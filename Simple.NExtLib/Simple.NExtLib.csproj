@@ -60,6 +60,8 @@
     <Compile Include="StringExtensions.cs" />
     <Compile Include="Linq\TupleEnumerableExtensions.cs" />
     <Compile Include="TupleExtensions.cs" />
+    <Compile Include="WebRequestExtensions.cs" />
+    <Compile Include="WebResponseExtensions.cs" />
     <Compile Include="Xml\Linq\XAttributeExtensions.cs" />
     <Compile Include="Xml\Linq\XElementExtensions.cs" />
     <Compile Include="Xml\Syndication\SyndicationItemExtensions.cs" />

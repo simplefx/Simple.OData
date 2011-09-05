@@ -6,7 +6,7 @@ using System.Text;
 using System.Net;
 using Simple.NExtLib.Xml;
 
-namespace Simple.Data.Azure
+namespace Simple.OData
 {
     [Serializable]
     public class TableServiceException : Exception

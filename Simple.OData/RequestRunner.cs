@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Simple.Data.Azure
+namespace Simple.OData
 {
     using System.Net;
     using NExtLib.IO;

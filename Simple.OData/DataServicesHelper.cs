@@ -10,7 +10,7 @@ using Simple.NExtLib;
 using Simple.NExtLib.Xml.Syndication;
 using Simple.NExtLib.IO;
 
-namespace Simple.Data.Azure.Helpers
+namespace Simple.OData
 {
     public static class DataServicesHelper
     {

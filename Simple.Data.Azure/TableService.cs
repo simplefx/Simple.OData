@@ -6,6 +6,7 @@ using System.Text;
 using System.Xml.Linq;
 using Simple.Data.Azure.Helpers;
 using System.Net;
+using Simple.OData;
 
 namespace Simple.Data.Azure
 {

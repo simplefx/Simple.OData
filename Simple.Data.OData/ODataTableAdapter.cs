@@ -3,21 +3,21 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Simple.Data.Azure
+namespace Simple.Data.OData
 {
     using System.ComponentModel.Composition;
     using Simple.OData;
     using Helpers;
 
-    [Export("Azure", typeof(Adapter))]
-    public class AzureTableAdapter : Adapter
+    [Export("OData", typeof(Adapter))]
+    public class ODataTableAdapter : Adapter
     {
-        private AzureHelper _helper;
+        private ODataHelper _helper;
 
         protected override void OnSetup()
         {
             base.OnSetup();
-            _helper = new AzureHelper { UrlBase = Settings.Url, SharedKey = Settings.Key, Account = Settings.Account };
+            _helper = new ODataHelper { UrlBase = Settings.Url };
         }
         public override IEnumerable<IDictionary<string, object>> Find(string tableName, SimpleExpression criteria)
         {

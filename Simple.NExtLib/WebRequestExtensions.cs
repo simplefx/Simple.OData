@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 
-namespace System.Net
+namespace Simple.NExtLib
 {
-    internal static class WebRequestExtensions
+    public static class WebRequestExtensions
     {
-        internal static void SetContent(this WebRequest request, string content)
+        public static void SetContent(this WebRequest request, string content)
         {
             using (var writer = new System.IO.StreamWriter(request.GetRequestStream()))
             {

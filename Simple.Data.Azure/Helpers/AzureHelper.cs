@@ -9,6 +9,8 @@ using System.IO;
 
 namespace Simple.Data.Azure.Helpers
 {
+    using Simple.NExtLib;
+
     public class AzureHelper
     {
         private byte[] _sharedKey;

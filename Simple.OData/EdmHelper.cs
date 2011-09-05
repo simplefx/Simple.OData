@@ -7,7 +7,7 @@ using System.Xml.Linq;
 using Simple.NExtLib;
 using System.Diagnostics;
 
-namespace Simple.Data.Azure.Helpers
+namespace Simple.OData
 {
     public static class EdmHelper
     {

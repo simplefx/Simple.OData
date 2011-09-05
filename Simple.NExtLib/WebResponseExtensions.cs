@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Xml.Linq;
 using System.IO;
 using System.Xml;
 
-namespace System.Net
+namespace Simple.NExtLib
 {
     public static class WebResponseExtensions
     {

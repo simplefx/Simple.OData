@@ -5,7 +5,7 @@ using System.Text;
 using Simple.NExtLib;
 using System.Reflection;
 
-namespace Simple.Data.Azure
+namespace Simple.OData
 {
     public sealed class EdmType : IEquatable<EdmType>
     {

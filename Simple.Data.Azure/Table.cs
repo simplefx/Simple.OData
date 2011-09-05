@@ -7,6 +7,7 @@ using System.Web;
 using System.Xml.Linq;
 using System.Diagnostics;
 using Simple.Data.Azure.Helpers;
+using Simple.OData;
 using Simple.NExtLib.Xml;
 using Simple.NExtLib.IO;
 using System.Net.Cache;
