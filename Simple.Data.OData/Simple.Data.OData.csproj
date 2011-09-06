@@ -31,8 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Simple.Data">
-      <HintPath>..\packages\Simple.Data.Core.0.9.3.2\lib\net40\Simple.Data.dll</HintPath>
+    <Reference Include="Simple.Data, Version=0.9.5.1, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\Simple.Data.Core.0.9.5.1\lib\net40\Simple.Data.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
@@ -51,9 +52,6 @@
     <Compile Include="Table.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Simple.NExtLib\Simple.NExtLib.csproj">
       <Project>{4A191FAD-DC1D-46FC-A941-7DEB2C8C4C15}</Project>
       <Name>Simple.NExtLib</Name>
@@ -62,6 +60,9 @@
       <Project>{00590565-A937-44EE-AA81-2B407F104380}</Project>
       <Name>Simple.OData</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -23,7 +23,12 @@ namespace Simple.OData
         {
             var feed = XElement.Parse(text);
 
-            return feed.Descendants(null, "content").Select(content => GetData(content).ToIDictionary());
+            string elementName =
+                feed.Element(null, "entry").Descendants(null, "link").Attributes("rel").Any(x => x.Value == "edit-media")
+                    ? "entry"
+                    : "content";
+
+            return feed.Descendants(null, elementName).Select(content => GetData(content).ToIDictionary());
         }
 
         public static IEnumerable<KeyValuePair<string, object>> GetData(XElement element)
