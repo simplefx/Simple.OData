@@ -13,22 +13,24 @@ namespace Simple.Data.OData
     public class ODataTableAdapter : Adapter
     {
         private ODataHelper _helper;
+        private ExpressionFormatter _expressionFormatter;
 
         protected override void OnSetup()
         {
             base.OnSetup();
+
             _helper = new ODataHelper { UrlBase = Settings.Url };
+            _expressionFormatter = new ExpressionFormatter();
         }
+
         public override IEnumerable<IDictionary<string, object>> Find(string tableName, SimpleExpression criteria)
         {
-            var filter = new ExpressionFormatter().Format(criteria);
-            var table = new Table(tableName, _helper);
-            return table.Query(filter);
+            return new Finder(_helper, _expressionFormatter).Find(tableName, criteria);
         }
 
         public override IEnumerable<IDictionary<string, object>> RunQuery(SimpleQuery query, out IEnumerable<SimpleQueryClauseBase> unhandledClauses)
         {
-            throw new NotImplementedException();
+            return new Finder(_helper, _expressionFormatter).Find(query, out unhandledClauses);
         }
 
         public override IDictionary<string, object> Insert(string tableName, IDictionary<string, object> data)

@@ -5,11 +5,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{96E43534-0CDC-4ECA-972E-4536055F8C63}</ProjectGuid>
+    <ProjectGuid>{898FFD08-B7FC-45FE-A6DD-5AE9C2280D28}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Simple.Data.OData.IntegrationTest</RootNamespace>
-    <AssemblyName>Simple.Data.OData.IntegrationTest</AssemblyName>
+    <RootNamespace>Simple.OData.Test</RootNamespace>
+    <AssemblyName>Simple.OData.Test</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -31,8 +31,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Simple.Data, Version=0.9.5.1, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Simple.Data">
       <HintPath>..\packages\Simple.Data.Core.0.9.5.1\lib\net40\Simple.Data.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -50,16 +49,16 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="FindTest.cs" />
+    <Compile Include="ExpressionFormatterTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Simple.Data.OData\Simple.Data.OData.csproj">
-      <Project>{E6EC2C3A-A7D8-41C3-ADCB-37B44F12B6F8}</Project>
-      <Name>Simple.Data.OData</Name>
+    <ProjectReference Include="..\Simple.OData\Simple.OData.csproj">
+      <Project>{00590565-A937-44EE-AA81-2B407F104380}</Project>
+      <Name>Simple.OData</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Simple.OData;
 
-namespace Simple.Data.Azure.Test
+namespace Simple.OData.Test
 {
     using Xunit;
+    using Simple.Data;
 
     public class ExpressionFormatterTest
     {

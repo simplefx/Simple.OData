@@ -5,8 +5,8 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Simple.Data.Azure.IntegrationTest")]
+[assembly: AssemblyTitle("Simple.OData.Test")]
 [assembly: AssemblyDescription("")]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("21fa2442-bd84-4880-b9ef-c77a70bf81bd")]
+[assembly: Guid("f3c4160f-7e74-4048-80b0-2f73c82332c8")]
