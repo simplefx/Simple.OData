@@ -9,9 +9,13 @@ namespace Simple.OData
 {
     public class SimpleReferenceFormatter
     {
+        private readonly FunctionNameConverter _functionNameConverter = new FunctionNameConverter();
+
         public string FormatColumnClause(SimpleReference reference)
         {
             var formatted = TryFormatAsObjectReference(reference as ObjectReference)
+                            ??
+                            TryFormatAsFunctionReference(reference as FunctionReference)
                             ??
                             TryFormatAsMathReference(reference as MathReference);
 
@@ -52,6 +56,26 @@ namespace Simple.OData
                 default:
                     throw new InvalidOperationException("Invalid MathOperator specified.");
             }
+        }
+
+        private string TryFormatAsFunctionReference(FunctionReference functionReference)
+        {
+            if (ReferenceEquals(functionReference, null)) return null;
+
+            var odataName = _functionNameConverter.ConvertToODataName(functionReference.Name);
+            return string.Format("{0}({1}{2})", odataName,
+                FormatColumnClause(functionReference.Argument), FormatAdditionalArguments(functionReference.AdditionalArguments));
+        }
+
+        private string FormatAdditionalArguments(IEnumerable<object> additionalArguments)
+        {
+            StringBuilder builder = null;
+            foreach (var additionalArgument in additionalArguments)
+            {
+                if (builder == null) builder = new StringBuilder();
+                builder.AppendFormat(",{0}", ExpressionFormatter.FormatValue(additionalArgument));
+            }
+            return builder != null ? builder.ToString() : string.Empty;
         }
 
         private string TryFormatAsObjectReference(ObjectReference objectReference)

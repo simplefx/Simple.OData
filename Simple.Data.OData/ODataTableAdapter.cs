@@ -55,7 +55,9 @@ namespace Simple.Data.OData
 
         public override bool IsExpressionFunction(string functionName, params object[] args)
         {
-            throw new NotImplementedException();
+            return functionName.Equals("like", StringComparison.OrdinalIgnoreCase)
+                && args.Length == 1
+                && args[0] is string;
         }
     }
 }

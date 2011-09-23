@@ -24,7 +24,7 @@ namespace Simple.OData
             var feed = XElement.Parse(text);
 
             string elementName =
-                feed.Element(null, "entry").Descendants(null, "link").Attributes("rel").Any(x => x.Value == "edit-media")
+                feed.Element(null, "entry") != null && feed.Element(null, "entry").Descendants(null, "link").Attributes("rel").Any(x => x.Value == "edit-media")
                     ? "entry"
                     : "content";
 

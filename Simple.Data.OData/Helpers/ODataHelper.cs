@@ -26,7 +26,6 @@ namespace Simple.Data.OData.Helpers
             var request = WebRequest.Create(uri);
             request.Method = method;
             request.ContentLength = (content ?? string.Empty).Length;
-            request.Headers.Add("x-ms-date", DateTime.UtcNow.ToString("R", CultureInfo.InvariantCulture));
 
             if (method == "PUT" || method == "DELETE" || method == "MERGE")
             {

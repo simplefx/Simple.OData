@@ -124,14 +124,30 @@ namespace Simple.OData
                                  FormatObject(expression.RightOperand));
         }
 
-        protected string FormatObject(object value)
+        internal protected string FormatObject(object value)
         {
+            if (value is SimpleFunction)
+                return FormatFunction(value as SimpleFunction);
+
             var objectReference = value as SimpleReference;
 
             if (!ReferenceEquals(objectReference, null))
                 return _simpleReferenceFormatter.FormatColumnClause(objectReference);
 
-            return value is string ? string.Format("'{0}'", value) : value is DateTime ? ((DateTime)value).ToIso8601String() : value.ToString();
+            return FormatValue(value);
+        }
+
+        internal protected string FormatFunction(SimpleFunction function)
+        {
+            return string.Format("{0}({1})", function.Name, function.Args.Aggregate((x, y) => FormatObject(x) + "," + FormatObject(y)));
+        }
+
+        internal static string FormatValue(object value)
+        {
+            return value is string ? string.Format("'{0}'", value)
+                : value is DateTime ? ((DateTime)value).ToIso8601String()
+                : value is bool ? ((bool)value) ? "true" : "false"
+                : value.ToString();
         }
     }
 }

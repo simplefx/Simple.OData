@@ -51,6 +51,7 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="FindTest.cs" />
+    <Compile Include="NortwindTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -60,6 +61,10 @@
     <ProjectReference Include="..\Simple.Data.OData\Simple.Data.OData.csproj">
       <Project>{E6EC2C3A-A7D8-41C3-ADCB-37B44F12B6F8}</Project>
       <Name>Simple.Data.OData</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Simple.OData\Simple.OData.csproj">
+      <Project>{00590565-A937-44EE-AA81-2B407F104380}</Project>
+      <Name>Simple.OData</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

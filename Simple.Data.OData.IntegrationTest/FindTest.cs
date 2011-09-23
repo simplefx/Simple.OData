@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Simple.OData;
 
 namespace Simple.Data.OData.IntegrationTest
 {
@@ -30,6 +31,54 @@ namespace Simple.Data.OData.IntegrationTest
             var package = db.Packages.FindByTitle("Simple.Data.Core");
             Assert.NotNull(package);
             Assert.Equal("Simple.Data.Core", package.Title);
+        }
+
+        [Fact]
+        public void FindWhereEqual()
+        {
+            var db = Database.Opener.Open(_northwindUrl);
+
+            var product = db.Products.Find(db.Products.ProductName == "Chai");
+            Assert.NotNull(product);
+            Assert.Equal("Chai", product.ProductName);
+        }
+
+        [Fact]
+        public void FindWhereEqualToLower()
+        {
+            var db = Database.Opener.Open(_northwindUrl);
+
+            var product = db.Products.Find(db.Products.ProductName.ToLower() == "chai");
+            Assert.NotNull(product);
+            Assert.Equal("Chai", product.ProductName);
+        }
+
+        [Fact]
+        public void FindWhereStartsWith()
+        {
+            var db = Database.Opener.Open(_northwindUrl);
+
+            var product = db.Products.Find(db.Products.ProductName.StartsWith("Ch") == true);
+            Assert.NotNull(product);
+            Assert.Equal("Chai", product.ProductName);
+        }
+
+        [Fact]
+        public void FindWhereEqualWithInvalidFunction()
+        {
+            var db = Database.Opener.Open(_northwindUrl);
+
+            Assert.Throws<TableServiceException>(() => db.Products.Find(db.Products.ProductName.InvalidFunction() == "Chai"));
+        }
+
+        [Fact]
+        public void FindAllWithSpecificLength()
+        {
+            var db = Database.Opener.Open(_northwindUrl);
+
+            IEnumerable<dynamic> products = db.Products.FindAll(db.Products.ProductName.Length() == 4);
+            Assert.NotNull(products);
+            Assert.NotEmpty(products);
         }
 
         [Fact]
