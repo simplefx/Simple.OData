@@ -21,7 +21,7 @@ namespace Simple.Data.Azure
 
         public IEnumerable<string> ListTables()
         {
-            var request = _azureHelper.CreateTableRequest("tables", RestVerbs.GET);
+            var request = _azureHelper.CreateTableRequest("Tables", RestVerbs.GET);
 
             IEnumerable<string> list;
 
@@ -39,7 +39,7 @@ namespace Simple.Data.Azure
             var dict = new Dictionary<string, object> { { "TableName", tableName } };
             var data = DataServicesHelper.CreateDataElement(dict);
 
-            DoRequest(data, "tables", RestVerbs.POST);
+            DoRequest(data, "Tables", RestVerbs.POST);
         }
 
         private void DoRequest(XElement element, string command, string method)

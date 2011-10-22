@@ -86,7 +86,7 @@ namespace Simple.Data.Azure
                 }
                 catch (TableServiceException ex)
                 {
-                    if (ex.Code == "TableNotFound")
+                    if (ex.Code == "ResourceNotFound")
                     {
                         Trace.WriteLine("Auto-creating table");
                         new TableService(_azureHelper).CreateTable(_tableName);
