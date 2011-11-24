@@ -39,10 +39,14 @@ namespace Simple.Data.OData
             return Get(_tableName);
         }
 
-        // TODO: Implement querying using LINQ, IQueryable<IDictionary<string, object>>
-        public IEnumerable<IDictionary<string, object>> Query(string filter)
+        public IEnumerable<IDictionary<string, object>> QueryWithFilter(string filter)
         {
             return Get(_tableName + "?$filter=" + HttpUtility.UrlEncode(filter));
+        }
+
+        public IEnumerable<IDictionary<string, object>> QueryWithKeys(string keys)
+        {
+            return Get(_tableName + "(" + keys + ")");
         }
 
         private IEnumerable<IDictionary<string, object>> Get(string url)

@@ -19,11 +19,17 @@ namespace Simple.Data.Azure
             base.OnSetup();
             _helper = new AzureHelper { UrlBase = Settings.Url, SharedKey = Settings.Key, Account = Settings.Account };
         }
+
         public override IEnumerable<IDictionary<string, object>> Find(string tableName, SimpleExpression criteria)
         {
             var filter = new ExpressionFormatter().Format(criteria);
             var table = new Table(tableName, _helper);
             return table.Query(filter);
+        }
+
+        public override IDictionary<string, object> Get(string tableName, params object[] keyValues)
+        {
+            throw new NotImplementedException();
         }
 
         public override IEnumerable<IDictionary<string, object>> RunQuery(SimpleQuery query, out IEnumerable<SimpleQueryClauseBase> unhandledClauses)

@@ -109,5 +109,15 @@ namespace Simple.Data.OData.IntegrationTest
             Assert.NotNull(products);
             Assert.NotEmpty(products);
         }
+
+        [Fact]
+        public void Get()
+        {
+            var db = Database.Opener.Open(_northwindUrl);
+
+            var product = db.Products.Get(1);
+            Assert.NotNull(product);
+            Assert.Equal("Chai", product.ProductName);
+        }
     }
 }

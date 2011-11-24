@@ -28,6 +28,11 @@ namespace Simple.Data.OData
             return new Finder(_helper, _expressionFormatter).Find(tableName, criteria);
         }
 
+        public override IDictionary<string, object> Get(string tableName, params object[] keyValues)
+        {
+            return new Finder(_helper, _expressionFormatter).Get(tableName, keyValues);
+        }
+
         public override IEnumerable<IDictionary<string, object>> RunQuery(SimpleQuery query, out IEnumerable<SimpleQueryClauseBase> unhandledClauses)
         {
             return new Finder(_helper, _expressionFormatter).Find(query, out unhandledClauses);

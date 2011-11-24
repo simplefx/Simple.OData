@@ -55,6 +55,11 @@ namespace Simple.OData
             return string.Empty;
         }
 
+        public string Format(object[] keyValues)
+        {
+            return string.Join(",", keyValues.Select(x => FormatValue(x)));
+        }
+
         private string LogicalExpressionToWhereClause(SimpleExpression expression)
         {
             return string.Format("({0} {1} {2})",

@@ -9,8 +9,15 @@ namespace Simple.Data.OData.IntegrationTest
 
     public class NortwindTest
     {
-        private const string _northwindUrl = "http://services.odata.org/Northwind/Northwind.svc/";
         dynamic _db;
+        private const string _northwindUrl = "http://services.odata.org/Northwind/Northwind.svc/";
+        private const string _testCategoryName = "Beverages";
+        private const int _testCategoryID = 1;
+        private const string _testCustomerID = "ALFKI";
+        private const string _testEmployeeFirstName = "Andrew";
+        private const string _testEmployeeLastName = "Fuller";
+        private const int _testOrderID = 10248;
+        private const int _testProductID = 11;
 
         public NortwindTest()
         {
@@ -18,92 +25,91 @@ namespace Simple.Data.OData.IntegrationTest
         }
 
         [Fact]
-        public void ShouldRetrieveNonemptyCategories()
+        public void ShouldFindAllCategories()
         {
             var categories = _db.Categories.All();
+
             Assert.True(categories.Count() > 0);
         }
 
         [Fact]
-        public void ShouldRetrieveNonemptyCategory()
+        public void ShouldFindCategoryByCategoryName()
         {
-            var key = "Condiments";
-            var category = _db.Categories.FindByCategoryName(key);
-            Assert.Equal(key, category.CategoryName);
+            var category = _db.Categories.FindByCategoryName(_testCategoryName);
+
+            Assert.Equal(_testCategoryName, category.CategoryName);
+        }
+
+        [Fact]
+        public void ShouldGetCategoryByKey()
+        {
+            var category = _db.Categories.Get(_testCategoryID);
+
+            Assert.Equal(_testCategoryName, category.CategoryName);
         }
 
         [Fact(Skip = "Not supported")]
-        public void ShouldRetrieveNonemptyCategoryProducts()
+        public void ShouldFindAllCategoryProducts()
         {
-            var key = "Condiments";
-            var category = _db.Categories.FindByCategoryName(key);
-            var products = category.Products.All();
+            var products = _db.Products.Find(
+                _db.Products.Category.CategoryName == _testCategoryName);
+
             Assert.True(products.Count() > 0);
         }
 
         [Fact]
-        public void ShouldRetrieveNonemptyCustomers()
+        public void ShouldFindAllCustomers()
         {
             var customers = _db.Customers.All();
+
             Assert.True(customers.Count() > 0);
         }
 
         [Fact]
-        public void ShouldRetrieveNonemptyCustomer()
+        public void ShouldFindCustomerByCustomerID()
         {
-            var key = "ALFKI";
-            var customer = _db.Customers.FindByCustomerID(key);
-            Assert.Equal(key, customer.CustomerID);
+            var customer = _db.Customers.FindByCustomerID(_testCustomerID);
+
+            Assert.Equal(_testCustomerID, customer.CustomerID);
+        }
+
+        [Fact]
+        public void ShouldGetCustomerByKey()
+        {
+            var customer = _db.Customers.Get(_testCustomerID);
+
+            Assert.Equal(_testCustomerID, customer.CustomerID);
         }
 
         [Fact(Skip = "Not supported")]
-        public void ShouldRetrieveNonemptyCustomerOrders()
+        public void ShouldFindAllCustomerOrders()
         {
-            var customer = _db.Customers.FindByCustomerID("ALFKI");
-            var customerOrders = customer.Orders.All();
+            var customerOrders = _db.Orders.Find(
+                _db.Orders.Customer.CustomerID == _testCustomerID);
+
             Assert.True(customerOrders.Count() > 0);
         }
 
-        [Fact(Skip = "Not supported")]
-        public void ShouldRetrieveEmptyCustomerCustomerDemographics()
-        {
-            var customer = _db.Customers.FindByCustomerID("ALFKI");
-            var customerDemographics = customer.CustomerDemographics.All();
-            Assert.Equal(0, customerDemographics.Count());
-        }
-
         [Fact]
-        public void ShouldRetrieveEmptyCustomerDemographics()
-        {
-            var customerDemographics = _db.CustomerDemographics.All();
-            Assert.Equal(0, customerDemographics.Count());
-        }
-
-        [Fact(Skip = "Not supported")]
-        public void ShouldRetrieveEmptyCustomerDemographicsCustomer()
-        {
-            var customerDemographics = _db.CustomerDemographics.FindByCustomerID(string.Empty);
-            var customers = customerDemographics.Customers.All();
-            Assert.Equal(0, customers.Count());
-        }
-
-        [Fact]
-        public void ShouldRetrieveNonemptyEmployes()
+        public void ShouldFindAllEmployes()
         {
             var employees = _db.Employees.All();
+
             Assert.True(employees.Count() > 0);
         }
 
         [Fact(Skip = "Not supported")]
-        public void ShouldRetrieveNonemptyEmployeeSubordinates()
+        public void ShouldFindAllEmployeeSubordinates()
         {
-            var employee = _db.Employees.FindByEmployeeFirstNameAndLastName("Andrew", "Fuller");
-            var subordinates = employee.Subordinates.All();
+            var subordinates = _db.Subordinates.Find(
+                _db.Subordinates.Employees.FirstName == _testEmployeeFirstName && 
+                _db.Subordinates.Employees.LastName == _testEmployeeLastName);
+
             Assert.True(subordinates.Count() > 0);
         }
 
         [Fact(Skip = "Not supported")]
-        public void ShouldRetrieveNonemptyEmployeeSuperior()
+        public void ShouldFindEmployeeSuperior()
         {
             var employee = _db.Employees.FindByEmployeeFirstNameAndLastName("Nancy", "Davolio");
             var superior = employee.Superior.FindOne();
@@ -111,179 +117,55 @@ namespace Simple.Data.OData.IntegrationTest
         }
 
         [Fact(Skip = "Not supported")]
-        public void ShouldRetrieveNonemptyEmployeeOrders()
+        public void ShouldFindAllEmployeeOrders()
         {
-            var employee = _db.Employees.FindByEmployeeFirstNameAndLastName("Andrew", "Fuller");
-            var orders = employee.Orders.All();
+            var orders = _db.Orders.Find(
+                _db.Orders.Employee.FirstName == _testEmployeeFirstName && 
+                _db.Orders.Employee.LastName == _testEmployeeLastName);
+
             Assert.True(orders.Count() > 0);
         }
 
-        [Fact(Skip = "Not supported")]
-        public void ShouldRetrieveNonemptyEmployeeTerritories()
-        {
-            var employee = _db.Employees.FindByEmployeeFirstNameAndLastName("Andrew", "Fuller");
-            var territories = employee.Territories.All();
-            Assert.True(territories.Count() > 0);
-        }
-
         [Fact]
-        public void ShouldRetrieveNonemptyOrders()
+        public void ShouldFindAllOrders()
         {
             var orders = _db.Orders.All();
+
             Assert.True(orders.Count() > 0);
         }
 
-        [Fact(Skip = "Not supported")]
-        public void ShouldRetrieveNonemptyOrderOrderDetails()
-        {
-            var order = _db.Orders.FindByOrderID(10248);
-            var orderDetails = order.OrderDetails.All();
-            Assert.True(orderDetails.Count() > 0);
-        }
-
         [Fact]
-        public void ShouldRetrieveNonemptyOrder()
-        {
-            var order = _db.Orders.FindByOrderID(10248);
-            Assert.Equal(10248, order.OrderID);
-        }
-
-        [Fact(Skip = "Not supported")]
-        public void ShouldRetrieveNonemptyOrderCustomer()
-        {
-            var order = _db.Orders.FindByOrderID(10248);
-            var customer = order.Customer.FindOne();
-            Assert.NotNull(customer);
-        }
-
-        [Fact(Skip = "Not supported")]
-        public void ShouldRetrieveNonnullOrderEmployee()
-        {
-            var order = _db.Orders.FindByOrderID(10248);
-            var employee = order.Employee.FindOne();
-            Assert.NotNull(employee);
-        }
-
-        [Fact(Skip = "Not supported")]
-        public void ShouldRetrieveNonnullOrderShipper()
-        {
-            var order = _db.Orders.FindByOrderID(10248);
-            var shipper = order.Shipper.FindOne();
-            Assert.NotNull(shipper);
-        }
-
-        [Fact]
-        public void ShouldRetrieveNonemptyOrderDetails()
-        {
-            var orderDetails = _db.Order_Details.All();
-            Assert.True(orderDetails.Count() > 0);
-        }
-
-        [Fact(Skip = "Not supported")]
-        public void ShouldRetrieveNonnullOrderDetailsOrder()
-        {
-            var orderDetails = _db.OrderDetails.FindByOrderIDAndOrderDetailsID(10248, 11);
-            var order = orderDetails.Order.FindOne();
-            Assert.NotNull(order);
-        }
-
-        [Fact(Skip = "Not supported")]
-        public void ShouldRetrieveNonnullOrderDetailsProduct()
-        {
-            var orderDetails = _db.OrderDetails.FindByOrderIDAndOrderDetailsID(10248, 11);
-            var product = orderDetails.Product.FindOne();
-            Assert.NotNull(product);
-        }
-
-        [Fact]
-        public void ShouldRetrieveNonemptyProducts()
+        public void ShouldFindAllProducts()
         {
             var products = _db.Products.All();
+
             Assert.True(products.Count() > 0);
         }
 
         [Fact(Skip = "Not supported")]
-        public void ShouldRetrieveNonnullProductCategory()
+        public void ShouldFindProductCategory()
         {
-            var product = _db.Products.FindByProductName("Chai");
-            var category = product.Category.FindOne();
+            var category = _db.Category.FindOne(
+                _db.Category.Products.ProductName == "Chai");
+
             Assert.NotNull(category);
         }
 
         [Fact(Skip = "Not supported")]
-        public void ShouldRetrieveNonnullProductSupplier()
+        public void ShouldFindProductSupplier()
         {
-            var product = _db.Products.FindByProductName("Chai");
-            var supplier = product.Supplier.FindOne();
+            var supplier = _db.Supplier.FindOne(
+                _db.Supplier.Product.ProductName == "Chai");
+
             Assert.NotNull(supplier);
         }
 
-        [Fact(Skip = "Not supported")]
-        public void ShouldRetrieveNonemptyProductOrderDetails()
+        [Fact(Skip = "Segments with multiple key values must specify them in 'name=value' form")]
+        public void ShouldGetProductDetailsByCompoundKey()
         {
-            var product = _db.Products.FindByProductName("Chai");
-            var orderDetails = product.OrderDetails.All();
-            Assert.True(orderDetails.Count() > 0);
-        }
+            var orderDetails = _db.Order_Details.Get(_testOrderID, _testProductID);
 
-        [Fact]
-        public void ShouldRetrieveNonemptyRegions()
-        {
-            var regions = _db.Regions.All();
-            Assert.True(regions.Count() > 0);
-        }
-
-        [Fact(Skip = "Not supported")]
-        public void ShouldRetrieveNonemptyRegionTerritories()
-        {
-            var region = _db.Regions.FindByRegionName("Eastern");
-            var territories = region.Territories.All();
-            Assert.True(territories.Count() > 0);
-        }
-
-        [Fact]
-        public void ShouldRetrieveNonemptyShippers()
-        {
-            var shippers = _db.Shippers.All();
-            Assert.True(shippers.Count() > 0);
-        }
-
-        [Fact(Skip = "Not supported")]
-        public void ShouldRetrieveNonemptyShipperOrders()
-        {
-            var shipper = _db.Shippers.FindOne("Speedy Express");
-            var orders = shipper.Orders.All();
-            Assert.True(orders.Count() > 0);
-        }
-
-        [Fact]
-        public void ShouldRetrieveNonemptySuppliers()
-        {
-            var suppliers = _db.Suppliers.All();
-            Assert.True(suppliers.Count() > 0);
-        }
-
-        [Fact(Skip = "Not supported")]
-        public void ShouldRetrieveNonemptySupplierProducts()
-        {
-            var supplier = _db.Suppliers.FindBySupplierName("Exotic Liquids");
-            var products = supplier.Products.All();
-            Assert.True(products.Count() > 0);
-        }
-
-        [Fact]
-        public void ShouldRetrieveNonemptyTerritories()
-        {
-            var territories = _db.Territories.All();
-            Assert.True(territories.Count() > 0);
-        }
-
-        [Fact(Skip = "Not supported")]
-        public void ShouldRetrieveNonnullTerritoryRegion()
-        {
-            var territory = _db.Territory.FindByTerritoryID("Westboro");
-            var region = territory.Region.FindOne();
-            Assert.NotNull(region);
+            Assert.Equal(_testOrderID, orderDetails.OrderID);
         }
     }
 }
