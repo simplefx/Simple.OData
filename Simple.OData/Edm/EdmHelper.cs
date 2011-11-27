@@ -7,7 +7,7 @@ using System.Xml.Linq;
 using Simple.NExtLib;
 using System.Diagnostics;
 
-namespace Simple.OData
+namespace Simple.OData.Edm
 {
     public static class EdmHelper
     {
@@ -16,10 +16,17 @@ namespace Simple.OData
             { EdmType.Binary, ReadEdmBinary },
             { EdmType.Boolean, ReadEdmBoolean },
             { EdmType.DateTime, ReadEdmDateTime },
+            { EdmType.DateTimeOffset, ReadEdmDateTimeOffset },
             { EdmType.Double, ReadEdmDouble },
+            { EdmType.Decimal, ReadEdmDecimal },
             { EdmType.Guid, ReadEdmGuid },
+            { EdmType.Int16, ReadEdmInt16 },
             { EdmType.Int32, ReadEdmInt32 },
             { EdmType.Int64, ReadEdmInt64 },
+            { EdmType.SByte, ReadEdmSByte },
+            { EdmType.Single, ReadEdmSingle },
+            { EdmType.String, ReadEdmString },
+            { EdmType.Time, ReadEdmTime },
         };
 
         private static readonly Dictionary<EdmType, Func<object, string>> Writers = new Dictionary<EdmType, Func<object, string>>
@@ -27,11 +34,17 @@ namespace Simple.OData
             { EdmType.Binary, WriteEdmBinary },
             { EdmType.Boolean, WriteEdmBoolean },
             { EdmType.DateTime, WriteEdmDateTime },
+            { EdmType.DateTimeOffset, WriteEdmDateTimeOffset },
             { EdmType.Double, WriteEdmDouble },
+            { EdmType.Decimal, WriteEdmDecimal },
             { EdmType.Guid, WriteEdmGuid },
+            { EdmType.Int16, WriteEdmInt16 },
             { EdmType.Int32, WriteEdmInt32 },
             { EdmType.Int64, WriteEdmInt64 },
+            { EdmType.SByte, WriteEdmSByte },
+            { EdmType.Single, WriteEdmSingle },
             { EdmType.String, WriteEdmString },
+            { EdmType.Time, WriteEdmTime },
         };
 
         public static KeyValuePair<string, object> Read(XElement element)
@@ -84,14 +97,29 @@ namespace Simple.OData
             return DateTime.Parse(source);
         }
 
+        public static object ReadEdmDateTimeOffset(string source)
+        {
+            return DateTimeOffset.Parse(source);
+        }
+
         public static object ReadEdmDouble(string source)
         {
-            return double.Parse(source);
+            return Double.Parse(source);
+        }
+
+        public static object ReadEdmDecimal(string source)
+        {
+            return Decimal.Parse(source);
         }
 
         public static object ReadEdmGuid(string source)
         {
             return new Guid(source);
+        }
+
+        public static object ReadEdmInt16(string source)
+        {
+            return Int16.Parse(source);
         }
 
         public static object ReadEdmInt32(string source)
@@ -104,6 +132,26 @@ namespace Simple.OData
             return Int64.Parse(source);
         }
 
+        public static object ReadEdmSByte(string source)
+        {
+            return SByte.Parse(source);
+        }
+
+        public static object ReadEdmSingle(string source)
+        {
+            return Single.Parse(source);
+        }
+
+        public static object ReadEdmString(string source)
+        {
+            return source;
+        }
+
+        public static object ReadEdmTime(string source)
+        {
+            return TimeSpan.Parse(source);
+        }
+
         public static string WriteEdmBinary(object source)
         {
             return Convert.ToBase64String((byte[])source);
@@ -111,27 +159,42 @@ namespace Simple.OData
 
         public static string WriteEdmBoolean(object source)
         {
-            return (bool)source ? "true" : "false";
+            return (Boolean)source ? "true" : "false";
         }
 
         public static string WriteEdmDateTime(object source)
         {
             if (((DateTime)source).Kind != DateTimeKind.Utc)
             {
-                Trace.WriteLine("Non-UTC DateTime specified to EdmHelper", "Simple.Data.Azure.Warnings");
+                Trace.WriteLine("Non-UTC DateTime specified to EdmHelper", "Simple.OData.Warnings");
             }
 
             return ((DateTime)source).ToIso8601String();
         }
 
+        public static string WriteEdmDateTimeOffset(object source)
+        {
+            return ((DateTimeOffset)source).ToIso8601String();
+        }
+
         public static string WriteEdmDouble(object source)
         {
-            return ((double)source).ToString();
+            return ((Double)source).ToString();
+        }
+
+        public static string WriteEdmDecimal(object source)
+        {
+            return ((Decimal)source).ToString();
         }
 
         public static string WriteEdmGuid(object source)
         {
             return ((Guid)source).ToString();
+        }
+
+        public static string WriteEdmInt16(object source)
+        {
+            return ((Int16)source).ToString();
         }
 
         public static string WriteEdmInt32(object source)
@@ -144,9 +207,24 @@ namespace Simple.OData
             return ((Int64)source).ToString();
         }
 
+        public static string WriteEdmSByte(object source)
+        {
+            return ((SByte)source).ToString();
+        }
+
+        public static string WriteEdmSingle(object source)
+        {
+            return ((Single)source).ToString();
+        }
+
         public static string WriteEdmString(object source)
         {
             return source.ToString();
+        }
+
+        public static string WriteEdmTime(object source)
+        {
+            return ((TimeSpan)source).ToIso8601String();
         }
 
         private static Func<string, object> GetReader(string edmType)

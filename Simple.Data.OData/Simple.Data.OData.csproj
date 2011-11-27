@@ -49,12 +49,19 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="Helpers\ODataHelper.cs" />
+    <Compile Include="Schema\Column.cs" />
+    <Compile Include="Schema\ColumnCollection.cs" />
+    <Compile Include="Schema\DatabaseSchema.cs" />
+    <Compile Include="Helpers\ProviderHelper.cs" />
     <Compile Include="IDatabaseOpenerExtensions.cs" />
     <Compile Include="Finder.cs" />
+    <Compile Include="Schema\ISchemaProvider.cs" />
+    <Compile Include="Schema\Key.cs" />
+    <Compile Include="Schema\SchemaProvider.cs" />
     <Compile Include="ODataTableAdapter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Table.cs" />
+    <Compile Include="Schema\Table.cs" />
+    <Compile Include="Schema\TableCollection.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Simple.NExtLib\Simple.NExtLib.csproj">

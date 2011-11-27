@@ -11,7 +11,7 @@ namespace Simple.Data.Azure.Helpers
 {
     using Simple.NExtLib;
 
-    public class AzureHelper
+    public class ProviderHelper
     {
         private byte[] _sharedKey;
 

@@ -5,28 +5,43 @@ using System.Text;
 using Simple.NExtLib;
 using System.Reflection;
 
-namespace Simple.OData
+namespace Simple.OData.Edm
 {
     public sealed class EdmType : IEquatable<EdmType>
     {
         public static readonly EdmType Binary = new EdmType("Edm.Binary");
         public static readonly EdmType Boolean = new EdmType("Edm.Boolean");
+        public static readonly EdmType Byte = new EdmType("Edm.Byte");
         public static readonly EdmType DateTime = new EdmType("Edm.DateTime");
+        public static readonly EdmType DateTimeOffset = new EdmType("Edm.DateTimeOffset");
+        public static readonly EdmType Decimal = new EdmType("Edm.Decimal");
         public static readonly EdmType Double = new EdmType("Edm.Double");
         public static readonly EdmType Guid = new EdmType("Edm.Guid");
+        public static readonly EdmType Int16 = new EdmType("Edm.Int16");
         public static readonly EdmType Int32 = new EdmType("Edm.Int32");
         public static readonly EdmType Int64 = new EdmType("Edm.Int64");
+        public static readonly EdmType SByte = new EdmType("Edm.SByte");
+        public static readonly EdmType Single = new EdmType("Edm.Single");
         public static readonly EdmType String = new EdmType("Edm.String");
+        public static readonly EdmType Time = new EdmType("Edm.Time");
 
         private static readonly Dictionary<Type, EdmType> EdmTypeMap = new Dictionary<Type, EdmType>
         {
             { typeof(byte[]), Binary },
             { typeof(bool), Boolean },
+            { typeof(byte), Byte },
             { typeof(DateTime), DateTime },
+            { typeof(DateTimeOffset), DateTimeOffset },
             { typeof(double), Double },
+            { typeof(decimal), Decimal },
             { typeof(Guid), Guid },
+            { typeof(Int16), Int16 },
             { typeof(Int32), Int32 },
             { typeof(Int64), Int64 },
+            { typeof(SByte), SByte },
+            { typeof(Single), Single },
+            { typeof(string), String },
+            { typeof(TimeSpan), Time },
         };
 
         private readonly string _text;

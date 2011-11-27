@@ -48,8 +48,9 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="DataServicesHelper.cs" />
-    <Compile Include="EdmHelper.cs" />
-    <Compile Include="EdmType.cs" />
+    <Compile Include="Edm\EdmHelper.cs" />
+    <Compile Include="Edm\EdmSchema.cs" />
+    <Compile Include="Edm\EdmType.cs" />
     <Compile Include="ExpressionFormatter.cs" />
     <Compile Include="FunctionNameConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

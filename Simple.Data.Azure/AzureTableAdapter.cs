@@ -12,12 +12,12 @@ namespace Simple.Data.Azure
     [Export("Azure", typeof(Adapter))]
     public class AzureTableAdapter : Adapter
     {
-        private AzureHelper _helper;
+        private ProviderHelper _helper;
 
         protected override void OnSetup()
         {
             base.OnSetup();
-            _helper = new AzureHelper { UrlBase = Settings.Url, SharedKey = Settings.Key, Account = Settings.Account };
+            _helper = new ProviderHelper { UrlBase = Settings.Url, SharedKey = Settings.Key, Account = Settings.Account };
         }
 
         public override IEnumerable<IDictionary<string, object>> Find(string tableName, SimpleExpression criteria)

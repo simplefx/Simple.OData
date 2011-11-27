@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
+using Simple.Data.OData.Schema;
 
 namespace Simple.Data.OData
 {
@@ -11,10 +12,10 @@ namespace Simple.Data.OData
 
     public class Finder
     {
-        private ODataHelper _helper;
+        private ProviderHelper _helper;
         private ExpressionFormatter _expressionFormatter;
 
-        public Finder(ODataHelper helper, ExpressionFormatter expressionFormatter)
+        public Finder(ProviderHelper helper, ExpressionFormatter expressionFormatter)
         {
             _helper = helper;
             _expressionFormatter = expressionFormatter;

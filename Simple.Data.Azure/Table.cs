@@ -19,7 +19,7 @@ namespace Simple.Data.Azure
     /// </summary>
     public class Table
     {
-        private readonly AzureHelper _azureHelper;
+        private readonly ProviderHelper _providerHelper;
 
         // ReSharper disable InconsistentNaming
         private const string GET = "GET";
@@ -32,12 +32,12 @@ namespace Simple.Data.Azure
         private readonly string _tableName;
         private readonly bool _autoCreate;
 
-        public Table(string tableName, AzureHelper azureHelper) : this(tableName, IfTableDoesNotExist.ThrowAnException, azureHelper) { }
+        public Table(string tableName, ProviderHelper azureHelper) : this(tableName, IfTableDoesNotExist.ThrowAnException, azureHelper) { }
 
-        public Table(string tableName, IfTableDoesNotExist doesNotExistAction, AzureHelper azureHelper)
+        public Table(string tableName, IfTableDoesNotExist doesNotExistAction, ProviderHelper providerHelper)
         {
             _tableName = tableName;
-            _azureHelper = azureHelper;
+            _providerHelper = providerHelper;
             _autoCreate = doesNotExistAction == IfTableDoesNotExist.CreateIt;
         }
 
@@ -74,7 +74,7 @@ namespace Simple.Data.Azure
             ThrowIfMissing(row, "PartitionKey", "RowKey");
 
             var entry = DataServicesHelper.CreateDataElement(row);
-            var request = _azureHelper.CreateTableRequest(_tableName, POST, entry.ToString());
+            var request = _providerHelper.CreateTableRequest(_tableName, POST, entry.ToString());
 
             string text = string.Empty;
 
@@ -89,8 +89,8 @@ namespace Simple.Data.Azure
                     if (ex.Code == "ResourceNotFound")
                     {
                         Trace.WriteLine("Auto-creating table");
-                        new TableService(_azureHelper).CreateTable(_tableName);
-                        request = _azureHelper.CreateTableRequest(_tableName, POST, entry.ToString());
+                        new TableService(_providerHelper).CreateTable(_tableName);
+                        request = _providerHelper.CreateTableRequest(_tableName, POST, entry.ToString());
 
                         text = new RequestRunner().Request(request);
                     }
@@ -149,7 +149,7 @@ namespace Simple.Data.Azure
         private IEnumerable<IDictionary<string, object>> Get(string url)
         {
             IEnumerable<IDictionary<string, object>> result;
-            var request = _azureHelper.CreateTableRequest(url, GET);
+            var request = _providerHelper.CreateTableRequest(url, GET);
 
             using (var response = new RequestRunner().TryRequest(request))
             {
@@ -170,7 +170,7 @@ namespace Simple.Data.Azure
 
         private void Delete(string url)
         {
-            var request = _azureHelper.CreateTableRequest(url, DELETE);
+            var request = _providerHelper.CreateTableRequest(url, DELETE);
 
             new RequestRunner().TryRequest(request);
         }
@@ -178,8 +178,8 @@ namespace Simple.Data.Azure
         private void WriteRowDataRequest(IDictionary<string, object> row, string command, string verb)
         {
             var entry = DataServicesHelper.CreateDataElement(row);
-            entry.Element(null, "id").Value = "http://" + _azureHelper.Account + ".table.core.windows.net/" + command;
-            var request = _azureHelper.CreateTableRequest(command, verb, entry.ToString());
+            entry.Element(null, "id").Value = "http://" + _providerHelper.Account + ".table.core.windows.net/" + command;
+            var request = _providerHelper.CreateTableRequest(command, verb, entry.ToString());
             request.Headers.Add(HttpRequestHeader.IfMatch, "*");
             request.Headers.Add("x-ms-version", "2009-09-19");
 

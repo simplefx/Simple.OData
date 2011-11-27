@@ -12,16 +12,16 @@ namespace Simple.Data.Azure
 {
     public class TableService
     {
-        private readonly AzureHelper _azureHelper;
+        private readonly ProviderHelper _providerHelper;
 
-        public TableService(AzureHelper azureHelper)
+        public TableService(ProviderHelper providerHelper)
         {
-            _azureHelper = azureHelper;
+            _providerHelper = providerHelper;
         }
 
         public IEnumerable<string> ListTables()
         {
-            var request = _azureHelper.CreateTableRequest("Tables", RestVerbs.GET);
+            var request = _providerHelper.CreateTableRequest("Tables", RestVerbs.GET);
 
             IEnumerable<string> list;
 
@@ -44,7 +44,7 @@ namespace Simple.Data.Azure
 
         private void DoRequest(XElement element, string command, string method)
         {
-            var request = _azureHelper.CreateTableRequest(command, method, element.ToString());
+            var request = _providerHelper.CreateTableRequest(command, method, element.ToString());
 
             using (var response = (HttpWebResponse)request.GetResponse())
             {

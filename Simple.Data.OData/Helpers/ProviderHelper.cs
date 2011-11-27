@@ -11,7 +11,7 @@ namespace Simple.Data.OData.Helpers
 {
     using Simple.NExtLib;
 
-    public class ODataHelper
+    public class ProviderHelper
     {
         public string UrlBase { get; set; }
 

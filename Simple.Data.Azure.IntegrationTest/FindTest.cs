@@ -11,7 +11,7 @@ namespace Simple.Data.Azure.IntegrationTest
     public class FindTest
     {
         private string _account = "devstoreaccount1";
-        private string _url = "http://127.0.0.1:10002/devstoreaccount1/";
+        private string _url = "http://localhost:10002/devstoreaccount1/";
         private string _key = "Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==";
 
         public FindTest()
@@ -32,7 +32,7 @@ namespace Simple.Data.Azure.IntegrationTest
 
         private void CreateTestTableAndData()
         {
-            var azureHelper = new AzureHelper { Account = _account, UrlBase = _url, SharedKey = _key };
+            var azureHelper = new ProviderHelper { Account = _account, UrlBase = _url, SharedKey = _key };
             var tableService = new TableService(azureHelper);
             var tables = tableService.ListTables();
             if (!tables.Contains("SimpleTest"))
