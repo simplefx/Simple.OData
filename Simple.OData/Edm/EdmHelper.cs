@@ -15,10 +15,11 @@ namespace Simple.OData.Edm
         {
             { EdmType.Binary, ReadEdmBinary },
             { EdmType.Boolean, ReadEdmBoolean },
+            { EdmType.Byte, ReadEdmByte },
             { EdmType.DateTime, ReadEdmDateTime },
             { EdmType.DateTimeOffset, ReadEdmDateTimeOffset },
-            { EdmType.Double, ReadEdmDouble },
             { EdmType.Decimal, ReadEdmDecimal },
+            { EdmType.Double, ReadEdmDouble },
             { EdmType.Guid, ReadEdmGuid },
             { EdmType.Int16, ReadEdmInt16 },
             { EdmType.Int32, ReadEdmInt32 },
@@ -33,10 +34,11 @@ namespace Simple.OData.Edm
         {
             { EdmType.Binary, WriteEdmBinary },
             { EdmType.Boolean, WriteEdmBoolean },
+            { EdmType.Byte, WriteEdmByte },
             { EdmType.DateTime, WriteEdmDateTime },
             { EdmType.DateTimeOffset, WriteEdmDateTimeOffset },
-            { EdmType.Double, WriteEdmDouble },
             { EdmType.Decimal, WriteEdmDecimal },
+            { EdmType.Double, WriteEdmDouble },
             { EdmType.Guid, WriteEdmGuid },
             { EdmType.Int16, WriteEdmInt16 },
             { EdmType.Int32, WriteEdmInt32 },
@@ -92,24 +94,29 @@ namespace Simple.OData.Edm
             return source.Equals("true", StringComparison.InvariantCultureIgnoreCase);
         }
 
+        public static object ReadEdmByte(string source)
+        {
+            return Byte.Parse(source);
+        }
+
         public static object ReadEdmDateTime(string source)
         {
-            return DateTime.Parse(source);
+            return DateTime.Parse(source, CultureInfo.InvariantCulture);
         }
 
         public static object ReadEdmDateTimeOffset(string source)
         {
-            return DateTimeOffset.Parse(source);
+            return DateTimeOffset.Parse(source, CultureInfo.InvariantCulture);
         }
 
         public static object ReadEdmDouble(string source)
         {
-            return Double.Parse(source);
+            return Double.Parse(source, CultureInfo.InvariantCulture);
         }
 
         public static object ReadEdmDecimal(string source)
         {
-            return Decimal.Parse(source);
+            return Decimal.Parse(source, CultureInfo.InvariantCulture);
         }
 
         public static object ReadEdmGuid(string source)
@@ -119,17 +126,17 @@ namespace Simple.OData.Edm
 
         public static object ReadEdmInt16(string source)
         {
-            return Int16.Parse(source);
+            return Int16.Parse(source, CultureInfo.InvariantCulture);
         }
 
         public static object ReadEdmInt32(string source)
         {
-            return Int32.Parse(source);
+            return Int32.Parse(source, CultureInfo.InvariantCulture);
         }
 
         public static object ReadEdmInt64(string source)
         {
-            return Int64.Parse(source);
+            return Int64.Parse(source, CultureInfo.InvariantCulture);
         }
 
         public static object ReadEdmSByte(string source)
@@ -139,7 +146,7 @@ namespace Simple.OData.Edm
 
         public static object ReadEdmSingle(string source)
         {
-            return Single.Parse(source);
+            return Single.Parse(source, CultureInfo.InvariantCulture);
         }
 
         public static object ReadEdmString(string source)
@@ -149,7 +156,7 @@ namespace Simple.OData.Edm
 
         public static object ReadEdmTime(string source)
         {
-            return TimeSpan.Parse(source);
+            return TimeSpan.Parse(source, CultureInfo.InvariantCulture);
         }
 
         public static string WriteEdmBinary(object source)
@@ -160,6 +167,11 @@ namespace Simple.OData.Edm
         public static string WriteEdmBoolean(object source)
         {
             return (Boolean)source ? "true" : "false";
+        }
+
+        public static string WriteEdmByte(object source)
+        {
+            return ((Byte)source).ToString();
         }
 
         public static string WriteEdmDateTime(object source)
@@ -179,12 +191,12 @@ namespace Simple.OData.Edm
 
         public static string WriteEdmDouble(object source)
         {
-            return ((Double)source).ToString();
+            return ((Double)source).ToString(CultureInfo.InvariantCulture);
         }
 
         public static string WriteEdmDecimal(object source)
         {
-            return ((Decimal)source).ToString();
+            return ((Decimal)source).ToString(CultureInfo.InvariantCulture);
         }
 
         public static string WriteEdmGuid(object source)
@@ -214,7 +226,7 @@ namespace Simple.OData.Edm
 
         public static string WriteEdmSingle(object source)
         {
-            return ((Single)source).ToString();
+            return ((Single)source).ToString(CultureInfo.InvariantCulture);
         }
 
         public static string WriteEdmString(object source)
