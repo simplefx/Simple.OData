@@ -12,19 +12,19 @@ namespace Simple.Data.OData
 
     public class Finder
     {
-        private ProviderHelper _helper;
+        private ProviderHelper _providerHelper;
         private ExpressionFormatter _expressionFormatter;
 
-        public Finder(ProviderHelper helper, ExpressionFormatter expressionFormatter)
+        public Finder(ProviderHelper providerHelper, ExpressionFormatter expressionFormatter)
         {
-            _helper = helper;
+            _providerHelper = providerHelper;
             _expressionFormatter = expressionFormatter;
         }
 
         public IEnumerable<IDictionary<string, object>> Find(string tableName, SimpleExpression criteria)
         {
             var filter = new ExpressionFormatter().Format(criteria);
-            var table = new Table(tableName, _helper);
+            var table = new Table(tableName, _providerHelper);
             return table.QueryWithFilter(filter);
         }
 
@@ -32,7 +32,7 @@ namespace Simple.Data.OData
         {
             var builder = QueryBuilder.BuildFrom(query);
 
-            var table = new Table(query.TableName, _helper);
+            var table = new Table(query.TableName, _providerHelper);
             unhandledClauses = builder.UnprocessedClauses;
             var results = table.QueryWithFilter(_expressionFormatter.Format(builder.Criteria));
 
@@ -44,8 +44,14 @@ namespace Simple.Data.OData
 
         internal IDictionary<string, object> Get(string tableName, object[] keyValues)
         {
-            var formattedKeyValues = new ExpressionFormatter().Format(keyValues);
-            var table = new Table(tableName, _helper);
+            var key = DatabaseSchema.Get(_providerHelper).FindTable(tableName).PrimaryKey;
+            var namedKeyValues = new Dictionary<string, object>();
+            for (int index = 0; index < keyValues.Count(); index++)
+            {
+                namedKeyValues.Add(key[index], keyValues[index]);
+            }
+            var formattedKeyValues = new ExpressionFormatter().Format(namedKeyValues);
+            var table = new Table(tableName, _providerHelper);
             return table.QueryWithKeys(formattedKeyValues).FirstOrDefault();
         }
     }

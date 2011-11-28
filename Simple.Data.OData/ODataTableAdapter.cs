@@ -28,6 +28,7 @@ namespace Simple.Data.OData
 
             _providerHelper = new ProviderHelper { UrlBase = Settings.Url };
             _expressionFormatter = new ExpressionFormatter();
+            _schema = DatabaseSchema.Get(_providerHelper);
         }
 
         public override IEnumerable<IDictionary<string, object>> Find(string tableName, SimpleExpression criteria)

@@ -35,8 +35,10 @@ namespace Simple.Data.OData
                    where e.IsDefaulEntityContainer
                        from s in e.EntitySets
                        where s.Name == table.ActualName
-                           from c in s.EntityType
-                           select new Column(s.Name, table);
+                           from t in _metadata.Value.EntityTypes
+                           where s.EntityType.Split('.').Last() == t.Name
+                               from p in t.Properties
+                               select new Column(p.Name, table);
         }
 
         public Key GetPrimaryKey(Table table)
@@ -46,7 +48,7 @@ namespace Simple.Data.OData
                        from s in e.EntitySets
                        where s.Name == table.ActualName
                            from t in _metadata.Value.EntityTypes
-                           where s.Name == t.Name
+                           where s.EntityType.Split('.').Last() == t.Name
                            select new Key(t.Key.Properties)).Single();
         }
 

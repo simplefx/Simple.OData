@@ -7,103 +7,40 @@ namespace Simple.Data.OData.IntegrationTest
 {
     using Xunit;
 
-    public class NortwindTest
+    public class NortwindTest : TestBase
     {
-        dynamic _db;
-        private const string _northwindUrl = "http://services.odata.org/Northwind/Northwind.svc/";
-        private const string _testCategoryName = "Beverages";
-        private const int _testCategoryID = 1;
-        private const string _testCustomerID = "ALFKI";
-        private const string _testEmployeeFirstName = "Andrew";
-        private const string _testEmployeeLastName = "Fuller";
-        private const int _testOrderID = 10248;
-        private const int _testProductID = 11;
-
-        public NortwindTest()
-        {
-            _db = Database.Opener.Open(_northwindUrl);
-        }
-
-        [Fact]
-        public void ShouldFindAllCategories()
-        {
-            var categories = _db.Categories.All();
-
-            Assert.True(categories.Count() > 0);
-        }
-
-        [Fact]
-        public void ShouldFindCategoryByCategoryName()
-        {
-            var category = _db.Categories.FindByCategoryName(_testCategoryName);
-
-            Assert.Equal(_testCategoryName, category.CategoryName);
-        }
-
-        [Fact]
-        public void ShouldGetCategoryByKey()
-        {
-            var category = _db.Categories.Get(_testCategoryID);
-
-            Assert.Equal(_testCategoryName, category.CategoryName);
-        }
-
         [Fact(Skip = "Not supported")]
         public void ShouldFindAllCategoryProducts()
         {
             var products = _db.Products.Find(
-                _db.Products.Category.CategoryName == _testCategoryName);
+                _db.Products.Category.CategoryName == "Beverages");
 
             Assert.True(products.Count() > 0);
         }
 
         [Fact]
-        public void ShouldFindAllCustomers()
-        {
-            var customers = _db.Customers.All();
-
-            Assert.True(customers.Count() > 0);
-        }
-
-        [Fact]
         public void ShouldFindCustomerByCustomerID()
         {
-            var customer = _db.Customers.FindByCustomerID(_testCustomerID);
+            var customer = _db.Customers.FindByCustomerID("ALFKI");
 
-            Assert.Equal(_testCustomerID, customer.CustomerID);
-        }
-
-        [Fact]
-        public void ShouldGetCustomerByKey()
-        {
-            var customer = _db.Customers.Get(_testCustomerID);
-
-            Assert.Equal(_testCustomerID, customer.CustomerID);
+            Assert.Equal("ALFKI", customer.CustomerID);
         }
 
         [Fact(Skip = "Not supported")]
         public void ShouldFindAllCustomerOrders()
         {
             var customerOrders = _db.Orders.Find(
-                _db.Orders.Customer.CustomerID == _testCustomerID);
+                _db.Orders.Customer.CustomerID == "ALFKI");
 
             Assert.True(customerOrders.Count() > 0);
-        }
-
-        [Fact]
-        public void ShouldFindAllEmployes()
-        {
-            var employees = _db.Employees.All();
-
-            Assert.True(employees.Count() > 0);
         }
 
         [Fact(Skip = "Not supported")]
         public void ShouldFindAllEmployeeSubordinates()
         {
             var subordinates = _db.Subordinates.Find(
-                _db.Subordinates.Employees.FirstName == _testEmployeeFirstName && 
-                _db.Subordinates.Employees.LastName == _testEmployeeLastName);
+                _db.Subordinates.Employees.FirstName == "Andrew" &&
+                _db.Subordinates.Employees.LastName == "Fuller");
 
             Assert.True(subordinates.Count() > 0);
         }
@@ -120,26 +57,10 @@ namespace Simple.Data.OData.IntegrationTest
         public void ShouldFindAllEmployeeOrders()
         {
             var orders = _db.Orders.Find(
-                _db.Orders.Employee.FirstName == _testEmployeeFirstName && 
-                _db.Orders.Employee.LastName == _testEmployeeLastName);
+                _db.Orders.Employee.FirstName == "Andrew" &&
+                _db.Orders.Employee.LastName == "Fuller");
 
             Assert.True(orders.Count() > 0);
-        }
-
-        [Fact]
-        public void ShouldFindAllOrders()
-        {
-            var orders = _db.Orders.All();
-
-            Assert.True(orders.Count() > 0);
-        }
-
-        [Fact]
-        public void ShouldFindAllProducts()
-        {
-            var products = _db.Products.All();
-
-            Assert.True(products.Count() > 0);
         }
 
         [Fact(Skip = "Not supported")]
@@ -158,14 +79,6 @@ namespace Simple.Data.OData.IntegrationTest
                 _db.Supplier.Product.ProductName == "Chai");
 
             Assert.NotNull(supplier);
-        }
-
-        [Fact(Skip = "Segments with multiple key values must specify them in 'name=value' form")]
-        public void ShouldGetProductDetailsByCompoundKey()
-        {
-            var orderDetails = _db.Order_Details.Get(_testOrderID, _testProductID);
-
-            Assert.Equal(_testOrderID, orderDetails.OrderID);
         }
     }
 }

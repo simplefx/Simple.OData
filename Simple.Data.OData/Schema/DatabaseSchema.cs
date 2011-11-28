@@ -50,7 +50,7 @@ namespace Simple.Data.OData.Schema
         private TableCollection CreateTableCollection()
         {
             return new TableCollection(_schemaProvider.GetTables()
-                .Select(table => new Table(table.ActualName, _providerHelper)));
+                .Select(table => new Table(table.ActualName, _providerHelper, this)));
         }
 
         public static DatabaseSchema Get(ProviderHelper providerHelper)

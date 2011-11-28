@@ -8,32 +8,52 @@ namespace Simple.Data.OData.IntegrationTest
 {
     using Xunit;
 
-    public class SchemaTest
+    public class SchemaTest : TestBase
     {
-        private const string _northwindUrl = "http://services.odata.org/Northwind/Northwind.svc/";
+        private DatabaseSchema _schema;
+
+        private DatabaseSchema GetSchema()
+        {
+            var adapter = _db.GetAdapter() as ODataTableAdapter;
+            return adapter.GetSchema();
+        }
+
+        protected DatabaseSchema Schema
+        {
+            get { return (_schema ?? (_schema = GetSchema())); }
+        }
 
         [Fact]
-        public void ShouldGetCorrectTableCount()
+        public void GetTablesCount()
         {
-            var db = Database.Opener.Open(_northwindUrl);
-            var adapter = db.GetAdapter() as ODataTableAdapter;
-
-            var schema = adapter.GetSchema();
-            var tables = schema.Tables;
+            var tables = Schema.Tables;
 
             Assert.Equal(26, tables.Count());
         }
 
         [Fact]
-        public void ShouldFindTable()
+        public void FindTable()
         {
-            var db = Database.Opener.Open(_northwindUrl);
-            var adapter = db.GetAdapter() as ODataTableAdapter;
+            var table = Schema.FindTable("Customers");
 
-            var schema = adapter.GetSchema();
-            var table = schema.FindTable("Customers");
+            Assert.Equal(11, table.Columns.Count());
+        }
 
-            Assert.Equal(23, table.Columns.Count());
+        [Fact]
+        public void FindColumn()
+        {
+            var column = Schema.FindTable("Employees").FindColumn("first_name");
+
+            Assert.Equal("FirstName", column.ActualName);
+        }
+
+        [Fact]
+        public void GetCompoundPrimaryKey()
+        {
+            var table = Schema.FindTable("OrderDetails");
+
+            Assert.Equal("OrderID", table.PrimaryKey[0]);
+            Assert.Equal("ProductID", table.PrimaryKey[1]);
         }
     }
 }

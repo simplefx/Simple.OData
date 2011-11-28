@@ -31,13 +31,20 @@ namespace Simple.Data.OData.Schema
         private const string DELETE = "DELETE";
         // ReSharper restore InconsistentNaming
 
-        public Table(string actualName, ProviderHelper providerHelper)
+        public Table(string name, ProviderHelper providerHelper)
+        {
+            _providerHelper = providerHelper;
+            _databaseSchema = DatabaseSchema.Get(_providerHelper);
+            _actualName = name;
+        }
+
+        internal Table(string actualName, ProviderHelper providerHelper, DatabaseSchema databaseSchema)
         {
             _actualName = actualName;
             _providerHelper = providerHelper;
+            _databaseSchema = databaseSchema;
             _lazyColumns = new Lazy<ColumnCollection>(GetColumns);
             _lazyPrimaryKey = new Lazy<Key>(GetPrimaryKey);
-            _databaseSchema = DatabaseSchema.Get(_providerHelper);
         }
 
         internal string HomogenizedName
@@ -95,12 +102,12 @@ namespace Simple.Data.OData.Schema
 
         public IEnumerable<IDictionary<string, object>> QueryWithFilter(string filter)
         {
-            return Get(_actualName + "?$filter=" + HttpUtility.UrlEncode(filter));
+            return Get(_databaseSchema.FindTable(_actualName).ActualName + "?$filter=" + HttpUtility.UrlEncode(filter));
         }
 
         public IEnumerable<IDictionary<string, object>> QueryWithKeys(string keys)
         {
-            return Get(_actualName + "(" + keys + ")");
+            return Get(_databaseSchema.FindTable(_actualName).ActualName + "(" + keys + ")");
         }
 
         private IEnumerable<IDictionary<string, object>> Get(string url)

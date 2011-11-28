@@ -162,8 +162,20 @@ namespace Simple.OData
                                             {
                                                 Name = s.Attribute("Name").Value,
                                                 Association = s.Attribute("Association").Value,
+                                                End = (from n in s.Descendants(null, "End")
+                                                    select new EdmAssociationSetEnd()
+                                                        {
+                                                            Role = n.Attribute("Role").Value,
+                                                            EntitySet = n.Attribute("EntitySet").Value,
+                                                        }).ToArray(),
                                             }).ToArray(),
-                                  FunctionImports = null,
+                                  FunctionImports = (from s in e.Descendants(null, "FunctionImport")
+                                        select new EdmFunctionImport()
+                                        {
+                                            Name = s.Attribute("Name").Value,
+                                            ReturnType = s.Attribute("ReturnType").Value,
+                                            EntitySet = s.Attribute("EntitySet").Value,
+                                        }).ToArray(),
                               };
 
         }

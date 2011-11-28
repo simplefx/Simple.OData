@@ -36,6 +36,7 @@ namespace Simple.OData.Edm
     {
         public string Name { get; set; }
         public string Association { get; set; }
+        public EdmAssociationSetEnd[] End { get; set; }
     }
 
     public sealed class EdmEntityType
@@ -101,22 +102,16 @@ namespace Simple.OData.Edm
     public sealed class EdmAssociationSetEnd
     {
         public string Role { get; set; }
-        public EdmEntitySet EntitySet { get; set; }
+        public string EntitySet { get; set; }
     }
 
     public sealed class EdmFunctionImport
     {
         public string Name { get; set; }
-        public EdmEntitySet EntitySet { get; set; }
-        public EdmReturnType ReturnType { get; set; }
+        public string EntitySet { get; set; }
+        public string ReturnType { get; set; }
         public string HttpMethod { get; set; }
         public EdmParameter[] Parameters { get; set; }
-    }
-
-    public sealed class EdmReturnType
-    {
-        public string Type { get; set; }
-        public bool IsCollection { get; set; }
     }
 
     public sealed class EdmParameter
