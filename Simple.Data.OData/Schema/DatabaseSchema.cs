@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Simple.Data.OData.Helpers;
+using Simple.OData.Schema;
 
 namespace Simple.Data.OData.Schema
 {
@@ -50,7 +51,7 @@ namespace Simple.Data.OData.Schema
         private TableCollection CreateTableCollection()
         {
             return new TableCollection(_schemaProvider.GetTables()
-                .Select(table => new Table(table.ActualName, _providerHelper, this)));
+                .Select(table => new ODataTable(table.ActualName, _providerHelper, this)));
         }
 
         public static DatabaseSchema Get(ProviderHelper providerHelper)

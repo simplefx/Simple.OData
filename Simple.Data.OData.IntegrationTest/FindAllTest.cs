@@ -19,6 +19,14 @@ namespace Simple.Data.OData.IntegrationTest
         }
 
         [Fact]
+        public void FindAllWithHomogenizedName()
+        {
+            IEnumerable<dynamic> products = _db.Products.FindAllByProduct_Name("Chai");
+
+            Assert.NotEmpty(products);
+        }
+
+        [Fact]
         public void FindAllWithSpecificLength()
         {
             IEnumerable<dynamic> products = _db.Products.FindAll(_db.Products.ProductName.Length() == 4);

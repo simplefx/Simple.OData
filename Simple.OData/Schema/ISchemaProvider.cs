@@ -2,9 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Simple.Data.OData.Schema;
 
-namespace Simple.Data.OData.Schema
+namespace Simple.OData.Schema
 {
     public interface ISchemaProvider
     {

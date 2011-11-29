@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Simple.Data.OData.Schema
+namespace Simple.OData.Schema
 {
     public sealed class Key
     {

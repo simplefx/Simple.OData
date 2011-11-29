@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using Simple.Data;
 using Simple.Data.Extensions;
 
-namespace Simple.Data.OData.Schema
+namespace Simple.OData.Schema
 {
-    class ColumnCollection : Collection<Column>
+    public class ColumnCollection : Collection<Column>
     {
         public ColumnCollection()
         {

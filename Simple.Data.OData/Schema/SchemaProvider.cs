@@ -7,6 +7,7 @@ using Simple.Data.OData.Helpers;
 using Simple.Data.OData.Schema;
 using Simple.OData;
 using Simple.OData.Edm;
+using Simple.OData.Schema;
 
 namespace Simple.Data.OData
 {
@@ -26,7 +27,7 @@ namespace Simple.Data.OData
             return from e in _metadata.Value.EntityContainers
                    where e.IsDefaulEntityContainer
                        from s in e.EntitySets
-                       select new Table(s.Name, _providerHelper);
+                       select new ODataTable(s.Name, _providerHelper);
         }
 
         public IEnumerable<Column> GetColumns(Table table)

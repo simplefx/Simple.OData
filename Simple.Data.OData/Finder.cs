@@ -23,8 +23,8 @@ namespace Simple.Data.OData
 
         public IEnumerable<IDictionary<string, object>> Find(string tableName, SimpleExpression criteria)
         {
-            var filter = new ExpressionFormatter().Format(criteria);
-            var table = new Table(tableName, _providerHelper);
+            var filter = new ExpressionFormatter(DatabaseSchema.Get(_providerHelper).FindTable).Format(criteria);
+            var table = new ODataTable(tableName, _providerHelper);
             return table.QueryWithFilter(filter);
         }
 
@@ -32,7 +32,7 @@ namespace Simple.Data.OData
         {
             var builder = QueryBuilder.BuildFrom(query);
 
-            var table = new Table(query.TableName, _providerHelper);
+            var table = new ODataTable(query.TableName, _providerHelper);
             unhandledClauses = builder.UnprocessedClauses;
             var results = table.QueryWithFilter(_expressionFormatter.Format(builder.Criteria));
 
@@ -50,8 +50,8 @@ namespace Simple.Data.OData
             {
                 namedKeyValues.Add(key[index], keyValues[index]);
             }
-            var formattedKeyValues = new ExpressionFormatter().Format(namedKeyValues);
-            var table = new Table(tableName, _providerHelper);
+            var formattedKeyValues = new ExpressionFormatter(DatabaseSchema.Get(_providerHelper).FindTable).Format(namedKeyValues);
+            var table = new ODataTable(tableName, _providerHelper);
             return table.QueryWithKeys(formattedKeyValues).FirstOrDefault();
         }
     }

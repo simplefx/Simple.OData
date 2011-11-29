@@ -64,6 +64,12 @@
     <Compile Include="QueryBuilder.cs" />
     <Compile Include="RequestRunner.cs" />
     <Compile Include="RestVerbs.cs" />
+    <Compile Include="Schema\Column.cs" />
+    <Compile Include="Schema\ColumnCollection.cs" />
+    <Compile Include="Schema\ISchemaProvider.cs" />
+    <Compile Include="Schema\Key.cs" />
+    <Compile Include="Schema\Table.cs" />
+    <Compile Include="Schema\TableCollection.cs" />
     <Compile Include="SimpleReferenceFormatter.cs" />
     <Compile Include="TableServiceException.cs" />
   </ItemGroup>

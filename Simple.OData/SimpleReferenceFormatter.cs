@@ -4,12 +4,19 @@ using System.Linq;
 using System.Text;
 using Simple.Data;
 using Simple.NExtLib;
+using Simple.OData.Schema;
 
 namespace Simple.OData
 {
     public class SimpleReferenceFormatter
     {
         private readonly FunctionNameConverter _functionNameConverter = new FunctionNameConverter();
+        private readonly Func<string, Table> _findTable; 
+
+        public SimpleReferenceFormatter(Func<string, Table> findTable)
+        {
+            _findTable = findTable;
+        }
 
         public string FormatColumnClause(SimpleReference reference)
         {
@@ -82,7 +89,16 @@ namespace Simple.OData
         {
             if (ReferenceEquals(objectReference, null)) return null;
 
-            return objectReference.GetName();
+            if (_findTable == null)
+            {
+                return objectReference.GetName();
+            }
+            else
+            {
+                var table = _findTable(objectReference.GetOwner().GetName());
+                var column = table.FindColumn(objectReference.GetName());
+                return column.ActualName;
+            }
         }
     }
 }

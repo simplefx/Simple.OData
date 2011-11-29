@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Simple.Data;
+using Simple.OData.Schema;
 
 namespace Simple.OData
 {
@@ -12,9 +13,10 @@ namespace Simple.OData
     public class ExpressionFormatter
     {
         private readonly Dictionary<SimpleExpressionType, Func<SimpleExpression, string>> _expressionFormatters;
-        private readonly SimpleReferenceFormatter _simpleReferenceFormatter = new SimpleReferenceFormatter();
+        private readonly SimpleReferenceFormatter _simpleReferenceFormatter;
+        private readonly Func<string, Table> _findTable; 
 
-        public ExpressionFormatter()
+        public ExpressionFormatter(Func<string, Table> findTable)
         {
             _expressionFormatters = new Dictionary<SimpleExpressionType, Func<SimpleExpression, string>>
                                         {
@@ -41,6 +43,8 @@ namespace Simple.OData
                                                 },
                                             { SimpleExpressionType.Empty, expr => string.Empty },
                                         };
+            _findTable = findTable;
+            _simpleReferenceFormatter = new SimpleReferenceFormatter(findTable);
         }
 
         public string Format(SimpleExpression expression)

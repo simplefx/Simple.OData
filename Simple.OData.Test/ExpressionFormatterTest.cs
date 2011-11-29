@@ -10,11 +10,13 @@ namespace Simple.OData.Test
 
     public class ExpressionFormatterTest
     {
+        private ExpressionFormatter _expressionFormatter = new ExpressionFormatter(null);
+
         [Fact]
         public void SingleEqualsFormatsAsODataFilter()
         {
             var expression = ObjectReference.FromString("foo.bar") == 1;
-            var actual = new ExpressionFormatter().Format(expression);
+            var actual = _expressionFormatter.Format(expression);
             Assert.Equal("bar eq 1", actual);
         }
 
@@ -22,7 +24,7 @@ namespace Simple.OData.Test
         public void TwoEqualsFormatsAsODataFilter()
         {
             var expression = ObjectReference.FromString("foo.bar") == 1 && ObjectReference.FromString("foo.quux") == 2;
-            var actual = new ExpressionFormatter().Format(expression);
+            var actual = _expressionFormatter.Format(expression);
             Assert.Equal("(bar eq 1 and quux eq 2)", actual);
         }
 
@@ -30,7 +32,7 @@ namespace Simple.OData.Test
         public void SingleNotEqualsFormatsAsODataFilter()
         {
             var expression = ObjectReference.FromString("foo.bar") != 1;
-            var actual = new ExpressionFormatter().Format(expression);
+            var actual = _expressionFormatter.Format(expression);
             Assert.Equal("bar ne 1", actual);
         }
 
@@ -38,7 +40,7 @@ namespace Simple.OData.Test
         public void GreaterThanFormatsAsODataFilter()
         {
             var expression = ObjectReference.FromString("foo.bar") > 1;
-            var actual = new ExpressionFormatter().Format(expression);
+            var actual = _expressionFormatter.Format(expression);
             Assert.Equal("bar gt 1", actual);
         }
 
@@ -46,7 +48,7 @@ namespace Simple.OData.Test
         public void GreaterThanOrEqualFormatsAsODataFilter()
         {
             var expression = ObjectReference.FromString("foo.bar") >= 1;
-            var actual = new ExpressionFormatter().Format(expression);
+            var actual = _expressionFormatter.Format(expression);
             Assert.Equal("bar ge 1", actual);
         }
 
@@ -54,7 +56,7 @@ namespace Simple.OData.Test
         public void LessThanFormatsAsODataFilter()
         {
             var expression = ObjectReference.FromString("foo.bar") < 1;
-            var actual = new ExpressionFormatter().Format(expression);
+            var actual = _expressionFormatter.Format(expression);
             Assert.Equal("bar lt 1", actual);
         }
 
@@ -62,7 +64,7 @@ namespace Simple.OData.Test
         public void LessThanOrEqualFormatsAsODataFilter()
         {
             var expression = ObjectReference.FromString("foo.bar") <= 1;
-            var actual = new ExpressionFormatter().Format(expression);
+            var actual = _expressionFormatter.Format(expression);
             Assert.Equal("bar le 1", actual);
         }
 
@@ -70,7 +72,7 @@ namespace Simple.OData.Test
         public void EqualWithRangeFormatsAsODataFilter()
         {
             var expression = ObjectReference.FromString("foo.bar") == 1.to(10);
-            var actual = new ExpressionFormatter().Format(expression);
+            var actual = _expressionFormatter.Format(expression);
             Assert.Equal("(bar ge 1 and bar le 10)", actual);
         }
 
@@ -78,7 +80,7 @@ namespace Simple.OData.Test
         public void EqualsWithAddFormatsAsODataFilter()
         {
             var expression = ObjectReference.FromString("bar") + ObjectReference.FromString("1") == 2;
-            var actual = new ExpressionFormatter().Format(expression);
+            var actual = _expressionFormatter.Format(expression);
             Assert.Equal("bar add 1 eq 2", actual);
         }
 
@@ -86,7 +88,7 @@ namespace Simple.OData.Test
         public void EqualsWithSubFormatsAsODataFilter()
         {
             var expression = ObjectReference.FromString("bar") - ObjectReference.FromString("1") == 2;
-            var actual = new ExpressionFormatter().Format(expression);
+            var actual = _expressionFormatter.Format(expression);
             Assert.Equal("bar sub 1 eq 2", actual);
         }
 
@@ -94,7 +96,7 @@ namespace Simple.OData.Test
         public void EqualsWithMulFormatsAsODataFilter()
         {
             var expression = ObjectReference.FromString("bar") * ObjectReference.FromString("1") == 2;
-            var actual = new ExpressionFormatter().Format(expression);
+            var actual = _expressionFormatter.Format(expression);
             Assert.Equal("bar mul 1 eq 2", actual);
         }
 
@@ -102,7 +104,7 @@ namespace Simple.OData.Test
         public void EqualsWithDivFormatsAsODataFilter()
         {
             var expression = ObjectReference.FromString("bar") / ObjectReference.FromString("1") == 2;
-            var actual = new ExpressionFormatter().Format(expression);
+            var actual = _expressionFormatter.Format(expression);
             Assert.Equal("bar div 1 eq 2", actual);
         }
 
@@ -110,7 +112,7 @@ namespace Simple.OData.Test
         public void EqualsWithModFormatsAsODataFilter()
         {
             var expression = ObjectReference.FromString("bar") % ObjectReference.FromString("1") == 2;
-            var actual = new ExpressionFormatter().Format(expression);
+            var actual = _expressionFormatter.Format(expression);
             Assert.Equal("bar mod 1 eq 2", actual);
         }
 
@@ -120,7 +122,7 @@ namespace Simple.OData.Test
             var expression = new SimpleExpression(ObjectReference.FromString("bar"),
                                                   new SimpleFunction("like", new object[] {ObjectReference.FromString("'abc'")}),
                                                   SimpleExpressionType.Function);
-            var actual = new ExpressionFormatter().Format(expression);
+            var actual = _expressionFormatter.Format(expression);
             Assert.Equal("bar LIKE 'abc'", actual);
         }
 
@@ -130,7 +132,7 @@ namespace Simple.OData.Test
             var expression = new SimpleExpression(new SimpleFunction("length", new object[] {ObjectReference.FromString("bar")}),
                                      1,
                                      SimpleExpressionType.Equal);
-            var actual = new ExpressionFormatter().Format(expression);
+            var actual = _expressionFormatter.Format(expression);
             Assert.Equal("length(bar) eq 1", actual);
         }
 
@@ -144,7 +146,7 @@ namespace Simple.OData.Test
                                            {ObjectReference.FromString("bar"), ObjectReference.FromString("'abc'")}),
                     true,
                     SimpleExpressionType.Equal);
-            var actual = new ExpressionFormatter().Format(expression);
+            var actual = _expressionFormatter.Format(expression);
             Assert.Equal("substringof(bar,'abc') eq true", actual);
         }
 
@@ -157,7 +159,7 @@ namespace Simple.OData.Test
                                        new object[] { ObjectReference.FromString("bar"), ObjectReference.FromString("'abc'") }),
                     10,
                     SimpleExpressionType.Equal);
-            var actual = new ExpressionFormatter().Format(expression);
+            var actual = _expressionFormatter.Format(expression);
             Assert.Equal("indexof(bar,'abc') eq 10", actual);
         }
     }

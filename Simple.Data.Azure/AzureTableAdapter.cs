@@ -22,7 +22,8 @@ namespace Simple.Data.Azure
 
         public override IEnumerable<IDictionary<string, object>> Find(string tableName, SimpleExpression criteria)
         {
-            var filter = new ExpressionFormatter().Format(criteria);
+            // TODO: initialize expression formatter with FindTable delegate
+            var filter = new ExpressionFormatter(null).Format(criteria);
             var table = new Table(tableName, _helper);
             return table.Query(filter);
         }

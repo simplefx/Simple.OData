@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Simple.Data.Extensions;
 
-namespace Simple.Data.OData.Schema
+namespace Simple.OData.Schema
 {
     public class Column
     {

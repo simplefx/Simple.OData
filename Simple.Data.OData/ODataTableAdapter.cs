@@ -27,7 +27,7 @@ namespace Simple.Data.OData
             base.OnSetup();
 
             _providerHelper = new ProviderHelper { UrlBase = Settings.Url };
-            _expressionFormatter = new ExpressionFormatter();
+            _expressionFormatter = new ExpressionFormatter(DatabaseSchema.Get(_providerHelper).FindTable);
             _schema = DatabaseSchema.Get(_providerHelper);
         }
 

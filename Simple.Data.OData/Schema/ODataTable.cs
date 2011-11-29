@@ -9,80 +9,32 @@ using System.Diagnostics;
 using Simple.Data.Extensions;
 using Simple.OData;
 using Simple.Data.OData.Helpers;
+using Simple.OData.Schema;
 
 namespace Simple.Data.OData.Schema
 {
     /// <summary>
     /// Represents an OData table and provides CRUD operations against it.
     /// </summary>
-    public class Table
+    public class ODataTable : Table
     {
         private readonly ProviderHelper _providerHelper;
-        private readonly string _actualName;
         private readonly DatabaseSchema _databaseSchema;
-        private readonly Lazy<ColumnCollection> _lazyColumns;
-        private readonly Lazy<Key> _lazyPrimaryKey;
 
-        // ReSharper disable InconsistentNaming
-        private const string GET = "GET";
-        private const string POST = "POST";
-        private const string PUT = "PUT";
-        private const string MERGE = "MERGE";
-        private const string DELETE = "DELETE";
-        // ReSharper restore InconsistentNaming
-
-        public Table(string name, ProviderHelper providerHelper)
+        public ODataTable(string name, ProviderHelper providerHelper)
+            : base(name)
         {
             _providerHelper = providerHelper;
             _databaseSchema = DatabaseSchema.Get(_providerHelper);
-            _actualName = name;
         }
 
-        internal Table(string actualName, ProviderHelper providerHelper, DatabaseSchema databaseSchema)
+        internal ODataTable(string name, ProviderHelper providerHelper, DatabaseSchema databaseSchema)
+            : base(name)
         {
-            _actualName = actualName;
             _providerHelper = providerHelper;
             _databaseSchema = databaseSchema;
             _lazyColumns = new Lazy<ColumnCollection>(GetColumns);
             _lazyPrimaryKey = new Lazy<Key>(GetPrimaryKey);
-        }
-
-        internal string HomogenizedName
-        {
-            get { return _actualName.Homogenize(); }
-        }
-
-        public string ActualName
-        {
-            get { return _actualName; }
-        }
-
-        public IEnumerable<Column> Columns
-        {
-            get { return _lazyColumns.Value.AsEnumerable(); }
-        }
-
-        public Column FindColumn(string columnName)
-        {
-            var columns = _lazyColumns.Value;
-            try
-            {
-                return columns.Find(columnName);
-            }
-            catch (UnresolvableObjectException ex)
-            {
-                throw new UnresolvableObjectException(_actualName + "." + ex.ObjectName, "Column not found", ex);
-            }
-        }
-
-        public bool HasColumn(string columnName)
-        {
-            return _lazyColumns.Value.Contains(columnName);
-        }
-
-        public Key PrimaryKey
-        {
-            get { return _lazyPrimaryKey.Value; }
         }
 
         private ColumnCollection GetColumns()
