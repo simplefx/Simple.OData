@@ -46,7 +46,7 @@ namespace Simple.Data.OData
             return new Finder(_providerHelper, _expressionFormatter).Find(query, out unhandledClauses);
         }
 
-        public override IDictionary<string, object> Insert(string tableName, IDictionary<string, object> data)
+        public override IDictionary<string, object> Insert(string tableName, IDictionary<string, object> data, bool resultRequired)
         {
             throw new NotImplementedException();
         }

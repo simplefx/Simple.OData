@@ -37,7 +37,7 @@ namespace Simple.Data.Azure
             throw new NotImplementedException();
         }
 
-        public override IDictionary<string, object> Insert(string tableName, IDictionary<string, object> data)
+        public override IDictionary<string, object> Insert(string tableName, IDictionary<string, object> data, bool resultRequired)
         {
             throw new NotImplementedException();
         }
