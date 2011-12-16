@@ -17,14 +17,6 @@ namespace Simple.OData.Schema
         protected Lazy<ColumnCollection> _lazyColumns;
         protected Lazy<Key> _lazyPrimaryKey;
 
-        // ReSharper disable InconsistentNaming
-        protected const string GET = "GET";
-        protected const string POST = "POST";
-        protected const string PUT = "PUT";
-        protected const string MERGE = "MERGE";
-        protected const string DELETE = "DELETE";
-        // ReSharper restore InconsistentNaming
-
         public Table(string name)
         {
             _actualName = name;

@@ -37,7 +37,7 @@ namespace Simple.Data.Azure.IntegrationTest
             var tables = tableService.ListTables();
             if (!tables.Contains("SimpleTest"))
             {
-                var table = new Table("SimpleTest", IfTableDoesNotExist.CreateIt, azureHelper);
+                var table = new AzureTable("SimpleTest", IfTableDoesNotExist.CreateIt, azureHelper);
                 table.InsertRow(new Dictionary<string, object>
                                 {
                                     {"PartitionKey", "1"}, 

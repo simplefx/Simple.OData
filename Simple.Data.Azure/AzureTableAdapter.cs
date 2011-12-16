@@ -24,7 +24,7 @@ namespace Simple.Data.Azure
         {
             // TODO: initialize expression formatter with FindTable delegate
             var filter = new ExpressionFormatter(null).Format(criteria);
-            var table = new Table(tableName, _helper);
+            var table = new AzureTable(tableName, _helper);
             return table.Query(filter);
         }
 

@@ -27,10 +27,11 @@ namespace Simple.Data.OData.Helpers
             request.Method = method;
             request.ContentLength = (content ?? string.Empty).Length;
 
-            if (method == "PUT" || method == "DELETE" || method == "MERGE")
-            {
-                request.Headers.Add("If-Match", "*");
-            }
+            // TODO: revise
+            //if (method == "PUT" || method == "DELETE" || method == "MERGE")
+            //{
+            //    request.Headers.Add("If-Match", "*");
+            //}
 
             if (content != null)
             {

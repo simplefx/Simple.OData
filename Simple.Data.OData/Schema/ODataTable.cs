@@ -62,10 +62,23 @@ namespace Simple.Data.OData.Schema
             return Get(_databaseSchema.FindTable(_actualName).ActualName + "(" + keys + ")");
         }
 
+        public int Delete(string keys)
+        {
+            string url = _databaseSchema.FindTable(_actualName).ActualName + "(" + keys + ")";
+            var request = _providerHelper.CreateTableRequest(url, RestVerbs.DELETE);
+
+            using (var response = new RequestRunner().TryRequest(request))
+            {
+                Trace.WriteLine(response.StatusCode, "HttpResponse");
+                // TODO
+                return response.StatusCode == HttpStatusCode.OK ? 1 : 0;
+            }
+        }
+
         private IEnumerable<IDictionary<string, object>> Get(string url)
         {
             IEnumerable<IDictionary<string, object>> result;
-            var request = _providerHelper.CreateTableRequest(url, GET);
+            var request = _providerHelper.CreateTableRequest(url, RestVerbs.GET);
 
             using (var response = new RequestRunner().TryRequest(request))
             {

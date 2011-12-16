@@ -54,6 +54,7 @@
     <Compile Include="FindAllTest.cs" />
     <Compile Include="FindOneTest.cs" />
     <Compile Include="GetTest.cs" />
+    <Compile Include="InsertTest.cs" />
     <Compile Include="NortwindTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SchemaTest.cs" />

@@ -8,47 +8,39 @@ using System.Xml.Linq;
 using System.Diagnostics;
 using Simple.Data.Azure.Helpers;
 using Simple.OData;
-using Simple.NExtLib.Xml;
-using Simple.NExtLib.IO;
-using System.Net.Cache;
+using Simple.OData.Schema;
 
 namespace Simple.Data.Azure
 {
     /// <summary>
     /// Represents an Azure table and provides CRUD operations against it.
     /// </summary>
-    public class Table
+    public class AzureTable : Table
     {
         private readonly ProviderHelper _providerHelper;
 
-        // ReSharper disable InconsistentNaming
-        private const string GET = "GET";
-        private const string POST = "POST";
-        private const string PUT = "PUT";
-        private const string MERGE = "MERGE";
-        private const string DELETE = "DELETE";
-        // ReSharper restore InconsistentNaming
-
-        private readonly string _tableName;
         private readonly bool _autoCreate;
 
-        public Table(string tableName, ProviderHelper azureHelper) : this(tableName, IfTableDoesNotExist.ThrowAnException, azureHelper) { }
-
-        public Table(string tableName, IfTableDoesNotExist doesNotExistAction, ProviderHelper providerHelper)
+        public AzureTable(string name, ProviderHelper azureHelper) 
+            : this(name, IfTableDoesNotExist.ThrowAnException, azureHelper)
         {
-            _tableName = tableName;
+        }
+
+        public AzureTable(string name, IfTableDoesNotExist doesNotExistAction, ProviderHelper providerHelper)
+            : base(name)
+        {
             _providerHelper = providerHelper;
             _autoCreate = doesNotExistAction == IfTableDoesNotExist.CreateIt;
         }
 
         public IEnumerable<IDictionary<string, object>> GetAllRows()
         {
-            return Get(_tableName);
+            return Get(_actualName);
         }
 
         public IDictionary<string, object> Get(string partitionKey, string rowKey)
         {
-            return Get(BuildEntityUri(_tableName, partitionKey, rowKey)).SingleOrDefault();
+            return Get(BuildEntityUri(_actualName, partitionKey, rowKey)).SingleOrDefault();
         }
 
         public void Delete(IDictionary<string, object> row)
@@ -60,13 +52,13 @@ namespace Simple.Data.Azure
 
         public void Delete(string partitionKey, string rowKey)
         {
-            Delete(BuildEntityUri(_tableName, partitionKey, rowKey));
+            Delete(BuildEntityUri(_actualName, partitionKey, rowKey));
         }
 
         // TODO: Implement querying using LINQ, IQueryable<IDictionary<string, object>>
         public IEnumerable<IDictionary<string, object>> Query(string filter)
         {
-            return Get(_tableName + "?$filter=" + HttpUtility.UrlEncode(filter));
+            return Get(_actualName + "?$filter=" + HttpUtility.UrlEncode(filter));
         }
 
         public IDictionary<string, object> InsertRow(IDictionary<string, object> row)
@@ -74,7 +66,7 @@ namespace Simple.Data.Azure
             ThrowIfMissing(row, "PartitionKey", "RowKey");
 
             var entry = DataServicesHelper.CreateDataElement(row);
-            var request = _providerHelper.CreateTableRequest(_tableName, POST, entry.ToString());
+            var request = _providerHelper.CreateTableRequest(_actualName,RestVerbs.POST, entry.ToString());
 
             string text = string.Empty;
 
@@ -89,8 +81,8 @@ namespace Simple.Data.Azure
                     if (ex.Code == "ResourceNotFound")
                     {
                         Trace.WriteLine("Auto-creating table");
-                        new TableService(_providerHelper).CreateTable(_tableName);
-                        request = _providerHelper.CreateTableRequest(_tableName, POST, entry.ToString());
+                        new TableService(_providerHelper).CreateTable(_actualName);
+                        request = _providerHelper.CreateTableRequest(_actualName, RestVerbs.POST, entry.ToString());
 
                         text = new RequestRunner().Request(request);
                     }
@@ -109,9 +101,9 @@ namespace Simple.Data.Azure
             ThrowIfMissing(row, "PartitionKey", "RowKey");
 
             var dict = row.ToDictionary();
-            var command = BuildEntityUri(_tableName, dict["PartitionKey"].ToString(), dict["RowKey"].ToString());
+            var command = BuildEntityUri(_actualName, dict["PartitionKey"].ToString(), dict["RowKey"].ToString());
 
-            WriteRowDataRequest(row, command, PUT);
+            WriteRowDataRequest(row, command, RestVerbs.PUT);
         }
 
         public void MergeRow(string partitionKey, string rowKey, IDictionary<string, object> row)
@@ -120,9 +112,9 @@ namespace Simple.Data.Azure
             ValidateKeyValue("rowKey", rowKey);
 
             var dict = row.ToDictionary();
-            var command = BuildEntityUri(_tableName, partitionKey, rowKey);
+            var command = BuildEntityUri(_actualName, partitionKey, rowKey);
 
-            WriteRowDataRequest(row, command, MERGE);
+            WriteRowDataRequest(row, command, RestVerbs.MERGE);
         }
 
         public static IDictionary<string, object> NewRow(string partitionKey, string rowKey)
@@ -149,7 +141,7 @@ namespace Simple.Data.Azure
         private IEnumerable<IDictionary<string, object>> Get(string url)
         {
             IEnumerable<IDictionary<string, object>> result;
-            var request = _providerHelper.CreateTableRequest(url, GET);
+            var request = _providerHelper.CreateTableRequest(url, RestVerbs.GET);
 
             using (var response = new RequestRunner().TryRequest(request))
             {
@@ -170,7 +162,7 @@ namespace Simple.Data.Azure
 
         private void Delete(string url)
         {
-            var request = _providerHelper.CreateTableRequest(url, DELETE);
+            var request = _providerHelper.CreateTableRequest(url, RestVerbs.DELETE);
 
             new RequestRunner().TryRequest(request);
         }

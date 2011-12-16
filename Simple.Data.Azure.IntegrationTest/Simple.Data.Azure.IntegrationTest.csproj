@@ -63,6 +63,10 @@
       <Project>{4A191FAD-DC1D-46FC-A941-7DEB2C8C4C15}</Project>
       <Name>Simple.NExtLib</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Simple.OData\Simple.OData.csproj">
+      <Project>{00590565-A937-44EE-AA81-2B407F104380}</Project>
+      <Name>Simple.OData</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config">

@@ -28,7 +28,7 @@ namespace Simple.Data.OData.IntegrationTest
         {
             var tables = Schema.Tables;
 
-            Assert.Equal(26, tables.Count());
+            Assert.Equal(11, tables.Count());
         }
 
         [Fact]

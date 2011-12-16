@@ -48,22 +48,43 @@ namespace Simple.Data.OData
 
         public override IDictionary<string, object> Insert(string tableName, IDictionary<string, object> data, bool resultRequired)
         {
-            throw new NotImplementedException();
+            return new Inserter(_providerHelper, _expressionFormatter).Insert(tableName, data, resultRequired);
         }
 
         public override int Update(string tableName, IDictionary<string, object> data, SimpleExpression criteria)
         {
-            throw new NotImplementedException();
+            // TODO
+            //ICommandBuilder commandBuilder = new UpdateHelper(_schema).GetUpdateCommand(tableName, data, criteria);
+            //return Execute(commandBuilder);
+            return 0;
         }
 
         public override int Update(string tableName, IDictionary<string, object> data)
         {
-            throw new NotImplementedException();
+            string[] keyFieldNames = _schema.FindTable(tableName).PrimaryKey.AsEnumerable().ToArray();
+            if (keyFieldNames.Length == 0) throw new ODataAdapterException("No Primary Key found for implicit update");
+            return Update(tableName, data, GetCriteria(tableName, keyFieldNames, data));
         }
 
         public override int Delete(string tableName, SimpleExpression criteria)
         {
-            throw new NotImplementedException();
+            // TODO: optimize
+            var table = new ODataTable(tableName, _providerHelper);
+            string[] keyFieldNames = _schema.FindTable(tableName).PrimaryKey.AsEnumerable().ToArray();
+            var entities = new Finder(_providerHelper, _expressionFormatter).Find(tableName, criteria);
+
+            foreach (var entity in entities)
+            {
+                var namedKeyValues = new Dictionary<string, object>();
+                for (int index = 0; index < keyFieldNames.Count(); index++)
+                {
+                    namedKeyValues.Add(keyFieldNames[index], entity[keyFieldNames[index]]);
+                }
+                var formattedKeyValues = new ExpressionFormatter(DatabaseSchema.Get(_providerHelper).FindTable).Format(namedKeyValues);
+                table.Delete(formattedKeyValues);
+            }
+            // TODO: what to return?
+            return 0;
         }
 
         public override bool IsExpressionFunction(string functionName, params object[] args)
