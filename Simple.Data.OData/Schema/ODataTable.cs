@@ -62,6 +62,20 @@ namespace Simple.Data.OData.Schema
             return Get(_databaseSchema.FindTable(_actualName).ActualName + "(" + keys + ")");
         }
 
+        public int Update(string keys, IDictionary<string, object> data)
+        {
+            string url = _databaseSchema.FindTable(_actualName).ActualName + "(" + keys + ")";
+            var entry = DataServicesHelper.CreateDataElement(data);
+            var request = _providerHelper.CreateTableRequest(url, RestVerbs.PUT, entry.ToString());
+
+            using (var response = new RequestRunner().TryRequest(request))
+            {
+                Trace.WriteLine(response.StatusCode, "HttpResponse");
+                // TODO
+                return response.StatusCode == HttpStatusCode.OK ? 1 : 0;
+            }
+        }
+
         public int Delete(string keys)
         {
             string url = _databaseSchema.FindTable(_actualName).ActualName + "(" + keys + ")";

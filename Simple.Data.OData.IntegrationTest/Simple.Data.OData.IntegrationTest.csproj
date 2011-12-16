@@ -51,6 +51,7 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="DeleteTest.cs" />
     <Compile Include="FindAllTest.cs" />
     <Compile Include="FindOneTest.cs" />
     <Compile Include="GetTest.cs" />
@@ -60,6 +61,7 @@
     <Compile Include="SchemaTest.cs" />
     <Compile Include="SpecialTest.cs" />
     <Compile Include="TestBase.cs" />
+    <Compile Include="UpdateTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

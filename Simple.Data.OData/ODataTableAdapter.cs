@@ -53,16 +53,34 @@ namespace Simple.Data.OData
 
         public override int Update(string tableName, IDictionary<string, object> data, SimpleExpression criteria)
         {
-            // TODO
-            //ICommandBuilder commandBuilder = new UpdateHelper(_schema).GetUpdateCommand(tableName, data, criteria);
-            //return Execute(commandBuilder);
+            // TODO: optimize
+            var table = new ODataTable(tableName, _providerHelper);
+            string[] keyFieldNames = _schema.FindTable(tableName).PrimaryKey.AsEnumerable().ToArray();
+            var entries = new Finder(_providerHelper, _expressionFormatter).Find(tableName, criteria);
+
+            foreach (var entry in entries)
+            {
+                foreach (var kv in data)
+                {
+                    entry[kv.Key] = kv.Value;
+                }
+                var namedKeyValues = new Dictionary<string, object>();
+                for (int index = 0; index < keyFieldNames.Count(); index++)
+                {
+                    namedKeyValues.Add(keyFieldNames[index], entry[keyFieldNames[index]]);
+                }
+                var formattedKeyValues = new ExpressionFormatter(DatabaseSchema.Get(_providerHelper).FindTable).Format(namedKeyValues);
+                table.Update(formattedKeyValues, entry);
+            }
+            // TODO: what to return?
             return 0;
         }
 
         public override int Update(string tableName, IDictionary<string, object> data)
         {
             string[] keyFieldNames = _schema.FindTable(tableName).PrimaryKey.AsEnumerable().ToArray();
-            if (keyFieldNames.Length == 0) throw new ODataAdapterException("No Primary Key found for implicit update");
+            if (keyFieldNames.Length == 0) 
+                throw new ODataAdapterException("No Primary Key found for implicit update");
             return Update(tableName, data, GetCriteria(tableName, keyFieldNames, data));
         }
 
@@ -71,14 +89,14 @@ namespace Simple.Data.OData
             // TODO: optimize
             var table = new ODataTable(tableName, _providerHelper);
             string[] keyFieldNames = _schema.FindTable(tableName).PrimaryKey.AsEnumerable().ToArray();
-            var entities = new Finder(_providerHelper, _expressionFormatter).Find(tableName, criteria);
+            var entries = new Finder(_providerHelper, _expressionFormatter).Find(tableName, criteria);
 
-            foreach (var entity in entities)
+            foreach (var entry in entries)
             {
                 var namedKeyValues = new Dictionary<string, object>();
                 for (int index = 0; index < keyFieldNames.Count(); index++)
                 {
-                    namedKeyValues.Add(keyFieldNames[index], entity[keyFieldNames[index]]);
+                    namedKeyValues.Add(keyFieldNames[index], entry[keyFieldNames[index]]);
                 }
                 var formattedKeyValues = new ExpressionFormatter(DatabaseSchema.Get(_providerHelper).FindTable).Format(namedKeyValues);
                 table.Delete(formattedKeyValues);
