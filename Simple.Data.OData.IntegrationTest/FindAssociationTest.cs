@@ -7,10 +7,10 @@ namespace Simple.Data.OData.IntegrationTest
 {
     using Xunit;
 
-    public class NortwindTest : TestBase
+    public class FindAssociationTest : TestBase
     {
-        [Fact(Skip = "Not supported")]
-        public void ShouldFindAllCategoryProducts()
+        [Fact]
+        public void FindAllCategoryProducts()
         {
             var products = _db.Products.Find(
                 _db.Products.Category.CategoryName == "Beverages");
@@ -19,15 +19,7 @@ namespace Simple.Data.OData.IntegrationTest
         }
 
         [Fact]
-        public void ShouldFindCustomerByCustomerID()
-        {
-            var customer = _db.Customers.FindByCustomerID("ALFKI");
-
-            Assert.Equal("ALFKI", customer.CustomerID);
-        }
-
-        [Fact(Skip = "Not supported")]
-        public void ShouldFindAllCustomerOrders()
+        public void FindAllCustomerOrders()
         {
             var customerOrders = _db.Orders.Find(
                 _db.Orders.Customer.CustomerID == "ALFKI");
@@ -35,8 +27,8 @@ namespace Simple.Data.OData.IntegrationTest
             Assert.True(customerOrders.Count() > 0);
         }
 
-        [Fact(Skip = "Not supported")]
-        public void ShouldFindAllEmployeeSubordinates()
+        [Fact]
+        public void FindAllEmployeeSubordinates()
         {
             var subordinates = _db.Subordinates.Find(
                 _db.Subordinates.Employees.FirstName == "Andrew" &&
@@ -45,16 +37,16 @@ namespace Simple.Data.OData.IntegrationTest
             Assert.True(subordinates.Count() > 0);
         }
 
-        [Fact(Skip = "Not supported")]
-        public void ShouldFindEmployeeSuperior()
+        [Fact]
+        public void FindEmployeeSuperior()
         {
             var employee = _db.Employees.FindByEmployeeFirstNameAndLastName("Nancy", "Davolio");
             var superior = employee.Superior.FindOne();
             Assert.NotNull(superior);
         }
 
-        [Fact(Skip = "Not supported")]
-        public void ShouldFindAllEmployeeOrders()
+        [Fact]
+        public void FindAllEmployeeOrders()
         {
             var orders = _db.Orders.Find(
                 _db.Orders.Employee.FirstName == "Andrew" &&
@@ -63,22 +55,22 @@ namespace Simple.Data.OData.IntegrationTest
             Assert.True(orders.Count() > 0);
         }
 
-        [Fact(Skip = "Not supported")]
-        public void ShouldFindProductCategory()
+        [Fact]
+        public void FindProductCategory()
         {
             var category = _db.Category.FindOne(
                 _db.Category.Products.ProductName == "Chai");
 
-            Assert.NotNull(category);
+            Assert.Equal("Beverages", category.CategoryName);
         }
 
-        [Fact(Skip = "Not supported")]
-        public void ShouldFindProductSupplier()
+        [Fact]
+        public void FindProductSupplier()
         {
             var supplier = _db.Supplier.FindOne(
                 _db.Supplier.Product.ProductName == "Chai");
 
-            Assert.NotNull(supplier);
+            Assert.Equal("Exotic Liquids", supplier.CompanyName);
         }
     }
 }
