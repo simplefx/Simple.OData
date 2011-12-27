@@ -60,7 +60,9 @@ namespace Simple.OData
         public string BuildCommand(string tableName, string filter)
         {
             var table = _findTable(tableName);
-            var command = table.ActualName + "?$filter=" + HttpUtility.UrlEncode(filter);
+            var command = table.ActualName;
+            if (!string.IsNullOrEmpty(filter))
+                command += "?$filter=" + HttpUtility.UrlEncode(filter);
             return command;
         }
 
@@ -70,12 +72,22 @@ namespace Simple.OData
 
             var table = _findTable(query.TableName);
             var command = table.ActualName;
-            string appendSymbol = "?";
-            command += FormatFilter(table, ref appendSymbol);
-            command += FormatSkip(table, ref appendSymbol);
-            command += FormatTake(table, ref appendSymbol);
-            command += FormatOrder(table, ref appendSymbol);
-            command += FormatSelect(table, ref appendSymbol);
+
+            var clauses = new List<string>();
+            string clause = FormatWhereClause(table);
+            if (!string.IsNullOrEmpty(clause)) clauses.Add(clause);
+            clause = FormatSkipClause(table);
+            if (!string.IsNullOrEmpty(clause)) clauses.Add(clause);
+            clause = FormatTakeClause(table);
+            if (!string.IsNullOrEmpty(clause)) clauses.Add(clause);
+            clause = FormatOrderClause(table);
+            if (!string.IsNullOrEmpty(clause)) clauses.Add(clause);
+            clause = FormatSelectClause(table);
+            if (!string.IsNullOrEmpty(clause)) clauses.Add(clause);
+            if (clauses.Count > 0)
+            {
+                command += "?" + string.Join("&", clauses);
+            }
 
             return command;
         }
@@ -169,67 +181,52 @@ namespace Simple.OData
             return table.FindColumn(item.GetAliasOrName()).ActualName;
         }
 
-        private string FormatFilter(Table table, ref string appendSymbol)
+        private string FormatWhereClause(Table table)
         {
-            string text = string.Empty;
             if (this.Criteria != null)
             {
-                text += appendSymbol;
-                text += "$filter=" + HttpUtility.UrlEncode(
+                return "$filter=" + HttpUtility.UrlEncode(
                     new ExpressionFormatter(_findTable).Format(this.Criteria));
-                appendSymbol = "&";
             }
-            return text;
+            return null;
         }
 
-        private string FormatOrder(Table table, ref string appendSymbol)
+        private string FormatOrderClause(Table table)
         {
-            string text = string.Empty;
             if (this.Order != null && this.Order.Count() > 0)
             {
                 var items = this.Order.Select(x => FormatOrderByItem(table, x));
-                text += appendSymbol;
-                text += "$orderby=" + string.Join(",", items);
-                appendSymbol = "&";
+                return "$orderby=" + string.Join(",", items);
             }
-            return text;
+            return null;
         }
 
-        private string FormatSkip(Table table, ref string appendSymbol)
+        private string FormatSkipClause(Table table)
         {
-            string text = string.Empty;
             if (this.SkipCount > 0)
             {
-                text += appendSymbol;
-                text += "$skip=" + this.SkipCount.ToString();
-                appendSymbol = "&";
+                return "$skip=" + this.SkipCount.ToString();
             }
-            return text;
+            return null;
         }
 
-        private string FormatTake(Table table, ref string appendSymbol)
+        private string FormatTakeClause(Table table)
         {
-            string text = string.Empty;
             if (this.TakeCount > 0)
             {
-                text += appendSymbol;
-                text += "$top=" + this.TakeCount.ToString();
-                appendSymbol = "&";
+                return "$top=" + this.TakeCount.ToString();
             }
-            return text;
+            return null;
         }
 
-        private string FormatSelect(Table table, ref string appendSymbol)
+        private string FormatSelectClause(Table table)
         {
-            string text = string.Empty;
             if (!this.IsTotalCountQuery && this.Columns != null && this.Columns.Count() > 0)
             {
                 var items = this.Columns.Select(x => FormatSelectItem(table, x));
-                text += appendSymbol;
-                text += "$select=" + string.Join(",", items);
-                appendSymbol = "&";
+                return "$select=" + string.Join(",", items);
             }
-            return text;
+            return null;
         }
     }
 }
