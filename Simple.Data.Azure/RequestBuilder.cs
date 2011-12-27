@@ -7,11 +7,11 @@ using System.Globalization;
 using System.Security.Cryptography;
 using System.IO;
 
-namespace Simple.Data.Azure.Helpers
+namespace Simple.Data.Azure
 {
     using Simple.NExtLib;
 
-    public class ProviderHelper
+    public class RequestBuilder
     {
         private byte[] _sharedKey;
 

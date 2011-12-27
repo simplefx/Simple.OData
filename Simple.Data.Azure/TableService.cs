@@ -2,26 +2,26 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Xml.Linq;
-using Simple.Data.Azure.Helpers;
-using System.Net;
+using Simple.Data.Azure.Schema;
 using Simple.OData;
 
 namespace Simple.Data.Azure
 {
     public class TableService
     {
-        private readonly ProviderHelper _providerHelper;
+        private readonly RequestBuilder _requestBuilder;
 
-        public TableService(ProviderHelper providerHelper)
+        public TableService(RequestBuilder requestBuilder)
         {
-            _providerHelper = providerHelper;
+            _requestBuilder = requestBuilder;
         }
 
         public IEnumerable<string> ListTables()
         {
-            var request = _providerHelper.CreateTableRequest("Tables", RestVerbs.GET);
+            var request = _requestBuilder.CreateTableRequest("Tables", RestVerbs.GET);
 
             IEnumerable<string> list;
 
@@ -44,7 +44,7 @@ namespace Simple.Data.Azure
 
         private void DoRequest(XElement element, string command, string method)
         {
-            var request = _providerHelper.CreateTableRequest(command, method, element.ToString());
+            var request = _requestBuilder.CreateTableRequest(command, method, element.ToString());
 
             using (var response = (HttpWebResponse)request.GetResponse())
             {

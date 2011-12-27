@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
-using Simple.Data.OData.Helpers;
 using Simple.Data.OData.Schema;
 using Simple.OData;
 using Simple.OData.Edm;
@@ -13,12 +12,12 @@ namespace Simple.Data.OData
 {
     class SchemaProvider : ISchemaProvider
     {
-        private ProviderHelper _providerHelper;
+        private RequestBuilder _requestBuilder;
         private Lazy<EdmSchema> _metadata; 
 
-        public SchemaProvider(ProviderHelper providerHelper)
+        public SchemaProvider(RequestBuilder requestBuilder)
         {
-            _providerHelper = providerHelper;
+            _requestBuilder = requestBuilder;
             _metadata = new Lazy<EdmSchema>(RequestMetadata);
         }
 
@@ -27,7 +26,7 @@ namespace Simple.Data.OData
             return from e in _metadata.Value.EntityContainers
                    where e.IsDefaulEntityContainer
                        from s in e.EntitySets
-                       select new ODataTable(s.Name, _providerHelper);
+                       select new ODataTable(s.Name, _requestBuilder);
         }
 
         public IEnumerable<Column> GetColumns(Table table)
@@ -55,7 +54,7 @@ namespace Simple.Data.OData
 
         private EdmSchema RequestMetadata()
         {
-            var request = _providerHelper.CreateTableRequest("$metadata", "GET");
+            var request = _requestBuilder.CreateTableRequest("$metadata", "GET");
             using (var response = new RequestRunner().TryRequest(request))
             {
                 if (response.StatusCode == HttpStatusCode.OK)

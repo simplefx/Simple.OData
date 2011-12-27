@@ -54,10 +54,10 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="AzureTableAdapter.cs" />
-    <Compile Include="Helpers\ProviderHelper.cs" />
+    <Compile Include="RequestBuilder.cs" />
     <Compile Include="IfTableDoesNotExist.cs" />
     <Compile Include="Namespaces.cs" />
-    <Compile Include="Helpers\TableHelper.cs" />
+    <Compile Include="Schema\TableHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Schema\AzureTable.cs" />
     <Compile Include="TableService.cs" />

@@ -19,6 +19,14 @@ namespace Simple.Data.OData.IntegrationTest
         }
 
         [Fact]
+        public void FindOneExpand()
+        {
+            var product = _db.Products.FindByProductName("Chai").ExpandCategory();
+
+            Assert.Equal("Beverages", product.Category.Name);
+        }
+
+        [Fact]
         public void FindWhereEqual()
         {
             var product = _db.Products.Find(_db.Products.ProductName == "Chai");

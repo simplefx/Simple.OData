@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Simple.Data.Azure.Helpers;
 
 namespace Simple.Data.Azure.IntegrationTest
 {
@@ -32,7 +31,7 @@ namespace Simple.Data.Azure.IntegrationTest
 
         private void CreateTestTableAndData()
         {
-            var azureHelper = new ProviderHelper { Account = _account, UrlBase = _url, SharedKey = _key };
+            var azureHelper = new RequestBuilder { Account = _account, UrlBase = _url, SharedKey = _key };
             var tableService = new TableService(azureHelper);
             var tables = tableService.ListTables();
             if (!tables.Contains("SimpleTest"))

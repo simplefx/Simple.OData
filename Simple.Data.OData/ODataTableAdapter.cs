@@ -3,60 +3,63 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Simple.Data.OData.Schema;
+using Simple.OData.Schema;
 
 namespace Simple.Data.OData
 {
     using System.ComponentModel.Composition;
     using Simple.OData;
-    using Helpers;
 
     [Export("OData", typeof(Adapter))]
     public class ODataTableAdapter : Adapter
     {
-        private ProviderHelper _providerHelper;
+        private RequestBuilder _requestBuilder;
         private ExpressionFormatter _expressionFormatter;
         private DatabaseSchema _schema;
 
         internal DatabaseSchema GetSchema()
         {
-            return _schema ?? (_schema = DatabaseSchema.Get(_providerHelper));
+            return _schema ?? (_schema = DatabaseSchema.Get(_requestBuilder));
         }
 
         protected override void OnSetup()
         {
             base.OnSetup();
 
-            _providerHelper = new ProviderHelper { UrlBase = Settings.Url };
-            _expressionFormatter = new ExpressionFormatter(DatabaseSchema.Get(_providerHelper).FindTable);
-            _schema = DatabaseSchema.Get(_providerHelper);
+            _requestBuilder = new RequestBuilder { UrlBase = Settings.Url };
+            _expressionFormatter = new ExpressionFormatter(DatabaseSchema.Get(_requestBuilder).FindTable);
+            _schema = DatabaseSchema.Get(_requestBuilder);
         }
 
         public override IEnumerable<IDictionary<string, object>> Find(string tableName, SimpleExpression criteria)
         {
-            return new Finder(_providerHelper, _expressionFormatter).Find(tableName, criteria);
+            return new ODataTable(tableName, _requestBuilder).Query(criteria);
         }
 
         public override IDictionary<string, object> Get(string tableName, params object[] keyValues)
         {
-            return new Finder(_providerHelper, _expressionFormatter).Get(tableName, keyValues);
+//            return new Finder(_requestBuilder, _expressionFormatter).Get(tableName, keyValues);
+            return new ODataTable(tableName, _requestBuilder).Get(keyValues);
         }
 
         public override IEnumerable<IDictionary<string, object>> RunQuery(SimpleQuery query, out IEnumerable<SimpleQueryClauseBase> unhandledClauses)
         {
-            return new Finder(_providerHelper, _expressionFormatter).Find(query, out unhandledClauses);
+            return new ODataTable(query.TableName, _requestBuilder).Query(query, out unhandledClauses);
         }
 
         public override IDictionary<string, object> Insert(string tableName, IDictionary<string, object> data, bool resultRequired)
         {
-            return new Inserter(_providerHelper, _expressionFormatter).Insert(tableName, data, resultRequired);
+            CheckInsertablePropertiesAreAvailable(tableName, data);
+            var table = new ODataTable(tableName, _requestBuilder);
+            return table.Insert(data, resultRequired);
         }
 
         public override int Update(string tableName, IDictionary<string, object> data, SimpleExpression criteria)
         {
             // TODO: optimize
-            var table = new ODataTable(tableName, _providerHelper);
+            var table = new ODataTable(tableName, _requestBuilder);
             string[] keyFieldNames = _schema.FindTable(tableName).PrimaryKey.AsEnumerable().ToArray();
-            var entries = new Finder(_providerHelper, _expressionFormatter).Find(tableName, criteria);
+            var entries = table.Query(criteria);
 
             foreach (var entry in entries)
             {
@@ -69,7 +72,7 @@ namespace Simple.Data.OData
                 {
                     namedKeyValues.Add(keyFieldNames[index], entry[keyFieldNames[index]]);
                 }
-                var formattedKeyValues = new ExpressionFormatter(DatabaseSchema.Get(_providerHelper).FindTable).Format(namedKeyValues);
+                var formattedKeyValues = _expressionFormatter.Format(namedKeyValues);
                 table.Update(formattedKeyValues, entry);
             }
             // TODO: what to return?
@@ -87,9 +90,9 @@ namespace Simple.Data.OData
         public override int Delete(string tableName, SimpleExpression criteria)
         {
             // TODO: optimize
-            var table = new ODataTable(tableName, _providerHelper);
+            var table = new ODataTable(tableName, _requestBuilder);
             string[] keyFieldNames = _schema.FindTable(tableName).PrimaryKey.AsEnumerable().ToArray();
-            var entries = new Finder(_providerHelper, _expressionFormatter).Find(tableName, criteria);
+            var entries = table.Query(criteria);
 
             foreach (var entry in entries)
             {
@@ -98,7 +101,7 @@ namespace Simple.Data.OData
                 {
                     namedKeyValues.Add(keyFieldNames[index], entry[keyFieldNames[index]]);
                 }
-                var formattedKeyValues = new ExpressionFormatter(DatabaseSchema.Get(_providerHelper).FindTable).Format(namedKeyValues);
+                var formattedKeyValues = _expressionFormatter.Format(namedKeyValues);
                 table.Delete(formattedKeyValues);
             }
             // TODO: what to return?
@@ -110,6 +113,17 @@ namespace Simple.Data.OData
             return functionName.Equals("like", StringComparison.OrdinalIgnoreCase)
                 && args.Length == 1
                 && args[0] is string;
+        }
+
+        private void CheckInsertablePropertiesAreAvailable(string tableName, IEnumerable<KeyValuePair<string, object>> data)
+        {
+            var table = DatabaseSchema.Get(_requestBuilder).FindTable(tableName);
+            data = data.Where(kvp => table.HasColumn(kvp.Key));
+
+            if (data.Count() == 0)
+            {
+                throw new SimpleDataException("No properties were found which could be mapped to the database.");
+            }
         }
     }
 }

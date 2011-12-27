@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Simple.Data.OData.Helpers;
 using Simple.OData.Schema;
 
 namespace Simple.Data.OData.Schema
@@ -12,20 +11,20 @@ namespace Simple.Data.OData.Schema
     {
         private static readonly ConcurrentDictionary<string, DatabaseSchema> Instances = new ConcurrentDictionary<string, DatabaseSchema>();
 
-        private readonly ProviderHelper _providerHelper;
+        private readonly RequestBuilder _requestBuilder;
         private readonly ISchemaProvider _schemaProvider;
         private readonly Lazy<TableCollection> _lazyTables;
 
-        private DatabaseSchema(ISchemaProvider schemaProvider, ProviderHelper providerHelper)
+        private DatabaseSchema(ISchemaProvider schemaProvider, RequestBuilder requestBuilder)
         {
             _lazyTables = new Lazy<TableCollection>(CreateTableCollection);
             _schemaProvider = schemaProvider;
-            _providerHelper = providerHelper;
+            _requestBuilder = requestBuilder;
         }
 
-        public ProviderHelper ProviderHelper
+        public RequestBuilder RequestBuilder
         {
-            get { return _providerHelper; }
+            get { return _requestBuilder; }
         }
 
         public ISchemaProvider SchemaProvider
@@ -51,10 +50,10 @@ namespace Simple.Data.OData.Schema
         private TableCollection CreateTableCollection()
         {
             return new TableCollection(_schemaProvider.GetTables()
-                .Select(table => new ODataTable(table.ActualName, _providerHelper, this)));
+                .Select(table => new ODataTable(table.ActualName, _requestBuilder, this)));
         }
 
-        public static DatabaseSchema Get(ProviderHelper providerHelper)
+        public static DatabaseSchema Get(RequestBuilder providerHelper)
         {
             return Instances.GetOrAdd(providerHelper.UrlBase,
                                       sp => new DatabaseSchema(new SchemaProvider(providerHelper), providerHelper));

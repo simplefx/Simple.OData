@@ -7,17 +7,16 @@ namespace Simple.Data.Azure
 {
     using System.ComponentModel.Composition;
     using Simple.OData;
-    using Helpers;
 
     [Export("Azure", typeof(Adapter))]
     public class AzureTableAdapter : Adapter
     {
-        private ProviderHelper _helper;
+        private RequestBuilder _helper;
 
         protected override void OnSetup()
         {
             base.OnSetup();
-            _helper = new ProviderHelper { UrlBase = Settings.Url, SharedKey = Settings.Key, Account = Settings.Account };
+            _helper = new RequestBuilder { UrlBase = Settings.Url, SharedKey = Settings.Key, Account = Settings.Account };
         }
 
         public override IEnumerable<IDictionary<string, object>> Find(string tableName, SimpleExpression criteria)

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Simple.OData;
 
 namespace Simple.Data.OData.IntegrationTest
 {
@@ -45,7 +44,7 @@ namespace Simple.Data.OData.IntegrationTest
         [Fact]
         public void AllWithHomogenizedName()
         {
-            IEnumerable<dynamic> orderDetails = _db.OrderDetails.All();
+            IEnumerable<dynamic> orderDetails = _db.Order_Details.All();
 
             Assert.NotEmpty(orderDetails);
         }

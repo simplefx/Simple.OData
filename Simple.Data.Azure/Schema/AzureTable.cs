@@ -6,7 +6,6 @@ using System.Net;
 using System.Web;
 using System.Xml.Linq;
 using System.Diagnostics;
-using Simple.Data.Azure.Helpers;
 using Simple.OData;
 using Simple.OData.Schema;
 
@@ -17,30 +16,30 @@ namespace Simple.Data.Azure
     /// </summary>
     public class AzureTable : Table
     {
-        private readonly ProviderHelper _providerHelper;
+        private readonly RequestBuilder _requestBuilder;
 
         private readonly bool _autoCreate;
 
-        public AzureTable(string name, ProviderHelper azureHelper) 
+        public AzureTable(string name, RequestBuilder azureHelper) 
             : this(name, IfTableDoesNotExist.ThrowAnException, azureHelper)
         {
         }
 
-        public AzureTable(string name, IfTableDoesNotExist doesNotExistAction, ProviderHelper providerHelper)
+        public AzureTable(string name, IfTableDoesNotExist doesNotExistAction, RequestBuilder requestBuilder)
             : base(name)
         {
-            _providerHelper = providerHelper;
+            _requestBuilder = requestBuilder;
             _autoCreate = doesNotExistAction == IfTableDoesNotExist.CreateIt;
         }
 
         public IEnumerable<IDictionary<string, object>> GetAllRows()
         {
-            return Get(_actualName);
+            return Find(_actualName);
         }
 
         public IDictionary<string, object> Get(string partitionKey, string rowKey)
         {
-            return Get(BuildEntityUri(_actualName, partitionKey, rowKey)).SingleOrDefault();
+            return Find(BuildEntityUri(_actualName, partitionKey, rowKey)).SingleOrDefault();
         }
 
         public void Delete(IDictionary<string, object> row)
@@ -58,7 +57,7 @@ namespace Simple.Data.Azure
         // TODO: Implement querying using LINQ, IQueryable<IDictionary<string, object>>
         public IEnumerable<IDictionary<string, object>> Query(string filter)
         {
-            return Get(_actualName + "?$filter=" + HttpUtility.UrlEncode(filter));
+            return Find(_actualName + "?$filter=" + HttpUtility.UrlEncode(filter));
         }
 
         public IDictionary<string, object> InsertRow(IDictionary<string, object> row)
@@ -66,7 +65,7 @@ namespace Simple.Data.Azure
             ThrowIfMissing(row, "PartitionKey", "RowKey");
 
             var entry = DataServicesHelper.CreateDataElement(row);
-            var request = _providerHelper.CreateTableRequest(_actualName,RestVerbs.POST, entry.ToString());
+            var request = _requestBuilder.CreateTableRequest(_actualName,RestVerbs.POST, entry.ToString());
 
             string text = string.Empty;
 
@@ -81,8 +80,8 @@ namespace Simple.Data.Azure
                     if (ex.Code == "ResourceNotFound")
                     {
                         Trace.WriteLine("Auto-creating table");
-                        new TableService(_providerHelper).CreateTable(_actualName);
-                        request = _providerHelper.CreateTableRequest(_actualName, RestVerbs.POST, entry.ToString());
+                        new TableService(_requestBuilder).CreateTable(_actualName);
+                        request = _requestBuilder.CreateTableRequest(_actualName, RestVerbs.POST, entry.ToString());
 
                         text = new RequestRunner().Request(request);
                     }
@@ -138,10 +137,10 @@ namespace Simple.Data.Azure
             if (value.Contains("?")) throw new ArgumentException("Key values may not contain question marks", keyName);
         }
 
-        private IEnumerable<IDictionary<string, object>> Get(string url)
+        private IEnumerable<IDictionary<string, object>> Find(string url)
         {
             IEnumerable<IDictionary<string, object>> result;
-            var request = _providerHelper.CreateTableRequest(url, RestVerbs.GET);
+            var request = _requestBuilder.CreateTableRequest(url, RestVerbs.GET);
 
             using (var response = new RequestRunner().TryRequest(request))
             {
@@ -162,7 +161,7 @@ namespace Simple.Data.Azure
 
         private void Delete(string url)
         {
-            var request = _providerHelper.CreateTableRequest(url, RestVerbs.DELETE);
+            var request = _requestBuilder.CreateTableRequest(url, RestVerbs.DELETE);
 
             new RequestRunner().TryRequest(request);
         }
@@ -170,8 +169,8 @@ namespace Simple.Data.Azure
         private void WriteRowDataRequest(IDictionary<string, object> row, string command, string verb)
         {
             var entry = DataServicesHelper.CreateDataElement(row);
-            entry.Element(null, "id").Value = "http://" + _providerHelper.Account + ".table.core.windows.net/" + command;
-            var request = _providerHelper.CreateTableRequest(command, verb, entry.ToString());
+            entry.Element(null, "id").Value = "http://" + _requestBuilder.Account + ".table.core.windows.net/" + command;
+            var request = _requestBuilder.CreateTableRequest(command, verb, entry.ToString());
             request.Headers.Add(HttpRequestHeader.IfMatch, "*");
             request.Headers.Add("x-ms-version", "2009-09-19");
 

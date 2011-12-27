@@ -11,7 +11,7 @@ namespace Simple.Data.OData.IntegrationTest
     class EntityPluralizer : IPluralizer
     {
         private readonly PluralizationService _pluralizationService =
-            PluralizationService.CreateService(CultureInfo.CurrentCulture);
+            PluralizationService.CreateService(new CultureInfo("en-US"));
 
         public bool IsPlural(string word)
         {

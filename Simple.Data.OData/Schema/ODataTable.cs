@@ -3,12 +3,11 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Web;
 using System.Xml.Linq;
 using System.Diagnostics;
-using Simple.Data.Extensions;
 using Simple.OData;
-using Simple.Data.OData.Helpers;
 using Simple.OData.Schema;
 
 namespace Simple.Data.OData.Schema
@@ -18,20 +17,20 @@ namespace Simple.Data.OData.Schema
     /// </summary>
     public class ODataTable : Table
     {
-        private readonly ProviderHelper _providerHelper;
+        private readonly RequestBuilder _requestBuilder;
         private readonly DatabaseSchema _databaseSchema;
 
-        public ODataTable(string name, ProviderHelper providerHelper)
+        public ODataTable(string name, RequestBuilder requestBuilder)
             : base(name)
         {
-            _providerHelper = providerHelper;
-            _databaseSchema = DatabaseSchema.Get(_providerHelper);
+            _requestBuilder = requestBuilder;
+            _databaseSchema = DatabaseSchema.Get(_requestBuilder);
         }
 
-        internal ODataTable(string name, ProviderHelper providerHelper, DatabaseSchema databaseSchema)
+        internal ODataTable(string name, RequestBuilder requestBuilder, DatabaseSchema databaseSchema)
             : base(name)
         {
-            _providerHelper = providerHelper;
+            _requestBuilder = requestBuilder;
             _databaseSchema = databaseSchema;
             _lazyColumns = new Lazy<ColumnCollection>(GetColumns);
             _lazyPrimaryKey = new Lazy<Key>(GetPrimaryKey);
@@ -49,24 +48,68 @@ namespace Simple.Data.OData.Schema
 
         public IEnumerable<IDictionary<string, object>> GetAllRows()
         {
-            return Get(_actualName);
+            return Find(_actualName);
         }
 
-        public IEnumerable<IDictionary<string, object>> QueryWithFilter(string filter)
+        public IEnumerable<IDictionary<string, object>> Query(SimpleExpression criteria)
         {
-            return Get(_databaseSchema.FindTable(_actualName).ActualName + "?$filter=" + HttpUtility.UrlEncode(filter));
+            var filter = new ExpressionFormatter(_databaseSchema.FindTable).Format(criteria);
+            var command = new CommandBuilder(_databaseSchema.FindTable).BuildCommand(_actualName, filter);
+            return Find(command);
         }
 
-        public IEnumerable<IDictionary<string, object>> QueryWithKeys(string keys)
+        public IEnumerable<IDictionary<string, object>> Query(SimpleQuery query, out IEnumerable<SimpleQueryClauseBase> unhandledClauses)
         {
-            return Get(_databaseSchema.FindTable(_actualName).ActualName + "(" + keys + ")");
+            var builder = new CommandBuilder(DatabaseSchema.Get(_requestBuilder).FindTable);
+            string command = builder.BuildCommand(query);
+            unhandledClauses = builder.UnprocessedClauses;
+            var results = Find(command);
+
+            if (builder.IsTotalCountQuery)
+                return new List<IDictionary<string, object>> { (new Dictionary<string, object> { { "COUNT", results.Count() } }) };
+            else
+                return results;
+        }
+
+        public IDictionary<string, object> Get(object[] keyValues)
+        {
+            var key = DatabaseSchema.Get(_requestBuilder).FindTable(_actualName).PrimaryKey;
+            var namedKeyValues = new Dictionary<string, object>();
+            for (int index = 0; index < keyValues.Count(); index++)
+            {
+                namedKeyValues.Add(key[index], keyValues[index]);
+            }
+            var formattedKeyValues = new ExpressionFormatter(_databaseSchema.FindTable).Format(namedKeyValues);
+            return Get(formattedKeyValues).FirstOrDefault();
+        }
+
+        public IEnumerable<IDictionary<string, object>> Get(string keys)
+        {
+            return Find(_databaseSchema.FindTable(_actualName).ActualName + "(" + keys + ")");
+        }
+
+        internal IDictionary<string, object> Insert(IDictionary<string, object> data, bool resultRequired)
+        {
+            var url = _databaseSchema.FindTable(_actualName).ActualName;
+            var entry = DataServicesHelper.CreateDataElement(data);
+            var request = _requestBuilder.CreateTableRequest(url, RestVerbs.POST, entry.ToString());
+
+            var text = new RequestRunner().Request(request);
+            if (resultRequired)
+            {
+                return DataServicesHelper.GetData(text).First();
+            }
+            else
+            {
+                return null;
+            }
         }
 
         public int Update(string keys, IDictionary<string, object> data)
         {
-            string url = _databaseSchema.FindTable(_actualName).ActualName + "(" + keys + ")";
+            var url = _databaseSchema.FindTable(_actualName).ActualName + "(" + keys + ")";
             var entry = DataServicesHelper.CreateDataElement(data);
-            var request = _providerHelper.CreateTableRequest(url, RestVerbs.PUT, entry.ToString());
+            var request = _requestBuilder.CreateTableRequest(url, RestVerbs.PUT, entry.ToString());
 
             using (var response = new RequestRunner().TryRequest(request))
             {
@@ -78,8 +121,8 @@ namespace Simple.Data.OData.Schema
 
         public int Delete(string keys)
         {
-            string url = _databaseSchema.FindTable(_actualName).ActualName + "(" + keys + ")";
-            var request = _providerHelper.CreateTableRequest(url, RestVerbs.DELETE);
+            var url = _databaseSchema.FindTable(_actualName).ActualName + "(" + keys + ")";
+            var request = _requestBuilder.CreateTableRequest(url, RestVerbs.DELETE);
 
             using (var response = new RequestRunner().TryRequest(request))
             {
@@ -89,10 +132,10 @@ namespace Simple.Data.OData.Schema
             }
         }
 
-        private IEnumerable<IDictionary<string, object>> Get(string url)
+        private IEnumerable<IDictionary<string, object>> Find(string url)
         {
             IEnumerable<IDictionary<string, object>> result;
-            var request = _providerHelper.CreateTableRequest(url, RestVerbs.GET);
+            var request = _requestBuilder.CreateTableRequest(url, RestVerbs.GET);
 
             using (var response = new RequestRunner().TryRequest(request))
             {

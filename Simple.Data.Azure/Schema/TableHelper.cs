@@ -7,7 +7,7 @@ using System.Xml;
 using System.Xml.Linq;
 using Simple.NExtLib.IO;
 
-namespace Simple.Data.Azure.Helpers
+namespace Simple.Data.Azure.Schema
 {
     internal static class TableHelper
     {

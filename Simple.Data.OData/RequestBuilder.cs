@@ -7,11 +7,11 @@ using System.Globalization;
 using System.Security.Cryptography;
 using System.IO;
 
-namespace Simple.Data.OData.Helpers
+namespace Simple.Data.OData
 {
     using Simple.NExtLib;
 
-    public class ProviderHelper
+    public class RequestBuilder
     {
         public string UrlBase { get; set; }
 

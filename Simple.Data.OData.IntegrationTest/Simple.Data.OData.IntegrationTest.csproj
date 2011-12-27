@@ -56,6 +56,7 @@
     <Compile Include="EntityPluralizer.cs" />
     <Compile Include="FindAllTest.cs" />
     <Compile Include="FindOneTest.cs" />
+    <Compile Include="FindWithClauseTest.cs" />
     <Compile Include="GetTest.cs" />
     <Compile Include="InsertTest.cs" />
     <Compile Include="FindAssociationTest.cs" />
