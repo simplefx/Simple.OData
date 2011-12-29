@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("Release")]
 #endif
 
-[assembly: AssemblyCompany("Simple.OData")]
-[assembly: AssemblyProduct("Simple.OData")]
-[assembly: AssemblyCopyright("Copyright © 2011")]
+[assembly: AssemblyCompany("SimpleFX")]
+[assembly: AssemblyProduct("SimpleFX")]
+[assembly: AssemblyCopyright("Copyright © Mark Rendle, Vagif Abilov 2011-2012")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -19,5 +19,5 @@ using System.Runtime.InteropServices;
 // COM, set the ComVisible attribute to true on that type.
 [assembly: ComVisible(false)]
 
-[assembly: AssemblyVersion("0.1.0.0")]
-[assembly: AssemblyFileVersion("0.1.0.0")]
+[assembly: AssemblyVersion("0.1.1.0")]
+[assembly: AssemblyFileVersion("0.1.1.0")]
