@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("Simple.Data.OData")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("OData provider for the Simple.Data data access library.")]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("faa7eb1a-4e98-4a89-81f8-4df6e29cdf7f")]
