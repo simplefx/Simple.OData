@@ -71,8 +71,34 @@ namespace Simple.OData.Edm
     public sealed class EdmProperty
     {
         public string Name { get; set; }
-        public EdmType Type { get; set; }
+        public EdmPropertyType Type { get; set; }
         public bool Nullable { get; set; }
+    }
+
+    public abstract class EdmPropertyType
+    {
+        public static EdmPropertyType Parse(string s, IEnumerable<EdmComplexType> complexTypes)
+        {
+            var result = EdmType.TryParse(s);
+            if (result.Item1)
+            {
+                return new EdmPrimitivePropertyType { Type = result.Item2 };
+            }
+            else
+            {
+                return new EdmComplexPropertyType { Type = complexTypes.SingleOrDefault(x => x.Name == s) };
+            }
+        }
+    }
+
+    public class EdmPrimitivePropertyType : EdmPropertyType
+    {
+        public EdmType Type { get; set; }
+    }
+
+    public class EdmComplexPropertyType : EdmPropertyType
+    {
+        public EdmComplexType Type { get; set; }
     }
 
     public sealed class EdmKey
