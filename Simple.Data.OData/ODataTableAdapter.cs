@@ -36,6 +36,16 @@ namespace Simple.Data.OData
             return new ODataTable(tableName, _requestBuilder).Query(criteria);
         }
 
+        public override IDictionary<string, object> GetKey(string tableName, IDictionary<string, object> record)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override IList<string> GetKeyNames(string tableName)
+        {
+            throw new NotImplementedException();
+        }
+
         public override IDictionary<string, object> Get(string tableName, params object[] keyValues)
         {
 //            return new Finder(_requestBuilder, _expressionFormatter).Get(tableName, keyValues);
@@ -77,14 +87,6 @@ namespace Simple.Data.OData
             }
             // TODO: what to return?
             return 0;
-        }
-
-        public override int Update(string tableName, IDictionary<string, object> data)
-        {
-            string[] keyFieldNames = _schema.FindTable(tableName).PrimaryKey.AsEnumerable().ToArray();
-            if (keyFieldNames.Length == 0) 
-                throw new ODataAdapterException("No Primary Key found for implicit update");
-            return Update(tableName, data, GetCriteria(tableName, keyFieldNames, data));
         }
 
         public override int Delete(string tableName, SimpleExpression criteria)

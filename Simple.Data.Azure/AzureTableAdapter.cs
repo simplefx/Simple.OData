@@ -27,6 +27,16 @@ namespace Simple.Data.Azure
             return table.Query(filter);
         }
 
+        public override IDictionary<string, object> GetKey(string tableName, IDictionary<string, object> record)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override IList<string> GetKeyNames(string tableName)
+        {
+            throw new NotImplementedException();
+        }
+
         public override IDictionary<string, object> Get(string tableName, params object[] keyValues)
         {
             throw new NotImplementedException();
@@ -43,11 +53,6 @@ namespace Simple.Data.Azure
         }
 
         public override int Update(string tableName, IDictionary<string, object> data, SimpleExpression criteria)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override int Update(string tableName, IDictionary<string, object> data)
         {
             throw new NotImplementedException();
         }
