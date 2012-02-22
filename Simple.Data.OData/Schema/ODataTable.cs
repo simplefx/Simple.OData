@@ -71,13 +71,24 @@ namespace Simple.Data.OData.Schema
                 return results;
         }
 
+        public IDictionary<string, object> GetKey(string tableName, IDictionary<string, object> record)
+        {
+            var keyNames = GetKeyNames();
+            return record.Where(x => keyNames.Contains(x.Key)).ToIDictionary();
+        }
+
+        public IList<string> GetKeyNames()
+        {
+            return DatabaseSchema.Get(_requestBuilder).FindTable(_actualName).PrimaryKey.AsEnumerable().ToList();
+        }
+
         public IDictionary<string, object> Get(object[] keyValues)
         {
-            var key = DatabaseSchema.Get(_requestBuilder).FindTable(_actualName).PrimaryKey;
+            var keyNames = GetKeyNames();
             var namedKeyValues = new Dictionary<string, object>();
             for (int index = 0; index < keyValues.Count(); index++)
             {
-                namedKeyValues.Add(key[index], keyValues[index]);
+                namedKeyValues.Add(keyNames[index], keyValues[index]);
             }
             var formattedKeyValues = new ExpressionFormatter(_databaseSchema.FindTable).Format(namedKeyValues);
             return Get(formattedKeyValues).FirstOrDefault();

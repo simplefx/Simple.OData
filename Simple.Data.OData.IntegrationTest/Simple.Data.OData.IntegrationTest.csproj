@@ -40,6 +40,9 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.Entity.Design" />
+    <Reference Include="System.Data.Services" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -66,6 +69,7 @@
     <Compile Include="SchemaTest.cs" />
     <Compile Include="SpecialTest.cs" />
     <Compile Include="TestBase.cs" />
+    <Compile Include="TestService.cs" />
     <Compile Include="UpdateTest.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -74,6 +78,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Simple.Data.OData.InMemoryService\Simple.Data.OData.InMemoryService.csproj">
+      <Project>{ECE470FB-5707-4CF7-AF81-B07A01E43EF8}</Project>
+      <Name>Simple.Data.OData.InMemoryService</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Simple.Data.OData\Simple.Data.OData.csproj">
       <Project>{E6EC2C3A-A7D8-41C3-ADCB-37B44F12B6F8}</Project>
       <Name>Simple.Data.OData</Name>

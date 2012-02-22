@@ -2,21 +2,33 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Simple.Data.OData.InMemoryService;
 
 namespace Simple.Data.OData.IntegrationTest
 {
-    public class TestBase
+    public class TestBase : IDisposable
     {
+        protected TestService _service;
         //private const string _northwindUrl = "http://services.odata.org/Northwind/Northwind.svc/";
-        private const string _northwindUrl = "http://localhost.:50555/Northwind.svc/";
+        //private const string _northwindUrl = "http://localhost.:50555/Northwind.svc/";
         protected dynamic _db;
 
         public TestBase()
         {
-            _db = Database.Opener.Open(_northwindUrl);
+            _service = new TestService(typeof(Northwind));
+            _db = Database.Opener.Open(_service.ServiceUri);
             Database.SetPluralizer(new EntityPluralizer());
 
             CreateTestData();
+        }
+
+        public void Dispose()
+        {
+            if (_service != null)
+            {
+                _service.Dispose();
+                _service = null;
+            }
         }
 
         protected void CreateTestData()

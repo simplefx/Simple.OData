@@ -38,17 +38,16 @@ namespace Simple.Data.OData
 
         public override IDictionary<string, object> GetKey(string tableName, IDictionary<string, object> record)
         {
-            throw new NotImplementedException();
+            return new ODataTable(tableName, _requestBuilder).GetKey(tableName, record);
         }
 
         public override IList<string> GetKeyNames(string tableName)
         {
-            throw new NotImplementedException();
+            return new ODataTable(tableName, _requestBuilder).GetKeyNames();
         }
 
         public override IDictionary<string, object> Get(string tableName, params object[] keyValues)
         {
-//            return new Finder(_requestBuilder, _expressionFormatter).Get(tableName, keyValues);
             return new ODataTable(tableName, _requestBuilder).Get(keyValues);
         }
 

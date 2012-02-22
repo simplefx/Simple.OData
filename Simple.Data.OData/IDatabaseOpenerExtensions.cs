@@ -11,7 +11,7 @@ namespace Simple.Data.OData
 
         public static dynamic Open(this IDatabaseOpener opener, Uri uri)
         {
-            return opener.Open("OData", new { Url = uri });
+            return opener.Open("OData", new { Url = uri.AbsoluteUri });
         }
     }
 }
