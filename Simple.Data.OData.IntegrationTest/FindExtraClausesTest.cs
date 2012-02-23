@@ -9,7 +9,7 @@ namespace Simple.Data.OData.IntegrationTest
 {
     using Xunit;
 
-    public class FindWithClauseTest : TestBase
+    public class FindExtraClausesTest : TestBase
     {
         [Fact]
         public void AllSelect()
