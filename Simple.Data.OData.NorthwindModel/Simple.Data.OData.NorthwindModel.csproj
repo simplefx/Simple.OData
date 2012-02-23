@@ -57,6 +57,7 @@
     <Compile Include="Entities\OrderDetails.cs" />
     <Compile Include="Entities\Orders.cs" />
     <Compile Include="Entities\Products.cs" />
+    <Compile Include="NorthwindService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Entities\Regions.cs" />
     <Compile Include="Entities\Shippers.cs" />

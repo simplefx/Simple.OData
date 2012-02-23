@@ -20,6 +20,16 @@ namespace Simple.Data.OData.IntegrationTest
         }
 
         [Fact]
+        public void FindAllCategoriesWithProducts()
+        {
+            // expected request: Categories?expand=Products
+            var categories = _db.Category.All().WithProducts();
+
+            Assert.True(categories.Count() > 0);
+            Assert.True(categories.First().Products.Count() > 0);
+        }
+
+        [Fact]
         public void GetCustomerExpandOrders()
         {
             // expected request: Customers('ALFKI')?$expand=Orders

@@ -34,8 +34,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{78D04AF9
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.Data.OData.NorthwindModel", "Simple.Data.OData.NorthwindModel\Simple.Data.OData.NorthwindModel.csproj", "{2A909E4D-6493-4D36-9FDE-786B89F9A387}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.Data.OData.InMemoryService", "Simple.Data.OData.InMemoryService\Simple.Data.OData.InMemoryService.csproj", "{ECE470FB-5707-4CF7-AF81-B07A01E43EF8}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -156,16 +154,6 @@ Global
 		{2A909E4D-6493-4D36-9FDE-786B89F9A387}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{2A909E4D-6493-4D36-9FDE-786B89F9A387}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{2A909E4D-6493-4D36-9FDE-786B89F9A387}.Release|x86.ActiveCfg = Release|Any CPU
-		{ECE470FB-5707-4CF7-AF81-B07A01E43EF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{ECE470FB-5707-4CF7-AF81-B07A01E43EF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{ECE470FB-5707-4CF7-AF81-B07A01E43EF8}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{ECE470FB-5707-4CF7-AF81-B07A01E43EF8}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{ECE470FB-5707-4CF7-AF81-B07A01E43EF8}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{ECE470FB-5707-4CF7-AF81-B07A01E43EF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{ECE470FB-5707-4CF7-AF81-B07A01E43EF8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{ECE470FB-5707-4CF7-AF81-B07A01E43EF8}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{ECE470FB-5707-4CF7-AF81-B07A01E43EF8}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{ECE470FB-5707-4CF7-AF81-B07A01E43EF8}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -177,6 +165,5 @@ Global
 		{898FFD08-B7FC-45FE-A6DD-5AE9C2280D28} = {78D04AF9-B9B4-4025-93C6-B3DB01EDAAE9}
 		{47B04630-8EC5-46E5-8E6B-3B12D73461DD} = {78D04AF9-B9B4-4025-93C6-B3DB01EDAAE9}
 		{2A909E4D-6493-4D36-9FDE-786B89F9A387} = {78D04AF9-B9B4-4025-93C6-B3DB01EDAAE9}
-		{ECE470FB-5707-4CF7-AF81-B07A01E43EF8} = {78D04AF9-B9B4-4025-93C6-B3DB01EDAAE9}
 	EndGlobalSection
 EndGlobal

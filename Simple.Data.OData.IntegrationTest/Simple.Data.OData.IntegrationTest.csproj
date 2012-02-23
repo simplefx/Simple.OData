@@ -77,16 +77,11 @@
     <Compile Include="UpdateTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Simple.Data.OData.InMemoryService\Simple.Data.OData.InMemoryService.csproj">
-      <Project>{ECE470FB-5707-4CF7-AF81-B07A01E43EF8}</Project>
-      <Name>Simple.Data.OData.InMemoryService</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Simple.Data.OData.NorthwindModel\Simple.Data.OData.NorthwindModel.csproj">
       <Project>{2A909E4D-6493-4D36-9FDE-786B89F9A387}</Project>
       <Name>Simple.Data.OData.NorthwindModel</Name>

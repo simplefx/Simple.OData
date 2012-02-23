@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Simple.Data.OData.InMemoryService;
+using Simple.Data.OData.NorthwindModel;
 
 namespace Simple.Data.OData.IntegrationTest
 {
@@ -15,7 +15,7 @@ namespace Simple.Data.OData.IntegrationTest
 
         public TestBase()
         {
-            _service = new TestService(typeof(Northwind));
+            _service = new TestService(typeof(NorthwindService));
             _db = Database.Opener.Open(_service.ServiceUri);
             Database.SetPluralizer(new EntityPluralizer());
 
