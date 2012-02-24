@@ -9,8 +9,6 @@ namespace Simple.Data.OData.IntegrationTest
     public class TestBase : IDisposable
     {
         protected TestService _service;
-        //private const string _northwindUrl = "http://services.odata.org/Northwind/Northwind.svc/";
-        //private const string _northwindUrl = "http://localhost.:50555/Northwind.svc/";
         protected dynamic _db;
 
         public TestBase()

@@ -12,6 +12,7 @@ namespace Simple.OData
     public class CommandBuilder
     {
         private readonly Dictionary<Type, Func<SimpleQueryClauseBase, bool>> _processors;
+        private readonly List<string> _expand;
         private readonly List<SimpleReference> _columns;
         private readonly List<SimpleOrderByItem> _order;
         private Stack<SimpleQueryClauseBase> _processedClauses;
@@ -22,9 +23,9 @@ namespace Simple.OData
             get { return _columns; }
         }
 
-        public SimpleExpression Criteria { get; private set; }
+        public IEnumerable<string> Expand { get { return _expand; } } 
 
-        public bool IsTotalCountQuery { get; private set; }
+        public SimpleExpression Criteria { get; private set; }
 
         public IEnumerable<SimpleOrderByItem> Order
         {
@@ -37,6 +38,8 @@ namespace Simple.OData
 
         public Action<int> SetTotalCount { get; private set; }
 
+        public bool IsTotalCountQuery { get; private set; }
+
         public IEnumerable<SimpleQueryClauseBase> UnprocessedClauses { get; private set; }
 
         public CommandBuilder(Func<string, Table> findTable)
@@ -44,6 +47,7 @@ namespace Simple.OData
             _findTable = findTable;
             _columns = new List<SimpleReference>();
             _order = new List<SimpleOrderByItem>();
+            _expand = new List<string>();
             _processedClauses = new Stack<SimpleQueryClauseBase>();
 
             _processors = new Dictionary<Type, Func<SimpleQueryClauseBase, bool>>
@@ -53,6 +57,7 @@ namespace Simple.OData
                 { typeof(SkipClause), c => TryApplySkipClause((SkipClause)c) },
                 { typeof(TakeClause), c => TryApplyTakeClause((TakeClause)c) },
                 { typeof(WhereClause), c => TryApplyWhereClause((WhereClause)c) },
+                { typeof(WithClause), c => TryApplyWithClause((WithClause)c) },
                 { typeof(WithCountClause), c => TryApplyWithCountClause((WithCountClause)c) },
             };
         }
@@ -75,6 +80,8 @@ namespace Simple.OData
 
             var clauses = new List<string>();
             string clause = FormatWhereClause(table);
+            if (!string.IsNullOrEmpty(clause)) clauses.Add(clause);
+            clause = FormatWithClause(table);
             if (!string.IsNullOrEmpty(clause)) clauses.Add(clause);
             clause = FormatSkipClause(table);
             if (!string.IsNullOrEmpty(clause)) clauses.Add(clause);
@@ -108,6 +115,12 @@ namespace Simple.OData
             }
 
             UnprocessedClauses = unprocessedClauses;
+        }
+
+        private bool TryApplyWithClause(WithClause clause)
+        {
+            _expand.Add(clause.ObjectReference.GetName());
+            return true;
         }
 
         private bool TryApplyOrderByClause(OrderByClause clause)
@@ -189,6 +202,12 @@ namespace Simple.OData
                     new ExpressionFormatter(_findTable).Format(this.Criteria));
             }
             return null;
+        }
+
+        private string FormatWithClause(Table table)
+        {
+            var expansion = string.Join(",", this.Expand);
+            return "$expand=" + expansion;
         }
 
         private string FormatOrderClause(Table table)

@@ -54,6 +54,7 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="CommandBuilderTest.cs" />
+    <Compile Include="DataServicesHelperTests.cs" />
     <Compile Include="ExpressionFormatterTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -65,6 +66,18 @@
       <Project>{00590565-A937-44EE-AA81-2B407F104380}</Project>
       <Name>Simple.OData</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\SingleProduct.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\MultipleProducts.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\MultipleCategoriesWithProducts.xml" />
+    <EmbeddedResource Include="Resources\MultipleProductsWithCategory.xml" />
+    <EmbeddedResource Include="Resources\SingleCategoryWithProducts.xml" />
+    <EmbeddedResource Include="Resources\SingleProductWithCategory.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" />

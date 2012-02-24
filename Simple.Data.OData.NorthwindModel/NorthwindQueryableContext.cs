@@ -49,5 +49,44 @@ namespace Simple.Data.OData.NorthwindModel
         public IQueryable<Shippers> Shippers { get { return this.shippers.AsQueryable(); } }
         public IQueryable<Suppliers> Suppliers { get { return this.suppliers.AsQueryable(); } }
         public IQueryable<Territories> Territories { get { return this.territories.AsQueryable(); } }
+
+        internal Categories SetProductCategory(Products product, int categoryID)
+        {
+            var category = this.categories.Where(x => x.CategoryID == product.CategoryID).SingleOrDefault();
+            if (category != null)
+                category.Products.Remove(product);
+            category = this.categories.Where(x => x.CategoryID == categoryID).SingleOrDefault();
+            if (category != null)
+                category.Products.Add(product);
+            return category;
+        }
+
+        internal Suppliers SetProductSupplier(Products product, int supplierID)
+        {
+            var supplier = this.suppliers.Where(x => x.SupplierID == product.SupplierID).SingleOrDefault();
+            if (supplier != null)
+                supplier.Products.Remove(product);
+            supplier = this.suppliers.Where(x => x.SupplierID == supplierID).SingleOrDefault();
+            if (supplier != null)
+                supplier.Products.Add(product);
+            return supplier;
+        }
+
+        internal Suppliers SetProductSupplier1(Products product, int supplierID)
+        {
+            return SetReference(product, supplierID, this.suppliers, x => x.SupplierID, x => x.SupplierID, x => x.Products);
+        }
+
+        internal T2 SetReference<T1, T2>(T1 entity, int referenceID, 
+            ICollection<T2> collection, Func<T1, int> entityItemID, Func<T2, int> collectionItemID, Func<T2, ICollection<T1>> itemCollection)
+        {
+            var item = collection.Where(x => collectionItemID(x) == entityItemID(entity)).SingleOrDefault();
+            if (item != null)
+                itemCollection(item).Remove(entity);
+            item = collection.Where(x => collectionItemID(x) == entityItemID(entity)).SingleOrDefault();
+            if (item != null)
+                itemCollection(item).Add(entity);
+            return item;
+        }
     }
 }

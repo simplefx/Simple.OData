@@ -12,7 +12,7 @@ namespace Simple.Data.OData.IntegrationTest
         [Fact]
         public void FindCategoryByNameExpandProducts()
         {
-            // expected request: Categories?expand=Products?$filter=CategoryName+eq+'Beverages'
+            // expected request: Categories?expand=Products&$filter=CategoryName+eq+'Beverages'
             var category = _db.Category.WithProducts().FindByCategoryName("Beverages");
 
             Assert.Equal("Beverages", category.CategoryName);
@@ -23,10 +23,20 @@ namespace Simple.Data.OData.IntegrationTest
         public void FindAllCategoriesWithProducts()
         {
             // expected request: Categories?expand=Products
-            var categories = _db.Category.All().WithProducts();
+            var categories = _db.Category.All().WithProducts().ToList();
 
-            Assert.True(categories.Count() > 0);
-            Assert.True(categories.First().Products.Count() > 0);
+            Assert.True(categories.Count > 0);
+            Assert.True(categories[0].Products.Count() > 0);
+        }
+
+        [Fact]
+        public void FindAllProductsWithCategory()
+        {
+            // expected request: Products?expand=Category
+            var products = _db.Products.All().WithCategory().ToList();
+
+            Assert.True(products.Count > 0);
+            Assert.Equal("Beverages", products[0].Category.CategoryName);
         }
 
         [Fact]
@@ -43,16 +53,16 @@ namespace Simple.Data.OData.IntegrationTest
         public void FindAllEmployeesExpandSubordinates()
         {
             // expected request: Employees?$expand=Subordinates
-            var employees = _db.Employees.All().WithSubordinates();
+            var employees = _db.Employees.All().WithSubordinates().ToList();
 
-            Assert.True(employees.Count() > 0);
-            Assert.True(employees.First().Subordinates.Count() > 0);
+            Assert.True(employees.Count > 0);
+            Assert.True(employees[0].Subordinates.Count() > 0);
         }
 
         [Fact]
         public void FindEmployeeWithSuperior()
         {
-            // expected request: Employees?$expand=Superior$filter=FirstName+eq+%27Nancy%27 and LastName+eq+%27Davolio%27
+            // expected request: Employees?$expand=Superior&$filter=FirstName+eq+%27Nancy%27 and LastName+eq+%27Davolio%27
             var employee = _db.Employees.FindByFirstNameAndLastName("Nancy", "Davolio").WithSuperior();
             Assert.NotNull(employee);
             Assert.NotNull(employee.Superior);

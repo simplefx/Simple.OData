@@ -28,16 +28,48 @@ namespace Simple.OData
         public static IEnumerable<IDictionary<string, object>> GetData(string text)
         {
             var feed = XElement.Parse(text);
-
-            string elementName =
-                feed.Element(null, "entry") != null && feed.Element(null, "entry").Descendants(null, "link").Attributes("rel").Any(x => x.Value == "edit-media")
-                    ? "entry"
-                    : "content";
-
-            return feed.Descendants(null, elementName).Select(content => GetData(content).ToIDictionary());
+            return GetData(feed);
         }
 
-        public static IEnumerable<KeyValuePair<string, object>> GetData(XElement element)
+        public static EdmSchema GetSchema(string text)
+        {
+            var feed = XElement.Parse(text);
+            return ParseSchema(feed);
+        }
+
+        private static IEnumerable<IDictionary<string, object>> GetData(XElement feed)
+        {
+            bool mediaStream = feed.Element(null, "entry") != null &&
+                               feed.Element(null, "entry").Descendants(null, "link").Attributes("rel").Any(
+                                   x => x.Value == "edit-media");
+
+            var entryElements = feed.Name.LocalName == "feed"
+                              ? feed.Elements(null, "entry")
+                              : new[] { feed };
+
+            List<IDictionary<string, object>> entryCollection = new List<IDictionary<string, object>>();
+            foreach (var entry in entryElements)
+            {
+                var entryData = new Dictionary<string, object>();
+
+                var linkElements = entry.Elements(null, "link").Where(x => x.Descendants("m", "inline").Any());
+                foreach (var linkElement in linkElements)
+                {
+                    var linkData = GetLinks(linkElement);
+                    entryData.Add(linkElement.Attribute("title").Value, linkData);
+                }
+
+                var entityElement = mediaStream ? entry : entry.Element(null, "content");
+                var properties = GetProperties(entityElement).ToIDictionary();
+                properties.ToList().ForEach(x => entryData.Add(x.Key, x.Value));
+
+                entryCollection.Add(entryData);
+            }
+
+            return entryCollection;
+        }
+
+        private static IEnumerable<KeyValuePair<string, object>> GetProperties(XElement element)
         {
             if (element == null) throw new ArgumentNullException("element");
 
@@ -51,10 +83,11 @@ namespace Simple.OData
             }
         }
 
-        public static EdmSchema GetSchema(string text)
+        private static object GetLinks(XElement element)
         {
-            var feed = XElement.Parse(text);
-            return ParseSchema(feed);
+            var feed = element.Element("m", "inline").Elements().Single();
+            var linkData = GetData(feed);
+            return feed.Name.LocalName == "feed" ? (object)linkData : linkData.Single();
         }
 
         private static EdmSchema ParseSchema(XElement element)

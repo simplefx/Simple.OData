@@ -20,7 +20,7 @@ namespace Simple.Data.OData.IntegrationTest
             for (int i = 0; i < 100; i++)
             {
                 int hostId = Interlocked.Increment(ref _lastHostId);
-                this._serviceUri = new Uri("http://localhost/Temporary_Listen_Addresses/SimpleODataTestService" + hostId.ToString() + "/");
+                this._serviceUri = new Uri("http://" + Environment.MachineName + "/Temporary_Listen_Addresses/SimpleODataTestService" + hostId.ToString() + "/");
                 this._host = new WebServiceHost(serviceType, this._serviceUri);
                 try
                 {
