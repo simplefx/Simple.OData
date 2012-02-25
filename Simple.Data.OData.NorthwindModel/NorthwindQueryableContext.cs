@@ -52,7 +52,7 @@ namespace Simple.Data.OData.NorthwindModel
 
         internal Employees SetEmployeeSuperior(Employees employee, int? superiorID)
         {
-            return SetReference(employee, superiorID, this.employees, x => x.Subordinates, x => x.ReportsTo, x => x.ReportsTo);
+            return SetReference(employee, superiorID, this.employees, x => x.Subordinates, x => x.ReportsTo, x => x.EmployeeID);
         }
 
         internal Orders SetOrderDetailsOrder(OrderDetails details, int orderID)
@@ -99,35 +99,45 @@ namespace Simple.Data.OData.NorthwindModel
             ICollection<T2> contextCollection, Func<T2, ICollection<T1>> referencedCollectionFunc, 
             Func<T1, int> referencedEntityIDFunc, Func<T2, int> contextCollectionIDFunc)
         {
-            var item = contextCollection.Where(x => contextCollectionIDFunc(x) == referencedEntityIDFunc(entity)).SingleOrDefault();
-            if (item != null)
-                referencedCollectionFunc(item).Remove(entity);
-            item = contextCollection.Where(x => contextCollectionIDFunc(x) == referencedEntityID).SingleOrDefault();
-            if (item != null)
-                referencedCollectionFunc(item).Add(entity);
-            return item;
+            lock (this)
+            {
+                var item = contextCollection.Where(x => contextCollectionIDFunc(x) == referencedEntityIDFunc(entity)).SingleOrDefault();
+                if (item != null)
+                    referencedCollectionFunc(item).Remove(entity);
+                item = contextCollection.Where(x => contextCollectionIDFunc(x) == referencedEntityID).SingleOrDefault();
+                if (item != null)
+                    referencedCollectionFunc(item).Add(entity);
+                return item;
+            }
         }
 
         internal T2 SetReference<T1, T2>(T1 entity, int? referencedEntityID,
             ICollection<T2> contextCollection, Func<T2, ICollection<T1>> referencedCollectionFunc,
             Func<T1, int?> referencedEntityIDFunc, Func<T2, int?> contextCollectionIDFunc)
         {
-            if (referencedEntityIDFunc(entity) != null)
+            lock (this)
             {
-                var item = contextCollection.Where(x => contextCollectionIDFunc(x) == referencedEntityIDFunc(entity)).SingleOrDefault();
-                if (item != null)
-                    referencedCollectionFunc(item).Remove(entity);
-            }
-            if (referencedEntityID.HasValue)
-            {
-                var item = contextCollection.Where(x => contextCollectionIDFunc(x) == referencedEntityID.Value).SingleOrDefault();
-                if (item != null)
-                    referencedCollectionFunc(item).Add(entity);
-                return item;
-            }
-            else
-            {
-                return default(T2);
+                if (referencedEntityIDFunc(entity) != null)
+                {
+                    var item =
+                        contextCollection.Where(x => contextCollectionIDFunc(x) == referencedEntityIDFunc(entity)).
+                            SingleOrDefault();
+                    if (item != null)
+                        referencedCollectionFunc(item).Remove(entity);
+                }
+                if (referencedEntityID.HasValue)
+                {
+                    var item =
+                        contextCollection.Where(x => contextCollectionIDFunc(x) == referencedEntityID.Value).
+                            SingleOrDefault();
+                    if (item != null)
+                        referencedCollectionFunc(item).Add(entity);
+                    return item;
+                }
+                else
+                {
+                    return default(T2);
+                }
             }
         }
 
@@ -135,13 +145,18 @@ namespace Simple.Data.OData.NorthwindModel
             ICollection<T2> contextCollection, Func<T2, ICollection<T1>> referencedCollectionFunc,
             Func<T1, string> referencedEntityIDFunc, Func<T2, string> contextCollectionIDFunc)
         {
-            var item = contextCollection.Where(x => contextCollectionIDFunc(x) == referencedEntityIDFunc(entity)).SingleOrDefault();
-            if (item != null)
-                referencedCollectionFunc(item).Remove(entity);
-            item = contextCollection.Where(x => contextCollectionIDFunc(x) == referencedEntityID).SingleOrDefault();
-            if (item != null)
-                referencedCollectionFunc(item).Add(entity);
-            return item;
+            lock (this)
+            {
+                var item =
+                    contextCollection.Where(x => contextCollectionIDFunc(x) == referencedEntityIDFunc(entity)).
+                        SingleOrDefault();
+                if (item != null)
+                    referencedCollectionFunc(item).Remove(entity);
+                item = contextCollection.Where(x => contextCollectionIDFunc(x) == referencedEntityID).SingleOrDefault();
+                if (item != null)
+                    referencedCollectionFunc(item).Add(entity);
+                return item;
+            }
         }
     }
 }

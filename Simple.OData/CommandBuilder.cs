@@ -166,9 +166,6 @@ namespace Simple.OData
             if (SkipCount.HasValue || TakeCount.HasValue)
                 return false;
 
-            if (_processedClauses.Any() && !(_processedClauses.Peek() is WhereClause))
-                return false;
-
             Criteria = Criteria == null
                 ? clause.Criteria
                 : new SimpleExpression(Criteria, clause.Criteria, SimpleExpressionType.And);
