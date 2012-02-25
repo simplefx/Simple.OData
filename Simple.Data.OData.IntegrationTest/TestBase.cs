@@ -40,7 +40,9 @@ namespace Simple.Data.OData.IntegrationTest
             _db.OrderDetails.DeleteAll();
 
             _db.Customers.Insert(CustomerID: "ALFKI", CompanyName: "Alfreds Futterkiste");
-            _db.Employees.Insert(EmployeeID: 1, FirstName: "Nancy", LastName: "Davolio");
+            _db.Employees.Insert(EmployeeID: 1, FirstName: "Andrew", LastName: "Fuller");
+            _db.Employees.Insert(EmployeeID: 2, FirstName: "Nancy", LastName: "Davolio", ReportsTo: 1);
+            _db.Employees.Insert(EmployeeID: 3, FirstName: "Janet", LastName: "Leverling", ReportsTo: 1);
             _db.Categories.Insert(CategoryID: 1, CategoryName: "Beverages");
             _db.Suppliers.Insert(SupplierID: 1, CompanyName: "Exotic Liquids");
             _db.Products.Insert(ProductID: 1, ProductName: "Chai", UnitPrice: 18m, CategoryID: 1);

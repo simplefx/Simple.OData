@@ -50,42 +50,97 @@ namespace Simple.Data.OData.NorthwindModel
         public IQueryable<Suppliers> Suppliers { get { return this.suppliers.AsQueryable(); } }
         public IQueryable<Territories> Territories { get { return this.territories.AsQueryable(); } }
 
+        internal Employees SetEmployeeSuperior(Employees employee, int? superiorID)
+        {
+            return SetReference(employee, superiorID, this.employees, x => x.Subordinates, x => x.ReportsTo, x => x.ReportsTo);
+        }
+
+        internal Orders SetOrderDetailsOrder(OrderDetails details, int orderID)
+        {
+            return SetReference(details, orderID, this.orders, x => x.OrderDetails, x => x.OrderID, x => x.OrderID);
+        }
+
+        internal Products SetOrderDetailsProduct(OrderDetails details, int productID)
+        {
+            return SetReference(details, productID, this.products, x => x.OrderDetails, x => x.ProductID, x => x.ProductID);
+        }
+
+        internal Customers SetOrderCustomer(Orders order, string customerID)
+        {
+            return SetReference(order, customerID, this.customers, x => x.Orders, x => x.CustomerID, x => x.CustomerID);
+        }
+
+        internal Employees SetOrderEmployee(Orders order, int employeeID)
+        {
+            return SetReference(order, employeeID, this.employees, x => x.Orders, x => x.EmployeeID, x => x.EmployeeID);
+        }
+
+        internal Shippers SetOrderShipper(Orders order, int shipperID)
+        {
+            return SetReference(order, shipperID, this.shippers, x => x.Orders, x => x.ShipVia, x => x.ShipperID);
+        }
+
         internal Categories SetProductCategory(Products product, int categoryID)
         {
-            var category = this.categories.Where(x => x.CategoryID == product.CategoryID).SingleOrDefault();
-            if (category != null)
-                category.Products.Remove(product);
-            category = this.categories.Where(x => x.CategoryID == categoryID).SingleOrDefault();
-            if (category != null)
-                category.Products.Add(product);
-            return category;
+            return SetReference(product, categoryID, this.categories, x => x.Products, x => x.CategoryID, x => x.CategoryID);
         }
 
         internal Suppliers SetProductSupplier(Products product, int supplierID)
         {
-            var supplier = this.suppliers.Where(x => x.SupplierID == product.SupplierID).SingleOrDefault();
-            if (supplier != null)
-                supplier.Products.Remove(product);
-            supplier = this.suppliers.Where(x => x.SupplierID == supplierID).SingleOrDefault();
-            if (supplier != null)
-                supplier.Products.Add(product);
-            return supplier;
+            return SetReference(product, supplierID, this.suppliers, x => x.Products, x => x.SupplierID, x => x.SupplierID);
         }
 
-        internal Suppliers SetProductSupplier1(Products product, int supplierID)
+        internal Regions SetTerritoryRegion(Territories territory, int regionID)
         {
-            return SetReference(product, supplierID, this.suppliers, x => x.SupplierID, x => x.SupplierID, x => x.Products);
+            return SetReference(territory, regionID, this.regions, x => x.Territories, x => x.RegionID, x => x.RegionID);
         }
 
-        internal T2 SetReference<T1, T2>(T1 entity, int referenceID, 
-            ICollection<T2> collection, Func<T1, int> entityItemID, Func<T2, int> collectionItemID, Func<T2, ICollection<T1>> itemCollection)
+        internal T2 SetReference<T1, T2>(T1 entity, int referencedEntityID,
+            ICollection<T2> contextCollection, Func<T2, ICollection<T1>> referencedCollectionFunc, 
+            Func<T1, int> referencedEntityIDFunc, Func<T2, int> contextCollectionIDFunc)
         {
-            var item = collection.Where(x => collectionItemID(x) == entityItemID(entity)).SingleOrDefault();
+            var item = contextCollection.Where(x => contextCollectionIDFunc(x) == referencedEntityIDFunc(entity)).SingleOrDefault();
             if (item != null)
-                itemCollection(item).Remove(entity);
-            item = collection.Where(x => collectionItemID(x) == entityItemID(entity)).SingleOrDefault();
+                referencedCollectionFunc(item).Remove(entity);
+            item = contextCollection.Where(x => contextCollectionIDFunc(x) == referencedEntityID).SingleOrDefault();
             if (item != null)
-                itemCollection(item).Add(entity);
+                referencedCollectionFunc(item).Add(entity);
+            return item;
+        }
+
+        internal T2 SetReference<T1, T2>(T1 entity, int? referencedEntityID,
+            ICollection<T2> contextCollection, Func<T2, ICollection<T1>> referencedCollectionFunc,
+            Func<T1, int?> referencedEntityIDFunc, Func<T2, int?> contextCollectionIDFunc)
+        {
+            if (referencedEntityIDFunc(entity) != null)
+            {
+                var item = contextCollection.Where(x => contextCollectionIDFunc(x) == referencedEntityIDFunc(entity)).SingleOrDefault();
+                if (item != null)
+                    referencedCollectionFunc(item).Remove(entity);
+            }
+            if (referencedEntityID.HasValue)
+            {
+                var item = contextCollection.Where(x => contextCollectionIDFunc(x) == referencedEntityID.Value).SingleOrDefault();
+                if (item != null)
+                    referencedCollectionFunc(item).Add(entity);
+                return item;
+            }
+            else
+            {
+                return default(T2);
+            }
+        }
+
+        internal T2 SetReference<T1, T2>(T1 entity, string referencedEntityID,
+            ICollection<T2> contextCollection, Func<T2, ICollection<T1>> referencedCollectionFunc,
+            Func<T1, string> referencedEntityIDFunc, Func<T2, string> contextCollectionIDFunc)
+        {
+            var item = contextCollection.Where(x => contextCollectionIDFunc(x) == referencedEntityIDFunc(entity)).SingleOrDefault();
+            if (item != null)
+                referencedCollectionFunc(item).Remove(entity);
+            item = contextCollection.Where(x => contextCollectionIDFunc(x) == referencedEntityID).SingleOrDefault();
+            if (item != null)
+                referencedCollectionFunc(item).Add(entity);
             return item;
         }
     }

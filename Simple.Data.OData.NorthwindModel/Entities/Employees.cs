@@ -8,6 +8,8 @@ namespace Simple.Data.OData.NorthwindModel.Entities
     [DataServiceKey("EmployeeID")]
     public class Employees
     {
+        private int? _reportsTo;
+
         public int EmployeeID { get; set; }
         public string LastName { get; set; }
         public string FirstName { get; set; }
@@ -24,7 +26,11 @@ namespace Simple.Data.OData.NorthwindModel.Entities
         public string Extension { get; set; }
         public byte[] Photo { get; set; }
         public string Notes { get; set; }
-        public int? ReportsTo { get; set; }
+        public int? ReportsTo
+        {
+            get { return _reportsTo; }
+            set { this.Superior = NorthwindContext.Instance.SetEmployeeSuperior(this, value); _reportsTo = value; }
+        }
         public string PhotoPath { get; set; }
 
         public Employees Superior { get; set; }

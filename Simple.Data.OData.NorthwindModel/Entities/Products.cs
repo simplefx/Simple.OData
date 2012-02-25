@@ -8,11 +8,16 @@ namespace Simple.Data.OData.NorthwindModel.Entities
     [DataServiceKey("ProductID")]
     public class Products
     {
+        private int _supplierID;
         private int _categoryID;
 
         public int ProductID { get; set; }
         public string ProductName { get; set; }
-        public int SupplierID { get; set; }
+        public int SupplierID
+        {
+            get { return _supplierID; }
+            set { this.Supplier = NorthwindContext.Instance.SetProductSupplier(this, value); _supplierID = value; }
+        }
         public int CategoryID
         {
             get { return _categoryID; }

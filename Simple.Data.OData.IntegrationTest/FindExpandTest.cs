@@ -16,7 +16,7 @@ namespace Simple.Data.OData.IntegrationTest
             var category = _db.Category.WithProducts().FindByCategoryName("Beverages");
 
             Assert.Equal("Beverages", category.CategoryName);
-            Assert.True(category.Products.Count() > 0);
+            Assert.True(category.Products.Count > 0);
         }
 
         [Fact]
@@ -26,7 +26,7 @@ namespace Simple.Data.OData.IntegrationTest
             var categories = _db.Category.All().WithProducts().ToList();
 
             Assert.True(categories.Count > 0);
-            Assert.True(categories[0].Products.Count() > 0);
+            Assert.True(categories[0].Products.Count > 0);
         }
 
         [Fact]
@@ -46,7 +46,7 @@ namespace Simple.Data.OData.IntegrationTest
             var customer = _db.Customer.WithOrders().Get("ALFKI");
 
             Assert.Equal("ALFKI", customer.CustomerID);
-            Assert.True(customer.Orders.Count() > 0);
+            Assert.True(customer.Orders.Count > 0);
         }
 
         [Fact]
@@ -56,14 +56,14 @@ namespace Simple.Data.OData.IntegrationTest
             var employees = _db.Employees.All().WithSubordinates().ToList();
 
             Assert.True(employees.Count > 0);
-            Assert.True(employees[0].Subordinates.Count() > 0);
+            Assert.True(employees[0].Subordinates.Count > 0);
         }
 
         [Fact]
         public void FindEmployeeWithSuperior()
         {
             // expected request: Employees?$expand=Superior&$filter=FirstName+eq+%27Nancy%27 and LastName+eq+%27Davolio%27
-            var employee = _db.Employees.FindByFirstNameAndLastName("Nancy", "Davolio").WithSuperior();
+            var employee = _db.Employees.WithSuperior().FindByFirstNameAndLastName("Nancy", "Davolio");
             Assert.NotNull(employee);
             Assert.NotNull(employee.Superior);
         }
