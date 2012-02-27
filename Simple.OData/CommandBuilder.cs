@@ -203,13 +203,17 @@ namespace Simple.OData
 
         private string FormatWithClause(Table table)
         {
-            var expansion = string.Join(",", this.Expand);
-            return "$expand=" + expansion;
+            if (this.Expand.Any())
+            {
+                var expansion = string.Join(",", this.Expand);
+                return "$expand=" + expansion;
+            }
+            return null;
         }
 
         private string FormatOrderClause(Table table)
         {
-            if (this.Order != null && this.Order.Count() > 0)
+            if (this.Order.Any())
             {
                 var items = this.Order.Select(x => FormatOrderByItem(table, x));
                 return "$orderby=" + string.Join(",", items);

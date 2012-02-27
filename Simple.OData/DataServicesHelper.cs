@@ -47,7 +47,6 @@ namespace Simple.OData
                               ? feed.Elements(null, "entry")
                               : new[] { feed };
 
-            List<IDictionary<string, object>> entryCollection = new List<IDictionary<string, object>>();
             foreach (var entry in entryElements)
             {
                 var entryData = new Dictionary<string, object>();
@@ -63,10 +62,8 @@ namespace Simple.OData
                 var properties = GetProperties(entityElement).ToIDictionary();
                 properties.ToList().ForEach(x => entryData.Add(x.Key, x.Value));
 
-                entryCollection.Add(entryData);
+                yield return entryData;
             }
-
-            return entryCollection;
         }
 
         private static IEnumerable<KeyValuePair<string, object>> GetProperties(XElement element)
