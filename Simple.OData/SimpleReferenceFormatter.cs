@@ -10,7 +10,7 @@ namespace Simple.OData
 {
     public class SimpleReferenceFormatter
     {
-        private readonly FunctionNameConverter _functionNameConverter = new FunctionNameConverter();
+        private readonly FunctionNameConverter _functionNameConverter = new FunctionNameConverter(); 
         private readonly Func<string, Table> _findTable; 
 
         public SimpleReferenceFormatter(Func<string, Table> findTable)
@@ -70,8 +70,13 @@ namespace Simple.OData
             if (ReferenceEquals(functionReference, null)) return null;
 
             var odataName = _functionNameConverter.ConvertToODataName(functionReference.Name);
-            return string.Format("{0}({1}{2})", odataName,
-                FormatColumnClause(functionReference.Argument), FormatAdditionalArguments(functionReference.AdditionalArguments));
+            var columnArgument = FormatColumnClause(functionReference.Argument);
+            var additionalArguments = FormatAdditionalArguments(functionReference.AdditionalArguments);
+
+            if (odataName == "substringof")
+                return string.Format("{0}({1},{2})", odataName, additionalArguments.Substring(1), columnArgument);
+            else
+                return string.Format("{0}({1}{2})", odataName, columnArgument, additionalArguments);
         }
 
         private string FormatAdditionalArguments(IEnumerable<object> additionalArguments)

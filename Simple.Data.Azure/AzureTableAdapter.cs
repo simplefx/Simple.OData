@@ -64,7 +64,7 @@ namespace Simple.Data.Azure
 
         public override bool IsExpressionFunction(string functionName, params object[] args)
         {
-            throw new NotImplementedException();
+            return false;
         }
     }
 }

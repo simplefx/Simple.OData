@@ -19,7 +19,7 @@ namespace Simple.Data.OData.IntegrationTest
         }
 
         [Fact]
-        public void FindWhereEqual()
+        public void FindWhereNameEqual()
         {
             var product = _db.Products.Find(_db.Products.ProductName == "Chai");
 
@@ -27,7 +27,7 @@ namespace Simple.Data.OData.IntegrationTest
         }
 
         [Fact]
-        public void FindWhereEqualToLower()
+        public void FindWhereNameEqualToLower()
         {
             var product = _db.Products.Find(_db.Products.ProductName.ToLower() == "chai");
 
@@ -35,7 +35,15 @@ namespace Simple.Data.OData.IntegrationTest
         }
 
         [Fact]
-        public void FindWhereStartsWith()
+        public void FindWhereNameWithSpecificLength()
+        {
+            var product = _db.Products.Find(_db.Products.ProductName.Length() == 4);
+
+            Assert.Equal("Chai", product.ProductName);
+        }
+
+        [Fact]
+        public void FindWhereNameStartsWith()
         {
             var product = _db.Products.Find(_db.Products.ProductName.StartsWith("Ch") == true);
 
@@ -43,7 +51,31 @@ namespace Simple.Data.OData.IntegrationTest
         }
 
         [Fact]
-        public void FindWhereEqualWithInvalidFunction()
+        public void FindWhereNameContains()
+        {
+            var product = _db.Products.Find(_db.Products.ProductName.Contains("ai") == true);
+
+            Assert.Equal("Chai", product.ProductName);
+        }
+
+        [Fact]
+        public void FindWhereNameIndexOf()
+        {
+            var product = _db.Products.Find(_db.Products.ProductName.IndexOf("ai") == 2);
+
+            Assert.Equal("Chai", product.ProductName);
+        }
+
+        [Fact]
+        public void FindWhereNameEqualSubstring()
+        {
+            var product = _db.Products.Find(_db.Products.ProductName.Substring(1) == "hai");
+
+            Assert.Equal("Chai", product.ProductName);
+        }
+
+        [Fact]
+        public void FindWhereNameEqualWithInvalidFunction()
         {
             Assert.Throws<TableServiceException>(
                 () => _db.Products.Find(_db.Products.ProductName.InvalidFunction() == "Chai"));

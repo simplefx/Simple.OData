@@ -111,9 +111,7 @@ namespace Simple.Data.OData
 
         public override bool IsExpressionFunction(string functionName, params object[] args)
         {
-            return functionName.Equals("like", StringComparison.OrdinalIgnoreCase)
-                && args.Length == 1
-                && args[0] is string;
+            return false;
         }
 
         private void CheckInsertablePropertiesAreAvailable(string tableName, IEnumerable<KeyValuePair<string, object>> data)
