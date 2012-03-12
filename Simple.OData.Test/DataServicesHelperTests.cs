@@ -73,6 +73,19 @@ namespace Simple.OData.Test
             Assert.Equal(productProperties, (result.First()["Products"] as IEnumerable<IDictionary<string, object>>).First().Count);
         }
 
+        [Fact]
+        public void GetDataParsesSingleProductWithComplexProperty()
+        {
+            string document = GetResourceAsString("SingleProductWithComplexProperty.xml");
+            var result = DataServicesHelper.GetData(document);
+            Assert.Equal(1, result.Count());
+            Assert.Equal(productProperties + 1, result.First().Count);
+            var quantity = result.First()["Quantity"] as IDictionary<string, object>;
+            Assert.NotNull(quantity);
+            Assert.Equal(10d, quantity["Value"]);
+            Assert.Equal("bags", quantity["Units"]);
+        }
+
         private string GetResourceAsString(string resourceName)
         {
             var assembly = Assembly.GetExecutingAssembly();

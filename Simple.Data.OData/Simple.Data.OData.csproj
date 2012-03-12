@@ -33,9 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Simple.Data, Version=1.0.0.2, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Simple.Data, Version=1.0.0.3, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Simple.Data.Core.1.0.0-beta2\lib\net40\Simple.Data.dll</HintPath>
+      <HintPath>..\packages\Simple.Data.Core.1.0.0-beta3\lib\net40\Simple.Data.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />

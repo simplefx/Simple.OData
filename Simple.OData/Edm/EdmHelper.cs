@@ -53,14 +53,28 @@ namespace Simple.OData.Edm
         {
             if (element == null) throw new ArgumentNullException("element");
 
+            object elementValue;
             if (element.Attribute("m", "null").ValueOrDefault() == "true")
             {
-                return new KeyValuePair<string, object>(element.Name.LocalName, null);
+                elementValue = null;
+            }
+            else if (element.HasElements)
+            {
+                var properties = new Dictionary<string, object>();
+                element.Descendants().ToList().ForEach(x =>
+                    {
+                        var kvp = Read(x);
+                        properties.Add(kvp.Key, kvp.Value);
+                    });
+                elementValue = properties;
+            }
+            else
+            {
+                var reader = GetReader(element.Attribute("m", "type").ValueOrDefault());
+                elementValue = reader(element.Value);
             }
 
-            var reader = GetReader(element.Attribute("m", "type").ValueOrDefault());
-
-            return new KeyValuePair<string, object>(element.Name.LocalName, reader(element.Value));
+            return new KeyValuePair<string, object>(element.Name.LocalName, elementValue);
         }
 
         public static void Write(XElement container, KeyValuePair<string, object> kvp)
