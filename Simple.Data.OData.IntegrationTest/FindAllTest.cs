@@ -41,14 +41,14 @@ namespace Simple.Data.OData.IntegrationTest
             Assert.Equal(1, count);
         }
 
-        [Fact(Skip = "Not implemented")]
+        [Fact]
         public void FindAllByNameWithTotalCount()
         {
             Promise<int> count;
             IEnumerable<dynamic> products = _db.Products.FindAllByProductName("Chai").WithTotalCount(out count).Take(1);
 
             Assert.NotEmpty(products);
-            Assert.True(count > 1);
+            Assert.Equal(1, count);
         }
 
         [Fact]
@@ -75,7 +75,7 @@ namespace Simple.Data.OData.IntegrationTest
             Assert.True(count > 0);
         }
 
-        [Fact(Skip = "Not implemented")]
+        [Fact]
         public void AllWithTotalCount()
         {
             Promise<int> count;

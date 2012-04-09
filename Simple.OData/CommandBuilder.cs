@@ -38,8 +38,6 @@ namespace Simple.OData
 
         public Action<int> SetTotalCount { get; private set; }
 
-        public bool IsTotalCountQuery { get; private set; }
-
         public IEnumerable<SimpleQueryClauseBase> UnprocessedClauses { get; private set; }
 
         public bool IsScalarResult { get; private set; }
@@ -99,6 +97,8 @@ namespace Simple.OData
             clause = FormatOrderClause(table);
             if (!string.IsNullOrEmpty(clause)) clauses.Add(clause);
             clause = FormatSelectClause(table);
+            if (!string.IsNullOrEmpty(clause)) clauses.Add(clause);
+            clause = FormatCountClause(table);
             if (!string.IsNullOrEmpty(clause)) clauses.Add(clause);
             if (clauses.Count > 0)
             {
@@ -181,7 +181,6 @@ namespace Simple.OData
 
         private bool TryApplyWithCountClause(WithCountClause clause)
         {
-            IsTotalCountQuery = true;
             SetTotalCount = clause.SetCount;
             return true;
         }
@@ -198,7 +197,7 @@ namespace Simple.OData
             return table.FindColumn(item.GetAliasOrName()).ActualName;
         }
 
-        private static string FormatSpecialReference(SpecialReference reference)
+        private string FormatSpecialReference(SpecialReference reference)
         {
             if (reference.GetType() == typeof(CountSpecialReference)) return "$count";
             throw new InvalidOperationException("SpecialReference type not recognised.");
@@ -269,6 +268,15 @@ namespace Simple.OData
             {
                 var items = this.Columns.Select(x => FormatSelectItem(table, x));
                 return "$select=" + string.Join(",", items);
+            }
+            return null;
+        }
+
+        private string FormatCountClause(Table table)
+        {
+            if (this.SetTotalCount != null)
+            {
+                return "$inlinecount=allpages";
             }
             return null;
         }

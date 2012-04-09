@@ -4,9 +4,6 @@ using System.Data;
 using System.Linq;
 using System.Net;
 using System.Text;
-using System.Web;
-using System.Xml.Linq;
-using System.Diagnostics;
 using Simple.OData;
 using Simple.OData.Schema;
 
@@ -54,7 +51,9 @@ namespace Simple.Data.OData.Schema
         public IEnumerable<IDictionary<string, object>> Query(SimpleExpression criteria)
         {
             var filter = new ExpressionFormatter(_databaseSchema.FindTable).Format(criteria);
-            var command = new CommandBuilder(_databaseSchema.FindTable).BuildCommand(_actualName, filter);
+            var builder = new CommandBuilder(_databaseSchema.FindTable);
+            var command = builder.BuildCommand(_actualName, filter);
+
             return Find(command);
         }
 
@@ -63,14 +62,19 @@ namespace Simple.Data.OData.Schema
             var builder = new CommandBuilder(DatabaseSchema.Get(_requestBuilder).FindTable);
             string command = builder.BuildCommand(query);
             unhandledClauses = builder.UnprocessedClauses;
-            var results = Find(command, builder.IsScalarResult);
+            IEnumerable<IDictionary<string, object>> results;
 
+            if (builder.SetTotalCount == null)
+            {
+                results = Find(command, builder.IsScalarResult);
+            }
+            else
+            {
+                int totalCount;
+                results = Find(command, out totalCount);
+                builder.SetTotalCount(totalCount);
+            }
             return results;
-
-            //if (builder.IsTotalCountQuery)
-            //    return new List<IDictionary<string, object>> { (new Dictionary<string, object> { { "count", results.Count() } }) };
-            //else
-            //    return results;
         }
 
         public IDictionary<string, object> GetKey(string tableName, IDictionary<string, object> record)
@@ -145,8 +149,20 @@ namespace Simple.Data.OData.Schema
 
         private IEnumerable<IDictionary<string, object>> Find(string url, bool scalarResult = false)
         {
+            int totalCount;
+            return Find(url, scalarResult, false, out totalCount);
+        }
+
+        private IEnumerable<IDictionary<string, object>> Find(string url, out int totalCount)
+        {
+            return Find(url, false, true, out totalCount);
+        }
+
+        private IEnumerable<IDictionary<string, object>> Find(string url, bool scalarResult, bool setTotalCount, out int totalCount)
+        {
             IEnumerable<IDictionary<string, object>> result;
             var request = _requestBuilder.CreateTableRequest(url, RestVerbs.GET);
+            totalCount = 0;
 
             using (var response = new RequestRunner().TryRequest(request))
             {
@@ -156,11 +172,15 @@ namespace Simple.Data.OData.Schema
                 }
                 else
                 {
-                    result = DataServicesHelper.GetData(response.GetResponseStream(), scalarResult);
+                    var stream = response.GetResponseStream();
+                    if (setTotalCount)
+                        result = DataServicesHelper.GetData(stream, out totalCount);
+                    else
+                        result = DataServicesHelper.GetData(response.GetResponseStream(), scalarResult);
                 }
-            }
 
-            return result;
+                return result;
+            }
         }
     }
 }

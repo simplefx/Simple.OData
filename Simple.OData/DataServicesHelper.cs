@@ -19,9 +19,15 @@ namespace Simple.OData
         {
             var text = QuickIO.StreamToString(stream);
             if (scalarResult)
-                return new[] { new Dictionary<string, object>() { { "result", text } } };
+                return new[] { new Dictionary<string, object>() { { "$result", text } } };
             else
                 return GetData(text);
+        }
+
+        public static IEnumerable<IDictionary<string, object>> GetData(Stream stream, out int totalCount)
+        {
+            var text = QuickIO.StreamToString(stream);
+            return GetData(text, out totalCount);
         }
 
         public static EdmSchema GetSchema(Stream stream)
@@ -32,6 +38,13 @@ namespace Simple.OData
         public static IEnumerable<IDictionary<string, object>> GetData(string text)
         {
             var feed = XElement.Parse(text);
+            return GetData(feed);
+        }
+
+        public static IEnumerable<IDictionary<string, object>> GetData(string text, out int totalCount)
+        {
+            var feed = XElement.Parse(text);
+            totalCount = GetDataCount(feed);
             return GetData(feed);
         }
 
@@ -70,6 +83,12 @@ namespace Simple.OData
             }
         }
 
+        private static int GetDataCount(XElement feed)
+        {
+            var count = feed.Elements("m", "count").SingleOrDefault();
+            return count == null ? 0 : Convert.ToInt32(count.Value);
+        }
+
         private static IEnumerable<KeyValuePair<string, object>> GetProperties(XElement element)
         {
             if (element == null) throw new ArgumentNullException("element");
@@ -93,7 +112,7 @@ namespace Simple.OData
 
         private static EdmSchema ParseSchema(XElement element)
         {
-            var complexTypes = ParseComplexTypes(new EdmComplexType[] { }, 
+            var complexTypes = ParseComplexTypes(new EdmComplexType[] { },
                 element.Descendants(null, "Schema").SelectMany(x => x.Descendants(null, "ComplexType")));
             var entityTypes = ParseEntityTypes(complexTypes,
                 element.Descendants(null, "Schema").SelectMany(x => x.Descendants(null, "EntityType")));
@@ -122,9 +141,9 @@ namespace Simple.OData
                               {
                                   Name = e.Attribute("Name").Value,
                                   Properties = (from p in e.Descendants(null, "Property")
-                                        select ParseProperty(p, complexTypes)).ToArray(),
+                                                select ParseProperty(p, complexTypes)).ToArray(),
                                   Key = (from k in e.Descendants(null, "Key")
-                                        select ParseKey(k)).Single(),
+                                         select ParseKey(k)).Single(),
                               };
         }
 
@@ -142,25 +161,25 @@ namespace Simple.OData
                                                 Multiplicity = p.Attribute("Multiplicity").Value,
                                             }).ToArray(),
                                   ReferentialConstraint = (from c in e.Descendants(null, "ReferentialConstraint")
-                                        select new EdmReferentialConstraint()
-                                            {
-                                                Principal = (from r in c.Descendants(null, "Principal")
-                                                    select new EdmReferentialConstraintEnd()
-                                                        {
-                                                            Role = r.Attribute("Role").Value,
-                                                            Properties = (from p in r.Descendants(null, "PropertyRef")
-                                                                        select p.Attribute("Name").Value).ToArray(),
-                                                        }
-                                                    ).Single(),
-                                                Dependent = (from r in c.Descendants(null, "Dependent")
-                                                    select new EdmReferentialConstraintEnd()
-                                                        {
-                                                            Role = r.Attribute("Role").Value,
-                                                            Properties = (from p in r.Descendants(null, "PropertyRef")
-                                                                        select p.Attribute("Name").Value).ToArray(),
-                                                        }
-                                                    ).Single(),
-                                            }).SingleOrDefault(),
+                                                           select new EdmReferentialConstraint()
+                                                               {
+                                                                   Principal = (from r in c.Descendants(null, "Principal")
+                                                                                select new EdmReferentialConstraintEnd()
+                                                                                    {
+                                                                                        Role = r.Attribute("Role").Value,
+                                                                                        Properties = (from p in r.Descendants(null, "PropertyRef")
+                                                                                                      select p.Attribute("Name").Value).ToArray(),
+                                                                                    }
+                                                                       ).Single(),
+                                                                   Dependent = (from r in c.Descendants(null, "Dependent")
+                                                                                select new EdmReferentialConstraintEnd()
+                                                                                    {
+                                                                                        Role = r.Attribute("Role").Value,
+                                                                                        Properties = (from p in r.Descendants(null, "PropertyRef")
+                                                                                                      select p.Attribute("Name").Value).ToArray(),
+                                                                                    }
+                                                                       ).Single(),
+                                                               }).SingleOrDefault(),
                               };
         }
 
@@ -172,30 +191,30 @@ namespace Simple.OData
                                   Name = e.Attribute("Name").Value,
                                   IsDefaulEntityContainer = bool.Parse(e.Attribute("m", "IsDefaultEntityContainer").Value),
                                   EntitySets = (from s in e.Descendants(null, "EntitySet")
-                                        select new EdmEntitySet()
-                                            {
-                                                Name = s.Attribute("Name").Value,
-                                                EntityType = s.Attribute("EntityType").Value,
-                                            }).ToArray(),
+                                                select new EdmEntitySet()
+                                                    {
+                                                        Name = s.Attribute("Name").Value,
+                                                        EntityType = s.Attribute("EntityType").Value,
+                                                    }).ToArray(),
                                   AssociationSets = (from s in e.Descendants(null, "AssociationSet")
-                                        select new EdmAssociationSet()
-                                            {
-                                                Name = s.Attribute("Name").Value,
-                                                Association = s.Attribute("Association").Value,
-                                                End = (from n in s.Descendants(null, "End")
-                                                    select new EdmAssociationSetEnd()
-                                                        {
-                                                            Role = n.Attribute("Role").Value,
-                                                            EntitySet = n.Attribute("EntitySet").Value,
-                                                        }).ToArray(),
-                                            }).ToArray(),
+                                                     select new EdmAssociationSet()
+                                                         {
+                                                             Name = s.Attribute("Name").Value,
+                                                             Association = s.Attribute("Association").Value,
+                                                             End = (from n in s.Descendants(null, "End")
+                                                                    select new EdmAssociationSetEnd()
+                                                                        {
+                                                                            Role = n.Attribute("Role").Value,
+                                                                            EntitySet = n.Attribute("EntitySet").Value,
+                                                                        }).ToArray(),
+                                                         }).ToArray(),
                                   FunctionImports = (from s in e.Descendants(null, "FunctionImport")
-                                        select new EdmFunctionImport()
-                                        {
-                                            Name = s.Attribute("Name").Value,
-                                            ReturnType = s.Attribute("ReturnType").Value,
-                                            EntitySet = s.Attribute("EntitySet").Value,
-                                        }).ToArray(),
+                                                     select new EdmFunctionImport()
+                                                     {
+                                                         Name = s.Attribute("Name").Value,
+                                                         ReturnType = s.Attribute("ReturnType").Value,
+                                                         EntitySet = s.Attribute("EntitySet").Value,
+                                                     }).ToArray(),
                               };
 
         }
