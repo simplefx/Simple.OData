@@ -26,8 +26,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		CommonAssemblyInfo.cs = CommonAssemblyInfo.cs
 		NugetPack.cmd = NugetPack.cmd
 		NugetPackAll.cmd = NugetPackAll.cmd
+		NugetPackAzure.cmd = NugetPackAzure.cmd
+		NugetPackOData.cmd = NugetPackOData.cmd
 		NugetPush.cmd = NugetPush.cmd
 		NugetPushAll.cmd = NugetPushAll.cmd
+		NugetPushAzure.cmd = NugetPushAzure.cmd
+		NugetPushOData.cmd = NugetPushOData.cmd
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{78D04AF9-B9B4-4025-93C6-B3DB01EDAAE9}"

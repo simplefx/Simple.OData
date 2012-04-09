@@ -51,11 +51,19 @@ namespace Simple.Data.OData.IntegrationTest
         }
 
         [Fact]
-        public void FindWhereNameContains()
+        public void FindWhereNameContainsEqualsTrue()
         {
             var product = _db.Products.Find(_db.Products.ProductName.Contains("ai") == true);
 
             Assert.Equal("Chai", product.ProductName);
+        }
+
+        [Fact]
+        public void FindWhereNameContainsEqualsFalse()
+        {
+            var product = _db.Products.Find(_db.Products.ProductName.Contains("ai") == false);
+
+            Assert.Equal("Chang", product.ProductName);
         }
 
         [Fact]

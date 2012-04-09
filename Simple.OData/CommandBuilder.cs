@@ -23,7 +23,7 @@ namespace Simple.OData
             get { return _columns; }
         }
 
-        public IEnumerable<string> Expand { get { return _expand; } } 
+        public IEnumerable<string> Expand { get { return _expand; } }
 
         public SimpleExpression Criteria { get; private set; }
 
@@ -41,6 +41,8 @@ namespace Simple.OData
         public bool IsTotalCountQuery { get; private set; }
 
         public IEnumerable<SimpleQueryClauseBase> UnprocessedClauses { get; private set; }
+
+        public bool IsScalarResult { get; private set; }
 
         public CommandBuilder(Func<string, Table> findTable)
         {
@@ -78,8 +80,15 @@ namespace Simple.OData
             var table = _findTable(query.TableName);
             var command = table.ActualName;
 
+            string clause = FormatSpecialClause(table);
+            if (!string.IsNullOrEmpty(clause))
+            {
+                command += "/" + clause;
+                this.IsScalarResult = true;
+            }
+
             var clauses = new List<string>();
-            string clause = FormatWhereClause(table);
+            clause = FormatWhereClause(table);
             if (!string.IsNullOrEmpty(clause)) clauses.Add(clause);
             clause = FormatWithClause(table);
             if (!string.IsNullOrEmpty(clause)) clauses.Add(clause);
@@ -138,8 +147,6 @@ namespace Simple.OData
                 return false;
 
             _columns.AddRange(clause.Columns);
-            if (_columns.Count == 1 && _columns[0] is CountSpecialReference)
-                IsTotalCountQuery = true;
             return true;
         }
 
@@ -189,6 +196,23 @@ namespace Simple.OData
         private string FormatSelectItem(Table table, SimpleReference item)
         {
             return table.FindColumn(item.GetAliasOrName()).ActualName;
+        }
+
+        private static string FormatSpecialReference(SpecialReference reference)
+        {
+            if (reference.GetType() == typeof(CountSpecialReference)) return "$count";
+            throw new InvalidOperationException("SpecialReference type not recognised.");
+        }
+
+        private string FormatSpecialClause(Table table)
+        {
+            if (this.Columns != null && this.Columns.Count() == 1 && this.Columns.First() is SpecialReference)
+            {
+                var specialColumn = _columns[0];
+                _columns.Clear();
+                return FormatSpecialReference((SpecialReference)specialColumn);
+            }
+            return null;
         }
 
         private string FormatWhereClause(Table table)
@@ -241,7 +265,7 @@ namespace Simple.OData
 
         private string FormatSelectClause(Table table)
         {
-            if (!this.IsTotalCountQuery && this.Columns != null && this.Columns.Count() > 0)
+            if (this.Columns != null && this.Columns.Count() > 0)
             {
                 var items = this.Columns.Select(x => FormatSelectItem(table, x));
                 return "$select=" + string.Join(",", items);

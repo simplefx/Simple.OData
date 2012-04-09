@@ -15,9 +15,13 @@ namespace Simple.OData
 {
     public static class DataServicesHelper
     {
-        public static IEnumerable<IDictionary<string, object>> GetData(Stream stream)
+        public static IEnumerable<IDictionary<string, object>> GetData(Stream stream, bool scalarResult = false)
         {
-            return GetData(QuickIO.StreamToString(stream));
+            var text = QuickIO.StreamToString(stream);
+            if (scalarResult)
+                return new[] { new Dictionary<string, object>() { { "result", text } } };
+            else
+                return GetData(text);
         }
 
         public static EdmSchema GetSchema(Stream stream)

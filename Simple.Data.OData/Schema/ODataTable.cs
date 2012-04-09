@@ -63,12 +63,14 @@ namespace Simple.Data.OData.Schema
             var builder = new CommandBuilder(DatabaseSchema.Get(_requestBuilder).FindTable);
             string command = builder.BuildCommand(query);
             unhandledClauses = builder.UnprocessedClauses;
-            var results = Find(command);
+            var results = Find(command, builder.IsScalarResult);
 
-            if (builder.IsTotalCountQuery)
-                return new List<IDictionary<string, object>> { (new Dictionary<string, object> { { "COUNT", results.Count() } }) };
-            else
-                return results;
+            return results;
+
+            //if (builder.IsTotalCountQuery)
+            //    return new List<IDictionary<string, object>> { (new Dictionary<string, object> { { "count", results.Count() } }) };
+            //else
+            //    return results;
         }
 
         public IDictionary<string, object> GetKey(string tableName, IDictionary<string, object> record)
@@ -124,7 +126,6 @@ namespace Simple.Data.OData.Schema
 
             using (var response = new RequestRunner().TryRequest(request))
             {
-                Trace.WriteLine(response.StatusCode, "HttpResponse");
                 // TODO
                 return response.StatusCode == HttpStatusCode.OK ? 1 : 0;
             }
@@ -137,28 +138,25 @@ namespace Simple.Data.OData.Schema
 
             using (var response = new RequestRunner().TryRequest(request))
             {
-                Trace.WriteLine(response.StatusCode, "HttpResponse");
-                // TODO
+                // TODO: check response code
                 return response.StatusCode == HttpStatusCode.OK ? 1 : 0;
             }
         }
 
-        private IEnumerable<IDictionary<string, object>> Find(string url)
+        private IEnumerable<IDictionary<string, object>> Find(string url, bool scalarResult = false)
         {
             IEnumerable<IDictionary<string, object>> result;
             var request = _requestBuilder.CreateTableRequest(url, RestVerbs.GET);
 
             using (var response = new RequestRunner().TryRequest(request))
             {
-                Trace.WriteLine(response.StatusCode, "HttpResponse");
-
                 if (response.StatusCode != HttpStatusCode.OK)
                 {
                     result = Enumerable.Empty<IDictionary<string, object>>();
                 }
                 else
                 {
-                    result = DataServicesHelper.GetData(response.GetResponseStream());
+                    result = DataServicesHelper.GetData(response.GetResponseStream(), scalarResult);
                 }
             }
 

@@ -9,7 +9,7 @@ namespace Simple.Data.OData.IntegrationTest
 
     public class FindAssociationTest : TestBase
     {
-        [Fact]
+        [Fact(Skip = "Associations are not implemented")]
         public void FindAllCategoryProducts()
         {
             // expected request: Products?$filter=Category/CategoryName+eq+%27Beverages%27
@@ -19,7 +19,7 @@ namespace Simple.Data.OData.IntegrationTest
             Assert.True(products.Count() > 0);
         }
 
-        [Fact]
+        [Fact(Skip = "Associations are not implemented")]
         public void FindAllCustomerOrders()
         {
             // expected request: Customers('ALFKI')/Orders
@@ -29,7 +29,7 @@ namespace Simple.Data.OData.IntegrationTest
             Assert.True(customerOrders.Count() > 0);
         }
 
-        [Fact]
+        [Fact(Skip = "Associations are not implemented")]
         public void FindAllEmployeeSubordinates()
         {
             // expected request: Employees(1)/Subordinates
@@ -40,7 +40,7 @@ namespace Simple.Data.OData.IntegrationTest
             Assert.True(subordinates.Count() > 0);
         }
 
-        [Fact]
+        [Fact(Skip = "Associations are not implemented")]
         public void FindAllEmployeeSubordinates2()
         {
             // expected request: Employees?$filter=Superior/FirstName+eq+%27Nancy%27 and Superior/LastName+eq+%27Davolio%27
@@ -51,7 +51,7 @@ namespace Simple.Data.OData.IntegrationTest
             Assert.True(subordinates.Count() > 0);
         }
 
-        [Fact]
+        [Fact(Skip = "Associations are not implemented")]
         public void FindEmployeeSuperior()
         {
             // expected request: Employees(1)/Superior
@@ -60,7 +60,7 @@ namespace Simple.Data.OData.IntegrationTest
             Assert.NotNull(superior);
         }
 
-        [Fact]
+        [Fact(Skip = "Associations are not implemented")]
         public void FindEmployeeSuperior2()
         {
             // expected request: Employees?$filter=Superior/FirstName+eq+%27Nancy%27 and Superior/LastName+eq+%27Davolio%27
@@ -69,7 +69,7 @@ namespace Simple.Data.OData.IntegrationTest
             Assert.NotNull(superior);
         }
 
-        [Fact]
+        [Fact(Skip = "Associations are not implemented")]
         public void FindAllEmployeeOrders()
         {
             // expected request: Orders?$filter=Employee/FirstName+eq+%27Andrew%27 and Employee/LastName+eq+%27Fuller%27
@@ -80,7 +80,7 @@ namespace Simple.Data.OData.IntegrationTest
             Assert.True(orders.Count() > 0);
         }
 
-        [Fact]
+        [Fact(Skip = "Associations are not implemented")]
         public void FindProductCategory()
         {
             // expected request: Categories?filter=Products/ProductName+eq+%27Chai%27
@@ -90,7 +90,7 @@ namespace Simple.Data.OData.IntegrationTest
             Assert.Equal("Beverages", category.CategoryName);
         }
 
-        [Fact]
+        [Fact(Skip = "Associations are not implemented")]
         public void FindProductSupplier()
         {
             // expected request: Suppliers?filter=Products/ProductName+eq+%27Chai%27

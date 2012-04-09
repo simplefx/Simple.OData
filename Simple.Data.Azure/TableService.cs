@@ -27,7 +27,6 @@ namespace Simple.Data.Azure
 
             using (var response = (HttpWebResponse)request.GetResponse())
             {
-                Trace.WriteLine(response.StatusCode, "HttpResponse");
                 list = TableHelper.ReadTableList(response.GetResponseStream()).ToList();
             }
 
@@ -48,7 +47,6 @@ namespace Simple.Data.Azure
 
             using (var response = (HttpWebResponse)request.GetResponse())
             {
-                Trace.WriteLine(response.StatusCode);
             }
         }
     }

@@ -79,7 +79,6 @@ namespace Simple.Data.Azure
                 {
                     if (ex.Code == "ResourceNotFound")
                     {
-                        Trace.WriteLine("Auto-creating table");
                         new TableService(_requestBuilder).CreateTable(_actualName);
                         request = _requestBuilder.CreateTableRequest(_actualName, RestVerbs.POST, entry.ToString());
 
@@ -144,8 +143,6 @@ namespace Simple.Data.Azure
 
             using (var response = new RequestRunner().TryRequest(request))
             {
-                Trace.WriteLine(response.StatusCode, "HttpResponse");
-
                 if (response.StatusCode != HttpStatusCode.OK)
                 {
                     result = Enumerable.Empty<IDictionary<string, object>>();
