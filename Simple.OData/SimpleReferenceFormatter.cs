@@ -34,7 +34,8 @@ namespace Simple.OData
         private string FormatObject(object value)
         {
             var reference = value as SimpleReference;
-            if (reference != null) return FormatColumnClause(reference);
+            if (reference != null) 
+                return FormatColumnClause(reference);
             return value is string ? string.Format("'{0}'", value) : value is DateTime ? ((DateTime)value).ToIso8601String() : value.ToString();
         }
 

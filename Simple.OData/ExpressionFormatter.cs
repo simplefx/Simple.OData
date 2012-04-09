@@ -24,7 +24,6 @@ namespace Simple.OData
                                             { SimpleExpressionType.Or, LogicalExpressionToWhereClause },
                                             { SimpleExpressionType.Equal, EqualExpressionToWhereClause },
                                             { SimpleExpressionType.NotEqual, NotEqualExpressionToWhereClause },
-                                            { SimpleExpressionType.Function, FunctionExpressionToWhereClause },
                                             {
                                                 SimpleExpressionType.GreaterThan,
                                                 expr => BinaryExpressionToWhereClause(expr, "gt")
@@ -113,26 +112,6 @@ namespace Simple.OData
                        : null;
         }
 
-        private string FunctionExpressionToWhereClause(SimpleExpression expression)
-        {
-            var function = expression.RightOperand as SimpleFunction;
-            if (function == null) throw new InvalidOperationException("Expected SimpleFunction as the right operand.");
-
-            if (function.Name.Equals("like", StringComparison.InvariantCultureIgnoreCase))
-            {
-                return string.Format("{0} LIKE {1}", FormatObject(expression.LeftOperand),
-                                     FormatObject(function.Args[0]));
-            }
-
-            if (function.Name.Equals("notlike", StringComparison.InvariantCultureIgnoreCase))
-            {
-                return string.Format("{0} NOT LIKE {1}", FormatObject(expression.LeftOperand),
-                                     FormatObject(function.Args[0]));
-            }
-
-            throw new NotSupportedException(string.Format("Unknown function '{0}'.", function.Name));
-        }
-
         private string BinaryExpressionToWhereClause(SimpleExpression expression, string comparisonOperator)
         {
             return string.Format("{0} {1} {2}", FormatObject(expression.LeftOperand),
@@ -145,10 +124,25 @@ namespace Simple.OData
             if (value is SimpleFunction)
                 return FormatFunction(value as SimpleFunction);
 
-            var objectReference = value as SimpleReference;
+            var simpleReference = value as SimpleReference;
 
-            if (!ReferenceEquals(objectReference, null))
-                return _simpleReferenceFormatter.FormatColumnClause(objectReference);
+            if (!ReferenceEquals(simpleReference, null))
+            {
+                string qualifiedColumn = string.Empty;
+                var objectReference = simpleReference as ObjectReference;
+                if (!ReferenceEquals(objectReference, null))
+                {
+                    var names = objectReference.GetAllObjectNames();
+                    if (names.Count() > 2)
+                    {
+                        // Select association inner names
+                        var associationPath = names.Skip(1).Take(names.Count() - 2).ToList();
+                        qualifiedColumn = string.Join("/", associationPath);
+                    }
+                }
+                var column = _simpleReferenceFormatter.FormatColumnClause(simpleReference);
+                return string.IsNullOrEmpty(qualifiedColumn) ? column : string.Join("/", qualifiedColumn, column);
+            }
 
             return FormatValue(value);
         }

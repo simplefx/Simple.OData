@@ -117,16 +117,6 @@ namespace Simple.OData.Test
         }
 
         [Fact]
-        public void LikeFormatsAsODataFilter()
-        {
-            var expression = new SimpleExpression(ObjectReference.FromString("bar"),
-                                                  new SimpleFunction("like", new object[] {ObjectReference.FromString("'abc'")}),
-                                                  SimpleExpressionType.Function);
-            var actual = _expressionFormatter.Format(expression);
-            Assert.Equal("bar LIKE 'abc'", actual);
-        }
-
-        [Fact]
         public void LengthFormatsAsODataFilter()
         {
             var expression = new SimpleExpression(new SimpleFunction("length", new object[] {ObjectReference.FromString("bar")}),

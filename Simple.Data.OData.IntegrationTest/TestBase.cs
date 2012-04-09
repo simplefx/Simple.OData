@@ -47,7 +47,7 @@ namespace Simple.Data.OData.IntegrationTest
             _db.Suppliers.Insert(SupplierID: 1, CompanyName: "Exotic Liquids");
             _db.Products.Insert(ProductID: 1, ProductName: "Chai", UnitPrice: 18m, CategoryID: 1);
             _db.Products.Insert(ProductID: 2, ProductName: "Chang", UnitPrice: 19m, CategoryID: 1);
-            _db.Orders.Insert(OrderID: 10255, CustomerID: "ALFKI");
+            _db.Orders.Insert(OrderID: 10255, CustomerID: "ALFKI", EmployeeID: 1);
             _db.OrderDetails.Insert(OrderID: 10255, ProductID: 2, UnitPrice: 15m, Quantity: 20);
         }
     }
