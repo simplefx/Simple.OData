@@ -20,12 +20,7 @@ namespace Simple.OData.Schema
         {
 
         }
-        /// <summary>
-        /// Finds the column with a name most closely matching the specified column name.
-        /// This method will try an exact match first, then a case-insensitve search, then a pluralized or singular version.
-        /// </summary>
-        /// <param name="columnName">Name of the column.</param>
-        /// <returns>A <see cref="Column"/> if a match is found; otherwise, <c>null</c>.</returns>
+
         public Column Find(string columnName)
         {
             var column = FindColumnWithName(columnName);

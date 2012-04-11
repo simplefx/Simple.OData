@@ -64,6 +64,8 @@
     <Compile Include="CommandBuilder.cs" />
     <Compile Include="RequestRunner.cs" />
     <Compile Include="RestVerbs.cs" />
+    <Compile Include="Schema\Association.cs" />
+    <Compile Include="Schema\AssociationCollection.cs" />
     <Compile Include="Schema\Column.cs" />
     <Compile Include="Schema\ColumnCollection.cs" />
     <Compile Include="Schema\ISchemaProvider.cs" />

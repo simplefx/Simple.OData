@@ -9,6 +9,7 @@ namespace Simple.OData.Schema
     {
         IEnumerable<Table> GetTables();
         IEnumerable<Column> GetColumns(Table table);
+        IEnumerable<Association> GetAssociations(Table table);
         Key GetPrimaryKey(Table table);
     }
 }

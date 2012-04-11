@@ -125,26 +125,15 @@ namespace Simple.OData
                 return FormatFunction(value as SimpleFunction);
 
             var simpleReference = value as SimpleReference;
-
             if (!ReferenceEquals(simpleReference, null))
-            {
-                string qualifiedColumn = string.Empty;
-                var objectReference = simpleReference as ObjectReference;
-                if (!ReferenceEquals(objectReference, null))
-                {
-                    var names = objectReference.GetAllObjectNames();
-                    if (names.Count() > 2)
-                    {
-                        // Select association inner names
-                        var associationPath = names.Skip(1).Take(names.Count() - 2).ToList();
-                        qualifiedColumn = string.Join("/", associationPath);
-                    }
-                }
-                var column = _simpleReferenceFormatter.FormatColumnClause(simpleReference);
-                return string.IsNullOrEmpty(qualifiedColumn) ? column : string.Join("/", qualifiedColumn, column);
-            }
+                return FormatReference(simpleReference);
 
             return FormatValue(value);
+        }
+
+        internal protected string FormatReference(SimpleReference reference)
+        {
+            return _simpleReferenceFormatter.FormatColumnClause(reference);
         }
 
         internal protected string FormatFunction(SimpleFunction function)

@@ -9,12 +9,15 @@ namespace Simple.OData.Schema
     public class Column
     {
         private readonly string _actualName;
-        private readonly Table _table;
 
-        public Column(string actualName, Table table)
+        public Column(string actualName)
         {
             _actualName = actualName;
-            _table = table;
+        }
+
+        public override string ToString()
+        {
+            return _actualName;
         }
 
         public string HomogenizedName

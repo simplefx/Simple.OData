@@ -10,8 +10,8 @@ namespace Simple.OData
 {
     public class SimpleReferenceFormatter
     {
-        private readonly FunctionNameConverter _functionNameConverter = new FunctionNameConverter(); 
-        private readonly Func<string, Table> _findTable; 
+        private readonly FunctionNameConverter _functionNameConverter = new FunctionNameConverter();
+        private readonly Func<string, Table> _findTable;
 
         public SimpleReferenceFormatter(Func<string, Table> findTable)
         {
@@ -34,7 +34,7 @@ namespace Simple.OData
         private string FormatObject(object value)
         {
             var reference = value as SimpleReference;
-            if (reference != null) 
+            if (reference != null)
                 return FormatColumnClause(reference);
             return value is string ? string.Format("'{0}'", value) : value is DateTime ? ((DateTime)value).ToIso8601String() : value.ToString();
         }
@@ -101,10 +101,35 @@ namespace Simple.OData
             }
             else
             {
-                var table = _findTable(objectReference.GetOwner().GetName());
-                var column = table.FindColumn(objectReference.GetName());
-                return column.ActualName;
+                string associationPath;
+                Table table = GetOwnerTable(objectReference, out associationPath);
+                return FormatObjectPath(associationPath, table.FindColumn(objectReference.GetName()).ActualName);
             }
+        }
+
+        private Table GetOwnerTable(ObjectReference objectReference, out string associationPath)
+        {
+            associationPath = string.Empty;
+
+            var owner = objectReference.GetOwner();
+            if (ReferenceEquals(owner, null))
+                return null;
+
+            if (ReferenceEquals(owner.GetOwner(), null))
+                return _findTable(owner.GetName());
+
+            var table = GetOwnerTable(owner, out associationPath);
+            var association = table.FindAssociation(owner.GetName());
+            associationPath = FormatObjectPath(associationPath, association.ActualName);
+            return _findTable(association.ReferenceTableName);
+        }
+
+        private string FormatObjectPath(string pathPrefix, string objectName)
+        {
+            if (string.IsNullOrEmpty(pathPrefix))
+                return objectName;
+            else
+                return string.Join("/", pathPrefix, objectName);
         }
     }
 }

@@ -38,7 +38,18 @@ namespace Simple.Data.OData
                            from t in _metadata.Value.EntityTypes
                            where s.EntityType.Split('.').Last() == t.Name
                                from p in t.Properties
-                               select new Column(p.Name, table);
+                               select new Column(p.Name);
+        }
+
+        public IEnumerable<Association> GetAssociations(Table table)
+        {
+            var a = _metadata.Value.Associations.ToList();
+
+            return from e in _metadata.Value.EntityContainers
+                   where e.IsDefaulEntityContainer
+                   from s in e.AssociationSets
+                   where s.End.First().EntitySet == table.ActualName
+                   select CreateAssociation(s.End.Last());
         }
 
         public Key GetPrimaryKey(Table table)
@@ -50,6 +61,11 @@ namespace Simple.Data.OData
                            from t in _metadata.Value.EntityTypes
                            where s.EntityType.Split('.').Last() == t.Name
                            select new Key(t.Key.Properties)).Single();
+        }
+
+        private Association CreateAssociation(EdmAssociationSetEnd end)
+        {
+            return new Association(end.Role, end.EntitySet);
         }
 
         private EdmSchema RequestMetadata()

@@ -30,12 +30,18 @@ namespace Simple.Data.OData.Schema
             _requestBuilder = requestBuilder;
             _databaseSchema = databaseSchema;
             _lazyColumns = new Lazy<ColumnCollection>(GetColumns);
+            _lazyAssociations = new Lazy<AssociationCollection>(GetAssociations);
             _lazyPrimaryKey = new Lazy<Key>(GetPrimaryKey);
         }
 
         private ColumnCollection GetColumns()
         {
             return new ColumnCollection(_databaseSchema.SchemaProvider.GetColumns(this));
+        }
+
+        private AssociationCollection GetAssociations()
+        {
+            return new AssociationCollection(_databaseSchema.SchemaProvider.GetAssociations(this));
         }
 
         private Key GetPrimaryKey()

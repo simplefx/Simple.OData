@@ -15,11 +15,17 @@ namespace Simple.OData.Schema
     {
         protected readonly string _actualName;
         protected Lazy<ColumnCollection> _lazyColumns;
+        protected Lazy<AssociationCollection> _lazyAssociations;
         protected Lazy<Key> _lazyPrimaryKey;
 
         public Table(string name)
         {
             _actualName = name;
+        }
+
+        public override string ToString()
+        {
+            return _actualName;
         }
 
         internal string HomogenizedName
@@ -46,13 +52,38 @@ namespace Simple.OData.Schema
             }
             catch (UnresolvableObjectException ex)
             {
-                throw new UnresolvableObjectException(_actualName + "." + ex.ObjectName, "Column not found", ex);
+                string qualifiedName = _actualName + "." + ex.ObjectName;
+                throw new UnresolvableObjectException(qualifiedName, string.Format("Column {0} not found", qualifiedName), ex);
             }
         }
 
         public bool HasColumn(string columnName)
         {
             return _lazyColumns.Value.Contains(columnName);
+        }
+
+        public IEnumerable<Association> Associations
+        {
+            get { return _lazyAssociations.Value.AsEnumerable(); }
+        }
+
+        public Association FindAssociation(string associationName)
+        {
+            var associations = _lazyAssociations.Value;
+            try
+            {
+                return associations.Find(associationName);
+            }
+            catch (UnresolvableObjectException ex)
+            {
+                string qualifiedName = _actualName + "." + ex.ObjectName;
+                throw new UnresolvableObjectException(qualifiedName, string.Format("Association {0} not found", qualifiedName), ex);
+            }
+        }
+
+        public bool HasAssociation(string associationName)
+        {
+            return _lazyAssociations.Value.Contains(associationName);
         }
 
         public Key PrimaryKey

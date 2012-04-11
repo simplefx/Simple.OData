@@ -22,8 +22,8 @@ namespace Simple.Data.OData.IntegrationTest
         public void FindAllCustomerOrders()
         {
             // expected request: Customers('ALFKI')/Orders
-            //IEnumerable<dynamic> customerOrders = _db.Customers.FindAll(_db.Customers.CustomerID == "ALFKI").Orders;
-            IEnumerable<dynamic> customerOrders = _db.Customers.Get("ALFKI").Orders;
+            IEnumerable<dynamic> customerOrders = _db.Customers.FindAll(_db.Customers.CustomerID == "ALFKI").Orders;
+            //IEnumerable<dynamic> customerOrders = _db.Customers.Orders.Get("ALFKI");
 
             Assert.NotEmpty(customerOrders);
         }
@@ -32,7 +32,7 @@ namespace Simple.Data.OData.IntegrationTest
         public void FindAllEmployeeSubordinates()
         {
             // expected request: Employees(1)/Subordinates
-            IEnumerable<dynamic> subordinates = _db.Employees.Get(1).Subordinates;
+            IEnumerable<dynamic> subordinates = _db.Employees.Subordinates.Get(1);
 
             Assert.NotEmpty(subordinates);
         }
@@ -50,7 +50,7 @@ namespace Simple.Data.OData.IntegrationTest
         public void FindEmployeeSuperior()
         {
             // expected request: Employees(1)/Superior
-            var superior = _db.Employees.Get(1).Superior;
+            var superior = _db.Employees.Superior.Get(1);
 
             Assert.NotNull(superior);
         }
@@ -77,7 +77,7 @@ namespace Simple.Data.OData.IntegrationTest
         public void FindProductSupplier()
         {
             // expected request: Suppliers?filter=Products/ProductName+eq+%27Chai%27
-            var supplier = _db.Supplier.Find(_db.Supplier.Product.ProductName == "Chai");
+            var supplier = _db.Supplier.Find(_db.Supplier.Products.ProductName == "Chai");
 
             Assert.Equal("Exotic Liquids", supplier.CompanyName);
         }

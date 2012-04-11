@@ -36,7 +36,15 @@ namespace Simple.Data.OData.IntegrationTest
         {
             var table = Schema.FindTable("Customers");
 
-            Assert.Equal(11, table.Columns.Count());
+            Assert.NotNull(table);
+        }
+
+        [Fact]
+        public void GetColumnsCount()
+        {
+            var columns = Schema.FindTable("Employees").Columns;
+
+            Assert.Equal(18, columns.Count());
         }
 
         [Fact]
@@ -45,6 +53,22 @@ namespace Simple.Data.OData.IntegrationTest
             var column = Schema.FindTable("Employees").FindColumn("first_name");
 
             Assert.Equal("FirstName", column.ActualName);
+        }
+
+        [Fact]
+        public void GetAssociationsCount()
+        {
+            var associations = Schema.FindTable("Employees").Associations;
+
+            Assert.Equal(4, associations.Count());
+        }
+
+        [Fact]
+        public void FindAssociation()
+        {
+            var association = Schema.FindTable("Employees").FindAssociation("superior");
+
+            Assert.Equal("Employees", association.ReferenceTableName);
         }
 
         [Fact]
