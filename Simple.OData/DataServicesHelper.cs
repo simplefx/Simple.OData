@@ -189,7 +189,7 @@ namespace Simple.OData
                    select new EdmEntityContainer()
                               {
                                   Name = e.Attribute("Name").Value,
-                                  IsDefaulEntityContainer = bool.Parse(e.Attribute("m", "IsDefaultEntityContainer").Value),
+                                  IsDefaulEntityContainer = ParseAttribute(e.Attribute("m", "IsDefaultEntityContainer")),
                                   EntitySets = (from s in e.Descendants(null, "EntitySet")
                                                 select new EdmEntitySet()
                                                     {
@@ -225,7 +225,7 @@ namespace Simple.OData
                        {
                            Name = element.Attribute("Name").Value,
                            Type = EdmPropertyType.Parse(element.Attribute("Type").Value, complexTypes),
-                           Nullable = bool.Parse(element.Attribute("Nullable").Value),
+                           Nullable = ParseAttribute(element.Attribute("Nullable")),
                        };
         }
 
@@ -236,6 +236,16 @@ namespace Simple.OData
                            Properties = (from p in element.Descendants(null, "PropertyRef")
                                          select p.Attribute("Name").Value).ToArray()
                        };
+        }
+
+        private static bool ParseAttribute(XAttribute attribute)
+        {
+            bool result = false;
+            if (attribute != null)
+            {
+                bool.TryParse(attribute.Value, out result);
+            }
+            return result;
         }
 
         public static XElement CreateDataElement(IDictionary<string, object> row)
