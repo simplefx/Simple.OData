@@ -72,17 +72,13 @@ namespace Simple.Data.OData
 
             foreach (var entry in entries)
             {
-                foreach (var kv in data)
-                {
-                    entry[kv.Key] = kv.Value;
-                }
                 var namedKeyValues = new Dictionary<string, object>();
                 for (int index = 0; index < keyFieldNames.Count(); index++)
                 {
                     namedKeyValues.Add(keyFieldNames[index], entry[keyFieldNames[index]]);
                 }
                 var formattedKeyValues = _expressionFormatter.Format(namedKeyValues);
-                table.Update(formattedKeyValues, entry);
+                table.Update(formattedKeyValues, data);
             }
             // TODO: what to return?
             return 0;
