@@ -14,7 +14,7 @@ namespace Simple.Data.OData.NorthwindModel
         {
             config.SetEntitySetAccessRule("*", EntitySetRights.All);
             config.SetServiceOperationAccessRule("*", ServiceOperationRights.All);
-            config.DataServiceBehavior.MaxProtocolVersion = DataServiceProtocolVersion.V2;
+            config.DataServiceBehavior.MaxProtocolVersion = DataServiceProtocolVersion.V3;
             config.UseVerboseErrors = true;
         }
 
