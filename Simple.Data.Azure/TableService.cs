@@ -2,32 +2,31 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Xml.Linq;
-using Simple.Data.Azure.Helpers;
-using System.Net;
+using Simple.Data.Azure.Schema;
 using Simple.OData;
 
 namespace Simple.Data.Azure
 {
     public class TableService
     {
-        private readonly AzureHelper _azureHelper;
+        private readonly RequestBuilder _requestBuilder;
 
-        public TableService(AzureHelper azureHelper)
+        public TableService(RequestBuilder requestBuilder)
         {
-            _azureHelper = azureHelper;
+            _requestBuilder = requestBuilder;
         }
 
         public IEnumerable<string> ListTables()
         {
-            var request = _azureHelper.CreateTableRequest("tables", RestVerbs.GET);
+            var request = _requestBuilder.CreateTableRequest("Tables", RestVerbs.GET);
 
             IEnumerable<string> list;
 
             using (var response = (HttpWebResponse)request.GetResponse())
             {
-                Trace.WriteLine(response.StatusCode, "HttpResponse");
                 list = TableHelper.ReadTableList(response.GetResponseStream()).ToList();
             }
 
@@ -39,16 +38,15 @@ namespace Simple.Data.Azure
             var dict = new Dictionary<string, object> { { "TableName", tableName } };
             var data = DataServicesHelper.CreateDataElement(dict);
 
-            DoRequest(data, "tables", RestVerbs.POST);
+            DoRequest(data, "Tables", RestVerbs.POST);
         }
 
         private void DoRequest(XElement element, string command, string method)
         {
-            var request = _azureHelper.CreateTableRequest(command, method, element.ToString());
+            var request = _requestBuilder.CreateTableRequest(command, method, element.ToString());
 
             using (var response = (HttpWebResponse)request.GetResponse())
             {
-                Trace.WriteLine(response.StatusCode);
             }
         }
     }

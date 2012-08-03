@@ -2,58 +2,123 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Simple.Data.OData.Schema;
+using Simple.OData.Schema;
 
 namespace Simple.Data.OData
 {
     using System.ComponentModel.Composition;
     using Simple.OData;
-    using Helpers;
 
     [Export("OData", typeof(Adapter))]
     public class ODataTableAdapter : Adapter
     {
-        private ODataHelper _helper;
+        private RequestBuilder _requestBuilder;
+        private ExpressionFormatter _expressionFormatter;
+        private DatabaseSchema _schema;
+
+        internal DatabaseSchema GetSchema()
+        {
+            return _schema ?? (_schema = DatabaseSchema.Get(_requestBuilder));
+        }
 
         protected override void OnSetup()
         {
             base.OnSetup();
-            _helper = new ODataHelper { UrlBase = Settings.Url };
+
+            _requestBuilder = new RequestBuilder { UrlBase = Settings.Url };
+            _expressionFormatter = new ExpressionFormatter(DatabaseSchema.Get(_requestBuilder).FindTable);
+            _schema = DatabaseSchema.Get(_requestBuilder);
         }
+
         public override IEnumerable<IDictionary<string, object>> Find(string tableName, SimpleExpression criteria)
         {
-            var filter = new ExpressionFormatter().Format(criteria);
-            var table = new Table(tableName, _helper);
-            return table.Query(filter);
+            return new ODataTable(tableName, _requestBuilder).Query(criteria);
+        }
+
+        public override IDictionary<string, object> GetKey(string tableName, IDictionary<string, object> record)
+        {
+            return new ODataTable(tableName, _requestBuilder).GetKey(tableName, record);
+        }
+
+        public override IList<string> GetKeyNames(string tableName)
+        {
+            return new ODataTable(tableName, _requestBuilder).GetKeyNames();
+        }
+
+        public override IDictionary<string, object> Get(string tableName, params object[] keyValues)
+        {
+            return new ODataTable(tableName, _requestBuilder).Get(keyValues);
         }
 
         public override IEnumerable<IDictionary<string, object>> RunQuery(SimpleQuery query, out IEnumerable<SimpleQueryClauseBase> unhandledClauses)
         {
-            throw new NotImplementedException();
+            return new ODataTable(query.TableName, _requestBuilder).Query(query, out unhandledClauses);
         }
 
-        public override IDictionary<string, object> Insert(string tableName, IDictionary<string, object> data)
+        public override IDictionary<string, object> Insert(string tableName, IDictionary<string, object> data, bool resultRequired)
         {
-            throw new NotImplementedException();
+            CheckInsertablePropertiesAreAvailable(tableName, data);
+            var table = new ODataTable(tableName, _requestBuilder);
+            return table.Insert(data, resultRequired);
         }
 
         public override int Update(string tableName, IDictionary<string, object> data, SimpleExpression criteria)
         {
-            throw new NotImplementedException();
-        }
+            // TODO: optimize
+            var table = new ODataTable(tableName, _requestBuilder);
+            string[] keyFieldNames = _schema.FindTable(tableName).PrimaryKey.AsEnumerable().ToArray();
+            var entries = table.Query(criteria);
 
-        public override int Update(string tableName, IDictionary<string, object> data)
-        {
-            throw new NotImplementedException();
+            foreach (var entry in entries)
+            {
+                var namedKeyValues = new Dictionary<string, object>();
+                for (int index = 0; index < keyFieldNames.Count(); index++)
+                {
+                    namedKeyValues.Add(keyFieldNames[index], entry[keyFieldNames[index]]);
+                }
+                var formattedKeyValues = _expressionFormatter.Format(namedKeyValues);
+                table.Update(formattedKeyValues, data);
+            }
+            // TODO: what to return?
+            return 0;
         }
 
         public override int Delete(string tableName, SimpleExpression criteria)
         {
-            throw new NotImplementedException();
+            // TODO: optimize
+            var table = new ODataTable(tableName, _requestBuilder);
+            string[] keyFieldNames = _schema.FindTable(tableName).PrimaryKey.AsEnumerable().ToArray();
+            var entries = table.Query(criteria);
+
+            foreach (var entry in entries)
+            {
+                var namedKeyValues = new Dictionary<string, object>();
+                for (int index = 0; index < keyFieldNames.Count(); index++)
+                {
+                    namedKeyValues.Add(keyFieldNames[index], entry[keyFieldNames[index]]);
+                }
+                var formattedKeyValues = _expressionFormatter.Format(namedKeyValues);
+                table.Delete(formattedKeyValues);
+            }
+            // TODO: what to return?
+            return 0;
         }
 
         public override bool IsExpressionFunction(string functionName, params object[] args)
         {
-            throw new NotImplementedException();
+            return false;
+        }
+
+        private void CheckInsertablePropertiesAreAvailable(string tableName, IEnumerable<KeyValuePair<string, object>> data)
+        {
+            var table = DatabaseSchema.Get(_requestBuilder).FindTable(tableName);
+            data = data.Where(kvp => table.HasColumn(kvp.Key));
+
+            if (data.Count() == 0)
+            {
+                throw new SimpleDataException("No properties were found which could be mapped to the database.");
+            }
         }
     }
 }

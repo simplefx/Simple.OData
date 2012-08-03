@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Simple.Data;
+using Simple.OData.Schema;
 
 namespace Simple.OData
 {
@@ -12,9 +13,10 @@ namespace Simple.OData
     public class ExpressionFormatter
     {
         private readonly Dictionary<SimpleExpressionType, Func<SimpleExpression, string>> _expressionFormatters;
-        private readonly SimpleReferenceFormatter _simpleReferenceFormatter = new SimpleReferenceFormatter();
+        private readonly SimpleReferenceFormatter _simpleReferenceFormatter;
+        private readonly Func<string, Table> _findTable; 
 
-        public ExpressionFormatter()
+        public ExpressionFormatter(Func<string, Table> findTable)
         {
             _expressionFormatters = new Dictionary<SimpleExpressionType, Func<SimpleExpression, string>>
                                         {
@@ -22,7 +24,6 @@ namespace Simple.OData
                                             { SimpleExpressionType.Or, LogicalExpressionToWhereClause },
                                             { SimpleExpressionType.Equal, EqualExpressionToWhereClause },
                                             { SimpleExpressionType.NotEqual, NotEqualExpressionToWhereClause },
-                                            { SimpleExpressionType.Function, FunctionExpressionToWhereClause },
                                             {
                                                 SimpleExpressionType.GreaterThan,
                                                 expr => BinaryExpressionToWhereClause(expr, "gt")
@@ -41,18 +42,32 @@ namespace Simple.OData
                                                 },
                                             { SimpleExpressionType.Empty, expr => string.Empty },
                                         };
+            _findTable = findTable;
+            _simpleReferenceFormatter = new SimpleReferenceFormatter(findTable);
         }
 
         public string Format(SimpleExpression expression)
         {
             Func<SimpleExpression, string> formatter;
 
-            if (_expressionFormatters.TryGetValue(expression.Type, out formatter))
+            if (expression != null && _expressionFormatters.TryGetValue(expression.Type, out formatter))
             {
                 return formatter(expression);
             }
 
             return string.Empty;
+        }
+
+        public string Format(IDictionary<string, object> keyValues)
+        {
+            if (keyValues.Count() == 1)
+            {
+                return FormatValue(keyValues.First().Value);
+            }
+            else
+            {
+                return string.Join(",", keyValues.Select(x => string.Format("{0}={1}", x.Key, FormatValue(x.Value))));
+            }
         }
 
         private string LogicalExpressionToWhereClause(SimpleExpression expression)
@@ -97,26 +112,6 @@ namespace Simple.OData
                        : null;
         }
 
-        private string FunctionExpressionToWhereClause(SimpleExpression expression)
-        {
-            var function = expression.RightOperand as SimpleFunction;
-            if (function == null) throw new InvalidOperationException("Expected SimpleFunction as the right operand.");
-
-            if (function.Name.Equals("like", StringComparison.InvariantCultureIgnoreCase))
-            {
-                return string.Format("{0} LIKE {1}", FormatObject(expression.LeftOperand),
-                                     FormatObject(function.Args[0]));
-            }
-
-            if (function.Name.Equals("notlike", StringComparison.InvariantCultureIgnoreCase))
-            {
-                return string.Format("{0} NOT LIKE {1}", FormatObject(expression.LeftOperand),
-                                     FormatObject(function.Args[0]));
-            }
-
-            throw new NotSupportedException(string.Format("Unknown function '{0}'.", function.Name));
-        }
-
         private string BinaryExpressionToWhereClause(SimpleExpression expression, string comparisonOperator)
         {
             return string.Format("{0} {1} {2}", FormatObject(expression.LeftOperand),
@@ -124,70 +119,34 @@ namespace Simple.OData
                                  FormatObject(expression.RightOperand));
         }
 
-        protected string FormatObject(object value)
+        internal protected string FormatObject(object value)
         {
-            var objectReference = value as SimpleReference;
+            if (value is SimpleFunction)
+                return FormatFunction(value as SimpleFunction);
 
-            if (!ReferenceEquals(objectReference, null))
-                return _simpleReferenceFormatter.FormatColumnClause(objectReference);
+            var simpleReference = value as SimpleReference;
+            if (!ReferenceEquals(simpleReference, null))
+                return FormatReference(simpleReference);
 
-            return value is string ? string.Format("'{0}'", value) : value is DateTime ? ((DateTime)value).ToIso8601String() : value.ToString();
-        }
-    }
-
-    class SimpleReferenceFormatter
-    {
-        public string FormatColumnClause(SimpleReference reference)
-        {
-            var formatted = TryFormatAsObjectReference(reference as ObjectReference)
-                            ??
-                            TryFormatAsMathReference(reference as MathReference);
-
-            if (formatted != null) return formatted;
-
-            throw new InvalidOperationException("SimpleReference type not supported.");
+            return FormatValue(value);
         }
 
-        private string FormatObject(object value)
+        internal protected string FormatReference(SimpleReference reference)
         {
-            var reference = value as SimpleReference;
-            if (reference != null) return FormatColumnClause(reference);
-            return value is string ? string.Format("'{0}'", value) : value is DateTime ? ((DateTime)value).ToIso8601String() : value.ToString();
+            return _simpleReferenceFormatter.FormatColumnClause(reference);
         }
 
-        private string TryFormatAsMathReference(MathReference mathReference)
+        internal protected string FormatFunction(SimpleFunction function)
         {
-            if (ReferenceEquals(mathReference, null)) return null;
-
-            return string.Format("{0} {1} {2}", FormatObject(mathReference.LeftOperand),
-                                 MathOperatorToString(mathReference.Operator), FormatObject(mathReference.RightOperand));
+            return string.Format("{0}({1})", function.Name, function.Args.Aggregate((x, y) => FormatObject(x) + "," + FormatObject(y)));
         }
 
-        private static string MathOperatorToString(MathOperator @operator)
+        internal static string FormatValue(object value)
         {
-            switch (@operator)
-            {
-                case MathOperator.Add:
-                    return "add";
-                case MathOperator.Subtract:
-                    return "sub";
-                case MathOperator.Multiply:
-                    return "mul";
-                case MathOperator.Divide:
-                    return "div";
-                case MathOperator.Modulo:
-                    return "mod";
-                default:
-                    throw new InvalidOperationException("Invalid MathOperator specified.");
-            }
+            return value is string ? string.Format("'{0}'", value)
+                : value is DateTime ? ((DateTime)value).ToIso8601String()
+                : value is bool ? ((bool)value) ? "true" : "false"
+                : value.ToString();
         }
-
-        private string TryFormatAsObjectReference(ObjectReference objectReference)
-        {
-            if (ReferenceEquals(objectReference, null)) return null;
-
-            return objectReference.GetName();
-        }
-
     }
 }
