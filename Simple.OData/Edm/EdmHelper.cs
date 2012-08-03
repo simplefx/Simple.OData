@@ -60,13 +60,15 @@ namespace Simple.OData.Edm
             }
             else if (element.HasElements)
             {
-                var properties = new Dictionary<string, object>();
-                element.Descendants().ToList().ForEach(x =>
-                    {
-                        var kvp = Read(x);
-                        properties.Add(kvp.Key, kvp.Value);
-                    });
-                elementValue = properties;
+                var typeAttribute = element.Attribute("m", "type").ValueOrDefault();
+                if (!string.IsNullOrEmpty(typeAttribute) && typeAttribute.StartsWith("Collection("))
+                {
+                    elementValue = ReadPropertyArray(element);
+                }
+                else
+                {
+                    elementValue = ReadPropertySet(element);
+                }
             }
             else
             {
@@ -75,6 +77,28 @@ namespace Simple.OData.Edm
             }
 
             return new KeyValuePair<string, object>(element.Name.LocalName, elementValue);
+        }
+
+        private static object ReadPropertyArray(XElement element)
+        {
+            var properties = new List<object>();
+            element.Elements().ToList().ForEach(x =>
+            {
+                var kvp = Read(x);
+                properties.Add(kvp.Value);
+            });
+            return properties;
+        }
+
+        private static object ReadPropertySet(XElement element)
+        {
+            var properties = new Dictionary<string, object>();
+            element.Elements().ToList().ForEach(x =>
+            {
+                var kvp = Read(x);
+                properties.Add(kvp.Key, kvp.Value);
+            });
+            return properties;
         }
 
         public static void Write(XElement container, KeyValuePair<string, object> kvp)

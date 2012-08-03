@@ -86,6 +86,34 @@ namespace Simple.OData.Test
             Assert.Equal("bags", quantity["Units"]);
         }
 
+        [Fact]
+        public void GetDataParsesSingleProductWithCollectionOfPrimitiveProperties()
+        {
+            string document = GetResourceAsString("SingleProductWithCollectionOfPrimitiveProperties.xml");
+            var result = DataServicesHelper.GetData(document);
+            Assert.Equal(1, result.Count());
+            Assert.Equal(productProperties + 1, result.First().Count);
+            var tags = result.First()["Tags"] as IList<dynamic>;
+            Assert.Equal(2, tags.Count);
+            Assert.Equal("Bakery", tags[0]);
+            Assert.Equal("Food", tags[1]);
+        }
+
+        [Fact]
+        public void GetDataParsesSingleProductWithCollectionOfComplexProperties()
+        {
+            string document = GetResourceAsString("SingleProductWithCollectionOfComplexProperties.xml");
+            var result = DataServicesHelper.GetData(document);
+            Assert.Equal(1, result.Count());
+            Assert.Equal(productProperties + 1, result.First().Count);
+            var tags = result.First()["Tags"] as IList<dynamic>;
+            Assert.Equal(2, tags.Count);
+            Assert.Equal("Food", tags[0]["group"]);
+            Assert.Equal("Bakery", tags[0]["value"]);
+            Assert.Equal("Food", tags[1]["group"]);
+            Assert.Equal("Meat", tags[1]["value"]);
+        }
+
         private string GetResourceAsString(string resourceName)
         {
             var assembly = Assembly.GetExecutingAssembly();
