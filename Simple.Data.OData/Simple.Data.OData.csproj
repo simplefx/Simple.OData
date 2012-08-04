@@ -50,7 +50,9 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="ODataAdapterTransaction.cs" />
     <Compile Include="ODataProviderException.cs" />
+    <Compile Include="ODataTableAdapterWithTransactions.cs" />
     <Compile Include="Schema\DatabaseSchema.cs" />
     <Compile Include="RequestBuilder.cs" />
     <Compile Include="IDatabaseOpenerExtensions.cs" />

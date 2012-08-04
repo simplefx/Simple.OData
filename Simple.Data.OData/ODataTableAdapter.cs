@@ -11,7 +11,7 @@ namespace Simple.Data.OData
     using Simple.OData;
 
     [Export("OData", typeof(Adapter))]
-    public class ODataTableAdapter : Adapter
+    public partial class ODataTableAdapter : Adapter
     {
         private RequestBuilder _requestBuilder;
         private ExpressionFormatter _expressionFormatter;
