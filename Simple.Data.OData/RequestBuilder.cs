@@ -6,45 +6,38 @@ using System.Net;
 using System.Globalization;
 using System.Security.Cryptography;
 using System.IO;
+using Simple.OData;
 
 namespace Simple.Data.OData
 {
     using Simple.NExtLib;
 
-    public class RequestBuilder
+    public abstract class RequestBuilder
     {
-        public string UrlBase { get; set; }
+        public string UrlBase { get; private set; }
+        public string Host
+        {
+            get 
+            {
+                if (string.IsNullOrEmpty(UrlBase)) return null;
+                var substr = UrlBase.Substring(UrlBase.IndexOf("//") + 2);
+                return substr.Substring(0, substr.IndexOf("/"));
+            }
+        }
+        public HttpWebRequest Request { get; protected set; }
 
-        private string CreateRequestUrl(string command)
+        public RequestBuilder(string urlBase)
+        {
+            this.UrlBase = urlBase;
+        }
+
+        protected string CreateRequestUrl(string command)
         {
             return (UrlBase ?? "http://") + command;
         }
 
-        public HttpWebRequest CreateTableRequest(string command, string method, string content = null)
-        {
-            var uri = CreateRequestUrl(command);
-            var request = WebRequest.Create(uri);
-            request.Method = method;
-            request.ContentLength = (content ?? string.Empty).Length;
+        public abstract void AddTableCommand(string command, string method, string content = null);
 
-            // TODO: revise
-            //if (method == "PUT" || method == "DELETE" || method == "MERGE")
-            //{
-            //    request.Headers.Add("If-Match", "*");
-            //}
-
-            if (content != null)
-            {
-                AddContent(content, request);
-            }
-
-            return (HttpWebRequest)request;
-        }
-
-        private static void AddContent(string content, WebRequest request)
-        {
-            request.ContentType = "application/atom+xml";
-            request.SetContent(content);
-        }
+        protected abstract void AddContent(WebRequest request, string content);
     }
 }

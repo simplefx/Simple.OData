@@ -12,12 +12,12 @@ namespace Simple.Data.OData
 {
     class SchemaProvider : ISchemaProvider
     {
-        private RequestBuilder _requestBuilder;
+        private string _urlBase;
         private Lazy<EdmSchema> _metadata; 
 
-        public SchemaProvider(RequestBuilder requestBuilder)
+        public SchemaProvider(string urlBase)
         {
-            _requestBuilder = requestBuilder;
+            _urlBase = urlBase;
             _metadata = new Lazy<EdmSchema>(RequestMetadata);
         }
 
@@ -26,7 +26,7 @@ namespace Simple.Data.OData
             return from e in _metadata.Value.EntityContainers
                    where e.IsDefaulEntityContainer
                        from s in e.EntitySets
-                       select new ODataTable(s.Name, _requestBuilder);
+                       select new ODataTable(s.Name, DatabaseSchema.Get(_urlBase));
         }
 
         public IEnumerable<Column> GetColumns(Table table)
@@ -70,8 +70,9 @@ namespace Simple.Data.OData
 
         private EdmSchema RequestMetadata()
         {
-            var request = _requestBuilder.CreateTableRequest("$metadata", "GET");
-            using (var response = new RequestRunner().TryRequest(request))
+            var requestBuilder = new CommandRequestBuilder(_urlBase);
+            requestBuilder.AddTableCommand("$metadata", "GET");
+            using (var response = new RequestRunner().TryRequest(requestBuilder.Request))
             {
                 if (response.StatusCode == HttpStatusCode.OK)
                 {

@@ -50,6 +50,9 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="BatchRequestBuilder.cs" />
+    <Compile Include="CommandRequestBuilder.cs" />
+    <Compile Include="CommandRequestRunner.cs" />
     <Compile Include="ODataAdapterTransaction.cs" />
     <Compile Include="ODataProviderException.cs" />
     <Compile Include="ODataTableAdapterWithTransactions.cs" />

@@ -2,18 +2,32 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Simple.OData;
 
 namespace Simple.Data.OData
 {
     class ODataAdapterTransaction : IAdapterTransaction
     {
+        class AdapterRequest
+        {
+            public string MethodName { get; private set; }
+            public object[] Parameters { get; private set; }
+
+            public AdapterRequest(string methodName, params object[] parameters)
+            {
+                this.MethodName = methodName;
+                this.Parameters = parameters;
+            }
+        }
+
         private readonly ODataTableAdapter _adapter;
-        private List<Tuple<string, object[]>> _calls; 
+        private List<AdapterRequest> _requests;
 
         public ODataAdapterTransaction(ODataTableAdapter adapter)
         {
             _adapter = adapter;
-            _calls = new List<Tuple<string, object[]>>();
+            _adapter.SetRequestHandlers(new BatchRequestBuilder(_adapter.UrlBase), new RequestRunner());
+            _requests = new List<AdapterRequest>();
         }
 
         public string Name
@@ -23,54 +37,25 @@ namespace Simple.Data.OData
 
         public void Commit()
         {
-            foreach (var call in _calls)
-            {
-                switch (call.Item1)
-                {
-                    case "Delete":
-                        _adapter.Delete((string)call.Item2[0], (SimpleExpression)call.Item2[1]);
-                        break;
-                    case "Insert":
-                        _adapter.Insert((string)call.Item2[0], (IDictionary<string, object>)call.Item2[1], (bool)call.Item2[2]);
-                        break;
-                    case "InsertMany":
-                        _adapter.InsertMany((string)call.Item2[0], (IEnumerable<IDictionary<string, object>>)call.Item2[1], (Func<IDictionary<string, object>, Exception, bool>)call.Item2[2], (bool)call.Item2[3]);
-                        break;
-                    case "Update":
-                        _adapter.Update((string)call.Item2[0], (IDictionary<string, object>)call.Item2[1], (SimpleExpression)call.Item2[2]);
-                        break;
-                    case "UpdateMany":
-                        switch (call.Item2.Length)
-                        {
-                            case 2:
-                                _adapter.UpdateMany((string)call.Item2[0], (IEnumerable<IDictionary<string, object>>)call.Item2[1]);
-                                break;
-                            case 3:
-                                if (call.Item2[1] is IList<IDictionary<string, object>>)
-                                    _adapter.UpdateMany((string)call.Item2[0], (IList<IDictionary<string, object>>)call.Item2[1], (IEnumerable<string>)call.Item2[2]);
-                                else
-                                    _adapter.UpdateMany((string)call.Item2[0], (IEnumerable<IDictionary<string, object>>)call.Item2[1], (IList<string>)call.Item2[2]);
-                                break;
-                        }
-                        break;
-                }
-            }
-            _calls.Clear();
+            SendBatchRequest();
+            _adapter.SetRequestHandlers(new CommandRequestBuilder(_adapter.UrlBase), new RequestRunner());
+            _requests.Clear();
         }
 
         public void Rollback()
         {
-            _calls.Clear();
+            _adapter.SetRequestHandlers(new CommandRequestBuilder(_adapter.UrlBase), new RequestRunner());
+            _requests.Clear();
         }
 
         public void Dispose()
         {
-            _calls.Clear();
+            _requests.Clear();
         }
 
         public int Delete(string tableName, SimpleExpression criteria)
         {
-            _calls.Add(new Tuple<string, object[]>("Delete", new object[] { tableName, criteria }));
+            _requests.Add(new AdapterRequest("Delete", tableName, criteria ));
             return 0;
         }
 
@@ -86,13 +71,13 @@ namespace Simple.Data.OData
 
         public IDictionary<string, object> Insert(string tableName, IDictionary<string, object> data, bool resultRequired)
         {
-            _calls.Add(new Tuple<string, object[]>("Insert", new object[] { tableName, data, resultRequired }));
+            _requests.Add(new AdapterRequest("Insert", tableName, data, resultRequired ));
             return null;
         }
 
         public IEnumerable<IDictionary<string, object>> InsertMany(string tableName, IEnumerable<IDictionary<string, object>> data, Func<IDictionary<string, object>, Exception, bool> onError, bool resultRequired)
         {
-            _calls.Add(new Tuple<string, object[]>("InsertMany", new object[] { tableName, data, onError, resultRequired }));
+            _requests.Add(new AdapterRequest("InsertMany", tableName, data, onError, resultRequired ));
             return null;
         }
 
@@ -103,26 +88,65 @@ namespace Simple.Data.OData
 
         public int Update(string tableName, IDictionary<string, object> data, SimpleExpression criteria)
         {
-            _calls.Add(new Tuple<string, object[]>("Update", new object[] { tableName, data, criteria }));
+            _requests.Add(new AdapterRequest("Update", tableName, data, criteria ));
             return 0;
         }
 
         public int UpdateMany(string tableName, IList<IDictionary<string, object>> dataList, IEnumerable<string> criteriaFieldNames)
         {
-            _calls.Add(new Tuple<string, object[]>("UpdateMany", new object[] { tableName, dataList, criteriaFieldNames }));
+            _requests.Add(new AdapterRequest("UpdateMany1", tableName, dataList, criteriaFieldNames ));
             return 0;
         }
 
         public int UpdateMany(string tableName, IEnumerable<IDictionary<string, object>> dataList, IList<string> keyFields)
         {
-            _calls.Add(new Tuple<string, object[]>("UpdateMany", new object[] { tableName, dataList, keyFields }));
+            _requests.Add(new AdapterRequest("UpdateMany2", tableName, dataList, keyFields ));
             return 0;
         }
 
         public int UpdateMany(string tableName, IEnumerable<IDictionary<string, object>> dataList)
         {
-            _calls.Add(new Tuple<string, object[]>("UpdateMany", new object[] { tableName, dataList }));
+            _requests.Add(new AdapterRequest("UpdateMany3", tableName, dataList ));
             return 0;
+        }
+
+        private void SendBatchRequest()
+        {
+            foreach (var request in _requests)
+            {
+                var tableName = (string)request.Parameters[0];
+                switch (request.MethodName)
+                {
+                    case "Delete":
+                        _adapter.Delete(tableName, 
+                            (SimpleExpression)request.Parameters[1]);
+                        break;
+                    case "Insert":
+                        _adapter.Insert(tableName, 
+                            (IDictionary<string, object>)request.Parameters[1], (bool)request.Parameters[2]);
+                        break;
+                    case "InsertMany":
+                        _adapter.InsertMany(tableName, 
+                            (IEnumerable<IDictionary<string, object>>)request.Parameters[1], (Func<IDictionary<string, object>, Exception, bool>)request.Parameters[2], (bool)request.Parameters[3]);
+                        break;
+                    case "Update":
+                        _adapter.Update(tableName, 
+                            (IDictionary<string, object>)request.Parameters[1], (SimpleExpression)request.Parameters[2]);
+                        break;
+                    case "UpdateMany1":
+                        _adapter.UpdateMany(tableName, 
+                            (IList<IDictionary<string, object>>)request.Parameters[1], (IEnumerable<string>)request.Parameters[2]);
+                        break;
+                    case "UpdateMany2":
+                        _adapter.UpdateMany(tableName, 
+                            (IEnumerable<IDictionary<string, object>>)request.Parameters[1], (IList<string>)request.Parameters[2]);
+                        break;
+                    case "UpdateMany3":
+                        _adapter.UpdateMany(tableName, 
+                            (IEnumerable<IDictionary<string, object>>)request.Parameters[1]);
+                        break;
+                }
+            }
         }
     }
 }

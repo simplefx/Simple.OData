@@ -14,7 +14,8 @@ namespace Simple.Data.OData
 
         public IAdapterTransaction BeginTransaction(System.Data.IsolationLevel isolationLevel = System.Data.IsolationLevel.Unspecified)
         {
-            return  new ODataAdapterTransaction(this);
+            _requestBuilder = new BatchRequestBuilder(_urlBase);
+            return new ODataAdapterTransaction(this);
         }
 
         public int Delete(string tableName, SimpleExpression criteria, IAdapterTransaction transaction)
