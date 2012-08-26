@@ -4,8 +4,8 @@ using System.Data;
 using System.Linq;
 using System.Net;
 using System.Text;
-using Simple.OData;
-using Simple.OData.Schema;
+using Simple.Data.OData;
+using Simple.Data.OData.Schema;
 
 namespace Simple.Data.OData.Schema
 {

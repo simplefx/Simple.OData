@@ -3,7 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Simple.OData.Schema;
+using Simple.Data.OData.Schema;
 
 namespace Simple.Data.OData.Schema
 {

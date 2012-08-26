@@ -16,7 +16,6 @@
     </dependencies>
   </metadata>
   <files>
-    <file src="bin\release\Simple.OData.dll" target="lib\net40" />
     <file src="bin\release\Simple.NExtLib.dll" target="lib\net40" />
   </files>
 </package>
