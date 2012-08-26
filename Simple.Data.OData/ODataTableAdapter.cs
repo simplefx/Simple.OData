@@ -8,7 +8,7 @@ using Simple.Data.OData.Schema;
 namespace Simple.Data.OData
 {
     using System.ComponentModel.Composition;
-    using Simple.OData;
+    using Simple.Data.OData;
 
     [Export("OData", typeof(Adapter))]
     public partial class ODataTableAdapter : Adapter

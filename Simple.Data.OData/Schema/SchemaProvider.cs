@@ -3,12 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
-using Simple.Data.OData.Schema;
-using Simple.OData;
-using Simple.OData.Edm;
-using Simple.OData.Schema;
+using Simple.Data.OData.Edm;
 
-namespace Simple.Data.OData
+namespace Simple.Data.OData.Schema
 {
     class SchemaProvider : ISchemaProvider
     {

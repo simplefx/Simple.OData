@@ -1,4 +1,4 @@
-﻿using Simple.OData;
+﻿using Simple.Data.OData;
 
 namespace Simple.Data.OData
 {

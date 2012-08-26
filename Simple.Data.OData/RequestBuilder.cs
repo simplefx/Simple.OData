@@ -3,15 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Net;
-using System.Globalization;
-using System.Security.Cryptography;
-using System.IO;
-using Simple.OData;
 
 namespace Simple.Data.OData
 {
-    using Simple.NExtLib;
-
     public abstract class RequestBuilder
     {
         public string UrlBase { get; private set; }

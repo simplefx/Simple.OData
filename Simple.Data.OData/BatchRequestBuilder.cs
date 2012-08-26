@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Net;
 using System.Text;
-using Simple.NExtLib;
-using Simple.OData;
 
 namespace Simple.Data.OData
 {
