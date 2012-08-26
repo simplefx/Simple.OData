@@ -10,7 +10,7 @@ namespace Simple.Data.OData.UnitTests
 {
     public class CommandBuilderTest
     {
-        private CommandBuilder _commandBuilder = new CommandBuilder(x => new Table(x));
+        private CommandBuilder _commandBuilder = new CommandBuilder(x => new Table(x, null));
 
         [Fact]
         public void BuildsCommandFromTableNameWithNoFilter()

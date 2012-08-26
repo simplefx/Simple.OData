@@ -45,7 +45,7 @@ namespace Simple.Data.OData.Schema
         private TableCollection CreateTableCollection()
         {
             return new TableCollection(_schemaProvider.GetTables()
-                .Select(table => new ODataTable(table.ActualName, this)));
+                .Select(table => new Table(table.ActualName, this)));
         }
 
         public static DatabaseSchema Get(string urlBase)

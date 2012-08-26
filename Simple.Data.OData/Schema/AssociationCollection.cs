@@ -12,13 +12,11 @@ namespace Simple.Data.OData.Schema
     {
         public AssociationCollection()
         {
-
         }
 
         public AssociationCollection(IEnumerable<Association> associations)
             : base(associations.ToList())
         {
-
         }
 
         public Association Find(string associationName)

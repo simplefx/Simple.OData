@@ -11,14 +11,19 @@ namespace Simple.Data.OData.Schema
     /// </summary>
     public class Table
     {
+        private readonly DatabaseSchema _databaseSchema;
         protected readonly string _actualName;
         protected Lazy<ColumnCollection> _lazyColumns;
         protected Lazy<AssociationCollection> _lazyAssociations;
         protected Lazy<Key> _lazyPrimaryKey;
 
-        public Table(string name)
+        public Table(string name, DatabaseSchema databaseSchema)
         {
             _actualName = name;
+            _databaseSchema = databaseSchema;
+            _lazyColumns = new Lazy<ColumnCollection>(GetColumns);
+            _lazyAssociations = new Lazy<AssociationCollection>(GetAssociations);
+            _lazyPrimaryKey = new Lazy<Key>(GetPrimaryKey);
         }
 
         public override string ToString()
@@ -87,6 +92,32 @@ namespace Simple.Data.OData.Schema
         public Key PrimaryKey
         {
             get { return _lazyPrimaryKey.Value; }
+        }
+
+        public IDictionary<string, object> GetKey(string tableName, IDictionary<string, object> record)
+        {
+            var keyNames = GetKeyNames();
+            return record.Where(x => keyNames.Contains(x.Key)).ToIDictionary();
+        }
+
+        public IList<string> GetKeyNames()
+        {
+            return _databaseSchema.FindTable(_actualName).PrimaryKey.AsEnumerable().ToList();
+        }
+
+        private ColumnCollection GetColumns()
+        {
+            return new ColumnCollection(_databaseSchema.SchemaProvider.GetColumns(this));
+        }
+
+        private AssociationCollection GetAssociations()
+        {
+            return new AssociationCollection(_databaseSchema.SchemaProvider.GetAssociations(this));
+        }
+
+        private Key GetPrimaryKey()
+        {
+            return _databaseSchema.SchemaProvider.GetPrimaryKey(this);
         }
     }
 }

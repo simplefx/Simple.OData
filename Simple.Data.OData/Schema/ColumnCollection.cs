@@ -12,13 +12,11 @@ namespace Simple.Data.OData.Schema
     {
         public ColumnCollection()
         {
-
         }
 
         public ColumnCollection(IEnumerable<Column> columns)
             : base(columns.ToList())
         {
-
         }
 
         public Column Find(string columnName)

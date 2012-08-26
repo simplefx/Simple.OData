@@ -53,12 +53,12 @@ namespace Simple.Data.OData
 
         public override IDictionary<string, object> GetKey(string tableName, IDictionary<string, object> record)
         {
-            return new ODataTable(tableName, GetSchema()).GetKey(tableName, record);
+            return new Table(tableName, GetSchema()).GetKey(tableName, record);
         }
 
         public override IList<string> GetKeyNames(string tableName)
         {
-            return new ODataTable(tableName, GetSchema()).GetKeyNames();
+            return new Table(tableName, GetSchema()).GetKeyNames();
         }
 
         public override IDictionary<string, object> Get(string tableName, params object[] keyValues)

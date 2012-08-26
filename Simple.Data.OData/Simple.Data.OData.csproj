@@ -82,7 +82,6 @@
     <Compile Include="Schema\SchemaProvider.cs" />
     <Compile Include="ODataTableAdapter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Schema\ODataTable.cs" />
     <Compile Include="Schema\Table.cs" />
     <Compile Include="Schema\TableCollection.cs" />
     <Compile Include="SimpleReferenceFormatter.cs" />

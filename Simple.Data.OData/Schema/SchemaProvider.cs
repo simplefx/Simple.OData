@@ -23,7 +23,7 @@ namespace Simple.Data.OData.Schema
             return from e in _metadata.Value.EntityContainers
                    where e.IsDefaulEntityContainer
                        from s in e.EntitySets
-                       select new ODataTable(s.Name, DatabaseSchema.Get(_urlBase));
+                       select new Table(s.Name, DatabaseSchema.Get(_urlBase));
         }
 
         public IEnumerable<Column> GetColumns(Table table)
