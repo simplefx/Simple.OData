@@ -8,14 +8,15 @@ namespace Simple.Data.OData
     using System.Net;
     using NExtLib.IO;
 
-    public interface IRequestRunner
+    public abstract class RequestRunner
     {
-        string Request(HttpWebRequest request);
-        HttpWebResponse TryRequest(HttpWebRequest request);
-    }
+        protected RequestBuilder _requestBuilder;
 
-    public class RequestRunner : IRequestRunner
-    {
+        public RequestRunner(RequestBuilder requestBuilder)
+        {
+            _requestBuilder = requestBuilder;
+        }
+
         public string Request(HttpWebRequest request)
         {
             using (var response = TryRequest(request))
@@ -35,6 +36,11 @@ namespace Simple.Data.OData
                 throw TableServiceException.CreateFromWebException(ex);
             }
         }
+
+        public abstract IEnumerable<IDictionary<string, object>> FindEntries(bool scalarResult, bool setTotalCount, out int totalCount);
+        public abstract IDictionary<string, object> InsertEntry(bool resultRequired);
+        public abstract int UpdateEntry();
+        public abstract int DeleteEntry();
 
         private static string TryGetResponseBody(HttpWebResponse response)
         {

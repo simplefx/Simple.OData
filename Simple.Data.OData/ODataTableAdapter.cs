@@ -16,8 +16,6 @@ namespace Simple.Data.OData
         private string _urlBase;
         private ExpressionFormatter _expressionFormatter;
         private DatabaseSchema _schema;
-        private RequestBuilder _requestBuilder;
-        private RequestRunner _requestRunner ;
 
         internal string UrlBase
         {
@@ -29,12 +27,6 @@ namespace Simple.Data.OData
             return _schema ?? (_schema = DatabaseSchema.Get(_urlBase));
         }
 
-        internal void SetRequestHandlers(RequestBuilder requestBuilder, RequestRunner requestRunner)
-        {
-            _requestBuilder = requestBuilder;
-            _requestRunner = requestRunner;
-        }
-
         protected override void OnSetup()
         {
             base.OnSetup();
@@ -42,8 +34,6 @@ namespace Simple.Data.OData
             _urlBase = Settings.Url;
             _expressionFormatter = new ExpressionFormatter(DatabaseSchema.Get(_urlBase).FindTable);
             _schema = DatabaseSchema.Get(_urlBase);
-            _requestBuilder = new CommandRequestBuilder(_urlBase);
-            _requestRunner = new RequestRunner();
         }
 
         public override IEnumerable<IDictionary<string, object>> Find(string tableName, SimpleExpression criteria)
@@ -74,47 +64,17 @@ namespace Simple.Data.OData
         public override IDictionary<string, object> Insert(string tableName, IDictionary<string, object> data, bool resultRequired)
         {
             CheckInsertablePropertiesAreAvailable(tableName, data);
-            return InsertEntry(tableName, data, resultRequired);
+            return InsertEntry(tableName, data, null, resultRequired);
         }
 
         public override int Update(string tableName, IDictionary<string, object> data, SimpleExpression criteria)
         {
-            // TODO: optimize
-            string[] keyFieldNames = GetSchema().FindTable(tableName).PrimaryKey.AsEnumerable().ToArray();
-            var entries = FindByExpression(tableName, criteria);
-
-            foreach (var entry in entries)
-            {
-                var namedKeyValues = new Dictionary<string, object>();
-                for (int index = 0; index < keyFieldNames.Count(); index++)
-                {
-                    namedKeyValues.Add(keyFieldNames[index], entry[keyFieldNames[index]]);
-                }
-                var formattedKeyValues = _expressionFormatter.Format(namedKeyValues);
-                UpdateEntry(tableName, formattedKeyValues, data);
-            }
-            // TODO: what to return?
-            return 0;
+            return UpdateByExpression(tableName, data, criteria, null);
         }
 
         public override int Delete(string tableName, SimpleExpression criteria)
         {
-            // TODO: optimize
-            string[] keyFieldNames = GetSchema().FindTable(tableName).PrimaryKey.AsEnumerable().ToArray();
-            var entries = FindByExpression(tableName, criteria);
-
-            foreach (var entry in entries)
-            {
-                var namedKeyValues = new Dictionary<string, object>();
-                for (int index = 0; index < keyFieldNames.Count(); index++)
-                {
-                    namedKeyValues.Add(keyFieldNames[index], entry[keyFieldNames[index]]);
-                }
-                var formattedKeyValues = _expressionFormatter.Format(namedKeyValues);
-                DeleteEntry(tableName, formattedKeyValues);
-            }
-            // TODO: what to return?
-            return 0;
+            return DeleteByExpression(tableName, criteria, null);
         }
 
         public override bool IsExpressionFunction(string functionName, params object[] args)
@@ -181,69 +141,84 @@ namespace Simple.Data.OData
 
         private IEnumerable<IDictionary<string, object>> FindEntries(string url, bool scalarResult, bool setTotalCount, out int totalCount)
         {
-            IEnumerable<IDictionary<string, object>> result;
-            _requestBuilder.AddTableCommand(url, RestVerbs.GET);
-            totalCount = 0;
-
-            using (var response = _requestRunner.TryRequest(_requestBuilder.Request))
-            {
-                if (response.StatusCode != HttpStatusCode.OK)
-                {
-                    result = Enumerable.Empty<IDictionary<string, object>>();
-                }
-                else
-                {
-                    var stream = response.GetResponseStream();
-                    if (setTotalCount)
-                        result = DataServicesHelper.GetData(stream, out totalCount);
-                    else
-                        result = DataServicesHelper.GetData(response.GetResponseStream(), scalarResult);
-                }
-
-                return result;
-            }
+            var requestBuilder = new CommandRequestBuilder(_urlBase);
+            requestBuilder.AddTableCommand(url, RestVerbs.GET);
+            return new CommandRequestRunner(requestBuilder).FindEntries(scalarResult, setTotalCount, out totalCount);
         }
 
-        private IDictionary<string, object> InsertEntry(string tableName, IDictionary<string, object> data, bool resultRequired)
+        private IDictionary<string, object> InsertEntry(string tableName, IDictionary<string, object> data, IAdapterTransaction transaction, bool resultRequired)
         {
+            RequestBuilder requestBuilder;
+            RequestRunner requestRunner;
+            GetRequestHandlers(transaction, out requestBuilder, out requestRunner);
+
             var entry = DataServicesHelper.CreateDataElement(data);
             var command = GetTableActualName(tableName);
-            _requestBuilder.AddTableCommand(command, RestVerbs.POST, entry.ToString());
-
-            var text = _requestRunner.Request(_requestBuilder.Request);
-            if (resultRequired)
-            {
-                return DataServicesHelper.GetData(text).First();
-            }
-            else
-            {
-                return null;
-            }
+            requestBuilder.AddTableCommand(command, RestVerbs.POST, entry.ToString());
+            return requestRunner.InsertEntry(resultRequired);
         }
 
-        private int UpdateEntry(string tableName, string keys, IDictionary<string, object> data)
+        private int UpdateByExpression(string tableName, IDictionary<string, object> data, SimpleExpression criteria, IAdapterTransaction transaction)
         {
+            // TODO: optimize
+            string[] keyFieldNames = GetSchema().FindTable(tableName).PrimaryKey.AsEnumerable().ToArray();
+            var entries = FindByExpression(tableName, criteria);
+
+            foreach (var entry in entries)
+            {
+                var namedKeyValues = new Dictionary<string, object>();
+                for (int index = 0; index < keyFieldNames.Count(); index++)
+                {
+                    namedKeyValues.Add(keyFieldNames[index], entry[keyFieldNames[index]]);
+                }
+                var formattedKeyValues = _expressionFormatter.Format(namedKeyValues);
+                UpdateEntry(tableName, formattedKeyValues, data, transaction);
+            }
+            // TODO: what to return?
+            return 0;
+        }
+
+        private int UpdateEntry(string tableName, string keys, IDictionary<string, object> data, IAdapterTransaction transaction)
+        {
+            RequestBuilder requestBuilder;
+            RequestRunner requestRunner;
+            GetRequestHandlers(transaction, out requestBuilder, out requestRunner);
+
             var entry = DataServicesHelper.CreateDataElement(data);
             var command = GetTableActualName(tableName) + "(" + keys + ")"; 
-            _requestBuilder.AddTableCommand(command, RestVerbs.PUT, entry.ToString());
-
-            using (var response = _requestRunner.TryRequest(_requestBuilder.Request))
-            {
-                // TODO
-                return response.StatusCode == HttpStatusCode.OK ? 1 : 0;
-            }
+            requestBuilder.AddTableCommand(command, RestVerbs.PUT, entry.ToString());
+            return requestRunner.UpdateEntry();
         }
 
-        private int DeleteEntry(string tableName, string keys)
+        private int DeleteByExpression(string tableName, SimpleExpression criteria, IAdapterTransaction transaction)
         {
-            var command = GetTableActualName(tableName) + "(" + keys + ")";
-            _requestBuilder.AddTableCommand(command, RestVerbs.DELETE);
+            // TODO: optimize
+            string[] keyFieldNames = GetSchema().FindTable(tableName).PrimaryKey.AsEnumerable().ToArray();
+            var entries = FindByExpression(tableName, criteria);
 
-            using (var response = _requestRunner.TryRequest(_requestBuilder.Request))
+            foreach (var entry in entries)
             {
-                // TODO: check response code
-                return response.StatusCode == HttpStatusCode.OK ? 1 : 0;
+                var namedKeyValues = new Dictionary<string, object>();
+                for (int index = 0; index < keyFieldNames.Count(); index++)
+                {
+                    namedKeyValues.Add(keyFieldNames[index], entry[keyFieldNames[index]]);
+                }
+                var formattedKeyValues = _expressionFormatter.Format(namedKeyValues);
+                DeleteEntry(tableName, formattedKeyValues, transaction);
             }
+            // TODO: what to return?
+            return 0;
+        }
+
+        private int DeleteEntry(string tableName, string keys, IAdapterTransaction transaction)
+        {
+            RequestBuilder requestBuilder;
+            RequestRunner requestRunner;
+            GetRequestHandlers(transaction, out requestBuilder, out requestRunner);
+
+            var command = GetTableActualName(tableName) + "(" + keys + ")";
+            requestBuilder.AddTableCommand(command, RestVerbs.DELETE);
+            return requestRunner.DeleteEntry();
         }
 
         private string GetTableActualName(string tableName)
@@ -260,6 +235,16 @@ namespace Simple.Data.OData
             {
                 throw new SimpleDataException("No properties were found which could be mapped to the database.");
             }
+        }
+
+        private void GetRequestHandlers(IAdapterTransaction transaction, out RequestBuilder requestBuilder, out RequestRunner requestRunner)
+        {
+            requestBuilder = transaction == null
+                                     ? new CommandRequestBuilder(_urlBase)
+                                     : (transaction as ODataAdapterTransaction).RequestBuilder;
+            requestRunner = transaction == null
+                                    ? new CommandRequestRunner(requestBuilder)
+                                    : (transaction as ODataAdapterTransaction).RequestRunner;
         }
     }
 }

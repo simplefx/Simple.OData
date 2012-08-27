@@ -14,76 +14,58 @@ namespace Simple.Data.OData
 
         public IAdapterTransaction BeginTransaction(System.Data.IsolationLevel isolationLevel = System.Data.IsolationLevel.Unspecified)
         {
-            _requestBuilder = new BatchRequestBuilder(_urlBase);
             return new ODataAdapterTransaction(this);
-        }
-
-        public int Delete(string tableName, SimpleExpression criteria, IAdapterTransaction transaction)
-        {
-            return transaction == null? 
-                this.Delete(tableName, criteria) : 
-                (transaction as ODataAdapterTransaction).Delete(tableName, criteria);
         }
 
         public IEnumerable<IDictionary<string, object>> Find(string tableName, SimpleExpression criteria, IAdapterTransaction transaction)
         {
-            return transaction == null ? 
-                this.Find(tableName, criteria) :
-                (transaction as ODataAdapterTransaction).Find(tableName, criteria);
+            return this.Find(tableName, criteria);
         }
 
         public IDictionary<string, object> Get(string tableName, IAdapterTransaction transaction, params object[] parameterValues)
         {
-            return transaction == null ? 
-                this.Get(tableName, parameterValues) :
-                (transaction as ODataAdapterTransaction).Get(tableName, parameterValues);
-        }
-
-        public IDictionary<string, object> Insert(string tableName, IDictionary<string, object> data, IAdapterTransaction transaction, bool resultRequired)
-        {
-            return (transaction as ODataAdapterTransaction).Insert(tableName, data, resultRequired);
-        }
-
-        public IEnumerable<IDictionary<string, object>> InsertMany(string tableName, IEnumerable<IDictionary<string, object>> data, IAdapterTransaction transaction, Func<IDictionary<string, object>, Exception, bool> onError, bool resultRequired)
-        {
-            return transaction == null ? 
-                this.InsertMany(tableName, data, onError, resultRequired) :
-                (transaction as ODataAdapterTransaction).InsertMany(tableName, data, onError, resultRequired);
+            return this.Get(tableName, parameterValues);
         }
 
         public IEnumerable<IDictionary<string, object>> RunQuery(SimpleQuery query, IAdapterTransaction transaction, out IEnumerable<SimpleQueryClauseBase> unhandledClauses)
         {
-            return transaction == null ? 
-                this.RunQuery(query, out unhandledClauses) :
-                (transaction as ODataAdapterTransaction).RunQuery(query, out unhandledClauses);
+            return this.RunQuery(query, out unhandledClauses);
+        }
+
+        public IDictionary<string, object> Insert(string tableName, IDictionary<string, object> data, IAdapterTransaction transaction, bool resultRequired)
+        {
+            CheckInsertablePropertiesAreAvailable(tableName, data);
+            return InsertEntry(tableName, data, transaction, resultRequired);
+        }
+
+        public IEnumerable<IDictionary<string, object>> InsertMany(string tableName, IEnumerable<IDictionary<string, object>> data, IAdapterTransaction transaction, Func<IDictionary<string, object>, Exception, bool> onError, bool resultRequired)
+        {
+            return this.InsertMany(tableName, data, onError, resultRequired);
         }
 
         public int Update(string tableName, IDictionary<string, object> data, SimpleExpression criteria, IAdapterTransaction transaction)
         {
-            return transaction == null ? 
-                this.Update(tableName, data, criteria) :
-                (transaction as ODataAdapterTransaction).Update(tableName, data, criteria);
+            return UpdateByExpression(tableName, data, criteria, transaction);
         }
 
         public int UpdateMany(string tableName, IList<IDictionary<string, object>> dataList, IEnumerable<string> criteriaFieldNames, IAdapterTransaction transaction)
         {
-            return transaction == null ? 
-                this.UpdateMany(tableName, dataList, criteriaFieldNames) :
-                (transaction as ODataAdapterTransaction).UpdateMany(tableName, dataList, criteriaFieldNames);
+            return this.UpdateMany(tableName, dataList, criteriaFieldNames);
         }
 
         public int UpdateMany(string tableName, IEnumerable<IDictionary<string, object>> dataList, IAdapterTransaction transaction, IList<string> keyFields)
         {
-            return transaction == null ? 
-                this.UpdateMany(tableName, dataList, keyFields) :
-                (transaction as ODataAdapterTransaction).UpdateMany(tableName, dataList, keyFields);
+            return this.UpdateMany(tableName, dataList, keyFields);
         }
 
         public int UpdateMany(string tableName, IEnumerable<IDictionary<string, object>> dataList, IAdapterTransaction transaction)
         {
-            return transaction == null ? 
-                this.UpdateMany(tableName, dataList) :
-                (transaction as ODataAdapterTransaction).UpdateMany(tableName, dataList);
+            return this.UpdateMany(tableName, dataList);
+        }
+
+        public int Delete(string tableName, SimpleExpression criteria, IAdapterTransaction transaction)
+        {
+            return DeleteByExpression(tableName, criteria, transaction);
         }
     }
 }

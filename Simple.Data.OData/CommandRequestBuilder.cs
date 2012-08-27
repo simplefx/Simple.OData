@@ -12,17 +12,6 @@ namespace Simple.Data.OData
 
         public override void AddTableCommand(string command, string method, string content = null)
         {
-            this.Request = CreateTableRequest(command, method, content);
-        }
-
-        protected override void AddContent(WebRequest request, string content)
-        {
-            request.ContentType = "application/atom+xml";
-            request.SetContent(content);
-        }
-
-        private HttpWebRequest CreateTableRequest(string command, string method, string content = null)
-        {
             var uri = CreateRequestUrl(command);
             var request = (HttpWebRequest)WebRequest.Create(uri);
             request.Method = method;
@@ -36,10 +25,11 @@ namespace Simple.Data.OData
 
             if (content != null)
             {
-                AddContent(request, content);
+                request.ContentType = "application/atom+xml";
+                request.SetContent(content);
             }
 
-            return request;
+            this.Request = request;
         }
     }
 }

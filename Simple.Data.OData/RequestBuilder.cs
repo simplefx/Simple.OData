@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Net;
+using Simple.NExtLib;
 
 namespace Simple.Data.OData
 {
@@ -31,7 +32,5 @@ namespace Simple.Data.OData
         }
 
         public abstract void AddTableCommand(string command, string method, string content = null);
-
-        protected abstract void AddContent(WebRequest request, string content);
     }
 }

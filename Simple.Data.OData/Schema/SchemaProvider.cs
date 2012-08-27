@@ -69,7 +69,7 @@ namespace Simple.Data.OData.Schema
         {
             var requestBuilder = new CommandRequestBuilder(_urlBase);
             requestBuilder.AddTableCommand("$metadata", "GET");
-            using (var response = new RequestRunner().TryRequest(requestBuilder.Request))
+            using (var response = new CommandRequestRunner(requestBuilder).TryRequest(requestBuilder.Request))
             {
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
