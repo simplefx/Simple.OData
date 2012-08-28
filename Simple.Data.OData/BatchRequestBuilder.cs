@@ -9,6 +9,7 @@ namespace Simple.Data.OData
     {
         private string _batchId;
         private string _changesetId;
+        private int _contentId;
         private StringBuilder _contentBuilder;
 
         public BatchRequestBuilder(string urlBase)
@@ -59,6 +60,7 @@ namespace Simple.Data.OData
 
             if (content != null)
             {
+                _contentBuilder.AppendLine(string.Format("Content-ID: {0}", ++_contentId));
                 _contentBuilder.AppendLine(string.Format("Content-Type: application/atom+xml;type=entry"));
                 _contentBuilder.AppendLine(string.Format("Content-Length: {0}", (content ?? string.Empty).Length));
                 _contentBuilder.AppendLine();

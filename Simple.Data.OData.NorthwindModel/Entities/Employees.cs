@@ -8,6 +8,7 @@ namespace Simple.Data.OData.NorthwindModel.Entities
     [DataServiceKey("EmployeeID")]
     public class Employees
     {
+        private static int _nextID;
         private int? _reportsTo;
 
         public int EmployeeID { get; set; }
@@ -40,6 +41,7 @@ namespace Simple.Data.OData.NorthwindModel.Entities
 
         public Employees()
         {
+            this.EmployeeID = ++_nextID;
             this.Subordinates = new List<Employees>();
             this.Orders = new List<Orders>();
             this.Territories = new List<Territories>();

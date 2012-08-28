@@ -8,6 +8,7 @@ namespace Simple.Data.OData.NorthwindModel.Entities
     [DataServiceKey("ProductID")]
     public class Products
     {
+        private static int _nextID;
         private int _supplierID;
         private int _categoryID;
 
@@ -36,6 +37,7 @@ namespace Simple.Data.OData.NorthwindModel.Entities
 
         public Products()
         {
+            this.ProductID = ++_nextID;
             this.OrderDetails = new List<OrderDetails>();
         }
     }
