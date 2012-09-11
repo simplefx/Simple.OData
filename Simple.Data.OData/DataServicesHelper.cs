@@ -266,5 +266,15 @@ namespace Simple.Data.OData
             entry.Element(null, "updated").SetValue(DateTime.UtcNow.ToIso8601String());
             return entry;
         }
+
+        public static void AddDataLink(XElement container, string associationName, string linkedEntityName, object[] linkedEntityKey)
+        {
+            var entry = new XElement(container.GetDefaultNamespace() + "Link");
+            entry.SetAttributeValue("rel", string.Format("http://schemas.microsoft.com/ado/2007/08/dataservices/related/{0}", associationName));
+            entry.SetAttributeValue("type", "application/atom+xml;type=Entry");
+            entry.SetAttributeValue("title", associationName);
+            entry.SetAttributeValue("href", string.Format("{0}({1})", linkedEntityName, string.Join(",", linkedEntityKey)));
+            container.Add(entry);
+        }
     }
 }

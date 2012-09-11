@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Xml.Linq;
 using Simple.Data.OData.Schema;
 
 namespace Simple.Data.OData
@@ -152,10 +153,20 @@ namespace Simple.Data.OData
             RequestRunner requestRunner;
             GetRequestHandlers(transaction, out requestBuilder, out requestRunner);
 
-            var entry = DataServicesHelper.CreateDataElement(data);
+            IDictionary<string, object> properties;
+            IDictionary<string, object> associations;
+            VerifyEntryData(tableName, data, out properties, out associations);
+
+            var entry = DataServicesHelper.CreateDataElement(properties);
+            foreach (var association in associations)
+            {
+                LinkEntry(entry, tableName, association);
+            }
+
             var command = GetTableActualName(tableName);
             requestBuilder.AddTableCommand(command, RestVerbs.POST, entry.ToString());
-            return requestRunner.InsertEntry(resultRequired);
+            var result = requestRunner.InsertEntry(resultRequired);
+            return result;
         }
 
         private int UpdateByExpression(string tableName, IDictionary<string, object> data, SimpleExpression criteria, IAdapterTransaction transaction)
@@ -184,10 +195,20 @@ namespace Simple.Data.OData
             RequestRunner requestRunner;
             GetRequestHandlers(transaction, out requestBuilder, out requestRunner);
 
-            var entry = DataServicesHelper.CreateDataElement(data);
-            var command = GetTableActualName(tableName) + "(" + keys + ")"; 
+            IDictionary<string, object> properties;
+            IDictionary<string, object> associations;
+            VerifyEntryData(tableName, data, out properties, out associations);
+
+            var entry = DataServicesHelper.CreateDataElement(properties);
+            foreach (var association in associations)
+            {
+                LinkEntry(entry, tableName, association);
+            }
+
+            var command = GetTableActualName(tableName) + "(" + keys + ")";
             requestBuilder.AddTableCommand(command, RestVerbs.PUT, entry.ToString());
-            return requestRunner.UpdateEntry();
+            var result = requestRunner.UpdateEntry();
+            return result;
         }
 
         private int DeleteByExpression(string tableName, SimpleExpression criteria, IAdapterTransaction transaction)
@@ -221,9 +242,47 @@ namespace Simple.Data.OData
             return requestRunner.DeleteEntry();
         }
 
+        private void LinkEntry(XElement entry, string tableName, KeyValuePair<string, object> linkedEntry)
+        {
+            var association = GetSchema().FindTable(tableName).FindAssociation(linkedEntry.Key);
+            var entryProperties = linkedEntry.Value as IDictionary<string, object>;
+            var keyFieldNames = GetSchema().FindTable(association.ReferenceTableName).PrimaryKey.AsEnumerable().ToArray();
+            var keyFieldValues = new object[keyFieldNames.Count()];
+            for (int index = 0; index < keyFieldNames.Count(); index++)
+            {
+                keyFieldValues[index] = entryProperties[keyFieldNames[index]];
+            }
+            DataServicesHelper.AddDataLink(entry, association.ActualName, association.ReferenceTableName, keyFieldValues);
+        }
+
         private string GetTableActualName(string tableName)
         {
             return GetSchema().FindTable(tableName).ActualName;
+        }
+
+        private void VerifyEntryData(string tableName, IDictionary<string, object> data, out IDictionary<string, object> properties, out IDictionary<string, object> associations)
+        {
+            properties = new Dictionary<string, object>();
+            associations = new Dictionary<string, object>();
+            var table = GetSchema().FindTable(tableName);
+            foreach (var item in data)
+            {
+                if (table.HasColumn(item.Key))
+                {
+                    properties.Add(item.Key, item.Value);
+                }
+                else
+                {
+                    if (table.HasAssociation(item.Key))
+                    {
+                        associations.Add(item.Key, item.Value);
+                    }
+                    else
+                    {
+                        throw new SimpleDataException(string.Format("No property or association found for {0}.", item.Key));
+                    }
+                }
+            }
         }
 
         private void CheckInsertablePropertiesAreAvailable(string tableName, IEnumerable<KeyValuePair<string, object>> data)

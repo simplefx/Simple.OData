@@ -13,12 +13,12 @@ namespace Simple.Data.OData.NorthwindModel.Entities
         public int OrderID
         {
             get { return _orderID; }
-            set { this.Order = NorthwindContext.Instance.SetOrderDetailsOrder(this, value); _orderID = value; }
+            set { this.Order = NorthwindContext.Instance.SetOrderDetailsOrderID(this, value); _orderID = value; }
         }
         public int ProductID
         {
             get { return _productID; }
-            set { this.Product = NorthwindContext.Instance.SetOrderDetailsProduct(this, value); _productID = value; }
+            set { this.Product = NorthwindContext.Instance.SetOrderDetailsProductID(this, value); _productID = value; }
         }
         public decimal UnitPrice { get; set; }
         public short Quantity { get; set; }

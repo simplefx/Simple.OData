@@ -9,7 +9,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.Data.OData", "Simple
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D1D23CCD-C556-480A-8817-6FD58817A0C8}"
 	ProjectSection(SolutionItems) = preProject
-		CommonAssemblyInfo.cs = CommonAssemblyInfo.cs
 		NugetPack.cmd = NugetPack.cmd
 		NugetPackOData.cmd = NugetPackOData.cmd
 		NugetPush.cmd = NugetPush.cmd

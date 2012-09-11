@@ -30,7 +30,7 @@ namespace Simple.Data.OData.NorthwindModel.Entities
         public int? ReportsTo
         {
             get { return _reportsTo; }
-            set { this.Superior = NorthwindContext.Instance.SetEmployeeSuperior(this, value); _reportsTo = value; }
+            set { this.Superior = NorthwindContext.Instance.SetEmployeeSuperiorID(this, value); _reportsTo = value; }
         }
         public string PhotoPath { get; set; }
 

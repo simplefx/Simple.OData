@@ -17,12 +17,12 @@ namespace Simple.Data.OData.NorthwindModel.Entities
         public string CustomerID
         {
             get { return _customerID; }
-            set { this.Customer = NorthwindContext.Instance.SetOrderCustomer(this, value); _customerID = value; }
+            set { this.Customer = NorthwindContext.Instance.SetOrderCustomerID(this, value); _customerID = value; }
         }
         public int EmployeeID
         {
             get { return _employeeID; }
-            set { this.Employee = NorthwindContext.Instance.SetOrderEmployee(this, value); _employeeID = value; }
+            set { this.Employee = NorthwindContext.Instance.SetOrderEmployeeID(this, value); _employeeID = value; }
         }
         public DateTime? OrderDate { get; set; }
         public DateTime? RequiredDate { get; set; }
@@ -30,7 +30,7 @@ namespace Simple.Data.OData.NorthwindModel.Entities
         public int ShipVia
         {
             get { return _shipVia; }
-            set { this.Shipper = NorthwindContext.Instance.SetOrderShipper(this, value); _shipVia = value; }
+            set { this.Shipper = NorthwindContext.Instance.SetOrderShipperID(this, value); _shipVia = value; }
         }
         public decimal? Freight { get; set; }
         public string ShipName { get; set; }

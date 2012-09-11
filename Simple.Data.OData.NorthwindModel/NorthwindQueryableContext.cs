@@ -50,47 +50,47 @@ namespace Simple.Data.OData.NorthwindModel
         public IQueryable<Suppliers> Suppliers { get { return this.suppliers.AsQueryable(); } }
         public IQueryable<Territories> Territories { get { return this.territories.AsQueryable(); } }
 
-        internal Employees SetEmployeeSuperior(Employees employee, int? superiorID)
+        internal Employees SetEmployeeSuperiorID(Employees employee, int? superiorID)
         {
             return SetReference(employee, superiorID, this.employees, x => x.Subordinates, x => x.ReportsTo, x => x.EmployeeID);
         }
 
-        internal Orders SetOrderDetailsOrder(OrderDetails details, int orderID)
+        internal Orders SetOrderDetailsOrderID(OrderDetails details, int orderID)
         {
             return SetReference(details, orderID, this.orders, x => x.OrderDetails, x => x.OrderID, x => x.OrderID);
         }
 
-        internal Products SetOrderDetailsProduct(OrderDetails details, int productID)
+        internal Products SetOrderDetailsProductID(OrderDetails details, int productID)
         {
             return SetReference(details, productID, this.products, x => x.OrderDetails, x => x.ProductID, x => x.ProductID);
         }
 
-        internal Customers SetOrderCustomer(Orders order, string customerID)
+        internal Customers SetOrderCustomerID(Orders order, string customerID)
         {
             return SetReference(order, customerID, this.customers, x => x.Orders, x => x.CustomerID, x => x.CustomerID);
         }
 
-        internal Employees SetOrderEmployee(Orders order, int employeeID)
+        internal Employees SetOrderEmployeeID(Orders order, int employeeID)
         {
             return SetReference(order, employeeID, this.employees, x => x.Orders, x => x.EmployeeID, x => x.EmployeeID);
         }
 
-        internal Shippers SetOrderShipper(Orders order, int shipperID)
+        internal Shippers SetOrderShipperID(Orders order, int shipperID)
         {
             return SetReference(order, shipperID, this.shippers, x => x.Orders, x => x.ShipVia, x => x.ShipperID);
         }
 
-        internal Categories SetProductCategory(Products product, int categoryID)
+        internal Categories SetProductCategoryID(Products product, int categoryID)
         {
             return SetReference(product, categoryID, this.categories, x => x.Products, x => x.CategoryID, x => x.CategoryID);
         }
 
-        internal Suppliers SetProductSupplier(Products product, int supplierID)
+        internal Suppliers SetProductSupplierID(Products product, int supplierID)
         {
             return SetReference(product, supplierID, this.suppliers, x => x.Products, x => x.SupplierID, x => x.SupplierID);
         }
 
-        internal Regions SetTerritoryRegion(Territories territory, int regionID)
+        internal Regions SetTerritoryRegionID(Territories territory, int regionID)
         {
             return SetReference(territory, regionID, this.regions, x => x.Territories, x => x.RegionID, x => x.RegionID);
         }

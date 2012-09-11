@@ -15,7 +15,7 @@ namespace Simple.Data.OData.NorthwindModel.Entities
         public int RegionID
         {
             get { return _regionID; }
-            set { this.Region = NorthwindContext.Instance.SetTerritoryRegion(this, value); _regionID = value; }
+            set { this.Region = NorthwindContext.Instance.SetTerritoryRegionID(this, value); _regionID = value; }
         }
 
         public ICollection<Employees> Employees { get; private set; }
