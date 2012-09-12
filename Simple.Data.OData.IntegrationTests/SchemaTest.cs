@@ -60,7 +60,7 @@ namespace Simple.Data.OData.IntegrationTests
         {
             var associations = Schema.FindTable("Employees").Associations;
 
-            Assert.Equal(2, associations.Count());
+            Assert.Equal(3, associations.Count());
         }
 
         [Fact]

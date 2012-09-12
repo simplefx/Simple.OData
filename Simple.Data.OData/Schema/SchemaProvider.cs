@@ -40,13 +40,17 @@ namespace Simple.Data.OData.Schema
 
         public IEnumerable<Association> GetAssociations(Table table)
         {
-            var a = _metadata.Value.Associations.ToList();
-
-            return from e in _metadata.Value.EntityContainers
+            var principals = from e in _metadata.Value.EntityContainers
                    where e.IsDefaulEntityContainer
                    from s in e.AssociationSets
                    where s.End.First().EntitySet == table.ActualName
                    select CreateAssociation(s.End.Last());
+            var dependents = from e in _metadata.Value.EntityContainers
+                             where e.IsDefaulEntityContainer
+                             from s in e.AssociationSets
+                             where s.End.Last().EntitySet == table.ActualName
+                             select CreateAssociation(s.End.First());
+            return principals.Union(dependents);
         }
 
         public Key GetPrimaryKey(Table table)

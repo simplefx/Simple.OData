@@ -250,14 +250,14 @@
     <edmx:ConceptualModels>
       <Schema Namespace="NorthwindModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
         <EntityContainer Name="NorthwindEntities" annotation:LazyLoadingEnabled="true">
-          <EntitySet Name="Categories" EntityType="NorthwindModel.Category" />
-          <EntitySet Name="Customers" EntityType="NorthwindModel.Customer" />
-          <EntitySet Name="Employees" EntityType="NorthwindModel.Employee" />
-          <EntitySet Name="Order_Details" EntityType="NorthwindModel.Order_Detail" />
-          <EntitySet Name="Orders" EntityType="NorthwindModel.Order" />
-          <EntitySet Name="Products" EntityType="NorthwindModel.Product" />
-          <EntitySet Name="Shippers" EntityType="NorthwindModel.Shipper" />
-          <EntitySet Name="Suppliers" EntityType="NorthwindModel.Supplier" />
+          <EntitySet Name="Categories" EntityType="NorthwindModel.Categories" />
+          <EntitySet Name="Customers" EntityType="NorthwindModel.Customers" />
+          <EntitySet Name="Employees" EntityType="NorthwindModel.Employees" />
+          <EntitySet Name="Order_Details" EntityType="NorthwindModel.Order_Details" />
+          <EntitySet Name="Orders" EntityType="NorthwindModel.Orders" />
+          <EntitySet Name="Products" EntityType="NorthwindModel.Products" />
+          <EntitySet Name="Shippers" EntityType="NorthwindModel.Shippers" />
+          <EntitySet Name="Suppliers" EntityType="NorthwindModel.Suppliers" />
           <AssociationSet Name="Products_FK01" Association="NorthwindModel.Products_FK01">
             <End Role="Categories" EntitySet="Categories" />
             <End Role="Products" EntitySet="Products" />
@@ -291,17 +291,17 @@
             <End Role="Superior" EntitySet="Employees" />
           </AssociationSet>
         </EntityContainer>
-        <EntityType Name="Category">
+        <EntityType Name="Categories">
           <Key>
             <PropertyRef Name="CategoryID" />
           </Key>
           <Property Name="CategoryID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Category_Name" Type="String" Nullable="false" MaxLength="15" Unicode="true" FixedLength="false" />
+          <Property Name="CategoryName" Type="String" Nullable="false" MaxLength="15" Unicode="true" FixedLength="false" />
           <Property Name="Description" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
           <Property Name="Picture" Type="Binary" MaxLength="Max" FixedLength="false" />
           <NavigationProperty Name="Products" Relationship="NorthwindModel.Products_FK01" FromRole="Categories" ToRole="Products" />
         </EntityType>
-        <EntityType Name="Customer">
+        <EntityType Name="Customers">
           <Key>
             <PropertyRef Name="CustomerID" />
           </Key>
@@ -318,7 +318,7 @@
           <Property Name="Fax" Type="String" MaxLength="24" Unicode="true" FixedLength="false" />
           <NavigationProperty Name="Orders" Relationship="NorthwindModel.Orders_FK00" FromRole="Customers" ToRole="Orders" />
         </EntityType>
-        <EntityType Name="Employee">
+        <EntityType Name="Employees">
           <Key>
             <PropertyRef Name="EmployeeID" />
           </Key>
@@ -342,7 +342,7 @@
           <NavigationProperty Name="Subordinates" Relationship="NorthwindModel.Employees_FK00" FromRole="Subordinates" ToRole="Superior" />
           <NavigationProperty Name="Superior" Relationship="NorthwindModel.Employees_FK00" FromRole="Superior" ToRole="Subordinates" />
         </EntityType>
-        <EntityType Name="Order_Detail">
+        <EntityType Name="Order_Details">
           <Key>
             <PropertyRef Name="OrderID" />
             <PropertyRef Name="ProductID" />
@@ -355,7 +355,7 @@
           <NavigationProperty Name="Product" Relationship="NorthwindModel.Order_Details_FK00" FromRole="Order_Details" ToRole="Products" />
           <NavigationProperty Name="Order" Relationship="NorthwindModel.Order_Details_FK01" FromRole="Order_Details" ToRole="Orders" />
         </EntityType>
-        <EntityType Name="Order">
+        <EntityType Name="Orders">
           <Key>
             <PropertyRef Name="OrderID" />
           </Key>
@@ -378,7 +378,7 @@
           <NavigationProperty Name="Order_Details" Relationship="NorthwindModel.Order_Details_FK01" FromRole="Orders" ToRole="Order_Details" />
           <NavigationProperty Name="Shipper" Relationship="NorthwindModel.Orders_FK01" FromRole="Orders" ToRole="Shippers" />
         </EntityType>
-        <EntityType Name="Product">
+        <EntityType Name="Products">
           <Key>
             <PropertyRef Name="ProductID" />
           </Key>
@@ -397,7 +397,7 @@
           <NavigationProperty Name="Order_Details" Relationship="NorthwindModel.Order_Details_FK00" FromRole="Products" ToRole="Order_Details" />
           <NavigationProperty Name="Supplier" Relationship="NorthwindModel.Products_FK00" FromRole="Products" ToRole="Suppliers" />
         </EntityType>
-        <EntityType Name="Shipper">
+        <EntityType Name="Shippers">
           <Key>
             <PropertyRef Name="ShipperID" />
           </Key>
@@ -405,7 +405,7 @@
           <Property Name="CompanyName" Type="String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
           <NavigationProperty Name="Orders" Relationship="NorthwindModel.Orders_FK01" FromRole="Shippers" ToRole="Orders" />
         </EntityType>
-        <EntityType Name="Supplier">
+        <EntityType Name="Suppliers">
           <Key>
             <PropertyRef Name="SupplierID" />
           </Key>
@@ -423,8 +423,8 @@
           <NavigationProperty Name="Products" Relationship="NorthwindModel.Products_FK00" FromRole="Suppliers" ToRole="Products" />
         </EntityType>
         <Association Name="Products_FK01">
-          <End Role="Categories" Type="NorthwindModel.Category" Multiplicity="0..1" />
-          <End Role="Products" Type="NorthwindModel.Product" Multiplicity="*" />
+          <End Role="Categories" Type="NorthwindModel.Categories" Multiplicity="0..1" />
+          <End Role="Products" Type="NorthwindModel.Products" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Categories">
               <PropertyRef Name="CategoryID" />
@@ -435,8 +435,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="Orders_FK00">
-          <End Role="Customers" Type="NorthwindModel.Customer" Multiplicity="1" />
-          <End Role="Orders" Type="NorthwindModel.Order" Multiplicity="*" />
+          <End Role="Customers" Type="NorthwindModel.Customers" Multiplicity="1" />
+          <End Role="Orders" Type="NorthwindModel.Orders" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Customers">
               <PropertyRef Name="CustomerID" />
@@ -447,8 +447,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="Orders_FK02">
-          <End Role="Employees" Type="NorthwindModel.Employee" Multiplicity="0..1" />
-          <End Role="Orders" Type="NorthwindModel.Order" Multiplicity="*" />
+          <End Role="Employees" Type="NorthwindModel.Employees" Multiplicity="0..1" />
+          <End Role="Orders" Type="NorthwindModel.Orders" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Employees">
               <PropertyRef Name="EmployeeID" />
@@ -459,8 +459,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="Order_Details_FK00">
-          <End Role="Products" Type="NorthwindModel.Product" Multiplicity="1" />
-          <End Role="Order_Details" Type="NorthwindModel.Order_Detail" Multiplicity="*" />
+          <End Role="Products" Type="NorthwindModel.Products" Multiplicity="1" />
+          <End Role="Order_Details" Type="NorthwindModel.Order_Details" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Products">
               <PropertyRef Name="ProductID" />
@@ -471,10 +471,10 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="Order_Details_FK01">
-          <End Role="Orders" Type="NorthwindModel.Order" Multiplicity="1">
+          <End Role="Orders" Type="NorthwindModel.Orders" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
-          <End Role="Order_Details" Type="NorthwindModel.Order_Detail" Multiplicity="*" />
+          <End Role="Order_Details" Type="NorthwindModel.Order_Details" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Orders">
               <PropertyRef Name="OrderID" />
@@ -485,8 +485,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="Orders_FK01">
-          <End Role="Shippers" Type="NorthwindModel.Shipper" Multiplicity="0..1" />
-          <End Role="Orders" Type="NorthwindModel.Order" Multiplicity="*" />
+          <End Role="Shippers" Type="NorthwindModel.Shippers" Multiplicity="0..1" />
+          <End Role="Orders" Type="NorthwindModel.Orders" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Shippers">
               <PropertyRef Name="ShipperID" />
@@ -497,8 +497,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="Products_FK00">
-          <End Role="Suppliers" Type="NorthwindModel.Supplier" Multiplicity="0..1" />
-          <End Role="Products" Type="NorthwindModel.Product" Multiplicity="*" />
+          <End Role="Suppliers" Type="NorthwindModel.Suppliers" Multiplicity="0..1" />
+          <End Role="Products" Type="NorthwindModel.Products" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Suppliers">
               <PropertyRef Name="SupplierID" />
@@ -509,8 +509,8 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="Employees_FK00">
-          <End Type="NorthwindModel.Employee" Role="Superior" Multiplicity="0..1" />
-          <End Type="NorthwindModel.Employee" Role="Subordinates" Multiplicity="*" />
+          <End Type="NorthwindModel.Employees" Role="Superior" Multiplicity="0..1" />
+          <End Type="NorthwindModel.Employees" Role="Subordinates" Multiplicity="*" />
           <ReferentialConstraint>
             <Principal Role="Superior">
               <PropertyRef Name="EmployeeID" />
@@ -526,13 +526,13 @@
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="NorthwindModelStoreContainer" CdmEntityContainer="NorthwindEntities">
-          <EntitySetMapping Name="Categories"><EntityTypeMapping TypeName="NorthwindModel.Category"><MappingFragment StoreEntitySet="Categories">
+          <EntitySetMapping Name="Categories"><EntityTypeMapping TypeName="NorthwindModel.Categories"><MappingFragment StoreEntitySet="Categories">
             <ScalarProperty Name="CategoryID" ColumnName="Category ID" />
-            <ScalarProperty Name="Category_Name" ColumnName="Category Name" />
+            <ScalarProperty Name="CategoryName" ColumnName="Category Name" />
             <ScalarProperty Name="Description" ColumnName="Description" />
             <ScalarProperty Name="Picture" ColumnName="Picture" />
           </MappingFragment></EntityTypeMapping></EntitySetMapping>
-          <EntitySetMapping Name="Customers"><EntityTypeMapping TypeName="NorthwindModel.Customer"><MappingFragment StoreEntitySet="Customers">
+          <EntitySetMapping Name="Customers"><EntityTypeMapping TypeName="NorthwindModel.Customers"><MappingFragment StoreEntitySet="Customers">
             <ScalarProperty Name="CustomerID" ColumnName="Customer ID" />
             <ScalarProperty Name="CompanyName" ColumnName="Company Name" />
             <ScalarProperty Name="ContactName" ColumnName="Contact Name" />
@@ -545,7 +545,7 @@
             <ScalarProperty Name="Phone" ColumnName="Phone" />
             <ScalarProperty Name="Fax" ColumnName="Fax" />
           </MappingFragment></EntityTypeMapping></EntitySetMapping>
-          <EntitySetMapping Name="Employees"><EntityTypeMapping TypeName="NorthwindModel.Employee"><MappingFragment StoreEntitySet="Employees">
+          <EntitySetMapping Name="Employees"><EntityTypeMapping TypeName="NorthwindModel.Employees"><MappingFragment StoreEntitySet="Employees">
             <ScalarProperty Name="EmployeeID" ColumnName="Employee ID" />
             <ScalarProperty Name="LastName" ColumnName="Last Name" />
             <ScalarProperty Name="FirstName" ColumnName="First Name" />
@@ -563,14 +563,14 @@
             <ScalarProperty Name="Notes" ColumnName="Notes" />
             <ScalarProperty Name="ReportsTo" ColumnName="Reports To" />
           </MappingFragment></EntityTypeMapping></EntitySetMapping>
-          <EntitySetMapping Name="Order_Details"><EntityTypeMapping TypeName="NorthwindModel.Order_Detail"><MappingFragment StoreEntitySet="Order Details">
+          <EntitySetMapping Name="Order_Details"><EntityTypeMapping TypeName="NorthwindModel.Order_Details"><MappingFragment StoreEntitySet="Order Details">
             <ScalarProperty Name="OrderID" ColumnName="Order ID" />
             <ScalarProperty Name="ProductID" ColumnName="Product ID" />
             <ScalarProperty Name="UnitPrice" ColumnName="Unit Price" />
             <ScalarProperty Name="Quantity" ColumnName="Quantity" />
             <ScalarProperty Name="Discount" ColumnName="Discount" />
           </MappingFragment></EntityTypeMapping></EntitySetMapping>
-          <EntitySetMapping Name="Orders"><EntityTypeMapping TypeName="NorthwindModel.Order"><MappingFragment StoreEntitySet="Orders">
+          <EntitySetMapping Name="Orders"><EntityTypeMapping TypeName="NorthwindModel.Orders"><MappingFragment StoreEntitySet="Orders">
             <ScalarProperty Name="OrderID" ColumnName="Order ID" />
             <ScalarProperty Name="CustomerID" ColumnName="Customer ID" />
             <ScalarProperty Name="EmployeeID" ColumnName="Employee ID" />
@@ -586,7 +586,7 @@
             <ScalarProperty Name="ShippedDate" ColumnName="Shipped Date" />
             <ScalarProperty Name="Freight" ColumnName="Freight" />
           </MappingFragment></EntityTypeMapping></EntitySetMapping>
-          <EntitySetMapping Name="Products"><EntityTypeMapping TypeName="NorthwindModel.Product"><MappingFragment StoreEntitySet="Products">
+          <EntitySetMapping Name="Products"><EntityTypeMapping TypeName="NorthwindModel.Products"><MappingFragment StoreEntitySet="Products">
             <ScalarProperty Name="ProductID" ColumnName="Product ID" />
             <ScalarProperty Name="SupplierID" ColumnName="Supplier ID" />
             <ScalarProperty Name="CategoryID" ColumnName="Category ID" />
@@ -599,11 +599,11 @@
             <ScalarProperty Name="ReorderLevel" ColumnName="Reorder Level" />
             <ScalarProperty Name="Discontinued" ColumnName="Discontinued" />
           </MappingFragment></EntityTypeMapping></EntitySetMapping>
-          <EntitySetMapping Name="Shippers"><EntityTypeMapping TypeName="NorthwindModel.Shipper"><MappingFragment StoreEntitySet="Shippers">
+          <EntitySetMapping Name="Shippers"><EntityTypeMapping TypeName="NorthwindModel.Shippers"><MappingFragment StoreEntitySet="Shippers">
             <ScalarProperty Name="ShipperID" ColumnName="Shipper ID" />
             <ScalarProperty Name="CompanyName" ColumnName="Company Name" />
           </MappingFragment></EntityTypeMapping></EntitySetMapping>
-          <EntitySetMapping Name="Suppliers"><EntityTypeMapping TypeName="NorthwindModel.Supplier"><MappingFragment StoreEntitySet="Suppliers">
+          <EntitySetMapping Name="Suppliers"><EntityTypeMapping TypeName="NorthwindModel.Suppliers"><MappingFragment StoreEntitySet="Suppliers">
             <ScalarProperty Name="SupplierID" ColumnName="Supplier ID" />
             <ScalarProperty Name="CompanyName" ColumnName="Company Name" />
             <ScalarProperty Name="ContactName" ColumnName="Contact Name" />
@@ -637,14 +637,14 @@
     <!-- Diagram content (shape and connector positions) -->
     <Diagrams>
       <Diagram Name="Northwind" ZoomLevel="81">
-        <EntityTypeShape EntityType="NorthwindModel.Category" Width="1.5" PointX="0.75" PointY="15.75" Height="1.9802864583333317" IsExpanded="true" />
-        <EntityTypeShape EntityType="NorthwindModel.Customer" Width="1.5" PointX="0.75" PointY="1.625" Height="3.3263964843749996" IsExpanded="true" />
-        <EntityTypeShape EntityType="NorthwindModel.Employee" Width="1.5" PointX="0.75" PointY="8.375" Height="4.6725065104166656" IsExpanded="true" />
-        <EntityTypeShape EntityType="NorthwindModel.Order_Detail" Width="1.5" PointX="5.25" PointY="2.125" Height="2.3648893229166656" IsExpanded="true" />
-        <EntityTypeShape EntityType="NorthwindModel.Order" Width="1.5" PointX="3" PointY="1" Height="4.4802050781250031" IsExpanded="true" />
-        <EntityTypeShape EntityType="NorthwindModel.Product" Width="1.5" PointX="3" PointY="16.875" Height="3.7109993489583317" IsExpanded="true" />
-        <EntityTypeShape EntityType="NorthwindModel.Shipper" Width="1.5" PointX="0.75" PointY="13.375" Height="1.5956835937499996" IsExpanded="true" />
-        <EntityTypeShape EntityType="NorthwindModel.Supplier" Width="1.5" PointX="0.75" PointY="18.5" Height="3.326396484374996" IsExpanded="true" />
+        <EntityTypeShape EntityType="NorthwindModel.Categories" Width="1.5" PointX="0.75" PointY="15.75" Height="1.9802864583333317" IsExpanded="true" />
+        <EntityTypeShape EntityType="NorthwindModel.Customers" Width="1.5" PointX="0.75" PointY="1.625" Height="3.3263964843749996" IsExpanded="true" />
+        <EntityTypeShape EntityType="NorthwindModel.Employees" Width="1.5" PointX="0.75" PointY="8.375" Height="4.6725065104166656" IsExpanded="true" />
+        <EntityTypeShape EntityType="NorthwindModel.Order_Details" Width="1.5" PointX="5.25" PointY="2.125" Height="2.3648893229166656" IsExpanded="true" />
+        <EntityTypeShape EntityType="NorthwindModel.Orders" Width="1.5" PointX="3" PointY="1" Height="4.4802050781250031" IsExpanded="true" />
+        <EntityTypeShape EntityType="NorthwindModel.Products" Width="1.5" PointX="3" PointY="16.875" Height="3.7109993489583317" IsExpanded="true" />
+        <EntityTypeShape EntityType="NorthwindModel.Shippers" Width="1.5" PointX="0.75" PointY="13.375" Height="1.5956835937499996" IsExpanded="true" />
+        <EntityTypeShape EntityType="NorthwindModel.Suppliers" Width="1.5" PointX="0.75" PointY="18.5" Height="3.326396484374996" IsExpanded="true" />
         <AssociationConnector Association="NorthwindModel.Products_FK01" ManuallyRouted="false">
           <ConnectorPoint PointX="2.25" PointY="17.302643229166666" />
           <ConnectorPoint PointX="3" PointY="17.302643229166666" />
