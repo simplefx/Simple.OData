@@ -20,6 +20,12 @@ namespace Simple.Data.OData.IntegrationTests
 
         public void Dispose()
         {
+            IEnumerable<dynamic> products = _db.Products.FindAll(_db.Products.ProductName.StartsWith("Test") == true);
+            foreach (var product in products)
+            {
+                _db.Products.Delete(ProductID: product.ProductID);
+            }
+
             if (_service != null)
             {
                 _service.Dispose();

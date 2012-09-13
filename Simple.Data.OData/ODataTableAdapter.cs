@@ -172,19 +172,31 @@ namespace Simple.Data.OData
                     namedKeyValues.Add(keyFieldNames[index], entry[keyFieldNames[index]]);
                 }
                 var formattedKeyValues = _expressionFormatter.Format(namedKeyValues);
-                UpdateEntry(tableName, formattedKeyValues, data, transaction);
+                var unaffectedData = new Dictionary<string, object>();
+                foreach (var item in entry)
+                {
+                    if (!formattedKeyValues.Contains(item.Key) && !data.ContainsKey(item.Key))
+                    {
+                        unaffectedData.Add(item.Key, item.Value);
+                    }
+                }
+                UpdateEntry(tableName, formattedKeyValues, data, unaffectedData, transaction);
             }
             // TODO: what to return?
             return 0;
         }
 
-        private int UpdateEntry(string tableName, string keys, IDictionary<string, object> data, IAdapterTransaction transaction)
+        private int UpdateEntry(string tableName, string keys, IDictionary<string, object> updatedData, IDictionary<string, object> unaffectedData, IAdapterTransaction transaction)
         {
             RequestBuilder requestBuilder;
             RequestRunner requestRunner;
             GetRequestHandlers(transaction, out requestBuilder, out requestRunner);
 
-            var entry = DataServicesHelper.CreateDataElement(data);
+            Dictionary<string, object> allData = new Dictionary<string, object>();
+            updatedData.Keys.ToList().ForEach(x => allData.Add(x, updatedData[x]));
+            unaffectedData.Keys.ToList().ForEach(x => allData.Add(x, unaffectedData[x]));
+
+            var entry = DataServicesHelper.CreateDataElement(allData);
             var command = GetTableActualName(tableName) + "(" + keys + ")"; 
             requestBuilder.AddTableCommand(command, RestVerbs.PUT, entry.ToString());
             return requestRunner.UpdateEntry();

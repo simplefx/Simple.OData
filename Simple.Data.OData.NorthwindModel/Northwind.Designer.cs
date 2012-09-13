@@ -1204,7 +1204,7 @@ namespace Simple.Data.OData.NorthwindModel
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
         [EdmRelationshipNavigationPropertyAttribute("NorthwindModel", "Employees_FK00", "Superior")]
-        public Employees Subordinates
+        public Employees Superior
         {
             get
             {
@@ -1220,7 +1220,7 @@ namespace Simple.Data.OData.NorthwindModel
         /// </summary>
         [BrowsableAttribute(false)]
         [DataMemberAttribute()]
-        public EntityReference<Employees> SubordinatesReference
+        public EntityReference<Employees> SuperiorReference
         {
             get
             {
@@ -1242,7 +1242,7 @@ namespace Simple.Data.OData.NorthwindModel
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
         [EdmRelationshipNavigationPropertyAttribute("NorthwindModel", "Employees_FK00", "Subordinates")]
-        public EntityCollection<Employees> Superior
+        public EntityCollection<Employees> Subordinates
         {
             get
             {

@@ -339,8 +339,8 @@
           <Property Name="Notes" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
           <Property Name="ReportsTo" Type="Int32" />
           <NavigationProperty Name="Orders" Relationship="NorthwindModel.Orders_FK02" FromRole="Employees" ToRole="Orders" />
-          <NavigationProperty Name="Subordinates" Relationship="NorthwindModel.Employees_FK00" FromRole="Subordinates" ToRole="Superior" />
-          <NavigationProperty Name="Superior" Relationship="NorthwindModel.Employees_FK00" FromRole="Superior" ToRole="Subordinates" />
+          <NavigationProperty Name="Superior" Relationship="NorthwindModel.Employees_FK00" FromRole="Subordinates" ToRole="Superior" />
+          <NavigationProperty Name="Subordinates" Relationship="NorthwindModel.Employees_FK00" FromRole="Superior" ToRole="Subordinates" />
         </EntityType>
         <EntityType Name="Order_Details">
           <Key>

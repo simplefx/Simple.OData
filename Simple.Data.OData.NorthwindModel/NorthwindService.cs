@@ -20,5 +20,10 @@ namespace Simple.Data.OData.NorthwindModel
             config.DataServiceBehavior.MaxProtocolVersion = DataServiceProtocolVersion.V3;
             config.UseVerboseErrors = true;
         }
+
+        protected override void HandleException(HandleExceptionArgs args)
+        {
+            base.HandleException(args);
+        }
     }
 }
