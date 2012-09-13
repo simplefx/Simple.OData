@@ -28,7 +28,7 @@ namespace Simple.Data.OData.IntegrationTests
         {
             var tables = Schema.Tables;
 
-            Assert.Equal(11, tables.Count());
+            Assert.Equal(8, tables.Count());
         }
 
         [Fact]
@@ -44,7 +44,7 @@ namespace Simple.Data.OData.IntegrationTests
         {
             var columns = Schema.FindTable("Employees").Columns;
 
-            Assert.Equal(18, columns.Count());
+            Assert.Equal(16, columns.Count());
         }
 
         [Fact]
@@ -60,7 +60,7 @@ namespace Simple.Data.OData.IntegrationTests
         {
             var associations = Schema.FindTable("Employees").Associations;
 
-            Assert.Equal(4, associations.Count());
+            Assert.Equal(3, associations.Count());
         }
 
         [Fact]

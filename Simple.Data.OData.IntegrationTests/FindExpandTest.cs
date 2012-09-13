@@ -56,7 +56,8 @@ namespace Simple.Data.OData.IntegrationTests
             var employees = _db.Employees.All().WithSubordinates().ToList();
 
             Assert.True(employees.Count > 0);
-            Assert.True(employees[0].Subordinates.Count > 0);
+            Assert.True(employees[0].Subordinates.Count == 0);
+            Assert.True(employees[1].Subordinates.Count > 0);
         }
 
         [Fact]

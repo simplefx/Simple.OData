@@ -36,7 +36,7 @@ namespace Simple.Data.OData.IntegrationTests
             IEnumerable<dynamic> products = _db.Products.All()
                 .Skip(1);
 
-            Assert.Equal(1, products.Count());
+            Assert.Equal(76, products.Count());
         }
 
         [Fact]
@@ -46,7 +46,7 @@ namespace Simple.Data.OData.IntegrationTests
                 .Skip(2)
                 .Take(1);
 
-            Assert.Equal(0, products.Count());
+            Assert.Equal(1, products.Count());
         }
 
         [Fact]
@@ -55,7 +55,7 @@ namespace Simple.Data.OData.IntegrationTests
             IEnumerable<dynamic> products = _db.Products.All()
                 .OrderBy(_db.Products.ProductName);
 
-            Assert.Equal("Chai", products.First().ProductName);
+            Assert.Equal("Alice Mutton", products.First().ProductName);
         }
 
         [Fact]
@@ -64,7 +64,7 @@ namespace Simple.Data.OData.IntegrationTests
             IEnumerable<dynamic> products = _db.Products.All()
                 .OrderByDescending(_db.Products.ProductName);
 
-            Assert.Equal("Chang", products.First().ProductName);
+            Assert.Equal("Zaanse koeken", products.First().ProductName);
         }
 
         [Fact]
@@ -74,7 +74,7 @@ namespace Simple.Data.OData.IntegrationTests
                 .OrderByDescending(_db.Products.ProductName)
                 .Select(_db.Products.ProductName);
 
-            Assert.Equal("Chang", products.First().ProductName);
+            Assert.Equal("Zaanse koeken", products.First().ProductName);
         }
     }
 }

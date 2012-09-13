@@ -16,39 +16,21 @@ namespace Simple.Data.OData.IntegrationTests
             _service = new TestService(typeof(NorthwindService));
             _db = Database.Opener.Open(_service.ServiceUri);
             Database.SetPluralizer(new EntityPluralizer());
-
-            CreateTestData();
         }
 
         public void Dispose()
         {
+            IEnumerable<dynamic> products = _db.Products.FindAll(_db.Products.ProductName.StartsWith("Test") == true);
+            foreach (var product in products)
+            {
+                _db.Products.Delete(ProductID: product.ProductID);
+            }
+
             if (_service != null)
             {
                 _service.Dispose();
                 _service = null;
             }
-        }
-
-        protected void CreateTestData()
-        {
-            _db.Customers.DeleteAll();
-            _db.Employees.DeleteAll();
-            _db.Categories.DeleteAll();
-            _db.Suppliers.DeleteAll();
-            _db.Products.DeleteAll();
-            _db.Orders.DeleteAll();
-            _db.OrderDetails.DeleteAll();
-
-            _db.Customers.Insert(CustomerID: "ALFKI", CompanyName: "Alfreds Futterkiste");
-            _db.Employees.Insert(EmployeeID: 1, FirstName: "Andrew", LastName: "Fuller");
-            _db.Employees.Insert(EmployeeID: 2, FirstName: "Nancy", LastName: "Davolio", ReportsTo: 1);
-            _db.Employees.Insert(EmployeeID: 3, FirstName: "Janet", LastName: "Leverling", ReportsTo: 1);
-            _db.Categories.Insert(CategoryID: 1, CategoryName: "Beverages");
-            _db.Suppliers.Insert(SupplierID: 1, CompanyName: "Exotic Liquids");
-            _db.Products.Insert(ProductID: 1, ProductName: "Chai", UnitPrice: 18m, CategoryID: 1);
-            _db.Products.Insert(ProductID: 2, ProductName: "Chang", UnitPrice: 19m, CategoryID: 1);
-            _db.Orders.Insert(OrderID: 10255, CustomerID: "ALFKI", EmployeeID: 1);
-            _db.OrderDetails.Insert(OrderID: 10255, ProductID: 2, UnitPrice: 15m, Quantity: 20);
         }
     }
 }

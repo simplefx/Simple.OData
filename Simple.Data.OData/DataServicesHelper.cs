@@ -103,7 +103,10 @@ namespace Simple.Data.OData
 
         private static object GetLinks(XElement element)
         {
-            var feed = element.Element("m", "inline").Elements().Single();
+            var feed = element.Element("m", "inline").Elements().SingleOrDefault();
+            if (feed == null)
+                return null;
+
             var linkData = GetData(feed);
             return feed.Name.LocalName == "feed" ? (object)linkData : linkData.Single();
         }
