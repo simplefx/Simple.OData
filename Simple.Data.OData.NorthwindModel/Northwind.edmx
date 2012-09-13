@@ -259,31 +259,31 @@
           <EntitySet Name="Shippers" EntityType="NorthwindModel.Shippers" />
           <EntitySet Name="Suppliers" EntityType="NorthwindModel.Suppliers" />
           <AssociationSet Name="Products_FK01" Association="NorthwindModel.Products_FK01">
-            <End Role="Categories" EntitySet="Categories" />
+            <End Role="Category" EntitySet="Categories" />
             <End Role="Products" EntitySet="Products" />
           </AssociationSet>
           <AssociationSet Name="Orders_FK00" Association="NorthwindModel.Orders_FK00">
-            <End Role="Customers" EntitySet="Customers" />
+            <End Role="Customer" EntitySet="Customers" />
             <End Role="Orders" EntitySet="Orders" />
           </AssociationSet>
           <AssociationSet Name="Orders_FK02" Association="NorthwindModel.Orders_FK02">
-            <End Role="Employees" EntitySet="Employees" />
+            <End Role="Employee" EntitySet="Employees" />
             <End Role="Orders" EntitySet="Orders" />
           </AssociationSet>
           <AssociationSet Name="Order_Details_FK00" Association="NorthwindModel.Order_Details_FK00">
-            <End Role="Products" EntitySet="Products" />
+            <End Role="Product" EntitySet="Products" />
             <End Role="Order_Details" EntitySet="Order_Details" />
           </AssociationSet>
           <AssociationSet Name="Order_Details_FK01" Association="NorthwindModel.Order_Details_FK01">
-            <End Role="Orders" EntitySet="Orders" />
+            <End Role="Order" EntitySet="Orders" />
             <End Role="Order_Details" EntitySet="Order_Details" />
           </AssociationSet>
           <AssociationSet Name="Orders_FK01" Association="NorthwindModel.Orders_FK01">
-            <End Role="Shippers" EntitySet="Shippers" />
+            <End Role="Shipper" EntitySet="Shippers" />
             <End Role="Orders" EntitySet="Orders" />
           </AssociationSet>
           <AssociationSet Name="Products_FK00" Association="NorthwindModel.Products_FK00">
-            <End Role="Suppliers" EntitySet="Suppliers" />
+            <End Role="Supplier" EntitySet="Suppliers" />
             <End Role="Products" EntitySet="Products" />
           </AssociationSet>
           <AssociationSet Name="Employees_FK00" Association="NorthwindModel.Employees_FK00">
@@ -299,7 +299,7 @@
           <Property Name="CategoryName" Type="String" Nullable="false" MaxLength="15" Unicode="true" FixedLength="false" />
           <Property Name="Description" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
           <Property Name="Picture" Type="Binary" MaxLength="Max" FixedLength="false" />
-          <NavigationProperty Name="Products" Relationship="NorthwindModel.Products_FK01" FromRole="Categories" ToRole="Products" />
+          <NavigationProperty Name="Products" Relationship="NorthwindModel.Products_FK01" FromRole="Category" ToRole="Products" />
         </EntityType>
         <EntityType Name="Customers">
           <Key>
@@ -316,7 +316,7 @@
           <Property Name="Country" Type="String" MaxLength="15" Unicode="true" FixedLength="false" />
           <Property Name="Phone" Type="String" MaxLength="24" Unicode="true" FixedLength="false" />
           <Property Name="Fax" Type="String" MaxLength="24" Unicode="true" FixedLength="false" />
-          <NavigationProperty Name="Orders" Relationship="NorthwindModel.Orders_FK00" FromRole="Customers" ToRole="Orders" />
+          <NavigationProperty Name="Orders" Relationship="NorthwindModel.Orders_FK00" FromRole="Customer" ToRole="Orders" />
         </EntityType>
         <EntityType Name="Employees">
           <Key>
@@ -338,7 +338,7 @@
           <Property Name="Photo" Type="Binary" MaxLength="Max" FixedLength="false" />
           <Property Name="Notes" Type="String" MaxLength="Max" Unicode="true" FixedLength="false" />
           <Property Name="ReportsTo" Type="Int32" />
-          <NavigationProperty Name="Orders" Relationship="NorthwindModel.Orders_FK02" FromRole="Employees" ToRole="Orders" />
+          <NavigationProperty Name="Orders" Relationship="NorthwindModel.Orders_FK02" FromRole="Employee" ToRole="Orders" />
           <NavigationProperty Name="Superior" Relationship="NorthwindModel.Employees_FK00" FromRole="Subordinates" ToRole="Superior" />
           <NavigationProperty Name="Subordinates" Relationship="NorthwindModel.Employees_FK00" FromRole="Superior" ToRole="Subordinates" />
         </EntityType>
@@ -352,8 +352,8 @@
           <Property Name="UnitPrice" Type="Decimal" Nullable="false" Precision="19" Scale="4" />
           <Property Name="Quantity" Type="Int16" Nullable="false" />
           <Property Name="Discount" Type="Single" Nullable="false" />
-          <NavigationProperty Name="Product" Relationship="NorthwindModel.Order_Details_FK00" FromRole="Order_Details" ToRole="Products" />
-          <NavigationProperty Name="Order" Relationship="NorthwindModel.Order_Details_FK01" FromRole="Order_Details" ToRole="Orders" />
+          <NavigationProperty Name="Product" Relationship="NorthwindModel.Order_Details_FK00" FromRole="Order_Details" ToRole="Product" />
+          <NavigationProperty Name="Order" Relationship="NorthwindModel.Order_Details_FK01" FromRole="Order_Details" ToRole="Order" />
         </EntityType>
         <EntityType Name="Orders">
           <Key>
@@ -373,10 +373,10 @@
           <Property Name="RequiredDate" Type="DateTime" />
           <Property Name="ShippedDate" Type="DateTime" />
           <Property Name="Freight" Type="Decimal" Precision="19" Scale="4" />
-          <NavigationProperty Name="Customer" Relationship="NorthwindModel.Orders_FK00" FromRole="Orders" ToRole="Customers" />
-          <NavigationProperty Name="Employee" Relationship="NorthwindModel.Orders_FK02" FromRole="Orders" ToRole="Employees" />
-          <NavigationProperty Name="Order_Details" Relationship="NorthwindModel.Order_Details_FK01" FromRole="Orders" ToRole="Order_Details" />
-          <NavigationProperty Name="Shipper" Relationship="NorthwindModel.Orders_FK01" FromRole="Orders" ToRole="Shippers" />
+          <NavigationProperty Name="Customer" Relationship="NorthwindModel.Orders_FK00" FromRole="Orders" ToRole="Customer" />
+          <NavigationProperty Name="Employee" Relationship="NorthwindModel.Orders_FK02" FromRole="Orders" ToRole="Employee" />
+          <NavigationProperty Name="Order_Details" Relationship="NorthwindModel.Order_Details_FK01" FromRole="Order" ToRole="Order_Details" />
+          <NavigationProperty Name="Shipper" Relationship="NorthwindModel.Orders_FK01" FromRole="Orders" ToRole="Shipper" />
         </EntityType>
         <EntityType Name="Products">
           <Key>
@@ -393,9 +393,9 @@
           <Property Name="UnitsOnOrder" Type="Int16" />
           <Property Name="ReorderLevel" Type="Int16" />
           <Property Name="Discontinued" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="Category" Relationship="NorthwindModel.Products_FK01" FromRole="Products" ToRole="Categories" />
-          <NavigationProperty Name="Order_Details" Relationship="NorthwindModel.Order_Details_FK00" FromRole="Products" ToRole="Order_Details" />
-          <NavigationProperty Name="Supplier" Relationship="NorthwindModel.Products_FK00" FromRole="Products" ToRole="Suppliers" />
+          <NavigationProperty Name="Category" Relationship="NorthwindModel.Products_FK01" FromRole="Products" ToRole="Category" />
+          <NavigationProperty Name="Order_Details" Relationship="NorthwindModel.Order_Details_FK00" FromRole="Product" ToRole="Order_Details" />
+          <NavigationProperty Name="Supplier" Relationship="NorthwindModel.Products_FK00" FromRole="Products" ToRole="Supplier" />
         </EntityType>
         <EntityType Name="Shippers">
           <Key>
@@ -403,7 +403,7 @@
           </Key>
           <Property Name="ShipperID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="CompanyName" Type="String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
-          <NavigationProperty Name="Orders" Relationship="NorthwindModel.Orders_FK01" FromRole="Shippers" ToRole="Orders" />
+          <NavigationProperty Name="Orders" Relationship="NorthwindModel.Orders_FK01" FromRole="Shipper" ToRole="Orders" />
         </EntityType>
         <EntityType Name="Suppliers">
           <Key>
@@ -420,13 +420,13 @@
           <Property Name="Country" Type="String" MaxLength="15" Unicode="true" FixedLength="false" />
           <Property Name="Phone" Type="String" MaxLength="24" Unicode="true" FixedLength="false" />
           <Property Name="Fax" Type="String" MaxLength="24" Unicode="true" FixedLength="false" />
-          <NavigationProperty Name="Products" Relationship="NorthwindModel.Products_FK00" FromRole="Suppliers" ToRole="Products" />
+          <NavigationProperty Name="Products" Relationship="NorthwindModel.Products_FK00" FromRole="Supplier" ToRole="Products" />
         </EntityType>
         <Association Name="Products_FK01">
-          <End Role="Categories" Type="NorthwindModel.Categories" Multiplicity="0..1" />
+          <End Role="Category" Type="NorthwindModel.Categories" Multiplicity="0..1" />
           <End Role="Products" Type="NorthwindModel.Products" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Categories">
+            <Principal Role="Category">
               <PropertyRef Name="CategoryID" />
             </Principal>
             <Dependent Role="Products">
@@ -435,10 +435,10 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="Orders_FK00">
-          <End Role="Customers" Type="NorthwindModel.Customers" Multiplicity="1" />
+          <End Role="Customer" Type="NorthwindModel.Customers" Multiplicity="1" />
           <End Role="Orders" Type="NorthwindModel.Orders" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Customers">
+            <Principal Role="Customer">
               <PropertyRef Name="CustomerID" />
             </Principal>
             <Dependent Role="Orders">
@@ -447,10 +447,10 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="Orders_FK02">
-          <End Role="Employees" Type="NorthwindModel.Employees" Multiplicity="0..1" />
+          <End Role="Employee" Type="NorthwindModel.Employees" Multiplicity="0..1" />
           <End Role="Orders" Type="NorthwindModel.Orders" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Employees">
+            <Principal Role="Employee">
               <PropertyRef Name="EmployeeID" />
             </Principal>
             <Dependent Role="Orders">
@@ -459,10 +459,10 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="Order_Details_FK00">
-          <End Role="Products" Type="NorthwindModel.Products" Multiplicity="1" />
+          <End Role="Product" Type="NorthwindModel.Products" Multiplicity="1" />
           <End Role="Order_Details" Type="NorthwindModel.Order_Details" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Products">
+            <Principal Role="Product">
               <PropertyRef Name="ProductID" />
             </Principal>
             <Dependent Role="Order_Details">
@@ -471,12 +471,12 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="Order_Details_FK01">
-          <End Role="Orders" Type="NorthwindModel.Orders" Multiplicity="1">
+          <End Role="Order" Type="NorthwindModel.Orders" Multiplicity="1">
             <OnDelete Action="Cascade" />
           </End>
           <End Role="Order_Details" Type="NorthwindModel.Order_Details" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Orders">
+            <Principal Role="Order">
               <PropertyRef Name="OrderID" />
             </Principal>
             <Dependent Role="Order_Details">
@@ -485,10 +485,10 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="Orders_FK01">
-          <End Role="Shippers" Type="NorthwindModel.Shippers" Multiplicity="0..1" />
+          <End Role="Shipper" Type="NorthwindModel.Shippers" Multiplicity="0..1" />
           <End Role="Orders" Type="NorthwindModel.Orders" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Shippers">
+            <Principal Role="Shipper">
               <PropertyRef Name="ShipperID" />
             </Principal>
             <Dependent Role="Orders">
@@ -497,10 +497,10 @@
           </ReferentialConstraint>
         </Association>
         <Association Name="Products_FK00">
-          <End Role="Suppliers" Type="NorthwindModel.Suppliers" Multiplicity="0..1" />
+          <End Role="Supplier" Type="NorthwindModel.Suppliers" Multiplicity="0..1" />
           <End Role="Products" Type="NorthwindModel.Products" Multiplicity="*" />
           <ReferentialConstraint>
-            <Principal Role="Suppliers">
+            <Principal Role="Supplier">
               <PropertyRef Name="SupplierID" />
             </Principal>
             <Dependent Role="Products">

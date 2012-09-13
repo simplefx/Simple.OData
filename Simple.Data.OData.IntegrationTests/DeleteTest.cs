@@ -12,7 +12,7 @@ namespace Simple.Data.OData.IntegrationTests
         [Fact]
         public void Delete()
         {
-            var product = _db.Products.Insert(ProductID: 1001, ProductName: "Test", UnitPrice: 18m);
+            var product = _db.Products.Insert(ProductName: "Test", UnitPrice: 18m);
             product = _db.Products.FindByProductName("Chai");
             Assert.NotNull(product);
 

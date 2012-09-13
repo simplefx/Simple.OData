@@ -21,10 +21,9 @@ namespace Simple.Data.OData.IntegrationTests
         public void Dispose()
         {
             IEnumerable<dynamic> products = _db.Products.FindAll(_db.Products.ProductName.StartsWith("Test") == true);
-            foreach (var product in products)
-            {
-                _db.Products.Delete(ProductID: product.ProductID);
-            }
+            products.ToList().ForEach(x => _db.Products.Delete(ProductID: x.ProductID));
+            IEnumerable<dynamic> categories = _db.Categories.FindAll(_db.Categories.CategoryName.StartsWith("Test") == true);
+            categories.ToList().ForEach(x => _db.Categories.Delete(CategoryID: x.CategoryID));
 
             if (_service != null)
             {

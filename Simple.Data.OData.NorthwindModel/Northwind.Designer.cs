@@ -18,13 +18,13 @@ using System.Runtime.Serialization;
 [assembly: EdmSchemaAttribute()]
 #region EDM Relationship Metadata
 
-[assembly: EdmRelationshipAttribute("NorthwindModel", "Products_FK01", "Categories", System.Data.Metadata.Edm.RelationshipMultiplicity.ZeroOrOne, typeof(Simple.Data.OData.NorthwindModel.Categories), "Products", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Simple.Data.OData.NorthwindModel.Products), true)]
-[assembly: EdmRelationshipAttribute("NorthwindModel", "Orders_FK00", "Customers", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(Simple.Data.OData.NorthwindModel.Customers), "Orders", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Simple.Data.OData.NorthwindModel.Orders), true)]
-[assembly: EdmRelationshipAttribute("NorthwindModel", "Orders_FK02", "Employees", System.Data.Metadata.Edm.RelationshipMultiplicity.ZeroOrOne, typeof(Simple.Data.OData.NorthwindModel.Employees), "Orders", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Simple.Data.OData.NorthwindModel.Orders), true)]
-[assembly: EdmRelationshipAttribute("NorthwindModel", "Order_Details_FK00", "Products", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(Simple.Data.OData.NorthwindModel.Products), "Order_Details", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Simple.Data.OData.NorthwindModel.Order_Details), true)]
-[assembly: EdmRelationshipAttribute("NorthwindModel", "Order_Details_FK01", "Orders", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(Simple.Data.OData.NorthwindModel.Orders), "Order_Details", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Simple.Data.OData.NorthwindModel.Order_Details), true)]
-[assembly: EdmRelationshipAttribute("NorthwindModel", "Orders_FK01", "Shippers", System.Data.Metadata.Edm.RelationshipMultiplicity.ZeroOrOne, typeof(Simple.Data.OData.NorthwindModel.Shippers), "Orders", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Simple.Data.OData.NorthwindModel.Orders), true)]
-[assembly: EdmRelationshipAttribute("NorthwindModel", "Products_FK00", "Suppliers", System.Data.Metadata.Edm.RelationshipMultiplicity.ZeroOrOne, typeof(Simple.Data.OData.NorthwindModel.Suppliers), "Products", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Simple.Data.OData.NorthwindModel.Products), true)]
+[assembly: EdmRelationshipAttribute("NorthwindModel", "Products_FK01", "Category", System.Data.Metadata.Edm.RelationshipMultiplicity.ZeroOrOne, typeof(Simple.Data.OData.NorthwindModel.Categories), "Products", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Simple.Data.OData.NorthwindModel.Products), true)]
+[assembly: EdmRelationshipAttribute("NorthwindModel", "Orders_FK00", "Customer", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(Simple.Data.OData.NorthwindModel.Customers), "Orders", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Simple.Data.OData.NorthwindModel.Orders), true)]
+[assembly: EdmRelationshipAttribute("NorthwindModel", "Orders_FK02", "Employee", System.Data.Metadata.Edm.RelationshipMultiplicity.ZeroOrOne, typeof(Simple.Data.OData.NorthwindModel.Employees), "Orders", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Simple.Data.OData.NorthwindModel.Orders), true)]
+[assembly: EdmRelationshipAttribute("NorthwindModel", "Order_Details_FK00", "Product", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(Simple.Data.OData.NorthwindModel.Products), "Order_Details", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Simple.Data.OData.NorthwindModel.Order_Details), true)]
+[assembly: EdmRelationshipAttribute("NorthwindModel", "Order_Details_FK01", "Order", System.Data.Metadata.Edm.RelationshipMultiplicity.One, typeof(Simple.Data.OData.NorthwindModel.Orders), "Order_Details", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Simple.Data.OData.NorthwindModel.Order_Details), true)]
+[assembly: EdmRelationshipAttribute("NorthwindModel", "Orders_FK01", "Shipper", System.Data.Metadata.Edm.RelationshipMultiplicity.ZeroOrOne, typeof(Simple.Data.OData.NorthwindModel.Shippers), "Orders", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Simple.Data.OData.NorthwindModel.Orders), true)]
+[assembly: EdmRelationshipAttribute("NorthwindModel", "Products_FK00", "Supplier", System.Data.Metadata.Edm.RelationshipMultiplicity.ZeroOrOne, typeof(Simple.Data.OData.NorthwindModel.Suppliers), "Products", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Simple.Data.OData.NorthwindModel.Products), true)]
 [assembly: EdmRelationshipAttribute("NorthwindModel", "Employees_FK00", "Superior", System.Data.Metadata.Edm.RelationshipMultiplicity.ZeroOrOne, typeof(Simple.Data.OData.NorthwindModel.Employees), "Subordinates", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Simple.Data.OData.NorthwindModel.Employees), true)]
 
 #endregion
@@ -1428,16 +1428,16 @@ namespace Simple.Data.OData.NorthwindModel
         [XmlIgnoreAttribute()]
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
-        [EdmRelationshipNavigationPropertyAttribute("NorthwindModel", "Order_Details_FK00", "Products")]
+        [EdmRelationshipNavigationPropertyAttribute("NorthwindModel", "Order_Details_FK00", "Product")]
         public Products Product
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Products>("NorthwindModel.Order_Details_FK00", "Products").Value;
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Products>("NorthwindModel.Order_Details_FK00", "Product").Value;
             }
             set
             {
-                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Products>("NorthwindModel.Order_Details_FK00", "Products").Value = value;
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Products>("NorthwindModel.Order_Details_FK00", "Product").Value = value;
             }
         }
         /// <summary>
@@ -1449,13 +1449,13 @@ namespace Simple.Data.OData.NorthwindModel
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Products>("NorthwindModel.Order_Details_FK00", "Products");
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Products>("NorthwindModel.Order_Details_FK00", "Product");
             }
             set
             {
                 if ((value != null))
                 {
-                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Products>("NorthwindModel.Order_Details_FK00", "Products", value);
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Products>("NorthwindModel.Order_Details_FK00", "Product", value);
                 }
             }
         }
@@ -1466,16 +1466,16 @@ namespace Simple.Data.OData.NorthwindModel
         [XmlIgnoreAttribute()]
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
-        [EdmRelationshipNavigationPropertyAttribute("NorthwindModel", "Order_Details_FK01", "Orders")]
+        [EdmRelationshipNavigationPropertyAttribute("NorthwindModel", "Order_Details_FK01", "Order")]
         public Orders Order
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Orders>("NorthwindModel.Order_Details_FK01", "Orders").Value;
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Orders>("NorthwindModel.Order_Details_FK01", "Order").Value;
             }
             set
             {
-                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Orders>("NorthwindModel.Order_Details_FK01", "Orders").Value = value;
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Orders>("NorthwindModel.Order_Details_FK01", "Order").Value = value;
             }
         }
         /// <summary>
@@ -1487,13 +1487,13 @@ namespace Simple.Data.OData.NorthwindModel
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Orders>("NorthwindModel.Order_Details_FK01", "Orders");
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Orders>("NorthwindModel.Order_Details_FK01", "Order");
             }
             set
             {
                 if ((value != null))
                 {
-                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Orders>("NorthwindModel.Order_Details_FK01", "Orders", value);
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Orders>("NorthwindModel.Order_Details_FK01", "Order", value);
                 }
             }
         }
@@ -1876,16 +1876,16 @@ namespace Simple.Data.OData.NorthwindModel
         [XmlIgnoreAttribute()]
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
-        [EdmRelationshipNavigationPropertyAttribute("NorthwindModel", "Orders_FK00", "Customers")]
+        [EdmRelationshipNavigationPropertyAttribute("NorthwindModel", "Orders_FK00", "Customer")]
         public Customers Customer
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Customers>("NorthwindModel.Orders_FK00", "Customers").Value;
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Customers>("NorthwindModel.Orders_FK00", "Customer").Value;
             }
             set
             {
-                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Customers>("NorthwindModel.Orders_FK00", "Customers").Value = value;
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Customers>("NorthwindModel.Orders_FK00", "Customer").Value = value;
             }
         }
         /// <summary>
@@ -1897,13 +1897,13 @@ namespace Simple.Data.OData.NorthwindModel
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Customers>("NorthwindModel.Orders_FK00", "Customers");
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Customers>("NorthwindModel.Orders_FK00", "Customer");
             }
             set
             {
                 if ((value != null))
                 {
-                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Customers>("NorthwindModel.Orders_FK00", "Customers", value);
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Customers>("NorthwindModel.Orders_FK00", "Customer", value);
                 }
             }
         }
@@ -1914,16 +1914,16 @@ namespace Simple.Data.OData.NorthwindModel
         [XmlIgnoreAttribute()]
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
-        [EdmRelationshipNavigationPropertyAttribute("NorthwindModel", "Orders_FK02", "Employees")]
+        [EdmRelationshipNavigationPropertyAttribute("NorthwindModel", "Orders_FK02", "Employee")]
         public Employees Employee
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Employees>("NorthwindModel.Orders_FK02", "Employees").Value;
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Employees>("NorthwindModel.Orders_FK02", "Employee").Value;
             }
             set
             {
-                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Employees>("NorthwindModel.Orders_FK02", "Employees").Value = value;
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Employees>("NorthwindModel.Orders_FK02", "Employee").Value = value;
             }
         }
         /// <summary>
@@ -1935,13 +1935,13 @@ namespace Simple.Data.OData.NorthwindModel
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Employees>("NorthwindModel.Orders_FK02", "Employees");
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Employees>("NorthwindModel.Orders_FK02", "Employee");
             }
             set
             {
                 if ((value != null))
                 {
-                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Employees>("NorthwindModel.Orders_FK02", "Employees", value);
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Employees>("NorthwindModel.Orders_FK02", "Employee", value);
                 }
             }
         }
@@ -1974,16 +1974,16 @@ namespace Simple.Data.OData.NorthwindModel
         [XmlIgnoreAttribute()]
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
-        [EdmRelationshipNavigationPropertyAttribute("NorthwindModel", "Orders_FK01", "Shippers")]
+        [EdmRelationshipNavigationPropertyAttribute("NorthwindModel", "Orders_FK01", "Shipper")]
         public Shippers Shipper
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Shippers>("NorthwindModel.Orders_FK01", "Shippers").Value;
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Shippers>("NorthwindModel.Orders_FK01", "Shipper").Value;
             }
             set
             {
-                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Shippers>("NorthwindModel.Orders_FK01", "Shippers").Value = value;
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Shippers>("NorthwindModel.Orders_FK01", "Shipper").Value = value;
             }
         }
         /// <summary>
@@ -1995,13 +1995,13 @@ namespace Simple.Data.OData.NorthwindModel
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Shippers>("NorthwindModel.Orders_FK01", "Shippers");
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Shippers>("NorthwindModel.Orders_FK01", "Shipper");
             }
             set
             {
                 if ((value != null))
                 {
-                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Shippers>("NorthwindModel.Orders_FK01", "Shippers", value);
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Shippers>("NorthwindModel.Orders_FK01", "Shipper", value);
                 }
             }
         }
@@ -2314,16 +2314,16 @@ namespace Simple.Data.OData.NorthwindModel
         [XmlIgnoreAttribute()]
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
-        [EdmRelationshipNavigationPropertyAttribute("NorthwindModel", "Products_FK01", "Categories")]
+        [EdmRelationshipNavigationPropertyAttribute("NorthwindModel", "Products_FK01", "Category")]
         public Categories Category
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Categories>("NorthwindModel.Products_FK01", "Categories").Value;
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Categories>("NorthwindModel.Products_FK01", "Category").Value;
             }
             set
             {
-                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Categories>("NorthwindModel.Products_FK01", "Categories").Value = value;
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Categories>("NorthwindModel.Products_FK01", "Category").Value = value;
             }
         }
         /// <summary>
@@ -2335,13 +2335,13 @@ namespace Simple.Data.OData.NorthwindModel
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Categories>("NorthwindModel.Products_FK01", "Categories");
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Categories>("NorthwindModel.Products_FK01", "Category");
             }
             set
             {
                 if ((value != null))
                 {
-                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Categories>("NorthwindModel.Products_FK01", "Categories", value);
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Categories>("NorthwindModel.Products_FK01", "Category", value);
                 }
             }
         }
@@ -2374,16 +2374,16 @@ namespace Simple.Data.OData.NorthwindModel
         [XmlIgnoreAttribute()]
         [SoapIgnoreAttribute()]
         [DataMemberAttribute()]
-        [EdmRelationshipNavigationPropertyAttribute("NorthwindModel", "Products_FK00", "Suppliers")]
+        [EdmRelationshipNavigationPropertyAttribute("NorthwindModel", "Products_FK00", "Supplier")]
         public Suppliers Supplier
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Suppliers>("NorthwindModel.Products_FK00", "Suppliers").Value;
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Suppliers>("NorthwindModel.Products_FK00", "Supplier").Value;
             }
             set
             {
-                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Suppliers>("NorthwindModel.Products_FK00", "Suppliers").Value = value;
+                ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Suppliers>("NorthwindModel.Products_FK00", "Supplier").Value = value;
             }
         }
         /// <summary>
@@ -2395,13 +2395,13 @@ namespace Simple.Data.OData.NorthwindModel
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Suppliers>("NorthwindModel.Products_FK00", "Suppliers");
+                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedReference<Suppliers>("NorthwindModel.Products_FK00", "Supplier");
             }
             set
             {
                 if ((value != null))
                 {
-                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Suppliers>("NorthwindModel.Products_FK00", "Suppliers", value);
+                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedReference<Suppliers>("NorthwindModel.Products_FK00", "Supplier", value);
                 }
             }
         }

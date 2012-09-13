@@ -21,12 +21,12 @@ namespace Simple.Data.OData.IntegrationTests
         [Fact]
         public void UpdateAssociation()
         {
-            var category = _db.Categories.Insert(CategoryID: 1001, CategoryName: "Test");
+            var category = _db.Categories.Insert(CategoryName: "Test1");
             _db.Products.UpdateByProductName(ProductName: "Chai", Category: category);
             var product = _db.Products.FindByProductName("Chai");
 
-            Assert.Equal(1001, product.CategoryID);
-            category = _db.Category.WithProducts().FindByCategoryName("Test");
+            Assert.Equal(category.CategoryID, product.CategoryID);
+            category = _db.Category.WithProducts().FindByCategoryName("Test1");
             Assert.True(category.Products.Count == 1);
         }
     }
