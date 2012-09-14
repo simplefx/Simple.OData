@@ -184,20 +184,22 @@ namespace Simple.Data.OData
                 }
                 var formattedKeyValues = _expressionFormatter.Format(namedKeyValues);
                 var unaffectedData = new Dictionary<string, object>();
+                bool merge = false;
                 foreach (var item in entry)
                 {
-                    if (!formattedKeyValues.Contains(item.Key) && !data.ContainsKey(item.Key))
+                    if (!keyFieldNames.Contains(item.Key) && !data.ContainsKey(item.Key))
                     {
-                        unaffectedData.Add(item.Key, item.Value);
+                        merge = true;
+                        break;
                     }
                 }
-                UpdateEntry(tableName, formattedKeyValues, data, unaffectedData, transaction);
+                UpdateEntry(tableName, formattedKeyValues, data, merge, transaction);
             }
             // TODO: what to return?
             return 0;
         }
 
-        private int UpdateEntry(string tableName, string keys, IDictionary<string, object> updatedData, IDictionary<string, object> unaffectedData, IAdapterTransaction transaction)
+        private int UpdateEntry(string tableName, string keys, IDictionary<string, object> updatedData, bool merge, IAdapterTransaction transaction)
         {
             RequestBuilder requestBuilder;
             RequestRunner requestRunner;
@@ -205,7 +207,6 @@ namespace Simple.Data.OData
 
             Dictionary<string, object> allData = new Dictionary<string, object>();
             updatedData.Keys.ToList().ForEach(x => allData.Add(x, updatedData[x]));
-            unaffectedData.Keys.ToList().ForEach(x => allData.Add(x, unaffectedData[x]));
 
             IDictionary<string, object> properties;
             IDictionary<string, object> associations;
@@ -218,7 +219,7 @@ namespace Simple.Data.OData
             }
 
             var command = GetTableActualName(tableName) + "(" + keys + ")";
-            requestBuilder.AddTableCommand(command, RestVerbs.PUT, entry.ToString());
+            requestBuilder.AddTableCommand(command, merge ? RestVerbs.MERGE : RestVerbs.PUT, entry.ToString());
             var result = requestRunner.UpdateEntry();
             return result;
         }
