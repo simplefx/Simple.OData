@@ -10,22 +10,31 @@ namespace Simple.Data.OData.IntegrationTests
     public class FindAssociationTest : TestBase
     {
         [Fact]
-        public void FindAllCategoryProducts()
+        public void FindAllProductsFromCategory()
         {
             // expected request: Products?$filter=Category/CategoryName+eq+%27Beverages%27
             IEnumerable<dynamic> products = _db.Products.FindAll(_db.Products.Category.CategoryName == "Beverages");
 
             Assert.NotEmpty(products);
+            foreach (var product in products)
+            {
+                Assert.True(product.ProductID > 0);
+                Assert.Equal(1, product.CategoryID);
+            }
         }
 
         [Fact]
-        public void FindAllCustomerOrders()
+        public void FindAllCustomersGotoOrders()
         {
             // expected request: Customers('ALFKI')/Orders
-            IEnumerable<dynamic> customerOrders = _db.Customers.FindAll(_db.Customers.CustomerID == "ALFKI").Orders;
-            //IEnumerable<dynamic> customerOrders = _db.Customers.Orders.Get("ALFKI");
+            IEnumerable<dynamic> orders = _db.Customers.FindAll(_db.Customers.CustomerID == "ALFKI").Orders;
 
-            Assert.NotEmpty(customerOrders);
+            Assert.NotEmpty(orders);
+            foreach (var order in orders)
+            {
+                Assert.True(order.OrderID > 0);
+                Assert.Equal("ALFKI", order.CustomerID);
+            }
         }
 
         [Fact]
