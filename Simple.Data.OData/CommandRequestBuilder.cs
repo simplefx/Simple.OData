@@ -10,7 +10,7 @@ namespace Simple.Data.OData
         {
         }
 
-        public override void AddTableCommand(string command, string method, string content = null)
+        public override void AddCommand(string command, string method, string content = null)
         {
             var uri = CreateRequestUrl(command);
             var request = (HttpWebRequest)WebRequest.Create(uri);

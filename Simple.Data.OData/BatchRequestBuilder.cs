@@ -49,7 +49,7 @@ namespace Simple.Data.OData
             _contentBuilder.Clear();
         }
 
-        public override void AddTableCommand(string command, string method, string content = null)
+        public override void AddCommand(string command, string method, string content = null)
         {
             _contentBuilder.AppendLine(string.Format("--changeset_{0}", _changesetId));
             _contentBuilder.AppendLine("Content-Type: application/http");

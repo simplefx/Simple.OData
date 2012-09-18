@@ -143,7 +143,7 @@ namespace Simple.Data.OData
         private IEnumerable<IDictionary<string, object>> FindEntries(string url, bool scalarResult, bool setTotalCount, out int totalCount)
         {
             var requestBuilder = new CommandRequestBuilder(_urlBase);
-            requestBuilder.AddTableCommand(url, RestVerbs.GET);
+            requestBuilder.AddCommand(url, RestVerbs.GET);
             return new CommandRequestRunner(requestBuilder).FindEntries(scalarResult, setTotalCount, out totalCount);
         }
 
@@ -164,7 +164,7 @@ namespace Simple.Data.OData
             }
 
             var command = GetTableActualName(tableName);
-            requestBuilder.AddTableCommand(command, RestVerbs.POST, entry.ToString());
+            requestBuilder.AddCommand(command, RestVerbs.POST, entry.ToString());
             var result = requestRunner.InsertEntry(resultRequired);
             return result;
         }
@@ -219,7 +219,7 @@ namespace Simple.Data.OData
             }
 
             var command = GetTableActualName(tableName) + "(" + keys + ")";
-            requestBuilder.AddTableCommand(command, merge ? RestVerbs.MERGE : RestVerbs.PUT, entry.ToString());
+            requestBuilder.AddCommand(command, merge ? RestVerbs.MERGE : RestVerbs.PUT, entry.ToString());
             var result = requestRunner.UpdateEntry();
             return result;
         }
@@ -251,7 +251,7 @@ namespace Simple.Data.OData
             GetRequestHandlers(transaction, out requestBuilder, out requestRunner);
 
             var command = GetTableActualName(tableName) + "(" + keys + ")";
-            requestBuilder.AddTableCommand(command, RestVerbs.DELETE);
+            requestBuilder.AddCommand(command, RestVerbs.DELETE);
             return requestRunner.DeleteEntry();
         }
 

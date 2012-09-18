@@ -31,6 +31,6 @@ namespace Simple.Data.OData
             return (UrlBase ?? "http://") + command;
         }
 
-        public abstract void AddTableCommand(string command, string method, string content = null);
+        public abstract void AddCommand(string command, string method, string content = null);
     }
 }

@@ -85,7 +85,7 @@ namespace Simple.Data.OData.Schema
         private EdmSchema RequestMetadata()
         {
             var requestBuilder = new CommandRequestBuilder(_urlBase);
-            requestBuilder.AddTableCommand("$metadata", "GET");
+            requestBuilder.AddCommand("$metadata", "GET");
             using (var response = new CommandRequestRunner(requestBuilder).TryRequest(requestBuilder.Request))
             {
                 if (response.StatusCode == HttpStatusCode.OK)

@@ -167,5 +167,21 @@ namespace Simple.Data.OData.IntegrationTests
             product = _db.Products.FindByProductName("Test14");
             Assert.Null(product);
         }
+
+        [Fact]
+        public void InsertSingleEntityWithAssociationSingleTrans()
+        {
+            dynamic category;
+            using (var tx = _db.BeginTransaction())
+            {
+                category = tx.Categories.Insert(CategoryName: "Test15");
+                tx.Products.Insert(ProductName: "Test16", UnitPrice: 18m, Category: category);
+                tx.Commit();
+            }
+
+            category = _db.Categories.FindByCategoryName("Test15");
+            var product = _db.Products.WithCategory().FindByProductName("Test16");
+            Assert.Equal(category.CategoryName, product.Category.CategoryName);
+        }
     }
 }
