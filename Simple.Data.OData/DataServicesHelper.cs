@@ -117,9 +117,9 @@ namespace Simple.Data.OData
                 element.Descendants(null, "Schema").SelectMany(x => x.Descendants(null, "ComplexType")));
             var entityTypes = ParseEntityTypes(complexTypes,
                 element.Descendants(null, "Schema").SelectMany(x => x.Descendants(null, "EntityType")));
-            var associations = ParseAssociations(
+            var associations = ParseAssociations(complexTypes,
                 element.Descendants(null, "Schema").SelectMany(x => x.Descendants(null, "Association")));
-            var entityContainers = ParseEntityContainers(
+            var entityContainers = ParseEntityContainers(complexTypes,
                 element.Descendants(null, "Schema").SelectMany(x => x.Descendants(null, "EntityContainer")));
             return new EdmSchema(entityTypes, complexTypes, associations, entityContainers);
         }
@@ -148,7 +148,7 @@ namespace Simple.Data.OData
                               };
         }
 
-        private static IEnumerable<EdmAssociation> ParseAssociations(IEnumerable<XElement> elements)
+        private static IEnumerable<EdmAssociation> ParseAssociations(IEnumerable<EdmComplexType> complexTypes, IEnumerable<XElement> elements)
         {
             return from e in elements
                    select new EdmAssociation()
@@ -184,13 +184,13 @@ namespace Simple.Data.OData
                               };
         }
 
-        private static IEnumerable<EdmEntityContainer> ParseEntityContainers(IEnumerable<XElement> elements)
+        private static IEnumerable<EdmEntityContainer> ParseEntityContainers(IEnumerable<EdmComplexType> complexTypes, IEnumerable<XElement> elements)
         {
             return from e in elements
                    select new EdmEntityContainer()
                               {
                                   Name = e.Attribute("Name").Value,
-                                  IsDefaulEntityContainer = ParseAttribute(e.Attribute("m", "IsDefaultEntityContainer")),
+                                  IsDefaulEntityContainer = ParseBooleanAttribute(e.Attribute("m", "IsDefaultEntityContainer")),
                                   EntitySets = (from s in e.Descendants(null, "EntitySet")
                                                 select new EdmEntitySet()
                                                     {
@@ -213,8 +213,15 @@ namespace Simple.Data.OData
                                                      select new EdmFunctionImport()
                                                      {
                                                          Name = s.Attribute("Name").Value,
-                                                         ReturnType = s.Attribute("ReturnType").Value,
-                                                         EntitySet = s.Attribute("EntitySet").Value,
+                                                         HttpMethod = ParseStringAttribute(e.Attribute("m", "HttpMethod")),
+                                                         ReturnType = ParseStringAttribute(e.Attribute(null, "ReturnType")),
+                                                         EntitySet = ParseStringAttribute(e.Attribute(null, "EntitySet")),
+                                                         Parameters = (from p in s.Descendants(null, "Parameter")
+                                                                       select new EdmParameter()
+                                                                       {
+                                                                           Name = p.Attribute("Name").Value,
+                                                                           Type = EdmPropertyType.Parse(p.Attribute("Type").Value, complexTypes),
+                                                                       }).ToArray(),
                                                      }).ToArray(),
                               };
 
@@ -226,7 +233,7 @@ namespace Simple.Data.OData
                        {
                            Name = element.Attribute("Name").Value,
                            Type = EdmPropertyType.Parse(element.Attribute("Type").Value, complexTypes),
-                           Nullable = ParseAttribute(element.Attribute("Nullable")),
+                           Nullable = ParseBooleanAttribute(element.Attribute("Nullable")),
                        };
         }
 
@@ -239,7 +246,7 @@ namespace Simple.Data.OData
                        };
         }
 
-        private static bool ParseAttribute(XAttribute attribute)
+        private static bool ParseBooleanAttribute(XAttribute attribute)
         {
             bool result = false;
             if (attribute != null)
@@ -247,6 +254,11 @@ namespace Simple.Data.OData
                 bool.TryParse(attribute.Value, out result);
             }
             return result;
+        }
+
+        private static string ParseStringAttribute(XAttribute attribute)
+        {
+            return attribute == null ? null : attribute.Value;
         }
 
         public static XElement CreateDataElement(IDictionary<string, object> row)

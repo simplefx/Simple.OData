@@ -143,7 +143,7 @@ namespace Simple.Data.OData.Edm
     public sealed class EdmParameter
     {
         public string Name { get; set; }
-        public EdmType Type { get; set; }
+        public EdmPropertyType Type { get; set; }
         public string Mode { get; set; }
     }
 }
