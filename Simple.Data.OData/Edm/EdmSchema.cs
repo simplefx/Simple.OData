@@ -7,18 +7,23 @@ namespace Simple.Data.OData.Edm
 {
     public sealed class EdmSchema
     {
-        public string Namespace { get; set; }
+        public string TypesNamespace { get; set; }
+        public string ContainersNamespace { get; set; }
         public EdmEntityType[] EntityTypes { get; private set; }
         public EdmComplexType[] ComplexTypes { get; private set; }
         public EdmAssociation[] Associations { get; private set; }
         public EdmEntityContainer[] EntityContainers { get; private set; }
 
         public EdmSchema(
+            string typesNamespace,
+            string containersNamespace,
             IEnumerable<EdmEntityType> entityTypes,
             IEnumerable<EdmComplexType> complexTypes,
             IEnumerable<EdmAssociation> associations,
             IEnumerable<EdmEntityContainer> entityContainers)
         {
+            this.TypesNamespace = typesNamespace;
+            this.ContainersNamespace = containersNamespace;
             this.EntityTypes = entityTypes.ToArray();
             this.ComplexTypes = complexTypes.ToArray();
             this.Associations = associations.ToArray();

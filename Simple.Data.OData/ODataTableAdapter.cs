@@ -160,7 +160,7 @@ namespace Simple.Data.OData
             var entry = DataServicesHelper.CreateDataElement(properties);
             foreach (var association in associations)
             {
-                LinkEntry(entry, tableName, association);
+                CreateAssociations(entry, tableName, association);
             }
 
             var command = GetTableActualName(tableName);
@@ -215,7 +215,7 @@ namespace Simple.Data.OData
             var entry = DataServicesHelper.CreateDataElement(properties);
             foreach (var association in associations)
             {
-                LinkEntry(entry, tableName, association);
+                CreateAssociations(entry, tableName, association);
             }
 
             var command = GetTableActualName(tableName) + "(" + keys + ")";
@@ -255,10 +255,33 @@ namespace Simple.Data.OData
             return requestRunner.DeleteEntry();
         }
 
-        private void LinkEntry(XElement entry, string tableName, KeyValuePair<string, object> linkedEntry)
+        private void CreateAssociations(XElement entry, string tableName, KeyValuePair<string, object> associatedData)
         {
-            var association = GetSchema().FindTable(tableName).FindAssociation(linkedEntry.Key);
-            var entryProperties = linkedEntry.Value as IDictionary<string, object>;
+            var association = GetSchema().FindTable(tableName).FindAssociation(associatedData.Key);
+            if (association.Multiplicity.Contains("*"))
+            {
+                var linkedEntries = associatedData.Value as IEnumerable<object>;
+                if (linkedEntries != null)
+                {
+                    foreach (var linkedEntry in linkedEntries)
+                    {
+                        LinkEntry(entry, association, linkedEntry);
+                    }
+                }
+            }
+            else
+            {
+                LinkEntry(entry, association, associatedData.Value);
+            }
+        }
+
+        private void LinkEntry(XElement entry, Association association, object entryData)
+        {
+            if (entryData == null)
+                return;
+
+            var entryProperties = GetLinkedEntryProperties(entryData);
+
             var keyFieldNames = GetSchema().FindTable(association.ReferenceTableName).PrimaryKey.AsEnumerable().ToArray();
             var keyFieldValues = new object[keyFieldNames.Count()];
             for (int index = 0; index < keyFieldNames.Count(); index++)
@@ -266,6 +289,21 @@ namespace Simple.Data.OData
                 keyFieldValues[index] = entryProperties[keyFieldNames[index]];
             }
             DataServicesHelper.AddDataLink(entry, association.ActualName, association.ReferenceTableName, keyFieldValues);
+        }
+
+        private IDictionary<string, object> GetLinkedEntryProperties(object entryData)
+        {
+            IDictionary<string, object> entryProperties = entryData as IDictionary<string, object>;
+            if (entryProperties == null)
+            {
+                entryProperties = new Dictionary<string, object>();
+                var entryType = entryData.GetType();
+                foreach (var entryProperty in entryType.GetProperties())
+                {
+                    entryProperties.Add(entryProperty.Name, entryType.GetProperty(entryProperty.Name).GetValue(entryData, null));
+                }
+            }
+            return entryProperties;
         }
 
         private string GetTableActualName(string tableName)

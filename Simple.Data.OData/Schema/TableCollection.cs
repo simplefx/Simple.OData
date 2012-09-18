@@ -33,7 +33,7 @@ namespace Simple.Data.OData.Schema
 
             if (table == null)
             {
-                throw new UnresolvableObjectException(tableName, "No matching table found, or insufficient permissions.");
+                throw new UnresolvableObjectException(tableName, string.Format("Table {0} not found", tableName));
             }
 
             return table;

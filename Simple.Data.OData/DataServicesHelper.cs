@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Xml.Linq;
 using System.IO;
-using System.Xml;
 using Simple.NExtLib;
 using Simple.NExtLib.IO;
 using Simple.Data.OData.Edm;
@@ -113,15 +112,23 @@ namespace Simple.Data.OData
 
         private static EdmSchema ParseSchema(XElement element)
         {
+            var schemaRoot = element.Descendants(null, "Schema");
+
+            var typesNamespace = schemaRoot
+                .Where(x => x.Descendants(null, "EntityType").Any()).FirstOrDefault().Attribute("Namespace").Value;
+            var containersNamespace = schemaRoot
+                .Where(x => x.Descendants(null, "EntityContainer").Any()).FirstOrDefault().Attribute("Namespace").Value;
+
             var complexTypes = ParseComplexTypes(new EdmComplexType[] { },
-                element.Descendants(null, "Schema").SelectMany(x => x.Descendants(null, "ComplexType")));
+                schemaRoot.SelectMany(x => x.Descendants(null, "ComplexType")));
             var entityTypes = ParseEntityTypes(complexTypes,
-                element.Descendants(null, "Schema").SelectMany(x => x.Descendants(null, "EntityType")));
+                schemaRoot.SelectMany(x => x.Descendants(null, "EntityType")));
             var associations = ParseAssociations(complexTypes,
-                element.Descendants(null, "Schema").SelectMany(x => x.Descendants(null, "Association")));
+                schemaRoot.SelectMany(x => x.Descendants(null, "Association")));
             var entityContainers = ParseEntityContainers(complexTypes,
-                element.Descendants(null, "Schema").SelectMany(x => x.Descendants(null, "EntityContainer")));
-            return new EdmSchema(entityTypes, complexTypes, associations, entityContainers);
+                schemaRoot.SelectMany(x => x.Descendants(null, "EntityContainer")));
+
+            return new EdmSchema(typesNamespace, containersNamespace, entityTypes, complexTypes, associations, entityContainers);
         }
 
         private static IEnumerable<EdmComplexType> ParseComplexTypes(IEnumerable<EdmComplexType> complexTypes, IEnumerable<XElement> elements)
@@ -282,13 +289,15 @@ namespace Simple.Data.OData
             return entry;
         }
 
-        public static void AddDataLink(XElement container, string associationName, string linkedEntityName, object[] linkedEntityKey)
+        public static void AddDataLink(XElement container, string associationName, string linkedEntityName, object[] linkedEntityKeyValues)
         {
             var entry = new XElement(container.GetDefaultNamespace() + "link");
             entry.SetAttributeValue("rel", string.Format("http://schemas.microsoft.com/ado/2007/08/dataservices/related/{0}", associationName));
             entry.SetAttributeValue("type", "application/atom+xml;type=Entry");
             entry.SetAttributeValue("title", associationName);
-            entry.SetAttributeValue("href", string.Format("{0}({1})", linkedEntityName, string.Join(",", linkedEntityKey)));
+            entry.SetAttributeValue("href", string.Format("{0}({1})", 
+                linkedEntityName,
+                string.Join(",", linkedEntityKeyValues.Select(x => ExpressionFormatter.FormatValue(x)))));
             container.Add(entry);
         }
     }

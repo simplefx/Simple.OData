@@ -146,6 +146,7 @@ namespace Simple.Data.OData
             return value is string ? string.Format("'{0}'", value)
                 : value is DateTime ? ((DateTime)value).ToIso8601String()
                 : value is bool ? ((bool)value) ? "true" : "false"
+                : (value is long || value is ulong) ? value.ToString() + "L"
                 : value.ToString();
         }
     }

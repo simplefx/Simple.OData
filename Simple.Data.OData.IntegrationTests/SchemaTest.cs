@@ -69,6 +69,7 @@ namespace Simple.Data.OData.IntegrationTests
             var association = Schema.FindTable("Employees").FindAssociation("superior");
 
             Assert.Equal("Employees", association.ReferenceTableName);
+            Assert.Equal("0..1", association.Multiplicity);
         }
 
         [Fact]
@@ -78,6 +79,39 @@ namespace Simple.Data.OData.IntegrationTests
 
             Assert.Equal("OrderID", table.PrimaryKey[0]);
             Assert.Equal("ProductID", table.PrimaryKey[1]);
+        }
+
+        [Fact]
+        public void CheckODataOrgNorthwindSchema()
+        {
+            var db = Database.Opener.Open("http://services.odata.org/Northwind/Northwind.svc/");
+            var schema = (db.GetAdapter() as ODataTableAdapter).GetSchema();
+
+            var table = schema.FindTable("Product");
+            Assert.Equal("ProductID", table.PrimaryKey[0]);
+
+            var association = table.FindAssociation("Categories");
+            Assert.Equal("Categories", association.ReferenceTableName);
+            Assert.Equal("0..1", association.Multiplicity);
+
+            table = schema.FindTable("Employees");
+            association = table.FindAssociation("Employees");
+            Assert.Equal("Employees", association.ReferenceTableName);
+            Assert.Equal("0..1", association.Multiplicity);
+        }
+
+        [Fact]
+        public void CheckODataOrgODataSchema()
+        {
+            var db = Database.Opener.Open("http://services.odata.org/OData/OData.svc/");
+            var schema = (db.GetAdapter() as ODataTableAdapter).GetSchema();
+
+            var table = schema.FindTable("Product");
+            Assert.Equal("ID", table.PrimaryKey[0]);
+
+            var association = table.FindAssociation("Category_Products");
+            Assert.Equal("Categories", association.ReferenceTableName);
+            Assert.Equal("0..1", association.Multiplicity);
         }
     }
 }

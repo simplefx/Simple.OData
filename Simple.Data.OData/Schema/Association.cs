@@ -10,11 +10,13 @@ namespace Simple.Data.OData.Schema
     {
         private readonly string _actualName;
         private readonly string _referenceTableName;
+        private readonly string _multiplicity;
 
-        public Association(string actualName, string referenceTableName)
+        public Association(string actualName, string referenceTableName, string multiplicity)
         {
             _actualName = actualName;
             _referenceTableName = referenceTableName;
+            _multiplicity = multiplicity;
         }
 
         public override string ToString()
@@ -40,6 +42,11 @@ namespace Simple.Data.OData.Schema
         public string ReferenceTableName
         {
             get { return _referenceTableName; }
+        }
+
+        public string Multiplicity
+        {
+            get { return _multiplicity; }
         }
     }
 }

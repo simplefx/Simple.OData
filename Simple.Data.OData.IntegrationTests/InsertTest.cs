@@ -48,5 +48,18 @@ namespace Simple.Data.OData.IntegrationTests
             category = _db.Category.WithProducts().FindByCategoryName("Test5");
             Assert.True(category.Products.Count == 1);
         }
+
+        [Fact]
+        public void InsertProductWholeRecordWithCategoryByAssociation()
+        {
+            var category = _db.Categories.Insert(CategoryName: "Test7");
+            var productRecord = new { ProductName = "Test8", UnitPrice = 18m, Category = category};
+            var product = _db.Products.Insert(productRecord);
+
+            Assert.Equal("Test8", product.ProductName);
+            Assert.Equal(category.CategoryID, product.CategoryID);
+            category = _db.Category.WithProducts().FindByCategoryName("Test7");
+            Assert.True(category.Products.Count == 1);
+        }
     }
 }
