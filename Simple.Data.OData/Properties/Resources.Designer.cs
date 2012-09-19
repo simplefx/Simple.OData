@@ -79,5 +79,16 @@ namespace Simple.Data.OData.Properties {
                 return ResourceManager.GetString("DataServicesAtomEntryXml", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot; standalone=&quot;yes&quot;?&gt;
+        ///&lt;uri xmlns=&quot;http://schemas.microsoft.com/ado/2007/08/dataservices/metadata&quot;&gt;
+        ///&lt;/uri&gt;.
+        /// </summary>
+        internal static string DataServicesMetadataEntryXml {
+            get {
+                return ResourceManager.GetString("DataServicesMetadataEntryXml", resourceCulture);
+            }
+        }
     }
 }

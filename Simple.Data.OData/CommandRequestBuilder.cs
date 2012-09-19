@@ -10,12 +10,12 @@ namespace Simple.Data.OData
         {
         }
 
-        public override void AddCommand(string command, string method, string content = null)
+        public override void AddCommandToRequest(HttpCommand command)
         {
-            var uri = CreateRequestUrl(command);
+            var uri = CreateRequestUrl(command.CommandText);
             var request = (HttpWebRequest)WebRequest.Create(uri);
-            request.Method = method;
-            request.ContentLength = (content ?? string.Empty).Length;
+            request.Method = command.Method;
+            request.ContentLength = (command.FormattedContent ?? string.Empty).Length;
 
             // TODO: revise
             //if (method == "PUT" || method == "DELETE" || method == "MERGE")
@@ -23,13 +23,18 @@ namespace Simple.Data.OData
             //    request.Headers.Add("If-Match", "*");
             //}
 
-            if (content != null)
+            if (command.FormattedContent != null)
             {
                 request.ContentType = "application/atom+xml";
-                request.SetContent(content);
+                request.SetContent(command.FormattedContent);
             }
 
-            this.Request = request;
+            command.Request = request;
+        }
+
+        public override HttpCommand GetContentCommand(object content)
+        {
+            return null;
         }
     }
 }

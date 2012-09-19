@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Net;
-using Simple.NExtLib;
 
 namespace Simple.Data.OData
 {
@@ -19,7 +18,6 @@ namespace Simple.Data.OData
                 return substr.Substring(0, substr.IndexOf("/"));
             }
         }
-        public HttpWebRequest Request { get; protected set; }
 
         public RequestBuilder(string urlBase)
         {
@@ -31,6 +29,7 @@ namespace Simple.Data.OData
             return (UrlBase ?? "http://") + command;
         }
 
-        public abstract void AddCommand(string command, string method, string content = null);
+        public abstract void AddCommandToRequest(HttpCommand command);
+        public abstract HttpCommand GetContentCommand(object content);
     }
 }

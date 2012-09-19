@@ -282,18 +282,34 @@ namespace Simple.Data.OData
             return entry;
         }
 
+        public static XElement CreateLinkElement(int contentId)
+        {
+            var entry = CreateEmptyMetadataWithNamespaces();
+
+            entry.Element(null, "uri").SetValue("$" + contentId.ToString());
+
+            return entry;
+        }
+
         private static XElement CreateEmptyEntryWithNamespaces()
         {
             var entry = XElement.Parse(Properties.Resources.DataServicesAtomEntryXml);
             entry.Element(null, "updated").SetValue(DateTime.UtcNow.ToIso8601String());
+            entry.Element(null, "link").Remove();
+            return entry;
+        }
+
+        private static XElement CreateEmptyMetadataWithNamespaces()
+        {
+            var entry = XElement.Parse(Properties.Resources.DataServicesMetadataEntryXml);
             return entry;
         }
 
         public static void AddDataLink(XElement container, string associationName, string linkedEntityName, object[] linkedEntityKeyValues)
         {
-            var entry = new XElement(container.GetDefaultNamespace() + "link");
-            entry.SetAttributeValue("rel", string.Format("http://schemas.microsoft.com/ado/2007/08/dataservices/related/{0}", associationName));
-            entry.SetAttributeValue("type", "application/atom+xml;type=Entry");
+            var entry = XElement.Parse(Properties.Resources.DataServicesAtomEntryXml).Element(null, "link");
+            var rel = entry.Attribute("rel");
+            rel.SetValue(rel.Value + associationName);
             entry.SetAttributeValue("title", associationName);
             entry.SetAttributeValue("href", string.Format("{0}({1})", 
                 linkedEntityName,

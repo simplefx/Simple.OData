@@ -65,10 +65,10 @@ namespace Simple.Data.OData
         public string BuildCommand(string tableName, string filter)
         {
             var table = _findTable(tableName);
-            var command = table.ActualName;
+            var commandText = table.ActualName;
             if (!string.IsNullOrEmpty(filter))
-                command += "?$filter=" + HttpUtility.UrlEncode(filter);
-            return command;
+                commandText += "?$filter=" + HttpUtility.UrlEncode(filter);
+            return commandText;
         }
 
         public string BuildCommand(SimpleQuery query)
@@ -76,12 +76,12 @@ namespace Simple.Data.OData
             Build(query);
 
             var table = _findTable(query.TableName);
-            var command = table.ActualName;
+            var commandText = table.ActualName;
 
             string clause = FormatSpecialClause(table);
             if (!string.IsNullOrEmpty(clause))
             {
-                command += "/" + clause;
+                commandText += "/" + clause;
                 this.IsScalarResult = true;
             }
 
@@ -102,10 +102,10 @@ namespace Simple.Data.OData
             if (!string.IsNullOrEmpty(clause)) clauses.Add(clause);
             if (clauses.Count > 0)
             {
-                command += "?" + string.Join("&", clauses);
+                commandText += "?" + string.Join("&", clauses);
             }
 
-            return command;
+            return commandText;
         }
 
         private void Build(SimpleQuery query)

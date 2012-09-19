@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Text;
 using System.Xml.Linq;
 using Simple.Data.OData.Schema;
@@ -87,9 +86,9 @@ namespace Simple.Data.OData
         {
             var filter = new ExpressionFormatter(GetSchema().FindTable).Format(criteria);
             var builder = new CommandBuilder(GetSchema().FindTable);
-            var command = builder.BuildCommand(GetTableActualName(tableName), filter);
+            var commandText = builder.BuildCommand(GetTableActualName(tableName), filter);
 
-            return FindEntries(command);
+            return FindEntries(commandText);
         }
 
         private IEnumerable<IDictionary<string, object>> FindByQuery(SimpleQuery query, out IEnumerable<SimpleQueryClauseBase> unhandledClauses)
@@ -129,22 +128,23 @@ namespace Simple.Data.OData
             return FindEntries(GetTableActualName(tableName) + "(" + keys + ")");
         }
 
-        private IEnumerable<IDictionary<string, object>> FindEntries(string url, bool scalarResult = false)
+        private IEnumerable<IDictionary<string, object>> FindEntries(string commandText, bool scalarResult = false)
         {
             int totalCount;
-            return FindEntries(url, scalarResult, false, out totalCount);
+            return FindEntries(commandText, scalarResult, false, out totalCount);
         }
 
-        private IEnumerable<IDictionary<string, object>> FindEntries(string url, out int totalCount)
+        private IEnumerable<IDictionary<string, object>> FindEntries(string commandText, out int totalCount)
         {
-            return FindEntries(url, false, true, out totalCount);
+            return FindEntries(commandText, false, true, out totalCount);
         }
 
-        private IEnumerable<IDictionary<string, object>> FindEntries(string url, bool scalarResult, bool setTotalCount, out int totalCount)
+        private IEnumerable<IDictionary<string, object>> FindEntries(string commandText, bool scalarResult, bool setTotalCount, out int totalCount)
         {
             var requestBuilder = new CommandRequestBuilder(_urlBase);
-            requestBuilder.AddCommand(url, RestVerbs.GET);
-            return new CommandRequestRunner(requestBuilder).FindEntries(scalarResult, setTotalCount, out totalCount);
+            var command = HttpCommand.Get(commandText);
+            requestBuilder.AddCommandToRequest(command);
+            return new CommandRequestRunner().FindEntries(command, scalarResult, setTotalCount, out totalCount);
         }
 
         private IDictionary<string, object> InsertEntry(string tableName, IDictionary<string, object> data, IAdapterTransaction transaction, bool resultRequired)
@@ -154,18 +154,28 @@ namespace Simple.Data.OData
             GetRequestHandlers(transaction, out requestBuilder, out requestRunner);
 
             IDictionary<string, object> properties;
-            IDictionary<string, object> associations;
-            VerifyEntryData(tableName, data, out properties, out associations);
+            IDictionary<string, object> associationsByValue;
+            IDictionary<string, int> associationsByContentId;
+            VerifyEntryData(requestBuilder, tableName, data, out properties, out associationsByValue, out associationsByContentId);
 
             var entry = DataServicesHelper.CreateDataElement(properties);
-            foreach (var association in associations)
+            foreach (var association in associationsByValue)
             {
-                CreateAssociations(entry, tableName, association);
+                CreateLink(entry, tableName, association);
             }
 
-            var command = GetTableActualName(tableName);
-            requestBuilder.AddCommand(command, RestVerbs.POST, entry.ToString());
-            var result = requestRunner.InsertEntry(resultRequired);
+            var commandText = GetTableActualName(tableName);
+            var command = HttpCommand.Post(commandText, data, entry.ToString());
+            requestBuilder.AddCommandToRequest(command);
+            var result = requestRunner.InsertEntry(command, resultRequired);
+
+            foreach (var association in associationsByContentId)
+            {
+                var linkCommand = CreateLinkCommand(tableName, association.Key, command.ContentId, association.Value);
+                requestBuilder.AddCommandToRequest(linkCommand);
+                requestRunner.InsertEntry(linkCommand, false);
+            }
+
             return result;
         }
 
@@ -201,26 +211,36 @@ namespace Simple.Data.OData
 
         private int UpdateEntry(string tableName, string keys, IDictionary<string, object> updatedData, bool merge, IAdapterTransaction transaction)
         {
+            Dictionary<string, object> allData = new Dictionary<string, object>();
+            updatedData.Keys.ToList().ForEach(x => allData.Add(x, updatedData[x]));
+
             RequestBuilder requestBuilder;
             RequestRunner requestRunner;
             GetRequestHandlers(transaction, out requestBuilder, out requestRunner);
 
-            Dictionary<string, object> allData = new Dictionary<string, object>();
-            updatedData.Keys.ToList().ForEach(x => allData.Add(x, updatedData[x]));
-
             IDictionary<string, object> properties;
-            IDictionary<string, object> associations;
-            VerifyEntryData(tableName, allData, out properties, out associations);
+            IDictionary<string, object> associationsByValue;
+            IDictionary<string, int> associationsByContentId;
+            VerifyEntryData(requestBuilder, tableName, allData, out properties, out associationsByValue, out associationsByContentId);
 
             var entry = DataServicesHelper.CreateDataElement(properties);
-            foreach (var association in associations)
+            foreach (var association in associationsByValue)
             {
-                CreateAssociations(entry, tableName, association);
+                CreateLink(entry, tableName, association);
             }
 
-            var command = GetTableActualName(tableName) + "(" + keys + ")";
-            requestBuilder.AddCommand(command, merge ? RestVerbs.MERGE : RestVerbs.PUT, entry.ToString());
-            var result = requestRunner.UpdateEntry();
+            var commandText = GetTableActualName(tableName) + "(" + keys + ")";
+            var command = new HttpCommand(merge ? RestVerbs.MERGE : RestVerbs.PUT, commandText, updatedData, entry.ToString());
+            requestBuilder.AddCommandToRequest(command);
+            var result = requestRunner.UpdateEntry(command);
+
+            foreach (var association in associationsByContentId)
+            {
+                var linkCommand = CreateLinkCommand(tableName, association.Key, command.ContentId, association.Value);
+                requestBuilder.AddCommandToRequest(linkCommand);
+                requestRunner.UpdateEntry(linkCommand);
+            }
+            
             return result;
         }
 
@@ -250,17 +270,28 @@ namespace Simple.Data.OData
             RequestRunner requestRunner;
             GetRequestHandlers(transaction, out requestBuilder, out requestRunner);
 
-            var command = GetTableActualName(tableName) + "(" + keys + ")";
-            requestBuilder.AddCommand(command, RestVerbs.DELETE);
-            return requestRunner.DeleteEntry();
+            var commandText = GetTableActualName(tableName) + "(" + keys + ")";
+            var command = HttpCommand.Delete(commandText);
+            requestBuilder.AddCommandToRequest(command);
+            return requestRunner.DeleteEntry(command);
         }
 
-        private void CreateAssociations(XElement entry, string tableName, KeyValuePair<string, object> associatedData)
+        private HttpCommand CreateLinkCommand(string tableName, string associationName, int entryContentId, int linkContentId)
+        {
+            var linkEntry = DataServicesHelper.CreateLinkElement(linkContentId);
+            var linkMethod = GetSchema().FindTable(tableName).FindAssociation(associationName).Multiplicity.Contains("*") ? RestVerbs.POST : RestVerbs.PUT;
+
+            var commandText = string.Format("${0}/$links/{1}", entryContentId, associationName);
+            return new HttpCommand(linkMethod, commandText, null, linkEntry.ToString());
+        }
+
+        private void CreateLink(XElement entry, string tableName, KeyValuePair<string, object> associatedData)
         {
             var association = GetSchema().FindTable(tableName).FindAssociation(associatedData.Key);
+            var linkedContent = associatedData.Value;
             if (association.Multiplicity.Contains("*"))
             {
-                var linkedEntries = associatedData.Value as IEnumerable<object>;
+                var linkedEntries = linkedContent as IEnumerable<object>;
                 if (linkedEntries != null)
                 {
                     foreach (var linkedEntry in linkedEntries)
@@ -271,7 +302,7 @@ namespace Simple.Data.OData
             }
             else
             {
-                LinkEntry(entry, association, associatedData.Value);
+                LinkEntry(entry, association, linkedContent);
             }
         }
 
@@ -281,12 +312,14 @@ namespace Simple.Data.OData
                 return;
 
             var entryProperties = GetLinkedEntryProperties(entryData);
-
             var keyFieldNames = GetSchema().FindTable(association.ReferenceTableName).PrimaryKey.AsEnumerable().ToArray();
             var keyFieldValues = new object[keyFieldNames.Count()];
+
             for (int index = 0; index < keyFieldNames.Count(); index++)
             {
-                keyFieldValues[index] = entryProperties[keyFieldNames[index]];
+                bool ok = entryProperties.TryGetValue(keyFieldNames[index], out keyFieldValues[index]);
+                if (!ok)
+                    return;
             }
             DataServicesHelper.AddDataLink(entry, association.ActualName, association.ReferenceTableName, keyFieldValues);
         }
@@ -311,10 +344,15 @@ namespace Simple.Data.OData
             return GetSchema().FindTable(tableName).ActualName;
         }
 
-        private void VerifyEntryData(string tableName, IDictionary<string, object> data, out IDictionary<string, object> properties, out IDictionary<string, object> associations)
+        private void VerifyEntryData(RequestBuilder requestBuilder, string tableName,
+            IDictionary<string, object> data, out IDictionary<string, object> properties,
+            out IDictionary<string, object> associationsByValue,
+            out IDictionary<string, int> associationsByContentId)
         {
             properties = new Dictionary<string, object>();
-            associations = new Dictionary<string, object>();
+            associationsByValue = new Dictionary<string, object>();
+            associationsByContentId = new Dictionary<string, int>();
+
             var table = GetSchema().FindTable(tableName);
             foreach (var item in data)
             {
@@ -326,7 +364,15 @@ namespace Simple.Data.OData
                 {
                     if (table.HasAssociation(item.Key))
                     {
-                        associations.Add(item.Key, item.Value);
+                        var command = requestBuilder.GetContentCommand(item.Value);
+                        if (command == null)
+                        {
+                            associationsByValue.Add(item.Key, item.Value);
+                        }
+                        else
+                        {
+                            associationsByContentId.Add(item.Key, command.ContentId);
+                        }
                     }
                     else
                     {
@@ -353,7 +399,7 @@ namespace Simple.Data.OData
                                      ? new CommandRequestBuilder(_urlBase)
                                      : (transaction as ODataAdapterTransaction).RequestBuilder;
             requestRunner = transaction == null
-                                    ? new CommandRequestRunner(requestBuilder)
+                                    ? new CommandRequestRunner()
                                     : (transaction as ODataAdapterTransaction).RequestRunner;
         }
     }

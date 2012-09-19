@@ -2,19 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Net;
+using Simple.NExtLib.IO;
 
 namespace Simple.Data.OData
 {
-    using System.Net;
-    using NExtLib.IO;
-
     public abstract class RequestRunner
     {
-        protected RequestBuilder _requestBuilder;
-
-        public RequestRunner(RequestBuilder requestBuilder)
+        public RequestRunner()
         {
-            _requestBuilder = requestBuilder;
         }
 
         public string Request(HttpWebRequest request)
@@ -37,10 +33,10 @@ namespace Simple.Data.OData
             }
         }
 
-        public abstract IEnumerable<IDictionary<string, object>> FindEntries(bool scalarResult, bool setTotalCount, out int totalCount);
-        public abstract IDictionary<string, object> InsertEntry(bool resultRequired);
-        public abstract int UpdateEntry();
-        public abstract int DeleteEntry();
+        public abstract IEnumerable<IDictionary<string, object>> FindEntries(HttpCommand command, bool scalarResult, bool setTotalCount, out int totalCount);
+        public abstract IDictionary<string, object> InsertEntry(HttpCommand command, bool resultRequired);
+        public abstract int UpdateEntry(HttpCommand command);
+        public abstract int DeleteEntry(HttpCommand command);
 
         private static string TryGetResponseBody(HttpWebResponse response)
         {

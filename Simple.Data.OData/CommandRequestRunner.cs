@@ -6,14 +6,13 @@ namespace Simple.Data.OData
 {
     public class CommandRequestRunner : RequestRunner
     {
-        public CommandRequestRunner(RequestBuilder requestBuilder)
-            : base(requestBuilder)
+        public CommandRequestRunner()
         {
         }
 
-        public override IEnumerable<IDictionary<string, object>> FindEntries(bool scalarResult, bool setTotalCount, out int totalCount)
+        public override IEnumerable<IDictionary<string, object>> FindEntries(HttpCommand command, bool scalarResult, bool setTotalCount, out int totalCount)
         {
-            using (var response = TryRequest(_requestBuilder.Request))
+            using (var response = TryRequest(command.Request))
             {
                 totalCount = 0;
                 IEnumerable<IDictionary<string, object>> result = null;
@@ -34,9 +33,9 @@ namespace Simple.Data.OData
             }
         }
 
-        public override IDictionary<string, object> InsertEntry(bool resultRequired)
+        public override IDictionary<string, object> InsertEntry(HttpCommand command, bool resultRequired)
         {
-            var text = Request(_requestBuilder.Request);
+            var text = Request(command.Request);
             if (resultRequired)
             {
                 return DataServicesHelper.GetData(text).First();
@@ -47,18 +46,18 @@ namespace Simple.Data.OData
             }
         }
 
-        public override int UpdateEntry()
+        public override int UpdateEntry(HttpCommand command)
         {
-            using (var response = TryRequest(_requestBuilder.Request))
+            using (var response = TryRequest(command.Request))
             {
                 // TODO
                 return response.StatusCode == HttpStatusCode.OK ? 1 : 0;
             }
         }
 
-        public override int DeleteEntry()
+        public override int DeleteEntry(HttpCommand command)
         {
-            using (var response = TryRequest(_requestBuilder.Request))
+            using (var response = TryRequest(command.Request))
             {
                 // TODO: check response code
                 return response.StatusCode == HttpStatusCode.OK ? 1 : 0;

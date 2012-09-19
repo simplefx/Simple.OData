@@ -9,4 +9,5 @@
   <content type="application/xml">
     <m:properties/>
   </content>
+  <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/" type="application/atom+xml;type=Entry" />
 </entry>

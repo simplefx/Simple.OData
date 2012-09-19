@@ -6,28 +6,30 @@ namespace Simple.Data.OData
 {
     public class BatchRequestRunner : RequestRunner
     {
+        private RequestBuilder _requestBuilder;
+
         public BatchRequestRunner(RequestBuilder requestBuilder)
-            : base(requestBuilder)
         {
+            _requestBuilder = requestBuilder;
         }
 
-        public override IEnumerable<IDictionary<string, object>> FindEntries(bool scalarResult, bool setTotalCount, out int totalCount)
+        public override IEnumerable<IDictionary<string, object>> FindEntries(HttpCommand command, bool scalarResult, bool setTotalCount, out int totalCount)
         {
             totalCount = 0;
             return null;
         }
 
-        public override IDictionary<string, object> InsertEntry(bool resultRequired)
+        public override IDictionary<string, object> InsertEntry(HttpCommand command, bool resultRequired)
         {
-            return null;
+            return command.OriginalContent;
         }
 
-        public override int UpdateEntry()
+        public override int UpdateEntry(HttpCommand command)
         {
             return 0;
         }
 
-        public override int DeleteEntry()
+        public override int DeleteEntry(HttpCommand command)
         {
             return 0;
         }
