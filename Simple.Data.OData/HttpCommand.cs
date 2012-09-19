@@ -9,6 +9,7 @@ namespace Simple.Data.OData
         public string CommandText { get; set; }
         public IDictionary<string, object> OriginalContent { get; set; }
         public string FormattedContent { get; set; }
+        public bool IsLink { get; set; }
         public HttpWebRequest Request { get; set; }
         public int ContentId { get; set; }
 
@@ -16,12 +17,18 @@ namespace Simple.Data.OData
         {
         }
 
-        public HttpCommand(string method, string commandText, IDictionary<string, object> originalContent = null, string formattedContent = null)
+        public HttpCommand(string method, string commandText)
+            : this(method, commandText, null, null, false)
+        {
+        }
+
+        public HttpCommand(string method, string commandText, IDictionary<string, object> originalContent, string formattedContent, bool isLink = false)
         {
             Method = method;
             CommandText = commandText;
             OriginalContent = originalContent;
             FormattedContent = formattedContent;
+            IsLink = isLink;
         }
 
         public static HttpCommand Get(string commandText)
@@ -32,36 +39,39 @@ namespace Simple.Data.OData
                 };
         }
 
-        public static HttpCommand Post(string commandText, IDictionary<string, object> originalContent, string formattedContent)
+        public static HttpCommand Post(string commandText, IDictionary<string, object> originalContent, string formattedContent, bool isLink = false)
         {
             return new HttpCommand
                 {
                     Method = RestVerbs.POST,
                     CommandText = commandText,
                     OriginalContent = originalContent,
-                    FormattedContent = formattedContent
+                    FormattedContent = formattedContent,
+                    IsLink = isLink
                 };
         }
 
-        public static HttpCommand Put(string commandText, IDictionary<string, object> originalContent, string formattedContent)
+        public static HttpCommand Put(string commandText, IDictionary<string, object> originalContent, string formattedContent, bool isLink = false)
         {
             return new HttpCommand
                 {
                     Method = RestVerbs.PUT,
                     CommandText = commandText,
                     OriginalContent = originalContent,
-                    FormattedContent = formattedContent
+                    FormattedContent = formattedContent,
+                    IsLink = isLink
                 };
         }
 
-        public static HttpCommand Merge(string commandText, IDictionary<string, object> originalContent, string formattedContent)
+        public static HttpCommand Merge(string commandText, IDictionary<string, object> originalContent, string formattedContent, bool isLink = false)
         {
             return new HttpCommand
                 {
                     Method = RestVerbs.MERGE,
                     CommandText = commandText,
                     OriginalContent = originalContent,
-                    FormattedContent = formattedContent
+                    FormattedContent = formattedContent,
+                    IsLink = isLink
                 };
         }
 

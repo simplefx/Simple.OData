@@ -12,7 +12,6 @@ namespace Simple.Data.OData
         private string _changesetId;
         private int _contentId;
         private StringBuilder _contentBuilder;
-        private Dictionary<object, HttpCommand> _commandContents;
 
         public HttpWebRequest Request { get; private set; }
 
@@ -36,8 +35,6 @@ namespace Simple.Data.OData
             _changesetId = Guid.NewGuid().ToString();
             _contentBuilder.AppendLine(string.Format("Content-Type: multipart/mixed; boundary=changeset_{0}", _changesetId));
             _contentBuilder.AppendLine();
-
-            _commandContents = new Dictionary<object, HttpCommand>();
         }
 
         public void EndBatch()
@@ -48,13 +45,11 @@ namespace Simple.Data.OData
             this.Request.ContentLength = content.Length;
             this.Request.SetContent(content);
             _contentBuilder.Clear();
-            _commandContents.Clear();
         }
 
         public void CancelBatch()
         {
             _contentBuilder.Clear();
-            _commandContents.Clear();
         }
 
         public override void AddCommandToRequest(HttpCommand command)
@@ -64,12 +59,12 @@ namespace Simple.Data.OData
             _contentBuilder.AppendLine("Content-Transfer-Encoding:binary");
             _contentBuilder.AppendLine();
 
-            _contentBuilder.AppendLine(string.Format("{0} {1} HTTP/{2}", command.Method, CreateRequestUrl(command.CommandText), "1.1"));
+            _contentBuilder.AppendLine(string.Format("{0} {1} HTTP/{2}", command.Method, command.IsLink ? command.CommandText : CreateRequestUrl(command.CommandText), "1.1"));
 
             if (command.FormattedContent != null)
             {
                 _contentBuilder.AppendLine(string.Format("Content-ID: {0}", ++_contentId));
-                _contentBuilder.AppendLine(string.Format("Content-Type: application/atom+xml;type=entry"));
+                _contentBuilder.AppendLine(string.Format("Content-Type: {0}", command.IsLink ? "application/xml" : "application/atom+xml;type=entry"));
                 _contentBuilder.AppendLine(string.Format("Content-Length: {0}", (command.FormattedContent ?? string.Empty).Length));
                 _contentBuilder.AppendLine();
                 _contentBuilder.Append(command.FormattedContent);
@@ -82,15 +77,14 @@ namespace Simple.Data.OData
 
             if (command.OriginalContent != null)
             {
-                _commandContents.Add(command.OriginalContent, command);
+                command.OriginalContent.Add("$Content-ID", command.ContentId);
             }
         }
 
-        public override HttpCommand GetContentCommand(object content)
+        public override int GetContentId(IDictionary<string, object> content)
         {
-            HttpCommand command = null;
-            _commandContents.TryGetValue(content, out command);
-            return command;
+            object contentId = 0;
+            return content.TryGetValue("$Content-ID", out contentId) ? int.Parse(contentId.ToString()) : 0;
         }
     }
 }

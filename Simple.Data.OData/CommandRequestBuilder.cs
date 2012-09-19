@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Collections.Generic;
+using System.Net;
 using Simple.NExtLib;
 
 namespace Simple.Data.OData
@@ -32,9 +33,9 @@ namespace Simple.Data.OData
             command.Request = request;
         }
 
-        public override HttpCommand GetContentCommand(object content)
+        public override int GetContentId(IDictionary<string, object> content)
         {
-            return null;
+            return 0;
         }
     }
 }

@@ -282,7 +282,7 @@ namespace Simple.Data.OData
             var linkMethod = GetSchema().FindTable(tableName).FindAssociation(associationName).Multiplicity.Contains("*") ? RestVerbs.POST : RestVerbs.PUT;
 
             var commandText = string.Format("${0}/$links/{1}", entryContentId, associationName);
-            return new HttpCommand(linkMethod, commandText, null, linkEntry.ToString());
+            return new HttpCommand(linkMethod, commandText, null, linkEntry.ToString(), true);
         }
 
         private void CreateLink(XElement entry, string tableName, KeyValuePair<string, object> associatedData)
@@ -364,14 +364,14 @@ namespace Simple.Data.OData
                 {
                     if (table.HasAssociation(item.Key))
                     {
-                        var command = requestBuilder.GetContentCommand(item.Value);
-                        if (command == null)
+                        int contentId = requestBuilder.GetContentId(item.Value as IDictionary<string, object>);
+                        if (contentId == 0)
                         {
                             associationsByValue.Add(item.Key, item.Value);
                         }
                         else
                         {
-                            associationsByContentId.Add(item.Key, command.ContentId);
+                            associationsByContentId.Add(item.Key, contentId);
                         }
                     }
                     else

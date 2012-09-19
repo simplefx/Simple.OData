@@ -286,9 +286,21 @@ namespace Simple.Data.OData
         {
             var entry = CreateEmptyMetadataWithNamespaces();
 
-            entry.Element(null, "uri").SetValue("$" + contentId.ToString());
+            entry.SetValue("$" + contentId.ToString());
 
             return entry;
+        }
+
+        public static void AddDataLink(XElement container, string associationName, string linkedEntityName, object[] linkedEntityKeyValues)
+        {
+            var entry = XElement.Parse(Properties.Resources.DataServicesAtomEntryXml).Element(null, "link");
+            var rel = entry.Attribute("rel");
+            rel.SetValue(rel.Value + associationName);
+            entry.SetAttributeValue("title", associationName);
+            entry.SetAttributeValue("href", string.Format("{0}({1})",
+                linkedEntityName,
+                string.Join(",", linkedEntityKeyValues.Select(x => ExpressionFormatter.FormatValue(x)))));
+            container.Add(entry);
         }
 
         private static XElement CreateEmptyEntryWithNamespaces()
@@ -303,18 +315,6 @@ namespace Simple.Data.OData
         {
             var entry = XElement.Parse(Properties.Resources.DataServicesMetadataEntryXml);
             return entry;
-        }
-
-        public static void AddDataLink(XElement container, string associationName, string linkedEntityName, object[] linkedEntityKeyValues)
-        {
-            var entry = XElement.Parse(Properties.Resources.DataServicesAtomEntryXml).Element(null, "link");
-            var rel = entry.Attribute("rel");
-            rel.SetValue(rel.Value + associationName);
-            entry.SetAttributeValue("title", associationName);
-            entry.SetAttributeValue("href", string.Format("{0}({1})", 
-                linkedEntityName,
-                string.Join(",", linkedEntityKeyValues.Select(x => ExpressionFormatter.FormatValue(x)))));
-            container.Add(entry);
         }
     }
 }
