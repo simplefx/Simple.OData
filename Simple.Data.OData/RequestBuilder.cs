@@ -30,6 +30,6 @@ namespace Simple.Data.OData
         }
 
         public abstract void AddCommandToRequest(HttpCommand command);
-        public abstract int GetContentId(IDictionary<string, object> content);
+        public abstract int GetContentId(object content);
     }
 }

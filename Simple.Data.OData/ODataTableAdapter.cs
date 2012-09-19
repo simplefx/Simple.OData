@@ -364,7 +364,7 @@ namespace Simple.Data.OData
                 {
                     if (table.HasAssociation(item.Key))
                     {
-                        int contentId = requestBuilder.GetContentId(item.Value as IDictionary<string, object>);
+                        int contentId = requestBuilder.GetContentId(item.Value);
                         if (contentId == 0)
                         {
                             associationsByValue.Add(item.Key, item.Value);

@@ -77,14 +77,23 @@ namespace Simple.Data.OData
 
             if (command.OriginalContent != null)
             {
+                command.OriginalContent.Add("$Batch-ID", _batchId);
                 command.OriginalContent.Add("$Content-ID", command.ContentId);
             }
         }
 
-        public override int GetContentId(IDictionary<string, object> content)
+        public override int GetContentId(object content)
         {
-            object contentId = 0;
-            return content.TryGetValue("$Content-ID", out contentId) ? int.Parse(contentId.ToString()) : 0;
+            var properties = content as IDictionary<string, object>;
+            if (properties != null)
+            {
+                object val;
+                if (properties.TryGetValue("$Batch-ID", out val) && val.ToString() == _batchId)
+                {
+                    return properties.TryGetValue("$Content-ID", out val) ? int.Parse(val.ToString()) : 0;
+                }
+            }
+            return 0;
         }
     }
 }

@@ -33,7 +33,7 @@ namespace Simple.Data.OData
             command.Request = request;
         }
 
-        public override int GetContentId(IDictionary<string, object> content)
+        public override int GetContentId(object content)
         {
             return 0;
         }
