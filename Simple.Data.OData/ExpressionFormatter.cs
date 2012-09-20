@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Simple.Data;
 using Simple.Data.OData.Schema;
 
 namespace Simple.Data.OData
@@ -81,8 +80,9 @@ namespace Simple.Data.OData
         private string EqualExpressionToWhereClause(SimpleExpression expression)
         {
             if (expression.RightOperand == null)
-                return string.Format("not({0} ge '')", FormatObject(expression.LeftOperand));
-            if (CommonTypes.Contains(expression.RightOperand.GetType())) return FormatAsComparison(expression, "eq");
+                return FormatAsComparison(expression, "eq");
+            if (CommonTypes.Contains(expression.RightOperand.GetType())) 
+                return FormatAsComparison(expression, "eq");
 
             return TryFormatAsRange(expression.LeftOperand, expression.RightOperand as IRange)
                 ?? FormatAsComparison(expression, "eq");
@@ -91,8 +91,9 @@ namespace Simple.Data.OData
         private string NotEqualExpressionToWhereClause(SimpleExpression expression)
         {
             if (expression.RightOperand == null)
-                return string.Format("({0} ge '')", FormatObject(expression.LeftOperand));
-            if (CommonTypes.Contains(expression.RightOperand.GetType())) return FormatAsComparison(expression, "ne");
+                return FormatAsComparison(expression, "ne");
+            if (CommonTypes.Contains(expression.RightOperand.GetType())) 
+                return FormatAsComparison(expression, "ne");
 
             return FormatAsComparison(expression, "ne");
         }
@@ -143,7 +144,8 @@ namespace Simple.Data.OData
 
         internal static string FormatValue(object value)
         {
-            return value is string ? string.Format("'{0}'", value)
+            return value == null ? "null"
+                : value is string ? string.Format("'{0}'", value)
                 : value is DateTime ? ((DateTime)value).ToIso8601String()
                 : value is bool ? ((bool)value) ? "true" : "false"
                 : (value is long || value is ulong) ? value.ToString() + "L"

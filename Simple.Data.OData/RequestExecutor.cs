@@ -77,7 +77,7 @@ namespace Simple.Data.OData
             {
                 var linkCommand = CreateLinkCommand(tableName, association.Key, command.ContentId, association.Value);
                 _requestBuilder.AddCommandToRequest(linkCommand);
-                _requestRunner.InsertEntry(linkCommand, false);
+                _requestRunner.InsertEntry(linkCommand, resultRequired);
             }
 
             return result;

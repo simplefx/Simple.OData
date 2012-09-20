@@ -19,7 +19,7 @@ namespace Simple.Data.OData.IntegrationTests
         }
 
         [Fact]
-        public void UpdateWholeRecord()
+        public void UpdateObject()
         {
             var product = _db.Products.FindByProductID(1);
             product.UnitPrice = 123m;
