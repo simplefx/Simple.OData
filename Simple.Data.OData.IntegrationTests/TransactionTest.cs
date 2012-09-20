@@ -169,7 +169,7 @@ namespace Simple.Data.OData.IntegrationTests
         }
 
         [Fact]
-        public void InsertSingleEntityWithAssociationSingleTrans()
+        public void InsertSingleEntityWithSingleAssociationSingleTrans()
         {
             dynamic category;
             using (var tx = _db.BeginTransaction())
@@ -182,6 +182,22 @@ namespace Simple.Data.OData.IntegrationTests
             category = _db.Categories.FindByCategoryName("Test15");
             var product = _db.Products.WithCategory().FindByProductName("Test16");
             Assert.Equal(category.CategoryName, product.Category.CategoryName);
+        }
+
+        [Fact]
+        public void InsertSingleEntityWithMultipleAssociationsSingleTrans()
+        {
+            dynamic category;
+            using (var tx = _db.BeginTransaction())
+            {
+                var product1 = tx.Products.Insert(ProductName: "Test17", UnitPrice: 18m);
+                var product2 = tx.Products.Insert(ProductName: "Test18", UnitPrice: 19m);
+                category = tx.Categories.Insert(CategoryName: "Test19", Products : new[] {product1, product2});
+                tx.Commit();
+            }
+
+            category = _db.Categories.WithProducts().FindByCategoryName("Test19");
+            Assert.Equal(2, category.Products.Count);
         }
     }
 }

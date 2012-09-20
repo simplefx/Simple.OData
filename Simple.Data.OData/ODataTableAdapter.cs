@@ -64,7 +64,7 @@ namespace Simple.Data.OData
         public override IDictionary<string, object> Insert(string tableName, IDictionary<string, object> data, bool resultRequired)
         {
             CheckInsertablePropertiesAreAvailable(tableName, data);
-            return InsertEntry(tableName, data, null, resultRequired);
+            return new RequestExecutor(_urlBase, _schema).InsertEntry(tableName, data, null, resultRequired);
         }
 
         public override int Update(string tableName, IDictionary<string, object> data, SimpleExpression criteria)
@@ -131,52 +131,12 @@ namespace Simple.Data.OData
         private IEnumerable<IDictionary<string, object>> FindEntries(string commandText, bool scalarResult = false)
         {
             int totalCount;
-            return FindEntries(commandText, scalarResult, false, out totalCount);
+            return new RequestExecutor(_urlBase, _schema).FindEntries(commandText, scalarResult, false, out totalCount);
         }
 
         private IEnumerable<IDictionary<string, object>> FindEntries(string commandText, out int totalCount)
         {
-            return FindEntries(commandText, false, true, out totalCount);
-        }
-
-        private IEnumerable<IDictionary<string, object>> FindEntries(string commandText, bool scalarResult, bool setTotalCount, out int totalCount)
-        {
-            var requestBuilder = new CommandRequestBuilder(_urlBase);
-            var command = HttpCommand.Get(commandText);
-            requestBuilder.AddCommandToRequest(command);
-            return new CommandRequestRunner().FindEntries(command, scalarResult, setTotalCount, out totalCount);
-        }
-
-        private IDictionary<string, object> InsertEntry(string tableName, IDictionary<string, object> data, IAdapterTransaction transaction, bool resultRequired)
-        {
-            RequestBuilder requestBuilder;
-            RequestRunner requestRunner;
-            GetRequestHandlers(transaction, out requestBuilder, out requestRunner);
-
-            IDictionary<string, object> properties;
-            IDictionary<string, object> associationsByValue;
-            IDictionary<string, int> associationsByContentId;
-            VerifyEntryData(requestBuilder, tableName, data, out properties, out associationsByValue, out associationsByContentId);
-
-            var entry = DataServicesHelper.CreateDataElement(properties);
-            foreach (var association in associationsByValue)
-            {
-                CreateLink(entry, tableName, association);
-            }
-
-            var commandText = GetTableActualName(tableName);
-            var command = HttpCommand.Post(commandText, data, entry.ToString());
-            requestBuilder.AddCommandToRequest(command);
-            var result = requestRunner.InsertEntry(command, resultRequired);
-
-            foreach (var association in associationsByContentId)
-            {
-                var linkCommand = CreateLinkCommand(tableName, association.Key, command.ContentId, association.Value);
-                requestBuilder.AddCommandToRequest(linkCommand);
-                requestRunner.InsertEntry(linkCommand, false);
-            }
-
-            return result;
+            return new RequestExecutor(_urlBase, _schema).FindEntries(commandText, false, true, out totalCount);
         }
 
         private int UpdateByExpression(string tableName, IDictionary<string, object> data, SimpleExpression criteria, IAdapterTransaction transaction)
@@ -203,45 +163,10 @@ namespace Simple.Data.OData
                         break;
                     }
                 }
-                UpdateEntry(tableName, formattedKeyValues, data, merge, transaction);
+                new RequestExecutor(_urlBase, _schema, transaction).UpdateEntry(tableName, formattedKeyValues, data, merge, transaction);
             }
             // TODO: what to return?
             return 0;
-        }
-
-        private int UpdateEntry(string tableName, string keys, IDictionary<string, object> updatedData, bool merge, IAdapterTransaction transaction)
-        {
-            Dictionary<string, object> allData = new Dictionary<string, object>();
-            updatedData.Keys.ToList().ForEach(x => allData.Add(x, updatedData[x]));
-
-            RequestBuilder requestBuilder;
-            RequestRunner requestRunner;
-            GetRequestHandlers(transaction, out requestBuilder, out requestRunner);
-
-            IDictionary<string, object> properties;
-            IDictionary<string, object> associationsByValue;
-            IDictionary<string, int> associationsByContentId;
-            VerifyEntryData(requestBuilder, tableName, allData, out properties, out associationsByValue, out associationsByContentId);
-
-            var entry = DataServicesHelper.CreateDataElement(properties);
-            foreach (var association in associationsByValue)
-            {
-                CreateLink(entry, tableName, association);
-            }
-
-            var commandText = GetTableActualName(tableName) + "(" + keys + ")";
-            var command = new HttpCommand(merge ? RestVerbs.MERGE : RestVerbs.PUT, commandText, updatedData, entry.ToString());
-            requestBuilder.AddCommandToRequest(command);
-            var result = requestRunner.UpdateEntry(command);
-
-            foreach (var association in associationsByContentId)
-            {
-                var linkCommand = CreateLinkCommand(tableName, association.Key, command.ContentId, association.Value);
-                requestBuilder.AddCommandToRequest(linkCommand);
-                requestRunner.UpdateEntry(linkCommand);
-            }
-            
-            return result;
         }
 
         private int DeleteByExpression(string tableName, SimpleExpression criteria, IAdapterTransaction transaction)
@@ -258,128 +183,15 @@ namespace Simple.Data.OData
                     namedKeyValues.Add(keyFieldNames[index], entry[keyFieldNames[index]]);
                 }
                 var formattedKeyValues = _expressionFormatter.Format(namedKeyValues);
-                DeleteEntry(tableName, formattedKeyValues, transaction);
+                new RequestExecutor(_urlBase, _schema, transaction).DeleteEntry(tableName, formattedKeyValues, transaction);
             }
             // TODO: what to return?
             return 0;
         }
 
-        private int DeleteEntry(string tableName, string keys, IAdapterTransaction transaction)
-        {
-            RequestBuilder requestBuilder;
-            RequestRunner requestRunner;
-            GetRequestHandlers(transaction, out requestBuilder, out requestRunner);
-
-            var commandText = GetTableActualName(tableName) + "(" + keys + ")";
-            var command = HttpCommand.Delete(commandText);
-            requestBuilder.AddCommandToRequest(command);
-            return requestRunner.DeleteEntry(command);
-        }
-
-        private HttpCommand CreateLinkCommand(string tableName, string associationName, int entryContentId, int linkContentId)
-        {
-            var linkEntry = DataServicesHelper.CreateLinkElement(linkContentId);
-            var linkMethod = GetSchema().FindTable(tableName).FindAssociation(associationName).Multiplicity.Contains("*") ? RestVerbs.POST : RestVerbs.PUT;
-
-            var commandText = string.Format("${0}/$links/{1}", entryContentId, associationName);
-            return new HttpCommand(linkMethod, commandText, null, linkEntry.ToString(), true);
-        }
-
-        private void CreateLink(XElement entry, string tableName, KeyValuePair<string, object> associatedData)
-        {
-            var association = GetSchema().FindTable(tableName).FindAssociation(associatedData.Key);
-            var linkedContent = associatedData.Value;
-            if (association.Multiplicity.Contains("*"))
-            {
-                var linkedEntries = linkedContent as IEnumerable<object>;
-                if (linkedEntries != null)
-                {
-                    foreach (var linkedEntry in linkedEntries)
-                    {
-                        LinkEntry(entry, association, linkedEntry);
-                    }
-                }
-            }
-            else
-            {
-                LinkEntry(entry, association, linkedContent);
-            }
-        }
-
-        private void LinkEntry(XElement entry, Association association, object entryData)
-        {
-            if (entryData == null)
-                return;
-
-            var entryProperties = GetLinkedEntryProperties(entryData);
-            var keyFieldNames = GetSchema().FindTable(association.ReferenceTableName).PrimaryKey.AsEnumerable().ToArray();
-            var keyFieldValues = new object[keyFieldNames.Count()];
-
-            for (int index = 0; index < keyFieldNames.Count(); index++)
-            {
-                bool ok = entryProperties.TryGetValue(keyFieldNames[index], out keyFieldValues[index]);
-                if (!ok)
-                    return;
-            }
-            DataServicesHelper.AddDataLink(entry, association.ActualName, association.ReferenceTableName, keyFieldValues);
-        }
-
-        private IDictionary<string, object> GetLinkedEntryProperties(object entryData)
-        {
-            IDictionary<string, object> entryProperties = entryData as IDictionary<string, object>;
-            if (entryProperties == null)
-            {
-                entryProperties = new Dictionary<string, object>();
-                var entryType = entryData.GetType();
-                foreach (var entryProperty in entryType.GetProperties())
-                {
-                    entryProperties.Add(entryProperty.Name, entryType.GetProperty(entryProperty.Name).GetValue(entryData, null));
-                }
-            }
-            return entryProperties;
-        }
-
         private string GetTableActualName(string tableName)
         {
             return GetSchema().FindTable(tableName).ActualName;
-        }
-
-        private void VerifyEntryData(RequestBuilder requestBuilder, string tableName,
-            IDictionary<string, object> data, out IDictionary<string, object> properties,
-            out IDictionary<string, object> associationsByValue,
-            out IDictionary<string, int> associationsByContentId)
-        {
-            properties = new Dictionary<string, object>();
-            associationsByValue = new Dictionary<string, object>();
-            associationsByContentId = new Dictionary<string, int>();
-
-            var table = GetSchema().FindTable(tableName);
-            foreach (var item in data)
-            {
-                if (table.HasColumn(item.Key))
-                {
-                    properties.Add(item.Key, item.Value);
-                }
-                else
-                {
-                    if (table.HasAssociation(item.Key))
-                    {
-                        int contentId = requestBuilder.GetContentId(item.Value);
-                        if (contentId == 0)
-                        {
-                            associationsByValue.Add(item.Key, item.Value);
-                        }
-                        else
-                        {
-                            associationsByContentId.Add(item.Key, contentId);
-                        }
-                    }
-                    else
-                    {
-                        throw new SimpleDataException(string.Format("No property or association found for {0}.", item.Key));
-                    }
-                }
-            }
         }
 
         private void CheckInsertablePropertiesAreAvailable(string tableName, IEnumerable<KeyValuePair<string, object>> data)
@@ -391,16 +203,6 @@ namespace Simple.Data.OData
             {
                 throw new SimpleDataException("No properties were found which could be mapped to the database.");
             }
-        }
-
-        private void GetRequestHandlers(IAdapterTransaction transaction, out RequestBuilder requestBuilder, out RequestRunner requestRunner)
-        {
-            requestBuilder = transaction == null
-                                     ? new CommandRequestBuilder(_urlBase)
-                                     : (transaction as ODataAdapterTransaction).RequestBuilder;
-            requestRunner = transaction == null
-                                    ? new CommandRequestRunner()
-                                    : (transaction as ODataAdapterTransaction).RequestRunner;
         }
     }
 }

@@ -65,6 +65,7 @@
     <Compile Include="Edm\EdmType.cs" />
     <Compile Include="ExpressionFormatter.cs" />
     <Compile Include="FunctionNameConverter.cs" />
+    <Compile Include="RequestExecutor.cs" />
     <Compile Include="RequestRunner.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

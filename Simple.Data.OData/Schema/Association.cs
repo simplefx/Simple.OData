@@ -48,5 +48,10 @@ namespace Simple.Data.OData.Schema
         {
             get { return _multiplicity; }
         }
+
+        public bool IsMultiple
+        {
+            get { return _multiplicity.Contains("*"); }
+        }
     }
 }

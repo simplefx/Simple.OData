@@ -35,7 +35,7 @@ namespace Simple.Data.OData
         public IDictionary<string, object> Insert(string tableName, IDictionary<string, object> data, IAdapterTransaction transaction, bool resultRequired)
         {
             CheckInsertablePropertiesAreAvailable(tableName, data);
-            return InsertEntry(tableName, data, transaction, resultRequired);
+            return new RequestExecutor(_urlBase, _schema, transaction).InsertEntry(tableName, data, transaction, resultRequired);
         }
 
         public IEnumerable<IDictionary<string, object>> InsertMany(string tableName, IEnumerable<IDictionary<string, object>> data, IAdapterTransaction transaction, Func<IDictionary<string, object>, Exception, bool> onError, bool resultRequired)

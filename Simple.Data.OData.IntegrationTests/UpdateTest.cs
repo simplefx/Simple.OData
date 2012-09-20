@@ -51,7 +51,7 @@ namespace Simple.Data.OData.IntegrationTests
             var product1 = _db.Products.Insert(ProductName: "Test4", UnitPrice: 21m, CategoryID: 1);
             var product2 = _db.Products.Insert(ProductName: "Test5", UnitPrice: 22m, CategoryID: 1);
 
-            _db.Categories.UpdateByCategoryName(CategoryName: "Test3", Products: new object[] { product1, product2 });
+            _db.Categories.UpdateByCategoryName(CategoryName: "Test3", Products: new[] { product1, product2 });
 
             category = _db.Category.WithProducts().FindByCategoryName("Test3");
             Assert.Equal(2, category.Products.Count);
