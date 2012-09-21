@@ -37,6 +37,7 @@ namespace Simple.Data.OData
         public abstract IDictionary<string, object> InsertEntry(HttpCommand command, bool resultRequired);
         public abstract int UpdateEntry(HttpCommand command);
         public abstract int DeleteEntry(HttpCommand command);
+        public abstract IEnumerable<IEnumerable<IEnumerable<KeyValuePair<string, object>>>> ExecuteFunction(HttpCommand command);
 
         private static string TryGetResponseBody(HttpWebResponse response)
         {

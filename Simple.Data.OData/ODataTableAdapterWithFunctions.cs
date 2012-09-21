@@ -11,12 +11,17 @@ namespace Simple.Data.OData
 
         public IEnumerable<IEnumerable<IEnumerable<KeyValuePair<string, object>>>> Execute(string functionName, IDictionary<string, object> parameters)
         {
-            throw new System.NotImplementedException();
+            return ExecuteFunction(functionName, parameters, null);
         }
 
         public IEnumerable<IEnumerable<IEnumerable<KeyValuePair<string, object>>>> Execute(string functionName, IDictionary<string, object> parameters, IAdapterTransaction transaction)
         {
-            throw new System.NotImplementedException();
+            return ExecuteFunction(functionName, parameters, transaction);
+        }
+
+        private IEnumerable<IEnumerable<IEnumerable<KeyValuePair<string, object>>>> ExecuteFunction(string functionName, IDictionary<string, object> parameters, IAdapterTransaction transaction)
+        {
+            return new RequestExecutor(_urlBase, _schema).ExecuteFunction(functionName, parameters);
         }
     }
 }

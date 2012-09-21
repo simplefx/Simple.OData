@@ -63,5 +63,24 @@ namespace Simple.Data.OData
                 return response.StatusCode == HttpStatusCode.OK ? 1 : 0;
             }
         }
+
+        public override IEnumerable<IEnumerable<IEnumerable<KeyValuePair<string, object>>>> ExecuteFunction(HttpCommand command)
+        {
+            using (var response = TryRequest(command.Request))
+            {
+                IEnumerable<IEnumerable<IEnumerable<KeyValuePair<string, object>>>> result = null;
+                if (response.StatusCode != HttpStatusCode.OK)
+                {
+                    //result = Enumerable.Empty<IDictionary<string, object>>();
+                }
+                else
+                {
+                    var stream = response.GetResponseStream();
+                    //result = ODataClient.GetData(response.GetResponseStream(), false);
+                }
+
+                return result;
+            }
+        }
     }
 }

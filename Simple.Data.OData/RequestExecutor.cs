@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Text;
+using System.Web;
 using System.Xml.Linq;
 using Simple.Data.OData.Schema;
 
@@ -117,6 +119,16 @@ namespace Simple.Data.OData
             var command = HttpCommand.Delete(commandText);
             _requestBuilder.AddCommandToRequest(command);
             return _requestRunner.DeleteEntry(command);
+        }
+
+        public IEnumerable<IEnumerable<IEnumerable<KeyValuePair<string, object>>>> ExecuteFunction(string functionName, IDictionary<string, object> parameters)
+        {
+            var function = _schema.FindFunction(functionName);
+            var formattedParameters = new ExpressionFormatter(_schema.FindTable).Format(parameters, "&");
+            var commandText = function.ActualName + "?" + formattedParameters;
+            var command = new HttpCommand(function.HttpMethod.ToUpper(), commandText.ToString());
+            _requestBuilder.AddCommandToRequest(command);
+            return _requestRunner.ExecuteFunction(command);
         }
 
         private HttpCommand CreateLinkCommand(string tableName, string associationName, int entryContentId, int linkContentId)

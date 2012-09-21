@@ -32,5 +32,10 @@ namespace Simple.Data.OData
         {
             return 0;
         }
+
+        public override IEnumerable<IEnumerable<IEnumerable<KeyValuePair<string, object>>>> ExecuteFunction(HttpCommand command)
+        {
+            return null;
+        }
     }
 }

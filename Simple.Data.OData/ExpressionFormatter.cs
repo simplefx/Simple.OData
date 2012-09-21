@@ -55,7 +55,7 @@ namespace Simple.Data.OData
             return string.Empty;
         }
 
-        public string Format(IDictionary<string, object> keyValues)
+        public string Format(IDictionary<string, object> keyValues, string separator = ",")
         {
             if (keyValues.Count() == 1)
             {
@@ -63,7 +63,7 @@ namespace Simple.Data.OData
             }
             else
             {
-                return string.Join(",", keyValues.Select(x => string.Format("{0}={1}", x.Key, FormatValue(x.Value))));
+                return string.Join(separator, keyValues.Select(x => string.Format("{0}={1}", x.Key, FormatValue(x.Value))));
             }
         }
 
