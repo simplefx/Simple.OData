@@ -17,7 +17,7 @@ namespace Simple.Data.OData.UnitTests
         public void GetDataParsesSingleProduct()
         {
             string document = GetResourceAsString("SingleProduct.xml");
-            var result = DataServicesHelper.GetData(document);
+            var result = ODataClient.GetData(document);
             Assert.Equal(1, result.Count());
             Assert.Equal(productProperties, result.First().Count);
         }
@@ -26,7 +26,7 @@ namespace Simple.Data.OData.UnitTests
         public void GetDataParsesMultipleProducts()
         {
             string document = GetResourceAsString("MultipleProducts.xml");
-            var result = DataServicesHelper.GetData(document);
+            var result = ODataClient.GetData(document);
             Assert.Equal(20, result.Count());
             Assert.Equal(productProperties, result.First().Count);
         }
@@ -35,7 +35,7 @@ namespace Simple.Data.OData.UnitTests
         public void GetDataParsesSingleProductWithCategory()
         {
             string document = GetResourceAsString("SingleProductWithCategory.xml");
-            var result = DataServicesHelper.GetData(document);
+            var result = ODataClient.GetData(document);
             Assert.Equal(1, result.Count());
             Assert.Equal(productProperties + 1, result.First().Count);
             Assert.Equal(categoryProperties, (result.First()["Category"] as IDictionary<string,object>).Count);
@@ -45,7 +45,7 @@ namespace Simple.Data.OData.UnitTests
         public void GetDataParsesMultipleProductsWithCategory()
         {
             string document = GetResourceAsString("MultipleProductsWithCategory.xml");
-            var result = DataServicesHelper.GetData(document);
+            var result = ODataClient.GetData(document);
             Assert.Equal(20, result.Count());
             Assert.Equal(productProperties + 1, result.First().Count);
             Assert.Equal(categoryProperties, (result.First()["Category"] as IDictionary<string, object>).Count);
@@ -55,7 +55,7 @@ namespace Simple.Data.OData.UnitTests
         public void GetDataParsesSingleCategoryWithProducts()
         {
             string document = GetResourceAsString("SingleCategoryWithProducts.xml");
-            var result = DataServicesHelper.GetData(document);
+            var result = ODataClient.GetData(document);
             Assert.Equal(1, result.Count());
             Assert.Equal(categoryProperties + 1, result.First().Count);
             Assert.Equal(12, (result.First()["Products"] as IEnumerable<IDictionary<string, object>>).Count());
@@ -66,7 +66,7 @@ namespace Simple.Data.OData.UnitTests
         public void GetDataParsesMultipleCategoriesWithProducts()
         {
             string document = GetResourceAsString("MultipleCategoriesWithProducts.xml");
-            var result = DataServicesHelper.GetData(document);
+            var result = ODataClient.GetData(document);
             Assert.Equal(8, result.Count());
             Assert.Equal(categoryProperties + 1, result.First().Count);
             Assert.Equal(12, (result.First()["Products"] as IEnumerable<IDictionary<string, object>>).Count());
@@ -77,7 +77,7 @@ namespace Simple.Data.OData.UnitTests
         public void GetDataParsesSingleProductWithComplexProperty()
         {
             string document = GetResourceAsString("SingleProductWithComplexProperty.xml");
-            var result = DataServicesHelper.GetData(document);
+            var result = ODataClient.GetData(document);
             Assert.Equal(1, result.Count());
             Assert.Equal(productProperties + 1, result.First().Count);
             var quantity = result.First()["Quantity"] as IDictionary<string, object>;
@@ -90,7 +90,7 @@ namespace Simple.Data.OData.UnitTests
         public void GetDataParsesSingleProductWithCollectionOfPrimitiveProperties()
         {
             string document = GetResourceAsString("SingleProductWithCollectionOfPrimitiveProperties.xml");
-            var result = DataServicesHelper.GetData(document);
+            var result = ODataClient.GetData(document);
             Assert.Equal(1, result.Count());
             Assert.Equal(productProperties + 1, result.First().Count);
             var tags = result.First()["Tags"] as IList<dynamic>;
@@ -103,7 +103,7 @@ namespace Simple.Data.OData.UnitTests
         public void GetDataParsesSingleProductWithCollectionOfComplexProperties()
         {
             string document = GetResourceAsString("SingleProductWithCollectionOfComplexProperties.xml");
-            var result = DataServicesHelper.GetData(document);
+            var result = ODataClient.GetData(document);
             Assert.Equal(1, result.Count());
             Assert.Equal(productProperties + 1, result.First().Count);
             var tags = result.First()["Tags"] as IList<dynamic>;

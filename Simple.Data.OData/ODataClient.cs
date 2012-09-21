@@ -10,7 +10,7 @@ using Simple.Data.OData.Edm;
 
 namespace Simple.Data.OData
 {
-    public static class DataServicesHelper
+    public static class ODataClient
     {
         public static IEnumerable<IDictionary<string, object>> GetData(Stream stream, bool scalarResult = false)
         {
@@ -119,43 +119,47 @@ namespace Simple.Data.OData
             var containersNamespace = schemaRoot
                 .Where(x => x.Descendants(null, "EntityContainer").Any()).FirstOrDefault().Attribute("Namespace").Value;
 
-            var complexTypes = ParseComplexTypes(new EdmComplexType[] { },
-                schemaRoot.SelectMany(x => x.Descendants(null, "ComplexType")));
-            var entityTypes = ParseEntityTypes(complexTypes,
-                schemaRoot.SelectMany(x => x.Descendants(null, "EntityType")));
-            var associations = ParseAssociations(complexTypes,
-                schemaRoot.SelectMany(x => x.Descendants(null, "Association")));
-            var entityContainers = ParseEntityContainers(complexTypes,
-                schemaRoot.SelectMany(x => x.Descendants(null, "EntityContainer")));
+            var complexTypes = ParseComplexTypes(schemaRoot.SelectMany(x => x.Descendants(null, "ComplexType")), typesNamespace);
+            var entityTypes = ParseEntityTypes(schemaRoot.SelectMany(x => x.Descendants(null, "EntityType")), complexTypes, typesNamespace);
+            var associations = ParseAssociations(schemaRoot.SelectMany(x => x.Descendants(null, "Association")), complexTypes, entityTypes);
+            var entityContainers = ParseEntityContainers(schemaRoot.SelectMany(x => x.Descendants(null, "EntityContainer")), complexTypes, entityTypes);
 
             return new EdmSchema(typesNamespace, containersNamespace, entityTypes, complexTypes, associations, entityContainers);
         }
 
-        private static IEnumerable<EdmComplexType> ParseComplexTypes(IEnumerable<EdmComplexType> complexTypes, IEnumerable<XElement> elements)
+        private static IEnumerable<EdmComplexType> ParseComplexTypes(
+            IEnumerable<XElement> elements, 
+            string typesNamespace)
         {
             return from e in elements
                    select new EdmComplexType()
                    {
-                       Name = e.Attribute("Name").Value,
+                       Name = string.Format("{0}.{1}", typesNamespace, e.Attribute("Name").Value),
                        Properties = (from p in e.Descendants(null, "Property")
-                                     select ParseProperty(p, complexTypes)).ToArray(),
+                                     select ParseProperty(p, new EdmComplexType[] { }, new EdmEntityType[] { })).ToArray(),
                    };
         }
 
-        private static IEnumerable<EdmEntityType> ParseEntityTypes(IEnumerable<EdmComplexType> complexTypes, IEnumerable<XElement> elements)
+        private static IEnumerable<EdmEntityType> ParseEntityTypes(
+            IEnumerable<XElement> elements, 
+            IEnumerable<EdmComplexType> complexTypes,
+            string typesNamespace)
         {
             return from e in elements
                    select new EdmEntityType()
                               {
                                   Name = e.Attribute("Name").Value,
                                   Properties = (from p in e.Descendants(null, "Property")
-                                                select ParseProperty(p, complexTypes)).ToArray(),
+                                                select ParseProperty(p, complexTypes, new EdmEntityType[] { })).ToArray(),
                                   Key = (from k in e.Descendants(null, "Key")
                                          select ParseKey(k)).Single(),
                               };
         }
 
-        private static IEnumerable<EdmAssociation> ParseAssociations(IEnumerable<EdmComplexType> complexTypes, IEnumerable<XElement> elements)
+        private static IEnumerable<EdmAssociation> ParseAssociations(
+            IEnumerable<XElement> elements,
+            IEnumerable<EdmComplexType> complexTypes,
+            IEnumerable<EdmEntityType> entityTypes)
         {
             return from e in elements
                    select new EdmAssociation()
@@ -191,7 +195,10 @@ namespace Simple.Data.OData
                               };
         }
 
-        private static IEnumerable<EdmEntityContainer> ParseEntityContainers(IEnumerable<EdmComplexType> complexTypes, IEnumerable<XElement> elements)
+        private static IEnumerable<EdmEntityContainer> ParseEntityContainers(
+            IEnumerable<XElement> elements, 
+            IEnumerable<EdmComplexType> complexTypes, 
+            IEnumerable<EdmEntityType> entityTypes)
         {
             return from e in elements
                    select new EdmEntityContainer()
@@ -220,37 +227,52 @@ namespace Simple.Data.OData
                                                      select new EdmFunctionImport()
                                                      {
                                                          Name = s.Attribute("Name").Value,
-                                                         HttpMethod = ParseStringAttribute(e.Attribute("m", "HttpMethod")),
-                                                         ReturnType = ParseStringAttribute(e.Attribute(null, "ReturnType")),
-                                                         EntitySet = ParseStringAttribute(e.Attribute(null, "EntitySet")),
+                                                         HttpMethod = ParseStringAttribute(s.Attribute("m", "HttpMethod")),
+                                                         ReturnType = ParseType(s.Attribute("ReturnType"), complexTypes, entityTypes),
+                                                         EntitySet = ParseStringAttribute(s.Attribute("EntitySet")),
                                                          Parameters = (from p in s.Descendants(null, "Parameter")
                                                                        select new EdmParameter()
                                                                        {
                                                                            Name = p.Attribute("Name").Value,
-                                                                           Type = EdmPropertyType.Parse(p.Attribute("Type").Value, complexTypes),
+                                                                           Type = EdmPropertyType.Parse(p.Attribute("Type").Value, complexTypes, entityTypes),
                                                                        }).ToArray(),
                                                      }).ToArray(),
                               };
 
         }
 
-        private static EdmProperty ParseProperty(XElement element, IEnumerable<EdmComplexType> complexTypes)
+        private static EdmProperty ParseProperty(
+            XElement element, 
+            IEnumerable<EdmComplexType> complexTypes,
+            IEnumerable<EdmEntityType> entityTypes)
         {
             return new EdmProperty
                        {
                            Name = element.Attribute("Name").Value,
-                           Type = EdmPropertyType.Parse(element.Attribute("Type").Value, complexTypes),
+                           Type = EdmPropertyType.Parse(element.Attribute("Type").Value, complexTypes, entityTypes),
                            Nullable = ParseBooleanAttribute(element.Attribute("Nullable")),
                        };
+        }
+
+        private static EdmPropertyType ParseType(
+            XAttribute attribute, 
+            IEnumerable<EdmComplexType> complexTypes, 
+            IEnumerable<EdmEntityType> entityTypes)
+        {
+            if (attribute == null || attribute.Value == null)
+                return null;
+
+            var attritbuteValue = ParseStringAttribute(attribute);
+            return EdmPropertyType.Parse(attritbuteValue, complexTypes, entityTypes);
         }
 
         private static EdmKey ParseKey(XElement element)
         {
             return new EdmKey()
-                       {
-                           Properties = (from p in element.Descendants(null, "PropertyRef")
-                                         select p.Attribute("Name").Value).ToArray()
-                       };
+            {
+                Properties = (from p in element.Descendants(null, "PropertyRef")
+                              select p.Attribute("Name").Value).ToArray()
+            };
         }
 
         private static bool ParseBooleanAttribute(XAttribute attribute)

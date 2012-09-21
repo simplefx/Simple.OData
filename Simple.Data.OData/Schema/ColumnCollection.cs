@@ -21,17 +21,17 @@ namespace Simple.Data.OData.Schema
 
         public Column Find(string columnName)
         {
-            var column = FindColumnWithName(columnName);
+            var column = TryFind(columnName);
             if (column == null) throw new UnresolvableObjectException(columnName);
             return column;
         }
 
         public bool Contains(string columnName)
         {
-            return FindColumnWithName(columnName) != null;
+            return TryFind(columnName) != null;
         }
 
-        private Column FindColumnWithName(string columnName)
+        private Column TryFind(string columnName)
         {
             columnName = columnName.Homogenize();
             return this

@@ -72,6 +72,14 @@ namespace Simple.Data.OData.Schema
                     select new Key(t.Key.Properties)).Single();
         }
 
+        public IEnumerable<Function> GetFunctions()
+        {
+            return from e in _metadata.Value.EntityContainers
+                   where e.IsDefaulEntityContainer
+                   from f in e.FunctionImports
+                   select CreateFunction(f);
+        }
+
         private string GetQualifiedName(string schemaName, string name)
         {
             return string.IsNullOrEmpty(schemaName) ? name : string.Format("{0}.{1}", schemaName, name);
@@ -80,6 +88,16 @@ namespace Simple.Data.OData.Schema
         private Association CreateAssociation(EdmAssociationSetEnd associationSetEnd, EdmAssociationEnd associationEnd)
         {
             return new Association(associationSetEnd.Role, associationSetEnd.EntitySet, associationEnd.Multiplicity);
+        }
+
+        private Function CreateFunction(EdmFunctionImport f)
+        {
+            return new Function(
+                f.Name, 
+                f.HttpMethod, 
+                f.EntitySet, 
+                f.ReturnType == null ? null : f.ReturnType.Name,
+                f.Parameters.Select(p => p.Name));
         }
 
         private EdmSchema RequestMetadata()
@@ -91,7 +109,7 @@ namespace Simple.Data.OData.Schema
             {
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    return DataServicesHelper.GetSchema(response.GetResponseStream());
+                    return ODataClient.GetSchema(response.GetResponseStream());
                 }
             }
             // TODO

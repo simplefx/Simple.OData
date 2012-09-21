@@ -49,12 +49,24 @@ namespace Simple.Data.OData.Edm
         public string Name { get; set; }
         public EdmProperty[] Properties { get; set; }
         public EdmKey Key { get; set; }
+
+        public static Tuple<bool, EdmEntityType> TryParse(string s, IEnumerable<EdmEntityType> entityTypes)
+        {
+            var edmEntityType = entityTypes.SingleOrDefault(x => x.Name == s);
+            return Tuple.Create(edmEntityType != null, edmEntityType);
+        }
     }
 
     public sealed class EdmComplexType
     {
         public string Name { get; set; }
         public EdmProperty[] Properties { get; set; }
+
+        public static Tuple<bool, EdmComplexType> TryParse(string s, IEnumerable<EdmComplexType> complexTypes)
+        {
+            var edmComplexType = complexTypes.SingleOrDefault(x => x.Name == s);
+            return Tuple.Create(edmComplexType != null, edmComplexType);
+        }
     }
 
     public sealed class EdmAssociation
@@ -78,32 +90,6 @@ namespace Simple.Data.OData.Edm
         public string Name { get; set; }
         public EdmPropertyType Type { get; set; }
         public bool Nullable { get; set; }
-    }
-
-    public abstract class EdmPropertyType
-    {
-        public static EdmPropertyType Parse(string s, IEnumerable<EdmComplexType> complexTypes)
-        {
-            var result = EdmType.TryParse(s);
-            if (result.Item1)
-            {
-                return new EdmPrimitivePropertyType { Type = result.Item2 };
-            }
-            else
-            {
-                return new EdmComplexPropertyType { Type = complexTypes.SingleOrDefault(x => x.Name == s) };
-            }
-        }
-    }
-
-    public class EdmPrimitivePropertyType : EdmPropertyType
-    {
-        public EdmType Type { get; set; }
-    }
-
-    public class EdmComplexPropertyType : EdmPropertyType
-    {
-        public EdmComplexType Type { get; set; }
     }
 
     public sealed class EdmKey
@@ -139,9 +125,9 @@ namespace Simple.Data.OData.Edm
     public sealed class EdmFunctionImport
     {
         public string Name { get; set; }
-        public string EntitySet { get; set; }
-        public string ReturnType { get; set; }
         public string HttpMethod { get; set; }
+        public string EntitySet { get; set; }
+        public EdmPropertyType ReturnType { get; set; }
         public EdmParameter[] Parameters { get; set; }
     }
 

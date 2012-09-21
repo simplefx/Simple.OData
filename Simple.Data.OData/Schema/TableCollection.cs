@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
-using Simple.Data;
 using Simple.Data.Extensions;
 
 namespace Simple.Data.OData.Schema
@@ -27,9 +25,9 @@ namespace Simple.Data.OData.Schema
         /// <returns>A <see cref="Table"/> if a match is found; otherwise, <c>null</c>.</returns>
         public Table Find(string tableName)
         {
-            var table = FindTableWithName(tableName.Homogenize())
-                   ?? FindTableWithPluralName(tableName.Homogenize())
-                   ?? FindTableWithSingularName(tableName.Homogenize());
+            var table = TryFind(tableName)
+                   ?? FindTableWithPluralName(tableName)
+                   ?? FindTableWithSingularName(tableName);
 
             if (table == null)
             {
@@ -41,16 +39,22 @@ namespace Simple.Data.OData.Schema
 
         private Table FindTableWithSingularName(string tableName)
         {
-            return FindTableWithName(tableName.Singularize());
+            return TryFind(tableName.Singularize());
         }
 
         private Table FindTableWithPluralName(string tableName)
         {
-            return FindTableWithName(tableName.Pluralize());
+            return TryFind(tableName.Pluralize());
         }
 
-        private Table FindTableWithName(string tableName)
+        public bool Contains(string tableName)
         {
+            return TryFind(tableName) != null;
+        }
+
+        private Table TryFind(string tableName)
+        {
+            tableName = tableName.Homogenize();
             return this
                 .Where(t => t.HomogenizedName.Equals(tableName))
                 .SingleOrDefault();

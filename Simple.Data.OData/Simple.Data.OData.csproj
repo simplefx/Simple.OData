@@ -52,14 +52,16 @@
     </Compile>
     <Compile Include="BatchRequestBuilder.cs" />
     <Compile Include="BatchRequestRunner.cs" />
+    <Compile Include="Edm\EdmPropertyType.cs" />
     <Compile Include="HttpCommand.cs" />
     <Compile Include="CommandRequestBuilder.cs" />
     <Compile Include="CommandRequestRunner.cs" />
     <Compile Include="ODataAdapterTransaction.cs" />
     <Compile Include="ODataProviderException.cs" />
+    <Compile Include="ODataTableAdapterWithFunctions.cs" />
     <Compile Include="ODataTableAdapterWithTransactions.cs" />
     <Compile Include="CommandBuilder.cs" />
-    <Compile Include="DataServicesHelper.cs" />
+    <Compile Include="ODataClient.cs" />
     <Compile Include="Edm\EdmHelper.cs" />
     <Compile Include="Edm\EdmSchema.cs" />
     <Compile Include="Edm\EdmType.cs" />
@@ -80,6 +82,8 @@
     <Compile Include="Schema\DatabaseSchema.cs" />
     <Compile Include="RequestBuilder.cs" />
     <Compile Include="IDatabaseOpenerExtensions.cs" />
+    <Compile Include="Schema\Function.cs" />
+    <Compile Include="Schema\FunctionCollection.cs" />
     <Compile Include="Schema\ISchemaProvider.cs" />
     <Compile Include="Schema\Key.cs" />
     <Compile Include="Schema\SchemaProvider.cs" />

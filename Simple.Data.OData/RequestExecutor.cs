@@ -62,7 +62,7 @@ namespace Simple.Data.OData
         {
             var entryMembers = ParseEntryMembers(tableName, data);
 
-            var entry = DataServicesHelper.CreateDataElement(entryMembers.Properties);
+            var entry = ODataClient.CreateDataElement(entryMembers.Properties);
             foreach (var association in entryMembers.AssociationsByValue)
             {
                 CreateLink(entry, tableName, association);
@@ -90,7 +90,7 @@ namespace Simple.Data.OData
 
             var entryMembers = ParseEntryMembers(tableName, allData);
 
-            var entry = DataServicesHelper.CreateDataElement(entryMembers.Properties);
+            var entry = ODataClient.CreateDataElement(entryMembers.Properties);
             foreach (var association in entryMembers.AssociationsByValue)
             {
                 CreateLink(entry, tableName, association);
@@ -121,7 +121,7 @@ namespace Simple.Data.OData
 
         private HttpCommand CreateLinkCommand(string tableName, string associationName, int entryContentId, int linkContentId)
         {
-            var linkEntry = DataServicesHelper.CreateLinkElement(linkContentId);
+            var linkEntry = ODataClient.CreateLinkElement(linkContentId);
             var linkMethod = _schema.FindTable(tableName).FindAssociation(associationName).IsMultiple ? RestVerbs.POST : RestVerbs.PUT;
 
             var commandText = string.Format("${0}/$links/{1}", entryContentId, associationName);
@@ -144,7 +144,7 @@ namespace Simple.Data.OData
                 if (!ok)
                     return;
             }
-            DataServicesHelper.AddDataLink(entry, association.ActualName, association.ReferenceTableName, keyFieldValues);
+            ODataClient.AddDataLink(entry, association.ActualName, association.ReferenceTableName, keyFieldValues);
         }
 
         private IDictionary<string, object> GetLinkedEntryProperties(object entryData)

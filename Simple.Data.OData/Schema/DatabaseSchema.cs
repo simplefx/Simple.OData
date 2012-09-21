@@ -14,10 +14,12 @@ namespace Simple.Data.OData.Schema
         private readonly string _urlBase;
         private readonly ISchemaProvider _schemaProvider;
         private readonly Lazy<TableCollection> _lazyTables;
+        private readonly Lazy<FunctionCollection> _lazyFunctions;
 
         private DatabaseSchema(ISchemaProvider schemaProvider, string urlBase)
         {
             _lazyTables = new Lazy<TableCollection>(CreateTableCollection);
+            _lazyFunctions = new Lazy<FunctionCollection>(CreateFunctionCollection);
             _schemaProvider = schemaProvider;
             _urlBase = urlBase;
         }
@@ -42,10 +44,35 @@ namespace Simple.Data.OData.Schema
             return _lazyTables.Value.Find(tableName);
         }
 
+        public bool HasTable(string tableName)
+        {
+            return _lazyTables.Value.Contains(tableName);
+        }
+
+        public IEnumerable<Function> Functions
+        {
+            get { return _lazyFunctions.Value.AsEnumerable(); }
+        }
+
+        public Function FindFunction(string functionName)
+        {
+            return _lazyFunctions.Value.Find(functionName);
+        }
+
+        public bool HasFunction(string functionName)
+        {
+            return _lazyFunctions.Value.Contains(functionName);
+        }
+
         private TableCollection CreateTableCollection()
         {
             return new TableCollection(_schemaProvider.GetTables()
                 .Select(table => new Table(table.ActualName, this)));
+        }
+
+        private FunctionCollection CreateFunctionCollection()
+        {
+            return new FunctionCollection(_schemaProvider.GetFunctions());
         }
 
         public static DatabaseSchema Get(string urlBase)

@@ -24,9 +24,9 @@ namespace Simple.Data.OData
                 {
                     var stream = response.GetResponseStream();
                     if (setTotalCount)
-                        result = DataServicesHelper.GetData(stream, out totalCount);
+                        result = ODataClient.GetData(stream, out totalCount);
                     else
-                        result = DataServicesHelper.GetData(response.GetResponseStream(), scalarResult);
+                        result = ODataClient.GetData(response.GetResponseStream(), scalarResult);
                 }
 
                 return result;
@@ -38,7 +38,7 @@ namespace Simple.Data.OData
             var text = Request(command.Request);
             if (resultRequired)
             {
-                return DataServicesHelper.GetData(text).First();
+                return ODataClient.GetData(text).First();
             }
             else
             {

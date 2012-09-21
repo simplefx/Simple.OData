@@ -11,5 +11,6 @@ namespace Simple.Data.OData.Schema
         IEnumerable<Column> GetColumns(Table table);
         IEnumerable<Association> GetAssociations(Table table);
         Key GetPrimaryKey(Table table);
+        IEnumerable<Function> GetFunctions();
     }
 }

@@ -112,6 +112,10 @@ namespace Simple.Data.OData.IntegrationTests
             var association = table.FindAssociation("Category_Products");
             Assert.Equal("Categories", association.ReferenceTableName);
             Assert.Equal("0..1", association.Multiplicity);
+
+            var function = schema.FindFunction("GetProductsByRating");
+            Assert.Equal(RestVerbs.GET, function.HttpMethod);
+            Assert.Equal("rating", function.Parameters[0]);
         }
     }
 }

@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Simple.NExtLib;
 using Simple.Data.OData.Schema;
 
 namespace Simple.Data.OData
 {
-    using System.Collections;
-    using NExtLib;
-
     public class ExpressionFormatter
     {
         private readonly Dictionary<SimpleExpressionType, Func<SimpleExpression, string>> _expressionFormatters;

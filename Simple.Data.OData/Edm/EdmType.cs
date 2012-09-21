@@ -46,6 +46,11 @@ namespace Simple.Data.OData.Edm
 
         private readonly string _text;
 
+        public string Name
+        {
+            get { return _text;  }
+        }
+
         private EdmType(string text)
         {
             this._text = text;

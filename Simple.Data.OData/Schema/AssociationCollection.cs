@@ -21,19 +21,19 @@ namespace Simple.Data.OData.Schema
 
         public Association Find(string associationName)
         {
-            var association = FindAssociationWithName(associationName);
+            var association = TryFind(associationName);
             if (association == null) throw new UnresolvableObjectException(associationName);
             return association;
         }
 
         public bool Contains(string associationName)
         {
-            return FindAssociationWithName(associationName) != null;
+            return TryFind(associationName) != null;
         }
 
-        private Association FindAssociationWithName(string associationName)
+        private Association TryFind(string associationName)
         {
-            associationName = associationName.Homogenize();
+            associationName = associationName.Homogenize(); 
             return this
                 .Where(c => c.HomogenizedActualName.Equals(associationName))
                 .SingleOrDefault();

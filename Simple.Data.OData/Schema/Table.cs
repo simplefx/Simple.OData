@@ -12,10 +12,10 @@ namespace Simple.Data.OData.Schema
     public class Table
     {
         private readonly DatabaseSchema _databaseSchema;
-        protected readonly string _actualName;
-        protected Lazy<ColumnCollection> _lazyColumns;
-        protected Lazy<AssociationCollection> _lazyAssociations;
-        protected Lazy<Key> _lazyPrimaryKey;
+        private readonly string _actualName;
+        private Lazy<ColumnCollection> _lazyColumns;
+        private Lazy<AssociationCollection> _lazyAssociations;
+        private Lazy<Key> _lazyPrimaryKey;
 
         public Table(string name, DatabaseSchema databaseSchema)
         {
