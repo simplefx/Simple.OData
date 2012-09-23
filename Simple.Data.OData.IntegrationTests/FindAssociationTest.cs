@@ -27,7 +27,7 @@ namespace Simple.Data.OData.IntegrationTests
         public void FindAllCustomersGotoOrders()
         {
             // expected request: Customers('ALFKI')/Orders
-            IEnumerable<dynamic> orders = _db.Customers.FindAll(_db.Customers.CustomerID == "ALFKI").Orders;
+            IEnumerable<dynamic> orders = _db.Customers.Orders.Get("ALFKI");
 
             Assert.NotEmpty(orders);
             foreach (var order in orders)
