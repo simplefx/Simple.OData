@@ -83,27 +83,27 @@ namespace Simple.Data.OData
 
         private IEnumerable<IDictionary<string, object>> FindByExpression(string tableName, SimpleExpression criteria)
         {
-            var builder = new CommandBuilder(GetSchema().FindTable);
-            var commandText = builder.BuildCommand(tableName, criteria, GetKeyNames);
+            var builder = new CommandBuilder(GetSchema().FindTable, GetKeyNames);
+            var commandText = builder.BuildCommand(tableName, criteria);
 
             return FindEntries(commandText);
         }
 
         private IEnumerable<IDictionary<string, object>> FindByQuery(SimpleQuery query, out IEnumerable<SimpleQueryClauseBase> unhandledClauses)
         {
-            var builder = new CommandBuilder(GetSchema().FindTable);
-            var command = builder.BuildCommand(query, GetKeyNames);
+            var builder = new CommandBuilder(GetSchema().FindTable, GetKeyNames);
+            var commandText = builder.BuildCommand(query);
             unhandledClauses = builder.UnprocessedClauses;
             IEnumerable<IDictionary<string, object>> results;
 
             if (builder.SetTotalCount == null)
             {
-                results = FindEntries(command, builder.IsScalarResult);
+                results = FindEntries(commandText, builder.IsScalarResult);
             }
             else
             {
                 int totalCount;
-                results = FindEntries(command, out totalCount);
+                results = FindEntries(commandText, out totalCount);
                 builder.SetTotalCount(totalCount);
             }
             return results;
@@ -111,8 +111,8 @@ namespace Simple.Data.OData
 
         private IDictionary<string, object> FindByKey(string tableName, object[] keyValues)
         {
-            var builder = new CommandBuilder(GetSchema().FindTable);
-            var command = builder.BuildCommand(tableName, keyValues, GetKeyNames);
+            var builder = new CommandBuilder(GetSchema().FindTable, GetKeyNames);
+            var command = builder.BuildCommand(tableName, keyValues);
             return FindEntries(command).SingleOrDefault();
         }
 
@@ -141,7 +141,6 @@ namespace Simple.Data.OData
                     namedKeyValues.Add(keyFieldNames[index], entry[keyFieldNames[index]]);
                 }
                 var formattedKeyValues = _expressionFormatter.Format(namedKeyValues);
-                var unaffectedData = new Dictionary<string, object>();
                 bool merge = false;
                 foreach (var item in entry)
                 {

@@ -15,8 +15,11 @@ namespace Simple.Data.OData
         private readonly List<string> _expand;
         private readonly List<SimpleReference> _columns;
         private readonly List<SimpleOrderByItem> _order;
-        private Stack<SimpleQueryClauseBase> _processedClauses;
         private readonly Func<string, Table> _findTable;
+        private readonly Func<string, IList<string>> _getKeyNames;
+        private readonly ExpressionFormatter _expressionFormatter;
+        private Stack<SimpleQueryClauseBase> _processedClauses;
+        public IEnumerable<SimpleQueryClauseBase> UnprocessedClauses { get; private set; }
 
         public IEnumerable<SimpleReference> Columns
         {
@@ -38,13 +41,13 @@ namespace Simple.Data.OData
 
         public Action<int> SetTotalCount { get; private set; }
 
-        public IEnumerable<SimpleQueryClauseBase> UnprocessedClauses { get; private set; }
-
         public bool IsScalarResult { get; private set; }
 
-        public CommandBuilder(Func<string, Table> findTable)
+        public CommandBuilder(Func<string, Table> findTable, Func<string, IList<string>> getKeyNames)
         {
             _findTable = findTable;
+            _getKeyNames = getKeyNames;
+            _expressionFormatter = new ExpressionFormatter(_findTable);
             _columns = new List<SimpleReference>();
             _order = new List<SimpleOrderByItem>();
             _expand = new List<string>();
@@ -62,31 +65,31 @@ namespace Simple.Data.OData
             };
         }
 
-        public string BuildCommand(string tableName, SimpleExpression criteria, Func<string, IList<string>> GetKeyNames)
+        public string BuildCommand(string tablePath, SimpleExpression criteria)
         {
-            Table table;
             string commandText;
-            var formattedKeyValues = HttpUtility.UrlEncode(FormatKeyValues(tableName.Split('.').First(), new ExpressionFormatter(_findTable).Format(criteria), GetKeyNames));
-            if (!string.IsNullOrEmpty(formattedKeyValues))
+            string tableName = ExtractPrimaryTableName(tablePath);
+            var keyLookup = TryFormatCriteriaAsKeyLookup(tableName, _expressionFormatter.Format(criteria), _getKeyNames);
+            if (!string.IsNullOrEmpty(keyLookup))
             {
-                commandText = FormatTableClause(tableName, formattedKeyValues, out table);
+                commandText = FormatTableKeyLookup(tablePath, keyLookup);
             }
             else
             {
-                commandText = _findTable(tableName.Split('.').First()).ActualName;
-                string filter = new ExpressionFormatter(_findTable).Format(criteria);
+                commandText = _findTable(tableName).ActualName;
+                string filter = _expressionFormatter.Format(criteria);
                 if (!string.IsNullOrEmpty(filter))
-                    commandText += "?$filter=" + HttpUtility.UrlEncode(filter);
+                    commandText += "?" + FormatFilter(filter);
             }
             return commandText;
         }
 
-        public string BuildCommand(SimpleQuery query, Func<string, IList<string>> GetKeyNames)
+        public string BuildCommand(SimpleQuery query)
         {
             Build(query);
 
             Table table;
-            var formattedKeyValues = HttpUtility.UrlEncode(FormatKeyValues(query.TableName, new ExpressionFormatter(_findTable).Format(this.Criteria), GetKeyNames));
+            var formattedKeyValues = TryFormatCriteriaAsKeyLookup(query.TableName, _expressionFormatter.Format(this.Criteria), _getKeyNames);
             bool isKeyLookup = !string.IsNullOrEmpty(formattedKeyValues);
             string clause = FormatTableClause(query.TableName, formattedKeyValues, out table);
             var commandText = clause;
@@ -127,12 +130,9 @@ namespace Simple.Data.OData
             return commandText;
         }
 
-        public string BuildCommand(string tableName, object[] keyValues, Func<string, IList<string>> GetKeyNames)
+        public string BuildCommand(string tablePath, object[] keyValues)
         {
-            Table table;
-            bool isJoin;
-            var formatter = new ExpressionFormatter(_findTable);
-            return FormatTableClause(tableName, "(" + HttpUtility.UrlEncode(formatter.Format(keyValues)) + ")", out table);
+            return FormatTableKeyLookup(tablePath, FormatKeyValues(keyValues));
         }
 
         private void Build(SimpleQuery query)
@@ -150,7 +150,7 @@ namespace Simple.Data.OData
                 _processedClauses.Push(unprocessedClauses.Dequeue());
             }
 
-            UnprocessedClauses = unprocessedClauses;
+            this.UnprocessedClauses = unprocessedClauses;
         }
 
         private bool TryApplyWithClause(WithClause clause)
@@ -212,19 +212,25 @@ namespace Simple.Data.OData
             return true;
         }
 
-        private string FormatTableClause(string tableName, string formattedKeyValues, out Table table)
+        private string FormatTableKeyLookup(string tablePath, string formattedKeyValues)
+        {
+            Table table;
+            return FormatTableClause(tablePath, formattedKeyValues, out table);
+        }
+
+        private string FormatTableClause(string tablePath, string formattedKeyValues, out Table table)
         {
             string clause = string.Empty;
-            var nameParts = tableName.Split('.');
+            var tableNames = ExtractTableNames(tablePath);
             table = null;
-            if (nameParts.Count() > 1)
+            if (tableNames.Count() > 1)
             {
                 Table parentTable = null;
-                foreach (var name in nameParts)
+                foreach (var tableName in tableNames)
                 {
                     if (parentTable == null)
                     {
-                        var childTable = _findTable(name);
+                        var childTable = _findTable(tableName);
                         table = childTable;
                         clause += childTable.ActualName;
                         if (!string.IsNullOrEmpty(formattedKeyValues))
@@ -233,7 +239,7 @@ namespace Simple.Data.OData
                     }
                     else
                     {
-                        var association = parentTable.FindAssociation(name);
+                        var association = parentTable.FindAssociation(tableName);
                         parentTable = _findTable(association.ReferenceTableName);
                         clause += "/" + association.ActualName;
                     }
@@ -241,7 +247,7 @@ namespace Simple.Data.OData
             }
             else
             {
-                table = _findTable(tableName);
+                table = _findTable(tablePath);
                 clause = table.ActualName;
                 if (!string.IsNullOrEmpty(formattedKeyValues))
                     clause += formattedKeyValues;
@@ -282,7 +288,7 @@ namespace Simple.Data.OData
         {
             if (this.Criteria != null)
             {
-                return "$filter=" + HttpUtility.UrlEncode(new ExpressionFormatter(_findTable).Format(this.Criteria));
+                return FormatFilter(_expressionFormatter.Format(this.Criteria));
             }
             return null;
         }
@@ -344,9 +350,24 @@ namespace Simple.Data.OData
             return null;
         }
 
-        private string FormatKeyValues(string tableName, string formattedCriteria, Func<string, IEnumerable<string>> GetKeyNames)
+        private string FormatFilter(string filter)
         {
-            var table = _findTable(tableName.Split('.').First());
+            return "$filter=" + HttpUtility.UrlEncode(filter);
+        }
+
+        private string FormatKeyValues(IEnumerable<object> keyValues)
+        {
+            return "(" + HttpUtility.UrlEncode(_expressionFormatter.Format(keyValues)) + ")";
+        }
+
+        private string FormatKeyValues(IEnumerable<string> keyValues)
+        {
+            return "(" + HttpUtility.UrlEncode(string.Join(",", keyValues)) + ")";
+        }
+
+        private string TryFormatCriteriaAsKeyLookup(string tablePath, string formattedCriteria, Func<string, IEnumerable<string>> GetKeyNames)
+        {
+            var table = _findTable(ExtractPrimaryTableName(tablePath));
 
             IList<string> keyValues = new List<string>();
             var keyNames = GetKeyNames(table.ActualName);
@@ -369,7 +390,17 @@ namespace Simple.Data.OData
                 }
             }
                 
-            return processedKeys == keyNames.Count() ? "(" + string.Join(",", keyValues) + ")" : string.Empty;
+            return processedKeys == keyNames.Count() ? FormatKeyValues(keyValues) : string.Empty;
+        }
+
+        private string[] ExtractTableNames(string tablePath)
+        {
+            return tablePath.Split('.');
+        }
+
+        private string ExtractPrimaryTableName(string tablePath)
+        {
+            return tablePath.Split('.').First();
         }
     }
 }
