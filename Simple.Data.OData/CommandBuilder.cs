@@ -62,12 +62,22 @@ namespace Simple.Data.OData
             };
         }
 
-        public string BuildCommand(string tableName, string filter)
+        public string BuildCommand(string tableName, SimpleExpression criteria, Func<string, IList<string>> GetKeyNames)
         {
-            var table = _findTable(tableName);
-            var commandText = table.ActualName;
-            if (!string.IsNullOrEmpty(filter))
-                commandText += "?$filter=" + HttpUtility.UrlEncode(filter);
+            Table table;
+            string commandText;
+            var formattedKeyValues = HttpUtility.UrlEncode(FormatKeyValues(tableName.Split('.').First(), new ExpressionFormatter(_findTable).Format(criteria), GetKeyNames));
+            if (!string.IsNullOrEmpty(formattedKeyValues))
+            {
+                commandText = FormatTableClause(tableName, formattedKeyValues, out table);
+            }
+            else
+            {
+                commandText = _findTable(tableName.Split('.').First()).ActualName;
+                string filter = new ExpressionFormatter(_findTable).Format(criteria);
+                if (!string.IsNullOrEmpty(filter))
+                    commandText += "?$filter=" + HttpUtility.UrlEncode(filter);
+            }
             return commandText;
         }
 
@@ -76,7 +86,7 @@ namespace Simple.Data.OData
             Build(query);
 
             Table table;
-            var formattedKeyValues = FormatKeyValues(query.TableName, new ExpressionFormatter(_findTable).Format(this.Criteria), GetKeyNames);
+            var formattedKeyValues = HttpUtility.UrlEncode(FormatKeyValues(query.TableName, new ExpressionFormatter(_findTable).Format(this.Criteria), GetKeyNames));
             bool isKeyLookup = !string.IsNullOrEmpty(formattedKeyValues);
             string clause = FormatTableClause(query.TableName, formattedKeyValues, out table);
             var commandText = clause;
@@ -122,7 +132,7 @@ namespace Simple.Data.OData
             Table table;
             bool isJoin;
             var formatter = new ExpressionFormatter(_findTable);
-            return FormatTableClause(tableName, "(" + formatter.Format(keyValues) + ")", out table);
+            return FormatTableClause(tableName, "(" + HttpUtility.UrlEncode(formatter.Format(keyValues)) + ")", out table);
         }
 
         private void Build(SimpleQuery query)
@@ -272,8 +282,7 @@ namespace Simple.Data.OData
         {
             if (this.Criteria != null)
             {
-                return "$filter=" + HttpUtility.UrlEncode(
-                    new ExpressionFormatter(_findTable).Format(this.Criteria));
+                return "$filter=" + HttpUtility.UrlEncode(new ExpressionFormatter(_findTable).Format(this.Criteria));
             }
             return null;
         }

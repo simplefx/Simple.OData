@@ -83,9 +83,8 @@ namespace Simple.Data.OData
 
         private IEnumerable<IDictionary<string, object>> FindByExpression(string tableName, SimpleExpression criteria)
         {
-            var filter = new ExpressionFormatter(GetSchema().FindTable).Format(criteria);
             var builder = new CommandBuilder(GetSchema().FindTable);
-            var commandText = builder.BuildCommand(tableName, filter);
+            var commandText = builder.BuildCommand(tableName, criteria, GetKeyNames);
 
             return FindEntries(commandText);
         }

@@ -82,13 +82,13 @@ namespace Simple.Data.OData.IntegrationTests
         public void FindAllEmployeeSubordinates()
         {
             // expected request: Employees(1)/Subordinates
-            IEnumerable<dynamic> subordinates = _db.Employees.Subordinates.FindAll(_db.Employees.EmployeeID == 1);
+            IEnumerable<dynamic> subordinates = _db.Employees.Subordinates.FindAll(_db.Employees.EmployeeID == 2);
 
             Assert.NotEmpty(subordinates);
             foreach (var subordinate in subordinates)
             {
                 Assert.True(subordinate.EmployeeID > 0);
-                Assert.Equal(1, subordinate.ReportsTo);
+                Assert.Equal(2, subordinate.ReportsTo);
             }
         }
 
