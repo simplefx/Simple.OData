@@ -71,14 +71,17 @@ namespace Simple.Data.OData
             return commandText;
         }
 
-        public string BuildCommand(SimpleQuery query)
+        public string BuildCommand(SimpleQuery query, Func<string, IList<string>> GetKeyNames)
         {
             Build(query);
 
-            var table = _findTable(query.TableName);
-            var commandText = table.ActualName;
+            Table table;
+            var formattedKeyValues = FormatKeyValues(query.TableName, new ExpressionFormatter(_findTable).Format(this.Criteria), GetKeyNames);
+            bool isKeyLookup = !string.IsNullOrEmpty(formattedKeyValues);
+            string clause = FormatTableClause(query.TableName, formattedKeyValues, out table);
+            var commandText = clause;
 
-            string clause = FormatSpecialClause(table);
+            clause = FormatSpecialClause(table);
             if (!string.IsNullOrEmpty(clause))
             {
                 commandText += "/" + clause;
@@ -86,14 +89,20 @@ namespace Simple.Data.OData
             }
 
             var clauses = new List<string>();
-            clause = FormatWhereClause(table);
-            if (!string.IsNullOrEmpty(clause)) clauses.Add(clause);
+            if (!isKeyLookup)
+            {
+                clause = FormatWhereClause(table);
+                if (!string.IsNullOrEmpty(clause)) clauses.Add(clause);
+            }
             clause = FormatWithClause(table);
             if (!string.IsNullOrEmpty(clause)) clauses.Add(clause);
             clause = FormatSkipClause(table);
             if (!string.IsNullOrEmpty(clause)) clauses.Add(clause);
-            clause = FormatTakeClause(table);
-            if (!string.IsNullOrEmpty(clause)) clauses.Add(clause);
+            if (!isKeyLookup)
+            {
+                clause = FormatTakeClause(table);
+                if (!string.IsNullOrEmpty(clause)) clauses.Add(clause);
+            }
             clause = FormatOrderClause(table);
             if (!string.IsNullOrEmpty(clause)) clauses.Add(clause);
             clause = FormatSelectClause(table);
@@ -106,6 +115,14 @@ namespace Simple.Data.OData
             }
 
             return commandText;
+        }
+
+        public string BuildCommand(string tableName, object[] keyValues, Func<string, IList<string>> GetKeyNames)
+        {
+            Table table;
+            bool isJoin;
+            var formatter = new ExpressionFormatter(_findTable);
+            return FormatTableClause(tableName, "(" + formatter.Format(keyValues) + ")", out table);
         }
 
         private void Build(SimpleQuery query)
@@ -183,6 +200,43 @@ namespace Simple.Data.OData
         {
             SetTotalCount = clause.SetCount;
             return true;
+        }
+
+        private string FormatTableClause(string tableName, string formattedKeyValues, out Table table)
+        {
+            string clause = string.Empty;
+            var nameParts = tableName.Split('.');
+            table = null;
+            if (nameParts.Count() > 1)
+            {
+                Table parentTable = null;
+                foreach (var name in nameParts)
+                {
+                    if (parentTable == null)
+                    {
+                        var childTable = _findTable(name);
+                        table = childTable;
+                        clause += childTable.ActualName;
+                        if (!string.IsNullOrEmpty(formattedKeyValues))
+                            clause += formattedKeyValues;
+                        parentTable = childTable;
+                    }
+                    else
+                    {
+                        var association = parentTable.FindAssociation(name);
+                        parentTable = _findTable(association.ReferenceTableName);
+                        clause += "/" + association.ActualName;
+                    }
+                }
+            }
+            else
+            {
+                table = _findTable(tableName);
+                clause = table.ActualName;
+                if (!string.IsNullOrEmpty(formattedKeyValues))
+                    clause += formattedKeyValues;
+            }
+            return clause;
         }
 
         private string FormatOrderByItem(Table table, SimpleOrderByItem item)
@@ -279,6 +333,34 @@ namespace Simple.Data.OData
                 return "$inlinecount=allpages";
             }
             return null;
+        }
+
+        private string FormatKeyValues(string tableName, string formattedCriteria, Func<string, IEnumerable<string>> GetKeyNames)
+        {
+            var table = _findTable(tableName.Split('.').First());
+
+            IList<string> keyValues = new List<string>();
+            var keyNames = GetKeyNames(table.ActualName);
+            var filterItems = formattedCriteria.Split(',');
+            int processedKeys = 0;
+            if (keyNames.Count() == filterItems.Count())
+            {
+                foreach (var keyName in keyNames)
+                {
+                    foreach (var filterItem in filterItems)
+                    {
+                        int index = filterItem.IndexOf(" eq ");
+                        if (index > 0 && filterItem.Substring(0, index) == keyName)
+                        {
+                            var keyValue = filterItem.Substring(index + 4);
+                            keyValues.Add(keyValue);
+                            ++processedKeys;
+                        }
+                    }
+                }
+            }
+                
+            return processedKeys == keyNames.Count() ? "(" + string.Join(",", keyValues) + ")" : string.Empty;
         }
     }
 }

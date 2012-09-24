@@ -67,6 +67,18 @@ namespace Simple.Data.OData
             }
         }
 
+        public string Format(IEnumerable<object> keyValues, string separator = ",")
+        {
+            if (keyValues.Count() == 1)
+            {
+                return FormatValue(keyValues.First());
+            }
+            else
+            {
+                return string.Join(separator, keyValues.Select(x => FormatValue(x)));
+            }
+        }
+
         private string LogicalExpressionToWhereClause(SimpleExpression expression)
         {
             return string.Format("({0} {1} {2})",

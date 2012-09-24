@@ -24,10 +24,37 @@ namespace Simple.Data.OData.IntegrationTests
         }
 
         [Fact]
-        public void FindAllCustomersGotoOrders()
+        public void FindAllEmployeesFromSuperior()
+        {
+            // expected request: Employees?$filter=Superior/FirstName+eq+%27Nancy%27 and Superior/LastName+eq+%27Davolio%27
+            IEnumerable<dynamic> employees = _db.Employees.FindAll(_db.Employees.Superior.FirstName == "Andrew" && _db.Employees.Superior.LastName == "Fuller");
+
+            Assert.NotEmpty(employees);
+            foreach (var employee in employees)
+            {
+                Assert.True(employee.EmployeeID > 0);
+                Assert.Equal(2, employee.ReportsTo);
+            }
+        }
+
+        [Fact]
+        public void FindAllOrdersFromEmployee()
+        {
+            // expected request: Orders?$filter=Employee/FirstName+eq+%27Andrew%27 and Employee/LastName+eq+%27Fuller%27
+            IEnumerable<dynamic> orders = _db.Orders.FindAll(_db.Orders.Employee.FirstName == "Andrew" && _db.Orders.Employee.LastName == "Fuller");
+
+            Assert.NotEmpty(orders);
+            foreach (var order in orders)
+            {
+                Assert.Equal(2, order.EmployeeID);
+            }
+        }
+
+        [Fact]
+        public void FindAllCustomerOrders()
         {
             // expected request: Customers('ALFKI')/Orders
-            IEnumerable<dynamic> orders = _db.Customers.Orders.Get("ALFKI");
+            IEnumerable<dynamic> orders = _db.Customers.Orders.FindAll(_db.Customers.CustomerID == "ALFKI");
 
             Assert.NotEmpty(orders);
             foreach (var order in orders)
@@ -38,57 +65,62 @@ namespace Simple.Data.OData.IntegrationTests
         }
 
         [Fact]
-        public void FindAllEmployeeSubordinates()
+        public void FindAllOrderOrderDetails()
         {
-            // expected request: Employees(1)/Subordinates
-            IEnumerable<dynamic> subordinates = _db.Employees.Subordinates.Get(1);
+            // expected request: Orders(10952)/OrderDetails
+            IEnumerable<dynamic> orderDetails = _db.Orders.OrderDetails.FindAll(_db.Orders.OrderID == 10952);
 
-            Assert.NotEmpty(subordinates);
+            Assert.NotEmpty(orderDetails);
+            foreach (var details in orderDetails)
+            {
+                Assert.True(details.ProductID > 0);
+                Assert.Equal(10952, details.OrderID);
+            }
         }
 
         [Fact]
-        public void FindAllSuperiorEmployees()
+        public void FindAllEmployeeSubordinates()
         {
-            // expected request: Employees?$filter=Superior/FirstName+eq+%27Nancy%27 and Superior/LastName+eq+%27Davolio%27
-            IEnumerable<dynamic> employees = _db.Employees.FindAll(_db.Employees.Superior.FirstName == "Nancy" && _db.Employees.Superior.LastName == "Davolio");
+            // expected request: Employees(1)/Subordinates
+            IEnumerable<dynamic> subordinates = _db.Employees.Subordinates.FindAll(_db.Employees.EmployeeID == 1);
 
-            Assert.NotEmpty(employees);
+            Assert.NotEmpty(subordinates);
+            foreach (var subordinate in subordinates)
+            {
+                Assert.True(subordinate.EmployeeID > 0);
+                Assert.Equal(1, subordinate.ReportsTo);
+            }
+        }
+
+        [Fact]
+        public void GetEmployeeSuperior()
+        {
+            // expected request: Employees(1)/Superior
+            var superior = _db.Employees.Superior.Get(1);
+
+            Assert.NotNull(superior);
+            Assert.Equal(2, superior.EmployeeID);
         }
 
         [Fact]
         public void FindEmployeeSuperior()
         {
             // expected request: Employees(1)/Superior
-            var superior = _db.Employees.Superior.Get(1);
+            var superior = _db.Employees.Superior.Find(_db.Employees.EmployeeID == 1);
 
             Assert.NotNull(superior);
+            Assert.Equal(2, superior.EmployeeID);
         }
 
         [Fact]
-        public void FindAllEmployeeOrders()
+        public void FindAllEmployeeSuperiors()
         {
-            // expected request: Orders?$filter=Employee/FirstName+eq+%27Andrew%27 and Employee/LastName+eq+%27Fuller%27
-            IEnumerable<dynamic> orders = _db.Orders.FindAll(_db.Orders.Employee.FirstName == "Andrew" && _db.Orders.Employee.LastName == "Fuller");
+            // expected request: Employees(1)/Superior
+            IEnumerable<dynamic> superiors = _db.Employees.Superior.FindAll(_db.Employees.EmployeeID == 1);
 
-            Assert.NotEmpty(orders);
-        }
-
-        [Fact]
-        public void FindProductCategory()
-        {
-            // expected request: Categories?filter=Products/ProductName+eq+%27Chai%27
-            var category = _db.Category.Find(_db.Category.Products.ProductName == "Chai");
-
-            Assert.Equal("Beverages", category.CategoryName);
-        }
-
-        [Fact]
-        public void FindProductSupplier()
-        {
-            // expected request: Suppliers?filter=Products/ProductName+eq+%27Chai%27
-            var supplier = _db.Supplier.Find(_db.Supplier.Products.ProductName == "Chai");
-
-            Assert.Equal("Exotic Liquids", supplier.CompanyName);
+            Assert.NotEmpty(superiors);
+            Assert.Equal(1, superiors.Count());
+            Assert.Equal(2, superiors.First().EmployeeID);
         }
     }
 }

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Xml.Linq;
 using Simple.Data.OData.Schema;
 
 namespace Simple.Data.OData
@@ -43,12 +42,12 @@ namespace Simple.Data.OData
 
         public override IDictionary<string, object> GetKey(string tableName, IDictionary<string, object> record)
         {
-            return new Table(tableName, GetSchema()).GetKey(tableName, record);
+            return GetTable(tableName).GetKey(tableName, record);
         }
 
         public override IList<string> GetKeyNames(string tableName)
         {
-            return new Table(tableName, GetSchema()).GetKeyNames();
+            return GetTable(tableName).GetKeyNames();
         }
 
         public override IDictionary<string, object> Get(string tableName, params object[] keyValues)
@@ -86,7 +85,7 @@ namespace Simple.Data.OData
         {
             var filter = new ExpressionFormatter(GetSchema().FindTable).Format(criteria);
             var builder = new CommandBuilder(GetSchema().FindTable);
-            var commandText = builder.BuildCommand(GetTableActualName(tableName), filter);
+            var commandText = builder.BuildCommand(tableName, filter);
 
             return FindEntries(commandText);
         }
@@ -94,7 +93,7 @@ namespace Simple.Data.OData
         private IEnumerable<IDictionary<string, object>> FindByQuery(SimpleQuery query, out IEnumerable<SimpleQueryClauseBase> unhandledClauses)
         {
             var builder = new CommandBuilder(GetSchema().FindTable);
-            string command = builder.BuildCommand(query);
+            var command = builder.BuildCommand(query, GetKeyNames);
             unhandledClauses = builder.UnprocessedClauses;
             IEnumerable<IDictionary<string, object>> results;
 
@@ -113,19 +112,9 @@ namespace Simple.Data.OData
 
         private IDictionary<string, object> FindByKey(string tableName, object[] keyValues)
         {
-            var keyNames = GetKeyNames(tableName);
-            var namedKeyValues = new Dictionary<string, object>();
-            for (int index = 0; index < keyValues.Count(); index++)
-            {
-                namedKeyValues.Add(keyNames[index], keyValues[index]);
-            }
-            var formattedKeyValues = new ExpressionFormatter(GetSchema().FindTable).Format(namedKeyValues);
-            return FindByKey(tableName, formattedKeyValues).FirstOrDefault();
-        }
-
-        private IEnumerable<IDictionary<string, object>> FindByKey(string tableName, string keys)
-        {
-            return FindEntries(GetTableActualName(tableName) + "(" + keys + ")");
+            var builder = new CommandBuilder(GetSchema().FindTable);
+            var command = builder.BuildCommand(tableName, keyValues, GetKeyNames);
+            return FindEntries(command).SingleOrDefault();
         }
 
         private IEnumerable<IDictionary<string, object>> FindEntries(string commandText, bool scalarResult = false)
@@ -189,9 +178,9 @@ namespace Simple.Data.OData
             return 0;
         }
 
-        private string GetTableActualName(string tableName)
+        private Table GetTable(string tableName)
         {
-            return GetSchema().FindTable(tableName).ActualName;
+            return new Table(tableName, GetSchema());
         }
 
         private void CheckInsertablePropertiesAreAvailable(string tableName, IEnumerable<KeyValuePair<string, object>> data)
