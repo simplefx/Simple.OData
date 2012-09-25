@@ -17,7 +17,7 @@ namespace Simple.Data.OData
 
         private readonly Dictionary<SimpleExpressionType, Func<SimpleExpression, string>> _expressionFormatters;
         private readonly SimpleReferenceFormatter _simpleReferenceFormatter;
-        private readonly Func<string, Table> _findTable; 
+        private readonly Func<string, Table> _findTable;
 
         public ExpressionFormatter(Func<string, Table> findTable)
         {
@@ -63,41 +63,27 @@ namespace Simple.Data.OData
 
         public string Format(IDictionary<string, object> keyValues, string separator = ",")
         {
-            if (keyValues.Count() == 1)
-            {
-                return FormatContentValue(keyValues.First().Value);
-            }
-            else
-            {
-                return string.Join(separator, keyValues.Select(x => string.Format("{0}={1}", x.Key, FormatContentValue(x.Value))));
-            }
+            return string.Join(separator, keyValues.Select(x => string.Format("{0}={1}", x.Key, FormatContentValue(x.Value))));
         }
 
         public string Format(IEnumerable<object> keyValues, string separator = ",")
         {
-            if (keyValues.Count() == 1)
-            {
-                return FormatContentValue(keyValues.First());
-            }
-            else
-            {
-                return string.Join(separator, keyValues.Select(FormatContentValue));
-            }
+            return string.Join(separator, keyValues.Select(FormatContentValue));
         }
 
         private string LogicalExpressionToWhereClause(SimpleExpression expression)
         {
             return string.Format("({0} {1} {2})",
-                                 Format((SimpleExpression) expression.LeftOperand),
+                                 Format((SimpleExpression)expression.LeftOperand),
                                  expression.Type.ToString().ToLowerInvariant(),
-                                 Format((SimpleExpression) expression.RightOperand));
+                                 Format((SimpleExpression)expression.RightOperand));
         }
 
         private string EqualExpressionToWhereClause(SimpleExpression expression)
         {
             if (expression.RightOperand == null)
                 return FormatAsComparison(expression, "eq");
-            if (CommonTypes.Contains(expression.RightOperand.GetType())) 
+            if (CommonTypes.Contains(expression.RightOperand.GetType()))
                 return FormatAsComparison(expression, "eq");
 
             return TryFormatAsRange(expression.LeftOperand, expression.RightOperand as IRange)
@@ -108,7 +94,7 @@ namespace Simple.Data.OData
         {
             if (expression.RightOperand == null)
                 return FormatAsComparison(expression, "ne");
-            if (CommonTypes.Contains(expression.RightOperand.GetType())) 
+            if (CommonTypes.Contains(expression.RightOperand.GetType()))
                 return FormatAsComparison(expression, "ne");
 
             return FormatAsComparison(expression, "ne");

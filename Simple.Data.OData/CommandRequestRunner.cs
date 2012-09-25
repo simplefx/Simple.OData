@@ -71,12 +71,12 @@ namespace Simple.Data.OData
                 IEnumerable<IEnumerable<IEnumerable<KeyValuePair<string, object>>>> result = null;
                 if (response.StatusCode != HttpStatusCode.OK)
                 {
-                    //result = Enumerable.Empty<IDictionary<string, object>>();
+                    result = Enumerable.Empty<IEnumerable<IDictionary<string, object>>>();
                 }
                 else
                 {
                     var stream = response.GetResponseStream();
-                    //result = ODataClient.GetData(response.GetResponseStream(), false);
+                    result = new[] { ODataClient.GetData(response.GetResponseStream(), false) };
                 }
 
                 return result;

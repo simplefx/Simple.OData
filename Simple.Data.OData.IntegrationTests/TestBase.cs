@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using Simple.Data.OData.NorthwindModel;
 
 namespace Simple.Data.OData.IntegrationTests

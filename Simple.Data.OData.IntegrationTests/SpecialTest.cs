@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Simple.Data.OData;
+﻿using Xunit;
 
 namespace Simple.Data.OData.IntegrationTests
 {
-    using Xunit;
-
     public class SpecialTest
     {
         private const string _nugetUrl = "http://packages.nuget.org/v1/FeedService.svc/";

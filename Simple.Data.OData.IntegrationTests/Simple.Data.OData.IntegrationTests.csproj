@@ -83,6 +83,7 @@
     <Compile Include="FindExpandTest.cs" />
     <Compile Include="FindOneTest.cs" />
     <Compile Include="FindExtraClausesTest.cs" />
+    <Compile Include="FunctionTest.cs" />
     <Compile Include="GetTest.cs" />
     <Compile Include="InsertTest.cs" />
     <Compile Include="FindAssociationTest.cs" />

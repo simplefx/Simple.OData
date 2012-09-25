@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
+using Xunit;
 
 namespace Simple.Data.OData.IntegrationTests
 {
-    using Xunit;
-
     public class FindAllTest : TestBase
     {
         [Fact]

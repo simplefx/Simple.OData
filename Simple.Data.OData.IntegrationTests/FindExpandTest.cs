@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Xunit;
 
 namespace Simple.Data.OData.IntegrationTests
 {
-    using Xunit;
-
     public class FindExpandTest : TestBase
     {
         [Fact]

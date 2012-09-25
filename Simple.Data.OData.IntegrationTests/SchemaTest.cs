@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Linq;
+using Xunit;
 using Simple.Data.OData.Schema;
 
 namespace Simple.Data.OData.IntegrationTests
 {
-    using Xunit;
-
     public class SchemaTest : TestBase
     {
         private DatabaseSchema _schema;
