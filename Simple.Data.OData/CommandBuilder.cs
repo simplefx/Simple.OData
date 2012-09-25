@@ -11,61 +11,58 @@ namespace Simple.Data.OData
 {
     public class CommandBuilder
     {
-        private readonly Dictionary<Type, Func<SimpleQueryClauseBase, bool>> _processors;
-        private readonly List<string> _expand;
-        private readonly List<SimpleReference> _columns;
-        private readonly List<SimpleOrderByItem> _order;
+        public class QueryCommand
+        {
+            private readonly List<string> _expand;
+            private readonly List<SimpleReference> _columns;
+            private readonly List<SimpleOrderByItem> _order;
+
+            public SimpleExpression Criteria { get; set; }
+            public List<SimpleReference> Columns { get { return _columns; } }
+            public List<string> Expand { get { return _expand; } }
+            public List<SimpleOrderByItem> Order { get { return _order; } }
+            public int? SkipCount { get; set; }
+            public int? TakeCount { get; set; }
+            public Action<int> SetTotalCount { get; set; }
+            public bool IsScalarResult { get; set; }
+
+            public string CommandText { get; set; }
+            public Stack<SimpleQueryClauseBase> ProcessedClauses { get; private set; }
+            public IEnumerable<SimpleQueryClauseBase> UnprocessedClauses { get; set; }
+
+            public QueryCommand()
+            {
+                this.ProcessedClauses = new Stack<SimpleQueryClauseBase>();
+                _columns = new List<SimpleReference>();
+                _order = new List<SimpleOrderByItem>();
+                _expand = new List<string>();
+            }
+        }
+
+        private readonly Dictionary<Type, Func<SimpleQueryClauseBase, QueryCommand, bool>> _processors;
         private readonly Func<string, Table> _findTable;
         private readonly Func<string, IList<string>> _getKeyNames;
         private readonly ExpressionFormatter _expressionFormatter;
-        private Stack<SimpleQueryClauseBase> _processedClauses;
-        public IEnumerable<SimpleQueryClauseBase> UnprocessedClauses { get; private set; }
-
-        public IEnumerable<SimpleReference> Columns
-        {
-            get { return _columns; }
-        }
-
-        public IEnumerable<string> Expand { get { return _expand; } }
-
-        public SimpleExpression Criteria { get; private set; }
-
-        public IEnumerable<SimpleOrderByItem> Order
-        {
-            get { return _order; }
-        }
-
-        public int? SkipCount { get; private set; }
-
-        public int? TakeCount { get; private set; }
-
-        public Action<int> SetTotalCount { get; private set; }
-
-        public bool IsScalarResult { get; private set; }
 
         public CommandBuilder(Func<string, Table> findTable, Func<string, IList<string>> getKeyNames)
         {
             _findTable = findTable;
             _getKeyNames = getKeyNames;
             _expressionFormatter = new ExpressionFormatter(_findTable);
-            _columns = new List<SimpleReference>();
-            _order = new List<SimpleOrderByItem>();
-            _expand = new List<string>();
-            _processedClauses = new Stack<SimpleQueryClauseBase>();
 
-            _processors = new Dictionary<Type, Func<SimpleQueryClauseBase, bool>>
+            _processors = new Dictionary<Type, Func<SimpleQueryClauseBase, QueryCommand, bool>>
             {
-                { typeof(OrderByClause), c => TryApplyOrderByClause((OrderByClause)c) },
-                { typeof(SelectClause), c => TryApplySelectClause((SelectClause)c) },
-                { typeof(SkipClause), c => TryApplySkipClause((SkipClause)c) },
-                { typeof(TakeClause), c => TryApplyTakeClause((TakeClause)c) },
-                { typeof(WhereClause), c => TryApplyWhereClause((WhereClause)c) },
-                { typeof(WithClause), c => TryApplyWithClause((WithClause)c) },
-                { typeof(WithCountClause), c => TryApplyWithCountClause((WithCountClause)c) },
+                { typeof(OrderByClause), (x,y) => TryApplyOrderByClause((OrderByClause)x, y) },
+                { typeof(SelectClause), (x,y) => TryApplySelectClause((SelectClause)x, y) },
+                { typeof(SkipClause), (x,y) => TryApplySkipClause((SkipClause)x, y) },
+                { typeof(TakeClause), (x,y) => TryApplyTakeClause((TakeClause)x, y) },
+                { typeof(WhereClause), (x,y) => TryApplyWhereClause((WhereClause)x, y) },
+                { typeof(WithClause), (x,y) => TryApplyWithClause((WithClause)x, y) },
+                { typeof(WithCountClause), (x,y) => TryApplyWithCountClause((WithCountClause)x, y) },
             };
         }
 
-        public string BuildCommand(string tablePath, SimpleExpression criteria)
+        public QueryCommand BuildCommand(string tablePath, SimpleExpression criteria)
         {
             string commandText;
             string tableName = ExtractPrimaryTableName(tablePath);
@@ -81,134 +78,139 @@ namespace Simple.Data.OData
                 if (!string.IsNullOrEmpty(filter))
                     commandText += "?" + FormatFilter(filter);
             }
-            return commandText;
+            return new QueryCommand() { Criteria = criteria, CommandText = commandText};
         }
 
-        public string BuildCommand(SimpleQuery query)
+        public QueryCommand BuildCommand(SimpleQuery query)
         {
-            Build(query);
+            var cmd = ParseQuery(query);
 
             Table table;
-            var formattedKeyValues = TryFormatExpressionAsKeyLookup(query.TableName, this.Criteria, _getKeyNames);
+            var formattedKeyValues = TryFormatExpressionAsKeyLookup(query.TableName, cmd.Criteria, _getKeyNames);
             bool isKeyLookup = !string.IsNullOrEmpty(formattedKeyValues);
             string clause = FormatTableClause(query.TableName, formattedKeyValues, out table);
             var commandText = clause;
 
-            clause = FormatSpecialClause(table);
+            clause = FormatSpecialClause(table, cmd);
             if (!string.IsNullOrEmpty(clause))
             {
                 commandText += "/" + clause;
-                this.IsScalarResult = true;
+                cmd.IsScalarResult = true;
             }
 
             var clauses = new List<string>();
             if (!isKeyLookup)
             {
-                clause = FormatWhereClause(table);
+                clause = FormatWhereClause(table, cmd);
                 if (!string.IsNullOrEmpty(clause)) clauses.Add(clause);
             }
-            clause = FormatWithClause(table);
+            clause = FormatWithClause(table, cmd);
             if (!string.IsNullOrEmpty(clause)) clauses.Add(clause);
-            clause = FormatSkipClause(table);
+            clause = FormatSkipClause(table, cmd);
             if (!string.IsNullOrEmpty(clause)) clauses.Add(clause);
             if (!isKeyLookup)
             {
-                clause = FormatTakeClause(table);
+                clause = FormatTakeClause(table, cmd);
                 if (!string.IsNullOrEmpty(clause)) clauses.Add(clause);
             }
-            clause = FormatOrderClause(table);
+            clause = FormatOrderClause(table, cmd);
             if (!string.IsNullOrEmpty(clause)) clauses.Add(clause);
-            clause = FormatSelectClause(table);
+            clause = FormatSelectClause(table, cmd);
             if (!string.IsNullOrEmpty(clause)) clauses.Add(clause);
-            clause = FormatCountClause(table);
+            clause = FormatCountClause(table, cmd);
             if (!string.IsNullOrEmpty(clause)) clauses.Add(clause);
             if (clauses.Count > 0)
             {
                 commandText += "?" + string.Join("&", clauses);
             }
+            cmd.CommandText = commandText;
 
-            return commandText;
+            return cmd;
         }
 
-        public string BuildCommand(string tablePath, object[] keyValues)
+        public QueryCommand BuildCommand(string tablePath, object[] keyValues)
         {
-            return FormatTableKeyLookup(tablePath, FormatKeyValues(keyValues));
+            var commandText = FormatTableKeyLookup(tablePath, FormatKeyValues(keyValues));
+            return new QueryCommand() { CommandText = commandText };
         }
 
-        private void Build(SimpleQuery query)
+        private QueryCommand ParseQuery(SimpleQuery query)
         {
+            var cmd = new QueryCommand();
+
             var unprocessedClauses = new Queue<SimpleQueryClauseBase>(query.Clauses);
-            Func<SimpleQueryClauseBase, bool> processor;
+            Func<SimpleQueryClauseBase, QueryCommand, bool> processor;
             while (unprocessedClauses.Count > 0)
             {
                 var clause = unprocessedClauses.Peek();
                 var clauseType = clause.GetType();
 
-                if (!_processors.TryGetValue(clauseType, out processor) || !processor(clause))
+                if (!_processors.TryGetValue(clauseType, out processor) || !processor(clause, cmd))
                     break;
 
-                _processedClauses.Push(unprocessedClauses.Dequeue());
+                cmd.ProcessedClauses.Push(unprocessedClauses.Dequeue());
             }
 
-            this.UnprocessedClauses = unprocessedClauses;
+            cmd.UnprocessedClauses = unprocessedClauses;
+            return cmd;
         }
 
-        private bool TryApplyWithClause(WithClause clause)
+        private bool TryApplyWithClause(WithClause clause, QueryCommand cmd)
         {
-            _expand.Add(clause.ObjectReference.GetName());
+            cmd.Expand.Add(clause.ObjectReference.GetName());
             return true;
         }
 
-        private bool TryApplyOrderByClause(OrderByClause clause)
+        private bool TryApplyOrderByClause(OrderByClause clause, QueryCommand cmd)
         {
-            if (SkipCount.HasValue || TakeCount.HasValue)
+            if (cmd.SkipCount.HasValue || cmd.TakeCount.HasValue)
                 return false;
 
-            _order.Add(new SimpleOrderByItem(clause.Reference, clause.Direction));
+            cmd.Order.Add(new SimpleOrderByItem(clause.Reference, clause.Direction));
             return true;
         }
 
-        private bool TryApplySelectClause(SelectClause clause)
+        private bool TryApplySelectClause(SelectClause clause, QueryCommand cmd)
         {
-            if (_columns.Any())
+            if (cmd.Columns.Any())
                 return false;
 
-            _columns.AddRange(clause.Columns);
+            cmd.Columns.AddRange(clause.Columns);
             return true;
         }
 
-        private bool TryApplySkipClause(SkipClause clause)
+        private bool TryApplySkipClause(SkipClause clause, QueryCommand cmd)
         {
-            if (SkipCount.HasValue || TakeCount.HasValue)
+            if (cmd.SkipCount.HasValue || cmd.TakeCount.HasValue)
                 return false;
 
-            SkipCount = clause.Count;
+            cmd.SkipCount = clause.Count;
             return true;
         }
 
-        private bool TryApplyTakeClause(TakeClause clause)
+        private bool TryApplyTakeClause(TakeClause clause, QueryCommand cmd)
         {
-            if (TakeCount.HasValue)
+            if (cmd.TakeCount.HasValue)
                 return false;
 
-            TakeCount = clause.Count;
+            cmd.TakeCount = clause.Count;
             return true;
         }
 
-        private bool TryApplyWhereClause(WhereClause clause)
+        private bool TryApplyWhereClause(WhereClause clause, QueryCommand cmd)
         {
-            if (SkipCount.HasValue || TakeCount.HasValue)
+            if (cmd.SkipCount.HasValue || cmd.TakeCount.HasValue)
                 return false;
 
-            Criteria = Criteria == null
+            cmd.Criteria = cmd.Criteria == null
                 ? clause.Criteria
-                : new SimpleExpression(Criteria, clause.Criteria, SimpleExpressionType.And);
+                : new SimpleExpression(cmd.Criteria, clause.Criteria, SimpleExpressionType.And);
             return true;
         }
 
-        private bool TryApplyWithCountClause(WithCountClause clause)
+        private bool TryApplyWithCountClause(WithCountClause clause, QueryCommand cmd)
         {
-            SetTotalCount = clause.SetCount;
+            cmd.SetTotalCount = clause.SetCount;
             return true;
         }
 
@@ -273,77 +275,77 @@ namespace Simple.Data.OData
             throw new InvalidOperationException("SpecialReference type not recognised.");
         }
 
-        private string FormatSpecialClause(Table table)
+        private string FormatSpecialClause(Table table, QueryCommand cmd)
         {
-            if (this.Columns != null && this.Columns.Count() == 1 && this.Columns.First() is SpecialReference)
+            if (cmd.Columns != null && cmd.Columns.Count() == 1 && cmd.Columns.First() is SpecialReference)
             {
-                var specialColumn = _columns[0];
-                _columns.Clear();
+                var specialColumn = cmd.Columns.First();
+                cmd.Columns.Clear();
                 return FormatSpecialReference((SpecialReference)specialColumn);
             }
             return null;
         }
 
-        private string FormatWhereClause(Table table)
+        private string FormatWhereClause(Table table, QueryCommand cmd)
         {
-            if (this.Criteria != null)
+            if (cmd.Criteria != null)
             {
-                return FormatFilter(_expressionFormatter.Format(this.Criteria));
+                return FormatFilter(_expressionFormatter.Format(cmd.Criteria));
             }
             return null;
         }
 
-        private string FormatWithClause(Table table)
+        private string FormatWithClause(Table table, QueryCommand cmd)
         {
-            if (this.Expand.Any())
+            if (cmd.Expand.Any())
             {
-                var expansion = string.Join(",", this.Expand);
+                var expansion = string.Join(",", cmd.Expand);
                 return "$expand=" + expansion;
             }
             return null;
         }
 
-        private string FormatOrderClause(Table table)
+        private string FormatOrderClause(Table table, QueryCommand cmd)
         {
-            if (this.Order.Any())
+            if (cmd.Order.Any())
             {
-                var items = this.Order.Select(x => FormatOrderByItem(table, x));
+                var items = cmd.Order.Select(x => FormatOrderByItem(table, x));
                 return "$orderby=" + string.Join(",", items);
             }
             return null;
         }
 
-        private string FormatSkipClause(Table table)
+        private string FormatSkipClause(Table table, QueryCommand cmd)
         {
-            if (this.SkipCount > 0)
+            if (cmd.SkipCount > 0)
             {
-                return "$skip=" + this.SkipCount.ToString();
+                return "$skip=" + cmd.SkipCount.ToString();
             }
             return null;
         }
 
-        private string FormatTakeClause(Table table)
+        private string FormatTakeClause(Table table, QueryCommand cmd)
         {
-            if (this.TakeCount > 0)
+            if (cmd.TakeCount > 0)
             {
-                return "$top=" + this.TakeCount.ToString();
+                return "$top=" + cmd.TakeCount.ToString();
             }
             return null;
         }
 
-        private string FormatSelectClause(Table table)
+        private string FormatSelectClause(Table table, QueryCommand cmd)
         {
-            if (this.Columns != null && this.Columns.Count() > 0)
+            if (cmd.Columns != null && cmd.Columns.Count() > 0)
             {
-                var items = this.Columns.Select(x => FormatSelectItem(table, x));
+                var items = cmd.Columns.Select(x => FormatSelectItem(table, x));
                 return "$select=" + string.Join(",", items);
             }
             return null;
         }
 
-        private string FormatCountClause(Table table)
+        private string FormatCountClause(Table table, QueryCommand cmd)
         {
-            if (this.SetTotalCount != null)
+            if (cmd.SetTotalCount != null)
             {
                 return "$inlinecount=allpages";
             }

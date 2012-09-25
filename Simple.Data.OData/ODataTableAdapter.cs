@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
 using System.Text;
 using Simple.Data.OData.Schema;
 
 namespace Simple.Data.OData
 {
-    using System.ComponentModel.Composition;
-    using Simple.Data.OData;
-
     [Export("OData", typeof(Adapter))]
     public partial class ODataTableAdapter : Adapter
     {
@@ -84,27 +82,27 @@ namespace Simple.Data.OData
         private IEnumerable<IDictionary<string, object>> FindByExpression(string tableName, SimpleExpression criteria)
         {
             var builder = new CommandBuilder(GetSchema().FindTable, GetKeyNames);
-            var commandText = builder.BuildCommand(tableName, criteria);
+            var cmd = builder.BuildCommand(tableName, criteria);
 
-            return FindEntries(commandText);
+            return FindEntries(cmd.CommandText);
         }
 
         private IEnumerable<IDictionary<string, object>> FindByQuery(SimpleQuery query, out IEnumerable<SimpleQueryClauseBase> unhandledClauses)
         {
             var builder = new CommandBuilder(GetSchema().FindTable, GetKeyNames);
-            var commandText = builder.BuildCommand(query);
-            unhandledClauses = builder.UnprocessedClauses;
+            var cmd = builder.BuildCommand(query);
+            unhandledClauses = cmd.UnprocessedClauses;
             IEnumerable<IDictionary<string, object>> results;
 
-            if (builder.SetTotalCount == null)
+            if (cmd.SetTotalCount == null)
             {
-                results = FindEntries(commandText, builder.IsScalarResult);
+                results = FindEntries(cmd.CommandText, cmd.IsScalarResult);
             }
             else
             {
                 int totalCount;
-                results = FindEntries(commandText, out totalCount);
-                builder.SetTotalCount(totalCount);
+                results = FindEntries(cmd.CommandText, out totalCount);
+                cmd.SetTotalCount(totalCount);
             }
             return results;
         }
@@ -112,8 +110,8 @@ namespace Simple.Data.OData
         private IDictionary<string, object> FindByKey(string tableName, object[] keyValues)
         {
             var builder = new CommandBuilder(GetSchema().FindTable, GetKeyNames);
-            var command = builder.BuildCommand(tableName, keyValues);
-            return FindEntries(command).SingleOrDefault();
+            var cmd = builder.BuildCommand(tableName, keyValues);
+            return FindEntries(cmd.CommandText).SingleOrDefault();
         }
 
         private IEnumerable<IDictionary<string, object>> FindEntries(string commandText, bool scalarResult = false)
