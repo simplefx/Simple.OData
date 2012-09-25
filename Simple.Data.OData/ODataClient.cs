@@ -315,13 +315,14 @@ namespace Simple.Data.OData
 
         public static void AddDataLink(XElement container, string associationName, string linkedEntityName, object[] linkedEntityKeyValues)
         {
+            var expressionFormatter = new ExpressionFormatter(null);
             var entry = XElement.Parse(Properties.Resources.DataServicesAtomEntryXml).Element(null, "link");
             var rel = entry.Attribute("rel");
             rel.SetValue(rel.Value + associationName);
             entry.SetAttributeValue("title", associationName);
             entry.SetAttributeValue("href", string.Format("{0}({1})",
                 linkedEntityName,
-                string.Join(",", linkedEntityKeyValues.Select(x => ExpressionFormatter.FormatValue(x)))));
+                string.Join(",", linkedEntityKeyValues.Select(expressionFormatter.FormatContentValue))));
             container.Add(entry);
         }
 

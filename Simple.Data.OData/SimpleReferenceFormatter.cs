@@ -72,23 +72,25 @@ namespace Simple.Data.OData
 
             var odataName = _functionNameConverter.ConvertToODataName(functionReference.Name);
             var columnArgument = FormatColumnClause(functionReference.Argument);
-            var additionalArguments = FormatAdditionalArguments(functionReference.AdditionalArguments);
 
-            if (odataName == "substringof")
-                return string.Format("{0}({1},{2})", odataName, additionalArguments.Substring(1), columnArgument);
+            if (functionReference.AdditionalArguments.Any())
+            {
+                var additionalArguments = FormatAdditionalArguments(functionReference.AdditionalArguments);
+                if (odataName == "substringof")
+                    return string.Format("{0}({1},{2})", odataName, additionalArguments, columnArgument);
+                else
+                    return string.Format("{0}({1},{2})", odataName, columnArgument, additionalArguments);
+            }
             else
-                return string.Format("{0}({1}{2})", odataName, columnArgument, additionalArguments);
+            {
+                return string.Format("{0}({1})", odataName, columnArgument);
+            }
         }
 
         private string FormatAdditionalArguments(IEnumerable<object> additionalArguments)
         {
-            StringBuilder builder = null;
-            foreach (var additionalArgument in additionalArguments)
-            {
-                if (builder == null) builder = new StringBuilder();
-                builder.AppendFormat(",{0}", ExpressionFormatter.FormatValue(additionalArgument));
-            }
-            return builder != null ? builder.ToString() : string.Empty;
+            var expressionFormatter = new ExpressionFormatter(_findTable);
+            return string.Join(",", additionalArguments.Select(expressionFormatter.FormatQueryStringValue));
         }
 
         private string TryFormatAsObjectReference(ObjectReference objectReference)

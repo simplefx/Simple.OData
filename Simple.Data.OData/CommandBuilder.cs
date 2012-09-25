@@ -69,7 +69,7 @@ namespace Simple.Data.OData
         {
             string commandText;
             string tableName = ExtractPrimaryTableName(tablePath);
-            var keyLookup = TryFormatCriteriaAsKeyLookup(tableName, _expressionFormatter.Format(criteria), _getKeyNames);
+            var keyLookup = TryFormatExpressionAsKeyLookup(tableName, criteria, _getKeyNames);
             if (!string.IsNullOrEmpty(keyLookup))
             {
                 commandText = FormatTableKeyLookup(tablePath, keyLookup);
@@ -89,7 +89,7 @@ namespace Simple.Data.OData
             Build(query);
 
             Table table;
-            var formattedKeyValues = TryFormatCriteriaAsKeyLookup(query.TableName, _expressionFormatter.Format(this.Criteria), _getKeyNames);
+            var formattedKeyValues = TryFormatExpressionAsKeyLookup(query.TableName, this.Criteria, _getKeyNames);
             bool isKeyLookup = !string.IsNullOrEmpty(formattedKeyValues);
             string clause = FormatTableClause(query.TableName, formattedKeyValues, out table);
             var commandText = clause;
@@ -365,25 +365,29 @@ namespace Simple.Data.OData
             return "(" + HttpUtility.UrlEncode(string.Join(",", keyValues)) + ")";
         }
 
-        private string TryFormatCriteriaAsKeyLookup(string tablePath, string formattedCriteria, Func<string, IEnumerable<string>> GetKeyNames)
+        private string TryFormatExpressionAsKeyLookup(string tablePath, SimpleExpression expression, Func<string, IEnumerable<string>> GetKeyNames)
         {
             var table = _findTable(ExtractPrimaryTableName(tablePath));
+            IDictionary<string, object> namedKeyValues = new Dictionary<string, object>();
+            if (expression != null)
+            {
+                TryExtractKeyValues(expression, namedKeyValues);
+            }
+            if (namedKeyValues.Count == 0)
+                return string.Empty;
 
             IList<string> keyValues = new List<string>();
             var keyNames = GetKeyNames(table.ActualName);
-            var filterItems = formattedCriteria.Split(',');
             int processedKeys = 0;
-            if (keyNames.Count() == filterItems.Count())
+            if (keyNames.Count() == namedKeyValues.Count())
             {
                 foreach (var keyName in keyNames)
                 {
-                    foreach (var filterItem in filterItems)
+                    foreach (var namedKeyValue in namedKeyValues)
                     {
-                        int index = filterItem.IndexOf(" eq ");
-                        if (index > 0 && filterItem.Substring(0, index) == keyName)
+                        if (namedKeyValue.Key == keyName)
                         {
-                            var keyValue = filterItem.Substring(index + 4);
-                            keyValues.Add(keyValue);
+                            keyValues.Add(_expressionFormatter.FormatContentValue(namedKeyValue.Value));
                             ++processedKeys;
                         }
                     }
@@ -391,6 +395,26 @@ namespace Simple.Data.OData
             }
                 
             return processedKeys == keyNames.Count() ? FormatKeyValues(keyValues) : string.Empty;
+        }
+
+        private void TryExtractKeyValues(SimpleExpression expression, IDictionary<string, object> namedKeyValues)
+        {
+            switch (expression.Type)
+            {
+                case SimpleExpressionType.And:
+                    TryExtractKeyValues(expression.LeftOperand as SimpleExpression, namedKeyValues);
+                    TryExtractKeyValues(expression.RightOperand as SimpleExpression, namedKeyValues);
+                    break;
+
+                case SimpleExpressionType.Equal:
+                    var key = expression.LeftOperand.ToString().Split('.').Last();
+                    if (!namedKeyValues.ContainsKey(key))
+                        namedKeyValues.Add(key, expression.RightOperand);
+                    break;
+
+                default:
+                    break;
+            }
         }
 
         private string[] ExtractTableNames(string tablePath)
