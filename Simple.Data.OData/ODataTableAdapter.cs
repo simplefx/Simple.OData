@@ -11,7 +11,6 @@ namespace Simple.Data.OData
     public partial class ODataTableAdapter : Adapter
     {
         private string _urlBase;
-        private ExpressionFormatter _expressionFormatter;
         private DatabaseSchema _schema;
 
         internal string UrlBase
@@ -29,7 +28,6 @@ namespace Simple.Data.OData
             base.OnSetup();
 
             _urlBase = Settings.Url;
-            _expressionFormatter = new ExpressionFormatter(DatabaseSchema.Get(_urlBase).FindTable);
             _schema = DatabaseSchema.Get(_urlBase);
         }
 

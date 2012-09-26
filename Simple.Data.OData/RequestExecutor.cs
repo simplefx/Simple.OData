@@ -69,7 +69,7 @@ namespace Simple.Data.OData
             var entry = ODataClient.CreateDataElement(entryMembers.Properties);
             foreach (var association in entryMembers.AssociationsByValue)
             {
-                CreateLink(entry, tableName, association);
+                CreateLinkElement(entry, tableName, association);
             }
 
             var commandText = GetTableActualName(tableName);
@@ -96,7 +96,7 @@ namespace Simple.Data.OData
             var entryElement = ODataClient.CreateDataElement(entryMembers.Properties);
             foreach (var association in entryMembers.AssociationsByValue)
             {
-                CreateLink(entryElement, tableName, association);
+                CreateLinkElement(entryElement, tableName, association);
             }
 
             var command = new HttpCommand(merge ? RestVerbs.MERGE : RestVerbs.PUT, commandText, data, entryElement.ToString());
@@ -124,7 +124,7 @@ namespace Simple.Data.OData
         public IEnumerable<IEnumerable<IEnumerable<KeyValuePair<string, object>>>> ExecuteFunction(string functionName, IDictionary<string, object> parameters)
         {
             var function = _schema.FindFunction(functionName);
-            var formattedParameters = new ExpressionFormatter(_schema.FindTable).Format(parameters, "&");
+            var formattedParameters = _expressionFormatter.Format(parameters, "&");
             var commandText = function.ActualName + "?" + formattedParameters;
             var command = new HttpCommand(function.HttpMethod.ToUpper(), commandText.ToString());
             _requestBuilder.AddCommandToRequest(command);
@@ -140,7 +140,7 @@ namespace Simple.Data.OData
             return new HttpCommand(linkMethod, commandText, null, linkEntry.ToString(), true);
         }
 
-        private void CreateLink(XElement entry, string tableName, KeyValuePair<string, object> associatedData)
+        private void CreateLinkElement(XElement entry, string tableName, KeyValuePair<string, object> associatedData)
         {
             if (associatedData.Value == null)
                 return;
