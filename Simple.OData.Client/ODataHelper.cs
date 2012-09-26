@@ -9,7 +9,7 @@ using Simple.NExtLib.IO;
 
 namespace Simple.OData.Client
 {
-    public static class ODataHelper
+    static class ODataHelper
     {
         public static IEnumerable<IDictionary<string, object>> GetData(Stream stream, bool scalarResult = false)
         {

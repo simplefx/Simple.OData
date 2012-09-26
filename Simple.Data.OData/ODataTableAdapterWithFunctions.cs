@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Simple.OData.Client;
 
 namespace Simple.Data.OData
 {
@@ -21,7 +22,7 @@ namespace Simple.Data.OData
 
         private IEnumerable<IEnumerable<IEnumerable<KeyValuePair<string, object>>>> ExecuteFunction(string functionName, IDictionary<string, object> parameters, IAdapterTransaction transaction)
         {
-            return new RequestExecutor(_urlBase, _schema).ExecuteFunction(functionName, parameters);
+            return GetODataClient(transaction).ExecuteFunction(functionName, parameters);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Simple.OData.Client;
 
 namespace Simple.Data.OData
 {
@@ -33,7 +34,7 @@ namespace Simple.Data.OData
         public IDictionary<string, object> Insert(string tableName, IDictionary<string, object> data, IAdapterTransaction transaction, bool resultRequired)
         {
             CheckInsertablePropertiesAreAvailable(tableName, data);
-            return new RequestExecutor(_urlBase, _schema, transaction).InsertEntry(tableName, data, transaction, resultRequired);
+            return GetODataClient(transaction).InsertEntry(tableName, data, resultRequired);
         }
 
         public IEnumerable<IDictionary<string, object>> InsertMany(string tableName, IEnumerable<IDictionary<string, object>> data, IAdapterTransaction transaction, Func<IDictionary<string, object>, Exception, bool> onError, bool resultRequired)

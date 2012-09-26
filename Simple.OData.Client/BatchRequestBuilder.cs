@@ -6,7 +6,7 @@ using Simple.NExtLib;
 
 namespace Simple.OData.Client
 {
-    public class BatchRequestBuilder : RequestBuilder
+    class BatchRequestBuilder : RequestBuilder
     {
         private string _batchId;
         private string _changesetId;

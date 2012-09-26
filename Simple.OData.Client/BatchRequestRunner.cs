@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Simple.OData.Client
 {
-    public class BatchRequestRunner : RequestRunner
+    class BatchRequestRunner : RequestRunner
     {
         private RequestBuilder _requestBuilder;
 

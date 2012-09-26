@@ -4,7 +4,6 @@ using System.Collections.Generic;
 
 namespace Simple.OData.Client
 {
-
     public abstract class EdmPropertyType
     {
         public abstract string Name { get; }

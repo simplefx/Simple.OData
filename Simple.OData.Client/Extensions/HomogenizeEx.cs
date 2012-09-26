@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace Simple.OData.Client
 {
-    public static class HomogenizeEx
+    static class HomogenizeEx
     {
         private static readonly ConcurrentDictionary<string, string> Cache
             = new ConcurrentDictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);

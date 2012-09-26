@@ -9,7 +9,7 @@ using System.Diagnostics;
 
 namespace Simple.OData.Client
 {
-    public static class EdmHelper
+    static class EdmHelper
     {
         private static readonly Dictionary<EdmType, Func<string, object>> Readers = new Dictionary<EdmType, Func<string, object>>
         {

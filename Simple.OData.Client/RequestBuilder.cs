@@ -6,7 +6,7 @@ using System.Net;
 
 namespace Simple.OData.Client
 {
-    public abstract class RequestBuilder
+    abstract class RequestBuilder
     {
         public string UrlBase { get; private set; }
         public string Host

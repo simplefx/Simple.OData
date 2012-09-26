@@ -4,7 +4,7 @@ using System.Net;
 
 namespace Simple.OData.Client
 {
-    public class CommandRequestRunner : RequestRunner
+    class CommandRequestRunner : RequestRunner
     {
         public CommandRequestRunner()
         {

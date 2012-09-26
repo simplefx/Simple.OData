@@ -4,8 +4,7 @@ using System.Linq;
 using System.Collections.Generic;
 using System.Text;
 using System.Web;
-using Simple.Data;
-using Simple.Data.OData.Schema;
+using Simple.OData.Client;
 
 namespace Simple.Data.OData
 {
@@ -359,7 +358,7 @@ namespace Simple.Data.OData
 
         private string FormatKeyValues(IEnumerable<object> keyValues)
         {
-            return "(" + HttpUtility.UrlEncode(_expressionFormatter.Format(keyValues)) + ")";
+            return "(" + HttpUtility.UrlEncode(new ValueFormatter().Format(keyValues)) + ")";
         }
 
         private string FormatKeyValues(IEnumerable<string> keyValues)
@@ -389,7 +388,7 @@ namespace Simple.Data.OData
                     {
                         if (namedKeyValue.Key == keyName)
                         {
-                            keyValues.Add(_expressionFormatter.FormatContentValue(namedKeyValue.Value));
+                            keyValues.Add(new ValueFormatter().FormatContentValue(namedKeyValue.Value));
                             ++processedKeys;
                         }
                     }

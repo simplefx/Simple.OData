@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Simple.OData.Client
 {
-    public static class StringExtensions
+    static class StringExtensions
     {
         public static bool IsPlural(this string str)
         {

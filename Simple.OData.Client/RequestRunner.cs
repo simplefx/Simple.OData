@@ -7,7 +7,7 @@ using Simple.NExtLib.IO;
 
 namespace Simple.OData.Client
 {
-    public abstract class RequestRunner
+    abstract class RequestRunner
     {
         public RequestRunner()
         {

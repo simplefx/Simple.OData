@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using Simple.Data;
 using Simple.NExtLib;
-using Simple.Data.OData.Schema;
+using Simple.OData.Client;
 
 namespace Simple.Data.OData
 {
@@ -89,8 +89,7 @@ namespace Simple.Data.OData
 
         private string FormatAdditionalArguments(IEnumerable<object> additionalArguments)
         {
-            var expressionFormatter = new ExpressionFormatter(_findTable);
-            return string.Join(",", additionalArguments.Select(expressionFormatter.FormatQueryStringValue));
+            return string.Join(",", additionalArguments.Select(new ValueFormatter().FormatQueryStringValue));
         }
 
         private string TryFormatAsObjectReference(ObjectReference objectReference)

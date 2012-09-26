@@ -3,18 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Simple.NExtLib;
-using Simple.Data.OData.Schema;
+using Simple.OData.Client;
 
 namespace Simple.Data.OData
 {
     public class ExpressionFormatter
     {
-        public enum FormattingStyle
-        {
-            QueryString,
-            Content
-        };
-
         private readonly Dictionary<SimpleExpressionType, Func<SimpleExpression, string>> _expressionFormatters;
         private readonly SimpleReferenceFormatter _simpleReferenceFormatter;
         private readonly Func<string, Table> _findTable;
@@ -59,16 +53,6 @@ namespace Simple.Data.OData
             }
 
             return string.Empty;
-        }
-
-        public string Format(IDictionary<string, object> keyValues, string separator = ",")
-        {
-            return string.Join(separator, keyValues.Select(x => string.Format("{0}={1}", x.Key, FormatContentValue(x.Value))));
-        }
-
-        public string Format(IEnumerable<object> keyValues, string separator = ",")
-        {
-            return string.Join(separator, keyValues.Select(FormatContentValue));
         }
 
         private string LogicalExpressionToWhereClause(SimpleExpression expression)
@@ -131,7 +115,7 @@ namespace Simple.Data.OData
             if (!ReferenceEquals(simpleReference, null))
                 return FormatReference(simpleReference);
 
-            return FormatValue(value, ExpressionFormatter.FormattingStyle.QueryString);
+            return new ValueFormatter().FormatQueryStringValue(value);
         }
 
         internal protected string FormatReference(SimpleReference reference)
@@ -142,26 +126,6 @@ namespace Simple.Data.OData
         internal protected string FormatFunction(SimpleFunction function)
         {
             return string.Format("{0}({1})", function.Name, function.Args.Aggregate((x, y) => FormatObject(x) + "," + FormatObject(y)));
-        }
-
-        internal string FormatContentValue(object value)
-        {
-            return FormatValue(value, FormattingStyle.Content);
-        }
-
-        internal string FormatQueryStringValue(object value)
-        {
-            return FormatValue(value, FormattingStyle.QueryString);
-        }
-
-        private string FormatValue(object value, FormattingStyle formattingStyle)
-        {
-            return value == null ? "null"
-                : value is string ? string.Format("'{0}'", value)
-                : value is DateTime ? ((DateTime)value).ToIso8601String()
-                : value is bool ? ((bool)value) ? "true" : "false"
-                : (formattingStyle == FormattingStyle.Content && (value is long || value is ulong)) ? value.ToString() + "L"
-                : value.ToString();
         }
     }
 }

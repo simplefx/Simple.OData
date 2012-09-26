@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Text;
-using Simple.Data.OData.Schema;
+using Simple.OData.Client;
 
 namespace Simple.Data.OData
 {
@@ -11,16 +11,16 @@ namespace Simple.Data.OData
     public partial class ODataTableAdapter : Adapter
     {
         private string _urlBase;
-        private DatabaseSchema _schema;
+        private Schema _schema;
 
         internal string UrlBase
         {
             get { return _urlBase; }
         }
 
-        internal DatabaseSchema GetSchema()
+        internal Schema GetSchema()
         {
-            return _schema ?? (_schema = DatabaseSchema.Get(_urlBase));
+            return _schema ?? (_schema = Schema.Get(_urlBase));
         }
 
         protected override void OnSetup()
@@ -28,7 +28,7 @@ namespace Simple.Data.OData
             base.OnSetup();
 
             _urlBase = Settings.Url;
-            _schema = DatabaseSchema.Get(_urlBase);
+            _schema = Schema.Get(_urlBase);
         }
 
         public override IEnumerable<IDictionary<string, object>> Find(string tableName, SimpleExpression criteria)
@@ -59,7 +59,7 @@ namespace Simple.Data.OData
         public override IDictionary<string, object> Insert(string tableName, IDictionary<string, object> data, bool resultRequired)
         {
             CheckInsertablePropertiesAreAvailable(tableName, data);
-            return new RequestExecutor(_urlBase, _schema).InsertEntry(tableName, data, null, resultRequired);
+            return GetODataClient().InsertEntry(tableName, data, resultRequired);
         }
 
         public override int Update(string tableName, IDictionary<string, object> data, SimpleExpression criteria)
@@ -115,12 +115,12 @@ namespace Simple.Data.OData
         private IEnumerable<IDictionary<string, object>> FindEntries(string commandText, bool scalarResult = false)
         {
             int totalCount;
-            return new RequestExecutor(_urlBase, _schema).FindEntries(commandText, scalarResult, false, out totalCount);
+            return GetODataClient().FindEntries(commandText, scalarResult, false, out totalCount);
         }
 
         private IEnumerable<IDictionary<string, object>> FindEntries(string commandText, out int totalCount)
         {
-            return new RequestExecutor(_urlBase, _schema).FindEntries(commandText, false, true, out totalCount);
+            return GetODataClient().FindEntries(commandText, false, true, out totalCount);
         }
 
         private int UpdateByExpression(string tableName, IDictionary<string, object> data, SimpleExpression criteria, IAdapterTransaction transaction)
@@ -129,7 +129,7 @@ namespace Simple.Data.OData
 
             foreach (var entry in entries)
             {
-                new RequestExecutor(_urlBase, _schema, transaction).UpdateEntry(tableName, entry, data, transaction);
+                GetODataClient(transaction).UpdateEntry(tableName, entry, data);
             }
             // TODO: what to return?
             return 0;
@@ -141,10 +141,34 @@ namespace Simple.Data.OData
 
             foreach (var entry in entries)
             {
-                new RequestExecutor(_urlBase, _schema, transaction).DeleteEntry(tableName, entry, transaction);
+                GetODataClient(transaction).DeleteEntry(tableName, entry);
             }
             // TODO: what to return?
             return 0;
+        }
+
+        private ODataClient GetODataClient(IAdapterTransaction transaction = null)
+        {
+            ODataClient client;
+            var adapterTransaction = transaction as ODataAdapterTransaction;
+            if (adapterTransaction != null)
+            {
+                client = new ODataClient(adapterTransaction.Batch);
+            }
+            else
+            {
+                client = new ODataClient(_urlBase);
+            }
+
+            var adapterPluralizer = Database.GetPluralizer();
+            if (adapterPluralizer != null)
+            {
+                var clientPluralizer = new Pluralizer(adapterPluralizer.IsPlural, adapterPluralizer.IsSingular,
+                                                      adapterPluralizer.Pluralize, adapterPluralizer.Singularize);
+                ODataClient.SetPluralizer(clientPluralizer);
+            }
+
+            return client;
         }
 
         private Table GetTable(string tableName)

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Simple.Data.OData.Edm;
 
 namespace Simple.Data.OData
 {

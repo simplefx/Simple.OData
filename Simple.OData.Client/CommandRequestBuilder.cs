@@ -4,7 +4,7 @@ using Simple.NExtLib;
 
 namespace Simple.OData.Client
 {
-    public class CommandRequestBuilder : RequestBuilder
+    class CommandRequestBuilder : RequestBuilder
     {
         public CommandRequestBuilder(string urlBase)
             : base(urlBase)
