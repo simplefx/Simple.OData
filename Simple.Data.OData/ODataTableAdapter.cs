@@ -127,28 +127,11 @@ namespace Simple.Data.OData
 
         private int UpdateByExpression(string tableName, IDictionary<string, object> data, SimpleExpression criteria, IAdapterTransaction transaction)
         {
-            // TODO: optimize
-            string[] keyFieldNames = GetSchema().FindTable(tableName).PrimaryKey.AsEnumerable().ToArray();
             var entries = FindByExpression(tableName, criteria);
 
             foreach (var entry in entries)
             {
-                var namedKeyValues = new Dictionary<string, object>();
-                for (int index = 0; index < keyFieldNames.Count(); index++)
-                {
-                    namedKeyValues.Add(keyFieldNames[index], entry[keyFieldNames[index]]);
-                }
-                var formattedKeyValues = _expressionFormatter.Format(namedKeyValues);
-                bool merge = false;
-                foreach (var item in entry)
-                {
-                    if (!keyFieldNames.Contains(item.Key) && !data.ContainsKey(item.Key))
-                    {
-                        merge = true;
-                        break;
-                    }
-                }
-                new RequestExecutor(_urlBase, _schema, transaction).UpdateEntry(tableName, formattedKeyValues, data, merge, transaction);
+                new RequestExecutor(_urlBase, _schema, transaction).UpdateEntry(tableName, entry, data, transaction);
             }
             // TODO: what to return?
             return 0;
@@ -156,19 +139,11 @@ namespace Simple.Data.OData
 
         private int DeleteByExpression(string tableName, SimpleExpression criteria, IAdapterTransaction transaction)
         {
-            // TODO: optimize
-            string[] keyFieldNames = GetSchema().FindTable(tableName).PrimaryKey.AsEnumerable().ToArray();
             var entries = FindByExpression(tableName, criteria);
 
             foreach (var entry in entries)
             {
-                var namedKeyValues = new Dictionary<string, object>();
-                for (int index = 0; index < keyFieldNames.Count(); index++)
-                {
-                    namedKeyValues.Add(keyFieldNames[index], entry[keyFieldNames[index]]);
-                }
-                var formattedKeyValues = _expressionFormatter.Format(namedKeyValues);
-                new RequestExecutor(_urlBase, _schema, transaction).DeleteEntry(tableName, formattedKeyValues, transaction);
+                new RequestExecutor(_urlBase, _schema, transaction).DeleteEntry(tableName, entry, transaction);
             }
             // TODO: what to return?
             return 0;

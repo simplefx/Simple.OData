@@ -26,6 +26,20 @@ namespace Simple.Data.OData.IntegrationTests
         }
 
         [Fact]
+        public void AddSingleAssociation()
+        {
+            var category = _db.Categories.Insert(CategoryName: "Test1");
+            var product = _db.Products.Insert(ProductName: "Test2", UnitPrice: 18m);
+
+            _db.Products.UpdateByProductName(ProductName: "Test2", Category: category);
+
+            product = _db.Products.FindByProductName("Test2");
+            Assert.Equal(category.CategoryID, product.CategoryID);
+            category = _db.Category.WithProducts().FindByCategoryName("Test1");
+            Assert.True(category.Products.Count == 1);
+        }
+
+        [Fact]
         public void UpdateSingleAssociation()
         {
             var category = _db.Categories.Insert(CategoryName: "Test1");
@@ -37,6 +51,35 @@ namespace Simple.Data.OData.IntegrationTests
             Assert.Equal(category.CategoryID, product.CategoryID);
             category = _db.Category.WithProducts().FindByCategoryName("Test1");
             Assert.True(category.Products.Count == 1);
+        }
+
+        [Fact]
+        public void RemoveSingleAssociation()
+        {
+            var category = _db.Categories.Insert(CategoryName: "Test6");
+            var product = _db.Products.Insert(ProductName: "Test7", UnitPrice: 18m, Category: category);
+            product = _db.Products.FindByProductName("Test7");
+            _db.Products.UpdateByProductName(ProductName: "Test7", Category: category);
+            product = _db.Products.FindByProductName("Test7");
+            Assert.Equal(category.CategoryID, product.CategoryID);
+
+            _db.Products.UpdateByProductName(ProductName: "Test7", Category: null);
+
+            product = _db.Products.FindByProductName("Test7");
+            Assert.Equal(0, product.CategoryID);
+        }
+
+        [Fact]
+        public void UpdateFieldsAndAssociation()
+        {
+            var category = _db.Categories.Insert(CategoryName: "Test1");
+            var product = _db.Products.Insert(ProductName: "Test2", UnitPrice: 18m, CategoryID: 1);
+
+            _db.Products.UpdateByProductName(ProductName: "Test2", UnitPrice: 19m, Category: category);
+
+            product = _db.Products.FindByProductName("Test2");
+            Assert.Equal(19m, product.UnitPrice);
+            Assert.Equal(category.CategoryID, product.CategoryID);
         }
 
         [Fact]

@@ -39,6 +39,7 @@ namespace Simple.Data.OData
         private DatabaseSchema _schema;
         private RequestBuilder _requestBuilder;
         private RequestRunner _requestRunner;
+        private ExpressionFormatter _expressionFormatter;
 
         public RequestExecutor(string urlBase, DatabaseSchema schema, IAdapterTransaction transaction = null)
         {
@@ -51,6 +52,7 @@ namespace Simple.Data.OData
             _requestRunner = transaction == null
                                     ? new CommandRequestRunner()
                                     : (transaction as ODataAdapterTransaction).RequestRunner;
+            _expressionFormatter = new ExpressionFormatter(DatabaseSchema.Get(_urlBase).FindTable);
         }
 
         public IEnumerable<IDictionary<string, object>> FindEntries(string commandText, bool scalarResult, bool setTotalCount, out int totalCount)
@@ -85,21 +87,19 @@ namespace Simple.Data.OData
             return result;
         }
 
-        public int UpdateEntry(string tableName, string keys, IDictionary<string, object> updatedData, bool merge, IAdapterTransaction transaction)
+        public int UpdateEntry(string tableName, IDictionary<string, object> entry, IDictionary<string, object> data, IAdapterTransaction transaction)
         {
-            Dictionary<string, object> allData = new Dictionary<string, object>();
-            updatedData.Keys.ToList().ForEach(x => allData.Add(x, updatedData[x]));
+            bool merge = CheckMergeConditions(tableName, entry, data);
+            var commandText = FormatGetKeyCommand(tableName, entry);
 
-            var entryMembers = ParseEntryMembers(tableName, allData);
-
-            var entry = ODataClient.CreateDataElement(entryMembers.Properties);
+            var entryMembers = ParseEntryMembers(tableName, data);
+            var entryElement = ODataClient.CreateDataElement(entryMembers.Properties);
             foreach (var association in entryMembers.AssociationsByValue)
             {
-                CreateLink(entry, tableName, association);
+                CreateLink(entryElement, tableName, association);
             }
 
-            var commandText = GetTableActualName(tableName) + "(" + keys + ")";
-            var command = new HttpCommand(merge ? RestVerbs.MERGE : RestVerbs.PUT, commandText, updatedData, entry.ToString());
+            var command = new HttpCommand(merge ? RestVerbs.MERGE : RestVerbs.PUT, commandText, data, entryElement.ToString());
             _requestBuilder.AddCommandToRequest(command);
             var result = _requestRunner.UpdateEntry(command);
 
@@ -113,9 +113,9 @@ namespace Simple.Data.OData
             return result;
         }
 
-        public int DeleteEntry(string tableName, string keys, IAdapterTransaction transaction)
+        public int DeleteEntry(string tableName, IDictionary<string, object> entry, IAdapterTransaction transaction)
         {
-            var commandText = GetTableActualName(tableName) + "(" + keys + ")";
+            var commandText = FormatGetKeyCommand(tableName, entry);
             var command = HttpCommand.Delete(commandText);
             _requestBuilder.AddCommandToRequest(command);
             return _requestRunner.DeleteEntry(command);
@@ -147,16 +147,15 @@ namespace Simple.Data.OData
 
             var association = _schema.FindTable(tableName).FindAssociation(associatedData.Key);
             var entryProperties = GetLinkedEntryProperties(associatedData.Value);
-            var keyFieldNames = _schema.FindTable(association.ReferenceTableName).PrimaryKey.AsEnumerable().ToArray();
-            var keyFieldValues = new object[keyFieldNames.Count()];
-
-            for (int index = 0; index < keyFieldNames.Count(); index++)
+            var associatedKeyNames = _schema.FindTable(association.ReferenceTableName).GetKeyNames();
+            var associatedKeyValues = new object[associatedKeyNames.Count()];
+            for (int index = 0; index < associatedKeyNames.Count(); index++)
             {
-                bool ok = entryProperties.TryGetValue(keyFieldNames[index], out keyFieldValues[index]);
+                bool ok = entryProperties.TryGetValue(associatedKeyNames[index], out associatedKeyValues[index]);
                 if (!ok)
                     return;
             }
-            ODataClient.AddDataLink(entry, association.ActualName, association.ReferenceTableName, keyFieldValues);
+            ODataClient.AddDataLink(entry, association.ActualName, association.ReferenceTableName, associatedKeyValues);
         }
 
         private IDictionary<string, object> GetLinkedEntryProperties(object entryData)
@@ -234,6 +233,35 @@ namespace Simple.Data.OData
         private string GetTableActualName(string tableName)
         {
             return _schema.FindTable(tableName).ActualName;
+        }
+
+        private string FormatGetKeyCommand(string tableName, IDictionary<string, object> entry)
+        {
+            var keyNames = _schema.FindTable(tableName).GetKeyNames();
+            var keyValues = new List<object>();
+            foreach (var keyName in keyNames)
+            {
+                object keyValue;
+                if (entry.TryGetValue(keyName, out keyValue))
+                {
+                    keyValues.Add(keyValue);
+                }
+            }
+            var formattedKeyValues = _expressionFormatter.Format(keyValues);
+            return GetTableActualName(tableName) + "(" + formattedKeyValues + ")";
+        }
+
+        private bool CheckMergeConditions(string tableName, IDictionary<string, object> entry, IDictionary<string, object> data)
+        {
+            var keyNames = _schema.FindTable(tableName).GetKeyNames();
+            foreach (var key in entry.Keys)
+            {
+                if (!keyNames.Contains(key) && !data.Keys.Contains(key))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }
