@@ -98,17 +98,17 @@ namespace Simple.OData.Client
             return _requestRunner.FindEntries(command, scalarResult, setTotalCount, out totalCount);
         }
 
-        public IDictionary<string, object> GetEntry(string tableName, IDictionary<string, object> key)
+        public IDictionary<string, object> GetEntry(string tableName, IDictionary<string, object> entryKey)
         {
-            var commandText = FormatGetKeyCommand(tableName, key);
+            var commandText = FormatGetKeyCommand(tableName, entryKey);
             var command = HttpCommand.Get(commandText);
             _requestBuilder.AddCommandToRequest(command);
             return _requestRunner.GetEntry(command);
         }
 
-        public IDictionary<string, object> InsertEntry(string tableName, IDictionary<string, object> data, bool resultRequired)
+        public IDictionary<string, object> InsertEntry(string tableName, IDictionary<string, object> entryData, bool resultRequired)
         {
-            var entryMembers = ParseEntryMembers(tableName, data);
+            var entryMembers = ParseEntryMembers(tableName, entryData);
 
             var entry = ODataHelper.CreateDataElement(entryMembers.Properties);
             foreach (var association in entryMembers.AssociationsByValue)
@@ -117,7 +117,7 @@ namespace Simple.OData.Client
             }
 
             var commandText = GetTableActualName(tableName);
-            var command = HttpCommand.Post(commandText, data, entry.ToString());
+            var command = HttpCommand.Post(commandText, entryData, entry.ToString());
             _requestBuilder.AddCommandToRequest(command);
             var result = _requestRunner.InsertEntry(command, resultRequired);
 
@@ -131,19 +131,19 @@ namespace Simple.OData.Client
             return result;
         }
 
-        public int UpdateEntry(string tableName, IDictionary<string, object> entry, IDictionary<string, object> data)
+        public int UpdateEntry(string tableName, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
         {
-            bool merge = CheckMergeConditions(tableName, entry, data);
-            var commandText = FormatGetKeyCommand(tableName, entry);
+            bool merge = CheckMergeConditions(tableName, entryKey, entryData);
+            var commandText = FormatGetKeyCommand(tableName, entryKey);
 
-            var entryMembers = ParseEntryMembers(tableName, data);
+            var entryMembers = ParseEntryMembers(tableName, entryData);
             var entryElement = ODataHelper.CreateDataElement(entryMembers.Properties);
             foreach (var association in entryMembers.AssociationsByValue)
             {
                 CreateLinkElement(entryElement, tableName, association);
             }
 
-            var command = new HttpCommand(merge ? RestVerbs.MERGE : RestVerbs.PUT, commandText, data, entryElement.ToString());
+            var command = new HttpCommand(merge ? RestVerbs.MERGE : RestVerbs.PUT, commandText, entryData, entryElement.ToString());
             _requestBuilder.AddCommandToRequest(command);
             var result = _requestRunner.UpdateEntry(command);
 
@@ -157,9 +157,9 @@ namespace Simple.OData.Client
             return result;
         }
 
-        public int DeleteEntry(string tableName, IDictionary<string, object> entry)
+        public int DeleteEntry(string tableName, IDictionary<string, object> entryKey)
         {
-            var commandText = FormatGetKeyCommand(tableName, entry);
+            var commandText = FormatGetKeyCommand(tableName, entryKey);
             var command = HttpCommand.Delete(commandText);
             _requestBuilder.AddCommandToRequest(command);
             return _requestRunner.DeleteEntry(command);
@@ -217,12 +217,12 @@ namespace Simple.OData.Client
             return entryProperties;
         }
 
-        private EntryMembers ParseEntryMembers(string tableName, IDictionary<string, object> data)
+        private EntryMembers ParseEntryMembers(string tableName, IDictionary<string, object> entryData)
         {
             var entryMembers = new EntryMembers();
 
             var table = _schema.FindTable(tableName);
-            foreach (var item in data)
+            foreach (var item in entryData)
             {
                 ParseEntryMember(table, item, entryMembers);
             }
@@ -279,14 +279,14 @@ namespace Simple.OData.Client
             return _schema.FindTable(tableName).ActualName;
         }
 
-        private string FormatGetKeyCommand(string tableName, IDictionary<string, object> entry)
+        private string FormatGetKeyCommand(string tableName, IDictionary<string, object> entryKey)
         {
             var keyNames = _schema.FindTable(tableName).GetKeyNames();
             var keyValues = new List<object>();
             foreach (var keyName in keyNames)
             {
                 object keyValue;
-                if (entry.TryGetValue(keyName, out keyValue))
+                if (entryKey.TryGetValue(keyName, out keyValue))
                 {
                     keyValues.Add(keyValue);
                 }
@@ -295,12 +295,12 @@ namespace Simple.OData.Client
             return GetTableActualName(tableName) + "(" + formattedKeyValues + ")";
         }
 
-        private bool CheckMergeConditions(string tableName, IDictionary<string, object> entry, IDictionary<string, object> data)
+        private bool CheckMergeConditions(string tableName, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
         {
             var keyNames = _schema.FindTable(tableName).GetKeyNames();
-            foreach (var key in entry.Keys)
+            foreach (var key in entryKey.Keys)
             {
-                if (!keyNames.Contains(key) && !data.Keys.Contains(key))
+                if (!keyNames.Contains(key) && !entryData.Keys.Contains(key))
                 {
                     return true;
                 }

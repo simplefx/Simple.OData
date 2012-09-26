@@ -134,7 +134,7 @@ namespace Simple.OData.Client
                    select new EdmComplexType()
                    {
                        Name = string.Format("{0}.{1}", typesNamespace, e.Attribute("Name").Value),
-                       Properties = (from p in e.Descendants(null, "Property")
+                       Properties = (from p in e.Descendants(null, "Column")
                                      select ParseProperty(p, new EdmComplexType[] { }, new EdmEntityType[] { })).ToArray(),
                    };
         }
@@ -148,7 +148,7 @@ namespace Simple.OData.Client
                    select new EdmEntityType()
                               {
                                   Name = e.Attribute("Name").Value,
-                                  Properties = (from p in e.Descendants(null, "Property")
+                                  Properties = (from p in e.Descendants(null, "Column")
                                                 select ParseProperty(p, complexTypes, new EdmEntityType[] { })).ToArray(),
                                   Key = (from k in e.Descendants(null, "Key")
                                          select ParseKey(k)).Single(),
