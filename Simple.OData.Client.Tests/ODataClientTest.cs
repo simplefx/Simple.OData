@@ -79,5 +79,33 @@ namespace Simple.OData.Client.Tests
             product = _client.FindEntry("Products?$filter=ProductName eq 'Test3'");
             Assert.Null(product);
         }
+
+        [Fact]
+        public void LinkEntry()
+        {
+            var category = _client.InsertEntry("Categories", new Entry() { { "CategoryName", "Test4" } }, true);
+            var product = _client.InsertEntry("Products", new Entry() { { "ProductName", "Test5" } }, true);
+
+            _client.LinkEntry("Products", product, "Category", category);
+
+            product = _client.FindEntry("Products?$filter=ProductName eq 'Test5'");
+            Assert.NotNull(product["CategoryID"]);
+            Assert.Equal(category["CategoryID"], product["CategoryID"]);
+        }
+
+        [Fact]
+        public void UnlinkEntry()
+        {
+            var category = _client.InsertEntry("Categories", new Entry() { { "CategoryName", "Test6" } }, true);
+            var product = _client.InsertEntry("Products", new Entry() { { "ProductName", "Test7" }, { "CategoryID", category["CategoryID"] } }, true);
+            product = _client.FindEntry("Products?$filter=ProductName eq 'Test7'");
+            Assert.NotNull(product["CategoryID"]);
+            Assert.Equal(category["CategoryID"], product["CategoryID"]);
+
+            _client.UnlinkEntry("Products", product, "Category");
+
+            product = _client.FindEntry("Products?$filter=ProductName eq 'Test7'");
+            Assert.Null(product["CategoryID"]);
+        }
     }
 }

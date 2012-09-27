@@ -170,6 +170,22 @@ namespace Simple.OData.Client
             return _requestRunner.DeleteEntry(command);
         }
 
+        public void LinkEntry(string tableName, IDictionary<string, object> entryKey, string linkName, IDictionary<string, object> linkedEntryKey)
+        {
+            var association = _schema.FindTable(tableName).FindAssociation(linkName);
+            var command = CreateLinkCommand(tableName, linkName, FormatGetKeyCommand(tableName, entryKey), FormatGetKeyCommand(association.ReferenceTableName, linkedEntryKey));
+            _requestBuilder.AddCommandToRequest(command);
+            _requestRunner.UpdateEntry(command);
+        }
+
+        public void UnlinkEntry(string tableName, IDictionary<string, object> entryKey, string linkName)
+        {
+            var association = _schema.FindTable(tableName).FindAssociation(linkName);
+            var command = CreateLinkCommand(tableName, linkName, FormatGetKeyCommand(tableName, entryKey));
+            _requestBuilder.AddCommandToRequest(command);
+            _requestRunner.UpdateEntry(command);
+        }
+
         public IEnumerable<IEnumerable<IEnumerable<KeyValuePair<string, object>>>> ExecuteFunction(string functionName, IDictionary<string, object> parameters)
         {
             var function = _schema.FindFunction(functionName);
@@ -178,6 +194,23 @@ namespace Simple.OData.Client
             var command = new HttpCommand(function.HttpMethod.ToUpper(), commandText.ToString());
             _requestBuilder.AddCommandToRequest(command);
             return _requestRunner.ExecuteFunction(command);
+        }
+
+        private HttpCommand CreateLinkCommand(string tableName, string associationName, string entryPath, string linkPath)
+        {
+            var linkEntry = ODataHelper.CreateLinkElement(linkPath);
+            var linkMethod = _schema.FindTable(tableName).FindAssociation(associationName).IsMultiple ? 
+                RestVerbs.POST : 
+                RestVerbs.PUT;
+
+            var commandText = string.Format("{0}/$links/{1}", entryPath, associationName);
+            return new HttpCommand(linkMethod, commandText, null, linkEntry.ToString(), true);
+        }
+
+        private HttpCommand CreateLinkCommand(string tableName, string associationName, string entryPath)
+        {
+            var commandText = string.Format("{0}/$links/{1}", entryPath, associationName);
+            return HttpCommand.Delete(commandText);
         }
 
         private HttpCommand CreateLinkCommand(string tableName, string associationName, int entryContentId, int linkContentId)

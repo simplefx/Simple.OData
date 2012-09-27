@@ -303,13 +303,18 @@ namespace Simple.OData.Client
             return entry;
         }
 
-        public static XElement CreateLinkElement(int contentId)
+        public static XElement CreateLinkElement(string link)
         {
             var entry = CreateEmptyMetadataWithNamespaces();
 
-            entry.SetValue("$" + contentId.ToString());
+            entry.SetValue(link);
 
             return entry;
+        }
+
+        public static XElement CreateLinkElement(int contentId)
+        {
+            return CreateLinkElement("$" + contentId.ToString());
         }
 
         public static void AddDataLink(XElement container, string associationName, string linkedEntityName, object[] linkedEntityKeyValues)

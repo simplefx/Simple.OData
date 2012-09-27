@@ -19,6 +19,17 @@ namespace Simple.OData.Client.Tests
 
         public void Dispose()
         {
+            IEnumerable<dynamic> products = _client.FindEntries("Products");
+            products.ToList().ForEach(x =>
+                {
+                    if (x["ProductName"].ToString().StartsWith("Test")) _client.DeleteEntry("Products", x);
+                });
+            IEnumerable<dynamic> categories = _client.FindEntries("Categories");
+            categories.ToList().ForEach(x =>
+            {
+                if (x["CategoryName"].ToString().StartsWith("Test")) _client.DeleteEntry("Categories", x);
+            });
+
             if (_service != null)
             {
                 _service.Dispose();
