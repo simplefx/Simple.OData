@@ -11,16 +11,16 @@ namespace Simple.Data.OData
     public partial class ODataTableAdapter : Adapter
     {
         private string _urlBase;
-        private Schema _schema;
+        private ISchema _schema;
 
         internal string UrlBase
         {
             get { return _urlBase; }
         }
 
-        internal Schema GetSchema()
+        internal ISchema GetSchema()
         {
-            return _schema ?? (_schema = Schema.Get(_urlBase));
+            return _schema ?? (_schema = ODataClient.GetSchema(_urlBase));
         }
 
         protected override void OnSetup()
@@ -28,7 +28,7 @@ namespace Simple.Data.OData
             base.OnSetup();
 
             _urlBase = Settings.Url;
-            _schema = Schema.Get(_urlBase);
+            _schema = ODataClient.GetSchema(_urlBase);
         }
 
         public override IEnumerable<IDictionary<string, object>> Find(string tableName, SimpleExpression criteria)

@@ -35,14 +35,14 @@ namespace Simple.OData.Client
     public class ODataClient
     {
         private string _urlBase;
-        private Schema _schema;
+        private ISchema _schema;
         private RequestBuilder _requestBuilder;
         private RequestRunner _requestRunner;
 
         public ODataClient(string urlBase)
         {
             _urlBase = urlBase;
-            _schema = Schema.Get(urlBase);
+            _schema = Client.Schema.Get(urlBase);
 
             _requestBuilder = new CommandRequestBuilder(_urlBase);
             _requestRunner = new CommandRequestRunner();
@@ -51,15 +51,20 @@ namespace Simple.OData.Client
         public ODataClient(ODataBatch batch)
         {
             _urlBase = batch.RequestBuilder.UrlBase;
-            _schema = Schema.Get(_urlBase);
+            _schema = Client.Schema.Get(_urlBase);
 
             _requestBuilder = batch.RequestBuilder;
             _requestRunner = batch.RequestRunner;
         }
 
-        public Schema Schema
+        public ISchema Schema
         {
             get { return _schema; }
+        }
+
+        public static ISchema GetSchema(string urlBase)
+        {
+            return Client.Schema.Get(urlBase);
         }
 
         public static void SetPluralizer(IPluralizer pluralizer)

@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Simple.OData.Client
 {
-    public class Schema
+    class Schema : ISchema
     {
         private static readonly ConcurrentDictionary<string, Schema> Instances = new ConcurrentDictionary<string, Schema>();
 
@@ -26,11 +26,6 @@ namespace Simple.OData.Client
         public ISchemaProvider SchemaProvider
         {
             get { return _schemaProvider; }
-        }
-
-        public bool IsAvailable
-        {
-            get { return _schemaProvider != null; }
         }
 
         public IEnumerable<Table> Tables
@@ -74,13 +69,13 @@ namespace Simple.OData.Client
             return new FunctionCollection(_schemaProvider.GetFunctions());
         }
 
-        public static Schema Get(string urlBase)
+        internal static Schema Get(string urlBase)
         {
             return Instances.GetOrAdd(urlBase,
                                       sp => new Schema(new SchemaProvider(urlBase), urlBase));
         }
 
-        public static void ClearCache()
+        internal static void ClearCache()
         {
             Instances.Clear();
         }

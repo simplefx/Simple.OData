@@ -10,13 +10,13 @@ namespace Simple.OData.Client
     /// </summary>
     public class Table
     {
-        private readonly Schema _schema;
+        private readonly ISchema _schema;
         private readonly string _actualName;
         private Lazy<ColumnCollection> _lazyColumns;
         private Lazy<AssociationCollection> _lazyAssociations;
         private Lazy<Key> _lazyPrimaryKey;
 
-        public Table(string name, Schema schema)
+        public Table(string name, ISchema schema)
         {
             _actualName = name;
             _schema = schema;
