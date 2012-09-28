@@ -82,22 +82,22 @@ namespace Simple.OData.Client
         private static object ReadPropertyArray(XElement element)
         {
             var properties = new List<object>();
-            element.Elements().ToList().ForEach(x =>
+            foreach (var propertyElement in element.Elements())
             {
-                var kvp = Read(x);
+                var kvp = Read(propertyElement);
                 properties.Add(kvp.Value);
-            });
+            }
             return properties;
         }
 
         private static object ReadPropertySet(XElement element)
         {
             var properties = new Dictionary<string, object>();
-            element.Elements().ToList().ForEach(x =>
+            foreach (var propertyElement in element.Elements())
             {
-                var kvp = Read(x);
+                var kvp = Read(propertyElement);
                 properties.Add(kvp.Key, kvp.Value);
-            });
+            }
             return properties;
         }
 
@@ -129,7 +129,7 @@ namespace Simple.OData.Client
 
         public static object ReadEdmBoolean(string source)
         {
-            return source.Equals("true", StringComparison.InvariantCultureIgnoreCase);
+            return source.Equals("true", StringComparison.OrdinalIgnoreCase);
         }
 
         public static object ReadEdmByte(string source)
@@ -214,11 +214,6 @@ namespace Simple.OData.Client
 
         public static string WriteEdmDateTime(object source)
         {
-            if (((DateTime)source).Kind != DateTimeKind.Utc)
-            {
-                Trace.WriteLine("Non-UTC DateTime specified to EdmHelper", "Simple.Data.OData.Warnings");
-            }
-
             return ((DateTime)source).ToIso8601String();
         }
 

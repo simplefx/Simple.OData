@@ -22,7 +22,7 @@ namespace Simple.OData.Client
 
         public static bool IsAllUpperCase(this string str)
         {
-            return !str.Any(char.IsLower);
+            return !str.Cast<char>().Any(char.IsLower);
         }
 
         public static string NullIfWhitespace(this string str)
@@ -52,7 +52,7 @@ namespace Simple.OData.Client
 
         public bool IsPlural(string word)
         {
-            return word.EndsWith("s", StringComparison.InvariantCultureIgnoreCase);
+            return word.EndsWith("s", StringComparison.OrdinalIgnoreCase);
         }
 
         public string Pluralize(string word)
@@ -62,7 +62,7 @@ namespace Simple.OData.Client
 
         public string Singularize(string word)
         {
-            return word.EndsWith("s", StringComparison.InvariantCultureIgnoreCase) ? word.Substring(0, word.Length - 1) : word;
+            return word.EndsWith("s", StringComparison.OrdinalIgnoreCase) ? word.Substring(0, word.Length - 1) : word;
         }
 
     }

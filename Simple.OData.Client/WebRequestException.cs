@@ -8,7 +8,9 @@ using Simple.NExtLib.Xml;
 
 namespace Simple.OData.Client
 {
+#if !NETFX_CORE
     [Serializable]
+#endif
     public class WebRequestException : Exception
     {
         private readonly string _code;
@@ -48,11 +50,13 @@ namespace Simple.OData.Client
 
         }
 
+#if !NETFX_CORE
         protected WebRequestException(
             SerializationInfo info,
             StreamingContext context) : base(info, context)
         {
         }
+#endif
 
         public string Code
         {

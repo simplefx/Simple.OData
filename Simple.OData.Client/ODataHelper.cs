@@ -73,7 +73,10 @@ namespace Simple.OData.Client
 
                 var entityElement = mediaStream ? entry : entry.Element(null, "content");
                 var properties = GetProperties(entityElement).ToIDictionary();
-                properties.ToList().ForEach(x => entryData.Add(x.Key, x.Value));
+                foreach (var propertyElement in properties)
+                {
+                    entryData.Add(propertyElement.Key, propertyElement.Value);
+                }
 
                 yield return entryData;
             }

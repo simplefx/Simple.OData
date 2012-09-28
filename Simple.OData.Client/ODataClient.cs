@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Xml.Linq;
 
@@ -247,9 +248,9 @@ namespace Simple.OData.Client
             {
                 entryProperties = new Dictionary<string, object>();
                 var entryType = entryData.GetType();
-                foreach (var entryProperty in entryType.GetProperties())
+                foreach (var entryProperty in GetTypeProperties(entryType))
                 {
-                    entryProperties.Add(entryProperty.Name, entryType.GetProperty(entryProperty.Name).GetValue(entryData, null));
+                    entryProperties.Add(entryProperty.Name, GetTypeProperty(entryType, entryProperty.Name).GetValue(entryData, null));
                 }
             }
             return entryProperties;
@@ -344,6 +345,24 @@ namespace Simple.OData.Client
                 }
             }
             return false;
+        }
+
+        private IEnumerable<PropertyInfo> GetTypeProperties(Type type)
+        {
+#if NETFX_CORE
+            return type.GetTypeInfo().DeclaredProperties;
+#else
+            return type.GetProperties();
+#endif
+        }
+
+        private PropertyInfo GetTypeProperty(Type type, string propertyName)
+        {
+#if NETFX_CORE
+            return type.GetTypeInfo().GetDeclaredProperty(propertyName);
+#else
+            return type.GetProperty(propertyName);
+#endif
         }
     }
 }

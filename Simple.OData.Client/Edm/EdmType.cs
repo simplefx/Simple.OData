@@ -110,10 +110,19 @@ namespace Simple.OData.Client
 
         private static IEnumerable<EdmType> EnumerateTypes()
         {
-            var edmTypes = from field in typeof(EdmType).GetFields(BindingFlags.Public | BindingFlags.Static)
+            var edmTypes = from field in GetTypeFields()
                            where field.FieldType == typeof(EdmType)
                            select ((EdmType)field.GetValue(null));
             return edmTypes;
+        }
+
+        private static IEnumerable<FieldInfo> GetTypeFields()
+        {
+#if NETFX_CORE
+            return typeof (EdmType).GetTypeInfo().DeclaredFields;
+#else
+            return typeof(EdmType).GetFields(BindingFlags.Public | BindingFlags.Static);
+#endif
         }
     }
 }

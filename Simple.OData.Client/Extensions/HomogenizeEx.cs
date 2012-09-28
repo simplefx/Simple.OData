@@ -7,7 +7,7 @@ namespace Simple.OData.Client
     static class HomogenizeEx
     {
         private static readonly ConcurrentDictionary<string, string> Cache
-            = new ConcurrentDictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
+            = new ConcurrentDictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         private static Regex _homogenizeRegex = new Regex("[^a-z0-9]");
 
         /// <summary>
@@ -22,7 +22,11 @@ namespace Simple.OData.Client
 
         private static string HomogenizeImpl(string source)
         {
+#if NETFX_CORE
+            return _homogenizeRegex.Replace(source.ToLowerInvariant(), string.Empty);
+#else
             return string.Intern(_homogenizeRegex.Replace(source.ToLowerInvariant(), string.Empty));
+#endif
         }
 
         /// <summary>

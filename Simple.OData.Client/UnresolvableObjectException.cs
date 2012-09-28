@@ -3,7 +3,9 @@ using System.Runtime.Serialization;
 
 namespace Simple.OData.Client
 {
+#if !NETFX_CORE
     [Serializable]
+#endif
     public sealed class UnresolvableObjectException : Exception
     {
         public UnresolvableObjectException()
@@ -27,6 +29,7 @@ namespace Simple.OData.Client
             ObjectName = objectName;
         }
 
+#if !NETFX_CORE
         private UnresolvableObjectException(
             SerializationInfo info,
             StreamingContext context)
@@ -34,7 +37,7 @@ namespace Simple.OData.Client
         {
             ObjectName = info.GetString("ObjectName");
         }
-
+#endif
         public string ObjectName
         {
             get { return Data.Contains("ObjectName") ? Data["ObjectName"].ToString() : null; }
