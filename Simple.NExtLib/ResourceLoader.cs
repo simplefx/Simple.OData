@@ -15,7 +15,7 @@ namespace Simple.NExtLib
             return await FileIO.ReadTextAsync(resourceFile);
         }
 
-        public static string LoadResourceFileAsString(string folderName, string resourceName)
+        public static string LoadFileAsString(string folderName, string resourceName)
         {
             var content = LoadFileAsStringAsync(folderName, resourceName);
             content.Wait();

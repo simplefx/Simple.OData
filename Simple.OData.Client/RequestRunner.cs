@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Net;
+using System.Threading.Tasks;
 using Simple.NExtLib.IO;
 
 namespace Simple.OData.Client
@@ -25,13 +26,37 @@ namespace Simple.OData.Client
         {
             try
             {
-                return (HttpWebResponse)request.GetResponse();
+                return GetResponse(request);
             }
             catch (WebException ex)
             {
                 throw WebRequestException.CreateFromWebException(ex);
             }
         }
+
+#if NETFX_CORE
+        private HttpWebResponse GetResponse(HttpWebRequest request)
+        {
+            var responseAsync = request.GetResponseAsync();
+            return (HttpWebResponse)WaitForResponse(responseAsync);
+        }
+
+        private async Task<WebResponse> GetResponseAsync(HttpWebRequest request)
+        {
+            return await request.GetResponseAsync();
+        }
+
+        private WebResponse WaitForResponse(Task<WebResponse> response)
+        {
+            response.Wait();
+            return response.Result;
+        }
+#else
+        private HttpWebResponse GetResponse(HttpWebRequest request)
+        {
+            return (HttpWebResponse)request.GetResponse();
+        }
+#endif
 
         public abstract IEnumerable<IDictionary<string, object>> FindEntries(HttpCommand command, bool scalarResult, bool setTotalCount, out int totalCount);
         public abstract IDictionary<string, object> GetEntry(HttpCommand command);

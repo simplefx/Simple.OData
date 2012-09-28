@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using Xunit;
+using Simple.NExtLib;
 
 namespace Simple.OData.Client.Tests
 {
@@ -114,6 +115,12 @@ namespace Simple.OData.Client.Tests
             Assert.Equal("Meat", tags[1]["value"]);
         }
 
+#if NETFX_CORE
+        private string GetResourceAsString(string resourceName)
+        {
+            return ResourceLoader.LoadFileAsString("Resources", resourceName);
+        }
+#else
         private string GetResourceAsString(string resourceName)
         {
             var assembly = Assembly.GetExecutingAssembly();
@@ -125,5 +132,6 @@ namespace Simple.OData.Client.Tests
                 return reader.ReadToEnd();
             }
         }
+#endif
     }
 }

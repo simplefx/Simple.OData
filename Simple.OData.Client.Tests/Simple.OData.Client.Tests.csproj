@@ -106,6 +106,10 @@
       <Project>{2A909E4D-6493-4D36-9FDE-786B89F9A387}</Project>
       <Name>Simple.Data.OData.NorthwindModel</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Simple.NExtLib\Simple.NExtLib.csproj">
+      <Project>{4a191fad-dc1d-46fc-a941-7deb2c8c4c15}</Project>
+      <Name>Simple.NExtLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Simple.OData.Client\Simple.OData.Client.csproj">
       <Project>{C20A3959-4895-41F8-86E2-7DED294FD904}</Project>
       <Name>Simple.OData.Client</Name>

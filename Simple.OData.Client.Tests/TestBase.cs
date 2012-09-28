@@ -19,22 +19,27 @@ namespace Simple.OData.Client.Tests
         {
 #if !NETFX_CORE
             _service = new TestService(typeof(NorthwindService));
-#endif
             _client = new ODataClient(_service.ServiceUri.AbsoluteUri);
+#endif
         }
 
         public void Dispose()
         {
-            IEnumerable<dynamic> products = _client.FindEntries("Products");
-            products.ToList().ForEach(x =>
-                {
-                    if (x["ProductName"].ToString().StartsWith("Test")) _client.DeleteEntry("Products", x);
-                });
-            IEnumerable<dynamic> categories = _client.FindEntries("Categories");
-            categories.ToList().ForEach(x =>
+            if (_client != null)
             {
-                if (x["CategoryName"].ToString().StartsWith("Test")) _client.DeleteEntry("Categories", x);
-            });
+                IEnumerable<dynamic> products = _client.FindEntries("Products");
+                foreach (var product in products)
+                {
+                    if (product["ProductName"].ToString().StartsWith("Test"))
+                        _client.DeleteEntry("Products", product);
+                }
+                IEnumerable<dynamic> categories = _client.FindEntries("Categories");
+                foreach (var category in categories)
+                {
+                    if (category["CategoryName"].ToString().StartsWith("Test"))
+                        _client.DeleteEntry("Categories", category);
+                }
+            }
 
 #if !NETFX_CORE
             if (_service != null)

@@ -9,12 +9,12 @@ namespace Simple.OData.Client
         {
             public static string DataServicesAtomEntryXml
             {
-                get { return ResourceLoader.LoadResourceFileAsString("Resources", "DataServicesAtomEntryXml.txt"); }
+                get { return ResourceLoader.LoadFileAsString("Resources", "DataServicesAtomEntryXml.txt"); }
             }
 
             public static string DataServicesMetadataEntryXml
             {
-                get { return ResourceLoader.LoadResourceFileAsString("Resources", "DataServicesMetadataEntryXml.txt"); }
+                get { return ResourceLoader.LoadFileAsString("Resources", "DataServicesMetadataEntryXml.txt"); }
             }
         }
     }

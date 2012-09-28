@@ -6,22 +6,22 @@
         {
             public static string XmlWithDefaultNamespace
             {
-                get { return ResourceLoader.LoadResourceFileAsString("Resources", "XmlWithDefaultNamespace.txt"); }
+                get { return ResourceLoader.LoadFileAsString("Resources", "XmlWithDefaultNamespace.txt"); }
             }
 
             public static string XmlWithNoNamespace
             {
-                get { return ResourceLoader.LoadResourceFileAsString("Resources", "XmlWithNoNamespace.txt"); }
+                get { return ResourceLoader.LoadFileAsString("Resources", "XmlWithNoNamespace.txt"); }
             }
 
             public static string XmlWithPrefixedNamespace
             {
-                get { return ResourceLoader.LoadResourceFileAsString("Resources", "XmlWithPrefixedNamespace.txt"); }
+                get { return ResourceLoader.LoadFileAsString("Resources", "XmlWithPrefixedNamespace.txt"); }
             }
 
             public static string TwitterStatusesSample
             {
-                get { return ResourceLoader.LoadResourceFileAsString("Resources", "TwitterStatusesSample.txt"); }
+                get { return ResourceLoader.LoadFileAsString("Resources", "TwitterStatusesSample.txt"); }
             }
         }
     }

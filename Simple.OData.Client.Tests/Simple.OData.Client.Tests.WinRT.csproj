@@ -149,6 +149,10 @@
     <Content Include="Resources\SingleProductWithComplexProperty.xml" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Simple.NExtLib\Simple.NExtLib.WinRT.csproj">
+      <Project>{bc986348-5913-4d56-a808-73f96a8ae289}</Project>
+      <Name>Simple.NExtLib.WinRT</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Simple.OData.Client\Simple.OData.Client.WinRT.csproj">
       <Project>{fc85ed9b-cc45-4d7d-9436-4c9c9d326dfb}</Project>
       <Name>Simple.OData.Client.WinRT</Name>
