@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using NExtLib.Unit;
+using NExtLib.TestUtils;
 using Xunit;
 using Simple.NExtLib.Xml;
 

@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using NExtLib.Unit;
+using NExtLib.TestUtils;
 using Xunit;
 using Simple.NExtLib.Linq;
 

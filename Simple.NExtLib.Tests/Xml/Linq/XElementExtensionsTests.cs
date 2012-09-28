@@ -2,19 +2,25 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using Xunit;
 using System.Xml.Linq;
-using NExtLib.Unit;
+using NExtLib.TestUtils;
+
+#if NETFX_CORE
+using Windows.ApplicationModel.Resources.Core;
+using Windows.Storage;
+#endif
 
 namespace Simple.NExtLib.Tests.Xml.Linq
 {
-    
     public class XElementExtensionsTests
     {
         [Fact]
         public void TestXElementWithDefaultNamespace()
         {
-            var element = XElement.Parse(Properties.Resources.XmlWithDefaultNamespace);
+            var content = Properties.Resources.XmlWithDefaultNamespace;
+            var element = XElement.Parse(content);
             var list = element.Elements(null, "child").ToList();
             list.Count.ShouldEqual(2);
             list[0].Element(null, "sub").Value.ShouldEqual("Foo");
@@ -24,7 +30,8 @@ namespace Simple.NExtLib.Tests.Xml.Linq
         [Fact]
         public void TestXElementWithNoNamespace()
         {
-            var element = XElement.Parse(Properties.Resources.XmlWithNoNamespace);
+            var content = Properties.Resources.XmlWithNoNamespace;
+            var element = XElement.Parse(content);
             var list = element.Elements(null, "child").ToList();
             list.Count.ShouldEqual(2);
             list[0].Element(null, "sub").Value.ShouldEqual("Foo");
@@ -34,7 +41,8 @@ namespace Simple.NExtLib.Tests.Xml.Linq
         [Fact]
         public void TestXElementWithPrefixedNamespace()
         {
-            var element = XElement.Parse(Properties.Resources.XmlWithPrefixedNamespace);
+            var content = Properties.Resources.XmlWithPrefixedNamespace;
+            var element = XElement.Parse(content);
             var list = element.Elements("c", "child").ToList();
             list.Count.ShouldEqual(2);
             list[0].Element("c", "sub").Value.ShouldEqual("Foo");

@@ -15,7 +15,7 @@ namespace Simple.NExtLib.Xml
 
         public static XName ResolveName(this XElement element, string name)
         {
-            if (name.Contains(':'))
+            if (name.Contains(":"))
             {
                 var bits = name.Split(':');
                 if (bits.Length != 2) throw new ArgumentException("name");
