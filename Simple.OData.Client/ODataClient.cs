@@ -63,9 +63,24 @@ namespace Simple.OData.Client
             get { return _schema; }
         }
 
+        public string SchemaAsString
+        {
+            get { return SchemaProvider.FromUrl(_urlBase).SchemaAsString; }
+        }
+
         public static ISchema GetSchema(string urlBase)
         {
             return Client.Schema.Get(urlBase);
+        }
+
+        public static string GetSchemaAsString(string urlBase)
+        {
+            return SchemaProvider.FromUrl(urlBase).SchemaAsString;
+        }
+
+        public static ISchema ParseSchemaString(string schemaString)
+        {
+            return SchemaProvider.FromMetadata(schemaString).Schema;
         }
 
         public static void SetPluralizer(IPluralizer pluralizer)

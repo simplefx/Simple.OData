@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using Xunit;
 
 namespace Simple.OData.Client.Tests
@@ -64,9 +64,26 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void GetSchemaAsString()
+        {
+            var schemaString = _client.SchemaAsString;
+
+            Assert.Contains("Products", schemaString);
+        }
+
+        [Fact]
+        public void ParseSchema()
+        {
+            var schemaString = _client.SchemaAsString;
+            var schema = ODataClient.ParseSchemaString(schemaString);
+
+            var table = _client.Schema.FindTable("OrderDetails");
+            Assert.NotNull(table);
+        }
+
+        [Fact]
         public void CheckODataOrgNorthwindSchema()
         {
-            _client = null;
             var client = new ODataClient("http://services.odata.org/Northwind/Northwind.svc/");
 
             var table = client.Schema.FindTable("Product");
@@ -85,7 +102,6 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void CheckODataOrgODataSchema()
         {
-            _client = null;
             var client = new ODataClient("http://services.odata.org/OData/OData.svc/");
 
             var table = client.Schema.FindTable("Product");

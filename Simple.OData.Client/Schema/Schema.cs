@@ -10,17 +10,15 @@ namespace Simple.OData.Client
     {
         private static readonly ConcurrentDictionary<string, Schema> Instances = new ConcurrentDictionary<string, Schema>();
 
-        private readonly string _urlBase;
         private readonly ISchemaProvider _schemaProvider;
         private readonly Lazy<TableCollection> _lazyTables;
         private readonly Lazy<FunctionCollection> _lazyFunctions;
 
-        private Schema(ISchemaProvider schemaProvider, string urlBase)
+        private Schema(ISchemaProvider schemaProvider)
         {
             _lazyTables = new Lazy<TableCollection>(CreateTableCollection);
             _lazyFunctions = new Lazy<FunctionCollection>(CreateFunctionCollection);
             _schemaProvider = schemaProvider;
-            _urlBase = urlBase;
         }
 
         public ISchemaProvider SchemaProvider
@@ -72,7 +70,12 @@ namespace Simple.OData.Client
         internal static Schema Get(string urlBase)
         {
             return Instances.GetOrAdd(urlBase,
-                                      sp => new Schema(new SchemaProvider(urlBase), urlBase));
+                                      sp => new Schema(Client.SchemaProvider.FromUrl(urlBase)));
+        }
+
+        internal static Schema Get(SchemaProvider schemaProvider)
+        {
+            return new Schema(schemaProvider);
         }
 
         internal static void ClearCache()
