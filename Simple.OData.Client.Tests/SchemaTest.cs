@@ -66,6 +66,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void CheckODataOrgNorthwindSchema()
         {
+            _client = null;
             var client = new ODataClient("http://services.odata.org/Northwind/Northwind.svc/");
 
             var table = client.Schema.FindTable("Product");
@@ -84,6 +85,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void CheckODataOrgODataSchema()
         {
+            _client = null;
             var client = new ODataClient("http://services.odata.org/OData/OData.svc/");
 
             var table = client.Schema.FindTable("Product");

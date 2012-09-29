@@ -15,6 +15,15 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void FindEntriesFromODataOrgNorthwind()
+        {
+            _client = null;
+            var client = new ODataClient("http://services.odata.org/Northwind/Northwind.svc/");
+            var products = client.FindEntries("Products");
+            Assert.True(products.Count() > 0);
+        }
+
+        [Fact]
         public void FindEntryExisting()
         {
             var product = _client.FindEntry("Products?$filter=ProductName eq 'Chai'");

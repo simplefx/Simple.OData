@@ -17,10 +17,14 @@ namespace Simple.OData.Client.Tests
 
         public TestBase()
         {
-#if !NETFX_CORE
+            string serviceUri;
+#if NETFX_CORE
+            serviceUri = "http://NORTHWIND/Northwind/Northwind.svc/";
+#else
             _service = new TestService(typeof(NorthwindService));
-            _client = new ODataClient(_service.ServiceUri.AbsoluteUri);
+            serviceUri = _service.ServiceUri.AbsoluteUri;
 #endif
+            _client = new ODataClient(serviceUri);
         }
 
         public void Dispose()
@@ -41,7 +45,8 @@ namespace Simple.OData.Client.Tests
                 }
             }
 
-#if !NETFX_CORE
+#if NETFX_CORE
+#else
             if (_service != null)
             {
                 _service.Dispose();
