@@ -64,6 +64,24 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void GetSchemaAsString()
+        {
+            var schemaString = _client.SchemaAsString;
+
+            Assert.Contains("Products", schemaString);
+        }
+
+        [Fact]
+        public void ParseSchema()
+        {
+            var schemaString = _client.SchemaAsString;
+            var schema = ODataClient.ParseSchemaString(schemaString);
+
+            var table = _client.Schema.FindTable("OrderDetails");
+            Assert.NotNull(table);
+        }
+
+        [Fact]
         public void CheckODataOrgNorthwindSchema()
         {
             var client = new ODataClient("http://services.odata.org/Northwind/Northwind.svc/");

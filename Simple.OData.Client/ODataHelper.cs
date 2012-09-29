@@ -31,6 +31,11 @@ namespace Simple.OData.Client
             return GetSchema(QuickIO.StreamToString(stream));
         }
 
+        public static string GetSchemaAsString(Stream stream)
+        {
+            return QuickIO.StreamToString(stream);
+        }
+
         public static IEnumerable<IDictionary<string, object>> GetData(string text)
         {
             var feed = XElement.Parse(text);

@@ -3,19 +3,47 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
-using Simple.OData.Client;
 
 namespace Simple.OData.Client
 {
     class SchemaProvider : ISchemaProvider
     {
-        private string _urlBase;
         private Lazy<EdmSchema> _metadata;
+        private Lazy<string> _metadataString;
+        private Lazy<Schema> _schema; 
 
-        public SchemaProvider(string urlBase)
+        private SchemaProvider(string urlBase, string metadataString)
         {
-            _urlBase = urlBase;
-            _metadata = new Lazy<EdmSchema>(RequestMetadata);
+            if (!string.IsNullOrEmpty(metadataString))
+            {
+                _metadataString = new Lazy<string>(() => metadataString);
+            }
+            else
+            {
+                _metadataString = new Lazy<string>(() => RequestMetadataAsString(urlBase));
+            }
+            _metadata = new Lazy<EdmSchema>(() => ODataHelper.GetSchema(_metadataString.Value));
+            _schema = new Lazy<Schema>(() => Schema.Get(this));
+        }
+
+        public static SchemaProvider FromUrl(string urlBase)
+        {
+            return new SchemaProvider(urlBase,null);
+        }
+
+        public static SchemaProvider FromMetadata(string metadataString)
+        {
+            return new SchemaProvider(null, metadataString);
+        }
+
+        public Schema Schema
+        {
+            get { return _schema.Value; }
+        }
+
+        public string SchemaAsString
+        {
+            get { return _metadataString.Value; }
         }
 
         public IEnumerable<Table> GetTables()
@@ -23,7 +51,7 @@ namespace Simple.OData.Client
             return from e in _metadata.Value.EntityContainers
                    where e.IsDefaulEntityContainer
                    from s in e.EntitySets
-                   select new Table(s.Name, Schema.Get(_urlBase));
+                   select new Table(s.Name, _schema.Value);
         }
 
         public IEnumerable<Column> GetColumns(Table table)
@@ -100,16 +128,16 @@ namespace Simple.OData.Client
                 f.Parameters.Select(p => p.Name));
         }
 
-        private EdmSchema RequestMetadata()
+        private string RequestMetadataAsString(string urlBase)
         {
-            var requestBuilder = new CommandRequestBuilder(_urlBase);
+            var requestBuilder = new CommandRequestBuilder(urlBase);
             var command = HttpCommand.Get("$metadata");
             requestBuilder.AddCommandToRequest(command);
             using (var response = new CommandRequestRunner().TryRequest(command.Request))
             {
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    return ODataHelper.GetSchema(response.GetResponseStream());
+                    return ODataHelper.GetSchemaAsString(response.GetResponseStream());
                 }
             }
             // TODO
