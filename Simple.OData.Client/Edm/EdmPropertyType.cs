@@ -7,6 +7,10 @@ namespace Simple.OData.Client
     public abstract class EdmPropertyType
     {
         public abstract string Name { get; }
+        public override string ToString()
+        {
+            return this.Name;
+        }
 
         public static EdmPropertyType Parse(string s, IEnumerable<EdmComplexType> complexTypes, IEnumerable<EdmEntityType> entityTypes)
         {
