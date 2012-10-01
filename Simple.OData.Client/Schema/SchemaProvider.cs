@@ -63,7 +63,7 @@ namespace Simple.OData.Client
                    from t in _metadata.Value.EntityTypes
                    where s.EntityType.Split('.').Last() == t.Name
                    from p in t.Properties
-                   select new Column(p.Name);
+                   select new Column(p.Name, p.Type, p.Nullable);
         }
 
         public IEnumerable<Association> GetAssociations(Table table)
