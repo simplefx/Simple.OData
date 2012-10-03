@@ -322,10 +322,20 @@ namespace Simple.OData.Client
 
         public static XElement CreateLinkElement(int contentId)
         {
-            return CreateLinkElement("$" + contentId.ToString());
+            return CreateLinkElement(CreateLinkPath(contentId));
         }
 
-        public static void AddDataLink(XElement container, string associationName, string linkedEntityName, object[] linkedEntityKeyValues)
+        public static string CreateLinkPath(int contentId)
+        {
+            return "$" + contentId.ToString();
+        }
+
+        public static string CreateLinkCommand(string entryPath, string linkName)
+        {
+            return string.Format("{0}/$links/{1}", entryPath, linkName);
+        }
+
+        public static void AddDataLink(XElement container, string associationName, string linkedEntityName, IEnumerable<object> linkedEntityKeyValues)
         {
             var entry = XElement.Parse(Properties.Resources.DataServicesAtomEntryXml).Element(null, "link");
             var rel = entry.Attribute("rel");

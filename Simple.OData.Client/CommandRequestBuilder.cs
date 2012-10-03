@@ -28,7 +28,7 @@ namespace Simple.OData.Client
 
             if (command.FormattedContent != null)
             {
-                request.ContentType = "application/atom+xml";
+                request.ContentType = command.ContentType;
                 request.SetContent(command.FormattedContent);
             }
 

@@ -66,7 +66,7 @@ namespace Simple.OData.Client
             if (command.FormattedContent != null)
             {
                 _contentBuilder.AppendLine(string.Format("Content-ID: {0}", ++_contentId));
-                _contentBuilder.AppendLine(string.Format("Content-Type: {0}", command.IsLink ? "application/xml" : "application/atom+xml;type=entry"));
+                _contentBuilder.AppendLine(string.Format("Content-Type: {0}", command.ContentType));
                 _contentBuilder.AppendLine(string.Format("Content-Length: {0}", (command.FormattedContent ?? string.Empty).Length));
                 _contentBuilder.AppendLine();
                 _contentBuilder.Append(command.FormattedContent);
