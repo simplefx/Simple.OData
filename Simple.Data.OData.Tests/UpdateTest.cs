@@ -66,7 +66,7 @@ namespace Simple.Data.OData.Tests
             _db.Products.UpdateByProductName(ProductName: "Test7", Category: null);
 
             product = _db.Products.FindByProductName("Test7");
-            Assert.Equal(0, product.CategoryID);
+            Assert.Null(product.CategoryID);
         }
 
         [Fact]

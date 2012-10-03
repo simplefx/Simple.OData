@@ -12,6 +12,10 @@ namespace Simple.OData.Client
         public bool IsLink { get; set; }
         public HttpWebRequest Request { get; set; }
         public int ContentId { get; set; }
+        public string ContentType
+        {
+            get { return this.IsLink ? "application/xml" : "application/atom+xml;type=entry"; }
+        }
 
         private HttpCommand()
         {

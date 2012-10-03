@@ -187,12 +187,50 @@ namespace Simple.Data.OData.Tests
             {
                 var product1 = tx.Products.Insert(ProductName: "Test17", UnitPrice: 18m);
                 var product2 = tx.Products.Insert(ProductName: "Test18", UnitPrice: 19m);
-                category = tx.Categories.Insert(CategoryName: "Test19", Products : new[] {product1, product2});
+                category = tx.Categories.Insert(CategoryName: "Test19", Products: new[] { product1, product2 });
                 tx.Commit();
             }
 
             category = _db.Categories.WithProducts().FindByCategoryName("Test19");
             Assert.Equal(2, category.Products.Count);
+        }
+
+        [Fact]
+        public void UpdateAssociationsSingleTrans()
+        {
+            var category = _db.Categories.Insert(CategoryName: "Test20");
+            var product = _db.Products.Insert(ProductName: "Test21", UnitPrice: 18m, CategoryID: 1);
+
+            using (var tx = _db.BeginTransaction())
+            {
+                tx.Products.UpdateByProductName(ProductName: "Test21", Category: category);
+                tx.Commit();
+            }
+
+            category = _db.Categories.WithProducts().FindByCategoryName("Test20");
+            Assert.Equal(1, category.Products.Count);
+        }
+
+        [Fact]
+        public void RemoveAssociationsSingleTrans()
+        {
+            dynamic category;
+            dynamic product;
+            using (var tx = _db.BeginTransaction())
+            {
+                category = tx.Categories.Insert(CategoryName: "Test22");
+                product = tx.Products.Insert(ProductName: "Test23", UnitPrice: 18m, CategoryID: 1);
+                tx.Commit();
+            }
+
+            using (var tx = _db.BeginTransaction())
+            {
+                tx.Products.UpdateByProductName(ProductName: "Test23", Category: null);
+                tx.Commit();
+            }
+
+            product = _db.Products.FindByProductName("Test23");
+            Assert.Null(product.CategoryID);
         }
     }
 }
