@@ -45,6 +45,13 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void GetEntryExistingCompoundKey()
+        {
+            var orderDetail = _client.GetEntry("OrderDetails", new Entry() { { "OrderID", 10248 }, { "ProductID", 11 } });
+            Assert.Equal(11, orderDetail["ProductID"]);
+        }
+
+        [Fact]
         public void GetEntryNonExisting()
         {
             Assert.Throws<WebRequestException>(() => _client.GetEntry("Products", new Entry() { { "ProductID", -1 } }));

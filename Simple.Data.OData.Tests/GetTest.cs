@@ -20,6 +20,7 @@ namespace Simple.Data.OData.Tests
             Assert.Equal("ALFKI", customer.CustomerID);
         }
 
+        [Fact]
         public void GetByCompoundKey()
         {
             var orderDetails = _db.OrderDetails.Get(10248, 11);

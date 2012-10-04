@@ -129,7 +129,7 @@ namespace Simple.Data.OData
 
         public QueryCommand BuildCommand(string tablePath, object[] keyValues)
         {
-            var commandText = FormatTableKeyLookup(tablePath, FormatKeyValues(keyValues));
+            var commandText = FormatTableKeyLookup(tablePath, FormatKeyValues(tablePath, keyValues));
             return new QueryCommand() { CommandText = commandText };
         }
 
@@ -356,9 +356,26 @@ namespace Simple.Data.OData
             return "$filter=" + HttpUtility.UrlEncode(filter);
         }
 
-        private string FormatKeyValues(IEnumerable<object> keyValues)
+        private string FormatKeyValues(string tablePath, IList<object> keyValues)
         {
-            return "(" + HttpUtility.UrlEncode(new ValueFormatter().Format(keyValues)) + ")";
+            var valueFormatter = new ValueFormatter();
+            string formattedKeyValues;
+            if (keyValues.Count == 1)
+            {
+                formattedKeyValues = valueFormatter.Format(keyValues);
+            }
+            else
+            {
+                var tableName = ExtractTableNames(tablePath).First();
+                var keyNames = _getKeyNames(tableName);
+                var namedKeyValues = new Dictionary<string, object>();
+                for (int index = 0; index < keyNames.Count(); index++)
+                {
+                    namedKeyValues.Add(keyNames[index], keyValues[index]);
+                }
+                formattedKeyValues = valueFormatter.Format(namedKeyValues);
+            }
+            return "(" + HttpUtility.UrlEncode(formattedKeyValues) + ")";
         }
 
         private string FormatKeyValues(IEnumerable<string> keyValues)
