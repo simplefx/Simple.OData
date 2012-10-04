@@ -374,16 +374,19 @@ namespace Simple.OData.Client
         private string FormatGetKeyCommand(string tableName, IDictionary<string, object> entryKey)
         {
             var keyNames = _schema.FindTable(tableName).GetKeyNames();
-            var keyValues = new List<object>();
+            var namedKeyValues = new Dictionary<string, object>();
             foreach (var keyName in keyNames)
             {
                 object keyValue;
                 if (entryKey.TryGetValue(keyName, out keyValue))
                 {
-                    keyValues.Add(keyValue);
+                    namedKeyValues.Add(keyName, keyValue);
                 }
             }
-            var formattedKeyValues = new ValueFormatter().Format(keyValues);
+            var valueFormatter = new ValueFormatter();
+            var formattedKeyValues = entryKey.Count == 1 ? 
+                valueFormatter.Format(namedKeyValues.Values) : 
+                valueFormatter.Format(namedKeyValues);
             return GetTableActualName(tableName) + "(" + formattedKeyValues + ")";
         }
 
