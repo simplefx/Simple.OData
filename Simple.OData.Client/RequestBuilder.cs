@@ -26,7 +26,10 @@ namespace Simple.OData.Client
 
         protected string CreateRequestUrl(string command)
         {
-            return (UrlBase ?? "http://") + command;
+            string url = UrlBase ?? "http://";
+            if (!url.EndsWith("/") && url.LastIndexOf('.') < url.LastIndexOf('/'))
+                url += "/";
+            return url + command;
         }
 
         public abstract void AddCommandToRequest(HttpCommand command);
