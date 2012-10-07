@@ -24,10 +24,10 @@ namespace Simple.OData.Client
             this.UrlBase = urlBase;
         }
 
-        protected string CreateRequestUrl(string command)
+        protected internal string CreateRequestUrl(string command)
         {
-            string url = UrlBase ?? "http://";
-            if (!url.EndsWith("/") && url.LastIndexOf('.') < url.LastIndexOf('/'))
+            string url = string.IsNullOrEmpty(UrlBase) ? "http://" : UrlBase;
+            if (!url.EndsWith("/"))
                 url += "/";
             return url + command;
         }
