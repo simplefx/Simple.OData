@@ -115,5 +115,15 @@ namespace Simple.OData.Client.Tests
             Assert.Equal(RestVerbs.GET, function.HttpMethod);
             Assert.Equal("rating", function.Parameters[0]);
         }
+
+        [Fact]
+        public void RetrieveSchemaFromUrlWithoutFilename()
+        {
+            var client = new ODataClient("http://vancouverdataservice.cloudapp.net/v1/impark");
+
+            var schema = client.Schema;
+
+            Assert.NotEmpty(schema.Tables);
+        }
     }
 }
