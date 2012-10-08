@@ -4,12 +4,12 @@
 *.jpg    binary
 *.png    binary
 
-*.cs     text=auto diff=csharp 
-*.java   text=auto
-*.html   text=auto
-*.css    text=auto
-*.js     text=auto
-*.sql    text=auto
+*.cs     text=auto eol=crlf diff=csharp 
+*.java   text=auto eol=crlf 
+*.html   text=auto eol=crlf 
+*.css    text=auto eol=crlf 
+*.js     text=auto eol=crlf 
+*.sql    text=auto eol=crlf 
 
 *.csproj text=auto merge=union 
 *.sln    text=auto eol=crlf merge=union
