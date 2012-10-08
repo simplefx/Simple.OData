@@ -385,7 +385,7 @@ namespace Simple.OData.Client
                 }
             }
             var valueFormatter = new ValueFormatter();
-            var formattedKeyValues = entryKey.Count == 1 ? 
+            var formattedKeyValues = namedKeyValues.Count == 1 ? 
                 valueFormatter.Format(namedKeyValues.Values) : 
                 valueFormatter.Format(namedKeyValues);
             return GetTableActualName(tableName) + "(" + formattedKeyValues + ")";
