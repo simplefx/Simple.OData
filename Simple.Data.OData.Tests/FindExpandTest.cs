@@ -35,6 +35,16 @@ namespace Simple.Data.OData.Tests
         }
 
         [Fact]
+        public void FindAllProductsWithCategoryOrderByProductName()
+        {
+            // expected request: Products?$orderby=ProductName&$expand=Category
+            var products = _db.Products.All().WithCategory().OrderBy(_db.Products.ProductName).ToList();
+
+            Assert.True(products.Count > 0);
+            Assert.Equal("Meat/Poultry", products[0].Category.CategoryName);
+        }
+
+        [Fact]
         public void GetCustomerExpandOrders()
         {
             // expected request: Customers('ALFKI')?$expand=Orders

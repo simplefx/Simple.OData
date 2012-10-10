@@ -33,6 +33,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
@@ -51,6 +52,7 @@
     <Compile Include="Edm\EdmSchema.cs" />
     <Compile Include="Edm\EdmType.cs" />
     <Compile Include="ODataBatch.cs" />
+    <Compile Include="ODataCommand.cs" />
     <Compile Include="Pluralizer.cs" />
     <Compile Include="Schema\ISchema.cs" />
     <Compile Include="ValueFormatter.cs" />

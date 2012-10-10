@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Xml.Linq;
 
 namespace Simple.OData.Client
@@ -87,11 +85,21 @@ namespace Simple.OData.Client
             StringExtensions.SetPluralizer(pluralizer);
         }
 
+        public IDictionary<string, object> FindEntry(ODataCommand command)
+        {
+            return FindEntry(command.ToString());
+        }
+
         public IDictionary<string, object> FindEntry(string commandText)
         {
             int totalCount;
             var result = FindEntries(commandText, false, false, out totalCount);
             return result == null ? null : result.FirstOrDefault();
+        }
+
+        public IEnumerable<IDictionary<string, object>> FindEntries(ODataCommand command)
+        {
+            return FindEntries(command.ToString());
         }
 
         public IEnumerable<IDictionary<string, object>> FindEntries(string commandText)
@@ -100,15 +108,30 @@ namespace Simple.OData.Client
             return FindEntries(commandText, false, false, out totalCount);
         }
 
+        public IEnumerable<IDictionary<string, object>> FindEntries(ODataCommand command, bool scalarResult)
+        {
+            return FindEntries(command.ToString(), scalarResult);
+        }
+
         public IEnumerable<IDictionary<string, object>> FindEntries(string commandText, bool scalarResult)
         {
             int totalCount;
             return FindEntries(commandText, scalarResult, false, out totalCount);
         }
 
+        public IEnumerable<IDictionary<string, object>> FindEntries(ODataCommand command, bool setTotalCount, out int totalCount)
+        {
+            return FindEntries(command.ToString(), false, setTotalCount, out totalCount);
+        }
+
         public IEnumerable<IDictionary<string, object>> FindEntries(string commandText, bool setTotalCount, out int totalCount)
         {
             return FindEntries(commandText, false, setTotalCount, out totalCount);
+        }
+
+        public IEnumerable<IDictionary<string, object>> FindEntries(ODataCommand command, bool scalarResult, bool setTotalCount, out int totalCount)
+        {
+            return FindEntries(command.ToString(), scalarResult, setTotalCount, out totalCount);
         }
 
         public IEnumerable<IDictionary<string, object>> FindEntries(string commandText, bool scalarResult, bool setTotalCount, out int totalCount)
@@ -229,9 +252,18 @@ namespace Simple.OData.Client
             var commandText = FormatGetKeyCommand(tableName, entryKey);
 
             var entryElement = ODataHelper.CreateDataElement(entryMembers.Properties);
+            var unlinkAssociationNames = new List<string>();
             foreach (var associatedData in entryMembers.AssociationsByValue)
             {
-                CreateLinkElement(entryElement, tableName, associatedData);
+                var association = _schema.FindTable(tableName).FindAssociation(associatedData.Key);
+                if (associatedData.Value != null)
+                {
+                    CreateLinkElement(entryElement, tableName, associatedData);
+                }
+                else
+                {
+                    unlinkAssociationNames.Add(association.ActualName);
+                }
             }
 
             var command = new HttpCommand(merge ? RestVerbs.MERGE : RestVerbs.PUT, commandText, entryData, entryElement.ToString());
@@ -245,6 +277,11 @@ namespace Simple.OData.Client
                     ODataHelper.CreateLinkPath(associatedData.Value));
                 _requestBuilder.AddCommandToRequest(linkCommand);
                 _requestRunner.UpdateEntry(linkCommand);
+            }
+
+            foreach (var associationName in unlinkAssociationNames)
+            {
+                UnlinkEntry(tableName, entryKey, associationName);
             }
 
             return result;

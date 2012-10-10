@@ -125,11 +125,19 @@ namespace Simple.Data.OData
 
         private int UpdateByExpression(string tableName, IDictionary<string, object> data, SimpleExpression criteria, IAdapterTransaction transaction)
         {
-            var entries = FindByExpression(tableName, criteria);
-
-            foreach (var entry in entries)
+            var entryKey = TryReinterpretExpressionAsKeyLookup(tableName, criteria);
+            if (entryKey != null)
             {
-                GetODataClient(transaction).UpdateEntry(tableName, entry, data);
+                GetODataClient(transaction).UpdateEntry(tableName, entryKey, data);
+            }
+            else
+            {
+                var entries = FindByExpression(tableName, criteria);
+
+                foreach (var entry in entries)
+                {
+                    GetODataClient(transaction).UpdateEntry(tableName, entry, data);
+                }
             }
             // TODO: what to return?
             return 0;
@@ -137,11 +145,19 @@ namespace Simple.Data.OData
 
         private int DeleteByExpression(string tableName, SimpleExpression criteria, IAdapterTransaction transaction)
         {
-            var entries = FindByExpression(tableName, criteria);
-
-            foreach (var entry in entries)
+            var entryKey = TryReinterpretExpressionAsKeyLookup(tableName, criteria);
+            if (entryKey != null)
             {
-                GetODataClient(transaction).DeleteEntry(tableName, entry);
+                GetODataClient(transaction).DeleteEntry(tableName, entryKey);
+            }
+            else
+            {
+                var entries = FindByExpression(tableName, criteria);
+
+                foreach (var entry in entries)
+                {
+                    GetODataClient(transaction).DeleteEntry(tableName, entry);
+                }
             }
             // TODO: what to return?
             return 0;
@@ -185,6 +201,12 @@ namespace Simple.Data.OData
             {
                 throw new SimpleDataException("No properties were found which could be mapped to the database.");
             }
+        }
+
+        private IDictionary<string, object> TryReinterpretExpressionAsKeyLookup(string tablePath, SimpleExpression expression)
+        {
+            // TODO
+            return null;
         }
     }
 }
