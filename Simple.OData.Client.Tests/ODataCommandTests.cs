@@ -12,7 +12,7 @@ namespace Simple.OData.Client.Tests
         public void SkipOne()
         {
             var products = _client
-                .Collection("Products")
+                .From("Products")
                 .Skip(1)
                 .FindEntries();
             Assert.Equal(76, products.Count());
@@ -22,7 +22,7 @@ namespace Simple.OData.Client.Tests
         public void TopOne()
         {
             var products = _client
-                .Collection("Products")
+                .From("Products")
                 .Top(1)
                 .FindEntries();
             Assert.Equal(1, products.Count());
@@ -32,7 +32,7 @@ namespace Simple.OData.Client.Tests
         public void SkipOneTopOne()
         {
             var products = _client
-                .Collection("Products")
+                .From("Products")
                 .Skip(1)
                 .Top(1)
                 .FindEntries();
@@ -43,7 +43,7 @@ namespace Simple.OData.Client.Tests
         public void OrderBy()
         {
             var product = _client
-                .Collection("Products")
+                .From("Products")
                 .OrderBy("ProductName")
                 .FindEntries().First();
             Assert.Equal("Alice Mutton", product["ProductName"]);
@@ -53,7 +53,7 @@ namespace Simple.OData.Client.Tests
         public void OrderByDescending()
         {
             var product = _client
-                .Collection("Products")
+                .From("Products")
                 .OrderByDescending("ProductName")
                 .FindEntries().First();
             Assert.Equal("Zaanse koeken", product["ProductName"]);
@@ -63,7 +63,7 @@ namespace Simple.OData.Client.Tests
         public void SelectSingle()
         {
             var products = _client
-                .Collection("Products")
+                .From("Products")
                 .Select("ProductName")
                 .FindEntries();
             Assert.Contains("ProductName", products.First().Keys);
@@ -74,7 +74,7 @@ namespace Simple.OData.Client.Tests
         public void SelectMultiple()
         {
             var products = _client
-                .Collection("Products")
+                .From("Products")
                 .Select("ProductID", "ProductName")
                 .FindEntries();
             Assert.Contains("ProductName", products.First().Keys);
@@ -85,7 +85,7 @@ namespace Simple.OData.Client.Tests
         public void Expand()
         {
             var product = _client
-                .Collection("Products")
+                .From("Products")
                 .OrderBy("ProductID")
                 .Expand("Category")
                 .FindEntries().Last();
@@ -96,7 +96,7 @@ namespace Simple.OData.Client.Tests
         public void CombineAll()
         {
             var product = _client
-                .Collection("Products")
+                .From("Products")
                 .OrderBy("ProductName")
                 .Skip(2)
                 .Top(1)
@@ -110,7 +110,7 @@ namespace Simple.OData.Client.Tests
         public void CombineAllReverse()
         {
             var product = _client
-                .Collection("Products")
+                .From("Products")
                 .Select("Category")
                 .Expand("Category")
                 .Top(1)
@@ -124,7 +124,7 @@ namespace Simple.OData.Client.Tests
         public void NavigateToSingle()
         {
             var category = _client
-                .Collection("Products")
+                .From("Products")
                 .Get(new Entry() { { "ProductID", 2 } })
                 .NavigateTo("Category")
                 .FindEntry();
@@ -135,7 +135,7 @@ namespace Simple.OData.Client.Tests
         public void NavigateToMultiple()
         {
             var products = _client
-                .Collection("Categories")
+                .From("Categories")
                 .Get(new Entry() { { "CategoryID", 2 } })
                 .NavigateTo("Products")
                 .FindEntries();

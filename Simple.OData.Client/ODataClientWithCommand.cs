@@ -28,7 +28,7 @@ namespace Simple.OData.Client
         public ODataClientWithCommand Link(ODataCommand command, string linkName)
         {
             var linkedClient = new ODataClientWithCommand(_client, _schema, command);
-            linkedClient.Link(linkName);
+            linkedClient._command.Link(linkName);
             return linkedClient;
         }
 
@@ -92,14 +92,9 @@ namespace Simple.OData.Client
             return _client.ExecuteFunction(_command.ToString(), parameters);
         }
 
-        public IClientWithCommand Collection(string collectionName)
+        public IClientWithCommand From(string collectionName)
         {
-            return _command.Collection(collectionName);
-        }
-
-        public IClientWithCommand Link(string linkName)
-        {
-            return _command.Link(linkName);
+            return _command.From(collectionName);
         }
 
         public IClientWithCommand Get(IDictionary<string, object> key)

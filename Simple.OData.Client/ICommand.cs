@@ -5,7 +5,7 @@ namespace Simple.OData.Client
 {
     public interface ICommand
     {
-        IClientWithCommand Collection(string collectionName);
+        IClientWithCommand From(string collectionName);
         IClientWithCommand Get(IDictionary<string, object> entryKey);
         IClientWithCommand Filter(string filter);
         IClientWithCommand Skip(int count);

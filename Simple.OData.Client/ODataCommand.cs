@@ -29,7 +29,7 @@ namespace Simple.OData.Client
             _parent = parent;
         }
 
-        public IClientWithCommand Collection(string collectionName)
+        public IClientWithCommand From(string collectionName)
         {
             _collectionName = collectionName;
             _table = _client.Schema.FindTable(_collectionName);

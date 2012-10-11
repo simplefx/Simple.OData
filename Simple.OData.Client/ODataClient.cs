@@ -85,9 +85,9 @@ namespace Simple.OData.Client
             StringExtensions.SetPluralizer(pluralizer);
         }
 
-        public IClientWithCommand Collection(string collectionName)
+        public IClientWithCommand From(string collectionName)
         {
-            return new ODataClientWithCommand(this, _schema).Collection(collectionName);
+            return new ODataClientWithCommand(this, _schema).From(collectionName);
         }
 
         public IDictionary<string, object> FindEntry(string commandText)
@@ -123,7 +123,7 @@ namespace Simple.OData.Client
 
         public IDictionary<string, object> GetEntry(string tableName, IDictionary<string, object> entryKey)
         {
-            var commandText = new ODataClientWithCommand(this, _schema).Collection(tableName).Get(entryKey).CommandText;
+            var commandText = new ODataClientWithCommand(this, _schema).From(tableName).Get(entryKey).CommandText;
             var command = HttpCommand.Get(commandText);
             _requestBuilder.AddCommandToRequest(command);
             return _requestRunner.GetEntry(command);
@@ -171,7 +171,7 @@ namespace Simple.OData.Client
 
         public int DeleteEntry(string tableName, IDictionary<string, object> entryKey)
         {
-            var commandText = new ODataClientWithCommand(this, _schema).Collection(tableName).Get(entryKey).CommandText;
+            var commandText = new ODataClientWithCommand(this, _schema).From(tableName).Get(entryKey).CommandText;
             var command = HttpCommand.Delete(commandText);
             _requestBuilder.AddCommandToRequest(command);
             return _requestRunner.DeleteEntry(command);
@@ -181,8 +181,8 @@ namespace Simple.OData.Client
         {
             var association = _schema.FindTable(tableName).FindAssociation(linkName);
             var command = CreateLinkCommand(tableName, linkName,
-                new ODataClientWithCommand(this, _schema).Collection(tableName).Get(entryKey).CommandText, 
-                new ODataClientWithCommand(this, _schema).Collection(association.ReferenceTableName).Get(linkedEntryKey).CommandText);
+                new ODataClientWithCommand(this, _schema).From(tableName).Get(entryKey).CommandText, 
+                new ODataClientWithCommand(this, _schema).From(association.ReferenceTableName).Get(linkedEntryKey).CommandText);
             _requestBuilder.AddCommandToRequest(command);
             _requestRunner.UpdateEntry(command);
         }
@@ -190,7 +190,7 @@ namespace Simple.OData.Client
         public void UnlinkEntry(string tableName, IDictionary<string, object> entryKey, string linkName)
         {
             var association = _schema.FindTable(tableName).FindAssociation(linkName);
-            var command = CreateUnlinkCommand(tableName, linkName, new ODataClientWithCommand(this, _schema).Collection(tableName).Get(entryKey).CommandText);
+            var command = CreateUnlinkCommand(tableName, linkName, new ODataClientWithCommand(this, _schema).From(tableName).Get(entryKey).CommandText);
             _requestBuilder.AddCommandToRequest(command);
             _requestRunner.UpdateEntry(command);
         }
@@ -227,7 +227,7 @@ namespace Simple.OData.Client
         private int UpdateEntryPropertiesAndAssociations(string tableName, IDictionary<string, object> entryKey, IDictionary<string, object> entryData, EntryMembers entryMembers)
         {
             bool merge = CheckMergeConditions(tableName, entryKey, entryData);
-            var commandText = new ODataClientWithCommand(this, _schema).Collection(tableName).Get(entryKey).CommandText;
+            var commandText = new ODataClientWithCommand(this, _schema).From(tableName).Get(entryKey).CommandText;
 
             var entryElement = ODataHelper.CreateDataElement(entryMembers.Properties);
             var unlinkAssociationNames = new List<string>();
