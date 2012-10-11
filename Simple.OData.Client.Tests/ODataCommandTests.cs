@@ -2,6 +2,8 @@
 using System.Linq;
 using Xunit;
 
+using Entry = System.Collections.Generic.Dictionary<string, object>;
+
 namespace Simple.OData.Client.Tests
 {
     public class ODataCommandTests : TestBase
@@ -116,6 +118,28 @@ namespace Simple.OData.Client.Tests
                 .OrderBy("ProductName")
                 .FindEntries().Single();
             Assert.Equal("Seafood", (product["Category"] as IDictionary<string, object>)["CategoryName"]);
+        }
+
+        [Fact]
+        public void NavigateToSingle()
+        {
+            var category = _client
+                .Collection("Products")
+                .Get(new Entry() { { "ProductID", 2 } })
+                .NavigateTo("Category")
+                .FindEntry();
+            Assert.Equal("Beverages", category["CategoryName"]);
+        }
+
+        [Fact]
+        public void NavigateToMultiple()
+        {
+            var products = _client
+                .Collection("Categories")
+                .Get(new Entry() { { "CategoryID", 2 } })
+                .NavigateTo("Products")
+                .FindEntries();
+            Assert.Equal(12, products.Count());
         }
     }
 }

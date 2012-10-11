@@ -7,10 +7,15 @@ namespace Simple.OData.Client
         private ODataClient _client;
         private ODataCommand _command;
 
-        public ODataClientWithCommand(ODataClient client)
+        public ODataClientWithCommand(ODataClient client, ODataCommand parent = null)
         {
             _client = client;
-            _command = new ODataCommand(this);
+            _command = new ODataCommand(this, parent);
+        }
+
+        public ODataClientWithCommand Chain(ODataCommand command)
+        {
+            return new ODataClientWithCommand(_client, command);
         }
 
         public IDictionary<string, object> FindEntry()
@@ -78,6 +83,11 @@ namespace Simple.OData.Client
             return _command.Collection(collectionName);
         }
 
+        public IClientWithCommand Get(IDictionary<string, object> key)
+        {
+            return _command.Get(key);
+        }
+
         public IClientWithCommand Filter(string filter)
         {
             return _command.Filter(filter);
@@ -131,6 +141,11 @@ namespace Simple.OData.Client
         public IClientWithCommand OrderByDescending(params string[] columns)
         {
             return _command.OrderByDescending(columns);
+        }
+
+        public IClientWithCommand NavigateTo(string collectionName)
+        {
+            return _command.NavigateTo(collectionName);
         }
     }
 }
