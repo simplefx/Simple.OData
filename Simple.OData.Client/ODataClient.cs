@@ -85,9 +85,9 @@ namespace Simple.OData.Client
             StringExtensions.SetPluralizer(pluralizer);
         }
 
-        public IDictionary<string, object> FindEntry(ODataCommand command)
+        public IClientWithCommand Collection(string collectionName)
         {
-            return FindEntry(command.ToString());
+            return new ODataClientWithCommand(this).Collection(collectionName);
         }
 
         public IDictionary<string, object> FindEntry(string commandText)
@@ -97,20 +97,10 @@ namespace Simple.OData.Client
             return result == null ? null : result.FirstOrDefault();
         }
 
-        public IEnumerable<IDictionary<string, object>> FindEntries(ODataCommand command)
-        {
-            return FindEntries(command.ToString());
-        }
-
         public IEnumerable<IDictionary<string, object>> FindEntries(string commandText)
         {
             int totalCount;
             return FindEntries(commandText, false, false, out totalCount);
-        }
-
-        public IEnumerable<IDictionary<string, object>> FindEntries(ODataCommand command, bool scalarResult)
-        {
-            return FindEntries(command.ToString(), scalarResult);
         }
 
         public IEnumerable<IDictionary<string, object>> FindEntries(string commandText, bool scalarResult)
@@ -119,19 +109,9 @@ namespace Simple.OData.Client
             return FindEntries(commandText, scalarResult, false, out totalCount);
         }
 
-        public IEnumerable<IDictionary<string, object>> FindEntries(ODataCommand command, bool setTotalCount, out int totalCount)
-        {
-            return FindEntries(command.ToString(), false, setTotalCount, out totalCount);
-        }
-
         public IEnumerable<IDictionary<string, object>> FindEntries(string commandText, bool setTotalCount, out int totalCount)
         {
             return FindEntries(commandText, false, setTotalCount, out totalCount);
-        }
-
-        public IEnumerable<IDictionary<string, object>> FindEntries(ODataCommand command, bool scalarResult, bool setTotalCount, out int totalCount)
-        {
-            return FindEntries(command.ToString(), scalarResult, setTotalCount, out totalCount);
         }
 
         public IEnumerable<IDictionary<string, object>> FindEntries(string commandText, bool scalarResult, bool setTotalCount, out int totalCount)

@@ -4,9 +4,10 @@ using System.Web;
 
 namespace Simple.OData.Client
 {
-    public class ODataCommand
+    class ODataCommand : ICommand
     {
-        private string _tableName;
+        private IClientWithCommand _client;
+        private string _collectionName;
         private string _filter;
         private int _skipCount = -1;
         private int _topCount = -1;
@@ -14,70 +15,76 @@ namespace Simple.OData.Client
         private List<string> _selectColumns = new List<string>();
         private List<KeyValuePair<string, bool>> _orderbyColumns = new List<KeyValuePair<string, bool>>();
 
-        public ODataCommand(string tableName)
+        public ODataCommand(IClientWithCommand client)
         {
-            _tableName = tableName;
+            _client = client;
         }
 
-        public ODataCommand Filter(string filter)
+        public IClientWithCommand Collection(string collectionName)
+        {
+            _collectionName = collectionName;
+            return _client;
+        }
+
+        public IClientWithCommand Filter(string filter)
         {
             _filter = filter;
-            return this;
+            return _client;
         }
 
-        public ODataCommand Skip(int count)
+        public IClientWithCommand Skip(int count)
         {
             _skipCount = count;
-            return this;
+            return _client;
         }
 
-        public ODataCommand Top(int count)
+        public IClientWithCommand Top(int count)
         {
             _topCount = count;
-            return this;
+            return _client;
         }
 
-        public ODataCommand Expand(IEnumerable<string> associations)
+        public IClientWithCommand Expand(IEnumerable<string> associations)
         {
             _expandAssociations = associations.ToList();
-            return this;
+            return _client;
         }
 
-        public ODataCommand Expand(params string[] associations)
+        public IClientWithCommand Expand(params string[] associations)
         {
             _expandAssociations = associations.ToList();
-            return this;
+            return _client;
         }
 
-        public ODataCommand Select(IEnumerable<string> columns)
+        public IClientWithCommand Select(IEnumerable<string> columns)
         {
             _selectColumns = columns.ToList();
-            return this;
+            return _client;
         }
 
-        public ODataCommand Select(params string[] columns)
+        public IClientWithCommand Select(params string[] columns)
         {
             _selectColumns = columns.ToList();
-            return this;
+            return _client;
         }
 
-        public ODataCommand OrderBy(IEnumerable<string> columns, bool descending = false)
+        public IClientWithCommand OrderBy(IEnumerable<string> columns, bool descending = false)
         {
             _orderbyColumns.AddRange(columns.Select(x => new KeyValuePair<string, bool>(x, descending)));
-            return this;
+            return _client;
         }
 
-        public ODataCommand OrderBy(params string[] columns)
+        public IClientWithCommand OrderBy(params string[] columns)
         {
             return OrderBy(columns, false);
         }
 
-        public ODataCommand OrderByDescending(IEnumerable<string> columns)
+        public IClientWithCommand OrderByDescending(IEnumerable<string> columns)
         {
             return OrderBy(columns, true);
         }
 
-        public ODataCommand OrderByDescending(params string[] columns)
+        public IClientWithCommand OrderByDescending(params string[] columns)
         {
             return OrderBy(columns, true);
         }
@@ -89,7 +96,7 @@ namespace Simple.OData.Client
 
         private string Format()
         {
-            string commandText = _tableName;
+            string commandText = _collectionName;
             var extraClauses = new List<string>();
 
             if (!string.IsNullOrEmpty(_filter))

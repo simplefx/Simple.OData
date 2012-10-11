@@ -45,12 +45,16 @@
     </Compile>
     <Compile Include="BatchRequestBuilder.cs" />
     <Compile Include="BatchRequestRunner.cs" />
+    <Compile Include="IClient.cs" />
+    <Compile Include="ICommand.cs" />
+    <Compile Include="ODataClientWithCommand.cs" />
     <Compile Include="CommandRequestBuilder.cs" />
     <Compile Include="CommandRequestRunner.cs" />
     <Compile Include="Edm\EdmHelper.cs" />
     <Compile Include="Edm\EdmPropertyType.cs" />
     <Compile Include="Edm\EdmSchema.cs" />
     <Compile Include="Edm\EdmType.cs" />
+    <Compile Include="IClientWithCommand.cs" />
     <Compile Include="ODataBatch.cs" />
     <Compile Include="ODataCommand.cs" />
     <Compile Include="Pluralizer.cs" />

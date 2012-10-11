@@ -9,55 +9,61 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void SkipOne()
         {
-            var cmd = new ODataCommand("Products")
-                .Skip(1);
-            var products = _client.FindEntries(cmd);
+            var products = _client
+                .Collection("Products")
+                .Skip(1)
+                .FindEntries();
             Assert.Equal(76, products.Count());
         }
 
         [Fact]
         public void TopOne()
         {
-            var cmd = new ODataCommand("Products")
-                .Top(1);
-            var products = _client.FindEntries(cmd);
+            var products = _client
+                .Collection("Products")
+                .Top(1)
+                .FindEntries();
             Assert.Equal(1, products.Count());
         }
 
         [Fact]
         public void SkipOneTopOne()
         {
-            var cmd = new ODataCommand("Products")
+            var products = _client
+                .Collection("Products")
                 .Skip(1)
-                .Top(1);
-            var products = _client.FindEntries(cmd);
+                .Top(1)
+                .FindEntries();
             Assert.Equal(1, products.Count());
         }
 
         [Fact]
         public void OrderBy()
         {
-            var cmd = new ODataCommand("Products")
-                .OrderBy("ProductName");
-            var product = _client.FindEntries(cmd).First();
+            var product = _client
+                .Collection("Products")
+                .OrderBy("ProductName")
+                .FindEntries().First();
             Assert.Equal("Alice Mutton", product["ProductName"]);
         }
 
         [Fact]
         public void OrderByDescending()
         {
-            var cmd = new ODataCommand("Products")
-                .OrderByDescending("ProductName");
-            var product = _client.FindEntries(cmd).First();
+            var product = _client
+                .Collection("Products")
+                .OrderByDescending("ProductName")
+                .FindEntries().First();
             Assert.Equal("Zaanse koeken", product["ProductName"]);
         }
 
         [Fact]
         public void SelectSingle()
         {
-            var cmd = new ODataCommand("Products")
-                .Select("ProductName");
-            var products = _client.FindEntries(cmd);
+            var products = _client
+                .Collection("Products")
+                .Select("ProductName")
+                .FindEntries();
             Assert.Contains("ProductName", products.First().Keys);
             Assert.DoesNotContain("ProductID", products.First().Keys);
         }
@@ -65,9 +71,10 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void SelectMultiple()
         {
-            var cmd = new ODataCommand("Products")
-                .Select("ProductID", "ProductName");
-            var products = _client.FindEntries(cmd);
+            var products = _client
+                .Collection("Products")
+                .Select("ProductID", "ProductName")
+                .FindEntries();
             Assert.Contains("ProductName", products.First().Keys);
             Assert.Contains("ProductID", products.First().Keys);
         }
@@ -75,36 +82,39 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void Expand()
         {
-            var cmd = new ODataCommand("Products")
+            var product = _client
+                .Collection("Products")
                 .OrderBy("ProductID")
-                .Expand("Category");
-            var product = _client.FindEntries(cmd).Last();
+                .Expand("Category")
+                .FindEntries().Last();
             Assert.Equal("Condiments", (product["Category"] as IDictionary<string, object>)["CategoryName"]);
         }
 
         [Fact]
         public void CombineAll()
         {
-            var cmd = new ODataCommand("Products")
+            var product = _client
+                .Collection("Products")
                 .OrderBy("ProductName")
                 .Skip(2)
                 .Top(1)
                 .Expand("Category")
-                .Select("Category");
-            var product = _client.FindEntries(cmd).Single();
+                .Select("Category")
+                .FindEntries().Single();
             Assert.Equal("Seafood", (product["Category"] as IDictionary<string, object>)["CategoryName"]);
         }
 
         [Fact]
         public void CombineAllReverse()
         {
-            var cmd = new ODataCommand("Products")
+            var product = _client
+                .Collection("Products")
                 .Select("Category")
                 .Expand("Category")
                 .Top(1)
                 .Skip(2)
-                .OrderBy("ProductName");
-            var product = _client.FindEntries(cmd).Single();
+                .OrderBy("ProductName")
+                .FindEntries().Single();
             Assert.Equal("Seafood", (product["Category"] as IDictionary<string, object>)["CategoryName"]);
         }
     }
