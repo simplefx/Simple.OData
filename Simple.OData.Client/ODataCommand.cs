@@ -9,7 +9,8 @@ namespace Simple.OData.Client
     {
         private ODataClientWithCommand _client;
         private ODataCommand _parent;
-        private string _collectionName;
+        private string _collectionOrLinkName;
+        private Table _table;
         private IDictionary<string, object> _key;
         private string _filter;
         private int _skipCount = -1;
@@ -27,7 +28,15 @@ namespace Simple.OData.Client
 
         public IClientWithCommand Collection(string collectionName)
         {
-            _collectionName = collectionName;
+            _collectionOrLinkName = collectionName;
+            _table = _client.Schema.FindTable(_collectionOrLinkName);
+            return _client;
+        }
+
+        public IClientWithCommand Link(string linkName)
+        {
+            _collectionOrLinkName = linkName;
+            _table = _client.Schema.FindTable(_parent._table.FindAssociation(linkName).ReferenceTableName);
             return _client;
         }
 
@@ -100,11 +109,9 @@ namespace Simple.OData.Client
             return OrderBy(columns, true);
         }
 
-        public IClientWithCommand NavigateTo(string collectionName)
+        public IClientWithCommand NavigateTo(string linkName)
         {
-            _navigateTo = _client.Chain(this);
-            _navigateTo.Collection(collectionName);
-            return _navigateTo;
+            return _client.Link(this, linkName);
         }
 
         public override string ToString()
@@ -115,10 +122,16 @@ namespace Simple.OData.Client
         private string Format()
         {
             string commandText = string.Empty;
-            if (_parent != null)
+            if (_parent == null)
+            {
+                commandText += _client.Schema.FindTable(_collectionOrLinkName).ActualName;
+            }
+            else
+            {
                 commandText += _parent.ToString() + "/";
+                commandText += _parent._table.FindAssociation(_collectionOrLinkName).ActualName;
+            }
 
-            commandText += _collectionName;
             var extraClauses = new List<string>();
 
             if (_key != null && _key.Count > 0 && !string.IsNullOrEmpty(_filter))
@@ -128,7 +141,7 @@ namespace Simple.OData.Client
                 throw new InvalidOperationException("Filter may not be set for link navigations");
 
             if (_key != null && _key.Count > 0)
-                commandText += "(" + (_key.Count == 1 ? FormatKeyItem(_key.First().Value) : string.Join(",", _key.Select(FormatKeyItem))) + ")";
+                commandText += FormatKey();
 
             if (!string.IsNullOrEmpty(_filter))
                 extraClauses.Add("$filter=" + HttpUtility.UrlEncode(_filter));
@@ -140,7 +153,7 @@ namespace Simple.OData.Client
                 extraClauses.Add("$top=" + _topCount.ToString());
 
             if (_expandAssociations.Any())
-                extraClauses.Add("$expand=" + string.Join(",", _expandAssociations));
+                extraClauses.Add("$expand=" + string.Join(",", _expandAssociations.Select(FormatExpandItem)));
 
             if (_orderbyColumns.Any())
                 extraClauses.Add("$orderby=" + string.Join(",", _orderbyColumns.Select(FormatOrderByItem)));
@@ -154,28 +167,40 @@ namespace Simple.OData.Client
             return commandText;
         }
 
-        private string FormatKeyItem(object item)
+        private string FormatExpandItem(string item)
         {
-            // TODO
-            return item.ToString();
-        }
-
-        private string FormatKeyItem(KeyValuePair<string, object> item)
-        {
-            // TODO
-            return string.Format("{0}={1}", item.Key, item.Value);
+            return _table.FindAssociation(item).ActualName;
         }
 
         private string FormatSelectItem(string item)
         {
-            // TODO
-            return item;
+            return _table.HasColumn(item)
+                       ? _table.FindColumn(item).ActualName
+                       : _table.FindAssociation(item).ActualName;
         }
 
         private string FormatOrderByItem(KeyValuePair<string,bool> item)
         {
-            // TODO
-            return item.Key + (item.Value ? " desc" : string.Empty);
+            return _table.FindColumn(item.Key) + (item.Value ? " desc" : string.Empty);
+        }
+
+        private string FormatKey()
+        {
+            var keyNames = _table.GetKeyNames();
+            var namedKeyValues = new Dictionary<string, object>();
+            foreach (var keyName in keyNames)
+            {
+                object keyValue;
+                if (_key.TryGetValue(keyName, out keyValue))
+                {
+                    namedKeyValues.Add(keyName, keyValue);
+                }
+            }
+            var valueFormatter = new ValueFormatter();
+            var formattedKeyValues = namedKeyValues.Count == 1 ?
+                valueFormatter.Format(namedKeyValues.Values) :
+                valueFormatter.Format(namedKeyValues);
+            return "(" + formattedKeyValues + ")";
         }
     }
 }
