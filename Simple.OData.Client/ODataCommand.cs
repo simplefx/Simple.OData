@@ -9,7 +9,7 @@ namespace Simple.OData.Client
     {
         private ODataClientWithCommand _client;
         private ODataCommand _parent;
-        private string _collectionOrLinkName;
+        private string _collectionName;
         private Table _table;
         private IDictionary<string, object> _key;
         private string _filter;
@@ -19,6 +19,9 @@ namespace Simple.OData.Client
         private List<string> _selectColumns = new List<string>();
         private List<KeyValuePair<string, bool>> _orderbyColumns = new List<KeyValuePair<string, bool>>();
         private ODataClientWithCommand _navigateTo;
+        private string _linkName;
+        private string _functionName;
+        private Dictionary<string, object> _parameters = new Dictionary<string, object>();
 
         public ODataCommand(ODataClientWithCommand client, ODataCommand parent)
         {
@@ -28,15 +31,15 @@ namespace Simple.OData.Client
 
         public IClientWithCommand Collection(string collectionName)
         {
-            _collectionOrLinkName = collectionName;
-            _table = _client.Schema.FindTable(_collectionOrLinkName);
+            _collectionName = collectionName;
+            _table = _client.Schema.FindTable(_collectionName);
             return _client;
         }
 
         public IClientWithCommand Link(string linkName)
         {
-            _collectionOrLinkName = linkName;
-            _table = _client.Schema.FindTable(_parent._table.FindAssociation(linkName).ReferenceTableName);
+            _linkName = linkName;
+            _table = _client.Schema.FindTable(_parent._table.FindAssociation(_linkName).ReferenceTableName);
             return _client;
         }
 
@@ -109,6 +112,18 @@ namespace Simple.OData.Client
             return OrderBy(columns, true);
         }
 
+        public IClientWithCommand Function(string functionName)
+        {
+            _functionName = functionName;
+            return _client;
+        }
+
+        public IClientWithCommand Parameters(IDictionary<string, object> parameters)
+        {
+            _parameters = parameters.ToDictionary();
+            return _client;
+        }
+
         public IClientWithCommand NavigateTo(string linkName)
         {
             return _client.Link(this, linkName);
@@ -122,14 +137,18 @@ namespace Simple.OData.Client
         private string Format()
         {
             string commandText = string.Empty;
-            if (_parent == null)
+            if (!string.IsNullOrEmpty(_collectionName))
             {
-                commandText += _client.Schema.FindTable(_collectionOrLinkName).ActualName;
+                commandText += _client.Schema.FindTable(_collectionName).ActualName;
             }
-            else
+            else if (!string.IsNullOrEmpty(_linkName))
             {
                 commandText += _parent.ToString() + "/";
-                commandText += _parent._table.FindAssociation(_collectionOrLinkName).ActualName;
+                commandText += _parent._table.FindAssociation(_linkName).ActualName;
+            }
+            else if (!string.IsNullOrEmpty(_functionName))
+            {
+                commandText += _client.Schema.FindFunction(_functionName).ActualName;
             }
 
             var extraClauses = new List<string>();
@@ -160,6 +179,9 @@ namespace Simple.OData.Client
 
             if (_selectColumns.Any())
                 extraClauses.Add("$select=" + string.Join(",", _selectColumns.Select(FormatSelectItem)));
+
+            if (_parameters.Any())
+                extraClauses.Add(new ValueFormatter().Format(_parameters, "&"));
 
             if (extraClauses.Any())
                 commandText += "?" + string.Join("&", extraClauses);

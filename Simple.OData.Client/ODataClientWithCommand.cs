@@ -162,6 +162,16 @@ namespace Simple.OData.Client
             return _command.OrderByDescending(columns);
         }
 
+        public IClientWithCommand Function(string functionName)
+        {
+            return _command.Function(functionName);
+        }
+
+        public IClientWithCommand Parameters(IDictionary<string, object> parameters)
+        {
+            return _command.Parameters(parameters);
+        }
+
         public IClientWithCommand NavigateTo(string linkName)
         {
             return _command.NavigateTo(linkName);

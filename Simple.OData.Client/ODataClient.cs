@@ -198,9 +198,7 @@ namespace Simple.OData.Client
         public IEnumerable<IEnumerable<IEnumerable<KeyValuePair<string, object>>>> ExecuteFunction(string functionName, IDictionary<string, object> parameters)
         {
             var function = _schema.FindFunction(functionName);
-            var formattedParameters = new ValueFormatter().Format(parameters, "&");
-            var commandText = function.ActualName + "?" + formattedParameters;
-            var command = new HttpCommand(function.HttpMethod.ToUpper(), commandText.ToString());
+            var command = new HttpCommand(function.HttpMethod.ToUpper(), new ODataClientWithCommand(this, _schema).Function(functionName).Parameters(parameters).CommandText);
             _requestBuilder.AddCommandToRequest(command);
             return _requestRunner.ExecuteFunction(command);
         }
