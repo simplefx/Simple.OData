@@ -159,14 +159,7 @@ namespace Simple.OData.Client
         public int UpdateEntry(string tableName, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
         {
             var entryMembers = ParseEntryMembers(tableName, entryData);
-            if (entryMembers.Properties.Count == 0)
-            {
-                return UpdateEntryAssociations(tableName, entryKey, entryData, entryMembers);
-            }
-            else
-            {
-                return UpdateEntryPropertiesAndAssociations(tableName, entryKey, entryData, entryMembers);
-            }
+            return UpdateEntryPropertiesAndAssociations(tableName, entryKey, entryData, entryMembers);
         }
 
         public int DeleteEntry(string tableName, IDictionary<string, object> entryKey)
@@ -203,30 +196,10 @@ namespace Simple.OData.Client
             return _requestRunner.ExecuteFunction(command);
         }
 
-        private int UpdateEntryAssociations(string tableName, IDictionary<string, object> entryKey, IDictionary<string, object> entryData, EntryMembers entryMembers)
-        {
-            foreach (var associatedData in entryMembers.AssociationsByValue)
-            {
-                var association = _schema.FindTable(tableName).FindAssociation(associatedData.Key);
-                if (associatedData.Value != null)
-                {
-                    var associatedKeyValues = GetLinkedEntryKeyValues(association.ReferenceTableName, associatedData);
-                    if (associatedKeyValues != null)
-                    {
-                        LinkEntry(tableName, entryKey, association.ActualName, GetLinkedEntryProperties(associatedData.Value));
-                    }
-                }
-                else
-                {
-                    UnlinkEntry(tableName, entryKey, association.ActualName);
-                }
-            }
-            return 0;
-        }
-
         private int UpdateEntryPropertiesAndAssociations(string tableName, IDictionary<string, object> entryKey, IDictionary<string, object> entryData, EntryMembers entryMembers)
         {
-            bool merge = CheckMergeConditions(tableName, entryKey, entryData);
+            bool hasPropertiesToUpdate = entryMembers.Properties.Count > 0;
+            bool merge = !hasPropertiesToUpdate || CheckMergeConditions(tableName, entryKey, entryData);
             var commandText = new ODataClientWithCommand(this, _schema).From(tableName).Get(entryKey).CommandText;
 
             var entryElement = ODataHelper.CreateDataElement(entryMembers.Properties);
