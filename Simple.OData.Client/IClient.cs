@@ -5,6 +5,7 @@ namespace Simple.OData.Client
     public interface IClient
     {
         IDictionary<string, object> FindEntry();
+        object FindScalar();
         IEnumerable<IDictionary<string, object>> FindEntries();
         IEnumerable<IDictionary<string, object>> FindEntries(bool scalarResult);
         IEnumerable<IDictionary<string, object>> FindEntries(bool setTotalCount, out int totalCount);

@@ -93,6 +93,16 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void Count()
+        {
+            var count = _client
+                .From("Products")
+                .Count()
+                .FindScalar();
+            Assert.Equal(77, int.Parse(count.ToString()));
+        }
+
+        [Fact]
         public void CombineAll()
         {
             var product = _client

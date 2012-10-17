@@ -18,6 +18,7 @@ namespace Simple.OData.Client
         IClientWithCommand OrderBy(params string[] columns);
         IClientWithCommand OrderByDescending(IEnumerable<string> columns);
         IClientWithCommand OrderByDescending(params string[] columns);
+        IClientWithCommand Count();
         IClientWithCommand NavigateTo(string linkName);
         IClientWithCommand Function(string functionName);
         IClientWithCommand Parameters(IDictionary<string, object> parameters);

@@ -97,6 +97,13 @@ namespace Simple.OData.Client
             return result == null ? null : result.FirstOrDefault();
         }
 
+        public object FindScalar(string commandText)
+        {
+            int totalCount;
+            var result = FindEntries(commandText, true, false, out totalCount);
+            return result == null ? null : result.FirstOrDefault().Values.First();
+        }
+
         public IEnumerable<IDictionary<string, object>> FindEntries(string commandText)
         {
             int totalCount;

@@ -14,7 +14,7 @@ namespace Simple.OData.Client
         {
             var text = QuickIO.StreamToString(stream);
             if (scalarResult)
-                return new[] { new Dictionary<string, object>() { { "$result", text } } };
+                return new[] { new Dictionary<string, object>() { { ODataCommand.ResultLiteral, text } } };
             else
                 return GetData(text);
         }

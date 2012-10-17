@@ -10,18 +10,32 @@ namespace Simple.OData.Client
         private ODataClientWithCommand _client;
         private ODataCommand _parent;
         private string _collectionName;
+        private string _functionName;
         private Table _table;
         private IDictionary<string, object> _key;
+        private Dictionary<string, object> _parameters = new Dictionary<string, object>();
         private string _filter;
         private int _skipCount = -1;
         private int _topCount = -1;
         private List<string> _expandAssociations = new List<string>();
         private List<string> _selectColumns = new List<string>();
         private List<KeyValuePair<string, bool>> _orderbyColumns = new List<KeyValuePair<string, bool>>();
+        private bool _computeCount;
+        private bool _scalarResult;
+        private bool _setTotalCount;
         private ODataClientWithCommand _navigateTo;
         private string _linkName;
-        private string _functionName;
-        private Dictionary<string, object> _parameters = new Dictionary<string, object>();
+
+        internal static readonly string MetadataLiteral = "$metadata";
+        internal static readonly string FilterLiteral = "$filter";
+        internal static readonly string SkipLiteral = "$skip";
+        internal static readonly string TopLiteral = "$top";
+        internal static readonly string ExpandLiteral = "$expand";
+        internal static readonly string OrderByLiteral = "$orderby";
+        internal static readonly string SelectLiteral = "$select";
+        internal static readonly string CountLiteral = "$count";
+        internal static readonly string BatchLiteral = "$batch";
+        internal static readonly string ResultLiteral = "$result";
 
         public ODataCommand(ODataClientWithCommand client, ODataCommand parent)
         {
@@ -112,6 +126,13 @@ namespace Simple.OData.Client
             return OrderBy(columns, true);
         }
 
+        public IClientWithCommand Count()
+        {
+            _computeCount = true;
+            _scalarResult = true;
+            return _client;
+        }
+
         public IClientWithCommand Function(string functionName)
         {
             _functionName = functionName;
@@ -152,6 +173,7 @@ namespace Simple.OData.Client
             }
 
             var extraClauses = new List<string>();
+            var aggregateClauses = new List<string>();
 
             if (_key != null && _key.Count > 0 && !string.IsNullOrEmpty(_filter))
                 throw new InvalidOperationException("Filter may not be set when key is assigned");
@@ -162,29 +184,34 @@ namespace Simple.OData.Client
             if (_key != null && _key.Count > 0)
                 commandText += FormatKey();
 
-            if (!string.IsNullOrEmpty(_filter))
-                extraClauses.Add("$filter=" + HttpUtility.UrlEncode(_filter));
-
-            if (_skipCount >= 0)
-                extraClauses.Add("$skip=" + _skipCount.ToString());
-
-            if (_topCount >= 0)
-                extraClauses.Add("$top=" + _topCount.ToString());
-
-            if (_expandAssociations.Any())
-                extraClauses.Add("$expand=" + string.Join(",", _expandAssociations.Select(FormatExpandItem)));
-
-            if (_orderbyColumns.Any())
-                extraClauses.Add("$orderby=" + string.Join(",", _orderbyColumns.Select(FormatOrderByItem)));
-
-            if (_selectColumns.Any())
-                extraClauses.Add("$select=" + string.Join(",", _selectColumns.Select(FormatSelectItem)));
-
             if (_parameters.Any())
                 extraClauses.Add(new ValueFormatter().Format(_parameters, "&"));
 
+            if (!string.IsNullOrEmpty(_filter))
+                extraClauses.Add(string.Format("{0}={1}", FilterLiteral, HttpUtility.UrlEncode(_filter)));
+
+            if (_skipCount >= 0)
+                extraClauses.Add(string.Format("{0}={1}", SkipLiteral, _skipCount));
+
+            if (_topCount >= 0)
+                extraClauses.Add(string.Format("{0}={1}", TopLiteral, _topCount));
+
+            if (_expandAssociations.Any())
+                extraClauses.Add(string.Format("{0}={1}", ExpandLiteral, string.Join(",", _expandAssociations.Select(FormatExpandItem))));
+
+            if (_orderbyColumns.Any())
+                extraClauses.Add(string.Format("{0}={1}", OrderByLiteral, string.Join(",", _orderbyColumns.Select(FormatOrderByItem))));
+
+            if (_selectColumns.Any())
+                extraClauses.Add(string.Format("{0}={1}", SelectLiteral, string.Join(",", _selectColumns.Select(FormatSelectItem))));
+
+            if (_computeCount)
+                aggregateClauses.Add(CountLiteral);
+
             if (extraClauses.Any())
                 commandText += "?" + string.Join("&", extraClauses);
+            if (aggregateClauses.Any())
+                commandText += "/" + string.Join("/", aggregateClauses);
 
             return commandText;
         }
@@ -197,11 +224,11 @@ namespace Simple.OData.Client
         private string FormatSelectItem(string item)
         {
             return _table.HasColumn(item)
-                       ? _table.FindColumn(item).ActualName
-                       : _table.FindAssociation(item).ActualName;
+                ? _table.FindColumn(item).ActualName
+                : _table.FindAssociation(item).ActualName;
         }
 
-        private string FormatOrderByItem(KeyValuePair<string,bool> item)
+        private string FormatOrderByItem(KeyValuePair<string, bool> item)
         {
             return _table.FindColumn(item.Key) + (item.Value ? " desc" : string.Empty);
         }

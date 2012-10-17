@@ -37,6 +37,11 @@ namespace Simple.OData.Client
             return _client.FindEntry(_command.ToString());
         }
 
+        public object FindScalar()
+        {
+            return _client.FindScalar(_command.ToString());
+        }
+
         public IEnumerable<IDictionary<string, object>> FindEntries()
         {
             return _client.FindEntries(_command.ToString());
@@ -155,6 +160,11 @@ namespace Simple.OData.Client
         public IClientWithCommand OrderByDescending(params string[] columns)
         {
             return _command.OrderByDescending(columns);
+        }
+
+        public IClientWithCommand Count()
+        {
+            return _command.Count();
         }
 
         public IClientWithCommand Function(string functionName)

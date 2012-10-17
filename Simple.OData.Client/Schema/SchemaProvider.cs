@@ -130,7 +130,7 @@ namespace Simple.OData.Client
         private string RequestMetadataAsString(string urlBase)
         {
             var requestBuilder = new CommandRequestBuilder(urlBase);
-            var command = HttpCommand.Get("$metadata");
+            var command = HttpCommand.Get(ODataCommand.MetadataLiteral);
             requestBuilder.AddCommandToRequest(command);
             using (var response = new CommandRequestRunner().TryRequest(command.Request))
             {
