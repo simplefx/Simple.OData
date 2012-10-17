@@ -90,20 +90,6 @@ namespace Simple.OData.Client
             return new ODataClientWithCommand(this, _schema).From(collectionName);
         }
 
-        public IDictionary<string, object> FindEntry(string commandText)
-        {
-            int totalCount;
-            var result = FindEntries(commandText, false, false, out totalCount);
-            return result == null ? null : result.FirstOrDefault();
-        }
-
-        public object FindScalar(string commandText)
-        {
-            int totalCount;
-            var result = FindEntries(commandText, true, false, out totalCount);
-            return result == null ? null : result.FirstOrDefault().Values.First();
-        }
-
         public IEnumerable<IDictionary<string, object>> FindEntries(string commandText)
         {
             int totalCount;
@@ -116,16 +102,35 @@ namespace Simple.OData.Client
             return FindEntries(commandText, scalarResult, false, out totalCount);
         }
 
-        public IEnumerable<IDictionary<string, object>> FindEntries(string commandText, bool setTotalCount, out int totalCount)
+        public IEnumerable<IDictionary<string, object>> FindEntries(string commandText, out int totalCount)
         {
-            return FindEntries(commandText, false, setTotalCount, out totalCount);
+            return FindEntries(commandText, false, true, out totalCount);
         }
 
-        public IEnumerable<IDictionary<string, object>> FindEntries(string commandText, bool scalarResult, bool setTotalCount, out int totalCount)
+        public IEnumerable<IDictionary<string, object>> FindEntries(string commandText, bool scalarResult, out int totalCount)
+        {
+            return FindEntries(commandText, scalarResult, true, out totalCount);
+        }
+
+        private IEnumerable<IDictionary<string, object>> FindEntries(string commandText, bool scalarResult, bool setTotalCount, out int totalCount)
         {
             var command = HttpCommand.Get(commandText);
             _requestBuilder.AddCommandToRequest(command);
             return _requestRunner.FindEntries(command, scalarResult, setTotalCount, out totalCount);
+        }
+
+        public IDictionary<string, object> FindEntry(string commandText)
+        {
+            int totalCount;
+            var result = FindEntries(commandText, false, false, out totalCount);
+            return result == null ? null : result.FirstOrDefault();
+        }
+
+        public object FindScalar(string commandText)
+        {
+            int totalCount;
+            var result = FindEntries(commandText, true, false, out totalCount);
+            return result == null ? null : result.FirstOrDefault().Values.First();
         }
 
         public IDictionary<string, object> GetEntry(string tableName, IDictionary<string, object> entryKey)

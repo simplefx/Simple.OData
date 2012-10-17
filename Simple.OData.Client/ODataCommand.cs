@@ -21,9 +21,7 @@ namespace Simple.OData.Client
         private List<string> _selectColumns = new List<string>();
         private List<KeyValuePair<string, bool>> _orderbyColumns = new List<KeyValuePair<string, bool>>();
         private bool _computeCount;
-        private bool _scalarResult;
-        private bool _setTotalCount;
-        private ODataClientWithCommand _navigateTo;
+        private bool _inlineCount;
         private string _linkName;
 
         internal static readonly string MetadataLiteral = "$metadata";
@@ -34,6 +32,8 @@ namespace Simple.OData.Client
         internal static readonly string OrderByLiteral = "$orderby";
         internal static readonly string SelectLiteral = "$select";
         internal static readonly string CountLiteral = "$count";
+        internal static readonly string InlineCountLiteral = "$inlinecount";
+        internal static readonly string AllPagesLiteral = "allpages";
         internal static readonly string BatchLiteral = "$batch";
         internal static readonly string ResultLiteral = "$result";
 
@@ -129,7 +129,6 @@ namespace Simple.OData.Client
         public IClientWithCommand Count()
         {
             _computeCount = true;
-            _scalarResult = true;
             return _client;
         }
 
@@ -148,6 +147,12 @@ namespace Simple.OData.Client
         public IClientWithCommand NavigateTo(string linkName)
         {
             return _client.Link(this, linkName);
+        }
+
+        public ODataCommand WithInlineCount()
+        {
+            _inlineCount = true;
+            return this;
         }
 
         public override string ToString()
@@ -178,9 +183,6 @@ namespace Simple.OData.Client
             if (_key != null && _key.Count > 0 && !string.IsNullOrEmpty(_filter))
                 throw new InvalidOperationException("Filter may not be set when key is assigned");
 
-            if (_navigateTo != null && !string.IsNullOrEmpty(_filter))
-                throw new InvalidOperationException("Filter may not be set for link navigations");
-
             if (_key != null && _key.Count > 0)
                 commandText += FormatKey();
 
@@ -204,6 +206,9 @@ namespace Simple.OData.Client
 
             if (_selectColumns.Any())
                 extraClauses.Add(string.Format("{0}={1}", SelectLiteral, string.Join(",", _selectColumns.Select(FormatSelectItem))));
+
+            if (_inlineCount)
+                extraClauses.Add(string.Format("{0}={1}", InlineCountLiteral, AllPagesLiteral));
 
             if (_computeCount)
                 aggregateClauses.Add(CountLiteral);

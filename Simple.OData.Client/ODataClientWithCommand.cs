@@ -32,16 +32,6 @@ namespace Simple.OData.Client
             return linkedClient;
         }
 
-        public IDictionary<string, object> FindEntry()
-        {
-            return _client.FindEntry(_command.ToString());
-        }
-
-        public object FindScalar()
-        {
-            return _client.FindScalar(_command.ToString());
-        }
-
         public IEnumerable<IDictionary<string, object>> FindEntries()
         {
             return _client.FindEntries(_command.ToString());
@@ -52,14 +42,26 @@ namespace Simple.OData.Client
             return _client.FindEntries(_command.ToString(), scalarResult);
         }
 
-        public IEnumerable<IDictionary<string, object>> FindEntries(bool setTotalCount, out int totalCount)
+        public IEnumerable<IDictionary<string, object>> FindEntries(out int totalCount)
         {
-            return _client.FindEntries(_command.ToString(), false, setTotalCount, out totalCount);
+            var result = _client.FindEntries(_command.WithInlineCount().ToString(), out totalCount);
+            return result;
         }
 
-        public IEnumerable<IDictionary<string, object>> FindEntries(bool scalarResult, bool setTotalCount, out int totalCount)
+        public IEnumerable<IDictionary<string, object>> FindEntries(bool scalarResult, out int totalCount)
         {
-            return _client.FindEntries(_command.ToString(), scalarResult, setTotalCount, out totalCount);
+            var result = _client.FindEntries(_command.WithInlineCount().ToString(), scalarResult, out totalCount);
+            return result;
+        }
+
+        public IDictionary<string, object> FindEntry()
+        {
+            return _client.FindEntry(_command.ToString());
+        }
+
+        public object FindScalar()
+        {
+            return _client.FindScalar(_command.ToString());
         }
 
         public IDictionary<string, object> GetEntry(IDictionary<string, object> entryKey)

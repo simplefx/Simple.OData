@@ -103,6 +103,17 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void TotalCount()
+        {
+            int count;
+            var products = _client
+                .From("Products")
+                .FindEntries(true, out count);
+            Assert.Equal(77, count);
+            Assert.Equal(77, products.Count());
+        }
+
+        [Fact]
         public void CombineAll()
         {
             var product = _client

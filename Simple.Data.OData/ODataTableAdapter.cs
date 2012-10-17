@@ -114,13 +114,12 @@ namespace Simple.Data.OData
 
         private IEnumerable<IDictionary<string, object>> FindEntries(string commandText, bool scalarResult = false)
         {
-            int totalCount;
-            return GetODataClient().FindEntries(commandText, scalarResult, false, out totalCount);
+            return GetODataClient().FindEntries(commandText, scalarResult);
         }
 
         private IEnumerable<IDictionary<string, object>> FindEntries(string commandText, out int totalCount)
         {
-            return GetODataClient().FindEntries(commandText, false, true, out totalCount);
+            return GetODataClient().FindEntries(commandText, false, out totalCount);
         }
 
         private int UpdateByExpression(string tableName, IDictionary<string, object> data, SimpleExpression criteria, IAdapterTransaction transaction)
