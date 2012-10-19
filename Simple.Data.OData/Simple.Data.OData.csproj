@@ -60,6 +60,7 @@
     <Compile Include="IDatabaseOpenerExtensions.cs" />
     <Compile Include="ODataTableAdapter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="QueryCommand.cs" />
     <Compile Include="SimpleReferenceFormatter.cs" />
   </ItemGroup>
   <ItemGroup>

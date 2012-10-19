@@ -82,7 +82,7 @@ namespace Simple.Data.OData
             var builder = new CommandBuilder(GetSchema().FindTable, GetKeyNames);
             var cmd = builder.BuildCommand(tableName, criteria);
 
-            return FindEntries(cmd.CommandText);
+            return FindEntries(cmd);
         }
 
         private IEnumerable<IDictionary<string, object>> FindByQuery(SimpleQuery query, out IEnumerable<SimpleQueryClauseBase> unhandledClauses)
@@ -90,16 +90,17 @@ namespace Simple.Data.OData
             var builder = new CommandBuilder(GetSchema().FindTable, GetKeyNames);
             var cmd = builder.BuildCommand(query);
             unhandledClauses = cmd.UnprocessedClauses;
-            IEnumerable<IDictionary<string, object>> results;
+            var clientCommand = GetODataClientCommand(cmd);
 
+            IEnumerable<IDictionary<string, object>> results;
             if (cmd.SetTotalCount == null)
             {
-                results = FindEntries(cmd.CommandText, cmd.IsScalarResult);
+                results = clientCommand.FindEntries(cmd.IsScalarResult);
             }
             else
             {
                 int totalCount;
-                results = FindEntries(cmd.CommandText, out totalCount);
+                results = clientCommand.FindEntries(out totalCount);
                 cmd.SetTotalCount(totalCount);
             }
             return results;
@@ -109,17 +110,19 @@ namespace Simple.Data.OData
         {
             var builder = new CommandBuilder(GetSchema().FindTable, GetKeyNames);
             var cmd = builder.BuildCommand(tableName, keyValues);
-            return FindEntries(cmd.CommandText).SingleOrDefault();
+            return FindEntries(cmd).SingleOrDefault();
         }
 
-        private IEnumerable<IDictionary<string, object>> FindEntries(string commandText, bool scalarResult = false)
+        private IEnumerable<IDictionary<string, object>> FindEntries(QueryCommand cmd, bool scalarResult = false)
         {
-            return GetODataClient().FindEntries(commandText, scalarResult);
+            var client = GetODataClientCommand(cmd);
+            return client.FindEntries(scalarResult);
         }
 
-        private IEnumerable<IDictionary<string, object>> FindEntries(string commandText, out int totalCount)
+        private IEnumerable<IDictionary<string, object>> FindEntries(QueryCommand cmd, out int totalCount)
         {
-            return GetODataClient().FindEntries(commandText, false, out totalCount);
+            var client = GetODataClientCommand(cmd);
+            return client.FindEntries(out totalCount);
         }
 
         private int UpdateByExpression(string tableName, IDictionary<string, object> data, SimpleExpression criteria, IAdapterTransaction transaction)
@@ -184,6 +187,50 @@ namespace Simple.Data.OData
             }
 
             return client;
+        }
+
+        private IClientWithCommand GetODataClientCommand(QueryCommand cmd)
+        {
+            var linkNames = CommandBuilder.ExtractTableNames(cmd.TablePath);
+            var client = GetODataClient();
+            var clientCommand = client.From(linkNames.First());
+
+            if (cmd.NamedKeyValues != null && cmd.NamedKeyValues.Count > 0)
+                clientCommand = clientCommand.Key(cmd.NamedKeyValues);
+            else if (cmd.KeyValues != null && cmd.KeyValues.Count > 0)
+                clientCommand = clientCommand.Key(cmd.KeyValues);
+
+            if (!string.IsNullOrEmpty(cmd.Filter))
+                clientCommand = clientCommand.Filter(cmd.Filter);
+
+            if (cmd.Expand.Count > 0)
+                clientCommand = clientCommand.Expand(cmd.Expand);
+
+            if (cmd.SkipCount.HasValue)
+                clientCommand = clientCommand.Skip(cmd.SkipCount.Value);
+
+            if (cmd.TakeCount.HasValue)
+                clientCommand = clientCommand.Top(cmd.TakeCount.Value);
+
+            if (cmd.Order.Count > 0)
+                clientCommand = clientCommand.OrderBy(
+                    cmd.Order.Select(x =>
+                        new KeyValuePair<string, bool>(x.Reference.GetAliasOrName(),
+                        x.Direction == OrderByDirection.Descending)));
+
+            if (cmd.Columns.Count == 1 && cmd.Columns.First().GetType() == typeof(CountSpecialReference))
+            {
+                clientCommand = clientCommand.Count();
+                cmd.IsScalarResult = true;
+            }
+            else if (cmd.Columns.Count > 0)
+            {
+                clientCommand = clientCommand.Select(cmd.Columns.Select(x => x.GetAliasOrName()));
+            }
+
+            linkNames.Skip(1).ToList().ForEach(x => clientCommand = clientCommand.NavigateTo(x));
+
+            return clientCommand;
         }
 
         private Table GetTable(string tableName)

@@ -6,7 +6,9 @@ namespace Simple.OData.Client
     public interface ICommand
     {
         IClientWithCommand From(string collectionName);
-        IClientWithCommand Get(IDictionary<string, object> entryKey);
+        IClientWithCommand Key(params object[] entryKey);
+        IClientWithCommand Key(IEnumerable<object> entryKey);
+        IClientWithCommand Key(IDictionary<string, object> entryKey);
         IClientWithCommand Filter(string filter);
         IClientWithCommand Skip(int count);
         IClientWithCommand Top(int count);
@@ -14,9 +16,8 @@ namespace Simple.OData.Client
         IClientWithCommand Expand(params string[] associations);
         IClientWithCommand Select(IEnumerable<string> columns);
         IClientWithCommand Select(params string[] columns);
-        IClientWithCommand OrderBy(IEnumerable<string> columns, bool descending = false);
+        IClientWithCommand OrderBy(IEnumerable<KeyValuePair<string, bool>> columns);
         IClientWithCommand OrderBy(params string[] columns);
-        IClientWithCommand OrderByDescending(IEnumerable<string> columns);
         IClientWithCommand OrderByDescending(params string[] columns);
         IClientWithCommand Count();
         IClientWithCommand NavigateTo(string linkName);

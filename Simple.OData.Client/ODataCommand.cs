@@ -12,7 +12,8 @@ namespace Simple.OData.Client
         private string _collectionName;
         private string _functionName;
         private Table _table;
-        private IDictionary<string, object> _key;
+        private IList<object> _keyValues;
+        private IDictionary<string, object> _namedKeyValues;
         private Dictionary<string, object> _parameters = new Dictionary<string, object>();
         private string _filter;
         private int _skipCount = -1;
@@ -57,9 +58,21 @@ namespace Simple.OData.Client
             return _client;
         }
 
-        public IClientWithCommand Get(IDictionary<string, object> key)
+        public IClientWithCommand Key(params object[] key)
         {
-            _key = key;
+            _keyValues = key.ToList();
+            return _client;
+        }
+
+        public IClientWithCommand Key(IEnumerable<object> key)
+        {
+            _keyValues = key.ToList();
+            return _client;
+        }
+
+        public IClientWithCommand Key(IDictionary<string, object> key)
+        {
+            _namedKeyValues = key;
             return _client;
         }
 
@@ -105,25 +118,20 @@ namespace Simple.OData.Client
             return _client;
         }
 
-        public IClientWithCommand OrderBy(IEnumerable<string> columns, bool descending = false)
+        public IClientWithCommand OrderBy(IEnumerable<KeyValuePair<string, bool>> columns)
         {
-            _orderbyColumns.AddRange(columns.Select(x => new KeyValuePair<string, bool>(x, descending)));
+            _orderbyColumns.AddRange(columns);
             return _client;
         }
 
         public IClientWithCommand OrderBy(params string[] columns)
         {
-            return OrderBy(columns, false);
-        }
-
-        public IClientWithCommand OrderByDescending(IEnumerable<string> columns)
-        {
-            return OrderBy(columns, true);
+            return OrderBy(columns.Select(x => new KeyValuePair<string, bool>(x, false)));
         }
 
         public IClientWithCommand OrderByDescending(params string[] columns)
         {
-            return OrderBy(columns, true);
+            return OrderBy(columns.Select(x => new KeyValuePair<string, bool>(x, true)));
         }
 
         public IClientWithCommand Count()
@@ -180,10 +188,10 @@ namespace Simple.OData.Client
             var extraClauses = new List<string>();
             var aggregateClauses = new List<string>();
 
-            if (_key != null && _key.Count > 0 && !string.IsNullOrEmpty(_filter))
+            if (_namedKeyValues != null && _namedKeyValues.Count > 0 && !string.IsNullOrEmpty(_filter))
                 throw new InvalidOperationException("Filter may not be set when key is assigned");
 
-            if (_key != null && _key.Count > 0)
+            if (_keyValues != null && _keyValues.Count > 0 || _namedKeyValues != null && _namedKeyValues.Count > 0)
                 commandText += FormatKey();
 
             if (_parameters.Any())
@@ -213,10 +221,11 @@ namespace Simple.OData.Client
             if (_computeCount)
                 aggregateClauses.Add(CountLiteral);
 
-            if (extraClauses.Any())
-                commandText += "?" + string.Join("&", extraClauses);
             if (aggregateClauses.Any())
                 commandText += "/" + string.Join("/", aggregateClauses);
+
+            if (extraClauses.Any())
+                commandText += "?" + string.Join("&", extraClauses);
 
             return commandText;
         }
@@ -242,12 +251,19 @@ namespace Simple.OData.Client
         {
             var keyNames = _table.GetKeyNames();
             var namedKeyValues = new Dictionary<string, object>();
-            foreach (var keyName in keyNames)
+            for (int index = 0; index < keyNames.Count; index++)
             {
                 object keyValue;
-                if (_key.TryGetValue(keyName, out keyValue))
+                if (_namedKeyValues != null && _namedKeyValues.Count > 0)
                 {
-                    namedKeyValues.Add(keyName, keyValue);
+                    if (_namedKeyValues.TryGetValue(keyNames[index], out keyValue))
+                    {
+                        namedKeyValues.Add(keyNames[index], keyValue);
+                    }
+                }
+                else if (_keyValues != null && _keyValues.Count >= index)
+                {
+                    namedKeyValues.Add(keyNames[index], _keyValues[index]);
                 }
             }
             var valueFormatter = new ValueFormatter();

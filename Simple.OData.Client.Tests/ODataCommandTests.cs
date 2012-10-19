@@ -9,6 +9,26 @@ namespace Simple.OData.Client.Tests
     public class ODataCommandTests : TestBase
     {
         [Fact]
+        public void Filter()
+        {
+            var products = _client
+                .From("Products")
+                .Filter("ProductName eq 'Chai'")
+                .FindEntries();
+            Assert.Equal(1, products.Count());
+        }
+
+        [Fact]
+        public void Get()
+        {
+            var category = _client
+                .From("Categories")
+                .Key(1)
+                .FindEntry();
+            Assert.Equal(1, category["CategoryID"]);
+        }
+
+        [Fact]
         public void SkipOne()
         {
             var products = _client
@@ -103,6 +123,17 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void FilterCount()
+        {
+            var count = _client
+                .From("Products")
+                .Filter("ProductName eq 'Chai'")
+                .Count()
+                .FindScalar();
+            Assert.Equal(1, int.Parse(count.ToString()));
+        }
+
+        [Fact]
         public void TotalCount()
         {
             int count;
@@ -146,7 +177,7 @@ namespace Simple.OData.Client.Tests
         {
             var category = _client
                 .From("Products")
-                .Get(new Entry() { { "ProductID", 2 } })
+                .Key(new Entry() { { "ProductID", 2 } })
                 .NavigateTo("Category")
                 .FindEntry();
             Assert.Equal("Beverages", category["CategoryName"]);
@@ -157,10 +188,24 @@ namespace Simple.OData.Client.Tests
         {
             var products = _client
                 .From("Categories")
-                .Get(new Entry() { { "CategoryID", 2 } })
+                .Key(2)
                 .NavigateTo("Products")
                 .FindEntries();
             Assert.Equal(12, products.Count());
+        }
+
+        [Fact]
+        public void NavigateToRecursive()
+        {
+            var employee = _client
+                .From("Employees")
+                .Key(14)
+                .NavigateTo("Superior")
+                .NavigateTo("Superior")
+                .NavigateTo("Subordinates")
+                .Key(3)
+                .FindEntry();
+            Assert.Equal("Janet", employee["FirstName"]);
         }
     }
 }

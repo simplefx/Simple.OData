@@ -64,6 +64,16 @@ namespace Simple.OData.Client
             return _client.FindScalar(_command.ToString());
         }
 
+        public IDictionary<string, object> GetEntry(params object[] entryKey)
+        {
+            return _client.GetEntry(_command.ToString(), entryKey);
+        }
+
+        public IDictionary<string, object> GetEntry(IEnumerable<object> entryKey)
+        {
+            return _client.GetEntry(_command.ToString(), entryKey);
+        }
+
         public IDictionary<string, object> GetEntry(IDictionary<string, object> entryKey)
         {
             return _client.GetEntry(_command.ToString(), entryKey);
@@ -104,9 +114,19 @@ namespace Simple.OData.Client
             return _command.From(collectionName);
         }
 
-        public IClientWithCommand Get(IDictionary<string, object> key)
+        public IClientWithCommand Key(params object[] key)
         {
-            return _command.Get(key);
+            return _command.Key(key);
+        }
+
+        public IClientWithCommand Key(IEnumerable<object> key)
+        {
+            return _command.Key(key);
+        }
+
+        public IClientWithCommand Key(IDictionary<string, object> key)
+        {
+            return _command.Key(key);
         }
 
         public IClientWithCommand Filter(string filter)
@@ -144,19 +164,14 @@ namespace Simple.OData.Client
             return _command.Select(columns);
         }
 
-        public IClientWithCommand OrderBy(IEnumerable<string> columns, bool @descending = false)
+        public IClientWithCommand OrderBy(IEnumerable<KeyValuePair<string,bool>> columns)
         {
-            return _command.OrderBy(columns, descending);
+            return _command.OrderBy(columns);
         }
 
         public IClientWithCommand OrderBy(params string[] columns)
         {
             return _command.OrderBy(columns);
-        }
-
-        public IClientWithCommand OrderByDescending(IEnumerable<string> columns)
-        {
-            return _command.OrderByDescending(columns);
         }
 
         public IClientWithCommand OrderByDescending(params string[] columns)
