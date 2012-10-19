@@ -46,8 +46,22 @@ namespace Simple.OData.Client
 
         private WebResponse WaitForResponse(Task<WebResponse> response)
         {
-            response.Wait();
-            return response.Result;
+            try
+            {
+                response.Wait();
+                return response.Result;
+            }
+            catch (AggregateException ex)
+            {
+                if (ex.InnerException is WebException)
+                {
+                    throw WebRequestException.CreateFromWebException(ex.InnerException as WebException);
+                }
+                else
+                {
+                    throw;
+                }
+            }
         }
 #else
         private HttpWebResponse GetResponse(HttpWebRequest request)
