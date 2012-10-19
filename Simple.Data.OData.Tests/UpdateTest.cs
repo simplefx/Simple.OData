@@ -70,7 +70,7 @@ namespace Simple.Data.OData.Tests
         }
 
         [Fact]
-        public void UpdateFieldsAndAssociation()
+        public void UpdateFieldsAndAddAssociation()
         {
             var category = _db.Categories.Insert(CategoryName: "Test1");
             var product = _db.Products.Insert(ProductName: "Test2", UnitPrice: 18m, CategoryID: 1);
@@ -80,6 +80,19 @@ namespace Simple.Data.OData.Tests
             product = _db.Products.FindByProductName("Test2");
             Assert.Equal(19m, product.UnitPrice);
             Assert.Equal(category.CategoryID, product.CategoryID);
+        }
+
+        [Fact]
+        public void UpdateFieldsAndRemoveAssociation()
+        {
+            var category = _db.Categories.Insert(CategoryName: "Test1");
+            var product = _db.Products.Insert(ProductName: "Test2", UnitPrice: 18m, CategoryID: 1);
+
+            _db.Products.UpdateByProductName(ProductName: "Test2", UnitPrice: 19m, Category: null);
+
+            product = _db.Products.FindByProductName("Test2");
+            Assert.Equal(19m, product.UnitPrice);
+            Assert.Null(product.CategoryID);
         }
 
         [Fact]

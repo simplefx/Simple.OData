@@ -1,43 +1,12 @@
 ﻿using System;
-using System.Data;
 using System.Linq;
 using System.Collections.Generic;
-using System.Text;
-using System.Web;
 using Simple.OData.Client;
 
 namespace Simple.Data.OData
 {
-    public class CommandBuilder
+    class CommandBuilder
     {
-        public class QueryCommand
-        {
-            private readonly List<string> _expand;
-            private readonly List<SimpleReference> _columns;
-            private readonly List<SimpleOrderByItem> _order;
-
-            public SimpleExpression Criteria { get; set; }
-            public List<SimpleReference> Columns { get { return _columns; } }
-            public List<string> Expand { get { return _expand; } }
-            public List<SimpleOrderByItem> Order { get { return _order; } }
-            public int? SkipCount { get; set; }
-            public int? TakeCount { get; set; }
-            public Action<int> SetTotalCount { get; set; }
-            public bool IsScalarResult { get; set; }
-
-            public string CommandText { get; set; }
-            public Stack<SimpleQueryClauseBase> ProcessedClauses { get; private set; }
-            public IEnumerable<SimpleQueryClauseBase> UnprocessedClauses { get; set; }
-
-            public QueryCommand()
-            {
-                this.ProcessedClauses = new Stack<SimpleQueryClauseBase>();
-                _columns = new List<SimpleReference>();
-                _order = new List<SimpleOrderByItem>();
-                _expand = new List<string>();
-            }
-        }
-
         private readonly Dictionary<Type, Func<SimpleQueryClauseBase, QueryCommand, bool>> _processors;
         private readonly Func<string, Table> _findTable;
         private readonly Func<string, IList<string>> _getKeyNames;
@@ -63,77 +32,18 @@ namespace Simple.Data.OData
 
         public QueryCommand BuildCommand(string tablePath, SimpleExpression criteria)
         {
-            string commandText;
             string tableName = ExtractPrimaryTableName(tablePath);
-            var keyLookup = TryFormatExpressionAsKeyLookup(tableName, criteria, _getKeyNames);
-            if (!string.IsNullOrEmpty(keyLookup))
-            {
-                commandText = FormatTableKeyLookup(tablePath, keyLookup);
-            }
-            else
-            {
-                commandText = _findTable(tableName).ActualName;
-                string filter = _expressionFormatter.Format(criteria);
-                if (!string.IsNullOrEmpty(filter))
-                    commandText += "?" + FormatFilter(filter);
-            }
-            return new QueryCommand() { Criteria = criteria, CommandText = commandText};
+            var namedKeyValues = TryInterpretExpressionAsKeyLookup(tableName, criteria, _getKeyNames);
+            return new QueryCommand()
+                {
+                    TablePath = tablePath,
+                    Criteria = criteria,
+                    NamedKeyValues = namedKeyValues == null ? null : namedKeyValues.ToDictionary(),
+                    Filter = namedKeyValues == null ? _expressionFormatter.Format(criteria) : null,
+                };
         }
 
         public QueryCommand BuildCommand(SimpleQuery query)
-        {
-            var cmd = ParseQuery(query);
-
-            Table table;
-            var formattedKeyValues = TryFormatExpressionAsKeyLookup(query.TableName, cmd.Criteria, _getKeyNames);
-            bool isKeyLookup = !string.IsNullOrEmpty(formattedKeyValues);
-            string clause = FormatTableClause(query.TableName, formattedKeyValues, out table);
-            var commandText = clause;
-
-            clause = FormatSpecialClause(table, cmd);
-            if (!string.IsNullOrEmpty(clause))
-            {
-                commandText += "/" + clause;
-                cmd.IsScalarResult = true;
-            }
-
-            var clauses = new List<string>();
-            if (!isKeyLookup)
-            {
-                clause = FormatWhereClause(table, cmd);
-                if (!string.IsNullOrEmpty(clause)) clauses.Add(clause);
-            }
-            clause = FormatWithClause(table, cmd);
-            if (!string.IsNullOrEmpty(clause)) clauses.Add(clause);
-            clause = FormatSkipClause(table, cmd);
-            if (!string.IsNullOrEmpty(clause)) clauses.Add(clause);
-            if (!isKeyLookup)
-            {
-                clause = FormatTakeClause(table, cmd);
-                if (!string.IsNullOrEmpty(clause)) clauses.Add(clause);
-            }
-            clause = FormatOrderClause(table, cmd);
-            if (!string.IsNullOrEmpty(clause)) clauses.Add(clause);
-            clause = FormatSelectClause(table, cmd);
-            if (!string.IsNullOrEmpty(clause)) clauses.Add(clause);
-            clause = FormatCountClause(table, cmd);
-            if (!string.IsNullOrEmpty(clause)) clauses.Add(clause);
-            if (clauses.Count > 0)
-            {
-                commandText += "?" + string.Join("&", clauses);
-            }
-            cmd.CommandText = commandText;
-
-            return cmd;
-        }
-
-        public QueryCommand BuildCommand(string tablePath, object[] keyValues)
-        {
-            var commandText = FormatTableKeyLookup(tablePath, FormatKeyValues(tablePath, keyValues));
-            return new QueryCommand() { CommandText = commandText };
-        }
-
-        private QueryCommand ParseQuery(SimpleQuery query)
         {
             var cmd = new QueryCommand();
 
@@ -150,8 +60,22 @@ namespace Simple.Data.OData
                 cmd.ProcessedClauses.Push(unprocessedClauses.Dequeue());
             }
 
+            var namedKeyValues = TryInterpretExpressionAsKeyLookup(query.TableName, cmd.Criteria, _getKeyNames);
+            if (namedKeyValues != null)
+            {
+                cmd.NamedKeyValues = namedKeyValues.ToDictionary();
+                cmd.Filter = null;
+                cmd.TakeCount = null;
+            }
+
+            cmd.TablePath = query.TableName;
             cmd.UnprocessedClauses = unprocessedClauses;
             return cmd;
+        }
+
+        public QueryCommand BuildCommand(string tablePath, object[] keyValues)
+        {
+            return new QueryCommand() { TablePath = tablePath, KeyValues = keyValues.ToList() };
         }
 
         private bool TryApplyWithClause(WithClause clause, QueryCommand cmd)
@@ -204,6 +128,9 @@ namespace Simple.Data.OData
             cmd.Criteria = cmd.Criteria == null
                 ? clause.Criteria
                 : new SimpleExpression(cmd.Criteria, clause.Criteria, SimpleExpressionType.And);
+
+            cmd.Filter = _expressionFormatter.Format(cmd.Criteria);
+
             return true;
         }
 
@@ -213,221 +140,33 @@ namespace Simple.Data.OData
             return true;
         }
 
-        private string FormatTableKeyLookup(string tablePath, string formattedKeyValues)
-        {
-            Table table;
-            return FormatTableClause(tablePath, formattedKeyValues, out table);
-        }
-
-        private string FormatTableClause(string tablePath, string formattedKeyValues, out Table table)
-        {
-            string clause = string.Empty;
-            var tableNames = ExtractTableNames(tablePath);
-            table = null;
-            if (tableNames.Count() > 1)
-            {
-                Table parentTable = null;
-                foreach (var tableName in tableNames)
-                {
-                    if (parentTable == null)
-                    {
-                        var childTable = _findTable(tableName);
-                        table = childTable;
-                        clause += childTable.ActualName;
-                        if (!string.IsNullOrEmpty(formattedKeyValues))
-                            clause += formattedKeyValues;
-                        parentTable = childTable;
-                    }
-                    else
-                    {
-                        var association = parentTable.FindAssociation(tableName);
-                        parentTable = _findTable(association.ReferenceTableName);
-                        clause += "/" + association.ActualName;
-                    }
-                }
-            }
-            else
-            {
-                table = _findTable(tablePath);
-                clause = table.ActualName;
-                if (!string.IsNullOrEmpty(formattedKeyValues))
-                    clause += formattedKeyValues;
-            }
-            return clause;
-        }
-
-        private string FormatOrderByItem(Table table, SimpleOrderByItem item)
-        {
-            var col = table.FindColumn(item.Reference.GetName());
-            var direction = item.Direction == OrderByDirection.Descending ? " desc" : string.Empty;
-            return col.ActualName + direction;
-        }
-
-        private string FormatSelectItem(Table table, SimpleReference item)
-        {
-            return table.FindColumn(item.GetAliasOrName()).ActualName;
-        }
-
-        private string FormatSpecialReference(SpecialReference reference)
-        {
-            if (reference.GetType() == typeof(CountSpecialReference)) return "$count";
-            throw new InvalidOperationException("SpecialReference type not recognised.");
-        }
-
-        private string FormatSpecialClause(Table table, QueryCommand cmd)
-        {
-            if (cmd.Columns != null && cmd.Columns.Count() == 1 && cmd.Columns.First() is SpecialReference)
-            {
-                var specialColumn = cmd.Columns.First();
-                cmd.Columns.Clear();
-                return FormatSpecialReference((SpecialReference)specialColumn);
-            }
-            return null;
-        }
-
-        private string FormatWhereClause(Table table, QueryCommand cmd)
-        {
-            if (cmd.Criteria != null)
-            {
-                return FormatFilter(_expressionFormatter.Format(cmd.Criteria));
-            }
-            return null;
-        }
-
-        private string FormatWithClause(Table table, QueryCommand cmd)
-        {
-            if (cmd.Expand.Any())
-            {
-                var expansion = string.Join(",", cmd.Expand);
-                return "$expand=" + expansion;
-            }
-            return null;
-        }
-
-        private string FormatOrderClause(Table table, QueryCommand cmd)
-        {
-            if (cmd.Order.Any())
-            {
-                var items = cmd.Order.Select(x => FormatOrderByItem(table, x));
-                return "$orderby=" + string.Join(",", items);
-            }
-            return null;
-        }
-
-        private string FormatSkipClause(Table table, QueryCommand cmd)
-        {
-            if (cmd.SkipCount > 0)
-            {
-                return "$skip=" + cmd.SkipCount.ToString();
-            }
-            return null;
-        }
-
-        private string FormatTakeClause(Table table, QueryCommand cmd)
-        {
-            if (cmd.TakeCount > 0)
-            {
-                return "$top=" + cmd.TakeCount.ToString();
-            }
-            return null;
-        }
-
-        private string FormatSelectClause(Table table, QueryCommand cmd)
-        {
-            if (cmd.Columns != null && cmd.Columns.Count() > 0)
-            {
-                var items = cmd.Columns.Select(x => FormatSelectItem(table, x));
-                return "$select=" + string.Join(",", items);
-            }
-            return null;
-        }
-
-        private string FormatCountClause(Table table, QueryCommand cmd)
-        {
-            if (cmd.SetTotalCount != null)
-            {
-                return "$inlinecount=allpages";
-            }
-            return null;
-        }
-
-        private string FormatFilter(string filter)
-        {
-            return "$filter=" + HttpUtility.UrlEncode(filter);
-        }
-
-        private string FormatKeyValues(string tablePath, IList<object> keyValues)
-        {
-            var valueFormatter = new ValueFormatter();
-            string formattedKeyValues;
-            if (keyValues.Count == 1)
-            {
-                formattedKeyValues = valueFormatter.Format(keyValues);
-            }
-            else
-            {
-                var tableName = ExtractTableNames(tablePath).First();
-                var keyNames = _getKeyNames(tableName);
-                var namedKeyValues = new Dictionary<string, object>();
-                for (int index = 0; index < keyNames.Count(); index++)
-                {
-                    namedKeyValues.Add(keyNames[index], keyValues[index]);
-                }
-                formattedKeyValues = valueFormatter.Format(namedKeyValues);
-            }
-            return "(" + HttpUtility.UrlEncode(formattedKeyValues) + ")";
-        }
-
-        private string FormatKeyValues(IEnumerable<string> keyValues)
-        {
-            return "(" + HttpUtility.UrlEncode(string.Join(",", keyValues)) + ")";
-        }
-
-        private string TryFormatExpressionAsKeyLookup(string tablePath, SimpleExpression expression, Func<string, IEnumerable<string>> GetKeyNames)
+        private IDictionary<string, object> TryInterpretExpressionAsKeyLookup(string tablePath, SimpleExpression expression, Func<string, IEnumerable<string>> GetKeyNames)
         {
             var table = _findTable(ExtractPrimaryTableName(tablePath));
             IDictionary<string, object> namedKeyValues = new Dictionary<string, object>();
             if (expression != null)
             {
-                TryExtractKeyValues(expression, namedKeyValues);
+                ExtractEqualityComparisons(expression, namedKeyValues);
             }
-            if (namedKeyValues.Count == 0)
-                return string.Empty;
-
-            IList<string> keyValues = new List<string>();
-            var keyNames = GetKeyNames(table.ActualName);
-            int processedKeys = 0;
-            if (keyNames.Count() == namedKeyValues.Count())
-            {
-                foreach (var keyName in keyNames)
-                {
-                    foreach (var namedKeyValue in namedKeyValues)
-                    {
-                        if (namedKeyValue.Key == keyName)
-                        {
-                            keyValues.Add(new ValueFormatter().FormatContentValue(namedKeyValue.Value));
-                            ++processedKeys;
-                        }
-                    }
-                }
-            }
-                
-            return processedKeys == keyNames.Count() ? FormatKeyValues(keyValues) : string.Empty;
+            return GetKeyNames(table.ActualName).All(namedKeyValues.ContainsKey) ? namedKeyValues : null;
         }
 
-        private void TryExtractKeyValues(SimpleExpression expression, IDictionary<string, object> namedKeyValues)
+        private void ExtractEqualityComparisons(SimpleExpression expression, IDictionary<string, object> columnEqualityComparisons)
         {
             switch (expression.Type)
             {
                 case SimpleExpressionType.And:
-                    TryExtractKeyValues(expression.LeftOperand as SimpleExpression, namedKeyValues);
-                    TryExtractKeyValues(expression.RightOperand as SimpleExpression, namedKeyValues);
+                    ExtractEqualityComparisons(expression.LeftOperand as SimpleExpression, columnEqualityComparisons);
+                    ExtractEqualityComparisons(expression.RightOperand as SimpleExpression, columnEqualityComparisons);
                     break;
 
                 case SimpleExpressionType.Equal:
-                    var key = expression.LeftOperand.ToString().Split('.').Last();
-                    if (!namedKeyValues.ContainsKey(key))
-                        namedKeyValues.Add(key, expression.RightOperand);
+                    if (expression.LeftOperand.GetType() == typeof(ObjectReference))
+                    {
+                        var key = expression.LeftOperand.ToString().Split('.').Last();
+                        if (!columnEqualityComparisons.ContainsKey(key))
+                            columnEqualityComparisons.Add(key, expression.RightOperand);
+                    }
                     break;
 
                 default:
@@ -435,14 +174,14 @@ namespace Simple.Data.OData
             }
         }
 
-        private string[] ExtractTableNames(string tablePath)
+        internal static string[] ExtractTableNames(string tablePath)
         {
             return tablePath.Split('.');
         }
 
-        private string ExtractPrimaryTableName(string tablePath)
+        internal static string ExtractPrimaryTableName(string tablePath)
         {
-            return tablePath.Split('.').First();
+            return ExtractTableNames(tablePath).First();
         }
     }
 }

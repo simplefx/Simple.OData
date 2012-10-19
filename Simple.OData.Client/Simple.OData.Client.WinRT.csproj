@@ -117,9 +117,14 @@
     <Compile Include="Extensions\HomogenizeEx.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="HttpCommand.cs" />
+    <Compile Include="IClient.cs" />
+    <Compile Include="IClientWithCommand.cs" />
+    <Compile Include="ICommand.cs" />
     <Compile Include="IPluralizer.cs" />
     <Compile Include="ODataBatch.cs" />
     <Compile Include="ODataClient.cs" />
+    <Compile Include="ODataClientWithCommand.cs" />
+    <Compile Include="ODataCommand.cs" />
     <Compile Include="ODataHelper.cs" />
     <Compile Include="Pluralizer.cs" />
     <Compile Include="Properties.cs" />

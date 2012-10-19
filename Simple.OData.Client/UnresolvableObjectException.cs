@@ -40,7 +40,7 @@ namespace Simple.OData.Client
 #endif
         public string ObjectName
         {
-            get { return Data.Contains("ObjectName") ? Data["ObjectName"].ToString() : null; }
+            get { return Data.Contains("ObjectName") ? (Data["ObjectName"] != null ? Data["ObjectName"].ToString() : "{{null}}") : null; }
             private set { Data["ObjectName"] = value; }
         }
     }

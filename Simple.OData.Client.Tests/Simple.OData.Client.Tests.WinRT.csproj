@@ -114,6 +114,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ODataClientTest.cs" />
+    <Compile Include="ODataCommandTests.cs" />
     <Compile Include="ODataHelperTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SchemaTest.cs" />

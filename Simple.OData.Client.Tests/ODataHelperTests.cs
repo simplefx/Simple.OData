@@ -4,8 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using Xunit;
 using Simple.NExtLib;
+using Xunit;
 
 namespace Simple.OData.Client.Tests
 {

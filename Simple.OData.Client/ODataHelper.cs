@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Xml.Linq;
 using System.IO;
+using System.Linq;
+using System.Xml.Linq;
 using Simple.NExtLib;
 using Simple.NExtLib.IO;
 
@@ -15,7 +14,7 @@ namespace Simple.OData.Client
         {
             var text = QuickIO.StreamToString(stream);
             if (scalarResult)
-                return new[] { new Dictionary<string, object>() { { "$result", text } } };
+                return new[] { new Dictionary<string, object>() { { ODataCommand.ResultLiteral, text } } };
             else
                 return GetData(text);
         }
@@ -78,9 +77,9 @@ namespace Simple.OData.Client
 
                 var entityElement = mediaStream ? entry : entry.Element(null, "content");
                 var properties = GetProperties(entityElement).ToIDictionary();
-                foreach (var propertyElement in properties)
+                foreach (var property in properties)
                 {
-                    entryData.Add(propertyElement.Key, propertyElement.Value);
+                    entryData.Add(property.Key, property.Value);
                 }
 
                 yield return entryData;
