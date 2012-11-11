@@ -151,15 +151,31 @@ namespace Simple.OData.Client
             IEnumerable<EdmComplexType> complexTypes,
             string typesNamespace)
         {
-            return from e in elements
+            var results = from e in elements
+                         select new
+                             {
+                                 EntityType = new EdmEntityType()
+                                     {
+                                         Name = e.Attribute("Name").Value,
+                                         Abstract = ParseBooleanAttribute(e.Attribute("Abstract")),
+                                         OpenType = ParseBooleanAttribute(e.Attribute("OpenType")),
+                                         Properties = (from p in e.Descendants(null, "Property")
+                                                       select ParseProperty(p, complexTypes, new EdmEntityType[] {})).ToArray(),
+                                         Key = (from k in e.Descendants(null, "Key")
+                                                select ParseKey(k)).SingleOrDefault(),
+                                     },
+                                 BaseType = ParseStringAttribute(e.Attribute("BaseType")),
+                             };
+            return from r in results
                    select new EdmEntityType()
-                              {
-                                  Name = e.Attribute("Name").Value,
-                                  Properties = (from p in e.Descendants(null, "Property")
-                                                select ParseProperty(p, complexTypes, new EdmEntityType[] { })).ToArray(),
-                                  Key = (from k in e.Descendants(null, "Key")
-                                         select ParseKey(k)).Single(),
-                              };
+                       {
+                           Name = r.EntityType.Name,
+                           BaseType = string.IsNullOrEmpty(r.BaseType) ? null : results.Single(y => y.EntityType.Name == r.BaseType.Split('.').Last()).EntityType,
+                           Abstract = r.EntityType.Abstract,
+                           OpenType = r.EntityType.OpenType,
+                           Properties = r.EntityType.Properties,
+                           Key = r.EntityType.Key,
+                       };
         }
 
         private static IEnumerable<EdmAssociation> ParseAssociations(

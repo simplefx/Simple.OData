@@ -59,8 +59,9 @@ namespace Simple.OData.Client
                    where e.IsDefaulEntityContainer
                    from s in e.EntitySets
                    where s.Name == table.ActualName
-                   from t in _metadata.Value.EntityTypes
-                   where s.EntityType.Split('.').Last() == t.Name
+                   from et in _metadata.Value.EntityTypes
+                   where s.EntityType.Split('.').Last() == et.Name
+                   from t in GetEntityTypeWithBaseTypes(et)
                    from p in t.Properties
                    select new Column(p.Name, p.Type, p.Nullable);
         }
@@ -94,8 +95,10 @@ namespace Simple.OData.Client
                     where e.IsDefaulEntityContainer
                     from s in e.EntitySets
                     where s.Name == table.ActualName
-                    from t in _metadata.Value.EntityTypes
-                    where s.EntityType.Split('.').Last() == t.Name
+                    from et in _metadata.Value.EntityTypes
+                    where s.EntityType.Split('.').Last() == et.Name
+                    from t in GetEntityTypeWithBaseTypes(et)
+                    where t.Key != null
                     select new Key(t.Key.Properties)).Single();
         }
 
@@ -125,6 +128,23 @@ namespace Simple.OData.Client
                 f.EntitySet, 
                 f.ReturnType == null ? null : f.ReturnType.Name,
                 f.Parameters.Select(p => p.Name));
+        }
+
+        private IEnumerable<EdmEntityType> GetEntityTypeWithBaseTypes(EdmEntityType entityType)
+        {
+            if (entityType.BaseType == null)
+            {
+                yield return entityType;
+            }
+            else
+            {
+                var baseTypes = GetEntityTypeWithBaseTypes(entityType.BaseType);
+                foreach (var baseType in baseTypes)
+                {
+                    yield return baseType;
+                }
+                yield return entityType;
+            }
         }
 
         private string RequestMetadataAsString(string urlBase)

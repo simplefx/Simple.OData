@@ -46,6 +46,9 @@ namespace Simple.OData.Client
     public sealed class EdmEntityType
     {
         public string Name { get; set; }
+        public EdmEntityType BaseType { get; set; }
+        public bool Abstract { get; set; }
+        public bool OpenType { get; set; }
         public EdmProperty[] Properties { get; set; }
         public EdmKey Key { get; set; }
 
