@@ -117,6 +117,22 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void CheckPluralsightComSchema()
+        {
+            var client = new ODataClient("http://pluralsight.com/odata/");
+
+            var table = client.Schema.FindTable("Modules");
+            Assert.Equal("Title", table.PrimaryKey[0]);
+
+            Assert.NotNull(table.FindColumn("Author"));
+            Assert.NotNull(table.FindColumn("Description"));
+
+            var association = table.FindAssociation("Course");
+            Assert.Equal("Courses", association.ReferenceTableName);
+            Assert.Equal("*", association.Multiplicity);
+        }
+
+        [Fact]
         public void RetrieveSchemaFromUrlWithoutFilename()
         {
             var client = new ODataClient("http://vancouverdataservice.cloudapp.net/v1/impark");
