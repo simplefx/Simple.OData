@@ -45,6 +45,11 @@
     </Compile>
     <Compile Include="BatchRequestBuilder.cs" />
     <Compile Include="BatchRequestRunner.cs" />
+    <Compile Include="Filter\ExpressionFunction.cs" />
+    <Compile Include="Filter\ExpressionOperator.cs" />
+    <Compile Include="Filter\FilterExpression.cs" />
+    <Compile Include="Filter\FilterExpression.Operators.cs" />
+    <Compile Include="Filter\FilterExpression.Format.cs" />
     <Compile Include="IClient.cs" />
     <Compile Include="ICommand.cs" />
     <Compile Include="ODataClientWithCommand.cs" />
@@ -57,6 +62,7 @@
     <Compile Include="IClientWithCommand.cs" />
     <Compile Include="ODataBatch.cs" />
     <Compile Include="ODataCommand.cs" />
+    <Compile Include="ODataFilter.cs" />
     <Compile Include="Pluralizer.cs" />
     <Compile Include="Schema\ISchema.cs" />
     <Compile Include="ValueFormatter.cs" />

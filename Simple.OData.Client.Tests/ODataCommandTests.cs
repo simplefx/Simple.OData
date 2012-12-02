@@ -15,7 +15,7 @@ namespace Simple.OData.Client.Tests
                 .From("Products")
                 .Filter("ProductName eq 'Chai'")
                 .FindEntries();
-            Assert.Equal(1, products.Count());
+            Assert.Equal("Chai", products.Single()["ProductName"]);
         }
 
         [Fact]
