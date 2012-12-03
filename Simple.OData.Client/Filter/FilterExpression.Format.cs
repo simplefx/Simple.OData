@@ -4,7 +4,6 @@ namespace Simple.OData.Client
 {
     public partial class FilterExpression
     {
-
         public override string ToString()
         {
             if (_operator == ExpressionOperator.None)
@@ -39,7 +38,7 @@ namespace Simple.OData.Client
 
         private static string FormatExpression(FilterExpression expr)
         {
-            return expr == null ? "null" : expr.ToString();
+            return (object)expr == null ? "null" : expr.ToString();
         }
 
         private string FormatReference()
@@ -49,7 +48,7 @@ namespace Simple.OData.Client
 
         private string FormatFunction()
         {
-            return string.Format("{0}({1})", _function.Name, string.Join(",", _function.Arguments.Select(FormatExpression)));
+            return string.Format("{0}({1})", _function.FunctionName, string.Join(",", _function.Arguments.Select(FormatExpression)));
         }
 
         private string FormatValue()
@@ -133,7 +132,7 @@ namespace Simple.OData.Client
         {
             if (_operator == ExpressionOperator.None)
                 return false;
-            if (expr == null)
+            if ((object)expr == null)
                 return false;
             if (expr._operator == ExpressionOperator.None)
                 return false;

@@ -1,4 +1,5 @@
-﻿using Simple.OData.Client;
+﻿using System;
+using Simple.OData.Client;
 using Xunit;
 
 namespace Simple.Data.OData.Tests
@@ -80,7 +81,7 @@ namespace Simple.Data.OData.Tests
         [Fact]
         public void FindWhereNameEqualWithInvalidFunction()
         {
-            Assert.Throws<WebRequestException>(
+            Assert.Throws<NotSupportedException>(
                 () => _db.Products.Find(_db.Products.ProductName.InvalidFunction() == "Chai"));
         }
     }

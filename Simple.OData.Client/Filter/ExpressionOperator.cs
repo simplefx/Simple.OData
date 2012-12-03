@@ -1,6 +1,6 @@
 ﻿namespace Simple.OData.Client
 {
-    enum ExpressionOperator
+    public enum ExpressionOperator
     {
         None,
         AND,

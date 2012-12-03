@@ -23,14 +23,27 @@ namespace Simple.OData.Client
             return new FilterExpression { _reference = reference };
         }
 
+        internal static FilterExpression FromValue(object value)
+        {
+            return new FilterExpression { _value = value };
+        }
+
         internal static FilterExpression FromFunction(ExpressionFunction function)
         {
             return new FilterExpression { _function = function };
         }
 
-        internal static FilterExpression FromValue(object value)
+        internal static FilterExpression FromFunction(string functionName, string targetName, IEnumerable<object> arguments)
         {
-            return new FilterExpression { _value = value };
+            ExpressionFunction.FunctionMapping mapping;
+            if (ExpressionFunction.SupportedFunctions.TryGetValue(new ExpressionFunction.FunctionCall(functionName, arguments == null ? 0 : arguments.Count()), out mapping))
+            {
+                return mapping.FunctionMapper(functionName, targetName, arguments);
+            }
+            else
+            {
+                throw new NotSupportedException(string.Format("The function {0} is not supported or called with wrong number of arguments", functionName));
+            }
         }
 
         private FilterExpression(FilterExpression left, FilterExpression right, ExpressionOperator expressionOperator)

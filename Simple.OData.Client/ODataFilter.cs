@@ -1,4 +1,5 @@
-﻿using System.Dynamic;
+﻿using System.Collections.Generic;
+using System.Dynamic;
 
 namespace Simple.OData.Client
 {
@@ -16,6 +17,26 @@ namespace Simple.OData.Client
         public static dynamic Context
         {
             get { return new DynamicContext(); }
+        }
+
+        public static FilterExpression ExpressionFromReference(string reference)
+        {
+            return FilterExpression.FromReference(reference);
+        }
+
+        public static FilterExpression ExpressionFromValue(object value)
+        {
+            return FilterExpression.FromValue(value);
+        }
+
+        public static FilterExpression ExpressionFromFunction(ExpressionFunction function)
+        {
+            return FilterExpression.FromFunction(function);
+        }
+
+        public static FilterExpression ExpressionFromFunction(string functionName, string targetName, IEnumerable<object> arguments)
+        {
+            return FilterExpression.FromFunction(functionName, targetName, arguments);
         }
     }
 }

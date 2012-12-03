@@ -10,13 +10,13 @@ namespace Simple.Data.OData
         private readonly Dictionary<Type, Func<SimpleQueryClauseBase, QueryCommand, bool>> _processors;
         private readonly Func<string, Table> _findTable;
         private readonly Func<string, IList<string>> _getKeyNames;
-        private readonly ExpressionFormatter _expressionFormatter;
+        //private readonly ExpressionFormatter _expressionFormatter;
 
         public CommandBuilder(Func<string, Table> findTable, Func<string, IList<string>> getKeyNames)
         {
             _findTable = findTable;
             _getKeyNames = getKeyNames;
-            _expressionFormatter = new ExpressionFormatter(_findTable);
+            //_expressionFormatter = new ExpressionFormatter(_findTable);
 
             _processors = new Dictionary<Type, Func<SimpleQueryClauseBase, QueryCommand, bool>>
             {
@@ -39,7 +39,8 @@ namespace Simple.Data.OData
                     TablePath = tablePath,
                     Criteria = criteria,
                     NamedKeyValues = namedKeyValues == null ? null : namedKeyValues.ToDictionary(),
-                    Filter = namedKeyValues == null ? _expressionFormatter.Format(criteria) : null,
+//                    Filter = namedKeyValues == null ? _expressionFormatter.Format(criteria) : null,
+                    Filter = namedKeyValues == null ? FormatExpression(criteria) : null,
                 };
         }
 
@@ -76,6 +77,11 @@ namespace Simple.Data.OData
         public QueryCommand BuildCommand(string tablePath, object[] keyValues)
         {
             return new QueryCommand() { TablePath = tablePath, KeyValues = keyValues.ToList() };
+        }
+
+        private string FormatExpression(SimpleExpression expression)
+        {
+            return new ExpressionConverter().ConvertExpression(expression);
         }
 
         private bool TryApplyWithClause(WithClause clause, QueryCommand cmd)
@@ -129,7 +135,8 @@ namespace Simple.Data.OData
                 ? clause.Criteria
                 : new SimpleExpression(cmd.Criteria, clause.Criteria, SimpleExpressionType.And);
 
-            cmd.Filter = _expressionFormatter.Format(cmd.Criteria);
+            //cmd.Filter = _expressionFormatter.Format(cmd.Criteria);
+            cmd.Filter = FormatExpression(cmd.Criteria);
 
             return true;
         }

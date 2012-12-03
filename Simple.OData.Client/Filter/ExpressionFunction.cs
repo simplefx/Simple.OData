@@ -5,9 +5,9 @@ using System.Linq;
 
 namespace Simple.OData.Client
 {
-    class ExpressionFunction
+    public class ExpressionFunction
     {
-        public string Name { get; set; }
+        public string FunctionName { get; set; }
         public List<FilterExpression> Arguments { get; set; }
 
         public class FunctionCall
@@ -43,15 +43,15 @@ namespace Simple.OData.Client
         public class FunctionMapping
         {
             public string FunctionName { get; private set; }
-            public Func<string, FilterExpression, IEnumerable<object>, FilterExpression> FunctionMapper { get; private set; }
+            public Func<string, string, IEnumerable<object>, FilterExpression> FunctionMapper { get; private set; }
 
             public FunctionMapping(string functionName)
             {
                 this.FunctionName = functionName;
-                this.FunctionMapper = FunctionWithSource;
+                this.FunctionMapper = FunctionWithTarget;
             }
 
-            public FunctionMapping(string functionName, Func<string, FilterExpression, IEnumerable<object>, FilterExpression> functionMapper)
+            public FunctionMapping(string functionName, Func<string, string, IEnumerable<object>, FilterExpression> functionMapper)
             {
                 this.FunctionName = functionName;
                 this.FunctionMapper = functionMapper;
@@ -62,47 +62,47 @@ namespace Simple.OData.Client
         {
         }
 
-        private readonly static Func<string, FilterExpression, IEnumerable<object>, FilterExpression>
-            FunctionWithSource =
-                (name, source, arguments) => FilterExpression.FromFunction(
+        private readonly static Func<string, string, IEnumerable<object>, FilterExpression>
+            FunctionWithTarget =
+                (functionName, targetName, arguments) => FilterExpression.FromFunction(
                 new ExpressionFunction()
                 {
-                    Name = SupportedFunctions[new FunctionCall(name, 0)].FunctionName,
-                    Arguments = new List<FilterExpression>() { source },
+                    FunctionName = SupportedFunctions[new FunctionCall(functionName, 0)].FunctionName,
+                    Arguments = new List<FilterExpression>() { FilterExpression.FromReference(targetName) },
                 });
 
-        private readonly static Func<string, FilterExpression, IEnumerable<object>, FilterExpression>
-            FunctionWithSourceAndArguments =
-                (name, source, arguments) => FilterExpression.FromFunction(
+        private readonly static Func<string, string, IEnumerable<object>, FilterExpression>
+            FunctionWithTargetAndArguments =
+                (functionName, targetName, arguments) => FilterExpression.FromFunction(
                 new ExpressionFunction()
                 {
-                    Name = SupportedFunctions[new FunctionCall(name, arguments.Count())].FunctionName,
-                    Arguments = MergeArguments(source, arguments),
+                    FunctionName = SupportedFunctions[new FunctionCall(functionName, arguments.Count())].FunctionName,
+                    Arguments = MergeArguments(FilterExpression.FromReference(targetName), arguments),
                 });
 
-        private readonly static Func<string, FilterExpression, IEnumerable<object>, FilterExpression>
-            FunctionWithArgumentsAndSource =
-                (name, source, arguments) => FilterExpression.FromFunction(
+        private readonly static Func<string, string, IEnumerable<object>, FilterExpression>
+            FunctionWithArgumentsAndTarget =
+                (functionName, targetName, arguments) => FilterExpression.FromFunction(
                 new ExpressionFunction()
                 {
-                    Name = SupportedFunctions[new FunctionCall(name, arguments.Count())].FunctionName,
-                    Arguments = MergeArguments(arguments, source),
+                    FunctionName = SupportedFunctions[new FunctionCall(functionName, arguments.Count())].FunctionName,
+                    Arguments = MergeArguments(arguments, FilterExpression.FromReference(targetName)),
                 });
 
         public static Dictionary<FunctionCall, FunctionMapping> SupportedFunctions = new Dictionary<FunctionCall, FunctionMapping>()
             {
-                {new FunctionCall("Contains", 1), new FunctionMapping("substringof", FunctionWithArgumentsAndSource)},
-                {new FunctionCall("StartsWith", 1), new FunctionMapping("startswith", FunctionWithSourceAndArguments)},
-                {new FunctionCall("EndsWith", 1), new FunctionMapping("endswith", FunctionWithSourceAndArguments)},
+                {new FunctionCall("Contains", 1), new FunctionMapping("substringof", FunctionWithArgumentsAndTarget)},
+                {new FunctionCall("StartsWith", 1), new FunctionMapping("startswith", FunctionWithTargetAndArguments)},
+                {new FunctionCall("EndsWith", 1), new FunctionMapping("endswith", FunctionWithTargetAndArguments)},
                 {new FunctionCall("Length", 0), new FunctionMapping("length")},
-                {new FunctionCall("IndexOf", 1), new FunctionMapping("indexof", FunctionWithSourceAndArguments)},
-                {new FunctionCall("Replace", 2), new FunctionMapping("replace", FunctionWithSourceAndArguments)},
-                {new FunctionCall("Substring", 1), new FunctionMapping("substring", FunctionWithSourceAndArguments)},
-                {new FunctionCall("Substring", 2), new FunctionMapping("substring", FunctionWithSourceAndArguments)},
+                {new FunctionCall("IndexOf", 1), new FunctionMapping("indexof", FunctionWithTargetAndArguments)},
+                {new FunctionCall("Replace", 2), new FunctionMapping("replace", FunctionWithTargetAndArguments)},
+                {new FunctionCall("Substring", 1), new FunctionMapping("substring", FunctionWithTargetAndArguments)},
+                {new FunctionCall("Substring", 2), new FunctionMapping("substring", FunctionWithTargetAndArguments)},
                 {new FunctionCall("ToLower", 0), new FunctionMapping("tolower")},
                 {new FunctionCall("ToUpper", 0), new FunctionMapping("toupper")},
                 {new FunctionCall("Trim", 0), new FunctionMapping("trim")},
-                {new FunctionCall("Concat", 1), new FunctionMapping("concat", FunctionWithSourceAndArguments)},
+                {new FunctionCall("Concat", 1), new FunctionMapping("concat", FunctionWithTargetAndArguments)},
                 {new FunctionCall("Year", 0), new FunctionMapping("year")},
                 {new FunctionCall("Month", 0), new FunctionMapping("month")},
                 {new FunctionCall("Day", 0), new FunctionMapping("day")},
