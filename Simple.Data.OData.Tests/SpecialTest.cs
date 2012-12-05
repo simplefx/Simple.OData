@@ -5,19 +5,28 @@ namespace Simple.Data.OData.Tests
     public class SpecialTest
     {
         private const string _nugetUrl = "http://packages.nuget.org/v1/FeedService.svc/";
-        dynamic _db;
+        private const string _odataOrgUrl = "http://services.odata.org/OData/OData.svc/";
 
         public SpecialTest()
         {
-            _db = Database.Opener.Open(_nugetUrl);
         }
 
         [Fact]
         public void FindFromFeedWithMediaLink()
         {
-            var package = _db.Packages.FindByTitle("Simple.Data.Core");
+            dynamic db = Database.Opener.Open(_nugetUrl);
+            var package = db.Packages.FindByTitle("Simple.Data.Core");
 
             Assert.Equal("Simple.Data.Core", package.Title);
+        }
+
+        [Fact]
+        public void FindByComplexTypeFromODataOrg()
+        {
+            dynamic db = Database.Opener.Open(_odataOrgUrl);
+            var supplier = db.Suppliers.Find(db.Suppliers.Address.City == "Redmond");
+
+            Assert.Equal("Redmond", supplier.Address.City);
         }
     }
 }

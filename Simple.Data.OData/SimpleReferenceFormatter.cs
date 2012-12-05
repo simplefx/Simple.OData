@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -102,35 +103,44 @@ namespace Simple.Data.OData
             }
             else
             {
-                string associationPath;
-                Table table = GetOwnerTable(objectReference, out associationPath);
-                return FormatObjectPath(associationPath, table.FindColumn(objectReference.GetName()).ActualName);
+                var objectNames = objectReference.GetAllObjectNames();
+                var pathNames = BuildObjectPath(new List<string>(), null, objectNames.ToList());
+                return string.Join("/", pathNames.Skip(1));
             }
         }
 
-        private Table GetOwnerTable(ObjectReference objectReference, out string associationPath)
+        private IEnumerable<string> BuildObjectPath(List<string> pathNames, Table table, List<string> objectNames)
         {
-            associationPath = string.Empty;
-
-            var owner = objectReference.GetOwner();
-            if (ReferenceEquals(owner, null))
-                return null;
-
-            if (ReferenceEquals(owner.GetOwner(), null))
-                return _findTable(owner.GetName());
-
-            var table = GetOwnerTable(owner, out associationPath);
-            var association = table.FindAssociation(owner.GetName());
-            associationPath = FormatObjectPath(associationPath, association.ActualName);
-            return _findTable(association.ReferenceTableName);
-        }
-
-        private string FormatObjectPath(string pathPrefix, string objectName)
-        {
-            if (string.IsNullOrEmpty(pathPrefix))
-                return objectName;
+            if (!objectNames.Any())
+            {
+                return pathNames;
+            }
+            else if (!pathNames.Any())
+            {
+                table = _findTable(objectNames.First());
+                pathNames.Add(table.ActualName);
+                return BuildObjectPath(pathNames, table, objectNames.Skip(1).ToList());
+            }
+            else if (table == null)
+            {
+                pathNames.AddRange(objectNames);
+                return BuildObjectPath(pathNames, null, new List<string>());
+            }
             else
-                return string.Join("/", pathPrefix, objectName);
+            {
+                var objectName = objectNames.First();
+                if (table.HasColumn(objectName))
+                {
+                    pathNames.Add(table.FindColumn(objectName).ActualName);
+                    return BuildObjectPath(pathNames, null, objectNames.Skip(1).ToList());
+                }
+                else
+                {
+                    var association = table.FindAssociation(objectName);
+                    pathNames.Add(association.ActualName);
+                    return BuildObjectPath(pathNames, _findTable(association.ReferenceTableName), objectNames.Skip(1).ToList());
+                }
+            }
         }
     }
 }
