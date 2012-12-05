@@ -38,7 +38,7 @@ namespace Simple.OData.Client
 
         private static string FormatExpression(FilterExpression expr)
         {
-            return (object)expr == null ? "null" : expr.ToString();
+            return ReferenceEquals(expr, null) ? "null" : expr.ToString();
         }
 
         private string FormatReference()
@@ -132,7 +132,7 @@ namespace Simple.OData.Client
         {
             if (_operator == ExpressionOperator.None)
                 return false;
-            if ((object)expr == null)
+            if (ReferenceEquals(expr, null))
                 return false;
             if (expr._operator == ExpressionOperator.None)
                 return false;
