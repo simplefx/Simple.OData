@@ -24,9 +24,9 @@ namespace Simple.OData.Client
                 {
                     var stream = response.GetResponseStream();
                     if (setTotalCount)
-                        result = ODataHelper.GetData(stream, out totalCount);
+                        result = ODataFeedReader.GetData(stream, out totalCount);
                     else
-                        result = ODataHelper.GetData(response.GetResponseStream(), scalarResult);
+                        result = ODataFeedReader.GetData(response.GetResponseStream(), scalarResult);
                 }
 
                 return result;
@@ -36,7 +36,7 @@ namespace Simple.OData.Client
         public override IDictionary<string, object> GetEntry(HttpCommand command)
         {
             var text = Request(command.Request);
-            return ODataHelper.GetData(text).First();
+            return ODataFeedReader.GetData(text).First();
         }
 
         public override IDictionary<string, object> InsertEntry(HttpCommand command, bool resultRequired)
@@ -44,7 +44,7 @@ namespace Simple.OData.Client
             var text = Request(command.Request);
             if (resultRequired)
             {
-                return ODataHelper.GetData(text).First();
+                return ODataFeedReader.GetData(text).First();
             }
             else
             {
@@ -82,7 +82,7 @@ namespace Simple.OData.Client
                 else
                 {
                     var stream = response.GetResponseStream();
-                    result = new[] { ODataHelper.GetData(response.GetResponseStream(), false) };
+                    result = new[] { ODataFeedReader.GetData(response.GetResponseStream(), false) };
                 }
 
                 return result;

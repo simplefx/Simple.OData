@@ -5,7 +5,7 @@ namespace Simple.OData.Client.Tests
 {
     using Entry = System.Collections.Generic.Dictionary<string, object>;
 
-    public class ODataClientTest : TestBase
+    public class ODataClientTests : TestBase
     {
         [Fact]
         public void FindEntries()

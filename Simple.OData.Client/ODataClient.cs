@@ -156,7 +156,7 @@ namespace Simple.OData.Client
         {
             var entryMembers = ParseEntryMembers(tableName, entryData);
 
-            var entry = ODataHelper.CreateDataElement(entryMembers.Properties);
+            var entry = ODataFeedReader.CreateDataElement(entryMembers.Properties);
             foreach (var associatedData in entryMembers.AssociationsByValue)
             {
                 CreateLinkElement(entry, tableName, associatedData);
@@ -170,8 +170,8 @@ namespace Simple.OData.Client
             foreach (var associatedData in entryMembers.AssociationsByContentId)
             {
                 var linkCommand = CreateLinkCommand(tableName, associatedData.Key, 
-                    ODataHelper.CreateLinkPath(command.ContentId), 
-                    ODataHelper.CreateLinkPath(associatedData.Value));
+                    ODataFeedReader.CreateLinkPath(command.ContentId), 
+                    ODataFeedReader.CreateLinkPath(associatedData.Value));
                 _requestBuilder.AddCommandToRequest(linkCommand);
                 _requestRunner.InsertEntry(linkCommand, resultRequired);
             }
@@ -225,7 +225,7 @@ namespace Simple.OData.Client
             bool merge = !hasPropertiesToUpdate || CheckMergeConditions(tableName, entryKey, entryData);
             var commandText = new ODataClientWithCommand(this, _schema).From(tableName).Key(entryKey).CommandText;
 
-            var entryElement = ODataHelper.CreateDataElement(entryMembers.Properties);
+            var entryElement = ODataFeedReader.CreateDataElement(entryMembers.Properties);
             var unlinkAssociationNames = new List<string>();
             foreach (var associatedData in entryMembers.AssociationsByValue)
             {
@@ -247,8 +247,8 @@ namespace Simple.OData.Client
             foreach (var associatedData in entryMembers.AssociationsByContentId)
             {
                 var linkCommand = CreateLinkCommand(tableName, associatedData.Key, 
-                    ODataHelper.CreateLinkPath(command.ContentId), 
-                    ODataHelper.CreateLinkPath(associatedData.Value));
+                    ODataFeedReader.CreateLinkPath(command.ContentId), 
+                    ODataFeedReader.CreateLinkPath(associatedData.Value));
                 _requestBuilder.AddCommandToRequest(linkCommand);
                 _requestRunner.UpdateEntry(linkCommand);
             }
@@ -263,18 +263,18 @@ namespace Simple.OData.Client
 
         private HttpCommand CreateLinkCommand(string tableName, string associationName, string entryPath, string linkPath)
         {
-            var linkEntry = ODataHelper.CreateLinkElement(linkPath);
+            var linkEntry = ODataFeedReader.CreateLinkElement(linkPath);
             var linkMethod = _schema.FindTable(tableName).FindAssociation(associationName).IsMultiple ? 
                 RestVerbs.POST : 
                 RestVerbs.PUT;
 
-            var commandText = ODataHelper.CreateLinkCommand(entryPath, associationName);
+            var commandText = ODataFeedReader.CreateLinkCommand(entryPath, associationName);
             return new HttpCommand(linkMethod, commandText, null, linkEntry.ToString(), true);
         }
 
         private HttpCommand CreateUnlinkCommand(string tableName, string associationName, string entryPath)
         {
-            var commandText = ODataHelper.CreateLinkCommand(entryPath, associationName);
+            var commandText = ODataFeedReader.CreateLinkCommand(entryPath, associationName);
             return HttpCommand.Delete(commandText);
         }
 
@@ -287,7 +287,7 @@ namespace Simple.OData.Client
             var associatedKeyValues = GetLinkedEntryKeyValues(association.ReferenceTableName, associatedData);
             if (associatedKeyValues != null)
             {
-                ODataHelper.AddDataLink(entry, association.ActualName, association.ReferenceTableName, associatedKeyValues);
+                ODataFeedReader.AddDataLink(entry, association.ActualName, association.ReferenceTableName, associatedKeyValues);
             }
         }
 

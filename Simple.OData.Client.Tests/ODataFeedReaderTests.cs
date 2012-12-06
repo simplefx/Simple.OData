@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Simple.OData.Client.Tests
 {
-    public class ODataHelperTests
+    public class ODataFeedReaderTests
     {
         private const int productProperties = 10;
         private const int categoryProperties = 4;
@@ -17,7 +17,7 @@ namespace Simple.OData.Client.Tests
         public void GetDataParsesSingleProduct()
         {
             string document = GetResourceAsString("SingleProduct.xml");
-            var result = ODataHelper.GetData(document);
+            var result = ODataFeedReader.GetData(document);
             Assert.Equal(1, result.Count());
             Assert.Equal(productProperties, result.First().Count);
         }
@@ -26,7 +26,7 @@ namespace Simple.OData.Client.Tests
         public void GetDataParsesMultipleProducts()
         {
             string document = GetResourceAsString("MultipleProducts.xml");
-            var result = ODataHelper.GetData(document);
+            var result = ODataFeedReader.GetData(document);
             Assert.Equal(20, result.Count());
             Assert.Equal(productProperties, result.First().Count);
         }
@@ -35,7 +35,7 @@ namespace Simple.OData.Client.Tests
         public void GetDataParsesSingleProductWithCategory()
         {
             string document = GetResourceAsString("SingleProductWithCategory.xml");
-            var result = ODataHelper.GetData(document);
+            var result = ODataFeedReader.GetData(document);
             Assert.Equal(1, result.Count());
             Assert.Equal(productProperties + 1, result.First().Count);
             Assert.Equal(categoryProperties, (result.First()["Category"] as IDictionary<string,object>).Count);
@@ -45,7 +45,7 @@ namespace Simple.OData.Client.Tests
         public void GetDataParsesMultipleProductsWithCategory()
         {
             string document = GetResourceAsString("MultipleProductsWithCategory.xml");
-            var result = ODataHelper.GetData(document);
+            var result = ODataFeedReader.GetData(document);
             Assert.Equal(20, result.Count());
             Assert.Equal(productProperties + 1, result.First().Count);
             Assert.Equal(categoryProperties, (result.First()["Category"] as IDictionary<string, object>).Count);
@@ -55,7 +55,7 @@ namespace Simple.OData.Client.Tests
         public void GetDataParsesSingleCategoryWithProducts()
         {
             string document = GetResourceAsString("SingleCategoryWithProducts.xml");
-            var result = ODataHelper.GetData(document);
+            var result = ODataFeedReader.GetData(document);
             Assert.Equal(1, result.Count());
             Assert.Equal(categoryProperties + 1, result.First().Count);
             Assert.Equal(12, (result.First()["Products"] as IEnumerable<IDictionary<string, object>>).Count());
@@ -66,7 +66,7 @@ namespace Simple.OData.Client.Tests
         public void GetDataParsesMultipleCategoriesWithProducts()
         {
             string document = GetResourceAsString("MultipleCategoriesWithProducts.xml");
-            var result = ODataHelper.GetData(document);
+            var result = ODataFeedReader.GetData(document);
             Assert.Equal(8, result.Count());
             Assert.Equal(categoryProperties + 1, result.First().Count);
             Assert.Equal(12, (result.First()["Products"] as IEnumerable<IDictionary<string, object>>).Count());
@@ -77,7 +77,7 @@ namespace Simple.OData.Client.Tests
         public void GetDataParsesSingleProductWithComplexProperty()
         {
             string document = GetResourceAsString("SingleProductWithComplexProperty.xml");
-            var result = ODataHelper.GetData(document);
+            var result = ODataFeedReader.GetData(document);
             Assert.Equal(1, result.Count());
             Assert.Equal(productProperties + 1, result.First().Count);
             var quantity = result.First()["Quantity"] as IDictionary<string, object>;
@@ -90,7 +90,7 @@ namespace Simple.OData.Client.Tests
         public void GetDataParsesSingleProductWithCollectionOfPrimitiveProperties()
         {
             string document = GetResourceAsString("SingleProductWithCollectionOfPrimitiveProperties.xml");
-            var result = ODataHelper.GetData(document);
+            var result = ODataFeedReader.GetData(document);
             Assert.Equal(1, result.Count());
             Assert.Equal(productProperties + 1, result.First().Count);
             var tags = result.First()["Tags"] as IList<dynamic>;
@@ -103,7 +103,7 @@ namespace Simple.OData.Client.Tests
         public void GetDataParsesSingleProductWithCollectionOfComplexProperties()
         {
             string document = GetResourceAsString("SingleProductWithCollectionOfComplexProperties.xml");
-            var result = ODataHelper.GetData(document);
+            var result = ODataFeedReader.GetData(document);
             Assert.Equal(1, result.Count());
             Assert.Equal(productProperties + 1, result.First().Count);
             var tags = result.First()["Tags"] as IList<dynamic>;
@@ -112,6 +112,60 @@ namespace Simple.OData.Client.Tests
             Assert.Equal("Bakery", tags[0]["value"]);
             Assert.Equal("Food", tags[1]["group"]);
             Assert.Equal("Meat", tags[1]["value"]);
+        }
+
+        [Fact]
+        public void GetColorsSchema()
+        {
+            ParseSchema("Colors");
+        }
+
+        [Fact]
+        public void GetFacebookSchema()
+        {
+            ParseSchema("Facebook");
+        }
+
+        [Fact]
+        public void GetFlickrSchema()
+        {
+            ParseSchema("Flickr");
+        }
+
+        [Fact]
+        public void GetGoogleMapsSchema()
+        {
+            ParseSchema("GoogleMaps");
+        }
+
+        [Fact]
+        public void GetiPhoneSchema()
+        {
+            ParseSchema("iPhone");
+        }
+
+        [Fact]
+        public void GetTwitterSchema()
+        {
+            ParseSchema("Twitter");
+        }
+
+        [Fact]
+        public void GetYouTubeSchema()
+        {
+            ParseSchema("YouTube");
+        }
+
+        [Fact]
+        public void GetNestedSchema()
+        {
+            ParseSchema("Nested");
+        }
+
+        [Fact]
+        public void GetArrayOfNestedSchema()
+        {
+            ParseSchema("ArrayOfNested");
         }
 
         private string GetResourceAsString(string resourceName)
@@ -124,6 +178,14 @@ namespace Simple.OData.Client.Tests
                 TextReader reader = new StreamReader(resourceStream);
                 return reader.ReadToEnd();
             }
+        }
+
+        private void ParseSchema(string schemaName)
+        {
+            var document = GetResourceAsString(schemaName + ".edmx");
+            var result = ODataFeedReader.GetSchema(document);
+            Assert.Equal(1, result.EntityTypes.Count());
+            Assert.Equal(schemaName, result.EntityTypes.First().Name);
         }
     }
 }

@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx">
+  <edmx:DataServices m:DataServiceVersion="3.0" m:MaxDataServiceVersion="3.0" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">
+    <Schema Namespace="Mongo" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <EntityType Name="ArrayOfNested">
+        <Key>
+          <PropertyRef Name="db_id" />
+        </Key>
+        <Property Name="db_id" Type="Edm.String" Nullable="false" />
+        <Property Name="nestedArray" Type="Collection(Mongo.ArrayOfNested__nestedArray)" Nullable="false" />
+      </EntityType>
+      <ComplexType Name="ArrayOfNested__nestedArray">
+        <Property Name="id" Type="Edm.String" />
+        <Property Name="type" Type="Edm.String" />
+        <Property Name="name" Type="Edm.String" />
+        <Property Name="ppu" Type="Edm.Double" Nullable="false" />
+        <Property Name="batters" Type="Mongo.ArrayOfNested__nestedArray__batters" />
+        <Property Name="topping" Type="Collection(Mongo.ArrayOfNested__nestedArray__topping)" Nullable="false" />
+      </ComplexType>
+      <ComplexType Name="ArrayOfNested__nestedArray__batters">
+        <Property Name="batter" Type="Collection(Mongo.ArrayOfNested__nestedArray__batters__batter)" Nullable="false" />
+      </ComplexType>
+      <ComplexType Name="ArrayOfNested__nestedArray__batters__batter">
+        <Property Name="id" Type="Edm.String" />
+        <Property Name="type" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="ArrayOfNested__nestedArray__topping">
+        <Property Name="id" Type="Edm.String" />
+        <Property Name="type" Type="Edm.String" />
+      </ComplexType>
+      <EntityContainer Name="MongoContext" m:IsDefaultEntityContainer="true">
+        <EntitySet Name="ArrayOfNested" EntityType="Mongo.ArrayOfNested" />
+      </EntityContainer>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>

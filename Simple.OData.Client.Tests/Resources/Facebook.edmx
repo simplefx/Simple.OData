@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx">
+  <edmx:DataServices m:DataServiceVersion="3.0" m:MaxDataServiceVersion="3.0" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">
+    <Schema Namespace="Mongo" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <EntityType Name="Facebook">
+        <Key>
+          <PropertyRef Name="db_id" />
+        </Key>
+        <Property Name="db_id" Type="Edm.String" Nullable="false" />
+        <Property Name="data" Type="Collection(Mongo.Facebook__data)" Nullable="false" />
+      </EntityType>
+      <ComplexType Name="Facebook__data">
+        <Property Name="id" Type="Edm.String" />
+        <Property Name="from" Type="Mongo.Facebook__data__from" />
+        <Property Name="message" Type="Edm.String" />
+        <Property Name="actions" Type="Collection(Mongo.Facebook__data__actions)" Nullable="false" />
+        <Property Name="type" Type="Edm.String" />
+        <Property Name="created_time" Type="Edm.String" />
+        <Property Name="updated_time" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="Facebook__data__from">
+        <Property Name="name" Type="Edm.String" />
+        <Property Name="id" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="Facebook__data__actions">
+        <Property Name="name" Type="Edm.String" />
+        <Property Name="link" Type="Edm.String" />
+      </ComplexType>
+      <EntityContainer Name="MongoContext" m:IsDefaultEntityContainer="true">
+        <EntitySet Name="Facebook" EntityType="Mongo.Facebook" />
+      </EntityContainer>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>

@@ -21,7 +21,7 @@ namespace Simple.OData.Client
             {
                 _metadataString = new Lazy<string>(() => RequestMetadataAsString(urlBase));
             }
-            _metadata = new Lazy<EdmSchema>(() => ODataHelper.GetSchema(_metadataString.Value));
+            _metadata = new Lazy<EdmSchema>(() => ODataFeedReader.GetSchema(_metadataString.Value));
             _schema = new Lazy<Schema>(() => Schema.Get(this));
         }
 
@@ -156,7 +156,7 @@ namespace Simple.OData.Client
             {
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    return ODataHelper.GetSchemaAsString(response.GetResponseStream());
+                    return ODataFeedReader.GetSchemaAsString(response.GetResponseStream());
                 }
             }
             // TODO
