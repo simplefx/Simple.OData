@@ -134,13 +134,15 @@ namespace Simple.OData.Client
             IEnumerable<XElement> elements, 
             string typesNamespace)
         {
-            return from e in elements
-                   select new EdmComplexType()
-                   {
-                       Name = string.Format("{0}.{1}", typesNamespace, e.Attribute("Name").Value),
-                       Properties = (from p in e.Descendants(null, "Property")
-                                     select ParseProperty(p, new EdmComplexType[] { }, new EdmEntityType[] { })).ToArray(),
-                   };
+            Func<XElement, string> GetComplexTypeName = x => string.Format("{0}.{1}", typesNamespace, x.Attribute("Name").Value);
+            var complexTypes = from e in elements select new EdmComplexType { Name = GetComplexTypeName(e) };
+            elements.ToList().ForEach(e =>
+            {
+                var complexType = complexTypes.Single(x => x.Name == GetComplexTypeName(e));
+                complexType.Properties = (from p in e.Descendants(null, "Property")
+                                          select ParseProperty(p, complexTypes, new EdmEntityType[] { })).ToArray();
+            });
+            return complexTypes;
         }
 
         private static IEnumerable<EdmEntityType> ParseEntityTypes(
