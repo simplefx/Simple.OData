@@ -51,7 +51,12 @@ namespace Simple.Data.OData
 
         private FilterExpression Convert(SimpleReference reference)
         {
-            return ODataFilter.ExpressionFromReference(reference.GetAliasOrName());
+            var formattedReference = reference.GetAliasOrName();
+            if (reference is ObjectReference)
+            {
+                formattedReference = string.Join(".", (reference as ObjectReference).GetAllObjectNames().Skip(1));
+            }
+            return ODataFilter.ExpressionFromReference(formattedReference);
         }
 
         private FilterExpression Convert(FunctionReference function)

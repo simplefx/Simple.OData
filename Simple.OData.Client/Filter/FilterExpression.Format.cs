@@ -43,7 +43,7 @@ namespace Simple.OData.Client
 
         private string FormatReference()
         {
-            return _reference;
+            return _reference.Replace(".", "/");
         }
 
         private string FormatFunction()
