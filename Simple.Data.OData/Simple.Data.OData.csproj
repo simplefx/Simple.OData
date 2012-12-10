@@ -56,13 +56,10 @@
     <Compile Include="ODataTableAdapterWithFunctions.cs" />
     <Compile Include="ODataTableAdapterWithTransactions.cs" />
     <Compile Include="CommandBuilder.cs" />
-    <Compile Include="ExpressionFormatter.cs" />
-    <Compile Include="FunctionNameConverter.cs" />
     <Compile Include="IDatabaseOpenerExtensions.cs" />
     <Compile Include="ODataTableAdapter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueryCommand.cs" />
-    <Compile Include="SimpleReferenceFormatter.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Simple.NExtLib\Simple.NExtLib.csproj">

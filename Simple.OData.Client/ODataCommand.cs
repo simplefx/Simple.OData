@@ -82,6 +82,12 @@ namespace Simple.OData.Client
             return _client;
         }
 
+        public IClientWithCommand Filter(FilterExpression expression)
+        {
+            _filter = expression.Format(_client, _table);
+            return _client;
+        }
+
         public IClientWithCommand Skip(int count)
         {
             _skipCount = count;

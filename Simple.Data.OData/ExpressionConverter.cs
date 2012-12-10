@@ -5,7 +5,7 @@ namespace Simple.Data.OData
 {
     public class ExpressionConverter
     {
-        public string ConvertExpression(SimpleExpression expression)
+        public FilterExpression ConvertExpression(SimpleExpression expression)
         {
             return Convert(expression);
         }

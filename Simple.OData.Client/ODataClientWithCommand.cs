@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Simple.OData.Client
 {
@@ -132,6 +133,11 @@ namespace Simple.OData.Client
         public IClientWithCommand Filter(string filter)
         {
             return _command.Filter(filter);
+        }
+
+        public IClientWithCommand Filter(FilterExpression expression)
+        {
+            return _command.Filter(expression);
         }
 
         public IClientWithCommand Skip(int count)

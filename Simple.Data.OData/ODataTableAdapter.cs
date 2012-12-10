@@ -200,8 +200,8 @@ namespace Simple.Data.OData
             else if (cmd.KeyValues != null && cmd.KeyValues.Count > 0)
                 clientCommand = clientCommand.Key(cmd.KeyValues);
 
-            if (!string.IsNullOrEmpty(cmd.Filter))
-                clientCommand = clientCommand.Filter(cmd.Filter);
+            if (!ReferenceEquals(cmd.FilterExpression, null))
+                clientCommand = clientCommand.Filter(cmd.FilterExpression);
 
             if (cmd.Expand.Count > 0)
                 clientCommand = clientCommand.Expand(cmd.Expand);

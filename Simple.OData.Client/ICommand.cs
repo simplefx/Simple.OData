@@ -9,6 +9,7 @@ namespace Simple.OData.Client
         IClientWithCommand Key(IEnumerable<object> entryKey);
         IClientWithCommand Key(IDictionary<string, object> entryKey);
         IClientWithCommand Filter(string filter);
+        IClientWithCommand Filter(FilterExpression expression);
         IClientWithCommand Skip(int count);
         IClientWithCommand Top(int count);
         IClientWithCommand Expand(IEnumerable<string> associations);

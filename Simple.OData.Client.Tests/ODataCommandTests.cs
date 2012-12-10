@@ -91,6 +91,17 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void SelectSingleHomogenize()
+        {
+            var products = _client
+                .From("Products")
+                .Select("Product_Name")
+                .FindEntries();
+            Assert.Contains("ProductName", products.First().Keys);
+            Assert.DoesNotContain("ProductID", products.First().Keys);
+        }
+
+        [Fact]
         public void SelectMultiple()
         {
             var products = _client

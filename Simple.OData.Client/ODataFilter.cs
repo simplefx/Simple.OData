@@ -5,7 +5,7 @@ namespace Simple.OData.Client
 {
     public static class ODataFilter
     {
-        public class DynamicContext : DynamicObject
+        public class ExpressionFactory : DynamicObject
         {
             public override bool TryGetMember(GetMemberBinder binder, out object result)
             {
@@ -14,9 +14,9 @@ namespace Simple.OData.Client
             }
         }
 
-        public static dynamic Context
+        public static dynamic Expression
         {
-            get { return new DynamicContext(); }
+            get { return new ExpressionFactory(); }
         }
 
         public static FilterExpression ExpressionFromReference(string reference)

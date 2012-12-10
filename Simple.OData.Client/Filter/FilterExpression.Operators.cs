@@ -21,11 +21,6 @@ namespace Simple.OData.Client
         public static implicit operator FilterExpression(Guid value) { return FilterExpression.FromValue(value); }
         public static implicit operator FilterExpression(string value) { return FilterExpression.FromValue(value); }
 
-        public static implicit operator string(FilterExpression expr)
-        {
-            return expr.ToString();
-        }
-
         public static FilterExpression operator !(FilterExpression expr)
         {
             return new FilterExpression(expr, null, ExpressionOperator.NOT);
