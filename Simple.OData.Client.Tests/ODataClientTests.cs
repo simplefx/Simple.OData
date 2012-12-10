@@ -15,7 +15,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public void FindEntryExistingStringFilter()
+        public void FindEntryExisting()
         {
             var product = _client.FindEntry("Products?$filter=ProductName eq 'Chai'");
             Assert.Equal("Chai", product["ProductName"]);

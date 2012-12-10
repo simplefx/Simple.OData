@@ -18,6 +18,16 @@ namespace Simple.OData.Client.Tests
             Assert.Equal("Chai", products.Single()["ProductName"]);
         }
 
+        public void FilterExpression()
+        {
+            var x = ODataFilter.Expression;
+            var products = _client
+                .From("Products")
+                .Filter(x.ProductName == "Chai")
+                .FindEntries();
+            Assert.Equal("Chai", products.Single()["ProductName"]);
+        }
+
         [Fact]
         public void Get()
         {
@@ -43,6 +53,18 @@ namespace Simple.OData.Client.Tests
         {
             var products = _client
                 .From("Products")
+                .Top(1)
+                .FindEntries();
+            Assert.Equal(1, products.Count());
+        }
+
+        [Fact]
+        public void TopOneExpression()
+        {
+            var x = ODataFilter.Expression;
+            IEnumerable<dynamic> products = _client
+                .From("Products")
+                .Filter(x.ProductName == "Chai")
                 .Top(1)
                 .FindEntries();
             Assert.Equal(1, products.Count());
@@ -139,6 +161,18 @@ namespace Simple.OData.Client.Tests
             var count = _client
                 .From("Products")
                 .Filter("ProductName eq 'Chai'")
+                .Count()
+                .FindScalar();
+            Assert.Equal(1, int.Parse(count.ToString()));
+        }
+
+        [Fact]
+        public void FilterExpressionCount()
+        {
+            var x = ODataFilter.Expression;
+            var count = _client
+                .From("Products")
+                .Filter(x.ProductName == "Chai")
                 .Count()
                 .FindScalar();
             Assert.Equal(1, int.Parse(count.ToString()));

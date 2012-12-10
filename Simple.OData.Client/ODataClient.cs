@@ -224,9 +224,9 @@ namespace Simple.OData.Client
         {
             if (filterExpression is FilterExpression)
             {
-                var clientWithCommand = new ODataClientWithCommand(this, _schema).From(collectionName);
-                clientWithCommand = clientWithCommand.Filter(filterExpression as FilterExpression);
-                return clientWithCommand.CommandText;
+                var clientWithCommand = new ODataClientWithCommand(this, _schema);
+                string filter = (filterExpression as FilterExpression).Format(clientWithCommand, collectionName);
+                return clientWithCommand.From(collectionName).Filter(filter).CommandText;
             }
             else
             {

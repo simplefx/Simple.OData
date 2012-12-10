@@ -15,6 +15,11 @@ namespace Simple.OData.Client
             return this.Format(new ExpressionContext() { Client = client, Table = table });
         }
 
+        internal string Format(ODataClientWithCommand client, string collectionName)
+        {
+            return this.Format(new ExpressionContext() { Client = client, CollectionName = collectionName });
+        }
+
         internal string Format(ExpressionContext context)
         {
             if (_operator == ExpressionOperator.None)

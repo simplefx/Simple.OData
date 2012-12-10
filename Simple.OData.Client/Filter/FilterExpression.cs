@@ -7,17 +7,6 @@ namespace Simple.OData.Client
 {
     public partial class FilterExpression : DynamicObject
     {
-        internal class ExpressionContext
-        {
-            public ODataClientWithCommand Client { get; set; }
-            public Table Table { get; set; }
-
-            public bool IsSet
-            {
-                get { return this.Client != null && this.Table != null; }
-            }
-        }
-
         private string _reference;
         private object _value;
         private ExpressionFunction _function;
@@ -82,9 +71,9 @@ namespace Simple.OData.Client
             return base.TryInvokeMember(binder, args, out result);
         }
 
-        //public override string ToString()
-        //{
-        //    return Format();
-        //}
+        public override string ToString()
+        {
+            return Format(new ExpressionContext());
+        }
     }
 }

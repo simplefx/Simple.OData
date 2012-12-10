@@ -37,7 +37,7 @@ namespace Simple.Data.OData
                     TablePath = tablePath,
                     Criteria = criteria,
                     NamedKeyValues = namedKeyValues == null ? null : namedKeyValues.ToDictionary(),
-                    FilterExpression = namedKeyValues == null ? ConvertExpression(criteria) : null,
+                    FilterExpression = namedKeyValues == null ? new ExpressionConverter().ConvertExpression(criteria) : null,
                 };
         }
 
@@ -74,11 +74,6 @@ namespace Simple.Data.OData
         public QueryCommand BuildCommand(string tablePath, object[] keyValues)
         {
             return new QueryCommand() { TablePath = tablePath, KeyValues = keyValues.ToList() };
-        }
-
-        private FilterExpression ConvertExpression(SimpleExpression expression)
-        {
-            return new ExpressionConverter().ConvertExpression(expression);
         }
 
         private bool TryApplyWithClause(WithClause clause, QueryCommand cmd)
@@ -132,7 +127,7 @@ namespace Simple.Data.OData
                 ? clause.Criteria
                 : new SimpleExpression(cmd.Criteria, clause.Criteria, SimpleExpressionType.And);
 
-            cmd.FilterExpression = ConvertExpression(cmd.Criteria);
+            cmd.FilterExpression = new ExpressionConverter().ConvertExpression(cmd.Criteria);
 
             return true;
         }
