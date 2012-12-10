@@ -172,7 +172,7 @@ namespace Simple.OData.Client.Tests
         {
             var assembly = Assembly.GetExecutingAssembly();
             var resourceNames = assembly.GetManifestResourceNames();
-            string completeResourceName = resourceNames.FirstOrDefault(o => o.EndsWith(resourceName, StringComparison.CurrentCultureIgnoreCase));
+            string completeResourceName = resourceNames.FirstOrDefault(o => o.EndsWith("." + resourceName, StringComparison.CurrentCultureIgnoreCase));
             using (Stream resourceStream = assembly.GetManifestResourceStream(completeResourceName))
             {
                 TextReader reader = new StreamReader(resourceStream);

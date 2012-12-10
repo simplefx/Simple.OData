@@ -29,11 +29,6 @@ namespace Simple.OData.Client
             return FilterExpression.FromValue(value);
         }
 
-        public static FilterExpression ExpressionFromFunction(ExpressionFunction function)
-        {
-            return FilterExpression.FromFunction(function);
-        }
-
         public static FilterExpression ExpressionFromFunction(string functionName, string targetName, IEnumerable<object> arguments)
         {
             return FilterExpression.FromFunction(functionName, targetName, arguments);

@@ -18,10 +18,10 @@ namespace Simple.OData.Client
             }
         }
 
-        private FilterExpression _parent;
         private string _reference;
-        private ExpressionFunction _function;
         private object _value;
+        private ExpressionFunction _function;
+        private FilterExpression _functionCaller;
         private readonly FilterExpression _left;
         private readonly FilterExpression _right;
         private readonly ExpressionOperator _operator;
@@ -55,26 +55,17 @@ namespace Simple.OData.Client
         internal static FilterExpression FromFunction(string functionName, string targetName, IEnumerable<object> arguments)
         {
             var expression = new FilterExpression();
-            expression._function = new ExpressionFunction(functionName, FilterExpression.FromReference(targetName), arguments);
+            expression._functionCaller = FilterExpression.FromReference(targetName);
+            expression._function = new ExpressionFunction(functionName, arguments);
             return expression;
-            //ExpressionFunction.FunctionMapping mapping;
-            //if (ExpressionFunction.SupportedFunctions.TryGetValue(new ExpressionFunction.FunctionCall(functionName, arguments == null ? 0 : arguments.Count()), out mapping))
-            //{
-            //    return mapping.FunctionMapper(functionName, targetName, arguments);
-            //}
-            //else
-            //{
-            //    throw new NotSupportedException(string.Format("The function {0} is not supported or called with wrong number of arguments", functionName));
-            //}
         }
 
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
-            ExpressionFunction.FunctionMapping mapping;
-            if (ExpressionFunction.SupportedFunctions.TryGetValue(new ExpressionFunction.FunctionCall(binder.Name, 0), out mapping))
+            FunctionMapping mapping;
+            if (FunctionMapping.SupportedFunctions.TryGetValue(new ExpressionFunction.FunctionCall(binder.Name, 0), out mapping))
             {
-//                result = mapping.FunctionMapper(binder.Name, this.Format(), null);
-                result = new FilterExpression() {_parent = this, _reference = binder.Name};
+                result = new FilterExpression() {_functionCaller = this, _reference = binder.Name};
                 return true;
             }
             return base.TryGetMember(binder, out result);
@@ -82,13 +73,10 @@ namespace Simple.OData.Client
 
         public override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)
         {
-            ExpressionFunction.FunctionMapping mapping;
-            if (ExpressionFunction.SupportedFunctions.TryGetValue(new ExpressionFunction.FunctionCall(binder.Name, args.Count()), out mapping))
+            FunctionMapping mapping;
+            if (FunctionMapping.SupportedFunctions.TryGetValue(new ExpressionFunction.FunctionCall(binder.Name, args.Count()), out mapping))
             {
-//                result = mapping.FunctionMapper(binder.Name, this.Format(), args);
-                var expression = new FilterExpression();
-                expression._function = new ExpressionFunction(binder.Name, this, args);
-                result = expression;
+                result = new FilterExpression() { _functionCaller = this, _function = new ExpressionFunction(binder.Name, args) };
                 return true;
             }
             return base.TryInvokeMember(binder, args, out result);

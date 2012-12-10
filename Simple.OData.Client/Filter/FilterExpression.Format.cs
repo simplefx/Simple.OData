@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
+using Simple.NExtLib;
 
 namespace Simple.OData.Client
 {
@@ -60,16 +62,16 @@ namespace Simple.OData.Client
         private string FormatReference(ExpressionContext context)
         {
             var elementNames = new List<string>(_reference.Split('.'));
-            var pathNames = BuildReferencePath(new List<string>(), null, elementNames, context);
-            return string.Join("/", pathNames.Skip(1).ToList());
+            var pathNames = BuildReferencePath(new List<string>(), context.Table, elementNames, context);
+            return string.Join("/", pathNames);
         }
 
         private string FormatFunction(ExpressionContext context)
         {
-            ExpressionFunction.FunctionMapping mapping;
-            if (ExpressionFunction.SupportedFunctions.TryGetValue(new ExpressionFunction.FunctionCall(_function.FunctionName, _function.Arguments.Count()), out mapping))
+            FunctionMapping mapping;
+            if (FunctionMapping.SupportedFunctions.TryGetValue(new ExpressionFunction.FunctionCall(_function.FunctionName, _function.Arguments.Count()), out mapping))
             {
-                var mappedFunction = mapping.FunctionMapper(_function.FunctionName, _function.Target.Format(context), _function.Arguments)._function;
+                var mappedFunction = mapping.FunctionMapper(_function.FunctionName, _functionCaller.Format(context), _function.Arguments)._function;
                 return string.Format("{0}({1})", mappedFunction.FunctionName,
                     string.Join(",", (IEnumerable<object>)mappedFunction.Arguments.Select(x => FormatExpression(x, context))));
             }
@@ -81,14 +83,16 @@ namespace Simple.OData.Client
 
         private string FormatValue(ExpressionContext context)
         {
-            return _value == null ?
-                "null" : _value is FilterExpression ?
-                (_value as FilterExpression).Format(context) :
-                _value is string ?
-                string.Format("'{0}'", _value) :
-                _value is bool ?
-                _value.ToString().ToLower() :
-                _value.ToString();
+            return _value == null
+                       ? "null"
+                       : _value is FilterExpression ? (_value as FilterExpression).Format(context)
+                       : _value is string ? string.Format("'{0}'", _value)
+                       : _value is bool ? _value.ToString().ToLower()
+                       : _value is DateTime ? ((DateTime)_value).ToIso8601String()
+                       : _value is float ? ((float)_value).ToString(CultureInfo.InvariantCulture)
+                       : _value is double ? ((double)_value).ToString(CultureInfo.InvariantCulture)
+                       : _value is decimal ? ((decimal)_value).ToString(CultureInfo.InvariantCulture)
+                       : _value.ToString();
         }
 
         private string FormatOperator(ExpressionContext context)
@@ -136,12 +140,7 @@ namespace Simple.OData.Client
             }
 
             var objectName = elementNames.First();
-            if (!pathNames.Any() && context != null && context.IsSet)
-            {
-                pathNames.Add(context.Table.ActualName);
-                return BuildReferencePath(pathNames, context.Table, elementNames, context);
-            }
-            else if (table != null)
+            if (table != null)
             {
                 if (table.HasColumn(objectName))
                 {
@@ -156,12 +155,9 @@ namespace Simple.OData.Client
                 }
                 else
                 {
-                    ExpressionFunction.FunctionMapping mapping;
-                    if (ExpressionFunction.SupportedFunctions.TryGetValue(new ExpressionFunction.FunctionCall(objectName, 0), out mapping))
+                    var formattedFunction = FormatAsFunction(objectName, context);
+                    if (!string.IsNullOrEmpty(formattedFunction))
                     {
-                        string targetName = _parent.Format(context);
-                        var mappedFunction = mapping.FunctionMapper(objectName, targetName, null)._function;
-                        var formattedFunction = string.Format("{0}({1})", mappedFunction.FunctionName, targetName);
                         pathNames.Add(formattedFunction);
                         return BuildReferencePath(pathNames, null, elementNames.Skip(1).ToList(), context);
                     }
@@ -171,12 +167,9 @@ namespace Simple.OData.Client
                     }
                 }
             }
-            else if (ExpressionFunction.SupportedFunctions.ContainsKey(new ExpressionFunction.FunctionCall(elementNames.First(), 0)))
+            else if (FunctionMapping.SupportedFunctions.ContainsKey(new ExpressionFunction.FunctionCall(elementNames.First(), 0)))
             {
-                string targetName = _parent.Format(context);
-                var mapping = ExpressionFunction.SupportedFunctions[new ExpressionFunction.FunctionCall(elementNames.First(), 0)];
-                var mappedFunction = mapping.FunctionMapper(objectName, targetName, null)._function;
-                var formattedFunction = string.Format("{0}({1})", mappedFunction.FunctionName, targetName);
+                var formattedFunction = FormatAsFunction(objectName, context);
                 pathNames.Add(formattedFunction);
                 return BuildReferencePath(pathNames, null, elementNames.Skip(1).ToList(), context);
             }
@@ -184,6 +177,21 @@ namespace Simple.OData.Client
             {
                 pathNames.AddRange(elementNames);
                 return BuildReferencePath(pathNames, null, new List<string>(), context);
+            }
+        }
+
+        private string FormatAsFunction(string objectName, ExpressionContext context)
+        {
+            FunctionMapping mapping;
+            if (FunctionMapping.SupportedFunctions.TryGetValue(new ExpressionFunction.FunctionCall(objectName, 0), out mapping))
+            {
+                string targetName = _functionCaller.Format(context);
+                var mappedFunction = mapping.FunctionMapper(objectName, targetName, null)._function;
+                return string.Format("{0}({1})", mappedFunction.FunctionName, targetName);
+            }
+            else
+            {
+                return null;
             }
         }
 
