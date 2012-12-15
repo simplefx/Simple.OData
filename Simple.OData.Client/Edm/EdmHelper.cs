@@ -52,6 +52,7 @@ namespace Simple.OData.Client
         {
             if (element == null) throw new ArgumentNullException("element");
 
+            var typeAttribute = element.Attribute("m", "type").ValueOrDefault();
             object elementValue;
             if (element.Attribute("m", "null").ValueOrDefault() == "true")
             {
@@ -59,7 +60,6 @@ namespace Simple.OData.Client
             }
             else if (element.HasElements)
             {
-                var typeAttribute = element.Attribute("m", "type").ValueOrDefault();
                 if (!string.IsNullOrEmpty(typeAttribute) && typeAttribute.StartsWith("Collection("))
                 {
                     elementValue = ReadPropertyArray(element);
@@ -68,6 +68,10 @@ namespace Simple.OData.Client
                 {
                     elementValue = ReadPropertySet(element);
                 }
+            }
+            else if (!string.IsNullOrEmpty(typeAttribute) && typeAttribute.StartsWith("Collection("))
+            {
+                elementValue = new object[0];
             }
             else
             {
@@ -102,7 +106,7 @@ namespace Simple.OData.Client
 
         public static void Write(XElement container, KeyValuePair<string, object> kvp)
         {
-            var element = new XElement(container.GetNamespaceOfPrefix("d") + kvp.Key);;
+            var element = new XElement(container.GetNamespaceOfPrefix("d") + kvp.Key); ;
 
             if (kvp.Value == null)
             {

@@ -92,11 +92,15 @@ namespace Simple.OData.Client.Tests
             string document = GetResourceAsString("SingleProductWithCollectionOfPrimitiveProperties.xml");
             var result = ODataFeedReader.GetData(document);
             Assert.Equal(1, result.Count());
-            Assert.Equal(productProperties + 1, result.First().Count);
+            Assert.Equal(productProperties + 2, result.First().Count);
             var tags = result.First()["Tags"] as IList<dynamic>;
             Assert.Equal(2, tags.Count);
             Assert.Equal("Bakery", tags[0]);
             Assert.Equal("Food", tags[1]);
+            var ids = result.First()["Ids"] as IList<dynamic>;
+            Assert.Equal(2, ids.Count);
+            Assert.Equal(1, ids[0]);
+            Assert.Equal(2, ids[1]);
         }
 
         [Fact]
@@ -112,6 +116,17 @@ namespace Simple.OData.Client.Tests
             Assert.Equal("Bakery", tags[0]["value"]);
             Assert.Equal("Food", tags[1]["group"]);
             Assert.Equal("Meat", tags[1]["value"]);
+        }
+
+        [Fact]
+        public void GetDataParsesSingleProductWithEmptyCollectionOfComplexProperties()
+        {
+            string document = GetResourceAsString("SingleProductWithEmptyCollectionOfComplexProperties.xml");
+            var result = ODataFeedReader.GetData(document);
+            Assert.Equal(1, result.Count());
+            Assert.Equal(productProperties + 1, result.First().Count);
+            var tags = result.First()["Tags"] as IList<dynamic>;
+            Assert.Equal(0, tags.Count);
         }
 
         [Fact]
