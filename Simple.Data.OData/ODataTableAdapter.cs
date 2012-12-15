@@ -80,7 +80,7 @@ namespace Simple.Data.OData
         private IEnumerable<IDictionary<string, object>> FindByExpression(string tableName, SimpleExpression criteria)
         {
             var cmd = new CommandBuilder().BuildCommand(tableName, criteria);
-            return FindEntries(cmd);
+            return GetODataClientCommand(cmd).FindEntries();
         }
 
         private IEnumerable<IDictionary<string, object>> FindByQuery(SimpleQuery query, out IEnumerable<SimpleQueryClauseBase> unhandledClauses)
@@ -106,59 +106,21 @@ namespace Simple.Data.OData
         private IDictionary<string, object> FindByKey(string tableName, object[] keyValues)
         {
             var cmd = new CommandBuilder().BuildCommand(tableName, keyValues);
-            return FindEntries(cmd).SingleOrDefault();
-        }
-
-        private IEnumerable<IDictionary<string, object>> FindEntries(QueryCommand cmd, bool scalarResult = false)
-        {
-            var client = GetODataClientCommand(cmd);
-            return client.FindEntries(scalarResult);
-        }
-
-        private IEnumerable<IDictionary<string, object>> FindEntries(QueryCommand cmd, out int totalCount)
-        {
-            var client = GetODataClientCommand(cmd);
-            return client.FindEntries(out totalCount);
+            return GetODataClientCommand(cmd).FindEntries().SingleOrDefault();
         }
 
         private int UpdateByExpression(string tableName, IDictionary<string, object> data, SimpleExpression criteria, IAdapterTransaction transaction)
         {
-            var entryKey = TryReinterpretExpressionAsKeyLookup(tableName, criteria);
-            if (entryKey != null)
-            {
-                GetODataClient(transaction).UpdateEntry(tableName, entryKey, data);
-            }
-            else
-            {
-                var entries = FindByExpression(tableName, criteria);
-
-                foreach (var entry in entries)
-                {
-                    GetODataClient(transaction).UpdateEntry(tableName, entry, data);
-                }
-            }
-            // TODO: what to return?
-            return 0;
+            var cmd = new CommandBuilder().BuildCommand(tableName, criteria);
+            var clientCommand = GetODataClientCommand(cmd);
+            return GetODataClient(transaction).UpdateEntries(tableName, clientCommand.CommandText, data);
         }
 
         private int DeleteByExpression(string tableName, SimpleExpression criteria, IAdapterTransaction transaction)
         {
-            var entryKey = TryReinterpretExpressionAsKeyLookup(tableName, criteria);
-            if (entryKey != null)
-            {
-                GetODataClient(transaction).DeleteEntry(tableName, entryKey);
-            }
-            else
-            {
-                var entries = FindByExpression(tableName, criteria);
-
-                foreach (var entry in entries)
-                {
-                    GetODataClient(transaction).DeleteEntry(tableName, entry);
-                }
-            }
-            // TODO: what to return?
-            return 0;
+            var cmd = new CommandBuilder().BuildCommand(tableName, criteria);
+            var clientCommand = GetODataClientCommand(cmd);
+            return GetODataClient(transaction).DeleteEntries(tableName, clientCommand.CommandText);
         }
 
         private ODataClient GetODataClient(IAdapterTransaction transaction = null)
@@ -243,12 +205,6 @@ namespace Simple.Data.OData
             {
                 throw new SimpleDataException("No properties were found which could be mapped to the database.");
             }
-        }
-
-        private IDictionary<string, object> TryReinterpretExpressionAsKeyLookup(string tablePath, SimpleExpression expression)
-        {
-            // TODO
-            return null;
         }
     }
 }

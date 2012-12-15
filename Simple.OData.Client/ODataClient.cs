@@ -180,10 +180,20 @@ namespace Simple.OData.Client
             return result;
         }
 
+        public int UpdateEntries(string collection, string commandText, IDictionary<string, object> entryData)
+        {
+            return IterateEntries(collection, commandText, entryData, UpdateEntry);
+        }
+
         public int UpdateEntry(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
         {
             var entryMembers = ParseEntryMembers(collection, entryData);
             return UpdateEntryPropertiesAndAssociations(collection, entryKey, entryData, entryMembers);
+        }
+
+        public int DeleteEntries(string collection, string commandText)
+        {
+            return IterateEntries(collection, commandText, null, (x,y,z) => DeleteEntry(x,y));
         }
 
         public int DeleteEntry(string collection, IDictionary<string, object> entryKey)
@@ -231,6 +241,33 @@ namespace Simple.OData.Client
             else
             {
                 throw new InvalidOperationException("Unable to cast dynamic object to FilterExpression");
+            }
+        }
+
+        private int IterateEntries(string collection, string commandText, IDictionary<string, object> entryData, 
+            Func<string, IDictionary<string, object>, IDictionary<string, object>, int> func)
+        {
+            var entryKey = ExtractKeyFromCommandText(collection, commandText);
+            if (entryKey != null)
+            {
+                return func(collection, entryKey, entryData);
+            }
+            else
+            {
+                var entries = new ODataClient(_urlBase).FindEntries(commandText);
+                if (entries != null)
+                {
+                    var entryList = entries.ToList();
+                    foreach (var entry in entryList)
+                    {
+                        func(collection, entry, entryData);
+                    }
+                    return entryList.Count;
+                }
+                else
+                {
+                    return 0;
+                }
             }
         }
 
@@ -403,6 +440,12 @@ namespace Simple.OData.Client
                 }
             }
             return false;
+        }
+
+        private IDictionary<string, object> ExtractKeyFromCommandText(string collection, string commandText)
+        {
+            // TODO
+            return null;
         }
     }
 }
