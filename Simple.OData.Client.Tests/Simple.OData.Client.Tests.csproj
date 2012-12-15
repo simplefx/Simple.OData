@@ -73,6 +73,7 @@
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="FilterExpressionTests.cs" />
+    <Compile Include="FilterAsKeyTests.cs" />
     <Compile Include="ODataClientTests.cs" />
     <Compile Include="ODataCommandTests.cs" />
     <Compile Include="ODataFeedReaderTests.cs" />
@@ -132,7 +133,9 @@
     <EmbeddedResource Include="Resources\SingleProductWithCollectionOfPrimitiveProperties.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\SingleProductWithCollectionOfComplexProperties.xml" />
+    <EmbeddedResource Include="Resources\SingleProductWithCollectionOfComplexProperties.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Simple.Data.OData.NorthwindModel\Simple.Data.OData.NorthwindModel.csproj">

@@ -75,5 +75,25 @@ namespace Simple.OData.Client
         {
             return Format(new ExpressionContext());
         }
+
+        internal void ExtractEqualityComparisons(IDictionary<string, object> columnEqualityComparisons)
+        {
+            switch (_operator)
+            {
+                case ExpressionOperator.AND:
+                    _left.ExtractEqualityComparisons(columnEqualityComparisons);
+                    _right.ExtractEqualityComparisons(columnEqualityComparisons);
+                    break;
+
+                case ExpressionOperator.EQ:
+                    if (!string.IsNullOrEmpty(_left._reference))
+                    {
+                        var key = _left.ToString().Split('.').Last();
+                        if (!columnEqualityComparisons.ContainsKey(key))
+                            columnEqualityComparisons.Add(key, _right);
+                    }
+                    break;
+            }
+        }
     }
 }

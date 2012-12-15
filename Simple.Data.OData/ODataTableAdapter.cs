@@ -79,16 +79,13 @@ namespace Simple.Data.OData
 
         private IEnumerable<IDictionary<string, object>> FindByExpression(string tableName, SimpleExpression criteria)
         {
-            var builder = new CommandBuilder(GetSchema().FindTable, GetKeyNames);
-            var cmd = builder.BuildCommand(tableName, criteria);
-
+            var cmd = new CommandBuilder().BuildCommand(tableName, criteria);
             return FindEntries(cmd);
         }
 
         private IEnumerable<IDictionary<string, object>> FindByQuery(SimpleQuery query, out IEnumerable<SimpleQueryClauseBase> unhandledClauses)
         {
-            var builder = new CommandBuilder(GetSchema().FindTable, GetKeyNames);
-            var cmd = builder.BuildCommand(query);
+            var cmd = new CommandBuilder().BuildCommand(query);
             unhandledClauses = cmd.UnprocessedClauses;
             var clientCommand = GetODataClientCommand(cmd);
 
@@ -108,8 +105,7 @@ namespace Simple.Data.OData
 
         private IDictionary<string, object> FindByKey(string tableName, object[] keyValues)
         {
-            var builder = new CommandBuilder(GetSchema().FindTable, GetKeyNames);
-            var cmd = builder.BuildCommand(tableName, keyValues);
+            var cmd = new CommandBuilder().BuildCommand(tableName, keyValues);
             return FindEntries(cmd).SingleOrDefault();
         }
 
@@ -191,7 +187,7 @@ namespace Simple.Data.OData
 
         private IClientWithCommand GetODataClientCommand(QueryCommand cmd)
         {
-            var linkNames = CommandBuilder.ExtractTableNames(cmd.TablePath);
+            var linkNames = cmd.TablePath.Split('.');
             var client = GetODataClient();
             var clientCommand = client.From(linkNames.First());
 
@@ -243,7 +239,7 @@ namespace Simple.Data.OData
             var table = GetSchema().FindTable(tableName);
             data = data.Where(kvp => table.HasColumn(kvp.Key));
 
-            if (data.Count() == 0)
+            if (!data.Any())
             {
                 throw new SimpleDataException("No properties were found which could be mapped to the database.");
             }

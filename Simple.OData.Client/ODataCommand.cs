@@ -84,7 +84,15 @@ namespace Simple.OData.Client
 
         public IClientWithCommand Filter(FilterExpression expression)
         {
-            _filter = expression.Format(_client, _table);
+            _namedKeyValues = TryInterpretFilterExpressionAsKey(expression);
+            if (_namedKeyValues == null)
+            {
+                _filter = expression.Format(_client, _table);
+            }
+            else
+            {
+                _topCount = -1;
+            }
             return _client;
         }
 
@@ -96,7 +104,14 @@ namespace Simple.OData.Client
 
         public IClientWithCommand Top(int count)
         {
-            _topCount = count;
+            if (!HasKey)
+            {
+                _topCount = count;
+            }
+            else if (count != 1)
+            {
+                throw new InvalidOperationException("Top count may only be assigned to 1 when key is assigned");
+            }
             return _client;
         }
 
@@ -197,7 +212,7 @@ namespace Simple.OData.Client
             if (_namedKeyValues != null && _namedKeyValues.Count > 0 && !string.IsNullOrEmpty(_filter))
                 throw new InvalidOperationException("Filter may not be set when key is assigned");
 
-            if (_keyValues != null && _keyValues.Count > 0 || _namedKeyValues != null && _namedKeyValues.Count > 0)
+            if (HasKey)
                 commandText += FormatKey();
 
             if (_parameters.Any())
@@ -259,9 +274,9 @@ namespace Simple.OData.Client
             var namedKeyValues = new Dictionary<string, object>();
             for (int index = 0; index < keyNames.Count; index++)
             {
-                object keyValue;
                 if (_namedKeyValues != null && _namedKeyValues.Count > 0)
                 {
+                    object keyValue;
                     if (_namedKeyValues.TryGetValue(keyNames[index], out keyValue))
                     {
                         namedKeyValues.Add(keyNames[index], keyValue);
@@ -277,6 +292,21 @@ namespace Simple.OData.Client
                 valueFormatter.Format(namedKeyValues.Values) :
                 valueFormatter.Format(namedKeyValues);
             return "(" + formattedKeyValues + ")";
+        }
+
+        private bool HasKey
+        {
+            get { return _keyValues != null && _keyValues.Count > 0 || _namedKeyValues != null && _namedKeyValues.Count > 0; }
+        }
+
+        private IDictionary<string, object> TryInterpretFilterExpressionAsKey(FilterExpression expression)
+        {
+            IDictionary<string, object> namedKeyValues = new Dictionary<string, object>();
+            if (!ReferenceEquals(expression, null))
+            {
+                expression.ExtractEqualityComparisons(namedKeyValues);
+            }
+            return _table.GetKeyNames().All(namedKeyValues.ContainsKey) ? namedKeyValues : null;
         }
     }
 }
