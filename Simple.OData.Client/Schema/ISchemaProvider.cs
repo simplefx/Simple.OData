@@ -9,5 +9,7 @@ namespace Simple.OData.Client
         IEnumerable<Association> GetAssociations(Table table);
         Key GetPrimaryKey(Table table);
         IEnumerable<Function> GetFunctions();
+        IEnumerable<EdmEntityType> GetEntityTypes();
+        IEnumerable<EdmComplexType> GetComplexTypes();
     }
 }

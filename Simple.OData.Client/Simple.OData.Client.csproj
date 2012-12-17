@@ -45,6 +45,7 @@
     </Compile>
     <Compile Include="BatchRequestBuilder.cs" />
     <Compile Include="BatchRequestRunner.cs" />
+    <Compile Include="Edm\EdmSchemaParser.cs" />
     <Compile Include="Filter\ExpressionContext.cs" />
     <Compile Include="Filter\ExpressionFunction.cs" />
     <Compile Include="Filter\ExpressionOperator.cs" />
@@ -57,7 +58,7 @@
     <Compile Include="ODataClientWithCommand.cs" />
     <Compile Include="CommandRequestBuilder.cs" />
     <Compile Include="CommandRequestRunner.cs" />
-    <Compile Include="Edm\EdmHelper.cs" />
+    <Compile Include="Edm\EdmTypeSerializer.cs" />
     <Compile Include="Edm\EdmPropertyType.cs" />
     <Compile Include="Edm\EdmSchema.cs" />
     <Compile Include="Edm\EdmType.cs" />

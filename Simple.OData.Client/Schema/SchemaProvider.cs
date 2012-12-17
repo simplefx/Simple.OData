@@ -110,6 +110,18 @@ namespace Simple.OData.Client
                    select CreateFunction(f);
         }
 
+        public IEnumerable<EdmEntityType> GetEntityTypes()
+        {
+            return from t in _metadata.Value.EntityTypes
+                   select t;
+        }
+
+        public IEnumerable<EdmComplexType> GetComplexTypes()
+        {
+            return from t in _metadata.Value.ComplexTypes
+                   select t;
+        }
+
         private string GetQualifiedName(string schemaName, string name)
         {
             return string.IsNullOrEmpty(schemaName) ? name : string.Format("{0}.{1}", schemaName, name);

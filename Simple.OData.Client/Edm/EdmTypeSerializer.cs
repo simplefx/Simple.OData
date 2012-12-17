@@ -8,7 +8,7 @@ using Simple.NExtLib;
 
 namespace Simple.OData.Client
 {
-    static class EdmHelper
+    static class EdmTypeSerializer
     {
         private static readonly Dictionary<EdmType, Func<string, object>> Readers = new Dictionary<EdmType, Func<string, object>>
         {
@@ -219,7 +219,7 @@ namespace Simple.OData.Client
         {
             if (((DateTime)source).Kind != DateTimeKind.Utc)
             {
-                Trace.WriteLine("Non-UTC DateTime specified to EdmHelper", "Simple.Data.OData.Warnings");
+                Trace.WriteLine("Non-UTC DateTime specified to EdmTypeSerializer", "Simple.Data.OData.Warnings");
             }
 
             return ((DateTime)source).ToIso8601String();

@@ -11,5 +11,7 @@ namespace Simple.OData.Client
         IEnumerable<Function> Functions { get; }
         Function FindFunction(string functionName);
         bool HasFunction(string functionName);
+        IEnumerable<EdmEntityType> EntityTypes { get; }
+        IEnumerable<EdmComplexType> ComplexTypes { get; }
     }
 }
