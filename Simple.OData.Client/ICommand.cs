@@ -23,5 +23,7 @@ namespace Simple.OData.Client
         IClientWithCommand NavigateTo(string linkName);
         IClientWithCommand Function(string functionName);
         IClientWithCommand Parameters(IDictionary<string, object> parameters);
+        bool FilterIsKey { get; }
+        IDictionary<string, object> FilterAsKey { get; }
     }
 }

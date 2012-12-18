@@ -113,14 +113,20 @@ namespace Simple.Data.OData
         {
             var cmd = new CommandBuilder().BuildCommand(tableName, criteria);
             var clientCommand = GetODataClientCommand(cmd);
-            return GetODataClient(transaction).UpdateEntries(tableName, clientCommand.CommandText, data);
+            var client = GetODataClient(transaction);
+            return clientCommand.FilterIsKey ? 
+                client.UpdateEntry(tableName, clientCommand.FilterAsKey, data) : 
+                client.UpdateEntries(tableName, clientCommand.CommandText, data);
         }
 
         private int DeleteByExpression(string tableName, SimpleExpression criteria, IAdapterTransaction transaction)
         {
             var cmd = new CommandBuilder().BuildCommand(tableName, criteria);
             var clientCommand = GetODataClientCommand(cmd);
-            return GetODataClient(transaction).DeleteEntries(tableName, clientCommand.CommandText);
+            var client = GetODataClient(transaction);
+            return clientCommand.FilterIsKey ?
+                client.DeleteEntry(tableName, clientCommand.FilterAsKey) :
+                client.DeleteEntries(tableName, clientCommand.CommandText);
         }
 
         private ODataClient GetODataClient(IAdapterTransaction transaction = null)

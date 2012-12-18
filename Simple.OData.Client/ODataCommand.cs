@@ -178,6 +178,22 @@ namespace Simple.OData.Client
             return _client.Link(this, linkName);
         }
 
+        public bool FilterIsKey
+        {
+            get
+            {
+                return _namedKeyValues != null;
+            }
+        }
+
+        public IDictionary<string, object> FilterAsKey
+        {
+            get
+            {
+                return _namedKeyValues;
+            }
+        }
+
         public ODataCommand WithInlineCount()
         {
             _inlineCount = true;
