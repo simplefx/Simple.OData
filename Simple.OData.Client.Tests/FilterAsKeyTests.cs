@@ -6,7 +6,7 @@ namespace Simple.OData.Client.Tests
     public class FilterAsKeyTests : TestBase
     {
         [Fact]
-        public void FindAllByProductID()
+        public void FindAllByFilterAsKeyEqual()
         {
             var x = ODataFilter.Expression;
             var command = _client
@@ -14,6 +14,72 @@ namespace Simple.OData.Client.Tests
                 .Filter(x.ProductID == 1);
             string commandText = command.CommandText;
             Assert.Equal("Products(1)", commandText);
+        }
+
+        [Fact]
+        public void FindAllByFilterAsKeyNotEqual()
+        {
+            var x = ODataFilter.Expression;
+            var command = _client
+                .From("Products")
+                .Filter(x.ProductID != 1);
+            string commandText = command.CommandText;
+            Assert.Equal("Products?$filter=ProductID+ne+1", commandText);
+        }
+
+        [Fact]
+        public void FindAllByFilterAsNotKeyEqual()
+        {
+            var x = ODataFilter.Expression;
+            var command = _client
+                .From("Products")
+                .Filter(!(x.ProductID == 1));
+            string commandText = command.CommandText;
+            Assert.Equal("Products?$filter=not(ProductID+eq+1)", commandText);
+        }
+
+        [Fact]
+        public void FindAllByFilterAsKeyEqualAndExtraClause()
+        {
+            var x = ODataFilter.Expression;
+            var command = _client
+                .From("Products")
+                .Filter(x.ProductID == 1 && x.ProductName == "abc");
+            string commandText = command.CommandText;
+            Assert.Equal("Products?$filter=ProductID+eq+1+and+ProductName+eq+%27abc%27", commandText);
+        }
+
+        [Fact]
+        public void FindAllByFilterAsKeyEqualDuplicateClause()
+        {
+            var x = ODataFilter.Expression;
+            var command = _client
+                .From("Products")
+                .Filter(x.ProductID == 1 && x.ProductID == 1);
+            string commandText = command.CommandText;
+            Assert.Equal("Products(1)", commandText);
+        }
+
+        [Fact]
+        public void FindAllByFilterAsCompleteCompoundKey()
+        {
+            var x = ODataFilter.Expression;
+            var command = _client
+                .From("OrderDetails")
+                .Filter(x.OrderID == 1 && x.ProductID == 2);
+            string commandText = command.CommandText;
+            Assert.Equal("Order_Details(OrderID=1,ProductID=2)", commandText);
+        }
+
+        [Fact]
+        public void FindAllByFilterAsInCompleteCompoundKey()
+        {
+            var x = ODataFilter.Expression;
+            var command = _client
+                .From("OrderDetails")
+                .Filter(x.OrderID == 1);
+            string commandText = command.CommandText;
+            Assert.Equal("Order_Details?$filter=OrderID+eq+1", commandText);
         }
 
         [Fact]

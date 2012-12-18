@@ -76,14 +76,14 @@ namespace Simple.OData.Client
             return Format(new ExpressionContext());
         }
 
-        internal void ExtractEqualityComparisons(IDictionary<string, object> columnEqualityComparisons)
+        internal bool ExtractEqualityComparisons(IDictionary<string, object> columnEqualityComparisons)
         {
             switch (_operator)
             {
                 case ExpressionOperator.AND:
                     _left.ExtractEqualityComparisons(columnEqualityComparisons);
                     _right.ExtractEqualityComparisons(columnEqualityComparisons);
-                    break;
+                    return true;
 
                 case ExpressionOperator.EQ:
                     if (!string.IsNullOrEmpty(_left._reference))
@@ -92,7 +92,10 @@ namespace Simple.OData.Client
                         if (!columnEqualityComparisons.ContainsKey(key))
                             columnEqualityComparisons.Add(key, _right);
                     }
-                    break;
+                    return true;
+
+                default:
+                    return false;
             }
         }
     }
