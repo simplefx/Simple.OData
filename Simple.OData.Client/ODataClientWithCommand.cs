@@ -204,5 +204,15 @@ namespace Simple.OData.Client
         {
             return _command.NavigateTo(linkName);
         }
+
+        public bool FilterIsKey
+        {
+            get { return _command.FilterIsKey; }
+        }
+
+        public IDictionary<string, object> FilterAsKey
+        {
+            get { return _command.FilterAsKey; }
+        }
     }
 }

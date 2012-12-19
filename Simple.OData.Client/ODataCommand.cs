@@ -178,6 +178,22 @@ namespace Simple.OData.Client
             return _client.Link(this, linkName);
         }
 
+        public bool FilterIsKey
+        {
+            get
+            {
+                return _namedKeyValues != null;
+            }
+        }
+
+        public IDictionary<string, object> FilterAsKey
+        {
+            get
+            {
+                return _namedKeyValues;
+            }
+        }
+
         public ODataCommand WithInlineCount()
         {
             _inlineCount = true;
@@ -301,12 +317,13 @@ namespace Simple.OData.Client
 
         private IDictionary<string, object> TryInterpretFilterExpressionAsKey(FilterExpression expression)
         {
+            bool ok = false;
             IDictionary<string, object> namedKeyValues = new Dictionary<string, object>();
             if (!ReferenceEquals(expression, null))
             {
-                expression.ExtractEqualityComparisons(namedKeyValues);
+                ok = expression.ExtractEqualityComparisons(namedKeyValues);
             }
-            return _table.GetKeyNames().All(namedKeyValues.ContainsKey) ? namedKeyValues : null;
+            return ok && _table.GetKeyNames().Count == namedKeyValues.Count() && _table.GetKeyNames().All(namedKeyValues.ContainsKey) ? namedKeyValues : null;
         }
     }
 }
