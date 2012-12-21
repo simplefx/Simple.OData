@@ -5,7 +5,7 @@ namespace Simple.OData.Client.Tests
 {
     using Entry = System.Collections.Generic.Dictionary<string, object>;
 
-    public class ODataClientTest : TestBase
+    public class ODataClientTests : TestBase
     {
         [Fact]
         public void FindEntries()
@@ -27,6 +27,15 @@ namespace Simple.OData.Client.Tests
         public void FindEntryExisting()
         {
             var product = _client.FindEntry("Products?$filter=ProductName eq 'Chai'");
+            Assert.Equal("Chai", product["ProductName"]);
+        }
+
+        [Fact]
+        public void FindEntryExistingExpressionFilter()
+        {
+            var x = ODataFilter.Expression;
+            string filter = _client.FormatFilter("Products", x.ProductName == "Chai");
+            var product = _client.FindEntry(filter);
             Assert.Equal("Chai", product["ProductName"]);
         }
 

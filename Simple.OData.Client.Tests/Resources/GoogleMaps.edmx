@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx">
+  <edmx:DataServices m:DataServiceVersion="3.0" m:MaxDataServiceVersion="3.0" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">
+    <Schema Namespace="Mongo" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <EntityType Name="GoogleMaps">
+        <Key>
+          <PropertyRef Name="db_id" />
+        </Key>
+        <Property Name="db_id" Type="Edm.String" Nullable="false" />
+        <Property Name="markers" Type="Collection(Mongo.GoogleMaps__markers)" Nullable="false" />
+      </EntityType>
+      <ComplexType Name="GoogleMaps__markers">
+        <Property Name="point" Type="Mongo.GoogleMaps__markers__point" />
+        <Property Name="homeTeam" Type="Edm.String" />
+        <Property Name="awayTeam" Type="Edm.String" />
+        <Property Name="markerImage" Type="Edm.String" />
+        <Property Name="information" Type="Edm.String" />
+        <Property Name="fixture" Type="Edm.String" />
+        <Property Name="capacity" Type="Edm.String" />
+        <Property Name="previousScore" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="GoogleMaps__markers__point">
+        <Property Name="latitude" Type="Edm.Double" Nullable="false" />
+        <Property Name="longitude" Type="Edm.Double" Nullable="false" />
+      </ComplexType>
+      <EntityContainer Name="MongoContext" m:IsDefaultEntityContainer="true">
+        <EntitySet Name="GoogleMaps" EntityType="Mongo.GoogleMaps" />
+      </EntityContainer>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>

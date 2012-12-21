@@ -45,18 +45,27 @@
     </Compile>
     <Compile Include="BatchRequestBuilder.cs" />
     <Compile Include="BatchRequestRunner.cs" />
+    <Compile Include="Edm\EdmSchemaParser.cs" />
+    <Compile Include="Filter\ExpressionContext.cs" />
+    <Compile Include="Filter\ExpressionFunction.cs" />
+    <Compile Include="Filter\ExpressionOperator.cs" />
+    <Compile Include="Filter\FilterExpression.cs" />
+    <Compile Include="Filter\FilterExpression.Operators.cs" />
+    <Compile Include="Filter\FilterExpression.Format.cs" />
+    <Compile Include="Filter\FunctionMapping.cs" />
     <Compile Include="IClient.cs" />
     <Compile Include="ICommand.cs" />
     <Compile Include="ODataClientWithCommand.cs" />
     <Compile Include="CommandRequestBuilder.cs" />
     <Compile Include="CommandRequestRunner.cs" />
-    <Compile Include="Edm\EdmHelper.cs" />
+    <Compile Include="Edm\EdmTypeSerializer.cs" />
     <Compile Include="Edm\EdmPropertyType.cs" />
     <Compile Include="Edm\EdmSchema.cs" />
     <Compile Include="Edm\EdmType.cs" />
     <Compile Include="IClientWithCommand.cs" />
     <Compile Include="ODataBatch.cs" />
     <Compile Include="ODataCommand.cs" />
+    <Compile Include="ODataFilter.cs" />
     <Compile Include="Pluralizer.cs" />
     <Compile Include="Schema\ISchema.cs" />
     <Compile Include="ValueFormatter.cs" />
@@ -64,7 +73,7 @@
     <Compile Include="IPluralizer.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="HttpCommand.cs" />
-    <Compile Include="ODataHelper.cs" />
+    <Compile Include="ODataFeedReader.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RequestBuilder.cs" />
     <Compile Include="ODataClient.cs" />
@@ -109,6 +118,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

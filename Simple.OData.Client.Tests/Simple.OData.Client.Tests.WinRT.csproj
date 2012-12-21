@@ -113,11 +113,11 @@
     </SDKReference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ODataClientTest.cs" />
+    <Compile Include="ODataClientTests.cs" />
     <Compile Include="ODataCommandTests.cs" />
-    <Compile Include="ODataHelperTests.cs" />
+    <Compile Include="ODataFeedReaderTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SchemaTest.cs" />
+    <Compile Include="SchemaTests.cs" />
     <Compile Include="TestBase.cs" />
   </ItemGroup>
   <ItemGroup>

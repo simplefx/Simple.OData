@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 namespace Simple.OData.Client
 {
@@ -10,6 +9,7 @@ namespace Simple.OData.Client
         IClientWithCommand Key(IEnumerable<object> entryKey);
         IClientWithCommand Key(IDictionary<string, object> entryKey);
         IClientWithCommand Filter(string filter);
+        IClientWithCommand Filter(FilterExpression expression);
         IClientWithCommand Skip(int count);
         IClientWithCommand Top(int count);
         IClientWithCommand Expand(IEnumerable<string> associations);
@@ -23,5 +23,7 @@ namespace Simple.OData.Client
         IClientWithCommand NavigateTo(string linkName);
         IClientWithCommand Function(string functionName);
         IClientWithCommand Parameters(IDictionary<string, object> parameters);
+        bool FilterIsKey { get; }
+        IDictionary<string, object> FilterAsKey { get; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Simple.OData.Client
 {
@@ -134,6 +135,11 @@ namespace Simple.OData.Client
             return _command.Filter(filter);
         }
 
+        public IClientWithCommand Filter(FilterExpression expression)
+        {
+            return _command.Filter(expression);
+        }
+
         public IClientWithCommand Skip(int count)
         {
             return _command.Skip(count);
@@ -197,6 +203,16 @@ namespace Simple.OData.Client
         public IClientWithCommand NavigateTo(string linkName)
         {
             return _command.NavigateTo(linkName);
+        }
+
+        public bool FilterIsKey
+        {
+            get { return _command.FilterIsKey; }
+        }
+
+        public IDictionary<string, object> FilterAsKey
+        {
+            get { return _command.FilterAsKey; }
         }
     }
 }

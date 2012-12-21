@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx">
+  <edmx:DataServices m:DataServiceVersion="3.0" m:MaxDataServiceVersion="3.0" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">
+    <Schema Namespace="Mongo" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <EntityType Name="Twitter">
+        <Key>
+          <PropertyRef Name="db_id" />
+        </Key>
+        <Property Name="db_id" Type="Edm.String" Nullable="false" />
+        <Property Name="results" Type="Mongo.Twitter__results" />
+      </EntityType>
+      <ComplexType Name="Twitter__results">
+        <Property Name="text" Type="Edm.String" />
+        <Property Name="to_user_id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="to_user" Type="Edm.String" />
+        <Property Name="from_user" Type="Edm.String" />
+        <Property Name="metadata" Type="Mongo.Twitter__results__metadata" />
+        <Property Name="id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="from_user_id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="iso_language_code" Type="Edm.String" />
+        <Property Name="source" Type="Edm.String" />
+        <Property Name="profile_image_url" Type="Edm.String" />
+        <Property Name="created_at" Type="Edm.String" />
+        <Property Name="since_id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="max_id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="refresh_url" Type="Edm.String" />
+        <Property Name="results_per_page" Type="Edm.Int32" Nullable="false" />
+        <Property Name="next_page" Type="Edm.String" />
+        <Property Name="completed_in" Type="Edm.Double" Nullable="false" />
+        <Property Name="page" Type="Edm.Int32" Nullable="false" />
+        <Property Name="query" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="Twitter__results__metadata">
+        <Property Name="result_type" Type="Edm.String" />
+        <Property Name="recent_retweets" Type="Edm.Int32" Nullable="false" />
+      </ComplexType>
+      <EntityContainer Name="MongoContext" m:IsDefaultEntityContainer="true">
+        <EntitySet Name="Twitter" EntityType="Mongo.Twitter" />
+      </EntityContainer>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>

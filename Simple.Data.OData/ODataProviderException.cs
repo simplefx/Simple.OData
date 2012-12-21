@@ -53,18 +53,6 @@ namespace Simple.Data.OData
         protected ODataAdapterException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
-            //CommandText = info.GetString("CommandText");
-            //try
-            //{
-            //    var array = info.GetValue("Parameters", typeof(KeyValuePair<string, object>[]));
-            //    if (array != null)
-            //    {
-            //        Parameters = ((KeyValuePair<string, object>[])array);
-            //    }
-            //}
-            //catch (SerializationException)
-            //{
-            //}
         }
 
         public IDictionary<string, object> Parameters

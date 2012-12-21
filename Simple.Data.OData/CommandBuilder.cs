@@ -8,16 +8,9 @@ namespace Simple.Data.OData
     class CommandBuilder
     {
         private readonly Dictionary<Type, Func<SimpleQueryClauseBase, QueryCommand, bool>> _processors;
-        private readonly Func<string, Table> _findTable;
-        private readonly Func<string, IList<string>> _getKeyNames;
-        private readonly ExpressionFormatter _expressionFormatter;
 
-        public CommandBuilder(Func<string, Table> findTable, Func<string, IList<string>> getKeyNames)
+        public CommandBuilder()
         {
-            _findTable = findTable;
-            _getKeyNames = getKeyNames;
-            _expressionFormatter = new ExpressionFormatter(_findTable);
-
             _processors = new Dictionary<Type, Func<SimpleQueryClauseBase, QueryCommand, bool>>
             {
                 { typeof(OrderByClause), (x,y) => TryApplyOrderByClause((OrderByClause)x, y) },
@@ -32,14 +25,11 @@ namespace Simple.Data.OData
 
         public QueryCommand BuildCommand(string tablePath, SimpleExpression criteria)
         {
-            string tableName = ExtractPrimaryTableName(tablePath);
-            var namedKeyValues = TryInterpretExpressionAsKeyLookup(tableName, criteria, _getKeyNames);
             return new QueryCommand()
                 {
                     TablePath = tablePath,
                     Criteria = criteria,
-                    NamedKeyValues = namedKeyValues == null ? null : namedKeyValues.ToDictionary(),
-                    Filter = namedKeyValues == null ? _expressionFormatter.Format(criteria) : null,
+                    FilterExpression = new ExpressionConverter().ConvertExpression(criteria),
                 };
         }
 
@@ -58,14 +48,6 @@ namespace Simple.Data.OData
                     break;
 
                 cmd.ProcessedClauses.Push(unprocessedClauses.Dequeue());
-            }
-
-            var namedKeyValues = TryInterpretExpressionAsKeyLookup(query.TableName, cmd.Criteria, _getKeyNames);
-            if (namedKeyValues != null)
-            {
-                cmd.NamedKeyValues = namedKeyValues.ToDictionary();
-                cmd.Filter = null;
-                cmd.TakeCount = null;
             }
 
             cmd.TablePath = query.TableName;
@@ -129,7 +111,7 @@ namespace Simple.Data.OData
                 ? clause.Criteria
                 : new SimpleExpression(cmd.Criteria, clause.Criteria, SimpleExpressionType.And);
 
-            cmd.Filter = _expressionFormatter.Format(cmd.Criteria);
+            cmd.FilterExpression = new ExpressionConverter().ConvertExpression(cmd.Criteria);
 
             return true;
         }
@@ -138,50 +120,6 @@ namespace Simple.Data.OData
         {
             cmd.SetTotalCount = clause.SetCount;
             return true;
-        }
-
-        private IDictionary<string, object> TryInterpretExpressionAsKeyLookup(string tablePath, SimpleExpression expression, Func<string, IEnumerable<string>> GetKeyNames)
-        {
-            var table = _findTable(ExtractPrimaryTableName(tablePath));
-            IDictionary<string, object> namedKeyValues = new Dictionary<string, object>();
-            if (expression != null)
-            {
-                ExtractEqualityComparisons(expression, namedKeyValues);
-            }
-            return GetKeyNames(table.ActualName).All(namedKeyValues.ContainsKey) ? namedKeyValues : null;
-        }
-
-        private void ExtractEqualityComparisons(SimpleExpression expression, IDictionary<string, object> columnEqualityComparisons)
-        {
-            switch (expression.Type)
-            {
-                case SimpleExpressionType.And:
-                    ExtractEqualityComparisons(expression.LeftOperand as SimpleExpression, columnEqualityComparisons);
-                    ExtractEqualityComparisons(expression.RightOperand as SimpleExpression, columnEqualityComparisons);
-                    break;
-
-                case SimpleExpressionType.Equal:
-                    if (expression.LeftOperand.GetType() == typeof(ObjectReference))
-                    {
-                        var key = expression.LeftOperand.ToString().Split('.').Last();
-                        if (!columnEqualityComparisons.ContainsKey(key))
-                            columnEqualityComparisons.Add(key, expression.RightOperand);
-                    }
-                    break;
-
-                default:
-                    break;
-            }
-        }
-
-        internal static string[] ExtractTableNames(string tablePath)
-        {
-            return tablePath.Split('.');
-        }
-
-        internal static string ExtractPrimaryTableName(string tablePath)
-        {
-            return ExtractTableNames(tablePath).First();
         }
     }
 }

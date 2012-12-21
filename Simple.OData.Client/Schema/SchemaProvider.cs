@@ -21,7 +21,7 @@ namespace Simple.OData.Client
             {
                 _metadataString = new Lazy<string>(() => RequestMetadataAsString(urlBase));
             }
-            _metadata = new Lazy<EdmSchema>(() => ODataHelper.GetSchema(_metadataString.Value));
+            _metadata = new Lazy<EdmSchema>(() => ODataFeedReader.GetSchema(_metadataString.Value));
             _schema = new Lazy<Schema>(() => Schema.Get(this));
         }
 
@@ -110,6 +110,18 @@ namespace Simple.OData.Client
                    select CreateFunction(f);
         }
 
+        public IEnumerable<EdmEntityType> GetEntityTypes()
+        {
+            return from t in _metadata.Value.EntityTypes
+                   select t;
+        }
+
+        public IEnumerable<EdmComplexType> GetComplexTypes()
+        {
+            return from t in _metadata.Value.ComplexTypes
+                   select t;
+        }
+
         private string GetQualifiedName(string schemaName, string name)
         {
             return string.IsNullOrEmpty(schemaName) ? name : string.Format("{0}.{1}", schemaName, name);
@@ -156,7 +168,7 @@ namespace Simple.OData.Client
             {
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    return ODataHelper.GetSchemaAsString(response.GetResponseStream());
+                    return ODataFeedReader.GetSchemaAsString(response.GetResponseStream());
                 }
             }
             // TODO

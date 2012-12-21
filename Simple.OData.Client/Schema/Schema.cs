@@ -12,11 +12,15 @@ namespace Simple.OData.Client
         private readonly ISchemaProvider _schemaProvider;
         private readonly Lazy<TableCollection> _lazyTables;
         private readonly Lazy<FunctionCollection> _lazyFunctions;
+        private readonly Lazy<List<EdmEntityType>> _lazyEntityTypes;
+        private readonly Lazy<List<EdmComplexType>> _lazyComplexTypes;
 
         private Schema(ISchemaProvider schemaProvider)
         {
             _lazyTables = new Lazy<TableCollection>(CreateTableCollection);
             _lazyFunctions = new Lazy<FunctionCollection>(CreateFunctionCollection);
+            _lazyEntityTypes = new Lazy<List<EdmEntityType>>(CreateEntityTypeCollection);
+            _lazyComplexTypes = new Lazy<List<EdmComplexType>>(CreateComplexTypeCollection);
             _schemaProvider = schemaProvider;
         }
 
@@ -55,6 +59,16 @@ namespace Simple.OData.Client
             return _lazyFunctions.Value.Contains(functionName);
         }
 
+        public IEnumerable<EdmEntityType> EntityTypes
+        {
+            get { return _lazyEntityTypes.Value.AsEnumerable(); }
+        }
+
+        public IEnumerable<EdmComplexType> ComplexTypes
+        {
+            get { return _lazyComplexTypes.Value.AsEnumerable(); }
+        }
+
         private TableCollection CreateTableCollection()
         {
             return new TableCollection(_schemaProvider.GetTables()
@@ -64,6 +78,16 @@ namespace Simple.OData.Client
         private FunctionCollection CreateFunctionCollection()
         {
             return new FunctionCollection(_schemaProvider.GetFunctions());
+        }
+
+        private List<EdmEntityType> CreateEntityTypeCollection()
+        {
+            return new List<EdmEntityType>(_schemaProvider.GetEntityTypes());
+        }
+
+        private List<EdmComplexType> CreateComplexTypeCollection()
+        {
+            return new List<EdmComplexType>(_schemaProvider.GetComplexTypes());
         }
 
         internal static Schema Get(string urlBase)
