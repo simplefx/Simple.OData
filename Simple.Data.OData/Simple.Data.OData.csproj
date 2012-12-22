@@ -37,6 +37,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Simple.Data.Core.0.18.3.1\lib\net40\Simple.Data.dll</HintPath>
     </Reference>
+    <Reference Include="Simple.NExtLib, Version=0.8.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Simple.OData.Client.0.8.4.0\lib\net40\Simple.NExtLib.dll</HintPath>
+    </Reference>
+    <Reference Include="Simple.OData.Client, Version=0.8.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Simple.OData.Client.0.8.4.0\lib\net40\Simple.OData.Client.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
@@ -50,6 +56,9 @@
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="..\CommonAssemblyVersion.cs">
+      <Link>Properties\CommonAssemblyVersion.cs</Link>
+    </Compile>
     <Compile Include="ExpressionConverter.cs" />
     <Compile Include="ODataAdapterTransaction.cs" />
     <Compile Include="ODataProviderException.cs" />
@@ -60,16 +69,6 @@
     <Compile Include="ODataTableAdapter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="QueryCommand.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Simple.NExtLib\Simple.NExtLib.csproj">
-      <Project>{4A191FAD-DC1D-46FC-A941-7DEB2C8C4C15}</Project>
-      <Name>Simple.NExtLib</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Simple.OData.Client\Simple.OData.Client.csproj">
-      <Project>{C20A3959-4895-41F8-86E2-7DED294FD904}</Project>
-      <Name>Simple.OData.Client</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

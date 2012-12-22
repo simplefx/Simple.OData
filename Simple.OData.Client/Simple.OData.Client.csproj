@@ -40,8 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\CommonAssemblyInfo.cs">
-      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    <Compile Include="..\CommonAssemblyVersion.cs">
+      <Link>Properties\CommonAssemblyVersion.cs</Link>
     </Compile>
     <Compile Include="BatchRequestBuilder.cs" />
     <Compile Include="BatchRequestRunner.cs" />
@@ -101,6 +101,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\DataServicesMetadataEntryXml.txt" />
+    <None Include="Simple.OData.Client.nuspec" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\DataServicesAtomEntryXml.txt" />

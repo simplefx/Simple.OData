@@ -1,21 +1,20 @@
 <?xml version="1.0"?>
 <package xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
-    <id>Simple.Data.OData</id>
+    <id>Simple.OData.Client</id>
     <version>$version$</version>
     <authors>$author$</authors>
-    <owners>Mark Rendle, Vagif Abilov</owners>
+    <owners>Vagif Abilov</owners>
     <description>$description$</description>
     <projectUrl>https://github.com/simplefx/Simple.OData</projectUrl>
     <licenseUrl>http://www.opensource.org/licenses/mit-license.php</licenseUrl>
-    <iconUrl>http://simplefx.org/images/simpledata100x100.png</iconUrl>
+    <iconUrl>http://www.odata.org/images/OData_logo_MS_small.png</iconUrl>
     <tags>odata data .net40 rest</tags>
     <language>en-us</language>
     <dependencies>
-      <dependency id="Simple.Data.Core" version="0.18.1.0" />
-      <dependency id="Simple.OData.Client" version="0.8.4.0" />
     </dependencies>
   </metadata>
   <files>
+    <file src="bin\release\Simple.NExtLib.dll" target="lib\net40" />
   </files>
 </package>

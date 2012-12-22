@@ -8,10 +8,13 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D1D23CCD-C556-480A-8817-6FD58817A0C8}"
 	ProjectSection(SolutionItems) = preProject
 		CommonAssemblyInfo.cs = CommonAssemblyInfo.cs
+		CommonAssemblyVersion.cs = CommonAssemblyVersion.cs
 		NugetPack.cmd = NugetPack.cmd
 		NugetPackOData.cmd = NugetPackOData.cmd
+		NugetPackODataClient.cmd = NugetPackODataClient.cmd
 		NugetPush.cmd = NugetPush.cmd
 		NugetPushOData.cmd = NugetPushOData.cmd
+		NugetPushODataClient.cmd = NugetPushODataClient.cmd
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{78D04AF9-B9B4-4025-93C6-B3DB01EDAAE9}"

@@ -1,5 +1,4 @@
 ﻿using System;
-using Simple.OData.Client;
 using Xunit;
 
 namespace Simple.Data.OData.Tests

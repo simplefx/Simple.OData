@@ -7,8 +7,6 @@ using System.Text;
 
 namespace Simple.Data.OData
 {
-    using System.Security;
-
     [Serializable]
     public class ODataAdapterException : AdapterException
     {
@@ -29,7 +27,7 @@ namespace Simple.Data.OData
             : base(typeof(ODataTableAdapter))
         {
             CommandText = commandText;
-            Parameters = parameters.ToDictionary();
+            Parameters = parameters.ToDictionary(x => x.Key, x => x.Value);
         }
 
 
@@ -42,7 +40,7 @@ namespace Simple.Data.OData
             : base(message, typeof(ODataTableAdapter))
         {
             CommandText = commandText;
-            Parameters = parameters.ToDictionary();
+            Parameters = parameters.ToDictionary(x => x.Key, x => x.Value);
         }
 
         public ODataAdapterException(string message, Exception inner)
@@ -57,7 +55,7 @@ namespace Simple.Data.OData
 
         public IDictionary<string, object> Parameters
         {
-            get { return Data.Contains("Parameters") ? ((KeyValuePair<string, object>[])Data["Parameters"]).ToDictionary() : null; }
+            get { return Data.Contains("Parameters") ? ((KeyValuePair<string, object>[])Data["Parameters"]).ToDictionary(x => x.Key, x => x.Value) : null; }
             private set { Data["Parameters"] = value.ToArray(); }
         }
 
