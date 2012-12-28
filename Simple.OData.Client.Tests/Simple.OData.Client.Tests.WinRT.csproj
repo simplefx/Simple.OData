@@ -126,6 +126,15 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
+    <Content Include="Resources\ArrayOfNested.edmx" />
+    <Content Include="Resources\Colors.edmx" />
+    <Content Include="Resources\Facebook.edmx" />
+    <Content Include="Resources\Flickr.edmx" />
+    <Content Include="Resources\GoogleMaps.edmx" />
+    <Content Include="Resources\iPhone.edmx" />
+    <Content Include="Resources\Nested.edmx" />
+    <Content Include="Resources\Twitter.edmx" />
+    <Content Include="Resources\YouTube.edmx" />
     <None Include="Simple.OData.Client.Tests.WinRT_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
