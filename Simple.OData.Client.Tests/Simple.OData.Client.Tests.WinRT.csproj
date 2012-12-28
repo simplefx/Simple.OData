@@ -113,6 +113,8 @@
     </SDKReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FilterAsKeyTests.cs" />
+    <Compile Include="FilterExpressionTests.cs" />
     <Compile Include="ODataClientTests.cs" />
     <Compile Include="ODataCommandTests.cs" />
     <Compile Include="ODataFeedReaderTests.cs" />

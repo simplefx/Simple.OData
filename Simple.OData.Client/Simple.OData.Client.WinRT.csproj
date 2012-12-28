@@ -100,6 +100,10 @@
   </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
+    <ProjectReference Include="..\Simple.NExtLib\Simple.NExtLib.Core.csproj">
+      <Project>{37cb8d2a-2eb8-4e91-99ca-1ba1b93e178b}</Project>
+      <Name>Simple.NExtLib.Core</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Simple.NExtLib\Simple.NExtLib.WinRT.csproj">
       <Project>{bc986348-5913-4d56-a808-73f96a8ae289}</Project>
       <Name>Simple.NExtLib.WinRT</Name>

@@ -15,15 +15,6 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public void FindEntriesFromODataOrgNorthwind()
-        {
-            _client = null;
-            var client = new ODataClient("http://services.odata.org/Northwind/Northwind.svc/");
-            var products = client.FindEntries("Products");
-            Assert.True(products.Count() > 0);
-        }
-
-        [Fact]
         public void FindEntryExisting()
         {
             var product = _client.FindEntry("Products?$filter=ProductName eq 'Chai'");
@@ -69,7 +60,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void InsertEntryWithResult()
         {
-            var product = _client.InsertEntry("Products", new Entry() {{"ProductName", "Test1"}, {"UnitPrice", 18m}}, true);
+            var product = _client.InsertEntry("Products", new Entry() { { "ProductName", "Test1" }, { "UnitPrice", 18m } }, true);
 
             Assert.Equal("Test1", product["ProductName"]);
         }
@@ -85,7 +76,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void UpdateEntry()
         {
-            var key = new Entry() {{"ProductID", 1}};
+            var key = new Entry() { { "ProductID", 1 } };
             _client.UpdateEntry("Products", key, new Entry() { { "ProductName", "Chai" }, { "UnitPrice", 123m } });
 
             var product = _client.GetEntry("Products", key);

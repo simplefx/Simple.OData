@@ -4,8 +4,10 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using Simple.NExtLib;
 using Xunit;
+#if NETFX_CORE
+using Simple.NExtLib;
+#endif
 
 namespace Simple.OData.Client.Tests
 {
