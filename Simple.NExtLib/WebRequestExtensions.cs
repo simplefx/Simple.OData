@@ -4,20 +4,26 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace Simple.NExtLib
 {
 #if NETFX_CORE
     public static class WebRequestExtensions
     {
-        public async static void SetContent(this WebRequest request, string content)
+        public static void SetContent(this WebRequest request, string content)
+        {
+            var restult = SetContentAsync(request, content).Result;
+        }
+
+        public static async Task<int> SetContentAsync(this WebRequest request, string content)
         {
             using (var stream = await request.GetRequestStreamAsync())
             {
-                using (var writer = new StreamWriter(stream))
-                {
-                    writer.Write(content);
-                }
+                var encoding = new UTF8Encoding();
+                var bytes = encoding.GetBytes(content);
+                await stream.WriteAsync(bytes, 0, bytes.Length);
+                return content.Length;
             }
         }
     }

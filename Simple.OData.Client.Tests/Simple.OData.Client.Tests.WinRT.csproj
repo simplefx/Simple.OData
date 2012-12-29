@@ -133,6 +133,7 @@
     <Content Include="Resources\GoogleMaps.edmx" />
     <Content Include="Resources\iPhone.edmx" />
     <Content Include="Resources\Nested.edmx" />
+    <Content Include="Resources\SingleProductWithEmptyCollectionOfComplexProperties.xml" />
     <Content Include="Resources\Twitter.edmx" />
     <Content Include="Resources\YouTube.edmx" />
     <None Include="Simple.OData.Client.Tests.WinRT_TemporaryKey.pfx" />
