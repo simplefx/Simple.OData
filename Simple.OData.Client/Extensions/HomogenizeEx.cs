@@ -22,11 +22,7 @@ namespace Simple.OData.Client
 
         private static string HomogenizeImpl(string source)
         {
-#if NETFX_CORE
             return _homogenizeRegex.Replace(source.ToLowerInvariant(), string.Empty);
-#else
-            return string.Intern(_homogenizeRegex.Replace(source.ToLowerInvariant(), string.Empty));
-#endif
         }
 
         /// <summary>

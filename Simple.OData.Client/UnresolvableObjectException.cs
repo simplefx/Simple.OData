@@ -3,7 +3,7 @@ using System.Runtime.Serialization;
 
 namespace Simple.OData.Client
 {
-#if !NETFX_CORE
+#if (NET20 || NET35 || NET40)
     [Serializable]
 #endif
     public sealed class UnresolvableObjectException : Exception
@@ -29,7 +29,7 @@ namespace Simple.OData.Client
             ObjectName = objectName;
         }
 
-#if !NETFX_CORE
+#if (NET20 || NET35 || NET40)
         private UnresolvableObjectException(
             SerializationInfo info,
             StreamingContext context)

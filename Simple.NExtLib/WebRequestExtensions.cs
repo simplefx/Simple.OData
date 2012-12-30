@@ -8,9 +8,17 @@ using System.Threading.Tasks;
 
 namespace Simple.NExtLib
 {
-#if NETFX_CORE
     public static class WebRequestExtensions
     {
+#if (NET20 || NET35 || NET40)
+        public static void SetContent(this WebRequest request, string content)
+        {
+            using (var writer = new StreamWriter(request.GetRequestStream()))
+            {
+                writer.Write(content);
+            }
+        }
+#else
         public static void SetContent(this WebRequest request, string content)
         {
             var restult = SetContentAsync(request, content).Result;
@@ -26,17 +34,21 @@ namespace Simple.NExtLib
                 return content.Length;
             }
         }
-    }
-#else
-    public static class WebRequestExtensions
-    {
-        public static void SetContent(this WebRequest request, string content)
+
+        internal static Task<WebResponse> GetResponseAsync(this WebRequest request, TimeSpan timeout)
         {
-            using (var writer = new StreamWriter(request.GetRequestStream()))
-            {
-                writer.Write(content);
-            }
+            return Task.Factory.StartNew<WebResponse>(() =>
+                                                          {
+                                                              var t = Task.Factory.FromAsync<WebResponse>(
+                                                                  request.BeginGetResponse,
+                                                                  request.EndGetResponse,
+                                                                  null);
+
+                                                              if (!t.Wait(timeout)) throw new TimeoutException();
+
+                                                              return t.Result;
+                                                          });
         }
-    }
 #endif
+    }
 }

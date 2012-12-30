@@ -451,19 +451,19 @@ namespace Simple.OData.Client
 
         private IEnumerable<PropertyInfo> GetTypeProperties(Type type)
         {
-#if NETFX_CORE
-            return type.GetTypeInfo().DeclaredProperties;
-#else
+#if (NET20 || NET35 || NET40)
             return type.GetProperties();
+#else
+            return type.GetTypeInfo().DeclaredProperties;
 #endif
         }
 
         private PropertyInfo GetTypeProperty(Type type, string propertyName)
         {
-#if NETFX_CORE
-            return type.GetTypeInfo().GetDeclaredProperty(propertyName);
-#else
+#if (NET20 || NET35 || NET40)
             return type.GetProperty(propertyName);
+#else
+            return type.GetTypeInfo().GetDeclaredProperty(propertyName);
 #endif
         }
     }

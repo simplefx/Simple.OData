@@ -166,9 +166,9 @@
       <Project>{bc986348-5913-4d56-a808-73f96a8ae289}</Project>
       <Name>Simple.NExtLib.WinRT</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Simple.OData.Client\Simple.OData.Client.WinRT.csproj">
-      <Project>{fc85ed9b-cc45-4d7d-9436-4c9c9d326dfb}</Project>
-      <Name>Simple.OData.Client.WinRT</Name>
+    <ProjectReference Include="..\Simple.OData.Client\Simple.OData.Client.Core.csproj">
+      <Project>{361868b8-a63e-4c74-aa87-b70e1ab22313}</Project>
+      <Name>Simple.OData.Client.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '11.0' ">

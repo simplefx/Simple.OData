@@ -24,7 +24,7 @@ namespace Simple.OData.Client.Tests
                 .From("Products")
                 .Filter(x.ProductID != 1);
             string commandText = command.CommandText;
-            Assert.Equal("Products?$filter=ProductID+ne+1", commandText);
+            Assert.Equal("Products?$filter=ProductID%20ne%201", commandText);
         }
 
         [Fact]
@@ -35,7 +35,7 @@ namespace Simple.OData.Client.Tests
                 .From("Products")
                 .Filter(!(x.ProductID == 1));
             string commandText = command.CommandText;
-            Assert.Equal("Products?$filter=not(ProductID+eq+1)", commandText);
+            Assert.Equal("Products?$filter=not(ProductID%20eq%201)", commandText);
         }
 
         [Fact]
@@ -46,7 +46,7 @@ namespace Simple.OData.Client.Tests
                 .From("Products")
                 .Filter(x.ProductID == 1 && x.ProductName == "abc");
             string commandText = command.CommandText;
-            Assert.Equal("Products?$filter=ProductID+eq+1+and+ProductName+eq+%27abc%27", commandText);
+            Assert.Equal("Products?$filter=ProductID%20eq%201%20and%20ProductName%20eq%20'abc'", commandText);
         }
 
         [Fact]
@@ -79,7 +79,7 @@ namespace Simple.OData.Client.Tests
                 .From("OrderDetails")
                 .Filter(x.OrderID == 1);
             string commandText = command.CommandText;
-            Assert.Equal("Order_Details?$filter=OrderID+eq+1", commandText);
+            Assert.Equal("Order_Details?$filter=OrderID%20eq%201", commandText);
         }
 
         [Fact]

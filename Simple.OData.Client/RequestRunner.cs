@@ -32,7 +32,12 @@ namespace Simple.OData.Client
             }
         }
 
-#if NETFX_CORE
+#if (NET20 || NET35 || NET40)
+        private HttpWebResponse GetResponse(HttpWebRequest request)
+        {
+            return (HttpWebResponse)request.GetResponse();
+        }
+#else
         private HttpWebResponse GetResponse(HttpWebRequest request)
         {
             var responseAsync = request.GetResponseAsync();
@@ -62,11 +67,6 @@ namespace Simple.OData.Client
                     throw;
                 }
             }
-        }
-#else
-        private HttpWebResponse GetResponse(HttpWebRequest request)
-        {
-            return (HttpWebResponse)request.GetResponse();
         }
 #endif
 

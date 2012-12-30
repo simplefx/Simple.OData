@@ -5,12 +5,12 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{8DF17038-537D-45BE-B229-C99EECBB4EDC}</ProjectGuid>
+    <ProjectGuid>{1843DA63-85C9-4103-ADF4-5B6205603807}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Simple.NExtLib.Tests</RootNamespace>
-    <AssemblyName>Simple.NExtLib.Tests.Net40</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <AssemblyName>Simple.NExtLib.Tests.Net45</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
@@ -21,17 +21,19 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NET40</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NET45</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE;NET40</DefineConstants>
+    <DefineConstants>TRACE;NET45</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -85,9 +87,9 @@
       <Project>{072F8BE4-81C1-4276-A9A5-1AEC87A84265}</Project>
       <Name>Simple.NExtLib.TestUtils.Net40</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Simple.NExtLib\Simple.NExtLib.Net40.csproj">
-      <Project>{4A191FAD-DC1D-46FC-A941-7DEB2C8C4C15}</Project>
-      <Name>Simple.NExtLib.Net40</Name>
+    <ProjectReference Include="..\Simple.NExtLib\Simple.NExtLib.Core.csproj">
+      <Project>{37cb8d2a-2eb8-4e91-99ca-1ba1b93e178b}</Project>
+      <Name>Simple.NExtLib.Core</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

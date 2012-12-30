@@ -117,10 +117,10 @@ namespace Simple.OData.Client
 
         private static IEnumerable<FieldInfo> GetTypeFields()
         {
-#if NETFX_CORE
-            return typeof (EdmType).GetTypeInfo().DeclaredFields;
-#else
+#if (NET20 || NET35 || NET40)
             return typeof(EdmType).GetFields(BindingFlags.Public | BindingFlags.Static);
+#else
+            return typeof(EdmType).GetTypeInfo().DeclaredFields;
 #endif
         }
     }

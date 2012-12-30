@@ -234,7 +234,7 @@ namespace Simple.OData.Client
                 extraClauses.Add(new ValueFormatter().Format(_parameters, "&"));
 
             if (!string.IsNullOrEmpty(_filter))
-                extraClauses.Add(string.Format("{0}={1}", FilterLiteral, EscapeUriString(_filter)));
+                extraClauses.Add(string.Format("{0}={1}", FilterLiteral, Uri.EscapeUriString(_filter)));
 
             if (_skipCount >= 0)
                 extraClauses.Add(string.Format("{0}={1}", SkipLiteral, _skipCount));
@@ -323,15 +323,6 @@ namespace Simple.OData.Client
                 ok = expression.ExtractEqualityComparisons(namedKeyValues);
             }
             return ok && _table.GetKeyNames().Count == namedKeyValues.Count() && _table.GetKeyNames().All(namedKeyValues.ContainsKey) ? namedKeyValues : null;
-        }
-        
-        private string EscapeUriString(string uri)
-        {
-#if NETFX_CORE
-            return System.Net.WebUtility.UrlEncode(uri);
-#else
-            return System.Web.HttpUtility.UrlEncode(uri);
-#endif
         }
     }
 }

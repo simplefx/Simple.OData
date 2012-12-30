@@ -1,16 +1,36 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Simple.OData.Client")]
-[assembly: AssemblyDescription("")]
+#if WINDOWS_PHONE
+[assembly: AssemblyTitle("Simple.OData.Client Windows Phone")]
+#elif SILVERLIGHT
+[assembly: AssemblyTitle("Simple.OData.Client Silverlight")]
+#elif PocketPC
+[assembly: AssemblyTitle("Simple.OData.Client Compact")]
+#elif PORTABLE
+[assembly: AssemblyTitle("Simple.OData.Client Portable")]
+#elif NETFX_CORE
+[assembly: AssemblyTitle("Simple.OData.Client WinRT")]
+#elif NET20
+[assembly: AssemblyTitle("Simple.OData.Client 2.0")]
+#elif NET35
+[assembly: AssemblyTitle("Simple.OData.Client 3.5")]
+#elif NET40
+[assembly: AssemblyTitle("Simple.OData.Client 4.0")]
+#else
+[assembly: AssemblyTitle("Simple.OData.Client Windows Phone")]
+#endif
 
-// The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("c39637fa-a4e4-4ca4-a0a8-f393f35e9a72")]
+[assembly: AssemblyDescription("")]
 
 [assembly: InternalsVisibleTo("Simple.OData.Client.Tests")]
 [assembly: InternalsVisibleTo("Simple.OData.Client.Tests.Net40")]
+[assembly: InternalsVisibleTo("Simple.OData.Client.Tests.Net45")]
 [assembly: InternalsVisibleTo("Simple.OData.Client.Tests.WinRT")]
+
+[assembly: CLSCompliant(true)]

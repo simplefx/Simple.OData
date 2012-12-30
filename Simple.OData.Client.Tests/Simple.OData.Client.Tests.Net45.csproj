@@ -5,32 +5,35 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{898FFD08-B7FC-45FE-A6DD-5AE9C2280D28}</ProjectGuid>
+    <ProjectGuid>{95B3E5A3-BE4F-4EBD-AF3D-599AE5FD1B43}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Simple.OData.Client.Tests</RootNamespace>
-    <AssemblyName>Simple.OData.Client.Tests.Net40</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <AssemblyName>Simple.OData.Client.Tests.Net45</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
     <RestorePackages>true</RestorePackages>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NET40</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NET45</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE;NET40</DefineConstants>
+    <DefineConstants>TRACE;NET45</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Data.Edm, Version=5.2.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -142,9 +145,9 @@
       <Project>{2A909E4D-6493-4D36-9FDE-786B89F9A387}</Project>
       <Name>Simple.Data.OData.NorthwindModel</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Simple.OData.Client\Simple.OData.Client.Net40.csproj">
-      <Project>{c20a3959-4895-41f8-86e2-7ded294fd904}</Project>
-      <Name>Simple.OData.Client.Net40</Name>
+    <ProjectReference Include="..\Simple.OData.Client\Simple.OData.Client.Core.csproj">
+      <Project>{361868b8-a63e-4c74-aa87-b70e1ab22313}</Project>
+      <Name>Simple.OData.Client.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\Simple.OData.TestUtils\Simple.OData.TestUtils.Net40.csproj">
       <Project>{858775EA-ECF6-458E-AD96-CF67CF730395}</Project>

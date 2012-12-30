@@ -15,7 +15,7 @@ namespace Simple.OData.Client
             var uri = CreateRequestUrl(command.CommandText);
             var request = (HttpWebRequest)WebRequest.Create(uri);
             request.Method = command.Method;
-#if !NETFX_CORE
+#if (NET20 || NET35 || NET40)
             request.ContentLength = (command.FormattedContent ?? string.Empty).Length;
 #endif
 

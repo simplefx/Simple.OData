@@ -102,17 +102,11 @@
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
     <Folder Include="IO\" />
     <Folder Include="Linq\" />
+    <Folder Include="Xml\Linq\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResourceLoader.cs" />
-    <Compile Include="WebRequestExtensions.cs" />
-    <Compile Include="WebResponseExtensions.cs" />
-    <Compile Include="Xml\Linq\XAttributeExtensions.cs" />
-    <Compile Include="Xml\Linq\XElementExtensions.cs" />
-    <Compile Include="Xml\XElementAsDictionaryExtension.cs" />
-    <Compile Include="Xml\XmlAttributesAsDictionary.cs" />
-    <Compile Include="Xml\XmlElementAsDictionary.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Simple.NExtLib.Core.csproj">
