@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using System.Resources;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security;
@@ -31,7 +32,7 @@ using System.Security;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("NExtLib")]
-[assembly: AssemblyCopyright("Copyright © Mark Rendle 2010")]
+[assembly: AssemblyCopyright("Copyright © Mark Rendle, Vagif Abilov 2010-2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -59,5 +60,5 @@ using System.Security;
 #if !PocketPC
 [assembly: AssemblyFileVersion("0.1.0.0")]
 #endif
-
+[assembly: NeutralResourcesLanguage("en-US")]
 [assembly: CLSCompliant(true)]
