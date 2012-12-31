@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -7,7 +6,7 @@ namespace Simple.OData.Client
 {
     class Schema : ISchema
     {
-        private static readonly ConcurrentDictionary<string, Schema> Instances = new ConcurrentDictionary<string, Schema>();
+        private static readonly SimpleDictionary<string, Schema> Instances = new SimpleDictionary<string, Schema>();
 
         private readonly ISchemaProvider _schemaProvider;
         private readonly Lazy<TableCollection> _lazyTables;

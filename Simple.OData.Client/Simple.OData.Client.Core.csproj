@@ -25,6 +25,7 @@
     <DefineConstants>TRACE;DEBUG;PORTABLE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -83,6 +84,7 @@
     <Compile Include="Schema\SchemaProvider.cs" />
     <Compile Include="Schema\Table.cs" />
     <Compile Include="Schema\TableCollection.cs" />
+    <Compile Include="SimpleDictionary.cs" />
     <Compile Include="UnresolvableObjectException.cs" />
     <Compile Include="ValueFormatter.cs" />
     <Compile Include="WebRequestException.cs" />

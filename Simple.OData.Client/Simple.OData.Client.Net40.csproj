@@ -71,6 +71,7 @@
     <Compile Include="ODataFilter.cs" />
     <Compile Include="Pluralizer.cs" />
     <Compile Include="Schema\ISchema.cs" />
+    <Compile Include="SimpleDictionary.cs" />
     <Compile Include="ValueFormatter.cs" />
     <Compile Include="Extensions\HomogenizeEx.cs" />
     <Compile Include="IPluralizer.cs" />

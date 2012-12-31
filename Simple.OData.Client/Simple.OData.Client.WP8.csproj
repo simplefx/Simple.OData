@@ -89,7 +89,6 @@
     <Compile Include="BatchRequestRunner.cs" />
     <Compile Include="CommandRequestBuilder.cs" />
     <Compile Include="CommandRequestRunner.cs" />
-    <Compile Include="ConcurrentDictionary.cs" />
     <Compile Include="Edm\EdmPropertyType.cs" />
     <Compile Include="Edm\EdmSchema.cs" />
     <Compile Include="Edm\EdmSchemaParser.cs" />
@@ -134,6 +133,7 @@
     <Compile Include="Schema\SchemaProvider.cs" />
     <Compile Include="Schema\Table.cs" />
     <Compile Include="Schema\TableCollection.cs" />
+    <Compile Include="SimpleDictionary.cs" />
     <Compile Include="UnresolvableObjectException.cs" />
     <Compile Include="ValueFormatter.cs" />
     <Compile Include="WebRequestException.cs" />

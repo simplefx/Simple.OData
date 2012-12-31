@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Text.RegularExpressions;
 
 namespace Simple.OData.Client
 {
     static class HomogenizeEx
     {
-        private static readonly ConcurrentDictionary<string, string> Cache
-            = new ConcurrentDictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        private static readonly SimpleDictionary<string, string> Cache
+            = new SimpleDictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         private static Regex _homogenizeRegex = new Regex("[^a-z0-9]");
 
         /// <summary>
