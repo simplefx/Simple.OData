@@ -110,10 +110,6 @@
     <None Include="Resources\DataServicesAtomEntryXml.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Simple.NExtLib\Simple.NExtLib.Core.csproj">
-      <Project>{37cb8d2a-2eb8-4e91-99ca-1ba1b93e178b}</Project>
-      <Name>Simple.NExtLib.Core</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Simple.NExtLib\Simple.NExtLib.Net40.csproj">
       <Project>{4A191FAD-DC1D-46FC-A941-7DEB2C8C4C15}</Project>
       <Name>Simple.NExtLib.Net40</Name>
