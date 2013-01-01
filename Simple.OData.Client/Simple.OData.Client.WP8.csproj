@@ -142,18 +142,18 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Simple.NExtLib\Simple.NExtLib.WP8.csproj">
-      <Project>{9D86F03D-A05F-4304-84A6-A845A1C3B6AE}</Project>
-      <Name>Simple.NExtLib.WP8</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Reference Include="Microsoft.Threading.Tasks.Extensions">
       <HintPath>..\packages\Microsoft.Bcl.Async.1.0.12-beta\lib\wp8\Microsoft.Threading.Tasks.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Threading.Tasks.Extensions.Phone">
       <HintPath>..\packages\Microsoft.Bcl.Async.1.0.12-beta\lib\wp8\Microsoft.Threading.Tasks.Extensions.Phone.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Simple.NExtLib\Simple.NExtLib.Core.csproj">
+      <Project>{37CB8D2A-2EB8-4E91-99CA-1BA1B93E178B}</Project>
+      <Name>Simple.NExtLib.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).$(TargetFrameworkVersion).Overrides.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).CSharp.targets" />
