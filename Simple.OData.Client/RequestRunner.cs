@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
-using System.Threading.Tasks;
+using Simple.NExtLib;
 using Simple.NExtLib.IO;
 
 namespace Simple.OData.Client
@@ -24,37 +24,11 @@ namespace Simple.OData.Client
         {
             try
             {
-                return GetResponse(request);
+                return (HttpWebResponse)request.GetResponse();
             }
             catch (WebException ex)
             {
                 throw WebRequestException.CreateFromWebException(ex);
-            }
-        }
-
-#if (NET20 || NET35 || NET40)
-        private HttpWebResponse GetResponse(HttpWebRequest request)
-        {
-            return (HttpWebResponse)request.GetResponse();
-        }
-#else
-        private HttpWebResponse GetResponse(HttpWebRequest request)
-        {
-            var responseAsync = request.GetResponseAsync();
-            return (HttpWebResponse)WaitForResponse(responseAsync);
-        }
-
-        private async Task<WebResponse> GetResponseAsync(HttpWebRequest request)
-        {
-            return await request.GetResponseAsync();
-        }
-
-        private WebResponse WaitForResponse(Task<WebResponse> response)
-        {
-            try
-            {
-                response.Wait();
-                return response.Result;
             }
             catch (AggregateException ex)
             {
@@ -68,7 +42,6 @@ namespace Simple.OData.Client
                 }
             }
         }
-#endif
 
         public abstract IEnumerable<IDictionary<string, object>> FindEntries(HttpCommand command, bool scalarResult, bool setTotalCount, out int totalCount);
         public abstract IDictionary<string, object> GetEntry(HttpCommand command);

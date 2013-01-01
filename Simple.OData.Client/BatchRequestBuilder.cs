@@ -42,9 +42,6 @@ namespace Simple.OData.Client
             _contentBuilder.AppendLine(string.Format("--changeset_{0}--", _changesetId));
             _contentBuilder.AppendLine(string.Format("--batch_{0}--", _batchId));
             var content = this._contentBuilder.ToString();
-#if (NET20 || NET35 || NET40)
-            this.Request.ContentLength = content.Length;
-#endif
             this.Request.SetContent(content);
             _contentBuilder.Clear();
         }

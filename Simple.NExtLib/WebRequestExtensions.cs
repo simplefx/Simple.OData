@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
-using System.IO;
 using System.Threading.Tasks;
 
 namespace Simple.NExtLib
@@ -13,10 +13,24 @@ namespace Simple.NExtLib
 #if (NET20 || NET35 || NET40)
         public static void SetContent(this WebRequest request, string content)
         {
+            request.ContentLength = content.Length;
             using (var writer = new StreamWriter(request.GetRequestStream()))
             {
                 writer.Write(content);
             }
+        }
+
+        public static Task<WebResponse> GetResponseAsync(this WebRequest request)
+        {
+            return Task.Factory.StartNew<WebResponse>(() =>
+                                                          {
+                                                              var t = Task.Factory.FromAsync<WebResponse>(
+                                                                  request.BeginGetResponse,
+                                                                  request.EndGetResponse,
+                                                                  null);
+
+                                                              return t.Result;
+                                                          });
         }
 #else
         public static void SetContent(this WebRequest request, string content)
@@ -35,19 +49,11 @@ namespace Simple.NExtLib
             }
         }
 
-        internal static Task<WebResponse> GetResponseAsync(this WebRequest request, TimeSpan timeout)
+        public static WebResponse GetResponse(this HttpWebRequest request)
         {
-            return Task.Factory.StartNew<WebResponse>(() =>
-                                                          {
-                                                              var t = Task.Factory.FromAsync<WebResponse>(
-                                                                  request.BeginGetResponse,
-                                                                  request.EndGetResponse,
-                                                                  null);
-
-                                                              if (!t.Wait(timeout)) throw new TimeoutException();
-
-                                                              return t.Result;
-                                                          });
+            var responseAsync = request.GetResponseAsync();
+            responseAsync.Wait();
+            return responseAsync.Result;
         }
 #endif
     }

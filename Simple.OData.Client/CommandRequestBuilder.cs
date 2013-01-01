@@ -15,9 +15,6 @@ namespace Simple.OData.Client
             var uri = CreateRequestUrl(command.CommandText);
             var request = (HttpWebRequest)WebRequest.Create(uri);
             request.Method = command.Method;
-#if (NET20 || NET35 || NET40)
-            request.ContentLength = (command.FormattedContent ?? string.Empty).Length;
-#endif
 
             // TODO: revise
             //if (method == "PUT" || method == "DELETE" || method == "MERGE")
