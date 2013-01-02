@@ -1,4 +1,8 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Reflection;
+using System.Resources;
+using System.Security;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 #if(DEBUG)
@@ -9,15 +13,16 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyCompany("SimpleFX")]
 [assembly: AssemblyProduct("SimpleFX")]
-[assembly: AssemblyCopyright("Copyright © Mark Rendle, Vagif Abilov 2011-2012")]
+[assembly: AssemblyCopyright("Copyright © Mark Rendle, Vagif Abilov 2011-2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
+#if !PORTABLE
 // Setting ComVisible to false makes the types in this assembly not visible
 // to COM components.  If you need to access a type in this assembly from
 // COM, set the ComVisible attribute to true on that type.
 [assembly: ComVisible(false)]
+#endif
 
-[assembly: AssemblyVersion("0.8.3.0")]
-[assembly: AssemblyFileVersion("0.8.3.0")]
-[assembly: AssemblyInformationalVersion("0.8.3.0")]
+[assembly: NeutralResourcesLanguage("en-US")]
+[assembly: CLSCompliant(true)]

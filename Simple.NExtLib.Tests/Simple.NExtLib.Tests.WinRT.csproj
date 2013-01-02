@@ -113,6 +113,12 @@
     </SDKReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\CommonAssemblyVersion.cs">
+      <Link>Properties\CommonAssemblyVersion.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.NExtLib.TestUtils\ContainTest.cs">
       <Link>ContainTest.cs</Link>
     </Compile>

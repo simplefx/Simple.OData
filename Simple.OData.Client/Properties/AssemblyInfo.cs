@@ -33,6 +33,3 @@ using System.Runtime.InteropServices;
 [assembly: InternalsVisibleTo("Simple.OData.Client.Tests.Net40")]
 [assembly: InternalsVisibleTo("Simple.OData.Client.Tests.Net45")]
 [assembly: InternalsVisibleTo("Simple.OData.Client.Tests.WinRT")]
-
-[assembly: NeutralResourcesLanguage("en-US")]
-[assembly: CLSCompliant(true)]
