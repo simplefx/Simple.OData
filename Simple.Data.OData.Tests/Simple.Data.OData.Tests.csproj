@@ -55,6 +55,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data.Entity" />
     <Reference Include="System.Data.Entity.Design" />
@@ -113,9 +114,9 @@
       <Project>{E6EC2C3A-A7D8-41C3-ADCB-37B44F12B6F8}</Project>
       <Name>Simple.Data.OData</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Simple.OData.TestUtils\Simple.OData.TestUtils.csproj">
-      <Project>{858775EA-ECF6-458E-AD96-CF67CF730395}</Project>
-      <Name>Simple.OData.TestUtils</Name>
+    <ProjectReference Include="..\Simple.OData.TestUtils\Simple.OData.TestUtils.Net40.csproj">
+      <Project>{858775ea-ecf6-458e-ad96-cf67cf730395}</Project>
+      <Name>Simple.OData.TestUtils.Net40</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
