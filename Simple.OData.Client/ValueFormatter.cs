@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Simple.NExtLib;
 
 namespace Simple.OData.Client
 {
-    public class ValueFormatter
+    internal class ValueFormatter
     {
         enum FormattingStyle
         {
@@ -29,21 +30,30 @@ namespace Simple.OData.Client
 
         public string FormatContentValue(object value)
         {
-            return FormatValue(value, FormattingStyle.Content);
+            return FormatValue(value, FormattingStyle.Content, null);
         }
 
         public string FormatQueryStringValue(object value)
         {
-            return FormatValue(value, FormattingStyle.QueryString);
+            return FormatValue(value, FormattingStyle.QueryString, null);
         }
 
-        private string FormatValue(object value, FormattingStyle formattingStyle)
+        public string FormatExpressionValue(object value, ExpressionContext context)
+        {
+            return FormatValue(value, FormattingStyle.Content, context);
+        }
+
+        private string FormatValue(object value, FormattingStyle formattingStyle, ExpressionContext context)
         {
             return value == null ? "null"
+                : value is FilterExpression ? (value as FilterExpression).Format(context)
                 : value is string ? string.Format("'{0}'", value)
                 : value is DateTime ? ((DateTime)value).ToIso8601String()
-                : value is bool ? ((bool)value) ? "true" : "false"
-                : (formattingStyle == FormattingStyle.Content && (value is long || value is ulong)) ? value.ToString() + "L"
+                : value is bool ? value.ToString().ToLower()
+                : (value is long || value is ulong) ? value + (formattingStyle == FormattingStyle.Content ? "L" : string.Empty)
+                : value is float ? ((float)value).ToString(CultureInfo.InvariantCulture)
+                : value is double ? ((double)value).ToString(CultureInfo.InvariantCulture)
+                : value is decimal ? ((decimal)value).ToString(CultureInfo.InvariantCulture)
                 : value.ToString();
         }
     }

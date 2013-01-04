@@ -235,7 +235,7 @@ namespace Simple.OData.Client
                 extraClauses.Add(new ValueFormatter().Format(_parameters, "&"));
 
             if (!string.IsNullOrEmpty(_filter))
-                extraClauses.Add(string.Format("{0}={1}", FilterLiteral, HttpUtility.UrlEncode(_filter)));
+                extraClauses.Add(string.Format("{0}={1}", FilterLiteral, Uri.EscapeDataString(_filter)));
 
             if (_skipCount >= 0)
                 extraClauses.Add(string.Format("{0}={1}", SkipLiteral, _skipCount));

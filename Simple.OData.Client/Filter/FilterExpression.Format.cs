@@ -87,16 +87,7 @@ namespace Simple.OData.Client
 
         private string FormatValue(ExpressionContext context)
         {
-            return _value == null
-                       ? "null"
-                       : _value is FilterExpression ? (_value as FilterExpression).Format(context)
-                       : _value is string ? string.Format("'{0}'", _value)
-                       : _value is bool ? _value.ToString().ToLower()
-                       : _value is DateTime ? ((DateTime)_value).ToIso8601String()
-                       : _value is float ? ((float)_value).ToString(CultureInfo.InvariantCulture)
-                       : _value is double ? ((double)_value).ToString(CultureInfo.InvariantCulture)
-                       : _value is decimal ? ((decimal)_value).ToString(CultureInfo.InvariantCulture)
-                       : _value.ToString();
+            return (new ValueFormatter()).FormatExpressionValue(_value, context);
         }
 
         private string FormatOperator(ExpressionContext context)
