@@ -1,18 +1,18 @@
-﻿#if WINDOWS_PHONE
-using System;
+﻿#if (NET20 || NET35 || NET40)
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 #else
-using System.Collections.Concurrent;
+using System;
 using System.Collections.Generic;
 #endif
 
 namespace Simple.OData.Client
 {
     internal class SimpleDictionary<TKey, TValue> :
-#if WINDOWS_PHONE
-        Dictionary<TKey, TValue>
-#else
+#if (NET20 || NET35 || NET40)
         ConcurrentDictionary<TKey, TValue>
+#else
+        Dictionary<TKey, TValue>
 #endif
     {
         public SimpleDictionary()
@@ -24,7 +24,7 @@ namespace Simple.OData.Client
         {
         }
 
-#if WINDOWS_PHONE
+#if !(NET20 || NET35 || NET40)
         public TValue GetOrAdd(TKey key, TValue value)
         {
             TValue storedValue;
