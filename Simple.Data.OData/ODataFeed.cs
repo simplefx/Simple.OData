@@ -8,6 +8,10 @@
         public string Domain { get; set; }
         public bool IntegratedSecurity { get; set; }
 
+        public ODataFeed()
+        {
+        }
+
         public ODataFeed(string url)
             : this(url, null, null, null, false)
         {
