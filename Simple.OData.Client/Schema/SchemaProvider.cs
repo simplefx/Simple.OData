@@ -11,7 +11,7 @@ namespace Simple.OData.Client
         private Lazy<string> _metadataString;
         private Lazy<Schema> _schema; 
 
-        private SchemaProvider(string urlBase, string metadataString)
+        private SchemaProvider(string urlBase, Credentials credentials, string metadataString)
         {
             if (!string.IsNullOrEmpty(metadataString))
             {
@@ -19,20 +19,20 @@ namespace Simple.OData.Client
             }
             else
             {
-                _metadataString = new Lazy<string>(() => RequestMetadataAsString(urlBase));
+                _metadataString = new Lazy<string>(() => RequestMetadataAsString(urlBase, credentials));
             }
             _metadata = new Lazy<EdmSchema>(() => ODataFeedReader.GetSchema(_metadataString.Value));
             _schema = new Lazy<Schema>(() => Schema.Get(this));
         }
 
-        public static SchemaProvider FromUrl(string urlBase)
+        public static SchemaProvider FromUrl(string urlBase, Credentials credentials)
         {
-            return new SchemaProvider(urlBase,null);
+            return new SchemaProvider(urlBase, credentials, null);
         }
 
         public static SchemaProvider FromMetadata(string metadataString)
         {
-            return new SchemaProvider(null, metadataString);
+            return new SchemaProvider(null, null, metadataString);
         }
 
         public Schema Schema
@@ -159,9 +159,9 @@ namespace Simple.OData.Client
             }
         }
 
-        private string RequestMetadataAsString(string urlBase)
+        private string RequestMetadataAsString(string urlBase, Credentials credentials)
         {
-            var requestBuilder = new CommandRequestBuilder(urlBase);
+            var requestBuilder = new CommandRequestBuilder(urlBase, credentials);
             var command = HttpCommand.Get(ODataCommand.MetadataLiteral);
             requestBuilder.AddCommandToRequest(command);
             using (var response = new CommandRequestRunner().TryRequest(command.Request))

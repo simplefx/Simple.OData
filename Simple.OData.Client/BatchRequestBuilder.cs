@@ -15,15 +15,15 @@ namespace Simple.OData.Client
 
         public HttpWebRequest Request { get; private set; }
 
-        public BatchRequestBuilder(string urlBase)
-            : base(urlBase)
+        public BatchRequestBuilder(string urlBase, Credentials credentials)
+            : base(urlBase, credentials)
         {
         }
 
         public void BeginBatch()
         {
             var uri = CreateRequestUrl(ODataCommand.BatchLiteral);
-            this.Request = (HttpWebRequest)WebRequest.Create(uri);
+            this.Request = CreateWebRequest(uri);
             this.Request.Method = RestVerbs.POST;
             _batchId = Guid.NewGuid().ToString();
             this.Request.ContentType = string.Format("multipart/mixed; boundary=batch_{0}", _batchId);

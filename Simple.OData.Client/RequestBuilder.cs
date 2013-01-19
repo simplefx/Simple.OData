@@ -1,9 +1,12 @@
 ﻿
+using System.Net;
+
 namespace Simple.OData.Client
 {
     abstract class RequestBuilder
     {
         public string UrlBase { get; private set; }
+        public Credentials Credentials { get; private set; }
         public string Host
         {
             get 
@@ -14,9 +17,10 @@ namespace Simple.OData.Client
             }
         }
 
-        public RequestBuilder(string urlBase)
+        public RequestBuilder(string urlBase, Credentials credentials)
         {
             this.UrlBase = urlBase;
+            this.Credentials = credentials;
         }
 
         protected internal string CreateRequestUrl(string command)
@@ -25,6 +29,27 @@ namespace Simple.OData.Client
             if (!url.EndsWith("/"))
                 url += "/";
             return url + command;
+        }
+
+        protected HttpWebRequest CreateWebRequest(string uri)
+        {
+            var request = (HttpWebRequest) WebRequest.Create(uri);
+            bool authenticate = false;
+            if (this.Credentials.IntegratedSecurity)
+            {
+                request.Credentials = CredentialCache.DefaultNetworkCredentials;
+                authenticate = true;
+            }
+            else if (!string.IsNullOrEmpty(this.Credentials.User))
+            {
+                request.Credentials = new NetworkCredential(this.Credentials.User, this.Credentials.Password, this.Credentials.Domain);
+            }
+            if (authenticate)
+            {
+                request.PreAuthenticate = true;
+                request.KeepAlive = true;
+            }
+            return request;
         }
 
         public abstract void AddCommandToRequest(HttpCommand command);

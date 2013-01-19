@@ -7,10 +7,6 @@ namespace Simple.OData.Client
 {
     abstract class RequestRunner
     {
-        public RequestRunner()
-        {
-        }
-
         public string Request(HttpWebRequest request)
         {
             using (var response = TryRequest(request))

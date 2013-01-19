@@ -6,10 +6,6 @@ namespace Simple.OData.Client
 {
     class CommandRequestRunner : RequestRunner
     {
-        public CommandRequestRunner()
-        {
-        }
-
         public override IEnumerable<IDictionary<string, object>> FindEntries(HttpCommand command, bool scalarResult, bool setTotalCount, out int totalCount)
         {
             using (var response = TryRequest(command.Request))

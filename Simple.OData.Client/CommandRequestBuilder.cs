@@ -1,19 +1,21 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
+using System.Text;
 using Simple.NExtLib;
 
 namespace Simple.OData.Client
 {
     class CommandRequestBuilder : RequestBuilder
     {
-        public CommandRequestBuilder(string urlBase)
-            : base(urlBase)
+        public CommandRequestBuilder(string urlBase, Credentials credentials)
+            : base(urlBase, credentials)
         {
         }
 
         public override void AddCommandToRequest(HttpCommand command)
         {
             var uri = CreateRequestUrl(command.CommandText);
-            var request = (HttpWebRequest)WebRequest.Create(uri);
+            var request = CreateWebRequest(uri);
             request.Method = command.Method;
             request.ContentLength = (command.FormattedContent ?? string.Empty).Length;
 

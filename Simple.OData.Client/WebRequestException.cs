@@ -12,9 +12,9 @@ namespace Simple.OData.Client
 
         public static WebRequestException CreateFromWebException(WebException ex)
         {
-            var xml = GetResponseBodyXml(ex.Response);
-            if (xml == null) return new WebRequestException(ex);
-            return new WebRequestException(xml["message"].Value, xml["code"].Value, ex);
+            var response = ex.Response as HttpWebResponse;
+            if (response == null) return new WebRequestException(ex);
+            return new WebRequestException(ex.Message, response.StatusCode.ToString(), ex);
         }
 
         public WebRequestException(string message)
