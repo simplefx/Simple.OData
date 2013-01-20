@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Xunit;
 
 namespace Simple.OData.Client.Tests
@@ -36,6 +36,17 @@ namespace Simple.OData.Client.Tests
                 .Filter(!(x.ProductID == 1));
             string commandText = command.CommandText;
             Assert.Equal("Products?$filter=not(ProductID%20eq%201)", commandText);
+        }
+
+        [Fact]
+        public void FindAllByFilterAsKeyEqualLong()
+        {
+            var x = ODataFilter.Expression;
+            var command = _client
+                .From("Products")
+                .Filter(x.ProductID == 1L);
+            string commandText = command.CommandText;
+            Assert.Equal("Products(1L)", commandText);
         }
 
         [Fact]
