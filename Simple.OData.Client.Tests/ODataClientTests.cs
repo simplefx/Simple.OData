@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Net;
 using Xunit;
 
 namespace Simple.OData.Client.Tests
@@ -122,6 +124,22 @@ namespace Simple.OData.Client.Tests
 
             product = _client.FindEntry("Products?$filter=ProductName eq 'Test7'");
             Assert.Null(product["CategoryID"]);
+        }
+
+        [Fact]
+        public void InterceptRequest()
+        {
+            _client.RequestInterceptor = x => x.Method = "PUT";
+            Assert.Throws<WebRequestException>(() => _client.FindEntries("Products"));
+            _client.RequestInterceptor = null;
+        }
+
+        [Fact]
+        public void InterceptResponse()
+        {
+            _client.ResponseInterceptor = x => { throw new InvalidOperationException(); };
+            Assert.Throws<InvalidOperationException>(() => _client.FindEntries("Products"));
+            _client.ResponseInterceptor = null;
         }
     }
 }

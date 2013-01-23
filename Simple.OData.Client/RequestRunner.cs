@@ -7,6 +7,9 @@ namespace Simple.OData.Client
 {
     abstract class RequestRunner
     {
+        public Action<HttpWebRequest> RequestInterceptor { get; set; }
+        public Action<HttpWebResponse> ResponseInterceptor { get; set; }
+
         public string Request(HttpWebRequest request)
         {
             using (var response = TryRequest(request))
@@ -19,7 +22,15 @@ namespace Simple.OData.Client
         {
             try
             {
-                return (HttpWebResponse)request.GetResponse();
+                if (this.RequestInterceptor != null)
+                    this.RequestInterceptor(request);
+
+                var response = (HttpWebResponse)request.GetResponse();
+
+                if (this.ResponseInterceptor != null)
+                    this.ResponseInterceptor(response);
+
+                return response;
             }
             catch (WebException ex)
             {

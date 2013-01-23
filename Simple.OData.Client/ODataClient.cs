@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Xml.Linq;
 
 namespace Simple.OData.Client
@@ -72,6 +73,18 @@ namespace Simple.OData.Client
 
             _requestBuilder = batch.RequestBuilder;
             _requestRunner = batch.RequestRunner;
+        }
+
+        public Action<HttpWebRequest> RequestInterceptor
+        {
+            get { return _requestRunner.RequestInterceptor; }
+            set { _requestRunner.RequestInterceptor = value; }
+        }
+
+        public Action<HttpWebResponse> ResponseInterceptor
+        {
+            get { return _requestRunner.ResponseInterceptor; }
+            set { _requestRunner.ResponseInterceptor = value; }
         }
 
         public ISchema Schema
