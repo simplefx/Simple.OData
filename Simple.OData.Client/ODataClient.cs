@@ -36,11 +36,14 @@ namespace Simple.OData.Client
     public class ODataClient
     {
         private string _urlBase;
+#if (NET20 || NET35 || NET40 || SILVERLIGHT)
         private Credentials _credentials;
+#endif
         private ISchema _schema;
         private readonly RequestBuilder _requestBuilder;
         private readonly RequestRunner _requestRunner;
 
+#if (NET20 || NET35 || NET40 || SILVERLIGHT)
         public ODataClient(string urlBase)
             : this(urlBase, new Credentials(null, null, null, false))
         {
@@ -65,12 +68,26 @@ namespace Simple.OData.Client
             _requestBuilder = new CommandRequestBuilder(_urlBase, _credentials);
             _requestRunner = new CommandRequestRunner();
         }
+#else
+        public ODataClient(string urlBase)
+        {
+            _urlBase = urlBase;
+            _schema = Client.Schema.Get(_urlBase);
+
+            _requestBuilder = new CommandRequestBuilder(_urlBase);
+            _requestRunner = new CommandRequestRunner();
+        }
+#endif
 
         public ODataClient(ODataBatch batch)
         {
             _urlBase = batch.RequestBuilder.UrlBase;
+#if (NET20 || NET35 || NET40 || SILVERLIGHT)
             _credentials = batch.RequestBuilder.Credentials;
             _schema = Client.Schema.Get(_urlBase, _credentials);
+#else
+            _schema = Client.Schema.Get(_urlBase);
+#endif
 
             _requestBuilder = batch.RequestBuilder;
             _requestRunner = batch.RequestRunner;
@@ -95,9 +112,14 @@ namespace Simple.OData.Client
 
         public string SchemaAsString
         {
-            get { return SchemaProvider.FromUrl(_urlBase, _credentials).SchemaAsString; }
+            get { return SchemaProvider.FromUrl(_urlBase
+#if (NET20 || NET35 || NET40 || SILVERLIGHT)
+                , _credentials
+#endif
+                ).SchemaAsString; }
         }
 
+#if (NET20 || NET35 || NET40 || SILVERLIGHT)
         public static ISchema GetSchema(string urlBase)
         {
             return GetSchema(urlBase, new Credentials(null, null, null, false));
@@ -132,6 +154,17 @@ namespace Simple.OData.Client
         {
             return SchemaProvider.FromUrl(urlBase, new Credentials(null, null, null, integratedSecurity)).SchemaAsString;
         }
+#else
+        public static ISchema GetSchema(string urlBase)
+        {
+            return GetSchema(urlBase);
+        }
+
+        public static string GetSchemaAsString(string urlBase)
+        {
+            return SchemaProvider.FromUrl(urlBase).SchemaAsString;
+        }
+#endif
 
         public static ISchema ParseSchemaString(string schemaString)
         {

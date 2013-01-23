@@ -8,6 +8,7 @@ namespace Simple.OData.Client
         internal BatchRequestRunner RequestRunner { get; set; }
         private bool _active;
 
+#if (NET20 || NET35 || NET40 || SILVERLIGHT)
         public ODataBatch(string urlBase)
             : this(urlBase, new Credentials(null, null, null, false))
         {
@@ -31,6 +32,16 @@ namespace Simple.OData.Client
             this.RequestBuilder.BeginBatch();
             _active = true;
         }
+#else
+        public ODataBatch(string urlBase)
+        {
+            this.RequestBuilder = new BatchRequestBuilder(urlBase);
+            this.RequestRunner = new BatchRequestRunner(this.RequestBuilder);
+
+            this.RequestBuilder.BeginBatch();
+            _active = true;
+        }
+#endif
 
         public void Dispose()
         {

@@ -15,8 +15,13 @@ namespace Simple.OData.Client
 
         public HttpWebRequest Request { get; private set; }
 
+#if (NET20 || NET35 || NET40 || SILVERLIGHT)
         public BatchRequestBuilder(string urlBase, Credentials credentials)
             : base(urlBase, credentials)
+#else
+        public BatchRequestBuilder(string urlBase)
+            : base(urlBase)
+#endif
         {
         }
 
@@ -42,7 +47,6 @@ namespace Simple.OData.Client
             _contentBuilder.AppendLine(string.Format("--changeset_{0}--", _changesetId));
             _contentBuilder.AppendLine(string.Format("--batch_{0}--", _batchId));
             var content = this._contentBuilder.ToString();
-            this.Request.ContentLength = content.Length;
             this.Request.SetContent(content);
             _contentBuilder.Clear();
         }

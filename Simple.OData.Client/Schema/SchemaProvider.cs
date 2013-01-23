@@ -11,7 +11,11 @@ namespace Simple.OData.Client
         private Lazy<string> _metadataString;
         private Lazy<Schema> _schema; 
 
-        private SchemaProvider(string urlBase, Credentials credentials, string metadataString)
+        private SchemaProvider(string urlBase, 
+#if (NET20 || NET35 || NET40 || SILVERLIGHT)
+            Credentials credentials, 
+#endif
+            string metadataString)
         {
             if (!string.IsNullOrEmpty(metadataString))
             {
@@ -19,20 +23,36 @@ namespace Simple.OData.Client
             }
             else
             {
-                _metadataString = new Lazy<string>(() => RequestMetadataAsString(urlBase, credentials));
+                _metadataString = new Lazy<string>(() => RequestMetadataAsString(urlBase
+#if (NET20 || NET35 || NET40 || SILVERLIGHT)
+                    , credentials
+#endif
+                    ));
             }
             _metadata = new Lazy<EdmSchema>(() => ODataFeedReader.GetSchema(_metadataString.Value));
             _schema = new Lazy<Schema>(() => Schema.Get(this));
         }
 
-        public static SchemaProvider FromUrl(string urlBase, Credentials credentials)
+        public static SchemaProvider FromUrl(string urlBase
+#if (NET20 || NET35 || NET40 || SILVERLIGHT)
+            , Credentials credentials
+#endif
+            )
         {
-            return new SchemaProvider(urlBase, credentials, null);
+            return new SchemaProvider(urlBase,
+#if (NET20 || NET35 || NET40 || SILVERLIGHT)
+                credentials, 
+#endif
+                null);
         }
 
         public static SchemaProvider FromMetadata(string metadataString)
         {
-            return new SchemaProvider(null, null, metadataString);
+            return new SchemaProvider(null, 
+#if (NET20 || NET35 || NET40 || SILVERLIGHT)
+                null, 
+#endif
+                metadataString);
         }
 
         public Schema Schema
@@ -159,9 +179,17 @@ namespace Simple.OData.Client
             }
         }
 
-        private string RequestMetadataAsString(string urlBase, Credentials credentials)
+        private string RequestMetadataAsString(string urlBase
+#if (NET20 || NET35 || NET40 || SILVERLIGHT)
+            , Credentials credentials
+#endif
+            )
         {
-            var requestBuilder = new CommandRequestBuilder(urlBase, credentials);
+            var requestBuilder = new CommandRequestBuilder(urlBase
+#if (NET20 || NET35 || NET40 || SILVERLIGHT)
+                , credentials
+#endif
+                );
             var command = HttpCommand.Get(ODataCommand.MetadataLiteral);
             requestBuilder.AddCommandToRequest(command);
             using (var response = new CommandRequestRunner().TryRequest(command.Request))
