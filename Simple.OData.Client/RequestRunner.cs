@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using Simple.NExtLib;
@@ -8,9 +8,8 @@ namespace Simple.OData.Client
 {
     abstract class RequestRunner
     {
-        public RequestRunner()
-        {
-        }
+        public Action<HttpWebRequest> RequestInterceptor { get; set; }
+        public Action<HttpWebResponse> ResponseInterceptor { get; set; }
 
         public string Request(HttpWebRequest request)
         {
@@ -24,7 +23,15 @@ namespace Simple.OData.Client
         {
             try
             {
-                return (HttpWebResponse)request.GetResponse();
+                if (this.RequestInterceptor != null)
+                    this.RequestInterceptor(request);
+
+                var response = (HttpWebResponse)request.GetResponse();
+
+                if (this.ResponseInterceptor != null)
+                    this.ResponseInterceptor(response);
+
+                return response;
             }
             catch (WebException ex)
             {
