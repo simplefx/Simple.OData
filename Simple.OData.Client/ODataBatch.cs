@@ -9,8 +9,23 @@ namespace Simple.OData.Client
         private bool _active;
 
         public ODataBatch(string urlBase)
+            : this(urlBase, new Credentials(null, null, null, false))
         {
-            this.RequestBuilder = new BatchRequestBuilder(urlBase);
+        }
+
+        public ODataBatch(string urlBase, string user, string password, string domain = null)
+            : this(urlBase, new Credentials(user, password, domain, false))
+        {
+        }
+
+        public ODataBatch(string urlBase, bool integratedSecurity)
+            : this(urlBase, new Credentials(null, null, null, integratedSecurity))
+        {
+        }
+
+        public ODataBatch(string urlBase, Credentials credentials)
+        {
+            this.RequestBuilder = new BatchRequestBuilder(urlBase, credentials);
             this.RequestRunner = new BatchRequestRunner(this.RequestBuilder);
 
             this.RequestBuilder.BeginBatch();

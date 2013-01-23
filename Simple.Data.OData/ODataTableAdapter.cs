@@ -11,11 +11,17 @@ namespace Simple.Data.OData
     public partial class ODataTableAdapter : Adapter
     {
         private string _urlBase;
+        private Credentials _credentials;
         private ISchema _schema;
 
         internal string UrlBase
         {
             get { return _urlBase; }
+        }
+
+        internal Credentials Credentials
+        {
+            get { return _credentials; }
         }
 
         internal ISchema GetSchema()
@@ -28,7 +34,8 @@ namespace Simple.Data.OData
             base.OnSetup();
 
             _urlBase = Settings.Url;
-            _schema = ODataClient.GetSchema(_urlBase);
+            _credentials = new Credentials(Settings.User, Settings.Password, Settings.Domain, Settings.IntegratedSecurity);
+            _schema = ODataClient.GetSchema(_urlBase, _credentials);
         }
 
         public override IEnumerable<IDictionary<string, object>> Find(string tableName, SimpleExpression criteria)
@@ -139,7 +146,7 @@ namespace Simple.Data.OData
             }
             else
             {
-                client = new ODataClient(_urlBase);
+                 client = new ODataClient(_urlBase, _credentials);
             }
 
             var adapterPluralizer = Database.GetPluralizer();

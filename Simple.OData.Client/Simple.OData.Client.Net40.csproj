@@ -53,6 +53,7 @@
     </Compile>
     <Compile Include="BatchRequestBuilder.cs" />
     <Compile Include="BatchRequestRunner.cs" />
+    <Compile Include="Credentials.cs" />
     <Compile Include="Edm\EdmSchemaParser.cs" />
     <Compile Include="Filter\ExpressionContext.cs" />
     <Compile Include="Filter\ExpressionFunction.cs" />
@@ -110,6 +111,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\DataServicesMetadataEntryXml.txt" />
+    <None Include="Simple.OData.Client.nuspec" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\DataServicesAtomEntryXml.txt" />
