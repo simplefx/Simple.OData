@@ -5,6 +5,7 @@ using System.Data.Entity.Infrastructure;
 using System.Data.Services;
 using System.Data.Services.Common;
 using System.Linq;
+using System.ServiceModel.Web;
 using System.Text;
 
 namespace Simple.Data.OData.NorthwindModel
@@ -25,5 +26,12 @@ namespace Simple.Data.OData.NorthwindModel
         {
             base.HandleException(args);
         }
+
+        [WebGet]
+        public int ParseInt(string number)
+        {
+            return int.Parse(number);
+        }
     }
 }
+

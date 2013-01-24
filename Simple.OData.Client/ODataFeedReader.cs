@@ -12,11 +12,7 @@ namespace Simple.OData.Client
     {
         public static IEnumerable<IDictionary<string, object>> GetData(Stream stream, bool scalarResult = false)
         {
-            var text = QuickIO.StreamToString(stream);
-            if (scalarResult)
-                return new[] { new Dictionary<string, object>() { { ODataCommand.ResultLiteral, text } } };
-            else
-                return GetData(text);
+            return GetData(QuickIO.StreamToString(stream), scalarResult);
         }
 
         public static IEnumerable<IDictionary<string, object>> GetData(Stream stream, out int totalCount)
@@ -35,10 +31,17 @@ namespace Simple.OData.Client
             return QuickIO.StreamToString(stream);
         }
 
-        public static IEnumerable<IDictionary<string, object>> GetData(string text)
+        public static IEnumerable<IDictionary<string, object>> GetData(string text, bool scalarResult = false)
         {
-            var feed = XElement.Parse(text);
-            return GetData(feed);
+            if (scalarResult)
+            {
+                return new[] { new Dictionary<string, object>() { { ODataCommand.ResultLiteral, text } } };
+            }
+            else
+            {
+                var feed = XElement.Parse(text);
+                return GetData(feed);
+            }
         }
 
         public static IEnumerable<IDictionary<string, object>> GetData(string text, out int totalCount)
@@ -52,6 +55,30 @@ namespace Simple.OData.Client
         {
             var feed = XElement.Parse(text);
             return EdmSchemaParser.ParseSchema(feed);
+        }
+
+        public static IEnumerable<IDictionary<string, object>> GetFunctionResult(Stream stream)
+        {
+            var text = QuickIO.StreamToString(stream);
+            var element = XElement.Parse(text);
+            bool scalarResult = element.Name.LocalName != "feed";
+            if (scalarResult)
+            {
+                KeyValuePair<string, object> kv;
+                try
+                {
+                    kv = EdmTypeSerializer.Read(element, ODataCommand.ResultLiteral);
+                }
+                catch (Exception)
+                {
+                    kv = new KeyValuePair<string, object>(ODataCommand.ResultLiteral, text);
+                }
+                return new[] { new Dictionary<string, object>() { { kv.Key, kv.Value } } };
+            }
+            else
+            {
+                return GetData(element);
+            }
         }
 
         private static IEnumerable<IDictionary<string, object>> GetData(XElement feed)

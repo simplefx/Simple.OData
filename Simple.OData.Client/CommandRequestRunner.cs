@@ -77,8 +77,7 @@ namespace Simple.OData.Client
                 }
                 else
                 {
-                    var stream = response.GetResponseStream();
-                    result = new[] { ODataFeedReader.GetData(response.GetResponseStream(), false) };
+                    result = new[] { ODataFeedReader.GetFunctionResult(response.GetResponseStream()) };
                 }
 
                 return result;

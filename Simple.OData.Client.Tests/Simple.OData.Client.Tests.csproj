@@ -121,7 +121,9 @@
     <EmbeddedResource Include="Resources\MultipleProducts.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\MultipleCategoriesWithProducts.xml" />
+    <EmbeddedResource Include="Resources\MultipleCategoriesWithProducts.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\MultipleProductsWithCategory.xml" />
     <EmbeddedResource Include="Resources\SingleCategoryWithProducts.xml" />
     <EmbeddedResource Include="Resources\SingleProductWithCategory.xml" />

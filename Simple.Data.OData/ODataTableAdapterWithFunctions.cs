@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
+using System.Linq;
 using Simple.OData.Client;
 
 namespace Simple.Data.OData

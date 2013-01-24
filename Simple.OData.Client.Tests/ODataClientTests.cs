@@ -177,6 +177,13 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void ExecuteScalarFunction()
+        {
+            var result = _client.ExecuteFunction("ParseInt", new Entry() { { "number", "1" } });
+            Assert.Equal(1, result.First().First().First().Value);
+        }
+
+        [Fact]
         public void InterceptRequest()
         {
             _client.RequestInterceptor = x => x.Method = "PUT";
