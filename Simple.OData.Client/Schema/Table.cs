@@ -11,13 +11,15 @@ namespace Simple.OData.Client
     {
         private readonly Schema _schema;
         private readonly string _actualName;
+        private readonly EdmEntityType _entityType;
         private Lazy<ColumnCollection> _lazyColumns;
         private Lazy<AssociationCollection> _lazyAssociations;
         private Lazy<Key> _lazyPrimaryKey;
 
-        internal Table(string name, Schema schema)
+        internal Table(string name, EdmEntityType entityType, Schema schema)
         {
             _actualName = name;
+            _entityType = entityType;
             _schema = schema;
             _lazyColumns = new Lazy<ColumnCollection>(GetColumns);
             _lazyAssociations = new Lazy<AssociationCollection>(GetAssociations);
@@ -37,6 +39,11 @@ namespace Simple.OData.Client
         public string ActualName
         {
             get { return _actualName; }
+        }
+
+        public EdmEntityType EntityType
+        {
+            get { return _entityType; }
         }
 
         public IEnumerable<Column> Columns

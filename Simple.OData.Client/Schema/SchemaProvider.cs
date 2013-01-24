@@ -60,7 +60,9 @@ namespace Simple.OData.Client
             return from e in _metadata.Value.EntityContainers
                    where e.IsDefaulEntityContainer
                    from s in e.EntitySets
-                   select new Table(s.Name, _schema.Value);
+                   from et in _metadata.Value.EntityTypes
+                   where s.EntityType.Split('.').Last() == et.Name
+                   select new Table(s.Name, et, _schema.Value);
         }
 
         public IEnumerable<Column> GetColumns(Table table)
