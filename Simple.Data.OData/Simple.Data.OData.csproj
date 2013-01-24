@@ -40,9 +40,6 @@
     <Reference Include="Simple.NExtLib, Version=0.10.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Simple.OData.Client.0.10.0.0\lib\net40\Simple.NExtLib.dll</HintPath>
     </Reference>
-    <Reference Include="Simple.OData.Client, Version=0.10.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Simple.OData.Client.0.10.0.0\lib\net40\Simple.OData.Client.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
@@ -74,6 +71,12 @@
   <ItemGroup>
     <None Include="packages.config" />
     <None Include="Simple.Data.OData.nuspec" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Simple.OData.Client\Simple.OData.Client.csproj">
+      <Project>{c20a3959-4895-41f8-86e2-7ded294fd904}</Project>
+      <Name>Simple.OData.Client</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" />

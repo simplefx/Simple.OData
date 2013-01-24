@@ -113,10 +113,12 @@ namespace Simple.OData.Client
             return feed.Name.LocalName == "feed" ? (object)linkData : linkData.Single();
         }
 
-        public static XElement CreateDataElement(IDictionary<string, object> row)
+        public static XElement CreateDataElement(string namespaceName, string collectionName, IDictionary<string, object> row)
         {
             var entry = CreateEmptyEntryWithNamespaces();
 
+            var resourceName = GetQualifiedResourceName(namespaceName, collectionName);
+            entry.Element(null, "category").SetAttributeValue("term", resourceName);
             var properties = entry.Element(null, "content").Element("m", "properties");
 
             foreach (var prop in row)
@@ -175,6 +177,11 @@ namespace Simple.OData.Client
         {
             var entry = XElement.Parse(Properties.Resources.DataServicesMetadataEntryXml);
             return entry;
+        }
+
+        private static string GetQualifiedResourceName(string namespaceName, string collectionName)
+        {
+            return string.Join(".", namespaceName, collectionName);
         }
     }
 }

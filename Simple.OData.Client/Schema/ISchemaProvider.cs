@@ -4,6 +4,8 @@ namespace Simple.OData.Client
 {
     public interface ISchemaProvider
     {
+        string GetTypesNamespace();
+        string GetContainersNamespace();
         IEnumerable<Table> GetTables();
         IEnumerable<Column> GetColumns(Table table);
         IEnumerable<Association> GetAssociations(Table table);

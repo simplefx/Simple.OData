@@ -10,6 +10,8 @@ namespace Simple.OData.Client
         private static readonly ConcurrentDictionary<string, Schema> Instances = new ConcurrentDictionary<string, Schema>();
 
         private readonly ISchemaProvider _schemaProvider;
+        private readonly string _typesNamespace;
+        private readonly string _containersNamespace;
         private readonly Lazy<TableCollection> _lazyTables;
         private readonly Lazy<FunctionCollection> _lazyFunctions;
         private readonly Lazy<List<EdmEntityType>> _lazyEntityTypes;
@@ -17,16 +19,28 @@ namespace Simple.OData.Client
 
         private Schema(ISchemaProvider schemaProvider)
         {
+            _schemaProvider = schemaProvider;
+            _typesNamespace = _schemaProvider.GetTypesNamespace();
+            _containersNamespace = _schemaProvider.GetContainersNamespace();
             _lazyTables = new Lazy<TableCollection>(CreateTableCollection);
             _lazyFunctions = new Lazy<FunctionCollection>(CreateFunctionCollection);
             _lazyEntityTypes = new Lazy<List<EdmEntityType>>(CreateEntityTypeCollection);
             _lazyComplexTypes = new Lazy<List<EdmComplexType>>(CreateComplexTypeCollection);
-            _schemaProvider = schemaProvider;
         }
 
         public ISchemaProvider SchemaProvider
         {
             get { return _schemaProvider; }
+        }
+
+        public string TypesNamespace
+        {
+            get { return _typesNamespace; }
+        }
+
+        public string ContainersNamespace
+        {
+            get { return _containersNamespace; }
         }
 
         public IEnumerable<Table> Tables

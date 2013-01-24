@@ -45,6 +45,16 @@ namespace Simple.OData.Client
             get { return _metadataString.Value; }
         }
 
+        public string GetTypesNamespace()
+        {
+            return _metadata.Value.TypesNamespace;
+        }
+
+        public string GetContainersNamespace()
+        {
+            return _metadata.Value.ContainersNamespace;
+        }
+
         public IEnumerable<Table> GetTables()
         {
             return from e in _metadata.Value.EntityContainers

@@ -211,15 +211,16 @@ namespace Simple.OData.Client
 
         public IDictionary<string, object> InsertEntry(string collection, IDictionary<string, object> entryData, bool resultRequired)
         {
+            var table = _schema.FindTable(collection);
             var entryMembers = ParseEntryMembers(collection, entryData);
 
-            var entry = ODataFeedReader.CreateDataElement(entryMembers.Properties);
+            var entry = ODataFeedReader.CreateDataElement(_schema.TypesNamespace, table.ActualName, entryMembers.Properties);
             foreach (var associatedData in entryMembers.AssociationsByValue)
             {
                 CreateLinkElement(entry, collection, associatedData);
             }
 
-            var commandText = _schema.FindTable(collection).ActualName;
+            var commandText = table.ActualName;
             var command = HttpCommand.Post(commandText, entryData, entry.ToString());
             _requestBuilder.AddCommandToRequest(command);
             var result = _requestRunner.InsertEntry(command, resultRequired);
@@ -333,11 +334,12 @@ namespace Simple.OData.Client
             bool merge = !hasPropertiesToUpdate || CheckMergeConditions(collection, entryKey, entryData);
             var commandText = new ODataClientWithCommand(this, _schema).From(collection).Key(entryKey).CommandText;
 
-            var entryElement = ODataFeedReader.CreateDataElement(entryMembers.Properties);
+            var table = _schema.FindTable(collection);
+            var entryElement = ODataFeedReader.CreateDataElement(_schema.TypesNamespace, table.ActualName, entryMembers.Properties);
             var unlinkAssociationNames = new List<string>();
             foreach (var associatedData in entryMembers.AssociationsByValue)
             {
-                var association = _schema.FindTable(collection).FindAssociation(associatedData.Key);
+                var association = table.FindAssociation(associatedData.Key);
                 if (associatedData.Value != null)
                 {
                     CreateLinkElement(entryElement, collection, associatedData);
