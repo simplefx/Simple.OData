@@ -7,10 +7,26 @@
         public ODataClientWithCommand Client { get; set; }
         public Table Table
         {
-            get { return _table ?? (IsSet ? this.Client.Schema.FindTable(this.CollectionName) : null); }
-            set { _table = value; }
+            get
+            {
+                if (!IsSet)
+                    return null;
+                if (_table != null)
+                    return _table;
+
+                var table = this.Client.Schema.FindTable(this.CollectionName);
+                return string.IsNullOrEmpty(this.DerivedCollectionName)
+                    ? table
+                    : table.FindDerivedTable(this.DerivedCollectionName);
+            }
+
+            set 
+            { 
+                _table = value; 
+            }
         }
         public string CollectionName { get; set; }
+        public string DerivedCollectionName { get; set; }
 
         public bool IsSet
         {

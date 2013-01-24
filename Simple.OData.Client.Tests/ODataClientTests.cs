@@ -60,6 +60,24 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void FindBaseClassEntryExpressionFilter()
+        {
+            var x = ODataFilter.Expression;
+            string filter = _client.FormatFilter("Transport", x.TransportID == 1);
+            var ship = _client.FindEntry(filter);
+            Assert.Equal("Titanic", ship["ShipName"]);
+        }
+
+        [Fact]
+        public void FindDerivedClassEntryExpressionFilter()
+        {
+            var x = ODataFilter.Expression;
+            string filter = _client.FormatFilter("Transport", "Ships", x.ShipName == "Titanic");
+            var ship = _client.FindEntry(filter);
+            Assert.Equal("Titanic", ship["ShipName"]);
+        }
+
+        [Fact]
         public void InsertEntryWithResult()
         {
             var product = _client.InsertEntry("Products", new Entry() {{"ProductName", "Test1"}, {"UnitPrice", 18m}}, true);
@@ -96,10 +114,11 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void UpdateEntrySubcollection()
         {
-            var key = new Entry() { { "TransportID", 1 } };
+            var ship = _client.InsertEntry("Transport", new Entry() { { "ShipName", "Test1" } }, true, "Ships");
+            var key = new Entry() { { "TransportID", ship["TransportID"] } };
             _client.UpdateEntry("Transport", key, new Entry() { { "ShipName", "Test2" } }, "Ships");
 
-            var ship = _client.GetEntry("Transport", key);
+            ship = _client.GetEntry("Transport", key);
             Assert.Equal("Test2", ship["ShipName"]);
         }
 

@@ -297,11 +297,21 @@ namespace Simple.OData.Client
 
         public string FormatFilter(string collectionName, dynamic filterExpression)
         {
+            return FormatFilter(collectionName, null, filterExpression);
+        }
+
+        public string FormatFilter(string collectionName, string derivedCollectionName, dynamic filterExpression)
+        {
             if (filterExpression is FilterExpression)
             {
                 var clientWithCommand = new ODataClientWithCommand(this, _schema);
-                string filter = (filterExpression as FilterExpression).Format(clientWithCommand, collectionName);
-                return clientWithCommand.From(collectionName).Filter(filter).CommandText;
+                string filter = (filterExpression as FilterExpression)
+                    .Format(clientWithCommand, collectionName, derivedCollectionName);
+                
+                return clientWithCommand
+                    .From(collectionName)
+                    .As(derivedCollectionName)
+                    .Filter(filter).CommandText;
             }
             else
             {

@@ -106,7 +106,7 @@ namespace Simple.OData.Client
                     from et in GetEntitySetType(s)
                     from t in GetEntityTypeWithBaseTypes(et)
                     where t.Key != null
-                    select new Key(t.Key.Properties)).Single();
+                    select new Key(t.Key.Properties)).SingleOrDefault();
         }
 
         public IEnumerable<Function> GetFunctions()

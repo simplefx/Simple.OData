@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
-using System.Text;
-using Simple.NExtLib;
 
 namespace Simple.OData.Client
 {
@@ -11,12 +8,21 @@ namespace Simple.OData.Client
     {
         internal string Format(ODataClientWithCommand client, Table table)
         {
-            return this.Format(new ExpressionContext() { Client = client, Table = table });
+            return this.Format(new ExpressionContext()
+                                   {
+                                       Client = client, 
+                                       Table = table
+                                   });
         }
 
-        internal string Format(ODataClientWithCommand client, string collectionName)
+        internal string Format(ODataClientWithCommand client, string collectionName, string derivedCollectionName = null)
         {
-            return this.Format(new ExpressionContext() { Client = client, CollectionName = collectionName });
+            return this.Format(new ExpressionContext()
+                                   {
+                                       Client = client, 
+                                       CollectionName = collectionName, 
+                                       DerivedCollectionName = derivedCollectionName
+                                   });
         }
 
         internal string Format(ExpressionContext context)

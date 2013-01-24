@@ -65,8 +65,7 @@ namespace Simple.Data.OData
 
         public override IDictionary<string, object> Insert(string tableName, IDictionary<string, object> data, bool resultRequired)
         {
-            CheckInsertablePropertiesAreAvailable(tableName, data);
-            return GetODataClient().InsertEntry(tableName, data, resultRequired);
+            return InsertOne(tableName, data, resultRequired, null);
         }
 
         public override int Update(string tableName, IDictionary<string, object> data, SimpleExpression criteria)
@@ -86,7 +85,10 @@ namespace Simple.Data.OData
 
         private IEnumerable<IDictionary<string, object>> FindByExpression(string tableName, SimpleExpression criteria)
         {
-            var cmd = new CommandBuilder().BuildCommand(tableName, criteria);
+            var baseTable = GetBaseTable(tableName);
+            var baseTableName = baseTable == null ? tableName : baseTable.ActualName;
+
+            var cmd = new CommandBuilder().BuildCommand(baseTableName, criteria);
             return GetODataClientCommand(cmd).FindEntries();
         }
 
@@ -116,17 +118,36 @@ namespace Simple.Data.OData
             return GetODataClientCommand(cmd).FindEntries().SingleOrDefault();
         }
 
-        private int UpdateByExpression(string tableName, IDictionary<string, object> data, SimpleExpression criteria, IAdapterTransaction transaction)
+        private IDictionary<string, object> InsertOne(string tableName, 
+            IDictionary<string, object> data, bool resultRequired, IAdapterTransaction transaction)
         {
-            var cmd = new CommandBuilder().BuildCommand(tableName, criteria);
+            CheckInsertablePropertiesAreAvailable(tableName, data);
+            var baseTable = GetBaseTable(tableName);
+            var derivedTable = GetAsDerivedTable(tableName);
+            var baseTableName = baseTable == null ? tableName : baseTable.ActualName;
+            var derivedTableName = derivedTable == null ? null : derivedTable.ActualName;
+
+            return GetODataClient(transaction).InsertEntry(baseTableName, data, resultRequired, derivedTableName);
+        }
+
+        private int UpdateByExpression(string tableName, 
+            IDictionary<string, object> data, SimpleExpression criteria, IAdapterTransaction transaction)
+        {
+            var baseTable = GetBaseTable(tableName);
+            var derivedTable = GetAsDerivedTable(tableName);
+            var baseTableName = baseTable == null ? tableName : baseTable.ActualName;
+            var derivedTableName = derivedTable == null ? null : derivedTable.ActualName;
+
+            var cmd = new CommandBuilder().BuildCommand(baseTableName, criteria);
             var clientCommand = GetODataClientCommand(cmd);
             var client = GetODataClient(transaction);
             return clientCommand.FilterIsKey ? 
-                client.UpdateEntry(tableName, clientCommand.FilterAsKey, data) : 
-                client.UpdateEntries(tableName, clientCommand.CommandText, data);
+                client.UpdateEntry(baseTableName, clientCommand.FilterAsKey, data, derivedTableName) : 
+                client.UpdateEntries(baseTableName, clientCommand.CommandText, data, derivedTableName);
         }
 
-        private int DeleteByExpression(string tableName, SimpleExpression criteria, IAdapterTransaction transaction)
+        private int DeleteByExpression(string tableName, 
+            SimpleExpression criteria, IAdapterTransaction transaction)
         {
             var cmd = new CommandBuilder().BuildCommand(tableName, criteria);
             var clientCommand = GetODataClientCommand(cmd);
@@ -164,7 +185,13 @@ namespace Simple.Data.OData
         {
             var linkNames = cmd.TablePath.Split('.');
             var client = GetODataClient();
-            var clientCommand = client.From(linkNames.First());
+
+            var tableName = linkNames.First();
+            var baseTable = GetBaseTable(tableName);
+            var derivedTable = GetAsDerivedTable(tableName);
+            var clientCommand = derivedTable != null
+                ? client.From(baseTable.ActualName).As(derivedTable.ActualName)
+                : client.From(tableName);
 
             if (cmd.NamedKeyValues != null && cmd.NamedKeyValues.Count > 0)
                 clientCommand = clientCommand.Key(cmd.NamedKeyValues);
@@ -206,13 +233,28 @@ namespace Simple.Data.OData
 
         private void CheckInsertablePropertiesAreAvailable(string tableName, IEnumerable<KeyValuePair<string, object>> data)
         {
-            var table = GetSchema().FindTable(tableName);
-            data = data.Where(kvp => table.HasColumn(kvp.Key));
+            Table table = null;
+            if (!GetSchema().HasTable(tableName))
+                table = GetAsDerivedTable(tableName);
+            if (table == null)
+                table = GetSchema().FindTable(tableName);
 
+            data = data.Where(kvp => table.HasColumn(kvp.Key));
             if (!data.Any())
             {
                 throw new SimpleDataException("No properties were found which could be mapped to the database.");
             }
+        }
+
+        private Table GetBaseTable(string tableName)
+        {
+            return GetSchema().Tables.SingleOrDefault(x => x.HasDerivedTable(tableName));
+        }
+
+        private Table GetAsDerivedTable(string tableName)
+        {
+            var baseTable = GetBaseTable(tableName);
+            return baseTable == null ? null : baseTable.FindDerivedTable(tableName);
         }
     }
 }

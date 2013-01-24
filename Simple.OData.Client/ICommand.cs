@@ -5,6 +5,7 @@ namespace Simple.OData.Client
     public interface ICommand
     {
         IClientWithCommand From(string collectionName);
+        IClientWithCommand As(string derivedCollectionName);
         IClientWithCommand Key(params object[] entryKey);
         IClientWithCommand Key(IEnumerable<object> entryKey);
         IClientWithCommand Key(IDictionary<string, object> entryKey);

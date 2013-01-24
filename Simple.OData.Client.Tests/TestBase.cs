@@ -29,6 +29,11 @@ namespace Simple.OData.Client.Tests
             {
                 if (x["CategoryName"].ToString().StartsWith("Test")) _client.DeleteEntry("Categories", x);
             });
+            IEnumerable<dynamic> transport = _client.FindEntries("Transport");
+            transport.ToList().ForEach(x =>
+            {
+                if (int.Parse(x["TransportID"].ToString()) > 2) _client.DeleteEntry("Transport", x);
+            });
 
             if (_service != null)
             {

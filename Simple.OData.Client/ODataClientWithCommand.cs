@@ -5,9 +5,9 @@ namespace Simple.OData.Client
 {
     class ODataClientWithCommand : IClientWithCommand
     {
-        private ODataClient _client;
-        private ISchema _schema;
-        private ODataCommand _command;
+        private readonly ODataClient _client;
+        private readonly ISchema _schema;
+        private readonly ODataCommand _command;
 
         public ODataClientWithCommand(ODataClient client, ISchema schema, ODataCommand parent = null)
         {
@@ -113,6 +113,11 @@ namespace Simple.OData.Client
         public IClientWithCommand From(string collectionName)
         {
             return _command.From(collectionName);
+        }
+
+        public IClientWithCommand As(string derivedCollectionName)
+        {
+            return _command.As(derivedCollectionName);
         }
 
         public IClientWithCommand Key(params object[] key)

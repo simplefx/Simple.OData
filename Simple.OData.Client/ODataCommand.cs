@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 
 namespace Simple.OData.Client
 {
     class ODataCommand : ICommand
     {
-        private ODataClientWithCommand _client;
-        private ODataCommand _parent;
+        private readonly ODataClientWithCommand _client;
+        private readonly ODataCommand _parent;
         private string _collectionName;
+        private string _derivedCollectionName;
         private string _functionName;
-        private Table _table;
         private IList<object> _keyValues;
         private IDictionary<string, object> _namedKeyValues;
         private Dictionary<string, object> _parameters = new Dictionary<string, object>();
@@ -20,7 +19,7 @@ namespace Simple.OData.Client
         private int _topCount = -1;
         private List<string> _expandAssociations = new List<string>();
         private List<string> _selectColumns = new List<string>();
-        private List<KeyValuePair<string, bool>> _orderbyColumns = new List<KeyValuePair<string, bool>>();
+        private readonly List<KeyValuePair<string, bool>> _orderbyColumns = new List<KeyValuePair<string, bool>>();
         private bool _computeCount;
         private bool _inlineCount;
         private string _linkName;
@@ -44,17 +43,43 @@ namespace Simple.OData.Client
             _parent = parent;
         }
 
+        private Table Table
+        {
+            get
+            {
+                if (!string.IsNullOrEmpty(_collectionName))
+                {
+                    var table = _client.Schema.FindTable(_collectionName);
+                    return string.IsNullOrEmpty(_derivedCollectionName)
+                               ? table
+                               : table.FindDerivedTable(_derivedCollectionName);
+                }
+                else if (!string.IsNullOrEmpty(_linkName))
+                {
+                    return _client.Schema.FindTable(_parent.Table.FindAssociation(_linkName).ReferenceTableName);
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
         public IClientWithCommand From(string collectionName)
         {
             _collectionName = collectionName;
-            _table = _client.Schema.FindTable(_collectionName);
+            return _client;
+        }
+
+        public IClientWithCommand As(string derivedCollectionName)
+        {
+            _derivedCollectionName = derivedCollectionName;
             return _client;
         }
 
         public IClientWithCommand Link(string linkName)
         {
             _linkName = linkName;
-            _table = _client.Schema.FindTable(_parent._table.FindAssociation(_linkName).ReferenceTableName);
             return _client;
         }
 
@@ -87,7 +112,7 @@ namespace Simple.OData.Client
             _namedKeyValues = TryInterpretFilterExpressionAsKey(expression);
             if (_namedKeyValues == null)
             {
-                _filter = expression.Format(_client, _table);
+                _filter = expression.Format(_client, this.Table);
             }
             else
             {
@@ -211,11 +236,13 @@ namespace Simple.OData.Client
             if (!string.IsNullOrEmpty(_collectionName))
             {
                 commandText += _client.Schema.FindTable(_collectionName).ActualName;
+                if (!string.IsNullOrEmpty(_derivedCollectionName))
+                    commandText += "/" + string.Join(".", _client.Schema.TypesNamespace, _derivedCollectionName);
             }
             else if (!string.IsNullOrEmpty(_linkName))
             {
                 commandText += _parent.ToString() + "/";
-                commandText += _parent._table.FindAssociation(_linkName).ActualName;
+                commandText += _parent.Table.FindAssociation(_linkName).ActualName;
             }
             else if (!string.IsNullOrEmpty(_functionName))
             {
@@ -269,24 +296,24 @@ namespace Simple.OData.Client
 
         private string FormatExpandItem(string item)
         {
-            return _table.FindAssociation(item).ActualName;
+            return this.Table.FindAssociation(item).ActualName;
         }
 
         private string FormatSelectItem(string item)
         {
-            return _table.HasColumn(item)
-                ? _table.FindColumn(item).ActualName
-                : _table.FindAssociation(item).ActualName;
+            return this.Table.HasColumn(item)
+                ? this.Table.FindColumn(item).ActualName
+                : this.Table.FindAssociation(item).ActualName;
         }
 
         private string FormatOrderByItem(KeyValuePair<string, bool> item)
         {
-            return _table.FindColumn(item.Key) + (item.Value ? " desc" : string.Empty);
+            return this.Table.FindColumn(item.Key) + (item.Value ? " desc" : string.Empty);
         }
 
         private string FormatKey()
         {
-            var keyNames = _table.GetKeyNames();
+            var keyNames = this.Table.GetKeyNames();
             var namedKeyValues = new Dictionary<string, object>();
             for (int index = 0; index < keyNames.Count; index++)
             {
@@ -323,7 +350,9 @@ namespace Simple.OData.Client
             {
                 ok = expression.ExtractEqualityComparisons(namedKeyValues);
             }
-            return ok && _table.GetKeyNames().Count == namedKeyValues.Count() && _table.GetKeyNames().All(namedKeyValues.ContainsKey) ? namedKeyValues : null;
+            return ok && 
+                this.Table.GetKeyNames().Count == namedKeyValues.Count() && 
+                this.Table.GetKeyNames().All(namedKeyValues.ContainsKey) ? namedKeyValues : null;
         }
     }
 }

@@ -126,7 +126,11 @@ namespace Simple.OData.Client
 
         public IList<string> GetKeyNames()
         {
-            return _schema.FindTable(_actualName).PrimaryKey.AsEnumerable().ToList();
+            return this.PrimaryKey != null && this.PrimaryKey.AsEnumerable().Any()
+                       ? this.PrimaryKey.AsEnumerable().ToList()
+                       : _baseTable != null
+                             ? _baseTable.GetKeyNames()
+                             : new string[] {};
         }
 
         private TableCollection GetDerivedTables()

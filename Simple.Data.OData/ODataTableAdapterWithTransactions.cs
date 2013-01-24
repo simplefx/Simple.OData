@@ -33,8 +33,7 @@ namespace Simple.Data.OData
 
         public IDictionary<string, object> Insert(string tableName, IDictionary<string, object> data, IAdapterTransaction transaction, bool resultRequired)
         {
-            CheckInsertablePropertiesAreAvailable(tableName, data);
-            return GetODataClient(transaction).InsertEntry(tableName, data, resultRequired);
+            return InsertOne(tableName, data, resultRequired, transaction);
         }
 
         public IEnumerable<IDictionary<string, object>> InsertMany(string tableName, IEnumerable<IDictionary<string, object>> data, IAdapterTransaction transaction, Func<IDictionary<string, object>, Exception, bool> onError, bool resultRequired)
