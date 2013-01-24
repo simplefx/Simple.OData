@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyCompany("SimpleFX")]
 [assembly: AssemblyProduct("SimpleFX")]
-[assembly: AssemblyCopyright("Copyright © Mark Rendle, Vagif Abilov 2011-2012")]
+[assembly: AssemblyCopyright("Copyright © Mark Rendle, Vagif Abilov 2011-2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

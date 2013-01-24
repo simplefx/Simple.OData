@@ -37,9 +37,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Simple.Data.Core.0.18.3.1\lib\net40\Simple.Data.dll</HintPath>
     </Reference>
-    <Reference Include="Simple.NExtLib, Version=0.10.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Simple.OData.Client.0.10.0.0\lib\net40\Simple.NExtLib.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.Core" />
@@ -73,6 +70,10 @@
     <None Include="Simple.Data.OData.nuspec" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Simple.NExtLib\Simple.NExtLib.csproj">
+      <Project>{4a191fad-dc1d-46fc-a941-7deb2c8c4c15}</Project>
+      <Name>Simple.NExtLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Simple.OData.Client\Simple.OData.Client.csproj">
       <Project>{c20a3959-4895-41f8-86e2-7ded294fd904}</Project>
       <Name>Simple.OData.Client</Name>
