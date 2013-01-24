@@ -86,7 +86,7 @@ namespace Simple.OData.Client
         private TableCollection CreateTableCollection()
         {
             return new TableCollection(_schemaProvider.GetTables()
-                .Select(table => new Table(table.ActualName, table.EntityType, this)));
+                .Select(table => new Table(table.ActualName, table.EntityType, null, this)));
         }
 
         private FunctionCollection CreateFunctionCollection()

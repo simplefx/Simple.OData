@@ -209,10 +209,13 @@ namespace Simple.OData.Client
             return _requestRunner.GetEntry(command);
         }
 
-        public IDictionary<string, object> InsertEntry(string collection, IDictionary<string, object> entryData, bool resultRequired)
+        public IDictionary<string, object> InsertEntry(string collection, IDictionary<string, object> entryData, bool resultRequired, string derivedCollection = null)
         {
-            var table = _schema.FindTable(collection);
-            var entryMembers = ParseEntryMembers(collection, entryData);
+            var baseTable = _schema.FindTable(collection);
+            var table = string.IsNullOrEmpty(derivedCollection) 
+                ? baseTable 
+                : baseTable.FindDerivedTable(derivedCollection);
+            var entryMembers = ParseEntryMembers(table, entryData);
 
             var entry = ODataFeedReader.CreateDataElement(_schema.TypesNamespace, table.ActualName, entryMembers.Properties);
             foreach (var associatedData in entryMembers.AssociationsByValue)
@@ -220,7 +223,7 @@ namespace Simple.OData.Client
                 CreateLinkElement(entry, collection, associatedData);
             }
 
-            var commandText = table.ActualName;
+            var commandText = baseTable.ActualName;
             var command = HttpCommand.Post(commandText, entryData, entry.ToString());
             _requestBuilder.AddCommandToRequest(command);
             var result = _requestRunner.InsertEntry(command, resultRequired);
@@ -237,20 +240,25 @@ namespace Simple.OData.Client
             return result;
         }
 
-        public int UpdateEntries(string collection, string commandText, IDictionary<string, object> entryData)
+        public int UpdateEntries(string collection, string commandText, IDictionary<string, object> entryData, string derivedCollection = null)
         {
-            return IterateEntries(collection, commandText, entryData, UpdateEntry);
+            return IterateEntries(collection, commandText, entryData, derivedCollection, UpdateEntry);
         }
 
-        public int UpdateEntry(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
+        public int UpdateEntry(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData, string derivedCollection = null)
         {
-            var entryMembers = ParseEntryMembers(collection, entryData);
-            return UpdateEntryPropertiesAndAssociations(collection, entryKey, entryData, entryMembers);
+            var baseTable = _schema.FindTable(collection);
+            var table = string.IsNullOrEmpty(derivedCollection)
+                ? baseTable
+                : baseTable.FindDerivedTable(derivedCollection);
+            var entryMembers = ParseEntryMembers(table, entryData);
+
+            return UpdateEntryPropertiesAndAssociations(collection, entryKey, entryData, entryMembers, derivedCollection);
         }
 
         public int DeleteEntries(string collection, string commandText)
         {
-            return IterateEntries(collection, commandText, null, (x,y,z) => DeleteEntry(x,y));
+            return IterateEntries(collection, commandText, null, null, (x,y,z,w) => DeleteEntry(x,y));
         }
 
         public int DeleteEntry(string collection, IDictionary<string, object> entryKey)
@@ -301,13 +309,13 @@ namespace Simple.OData.Client
             }
         }
 
-        private int IterateEntries(string collection, string commandText, IDictionary<string, object> entryData, 
-            Func<string, IDictionary<string, object>, IDictionary<string, object>, int> func)
+        private int IterateEntries(string collection, string commandText, IDictionary<string, object> entryData, string derivedCollection,
+            Func<string, IDictionary<string, object>, IDictionary<string, object>, string, int> func)
         {
             var entryKey = ExtractKeyFromCommandText(collection, commandText);
             if (entryKey != null)
             {
-                return func(collection, entryKey, entryData);
+                return func(collection, entryKey, entryData, derivedCollection);
             }
             else
             {
@@ -317,7 +325,7 @@ namespace Simple.OData.Client
                     var entryList = entries.ToList();
                     foreach (var entry in entryList)
                     {
-                        func(collection, entry, entryData);
+                        func(collection, entry, entryData, derivedCollection);
                     }
                     return entryList.Count;
                 }
@@ -328,13 +336,22 @@ namespace Simple.OData.Client
             }
         }
 
-        private int UpdateEntryPropertiesAndAssociations(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData, EntryMembers entryMembers)
+        private int UpdateEntryPropertiesAndAssociations(
+            string collection, 
+            IDictionary<string, object> entryKey, 
+            IDictionary<string, object> entryData, 
+            EntryMembers entryMembers, 
+            string derivedCollection)
         {
             bool hasPropertiesToUpdate = entryMembers.Properties.Count > 0;
             bool merge = !hasPropertiesToUpdate || CheckMergeConditions(collection, entryKey, entryData);
             var commandText = new ODataClientWithCommand(this, _schema).From(collection).Key(entryKey).CommandText;
 
-            var table = _schema.FindTable(collection);
+            var baseTable = _schema.FindTable(collection);
+            var table = string.IsNullOrEmpty(derivedCollection)
+                ? baseTable
+                : baseTable.FindDerivedTable(derivedCollection);
+
             var entryElement = ODataFeedReader.CreateDataElement(_schema.TypesNamespace, table.ActualName, entryMembers.Properties);
             var unlinkAssociationNames = new List<string>();
             foreach (var associatedData in entryMembers.AssociationsByValue)
@@ -430,11 +447,10 @@ namespace Simple.OData.Client
             return entryProperties;
         }
 
-        private EntryMembers ParseEntryMembers(string collection, IDictionary<string, object> entryData)
+        private EntryMembers ParseEntryMembers(Table table, IDictionary<string, object> entryData)
         {
             var entryMembers = new EntryMembers();
 
-            var table = _schema.FindTable(collection);
             foreach (var item in entryData)
             {
                 ParseEntryMember(table, item, entryMembers);

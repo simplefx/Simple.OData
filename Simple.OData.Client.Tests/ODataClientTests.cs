@@ -76,6 +76,14 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void InsertEntrySubcollection()
+        {
+            var ship = _client.InsertEntry("Transport", new Entry() { { "ShipName", "Test1" } }, true, "Ships");
+
+            Assert.Equal("Test1", ship["ShipName"]);
+        }
+
+        [Fact]
         public void UpdateEntry()
         {
             var key = new Entry() {{"ProductID", 1}};
@@ -83,6 +91,16 @@ namespace Simple.OData.Client.Tests
 
             var product = _client.GetEntry("Products", key);
             Assert.Equal(123m, product["UnitPrice"]);
+        }
+
+        [Fact]
+        public void UpdateEntrySubcollection()
+        {
+            var key = new Entry() { { "TransportID", 1 } };
+            _client.UpdateEntry("Transport", key, new Entry() { { "ShipName", "Test2" } }, "Ships");
+
+            var ship = _client.GetEntry("Transport", key);
+            Assert.Equal("Test2", ship["ShipName"]);
         }
 
         [Fact]
@@ -96,6 +114,19 @@ namespace Simple.OData.Client.Tests
 
             product = _client.FindEntry("Products?$filter=ProductName eq 'Test3'");
             Assert.Null(product);
+        }
+
+        [Fact]
+        public void DeleteEntrySubCollection()
+        {
+            var ship = _client.InsertEntry("Transport", new Entry() { { "ShipName", "Test3" } }, true, "Ships");
+            ship = _client.FindEntry("Transport?$filter=TransportID eq " + ship["TransportID"]);
+            Assert.NotNull(ship);
+
+            _client.DeleteEntry("Transport", ship);
+
+            ship = _client.FindEntry("Transport?$filter=TransportID eq " + ship["TransportID"]);
+            Assert.Null(ship);
         }
 
         [Fact]

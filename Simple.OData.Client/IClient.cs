@@ -13,8 +13,8 @@ namespace Simple.OData.Client
         IDictionary<string, object> GetEntry(params object[] entryKey);
         IDictionary<string, object> GetEntry(IEnumerable<object> entryKey);
         IDictionary<string, object> GetEntry(IDictionary<string, object> entryKey);
-        IDictionary<string, object> InsertEntry(IDictionary<string, object> entryData, bool resultRequired);
-        int UpdateEntry(IDictionary<string, object> entryKey, IDictionary<string, object> entryData);
+        IDictionary<string, object> InsertEntry(IDictionary<string, object> entryData, bool resultRequired, string derivedCollection = null);
+        int UpdateEntry(IDictionary<string, object> entryKey, IDictionary<string, object> entryData, string derivedCollection = null);
         int DeleteEntry(IDictionary<string, object> entryKey);
         void LinkEntry(IDictionary<string, object> entryKey, string linkName, IDictionary<string, object> linkedEntryKey);
         void UnlinkEntry(IDictionary<string, object> entryKey, string linkName);

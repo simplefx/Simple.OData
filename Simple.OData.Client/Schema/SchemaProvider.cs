@@ -7,9 +7,9 @@ namespace Simple.OData.Client
 {
     class SchemaProvider
     {
-        private Lazy<EdmSchema> _metadata;
-        private Lazy<string> _metadataString;
-        private Lazy<Schema> _schema; 
+        private readonly Lazy<EdmSchema> _metadata;
+        private readonly Lazy<string> _metadataString;
+        private readonly Lazy<Schema> _schema;
 
         private SchemaProvider(string urlBase, Credentials credentials, string metadataString)
         {
@@ -57,23 +57,21 @@ namespace Simple.OData.Client
 
         public IEnumerable<Table> GetTables()
         {
-            return from e in _metadata.Value.EntityContainers
-                   where e.IsDefaulEntityContainer
-                   from s in e.EntitySets
-                   from et in _metadata.Value.EntityTypes
-                   where s.EntityType.Split('.').Last() == et.Name
-                   select new Table(s.Name, et, _schema.Value);
+            return from s in GetEntitySets()
+                   from et in GetEntitySetType(s)
+                   select new Table(s.Name, et, null, _schema.Value);
+        }
+
+        public IEnumerable<Table> GetDerivedTables(Table table)
+        {
+            return from et in _metadata.Value.EntityTypes
+                   where et.BaseType != null && et.BaseType.Name == table.EntityType.Name 
+                   select new Table(et.Name, et, table, _schema.Value);
         }
 
         public IEnumerable<Column> GetColumns(Table table)
         {
-            return from e in _metadata.Value.EntityContainers
-                   where e.IsDefaulEntityContainer
-                   from s in e.EntitySets
-                   where s.Name == table.ActualName
-                   from et in _metadata.Value.EntityTypes
-                   where s.EntityType.Split('.').Last() == et.Name
-                   from t in GetEntityTypeWithBaseTypes(et)
+            return from t in GetEntityTypeWithBaseTypes(table.EntityType)
                    from p in t.Properties
                    select new Column(p.Name, p.Type, p.Nullable);
         }
@@ -103,12 +101,9 @@ namespace Simple.OData.Client
 
         public Key GetPrimaryKey(Table table)
         {
-            return (from e in _metadata.Value.EntityContainers
-                    where e.IsDefaulEntityContainer
-                    from s in e.EntitySets
+            return (from s in GetEntitySets()
                     where s.Name == table.ActualName
-                    from et in _metadata.Value.EntityTypes
-                    where s.EntityType.Split('.').Last() == et.Name
+                    from et in GetEntitySetType(s)
                     from t in GetEntityTypeWithBaseTypes(et)
                     where t.Key != null
                     select new Key(t.Key.Properties)).Single();
@@ -134,6 +129,21 @@ namespace Simple.OData.Client
                    select t;
         }
 
+        private IEnumerable<EdmEntitySet> GetEntitySets()
+        {
+            return from e in _metadata.Value.EntityContainers
+                   where e.IsDefaulEntityContainer
+                   from s in e.EntitySets
+                   select s;
+        }
+
+        private IEnumerable<EdmEntityType> GetEntitySetType(EdmEntitySet entitySet)
+        {
+            return from et in _metadata.Value.EntityTypes
+                   where entitySet.EntityType.Split('.').Last() == et.Name
+                   select et;
+        }
+
         private string GetQualifiedName(string schemaName, string name)
         {
             return string.IsNullOrEmpty(schemaName) ? name : string.Format("{0}.{1}", schemaName, name);
@@ -147,9 +157,9 @@ namespace Simple.OData.Client
         private Function CreateFunction(EdmFunctionImport f)
         {
             return new Function(
-                f.Name, 
-                f.HttpMethod, 
-                f.EntitySet, 
+                f.Name,
+                f.HttpMethod,
+                f.EntitySet,
                 f.ReturnType == null ? null : f.ReturnType.Name,
                 f.Parameters.Select(p => p.Name));
         }
