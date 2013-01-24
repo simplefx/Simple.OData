@@ -45,12 +45,12 @@ namespace Simple.Data.OData
 
         public override IDictionary<string, object> GetKey(string tableName, IDictionary<string, object> record)
         {
-            return GetTable(tableName).GetKey(tableName, record);
+            return GetSchema().FindTable(tableName).GetKey(tableName, record);
         }
 
         public override IList<string> GetKeyNames(string tableName)
         {
-            return GetTable(tableName).GetKeyNames();
+            return GetSchema().FindTable(tableName).GetKeyNames();
         }
 
         public override IDictionary<string, object> Get(string tableName, params object[] keyValues)
@@ -202,11 +202,6 @@ namespace Simple.Data.OData
             linkNames.Skip(1).ToList().ForEach(x => clientCommand = clientCommand.NavigateTo(x));
 
             return clientCommand;
-        }
-
-        private Table GetTable(string tableName)
-        {
-            return new Table(tableName, GetSchema());
         }
 
         private void CheckInsertablePropertiesAreAvailable(string tableName, IEnumerable<KeyValuePair<string, object>> data)

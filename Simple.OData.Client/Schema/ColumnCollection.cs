@@ -6,11 +6,11 @@ namespace Simple.OData.Client
 {
     public class ColumnCollection : Collection<Column>
     {
-        public ColumnCollection()
+        internal ColumnCollection()
         {
         }
 
-        public ColumnCollection(IEnumerable<Column> columns)
+        internal ColumnCollection(IEnumerable<Column> columns)
             : base(columns.ToList())
         {
         }

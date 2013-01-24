@@ -5,7 +5,7 @@ using System.Net;
 
 namespace Simple.OData.Client
 {
-    class SchemaProvider : ISchemaProvider
+    class SchemaProvider
     {
         private Lazy<EdmSchema> _metadata;
         private Lazy<string> _metadataString;

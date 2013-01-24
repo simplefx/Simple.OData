@@ -4,7 +4,6 @@ namespace Simple.OData.Client
 {
     public interface ISchema
     {
-        ISchemaProvider SchemaProvider { get; }
         string TypesNamespace { get; }
         string ContainersNamespace { get; }
         IEnumerable<Table> Tables { get; }

@@ -6,11 +6,11 @@ namespace Simple.OData.Client
 {
     public class AssociationCollection : Collection<Association>
     {
-        public AssociationCollection()
+        internal AssociationCollection()
         {
         }
 
-        public AssociationCollection(IEnumerable<Association> associations)
+        internal AssociationCollection(IEnumerable<Association> associations)
             : base(associations.ToList())
         {
         }

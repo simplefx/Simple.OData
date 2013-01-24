@@ -6,11 +6,11 @@ namespace Simple.OData.Client
 {
     public class FunctionCollection : Collection<Function>
     {
-        public FunctionCollection()
+        internal FunctionCollection()
         {
         }
 
-        public FunctionCollection(IEnumerable<Function> functions)
+        internal FunctionCollection(IEnumerable<Function> functions)
             : base(functions.ToList())
         {
         }
