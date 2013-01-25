@@ -48,14 +48,70 @@ namespace Simple.OData.Client
             get { return _lazyTables.Value.AsEnumerable(); }
         }
 
+        public bool HasTable(string tableName)
+        {
+            return _lazyTables.Value.Contains(tableName);
+        }
+
         public Table FindTable(string tableName)
         {
             return _lazyTables.Value.Find(tableName);
         }
 
-        public bool HasTable(string tableName)
+        public Table FindBaseTable(string tablePath)
         {
-            return _lazyTables.Value.Contains(tableName);
+            return this.FindTable(tablePath.Split('/').First());
+        }
+
+        public Table FindConcreteTable(string tablePath)
+        {
+            var items = tablePath.Split('/');
+            if (items.Count() > 1)
+            {
+                var baseTable = this.FindTable(items[0]);
+                var table = string.IsNullOrEmpty(items[1])
+                    ? baseTable
+                    : baseTable.FindDerivedTable(items[1]);
+                return table;
+            }
+            else
+            {
+                return this.FindTable(tablePath);
+            }
+        }
+
+        public Column FindColumn(string tablePath, string columnName)
+        {
+            var baseTable = this.FindBaseTable(tablePath);
+            var concreteTable = this.FindConcreteTable(tablePath);
+            if (baseTable == concreteTable)
+            {
+                return concreteTable.FindColumn(columnName);
+            }
+            else
+            {
+                if (concreteTable.HasAssociation(columnName))
+                    return concreteTable.FindColumn(columnName);
+                else
+                    return baseTable.FindColumn(columnName);
+            }
+        }
+
+        public Association FindAssociation(string tablePath, string associationName)
+        {
+            var baseTable = this.FindBaseTable(tablePath);
+            var concreteTable = this.FindConcreteTable(tablePath);
+            if (baseTable == concreteTable)
+            {
+                return concreteTable.FindAssociation(associationName);
+            }
+            else
+            {
+                if (concreteTable.HasAssociation(associationName))
+                    return concreteTable.FindAssociation(associationName);
+                else
+                    return baseTable.FindAssociation(associationName);
+            }
         }
 
         public IEnumerable<Function> Functions
@@ -63,14 +119,14 @@ namespace Simple.OData.Client
             get { return _lazyFunctions.Value.AsEnumerable(); }
         }
 
-        public Function FindFunction(string functionName)
-        {
-            return _lazyFunctions.Value.Find(functionName);
-        }
-
         public bool HasFunction(string functionName)
         {
             return _lazyFunctions.Value.Contains(functionName);
+        }
+
+        public Function FindFunction(string functionName)
+        {
+            return _lazyFunctions.Value.Find(functionName);
         }
 
         public IEnumerable<EdmEntityType> EntityTypes

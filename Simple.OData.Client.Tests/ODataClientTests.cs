@@ -72,7 +72,7 @@ namespace Simple.OData.Client.Tests
         public void FindDerivedClassEntryExpressionFilter()
         {
             var x = ODataFilter.Expression;
-            string filter = _client.FormatFilter("Transport", "Ships", x.ShipName == "Titanic");
+            string filter = _client.FormatFilter("Transport/Ships", x.ShipName == "Titanic");
             var ship = _client.FindEntry(filter);
             Assert.Equal("Titanic", ship["ShipName"]);
         }
@@ -96,7 +96,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void InsertEntrySubcollection()
         {
-            var ship = _client.InsertEntry("Transport", new Entry() { { "ShipName", "Test1" } }, true, "Ships");
+            var ship = _client.InsertEntry("Transport/Ships", new Entry() { { "ShipName", "Test1" } }, true);
 
             Assert.Equal("Test1", ship["ShipName"]);
         }
@@ -114,9 +114,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void UpdateEntrySubcollection()
         {
-            var ship = _client.InsertEntry("Transport", new Entry() { { "ShipName", "Test1" } }, true, "Ships");
+            var ship = _client.InsertEntry("Transport/Ships", new Entry() { { "ShipName", "Test1" } }, true);
             var key = new Entry() { { "TransportID", ship["TransportID"] } };
-            _client.UpdateEntry("Transport", key, new Entry() { { "ShipName", "Test2" } }, "Ships");
+            _client.UpdateEntry("Transport/Ships", key, new Entry() { { "ShipName", "Test2" } });
 
             ship = _client.GetEntry("Transport", key);
             Assert.Equal("Test2", ship["ShipName"]);
@@ -138,7 +138,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void DeleteEntrySubCollection()
         {
-            var ship = _client.InsertEntry("Transport", new Entry() { { "ShipName", "Test3" } }, true, "Ships");
+            var ship = _client.InsertEntry("Transport/Ships", new Entry() { { "ShipName", "Test3" } }, true);
             ship = _client.FindEntry("Transport?$filter=TransportID eq " + ship["TransportID"]);
             Assert.NotNull(ship);
 

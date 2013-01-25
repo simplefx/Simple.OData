@@ -15,14 +15,9 @@ namespace Simple.OData.Client
                                    });
         }
 
-        internal string Format(ODataClientWithCommand client, string collectionName, string derivedCollectionName = null)
+        internal string Format(ODataClientWithCommand client, string collection)
         {
-            return this.Format(new ExpressionContext()
-                                   {
-                                       Client = client, 
-                                       CollectionName = collectionName, 
-                                       DerivedCollectionName = derivedCollectionName
-                                   });
+            return this.Format(new ExpressionContext { Client = client, Collection = collection });
         }
 
         internal string Format(ExpressionContext context)

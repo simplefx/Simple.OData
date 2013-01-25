@@ -127,7 +127,7 @@ namespace Simple.Data.OData
             var baseTableName = baseTable == null ? tableName : baseTable.ActualName;
             var derivedTableName = derivedTable == null ? null : derivedTable.ActualName;
 
-            return GetODataClient(transaction).InsertEntry(baseTableName, data, resultRequired, derivedTableName);
+            return GetODataClient(transaction).InsertEntry(string.Join("/", baseTableName, derivedTableName), data, resultRequired);
         }
 
         private int UpdateByExpression(string tableName, 
@@ -141,9 +141,9 @@ namespace Simple.Data.OData
             var cmd = new CommandBuilder().BuildCommand(baseTableName, criteria);
             var clientCommand = GetODataClientCommand(cmd);
             var client = GetODataClient(transaction);
-            return clientCommand.FilterIsKey ? 
-                client.UpdateEntry(baseTableName, clientCommand.FilterAsKey, data, derivedTableName) : 
-                client.UpdateEntries(baseTableName, clientCommand.CommandText, data, derivedTableName);
+            return clientCommand.FilterIsKey ?
+                client.UpdateEntry(string.Join("/", baseTableName, derivedTableName), clientCommand.FilterAsKey, data) :
+                client.UpdateEntries(string.Join("/", baseTableName, derivedTableName), clientCommand.CommandText, data);
         }
 
         private int DeleteByExpression(string tableName, 

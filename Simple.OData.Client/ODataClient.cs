@@ -6,37 +6,11 @@ using System.Xml.Linq;
 
 namespace Simple.OData.Client
 {
-    internal class EntryMembers
-    {
-        private readonly IDictionary<string, object> _properties = new Dictionary<string, object>();
-        private readonly List<KeyValuePair<string, object>> _associationsByValue = new List<KeyValuePair<string, object>>();
-        private readonly List<KeyValuePair<string, int>> _associationsByContentId = new List<KeyValuePair<string, int>>();
-
-        public IDictionary<string, object> Properties { get { return _properties; } }
-        public List<KeyValuePair<string, object>> AssociationsByValue { get { return _associationsByValue; } }
-        public List<KeyValuePair<string, int>> AssociationsByContentId { get { return _associationsByContentId; } }
-
-        public void AddProperty(string propertyName, object propertyValue)
-        {
-            _properties.Add(propertyName, propertyValue);
-        }
-
-        public void AddAssociationByValue(string associationName, object associatedData)
-        {
-            _associationsByValue.Add(new KeyValuePair<string, object>(associationName, associatedData));
-        }
-
-        public void AddAssociationByContentId(string associationName, int contentId)
-        {
-            _associationsByContentId.Add(new KeyValuePair<string, int>(associationName, contentId));
-        }
-    }
-
     public class ODataClient
     {
-        private string _urlBase;
-        private Credentials _credentials;
-        private ISchema _schema;
+        private readonly string _urlBase;
+        private readonly Credentials _credentials;
+        private readonly ISchema _schema;
         private readonly RequestBuilder _requestBuilder;
         private readonly RequestRunner _requestRunner;
 
@@ -193,7 +167,7 @@ namespace Simple.OData.Client
         public IDictionary<string, object> GetEntry(string collection, params object[] entryKey)
         {
             var entryKeyWithNames = new Dictionary<string, object>();
-            var keyNames = _schema.FindTable(collection).GetKeyNames();
+            var keyNames = _schema.FindConcreteTable(collection).GetKeyNames();
             for (int index = 0; index < keyNames.Count; index++)
             {
                 entryKeyWithNames.Add(keyNames[index], entryKey.ElementAt(index));
@@ -209,12 +183,9 @@ namespace Simple.OData.Client
             return _requestRunner.GetEntry(command);
         }
 
-        public IDictionary<string, object> InsertEntry(string collection, IDictionary<string, object> entryData, bool resultRequired, string derivedCollection = null)
+        public IDictionary<string, object> InsertEntry(string collection, IDictionary<string, object> entryData, bool resultRequired)
         {
-            var baseTable = _schema.FindTable(collection);
-            var table = string.IsNullOrEmpty(derivedCollection) 
-                ? baseTable 
-                : baseTable.FindDerivedTable(derivedCollection);
+            var table = _schema.FindConcreteTable(collection);
             var entryMembers = ParseEntryMembers(table, entryData);
 
             var entry = ODataFeedWriter.CreateDataElement(_schema.TypesNamespace, table.ActualName, entryMembers.Properties);
@@ -223,7 +194,7 @@ namespace Simple.OData.Client
                 CreateLinkElement(entry, collection, associatedData);
             }
 
-            var commandText = baseTable.ActualName;
+            var commandText = _schema.FindBaseTable(collection).ActualName;
             var command = HttpCommand.Post(commandText, entryData, entry.ToString());
             _requestBuilder.AddCommandToRequest(command);
             var result = _requestRunner.InsertEntry(command, resultRequired);
@@ -240,25 +211,22 @@ namespace Simple.OData.Client
             return result;
         }
 
-        public int UpdateEntries(string collection, string commandText, IDictionary<string, object> entryData, string derivedCollection = null)
+        public int UpdateEntries(string collection, string commandText, IDictionary<string, object> entryData)
         {
-            return IterateEntries(collection, commandText, entryData, derivedCollection, UpdateEntry);
+            return IterateEntries(collection, commandText, entryData, UpdateEntry);
         }
 
-        public int UpdateEntry(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData, string derivedCollection = null)
+        public int UpdateEntry(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
         {
-            var baseTable = _schema.FindTable(collection);
-            var table = string.IsNullOrEmpty(derivedCollection)
-                ? baseTable
-                : baseTable.FindDerivedTable(derivedCollection);
+            var table = _schema.FindConcreteTable(collection);
             var entryMembers = ParseEntryMembers(table, entryData);
 
-            return UpdateEntryPropertiesAndAssociations(collection, entryKey, entryData, entryMembers, derivedCollection);
+            return UpdateEntryPropertiesAndAssociations(collection, entryKey, entryData, entryMembers);
         }
 
         public int DeleteEntries(string collection, string commandText)
         {
-            return IterateEntries(collection, commandText, null, null, (x,y,z,w) => DeleteEntry(x,y));
+            return IterateEntries(collection, commandText, null, (x,y,z) => DeleteEntry(x,y));
         }
 
         public int DeleteEntry(string collection, IDictionary<string, object> entryKey)
@@ -271,7 +239,7 @@ namespace Simple.OData.Client
 
         public void LinkEntry(string collection, IDictionary<string, object> entryKey, string linkName, IDictionary<string, object> linkedEntryKey)
         {
-            var association = _schema.FindTable(collection).FindAssociation(linkName);
+            var association = _schema.FindAssociation(collection, linkName);
             var command = CreateLinkCommand(collection, linkName,
                 new ODataClientWithCommand(this, _schema).From(collection).Key(entryKey).CommandText,
                 new ODataClientWithCommand(this, _schema).From(association.ReferenceTableName).Key(linkedEntryKey).CommandText);
@@ -281,7 +249,7 @@ namespace Simple.OData.Client
 
         public void UnlinkEntry(string collection, IDictionary<string, object> entryKey, string linkName)
         {
-            var association = _schema.FindTable(collection).FindAssociation(linkName);
+            var association = _schema.FindAssociation(collection, linkName);
             var command = CreateUnlinkCommand(collection, linkName, new ODataClientWithCommand(this, _schema).From(collection).Key(entryKey).CommandText);
             _requestBuilder.AddCommandToRequest(command);
             _requestRunner.UpdateEntry(command);
@@ -295,22 +263,16 @@ namespace Simple.OData.Client
             return _requestRunner.ExecuteFunction(command);
         }
 
-        public string FormatFilter(string collectionName, dynamic filterExpression)
-        {
-            return FormatFilter(collectionName, null, filterExpression);
-        }
-
-        public string FormatFilter(string collectionName, string derivedCollectionName, dynamic filterExpression)
+        public string FormatFilter(string collection, dynamic filterExpression)
         {
             if (filterExpression is FilterExpression)
             {
                 var clientWithCommand = new ODataClientWithCommand(this, _schema);
                 string filter = (filterExpression as FilterExpression)
-                    .Format(clientWithCommand, collectionName, derivedCollectionName);
+                    .Format(clientWithCommand, collection);
                 
                 return clientWithCommand
-                    .From(collectionName)
-                    .As(derivedCollectionName)
+                    .From(collection)
                     .Filter(filter).CommandText;
             }
             else
@@ -319,13 +281,13 @@ namespace Simple.OData.Client
             }
         }
 
-        private int IterateEntries(string collection, string commandText, IDictionary<string, object> entryData, string derivedCollection,
-            Func<string, IDictionary<string, object>, IDictionary<string, object>, string, int> func)
+        private int IterateEntries(string collection, string commandText, IDictionary<string, object> entryData,
+            Func<string, IDictionary<string, object>, IDictionary<string, object>, int> func)
         {
             var entryKey = ExtractKeyFromCommandText(collection, commandText);
             if (entryKey != null)
             {
-                return func(collection, entryKey, entryData, derivedCollection);
+                return func(collection, entryKey, entryData);
             }
             else
             {
@@ -335,7 +297,7 @@ namespace Simple.OData.Client
                     var entryList = entries.ToList();
                     foreach (var entry in entryList)
                     {
-                        func(collection, entry, entryData, derivedCollection);
+                        func(collection, entry, entryData);
                     }
                     return entryList.Count;
                 }
@@ -350,18 +312,13 @@ namespace Simple.OData.Client
             string collection, 
             IDictionary<string, object> entryKey, 
             IDictionary<string, object> entryData, 
-            EntryMembers entryMembers, 
-            string derivedCollection)
+            EntryMembers entryMembers)
         {
             bool hasPropertiesToUpdate = entryMembers.Properties.Count > 0;
             bool merge = !hasPropertiesToUpdate || CheckMergeConditions(collection, entryKey, entryData);
-            var commandText = new ODataClientWithCommand(this, _schema).From(collection).Key(entryKey).CommandText;
+            var commandText = new ODataClientWithCommand(this, _schema).From(_schema.FindBaseTable(collection).ActualName).Key(entryKey).CommandText;
 
-            var baseTable = _schema.FindTable(collection);
-            var table = string.IsNullOrEmpty(derivedCollection)
-                ? baseTable
-                : baseTable.FindDerivedTable(derivedCollection);
-
+            var table = _schema.FindConcreteTable(collection);
             var entryElement = ODataFeedWriter.CreateDataElement(_schema.TypesNamespace, table.ActualName, entryMembers.Properties);
             var unlinkAssociationNames = new List<string>();
             foreach (var associatedData in entryMembers.AssociationsByValue)
@@ -401,7 +358,7 @@ namespace Simple.OData.Client
         private HttpCommand CreateLinkCommand(string collection, string associationName, string entryPath, string linkPath)
         {
             var linkEntry = ODataFeedWriter.CreateLinkElement(linkPath);
-            var linkMethod = _schema.FindTable(collection).FindAssociation(associationName).IsMultiple ? 
+            var linkMethod = _schema.FindAssociation(collection, associationName).IsMultiple ? 
                 RestVerbs.POST : 
                 RestVerbs.PUT;
 
@@ -420,7 +377,7 @@ namespace Simple.OData.Client
             if (associatedData.Value == null)
                 return;
 
-            var association = _schema.FindTable(collection).FindAssociation(associatedData.Key);
+            var association = _schema.FindAssociation(collection, associatedData.Key);
             var associatedKeyValues = GetLinkedEntryKeyValues(association.ReferenceTableName, associatedData);
             if (associatedKeyValues != null)
             {
@@ -431,7 +388,7 @@ namespace Simple.OData.Client
         private IEnumerable<object> GetLinkedEntryKeyValues(string collection, KeyValuePair<string, object> entryData)
         {
             var entryProperties = GetLinkedEntryProperties(entryData.Value);
-            var associatedKeyNames = _schema.FindTable(collection).GetKeyNames();
+            var associatedKeyNames = _schema.FindConcreteTable(collection).GetKeyNames();
             var associatedKeyValues = new object[associatedKeyNames.Count()];
             for (int index = 0; index < associatedKeyNames.Count(); index++)
             {
@@ -515,7 +472,8 @@ namespace Simple.OData.Client
 
         private bool CheckMergeConditions(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
         {
-            var keyNames = _schema.FindTable(collection).GetKeyNames();
+            var table = _schema.FindConcreteTable(collection);
+            var keyNames = table.GetKeyNames();
             foreach (var key in entryKey.Keys)
             {
                 if (!keyNames.Contains(key) && !entryData.Keys.Contains(key))

@@ -67,7 +67,16 @@ namespace Simple.OData.Client
 
         public IClientWithCommand From(string collectionName)
         {
-            _collectionName = collectionName;
+            var items = collectionName.Split('/');
+            if (items.Count() > 1)
+            {
+                _collectionName = items[0];
+                _derivedCollectionName = items[1];
+            }
+            else
+            {
+                _collectionName = collectionName;
+            }
             return _client;
         }
 

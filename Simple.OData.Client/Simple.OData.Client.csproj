@@ -47,6 +47,7 @@
     <Compile Include="BatchRequestRunner.cs" />
     <Compile Include="Credentials.cs" />
     <Compile Include="Edm\EdmSchemaParser.cs" />
+    <Compile Include="EntryMembers.cs" />
     <Compile Include="Filter\ExpressionContext.cs" />
     <Compile Include="Filter\ExpressionFunction.cs" />
     <Compile Include="Filter\ExpressionOperator.cs" />

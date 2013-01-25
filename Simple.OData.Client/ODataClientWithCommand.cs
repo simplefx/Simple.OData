@@ -80,14 +80,14 @@ namespace Simple.OData.Client
             return _client.GetEntry(_command.ToString(), entryKey);
         }
 
-        public IDictionary<string, object> InsertEntry(IDictionary<string, object> entryData, bool resultRequired, string derivedCollection = null)
+        public IDictionary<string, object> InsertEntry(IDictionary<string, object> entryData, bool resultRequired)
         {
-            return _client.InsertEntry(_command.ToString(), entryData, resultRequired, derivedCollection);
+            return _client.InsertEntry(_command.ToString(), entryData, resultRequired);
         }
 
-        public int UpdateEntry(IDictionary<string, object> entryKey, IDictionary<string, object> entryData, string derivedCollection = null)
+        public int UpdateEntry(IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
         {
-            return _client.UpdateEntry(_command.ToString(), entryKey, entryData, derivedCollection);
+            return _client.UpdateEntry(_command.ToString(), entryKey, entryData);
         }
 
         public int DeleteEntry(IDictionary<string, object> entryKey)

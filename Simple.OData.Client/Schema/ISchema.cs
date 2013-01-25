@@ -7,11 +7,15 @@ namespace Simple.OData.Client
         string TypesNamespace { get; }
         string ContainersNamespace { get; }
         IEnumerable<Table> Tables { get; }
-        Table FindTable(string tableName);
         bool HasTable(string tableName);
+        Table FindTable(string tableName);
+        Table FindBaseTable(string tablePath);
+        Table FindConcreteTable(string tablePath);
+        Column FindColumn(string tablePath, string columnName);
+        Association FindAssociation(string tablePath, string associationName);
         IEnumerable<Function> Functions { get; }
-        Function FindFunction(string functionName);
         bool HasFunction(string functionName);
+        Function FindFunction(string functionName);
         IEnumerable<EdmEntityType> EntityTypes { get; }
         IEnumerable<EdmComplexType> ComplexTypes { get; }
     }
