@@ -6,7 +6,7 @@ namespace Simple.OData.Client
     abstract class RequestBuilder
     {
         public string UrlBase { get; private set; }
-        public Credentials Credentials { get; private set; }
+        public ICredentials Credentials { get; private set; }
         public string Host
         {
             get 
@@ -17,7 +17,7 @@ namespace Simple.OData.Client
             }
         }
 
-        public RequestBuilder(string urlBase, Credentials credentials)
+        public RequestBuilder(string urlBase, ICredentials credentials)
         {
             this.UrlBase = urlBase;
             this.Credentials = credentials;
@@ -34,17 +34,8 @@ namespace Simple.OData.Client
         protected HttpWebRequest CreateWebRequest(string uri)
         {
             var request = (HttpWebRequest) WebRequest.Create(uri);
-            bool authenticate = false;
-            if (this.Credentials.IntegratedSecurity)
-            {
-                request.Credentials = CredentialCache.DefaultNetworkCredentials;
-                authenticate = true;
-            }
-            else if (!string.IsNullOrEmpty(this.Credentials.User))
-            {
-                request.Credentials = new NetworkCredential(this.Credentials.User, this.Credentials.Password, this.Credentials.Domain);
-            }
-            if (authenticate)
+            request.Credentials = this.Credentials;
+            if (this.Credentials != null)
             {
                 request.PreAuthenticate = true;
                 request.KeepAlive = true;

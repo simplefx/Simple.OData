@@ -11,7 +11,7 @@ namespace Simple.OData.Client
         private readonly Lazy<string> _metadataString;
         private readonly Lazy<Schema> _schema;
 
-        private SchemaProvider(string urlBase, Credentials credentials, string metadataString)
+        private SchemaProvider(string urlBase, ICredentials credentials, string metadataString)
         {
             if (!string.IsNullOrEmpty(metadataString))
             {
@@ -25,7 +25,7 @@ namespace Simple.OData.Client
             _schema = new Lazy<Schema>(() => Schema.Get(this));
         }
 
-        public static SchemaProvider FromUrl(string urlBase, Credentials credentials)
+        public static SchemaProvider FromUrl(string urlBase, ICredentials credentials)
         {
             return new SchemaProvider(urlBase, credentials, null);
         }
@@ -181,7 +181,7 @@ namespace Simple.OData.Client
             }
         }
 
-        private string RequestMetadataAsString(string urlBase, Credentials credentials)
+        private string RequestMetadataAsString(string urlBase, ICredentials credentials = null)
         {
             var requestBuilder = new CommandRequestBuilder(urlBase, credentials);
             var command = HttpCommand.Get(ODataCommand.MetadataLiteral);

@@ -15,7 +15,7 @@ namespace Simple.OData.Client
 
         public HttpWebRequest Request { get; private set; }
 
-        public BatchRequestBuilder(string urlBase, Credentials credentials)
+        public BatchRequestBuilder(string urlBase, ICredentials credentials = null)
             : base(urlBase, credentials)
         {
         }

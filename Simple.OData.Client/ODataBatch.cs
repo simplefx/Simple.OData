@@ -12,22 +12,7 @@ namespace Simple.OData.Client
         internal BatchRequestRunner RequestRunner { get; set; }
         private bool _active;
 
-        public ODataBatch(string urlBase)
-            : this(urlBase, new Credentials(null, null, null, false))
-        {
-        }
-
-        public ODataBatch(string urlBase, string user, string password, string domain = null)
-            : this(urlBase, new Credentials(user, password, domain, false))
-        {
-        }
-
-        public ODataBatch(string urlBase, bool integratedSecurity)
-            : this(urlBase, new Credentials(null, null, null, integratedSecurity))
-        {
-        }
-
-        public ODataBatch(string urlBase, Credentials credentials)
+        public ODataBatch(string urlBase, ICredentials credentials = null)
         {
             this.RequestBuilder = new BatchRequestBuilder(urlBase, credentials);
             this.RequestRunner = new BatchRequestRunner(this.RequestBuilder);
