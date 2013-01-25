@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 
 namespace Simple.OData.Client
 {
@@ -160,7 +161,7 @@ namespace Simple.OData.Client
             return new List<EdmComplexType>(_schemaProvider.GetComplexTypes());
         }
 
-        internal static Schema Get(string urlBase, Credentials credentials)
+        internal static Schema Get(string urlBase, ICredentials credentials = null)
         {
             return Instances.GetOrAdd(urlBase,
                                       sp => new Schema(Client.SchemaProvider.FromUrl(urlBase, credentials)));

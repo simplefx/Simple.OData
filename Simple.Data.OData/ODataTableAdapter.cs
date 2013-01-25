@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
+using System.Net;
 using System.Text;
 using Simple.OData.Client;
 
@@ -11,7 +12,7 @@ namespace Simple.Data.OData
     public partial class ODataTableAdapter : Adapter
     {
         private string _urlBase;
-        private Credentials _credentials;
+        private ICredentials _credentials;
         private ISchema _schema;
 
         internal string UrlBase
@@ -19,7 +20,7 @@ namespace Simple.Data.OData
             get { return _urlBase; }
         }
 
-        internal Credentials Credentials
+        internal ICredentials Credentials
         {
             get { return _credentials; }
         }
@@ -34,7 +35,7 @@ namespace Simple.Data.OData
             base.OnSetup();
 
             _urlBase = Settings.Url;
-            _credentials = new Credentials(Settings.User, Settings.Password, Settings.Domain, Settings.IntegratedSecurity);
+            _credentials = Settings.Credentials;
             _schema = ODataClient.GetSchema(_urlBase, _credentials);
         }
 

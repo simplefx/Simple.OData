@@ -9,27 +9,12 @@ namespace Simple.OData.Client
     public class ODataClient
     {
         private readonly string _urlBase;
-        private readonly Credentials _credentials;
+        private readonly ICredentials _credentials;
         private readonly ISchema _schema;
         private readonly RequestBuilder _requestBuilder;
         private readonly RequestRunner _requestRunner;
 
-        public ODataClient(string urlBase)
-            : this(urlBase, new Credentials(null, null, null, false))
-        {
-        }
-
-        public ODataClient(string urlBase, string user, string password, string domain = null)
-            : this(urlBase, new Credentials(user, password, domain, false))
-        {
-        }
-
-        public ODataClient(string urlBase, bool integratedSecurity)
-            : this(urlBase, new Credentials(null, null, null, integratedSecurity))
-        {
-        }
-
-        public ODataClient(string urlBase, Credentials credentials)
+        public ODataClient(string urlBase, ICredentials credentials = null)
         {
             _urlBase = urlBase;
             _credentials = credentials;
@@ -71,39 +56,14 @@ namespace Simple.OData.Client
             get { return SchemaProvider.FromUrl(_urlBase, _credentials).SchemaAsString; }
         }
 
-        public static ISchema GetSchema(string urlBase)
-        {
-            return GetSchema(urlBase, new Credentials(null, null, null, false));
-        }
-
-        public static ISchema GetSchema(string urlBase, string user, string password, string domain = null)
-        {
-            return GetSchema(urlBase, new Credentials(user, password, domain, false));
-        }
-
-        public static ISchema GetSchema(string urlBase, bool integratedSecurity)
-        {
-            return GetSchema(urlBase, new Credentials(null, null, null, integratedSecurity));
-        }
-
-        public static ISchema GetSchema(string urlBase, Credentials credentials)
+        public static ISchema GetSchema(string urlBase, ICredentials credentials = null)
         {
             return Client.Schema.Get(urlBase, credentials);
         }
 
-        public static string GetSchemaAsString(string urlBase)
+        public static string GetSchemaAsString(string urlBase, ICredentials credentials = null)
         {
-            return SchemaProvider.FromUrl(urlBase, new Credentials(null, null, null, false)).SchemaAsString;
-        }
-
-        public static string GetSchemaAsString(string urlBase, string user, string password, string domain = null)
-        {
-            return SchemaProvider.FromUrl(urlBase, new Credentials(user, password, domain, false)).SchemaAsString;
-        }
-
-        public static string GetSchemaAsString(string urlBase, bool integratedSecurity)
-        {
-            return SchemaProvider.FromUrl(urlBase, new Credentials(null, null, null, integratedSecurity)).SchemaAsString;
+            return SchemaProvider.FromUrl(urlBase, credentials).SchemaAsString;
         }
 
         public static ISchema ParseSchemaString(string schemaString)

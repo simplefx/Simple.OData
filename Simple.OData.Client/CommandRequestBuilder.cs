@@ -7,7 +7,7 @@ namespace Simple.OData.Client
 {
     class CommandRequestBuilder : RequestBuilder
     {
-        public CommandRequestBuilder(string urlBase, Credentials credentials)
+        public CommandRequestBuilder(string urlBase, ICredentials credentials)
             : base(urlBase, credentials)
         {
         }
