@@ -186,17 +186,17 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void InterceptRequest()
         {
-            _client.RequestInterceptor = x => x.Method = "PUT";
+            _client.BeforeRequest = x => x.Method = "PUT";
             Assert.Throws<WebRequestException>(() => _client.FindEntries("Products"));
-            _client.RequestInterceptor = null;
+            _client.BeforeRequest = null;
         }
 
         [Fact]
         public void InterceptResponse()
         {
-            _client.ResponseInterceptor = x => { throw new InvalidOperationException(); };
+            _client.AfterResponse = x => { throw new InvalidOperationException(); };
             Assert.Throws<InvalidOperationException>(() => _client.FindEntries("Products"));
-            _client.ResponseInterceptor = null;
+            _client.AfterResponse = null;
         }
     }
 }

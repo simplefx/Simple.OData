@@ -49,16 +49,16 @@ namespace Simple.OData.Client
             _requestRunner = batch.RequestRunner;
         }
 
-        public Action<HttpWebRequest> RequestInterceptor
+        public Action<HttpWebRequest> BeforeRequest
         {
-            get { return _requestRunner.RequestInterceptor; }
-            set { _requestRunner.RequestInterceptor = value; }
+            get { return _requestRunner.BeforeRequest; }
+            set { _requestRunner.BeforeRequest = value; }
         }
 
-        public Action<HttpWebResponse> ResponseInterceptor
+        public Action<HttpWebResponse> AfterResponse
         {
-            get { return _requestRunner.ResponseInterceptor; }
-            set { _requestRunner.ResponseInterceptor = value; }
+            get { return _requestRunner.AfterResponse; }
+            set { _requestRunner.AfterResponse = value; }
         }
 
         public ISchema Schema
