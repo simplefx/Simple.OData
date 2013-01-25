@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Net;
 using Xunit;
 
 namespace Simple.OData.Client.Tests
@@ -181,6 +180,47 @@ namespace Simple.OData.Client.Tests
         {
             var result = _client.ExecuteFunction("ParseInt", new Entry() { { "number", "1" } });
             Assert.Equal(1, result.First().First().First().Value);
+        }
+
+        [Fact]
+        public void BatchWithSuccess()
+        {
+            using (var batch = new ODataBatch(_service.ServiceUri.AbsoluteUri))
+            {
+                var client = new ODataClient(batch);
+                client.InsertEntry("Products", new Entry() { { "ProductName", "Test1" }, { "UnitPrice", 10m } }, false);
+                client.InsertEntry("Products", new Entry() { { "ProductName", "Test2" }, { "UnitPrice", 20m } }, false);
+                batch.Complete();
+            }
+
+            var product = _client.FindEntry("Products?$filter=ProductName eq 'Test1'");
+            Assert.NotNull(product);
+            product = _client.FindEntry("Products?$filter=ProductName eq 'Test2'");
+            Assert.NotNull(product);
+        }
+
+        [Fact]
+        public void BatchWithPartialFailures()
+        {
+            using (var batch = new ODataBatch(_service.ServiceUri.AbsoluteUri))
+            {
+                var client = new ODataClient(batch);
+                client.InsertEntry("Products", new Entry() { { "ProductName", "Test1" }, { "UnitPrice", 10m } }, false);
+                client.InsertEntry("Products", new Entry() { { "ProductName", "Test2" }, { "UnitPrice", 10m }, { "SupplierID", 0xFFFF } }, false);
+                Assert.Throws<WebRequestException>(() => batch.Complete());
+            }
+        }
+
+        [Fact]
+        public void BatchWithAllFailures()
+        {
+            using (var batch = new ODataBatch(_service.ServiceUri.AbsoluteUri))
+            {
+                var client = new ODataClient(batch);
+                client.InsertEntry("Products", new Entry() { { "UnitPrice", 10m } }, false);
+                client.InsertEntry("Products", new Entry() { { "UnitPrice", 20m } }, false);
+                Assert.Throws<WebRequestException>(() => batch.Complete());
+            }
         }
 
         [Fact]
