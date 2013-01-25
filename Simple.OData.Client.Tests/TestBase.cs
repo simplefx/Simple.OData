@@ -10,6 +10,7 @@ namespace Simple.OData.Client.Tests
 {
     public class TestBase : IDisposable
     {
+        protected string _serviceUri;
 # if !NETFX_CORE
         protected TestService _service;
 #endif
@@ -17,14 +18,13 @@ namespace Simple.OData.Client.Tests
 
         public TestBase()
         {
-            string serviceUri;
 #if NETFX_CORE
-            serviceUri = "http://NORTHWIND/Northwind/Northwind.svc/";
+            _serviceUri = "http://NORTHWIND/Northwind/Northwind.svc/";
 #else
             _service = new TestService(typeof(NorthwindService));
-            serviceUri = _service.ServiceUri.AbsoluteUri;
+            _serviceUri = _service.ServiceUri.AbsoluteUri;
 #endif
-            _client = new ODataClient(serviceUri);
+            _client = new ODataClient(_serviceUri);
         }
 
         public void Dispose()
@@ -43,11 +43,12 @@ namespace Simple.OData.Client.Tests
                     if (category["CategoryName"].ToString().StartsWith("Test"))
                         _client.DeleteEntry("Categories", category);
                 }
-                IEnumerable<dynamic> transport = _client.FindEntries("Transport");
-                transport.ToList().ForEach(x =>
+                IEnumerable<dynamic> transports = _client.FindEntries("Transport");
+                foreach (var transport in transports)
                 {
-                    if (int.Parse(x["TransportID"].ToString()) > 2) _client.DeleteEntry("Transport", x);
-                });
+                    if (int.Parse(transport["TransportID"].ToString()) > 2)
+                        _client.DeleteEntry("Transport", transport);
+                }
             }
 
 #if NETFX_CORE

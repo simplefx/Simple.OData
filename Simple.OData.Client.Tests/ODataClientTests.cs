@@ -185,7 +185,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void BatchWithSuccess()
         {
-            using (var batch = new ODataBatch(_service.ServiceUri.AbsoluteUri))
+            using (var batch = new ODataBatch(_serviceUri))
             {
                 var client = new ODataClient(batch);
                 client.InsertEntry("Products", new Entry() { { "ProductName", "Test1" }, { "UnitPrice", 10m } }, false);
@@ -202,7 +202,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void BatchWithPartialFailures()
         {
-            using (var batch = new ODataBatch(_service.ServiceUri.AbsoluteUri))
+            using (var batch = new ODataBatch(_serviceUri))
             {
                 var client = new ODataClient(batch);
                 client.InsertEntry("Products", new Entry() { { "ProductName", "Test1" }, { "UnitPrice", 10m } }, false);
@@ -214,7 +214,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void BatchWithAllFailures()
         {
-            using (var batch = new ODataBatch(_service.ServiceUri.AbsoluteUri))
+            using (var batch = new ODataBatch(_serviceUri))
             {
                 var client = new ODataClient(batch);
                 client.InsertEntry("Products", new Entry() { { "UnitPrice", 10m } }, false);

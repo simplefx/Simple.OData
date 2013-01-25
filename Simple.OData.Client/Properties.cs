@@ -14,6 +14,7 @@ namespace Simple.OData.Client
             @"    <name />" + 
             @"  </author>" + 
             @"  <id />" + 
+            @"  <category scheme=""http://schemas.microsoft.com/ado/2007/08/dataservices/scheme""/>" +
             @"  <content type=""application/xml"">" + 
             @"    <m:properties/>" + 
             @"  </content>" + 

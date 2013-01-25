@@ -34,11 +34,6 @@ namespace Simple.OData.Client
         {
             var request = (HttpWebRequest) WebRequest.Create(uri);
             request.Credentials = this.Credentials;
-            if (this.Credentials != null)
-            {
-                request.PreAuthenticate = true;
-                request.KeepAlive = true;
-            }
             return request;
         }
 

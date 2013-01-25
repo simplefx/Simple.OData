@@ -51,6 +51,7 @@
     <Compile Include="Edm\EdmSchemaParser.cs" />
     <Compile Include="Edm\EdmType.cs" />
     <Compile Include="Edm\EdmTypeSerializer.cs" />
+    <Compile Include="EntryMembers.cs" />
     <Compile Include="Extensions\HomogenizeEx.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Filter\ExpressionContext.cs" />
