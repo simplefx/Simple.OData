@@ -7,7 +7,7 @@ namespace Simple.OData.Client
     {
         private readonly string[] _columns;
 
-        public Key(IEnumerable<string> columns)
+        internal Key(IEnumerable<string> columns)
         {
             _columns = columns.ToArray();
         }

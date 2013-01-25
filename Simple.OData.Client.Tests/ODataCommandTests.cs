@@ -252,5 +252,35 @@ namespace Simple.OData.Client.Tests
                 .FindEntry();
             Assert.Equal("Janet", employee["FirstName"]);
         }
+
+        [Fact]
+        public void FindBaseClassEntries()
+        {
+            var transport = _client
+                .From("Transport")
+                .FindEntries();
+            Assert.Equal(2, transport.Count());
+        }
+
+        [Fact]
+        public void FindAllDerivedClassEntries()
+        {
+            var transport = _client
+                .From("Transport")
+                .As("Ships")
+                .FindEntries();
+            Assert.Equal("Titanic", transport.Single()["ShipName"]);
+        }
+
+        [Fact]
+        public void FindDerivedClassEntry()
+        {
+            var transport = _client
+                .From("Transport")
+                .As("Ships")
+                .Filter("ShipName eq 'Titanic'")
+                .FindEntry();
+            Assert.Equal("Titanic", transport["ShipName"]);
+        }
     }
 }

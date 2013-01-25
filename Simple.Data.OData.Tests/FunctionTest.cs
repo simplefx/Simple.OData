@@ -7,6 +7,14 @@ namespace Simple.Data.OData.Tests
     public class FunctionTest : TestBase
     {
         [Fact]
+        public void ParseInt()
+        {
+            var result = _db.ParseInt(number: "1");
+
+            Assert.Equal(1, result.ToScalarList()[0]);
+        }
+
+        [Fact]
         public void GetProductsByRatingWithNonEmptyResultSet()
         {
             var db = Database.Opener.Open("http://services.odata.org/OData/OData.svc/");

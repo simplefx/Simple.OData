@@ -1,14 +1,11 @@
 ﻿using System.Net;
 
-
 namespace Simple.OData.Client
 {
     abstract class RequestBuilder
     {
         public string UrlBase { get; private set; }
-#if (NET20 || NET35 || NET40 || SILVERLIGHT)
-        public Credentials Credentials { get; private set; }
-#endif
+        public ICredentials Credentials { get; private set; }
         public string Host
         {
             get 
@@ -19,16 +16,10 @@ namespace Simple.OData.Client
             }
         }
 
-        public RequestBuilder(string urlBase
-#if (NET20 || NET35 || NET40 || SILVERLIGHT)
-            , Credentials credentials
-#endif
-            )
+        public RequestBuilder(string urlBase, ICredentials credentials)
         {
             this.UrlBase = urlBase;
-#if (NET20 || NET35 || NET40 || SILVERLIGHT)
             this.Credentials = credentials;
-#endif
         }
 
         protected internal string CreateRequestUrl(string command)
@@ -42,23 +33,12 @@ namespace Simple.OData.Client
         protected HttpWebRequest CreateWebRequest(string uri)
         {
             var request = (HttpWebRequest) WebRequest.Create(uri);
-#if (NET20 || NET35 || NET40 || SILVERLIGHT)
-            bool authenticate = false;
-            if (this.Credentials.IntegratedSecurity)
-            {
-                request.Credentials = CredentialCache.DefaultNetworkCredentials;
-                authenticate = true;
-            }
-            else if (!string.IsNullOrEmpty(this.Credentials.User))
-            {
-                request.Credentials = new NetworkCredential(this.Credentials.User, this.Credentials.Password, this.Credentials.Domain);
-            }
-            if (authenticate)
+            request.Credentials = this.Credentials;
+            if (this.Credentials != null)
             {
                 request.PreAuthenticate = true;
                 request.KeepAlive = true;
             }
-#endif
             return request;
         }
 

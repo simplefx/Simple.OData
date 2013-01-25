@@ -8,12 +8,13 @@
 //------------------------------------------------------------------------------
 
 using System;
+using System.ComponentModel;
+using System.Data.EntityClient;
 using System.Data.Objects;
 using System.Data.Objects.DataClasses;
-using System.Data.EntityClient;
-using System.ComponentModel;
-using System.Xml.Serialization;
+using System.Linq;
 using System.Runtime.Serialization;
+using System.Xml.Serialization;
 
 [assembly: EdmSchemaAttribute()]
 #region EDM Relationship Metadata
@@ -204,8 +205,25 @@ namespace Simple.Data.OData.NorthwindModel
             }
         }
         private ObjectSet<Suppliers> _Suppliers;
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        public ObjectSet<Transport> Transport
+        {
+            get
+            {
+                if ((_Transport == null))
+                {
+                    _Transport = base.CreateObjectSet<Transport>("Transport");
+                }
+                return _Transport;
+            }
+        }
+        private ObjectSet<Transport> _Transport;
 
         #endregion
+
         #region AddTo Methods
     
         /// <summary>
@@ -271,13 +289,21 @@ namespace Simple.Data.OData.NorthwindModel
         {
             base.AddObject("Suppliers", suppliers);
         }
+    
+        /// <summary>
+        /// Deprecated Method for adding a new object to the Transport EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
+        /// </summary>
+        public void AddToTransport(Transport transport)
+        {
+            base.AddObject("Transport", transport);
+        }
 
         #endregion
+
     }
-    
 
     #endregion
-    
+
     #region Entities
     
     /// <summary>
@@ -304,6 +330,7 @@ namespace Simple.Data.OData.NorthwindModel
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -406,6 +433,7 @@ namespace Simple.Data.OData.NorthwindModel
         partial void OnPictureChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -432,6 +460,7 @@ namespace Simple.Data.OData.NorthwindModel
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -458,6 +487,7 @@ namespace Simple.Data.OData.NorthwindModel
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -728,6 +758,7 @@ namespace Simple.Data.OData.NorthwindModel
         partial void OnFaxChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -754,6 +785,7 @@ namespace Simple.Data.OData.NorthwindModel
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -782,6 +814,7 @@ namespace Simple.Data.OData.NorthwindModel
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -1172,6 +1205,7 @@ namespace Simple.Data.OData.NorthwindModel
         partial void OnReportsToChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -1258,6 +1292,7 @@ namespace Simple.Data.OData.NorthwindModel
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -1290,6 +1325,7 @@ namespace Simple.Data.OData.NorthwindModel
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -1419,6 +1455,7 @@ namespace Simple.Data.OData.NorthwindModel
         partial void OnDiscountChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -1499,6 +1536,7 @@ namespace Simple.Data.OData.NorthwindModel
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -1525,6 +1563,7 @@ namespace Simple.Data.OData.NorthwindModel
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -1867,6 +1906,7 @@ namespace Simple.Data.OData.NorthwindModel
         partial void OnFreightChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -2007,6 +2047,7 @@ namespace Simple.Data.OData.NorthwindModel
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -2035,6 +2076,7 @@ namespace Simple.Data.OData.NorthwindModel
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -2305,6 +2347,7 @@ namespace Simple.Data.OData.NorthwindModel
         partial void OnDiscontinuedChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -2407,6 +2450,7 @@ namespace Simple.Data.OData.NorthwindModel
         }
 
         #endregion
+
     }
     
     /// <summary>
@@ -2433,6 +2477,7 @@ namespace Simple.Data.OData.NorthwindModel
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -2487,6 +2532,7 @@ namespace Simple.Data.OData.NorthwindModel
         partial void OnCompanyNameChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -2513,6 +2559,61 @@ namespace Simple.Data.OData.NorthwindModel
         }
 
         #endregion
+
+    }
+    
+    /// <summary>
+    /// No Metadata Documentation available.
+    /// </summary>
+    [EdmEntityTypeAttribute(NamespaceName="NorthwindModel", Name="Ships")]
+    [Serializable()]
+    [DataContractAttribute(IsReference=true)]
+    public partial class Ships : Transport
+    {
+        #region Factory Method
+    
+        /// <summary>
+        /// Create a new Ships object.
+        /// </summary>
+        /// <param name="transportID">Initial value of the TransportID property.</param>
+        public static Ships CreateShips(global::System.Int32 transportID)
+        {
+            Ships ships = new Ships();
+            ships.TransportID = transportID;
+            return ships;
+        }
+
+        #endregion
+
+        #region Primitive Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public global::System.String ShipName
+        {
+            get
+            {
+                return _ShipName;
+            }
+            set
+            {
+                OnShipNameChanging(value);
+                ReportPropertyChanging("ShipName");
+                _ShipName = StructuralObject.SetValidValue(value, true);
+                ReportPropertyChanged("ShipName");
+                OnShipNameChanged();
+            }
+        }
+        private global::System.String _ShipName;
+        partial void OnShipNameChanging(global::System.String value);
+        partial void OnShipNameChanged();
+
+        #endregion
+
+    
     }
     
     /// <summary>
@@ -2539,6 +2640,7 @@ namespace Simple.Data.OData.NorthwindModel
         }
 
         #endregion
+
         #region Primitive Properties
     
         /// <summary>
@@ -2809,6 +2911,7 @@ namespace Simple.Data.OData.NorthwindModel
         partial void OnFaxChanged();
 
         #endregion
+
     
         #region Navigation Properties
     
@@ -2835,8 +2938,108 @@ namespace Simple.Data.OData.NorthwindModel
         }
 
         #endregion
+
+    }
+    
+    /// <summary>
+    /// No Metadata Documentation available.
+    /// </summary>
+    [EdmEntityTypeAttribute(NamespaceName="NorthwindModel", Name="Transport")]
+    [Serializable()]
+    [DataContractAttribute(IsReference=true)]
+    [KnownTypeAttribute(typeof(Ships))]
+    [KnownTypeAttribute(typeof(Trucks))]
+    public abstract partial class Transport : EntityObject
+    {
+        #region Primitive Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.Int32 TransportID
+        {
+            get
+            {
+                return _TransportID;
+            }
+            set
+            {
+                if (_TransportID != value)
+                {
+                    OnTransportIDChanging(value);
+                    ReportPropertyChanging("TransportID");
+                    _TransportID = StructuralObject.SetValidValue(value);
+                    ReportPropertyChanged("TransportID");
+                    OnTransportIDChanged();
+                }
+            }
+        }
+        private global::System.Int32 _TransportID;
+        partial void OnTransportIDChanging(global::System.Int32 value);
+        partial void OnTransportIDChanged();
+
+        #endregion
+
+    
+    }
+    
+    /// <summary>
+    /// No Metadata Documentation available.
+    /// </summary>
+    [EdmEntityTypeAttribute(NamespaceName="NorthwindModel", Name="Trucks")]
+    [Serializable()]
+    [DataContractAttribute(IsReference=true)]
+    public partial class Trucks : Transport
+    {
+        #region Factory Method
+    
+        /// <summary>
+        /// Create a new Trucks object.
+        /// </summary>
+        /// <param name="transportID">Initial value of the TransportID property.</param>
+        public static Trucks CreateTrucks(global::System.Int32 transportID)
+        {
+            Trucks trucks = new Trucks();
+            trucks.TransportID = transportID;
+            return trucks;
+        }
+
+        #endregion
+
+        #region Primitive Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
+        [DataMemberAttribute()]
+        public global::System.String TruckNumber
+        {
+            get
+            {
+                return _TruckNumber;
+            }
+            set
+            {
+                OnTruckNumberChanging(value);
+                ReportPropertyChanging("TruckNumber");
+                _TruckNumber = StructuralObject.SetValidValue(value, true);
+                ReportPropertyChanged("TruckNumber");
+                OnTruckNumberChanged();
+            }
+        }
+        private global::System.String _TruckNumber;
+        partial void OnTruckNumberChanging(global::System.String value);
+        partial void OnTruckNumberChanged();
+
+        #endregion
+
+    
     }
 
     #endregion
+
     
 }

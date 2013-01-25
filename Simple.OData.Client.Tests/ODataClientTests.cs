@@ -59,9 +59,27 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void FindBaseClassEntryExpressionFilter()
+        {
+            var x = ODataFilter.Expression;
+            string filter = _client.FormatFilter("Transport", x.TransportID == 1);
+            var ship = _client.FindEntry(filter);
+            Assert.Equal("Titanic", ship["ShipName"]);
+        }
+
+        [Fact]
+        public void FindDerivedClassEntryExpressionFilter()
+        {
+            var x = ODataFilter.Expression;
+            string filter = _client.FormatFilter("Transport/Ships", x.ShipName == "Titanic");
+            var ship = _client.FindEntry(filter);
+            Assert.Equal("Titanic", ship["ShipName"]);
+        }
+
+        [Fact]
         public void InsertEntryWithResult()
         {
-            var product = _client.InsertEntry("Products", new Entry() { { "ProductName", "Test1" }, { "UnitPrice", 18m } }, true);
+            var product = _client.InsertEntry("Products", new Entry() {{"ProductName", "Test1"}, {"UnitPrice", 18m}}, true);
 
             Assert.Equal("Test1", product["ProductName"]);
         }
@@ -75,13 +93,32 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void InsertEntrySubcollection()
+        {
+            var ship = _client.InsertEntry("Transport/Ships", new Entry() { { "ShipName", "Test1" } }, true);
+
+            Assert.Equal("Test1", ship["ShipName"]);
+        }
+
+        [Fact]
         public void UpdateEntry()
         {
-            var key = new Entry() { { "ProductID", 1 } };
+            var key = new Entry() {{"ProductID", 1}};
             _client.UpdateEntry("Products", key, new Entry() { { "ProductName", "Chai" }, { "UnitPrice", 123m } });
 
             var product = _client.GetEntry("Products", key);
             Assert.Equal(123m, product["UnitPrice"]);
+        }
+
+        [Fact]
+        public void UpdateEntrySubcollection()
+        {
+            var ship = _client.InsertEntry("Transport/Ships", new Entry() { { "ShipName", "Test1" } }, true);
+            var key = new Entry() { { "TransportID", ship["TransportID"] } };
+            _client.UpdateEntry("Transport/Ships", key, new Entry() { { "ShipName", "Test2" } });
+
+            ship = _client.GetEntry("Transport", key);
+            Assert.Equal("Test2", ship["ShipName"]);
         }
 
         [Fact]
@@ -95,6 +132,19 @@ namespace Simple.OData.Client.Tests
 
             product = _client.FindEntry("Products?$filter=ProductName eq 'Test3'");
             Assert.Null(product);
+        }
+
+        [Fact]
+        public void DeleteEntrySubCollection()
+        {
+            var ship = _client.InsertEntry("Transport/Ships", new Entry() { { "ShipName", "Test3" } }, true);
+            ship = _client.FindEntry("Transport?$filter=TransportID eq " + ship["TransportID"]);
+            Assert.NotNull(ship);
+
+            _client.DeleteEntry("Transport", ship);
+
+            ship = _client.FindEntry("Transport?$filter=TransportID eq " + ship["TransportID"]);
+            Assert.Null(ship);
         }
 
         [Fact]
@@ -126,19 +176,67 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void ExecuteScalarFunction()
+        {
+            var result = _client.ExecuteFunction("ParseInt", new Entry() { { "number", "1" } });
+            Assert.Equal(1, result.First().First().First().Value);
+        }
+
+        [Fact]
+        public void BatchWithSuccess()
+        {
+            using (var batch = new ODataBatch(_service.ServiceUri.AbsoluteUri))
+            {
+                var client = new ODataClient(batch);
+                client.InsertEntry("Products", new Entry() { { "ProductName", "Test1" }, { "UnitPrice", 10m } }, false);
+                client.InsertEntry("Products", new Entry() { { "ProductName", "Test2" }, { "UnitPrice", 20m } }, false);
+                batch.Complete();
+            }
+
+            var product = _client.FindEntry("Products?$filter=ProductName eq 'Test1'");
+            Assert.NotNull(product);
+            product = _client.FindEntry("Products?$filter=ProductName eq 'Test2'");
+            Assert.NotNull(product);
+        }
+
+        [Fact]
+        public void BatchWithPartialFailures()
+        {
+            using (var batch = new ODataBatch(_service.ServiceUri.AbsoluteUri))
+            {
+                var client = new ODataClient(batch);
+                client.InsertEntry("Products", new Entry() { { "ProductName", "Test1" }, { "UnitPrice", 10m } }, false);
+                client.InsertEntry("Products", new Entry() { { "ProductName", "Test2" }, { "UnitPrice", 10m }, { "SupplierID", 0xFFFF } }, false);
+                Assert.Throws<WebRequestException>(() => batch.Complete());
+            }
+        }
+
+        [Fact]
+        public void BatchWithAllFailures()
+        {
+            using (var batch = new ODataBatch(_service.ServiceUri.AbsoluteUri))
+            {
+                var client = new ODataClient(batch);
+                client.InsertEntry("Products", new Entry() { { "UnitPrice", 10m } }, false);
+                client.InsertEntry("Products", new Entry() { { "UnitPrice", 20m } }, false);
+                Assert.Throws<WebRequestException>(() => batch.Complete());
+            }
+        }
+
+        [Fact]
         public void InterceptRequest()
         {
-            _client.RequestInterceptor = x => x.Method = "PUT";
+            _client.BeforeRequest = x => x.Method = "PUT";
             Assert.Throws<WebRequestException>(() => _client.FindEntries("Products"));
-            _client.RequestInterceptor = null;
+            _client.BeforeRequest = null;
         }
 
         [Fact]
         public void InterceptResponse()
         {
-            _client.ResponseInterceptor = x => { throw new InvalidOperationException(); };
+            _client.AfterResponse = x => { throw new InvalidOperationException(); };
             Assert.Throws<InvalidOperationException>(() => _client.FindEntries("Products"));
-            _client.ResponseInterceptor = null;
+            _client.AfterResponse = null;
         }
     }
 }

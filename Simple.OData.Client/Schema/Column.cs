@@ -7,7 +7,7 @@ namespace Simple.OData.Client
         private readonly EdmPropertyType _propertyType;
         private readonly bool _isNullable;
 
-        public Column(string actualName, EdmPropertyType propertyType, bool isNullable)
+        internal Column(string actualName, EdmPropertyType propertyType, bool isNullable)
         {
             _actualName = actualName;
             _propertyType = propertyType;

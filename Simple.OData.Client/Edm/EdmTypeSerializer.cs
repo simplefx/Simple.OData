@@ -48,7 +48,7 @@ namespace Simple.OData.Client
             { EdmType.Time, WriteEdmTime },
         };
 
-        public static KeyValuePair<string, object> Read(XElement element)
+        public static KeyValuePair<string, object> Read(XElement element, string elementName = null)
         {
             if (element == null) throw new ArgumentNullException("element");
 
@@ -79,7 +79,7 @@ namespace Simple.OData.Client
                 elementValue = reader(element.Value);
             }
 
-            return new KeyValuePair<string, object>(element.Name.LocalName, elementValue);
+            return new KeyValuePair<string, object>(elementName ?? element.Name.LocalName, elementValue);
         }
 
         private static object ReadPropertyArray(XElement element)

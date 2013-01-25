@@ -12,7 +12,7 @@ namespace Simple.OData.Client
         private readonly string _returnType;
         private Collection<string> _parameters;
 
-        public Function(string name, string httpMethod, string tableName, string returnType, IEnumerable<string> parameters)
+        internal Function(string name, string httpMethod, string tableName, string returnType, IEnumerable<string> parameters)
         {
             _actualName = name;
             _httpMethod = httpMethod;

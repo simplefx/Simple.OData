@@ -53,8 +53,8 @@
     </Compile>
     <Compile Include="BatchRequestBuilder.cs" />
     <Compile Include="BatchRequestRunner.cs" />
-    <Compile Include="Credentials.cs" />
     <Compile Include="Edm\EdmSchemaParser.cs" />
+    <Compile Include="EntryMembers.cs" />
     <Compile Include="Filter\ExpressionContext.cs" />
     <Compile Include="Filter\ExpressionFunction.cs" />
     <Compile Include="Filter\ExpressionOperator.cs" />
@@ -74,6 +74,7 @@
     <Compile Include="IClientWithCommand.cs" />
     <Compile Include="ODataBatch.cs" />
     <Compile Include="ODataCommand.cs" />
+    <Compile Include="ODataFeedWriter.cs" />
     <Compile Include="ODataFilter.cs" />
     <Compile Include="Pluralizer.cs" />
     <Compile Include="Schema\ISchema.cs" />
@@ -101,7 +102,6 @@
     <Compile Include="Schema\Schema.cs" />
     <Compile Include="Schema\Function.cs" />
     <Compile Include="Schema\FunctionCollection.cs" />
-    <Compile Include="Schema\ISchemaProvider.cs" />
     <Compile Include="Schema\Key.cs" />
     <Compile Include="Schema\SchemaProvider.cs" />
     <Compile Include="Schema\Table.cs" />

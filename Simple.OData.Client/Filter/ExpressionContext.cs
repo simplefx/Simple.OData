@@ -1,4 +1,6 @@
-﻿namespace Simple.OData.Client
+﻿using System.Linq;
+
+namespace Simple.OData.Client
 {
     internal class ExpressionContext
     {
@@ -7,14 +9,26 @@
         public ODataClientWithCommand Client { get; set; }
         public Table Table
         {
-            get { return _table ?? (IsSet ? this.Client.Schema.FindTable(this.CollectionName) : null); }
-            set { _table = value; }
+            get
+            {
+                if (!IsSet)
+                    return null;
+                if (_table != null)
+                    return _table;
+
+                return this.Client.Schema.FindConcreteTable(this.Collection);
+            }
+
+            set 
+            { 
+                _table = value; 
+            }
         }
-        public string CollectionName { get; set; }
+        public string Collection { get; set; }
 
         public bool IsSet
         {
-            get { return this.Client != null && (this._table != null || !string.IsNullOrEmpty(this.CollectionName)); }
+            get { return this.Client != null && (this._table != null || !string.IsNullOrEmpty(this.Collection)); }
         }
     }
 }

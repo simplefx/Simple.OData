@@ -24,6 +24,8 @@ namespace Simple.Data.OData.Tests
             products.ToList().ForEach(x => _db.Products.Delete(ProductID: x.ProductID));
             IEnumerable<dynamic> categories = _db.Categories.FindAll(_db.Categories.CategoryName.StartsWith("Test") == true);
             categories.ToList().ForEach(x => _db.Categories.Delete(CategoryID: x.CategoryID));
+            IEnumerable<dynamic> transport = _db.Transport.FindAll(_db.Transports.TransportID > 2);
+            transport.ToList().ForEach(x => _db.Transport.Delete(TransportID: x.TransportID));
 
             if (_service != null)
             {

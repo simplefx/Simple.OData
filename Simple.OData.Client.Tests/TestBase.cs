@@ -43,6 +43,11 @@ namespace Simple.OData.Client.Tests
                     if (category["CategoryName"].ToString().StartsWith("Test"))
                         _client.DeleteEntry("Categories", category);
                 }
+                IEnumerable<dynamic> transport = _client.FindEntries("Transport");
+                transport.ToList().ForEach(x =>
+                {
+                    if (int.Parse(x["TransportID"].ToString()) > 2) _client.DeleteEntry("Transport", x);
+                });
             }
 
 #if NETFX_CORE

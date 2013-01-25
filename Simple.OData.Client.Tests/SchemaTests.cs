@@ -10,7 +10,7 @@ namespace Simple.OData.Client.Tests
         {
             var tables = _client.Schema.Tables;
 
-            Assert.Equal(8, tables.Count());
+            Assert.Equal(9, tables.Count());
         }
 
         [Fact]
@@ -68,7 +68,7 @@ namespace Simple.OData.Client.Tests
         {
             var entityTypes = _client.Schema.EntityTypes;
 
-            Assert.Equal(8, entityTypes.Count());
+            Assert.Equal(11, entityTypes.Count());
         }
 
         [Fact]

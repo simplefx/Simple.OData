@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="NorthwindModel.Store" Alias="Self" Provider="System.Data.SqlServerCe.4.0" ProviderManifestToken="4.0" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+    <Schema Namespace="NorthwindModel.Store" Alias="Self" Provider="System.Data.SqlServerCe.4.0" ProviderManifestToken="4.0" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
         <EntityContainer Name="NorthwindModelStoreContainer">
           <EntitySet Name="Categories" EntityType="NorthwindModel.Store.Categories" store:Type="Tables" />
           <EntitySet Name="Customers" EntityType="NorthwindModel.Store.Customers" store:Type="Tables" />
@@ -14,6 +14,7 @@
           <EntitySet Name="Products" EntityType="NorthwindModel.Store.Products" store:Type="Tables" />
           <EntitySet Name="Shippers" EntityType="NorthwindModel.Store.Shippers" store:Type="Tables" />
           <EntitySet Name="Suppliers" EntityType="NorthwindModel.Store.Suppliers" store:Type="Tables" />
+          <EntitySet Name="Transport" EntityType="NorthwindModel.Store.Transport" store:Type="Tables" />
           <AssociationSet Name="Order Details_FK00" Association="NorthwindModel.Store.Order Details_FK00">
             <End Role="Products" EntitySet="Products" />
             <End Role="Order Details" EntitySet="Order Details" />
@@ -158,6 +159,15 @@
           <Property Name="Phone" Type="nvarchar" MaxLength="24" />
           <Property Name="Fax" Type="nvarchar" MaxLength="24" />
         </EntityType>
+        <EntityType Name="Transport">
+          <Key>
+            <PropertyRef Name="Transport ID" />
+          </Key>
+          <Property Name="Transport ID" Type="int" Nullable="false" StoreGeneratedPattern="Identity" />
+          <Property Name="Transport Type" Type="int" Nullable="false" />
+          <Property Name="Ship Name" Type="nvarchar" MaxLength="100" />
+          <Property Name="Truck Number" Type="nvarchar" MaxLength="100" />
+        </EntityType>
         <Association Name="Order Details_FK00">
           <End Role="Products" Type="NorthwindModel.Store.Products" Multiplicity="1" />
           <End Role="Order Details" Type="NorthwindModel.Store.Order Details" Multiplicity="*" />
@@ -244,8 +254,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="NorthwindModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
@@ -290,7 +299,8 @@
             <End Role="Subordinates" EntitySet="Employees" />
             <End Role="Superior" EntitySet="Employees" />
           </AssociationSet>
-        </EntityContainer>
+          <EntitySet Name="Transport" EntityType="NorthwindModel.Transport" />
+          </EntityContainer>
         <EntityType Name="Categories">
           <Key>
             <PropertyRef Name="CategoryID" />
@@ -326,8 +336,8 @@
           <Property Name="LastName" Type="String" Nullable="false" MaxLength="20" Unicode="true" FixedLength="false" />
           <Property Name="FirstName" Type="String" Nullable="false" MaxLength="10" Unicode="true" FixedLength="false" />
           <Property Name="Title" Type="String" MaxLength="30" Unicode="true" FixedLength="false" />
-          <Property Name="BirthDate" Type="DateTime" />
-          <Property Name="HireDate" Type="DateTime" />
+          <Property Name="BirthDate" Type="DateTime" Precision="3" />
+          <Property Name="HireDate" Type="DateTime" Precision="3" />
           <Property Name="Address" Type="String" MaxLength="60" Unicode="true" FixedLength="false" />
           <Property Name="City" Type="String" MaxLength="15" Unicode="true" FixedLength="false" />
           <Property Name="Region" Type="String" MaxLength="15" Unicode="true" FixedLength="false" />
@@ -369,9 +379,9 @@
           <Property Name="ShipPostalCode" Type="String" MaxLength="10" Unicode="true" FixedLength="false" />
           <Property Name="ShipCountry" Type="String" MaxLength="15" Unicode="true" FixedLength="false" />
           <Property Name="ShipVia" Type="Int32" />
-          <Property Name="OrderDate" Type="DateTime" />
-          <Property Name="RequiredDate" Type="DateTime" />
-          <Property Name="ShippedDate" Type="DateTime" />
+          <Property Name="OrderDate" Type="DateTime" Precision="3" />
+          <Property Name="RequiredDate" Type="DateTime" Precision="3" />
+          <Property Name="ShippedDate" Type="DateTime" Precision="3" />
           <Property Name="Freight" Type="Decimal" Precision="19" Scale="4" />
           <NavigationProperty Name="Customer" Relationship="NorthwindModel.Orders_FK00" FromRole="Orders" ToRole="Customer" />
           <NavigationProperty Name="Employee" Relationship="NorthwindModel.Orders_FK02" FromRole="Orders" ToRole="Employee" />
@@ -520,18 +530,34 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="Transport" Abstract="true">
+          <Key>
+            <PropertyRef Name="TransportID" />
+          </Key>
+          <Property Type="Int32" Name="TransportID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+        </EntityType>
+        <EntityType Name="Ships" BaseType="NorthwindModel.Transport">
+          <Property Type="String" Name="ShipName" MaxLength="100" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="Trucks" BaseType="NorthwindModel.Transport">
+          <Property Type="String" Name="TruckNumber" MaxLength="100" FixedLength="false" Unicode="true" />
+        </EntityType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
     <edmx:Mappings>
       <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
         <EntityContainerMapping StorageEntityContainer="NorthwindModelStoreContainer" CdmEntityContainer="NorthwindEntities">
-          <EntitySetMapping Name="Categories"><EntityTypeMapping TypeName="NorthwindModel.Categories"><MappingFragment StoreEntitySet="Categories">
-            <ScalarProperty Name="CategoryID" ColumnName="Category ID" />
-            <ScalarProperty Name="CategoryName" ColumnName="Category Name" />
-            <ScalarProperty Name="Description" ColumnName="Description" />
-            <ScalarProperty Name="Picture" ColumnName="Picture" />
-          </MappingFragment></EntityTypeMapping></EntitySetMapping>
+          <EntitySetMapping Name="Categories">
+            <EntityTypeMapping TypeName="IsTypeOf(NorthwindModel.Categories)">
+              <MappingFragment StoreEntitySet="Categories">
+                <ScalarProperty Name="CategoryID" ColumnName="Category ID" />
+                <ScalarProperty Name="Picture" ColumnName="Picture" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="CategoryName" ColumnName="Category Name" />
+              </MappingFragment>
+            </EntityTypeMapping>
+            </EntitySetMapping>
           <EntitySetMapping Name="Customers"><EntityTypeMapping TypeName="NorthwindModel.Customers"><MappingFragment StoreEntitySet="Customers">
             <ScalarProperty Name="CustomerID" ColumnName="Customer ID" />
             <ScalarProperty Name="CompanyName" ColumnName="Company Name" />
@@ -616,7 +642,28 @@
             <ScalarProperty Name="Phone" ColumnName="Phone" />
             <ScalarProperty Name="Fax" ColumnName="Fax" />
           </MappingFragment></EntityTypeMapping></EntitySetMapping>
-        </EntityContainerMapping>
+          <EntitySetMapping Name="Transport">
+            <EntityTypeMapping TypeName="IsTypeOf(NorthwindModel.Transport)">
+              <MappingFragment StoreEntitySet="Transport">
+                <ScalarProperty Name="TransportID" ColumnName="Transport ID" />
+              </MappingFragment>
+            </EntityTypeMapping>
+            <EntityTypeMapping TypeName="IsTypeOf(NorthwindModel.Ships)">
+              <MappingFragment StoreEntitySet="Transport">
+                <ScalarProperty Name="ShipName" ColumnName="Ship Name" />
+                <ScalarProperty Name="TransportID" ColumnName="Transport ID" />
+                <Condition ColumnName="Transport Type" Value="1" />
+              </MappingFragment>
+            </EntityTypeMapping>
+            <EntityTypeMapping TypeName="IsTypeOf(NorthwindModel.Trucks)">
+              <MappingFragment StoreEntitySet="Transport">
+                <ScalarProperty Name="TruckNumber" ColumnName="Truck Number" />
+                <ScalarProperty Name="TransportID" ColumnName="Transport ID" />
+                <Condition ColumnName="Transport Type" Value="2" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>
   </edmx:Runtime>
@@ -630,7 +677,7 @@
     <Options>
       <DesignerInfoPropertySet>
         <DesignerProperty Name="ValidateOnBuild" Value="true" />
-        <DesignerProperty Name="EnablePluralization" Value="True" />
+        <DesignerProperty Name="EnablePluralization" Value="False" />
         <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
       </DesignerInfoPropertySet>
     </Options>
@@ -684,7 +731,12 @@
           <ConnectorPoint PointX="1.7284615384615383" PointY="13.297506510416667" />
           <ConnectorPoint PointX="1.7284615384615383" PointY="13.047506510416666" />
         </AssociationConnector>
-      </Diagram>
+        <EntityTypeShape EntityType="NorthwindModel.Transport" Width="1.5" PointX="6" PointY="10.625" />
+        <EntityTypeShape EntityType="NorthwindModel.Ships" Width="1.5" PointX="4.875" PointY="12.875" />
+        <EntityTypeShape EntityType="NorthwindModel.Trucks" Width="1.5" PointX="7.5" PointY="12.875" />
+        <InheritanceConnector EntityType="NorthwindModel.Ships" />
+        <InheritanceConnector EntityType="NorthwindModel.Trucks" />
+        </Diagram>
     </Diagrams>
   </Designer>
 </edmx:Edmx>

@@ -70,6 +70,7 @@
     <Compile Include="BatchRequestRunner.cs" />
     <Compile Include="CommandRequestBuilder.cs" />
     <Compile Include="CommandRequestRunner.cs" />
+    <Compile Include="EntryMembers.cs" />
     <Compile Include="Edm\EdmPropertyType.cs" />
     <Compile Include="Edm\EdmSchema.cs" />
     <Compile Include="Edm\EdmSchemaParser.cs" />
@@ -94,6 +95,7 @@
     <Compile Include="ODataClientWithCommand.cs" />
     <Compile Include="ODataCommand.cs" />
     <Compile Include="ODataFeedReader.cs" />
+    <Compile Include="ODataFeedWriter.cs" />
     <Compile Include="ODataFilter.cs" />
     <Compile Include="Pluralizer.cs" />
     <Compile Include="Properties.cs" />
@@ -108,7 +110,6 @@
     <Compile Include="Schema\Function.cs" />
     <Compile Include="Schema\FunctionCollection.cs" />
     <Compile Include="Schema\ISchema.cs" />
-    <Compile Include="Schema\ISchemaProvider.cs" />
     <Compile Include="Schema\Key.cs" />
     <Compile Include="Schema\Schema.cs" />
     <Compile Include="Schema\SchemaProvider.cs" />

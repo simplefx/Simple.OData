@@ -9,16 +9,22 @@ namespace Simple.OData.Client
     /// </summary>
     public class Table
     {
-        private readonly ISchema _schema;
+        private readonly Schema _schema;
         private readonly string _actualName;
-        private Lazy<ColumnCollection> _lazyColumns;
-        private Lazy<AssociationCollection> _lazyAssociations;
-        private Lazy<Key> _lazyPrimaryKey;
+        private readonly EdmEntityType _entityType;
+        private readonly Table _baseTable;
+        private readonly Lazy<TableCollection> _lazyDerivedTables;
+        private readonly Lazy<ColumnCollection> _lazyColumns;
+        private readonly Lazy<AssociationCollection> _lazyAssociations;
+        private readonly Lazy<Key> _lazyPrimaryKey;
 
-        public Table(string name, ISchema schema)
+        internal Table(string name, EdmEntityType entityType, Table baseTable, Schema schema)
         {
             _actualName = name;
+            _entityType = entityType;
+            _baseTable = baseTable;
             _schema = schema;
+            _lazyDerivedTables = new Lazy<TableCollection>(GetDerivedTables);
             _lazyColumns = new Lazy<ColumnCollection>(GetColumns);
             _lazyAssociations = new Lazy<AssociationCollection>(GetAssociations);
             _lazyPrimaryKey = new Lazy<Key>(GetPrimaryKey);
@@ -37,6 +43,26 @@ namespace Simple.OData.Client
         public string ActualName
         {
             get { return _actualName; }
+        }
+
+        public EdmEntityType EntityType
+        {
+            get { return _entityType; }
+        }
+
+        public Table BaseTable
+        {
+            get { return _baseTable; }
+        }
+
+        public Table FindDerivedTable(string tableName)
+        {
+            return _lazyDerivedTables.Value.Find(tableName);
+        }
+
+        public bool HasDerivedTable(string tableName)
+        {
+            return _lazyDerivedTables.Value.Contains(tableName);
         }
 
         public IEnumerable<Column> Columns
@@ -100,7 +126,16 @@ namespace Simple.OData.Client
 
         public IList<string> GetKeyNames()
         {
-            return _schema.FindTable(_actualName).PrimaryKey.AsEnumerable().ToList();
+            return this.PrimaryKey != null && this.PrimaryKey.AsEnumerable().Any()
+                       ? this.PrimaryKey.AsEnumerable().ToList()
+                       : _baseTable != null
+                             ? _baseTable.GetKeyNames()
+                             : new string[] {};
+        }
+
+        private TableCollection GetDerivedTables()
+        {
+            return new TableCollection(_schema.SchemaProvider.GetDerivedTables(this));
         }
 
         private ColumnCollection GetColumns()

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
@@ -15,13 +15,8 @@ namespace Simple.OData.Client
 
         public HttpWebRequest Request { get; private set; }
 
-#if (NET20 || NET35 || NET40 || SILVERLIGHT)
-        public BatchRequestBuilder(string urlBase, Credentials credentials)
+        public BatchRequestBuilder(string urlBase, ICredentials credentials = null)
             : base(urlBase, credentials)
-#else
-        public BatchRequestBuilder(string urlBase)
-            : base(urlBase)
-#endif
         {
         }
 

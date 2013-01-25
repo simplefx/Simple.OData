@@ -7,7 +7,7 @@ namespace Simple.OData.Client
         private readonly string _referenceTableName;
         private readonly string _multiplicity;
 
-        public Association(string actualName, string referenceTableName, string multiplicity)
+        internal Association(string actualName, string referenceTableName, string multiplicity)
         {
             _actualName = actualName;
             _referenceTableName = referenceTableName;

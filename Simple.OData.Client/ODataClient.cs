@@ -7,59 +7,15 @@ using System.Xml.Linq;
 
 namespace Simple.OData.Client
 {
-    internal class EntryMembers
-    {
-        private readonly IDictionary<string, object> _properties = new Dictionary<string, object>();
-        private readonly List<KeyValuePair<string, object>> _associationsByValue = new List<KeyValuePair<string, object>>();
-        private readonly List<KeyValuePair<string, int>> _associationsByContentId = new List<KeyValuePair<string, int>>();
-
-        public IDictionary<string, object> Properties { get { return _properties; } }
-        public List<KeyValuePair<string, object>> AssociationsByValue { get { return _associationsByValue; } }
-        public List<KeyValuePair<string, int>> AssociationsByContentId { get { return _associationsByContentId; } }
-
-        public void AddProperty(string propertyName, object propertyValue)
-        {
-            _properties.Add(propertyName, propertyValue);
-        }
-
-        public void AddAssociationByValue(string associationName, object associatedData)
-        {
-            _associationsByValue.Add(new KeyValuePair<string, object>(associationName, associatedData));
-        }
-
-        public void AddAssociationByContentId(string associationName, int contentId)
-        {
-            _associationsByContentId.Add(new KeyValuePair<string, int>(associationName, contentId));
-        }
-    }
-
     public class ODataClient
     {
-        private string _urlBase;
-#if (NET20 || NET35 || NET40 || SILVERLIGHT)
-        private Credentials _credentials;
-#endif
-        private ISchema _schema;
+        private readonly string _urlBase;
+        private readonly ICredentials _credentials;
+        private readonly ISchema _schema;
         private readonly RequestBuilder _requestBuilder;
         private readonly RequestRunner _requestRunner;
 
-#if (NET20 || NET35 || NET40 || SILVERLIGHT)
-        public ODataClient(string urlBase)
-            : this(urlBase, new Credentials(null, null, null, false))
-        {
-        }
-
-        public ODataClient(string urlBase, string user, string password, string domain = null)
-            : this(urlBase, new Credentials(user, password, domain, false))
-        {
-        }
-
-        public ODataClient(string urlBase, bool integratedSecurity)
-            : this(urlBase, new Credentials(null, null, null, integratedSecurity))
-        {
-        }
-
-        public ODataClient(string urlBase, Credentials credentials)
+        public ODataClient(string urlBase, ICredentials credentials = null)
         {
             _urlBase = urlBase;
             _credentials = credentials;
@@ -68,41 +24,27 @@ namespace Simple.OData.Client
             _requestBuilder = new CommandRequestBuilder(_urlBase, _credentials);
             _requestRunner = new CommandRequestRunner();
         }
-#else
-        public ODataClient(string urlBase)
-        {
-            _urlBase = urlBase;
-            _schema = Client.Schema.Get(_urlBase);
-
-            _requestBuilder = new CommandRequestBuilder(_urlBase);
-            _requestRunner = new CommandRequestRunner();
-        }
-#endif
 
         public ODataClient(ODataBatch batch)
         {
             _urlBase = batch.RequestBuilder.UrlBase;
-#if (NET20 || NET35 || NET40 || SILVERLIGHT)
             _credentials = batch.RequestBuilder.Credentials;
             _schema = Client.Schema.Get(_urlBase, _credentials);
-#else
-            _schema = Client.Schema.Get(_urlBase);
-#endif
 
             _requestBuilder = batch.RequestBuilder;
             _requestRunner = batch.RequestRunner;
         }
 
-        public Action<HttpWebRequest> RequestInterceptor
+        public Action<HttpWebRequest> BeforeRequest
         {
-            get { return _requestRunner.RequestInterceptor; }
-            set { _requestRunner.RequestInterceptor = value; }
+            get { return _requestRunner.BeforeRequest; }
+            set { _requestRunner.BeforeRequest = value; }
         }
 
-        public Action<HttpWebResponse> ResponseInterceptor
+        public Action<HttpWebResponse> AfterResponse
         {
-            get { return _requestRunner.ResponseInterceptor; }
-            set { _requestRunner.ResponseInterceptor = value; }
+            get { return _requestRunner.AfterResponse; }
+            set { _requestRunner.AfterResponse = value; }
         }
 
         public ISchema Schema
@@ -112,59 +54,18 @@ namespace Simple.OData.Client
 
         public string SchemaAsString
         {
-            get { return SchemaProvider.FromUrl(_urlBase
-#if (NET20 || NET35 || NET40 || SILVERLIGHT)
-                , _credentials
-#endif
-                ).SchemaAsString; }
+            get { return SchemaProvider.FromUrl(_urlBase, _credentials).SchemaAsString; }
         }
 
-#if (NET20 || NET35 || NET40 || SILVERLIGHT)
-        public static ISchema GetSchema(string urlBase)
-        {
-            return GetSchema(urlBase, new Credentials(null, null, null, false));
-        }
-
-        public static ISchema GetSchema(string urlBase, string user, string password, string domain = null)
-        {
-            return GetSchema(urlBase, new Credentials(user, password, domain, false));
-        }
-
-        public static ISchema GetSchema(string urlBase, bool integratedSecurity)
-        {
-            return GetSchema(urlBase, new Credentials(null, null, null, integratedSecurity));
-        }
-
-        public static ISchema GetSchema(string urlBase, Credentials credentials)
+        public static ISchema GetSchema(string urlBase, ICredentials credentials = null)
         {
             return Client.Schema.Get(urlBase, credentials);
         }
 
-        public static string GetSchemaAsString(string urlBase)
+        public static string GetSchemaAsString(string urlBase, ICredentials credentials = null)
         {
-            return SchemaProvider.FromUrl(urlBase, new Credentials(null, null, null, false)).SchemaAsString;
+            return SchemaProvider.FromUrl(urlBase, credentials).SchemaAsString;
         }
-
-        public static string GetSchemaAsString(string urlBase, string user, string password, string domain = null)
-        {
-            return SchemaProvider.FromUrl(urlBase, new Credentials(user, password, domain, false)).SchemaAsString;
-        }
-
-        public static string GetSchemaAsString(string urlBase, bool integratedSecurity)
-        {
-            return SchemaProvider.FromUrl(urlBase, new Credentials(null, null, null, integratedSecurity)).SchemaAsString;
-        }
-#else
-        public static ISchema GetSchema(string urlBase)
-        {
-            return GetSchema(urlBase);
-        }
-
-        public static string GetSchemaAsString(string urlBase)
-        {
-            return SchemaProvider.FromUrl(urlBase).SchemaAsString;
-        }
-#endif
 
         public static ISchema ParseSchemaString(string schemaString)
         {
@@ -227,7 +128,7 @@ namespace Simple.OData.Client
         public IDictionary<string, object> GetEntry(string collection, params object[] entryKey)
         {
             var entryKeyWithNames = new Dictionary<string, object>();
-            var keyNames = _schema.FindTable(collection).GetKeyNames();
+            var keyNames = _schema.FindConcreteTable(collection).GetKeyNames();
             for (int index = 0; index < keyNames.Count; index++)
             {
                 entryKeyWithNames.Add(keyNames[index], entryKey.ElementAt(index));
@@ -245,24 +146,25 @@ namespace Simple.OData.Client
 
         public IDictionary<string, object> InsertEntry(string collection, IDictionary<string, object> entryData, bool resultRequired)
         {
-            var entryMembers = ParseEntryMembers(collection, entryData);
+            var table = _schema.FindConcreteTable(collection);
+            var entryMembers = ParseEntryMembers(table, entryData);
 
-            var entry = ODataFeedReader.CreateDataElement(entryMembers.Properties);
+            var entry = ODataFeedWriter.CreateDataElement(_schema.TypesNamespace, table.ActualName, entryMembers.Properties);
             foreach (var associatedData in entryMembers.AssociationsByValue)
             {
                 CreateLinkElement(entry, collection, associatedData);
             }
 
-            var commandText = _schema.FindTable(collection).ActualName;
+            var commandText = _schema.FindBaseTable(collection).ActualName;
             var command = HttpCommand.Post(commandText, entryData, entry.ToString());
             _requestBuilder.AddCommandToRequest(command);
             var result = _requestRunner.InsertEntry(command, resultRequired);
 
             foreach (var associatedData in entryMembers.AssociationsByContentId)
             {
-                var linkCommand = CreateLinkCommand(collection, associatedData.Key, 
-                    ODataFeedReader.CreateLinkPath(command.ContentId), 
-                    ODataFeedReader.CreateLinkPath(associatedData.Value));
+                var linkCommand = CreateLinkCommand(collection, associatedData.Key,
+                    ODataFeedWriter.CreateLinkPath(command.ContentId),
+                    ODataFeedWriter.CreateLinkPath(associatedData.Value));
                 _requestBuilder.AddCommandToRequest(linkCommand);
                 _requestRunner.InsertEntry(linkCommand, resultRequired);
             }
@@ -277,7 +179,9 @@ namespace Simple.OData.Client
 
         public int UpdateEntry(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
         {
-            var entryMembers = ParseEntryMembers(collection, entryData);
+            var table = _schema.FindConcreteTable(collection);
+            var entryMembers = ParseEntryMembers(table, entryData);
+
             return UpdateEntryPropertiesAndAssociations(collection, entryKey, entryData, entryMembers);
         }
 
@@ -296,7 +200,7 @@ namespace Simple.OData.Client
 
         public void LinkEntry(string collection, IDictionary<string, object> entryKey, string linkName, IDictionary<string, object> linkedEntryKey)
         {
-            var association = _schema.FindTable(collection).FindAssociation(linkName);
+            var association = _schema.FindAssociation(collection, linkName);
             var command = CreateLinkCommand(collection, linkName,
                 new ODataClientWithCommand(this, _schema).From(collection).Key(entryKey).CommandText,
                 new ODataClientWithCommand(this, _schema).From(association.ReferenceTableName).Key(linkedEntryKey).CommandText);
@@ -306,7 +210,7 @@ namespace Simple.OData.Client
 
         public void UnlinkEntry(string collection, IDictionary<string, object> entryKey, string linkName)
         {
-            var association = _schema.FindTable(collection).FindAssociation(linkName);
+            var association = _schema.FindAssociation(collection, linkName);
             var command = CreateUnlinkCommand(collection, linkName, new ODataClientWithCommand(this, _schema).From(collection).Key(entryKey).CommandText);
             _requestBuilder.AddCommandToRequest(command);
             _requestRunner.UpdateEntry(command);
@@ -320,13 +224,17 @@ namespace Simple.OData.Client
             return _requestRunner.ExecuteFunction(command);
         }
 
-        public string FormatFilter(string collectionName, dynamic filterExpression)
+        public string FormatFilter(string collection, dynamic filterExpression)
         {
             if (filterExpression is FilterExpression)
             {
                 var clientWithCommand = new ODataClientWithCommand(this, _schema);
-                string filter = (filterExpression as FilterExpression).Format(clientWithCommand, collectionName);
-                return clientWithCommand.From(collectionName).Filter(filter).CommandText;
+                string filter = (filterExpression as FilterExpression)
+                    .Format(clientWithCommand, collection);
+                
+                return clientWithCommand
+                    .From(collection)
+                    .Filter(filter).CommandText;
             }
             else
             {
@@ -334,7 +242,7 @@ namespace Simple.OData.Client
             }
         }
 
-        private int IterateEntries(string collection, string commandText, IDictionary<string, object> entryData, 
+        private int IterateEntries(string collection, string commandText, IDictionary<string, object> entryData,
             Func<string, IDictionary<string, object>, IDictionary<string, object>, int> func)
         {
             var entryKey = ExtractKeyFromCommandText(collection, commandText);
@@ -361,17 +269,22 @@ namespace Simple.OData.Client
             }
         }
 
-        private int UpdateEntryPropertiesAndAssociations(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData, EntryMembers entryMembers)
+        private int UpdateEntryPropertiesAndAssociations(
+            string collection, 
+            IDictionary<string, object> entryKey, 
+            IDictionary<string, object> entryData, 
+            EntryMembers entryMembers)
         {
             bool hasPropertiesToUpdate = entryMembers.Properties.Count > 0;
             bool merge = !hasPropertiesToUpdate || CheckMergeConditions(collection, entryKey, entryData);
-            var commandText = new ODataClientWithCommand(this, _schema).From(collection).Key(entryKey).CommandText;
+            var commandText = new ODataClientWithCommand(this, _schema).From(_schema.FindBaseTable(collection).ActualName).Key(entryKey).CommandText;
 
-            var entryElement = ODataFeedReader.CreateDataElement(entryMembers.Properties);
+            var table = _schema.FindConcreteTable(collection);
+            var entryElement = ODataFeedWriter.CreateDataElement(_schema.TypesNamespace, table.ActualName, entryMembers.Properties);
             var unlinkAssociationNames = new List<string>();
             foreach (var associatedData in entryMembers.AssociationsByValue)
             {
-                var association = _schema.FindTable(collection).FindAssociation(associatedData.Key);
+                var association = table.FindAssociation(associatedData.Key);
                 if (associatedData.Value != null)
                 {
                     CreateLinkElement(entryElement, collection, associatedData);
@@ -388,9 +301,9 @@ namespace Simple.OData.Client
 
             foreach (var associatedData in entryMembers.AssociationsByContentId)
             {
-                var linkCommand = CreateLinkCommand(collection, associatedData.Key, 
-                    ODataFeedReader.CreateLinkPath(command.ContentId), 
-                    ODataFeedReader.CreateLinkPath(associatedData.Value));
+                var linkCommand = CreateLinkCommand(collection, associatedData.Key,
+                    ODataFeedWriter.CreateLinkPath(command.ContentId),
+                    ODataFeedWriter.CreateLinkPath(associatedData.Value));
                 _requestBuilder.AddCommandToRequest(linkCommand);
                 _requestRunner.UpdateEntry(linkCommand);
             }
@@ -405,18 +318,18 @@ namespace Simple.OData.Client
 
         private HttpCommand CreateLinkCommand(string collection, string associationName, string entryPath, string linkPath)
         {
-            var linkEntry = ODataFeedReader.CreateLinkElement(linkPath);
-            var linkMethod = _schema.FindTable(collection).FindAssociation(associationName).IsMultiple ? 
+            var linkEntry = ODataFeedWriter.CreateLinkElement(linkPath);
+            var linkMethod = _schema.FindAssociation(collection, associationName).IsMultiple ? 
                 RestVerbs.POST : 
                 RestVerbs.PUT;
 
-            var commandText = ODataFeedReader.CreateLinkCommand(entryPath, associationName);
+            var commandText = ODataFeedWriter.CreateLinkCommand(entryPath, associationName);
             return new HttpCommand(linkMethod, commandText, null, linkEntry.ToString(), true);
         }
 
         private HttpCommand CreateUnlinkCommand(string collection, string associationName, string entryPath)
         {
-            var commandText = ODataFeedReader.CreateLinkCommand(entryPath, associationName);
+            var commandText = ODataFeedWriter.CreateLinkCommand(entryPath, associationName);
             return HttpCommand.Delete(commandText);
         }
 
@@ -425,18 +338,18 @@ namespace Simple.OData.Client
             if (associatedData.Value == null)
                 return;
 
-            var association = _schema.FindTable(collection).FindAssociation(associatedData.Key);
+            var association = _schema.FindAssociation(collection, associatedData.Key);
             var associatedKeyValues = GetLinkedEntryKeyValues(association.ReferenceTableName, associatedData);
             if (associatedKeyValues != null)
             {
-                ODataFeedReader.AddDataLink(entry, association.ActualName, association.ReferenceTableName, associatedKeyValues);
+                ODataFeedWriter.AddDataLink(entry, association.ActualName, association.ReferenceTableName, associatedKeyValues);
             }
         }
 
         private IEnumerable<object> GetLinkedEntryKeyValues(string collection, KeyValuePair<string, object> entryData)
         {
             var entryProperties = GetLinkedEntryProperties(entryData.Value);
-            var associatedKeyNames = _schema.FindTable(collection).GetKeyNames();
+            var associatedKeyNames = _schema.FindConcreteTable(collection).GetKeyNames();
             var associatedKeyValues = new object[associatedKeyNames.Count()];
             for (int index = 0; index < associatedKeyNames.Count(); index++)
             {
@@ -462,11 +375,10 @@ namespace Simple.OData.Client
             return entryProperties;
         }
 
-        private EntryMembers ParseEntryMembers(string collection, IDictionary<string, object> entryData)
+        private EntryMembers ParseEntryMembers(Table table, IDictionary<string, object> entryData)
         {
             var entryMembers = new EntryMembers();
 
-            var table = _schema.FindTable(collection);
             foreach (var item in entryData)
             {
                 ParseEntryMember(table, item, entryMembers);
@@ -521,7 +433,8 @@ namespace Simple.OData.Client
 
         private bool CheckMergeConditions(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
         {
-            var keyNames = _schema.FindTable(collection).GetKeyNames();
+            var table = _schema.FindConcreteTable(collection);
+            var keyNames = table.GetKeyNames();
             foreach (var key in entryKey.Keys)
             {
                 if (!keyNames.Contains(key) && !entryData.Keys.Contains(key))

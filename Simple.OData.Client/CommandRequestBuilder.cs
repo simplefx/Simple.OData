@@ -7,13 +7,8 @@ namespace Simple.OData.Client
 {
     class CommandRequestBuilder : RequestBuilder
     {
-#if (NET20 || NET35 || NET40 || SILVERLIGHT)
-        public CommandRequestBuilder(string urlBase, Credentials credentials)
+        public CommandRequestBuilder(string urlBase, ICredentials credentials)
             : base(urlBase, credentials)
-#else
-        public CommandRequestBuilder(string urlBase)
-            : base(urlBase)
-#endif
         {
         }
 

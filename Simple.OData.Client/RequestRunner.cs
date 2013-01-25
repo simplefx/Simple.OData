@@ -8,8 +8,8 @@ namespace Simple.OData.Client
 {
     abstract class RequestRunner
     {
-        public Action<HttpWebRequest> RequestInterceptor { get; set; }
-        public Action<HttpWebResponse> ResponseInterceptor { get; set; }
+        public Action<HttpWebRequest> BeforeRequest { get; set; }
+        public Action<HttpWebResponse> AfterResponse { get; set; }
 
         public string Request(HttpWebRequest request)
         {
@@ -23,13 +23,13 @@ namespace Simple.OData.Client
         {
             try
             {
-                if (this.RequestInterceptor != null)
-                    this.RequestInterceptor(request);
+                if (this.BeforeRequest != null)
+                    this.BeforeRequest(request);
 
                 var response = (HttpWebResponse)request.GetResponse();
 
-                if (this.ResponseInterceptor != null)
-                    this.ResponseInterceptor(response);
+                if (this.AfterResponse != null)
+                    this.AfterResponse(response);
 
                 return response;
             }

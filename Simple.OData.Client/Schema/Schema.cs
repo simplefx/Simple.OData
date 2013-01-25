@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 
 namespace Simple.OData.Client
 {
@@ -8,24 +9,38 @@ namespace Simple.OData.Client
     {
         private static readonly SimpleDictionary<string, Schema> Instances = new SimpleDictionary<string, Schema>();
 
-        private readonly ISchemaProvider _schemaProvider;
+        private readonly SchemaProvider _schemaProvider;
+        private readonly string _typesNamespace;
+        private readonly string _containersNamespace;
         private readonly Lazy<TableCollection> _lazyTables;
         private readonly Lazy<FunctionCollection> _lazyFunctions;
         private readonly Lazy<List<EdmEntityType>> _lazyEntityTypes;
         private readonly Lazy<List<EdmComplexType>> _lazyComplexTypes;
 
-        private Schema(ISchemaProvider schemaProvider)
+        private Schema(SchemaProvider schemaProvider)
         {
+            _schemaProvider = schemaProvider;
+            _typesNamespace = _schemaProvider.GetTypesNamespace();
+            _containersNamespace = _schemaProvider.GetContainersNamespace();
             _lazyTables = new Lazy<TableCollection>(CreateTableCollection);
             _lazyFunctions = new Lazy<FunctionCollection>(CreateFunctionCollection);
             _lazyEntityTypes = new Lazy<List<EdmEntityType>>(CreateEntityTypeCollection);
             _lazyComplexTypes = new Lazy<List<EdmComplexType>>(CreateComplexTypeCollection);
-            _schemaProvider = schemaProvider;
         }
 
-        public ISchemaProvider SchemaProvider
+        internal SchemaProvider SchemaProvider
         {
             get { return _schemaProvider; }
+        }
+
+        public string TypesNamespace
+        {
+            get { return _typesNamespace; }
+        }
+
+        public string ContainersNamespace
+        {
+            get { return _containersNamespace; }
         }
 
         public IEnumerable<Table> Tables
@@ -33,14 +48,70 @@ namespace Simple.OData.Client
             get { return _lazyTables.Value.AsEnumerable(); }
         }
 
+        public bool HasTable(string tableName)
+        {
+            return _lazyTables.Value.Contains(tableName);
+        }
+
         public Table FindTable(string tableName)
         {
             return _lazyTables.Value.Find(tableName);
         }
 
-        public bool HasTable(string tableName)
+        public Table FindBaseTable(string tablePath)
         {
-            return _lazyTables.Value.Contains(tableName);
+            return this.FindTable(tablePath.Split('/').First());
+        }
+
+        public Table FindConcreteTable(string tablePath)
+        {
+            var items = tablePath.Split('/');
+            if (items.Count() > 1)
+            {
+                var baseTable = this.FindTable(items[0]);
+                var table = string.IsNullOrEmpty(items[1])
+                    ? baseTable
+                    : baseTable.FindDerivedTable(items[1]);
+                return table;
+            }
+            else
+            {
+                return this.FindTable(tablePath);
+            }
+        }
+
+        public Column FindColumn(string tablePath, string columnName)
+        {
+            var baseTable = this.FindBaseTable(tablePath);
+            var concreteTable = this.FindConcreteTable(tablePath);
+            if (baseTable == concreteTable)
+            {
+                return concreteTable.FindColumn(columnName);
+            }
+            else
+            {
+                if (concreteTable.HasAssociation(columnName))
+                    return concreteTable.FindColumn(columnName);
+                else
+                    return baseTable.FindColumn(columnName);
+            }
+        }
+
+        public Association FindAssociation(string tablePath, string associationName)
+        {
+            var baseTable = this.FindBaseTable(tablePath);
+            var concreteTable = this.FindConcreteTable(tablePath);
+            if (baseTable == concreteTable)
+            {
+                return concreteTable.FindAssociation(associationName);
+            }
+            else
+            {
+                if (concreteTable.HasAssociation(associationName))
+                    return concreteTable.FindAssociation(associationName);
+                else
+                    return baseTable.FindAssociation(associationName);
+            }
         }
 
         public IEnumerable<Function> Functions
@@ -48,14 +119,14 @@ namespace Simple.OData.Client
             get { return _lazyFunctions.Value.AsEnumerable(); }
         }
 
-        public Function FindFunction(string functionName)
-        {
-            return _lazyFunctions.Value.Find(functionName);
-        }
-
         public bool HasFunction(string functionName)
         {
             return _lazyFunctions.Value.Contains(functionName);
+        }
+
+        public Function FindFunction(string functionName)
+        {
+            return _lazyFunctions.Value.Find(functionName);
         }
 
         public IEnumerable<EdmEntityType> EntityTypes
@@ -71,7 +142,7 @@ namespace Simple.OData.Client
         private TableCollection CreateTableCollection()
         {
             return new TableCollection(_schemaProvider.GetTables()
-                .Select(table => new Table(table.ActualName, this)));
+                .Select(table => new Table(table.ActualName, table.EntityType, null, this)));
         }
 
         private FunctionCollection CreateFunctionCollection()
@@ -89,18 +160,9 @@ namespace Simple.OData.Client
             return new List<EdmComplexType>(_schemaProvider.GetComplexTypes());
         }
 
-        internal static Schema Get(string urlBase
-#if (NET20 || NET35 || NET40 || SILVERLIGHT)
-            , Credentials credentials
-#endif
-            )
+        internal static Schema Get(string urlBase, ICredentials credentials = null)
         {
-            return Instances.GetOrAdd(urlBase,
-                                      sp => new Schema(Client.SchemaProvider.FromUrl(urlBase
-#if (NET20 || NET35 || NET40 || SILVERLIGHT)
-                                          , credentials
-#endif
-                                          )));
+            return Instances.GetOrAdd(urlBase, sp => new Schema(Client.SchemaProvider.FromUrl(urlBase, credentials)));
         }
 
         internal static Schema Get(SchemaProvider schemaProvider)
