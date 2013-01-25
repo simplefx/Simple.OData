@@ -66,6 +66,7 @@
     <Compile Include="IClientWithCommand.cs" />
     <Compile Include="ODataBatch.cs" />
     <Compile Include="ODataCommand.cs" />
+    <Compile Include="ODataFeedWriter.cs" />
     <Compile Include="ODataFilter.cs" />
     <Compile Include="Pluralizer.cs" />
     <Compile Include="Schema\ISchema.cs" />

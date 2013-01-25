@@ -217,7 +217,7 @@ namespace Simple.OData.Client
                 : baseTable.FindDerivedTable(derivedCollection);
             var entryMembers = ParseEntryMembers(table, entryData);
 
-            var entry = ODataFeedReader.CreateDataElement(_schema.TypesNamespace, table.ActualName, entryMembers.Properties);
+            var entry = ODataFeedWriter.CreateDataElement(_schema.TypesNamespace, table.ActualName, entryMembers.Properties);
             foreach (var associatedData in entryMembers.AssociationsByValue)
             {
                 CreateLinkElement(entry, collection, associatedData);
@@ -230,9 +230,9 @@ namespace Simple.OData.Client
 
             foreach (var associatedData in entryMembers.AssociationsByContentId)
             {
-                var linkCommand = CreateLinkCommand(collection, associatedData.Key, 
-                    ODataFeedReader.CreateLinkPath(command.ContentId), 
-                    ODataFeedReader.CreateLinkPath(associatedData.Value));
+                var linkCommand = CreateLinkCommand(collection, associatedData.Key,
+                    ODataFeedWriter.CreateLinkPath(command.ContentId),
+                    ODataFeedWriter.CreateLinkPath(associatedData.Value));
                 _requestBuilder.AddCommandToRequest(linkCommand);
                 _requestRunner.InsertEntry(linkCommand, resultRequired);
             }
@@ -362,7 +362,7 @@ namespace Simple.OData.Client
                 ? baseTable
                 : baseTable.FindDerivedTable(derivedCollection);
 
-            var entryElement = ODataFeedReader.CreateDataElement(_schema.TypesNamespace, table.ActualName, entryMembers.Properties);
+            var entryElement = ODataFeedWriter.CreateDataElement(_schema.TypesNamespace, table.ActualName, entryMembers.Properties);
             var unlinkAssociationNames = new List<string>();
             foreach (var associatedData in entryMembers.AssociationsByValue)
             {
@@ -383,9 +383,9 @@ namespace Simple.OData.Client
 
             foreach (var associatedData in entryMembers.AssociationsByContentId)
             {
-                var linkCommand = CreateLinkCommand(collection, associatedData.Key, 
-                    ODataFeedReader.CreateLinkPath(command.ContentId), 
-                    ODataFeedReader.CreateLinkPath(associatedData.Value));
+                var linkCommand = CreateLinkCommand(collection, associatedData.Key,
+                    ODataFeedWriter.CreateLinkPath(command.ContentId),
+                    ODataFeedWriter.CreateLinkPath(associatedData.Value));
                 _requestBuilder.AddCommandToRequest(linkCommand);
                 _requestRunner.UpdateEntry(linkCommand);
             }
@@ -400,18 +400,18 @@ namespace Simple.OData.Client
 
         private HttpCommand CreateLinkCommand(string collection, string associationName, string entryPath, string linkPath)
         {
-            var linkEntry = ODataFeedReader.CreateLinkElement(linkPath);
+            var linkEntry = ODataFeedWriter.CreateLinkElement(linkPath);
             var linkMethod = _schema.FindTable(collection).FindAssociation(associationName).IsMultiple ? 
                 RestVerbs.POST : 
                 RestVerbs.PUT;
 
-            var commandText = ODataFeedReader.CreateLinkCommand(entryPath, associationName);
+            var commandText = ODataFeedWriter.CreateLinkCommand(entryPath, associationName);
             return new HttpCommand(linkMethod, commandText, null, linkEntry.ToString(), true);
         }
 
         private HttpCommand CreateUnlinkCommand(string collection, string associationName, string entryPath)
         {
-            var commandText = ODataFeedReader.CreateLinkCommand(entryPath, associationName);
+            var commandText = ODataFeedWriter.CreateLinkCommand(entryPath, associationName);
             return HttpCommand.Delete(commandText);
         }
 
@@ -424,7 +424,7 @@ namespace Simple.OData.Client
             var associatedKeyValues = GetLinkedEntryKeyValues(association.ReferenceTableName, associatedData);
             if (associatedKeyValues != null)
             {
-                ODataFeedReader.AddDataLink(entry, association.ActualName, association.ReferenceTableName, associatedKeyValues);
+                ODataFeedWriter.AddDataLink(entry, association.ActualName, association.ReferenceTableName, associatedKeyValues);
             }
         }
 
