@@ -62,23 +62,48 @@ namespace Simple.Data.OData.Tests
         }
 
         [Fact]
-        public void UpdateShip()
+        public void UpdateShipByKeyField()
         {
             var ship = _db.Ships.Insert(ShipName: "Test1");
-            _db.Ships.UpdateByTransportID(TransportID: ship.TransportID, ShipName: "Test2");
-            ship = _db.Transport.FindByTransportID(ship.TransportID);
 
+            _db.Ships.UpdateByTransportID(TransportID: ship.TransportID, ShipName: "Test2");
+
+            ship = _db.Transport.FindByTransportID(ship.TransportID);
             Assert.Equal("Test2", ship.ShipName);
         }
 
         [Fact]
-        public void DeleteShip()
+        public void UpdateShipByObject()
+        {
+            var ship = _db.Ships.Insert(ShipName: "Test1");
+
+            ship.ShipName = "Test2";
+            _db.Ships.Update(ship);
+
+            ship = _db.Transport.FindByTransportID(ship.TransportID);
+            Assert.Equal("Test2", ship.ShipName);
+        }
+
+        [Fact]
+        public void DeleteShipByKeyField()
         {
             var ship = _db.Ships.Insert(ShipName: "Test1");
             var count = _db.Transport.All().Count();
+
             _db.Transport.DeleteByTransportID(ship.TransportID);
 
             Assert.Equal(count-1, _db.Transport.All().Count());
+        }
+
+        [Fact]
+        public void DeleteShipByObject()
+        {
+            var ship = _db.Ships.Insert(ShipName: "Test1");
+            var count = _db.Transport.All().Count();
+
+            _db.Ships.Delete(ship);
+
+            Assert.Equal(count - 1, _db.Transport.All().Count());
         }
 
         [Fact]

@@ -282,5 +282,16 @@ namespace Simple.OData.Client.Tests
                 .FindEntry();
             Assert.Equal("Titanic", transport["ShipName"]);
         }
+
+        [Fact]
+        public void FindDerivedClassEntryBaseAndDerivedFields()
+        {
+            var transport = _client
+                .From("Transport")
+                .As("Ships")
+                .Filter("TransportID eq 1 and ShipName eq 'Titanic'")
+                .FindEntry();
+            Assert.Equal("Titanic", transport["ShipName"]);
+        }
     }
 }

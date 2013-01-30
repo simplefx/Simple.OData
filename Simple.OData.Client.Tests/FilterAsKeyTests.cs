@@ -152,5 +152,28 @@ namespace Simple.OData.Client.Tests
             string commandText = command.CommandText;
             Assert.Equal("Employees(1)/Superior", commandText);
         }
+
+        [Fact]
+        public void FindAllFromBaseTableByFilterAsKeyEqual()
+        {
+            var x = ODataFilter.Expression;
+            var command = _client
+                .From("Transport")
+                .Filter(x.TransportID == 1);
+            string commandText = command.CommandText;
+            Assert.Equal("Transport(1)", commandText);
+        }
+
+        [Fact]
+        public void FindAllFromDerivedTableByFilterAsKeyEqual()
+        {
+            var x = ODataFilter.Expression;
+            var command = _client
+                .From("Transport")
+                .As("Ship")
+                .Filter(x.TransportID == 1);
+            string commandText = command.CommandText;
+            Assert.Equal("Transport/NorthwindModel.Ship(1)", commandText);
+        }
     }
 }
