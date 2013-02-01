@@ -56,6 +56,7 @@
     <Compile Include="Filter\FunctionMapping.cs" />
     <Compile Include="IClient.cs" />
     <Compile Include="ICommand.cs" />
+    <Compile Include="ODataClientSettings.cs" />
     <Compile Include="ODataClientWithCommand.cs" />
     <Compile Include="CommandRequestBuilder.cs" />
     <Compile Include="CommandRequestRunner.cs" />

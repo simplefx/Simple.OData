@@ -173,7 +173,12 @@ namespace Simple.Data.OData
             }
             else
             {
-                 client = new ODataClient(_urlBase, _credentials);
+                var clientSettings = new ODataClientSettings
+                {
+                    UrlBase = _urlBase,
+                    Credentials = _credentials
+                };
+                client = new ODataClient(clientSettings);
             }
 
             var adapterPluralizer = Database.GetPluralizer();

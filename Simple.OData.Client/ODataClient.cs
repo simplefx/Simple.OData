@@ -8,27 +8,29 @@ namespace Simple.OData.Client
 {
     public class ODataClient
     {
-        private readonly string _urlBase;
-        private readonly ICredentials _credentials;
+        private readonly ODataClientSettings _settings;
         private readonly ISchema _schema;
         private readonly RequestBuilder _requestBuilder;
         private readonly RequestRunner _requestRunner;
 
-        public ODataClient(string urlBase, ICredentials credentials = null)
+        public ODataClient(string urlBase)
+            : this(new ODataClientSettings { UrlBase = urlBase })
         {
-            _urlBase = urlBase;
-            _credentials = credentials;
-            _schema = Client.Schema.Get(_urlBase, _credentials);
+        }
 
-            _requestBuilder = new CommandRequestBuilder(_urlBase, _credentials);
+        public ODataClient(ODataClientSettings settings)
+        {
+            _settings = settings;
+            _schema = Client.Schema.Get(_settings.UrlBase, _settings.Credentials);
+
+            _requestBuilder = new CommandRequestBuilder(_settings.UrlBase, _settings.Credentials);
             _requestRunner = new CommandRequestRunner();
         }
 
         public ODataClient(ODataBatch batch)
         {
-            _urlBase = batch.RequestBuilder.UrlBase;
-            _credentials = batch.RequestBuilder.Credentials;
-            _schema = Client.Schema.Get(_urlBase, _credentials);
+            _settings = batch.Settings;
+            _schema = Client.Schema.Get(_settings.UrlBase, _settings.Credentials);
 
             _requestBuilder = batch.RequestBuilder;
             _requestRunner = batch.RequestRunner;
@@ -53,7 +55,7 @@ namespace Simple.OData.Client
 
         public string SchemaAsString
         {
-            get { return SchemaProvider.FromUrl(_urlBase, _credentials).SchemaAsString; }
+            get { return SchemaProvider.FromUrl(_settings.UrlBase, _settings.Credentials).SchemaAsString; }
         }
 
         public static ISchema GetSchema(string urlBase, ICredentials credentials = null)
@@ -186,7 +188,7 @@ namespace Simple.OData.Client
 
         public int DeleteEntries(string collection, string commandText)
         {
-            return IterateEntries(collection, commandText, null, (x,y,z) => DeleteEntry(x,y));
+            return IterateEntries(collection, commandText, null, (x, y, z) => DeleteEntry(x, y));
         }
 
         public int DeleteEntry(string collection, IDictionary<string, object> entryKey)
@@ -230,7 +232,7 @@ namespace Simple.OData.Client
                 var clientWithCommand = new ODataClientWithCommand(this, _schema);
                 string filter = (filterExpression as FilterExpression)
                     .Format(clientWithCommand, collection);
-                
+
                 return clientWithCommand
                     .From(collection)
                     .Filter(filter).CommandText;
@@ -251,7 +253,7 @@ namespace Simple.OData.Client
             }
             else
             {
-                var entries = new ODataClient(_urlBase).FindEntries(commandText);
+                var entries = new ODataClient(_settings).FindEntries(commandText);
                 if (entries != null)
                 {
                     var entryList = entries.ToList();
@@ -269,9 +271,9 @@ namespace Simple.OData.Client
         }
 
         private int UpdateEntryPropertiesAndAssociations(
-            string collection, 
-            IDictionary<string, object> entryKey, 
-            IDictionary<string, object> entryData, 
+            string collection,
+            IDictionary<string, object> entryKey,
+            IDictionary<string, object> entryData,
             EntryMembers entryMembers)
         {
             bool hasPropertiesToUpdate = entryMembers.Properties.Count > 0;
@@ -318,8 +320,8 @@ namespace Simple.OData.Client
         private HttpCommand CreateLinkCommand(string collection, string associationName, string entryPath, string linkPath)
         {
             var linkEntry = ODataFeedWriter.CreateLinkElement(linkPath);
-            var linkMethod = _schema.FindAssociation(collection, associationName).IsMultiple ? 
-                RestVerbs.POST : 
+            var linkMethod = _schema.FindAssociation(collection, associationName).IsMultiple ?
+                RestVerbs.POST :
                 RestVerbs.PUT;
 
             var commandText = ODataFeedWriter.CreateLinkCommand(entryPath, associationName);
