@@ -226,17 +226,39 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void InterceptRequest()
         {
-            _client.BeforeRequest = x => x.Method = "PUT";
-            Assert.Throws<WebRequestException>(() => _client.FindEntries("Products"));
-            _client.BeforeRequest = null;
+            try
+            {
+                var settings = new ODataClientSettings
+                                   {
+                                       UrlBase = _service.ServiceUri.AbsoluteUri,
+                                       BeforeRequest = x => x.Method = "PUT",
+                                   };
+                _client = new ODataClient(settings);
+                Assert.Throws<WebRequestException>(() => _client.FindEntries("Products"));
+            }
+            finally
+            {
+                _client = CreateClientWithDefaultSettings();
+            }
         }
 
         [Fact]
         public void InterceptResponse()
         {
-            _client.AfterResponse = x => { throw new InvalidOperationException(); };
-            Assert.Throws<InvalidOperationException>(() => _client.FindEntries("Products"));
-            _client.AfterResponse = null;
+            try
+            {
+                var settings = new ODataClientSettings
+                {
+                    UrlBase = _service.ServiceUri.AbsoluteUri,
+                    AfterResponse = x => { throw new InvalidOperationException(); },
+                };
+                _client = new ODataClient(settings);
+                Assert.Throws<InvalidOperationException>(() => _client.FindEntries("Products"));
+            }
+            finally
+            {
+                _client = CreateClientWithDefaultSettings();
+            }
         }
     }
 }

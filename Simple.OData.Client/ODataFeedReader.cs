@@ -7,30 +7,37 @@ using Simple.NExtLib.IO;
 
 namespace Simple.OData.Client
 {
-    static class ODataFeedReader
+    class ODataFeedReader
     {
-        public static IEnumerable<IDictionary<string, object>> GetData(Stream stream, bool scalarResult = false)
+        private readonly bool _includeResourceTypeInEntryProperties;
+
+        public ODataFeedReader(bool includeResourceTypeInEntryProperties = false)
+        {
+            _includeResourceTypeInEntryProperties = includeResourceTypeInEntryProperties;
+        }
+
+        public IEnumerable<IDictionary<string, object>> GetData(Stream stream, bool scalarResult = false)
         {
             return GetData(QuickIO.StreamToString(stream), scalarResult);
         }
 
-        public static IEnumerable<IDictionary<string, object>> GetData(Stream stream, out int totalCount)
+        public IEnumerable<IDictionary<string, object>> GetData(Stream stream, out int totalCount)
         {
             var text = QuickIO.StreamToString(stream);
             return GetData(text, out totalCount);
         }
 
-        public static EdmSchema GetSchema(Stream stream)
+        public EdmSchema GetSchema(Stream stream)
         {
             return GetSchema(QuickIO.StreamToString(stream));
         }
 
-        public static string GetSchemaAsString(Stream stream)
+        public string GetSchemaAsString(Stream stream)
         {
             return QuickIO.StreamToString(stream);
         }
 
-        public static IEnumerable<IDictionary<string, object>> GetData(string text, bool scalarResult = false)
+        public IEnumerable<IDictionary<string, object>> GetData(string text, bool scalarResult = false)
         {
             if (scalarResult)
             {
@@ -43,20 +50,20 @@ namespace Simple.OData.Client
             }
         }
 
-        public static IEnumerable<IDictionary<string, object>> GetData(string text, out int totalCount)
+        public IEnumerable<IDictionary<string, object>> GetData(string text, out int totalCount)
         {
             var feed = XElement.Parse(text);
             totalCount = GetDataCount(feed);
             return GetData(feed);
         }
 
-        public static EdmSchema GetSchema(string text)
+        public EdmSchema GetSchema(string text)
         {
             var feed = XElement.Parse(text);
             return EdmSchemaParser.ParseSchema(feed);
         }
 
-        public static IEnumerable<IDictionary<string, object>> GetFunctionResult(Stream stream)
+        public IEnumerable<IDictionary<string, object>> GetFunctionResult(Stream stream)
         {
             var text = QuickIO.StreamToString(stream);
             var element = XElement.Parse(text);
@@ -80,7 +87,7 @@ namespace Simple.OData.Client
             }
         }
 
-        private static IEnumerable<IDictionary<string, object>> GetData(XElement feed)
+        private IEnumerable<IDictionary<string, object>> GetData(XElement feed)
         {
             bool mediaStream = feed.Element(null, "entry") != null &&
                                feed.Element(null, "entry").Descendants(null, "link").Attributes("rel").Any(
@@ -105,17 +112,23 @@ namespace Simple.OData.Client
                 var properties = GetProperties(entityElement).ToIDictionary();
                 properties.ToList().ForEach(x => entryData.Add(x.Key, x.Value));
 
+                if (_includeResourceTypeInEntryProperties)
+                {
+                    var resourceType = entry.Element(null, "category").Attribute("term").Value.Split('.').Last();
+                    entryData.Add(ODataCommand.ResourceTypeLiteral, resourceType);
+                }
+
                 yield return entryData;
             }
         }
 
-        private static int GetDataCount(XElement feed)
+        private int GetDataCount(XElement feed)
         {
             var count = feed.Elements("m", "count").SingleOrDefault();
             return count == null ? 0 : Convert.ToInt32(count.Value);
         }
 
-        private static IEnumerable<KeyValuePair<string, object>> GetProperties(XElement element)
+        private IEnumerable<KeyValuePair<string, object>> GetProperties(XElement element)
         {
             if (element == null) throw new ArgumentNullException("element");
 
@@ -129,7 +142,7 @@ namespace Simple.OData.Client
             }
         }
 
-        private static object GetLinks(XElement element)
+        private object GetLinks(XElement element)
         {
             var feed = element.Element("m", "inline").Elements().SingleOrDefault();
             if (feed == null)

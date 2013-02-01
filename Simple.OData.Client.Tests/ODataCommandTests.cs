@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
@@ -260,6 +261,30 @@ namespace Simple.OData.Client.Tests
                 .From("Transport")
                 .FindEntries();
             Assert.Equal(2, transport.Count());
+            Assert.False(transport.Any(x => x.ContainsKey(ODataCommand.ResourceTypeLiteral)));
+        }
+
+        [Fact]
+        public void FindBaseClassEntriesWithResourceTypes()
+        {
+            try
+            {
+                var clientSettings = new ODataClientSettings
+                                         {
+                                             UrlBase = _service.ServiceUri.AbsoluteUri,
+                                             IncludeResourceTypeInEntryProperties = true,
+                                         };
+                _client = new ODataClient(clientSettings);
+                var transport = _client
+                    .From("Transport")
+                    .FindEntries();
+                Assert.Equal(2, transport.Count());
+                Assert.True(transport.All(x => x.ContainsKey(ODataCommand.ResourceTypeLiteral)));
+            }
+            finally
+            {
+                _client = CreateClientWithDefaultSettings();
+            }
         }
 
         [Fact]
@@ -270,6 +295,30 @@ namespace Simple.OData.Client.Tests
                 .As("Ships")
                 .FindEntries();
             Assert.Equal("Titanic", transport.Single()["ShipName"]);
+        }
+
+        [Fact]
+        public void FindAllDerivedClassEntriesWithResourceTypes()
+        {
+            try
+            {
+                var clientSettings = new ODataClientSettings
+                {
+                    UrlBase = _service.ServiceUri.AbsoluteUri,
+                    IncludeResourceTypeInEntryProperties = true,
+                };
+                _client = new ODataClient(clientSettings);
+                var transport = _client
+                    .From("Transport")
+                    .As("Ships")
+                    .FindEntries();
+                Assert.Equal("Titanic", transport.Single()["ShipName"]);
+                Assert.Equal("Ships", transport.Single()[ODataCommand.ResourceTypeLiteral]);
+            }
+            finally
+            {
+                _client = CreateClientWithDefaultSettings();
+            }
         }
 
         [Fact]

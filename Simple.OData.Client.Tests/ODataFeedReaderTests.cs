@@ -10,14 +10,20 @@ namespace Simple.OData.Client.Tests
 {
     public class ODataFeedReaderTests
     {
+        private ODataFeedReader _feedReader;
         private const int productProperties = 10;
         private const int categoryProperties = 4;
+
+        public ODataFeedReaderTests()
+        {
+            _feedReader = new ODataFeedReader();
+        }
 
         [Fact]
         public void GetDataParsesSingleProduct()
         {
             string document = GetResourceAsString("SingleProduct.xml");
-            var result = ODataFeedReader.GetData(document);
+            var result = _feedReader.GetData(document);
             Assert.Equal(1, result.Count());
             Assert.Equal(productProperties, result.First().Count);
         }
@@ -26,7 +32,7 @@ namespace Simple.OData.Client.Tests
         public void GetDataParsesMultipleProducts()
         {
             string document = GetResourceAsString("MultipleProducts.xml");
-            var result = ODataFeedReader.GetData(document);
+            var result = _feedReader.GetData(document);
             Assert.Equal(20, result.Count());
             Assert.Equal(productProperties, result.First().Count);
         }
@@ -35,7 +41,7 @@ namespace Simple.OData.Client.Tests
         public void GetDataParsesSingleProductWithCategory()
         {
             string document = GetResourceAsString("SingleProductWithCategory.xml");
-            var result = ODataFeedReader.GetData(document);
+            var result = _feedReader.GetData(document);
             Assert.Equal(1, result.Count());
             Assert.Equal(productProperties + 1, result.First().Count);
             Assert.Equal(categoryProperties, (result.First()["Category"] as IDictionary<string,object>).Count);
@@ -45,7 +51,7 @@ namespace Simple.OData.Client.Tests
         public void GetDataParsesMultipleProductsWithCategory()
         {
             string document = GetResourceAsString("MultipleProductsWithCategory.xml");
-            var result = ODataFeedReader.GetData(document);
+            var result = _feedReader.GetData(document);
             Assert.Equal(20, result.Count());
             Assert.Equal(productProperties + 1, result.First().Count);
             Assert.Equal(categoryProperties, (result.First()["Category"] as IDictionary<string, object>).Count);
@@ -55,7 +61,7 @@ namespace Simple.OData.Client.Tests
         public void GetDataParsesSingleCategoryWithProducts()
         {
             string document = GetResourceAsString("SingleCategoryWithProducts.xml");
-            var result = ODataFeedReader.GetData(document);
+            var result = _feedReader.GetData(document);
             Assert.Equal(1, result.Count());
             Assert.Equal(categoryProperties + 1, result.First().Count);
             Assert.Equal(12, (result.First()["Products"] as IEnumerable<IDictionary<string, object>>).Count());
@@ -66,7 +72,7 @@ namespace Simple.OData.Client.Tests
         public void GetDataParsesMultipleCategoriesWithProducts()
         {
             string document = GetResourceAsString("MultipleCategoriesWithProducts.xml");
-            var result = ODataFeedReader.GetData(document);
+            var result = _feedReader.GetData(document);
             Assert.Equal(8, result.Count());
             Assert.Equal(categoryProperties + 1, result.First().Count);
             Assert.Equal(12, (result.First()["Products"] as IEnumerable<IDictionary<string, object>>).Count());
@@ -77,7 +83,7 @@ namespace Simple.OData.Client.Tests
         public void GetDataParsesSingleProductWithComplexProperty()
         {
             string document = GetResourceAsString("SingleProductWithComplexProperty.xml");
-            var result = ODataFeedReader.GetData(document);
+            var result = _feedReader.GetData(document);
             Assert.Equal(1, result.Count());
             Assert.Equal(productProperties + 1, result.First().Count);
             var quantity = result.First()["Quantity"] as IDictionary<string, object>;
@@ -90,7 +96,7 @@ namespace Simple.OData.Client.Tests
         public void GetDataParsesSingleProductWithCollectionOfPrimitiveProperties()
         {
             string document = GetResourceAsString("SingleProductWithCollectionOfPrimitiveProperties.xml");
-            var result = ODataFeedReader.GetData(document);
+            var result = _feedReader.GetData(document);
             Assert.Equal(1, result.Count());
             Assert.Equal(productProperties + 2, result.First().Count);
             var tags = result.First()["Tags"] as IList<dynamic>;
@@ -107,7 +113,7 @@ namespace Simple.OData.Client.Tests
         public void GetDataParsesSingleProductWithCollectionOfComplexProperties()
         {
             string document = GetResourceAsString("SingleProductWithCollectionOfComplexProperties.xml");
-            var result = ODataFeedReader.GetData(document);
+            var result = _feedReader.GetData(document);
             Assert.Equal(1, result.Count());
             Assert.Equal(productProperties + 1, result.First().Count);
             var tags = result.First()["Tags"] as IList<dynamic>;
@@ -122,7 +128,7 @@ namespace Simple.OData.Client.Tests
         public void GetDataParsesSingleProductWithEmptyCollectionOfComplexProperties()
         {
             string document = GetResourceAsString("SingleProductWithEmptyCollectionOfComplexProperties.xml");
-            var result = ODataFeedReader.GetData(document);
+            var result = _feedReader.GetData(document);
             Assert.Equal(1, result.Count());
             Assert.Equal(productProperties + 1, result.First().Count);
             var tags = result.First()["Tags"] as IList<dynamic>;
@@ -198,7 +204,7 @@ namespace Simple.OData.Client.Tests
         private void ParseSchema(string schemaName)
         {
             var document = GetResourceAsString(schemaName + ".edmx");
-            var result = ODataFeedReader.GetSchema(document);
+            var result = _feedReader.GetSchema(document);
             Assert.Equal(1, result.EntityTypes.Count());
             Assert.Equal(schemaName, result.EntityTypes.First().Name);
         }

@@ -6,6 +6,13 @@ namespace Simple.OData.Client
 {
     class CommandRequestRunner : RequestRunner
     {
+        private ODataFeedReader _feedReader;
+
+        public CommandRequestRunner(bool includeResourceTypeInEntryProperties = false)
+        {
+            _feedReader = new ODataFeedReader(includeResourceTypeInEntryProperties);
+        }
+
         public override IEnumerable<IDictionary<string, object>> FindEntries(HttpCommand command, bool scalarResult, bool setTotalCount, out int totalCount)
         {
             using (var response = TryRequest(command.Request))
@@ -20,9 +27,9 @@ namespace Simple.OData.Client
                 {
                     var stream = response.GetResponseStream();
                     if (setTotalCount)
-                        result = ODataFeedReader.GetData(stream, out totalCount);
+                        result = _feedReader.GetData(stream, out totalCount);
                     else
-                        result = ODataFeedReader.GetData(response.GetResponseStream(), scalarResult);
+                        result = _feedReader.GetData(response.GetResponseStream(), scalarResult);
                 }
 
                 return result;
@@ -32,7 +39,7 @@ namespace Simple.OData.Client
         public override IDictionary<string, object> GetEntry(HttpCommand command)
         {
             var text = Request(command.Request);
-            return ODataFeedReader.GetData(text).First();
+            return _feedReader.GetData(text).First();
         }
 
         public override IDictionary<string, object> InsertEntry(HttpCommand command, bool resultRequired)
@@ -40,7 +47,7 @@ namespace Simple.OData.Client
             var text = Request(command.Request);
             if (resultRequired)
             {
-                return ODataFeedReader.GetData(text).First();
+                return _feedReader.GetData(text).First();
             }
             else
             {
@@ -77,7 +84,7 @@ namespace Simple.OData.Client
                 }
                 else
                 {
-                    result = new[] { ODataFeedReader.GetFunctionResult(response.GetResponseStream()) };
+                    result = new[] { _feedReader.GetFunctionResult(response.GetResponseStream()) };
                 }
 
                 return result;

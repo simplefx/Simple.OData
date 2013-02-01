@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
-using System.Net;
-using System.Text;
 using Simple.OData.Client;
 
 namespace Simple.Data.OData
@@ -11,32 +9,26 @@ namespace Simple.Data.OData
     [Export("OData", typeof(Adapter))]
     public partial class ODataTableAdapter : Adapter
     {
-        private string _urlBase;
-        private ICredentials _credentials;
+        private ODataClientSettings _clientSettings;
         private ISchema _schema;
 
-        internal string UrlBase
+        internal ODataClientSettings ClientSettings
         {
-            get { return _urlBase; }
-        }
-
-        internal ICredentials Credentials
-        {
-            get { return _credentials; }
+            get { return _clientSettings; }
         }
 
         internal ISchema GetSchema()
         {
-            return _schema ?? (_schema = ODataClient.GetSchema(_urlBase));
+            return _schema ?? (_schema = ODataClient.GetSchema(_clientSettings.UrlBase, _clientSettings.Credentials));
         }
 
         protected override void OnSetup()
         {
             base.OnSetup();
 
-            _urlBase = Settings.Url;
-            _credentials = Settings.Credentials;
-            _schema = ODataClient.GetSchema(_urlBase, _credentials);
+            var odataFeed = new ODataFeed(this.Settings);
+            _clientSettings = odataFeed.ClientSettings;
+            _schema = ODataClient.GetSchema(_clientSettings.UrlBase, _clientSettings.Credentials);
         }
 
         public override IEnumerable<IDictionary<string, object>> Find(string tableName, SimpleExpression criteria)
@@ -89,13 +81,13 @@ namespace Simple.Data.OData
             var baseTable = GetBaseTable(tableName);
             var concreteTableName = baseTable == null ? tableName : baseTable.ActualName;
 
-            var cmd = new CommandBuilder().BuildCommand(concreteTableName, criteria);
+            var cmd = GetCommandBuilder().BuildCommand(concreteTableName, criteria);
             return GetODataClientCommand(cmd).FindEntries();
         }
 
         private IEnumerable<IDictionary<string, object>> FindByQuery(SimpleQuery query, out IEnumerable<SimpleQueryClauseBase> unhandledClauses)
         {
-            var cmd = new CommandBuilder().BuildCommand(query);
+            var cmd = GetCommandBuilder().BuildCommand(query);
             unhandledClauses = cmd.UnprocessedClauses;
             var clientCommand = GetODataClientCommand(cmd);
 
@@ -118,13 +110,14 @@ namespace Simple.Data.OData
             var baseTable = GetBaseTable(tableName);
             var concreteTableName = baseTable == null ? tableName : baseTable.ActualName;
 
-            var cmd = new CommandBuilder().BuildCommand(concreteTableName, keyValues);
+            var cmd = GetCommandBuilder().BuildCommand(concreteTableName, keyValues);
             return GetODataClientCommand(cmd).FindEntries().SingleOrDefault();
         }
 
         private IDictionary<string, object> InsertOne(string tableName, 
             IDictionary<string, object> data, bool resultRequired, IAdapterTransaction transaction)
         {
+            tableName = EvaluateConcreteTableName(tableName, data, null);
             CheckInsertablePropertiesAreAvailable(tableName, data);
             var tablePath = GetTablePath(tableName);
 
@@ -136,10 +129,11 @@ namespace Simple.Data.OData
         private int UpdateByExpression(string tableName, 
             IDictionary<string, object> data, SimpleExpression criteria, IAdapterTransaction transaction)
         {
+            tableName = EvaluateConcreteTableName(tableName, data, criteria);
             var tablePath = GetTablePath(tableName);
             var concreteTableName = tablePath.Split('/').Last();
 
-            var cmd = new CommandBuilder().BuildCommand(concreteTableName, criteria);
+            var cmd = GetCommandBuilder().BuildCommand(concreteTableName, criteria);
             var clientCommand = GetODataClientCommand(cmd);
             var client = GetODataClient(transaction);
 
@@ -151,10 +145,11 @@ namespace Simple.Data.OData
         private int DeleteByExpression(string tableName, 
             SimpleExpression criteria, IAdapterTransaction transaction)
         {
+            tableName = EvaluateConcreteTableName(tableName, null, criteria);
             var tablePath = GetTablePath(tableName);
             var concreteTableName = tablePath.Split('/').Last();
 
-            var cmd = new CommandBuilder().BuildCommand(concreteTableName, criteria);
+            var cmd = GetCommandBuilder().BuildCommand(concreteTableName, criteria);
             var clientCommand = GetODataClientCommand(cmd);
             var client = GetODataClient(transaction);
 
@@ -173,12 +168,7 @@ namespace Simple.Data.OData
             }
             else
             {
-                var clientSettings = new ODataClientSettings
-                {
-                    UrlBase = _urlBase,
-                    Credentials = _credentials
-                };
-                client = new ODataClient(clientSettings);
+                client = new ODataClient(_clientSettings);
             }
 
             var adapterPluralizer = Database.GetPluralizer();
@@ -252,6 +242,11 @@ namespace Simple.Data.OData
             }
         }
 
+        private CommandBuilder GetCommandBuilder()
+        {
+            return new CommandBuilder(this.ClientSettings.IncludeResourceTypeInEntryProperties);
+        }
+
         private Table FindTable(string tableName)
         {
             Table table = null;
@@ -280,6 +275,26 @@ namespace Simple.Data.OData
             var baseTableName = baseTable == null ? tableName : baseTable.ActualName;
             var derivedTableName = derivedTable == null ? null : derivedTable.ActualName;
             return derivedTableName == null ? baseTableName : string.Join("/", baseTableName, derivedTableName);
+        }
+
+        private string EvaluateConcreteTableName(string tableName, IDictionary<string, object> data, SimpleExpression criteria)
+        {
+            if (!this.ClientSettings.IncludeResourceTypeInEntryProperties)
+                return tableName;
+
+            if (data != null && data.ContainsKey(ODataFeed.ResourceTypeLiteral))
+            {
+                tableName = data[ODataFeed.ResourceTypeLiteral].ToString();
+                data.Remove(ODataFeed.ResourceTypeLiteral);
+            }
+            else if (criteria != null)
+            {
+                var converter = new ExpressionConverter(true);
+                var resourceType = converter.GetReferencedResourceType(criteria);
+                if (!string.IsNullOrEmpty(resourceType))
+                    tableName = resourceType;
+            }
+            return tableName;
         }
     }
 }

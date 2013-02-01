@@ -14,12 +14,7 @@ namespace Simple.Data.OData
         public ODataAdapterTransaction(ODataTableAdapter adapter)
         {
             _adapter = adapter;
-            var clientSettings = new ODataClientSettings
-                               {
-                                   UrlBase = _adapter.UrlBase,
-                                   Credentials = _adapter.Credentials
-                               };
-            _batch = new ODataBatch(clientSettings);
+            _batch = new ODataBatch(_adapter.ClientSettings);
         }
 
         public string Name

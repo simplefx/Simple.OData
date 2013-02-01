@@ -23,6 +23,8 @@ namespace Simple.Data.OData.Tests
                 {
                     Assert.Equal("123456", transport.TruckNumber);
                 }
+                IEnumerable<string> propertyNames = transport.GetDynamicMemberNames();
+                Assert.False(propertyNames.Contains(ODataFeed.ResourceTypeLiteral));
             }
         }
 
@@ -36,6 +38,17 @@ namespace Simple.Data.OData.Tests
         }
 
         [Fact]
+        public void FindAllShipsWithResourceTypes()
+        {
+            dynamic db = Database.Opener.Open(new ODataFeed { Url = _service.ServiceUri.AbsoluteUri, IncludeResourceTypeInEntryProperties = true });
+            IEnumerable<dynamic> ships = db.Ships.All();
+
+            Assert.Equal(1, ships.Count());
+            Assert.Equal("Titanic", ships.First().ShipName);
+            Assert.Equal("Ships", ships.First().__resourcetype);
+        }
+
+        [Fact]
         public void FindOneShip()
         {
             IEnumerable<dynamic> ships = _db.Ships.FindAll(_db.Ships.ShipName == "Titanic");
@@ -44,11 +57,19 @@ namespace Simple.Data.OData.Tests
             Assert.Equal("Titanic", ships.First().ShipName);
         }
 
-
         [Fact]
         public void InsertShip()
         {
             var ship = _db.Ships.Insert(ShipName: "Test1");
+
+            Assert.Equal("Test1", ship.ShipName);
+        }
+
+        [Fact]
+        public void InsertShipIncludeResourceType()
+        {
+            dynamic db = Database.Opener.Open(new ODataFeed { Url = _service.ServiceUri.AbsoluteUri, IncludeResourceTypeInEntryProperties = true });
+            var ship = db.Transport.Insert(ShipName: "Test1", __resourcetype: "Ships");
 
             Assert.Equal("Test1", ship.ShipName);
         }
@@ -85,6 +106,20 @@ namespace Simple.Data.OData.Tests
         }
 
         [Fact]
+        public void UpdateShipByObjectIncludeResourceType()
+        {
+            dynamic db = Database.Opener.Open(new ODataFeed { Url = _service.ServiceUri.AbsoluteUri, IncludeResourceTypeInEntryProperties = true });
+            var ship = db.Ships.Insert(ShipName: "Test1");
+
+            ship.ShipName = "Test2";
+            ship.__resourcetype = "Ships";
+            db.Transport.Update(ship);
+
+            ship = db.Transport.FindByTransportID(ship.TransportID);
+            Assert.Equal("Test2", ship.ShipName);
+        }
+
+        [Fact]
         public void DeleteShipByKeyField()
         {
             var ship = _db.Ships.Insert(ShipName: "Test1");
@@ -104,6 +139,18 @@ namespace Simple.Data.OData.Tests
             _db.Ships.Delete(ship);
 
             Assert.Equal(count - 1, _db.Transport.All().Count());
+        }
+
+        [Fact]
+        public void DeleteTransportByObjectIncludeResourceType()
+        {
+            dynamic db = Database.Opener.Open(new ODataFeed { Url = _service.ServiceUri.AbsoluteUri, IncludeResourceTypeInEntryProperties = true });
+            var ship = db.Ships.Insert(ShipName: "Test1");
+            var count = db.Transport.All().Count();
+
+            db.Transport.Delete(ship);
+
+            Assert.Equal(count - 1, db.Transport.All().Count());
         }
 
         [Fact]
