@@ -79,7 +79,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void InsertEntryWithResult()
         {
-            var product = _client.InsertEntry("Products", new Entry() {{"ProductName", "Test1"}, {"UnitPrice", 18m}}, true);
+            var product = _client.InsertEntry("Products", new Entry() { { "ProductName", "Test1" }, { "UnitPrice", 18m } }, true);
 
             Assert.Equal("Test1", product["ProductName"]);
         }
@@ -103,7 +103,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void UpdateEntry()
         {
-            var key = new Entry() {{"ProductID", 1}};
+            var key = new Entry() { { "ProductID", 1 } };
             _client.UpdateEntry("Products", key, new Entry() { { "ProductName", "Chai" }, { "UnitPrice", 123m } });
 
             var product = _client.GetEntry("Products", key);
@@ -118,6 +118,23 @@ namespace Simple.OData.Client.Tests
             _client.UpdateEntry("Transport/Ships", key, new Entry() { { "ShipName", "Test2" } });
 
             ship = _client.GetEntry("Transport", key);
+            Assert.Equal("Test2", ship["ShipName"]);
+        }
+
+        [Fact]
+        public void UpdateEntrySubcollectionWithResourceType()
+        {
+            var clientSettings = new ODataClientSettings
+            {
+                UrlBase = _service.ServiceUri.AbsoluteUri,
+                IncludeResourceTypeInEntryProperties = true,
+            };
+            var client = new ODataClient(clientSettings);
+            var ship = client.InsertEntry("Transport/Ships", new Entry() { { "ShipName", "Test1" } }, true);
+            var key = new Entry() { { "TransportID", ship["TransportID"] } };
+            client.UpdateEntry("Transport/Ships", key, new Entry() { { "ShipName", "Test2" }, { ODataCommand.ResourceTypeLiteral, "Ships" } });
+
+            ship = client.GetEntry("Transport", key);
             Assert.Equal("Test2", ship["ShipName"]);
         }
 
@@ -144,6 +161,25 @@ namespace Simple.OData.Client.Tests
             _client.DeleteEntry("Transport", ship);
 
             ship = _client.FindEntry("Transport?$filter=TransportID eq " + ship["TransportID"]);
+            Assert.Null(ship);
+        }
+
+        [Fact]
+        public void DeleteEntrySubCollectionWithResourceType()
+        {
+            var clientSettings = new ODataClientSettings
+            {
+                UrlBase = _service.ServiceUri.AbsoluteUri,
+                IncludeResourceTypeInEntryProperties = true,
+            };
+            var client = new ODataClient(clientSettings);
+            var ship = client.InsertEntry("Transport/Ships", new Entry() { { "ShipName", "Test3" } }, true);
+            ship = client.FindEntry("Transport?$filter=TransportID eq " + ship["TransportID"]);
+            Assert.NotNull(ship);
+
+            client.DeleteEntry("Transport", ship);
+
+            ship = client.FindEntry("Transport?$filter=TransportID eq " + ship["TransportID"]);
             Assert.Null(ship);
         }
 
@@ -226,39 +262,25 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void InterceptRequest()
         {
-            try
-            {
-                var settings = new ODataClientSettings
-                                   {
-                                       UrlBase = _service.ServiceUri.AbsoluteUri,
-                                       BeforeRequest = x => x.Method = "PUT",
-                                   };
-                _client = new ODataClient(settings);
-                Assert.Throws<WebRequestException>(() => _client.FindEntries("Products"));
-            }
-            finally
-            {
-                _client = CreateClientWithDefaultSettings();
-            }
+            var settings = new ODataClientSettings
+                               {
+                                   UrlBase = _service.ServiceUri.AbsoluteUri,
+                                   BeforeRequest = x => x.Method = "PUT",
+                               };
+            var client = new ODataClient(settings);
+            Assert.Throws<WebRequestException>(() => client.FindEntries("Products"));
         }
 
         [Fact]
         public void InterceptResponse()
         {
-            try
+            var settings = new ODataClientSettings
             {
-                var settings = new ODataClientSettings
-                {
-                    UrlBase = _service.ServiceUri.AbsoluteUri,
-                    AfterResponse = x => { throw new InvalidOperationException(); },
-                };
-                _client = new ODataClient(settings);
-                Assert.Throws<InvalidOperationException>(() => _client.FindEntries("Products"));
-            }
-            finally
-            {
-                _client = CreateClientWithDefaultSettings();
-            }
+                UrlBase = _service.ServiceUri.AbsoluteUri,
+                AfterResponse = x => { throw new InvalidOperationException(); },
+            };
+            var client = new ODataClient(settings);
+            Assert.Throws<InvalidOperationException>(() => client.FindEntries("Products"));
         }
     }
 }

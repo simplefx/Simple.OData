@@ -267,24 +267,17 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void FindBaseClassEntriesWithResourceTypes()
         {
-            try
-            {
-                var clientSettings = new ODataClientSettings
-                                         {
-                                             UrlBase = _service.ServiceUri.AbsoluteUri,
-                                             IncludeResourceTypeInEntryProperties = true,
-                                         };
-                _client = new ODataClient(clientSettings);
-                var transport = _client
-                    .From("Transport")
-                    .FindEntries();
-                Assert.Equal(2, transport.Count());
-                Assert.True(transport.All(x => x.ContainsKey(ODataCommand.ResourceTypeLiteral)));
-            }
-            finally
-            {
-                _client = CreateClientWithDefaultSettings();
-            }
+            var clientSettings = new ODataClientSettings
+                                     {
+                                         UrlBase = _service.ServiceUri.AbsoluteUri,
+                                         IncludeResourceTypeInEntryProperties = true,
+                                     };
+            var client = new ODataClient(clientSettings);
+            var transport = client
+                .From("Transport")
+                .FindEntries();
+            Assert.Equal(2, transport.Count());
+            Assert.True(transport.All(x => x.ContainsKey(ODataCommand.ResourceTypeLiteral)));
         }
 
         [Fact]
@@ -300,25 +293,18 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void FindAllDerivedClassEntriesWithResourceTypes()
         {
-            try
+            var clientSettings = new ODataClientSettings
             {
-                var clientSettings = new ODataClientSettings
-                {
-                    UrlBase = _service.ServiceUri.AbsoluteUri,
-                    IncludeResourceTypeInEntryProperties = true,
-                };
-                _client = new ODataClient(clientSettings);
-                var transport = _client
-                    .From("Transport")
-                    .As("Ships")
-                    .FindEntries();
-                Assert.Equal("Titanic", transport.Single()["ShipName"]);
-                Assert.Equal("Ships", transport.Single()[ODataCommand.ResourceTypeLiteral]);
-            }
-            finally
-            {
-                _client = CreateClientWithDefaultSettings();
-            }
+                UrlBase = _service.ServiceUri.AbsoluteUri,
+                IncludeResourceTypeInEntryProperties = true,
+            };
+            var client = new ODataClient(clientSettings);
+            var transport = client
+                .From("Transport")
+                .As("Ships")
+                .FindEntries();
+            Assert.Equal("Titanic", transport.Single()["ShipName"]);
+            Assert.Equal("Ships", transport.Single()[ODataCommand.ResourceTypeLiteral]);
         }
 
         [Fact]

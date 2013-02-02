@@ -137,6 +137,7 @@ namespace Simple.OData.Client
 
         public IDictionary<string, object> InsertEntry(string collection, IDictionary<string, object> entryData, bool resultRequired)
         {
+            RemoveSystemProperties(entryData);
             var table = _schema.FindConcreteTable(collection);
             var entryMembers = ParseEntryMembers(table, entryData);
 
@@ -166,11 +167,14 @@ namespace Simple.OData.Client
 
         public int UpdateEntries(string collection, string commandText, IDictionary<string, object> entryData)
         {
+            RemoveSystemProperties(entryData);
             return IterateEntries(collection, commandText, entryData, UpdateEntry);
         }
 
         public int UpdateEntry(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
         {
+            RemoveSystemProperties(entryKey);
+            RemoveSystemProperties(entryData);
             var table = _schema.FindConcreteTable(collection);
             var entryMembers = ParseEntryMembers(table, entryData);
 
@@ -184,6 +188,7 @@ namespace Simple.OData.Client
 
         public int DeleteEntry(string collection, IDictionary<string, object> entryKey)
         {
+            RemoveSystemProperties(entryKey);
             var commandText = new ODataClientWithCommand(this, _schema).From(collection).Key(entryKey).CommandText;
             var command = HttpCommand.Delete(commandText);
             _requestBuilder.AddCommandToRequest(command);
@@ -192,6 +197,8 @@ namespace Simple.OData.Client
 
         public void LinkEntry(string collection, IDictionary<string, object> entryKey, string linkName, IDictionary<string, object> linkedEntryKey)
         {
+            RemoveSystemProperties(entryKey);
+            RemoveSystemProperties(linkedEntryKey);
             var association = _schema.FindAssociation(collection, linkName);
             var command = CreateLinkCommand(collection, linkName,
                 new ODataClientWithCommand(this, _schema).From(collection).Key(entryKey).CommandText,
@@ -202,6 +209,7 @@ namespace Simple.OData.Client
 
         public void UnlinkEntry(string collection, IDictionary<string, object> entryKey, string linkName)
         {
+            RemoveSystemProperties(entryKey);
             var association = _schema.FindAssociation(collection, linkName);
             var command = CreateUnlinkCommand(collection, linkName, new ODataClientWithCommand(this, _schema).From(collection).Key(entryKey).CommandText);
             _requestBuilder.AddCommandToRequest(command);
@@ -437,6 +445,14 @@ namespace Simple.OData.Client
                 }
             }
             return false;
+        }
+
+        private void RemoveSystemProperties(IDictionary<string, object> entryData)
+        {
+            if (_settings.IncludeResourceTypeInEntryProperties && entryData.ContainsKey(ODataCommand.ResourceTypeLiteral))
+            {
+                entryData.Remove(ODataCommand.ResourceTypeLiteral);
+            }
         }
 
         private IDictionary<string, object> ExtractKeyFromCommandText(string collection, string commandText)
