@@ -154,6 +154,25 @@ namespace Simple.Data.OData.Tests
         }
 
         [Fact]
+        public void InsertUpdateDeleteTransportIncludeResourceType()
+        {
+            dynamic db = Database.Opener.Open(new ODataFeed { Url = _service.ServiceUri.AbsoluteUri, IncludeResourceTypeInEntryProperties = true });
+
+            var transport = db.Transport.Insert(ShipName: "Test1", __resourcetype: "Ships");
+            transport = db.Transport.FindByTransportID(transport.TransportID);
+            Assert.Equal("Test1", transport.ShipName);
+
+            transport.ShipName = "Test2";
+            db.Transport.Update(transport);
+            transport = db.Transport.FindByTransportID(transport.TransportID);
+            Assert.Equal("Test2", transport.ShipName);
+
+            var count = db.Transport.All().Count();
+            db.Transport.Delete(transport);
+            Assert.Equal(count - 1, db.Transport.All().Count());
+        }
+
+        [Fact]
         public void BatchInsert()
         {
             using (var tx = _db.BeginTransaction())
