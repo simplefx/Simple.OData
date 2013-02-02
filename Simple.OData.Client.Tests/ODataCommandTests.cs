@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
@@ -260,6 +261,23 @@ namespace Simple.OData.Client.Tests
                 .From("Transport")
                 .FindEntries();
             Assert.Equal(2, transport.Count());
+            Assert.False(transport.Any(x => x.ContainsKey(ODataCommand.ResourceTypeLiteral)));
+        }
+
+        [Fact]
+        public void FindBaseClassEntriesWithResourceTypes()
+        {
+            var clientSettings = new ODataClientSettings
+                                     {
+                                         UrlBase = _serviceUri,
+                                         IncludeResourceTypeInEntryProperties = true,
+                                     };
+            var client = new ODataClient(clientSettings);
+            var transport = client
+                .From("Transport")
+                .FindEntries();
+            Assert.Equal(2, transport.Count());
+            Assert.True(transport.All(x => x.ContainsKey(ODataCommand.ResourceTypeLiteral)));
         }
 
         [Fact]
@@ -273,12 +291,40 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void FindAllDerivedClassEntriesWithResourceTypes()
+        {
+            var clientSettings = new ODataClientSettings
+            {
+                UrlBase = _serviceUri,
+                IncludeResourceTypeInEntryProperties = true,
+            };
+            var client = new ODataClient(clientSettings);
+            var transport = client
+                .From("Transport")
+                .As("Ships")
+                .FindEntries();
+            Assert.Equal("Titanic", transport.Single()["ShipName"]);
+            Assert.Equal("Ships", transport.Single()[ODataCommand.ResourceTypeLiteral]);
+        }
+
+        [Fact]
         public void FindDerivedClassEntry()
         {
             var transport = _client
                 .From("Transport")
                 .As("Ships")
                 .Filter("ShipName eq 'Titanic'")
+                .FindEntry();
+            Assert.Equal("Titanic", transport["ShipName"]);
+        }
+
+        [Fact]
+        public void FindDerivedClassEntryBaseAndDerivedFields()
+        {
+            var transport = _client
+                .From("Transport")
+                .As("Ships")
+                .Filter("TransportID eq 1 and ShipName eq 'Titanic'")
                 .FindEntry();
             Assert.Equal("Titanic", transport["ShipName"]);
         }

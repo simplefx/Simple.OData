@@ -20,5 +20,11 @@ namespace Simple.OData.NorthwindService
         {
             Simple.Data.OData.NorthwindModel.NorthwindService.InitializeService(config);
         }
+
+        [WebGet]
+        public int ParseInt(string number)
+        {
+            return int.Parse(number);
+        }
     }
 }

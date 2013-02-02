@@ -68,6 +68,7 @@
     <Compile Include="IPluralizer.cs" />
     <Compile Include="ODataBatch.cs" />
     <Compile Include="ODataClient.cs" />
+    <Compile Include="ODataClientSettings.cs" />
     <Compile Include="ODataClientWithCommand.cs" />
     <Compile Include="ODataCommand.cs" />
     <Compile Include="ODataFeedReader.cs" />

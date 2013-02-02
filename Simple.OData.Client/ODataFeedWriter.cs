@@ -6,9 +6,9 @@ using Simple.NExtLib;
 
 namespace Simple.OData.Client
 {
-    static class ODataFeedWriter
+    class ODataFeedWriter
     {
-        public static XElement CreateDataElement(string namespaceName, string collectionName, IDictionary<string, object> row)
+        public XElement CreateDataElement(string namespaceName, string collectionName, IDictionary<string, object> row)
         {
             var entry = CreateEmptyEntryWithNamespaces();
 
@@ -24,7 +24,7 @@ namespace Simple.OData.Client
             return entry;
         }
 
-        public static XElement CreateLinkElement(string link)
+        public XElement CreateLinkElement(string link)
         {
             var entry = CreateEmptyMetadataWithNamespaces();
 
@@ -33,22 +33,22 @@ namespace Simple.OData.Client
             return entry;
         }
 
-        public static XElement CreateLinkElement(int contentId)
+        public XElement CreateLinkElement(int contentId)
         {
             return CreateLinkElement(CreateLinkPath(contentId));
         }
 
-        public static string CreateLinkPath(int contentId)
+        public string CreateLinkPath(int contentId)
         {
             return "$" + contentId.ToString();
         }
 
-        public static string CreateLinkCommand(string entryPath, string linkName)
+        public string CreateLinkCommand(string entryPath, string linkName)
         {
             return string.Format("{0}/$links/{1}", entryPath, linkName);
         }
 
-        public static void AddDataLink(XElement container, string associationName, string linkedEntityName, IEnumerable<object> linkedEntityKeyValues)
+        public void AddDataLink(XElement container, string associationName, string linkedEntityName, IEnumerable<object> linkedEntityKeyValues)
         {
             var entry = XElement.Parse(Properties.Resources.DataServicesAtomEntryXml).Element(null, "link");
             var rel = entry.Attribute("rel");
@@ -60,7 +60,7 @@ namespace Simple.OData.Client
             container.Add(entry);
         }
 
-        private static XElement CreateEmptyEntryWithNamespaces()
+        private XElement CreateEmptyEntryWithNamespaces()
         {
             var entry = XElement.Parse(Properties.Resources.DataServicesAtomEntryXml);
             entry.Element(null, "updated").SetValue(DateTime.UtcNow.ToIso8601String());
@@ -68,13 +68,13 @@ namespace Simple.OData.Client
             return entry;
         }
 
-        private static XElement CreateEmptyMetadataWithNamespaces()
+        private XElement CreateEmptyMetadataWithNamespaces()
         {
             var entry = XElement.Parse(Properties.Resources.DataServicesMetadataEntryXml);
             return entry;
         }
 
-        private static string GetQualifiedResourceName(string namespaceName, string collectionName)
+        private string GetQualifiedResourceName(string namespaceName, string collectionName)
         {
             return string.Join(".", namespaceName, collectionName);
         }

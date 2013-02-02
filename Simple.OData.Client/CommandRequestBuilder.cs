@@ -16,7 +16,6 @@ namespace Simple.OData.Client
         {
             var uri = CreateRequestUrl(command.CommandText);
             var request = CreateWebRequest(uri);
-
             request.Method = command.Method;
 
             // TODO: revise

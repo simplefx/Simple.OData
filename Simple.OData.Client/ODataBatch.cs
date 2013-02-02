@@ -6,15 +6,22 @@ using Simple.NExtLib.IO;
 
 namespace Simple.OData.Client
 {
-    public class ODataBatch : IDisposable 
+    public class ODataBatch : IDisposable
     {
+        private bool _active;
+        internal ODataClientSettings Settings { get; set; }
         internal BatchRequestBuilder RequestBuilder { get; set; }
         internal BatchRequestRunner RequestRunner { get; set; }
-        private bool _active;
 
-        public ODataBatch(string urlBase, ICredentials credentials = null)
+        public ODataBatch(string urlBase)
+            : this (new ODataClientSettings { UrlBase = urlBase })
         {
-            this.RequestBuilder = new BatchRequestBuilder(urlBase, credentials);
+        }
+
+        public ODataBatch(ODataClientSettings settings)
+        {
+            this.Settings = settings;
+            this.RequestBuilder = new BatchRequestBuilder(this.Settings.UrlBase, this.Settings.Credentials);
             this.RequestRunner = new BatchRequestRunner(this.RequestBuilder);
 
             this.RequestBuilder.BeginBatch();

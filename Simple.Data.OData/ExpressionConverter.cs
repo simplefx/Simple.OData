@@ -5,9 +5,21 @@ namespace Simple.Data.OData
 {
     public class ExpressionConverter
     {
+        private readonly bool _excludeResourceTypeExpressions;
+
+        public ExpressionConverter(bool excludeResourceTypeExpressions)
+        {
+            _excludeResourceTypeExpressions = excludeResourceTypeExpressions;
+        }
+
         public FilterExpression ConvertExpression(SimpleExpression expression)
         {
             return Convert(expression);
+        }
+
+        public string GetReferencedResourceType(SimpleExpression expression)
+        {
+            return FindResourceType(expression);
         }
 
         private FilterExpression Convert(object value)
@@ -27,9 +39,19 @@ namespace Simple.Data.OData
             switch (expression.Type)
             {
                 case SimpleExpressionType.And:
-                    return Convert(expression.LeftOperand) && Convert(expression.RightOperand);
+                    if (IsResourceTypeExpression(expression.LeftOperand))
+                        return Convert(expression.RightOperand);
+                    else if (IsResourceTypeExpression(expression.RightOperand))
+                        return Convert(expression.LeftOperand);
+                    else
+                        return Convert(expression.LeftOperand) && Convert(expression.RightOperand);
                 case SimpleExpressionType.Or:
-                    return Convert(expression.LeftOperand) || Convert(expression.RightOperand);
+                    if (IsResourceTypeExpression(expression.LeftOperand))
+                        return Convert(expression.RightOperand);
+                    else if (IsResourceTypeExpression(expression.RightOperand))
+                        return Convert(expression.LeftOperand);
+                    else
+                        return Convert(expression.LeftOperand) || Convert(expression.RightOperand);
                 case SimpleExpressionType.Equal:
                     return Convert(expression.LeftOperand) == Convert(expression.RightOperand);
                 case SimpleExpressionType.NotEqual:
@@ -64,6 +86,50 @@ namespace Simple.Data.OData
             return ODataFilter.ExpressionFromFunction(function.Name,
                                                  function.Argument.GetAliasOrName(),
                                                  function.AdditionalArguments);
+        }
+
+        private string FindResourceType(object value)
+        {
+            if (value is SimpleExpression)
+                return FindResourceType(value as SimpleExpression);
+            else
+                return null;
+        }
+
+        private string FindResourceType(SimpleExpression expression)
+        {
+            string resourceType = null;
+            switch (expression.Type)
+            {
+                case SimpleExpressionType.And:
+                case SimpleExpressionType.Or:
+                    resourceType = FindResourceType(expression.LeftOperand);
+                    resourceType = resourceType ?? FindResourceType(expression.RightOperand);
+                    break;
+                case SimpleExpressionType.Equal:
+                    if (expression.LeftOperand is ObjectReference &&
+                        (expression.LeftOperand as ObjectReference).GetAliasOrName() == ODataFeed.ResourceTypeLiteral)
+                        resourceType = expression.RightOperand.ToString();
+                    break;
+            }
+            return resourceType;
+        }
+
+        private bool IsResourceTypeExpression(object value)
+        {
+            if (!_excludeResourceTypeExpressions)
+                return false;
+
+            var expression = value as SimpleExpression;
+            if (expression != null && expression.Type == SimpleExpressionType.Equal)
+            {
+                if (expression.LeftOperand is ObjectReference &&
+                    (expression.LeftOperand as ObjectReference).GetAliasOrName() == ODataFeed.ResourceTypeLiteral)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }

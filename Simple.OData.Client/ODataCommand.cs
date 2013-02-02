@@ -36,6 +36,7 @@ namespace Simple.OData.Client
         internal static readonly string AllPagesLiteral = "allpages";
         internal static readonly string BatchLiteral = "$batch";
         internal static readonly string ResultLiteral = "__result";
+        internal static readonly string ResourceTypeLiteral = "__resourcetype";
 
         public ODataCommand(ODataClientWithCommand client, ODataCommand parent)
         {

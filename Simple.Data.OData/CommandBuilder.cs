@@ -7,10 +7,12 @@ namespace Simple.Data.OData
 {
     class CommandBuilder
     {
+        private bool _excludeResourceTypeExpressions;
         private readonly Dictionary<Type, Func<SimpleQueryClauseBase, QueryCommand, bool>> _processors;
 
-        public CommandBuilder()
+        public CommandBuilder(bool excludeResourceTypeExpressions)
         {
+            _excludeResourceTypeExpressions = excludeResourceTypeExpressions;
             _processors = new Dictionary<Type, Func<SimpleQueryClauseBase, QueryCommand, bool>>
             {
                 { typeof(OrderByClause), (x,y) => TryApplyOrderByClause((OrderByClause)x, y) },
@@ -29,7 +31,7 @@ namespace Simple.Data.OData
                 {
                     TablePath = tablePath,
                     Criteria = criteria,
-                    FilterExpression = new ExpressionConverter().ConvertExpression(criteria),
+                    FilterExpression = new ExpressionConverter(_excludeResourceTypeExpressions).ConvertExpression(criteria),
                 };
         }
 
@@ -111,7 +113,7 @@ namespace Simple.Data.OData
                 ? clause.Criteria
                 : new SimpleExpression(cmd.Criteria, clause.Criteria, SimpleExpressionType.And);
 
-            cmd.FilterExpression = new ExpressionConverter().ConvertExpression(cmd.Criteria);
+            cmd.FilterExpression = new ExpressionConverter(_excludeResourceTypeExpressions).ConvertExpression(cmd.Criteria);
 
             return true;
         }

@@ -24,7 +24,12 @@ namespace Simple.OData.Client.Tests
             _service = new TestService(typeof(NorthwindService));
             _serviceUri = _service.ServiceUri.AbsoluteUri;
 #endif
-            _client = new ODataClient(_serviceUri);
+            _client = CreateClientWithDefaultSettings();
+        }
+
+        public ODataClient CreateClientWithDefaultSettings()
+        {
+            return new ODataClient(_serviceUri);
         }
 
         public void Dispose()
