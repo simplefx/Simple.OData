@@ -100,6 +100,7 @@
     <Compile Include="Edm\EdmSchemaParser.cs" />
     <Compile Include="Edm\EdmType.cs" />
     <Compile Include="Edm\EdmTypeSerializer.cs" />
+    <Compile Include="EntryMembers.cs" />
     <Compile Include="Extensions\HomogenizeEx.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Filter\ExpressionContext.cs" />
@@ -116,9 +117,11 @@
     <Compile Include="IPluralizer.cs" />
     <Compile Include="ODataBatch.cs" />
     <Compile Include="ODataClient.cs" />
+    <Compile Include="ODataClientSettings.cs" />
     <Compile Include="ODataClientWithCommand.cs" />
     <Compile Include="ODataCommand.cs" />
     <Compile Include="ODataFeedReader.cs" />
+    <Compile Include="ODataFeedWriter.cs" />
     <Compile Include="ODataFilter.cs" />
     <Compile Include="Pluralizer.cs" />
     <Compile Include="Properties.cs" />
@@ -133,7 +136,6 @@
     <Compile Include="Schema\Function.cs" />
     <Compile Include="Schema\FunctionCollection.cs" />
     <Compile Include="Schema\ISchema.cs" />
-    <Compile Include="Schema\ISchemaProvider.cs" />
     <Compile Include="Schema\Key.cs" />
     <Compile Include="Schema\Schema.cs" />
     <Compile Include="Schema\SchemaProvider.cs" />
