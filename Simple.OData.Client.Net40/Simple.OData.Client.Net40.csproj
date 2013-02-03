@@ -1,0 +1,261 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{C20A3959-4895-41F8-86E2-7DED294FD904}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Simple.OData.Client</RootNamespace>
+    <AssemblyName>Simple.OData.Client.Net40</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NET40</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE;NET40</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\CommonAssemblyVersion.cs">
+      <Link>Properties\CommonAssemblyVersion.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\BatchRequestBuilder.cs">
+      <Link>BatchRequestBuilder.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\BatchRequestRunner.cs">
+      <Link>BatchRequestRunner.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Edm\EdmSchemaParser.cs">
+      <Link>Edm\EdmSchemaParser.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\EntryMembers.cs">
+      <Link>EntryMembers.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Filter\ExpressionContext.cs">
+      <Link>Filter\ExpressionContext.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Filter\ExpressionFunction.cs">
+      <Link>Filter\ExpressionFunction.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Filter\ExpressionOperator.cs">
+      <Link>Filter\ExpressionOperator.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Filter\FilterExpression.cs">
+      <Link>Filter\FilterExpression.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Filter\FilterExpression.Operators.cs">
+      <Link>Filter\FilterExpression.Operators.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Filter\FilterExpression.Format.cs">
+      <Link>Filter\FilterExpression.Format.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Filter\FunctionMapping.cs">
+      <Link>Filter\FunctionMapping.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\IClient.cs">
+      <Link>IClient.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ICommand.cs">
+      <Link>ICommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ODataClientSettings.cs">
+      <Link>ODataClientSettings.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ODataClientWithCommand.cs">
+      <Link>ODataClientWithCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\CommandRequestBuilder.cs">
+      <Link>CommandRequestBuilder.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\CommandRequestRunner.cs">
+      <Link>CommandRequestRunner.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Edm\EdmTypeSerializer.cs">
+      <Link>Edm\EdmTypeSerializer.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Edm\EdmPropertyType.cs">
+      <Link>Edm\EdmPropertyType.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Edm\EdmSchema.cs">
+      <Link>Edm\EdmSchema.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Edm\EdmType.cs">
+      <Link>Edm\EdmType.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\IClientWithCommand.cs">
+      <Link>IClientWithCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ODataBatch.cs">
+      <Link>ODataBatch.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ODataCommand.cs">
+      <Link>ODataCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ODataFeedWriter.cs">
+      <Link>ODataFeedWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ODataFilter.cs">
+      <Link>ODataFilter.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Pluralizer.cs">
+      <Link>Pluralizer.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Properties\Resources.Designer.cs">
+      <Link>Properties\Resources.Designer.cs</Link>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Schema\ISchema.cs">
+      <Link>Schema\ISchema.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\SimpleDictionary.cs">
+      <Link>SimpleDictionary.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ValueFormatter.cs">
+      <Link>ValueFormatter.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Extensions\HomogenizeEx.cs">
+      <Link>Extensions\HomogenizeEx.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\IPluralizer.cs">
+      <Link>IPluralizer.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Extensions\StringExtensions.cs">
+      <Link>Extensions\StringExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\HttpCommand.cs">
+      <Link>HttpCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ODataFeedReader.cs">
+      <Link>ODataFeedReader.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Properties\AssemblyInfo.cs">
+      <Link>Properties\AssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\RequestBuilder.cs">
+      <Link>RequestBuilder.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ODataClient.cs">
+      <Link>ODataClient.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\RequestRunner.cs">
+      <Link>RequestRunner.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\RestVerbs.cs">
+      <Link>RestVerbs.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Schema\Association.cs">
+      <Link>Schema\Association.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Schema\AssociationCollection.cs">
+      <Link>Schema\AssociationCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Schema\Column.cs">
+      <Link>Schema\Column.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Schema\ColumnCollection.cs">
+      <Link>Schema\ColumnCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Schema\Schema.cs">
+      <Link>Schema\Schema.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Schema\Function.cs">
+      <Link>Schema\Function.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Schema\FunctionCollection.cs">
+      <Link>Schema\FunctionCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Schema\Key.cs">
+      <Link>Schema\Key.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Schema\SchemaProvider.cs">
+      <Link>Schema\SchemaProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Schema\Table.cs">
+      <Link>Schema\Table.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Schema\TableCollection.cs">
+      <Link>Schema\TableCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\WebRequestException.cs">
+      <Link>WebRequestException.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\UnresolvableObjectException.cs">
+      <Link>UnresolvableObjectException.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Simple.OData.Client.Core\Resources\DataServicesMetadataEntryXml.txt">
+      <Link>DataServicesMetadataEntryXml.txt</Link>
+    </None>
+    <None Include="..\Simple.OData.Client.Core\Resources\DataServicesAtomEntryXml.txt">
+      <Link>DataServicesAtomEntryXml.txt</Link>
+    </None>
+    <None Include="..\Simple.OData.Client.Core\Simple.OData.Client.nuspec">
+      <Link>Simple.OData.Client.nuspec</Link>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Simple.NExtLib.Net40\Simple.NExtLib.Net40.csproj">
+      <Project>{4A191FAD-DC1D-46FC-A941-7DEB2C8C4C15}</Project>
+      <Name>Simple.NExtLib.Net40</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\Simple.OData.Client.Core\Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+      <Link>Properties\Resources.resx</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+ 
+       Other similar extension points exist, see Microsoft.Common.targets.
+
+  <Target Name="BeforeBuild">
+
+  </Target>
+
+  <Target Name="AfterBuild">
+
+  </Target>
+
+  -->
+</Project>

@@ -1,0 +1,144 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{4A191FAD-DC1D-46FC-A941-7DEB2C8C4C15}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Simple.NExtLib</RootNamespace>
+    <AssemblyName>Simple.NExtLib.Net40</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NET40</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE;NET40</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Web" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\CommonAssemblyVersion.cs">
+      <Link>Properties\CommonAssemblyVersion.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.NExtLib.Core\Async\AsyncException.cs">
+      <Link>Async\AsyncException.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.NExtLib.Core\Async\Future.cs">
+      <Link>Async\Future.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.NExtLib.Core\Async\Future`1.cs">
+      <Link>Async\Future`1.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.NExtLib.Core\DateTimeExtensions.cs">
+      <Link>DateTimeExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.NExtLib.Core\Func.cs">
+      <Link>Func.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.NExtLib.Core\IO\QuickIO.cs">
+      <Link>IO\QuickIO.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.NExtLib.Core\Linq\EnumerableExtensions.cs">
+      <Link>Linq\EnumerableExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.NExtLib.Core\Linq\EnumerableOfKeyValuePairExtensions.cs">
+      <Link>Linq\EnumerableOfKeyValuePairExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.NExtLib.Core\Linq\TupleEnumerableExtensions.cs">
+      <Link>Linq\TupleEnumerableExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.NExtLib.Core\Properties\AssemblyInfo.cs">
+      <Link>Properties\AssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.NExtLib.Core\Properties\Resources.Designer.cs">
+      <Link>Properties\Resources.Designer.cs</Link>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="..\Simple.NExtLib.Core\StringExtensions.cs">
+      <Link>StringExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.NExtLib.Core\TupleExtensions.cs">
+      <Link>TupleExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.NExtLib.Core\WebRequestExtensions.cs">
+      <Link>WebRequestExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.NExtLib.Core\WebResponseExtensions.cs">
+      <Link>WebResponseExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.NExtLib.Core\Xml\Linq\XAttributeExtensions.cs">
+      <Link>Xml\Linq\XAttributeExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.NExtLib.Core\Xml\Linq\XElementExtensions.cs">
+      <Link>Xml\Linq\XElementExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.NExtLib.Core\Xml\Syndication\SyndicationItemExtensions.cs">
+      <Link>Xml\Syndication\SyndicationItemExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.NExtLib.Core\Xml\XElementAsDictionaryExtension.cs">
+      <Link>Xml\XElementAsDictionaryExtension.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.NExtLib.Core\Xml\XmlAttributesAsDictionary.cs">
+      <Link>Xml\XmlAttributesAsDictionary.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.NExtLib.Core\Xml\XmlElementAsDictionary.cs">
+      <Link>Xml\XmlElementAsDictionary.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="..\Simple.NExtLib.Core\Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+      <Link>Properties\Resources.resx</Link>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+ 
+       Other similar extension points exist, see Microsoft.Common.targets.
+
+  <Target Name="BeforeBuild">
+
+  </Target>
+
+  <Target Name="AfterBuild">
+
+  </Target>
+
+  -->
+</Project>

@@ -9,11 +9,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\CommonAssemblyVersion.cs = ..\CommonAssemblyVersion.cs
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.NExtLib.Core", "..\Simple.NExtLib\Simple.NExtLib.Core.csproj", "{37CB8D2A-2EB8-4E91-99CA-1BA1B93E178B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.NExtLib.Core", "..\Simple.NExtLib.Core\Simple.NExtLib.Core.csproj", "{37CB8D2A-2EB8-4E91-99CA-1BA1B93E178B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.OData.Client.SL5", "..\Simple.OData.Client\Simple.OData.Client.SL5.csproj", "{85B26DDE-7013-4782-A4EE-C5C8FE6AFFD6}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.OData.Client.SL5", "..\Simple.OData.Client.SL5\Simple.OData.Client.SL5.csproj", "{85B26DDE-7013-4782-A4EE-C5C8FE6AFFD6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.Data.OData.NorthwindModel", "..\Simple.Data.OData.NorthwindModel\Simple.Data.OData.NorthwindModel.csproj", "{2A909E4D-6493-4D36-9FDE-786B89F9A387}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.OData.NorthwindModel", "..\Simple.OData.NorthwindModel\Simple.OData.NorthwindModel.csproj", "{2A909E4D-6493-4D36-9FDE-786B89F9A387}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.OData.NorthwindService", "..\Simple.OData.NorthwindService\Simple.OData.NorthwindService.csproj", "{14436AD5-8995-406A-8468-F0B4DE53DFDB}"
 EndProject

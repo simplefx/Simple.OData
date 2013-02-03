@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Simple.Data.OData.NorthwindModel;
+using Simple.OData.NorthwindModel;
 using Simple.OData.TestUtils;
 
 namespace Simple.Data.OData.Tests

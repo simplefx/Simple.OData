@@ -1,0 +1,249 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{43156253-97E2-4D71-999C-37C3C172DE4B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Simple.OData.Client.Tests</RootNamespace>
+    <AssemblyName>Simple.OData.Client.Tests.WinRT</AssemblyName>
+    <DefaultLanguage>en-US</DefaultLanguage>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{BC8A1FFA-BEE3-4634-8014-F334798102B3};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <PackageCertificateKeyFile>Simple.OData.Client.Tests.WinRT_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\ARM\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>ARM</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM'">
+    <OutputPath>bin\ARM\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>ARM</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;NETFX_CORE</DefineConstants>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE;NETFX_CORE</DefineConstants>
+    <Optimize>true</Optimize>
+    <NoWarn>;2008</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AppXPackage>True</AppXPackage>
+    <AppxPackageIncludePrivateSymbols>true</AppxPackageIncludePrivateSymbols>
+  </PropertyGroup>
+  <ItemGroup>
+    <!--A reference to the entire .Net Framework and Windows SDK are automatically included-->
+    <SDKReference Include="TestPlatform, Version=11.0" />
+    <SDKReference Include="XUnit, Version=2.0">
+      <Name>XUnit for Managed Projects</Name>
+    </SDKReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\CommonAssemblyVersion.cs">
+      <Link>Properties\CommonAssemblyVersion.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\FilterExpressionTests.cs">
+      <Link>FilterExpressionTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\FilterAsKeyTests.cs">
+      <Link>FilterAsKeyTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\ODataClientTests.cs">
+      <Link>ODataClientTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\ODataCommandTests.cs">
+      <Link>ODataCommandTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\ODataFeedReaderTests.cs">
+      <Link>ODataFeedReaderTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\Properties\AssemblyInfo.cs">
+      <Link>Properties\AssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\SchemaTests.cs">
+      <Link>SchemaTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\TestBase.cs">
+      <Link>TestBase.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <AppxManifest Include="Package.appxmanifest">
+      <SubType>Designer</SubType>
+    </AppxManifest>
+    <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\Colors.edmx">
+      <Link>Resources\Colors.edmx</Link>
+    </Content>
+    <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\Facebook.edmx">
+      <Link>Resources\Facebook.edmx</Link>
+    </Content>
+    <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\Flickr.edmx">
+      <Link>Resources\Flickr.edmx</Link>
+    </Content>
+    <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\GoogleMaps.edmx">
+      <Link>Resources\GoogleMaps.edmx</Link>
+    </Content>
+    <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\iPhone.edmx">
+      <Link>Resources\iPhone.edmx</Link>
+    </Content>
+    <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\Twitter.edmx">
+      <Link>Resources\Twitter.edmx</Link>
+    </Content>
+    <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\YouTube.edmx">
+      <Link>Resources\YouTube.edmx</Link>
+    </Content>
+    <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\Nested.edmx">
+      <Link>Resources\Nested.edmx</Link>
+    </Content>
+    <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\ArrayOfNested.edmx">
+      <Link>Resources\ArrayOfNested.edmx</Link>
+    </Content>
+    <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\SingleProduct.xml">
+      <Link>Resources\SingleProduct.xml</Link>
+    </Content>
+    <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\MultipleProducts.xml">
+      <Link>Resources\MultipleProducts.xml</Link>
+    </Content>
+    <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\MultipleCategoriesWithProducts.xml">
+      <Link>Resources\MultipleCategoriesWithProducts.xml</Link>
+    </Content>
+    <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\MultipleProductsWithCategory.xml">
+      <Link>Resources\MultipleProductsWithCategory.xml</Link>
+    </Content>
+    <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\SingleCategoryWithProducts.xml">
+      <Link>Resources\SingleCategoryWithProducts.xml</Link>
+    </Content>
+    <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\SingleProductWithCategory.xml">
+      <Link>Resources\SingleProductWithCategory.xml</Link>
+    </Content>
+    <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\SingleProductWithComplexProperty.xml">
+      <Link>Resources\SingleProductWithComplexProperty.xml</Link>
+    </Content>
+    <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\SingleProductWithCollectionOfPrimitiveProperties.xml">
+      <Link>Resources\SingleProductWithCollectionOfPrimitiveProperties.xml</Link>
+    </Content>
+    <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\SingleProductWithCollectionOfComplexProperties.xml">
+      <Link>Resources\SingleProductWithCollectionOfComplexProperties.xml</Link>
+    </Content>
+    <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\SingleProductWithEmptyCollectionOfComplexProperties.xml">
+      <Link>Resources\SingleProductWithEmptyCollectionOfComplexProperties.xml</Link>
+    </Content>
+    <None Include="Simple.OData.Client.Tests.WinRT_TemporaryKey.pfx" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Images\UnitTestLogo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\UnitTestSmallLogo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\UnitTestSplashScreen.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Images\UnitTestStoreLogo.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Simple.NExtLib.WinRT\Simple.NExtLib.WinRT.csproj">
+      <Project>{bc986348-5913-4d56-a808-73f96a8ae289}</Project>
+      <Name>Simple.NExtLib.WinRT</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Simple.OData.Client.Core\Simple.OData.Client.Core.csproj">
+      <Project>{361868b8-a63e-4c74-aa87-b70e1ab22313}</Project>
+      <Name>Simple.OData.Client.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '11.0' ">
+    <VisualStudioVersion>11.0</VisualStudioVersion>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\WindowsXaml\v$(VisualStudioVersion)\Microsoft.Windows.UI.Xaml.CSharp.targets" />
+  <PropertyGroup>
+    <SDKReferenceDirectoryRoot>$(ProjectDir)\libs;$(SDKReferenceDirectoryRoot)</SDKReferenceDirectoryRoot>
+  </PropertyGroup>
+  <Import Project="$(SolutionDir)\.nuget\nuget.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>  
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

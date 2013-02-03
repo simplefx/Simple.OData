@@ -15,23 +15,23 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{78D04AF9-B9B4-4025-93C6-B3DB01EDAAE9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.NExtLib.Net40", "..\Simple.NExtLib\Simple.NExtLib.Net40.csproj", "{4A191FAD-DC1D-46FC-A941-7DEB2C8C4C15}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.NExtLib.Net40", "..\Simple.NExtLib.Net40\Simple.NExtLib.Net40.csproj", "{4A191FAD-DC1D-46FC-A941-7DEB2C8C4C15}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.OData.Client.Net40", "..\Simple.OData.Client\Simple.OData.Client.Net40.csproj", "{C20A3959-4895-41F8-86E2-7DED294FD904}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.OData.Client.Net40", "..\Simple.OData.Client.Net40\Simple.OData.Client.Net40.csproj", "{C20A3959-4895-41F8-86E2-7DED294FD904}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.Data.OData", "..\Simple.Data.OData\Simple.Data.OData.csproj", "{E6EC2C3A-A7D8-41C3-ADCB-37B44F12B6F8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.OData.TestUtils.Net40", "..\Simple.OData.TestUtils\Simple.OData.TestUtils.Net40.csproj", "{858775EA-ECF6-458E-AD96-CF67CF730395}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.OData.TestUtils.Net40", "..\Simple.OData.TestUtils.Net40\Simple.OData.TestUtils.Net40.csproj", "{858775EA-ECF6-458E-AD96-CF67CF730395}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.Data.OData.NorthwindModel", "..\Simple.Data.OData.NorthwindModel\Simple.Data.OData.NorthwindModel.csproj", "{2A909E4D-6493-4D36-9FDE-786B89F9A387}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.OData.NorthwindModel", "..\Simple.OData.NorthwindModel\Simple.OData.NorthwindModel.csproj", "{2A909E4D-6493-4D36-9FDE-786B89F9A387}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.Data.OData.Tests", "..\Simple.Data.OData.Tests\Simple.Data.OData.Tests.csproj", "{96E43534-0CDC-4ECA-972E-4536055F8C63}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.NExtLib.Tests.Net40", "..\Simple.NExtLib.Tests\Simple.NExtLib.Tests.Net40.csproj", "{8DF17038-537D-45BE-B229-C99EECBB4EDC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.NExtLib.Tests.Net40", "..\Simple.NExtLib.Tests.Net40\Simple.NExtLib.Tests.Net40.csproj", "{8DF17038-537D-45BE-B229-C99EECBB4EDC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.NExtLib.TestUtils.Net40", "..\Simple.NExtLib.TestUtils\Simple.NExtLib.TestUtils.Net40.csproj", "{072F8BE4-81C1-4276-A9A5-1AEC87A84265}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.NExtLib.TestUtils.Net40", "..\Simple.NExtLib.TestUtils.Net40\Simple.NExtLib.TestUtils.Net40.csproj", "{072F8BE4-81C1-4276-A9A5-1AEC87A84265}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.OData.Client.Tests.Net40", "..\Simple.OData.Client.Tests\Simple.OData.Client.Tests.Net40.csproj", "{898FFD08-B7FC-45FE-A6DD-5AE9C2280D28}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.OData.Client.Tests.Net40", "..\Simple.OData.Client.Tests.Net40\Simple.OData.Client.Tests.Net40.csproj", "{898FFD08-B7FC-45FE-A6DD-5AE9C2280D28}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

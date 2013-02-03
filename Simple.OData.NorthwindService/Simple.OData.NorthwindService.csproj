@@ -94,9 +94,6 @@
     <Compile Include="..\CommonAssemblyVersion.cs">
       <Link>Properties\CommonAssemblyVersion.cs</Link>
     </Compile>
-    <Compile Include="Northwind.svc.cs">
-      <DependentUpon>Northwind.svc</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -112,9 +109,9 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Simple.Data.OData.NorthwindModel\Simple.Data.OData.NorthwindModel.csproj">
+    <ProjectReference Include="..\Simple.OData.NorthwindModel\Simple.OData.NorthwindModel.csproj">
       <Project>{2a909e4d-6493-4d36-9fde-786b89f9a387}</Project>
-      <Name>Simple.Data.OData.NorthwindModel</Name>
+      <Name>Simple.OData.NorthwindModel</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
@@ -132,7 +129,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>55172</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:54862/</IISUrl>
+          <IISUrl>http://localhost:54863/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
