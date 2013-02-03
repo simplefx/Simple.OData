@@ -117,11 +117,7 @@ namespace Simple.OData.Client
 
         private static IEnumerable<FieldInfo> GetTypeFields()
         {
-#if (NET20 || NET35 || NET40 || SILVERLIGHT)
             return typeof(EdmType).GetFields(BindingFlags.Public | BindingFlags.Static);
-#else
-            return typeof(EdmType).GetTypeInfo().DeclaredFields;
-#endif
         }
     }
 }
