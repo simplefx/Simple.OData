@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Runtime.Serialization;
-using Simple.NExtLib.Xml;
+using Simple.NExtLib.IO;
 
 namespace Simple.OData.Client
 {
@@ -9,12 +9,14 @@ namespace Simple.OData.Client
     public class WebRequestException : Exception
     {
         private readonly string _code;
+        private readonly string _response;
 
         public static WebRequestException CreateFromWebException(WebException ex)
         {
             var response = ex.Response as HttpWebResponse;
-            if (response == null) return new WebRequestException(ex);
-            return new WebRequestException(ex.Message, response.StatusCode.ToString(), ex);
+            return response == null ?
+                new WebRequestException(ex) :
+                new WebRequestException(ex.Message, response, ex);
         }
 
         public WebRequestException(string message)
@@ -33,6 +35,13 @@ namespace Simple.OData.Client
         {
         }
 
+        public WebRequestException(string message, HttpWebResponse response, Exception inner)
+            : base(message, inner)
+        {
+            _code = response.StatusCode.ToString();
+            _response = QuickIO.StreamToString(response.GetResponseStream());
+        }
+
         public WebRequestException(string message, string code, Exception inner)
             : base(message, inner)
         {
@@ -42,7 +51,6 @@ namespace Simple.OData.Client
         public WebRequestException(WebException inner)
             : base("Unexpected WebException encountered", inner)
         {
-
         }
 
         protected WebRequestException(
@@ -56,14 +64,9 @@ namespace Simple.OData.Client
             get { return _code; }
         }
 
-        private static XmlElementAsDictionary GetResponseBodyXml(WebResponse response)
+        public string Response
         {
-            if (response == null) return null;
-
-            var stream = response.GetResponseStream();
-            if (stream == null || !stream.CanRead) return null;
-
-            return XmlElementAsDictionary.Parse(stream);
+            get { return _response; }
         }
     }
 }
