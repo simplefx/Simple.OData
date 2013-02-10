@@ -24,7 +24,7 @@ namespace Simple.OData.Client
             _schema = Client.Schema.Get(_settings.UrlBase, _settings.Credentials);
 
             _requestBuilder = new CommandRequestBuilder(_settings.UrlBase, _settings.Credentials);
-            _requestRunner = new CommandRequestRunner(_settings.IncludeResourceTypeInEntryProperties);
+            _requestRunner = new CommandRequestRunner(_settings);
             _requestRunner.BeforeRequest = _settings.BeforeRequest;
             _requestRunner.AfterResponse = _settings.AfterResponse;
         }

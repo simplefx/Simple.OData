@@ -33,6 +33,12 @@ namespace Simple.Data.OData
             set { _clientSettings.IncludeResourceTypeInEntryProperties = value; }
         }
 
+        public bool IgnoreResourceNotFoundException
+        {
+            get { return _clientSettings.IgnoreResourceNotFoundException; }
+            set { _clientSettings.IgnoreResourceNotFoundException = value; }
+        }
+
         public Action<HttpWebRequest> BeforeRequest
         {
             get { return _clientSettings.BeforeRequest; }
@@ -62,6 +68,7 @@ namespace Simple.Data.OData
             this.Url = expando.Url;
             this.Credentials = expando.Credentials;
             this.IncludeResourceTypeInEntryProperties = expando.IncludeResourceTypeInEntryProperties;
+            this.IgnoreResourceNotFoundException = expando.IgnoreResourceNotFoundException;
             this.BeforeRequest = expando.BeforeRequest;
             this.AfterResponse = expando.AfterResponse;
         }

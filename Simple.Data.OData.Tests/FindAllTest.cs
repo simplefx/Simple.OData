@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Simple.OData.Client;
 using Xunit;
 
 namespace Simple.Data.OData.Tests
@@ -45,6 +46,29 @@ namespace Simple.Data.OData.Tests
 
             Assert.NotEmpty(products);
             Assert.Equal(1, count);
+        }
+
+        [Fact]
+        public void FindAllByKey()
+        {
+            IEnumerable<dynamic> products = _db.Products.FindAllByProductID(1);
+
+            Assert.NotEmpty(products);
+        }
+
+        [Fact]
+        public void FindAllByNonExistingKey()
+        {
+            Assert.Throws<WebRequestException>(() => _db.Products.FindAllByProductID(-1).ToList());
+        }
+
+        [Fact]
+        public void FindAllByNonExistingKeyIgnoreException()
+        {
+            dynamic db = Database.Opener.Open(new ODataFeed { Url = _service.ServiceUri.AbsoluteUri, IgnoreResourceNotFoundException = true });
+            IEnumerable<dynamic> products = db.Products.FindAllByProductID(-1);
+
+            Assert.Empty(products);
         }
 
         [Fact]

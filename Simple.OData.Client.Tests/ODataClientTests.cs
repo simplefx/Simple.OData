@@ -16,6 +16,13 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void FindEntriesNonExisting()
+        {
+            var products = _client.FindEntries("Products?$filter=ProductID eq -1");
+            Assert.True(products.Count() == 0);
+        }
+
+        [Fact]
         public void FindEntryExisting()
         {
             var product = _client.FindEntry("Products?$filter=ProductName eq 'Chai'");
@@ -56,6 +63,18 @@ namespace Simple.OData.Client.Tests
         public void GetEntryNonExisting()
         {
             Assert.Throws<WebRequestException>(() => _client.GetEntry("Products", new Entry() { { "ProductID", -1 } }));
+        }
+
+        [Fact]
+        public void GetEntryNonExistingIgnoreException()
+        {
+            var settings = new ODataClientSettings
+            {
+                UrlBase = _service.ServiceUri.AbsoluteUri,
+                IgnoreResourceNotFoundException = true,
+            };
+            var client = new ODataClient(settings);
+            Assert.Null(client.GetEntry("Products", new Entry() { { "ProductID", -1 } }));
         }
 
         [Fact]

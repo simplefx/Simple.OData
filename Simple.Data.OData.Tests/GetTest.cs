@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using Simple.OData.Client;
+using Xunit;
 
 namespace Simple.Data.OData.Tests
 {
@@ -26,6 +27,21 @@ namespace Simple.Data.OData.Tests
             var orderDetails = _db.OrderDetails.Get(10248, 11);
 
             Assert.Equal(10248, orderDetails.OrderID);
+        }
+
+        [Fact]
+        public void GetNonExisting()
+        {
+            Assert.Throws<WebRequestException>(() => _db.Products.Get(-1));
+        }
+
+        [Fact]
+        public void GetNonExistingIgnoreException()
+        {
+            dynamic db = Database.Opener.Open(new ODataFeed { Url = _service.ServiceUri.AbsoluteUri, IgnoreResourceNotFoundException = true });
+            var product = db.Products.Get(-1);
+
+            Assert.Null(product);
         }
     }
 }

@@ -8,6 +8,8 @@ namespace Simple.OData.Client
         public string UrlBase { get; set; }
         public ICredentials Credentials { get; set; }
         public bool IncludeResourceTypeInEntryProperties { get; set; }
+        public bool IgnoreResourceNotFoundException { get; set; }
+
         public Action<HttpWebRequest> BeforeRequest { get; set; }
         public Action<HttpWebResponse> AfterResponse { get; set; }
 

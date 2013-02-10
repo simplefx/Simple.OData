@@ -114,6 +114,10 @@
       <Project>{E6EC2C3A-A7D8-41C3-ADCB-37B44F12B6F8}</Project>
       <Name>Simple.Data.OData</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Simple.OData.Client\Simple.OData.Client.csproj">
+      <Project>{c20a3959-4895-41f8-86e2-7ded294fd904}</Project>
+      <Name>Simple.OData.Client</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Simple.OData.TestUtils\Simple.OData.TestUtils.csproj">
       <Project>{858775EA-ECF6-458E-AD96-CF67CF730395}</Project>
       <Name>Simple.OData.TestUtils</Name>

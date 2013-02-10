@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 
@@ -6,40 +7,62 @@ namespace Simple.OData.Client
 {
     class CommandRequestRunner : RequestRunner
     {
-        private ODataFeedReader _feedReader;
+        private readonly ODataFeedReader _feedReader;
+        private readonly bool _ignoreResourceNotFoundException;
 
-        public CommandRequestRunner(bool includeResourceTypeInEntryProperties = false)
+        public CommandRequestRunner(ODataClientSettings settings)
         {
-            _feedReader = new ODataFeedReader(includeResourceTypeInEntryProperties);
+            _feedReader = new ODataFeedReader(settings.IncludeResourceTypeInEntryProperties);
+            _ignoreResourceNotFoundException = settings.IgnoreResourceNotFoundException;
         }
 
         public override IEnumerable<IDictionary<string, object>> FindEntries(HttpCommand command, bool scalarResult, bool setTotalCount, out int totalCount)
         {
-            using (var response = TryRequest(command.Request))
+            totalCount = 0;
+            try
             {
-                totalCount = 0;
-                IEnumerable<IDictionary<string, object>> result = null;
-                if (response.StatusCode != HttpStatusCode.OK)
+                using (var response = TryRequest(command.Request))
                 {
-                    result = Enumerable.Empty<IDictionary<string, object>>();
-                }
-                else
-                {
-                    var stream = response.GetResponseStream();
-                    if (setTotalCount)
-                        result = _feedReader.GetData(stream, out totalCount);
+                    IEnumerable<IDictionary<string, object>> result = null;
+                    if (response.StatusCode != HttpStatusCode.OK)
+                    {
+                        result = Enumerable.Empty<IDictionary<string, object>>();
+                    }
                     else
-                        result = _feedReader.GetData(response.GetResponseStream(), scalarResult);
-                }
+                    {
+                        var stream = response.GetResponseStream();
+                        if (setTotalCount)
+                            result = _feedReader.GetData(stream, out totalCount);
+                        else
+                            result = _feedReader.GetData(response.GetResponseStream(), scalarResult);
+                    }
 
-                return result;
+                    return result;
+                }
+            }
+            catch (WebRequestException ex)
+            {
+                if (_ignoreResourceNotFoundException && IsResourceNotFoundException(ex))
+                    return new[] { (IDictionary<string, object>)null };
+                else
+                    throw;
             }
         }
 
         public override IDictionary<string, object> GetEntry(HttpCommand command)
         {
-            var text = Request(command.Request);
-            return _feedReader.GetData(text).First();
+            try
+            {
+                var text = Request(command.Request);
+                return _feedReader.GetData(text).First();
+            }
+            catch (WebRequestException ex)
+            {
+                if (_ignoreResourceNotFoundException && IsResourceNotFoundException(ex))
+                    return null;
+                else
+                    throw;
+            }
         }
 
         public override IDictionary<string, object> InsertEntry(HttpCommand command, bool resultRequired)
@@ -89,6 +112,17 @@ namespace Simple.OData.Client
 
                 return result;
             }
+        }
+
+        private bool IsResourceNotFoundException(WebRequestException ex)
+        {
+            var innerException = ex.InnerException as WebException;
+            if (innerException != null)
+            {
+                var statusCode = (innerException.Response as HttpWebResponse).StatusCode;
+                return statusCode == HttpStatusCode.NotFound;
+            }
+            return false;
         }
     }
 }

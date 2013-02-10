@@ -7,12 +7,12 @@ namespace Simple.Data.OData
     {
         public static dynamic Open(this IDatabaseOpener opener, string url)
         {
-            return opener.Open("OData", CreateSettings(url, null, false, null, null));
+            return opener.Open("OData", CreateSettings(url, null, false, false, null, null));
         }
 
         public static dynamic Open(this IDatabaseOpener opener, Uri uri)
         {
-            return opener.Open("OData", CreateSettings(uri.AbsoluteUri, null, false, null, null));
+            return opener.Open("OData", CreateSettings(uri.AbsoluteUri, null, false, false, null, null));
         }
 
         public static dynamic Open(this IDatabaseOpener opener, ODataFeed settings)
@@ -21,6 +21,7 @@ namespace Simple.Data.OData
                 settings.Url, 
                 settings.Credentials, 
                 settings.IncludeResourceTypeInEntryProperties,
+                settings.IgnoreResourceNotFoundException,
                 settings.BeforeRequest,
                 settings.AfterResponse));
         }
@@ -29,6 +30,7 @@ namespace Simple.Data.OData
             string url, 
             ICredentials credentials,
             bool includeResourceTypeInEntryProperties,
+            bool ignoreResourceNotFoundException,
             Action<HttpWebRequest> beforeRequest,
             Action<HttpWebResponse> afterResponse)
         {
@@ -37,6 +39,7 @@ namespace Simple.Data.OData
                            Url = url,
                            Credentials = credentials,
                            IncludeResourceTypeInEntryProperties = includeResourceTypeInEntryProperties,
+                           IgnoreResourceNotFoundException = ignoreResourceNotFoundException,
                            BeforeRequest = beforeRequest,
                            AfterResponse = afterResponse,
                        };

@@ -1,4 +1,5 @@
 ﻿using System;
+using Simple.OData.Client;
 using Xunit;
 
 namespace Simple.Data.OData.Tests
@@ -11,6 +12,29 @@ namespace Simple.Data.OData.Tests
             var product = _db.Products.FindByProductName("Chai");
 
             Assert.Equal("Chai", product.ProductName);
+        }
+
+        [Fact]
+        public void FindOneByKey()
+        {
+            var product = _db.Products.FindByProductID(1);
+
+            Assert.Equal("Chai", product.ProductName);
+        }
+
+        [Fact]
+        public void FindNonExistingByKey()
+        {
+            Assert.Throws<WebRequestException>(() => _db.Products.FindByProductID(-1));
+        }
+
+        [Fact]
+        public void FindNonExistingByKeyIgnoreException()
+        {
+            dynamic db = Database.Opener.Open(new ODataFeed { Url = _service.ServiceUri.AbsoluteUri, IgnoreResourceNotFoundException = true });
+            var product = db.Products.FindByProductID(-1);
+
+            Assert.Null(product);
         }
 
         [Fact]
