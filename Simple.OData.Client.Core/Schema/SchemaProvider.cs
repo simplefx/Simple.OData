@@ -186,7 +186,7 @@ namespace Simple.OData.Client
             var requestBuilder = new CommandRequestBuilder(urlBase, credentials);
             var command = HttpCommand.Get(ODataCommand.MetadataLiteral);
             requestBuilder.AddCommandToRequest(command);
-            using (var response = new CommandRequestRunner().TryRequest(command.Request))
+            using (var response = new CommandRequestRunner(new ODataClientSettings()).TryRequest(command.Request))
             {
                 if (response.StatusCode == HttpStatusCode.OK)
                 {

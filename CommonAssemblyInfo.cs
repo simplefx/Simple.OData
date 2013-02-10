@@ -11,9 +11,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("Release")]
 #endif
 
-[assembly: AssemblyCompany("SimpleFX")]
-[assembly: AssemblyProduct("SimpleFX")]
-[assembly: AssemblyCopyright("Copyright © Mark Rendle, Vagif Abilov 2011-2013")]
+[assembly: AssemblyCompany("Vagif Abilov")]
+[assembly: AssemblyProduct("Simple OData Client")]
+[assembly: AssemblyCopyright("Copyright © Vagif Abilov 2012-2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
