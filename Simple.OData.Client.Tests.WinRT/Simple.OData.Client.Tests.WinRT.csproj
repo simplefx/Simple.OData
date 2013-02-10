@@ -205,6 +205,7 @@
     <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\SingleProductWithEmptyCollectionOfComplexProperties.xml">
       <Link>Resources\SingleProductWithEmptyCollectionOfComplexProperties.xml</Link>
     </Content>
+    <None Include="packages.config" />
     <None Include="Simple.OData.Client.Tests.WinRT_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>

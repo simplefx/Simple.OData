@@ -35,7 +35,7 @@ namespace Simple.OData.Client.Tests
                 .From("Products")
                 .Filter(!(x.ProductID == 1));
             string commandText = command.CommandText;
-            Assert.Equal("Products?$filter=not(ProductID%20eq%201)", commandText);
+            Assert.Equal("Products?$filter=not%28ProductID%20eq%201%29", commandText);
         }
 
         [Fact]
@@ -57,7 +57,7 @@ namespace Simple.OData.Client.Tests
                 .From("Products")
                 .Filter(x.ProductID == 1 && x.ProductName == "abc");
             string commandText = command.CommandText;
-            Assert.Equal("Products?$filter=ProductID%20eq%201%20and%20ProductName%20eq%20'abc'", commandText);
+            Assert.Equal("Products?$filter=ProductID%20eq%201%20and%20ProductName%20eq%20%27abc%27", commandText);
         }
 
         [Fact]
