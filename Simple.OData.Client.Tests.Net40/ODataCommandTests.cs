@@ -13,7 +13,7 @@ namespace Simple.OData.Client.Tests
         public void Filter()
         {
             var products = _client
-                .From("Products")
+                .For("Products")
                 .Filter("ProductName eq 'Chai'")
                 .FindEntries();
             Assert.Equal("Chai", products.Single()["ProductName"]);
@@ -23,7 +23,7 @@ namespace Simple.OData.Client.Tests
         {
             var x = ODataFilter.Expression;
             var products = _client
-                .From("Products")
+                .For("Products")
                 .Filter(x.ProductName == "Chai")
                 .FindEntries();
             Assert.Equal("Chai", products.Single()["ProductName"]);
@@ -33,7 +33,7 @@ namespace Simple.OData.Client.Tests
         public void Get()
         {
             var category = _client
-                .From("Categories")
+                .For("Categories")
                 .Key(1)
                 .FindEntry();
             Assert.Equal(1, category["CategoryID"]);
@@ -43,7 +43,7 @@ namespace Simple.OData.Client.Tests
         public void SkipOne()
         {
             var products = _client
-                .From("Products")
+                .For("Products")
                 .Skip(1)
                 .FindEntries();
             Assert.Equal(76, products.Count());
@@ -53,7 +53,7 @@ namespace Simple.OData.Client.Tests
         public void TopOne()
         {
             var products = _client
-                .From("Products")
+                .For("Products")
                 .Top(1)
                 .FindEntries();
             Assert.Equal(1, products.Count());
@@ -64,7 +64,7 @@ namespace Simple.OData.Client.Tests
         {
             var x = ODataFilter.Expression;
             IEnumerable<dynamic> products = _client
-                .From("Products")
+                .For("Products")
                 .Filter(x.ProductName == "Chai")
                 .Top(1)
                 .FindEntries();
@@ -75,7 +75,7 @@ namespace Simple.OData.Client.Tests
         public void SkipOneTopOne()
         {
             var products = _client
-                .From("Products")
+                .For("Products")
                 .Skip(1)
                 .Top(1)
                 .FindEntries();
@@ -86,7 +86,7 @@ namespace Simple.OData.Client.Tests
         public void OrderBy()
         {
             var product = _client
-                .From("Products")
+                .For("Products")
                 .OrderBy("ProductName")
                 .FindEntries().First();
             Assert.Equal("Alice Mutton", product["ProductName"]);
@@ -96,7 +96,7 @@ namespace Simple.OData.Client.Tests
         public void OrderByDescending()
         {
             var product = _client
-                .From("Products")
+                .For("Products")
                 .OrderByDescending("ProductName")
                 .FindEntries().First();
             Assert.Equal("Zaanse koeken", product["ProductName"]);
@@ -106,7 +106,7 @@ namespace Simple.OData.Client.Tests
         public void SelectSingle()
         {
             var products = _client
-                .From("Products")
+                .For("Products")
                 .Select("ProductName")
                 .FindEntries();
             Assert.Contains("ProductName", products.First().Keys);
@@ -117,7 +117,7 @@ namespace Simple.OData.Client.Tests
         public void SelectSingleHomogenize()
         {
             var products = _client
-                .From("Products")
+                .For("Products")
                 .Select("Product_Name")
                 .FindEntries();
             Assert.Contains("ProductName", products.First().Keys);
@@ -128,7 +128,7 @@ namespace Simple.OData.Client.Tests
         public void SelectMultiple()
         {
             var products = _client
-                .From("Products")
+                .For("Products")
                 .Select("ProductID", "ProductName")
                 .FindEntries();
             Assert.Contains("ProductName", products.First().Keys);
@@ -139,7 +139,7 @@ namespace Simple.OData.Client.Tests
         public void Expand()
         {
             var product = _client
-                .From("Products")
+                .For("Products")
                 .OrderBy("ProductID")
                 .Expand("Category")
                 .FindEntries().Last();
@@ -150,7 +150,7 @@ namespace Simple.OData.Client.Tests
         public void Count()
         {
             var count = _client
-                .From("Products")
+                .For("Products")
                 .Count()
                 .FindScalar();
             Assert.Equal(77, int.Parse(count.ToString()));
@@ -160,7 +160,7 @@ namespace Simple.OData.Client.Tests
         public void FilterCount()
         {
             var count = _client
-                .From("Products")
+                .For("Products")
                 .Filter("ProductName eq 'Chai'")
                 .Count()
                 .FindScalar();
@@ -172,7 +172,7 @@ namespace Simple.OData.Client.Tests
         {
             var x = ODataFilter.Expression;
             var count = _client
-                .From("Products")
+                .For("Products")
                 .Filter(x.ProductName == "Chai")
                 .Count()
                 .FindScalar();
@@ -184,7 +184,7 @@ namespace Simple.OData.Client.Tests
         {
             int count;
             var products = _client
-                .From("Products")
+                .For("Products")
                 .FindEntries(true, out count);
             Assert.Equal(77, count);
             Assert.Equal(77, products.Count());
@@ -194,7 +194,7 @@ namespace Simple.OData.Client.Tests
         public void CombineAll()
         {
             var product = _client
-                .From("Products")
+                .For("Products")
                 .OrderBy("ProductName")
                 .Skip(2)
                 .Top(1)
@@ -208,7 +208,7 @@ namespace Simple.OData.Client.Tests
         public void CombineAllReverse()
         {
             var product = _client
-                .From("Products")
+                .For("Products")
                 .Select("Category")
                 .Expand("Category")
                 .Top(1)
@@ -222,7 +222,7 @@ namespace Simple.OData.Client.Tests
         public void NavigateToSingle()
         {
             var category = _client
-                .From("Products")
+                .For("Products")
                 .Key(new Entry() { { "ProductID", 2 } })
                 .NavigateTo("Category")
                 .FindEntry();
@@ -233,7 +233,7 @@ namespace Simple.OData.Client.Tests
         public void NavigateToMultiple()
         {
             var products = _client
-                .From("Categories")
+                .For("Categories")
                 .Key(2)
                 .NavigateTo("Products")
                 .FindEntries();
@@ -244,7 +244,7 @@ namespace Simple.OData.Client.Tests
         public void NavigateToRecursive()
         {
             var employee = _client
-                .From("Employees")
+                .For("Employees")
                 .Key(14)
                 .NavigateTo("Superior")
                 .NavigateTo("Superior")
@@ -258,7 +258,7 @@ namespace Simple.OData.Client.Tests
         public void FindBaseClassEntries()
         {
             var transport = _client
-                .From("Transport")
+                .For("Transport")
                 .FindEntries();
             Assert.Equal(2, transport.Count());
             Assert.False(transport.Any(x => x.ContainsKey(ODataCommand.ResourceTypeLiteral)));
@@ -274,7 +274,7 @@ namespace Simple.OData.Client.Tests
                                      };
             var client = new ODataClient(clientSettings);
             var transport = client
-                .From("Transport")
+                .For("Transport")
                 .FindEntries();
             Assert.Equal(2, transport.Count());
             Assert.True(transport.All(x => x.ContainsKey(ODataCommand.ResourceTypeLiteral)));
@@ -284,7 +284,7 @@ namespace Simple.OData.Client.Tests
         public void FindAllDerivedClassEntries()
         {
             var transport = _client
-                .From("Transport")
+                .For("Transport")
                 .As("Ships")
                 .FindEntries();
             Assert.Equal("Titanic", transport.Single()["ShipName"]);
@@ -300,7 +300,7 @@ namespace Simple.OData.Client.Tests
             };
             var client = new ODataClient(clientSettings);
             var transport = client
-                .From("Transport")
+                .For("Transport")
                 .As("Ships")
                 .FindEntries();
             Assert.Equal("Titanic", transport.Single()["ShipName"]);
@@ -311,7 +311,7 @@ namespace Simple.OData.Client.Tests
         public void FindDerivedClassEntry()
         {
             var transport = _client
-                .From("Transport")
+                .For("Transport")
                 .As("Ships")
                 .Filter("ShipName eq 'Titanic'")
                 .FindEntry();
@@ -322,7 +322,7 @@ namespace Simple.OData.Client.Tests
         public void FindDerivedClassEntryBaseAndDerivedFields()
         {
             var transport = _client
-                .From("Transport")
+                .For("Transport")
                 .As("Ships")
                 .Filter("TransportID eq 1 and ShipName eq 'Titanic'")
                 .FindEntry();

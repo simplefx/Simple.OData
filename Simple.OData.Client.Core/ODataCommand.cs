@@ -66,7 +66,7 @@ namespace Simple.OData.Client
             }
         }
 
-        public IClientWithCommand From(string collectionName)
+        public IClientWithCommand For(string collectionName)
         {
             var items = collectionName.Split('/');
             if (items.Count() > 1)

@@ -69,9 +69,9 @@ namespace Simple.OData.Client
             StringExtensions.SetPluralizer(pluralizer);
         }
 
-        public IClientWithCommand From(string collectionName)
+        public IClientWithCommand For(string collectionName)
         {
-            return new ODataClientWithCommand(this, _schema).From(collectionName);
+            return new ODataClientWithCommand(this, _schema).For(collectionName);
         }
 
         public IEnumerable<IDictionary<string, object>> FindEntries(string commandText)
@@ -130,7 +130,7 @@ namespace Simple.OData.Client
 
         public IDictionary<string, object> GetEntry(string collection, IDictionary<string, object> entryKey)
         {
-            var commandText = new ODataClientWithCommand(this, _schema).From(collection).Key(entryKey).CommandText;
+            var commandText = new ODataClientWithCommand(this, _schema).For(collection).Key(entryKey).CommandText;
             var command = HttpCommand.Get(commandText);
             _requestBuilder.AddCommandToRequest(command);
             return _requestRunner.GetEntry(command);
@@ -190,7 +190,7 @@ namespace Simple.OData.Client
         public int DeleteEntry(string collection, IDictionary<string, object> entryKey)
         {
             RemoveSystemProperties(entryKey);
-            var commandText = new ODataClientWithCommand(this, _schema).From(collection).Key(entryKey).CommandText;
+            var commandText = new ODataClientWithCommand(this, _schema).For(collection).Key(entryKey).CommandText;
             var command = HttpCommand.Delete(commandText);
             _requestBuilder.AddCommandToRequest(command);
             return _requestRunner.DeleteEntry(command);
@@ -202,8 +202,8 @@ namespace Simple.OData.Client
             RemoveSystemProperties(linkedEntryKey);
             var association = _schema.FindAssociation(collection, linkName);
             var command = CreateLinkCommand(collection, linkName,
-                new ODataClientWithCommand(this, _schema).From(collection).Key(entryKey).CommandText,
-                new ODataClientWithCommand(this, _schema).From(association.ReferenceTableName).Key(linkedEntryKey).CommandText);
+                new ODataClientWithCommand(this, _schema).For(collection).Key(entryKey).CommandText,
+                new ODataClientWithCommand(this, _schema).For(association.ReferenceTableName).Key(linkedEntryKey).CommandText);
             _requestBuilder.AddCommandToRequest(command);
             _requestRunner.UpdateEntry(command);
         }
@@ -212,7 +212,7 @@ namespace Simple.OData.Client
         {
             RemoveSystemProperties(entryKey);
             var association = _schema.FindAssociation(collection, linkName);
-            var command = CreateUnlinkCommand(collection, linkName, new ODataClientWithCommand(this, _schema).From(collection).Key(entryKey).CommandText);
+            var command = CreateUnlinkCommand(collection, linkName, new ODataClientWithCommand(this, _schema).For(collection).Key(entryKey).CommandText);
             _requestBuilder.AddCommandToRequest(command);
             _requestRunner.UpdateEntry(command);
         }
@@ -234,7 +234,7 @@ namespace Simple.OData.Client
                     .Format(clientWithCommand, collection);
 
                 return clientWithCommand
-                    .From(collection)
+                    .For(collection)
                     .Filter(filter).CommandText;
             }
             else
@@ -278,7 +278,7 @@ namespace Simple.OData.Client
         {
             bool hasPropertiesToUpdate = entryMembers.Properties.Count > 0;
             bool merge = !hasPropertiesToUpdate || CheckMergeConditions(collection, entryKey, entryData);
-            var commandText = new ODataClientWithCommand(this, _schema).From(_schema.FindBaseTable(collection).ActualName).Key(entryKey).CommandText;
+            var commandText = new ODataClientWithCommand(this, _schema).For(_schema.FindBaseTable(collection).ActualName).Key(entryKey).CommandText;
 
             var feedWriter = new ODataFeedWriter();
             var table = _schema.FindConcreteTable(collection);

@@ -10,7 +10,7 @@ namespace Simple.OData.Client.Tests
         {
             var x = ODataFilter.Expression;
             var command = _client
-                .From("Products")
+                .For("Products")
                 .Filter(x.ProductID == 1);
             string commandText = command.CommandText;
             Assert.Equal("Products(1)", commandText);
@@ -21,7 +21,7 @@ namespace Simple.OData.Client.Tests
         {
             var x = ODataFilter.Expression;
             var command = _client
-                .From("Products")
+                .For("Products")
                 .Filter(x.ProductID != 1);
             string commandText = command.CommandText;
             Assert.Equal("Products?$filter=ProductID%20ne%201", commandText);
@@ -32,7 +32,7 @@ namespace Simple.OData.Client.Tests
         {
             var x = ODataFilter.Expression;
             var command = _client
-                .From("Products")
+                .For("Products")
                 .Filter(!(x.ProductID == 1));
             string commandText = command.CommandText;
             Assert.Equal("Products?$filter=not%28ProductID%20eq%201%29", commandText);
@@ -43,7 +43,7 @@ namespace Simple.OData.Client.Tests
         {
             var x = ODataFilter.Expression;
             var command = _client
-                .From("Products")
+                .For("Products")
                 .Filter(x.ProductID == 1L);
             string commandText = command.CommandText;
             Assert.Equal("Products(1L)", commandText);
@@ -54,7 +54,7 @@ namespace Simple.OData.Client.Tests
         {
             var x = ODataFilter.Expression;
             var command = _client
-                .From("Products")
+                .For("Products")
                 .Filter(x.ProductID == 1 && x.ProductName == "abc");
             string commandText = command.CommandText;
             Assert.Equal("Products?$filter=ProductID%20eq%201%20and%20ProductName%20eq%20%27abc%27", commandText);
@@ -65,7 +65,7 @@ namespace Simple.OData.Client.Tests
         {
             var x = ODataFilter.Expression;
             var command = _client
-                .From("Products")
+                .For("Products")
                 .Filter(x.ProductID == 1 && x.ProductID == 1);
             string commandText = command.CommandText;
             Assert.Equal("Products(1)", commandText);
@@ -76,7 +76,7 @@ namespace Simple.OData.Client.Tests
         {
             var x = ODataFilter.Expression;
             var command = _client
-                .From("OrderDetails")
+                .For("OrderDetails")
                 .Filter(x.OrderID == 1 && x.ProductID == 2);
             string commandText = command.CommandText;
             Assert.Equal("Order_Details(OrderID=1,ProductID=2)", commandText);
@@ -87,7 +87,7 @@ namespace Simple.OData.Client.Tests
         {
             var x = ODataFilter.Expression;
             var command = _client
-                .From("OrderDetails")
+                .For("OrderDetails")
                 .Filter(x.OrderID == 1);
             string commandText = command.CommandText;
             Assert.Equal("Order_Details?$filter=OrderID%20eq%201", commandText);
@@ -98,7 +98,7 @@ namespace Simple.OData.Client.Tests
         {
             var x = ODataFilter.Expression;
             var command = _client
-                .From("Employees")
+                .For("Employees")
                 .Filter(x.EmployeeID == 1)
                 .NavigateTo("Superior");
             string commandText = command.CommandText;
@@ -110,7 +110,7 @@ namespace Simple.OData.Client.Tests
         {
             var x = ODataFilter.Expression;
             var command = _client
-                .From("Customers")
+                .For("Customers")
                 .Filter(x.CustomerID == "ALFKI")
                 .NavigateTo("Orders");
             string commandText = command.CommandText;
@@ -122,7 +122,7 @@ namespace Simple.OData.Client.Tests
         {
             var x = ODataFilter.Expression;
             var command = _client
-                .From("Employees")
+                .For("Employees")
                 .Filter(x.EmployeeID == 2)
                 .NavigateTo("Subordinates");
             string commandText = command.CommandText;
@@ -134,7 +134,7 @@ namespace Simple.OData.Client.Tests
         {
             var x = ODataFilter.Expression;
             var command = _client
-                .From("Orders")
+                .For("Orders")
                 .Filter(x.OrderID == 10952)
                 .NavigateTo("OrderDetails");
             string commandText = command.CommandText;
@@ -146,7 +146,7 @@ namespace Simple.OData.Client.Tests
         {
             var x = ODataFilter.Expression;
             var command = _client
-                .From("Employees")
+                .For("Employees")
                 .Filter(x.EmployeeID == 1)
                 .NavigateTo("Superior");
             string commandText = command.CommandText;
@@ -158,7 +158,7 @@ namespace Simple.OData.Client.Tests
         {
             var x = ODataFilter.Expression;
             var command = _client
-                .From("Transport")
+                .For("Transport")
                 .Filter(x.TransportID == 1);
             string commandText = command.CommandText;
             Assert.Equal("Transport(1)", commandText);
@@ -169,7 +169,7 @@ namespace Simple.OData.Client.Tests
         {
             var x = ODataFilter.Expression;
             var command = _client
-                .From("Transport")
+                .For("Transport")
                 .As("Ship")
                 .Filter(x.TransportID == 1);
             string commandText = command.CommandText;

@@ -110,9 +110,9 @@ namespace Simple.OData.Client
             return _client.ExecuteFunction(_command.ToString(), parameters);
         }
 
-        public IClientWithCommand From(string collectionName)
+        public IClientWithCommand For(string collectionName)
         {
-            return _command.From(collectionName);
+            return _command.For(collectionName);
         }
 
         public IClientWithCommand As(string derivedCollectionName)
