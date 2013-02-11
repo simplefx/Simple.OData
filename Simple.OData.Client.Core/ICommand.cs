@@ -22,6 +22,8 @@ namespace Simple.OData.Client
         IClientWithCommand OrderByDescending(params string[] columns);
         IClientWithCommand Count();
         IClientWithCommand NavigateTo(string linkName);
+        IClientWithCommand Set(object value);
+        IClientWithCommand Set(IDictionary<string, object> value);
         IClientWithCommand Function(string functionName);
         IClientWithCommand Parameters(IDictionary<string, object> parameters);
         bool FilterIsKey { get; }

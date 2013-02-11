@@ -13,6 +13,7 @@ namespace Simple.OData.Client
         private string _functionName;
         private IList<object> _keyValues;
         private IDictionary<string, object> _namedKeyValues;
+        private IDictionary<string, object> _entryData;
         private Dictionary<string, object> _parameters = new Dictionary<string, object>();
         private string _filter;
         private int _skipCount = -1;
@@ -196,6 +197,24 @@ namespace Simple.OData.Client
             return _client;
         }
 
+        public IClientWithCommand Set(object value)
+        {
+            var properties = value.GetType().GetProperties();
+            var dict = new Dictionary<string, object>();
+            foreach (var property in properties)
+            {
+                dict.Add(property.Name, property.GetValue(value, null));
+            }
+            _entryData = dict;
+            return _client;
+        }
+
+        public IClientWithCommand Set(IDictionary<string, object> value)
+        {
+            _entryData = value;
+            return _client;
+        }
+
         public IClientWithCommand Function(string functionName)
         {
             _functionName = functionName;
@@ -238,6 +257,44 @@ namespace Simple.OData.Client
         public override string ToString()
         {
             return Format();
+        }
+
+        internal string CollectionName
+        {
+            get { return _collectionName; }
+        }
+
+        internal IDictionary<string, object> KeyValues
+        {
+            get
+            {
+                if (!HasKey)
+                    return null;
+
+                var keyNames = this.Table.GetKeyNames();
+                var namedKeyValues = new Dictionary<string, object>();
+                for (int index = 0; index < keyNames.Count; index++)
+                {
+                    if (_namedKeyValues != null && _namedKeyValues.Count > 0)
+                    {
+                        object keyValue;
+                        if (_namedKeyValues.TryGetValue(keyNames[index], out keyValue))
+                        {
+                            namedKeyValues.Add(keyNames[index], keyValue);
+                        }
+                    }
+                    else if (_keyValues != null && _keyValues.Count >= index)
+                    {
+                        namedKeyValues.Add(keyNames[index], _keyValues[index]);
+                    }
+                }
+                return namedKeyValues;
+            }
+        }
+
+        internal IDictionary<string, object> EntryData
+        {
+            get { return _entryData; }
         }
 
         private string Format()
@@ -323,23 +380,7 @@ namespace Simple.OData.Client
 
         private string FormatKey()
         {
-            var keyNames = this.Table.GetKeyNames();
-            var namedKeyValues = new Dictionary<string, object>();
-            for (int index = 0; index < keyNames.Count; index++)
-            {
-                if (_namedKeyValues != null && _namedKeyValues.Count > 0)
-                {
-                    object keyValue;
-                    if (_namedKeyValues.TryGetValue(keyNames[index], out keyValue))
-                    {
-                        namedKeyValues.Add(keyNames[index], keyValue);
-                    }
-                }
-                else if (_keyValues != null && _keyValues.Count >= index)
-                {
-                    namedKeyValues.Add(keyNames[index], _keyValues[index]);
-                }
-            }
+            var namedKeyValues = this.KeyValues;
             var valueFormatter = new ValueFormatter();
             var formattedKeyValues = namedKeyValues.Count == 1 ?
                 valueFormatter.Format(namedKeyValues.Values) :

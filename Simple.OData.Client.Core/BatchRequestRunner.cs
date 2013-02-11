@@ -22,7 +22,7 @@ namespace Simple.OData.Client
             return null;
         }
 
-        public override IDictionary<string, object> InsertEntry(HttpCommand command, bool resultRequired)
+        public override IDictionary<string, object> InsertEntry(HttpCommand command, bool resultRequired = true)
         {
             return command.OriginalContent;
         }

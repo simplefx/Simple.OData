@@ -75,17 +75,29 @@
     <Compile Include="..\CommonAssemblyVersion.cs">
       <Link>Properties\CommonAssemblyVersion.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\BatchTests.cs">
+      <Link>BatchTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\DeleteTests.cs">
+      <Link>DeleteTests.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\FilterExpressionTests.cs">
       <Link>FilterExpressionTests.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\FilterAsKeyTests.cs">
       <Link>FilterAsKeyTests.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\InsertTests.cs">
+      <Link>InsertTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\LinkTests.cs">
+      <Link>LinkTests.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\ODataClientTests.cs">
       <Link>ODataClientTests.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\ODataCommandTests.cs">
-      <Link>ODataCommandTests.cs</Link>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\FindTests.cs">
+      <Link>FindTests.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\ODataFeedReaderTests.cs">
       <Link>ODataFeedReaderTests.cs</Link>
@@ -98,6 +110,9 @@
     </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\TestBase.cs">
       <Link>TestBase.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\UpdateTests.cs">
+      <Link>UpdateTests.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>

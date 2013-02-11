@@ -64,7 +64,7 @@ namespace Simple.OData.Client
             }
         }
 
-        public override IDictionary<string, object> InsertEntry(HttpCommand command, bool resultRequired)
+        public override IDictionary<string, object> InsertEntry(HttpCommand command, bool resultRequired = true)
         {
             var text = Request(command.Request);
             if (resultRequired)

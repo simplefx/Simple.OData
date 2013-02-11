@@ -136,7 +136,7 @@ namespace Simple.OData.Client
             return _requestRunner.GetEntry(command);
         }
 
-        public IDictionary<string, object> InsertEntry(string collection, IDictionary<string, object> entryData, bool resultRequired)
+        public IDictionary<string, object> InsertEntry(string collection, IDictionary<string, object> entryData, bool resultRequired = true)
         {
             RemoveSystemProperties(entryData);
             var table = _schema.FindConcreteTable(collection);
@@ -437,15 +437,7 @@ namespace Simple.OData.Client
         private bool CheckMergeConditions(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
         {
             var table = _schema.FindConcreteTable(collection);
-            var keyNames = table.GetKeyNames();
-            foreach (var key in entryKey.Keys)
-            {
-                if (!keyNames.Contains(key) && !entryData.Keys.Contains(key))
-                {
-                    return true;
-                }
-            }
-            return false;
+            return table.Columns.Any(x => !entryData.ContainsKey(x.ActualName));
         }
 
         private void RemoveSystemProperties(IDictionary<string, object> entryData)

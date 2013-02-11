@@ -65,34 +65,19 @@ namespace Simple.OData.Client
             return _client.FindScalar(_command.ToString());
         }
 
-        public IDictionary<string, object> GetEntry(params object[] entryKey)
+        public IDictionary<string, object> InsertEntry(bool resultRequired = true)
         {
-            return _client.GetEntry(_command.ToString(), entryKey);
+            return _client.InsertEntry(_command.CollectionName, _command.EntryData, resultRequired);
         }
 
-        public IDictionary<string, object> GetEntry(IEnumerable<object> entryKey)
+        public int UpdateEntry()
         {
-            return _client.GetEntry(_command.ToString(), entryKey);
+            return _client.UpdateEntry(_command.CollectionName, _command.KeyValues, _command.EntryData);
         }
 
-        public IDictionary<string, object> GetEntry(IDictionary<string, object> entryKey)
+        public int DeleteEntry()
         {
-            return _client.GetEntry(_command.ToString(), entryKey);
-        }
-
-        public IDictionary<string, object> InsertEntry(IDictionary<string, object> entryData, bool resultRequired)
-        {
-            return _client.InsertEntry(_command.ToString(), entryData, resultRequired);
-        }
-
-        public int UpdateEntry(IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
-        {
-            return _client.UpdateEntry(_command.ToString(), entryKey, entryData);
-        }
-
-        public int DeleteEntry(IDictionary<string, object> entryKey)
-        {
-            return _client.DeleteEntry(_command.ToString(), entryKey);
+            return _client.DeleteEntry(_command.CollectionName, _command.KeyValues);
         }
 
         public void LinkEntry(IDictionary<string, object> entryKey, string linkName, IDictionary<string, object> linkedEntryKey)
@@ -195,6 +180,16 @@ namespace Simple.OData.Client
             return _command.Count();
         }
 
+        public IClientWithCommand Set(object value)
+        {
+            return _command.Set(value);
+        }
+
+        public IClientWithCommand Set(IDictionary<string, object> value)
+        {
+            return _command.Set(value);
+        }
+
         public IClientWithCommand Function(string functionName)
         {
             return _command.Function(functionName);
@@ -218,6 +213,11 @@ namespace Simple.OData.Client
         public IDictionary<string, object> FilterAsKey
         {
             get { return _command.FilterAsKey; }
+        }
+
+        public IDictionary<string, object> NewValues
+        {
+            get { return _command.EntryData; }
         }
     }
 }
