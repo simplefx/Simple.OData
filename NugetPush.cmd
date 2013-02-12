@@ -1,3 +1,1 @@
-cd .\%1
-call ..\.nuget\nuget push %1.%2.nupkg %3
-cd ..\
+call .\.nuget\nuget push Packages\Simple.OData.Client.%1.nupkg %2

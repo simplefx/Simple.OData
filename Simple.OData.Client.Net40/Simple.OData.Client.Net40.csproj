@@ -263,9 +263,6 @@
     <None Include="..\Simple.OData.Client.Core\Resources\DataServicesAtomEntryXml.txt">
       <Link>DataServicesAtomEntryXml.txt</Link>
     </None>
-    <None Include="..\Simple.OData.Client.Core\Simple.OData.Client.nuspec">
-      <Link>Simple.OData.Client.nuspec</Link>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\Simple.OData.Client.Core\Properties\Resources.resx">

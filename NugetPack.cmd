@@ -1,3 +1,1 @@
-cd .\%1
-call ..\.nuget\nuget pack -sym %1.csproj -Symbols -Properties Configuration=Release
-cd ..\
+call .\.nuget\nuget pack -sym Simple.OData.Client.nuspec -Symbols -Version %1 -OutputDirectory Packages 

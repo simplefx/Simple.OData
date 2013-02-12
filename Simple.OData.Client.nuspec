@@ -2,8 +2,8 @@
 <package xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <id>Simple.OData.Client</id>
-    <version>$version$</version>
-    <authors>$author$</authors>
+    <authors>Vagif Abilov</authors>
+    <version>0.0.0.0</version>
     <owners>Vagif Abilov</owners>
     <description>Simple.OData.Client is a multiplatform OData client library supporting .NET 4.x, Silverlight 5, Windows Phone 8, Android and iOS. The adapter provides a great alternative to WCF Data Services client. It does not require generation of context or entity classes and fits RESTful nature of OData services.</description>
     <summary>Simple.OData.Client is a multiplatform OData client library supporting .NET 4.x, Silverlight 5, Windows Phone 8, Android and iOS. The adapter provides a great alternative to WCF Data Services client. It does not require generation of context or entity classes and fits RESTful nature of OData services.</summary>
@@ -18,7 +18,6 @@
   </metadata>
   <files>
     <file src="Simple.OData.Client.Net40\bin\Release\Simple.OData.Client.Net40.dll" target="lib\net40\Simple.OData.Client.Net40.dll" />
-    <file src="Simple.OData.Client.Net40\bin\Release\Simple.OData.Client.Net40.dll" target="lib\net45\Simple.OData.Client.Net40.dll" />
-    <file src="Simple.OData.Client.Core\bin\Release\Simple.OData.Client.Core.dll" target="lib\net40+sl5+win8+wp8\Simple.OData.Client.Core.dll" />
+    <file src="Simple.OData.Client.Core\bin\Release\Simple.OData.Client.Core.dll" target="lib\portable-net403+net45+win8+sl5+wp8\Simple.OData.Client.Core.dll" />
   </files>
 </package>
