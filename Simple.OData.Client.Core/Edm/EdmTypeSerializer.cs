@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
-using Simple.NExtLib;
 
 namespace Simple.OData.Client
 {
@@ -277,7 +276,7 @@ namespace Simple.OData.Client
 
         private static Func<string, object> GetReader(string edmType)
         {
-            var func = Func.NoOp<string, object>();
+            var func = new Func<string, object>(x => x);
 
             EdmType.TryParse(edmType).IfGood((et) =>
                 {

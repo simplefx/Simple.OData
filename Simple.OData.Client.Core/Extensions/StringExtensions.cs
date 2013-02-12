@@ -41,6 +41,11 @@ namespace Simple.OData.Client
         {
             _pluralizer = pluralizer ?? new SimplePluralizer();
         }
+
+        public static string EnsureStartsWith(this string source, string value)
+        {
+            return (source == null || source.StartsWith(value)) ? source : value + source;
+        }
     }
 
     class SimplePluralizer : IPluralizer

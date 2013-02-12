@@ -1,7 +1,6 @@
 using System;
 using System.Net;
 using System.Runtime.Serialization;
-using Simple.NExtLib.IO;
 
 namespace Simple.OData.Client
 {
@@ -41,7 +40,7 @@ namespace Simple.OData.Client
             : base(message, inner)
         {
             _code = response.StatusCode.ToString();
-            _response = QuickIO.StreamToString(response.GetResponseStream());
+            _response = Utils.StreamToString(response.GetResponseStream());
         }
 
         public WebRequestException(string message, string code, Exception inner)

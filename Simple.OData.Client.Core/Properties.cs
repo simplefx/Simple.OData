@@ -1,6 +1,4 @@
 ﻿
-using Simple.NExtLib;
-
 namespace Simple.OData.Client
 {
     public static class Properties

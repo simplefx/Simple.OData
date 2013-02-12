@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Xml.Linq;
-using Simple.NExtLib.IO;
 
 namespace Simple.OData.Client
 {
@@ -18,23 +17,23 @@ namespace Simple.OData.Client
 
         public IEnumerable<IDictionary<string, object>> GetData(Stream stream, bool scalarResult = false)
         {
-            return GetData(QuickIO.StreamToString(stream), scalarResult);
+            return GetData(Utils.StreamToString(stream), scalarResult);
         }
 
         public IEnumerable<IDictionary<string, object>> GetData(Stream stream, out int totalCount)
         {
-            var text = QuickIO.StreamToString(stream);
+            var text = Utils.StreamToString(stream);
             return GetData(text, out totalCount);
         }
 
         public EdmSchema GetSchema(Stream stream)
         {
-            return GetSchema(QuickIO.StreamToString(stream));
+            return GetSchema(Utils.StreamToString(stream));
         }
 
         public string GetSchemaAsString(Stream stream)
         {
-            return QuickIO.StreamToString(stream);
+            return Utils.StreamToString(stream);
         }
 
         public IEnumerable<IDictionary<string, object>> GetData(string text, bool scalarResult = false)
@@ -65,7 +64,7 @@ namespace Simple.OData.Client
 
         public IEnumerable<IDictionary<string, object>> GetFunctionResult(Stream stream)
         {
-            var text = QuickIO.StreamToString(stream);
+            var text = Utils.StreamToString(stream);
             var element = XElement.Parse(text);
             bool scalarResult = element.Name.LocalName != "feed";
             if (scalarResult)

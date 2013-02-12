@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using Simple.NExtLib;
 
 namespace Simple.OData.Client
 {

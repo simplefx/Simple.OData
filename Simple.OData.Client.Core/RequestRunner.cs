@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
-using Simple.NExtLib;
-using Simple.NExtLib.IO;
 
 namespace Simple.OData.Client
 {
@@ -64,7 +62,7 @@ namespace Simple.OData.Client
                 var stream = response.GetResponseStream();
                 if (stream != null)
                 {
-                    return QuickIO.StreamToString(stream);
+                    return Utils.StreamToString(stream);
                 }
             }
 

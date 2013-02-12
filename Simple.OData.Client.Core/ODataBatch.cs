@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
-using Simple.NExtLib.IO;
 
 namespace Simple.OData.Client
 {
@@ -53,7 +52,7 @@ namespace Simple.OData.Client
 
         private void ParseResponse(HttpWebResponse response)
         {
-            var content = QuickIO.StreamToString(response.GetResponseStream());
+            var content = Utils.StreamToString(response.GetResponseStream());
             var batchMarker = Regex.Match(content, @"--batchresponse_[a-zA-Z0-9\-]+").Value;
             var batchResponse = content.Split(new string[] { batchMarker }, StringSplitOptions.None)[1];
             var changesetMarker = Regex.Match(batchResponse, @"--changesetresponse_[a-zA-Z0-9\-]+").Value;
