@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.Data.OData.Tests", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.OData.TestUtils", "Simple.OData.TestUtils\Simple.OData.TestUtils.csproj", "{858775EA-ECF6-458E-AD96-CF67CF730395}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.OData.Client.Net40", "..\Simple.OData.Client\Simple.OData.Client.Net40\Simple.OData.Client.Net40.csproj", "{C20A3959-4895-41F8-86E2-7DED294FD904}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,16 @@ Global
 		{858775EA-ECF6-458E-AD96-CF67CF730395}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{858775EA-ECF6-458E-AD96-CF67CF730395}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{858775EA-ECF6-458E-AD96-CF67CF730395}.Release|x86.ActiveCfg = Release|Any CPU
+		{C20A3959-4895-41F8-86E2-7DED294FD904}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C20A3959-4895-41F8-86E2-7DED294FD904}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C20A3959-4895-41F8-86E2-7DED294FD904}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{C20A3959-4895-41F8-86E2-7DED294FD904}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{C20A3959-4895-41F8-86E2-7DED294FD904}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C20A3959-4895-41F8-86E2-7DED294FD904}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C20A3959-4895-41F8-86E2-7DED294FD904}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C20A3959-4895-41F8-86E2-7DED294FD904}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{C20A3959-4895-41F8-86E2-7DED294FD904}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{C20A3959-4895-41F8-86E2-7DED294FD904}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

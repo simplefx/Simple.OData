@@ -106,6 +106,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Simple.OData.Client\Simple.OData.Client.Net40\Simple.OData.Client.Net40.csproj">
+      <Project>{c20a3959-4895-41f8-86e2-7ded294fd904}</Project>
+      <Name>Simple.OData.Client.Net40</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Simple.Data.OData.NorthwindModel\Simple.Data.OData.NorthwindModel.csproj">
       <Project>{2A909E4D-6493-4D36-9FDE-786B89F9A387}</Project>
       <Name>Simple.Data.OData.NorthwindModel</Name>
@@ -113,10 +117,6 @@
     <ProjectReference Include="..\Simple.Data.OData\Simple.Data.OData.csproj">
       <Project>{E6EC2C3A-A7D8-41C3-ADCB-37B44F12B6F8}</Project>
       <Name>Simple.Data.OData</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Simple.OData.Client\Simple.OData.Client.csproj">
-      <Project>{c20a3959-4895-41f8-86e2-7ded294fd904}</Project>
-      <Name>Simple.OData.Client</Name>
     </ProjectReference>
     <ProjectReference Include="..\Simple.OData.TestUtils\Simple.OData.TestUtils.csproj">
       <Project>{858775EA-ECF6-458E-AD96-CF67CF730395}</Project>

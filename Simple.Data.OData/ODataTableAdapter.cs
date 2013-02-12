@@ -191,8 +191,8 @@ namespace Simple.Data.OData
             var baseTable = GetBaseTable(tableName);
             var derivedTable = GetAsDerivedTable(tableName);
             var clientCommand = derivedTable != null
-                ? client.From(baseTable.ActualName).As(derivedTable.ActualName)
-                : client.From(tableName);
+                ? client.For(baseTable.ActualName).As(derivedTable.ActualName)
+                : client.For(tableName);
 
             if (cmd.NamedKeyValues != null && cmd.NamedKeyValues.Count > 0)
                 clientCommand = clientCommand.Key(cmd.NamedKeyValues);
