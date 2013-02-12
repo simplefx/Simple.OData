@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 
-namespace Simple.OData.Client
+namespace Simple.OData.Client.Extensions
 {
     static class HomogenizeEx
     {

@@ -52,8 +52,20 @@
     <Compile Include="Edm\EdmType.cs" />
     <Compile Include="Edm\EdmTypeSerializer.cs" />
     <Compile Include="EntryMembers.cs" />
+    <Compile Include="Extensions\DateTimeExtensions.cs" />
+    <Compile Include="Extensions\EnumerableExtensions.cs" />
+    <Compile Include="Extensions\EnumerableOfKeyValuePairExtensions.cs" />
     <Compile Include="Extensions\HomogenizeEx.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Extensions\TupleEnumerableExtensions.cs" />
+    <Compile Include="Extensions\TupleExtensions.cs" />
+    <Compile Include="Extensions\WebRequestExtensions.cs" />
+    <Compile Include="Extensions\WebResponseExtensions.cs" />
+    <Compile Include="Extensions\XAttributeExtensions.cs" />
+    <Compile Include="Extensions\XElementAsDictionaryExtension.cs" />
+    <Compile Include="Extensions\XElementExtensions.cs" />
+    <Compile Include="Extensions\XmlAttributesAsDictionary.cs" />
+    <Compile Include="Extensions\XmlElementAsDictionary.cs" />
     <Compile Include="Filter\ExpressionContext.cs" />
     <Compile Include="Filter\ExpressionFunction.cs" />
     <Compile Include="Filter\ExpressionOperator.cs" />
@@ -94,6 +106,7 @@
     <Compile Include="Schema\TableCollection.cs" />
     <Compile Include="SimpleDictionary.cs" />
     <Compile Include="UnresolvableObjectException.cs" />
+    <Compile Include="Utils.cs" />
     <Compile Include="ValueFormatter.cs" />
     <Compile Include="WebRequestException.cs" />
   </ItemGroup>
@@ -104,12 +117,6 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Simple.NExtLib.Core\Simple.NExtLib.Core.csproj">
-      <Project>{37cb8d2a-2eb8-4e91-99ca-1ba1b93e178b}</Project>
-      <Name>Simple.NExtLib.Core</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Threading.Tasks">

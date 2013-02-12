@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace Simple.OData.Client
+namespace Simple.OData.Client.Extensions
 {
     static class StringExtensions
     {

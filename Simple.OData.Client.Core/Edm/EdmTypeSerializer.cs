@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
+using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {

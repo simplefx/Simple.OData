@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Text;
+using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Simple.OData.Client
+namespace Simple.OData.Client.Extensions
 {
     public static class DateTimeExtensions
     {

@@ -6,7 +6,7 @@ using System.Xml.Linq;
 using System.IO;
 using System.Xml;
 
-namespace Simple.OData.Client
+namespace Simple.OData.Client.Extensions
 {
     public static class WebResponseExtensions
     {

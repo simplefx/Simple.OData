@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Xml.Linq;
 using System.IO;
 
-namespace Simple.OData.Client
+namespace Simple.OData.Client.Extensions
 {
     public class XmlElementAsDictionary
     {

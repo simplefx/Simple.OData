@@ -63,6 +63,42 @@
     <Compile Include="..\Simple.OData.Client.Core\EntryMembers.cs">
       <Link>EntryMembers.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Extensions\DateTimeExtensions.cs">
+      <Link>Extensions\DateTimeExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Extensions\EnumerableExtensions.cs">
+      <Link>Extensions\EnumerableExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Extensions\EnumerableOfKeyValuePairExtensions.cs">
+      <Link>Extensions\EnumerableOfKeyValuePairExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Extensions\TupleEnumerableExtensions.cs">
+      <Link>Extensions\TupleEnumerableExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Extensions\TupleExtensions.cs">
+      <Link>Extensions\TupleExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Extensions\WebRequestExtensions.cs">
+      <Link>Extensions\WebRequestExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Extensions\WebResponseExtensions.cs">
+      <Link>Extensions\WebResponseExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Extensions\XAttributeExtensions.cs">
+      <Link>Extensions\XAttributeExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Extensions\XElementAsDictionaryExtension.cs">
+      <Link>Extensions\XElementAsDictionaryExtension.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Extensions\XElementExtensions.cs">
+      <Link>Extensions\XElementExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Extensions\XmlAttributesAsDictionary.cs">
+      <Link>Extensions\XmlAttributesAsDictionary.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Extensions\XmlElementAsDictionary.cs">
+      <Link>Extensions\XmlElementAsDictionary.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Filter\ExpressionContext.cs">
       <Link>Filter\ExpressionContext.cs</Link>
     </Compile>
@@ -143,6 +179,9 @@
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\SimpleDictionary.cs">
       <Link>SimpleDictionary.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Utils.cs">
+      <Link>Utils.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ValueFormatter.cs">
       <Link>ValueFormatter.cs</Link>
@@ -227,12 +266,6 @@
     <None Include="..\Simple.OData.Client.Core\Simple.OData.Client.nuspec">
       <Link>Simple.OData.Client.nuspec</Link>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Simple.NExtLib.Net40\Simple.NExtLib.Net40.csproj">
-      <Project>{4A191FAD-DC1D-46FC-A941-7DEB2C8C4C15}</Project>
-      <Name>Simple.NExtLib.Net40</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\Simple.OData.Client.Core\Properties\Resources.resx">

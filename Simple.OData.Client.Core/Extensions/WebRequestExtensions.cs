@@ -6,7 +6,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Simple.OData.Client
+namespace Simple.OData.Client.Extensions
 {
     public static class WebRequestExtensions
     {
