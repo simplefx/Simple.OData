@@ -72,22 +72,38 @@ namespace Simple.OData.Client
 
         public int UpdateEntry()
         {
-            return _client.UpdateEntry(_command.CollectionName, _command.KeyValues, _command.EntryData);
+            if (_command.HasFilter)
+                return UpdateEntries();
+            else
+                return _client.UpdateEntry(_command.CollectionName, _command.KeyValues, _command.EntryData);
+        }
+
+        public int UpdateEntries()
+        {
+            return _client.UpdateEntries(_command.CollectionName, _command.ToString(), _command.EntryData);
         }
 
         public int DeleteEntry()
         {
-            return _client.DeleteEntry(_command.CollectionName, _command.KeyValues);
+            if (_command.HasFilter)
+                return DeleteEntries();
+            else
+                return _client.DeleteEntry(_command.CollectionName, _command.KeyValues);
         }
 
-        public void LinkEntry(IDictionary<string, object> entryKey, string linkName, IDictionary<string, object> linkedEntryKey)
+        public int DeleteEntries()
         {
-            _client.LinkEntry(_command.ToString(), entryKey, linkName, linkedEntryKey);
+            return _client.DeleteEntries(_command.CollectionName, _command.ToString());
         }
 
-        public void UnlinkEntry(IDictionary<string, object> entryKey, string linkName)
+        public void LinkEntry(string linkName, IDictionary<string, object> linkedEntryKey)
         {
-            _client.UnlinkEntry(_command.ToString(), entryKey, linkName);
+            _client.LinkEntry(_command.CollectionName, _command.KeyValues, linkName, linkedEntryKey);
+        }
+
+        public void UnlinkEntry(string linkName)
+        {
+            _client.UnlinkEntry(_command.CollectionName, _command.KeyValues, linkName);
         }
 
         public IEnumerable<IEnumerable<IEnumerable<KeyValuePair<string, object>>>> ExecuteFunction(string functionName, IDictionary<string, object> parameters)

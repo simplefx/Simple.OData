@@ -54,7 +54,7 @@ namespace Simple.OData.Client.Tests
             var category = _client
                 .For("Categories")
                 .Set(new { CategoryName = "Test3" })
-                .InsertEntry(true);
+                .InsertEntry();
             var product = _client
                 .For("Products")
                 .Set(new { ProductName = "Test4", UnitPrice = 18m, CategoryID = category["CategoryID"] })

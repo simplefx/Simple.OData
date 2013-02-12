@@ -12,9 +12,11 @@ namespace Simple.OData.Client
         object FindScalar();
         IDictionary<string, object> InsertEntry(bool resultRequired = true);
         int UpdateEntry();
+        int UpdateEntries();
         int DeleteEntry();
-        void LinkEntry(IDictionary<string, object> entryKey, string linkName, IDictionary<string, object> linkedEntryKey);
-        void UnlinkEntry(IDictionary<string, object> entryKey, string linkName);
+        int DeleteEntries();
+        void LinkEntry(string linkName, IDictionary<string, object> linkedEntryKey);
+        void UnlinkEntry(string linkName);
         IEnumerable<IEnumerable<IEnumerable<KeyValuePair<string, object>>>> ExecuteFunction(string functionName, IDictionary<string, object> parameters);
     }
 }

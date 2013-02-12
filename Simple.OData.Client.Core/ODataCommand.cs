@@ -261,7 +261,17 @@ namespace Simple.OData.Client
 
         internal string CollectionName
         {
-            get { return _collectionName; }
+            get { return _client.Schema.FindTable(_collectionName).ActualName; }
+        }
+
+        internal bool HasKey
+        {
+            get { return _keyValues != null && _keyValues.Count > 0 || _namedKeyValues != null && _namedKeyValues.Count > 0; }
+        }
+
+        internal bool HasFilter
+        {
+            get { return !string.IsNullOrEmpty(_filter); }
         }
 
         internal IDictionary<string, object> KeyValues
@@ -308,7 +318,7 @@ namespace Simple.OData.Client
             }
             else if (!string.IsNullOrEmpty(_linkName))
             {
-                commandText += _parent.ToString() + "/";
+                commandText += _parent + "/";
                 commandText += _parent.Table.FindAssociation(_linkName).ActualName;
             }
             else if (!string.IsNullOrEmpty(_functionName))
@@ -316,19 +326,27 @@ namespace Simple.OData.Client
                 commandText += _client.Schema.FindFunction(_functionName).ActualName;
             }
 
-            var extraClauses = new List<string>();
-            var aggregateClauses = new List<string>();
-
-            if (_namedKeyValues != null && _namedKeyValues.Count > 0 && !string.IsNullOrEmpty(_filter))
+            if (HasKey && HasFilter)
                 throw new InvalidOperationException("Filter may not be set when key is assigned");
 
             if (HasKey)
                 commandText += FormatKey();
 
+            commandText += FormatClauses();
+
+            return commandText;
+        }
+
+        private string FormatClauses()
+        {
+            var text = string.Empty;
+            var extraClauses = new List<string>();
+            var aggregateClauses = new List<string>();
+
             if (_parameters.Any())
                 extraClauses.Add(new ValueFormatter().Format(_parameters, "&"));
 
-            if (!string.IsNullOrEmpty(_filter))
+            if (HasFilter)
                 extraClauses.Add(string.Format("{0}={1}", FilterLiteral, Uri.EscapeDataString(_filter)));
 
             if (_skipCount >= 0)
@@ -353,12 +371,12 @@ namespace Simple.OData.Client
                 aggregateClauses.Add(CountLiteral);
 
             if (aggregateClauses.Any())
-                commandText += "/" + string.Join("/", aggregateClauses);
+                text += "/" + string.Join("/", aggregateClauses);
 
             if (extraClauses.Any())
-                commandText += "?" + string.Join("&", extraClauses);
+                text += "?" + string.Join("&", extraClauses);
 
-            return commandText;
+            return text;
         }
 
         private string FormatExpandItem(string item)
@@ -386,11 +404,6 @@ namespace Simple.OData.Client
                 valueFormatter.Format(namedKeyValues.Values) :
                 valueFormatter.Format(namedKeyValues);
             return "(" + formattedKeyValues + ")";
-        }
-
-        private bool HasKey
-        {
-            get { return _keyValues != null && _keyValues.Count > 0 || _namedKeyValues != null && _namedKeyValues.Count > 0; }
         }
 
         private IDictionary<string, object> TryInterpretFilterExpressionAsKey(FilterExpression expression)
