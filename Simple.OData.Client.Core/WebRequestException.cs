@@ -5,7 +5,7 @@ using Simple.NExtLib.IO;
 
 namespace Simple.OData.Client
 {
-#if (NET20 || NET35 || NET40)
+#if NET40
     [Serializable]
 #endif
     public class WebRequestException : Exception
@@ -55,7 +55,7 @@ namespace Simple.OData.Client
         {
         }
 
-#if (NET20 || NET35 || NET40)
+#if NET40
         protected WebRequestException(
             SerializationInfo info,
             StreamingContext context) : base(info, context)

@@ -1,4 +1,4 @@
-﻿#if (NET20 || NET35 || NET40)
+﻿#if NET40
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 #else
@@ -9,7 +9,7 @@ using System.Collections.Generic;
 namespace Simple.OData.Client
 {
     internal class SimpleDictionary<TKey, TValue> :
-#if (NET20 || NET35 || NET40)
+#if NET40
         ConcurrentDictionary<TKey, TValue>
 #else
         Dictionary<TKey, TValue>
@@ -24,7 +24,7 @@ namespace Simple.OData.Client
         {
         }
 
-#if !(NET20 || NET35 || NET40)
+#if !NET40
         public TValue GetOrAdd(TKey key, TValue value)
         {
             TValue storedValue;

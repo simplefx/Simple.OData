@@ -10,7 +10,7 @@ namespace Simple.NExtLib
 {
     public static class WebRequestExtensions
     {
-#if (NET20 || NET35 || NET40)
+#if NET40
         public static void SetContent(this WebRequest request, string content)
         {
             request.ContentLength = content.Length;
