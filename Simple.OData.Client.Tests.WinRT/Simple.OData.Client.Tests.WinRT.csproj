@@ -119,11 +119,53 @@
     <Compile Include="..\CommonAssemblyVersion.cs">
       <Link>Properties\CommonAssemblyVersion.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.TestUtils.Net40\ContainTest.cs">
+      <Link>ContainTest.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.TestUtils.Net40\EqualTest.cs">
+      <Link>EqualTest.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.TestUtils.Net40\GenericBinaryTest.cs">
+      <Link>GenericBinaryTest.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.TestUtils.Net40\IBinaryTest.cs">
+      <Link>IBinaryTest.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.TestUtils.Net40\IEnumerableTest.cs">
+      <Link>IEnumerableTest.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.TestUtils.Net40\ShouldExtensions.cs">
+      <Link>ShouldExtensions.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\BatchTests.cs">
       <Link>BatchTests.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\DeleteTests.cs">
       <Link>DeleteTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\Extensions\DateTimeExtensionsTests.cs">
+      <Link>Extensions\DateTimeExtensionsTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\Extensions\EnumerableExtensionTests.cs">
+      <Link>Extensions\EnumerableExtensionTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\Extensions\StringExtensionTests.cs">
+      <Link>Extensions\StringExtensionTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\Extensions\XElementExtensionsTests.cs">
+      <Link>Extensions\XElementExtensionsTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\Extensions\XmlAttributesAsDictionaryReadTests.cs">
+      <Link>Extensions\XmlAttributesAsDictionaryReadTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\Extensions\XmlAttributesAsDictionaryWriteTests.cs">
+      <Link>Extensions\XmlAttributesAsDictionaryWriteTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\Extensions\XmlElementAsDictionaryReadTests.cs">
+      <Link>Extensions\XmlElementAsDictionaryReadTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\Extensions\XmlElementAsDictionaryWriteTests.cs">
+      <Link>Extensions\XmlElementAsDictionaryWriteTests.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\FilterExpressionTests.cs">
       <Link>FilterExpressionTests.cs</Link>
@@ -158,6 +200,8 @@
     <Compile Include="..\Simple.OData.Client.Tests.Net40\UpdateTests.cs">
       <Link>UpdateTests.cs</Link>
     </Compile>
+    <Compile Include="Properties.cs" />
+    <Compile Include="ResourceLoader.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -180,6 +224,18 @@
     </Content>
     <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\Twitter.edmx">
       <Link>Resources\Twitter.edmx</Link>
+    </Content>
+    <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\TwitterStatusesSample.txt">
+      <Link>Resources\TwitterStatusesSample.txt</Link>
+    </Content>
+    <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\XmlWithDefaultNamespace.txt">
+      <Link>Resources\XmlWithDefaultNamespace.txt</Link>
+    </Content>
+    <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\XmlWithNoNamespace.txt">
+      <Link>Resources\XmlWithNoNamespace.txt</Link>
+    </Content>
+    <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\XmlWithPrefixedNamespace.txt">
+      <Link>Resources\XmlWithPrefixedNamespace.txt</Link>
     </Content>
     <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\YouTube.edmx">
       <Link>Resources\YouTube.edmx</Link>
@@ -238,10 +294,6 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Simple.NExtLib.WinRT\Simple.NExtLib.WinRT.csproj">
-      <Project>{bc986348-5913-4d56-a808-73f96a8ae289}</Project>
-      <Name>Simple.NExtLib.WinRT</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Simple.OData.Client.Core\Simple.OData.Client.Core.csproj">
       <Project>{361868b8-a63e-4c74-aa87-b70e1ab22313}</Project>
       <Name>Simple.OData.Client.Core</Name>

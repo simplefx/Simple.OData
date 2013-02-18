@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 # if !NETFX_CORE
+using Simple.OData.Client.TestUtils;
 using Simple.OData.NorthwindModel;
-using Simple.OData.TestUtils;
 #endif
 
 namespace Simple.OData.Client.Tests

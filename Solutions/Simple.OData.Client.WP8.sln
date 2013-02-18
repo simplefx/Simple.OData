@@ -9,8 +9,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		..\CommonAssemblyVersion.cs = ..\CommonAssemblyVersion.cs
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.NExtLib.Core", "..\Simple.NExtLib.Core\Simple.NExtLib.Core.csproj", "{37CB8D2A-2EB8-4E91-99CA-1BA1B93E178B}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.OData.NorthwindModel", "..\Simple.OData.NorthwindModel\Simple.OData.NorthwindModel.csproj", "{2A909E4D-6493-4D36-9FDE-786B89F9A387}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.OData.NorthwindService", "..\Simple.OData.NorthwindService\Simple.OData.NorthwindService.csproj", "{14436AD5-8995-406A-8468-F0B4DE53DFDB}"
@@ -27,14 +25,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{37CB8D2A-2EB8-4E91-99CA-1BA1B93E178B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{37CB8D2A-2EB8-4E91-99CA-1BA1B93E178B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{37CB8D2A-2EB8-4E91-99CA-1BA1B93E178B}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{37CB8D2A-2EB8-4E91-99CA-1BA1B93E178B}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{37CB8D2A-2EB8-4E91-99CA-1BA1B93E178B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{37CB8D2A-2EB8-4E91-99CA-1BA1B93E178B}.Release|Any CPU.Build.0 = Release|Any CPU
-		{37CB8D2A-2EB8-4E91-99CA-1BA1B93E178B}.Release|ARM.ActiveCfg = Release|Any CPU
-		{37CB8D2A-2EB8-4E91-99CA-1BA1B93E178B}.Release|x86.ActiveCfg = Release|Any CPU
 		{2A909E4D-6493-4D36-9FDE-786B89F9A387}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2A909E4D-6493-4D36-9FDE-786B89F9A387}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2A909E4D-6493-4D36-9FDE-786B89F9A387}.Debug|ARM.ActiveCfg = Debug|Any CPU
