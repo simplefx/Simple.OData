@@ -23,7 +23,7 @@
   </metadata>
   <files>
     <file src="Simple.OData.Client.Net40\bin\Release\Simple.OData.Client.Net40.dll" target="lib\net40\Simple.OData.Client.Net40.dll" />
-    <file src="Simple.OData.Client.Core\bin\Release\Simple.OData.Client.Core.dll" target="lib\portable-net403+net45+win8+sl5+wp8\Simple.OData.Client.Core.dll" />
-    <file src="Simple.OData.Client.Core\bin\Release\Microsoft.Threading.Tasks.Extensions.dll" target="lib\portable-net403+net45+win8+sl5+wp8\Microsoft.Threading.Tasks.Extensions.dll" />
+    <file src="Simple.OData.Client.Core\bin\Release\Simple.OData.Client.Core.dll" target="lib\portable-net403+win8+sl5+wp8\Simple.OData.Client.Core.dll" />
+    <file src="Simple.OData.Client.Core\bin\Release\Microsoft.Threading.Tasks.Extensions.dll" target="lib\portable-net403+win8+sl5+wp8\Microsoft.Threading.Tasks.Extensions.dll" />
   </files>
 </package>
