@@ -27,21 +27,31 @@ namespace Simple.OData.Client
 #if !NET40
         public TValue GetOrAdd(TKey key, TValue value)
         {
-            TValue storedValue;
-            if (base.TryGetValue(key, out storedValue))
-                value = storedValue;
-            else
-                base.Add(key, value);
-            return value;
+            return GetOrAdd(key, x => value);
         }
 
         public TValue GetOrAdd(TKey key, Func<TKey, TValue> valueFactory)
         {
             TValue value;
-            if (!base.TryGetValue(key, out value))
+            TValue storedValue;
+            if (base.TryGetValue(key, out storedValue))
             {
-                value = valueFactory(key);
-                base.Add(key, value);
+                value = storedValue;
+            }
+            else
+            {
+                lock (this)
+                {
+                    if (base.TryGetValue(key, out storedValue))
+                    {
+                        value = storedValue;
+                    }
+                    else
+                    {
+                        value = valueFactory(key);
+                        base.Add(key, value);
+                    }
+                }
             }
             return value;
         }
