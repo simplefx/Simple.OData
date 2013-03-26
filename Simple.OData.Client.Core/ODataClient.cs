@@ -8,7 +8,7 @@ using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
-    public class ODataClient
+    public partial class ODataClient
     {
         private readonly ODataClientSettings _settings;
         private readonly ISchema _schema;

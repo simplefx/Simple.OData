@@ -20,7 +20,7 @@ namespace Simple.OData.Client
             totalCount = 0;
             try
             {
-                using (var response = TryRequest(command.Request))
+                using (var response = ExecuteRequest(command.Request))
                 {
                     IEnumerable<IDictionary<string, object>> result = null;
                     if (response.StatusCode != HttpStatusCode.OK)
@@ -52,7 +52,7 @@ namespace Simple.OData.Client
         {
             try
             {
-                var text = Request(command.Request);
+                var text = ExecuteRequestAndGetResponse(command.Request);
                 return _feedReader.GetData(text).First();
             }
             catch (WebRequestException ex)
@@ -66,7 +66,7 @@ namespace Simple.OData.Client
 
         public override IDictionary<string, object> InsertEntry(HttpCommand command, bool resultRequired = true)
         {
-            var text = Request(command.Request);
+            var text = ExecuteRequestAndGetResponse(command.Request);
             if (resultRequired)
             {
                 return _feedReader.GetData(text).First();
@@ -79,7 +79,7 @@ namespace Simple.OData.Client
 
         public override int UpdateEntry(HttpCommand command)
         {
-            using (var response = TryRequest(command.Request))
+            using (var response = ExecuteRequest(command.Request))
             {
                 // TODO
                 return response.StatusCode == HttpStatusCode.OK ? 1 : 0;
@@ -88,7 +88,7 @@ namespace Simple.OData.Client
 
         public override int DeleteEntry(HttpCommand command)
         {
-            using (var response = TryRequest(command.Request))
+            using (var response = ExecuteRequest(command.Request))
             {
                 // TODO: check response code
                 return response.StatusCode == HttpStatusCode.OK ? 1 : 0;
@@ -97,7 +97,7 @@ namespace Simple.OData.Client
 
         public override IEnumerable<IEnumerable<IEnumerable<KeyValuePair<string, object>>>> ExecuteFunction(HttpCommand command)
         {
-            using (var response = TryRequest(command.Request))
+            using (var response = ExecuteRequest(command.Request))
             {
                 IEnumerable<IEnumerable<IEnumerable<KeyValuePair<string, object>>>> result = null;
                 if (response.StatusCode != HttpStatusCode.OK)

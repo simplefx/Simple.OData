@@ -116,6 +116,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <Compile Include="ODataClient.Async.cs" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

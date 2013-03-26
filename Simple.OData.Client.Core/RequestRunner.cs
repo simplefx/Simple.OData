@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Threading.Tasks;
 using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
@@ -10,22 +11,14 @@ namespace Simple.OData.Client
         public Action<HttpWebRequest> BeforeRequest { get; set; }
         public Action<HttpWebResponse> AfterResponse { get; set; }
 
-        public string Request(HttpWebRequest request)
-        {
-            using (var response = TryRequest(request))
-            {
-                return TryGetResponseBody(response);
-            }
-        }
-
-        public HttpWebResponse TryRequest(HttpWebRequest request)
+        public HttpWebResponse ExecuteRequest(HttpWebRequest request)
         {
             try
             {
                 if (this.BeforeRequest != null)
                     this.BeforeRequest(request);
 
-                var response = (HttpWebResponse)request.GetResponse();
+                var response = (HttpWebResponse)request.GetResponseAsync().Result;
 
                 if (this.AfterResponse != null)
                     this.AfterResponse(response);
@@ -56,18 +49,21 @@ namespace Simple.OData.Client
         public abstract int DeleteEntry(HttpCommand command);
         public abstract IEnumerable<IEnumerable<IEnumerable<KeyValuePair<string, object>>>> ExecuteFunction(HttpCommand command);
 
-        private static string TryGetResponseBody(HttpWebResponse response)
+        protected string ExecuteRequestAndGetResponse(HttpWebRequest request)
         {
-            if (response != null)
+            using (var response = ExecuteRequest(request))
             {
-                var stream = response.GetResponseStream();
-                if (stream != null)
+                if (response != null)
                 {
-                    return Utils.StreamToString(stream);
+                    var stream = response.GetResponseStream();
+                    if (stream != null)
+                    {
+                        return Utils.StreamToString(stream);
+                    }
                 }
-            }
 
-            return String.Empty;
+                return String.Empty;
+            }
         }
     }
 }

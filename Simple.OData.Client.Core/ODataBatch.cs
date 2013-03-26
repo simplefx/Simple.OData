@@ -37,7 +37,7 @@ namespace Simple.OData.Client
         public void Complete()
         {
             this.RequestBuilder.EndBatch();
-            using (var response = this.RequestRunner.TryRequest(this.RequestBuilder.Request))
+            using (var response = this.RequestRunner.ExecuteRequest(this.RequestBuilder.Request))
             {
                 ParseResponse(response);
             }
