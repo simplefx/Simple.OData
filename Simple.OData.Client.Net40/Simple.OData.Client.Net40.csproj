@@ -126,8 +126,17 @@
     <Compile Include="..\Simple.OData.Client.Core\ICommand.cs">
       <Link>ICommand.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ODataClient.Async.cs">
+      <Link>ODataClient.Async.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ODataClient.Sync.cs">
+      <Link>ODataClient.Sync.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ODataClientSettings.cs">
       <Link>ODataClientSettings.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ODataClientWithCommand.Async.cs">
+      <Link>ODataClientWithCommand.Async.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ODataClientWithCommand.cs">
       <Link>ODataClientWithCommand.cs</Link>
@@ -155,6 +164,9 @@
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ODataBatch.cs">
       <Link>ODataBatch.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ODataClientWithCommand.Sync.cs">
+      <Link>ODataClientWithCommand.Sync.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ODataCommand.cs">
       <Link>ODataCommand.cs</Link>

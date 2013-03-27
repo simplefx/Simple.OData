@@ -117,6 +117,9 @@
   <ItemGroup>
     <None Include="app.config" />
     <Compile Include="ODataClient.Async.cs" />
+    <Compile Include="ODataClient.Sync.cs" />
+    <Compile Include="ODataClientWithCommand.Sync.cs" />
+    <Compile Include="ODataClientWithCommand.Async.cs" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

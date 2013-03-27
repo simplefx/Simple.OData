@@ -16,7 +16,7 @@ namespace Simple.OData.Client
             return Task.Factory.StartNew(() => this.FindEntries(commandText, scalarResult));
         }
 
-        public Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> FindEntriesWithTotalCountAsync(string commandText)
+        public Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> FindEntriesWithCountAsync(string commandText)
         {
             return Task.Factory.StartNew(() =>
                 {
@@ -26,7 +26,7 @@ namespace Simple.OData.Client
                 });
         }
 
-        public Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> FindEntriesWithTotalCountAsync(string commandText, bool scalarResult)
+        public Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> FindEntriesWithCountAsync(string commandText, bool scalarResult)
         {
             return Task.Factory.StartNew(() =>
             {
