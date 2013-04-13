@@ -134,6 +134,62 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void EqualLong()
+        {
+            var x = ODataFilter.Expression;
+            var filter = x.CategoryID == 1L;
+            Assert.Equal("CategoryID eq 1", filter.ToString());
+        }
+
+        [Fact]
+        public void EqualDecimal()
+        {
+            var x = ODataFilter.Expression;
+            var filter = x.Total == 1M;
+            Assert.Equal("Total eq 1.00M", filter.ToString());
+        }
+
+        [Fact]
+        public void EqualDecimalWithFractionalPart()
+        {
+            var x = ODataFilter.Expression;
+            var filter = x.Total == 1.23M;
+            Assert.Equal("Total eq 1.23M", filter.ToString());
+        }
+
+        [Fact]
+        public void EqualGuid()
+        {
+            var x = ODataFilter.Expression;
+            var filter = x.CategoryID == Guid.Empty;
+            Assert.Equal("CategoryID eq guid'00000000-0000-0000-0000-000000000000'", filter.ToString());
+        }
+
+        [Fact]
+        public void EqualDateTime()
+        {
+            var x = ODataFilter.Expression;
+            var filter = x.Updated == new DateTime(2013, 1, 1);
+            Assert.Equal("Updated eq datetime'2013-01-01T00:00:00.0000000Z'", filter.ToString());
+        }
+
+        [Fact]
+        public void EqualDateTimeOffset()
+        {
+            var x = ODataFilter.Expression;
+            var filter = x.Updated == new DateTimeOffset(new DateTime(2013, 1, 1));
+            Assert.Equal("Updated eq datetimeoffset'2013-01-01T00:00:00.0000000Z'", filter.ToString());
+        }
+
+        [Fact]
+        public void EqualTimeSpan()
+        {
+            var x = ODataFilter.Expression;
+            var filter = x.Updated == new TimeSpan(1, 2, 3);
+            Assert.Equal("Updated eq time'01:02:03'", filter.ToString());
+        }
+
+        [Fact]
         public void LengthOfStringEqual()
         {
             var x = ODataFilter.Expression;

@@ -16,14 +16,16 @@
     <dependencies>
       <group targetFramework="net40">
       </group>
-      <!--group targetFramework="portable-net403+win8+sl5+wp8">
+      <group targetFramework="portable-net403+win8+sl5+wp8">
         <dependency id="Microsoft.Bcl.Async" version="1.0.14-rc" />
-      </group-->
+      </group>
+      <group targetFramework="portable-win+net45+MonoAndroid16+sl50+MonoTouch10+wp80">
+      </group>
     </dependencies>
   </metadata>
   <files>
     <file src="Simple.OData.Client.Net40\bin\Release\Simple.OData.Client.Net40.dll" target="lib\net40\Simple.OData.Client.Net40.dll" />
-    <!--file src="Simple.OData.Client.Core\bin\Release\Simple.OData.Client.Core.dll" target="lib\portable-net403+win8+sl5+wp8\Simple.OData.Client.Core.dll" />
-    <file src="Simple.OData.Client.Core\bin\Release\Microsoft.Threading.Tasks.Extensions.dll" target="lib\portable-net403+win8+sl5+wp8\Microsoft.Threading.Tasks.Extensions.dll" /-->
+    <file src="Simple.OData.Client.Core\bin\Release\Simple.OData.Client.Core.dll" target="lib\portable-net403+win8+sl5+wp8+MonoAndroid16+MonoTouch10\Simple.OData.Client.Core.dll" />
+    <file src="Simple.OData.Client.Core\bin\Release\Microsoft.Threading.Tasks.Extensions.dll" target="lib\portable-net403+win8+sl5+wp8\Microsoft.Threading.Tasks.Extensions.dll" />
   </files>
 </package>

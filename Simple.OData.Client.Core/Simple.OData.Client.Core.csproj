@@ -53,12 +53,16 @@
     <Compile Include="Edm\EdmTypeSerializer.cs" />
     <Compile Include="EntryMembers.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
+    <Compile Include="Extensions\DecimalExtensions.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\EnumerableOfKeyValuePairExtensions.cs" />
+    <Compile Include="Extensions\GuidExtensions.cs" />
     <Compile Include="Extensions\HomogenizeEx.cs" />
+    <Compile Include="Extensions\LongExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\TupleEnumerableExtensions.cs" />
     <Compile Include="Extensions\TupleExtensions.cs" />
+    <Compile Include="Extensions\ULongExtensions.cs" />
     <Compile Include="Extensions\WebRequestExtensions.cs" />
     <Compile Include="Extensions\WebResponseExtensions.cs" />
     <Compile Include="Extensions\XAttributeExtensions.cs" />

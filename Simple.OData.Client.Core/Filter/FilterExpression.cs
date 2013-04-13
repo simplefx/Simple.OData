@@ -49,6 +49,21 @@ namespace Simple.OData.Client
             return expression;
         }
 
+        public string Reference
+        {
+            get { return _reference; }
+        }
+
+        public object Value
+        {
+            get { return _value; }
+        }
+
+        public ExpressionFunction Function
+        {
+            get { return _function; }
+        }
+
         public override bool TryGetMember(GetMemberBinder binder, out object result)
         {
             FunctionMapping mapping;

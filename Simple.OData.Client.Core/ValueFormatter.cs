@@ -8,7 +8,7 @@ namespace Simple.OData.Client
 {
     internal class ValueFormatter
     {
-        enum FormattingStyle
+        public enum FormattingStyle
         {
             QueryString,
             Content
@@ -40,7 +40,7 @@ namespace Simple.OData.Client
 
         public string FormatExpressionValue(object value, ExpressionContext context)
         {
-            return FormatValue(value, FormattingStyle.Content, context);
+            return FormatValue(value, FormattingStyle.QueryString, context);
         }
 
         private string FormatValue(object value, FormattingStyle formattingStyle, ExpressionContext context)
@@ -48,12 +48,16 @@ namespace Simple.OData.Client
             return value == null ? "null"
                 : value is FilterExpression ? (value as FilterExpression).Format(context)
                 : value is string ? string.Format("'{0}'", value)
-                : value is DateTime ? ((DateTime)value).ToIso8601String()
+                : value is DateTime ? ((DateTime)value).ToODataString(formattingStyle)
+                : value is DateTimeOffset ? ((DateTimeOffset)value).ToODataString(formattingStyle)
+                : value is TimeSpan ? ((TimeSpan)value).ToODataString(formattingStyle)
+                : value is Guid ? ((Guid)value).ToODataString(formattingStyle)
                 : value is bool ? value.ToString().ToLower()
-                : (value is long || value is ulong) ? value + (formattingStyle == FormattingStyle.Content ? "L" : string.Empty)
+                : value is long ? ((long)value).ToODataString(formattingStyle)
+                : value is ulong ? ((ulong)value).ToODataString(formattingStyle)
                 : value is float ? ((float)value).ToString(CultureInfo.InvariantCulture)
                 : value is double ? ((double)value).ToString(CultureInfo.InvariantCulture)
-                : value is decimal ? ((decimal)value).ToString(CultureInfo.InvariantCulture)
+                : value is decimal ? ((decimal)value).ToODataString(formattingStyle)
                 : value.ToString();
         }
     }
