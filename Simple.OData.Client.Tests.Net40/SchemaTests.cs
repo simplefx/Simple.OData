@@ -154,7 +154,7 @@ namespace Simple.OData.Client.Tests
             Assert.Equal("Courses", association.ReferenceTableName);
             Assert.Equal("*", association.Multiplicity);
 
-            Assert.Equal(8, client.Schema.EntityTypes.Count());
+            Assert.Equal(5, client.Schema.EntityTypes.Count());
             Assert.Equal(0, client.Schema.ComplexTypes.Count());
         }
 
