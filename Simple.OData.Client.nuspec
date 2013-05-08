@@ -14,29 +14,24 @@
     <language>en-us</language>
     <tags>odata data rest client portable pcl net40 net45 silverlight windows8 winrt win8 wp8</tags>
     <dependencies>
-      <group targetFramework="net40">
-      </group>
-      <group targetFramework="portable-net403+win8+sl5+wp8">
-        <dependency id="Microsoft.Bcl.Async" version="1.0.16" />
-      </group>
     </dependencies>
   </metadata>
   <files>
     <!-- PCL -->
     <file src="Simple.OData.Client.Core\bin\Release\Simple.OData.Client.Core.dll" target="lib\portable-net403+win8+sl5+wp8+MonoAndroid16+MonoTouch40\Simple.OData.Client.Core.dll" />
-    <file src="Simple.OData.Client.Core\bin\Release\Microsoft.Threading.Tasks.Extensions.dll" target="lib\portable-net403+win8+sl5+wp8+MonoAndroid16+MonoTouch40\Microsoft.Threading.Tasks.Extensions.dll" />
 
     <!-- NET40 -->
     <file src="Simple.OData.Client.Net40\bin\Release\Simple.OData.Client.Net40.dll" target="lib\net40\Simple.OData.Client.Net40.dll" />
 
+    <!-- SL5 -->
+    <file src="Simple.OData.Client.SL5\bin\Release\Simple.OData.Client.SL5.dll" target="lib\sl5\Simple.OData.Client.SL5.dll" />
+
     <!-- Droid -->
     <file src="Simple.OData.Client.Core\bin\Release\Simple.OData.Client.Core.dll" target="lib\MonoAndroid16\Simple.OData.Client.Core.dll" />
-    <file src="Simple.OData.Client.Core\bin\Release\Microsoft.Threading.Tasks.Extensions.dll" target="lib\portable-net403+win8+sl5+wp8+MonoAndroid16+MonoTouch40\Microsoft.Threading.Tasks.Extensions.dll" />
     <file src="lib\Droid\System.Net.dll" target="lib\MonoAndroid16\System.Net.dll" />
 
     <!-- Touch -->
     <file src="Simple.OData.Client.Core\bin\Release\Simple.OData.Client.Core.dll" target="lib\MonoTouch40\Simple.OData.Client.Core.dll" />
-    <file src="Simple.OData.Client.Core\bin\Release\Microsoft.Threading.Tasks.Extensions.dll" target="lib\portable-net403+win8+sl5+wp8+MonoAndroid16+MonoTouch40\Microsoft.Threading.Tasks.Extensions.dll" />
     <file src="lib\Touch\System.Net.dll" target="lib\MonoTouch40\System.Net.dll" />
   </files>
 </package>
