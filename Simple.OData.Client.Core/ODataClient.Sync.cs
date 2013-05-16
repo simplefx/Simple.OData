@@ -1,10 +1,21 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 
 namespace Simple.OData.Client
 {
     public partial class ODataClient
     {
+        public static ISchema GetSchema(string urlBase, ICredentials credentials = null)
+        {
+            return Client.Schema.Get(urlBase, credentials);
+        }
+
+        public static string GetSchemaAsString(string urlBase, ICredentials credentials = null)
+        {
+            return SchemaProvider.FromUrl(urlBase, credentials).SchemaAsString;
+        }
+
         public IEnumerable<IDictionary<string, object>> FindEntries(string commandText)
         {
             int totalCount;

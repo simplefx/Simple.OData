@@ -160,12 +160,12 @@ namespace Simple.OData.Client
             return new List<EdmComplexType>(_schemaProvider.GetComplexTypes());
         }
 
-        internal static Schema Get(string urlBase, ICredentials credentials = null)
+        internal static ISchema Get(string urlBase, ICredentials credentials = null)
         {
             return Instances.GetOrAdd(urlBase, sp => new Schema(Client.SchemaProvider.FromUrl(urlBase, credentials)));
         }
 
-        internal static Schema Get(SchemaProvider schemaProvider)
+        internal static ISchema Get(SchemaProvider schemaProvider)
         {
             return new Schema(schemaProvider);
         }

@@ -1,11 +1,22 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace Simple.OData.Client
 {
     public partial class ODataClient
     {
+        public static Task<ISchema> GetSchemaAsync(string urlBase, ICredentials credentials = null)
+        {
+            return Task.Factory.StartNew(() => Client.Schema.Get(urlBase, credentials));
+        }
+
+        public static Task<string> GetSchemaAsStringAsync(string urlBase, ICredentials credentials = null)
+        {
+            return Task.Factory.StartNew(() => SchemaProvider.FromUrl(urlBase, credentials).SchemaAsString);
+        }
+
         public Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(string commandText)
         {
             return Task.Factory.StartNew(() => this.FindEntries(commandText));

@@ -87,6 +87,7 @@
     <Compile Include="ODataClient.Async.cs" />
     <Compile Include="ODataClient.cs" />
     <Compile Include="ODataClient.Sync.cs" />
+    <Compile Include="ODataClient.Internals.cs" />
     <Compile Include="ODataClientSettings.cs" />
     <Compile Include="ODataClientWithCommand.Async.cs" />
     <Compile Include="ODataClientWithCommand.cs" />

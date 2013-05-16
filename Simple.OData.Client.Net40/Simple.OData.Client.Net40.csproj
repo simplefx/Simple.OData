@@ -160,6 +160,9 @@
     <Compile Include="..\Simple.OData.Client.Core\ODataClient.Async.cs">
       <Link>ODataClient.Async.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ODataClient.Internals.cs">
+      <Link>ODataClient.Internals.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ODataClient.Sync.cs">
       <Link>ODataClient.Sync.cs</Link>
     </Compile>
