@@ -140,6 +140,27 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void CheckODataOrgODataV3Schema()
+        {
+            var client = new ODataClient("http://services.odata.org/V3/OData/OData.svc/");
+
+            var table = client.Schema.FindTable("Product");
+            Assert.Equal("ID", table.PrimaryKey[0]);
+
+            var association = table.FindAssociation("Category_Products");
+            Assert.Equal("Categories", association.ReferenceTableName);
+            Assert.Equal("0..1", association.Multiplicity);
+
+            var function = client.Schema.FindFunction("GetProductsByRating");
+            Assert.Equal(RestVerbs.GET, function.HttpMethod);
+            Assert.Equal("rating", function.Parameters[0]);
+
+            Assert.Equal(5, client.Schema.EntityTypes.Count());
+            Assert.Equal(1, client.Schema.ComplexTypes.Count());
+            Assert.Equal(5, client.Schema.ComplexTypes.First().Properties.Count());
+        }
+
+        [Fact]
         public void CheckPluralsightComSchema()
         {
             var client = new ODataClient("http://pluralsight.com/odata/");
@@ -154,7 +175,7 @@ namespace Simple.OData.Client.Tests
             Assert.Equal("Courses", association.ReferenceTableName);
             Assert.Equal("*", association.Multiplicity);
 
-            Assert.Equal(8, client.Schema.EntityTypes.Count());
+            Assert.Equal(5, client.Schema.EntityTypes.Count());
             Assert.Equal(0, client.Schema.ComplexTypes.Count());
         }
 

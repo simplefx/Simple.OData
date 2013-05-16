@@ -18,6 +18,7 @@ namespace Simple.OData.Client
         public static implicit operator FilterExpression(decimal value) { return FilterExpression.FromValue(value); }
         public static implicit operator FilterExpression(DateTime value) { return FilterExpression.FromValue(value); }
         public static implicit operator FilterExpression(DateTimeOffset value) { return FilterExpression.FromValue(value); }
+        public static implicit operator FilterExpression(TimeSpan value) { return FilterExpression.FromValue(value); }
         public static implicit operator FilterExpression(Guid value) { return FilterExpression.FromValue(value); }
         public static implicit operator FilterExpression(string value) { return FilterExpression.FromValue(value); }
 

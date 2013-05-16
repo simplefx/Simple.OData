@@ -222,14 +222,16 @@ namespace Simple.OData.Client
 
         private IDictionary<string, object> GetLinkedEntryProperties(object entryData)
         {
-            IDictionary<string, object> entryProperties = entryData as IDictionary<string, object>;
+            var entryProperties = entryData as IDictionary<string, object>;
             if (entryProperties == null)
             {
                 entryProperties = new Dictionary<string, object>();
                 var entryType = entryData.GetType();
-                foreach (var entryProperty in GetTypeProperties(entryType))
+                foreach (var entryProperty in entryType.GetDeclaredProperties())
                 {
-                    entryProperties.Add(entryProperty.Name, GetTypeProperty(entryType, entryProperty.Name).GetValue(entryData, null));
+                    entryProperties.Add(
+                        entryProperty.Name, 
+                        entryType.GetDeclaredProperty(entryProperty.Name).GetValue(entryData, null));
                 }
             }
             return entryProperties;
@@ -309,16 +311,6 @@ namespace Simple.OData.Client
         {
             // TODO
             return null;
-        }
-
-        private IEnumerable<PropertyInfo> GetTypeProperties(Type type)
-        {
-            return type.GetProperties();
-        }
-
-        private PropertyInfo GetTypeProperty(Type type, string propertyName)
-        {
-            return type.GetProperty(propertyName);
         }
     }
 }
