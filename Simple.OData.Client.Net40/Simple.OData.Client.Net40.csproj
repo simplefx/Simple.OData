@@ -66,17 +66,32 @@
     <Compile Include="..\Simple.OData.Client.Core\Extensions\DateTimeExtensions.cs">
       <Link>Extensions\DateTimeExtensions.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Extensions\DecimalExtensions.cs">
+      <Link>Extensions\DecimalExtensions.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Extensions\EnumerableExtensions.cs">
       <Link>Extensions\EnumerableExtensions.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Extensions\EnumerableOfKeyValuePairExtensions.cs">
       <Link>Extensions\EnumerableOfKeyValuePairExtensions.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Extensions\GuidExtensions.cs">
+      <Link>Extensions\GuidExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Extensions\LongExtensions.cs">
+      <Link>Extensions\LongExtensions.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Extensions\TupleEnumerableExtensions.cs">
       <Link>Extensions\TupleEnumerableExtensions.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Extensions\TupleExtensions.cs">
       <Link>Extensions\TupleExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Extensions\TypeExtensions.cs">
+      <Link>Extensions\TypeExtensions.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Extensions\ULongExtensions.cs">
+      <Link>Extensions\ULongExtensions.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Extensions\WebRequestExtensions.cs">
       <Link>Extensions\WebRequestExtensions.cs</Link>

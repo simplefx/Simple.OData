@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
@@ -200,7 +201,7 @@ namespace Simple.OData.Client
 
         public IClientWithCommand Set(object value)
         {
-            var properties = value.GetType().GetProperties();
+            var properties = value.GetType().GetDeclaredProperties();
             var dict = new Dictionary<string, object>();
             foreach (var property in properties)
             {
@@ -286,17 +287,23 @@ namespace Simple.OData.Client
                 var namedKeyValues = new Dictionary<string, object>();
                 for (int index = 0; index < keyNames.Count; index++)
                 {
+                    bool found = false;
+                    object keyValue = null;
                     if (_namedKeyValues != null && _namedKeyValues.Count > 0)
                     {
-                        object keyValue;
-                        if (_namedKeyValues.TryGetValue(keyNames[index], out keyValue))
-                        {
-                            namedKeyValues.Add(keyNames[index], keyValue);
-                        }
+                        found = _namedKeyValues.TryGetValue(keyNames[index], out keyValue);
                     }
                     else if (_keyValues != null && _keyValues.Count >= index)
                     {
-                        namedKeyValues.Add(keyNames[index], _keyValues[index]);
+                        keyValue = _keyValues[index];
+                        found = true;
+                    }
+                    if (found)
+                    {
+                        var value = keyValue is FilterExpression ? 
+                            (keyValue as FilterExpression).Value : 
+                            keyValue;
+                        namedKeyValues.Add(keyNames[index], value);
                     }
                 }
                 return namedKeyValues;

@@ -15,6 +15,7 @@ namespace Simple.OData.Client
         public static readonly EdmType DateTimeOffset = new EdmType("Edm.DateTimeOffset");
         public static readonly EdmType Decimal = new EdmType("Edm.Decimal");
         public static readonly EdmType Double = new EdmType("Edm.Double");
+        public static readonly EdmType Float = new EdmType("Edm.Float");
         public static readonly EdmType Guid = new EdmType("Edm.Guid");
         public static readonly EdmType Int16 = new EdmType("Edm.Int16");
         public static readonly EdmType Int32 = new EdmType("Edm.Int32");
@@ -23,23 +24,39 @@ namespace Simple.OData.Client
         public static readonly EdmType Single = new EdmType("Edm.Single");
         public static readonly EdmType String = new EdmType("Edm.String");
         public static readonly EdmType Time = new EdmType("Edm.Time");
+        public static readonly EdmType Geography = new EdmType("Edm.Geography");
+        public static readonly EdmType GeographyPoint = new EdmType("Edm.GeographyPoint");
+        public static readonly EdmType GeographyLineString = new EdmType("Edm.GeographyLineString");
+        public static readonly EdmType GeographyPolygon = new EdmType("Edm.GeographyPolygon");
+        public static readonly EdmType GeographyCollection = new EdmType("Edm.GeographyCollection");
+        public static readonly EdmType GeographyMultiPoint = new EdmType("Edm.GeographyMultiPoint");
+        public static readonly EdmType GeographyMultiLineString = new EdmType("Edm.GeographyMultiLineString");
+        public static readonly EdmType GeographyMultiPolygon = new EdmType("Edm.GeographyMultiPolygon");
+        public static readonly EdmType Geometry = new EdmType("Edm.Geometry");
+        public static readonly EdmType GeometryPoint = new EdmType("Edm.GeometryPoint");
+        public static readonly EdmType GeometryLineString = new EdmType("Edm.GeometryLineString");
+        public static readonly EdmType GeometryPolygon = new EdmType("Edm.GeometryPolygon");
+        public static readonly EdmType GeometryCollection = new EdmType("Edm.GeometryCollection");
+        public static readonly EdmType GeometryMultiPoint = new EdmType("Edm.GeometryMultiPoint");
+        public static readonly EdmType GeometryMultiLineString = new EdmType("Edm.GeometryMultiLineString");
+        public static readonly EdmType GeometryMultiPolygon = new EdmType("Edm.GeometryMultiPolygon");
 
         private static readonly Dictionary<Type, EdmType> EdmTypeMap = new Dictionary<Type, EdmType>
         {
-            { typeof(byte[]), Binary },
-            { typeof(bool), Boolean },
-            { typeof(byte), Byte },
+            { typeof(Byte[]), Binary },
+            { typeof(Boolean), Boolean },
+            { typeof(Byte), Byte },
             { typeof(DateTime), DateTime },
             { typeof(DateTimeOffset), DateTimeOffset },
-            { typeof(double), Double },
-            { typeof(decimal), Decimal },
+            { typeof(Decimal), Decimal },
+            { typeof(Double), Double },
             { typeof(Guid), Guid },
             { typeof(Int16), Int16 },
             { typeof(Int32), Int32 },
             { typeof(Int64), Int64 },
             { typeof(SByte), SByte },
             { typeof(Single), Single },
-            { typeof(string), String },
+            { typeof(String), String },
             { typeof(TimeSpan), Time },
         };
 

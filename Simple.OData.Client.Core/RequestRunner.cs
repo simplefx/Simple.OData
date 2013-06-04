@@ -18,7 +18,7 @@ namespace Simple.OData.Client
                 if (this.BeforeRequest != null)
                     this.BeforeRequest(request);
 
-                var response = (HttpWebResponse)request.GetResponseAsync().Result;
+                var response = (HttpWebResponse)request.GetResponse();
 
                 if (this.AfterResponse != null)
                     this.AfterResponse(response);

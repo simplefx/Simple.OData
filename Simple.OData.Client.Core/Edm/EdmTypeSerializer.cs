@@ -19,6 +19,7 @@ namespace Simple.OData.Client
             { EdmType.DateTimeOffset, ReadEdmDateTimeOffset },
             { EdmType.Decimal, ReadEdmDecimal },
             { EdmType.Double, ReadEdmDouble },
+            { EdmType.Float, ReadEdmSingle },
             { EdmType.Guid, ReadEdmGuid },
             { EdmType.Int16, ReadEdmInt16 },
             { EdmType.Int32, ReadEdmInt32 },
@@ -38,6 +39,7 @@ namespace Simple.OData.Client
             { EdmType.DateTimeOffset, WriteEdmDateTimeOffset },
             { EdmType.Decimal, WriteEdmDecimal },
             { EdmType.Double, WriteEdmDouble },
+            { EdmType.Float, WriteEdmSingle },
             { EdmType.Guid, WriteEdmGuid },
             { EdmType.Int16, WriteEdmInt16 },
             { EdmType.Int32, WriteEdmInt32 },
@@ -150,14 +152,14 @@ namespace Simple.OData.Client
             return DateTimeOffset.Parse(source, CultureInfo.InvariantCulture);
         }
 
-        public static object ReadEdmDouble(string source)
-        {
-            return Double.Parse(source, CultureInfo.InvariantCulture);
-        }
-
         public static object ReadEdmDecimal(string source)
         {
             return Decimal.Parse(source, CultureInfo.InvariantCulture);
+        }
+
+        public static object ReadEdmDouble(string source)
+        {
+            return Double.Parse(source, CultureInfo.InvariantCulture);
         }
 
         public static object ReadEdmGuid(string source)

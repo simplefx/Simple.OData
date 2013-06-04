@@ -19,14 +19,26 @@ namespace Simple.OData.Client.Tests
             Assert.Equal("Chai", products.Single()["ProductName"]);
         }
 
+        [Fact]
         public void FilterExpression()
         {
             var x = ODataFilter.Expression;
-            var products = _client
+            var product = _client
                 .For("Products")
                 .Filter(x.ProductName == "Chai")
-                .FindEntries();
-            Assert.Equal("Chai", products.Single()["ProductName"]);
+                .FindEntry();
+            Assert.Equal("Chai", product["ProductName"]);
+        }
+
+        [Fact]
+        public void FilterCombinedConditions()
+        {
+            var x = ODataFilter.Expression;
+            var product = _client
+                .For("Employees")
+                .Filter(x.FirstName == "Nancy" && x.HireDate < DateTime.Now)
+                .FindEntry();
+            Assert.Equal("Davolio", product["LastName"]);
         }
 
         [Fact]
