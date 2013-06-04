@@ -22,7 +22,7 @@ namespace Simple.OData.Client
                 _metadataString = new Lazy<string>(() => RequestMetadataAsString(urlBase, credentials));
             }
             _metadata = new Lazy<EdmSchema>(() => new ODataFeedReader().GetSchema(_metadataString.Value));
-            _schema = new Lazy<Schema>(() => Schema.Get(this));
+            _schema = new Lazy<Schema>(() => Schema.Get(this) as Schema);
         }
 
         public static SchemaProvider FromUrl(string urlBase, ICredentials credentials)
