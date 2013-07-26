@@ -23,9 +23,6 @@
     <!-- NET40 -->
     <file src="Simple.OData.Client.Net40\bin\Release\Simple.OData.Client.Net40.dll" target="lib\net40\Simple.OData.Client.Net40.dll" />
 
-    <!-- SL5 -->
-    <file src="Simple.OData.Client.SL5\bin\Release\Simple.OData.Client.SL5.dll" target="lib\sl5\Simple.OData.Client.SL5.dll" />
-
     <!-- Droid -->
     <file src="Simple.OData.Client.Core\bin\Release\Simple.OData.Client.Core.dll" target="lib\MonoAndroid16\Simple.OData.Client.Core.dll" />
     <file src="lib\Droid\System.Net.dll" target="lib\MonoAndroid16\System.Net.dll" />

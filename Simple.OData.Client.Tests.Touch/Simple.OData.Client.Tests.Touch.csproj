@@ -10,7 +10,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>Simple.OData.Client.Tests.Touch</RootNamespace>
     <IPhoneResourcePrefix>Resources</IPhoneResourcePrefix>
-    <AssemblyName>Simple.OData.Client.Tests.Touch</AssemblyName>
+    <AssemblyName>SimpleODataClientTestsTouch</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|iPhoneSimulator' ">
     <DebugSymbols>true</DebugSymbols>
