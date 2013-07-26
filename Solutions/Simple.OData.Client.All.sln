@@ -34,24 +34,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.OData.Client.Tests.D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.OData.Client.Tests.Touch", "..\Simple.OData.Client.Tests.Touch\Simple.OData.Client.Tests.Touch.csproj", "{E20D9290-DDCF-4779-9121-509C54F0E7BB}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib", "Lib", "{C454FB8C-D8F9-4F9F-9709-95386B868150}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.OData.Client.SL5", "..\Simple.OData.Client.SL5\Simple.OData.Client.SL5.csproj", "{475962DF-2F2C-41B4-ACF3-3C8CF683C98C}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Droid", "Droid", "{71E91D8F-672C-4FB1-A4A7-56B39AA6E06F}"
-	ProjectSection(SolutionItems) = preProject
-		..\lib\MonoDroidUnitTesting.dll = ..\lib\MonoDroidUnitTesting.dll
-		..\lib\MonoDroidUnitTesting.pdb = ..\lib\MonoDroidUnitTesting.pdb
-		..\lib\Droid\System.Net.dll = ..\lib\Droid\System.Net.dll
-		..\lib\Droid\System.Net.pdb = ..\lib\Droid\System.Net.pdb
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.OData.Client.Tests.WP8", "..\Simple.OData.Client.Tests.WP8\Simple.OData.Client.Tests.WP8.csproj", "{12B0D705-AB89-4D7F-AB9D-75F5743F3956}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Touch", "Touch", "{C49759B3-A11D-4A47-821F-94F1700E81A0}"
-	ProjectSection(SolutionItems) = preProject
-		..\lib\Touch\System.Net.dll = ..\lib\Touch\System.Net.dll
-	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -660,7 +645,5 @@ Global
 		{DED3C27A-2FB0-4E25-A201-A32CDF96E4BF} = {78D04AF9-B9B4-4025-93C6-B3DB01EDAAE9}
 		{E20D9290-DDCF-4779-9121-509C54F0E7BB} = {78D04AF9-B9B4-4025-93C6-B3DB01EDAAE9}
 		{12B0D705-AB89-4D7F-AB9D-75F5743F3956} = {78D04AF9-B9B4-4025-93C6-B3DB01EDAAE9}
-		{71E91D8F-672C-4FB1-A4A7-56B39AA6E06F} = {C454FB8C-D8F9-4F9F-9709-95386B868150}
-		{C49759B3-A11D-4A47-821F-94F1700E81A0} = {C454FB8C-D8F9-4F9F-9709-95386B868150}
 	EndGlobalSection
 EndGlobal
