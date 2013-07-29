@@ -82,7 +82,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
     <OutputPath>bin\x86\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;NETFX_CORE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NETFX_CORE,PORTABLE_IOS</DefineConstants>
     <NoWarn>;2008</NoWarn>
     <DebugType>full</DebugType>
     <PlatformTarget>x86</PlatformTarget>
@@ -92,7 +92,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <OutputPath>bin\x86\Release\</OutputPath>
-    <DefineConstants>TRACE;NETFX_CORE</DefineConstants>
+    <DefineConstants>TRACE;NETFX_CORE,PORTABLE_IOS</DefineConstants>
     <Optimize>true</Optimize>
     <NoWarn>;2008</NoWarn>
     <DebugType>pdbonly</DebugType>
@@ -119,6 +119,39 @@
     <Compile Include="..\CommonAssemblyVersion.cs">
       <Link>Properties\CommonAssemblyVersion.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\ClientTests.cs">
+      <Link>ClientTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\DynamicFilterAsKeyTests.cs">
+      <Link>DynamicFilterAsKeyTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\Entities\Customer.cs">
+      <Link>Entities\Customer.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\Entities\Employee.cs">
+      <Link>Entities\Employee.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\Entities\Order.cs">
+      <Link>Entities\Order.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\Entities\OrderDetail.cs">
+      <Link>Entities\OrderDetail.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\Entities\Product.cs">
+      <Link>Entities\Product.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\Entities\Ship.cs">
+      <Link>Entities\Ship.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\Entities\Transport.cs">
+      <Link>Entities\Transport.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\FeedReaderTests.cs">
+      <Link>FeedReaderTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\TypedFilterAsKeyTests.cs">
+      <Link>TypedFilterAsKeyTests.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.TestUtils.Net40\ContainTest.cs">
       <Link>ContainTest.cs</Link>
     </Compile>
@@ -136,9 +169,6 @@
     </Compile>
     <Compile Include="..\Simple.OData.Client.TestUtils.Net40\ShouldExtensions.cs">
       <Link>ShouldExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\BatchTests.cs">
-      <Link>BatchTests.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\DeleteTests.cs">
       <Link>DeleteTests.cs</Link>
@@ -170,23 +200,14 @@
     <Compile Include="..\Simple.OData.Client.Tests.Net40\FilterExpressionTests.cs">
       <Link>FilterExpressionTests.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\FilterAsKeyTests.cs">
-      <Link>FilterAsKeyTests.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\InsertTests.cs">
       <Link>InsertTests.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\LinkTests.cs">
       <Link>LinkTests.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\ODataClientTests.cs">
-      <Link>ODataClientTests.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\FindTests.cs">
       <Link>FindTests.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\ODataFeedReaderTests.cs">
-      <Link>ODataFeedReaderTests.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\Properties\AssemblyInfo.cs">
       <Link>Properties\AssemblyInfo.cs</Link>

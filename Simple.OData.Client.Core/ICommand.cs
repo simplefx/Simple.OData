@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace Simple.OData.Client
 {
@@ -10,7 +12,10 @@ namespace Simple.OData.Client
         IClientWithCommand Key(IEnumerable<object> entryKey);
         IClientWithCommand Key(IDictionary<string, object> entryKey);
         IClientWithCommand Filter(string filter);
+#if !PORTABLE_IOS
         IClientWithCommand Filter(FilterExpression expression);
+#endif
+        IClientWithCommand Filter<T>(Expression<Func<T, bool>> expression);
         IClientWithCommand Skip(int count);
         IClientWithCommand Top(int count);
         IClientWithCommand Expand(IEnumerable<string> associations);

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using Simple.OData.Client.Extensions;
 
@@ -120,6 +121,7 @@ namespace Simple.OData.Client
             return _client;
         }
 
+#if !PORTABLE_IOS
         public IClientWithCommand Filter(FilterExpression expression)
         {
             _namedKeyValues = TryInterpretFilterExpressionAsKey(expression);
@@ -132,6 +134,12 @@ namespace Simple.OData.Client
                 _topCount = -1;
             }
             return _client;
+        }
+#endif
+
+        public IClientWithCommand Filter<T>(Expression<Func<T, bool>> expression)
+        {
+            throw new NotImplementedException();
         }
 
         public IClientWithCommand Skip(int count)

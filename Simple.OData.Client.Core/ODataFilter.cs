@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Dynamic;
 
+#if !PORTABLE_IOS
 namespace Simple.OData.Client
 {
     public static class ODataFilter
@@ -35,3 +36,4 @@ namespace Simple.OData.Client
         }
     }
 }
+#endif

@@ -20,28 +20,6 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public void FilterExpression()
-        {
-            var x = ODataFilter.Expression;
-            var product = _client
-                .For("Products")
-                .Filter(x.ProductName == "Chai")
-                .FindEntry();
-            Assert.Equal("Chai", product["ProductName"]);
-        }
-
-        [Fact]
-        public void FilterCombinedConditions()
-        {
-            var x = ODataFilter.Expression;
-            var product = _client
-                .For("Employees")
-                .Filter(x.FirstName == "Nancy" && x.HireDate < DateTime.Now)
-                .FindEntry();
-            Assert.Equal("Davolio", product["LastName"]);
-        }
-
-        [Fact]
         public void Get()
         {
             var category = _client
@@ -66,18 +44,6 @@ namespace Simple.OData.Client.Tests
         {
             var products = _client
                 .For("Products")
-                .Top(1)
-                .FindEntries();
-            Assert.Equal(1, products.Count());
-        }
-
-        [Fact]
-        public void TopOneExpression()
-        {
-            var x = ODataFilter.Expression;
-            IEnumerable<dynamic> products = _client
-                .For("Products")
-                .Filter(x.ProductName == "Chai")
                 .Top(1)
                 .FindEntries();
             Assert.Equal(1, products.Count());
@@ -180,18 +146,6 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public void FilterExpressionCount()
-        {
-            var x = ODataFilter.Expression;
-            var count = _client
-                .For("Products")
-                .Filter(x.ProductName == "Chai")
-                .Count()
-                .FindScalar();
-            Assert.Equal(1, int.Parse(count.ToString()));
-        }
-
-        [Fact]
         public void TotalCount()
         {
             int count;
@@ -267,7 +221,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public void FindBaseClassEntries()
+        public void BaseClassEntries()
         {
             var transport = _client
                 .For("Transport")
@@ -277,7 +231,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public void FindBaseClassEntriesWithResourceTypes()
+        public void BaseClassEntriesWithResourceTypes()
         {
             var clientSettings = new ODataClientSettings
                                      {
@@ -293,7 +247,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public void FindAllDerivedClassEntries()
+        public void AllDerivedClassEntries()
         {
             var transport = _client
                 .For("Transport")
@@ -303,7 +257,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public void FindAllDerivedClassEntriesWithResourceTypes()
+        public void AllDerivedClassEntriesWithResourceTypes()
         {
             var clientSettings = new ODataClientSettings
             {
@@ -320,7 +274,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public void FindDerivedClassEntry()
+        public void DerivedClassEntry()
         {
             var transport = _client
                 .For("Transport")
@@ -331,7 +285,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public void FindDerivedClassEntryBaseAndDerivedFields()
+        public void DerivedClassEntryBaseAndDerivedFields()
         {
             var transport = _client
                 .For("Transport")

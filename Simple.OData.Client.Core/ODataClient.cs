@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Net;
 using Simple.OData.Client.Extensions;
 
@@ -63,6 +64,7 @@ namespace Simple.OData.Client
             return new ODataClientWithCommand(this, _schema).For(collectionName);
         }
 
+#if !PORTABLE_IOS
         public string FormatFilter(string collection, dynamic filterExpression)
         {
             if (filterExpression is FilterExpression)
@@ -79,6 +81,13 @@ namespace Simple.OData.Client
             {
                 throw new InvalidOperationException("Unable to cast dynamic object to FilterExpression");
             }
+        }
+#endif
+
+        public string FormatFilter<T>(string collection, Expression<Func<T, bool>> filterExpression)
+        {
+            var clientWithCommand = new ODataClientWithCommand(this, _schema);
+            throw new NotImplementedException();
         }
     }
 }

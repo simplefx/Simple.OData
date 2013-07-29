@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 
 namespace Simple.OData.Client
 {
@@ -62,9 +64,16 @@ namespace Simple.OData.Client
             return _command.Filter(filter);
         }
 
+#if !PORTABLE_IOS
         public IClientWithCommand Filter(FilterExpression expression)
         {
             return _command.Filter(expression);
+        }
+#endif
+
+        public IClientWithCommand Filter<T>(Expression<Func<T, bool>> expression)
+        {
+            throw new NotImplementedException();
         }
 
         public IClientWithCommand Skip(int count)

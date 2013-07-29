@@ -36,19 +36,19 @@ namespace Simple.OData.Client.Tests
         {
             if (_client != null)
             {
-                IEnumerable<dynamic> products = _client.FindEntries("Products");
+                var products = _client.FindEntries("Products");
                 foreach (var product in products)
                 {
                     if (product["ProductName"].ToString().StartsWith("Test"))
                         _client.DeleteEntry("Products", product);
                 }
-                IEnumerable<dynamic> categories = _client.FindEntries("Categories");
+                var categories = _client.FindEntries("Categories");
                 foreach (var category in categories)
                 {
                     if (category["CategoryName"].ToString().StartsWith("Test"))
                         _client.DeleteEntry("Categories", category);
                 }
-                IEnumerable<dynamic> transports = _client.FindEntries("Transport");
+                var transports = _client.FindEntries("Transport");
                 foreach (var transport in transports)
                 {
                     if (int.Parse(transport["TransportID"].ToString()) > 2)
