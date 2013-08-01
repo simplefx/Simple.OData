@@ -6,18 +6,9 @@ namespace Simple.OData.Client
 {
     public static class ODataFilter
     {
-        public class ExpressionFactory : DynamicObject
-        {
-            public override bool TryGetMember(GetMemberBinder binder, out object result)
-            {
-                result = FilterExpression.FromReference(binder.Name);
-                return true;
-            }
-        }
-
         public static dynamic Expression
         {
-            get { return new ExpressionFactory(); }
+            get { return new FilterExpression(); }
         }
 
         public static FilterExpression ExpressionFromReference(string reference)

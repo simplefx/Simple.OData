@@ -73,7 +73,7 @@ namespace Simple.OData.Client
 
         public IClientWithCommand Filter<T>(Expression<Func<T, bool>> expression)
         {
-            throw new NotImplementedException();
+            return _command.Filter(expression);
         }
 
         public IClientWithCommand Skip(int count)

@@ -149,6 +149,12 @@
     <Compile Include="..\Simple.OData.Client.Tests.Net40\FeedReaderTests.cs">
       <Link>FeedReaderTests.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\FindDynamicFilterTests.cs">
+      <Link>FindDynamicFilterTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\FindTypedFilterTests.cs">
+      <Link>FindTypedFilterTests.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\TypedFilterAsKeyTests.cs">
       <Link>TypedFilterAsKeyTests.cs</Link>
     </Compile>

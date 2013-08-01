@@ -24,8 +24,8 @@ namespace Simple.OData.Client
         {
             if (_operator == ExpressionOperator.None)
             {
-                return _reference != null ?
-                    FormatReference(context) : _function != null ?
+                return Reference != null ?
+                    FormatReference(context) : Function != null ?
                     FormatFunction(context) :
                     FormatValue(context);
             }
@@ -66,7 +66,7 @@ namespace Simple.OData.Client
 
         private string FormatReference(ExpressionContext context)
         {
-            var elementNames = new List<string>(_reference.Split('.'));
+            var elementNames = new List<string>(Reference.Split('.'));
             var pathNames = BuildReferencePath(new List<string>(), context.Table, elementNames, context);
             return string.Join("/", pathNames);
         }
@@ -74,21 +74,21 @@ namespace Simple.OData.Client
         private string FormatFunction(ExpressionContext context)
         {
             FunctionMapping mapping;
-            if (FunctionMapping.SupportedFunctions.TryGetValue(new ExpressionFunction.FunctionCall(_function.FunctionName, _function.Arguments.Count()), out mapping))
+            if (FunctionMapping.SupportedFunctions.TryGetValue(new ExpressionFunction.FunctionCall(Function.FunctionName, Function.Arguments.Count()), out mapping))
             {
-                var mappedFunction = mapping.FunctionMapper(_function.FunctionName, _functionCaller.Format(context), _function.Arguments)._function;
+                var mappedFunction = mapping.FunctionMapper(Function.FunctionName, _functionCaller.Format(context), Function.Arguments).Function;
                 return string.Format("{0}({1})", mappedFunction.FunctionName,
                     string.Join(",", (IEnumerable<object>)mappedFunction.Arguments.Select(x => FormatExpression(x, context))));
             }
             else
             {
-                throw new NotSupportedException(string.Format("The function {0} is not supported or called with wrong number of arguments", _function.FunctionName));
+                throw new NotSupportedException(string.Format("The function {0} is not supported or called with wrong number of arguments", Function.FunctionName));
             }
         }
 
         private string FormatValue(ExpressionContext context)
         {
-            return (new ValueFormatter()).FormatExpressionValue(_value, context);
+            return (new ValueFormatter()).FormatExpressionValue(Value, context);
         }
 
         private string FormatOperator(ExpressionContext context)
@@ -182,7 +182,7 @@ namespace Simple.OData.Client
             if (FunctionMapping.SupportedFunctions.TryGetValue(new ExpressionFunction.FunctionCall(objectName, 0), out mapping))
             {
                 string targetName = _functionCaller.Format(context);
-                var mappedFunction = mapping.FunctionMapper(objectName, targetName, null)._function;
+                var mappedFunction = mapping.FunctionMapper(objectName, targetName, null).Function;
                 return string.Format("{0}({1})", mappedFunction.FunctionName, targetName);
             }
             else

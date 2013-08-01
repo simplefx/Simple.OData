@@ -7,16 +7,32 @@ namespace Simple.OData.Client
 {
     public partial class FilterExpression : DynamicObject
     {
-        private string _reference;
-        private object _value;
-        private ExpressionFunction _function;
-        private FilterExpression _functionCaller;
+        private readonly FilterExpression _functionCaller;
         private readonly FilterExpression _left;
         private readonly FilterExpression _right;
         private readonly ExpressionOperator _operator;
 
-        public FilterExpression()
+        public string Reference { get; private set; }
+        public object Value { get; private set; }
+        public ExpressionFunction Function { get; private set; }
+
+        internal FilterExpression()
         {
+        }
+
+        private FilterExpression(object value)
+        {
+            this.Value = value;
+        }
+
+        private FilterExpression(string reference)
+        {
+            this.Reference = reference;
+        }
+
+        private FilterExpression(ExpressionFunction function)
+        {
+            this.Function = function;
         }
 
         private FilterExpression(FilterExpression left, FilterExpression right, ExpressionOperator expressionOperator)
@@ -26,42 +42,38 @@ namespace Simple.OData.Client
             _operator = expressionOperator;
         }
 
+        private FilterExpression(FilterExpression caller, string reference)
+        {
+            _functionCaller = caller;
+            this.Reference = reference;
+        }
+
+        private FilterExpression(FilterExpression caller, ExpressionFunction function)
+        {
+            _functionCaller = caller;
+            this.Function = function;
+        }
+
         internal static FilterExpression FromReference(string reference)
         {
-            return new FilterExpression { _reference = reference };
+            return new FilterExpression(reference);
         }
 
         internal static FilterExpression FromValue(object value)
         {
-            return new FilterExpression { _value = value };
+            return new FilterExpression(value);
         }
 
         internal static FilterExpression FromFunction(ExpressionFunction function)
         {
-            return new FilterExpression { _function = function };
+            return new FilterExpression(function);
         }
 
         internal static FilterExpression FromFunction(string functionName, string targetName, IEnumerable<object> arguments)
         {
-            var expression = new FilterExpression();
-            expression._functionCaller = FilterExpression.FromReference(targetName);
-            expression._function = new ExpressionFunction(functionName, arguments);
-            return expression;
-        }
-
-        public string Reference
-        {
-            get { return _reference; }
-        }
-
-        public object Value
-        {
-            get { return _value; }
-        }
-
-        public ExpressionFunction Function
-        {
-            get { return _function; }
+            return new FilterExpression(
+                new FilterExpression(targetName),
+                new ExpressionFunction(functionName, arguments));
         }
 
         public override bool TryGetMember(GetMemberBinder binder, out object result)
@@ -69,10 +81,13 @@ namespace Simple.OData.Client
             FunctionMapping mapping;
             if (FunctionMapping.SupportedFunctions.TryGetValue(new ExpressionFunction.FunctionCall(binder.Name, 0), out mapping))
             {
-                result = new FilterExpression() {_functionCaller = this, _reference = binder.Name};
-                return true;
+                result = new FilterExpression(this, binder.Name);
             }
-            return base.TryGetMember(binder, out result);
+            else
+            {
+                result = new FilterExpression(binder.Name);
+            }
+            return true;
         }
 
         public override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)
@@ -80,7 +95,7 @@ namespace Simple.OData.Client
             FunctionMapping mapping;
             if (FunctionMapping.SupportedFunctions.TryGetValue(new ExpressionFunction.FunctionCall(binder.Name, args.Count()), out mapping))
             {
-                result = new FilterExpression() { _functionCaller = this, _function = new ExpressionFunction(binder.Name, args) };
+                result = new FilterExpression(this, new ExpressionFunction(binder.Name, args));
                 return true;
             }
             return base.TryInvokeMember(binder, args, out result);
@@ -101,7 +116,7 @@ namespace Simple.OData.Client
                     return true;
 
                 case ExpressionOperator.EQ:
-                    if (!string.IsNullOrEmpty(_left._reference))
+                    if (!string.IsNullOrEmpty(_left.Reference))
                     {
                         var key = _left.ToString().Split('.').Last();
                         if (!columnEqualityComparisons.ContainsKey(key))
