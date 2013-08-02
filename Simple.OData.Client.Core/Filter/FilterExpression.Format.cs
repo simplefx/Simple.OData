@@ -24,8 +24,8 @@ namespace Simple.OData.Client
         {
             if (_operator == ExpressionOperator.None)
             {
-                return Reference != null ?
-                    FormatReference(context) : Function != null ?
+                return this.Reference != null ?
+                    FormatReference(context) : this.Function != null ?
                     FormatFunction(context) :
                     FormatValue(context);
             }
@@ -66,7 +66,7 @@ namespace Simple.OData.Client
 
         private string FormatReference(ExpressionContext context)
         {
-            var elementNames = new List<string>(Reference.Split('.'));
+            var elementNames = new List<string>(this.Reference.Split('.'));
             var pathNames = BuildReferencePath(new List<string>(), context.Table, elementNames, context);
             return string.Join("/", pathNames);
         }
@@ -74,15 +74,15 @@ namespace Simple.OData.Client
         private string FormatFunction(ExpressionContext context)
         {
             FunctionMapping mapping;
-            if (FunctionMapping.SupportedFunctions.TryGetValue(new ExpressionFunction.FunctionCall(Function.FunctionName, Function.Arguments.Count()), out mapping))
+            if (FunctionMapping.SupportedFunctions.TryGetValue(new ExpressionFunction.FunctionCall(this.Function.FunctionName, this.Function.Arguments.Count()), out mapping))
             {
-                var mappedFunction = mapping.FunctionMapper(Function.FunctionName, _functionCaller.Format(context), Function.Arguments).Function;
+                var mappedFunction = mapping.FunctionMapper(this.Function.FunctionName, _functionCaller.Format(context), this.Function.Arguments).Function;
                 return string.Format("{0}({1})", mappedFunction.FunctionName,
                     string.Join(",", (IEnumerable<object>)mappedFunction.Arguments.Select(x => FormatExpression(x, context))));
             }
             else
             {
-                throw new NotSupportedException(string.Format("The function {0} is not supported or called with wrong number of arguments", Function.FunctionName));
+                throw new NotSupportedException(string.Format("The function {0} is not supported or called with wrong number of arguments", this.Function.FunctionName));
             }
         }
 

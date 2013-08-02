@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Simple.OData.Client
 {
-    public partial class FilterExpression : DynamicObject
+    public partial class FilterExpression : IDynamicMetaObjectProvider
     {
         private readonly FilterExpression _functionCaller;
         private readonly FilterExpression _left;
@@ -74,31 +74,6 @@ namespace Simple.OData.Client
             return new FilterExpression(
                 new FilterExpression(targetName),
                 new ExpressionFunction(functionName, arguments));
-        }
-
-        public override bool TryGetMember(GetMemberBinder binder, out object result)
-        {
-            FunctionMapping mapping;
-            if (FunctionMapping.SupportedFunctions.TryGetValue(new ExpressionFunction.FunctionCall(binder.Name, 0), out mapping))
-            {
-                result = new FilterExpression(this, binder.Name);
-            }
-            else
-            {
-                result = new FilterExpression(binder.Name);
-            }
-            return true;
-        }
-
-        public override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)
-        {
-            FunctionMapping mapping;
-            if (FunctionMapping.SupportedFunctions.TryGetValue(new ExpressionFunction.FunctionCall(binder.Name, args.Count()), out mapping))
-            {
-                result = new FilterExpression(this, new ExpressionFunction(binder.Name, args));
-                return true;
-            }
-            return base.TryInvokeMember(binder, args, out result);
         }
 
         public override string ToString()
