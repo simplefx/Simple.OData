@@ -69,13 +69,7 @@ namespace Simple.OData.Client
         {
             if (filterExpression is FilterExpression)
             {
-                var clientWithCommand = new ODataClientWithCommand(this, _schema);
-                string filter = (filterExpression as FilterExpression)
-                    .Format(clientWithCommand, collection);
-
-                return clientWithCommand
-                    .For(collection)
-                    .Filter(filter).CommandText;
+                return FormatFilterExpression(collection, filterExpression as FilterExpression);
             }
             else
             {
@@ -86,8 +80,17 @@ namespace Simple.OData.Client
 
         public string FormatFilter<T>(string collection, Expression<Func<T, bool>> filterExpression)
         {
+            return FormatFilterExpression(collection, FilterExpression.FromLinqExpression(filterExpression.Body));
+        }
+
+        private string FormatFilterExpression(string collection, FilterExpression filterExpression)
+        {
             var clientWithCommand = new ODataClientWithCommand(this, _schema);
-            throw new NotImplementedException();
+            var filter = filterExpression.Format(clientWithCommand, collection);
+
+            return clientWithCommand
+                .For(collection)
+                .Filter(filter).CommandText;
         }
     }
 }

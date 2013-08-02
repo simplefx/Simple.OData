@@ -22,6 +22,18 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void SingleConditionWithVariable()
+        {
+            var productName = "Chai";
+            var x = ODataFilter.Expression;
+            var product = _client
+                .For("Products")
+                .Filter(x.ProductName == productName)
+                .FindEntry();
+            Assert.Equal("Chai", product["ProductName"]);
+        }
+
+        [Fact]
         public void CombinedConditions()
         {
             var x = ODataFilter.Expression;

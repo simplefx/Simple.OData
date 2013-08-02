@@ -121,7 +121,6 @@ namespace Simple.OData.Client
             return _client;
         }
 
-#if !PORTABLE_IOS
         public IClientWithCommand Filter(FilterExpression expression)
         {
             _namedKeyValues = TryInterpretFilterExpressionAsKey(expression);
@@ -135,11 +134,10 @@ namespace Simple.OData.Client
             }
             return _client;
         }
-#endif
 
         public IClientWithCommand Filter<T>(Expression<Func<T, bool>> expression)
         {
-            throw new NotImplementedException();
+            return Filter(FilterExpression.FromLinqExpression(expression.Body));
         }
 
         public IClientWithCommand Skip(int count)

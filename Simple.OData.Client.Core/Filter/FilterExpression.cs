@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace Simple.OData.Client
 {
-    public partial class FilterExpression// : IDynamicMetaObjectProvider
+    public partial class FilterExpression
     {
         private readonly FilterExpression _functionCaller;
         private readonly FilterExpression _left;
@@ -74,6 +75,11 @@ namespace Simple.OData.Client
             return new FilterExpression(
                 new FilterExpression(targetName),
                 new ExpressionFunction(functionName, arguments));
+        }
+
+        internal static FilterExpression FromLinqExpression(Expression expression)
+        {
+            return ParseLinqExpression(expression);
         }
 
         public override string ToString()

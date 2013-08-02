@@ -20,6 +20,17 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void SingleConditionWithVariable()
+        {
+            var productName = "Chai";
+            var product = _client
+                .For("Products")
+                .Filter<Product>(x => x.ProductName == productName)
+                .FindEntry();
+            Assert.Equal("Chai", product["ProductName"]);
+        }
+
+        [Fact]
         public void CombinedConditions()
         {
             var product = _client

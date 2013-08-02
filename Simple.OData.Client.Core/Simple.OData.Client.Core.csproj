@@ -81,6 +81,7 @@
     <Compile Include="Filter\FilterExpression.cs" />
     <Compile Include="Filter\FilterExpression.Format.cs" />
     <Compile Include="Filter\FilterExpression.Operators.cs" />
+    <Compile Include="Filter\FilterExpression.Linq.cs" />
     <Compile Include="Filter\FunctionMapping.cs" />
     <Compile Include="HttpCommand.cs" />
     <Compile Include="IClient.cs" />
