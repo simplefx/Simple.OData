@@ -43,7 +43,7 @@ namespace Simple.OData.Client.Tests
             Assert.AreEqual(RestVerbs.GET, function.HttpMethod);
             Assert.AreEqual("rating", function.Parameters[0]);
 
-            Assert.AreEqual(3, client.Schema.EntityTypes.Count());
+            Assert.AreEqual(5, client.Schema.EntityTypes.Count());
             Assert.AreEqual(1, client.Schema.ComplexTypes.Count());
             Assert.AreEqual(5, client.Schema.ComplexTypes.First().Properties.Count());
         }
