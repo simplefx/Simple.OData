@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -7,43 +6,52 @@ using System.Reflection;
 
 namespace Simple.OData.Client
 {
-    public partial class FilterExpression
+    public class DynamicFilterExpression : FilterExpression,  IDynamicMetaObjectProvider
     {
-        //public override bool TryGetMember(GetMemberBinder binder, out object result)
-        //{
-        //    FunctionMapping mapping;
-        //    if (FunctionMapping.SupportedFunctions.TryGetValue(new ExpressionFunction.FunctionCall(binder.Name, 0), out mapping))
-        //    {
-        //        result = new FilterExpression(this, binder.Name);
-        //    }
-        //    else
-        //    {
-        //        result = new FilterExpression(binder.Name);
-        //    }
-        //    return true;
-        //}
+        internal DynamicFilterExpression()
+        {
+        }
 
-        //public override bool TryInvokeMember(InvokeMemberBinder binder, object[] args, out object result)
-        //{
-        //    FunctionMapping mapping;
-        //    if (FunctionMapping.SupportedFunctions.TryGetValue(new ExpressionFunction.FunctionCall(binder.Name, args.Count()), out mapping))
-        //    {
-        //        result = new FilterExpression(this, new ExpressionFunction(binder.Name, args));
-        //        return true;
-        //    }
-        //    return base.TryInvokeMember(binder, args, out result);
-        //}
+        protected DynamicFilterExpression(object value)
+            : base(value)
+        {
+        }
+
+        protected DynamicFilterExpression(string reference)
+            : base(reference)
+        {
+        }
+
+        protected DynamicFilterExpression(ExpressionFunction function)
+            : base(function)
+        {
+        }
+
+        protected DynamicFilterExpression(FilterExpression left, FilterExpression right, ExpressionOperator expressionOperator)
+            : base(left, right, expressionOperator)
+        {
+        }
+
+        protected DynamicFilterExpression(FilterExpression caller, string reference)
+            : base(caller, reference)
+        {
+        }
+
+        protected DynamicFilterExpression(FilterExpression caller, ExpressionFunction function)
+            : base(caller, function)
+        {
+        }
 
         public DynamicMetaObject GetMetaObject(Expression parameter)
         {
-            return new DynamicDictionaryMetaObject(parameter, this);
+            return new DynamicFilterExpression.DynamicDictionaryMetaObject(parameter, this);
         }
 
         private class DynamicDictionaryMetaObject : DynamicMetaObject
         {
             internal DynamicDictionaryMetaObject(
                 Expression parameter,
-                FilterExpression value)
+                DynamicFilterExpression value)
                 : base(parameter, BindingRestrictions.Empty, value)
             {
             }
@@ -51,12 +59,12 @@ namespace Simple.OData.Client
             public override DynamicMetaObject BindGetMember(GetMemberBinder binder)
             {
                 ConstructorInfo ctor;
-                Expression[] ctorArguments; 
+                Expression[] ctorArguments;
                 FunctionMapping mapping;
                 if (FunctionMapping.SupportedFunctions.TryGetValue(new ExpressionFunction.FunctionCall(binder.Name, 0), out mapping))
                 {
                     ctor = CtorWithFilterExpressionAndString;
-					ctorArguments = new[] { Expression.Constant(this.Value), Expression.Constant(binder.Name) };
+                    ctorArguments = new[] { Expression.Constant(this.Value), Expression.Constant(binder.Name) };
                 }
                 else
                 {
@@ -95,9 +103,9 @@ namespace Simple.OData.Client
 
         private static IEnumerable<ConstructorInfo> GetConstructorInfo()
         {
-            return _ctors ?? 
-                (_ctors = typeof (FilterExpression).GetConstructors(
-					BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic));
+            return _ctors ??
+                (_ctors = typeof(DynamicFilterExpression).GetConstructors(
+                    BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic));
         }
 
         private static ConstructorInfo CtorWithString
@@ -105,9 +113,9 @@ namespace Simple.OData.Client
             get
             {
                 return _ctorWithString ??
-					(_ctorWithString = GetConstructorInfo().Single(x =>
+                    (_ctorWithString = GetConstructorInfo().Single(x =>
                     x.GetParameters().Count() == 1 &&
-                    x.GetParameters()[0].ParameterType == typeof (string)));
+                    x.GetParameters()[0].ParameterType == typeof(string)));
             }
         }
 
@@ -118,8 +126,8 @@ namespace Simple.OData.Client
                 return _ctorWithFilterExpressionAndString ??
                        (_ctorWithFilterExpressionAndString = GetConstructorInfo().Single(x =>
                            x.GetParameters().Count() == 2 &&
-                           x.GetParameters()[0].ParameterType == typeof (FilterExpression) &&
-                           x.GetParameters()[1].ParameterType == typeof (string)));
+                           x.GetParameters()[0].ParameterType == typeof(FilterExpression) &&
+                           x.GetParameters()[1].ParameterType == typeof(string)));
             }
         }
 
@@ -130,8 +138,8 @@ namespace Simple.OData.Client
                 return _ctorWithFilterExpressionAndExpressionFunction ??
                        (_ctorWithFilterExpressionAndExpressionFunction = GetConstructorInfo().Single(x =>
                            x.GetParameters().Count() == 2 &&
-                           x.GetParameters()[0].ParameterType == typeof (FilterExpression) &&
-                           x.GetParameters()[1].ParameterType == typeof (ExpressionFunction)));
+                           x.GetParameters()[0].ParameterType == typeof(FilterExpression) &&
+                           x.GetParameters()[1].ParameterType == typeof(ExpressionFunction)));
             }
         }
 

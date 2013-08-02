@@ -130,6 +130,9 @@
     <Compile Include="..\Simple.OData.Client.Core\Extensions\XmlElementAsDictionary.cs">
       <Link>Extensions\XmlElementAsDictionary.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Filter\DynamicFilterExpression.cs">
+      <Link>Filter\DynamicFilterExpression.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Filter\ExpressionContext.cs">
       <Link>Filter\ExpressionContext.cs</Link>
     </Compile>
@@ -141,9 +144,6 @@
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Filter\FilterExpression.cs">
       <Link>Filter\FilterExpression.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Filter\FilterExpression.Dynamic.cs">
-      <Link>Filter\FilterExpression.Dynamic.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Filter\FilterExpression.Operators.cs">
       <Link>Filter\FilterExpression.Operators.cs</Link>

@@ -74,6 +74,7 @@
     <Compile Include="Extensions\XElementExtensions.cs" />
     <Compile Include="Extensions\XmlAttributesAsDictionary.cs" />
     <Compile Include="Extensions\XmlElementAsDictionary.cs" />
+    <Compile Include="Filter\DynamicFilterExpression.cs" />
     <Compile Include="Filter\ExpressionContext.cs" />
     <Compile Include="Filter\ExpressionFunction.cs" />
     <Compile Include="Filter\ExpressionOperator.cs" />
@@ -129,7 +130,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <Compile Include="Filter\FilterExpression.Dynamic.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\nuget.targets" />

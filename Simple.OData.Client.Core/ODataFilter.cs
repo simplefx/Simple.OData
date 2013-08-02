@@ -8,22 +8,22 @@ namespace Simple.OData.Client
     {
         public static dynamic Expression
         {
-            get { return new FilterExpression(); }
+            get { return new DynamicFilterExpression(); }
         }
 
         public static FilterExpression ExpressionFromReference(string reference)
         {
-            return FilterExpression.FromReference(reference);
+            return DynamicFilterExpression.FromReference(reference);
         }
 
         public static FilterExpression ExpressionFromValue(object value)
         {
-            return FilterExpression.FromValue(value);
+            return DynamicFilterExpression.FromValue(value);
         }
 
         public static FilterExpression ExpressionFromFunction(string functionName, string targetName, IEnumerable<object> arguments)
         {
-            return FilterExpression.FromFunction(functionName, targetName, arguments);
+            return DynamicFilterExpression.FromFunction(functionName, targetName, arguments);
         }
     }
 }

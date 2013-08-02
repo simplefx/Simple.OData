@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Simple.OData.Client
 {
-    public partial class FilterExpression : IDynamicMetaObjectProvider
+    public partial class FilterExpression// : IDynamicMetaObjectProvider
     {
         private readonly FilterExpression _functionCaller;
         private readonly FilterExpression _left;
@@ -20,35 +20,35 @@ namespace Simple.OData.Client
         {
         }
 
-        private FilterExpression(object value)
+        protected FilterExpression(object value)
         {
             this.Value = value;
         }
 
-        private FilterExpression(string reference)
+        protected FilterExpression(string reference)
         {
             this.Reference = reference;
         }
 
-        private FilterExpression(ExpressionFunction function)
+        protected FilterExpression(ExpressionFunction function)
         {
             this.Function = function;
         }
 
-        private FilterExpression(FilterExpression left, FilterExpression right, ExpressionOperator expressionOperator)
+        protected FilterExpression(FilterExpression left, FilterExpression right, ExpressionOperator expressionOperator)
         {
             _left = left;
             _right = right;
             _operator = expressionOperator;
         }
 
-        private FilterExpression(FilterExpression caller, string reference)
+        protected FilterExpression(FilterExpression caller, string reference)
         {
             _functionCaller = caller;
             this.Reference = reference;
         }
 
-        private FilterExpression(FilterExpression caller, ExpressionFunction function)
+        protected FilterExpression(FilterExpression caller, ExpressionFunction function)
         {
             _functionCaller = caller;
             this.Function = function;
