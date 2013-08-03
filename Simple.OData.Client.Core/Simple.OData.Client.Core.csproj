@@ -24,7 +24,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;PORTABLE, PORTABLE_NET40</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;PORTABLE,PORTABLE_LEGACY</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -33,7 +33,7 @@
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE;PORTABLE, PORTABLE_NET40</DefineConstants>
+    <DefineConstants>TRACE;PORTABLE,PORTABLE_LEGACY</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -74,7 +74,6 @@
     <Compile Include="Extensions\XElementExtensions.cs" />
     <Compile Include="Extensions\XmlAttributesAsDictionary.cs" />
     <Compile Include="Extensions\XmlElementAsDictionary.cs" />
-    <Compile Include="Filter\DynamicFilterExpression.cs" />
     <Compile Include="Filter\ExpressionContext.cs" />
     <Compile Include="Filter\ExpressionFunction.cs" />
     <Compile Include="Filter\ExpressionOperator.cs" />
@@ -100,7 +99,6 @@
     <Compile Include="ODataCommand.cs" />
     <Compile Include="ODataFeedReader.cs" />
     <Compile Include="ODataFeedWriter.cs" />
-    <Compile Include="ODataFilter.cs" />
     <Compile Include="Pluralizer.cs" />
     <Compile Include="Properties.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

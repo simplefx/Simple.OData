@@ -7,7 +7,6 @@ using Entry = System.Collections.Generic.Dictionary<string, object>;
 
 namespace Simple.OData.Client.Tests
 {
-#if !PORTABLE_IOS
     public class FindDynamicFilterTests : TestBase
     {
         [Fact]
@@ -80,5 +79,4 @@ namespace Simple.OData.Client.Tests
             Assert.Equal(2.5m, product["Price"]);
         }
     }
-#endif
 }

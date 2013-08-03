@@ -3,7 +3,6 @@ using Xunit;
 
 namespace Simple.OData.Client.Tests
 {
-#if !PORTABLE_IOS
     public class DynamicFilterAsKeyTests : TestBase
     {
         [Fact]
@@ -177,5 +176,4 @@ namespace Simple.OData.Client.Tests
             Assert.Equal("Transport/NorthwindModel.Ship(1)", commandText);
         }
     }
-#endif
 }

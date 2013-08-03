@@ -275,7 +275,6 @@ namespace Simple.OData.Client.Tests
             Assert.Throws<InvalidOperationException>(() => client.FindEntries("Products"));
         }
 
-#if !PORTABLE_IOS
         [Fact]
         public void FindEntryExistingDynamicFilter()
         {
@@ -302,7 +301,7 @@ namespace Simple.OData.Client.Tests
             var ship = _client.FindEntry(filter);
             Assert.Equal("Titanic", ship["ShipName"]);
         }
-#endif
+
         [Fact]
         public void FindEntryExistingTypedFilter()
         {

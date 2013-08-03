@@ -6,22 +6,7 @@ namespace Simple.OData.Client.Extensions
 {
     public static class TypeExtensions
     {
-#if PORTABLE && !PORTABLE_NET40
-        public static IEnumerable<PropertyInfo> GetDeclaredProperties(this Type type)
-        {
-            return type.GetTypeInfo().DeclaredProperties;
-        }
-
-        public static PropertyInfo GetDeclaredProperty(this Type type, string propertyName)
-        {
-            return type.GetTypeInfo().GetDeclaredProperty(propertyName);
-        }
-
-        public static IEnumerable<FieldInfo> GetDeclaredFields(this Type type)
-        {
-            return typeof(EdmType).GetTypeInfo().DeclaredFields;
-        }
-#else
+#if NET40 || PORTABLE_LEGACY
         public static IEnumerable<PropertyInfo> GetDeclaredProperties(this Type type)
         {
             return type.GetProperties();
@@ -35,6 +20,21 @@ namespace Simple.OData.Client.Extensions
         public static IEnumerable<FieldInfo> GetDeclaredFields(this Type type)
         {
             return type.GetFields(BindingFlags.Public | BindingFlags.Static);
+        }
+#else
+        public static IEnumerable<PropertyInfo> GetDeclaredProperties(this Type type)
+        {
+            return type.GetTypeInfo().DeclaredProperties;
+        }
+
+        public static PropertyInfo GetDeclaredProperty(this Type type, string propertyName)
+        {
+            return type.GetTypeInfo().GetDeclaredProperty(propertyName);
+        }
+
+        public static IEnumerable<FieldInfo> GetDeclaredFields(this Type type)
+        {
+            return typeof(EdmType).GetTypeInfo().DeclaredFields;
         }
 #endif
     }

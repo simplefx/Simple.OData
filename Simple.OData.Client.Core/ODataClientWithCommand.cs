@@ -64,12 +64,10 @@ namespace Simple.OData.Client
             return _command.Filter(filter);
         }
 
-#if !PORTABLE_IOS
         public IClientWithCommand Filter(FilterExpression expression)
         {
             return _command.Filter(expression);
         }
-#endif
 
         public IClientWithCommand Filter<T>(Expression<Func<T, bool>> expression)
         {

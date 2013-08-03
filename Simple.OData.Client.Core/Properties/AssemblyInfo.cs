@@ -29,8 +29,8 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyDescription("OData client library for .NET 4.x, Windows Store, Silverlight 5, Windows Phone 8, Mond for Android and MonoTouch platforms")]
 
+[assembly: InternalsVisibleTo("Simple.OData.Client.Dynamic")]
 [assembly: InternalsVisibleTo("Simple.OData.Client.Tests")]
 [assembly: InternalsVisibleTo("Simple.OData.Client.Tests.Net40")]
 [assembly: InternalsVisibleTo("Simple.OData.Client.Tests.Net45")]
 [assembly: InternalsVisibleTo("Simple.OData.Client.Tests.WinRT")]
-[assembly: InternalsVisibleTo("Simple.OData.Client.Tests.SL5")]

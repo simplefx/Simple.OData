@@ -130,9 +130,6 @@
     <Compile Include="..\Simple.OData.Client.Core\Extensions\XmlElementAsDictionary.cs">
       <Link>Extensions\XmlElementAsDictionary.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Filter\DynamicFilterExpression.cs">
-      <Link>Filter\DynamicFilterExpression.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Filter\ExpressionContext.cs">
       <Link>Filter\ExpressionContext.cs</Link>
     </Compile>
@@ -213,9 +210,6 @@
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ODataFeedWriter.cs">
       <Link>ODataFeedWriter.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\ODataFilter.cs">
-      <Link>ODataFilter.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Pluralizer.cs">
       <Link>Pluralizer.cs</Link>
@@ -306,6 +300,12 @@
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\UnresolvableObjectException.cs">
       <Link>UnresolvableObjectException.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Dynamic\DynamicFilterExpression.cs">
+      <Link>Filter\DynamicFilterExpression.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Dynamic\ODataFilter.cs">
+      <Link>ODataFilter.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>

@@ -268,6 +268,10 @@
       <Project>{361868b8-a63e-4c74-aa87-b70e1ab22313}</Project>
       <Name>Simple.OData.Client.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Simple.OData.Client.Dynamic\Simple.OData.Client.Dynamic.csproj">
+      <Project>{c025fb0f-452b-4795-b9a4-64c9e6abbeee}</Project>
+      <Name>Simple.OData.Client.Dynamic</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Simple.OData.Client.TestUtils.Net40\Simple.OData.Client.TestUtils.Net40.csproj">
       <Project>{072f8be4-81c1-4276-a9a5-1aec87a84265}</Project>
       <Name>Simple.OData.Client.TestUtils.Net40</Name>

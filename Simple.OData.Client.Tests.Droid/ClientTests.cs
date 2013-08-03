@@ -67,12 +67,6 @@ namespace Simple.OData.Client.Tests
             Assert.AreEqual(0, client.Schema.ComplexTypes.Count());
         }
 
-        public class Product
-        {
-            public string Name { get; set; }
-            public decimal Price { get; set; }
-        }
-
         [TestMethod]
         public void AllEntriesFromODataOrg()
         {
@@ -82,6 +76,25 @@ namespace Simple.OData.Client.Tests
                 .FindEntries();
             Assert.IsNotNull(products);
             Assert.AreNotEqual(0, products.Count());
+        }
+
+        [TestMethod]
+        public void DynamicCombinedConditionsFromODataOrg()
+        {
+            var x = ODataFilter.Expression;
+            var client = new ODataClient("http://services.odata.org/V3/OData/OData.svc/");
+            var product = client
+                .For("Product")
+                .Filter(x.Name == "Bread" && x.Price < 1000)
+                .FindEntry();
+            Assert.IsNotNull(product);
+            Assert.AreEqual(2.5m, product["Price"]);
+        }
+
+        public class Product
+        {
+            public string Name { get; set; }
+            public decimal Price { get; set; }
         }
 
         [TestMethod]

@@ -66,5 +66,34 @@ namespace Simple.OData.Client.Tests
             Assert.AreEqual(5, client.Schema.EntityTypes.Count());
             Assert.AreEqual(0, client.Schema.ComplexTypes.Count());
         }
+
+        [Test]
+        public void AllEntriesFromODataOrg()
+        {
+            var client = new ODataClient("http://services.odata.org/V3/OData/OData.svc/");
+            var products = client
+                .For("Product")
+                .FindEntries();
+            Assert.IsNotNull(products);
+            Assert.AreNotEqual(0, products.Count());
+        }
+
+        public class Product
+        {
+            public string Name { get; set; }
+            public decimal Price { get; set; }
+        }
+
+        [Test]
+        public void TypedCombinedConditionsFromODataOrg()
+        {
+            var client = new ODataClient("http://services.odata.org/V3/OData/OData.svc/");
+            var product = client
+                .For("Product")
+                .Filter<Product>(x => x.Name == "Bread" && x.Price < 1000)
+                .FindEntry();
+            Assert.IsNotNull(product);
+            Assert.AreEqual(2.5m, product["Price"]);
+        }
     }
 }

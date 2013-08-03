@@ -10,9 +10,7 @@ namespace Simple.OData.Client
 
         // see http://stackoverflow.com/questions/10531575/passing-a-dynamic-parameter-throws-runtimebinderexception-when-calling-method-fr
         new IClientWithCommand Filter(string filter);
-#if !PORTABLE_IOS
         new IClientWithCommand Filter(FilterExpression expression);
-#endif
         new IClientWithCommand Filter<T>(Expression<Func<T, bool>> expression);
         new IClientWithCommand Set(object value);
         new IClientWithCommand Set(IDictionary<string, object> value);

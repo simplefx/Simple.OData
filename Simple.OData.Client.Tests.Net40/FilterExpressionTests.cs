@@ -3,7 +3,6 @@ using Xunit;
 
 namespace Simple.OData.Client.Tests
 {
-#if !PORTABLE_IOS
     public class FilterExpressionTests
     {
         [Fact]
@@ -366,5 +365,4 @@ namespace Simple.OData.Client.Tests
             Assert.Equal("ceiling(Price) eq 2", filter.ToString());
         }
     }
-#endif
 }

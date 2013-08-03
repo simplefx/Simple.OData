@@ -4,10 +4,10 @@ namespace Simple.OData.Client
 {
     public class Pluralizer : IPluralizer
     {
-        private Func<string, bool> _isPlural;
-        private Func<string, bool> _isSingular;
-        private Func<string, string> _pluralize;
-        private Func<string, string> _singularize;
+        private readonly Func<string, bool> _isPlural;
+        private readonly Func<string, bool> _isSingular;
+        private readonly Func<string, string> _pluralize;
+        private readonly Func<string, string> _singularize;
 
         public Pluralizer(Func<string, bool> isPlural, Func<string, bool> isSingular, Func<string, string> pluralize, Func<string, string> singularize)
         {
