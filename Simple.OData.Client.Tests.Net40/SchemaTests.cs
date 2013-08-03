@@ -179,14 +179,14 @@ namespace Simple.OData.Client.Tests
             Assert.Equal(0, client.Schema.ComplexTypes.Count());
         }
 
-        [Fact]
-        public void RetrieveSchemaFromUrlWithoutFilename()
-        {
-            var client = new ODataClient("http://vancouverdataservice.cloudapp.net/v1/impark");
+        //[Fact]
+        //public void RetrieveSchemaFromUrlWithoutFilename()
+        //{
+        //    var client = new ODataClient("http://vancouverdataservice.cloudapp.net/v1/impark");
 
-            var schema = client.Schema;
+        //    var schema = client.Schema;
 
-            Assert.NotEmpty(schema.Tables);
-        }
+        //    Assert.NotEmpty(schema.Tables);
+        //}
     }
 }

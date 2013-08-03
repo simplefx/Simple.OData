@@ -4,7 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 namespace Simple.OData.Client.Tests
 {
     [TestClass]
-    public class SchemaTests
+    public class ClientTests
     {
         [TestMethod]
         public void CheckODataOrgNorthwindSchema()
@@ -67,14 +67,33 @@ namespace Simple.OData.Client.Tests
             Assert.AreEqual(0, client.Schema.ComplexTypes.Count());
         }
 
-        [TestMethod]
-        public void RetrieveSchemaFromUrlWithoutFilename()
+        public class Product
         {
-            var client = new ODataClient("http://vancouverdataservice.cloudapp.net/v1/impark");
+            public string Name { get; set; }
+            public decimal Price { get; set; }
+        }
 
-            var schema = client.Schema;
+        [TestMethod]
+        public void AllEntriesFromODataOrg()
+        {
+            var client = new ODataClient("http://services.odata.org/V3/OData/OData.svc/");
+            var products = client
+                .For("Product")
+                .FindEntries();
+            Assert.IsNotNull(products);
+            Assert.AreNotEqual(0, products.Count());
+        }
 
-            Assert.IsTrue(schema.Tables.Any());
+        [TestMethod]
+        public void TypedCombinedConditionsFromODataOrg()
+        {
+            var client = new ODataClient("http://services.odata.org/V3/OData/OData.svc/");
+            var product = client
+                .For("Product")
+                .Filter<Product>(x => x.Name == "Bread" && x.Price < 1000)
+                .FindEntry();
+            Assert.IsNotNull(product);
+            Assert.AreEqual(2.5m, product["Price"]);
         }
     }
 }

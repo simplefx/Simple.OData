@@ -48,7 +48,8 @@ namespace Simple.OData.Client
 
         private static FilterExpression ParseUnaryExpression(Expression expression)
         {
-            var filterExpression = ParseLinqExpression(expression as UnaryExpression);
+            var unaryExpression = (expression as UnaryExpression).Operand;
+            var filterExpression = ParseLinqExpression(unaryExpression);
             switch (expression.NodeType)
             {
                 case ExpressionType.Not:

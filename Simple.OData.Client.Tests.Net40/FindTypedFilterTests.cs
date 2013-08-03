@@ -61,5 +61,22 @@ namespace Simple.OData.Client.Tests
                 .FindScalar();
             Assert.Equal(1, int.Parse(count.ToString()));
         }
+
+        public class ODataOrgProduct
+        {
+            public string Name { get; set; }
+            public decimal Price { get; set; }
+        }
+
+        [Fact]
+        public void TypedCombinedConditionsFromODataOrg()
+        {
+            var client = new ODataClient("http://services.odata.org/V3/OData/OData.svc/");
+            var product = client
+                .For("Product")
+                .Filter<ODataOrgProduct>(x => x.Name == "Bread" && x.Price < 1000)
+                .FindEntry();
+            Assert.Equal(2.5m, product["Price"]);
+        }
     }
 }

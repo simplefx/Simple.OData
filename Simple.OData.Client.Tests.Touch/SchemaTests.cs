@@ -66,15 +66,5 @@ namespace Simple.OData.Client.Tests
             Assert.AreEqual(5, client.Schema.EntityTypes.Count());
             Assert.AreEqual(0, client.Schema.ComplexTypes.Count());
         }
-
-        [Test]
-        public void RetrieveSchemaFromUrlWithoutFilename()
-        {
-            var client = new ODataClient("http://vancouverdataservice.cloudapp.net/v1/impark");
-
-            var schema = client.Schema;
-
-            Assert.IsTrue(schema.Tables.Any());
-        }
     }
 }
