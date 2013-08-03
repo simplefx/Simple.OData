@@ -18,6 +18,7 @@ namespace Simple.OData.Client
 
                 case ExpressionType.Not:
                 case ExpressionType.Convert:
+                case ExpressionType.Negate:
                     return ParseUnaryExpression(expression);
 
                 case ExpressionType.Equal:
@@ -30,6 +31,14 @@ namespace Simple.OData.Client
                 case ExpressionType.AndAlso:
                 case ExpressionType.Or:
                 case ExpressionType.OrElse:
+                case ExpressionType.Add:
+                case ExpressionType.AddChecked:
+                case ExpressionType.Subtract:
+                case ExpressionType.SubtractChecked:
+                case ExpressionType.Multiply:
+                case ExpressionType.MultiplyChecked:
+                case ExpressionType.Divide:
+                case ExpressionType.Modulo:
                     return ParseBinaryExpression(expression);
             }
 
@@ -56,6 +65,8 @@ namespace Simple.OData.Client
                     return !filterExpression;
                 case ExpressionType.Convert:
                     return filterExpression;
+                case ExpressionType.Negate:
+                    return -filterExpression;
             }
 
             throw new NotSupportedException(string.Format("Not supported expression of type {0} ({1}): {2}",
@@ -88,6 +99,19 @@ namespace Simple.OData.Client
                 case ExpressionType.Or:
                 case ExpressionType.OrElse:
                     return leftExpression || rightExpression;
+                case ExpressionType.Add:
+                case ExpressionType.AddChecked:
+                    return leftExpression + rightExpression;
+                case ExpressionType.Subtract:
+                case ExpressionType.SubtractChecked:
+                    return leftExpression - rightExpression;
+                case ExpressionType.Multiply:
+                case ExpressionType.MultiplyChecked:
+                    return leftExpression * rightExpression;
+                case ExpressionType.Divide:
+                    return leftExpression / rightExpression;
+                case ExpressionType.Modulo:
+                    return leftExpression % rightExpression;
             }
 
             throw new NotSupportedException(string.Format("Not supported expression of type {0} ({1}): {2}",

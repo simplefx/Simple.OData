@@ -16,6 +16,7 @@
         SUB,
         MUL,
         DIV,
-        MOD
+        MOD,
+        NEG
     }
 }

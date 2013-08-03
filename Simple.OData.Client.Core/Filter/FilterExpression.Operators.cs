@@ -27,6 +27,11 @@ namespace Simple.OData.Client
             return new FilterExpression(expr, null, ExpressionOperator.NOT);
         }
 
+        public static FilterExpression operator -(FilterExpression expr)
+        {
+            return new FilterExpression(expr, null, ExpressionOperator.NEG);
+        }
+
         public static FilterExpression operator ==(FilterExpression expr1, FilterExpression expr2)
         {
             return new FilterExpression(expr1, expr2, ExpressionOperator.EQ);

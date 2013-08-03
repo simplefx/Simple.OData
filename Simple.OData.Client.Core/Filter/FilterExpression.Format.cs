@@ -29,7 +29,7 @@ namespace Simple.OData.Client
                     FormatFunction(context) :
                     FormatValue(context);
             }
-            else if (_operator == ExpressionOperator.NOT)
+            else if (_operator == ExpressionOperator.NOT || _operator == ExpressionOperator.NEG)
             {
                 var left = FormatExpression(_left, context);
                 var op = FormatOperator(context);
@@ -123,6 +123,8 @@ namespace Simple.OData.Client
                     return "div";
                 case ExpressionOperator.MOD:
                     return "mod";
+                case ExpressionOperator.NEG:
+                    return "-";
                 default:
                     return null;
             }
@@ -196,6 +198,7 @@ namespace Simple.OData.Client
             switch (op)
             {
                 case ExpressionOperator.NOT:
+                case ExpressionOperator.NEG:
                     return 1;
                 case ExpressionOperator.MOD:
                 case ExpressionOperator.MUL:
