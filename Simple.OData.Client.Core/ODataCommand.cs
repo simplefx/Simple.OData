@@ -2,12 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
-    class ODataCommand : ICommand
+    public class ODataCommand : ICommand
     {
         private readonly ODataClientWithCommand _client;
         private readonly ODataCommand _parent;

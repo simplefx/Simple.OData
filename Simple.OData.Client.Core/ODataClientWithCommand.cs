@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace Simple.OData.Client
 {
-    partial class ODataClientWithCommand : IClientWithCommand
+    public partial class ODataClientWithCommand : IClientWithCommand
     {
         private readonly ODataClient _client;
         private readonly ISchema _schema;
