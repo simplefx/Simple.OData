@@ -21,7 +21,8 @@ namespace Simple.OData.Client.Extensions
             if (string.IsNullOrEmpty(prefix))
             {
                 return element.Elements().Where(
-                    x => x.Name.LocalName == name && element.GetPrefixOfNamespace(x.Name.Namespace) == null);
+                    x => x.Name.LocalName == name && 
+                        string.IsNullOrEmpty(element.GetPrefixOfNamespace(x.Name.Namespace)));
             }
 
             return element.Elements(ResolvePrefix(element, prefix) + name);
@@ -36,7 +37,8 @@ namespace Simple.OData.Client.Extensions
             if (string.IsNullOrEmpty(prefix))
             {
                 return element.Descendants().Where(
-                    x => x.Name.LocalName == name && element.GetPrefixOfNamespace(x.Name.Namespace) == null);
+                    x => x.Name.LocalName == name && 
+                        string.IsNullOrEmpty(element.GetPrefixOfNamespace(x.Name.Namespace)));
             }
 
             return XElement.EmptySequence;

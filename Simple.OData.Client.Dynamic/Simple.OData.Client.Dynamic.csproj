@@ -14,6 +14,8 @@
     <TargetFrameworkProfile>Profile147</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <ProductVersion>12.0.0</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -35,7 +37,7 @@
   <ItemGroup>
     <!-- A reference to the entire .NET Framework is automatically included -->
     <ProjectReference Include="..\Simple.OData.Client.Core\Simple.OData.Client.Core.csproj">
-      <Project>{361868b8-a63e-4c74-aa87-b70e1ab22313}</Project>
+      <Project>{361868B8-A63E-4C74-AA87-B70E1AB22313}</Project>
       <Name>Simple.OData.Client.Core</Name>
     </ProjectReference>
   </ItemGroup>
