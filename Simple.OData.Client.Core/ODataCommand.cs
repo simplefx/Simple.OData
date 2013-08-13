@@ -6,6 +6,11 @@ using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
+    // ALthough ODataCommand is never instantiated directly (only via ICommand interface)
+    // it's declared as public in order to resolve problem when it is used with dynamic C#
+    // For the same reason ODataClientWithCommand is also declared as public
+    // More: http://bloggingabout.net/blogs/vagif/archive/2013/08/05/we-need-better-interoperability-between-dynamic-and-statically-compiled-c.aspx
+
     public class ODataCommand : ICommand
     {
         private readonly ODataClientWithCommand _client;

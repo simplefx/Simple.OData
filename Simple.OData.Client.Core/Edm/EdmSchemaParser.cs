@@ -167,7 +167,7 @@ namespace Simple.OData.Client
             {
                 Name = element.Attribute("Name").Value,
                 Type = EdmPropertyType.Parse(element.Attribute("Type").Value, complexTypes, entityTypes),
-                Nullable = ParseBooleanAttribute(element.Attribute("Nullable")),
+                Nullable = ParseBooleanAttribute(element.Attribute("Nullable"), true),
             };
         }
 
@@ -192,9 +192,9 @@ namespace Simple.OData.Client
             };
         }
 
-        private static bool ParseBooleanAttribute(XAttribute attribute)
+        private static bool ParseBooleanAttribute(XAttribute attribute, bool @default = false)
         {
-            bool result = false;
+            bool result = @default;
             if (attribute != null)
             {
                 Boolean.TryParse(attribute.Value, out result);
@@ -202,9 +202,9 @@ namespace Simple.OData.Client
             return result;
         }
 
-        private static string ParseStringAttribute(XAttribute attribute)
+        private static string ParseStringAttribute(XAttribute attribute, string @default = null)
         {
-            return attribute == null ? null : attribute.Value;
+            return attribute == null ? @default : attribute.Value;
         }
     }
 }

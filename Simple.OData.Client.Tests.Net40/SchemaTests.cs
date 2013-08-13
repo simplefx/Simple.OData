@@ -38,6 +38,16 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void ColumnNullability()
+        {
+            var nonNullablecolumn = _client.Schema.FindTable("Employees").FindColumn("EmployeeID");
+            var nullableColumn = _client.Schema.FindTable("Employees").FindColumn("ReportsTo");
+
+            Assert.Equal(false, nonNullablecolumn.IsNullable);
+            Assert.Equal(true, nullableColumn.IsNullable);
+        }
+
+        [Fact]
         public void GetAssociationsCount()
         {
             var associations = _client.Schema.FindTable("Employees").Associations;
@@ -93,7 +103,7 @@ namespace Simple.OData.Client.Tests
             var schemaString = _client.SchemaAsString;
             var schema = ODataClient.ParseSchemaString(schemaString);
 
-            var table = _client.Schema.FindTable("OrderDetails");
+            var table = schema.FindTable("OrderDetails");
             Assert.NotNull(table);
         }
 
