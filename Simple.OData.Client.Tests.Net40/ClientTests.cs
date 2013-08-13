@@ -23,6 +23,13 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void FindEntriesNonExistingLong()
+        {
+            var products = _client.FindEntries("Products?$filter=ProductID eq 999999999999L");
+            Assert.True(products.Count() == 0);
+        }
+
+        [Fact]
         public void FindEntryExisting()
         {
             var product = _client.FindEntry("Products?$filter=ProductName eq 'Chai'");
@@ -204,10 +211,33 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public void ExecuteScalarFunction()
+        public void ExecuteScalarFunctionWithStringParameter()
         {
             var result = _client.ExecuteFunction("ParseInt", new Entry() { { "number", "1" } });
             Assert.Equal(1, result.First().First().First().Value);
+        }
+
+        [Fact]
+        public void ExecuteScalarFunctionWithLongParameter()
+        {
+            var result = _client.ExecuteFunction("PassThroughLong", new Entry() { { "number", 1L } });
+            Assert.Equal(1L, result.First().First().First().Value);
+        }
+
+        [Fact]
+        public void ExecuteScalarFunctionWithDateTimeParameter()
+        {
+            var dateTime = new DateTime(2013, 1, 1, 12, 13, 14);
+            var result = _client.ExecuteFunction("PassThroughDateTime", new Entry() { { "dateTime", dateTime } });
+            Assert.Equal(dateTime.ToLocalTime(), result.First().First().First().Value);
+        }
+
+        [Fact]
+        public void ExecuteScalarFunctionWithGuidParameter()
+        {
+            var guid = Guid.NewGuid();
+            var result = _client.ExecuteFunction("PassThroughGuid", new Entry() { { "guid", guid } });
+            Assert.Equal(guid, result.First().First().First().Value);
         }
 
         [Fact]

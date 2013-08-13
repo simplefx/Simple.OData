@@ -54,6 +54,12 @@ namespace Simple.OData.Client.Tests
                     if (int.Parse(transport["TransportID"].ToString()) > 2)
                         _client.DeleteEntry("Transport", transport);
                 }
+                var employees = _client.FindEntries("Employees");
+                foreach (var employee in employees)
+                {
+                    if (employee["LastName"].ToString().StartsWith("Test"))
+                        _client.DeleteEntry("Employees", employee);
+                }
             }
 
 #if NETFX_CORE

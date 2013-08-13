@@ -146,8 +146,8 @@ namespace Simple.OData.Client
         public void UnlinkEntry(string collection, IDictionary<string, object> entryKey, string linkName)
         {
             RemoveSystemProperties(entryKey);
-            var association = _schema.FindAssociation(collection, linkName);
-            var command = CreateUnlinkCommand(collection, linkName, new ODataClientWithCommand(this, _schema).For(collection).Key(entryKey).CommandText);
+            var command = CreateUnlinkCommand(collection, linkName, 
+                new ODataClientWithCommand(this, _schema).For(collection).Key(entryKey).CommandText);
             _requestBuilder.AddCommandToRequest(command);
             _requestRunner.UpdateEntry(command);
         }
@@ -155,7 +155,8 @@ namespace Simple.OData.Client
         public IEnumerable<IEnumerable<IEnumerable<KeyValuePair<string, object>>>> ExecuteFunction(string functionName, IDictionary<string, object> parameters)
         {
             var function = _schema.FindFunction(functionName);
-            var command = new HttpCommand(function.HttpMethod.ToUpper(), new ODataClientWithCommand(this, _schema).Function(functionName).Parameters(parameters).CommandText);
+            var command = new HttpCommand(function.HttpMethod.ToUpper(), 
+                new ODataClientWithCommand(this, _schema).Function(functionName).Parameters(parameters).CommandText);
             _requestBuilder.AddCommandToRequest(command);
             return _requestRunner.ExecuteFunction(command);
         }

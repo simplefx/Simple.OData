@@ -7,10 +7,7 @@ namespace Simple.OData.Client.Extensions
         public static string ToODataString(this long number, ValueFormatter.FormattingStyle formattingStyle)
         {
             var value = number.ToString(CultureInfo.InvariantCulture);
-            if (formattingStyle == ValueFormatter.FormattingStyle.Content)
-                return string.Format(@"{0}L", value);
-            else
-                return value;
+            return string.Format(@"{0}L", value);
         }
     }
 }

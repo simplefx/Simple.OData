@@ -138,7 +138,7 @@ namespace Simple.OData.Client.Tests
         {
             var x = ODataFilter.Expression;
             var filter = x.CategoryID == 1L;
-            Assert.Equal("CategoryID eq 1", filter.ToString());
+            Assert.Equal("CategoryID eq 1L", filter.ToString());
         }
 
         [Fact]

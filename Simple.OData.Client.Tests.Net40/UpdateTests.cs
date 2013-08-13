@@ -76,6 +76,31 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void UpdateDate()
+        {
+            var today = DateTime.Now.Date;
+            var tomorrow = today.AddDays(1);
+
+            var employee = _client
+                .For("Employees")
+                .Set(new { FirstName="Test1", LastName="Test1", HireDate = today })
+                .InsertEntry();
+
+            _client
+                .For("Employees")
+                .Key(employee["EmployeeID"])
+                .Set(new { HireDate = tomorrow })
+                .UpdateEntry();
+
+            employee = _client
+                .For("Employees")
+                .Key(employee["EmployeeID"])
+                .FindEntry();
+
+            Assert.Equal(tomorrow, employee["HireDate"]);
+        }
+
+        [Fact]
         public void AddSingleAssociation()
         {
             var category = _client

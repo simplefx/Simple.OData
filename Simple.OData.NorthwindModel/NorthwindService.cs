@@ -32,6 +32,24 @@ namespace Simple.OData.NorthwindModel
         {
             return int.Parse(number);
         }
+
+        [WebGet]
+        public long PassThroughLong(long number)
+        {
+            return number;
+        }
+
+        [WebGet]
+        public DateTime PassThroughDateTime(DateTime dateTime)
+        {
+            return dateTime;
+        }
+
+        [WebGet]
+        public Guid PassThroughGuid(Guid guid)
+        {
+            return guid;
+        }
     }
 }
 
