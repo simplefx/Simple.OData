@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Data.Services;
+using System.Data.Services.Client;
 using System.Data.Services.Common;
 using System.Linq;
 using System.ServiceModel.Web;
@@ -34,6 +35,17 @@ namespace Simple.OData.NorthwindModel
         }
 
         [WebGet]
+        public IQueryable<int> ReturnIntCollection(int count)
+        {
+            var numbers = new List<int>();
+            for (var index = 1; index <= count; index++)
+            {
+                numbers.Add(index);
+            }
+            return numbers.AsQueryable();
+        }
+
+        [WebGet]
         public long PassThroughLong(long number)
         {
             return number;
@@ -49,6 +61,18 @@ namespace Simple.OData.NorthwindModel
         public Guid PassThroughGuid(Guid guid)
         {
             return guid;
+        }
+
+        [WebGet]
+        public IQueryable<Address> ReturnAddressCollection(int count)
+        {
+            var address = new Address {City = "Oslo", Country = "Norway"};
+            var addresses = new List<Address>();
+            for (var index = 1; index <= count; index++)
+            {
+                addresses.Add(address);
+            }
+            return addresses.AsQueryable();
         }
     }
 }

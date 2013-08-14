@@ -3041,5 +3041,140 @@ namespace Simple.OData.NorthwindModel
 
     #endregion
 
+    #region ComplexTypes
+    
+    /// <summary>
+    /// No Metadata Documentation available.
+    /// </summary>
+    [EdmComplexTypeAttribute(NamespaceName="NorthwindModel", Name="Address")]
+    [DataContractAttribute(IsReference=true)]
+    [Serializable()]
+    public partial class Address : ComplexObject
+    {
+        #region Factory Method
+    
+        /// <summary>
+        /// Create a new Address object.
+        /// </summary>
+        /// <param name="city">Initial value of the City property.</param>
+        /// <param name="region">Initial value of the Region property.</param>
+        /// <param name="postalCode">Initial value of the PostalCode property.</param>
+        /// <param name="country">Initial value of the Country property.</param>
+        public static Address CreateAddress(global::System.String city, global::System.String region, global::System.String postalCode, global::System.String country)
+        {
+            Address address = new Address();
+            address.City = city;
+            address.Region = region;
+            address.PostalCode = postalCode;
+            address.Country = country;
+            return address;
+        }
+
+        #endregion
+
+        #region Primitive Properties
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String City
+        {
+            get
+            {
+                return _City;
+            }
+            set
+            {
+                OnCityChanging(value);
+                ReportPropertyChanging("City");
+                _City = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("City");
+                OnCityChanged();
+            }
+        }
+        private global::System.String _City;
+        partial void OnCityChanging(global::System.String value);
+        partial void OnCityChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String Region
+        {
+            get
+            {
+                return _Region;
+            }
+            set
+            {
+                OnRegionChanging(value);
+                ReportPropertyChanging("Region");
+                _Region = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("Region");
+                OnRegionChanged();
+            }
+        }
+        private global::System.String _Region;
+        partial void OnRegionChanging(global::System.String value);
+        partial void OnRegionChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String PostalCode
+        {
+            get
+            {
+                return _PostalCode;
+            }
+            set
+            {
+                OnPostalCodeChanging(value);
+                ReportPropertyChanging("PostalCode");
+                _PostalCode = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("PostalCode");
+                OnPostalCodeChanged();
+            }
+        }
+        private global::System.String _PostalCode;
+        partial void OnPostalCodeChanging(global::System.String value);
+        partial void OnPostalCodeChanged();
+    
+        /// <summary>
+        /// No Metadata Documentation available.
+        /// </summary>
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [DataMemberAttribute()]
+        public global::System.String Country
+        {
+            get
+            {
+                return _Country;
+            }
+            set
+            {
+                OnCountryChanging(value);
+                ReportPropertyChanging("Country");
+                _Country = StructuralObject.SetValidValue(value, false);
+                ReportPropertyChanged("Country");
+                OnCountryChanged();
+            }
+        }
+        private global::System.String _Country;
+        partial void OnCountryChanging(global::System.String value);
+        partial void OnCountryChanged();
+
+        #endregion
+
+    }
+
+    #endregion
+
     
 }

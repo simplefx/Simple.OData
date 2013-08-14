@@ -86,7 +86,7 @@ namespace Simple.OData.Client.Tests
         {
             var complexTypes = _client.Schema.ComplexTypes;
 
-            Assert.Equal(0, complexTypes.Count());
+            Assert.Equal(1, complexTypes.Count());
         }
 
         [Fact]

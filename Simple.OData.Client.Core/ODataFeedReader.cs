@@ -67,23 +67,30 @@ namespace Simple.OData.Client
         {
             var text = Utils.StreamToString(stream);
             var element = XElement.Parse(text);
-            bool scalarResult = element.Name.LocalName != "feed";
-            if (scalarResult)
+            if (element.Name.LocalName == "feed")
             {
-                KeyValuePair<string, object> kv;
-                try
-                {
-                    kv = EdmTypeSerializer.Read(element, ODataCommand.ResultLiteral);
-                }
-                catch (Exception)
-                {
-                    kv = new KeyValuePair<string, object>(ODataCommand.ResultLiteral, text);
-                }
-                return new[] { new Dictionary<string, object>() { { kv.Key, kv.Value } } };
+                return GetData(element);
             }
             else
             {
-                return GetData(element);
+                object value;
+                try
+                {
+                    var collectionElements = element.Elements(null, "element");
+                    if (collectionElements.Any())
+                    {
+                        value = collectionElements.Select(x => EdmTypeSerializer.Read(x).Value).ToArray();
+                    }
+                    else
+                    {
+                        value = EdmTypeSerializer.Read(element).Value;
+                    }
+                }
+                catch (Exception)
+                {
+                    value = text;
+                }
+                return new[] { new Dictionary<string, object>() { { ODataCommand.ResultLiteral, value } } };
             }
         }
 

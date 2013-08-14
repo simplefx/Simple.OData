@@ -51,6 +51,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Data.Entity" />
     <Reference Include="System.Spatial, Version=5.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Solutions\packages\System.Spatial.5.5.0\lib\net40\System.Spatial.dll</HintPath>
@@ -86,6 +87,7 @@
     <Compile Include="DynamicFilterAsKeyTests.cs" />
     <Compile Include="FindDynamicFilterTests.cs" />
     <Compile Include="FindTypedFilterTests.cs" />
+    <Compile Include="FunctionTests.cs" />
     <Compile Include="InsertTests.cs" />
     <Compile Include="LinkTests.cs" />
     <Compile Include="ClientTests.cs" />

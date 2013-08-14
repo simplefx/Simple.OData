@@ -141,6 +141,9 @@
     <Compile Include="..\Simple.OData.Client.Tests.Net40\FindTypedFilterTests.cs">
       <Link>FindTypedFilterTests.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\FunctionTests.cs">
+      <Link>FunctionTests.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\InsertTests.cs">
       <Link>InsertTests.cs</Link>
     </Compile>

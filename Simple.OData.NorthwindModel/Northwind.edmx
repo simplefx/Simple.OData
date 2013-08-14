@@ -542,6 +542,12 @@
         <EntityType Name="Trucks" BaseType="NorthwindModel.Transport">
           <Property Type="String" Name="TruckNumber" MaxLength="100" FixedLength="false" Unicode="true" />
         </EntityType>
+        <ComplexType Name="Address" >
+          <Property Type="String" Name="City" Nullable="false" />
+          <Property Type="String" Name="Region" Nullable="false" />
+          <Property Type="String" Name="PostalCode" Nullable="false" />
+          <Property Type="String" Name="Country" Nullable="false" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
