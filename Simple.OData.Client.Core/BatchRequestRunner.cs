@@ -37,7 +37,7 @@ namespace Simple.OData.Client
             return 0;
         }
 
-        public override IEnumerable<IEnumerable<IEnumerable<KeyValuePair<string, object>>>> ExecuteFunction(HttpCommand command)
+        public override IEnumerable<IDictionary<string, object>> ExecuteFunction(HttpCommand command)
         {
             return null;
         }

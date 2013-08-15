@@ -152,7 +152,7 @@ namespace Simple.OData.Client
             _requestRunner.UpdateEntry(command);
         }
 
-        public IEnumerable<IEnumerable<IEnumerable<KeyValuePair<string, object>>>> ExecuteFunction(string functionName, IDictionary<string, object> parameters)
+        public IEnumerable<IDictionary<string, object>> ExecuteFunction(string functionName, IDictionary<string, object> parameters)
         {
             var function = _schema.FindFunction(functionName);
             var command = new HttpCommand(function.HttpMethod.ToUpper(), 

@@ -77,7 +77,7 @@ namespace Simple.OData.Client
             _client.UnlinkEntry(_command.CollectionName, _command.KeyValues, linkName);
         }
 
-        public IEnumerable<IEnumerable<IEnumerable<KeyValuePair<string, object>>>> ExecuteFunction(string functionName, IDictionary<string, object> parameters)
+        public IEnumerable<IDictionary<string, object>> ExecuteFunction(string functionName, IDictionary<string, object> parameters)
         {
             return _client.ExecuteFunction(_command.ToString(), parameters);
         }

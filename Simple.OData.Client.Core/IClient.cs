@@ -17,6 +17,6 @@ namespace Simple.OData.Client
         int DeleteEntries();
         void LinkEntry(string linkName, IDictionary<string, object> linkedEntryKey);
         void UnlinkEntry(string linkName);
-        IEnumerable<IEnumerable<IEnumerable<KeyValuePair<string, object>>>> ExecuteFunction(string functionName, IDictionary<string, object> parameters);
+        IEnumerable<IDictionary<string, object>> ExecuteFunction(string functionName, IDictionary<string, object> parameters);
     }
 }

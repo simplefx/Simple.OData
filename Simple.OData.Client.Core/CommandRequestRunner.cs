@@ -95,18 +95,18 @@ namespace Simple.OData.Client
             }
         }
 
-        public override IEnumerable<IEnumerable<IEnumerable<KeyValuePair<string, object>>>> ExecuteFunction(HttpCommand command)
+        public override IEnumerable<IDictionary<string, object>> ExecuteFunction(HttpCommand command)
         {
             using (var response = ExecuteRequest(command.Request))
             {
-                IEnumerable<IEnumerable<IEnumerable<KeyValuePair<string, object>>>> result = null;
+                IEnumerable<IDictionary<string, object>> result = null;
                 if (response.StatusCode != HttpStatusCode.OK)
                 {
-                    result = Enumerable.Empty<IEnumerable<IDictionary<string, object>>>();
+                    result = Enumerable.Empty<IDictionary<string, object>>();
                 }
                 else
                 {
-                    result = new[] { _feedReader.GetFunctionResult(response.GetResponseStream()) };
+                    result = _feedReader.GetFunctionResult(response.GetResponseStream());
                 }
 
                 return result;

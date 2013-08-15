@@ -214,14 +214,14 @@ namespace Simple.OData.Client.Tests
         public void ExecuteScalarFunctionWithStringParameter()
         {
             var result = _client.ExecuteFunction("ParseInt", new Entry() { { "number", "1" } });
-            Assert.Equal(1, result.First().First().First().Value);
+            Assert.Equal(1, result.First().First().Value);
         }
 
         [Fact]
         public void ExecuteScalarFunctionWithLongParameter()
         {
             var result = _client.ExecuteFunction("PassThroughLong", new Entry() { { "number", 1L } });
-            Assert.Equal(1L, result.First().First().First().Value);
+            Assert.Equal(1L, result.First().First().Value);
         }
 
         [Fact]
@@ -229,7 +229,7 @@ namespace Simple.OData.Client.Tests
         {
             var dateTime = new DateTime(2013, 1, 1, 12, 13, 14);
             var result = _client.ExecuteFunction("PassThroughDateTime", new Entry() { { "dateTime", dateTime } });
-            Assert.Equal(dateTime.ToLocalTime(), result.First().First().First().Value);
+            Assert.Equal(dateTime.ToLocalTime(), result.First().First().Value);
         }
 
         [Fact]
@@ -237,7 +237,7 @@ namespace Simple.OData.Client.Tests
         {
             var guid = Guid.NewGuid();
             var result = _client.ExecuteFunction("PassThroughGuid", new Entry() { { "guid", guid } });
-            Assert.Equal(guid, result.First().First().First().Value);
+            Assert.Equal(guid, result.First().First().Value);
         }
 
         [Fact]

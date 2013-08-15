@@ -102,7 +102,7 @@ namespace Simple.OData.Client
 			return Task.Factory.StartNew(() => this.UnlinkEntry(collection, entryKey, linkName));
         }
 
-        public Task<IEnumerable<IEnumerable<IEnumerable<KeyValuePair<string, object>>>>> ExecuteFunctionAsync(string functionName, IDictionary<string, object> parameters)
+        public Task<IEnumerable<IDictionary<string, object>>> ExecuteFunctionAsync(string functionName, IDictionary<string, object> parameters)
         {
             return Task.Factory.StartNew(() => this.ExecuteFunction(functionName, parameters));
         }

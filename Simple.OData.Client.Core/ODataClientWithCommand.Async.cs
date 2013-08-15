@@ -77,7 +77,7 @@ namespace Simple.OData.Client
             return _client.UnlinkEntryAsync(_command.CollectionName, _command.KeyValues, linkName);
         }
 
-        public Task<IEnumerable<IEnumerable<IEnumerable<KeyValuePair<string, object>>>>> ExecuteFunctionAsync(string functionName, IDictionary<string, object> parameters)
+        public Task<IEnumerable<IDictionary<string, object>>> ExecuteFunctionAsync(string functionName, IDictionary<string, object> parameters)
         {
             return _client.ExecuteFunctionAsync(_command.ToString(), parameters);
         }
