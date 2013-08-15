@@ -106,5 +106,10 @@ namespace Simple.OData.Client
         {
             return Task.Factory.StartNew(() => this.ExecuteFunction(functionName, parameters));
         }
+
+        public Task<T> ExecuteFunctionAsync<T>(string functionName, IDictionary<string, object> parameters)
+        {
+            return Task.Factory.StartNew(() => this.ExecuteFunction<T>(functionName, parameters));
+        }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 
@@ -146,7 +147,7 @@ namespace Simple.OData.Client
         public void UnlinkEntry(string collection, IDictionary<string, object> entryKey, string linkName)
         {
             RemoveSystemProperties(entryKey);
-            var command = CreateUnlinkCommand(collection, linkName, 
+            var command = CreateUnlinkCommand(collection, linkName,
                 new ODataClientWithCommand(this, _schema).For(collection).Key(entryKey).CommandText);
             _requestBuilder.AddCommandToRequest(command);
             _requestRunner.UpdateEntry(command);
@@ -155,10 +156,15 @@ namespace Simple.OData.Client
         public IEnumerable<IDictionary<string, object>> ExecuteFunction(string functionName, IDictionary<string, object> parameters)
         {
             var function = _schema.FindFunction(functionName);
-            var command = new HttpCommand(function.HttpMethod.ToUpper(), 
+            var command = new HttpCommand(function.HttpMethod.ToUpper(),
                 new ODataClientWithCommand(this, _schema).Function(functionName).Parameters(parameters).CommandText);
             _requestBuilder.AddCommandToRequest(command);
             return _requestRunner.ExecuteFunction(command);
+        }
+
+        public T ExecuteFunction<T>(string functionName, IDictionary<string, object> parameters)
+        {
+            return (T)ExecuteFunction(functionName, parameters).First().First().Value;
         }
     }
 }
