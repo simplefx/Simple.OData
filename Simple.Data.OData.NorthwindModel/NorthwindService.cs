@@ -32,6 +32,47 @@ namespace Simple.Data.OData.NorthwindModel
         {
             return int.Parse(number);
         }
+
+        [WebGet]
+        public IQueryable<int> ReturnIntCollection(int count)
+        {
+            var numbers = new List<int>();
+            for (var index = 1; index <= count; index++)
+            {
+                numbers.Add(index);
+            }
+            return numbers.AsQueryable();
+        }
+
+        [WebGet]
+        public long PassThroughLong(long number)
+        {
+            return number;
+        }
+
+        [WebGet]
+        public DateTime PassThroughDateTime(DateTime dateTime)
+        {
+            return dateTime;
+        }
+
+        [WebGet]
+        public Guid PassThroughGuid(Guid guid)
+        {
+            return guid;
+        }
+
+        [WebGet]
+        public IQueryable<Address> ReturnAddressCollection(int count)
+        {
+            var address = new Address { City = "Oslo", Country = "Norway" };
+            var addresses = new List<Address>();
+            for (var index = 1; index <= count; index++)
+            {
+                addresses.Add(address);
+            }
+            return addresses.AsQueryable();
+        }
     }
 }
 

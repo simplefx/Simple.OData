@@ -12,19 +12,25 @@ namespace Simple.Data.OData
             return GetSchema().HasFunction(functionName);
         }
 
-        public IEnumerable<IEnumerable<IEnumerable<KeyValuePair<string, object>>>> Execute(string functionName, IDictionary<string, object> parameters)
+        public IEnumerable<IEnumerable<IEnumerable<KeyValuePair<string, object>>>> Execute(string functionName,
+            IDictionary<string, object> parameters)
         {
             return ExecuteFunction(functionName, parameters, null);
         }
 
-        public IEnumerable<IEnumerable<IEnumerable<KeyValuePair<string, object>>>> Execute(string functionName, IDictionary<string, object> parameters, IAdapterTransaction transaction)
+        public IEnumerable<IEnumerable<IEnumerable<KeyValuePair<string, object>>>> Execute(string functionName,
+            IDictionary<string, object> parameters, IAdapterTransaction transaction)
         {
             return ExecuteFunction(functionName, parameters, transaction);
         }
 
-        private IEnumerable<IEnumerable<IEnumerable<KeyValuePair<string, object>>>> ExecuteFunction(string functionName, IDictionary<string, object> parameters, IAdapterTransaction transaction)
+        private IEnumerable<IEnumerable<IEnumerable<KeyValuePair<string, object>>>> ExecuteFunction(string functionName,
+            IDictionary<string, object> parameters, IAdapterTransaction transaction)
         {
-            return GetODataClient(transaction).ExecuteFunction(functionName, parameters);
+            return new[]
+                   {
+                       GetODataClient(transaction).ExecuteFunction(functionName, parameters)
+                   };
         }
     }
 }
