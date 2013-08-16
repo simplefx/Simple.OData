@@ -213,14 +213,14 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void ExecuteScalarFunctionWithStringParameter()
         {
-            var result = _client.ExecuteFunction<int>("ParseInt", new Entry() { { "number", "1" } });
+            var result = _client.ExecuteFunctionAsScalar<int>("ParseInt", new Entry() { { "number", "1" } });
             Assert.Equal(1, result);
         }
 
         [Fact]
         public void ExecuteScalarFunctionWithLongParameter()
         {
-            var result = _client.ExecuteFunction<long>("PassThroughLong", new Entry() { { "number", 1L } });
+            var result = _client.ExecuteFunctionAsScalar<long>("PassThroughLong", new Entry() { { "number", 1L } });
             Assert.Equal(1L, result);
         }
 
@@ -228,7 +228,7 @@ namespace Simple.OData.Client.Tests
         public void ExecuteScalarFunctionWithDateTimeParameter()
         {
             var dateTime = new DateTime(2013, 1, 1, 12, 13, 14);
-            var result = _client.ExecuteFunction<DateTime>("PassThroughDateTime", new Entry() { { "dateTime", dateTime } });
+            var result = _client.ExecuteFunctionAsScalar<DateTime>("PassThroughDateTime", new Entry() { { "dateTime", dateTime } });
             Assert.Equal(dateTime.ToLocalTime(), result);
         }
 
@@ -236,7 +236,7 @@ namespace Simple.OData.Client.Tests
         public void ExecuteScalarFunctionWithGuidParameter()
         {
             var guid = Guid.NewGuid();
-            var result = _client.ExecuteFunction<Guid>("PassThroughGuid", new Entry() { { "guid", guid } });
+            var result = _client.ExecuteFunctionAsScalar<Guid>("PassThroughGuid", new Entry() { { "guid", guid } });
             Assert.Equal(guid, result);
         }
 

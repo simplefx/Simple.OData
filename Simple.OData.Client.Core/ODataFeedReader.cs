@@ -73,24 +73,27 @@ namespace Simple.OData.Client
             }
             else
             {
+                Func<object, Dictionary<string, object>> ValueToResultDictionary = v => 
+                    new Dictionary<string, object>() { { ODataCommand.ResultLiteral, v } };
+
                 object value;
                 try
                 {
                     var collectionElements = element.Elements(null, "element");
                     if (collectionElements.Any())
                     {
-                        value = collectionElements.Select(x => EdmTypeSerializer.Read(x).Value).ToArray();
+                        return collectionElements.Select(x => 
+                            ValueToResultDictionary(EdmTypeSerializer.Read(x).Value));
                     }
                     else
                     {
-                        value = EdmTypeSerializer.Read(element).Value;
+                        return new[] { ValueToResultDictionary(EdmTypeSerializer.Read(element).Value) };
                     }
                 }
                 catch (Exception)
                 {
-                    value = text;
+                    return new[] { ValueToResultDictionary(text) };
                 }
-                return new[] { new Dictionary<string, object>() { { ODataCommand.ResultLiteral, value } } };
             }
         }
 

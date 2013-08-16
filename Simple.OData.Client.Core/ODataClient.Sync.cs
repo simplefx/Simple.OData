@@ -162,9 +162,17 @@ namespace Simple.OData.Client
             return _requestRunner.ExecuteFunction(command);
         }
 
-        public T ExecuteFunction<T>(string functionName, IDictionary<string, object> parameters)
+        public T ExecuteFunctionAsScalar<T>(string functionName, IDictionary<string, object> parameters)
         {
             return (T)ExecuteFunction(functionName, parameters).First().First().Value;
+        }
+
+        public T[] ExecuteFunctionAsArray<T>(string functionName, IDictionary<string, object> parameters)
+        {
+            return ExecuteFunction(functionName, parameters)
+                .SelectMany(x => x.Values)
+                .Select(y => (T)y)
+                .ToArray();
         }
     }
 }

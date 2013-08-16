@@ -84,7 +84,7 @@ namespace Simple.OData.Client
 
         public Task<T> ExecuteFunctionAsync<T>(string functionName, IDictionary<string, object> parameters)
         {
-            return _client.ExecuteFunctionAsync<T>(_command.ToString(), parameters);
+            return _client.ExecuteFunctionAsScalarAsync<T>(_command.ToString(), parameters);
         }
     }
 }

@@ -107,9 +107,14 @@ namespace Simple.OData.Client
             return Task.Factory.StartNew(() => this.ExecuteFunction(functionName, parameters));
         }
 
-        public Task<T> ExecuteFunctionAsync<T>(string functionName, IDictionary<string, object> parameters)
+        public Task<T> ExecuteFunctionAsScalarAsync<T>(string functionName, IDictionary<string, object> parameters)
         {
-            return Task.Factory.StartNew(() => this.ExecuteFunction<T>(functionName, parameters));
+            return Task.Factory.StartNew(() => this.ExecuteFunctionAsScalar<T>(functionName, parameters));
+        }
+
+        public Task<T[]> ExecuteFunctionAsArrayAsync<T>(string functionName, IDictionary<string, object> parameters)
+        {
+            return Task.Factory.StartNew(() => this.ExecuteFunctionAsArray<T>(functionName, parameters));
         }
     }
 }
