@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Simple.OData.Client
 {
@@ -20,5 +22,21 @@ namespace Simple.OData.Client
         IEnumerable<IDictionary<string, object>> ExecuteFunction(string functionName, IDictionary<string, object> parameters);
         T ExecuteFunctionAsScalar<T>(string functionName, IDictionary<string, object> parameters);
         T[] ExecuteFunctionAsArray<T>(string functionName, IDictionary<string, object> parameters);
+    
+        Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync();
+        Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(bool scalarResult);
+        Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> FindEntriesWithCountAsync();
+        Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> FindEntriesWithCountAsync(bool scalarResult);
+        Task<IDictionary<string, object>> FindEntryAsync();
+        Task<object> FindScalarAsync();
+        Task<IDictionary<string, object>> InsertEntryAsync(bool resultRequired = true);
+        Task<int> UpdateEntryAsync();
+        Task<int> DeleteEntryAsync();
+        Task<int> DeleteEntriesAsync();
+        Task LinkEntryAsync(string linkName, IDictionary<string, object> linkedEntryKey);
+        Task UnlinkEntryAsync(string linkName);
+        Task<IEnumerable<IDictionary<string, object>>> ExecuteFunctionAsync(string functionName, IDictionary<string, object> parameters);
+        Task<T> ExecuteFunctionAsScalarAsync<T>(string functionName, IDictionary<string, object> parameters);
+        Task<T[]> ExecuteFunctionAsArrayAsync<T>(string functionName, IDictionary<string, object> parameters);
     }
 }

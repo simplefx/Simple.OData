@@ -1,0 +1,236 @@
+﻿using System;
+using System.Linq;
+using Xunit;
+
+namespace Simple.OData.Client.Tests
+{
+    using Entry = System.Collections.Generic.Dictionary<string, object>;
+
+    public class AsyncTests : TestBase
+    {
+        [Fact]
+        public async void FindEntries()
+        {
+            var products = await _client.FindEntriesAsync("Products");
+            Assert.True(products.Count() > 0);
+        }
+
+        [Fact]
+        public async void FindEntriesNonExisting()
+        {
+            var products = await _client.FindEntriesAsync("Products?$filter=ProductID eq -1");
+            Assert.True(products.Count() == 0);
+        }
+
+        [Fact]
+        public async void FindEntriesNonExistingLong()
+        {
+            var products = await _client.FindEntriesAsync("Products?$filter=ProductID eq 999999999999L");
+            Assert.True(products.Count() == 0);
+        }
+
+        [Fact]
+        public async void FindEntryExisting()
+        {
+            var product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'Chai'");
+            Assert.Equal("Chai", product["ProductName"]);
+        }
+
+        [Fact]
+        public async void FindEntryNonExisting()
+        {
+            var product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'XYZ'");
+            Assert.Null(product);
+        }
+
+        [Fact]
+        public async void GetEntryExisting()
+        {
+            var product = await _client.GetEntryAsync("Products", new Entry() { { "ProductID", 1 } });
+            Assert.Equal("Chai", product["ProductName"]);
+        }
+
+        [Fact]
+        public async void GetEntryExistingCompoundKey()
+        {
+            var orderDetail = await _client.GetEntryAsync("OrderDetails", new Entry() { { "OrderID", 10248 }, { "ProductID", 11 } });
+            Assert.Equal(11, orderDetail["ProductID"]);
+        }
+
+        [Fact]
+        public async void GetEntryNonExisting()
+        {
+            Assert.Throws<WebRequestException>(async () => await _client.GetEntryAsync("Products", new Entry() { { "ProductID", -1 } }));
+        }
+
+        [Fact]
+        public async void GetEntryNonExistingIgnoreException()
+        {
+            var settings = new ODataClientSettings
+            {
+                UrlBase = _serviceUri,
+                IgnoreResourceNotFoundException = true,
+            };
+            var client = new ODataClient(settings);
+            var product = await client.GetEntryAsync("Products", new Entry() {{"ProductID", -1}});
+
+            Assert.Null(product);
+        }
+
+        [Fact]
+        public async void InsertEntryWithResult()
+        {
+            var product = await _client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test1" }, { "UnitPrice", 18m } }, true);
+
+            Assert.Equal("Test1", product["ProductName"]);
+        }
+
+        [Fact]
+        public async void InsertEntryNoResult()
+        {
+            var product = await _client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test2" }, { "UnitPrice", 18m } }, false);
+
+            Assert.Null(product);
+        }
+
+        [Fact]
+        public async void UpdateEntry()
+        {
+            var key = new Entry() { { "ProductID", 1 } };
+            await _client.UpdateEntryAsync("Products", key, new Entry() { { "ProductName", "Chai" }, { "UnitPrice", 123m } });
+
+            var product = await _client.GetEntryAsync("Products", key);
+            Assert.Equal(123m, product["UnitPrice"]);
+        }
+
+        [Fact]
+        public async void DeleteEntry()
+        {
+            var product = await _client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test3" }, { "UnitPrice", 18m } }, true);
+            product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'Test3'");
+            Assert.NotNull(product);
+
+            await _client.DeleteEntryAsync("Products", product);
+
+            product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'Test3'");
+            Assert.Null(product);
+        }
+
+        [Fact]
+        public async void LinkEntry()
+        {
+            var category = await _client.InsertEntryAsync("Categories", new Entry() { { "CategoryName", "Test4" } }, true);
+            var product = await _client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test5" } }, true);
+
+            await _client.LinkEntryAsync("Products", product, "Category", category);
+
+            product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'Test5'");
+            Assert.NotNull(product["CategoryID"]);
+            Assert.Equal(category["CategoryID"], product["CategoryID"]);
+        }
+
+        [Fact]
+        public async void UnlinkEntry()
+        {
+            var category = await _client.InsertEntryAsync("Categories", new Entry() { { "CategoryName", "Test6" } }, true);
+            var product = await _client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test7" }, { "CategoryID", category["CategoryID"] } }, true);
+            product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'Test7'");
+            Assert.NotNull(product["CategoryID"]);
+            Assert.Equal(category["CategoryID"], product["CategoryID"]);
+
+            await _client.UnlinkEntryAsync("Products", product, "Category");
+
+            product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'Test7'");
+            Assert.Null(product["CategoryID"]);
+        }
+
+        [Fact]
+        public async void ExecuteScalarFunction()
+        {
+            var result = await _client.ExecuteFunctionAsScalarAsync<int>("ParseInt", new Entry() { { "number", "1" } });
+            Assert.Equal(1, result);
+        }
+
+        [Fact]
+        public async void BatchWithSuccess()
+        {
+            using (var batch = new ODataBatch(_serviceUri))
+            {
+                var client = new ODataClient(batch);
+                await client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test1" }, { "UnitPrice", 10m } }, false);
+                await client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test2" }, { "UnitPrice", 20m } }, false);
+                batch.Complete();
+            }
+
+            var product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'Test1'");
+            Assert.NotNull(product);
+            product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'Test2'");
+            Assert.NotNull(product);
+        }
+
+        [Fact]
+        public async void BatchWithPartialFailures()
+        {
+            using (var batch = new ODataBatch(_serviceUri))
+            {
+                var client = new ODataClient(batch);
+                await client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test1" }, { "UnitPrice", 10m } }, false);
+                await client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test2" }, { "UnitPrice", 10m }, { "SupplierID", 0xFFFF } }, false);
+                Assert.Throws<WebRequestException>(() => batch.Complete());
+            }
+        }
+
+        [Fact]
+        public async void BatchWithAllFailures()
+        {
+            using (var batch = new ODataBatch(_serviceUri))
+            {
+                var client = new ODataClient(batch);
+                await client.InsertEntryAsync("Products", new Entry() { { "UnitPrice", 10m } }, false);
+                await client.InsertEntryAsync("Products", new Entry() { { "UnitPrice", 20m } }, false);
+                Assert.Throws<WebRequestException>(() => batch.Complete());
+            }
+        }
+
+        [Fact]
+        public async void InterceptRequest()
+        {
+            var settings = new ODataClientSettings
+            {
+                UrlBase = _serviceUri,
+                BeforeRequest = x => x.Method = "PUT",
+            };
+            var client = new ODataClient(settings);
+            Assert.Throws<WebRequestException>(async () => await client.FindEntriesAsync("Products"));
+        }
+
+        [Fact]
+        public async void InterceptResponse()
+        {
+            var settings = new ODataClientSettings
+            {
+                UrlBase = _serviceUri,
+                AfterResponse = x => { throw new InvalidOperationException(); },
+            };
+            var client = new ODataClient(settings);
+            Assert.Throws<InvalidOperationException>(async () => await client.FindEntriesAsync("Products"));
+        }
+
+        [Fact]
+        public async void FindEntryExistingDynamicFilter()
+        {
+            var x = ODataFilter.Expression;
+            string filter = _client.FormatFilter("Products", x.ProductName == "Chai");
+            var product = await _client.FindEntryAsync(filter);
+            Assert.Equal("Chai", product["ProductName"]);
+        }
+
+        [Fact]
+        public async void FindEntryExistingTypedFilter()
+        {
+            string filter = _client.FormatFilter<Product>("Products", x => x.ProductName == "Chai");
+            var product = await _client.FindEntryAsync(filter);
+            Assert.Equal("Chai", product["ProductName"]);
+        }
+    }
+}

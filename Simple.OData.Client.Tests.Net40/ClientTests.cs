@@ -72,7 +72,9 @@ namespace Simple.OData.Client.Tests
                 IgnoreResourceNotFoundException = true,
             };
             var client = new ODataClient(settings);
-            Assert.Null(client.GetEntry("Products", new Entry() { { "ProductID", -1 } }));
+            var product = client.GetEntry("Products", new Entry() {{"ProductID", -1}});
+
+            Assert.Null(product);
         }
 
         [Fact]
