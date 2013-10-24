@@ -119,6 +119,9 @@
     <Compile Include="..\CommonAssemblyVersion.cs">
       <Link>Properties\CommonAssemblyVersion.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\AsyncTests.cs">
+      <Link>AsyncTests.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\ClientTests.cs">
       <Link>ClientTests.cs</Link>
     </Compile>
@@ -306,7 +309,6 @@
     <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\SingleProductWithEmptyCollectionOfComplexProperties.xml">
       <Link>Resources\SingleProductWithEmptyCollectionOfComplexProperties.xml</Link>
     </Content>
-    <None Include="packages.config" />
     <None Include="Simple.OData.Client.Tests.WinRT_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
