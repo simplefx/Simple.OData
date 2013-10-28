@@ -44,6 +44,22 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void FindEntryNuGetV1()
+        {
+            var client = new ODataClient("http://nuget.org/api/v1");
+            var package = client.FindEntry("Packages?$filter=Title eq 'EntityFramework'");
+            Assert.NotNull(package["Id"]);
+        }
+
+        [Fact]
+        public void FindEntryNuGetV2()
+        {
+            var client = new ODataClient("http://nuget.org/api/v2");
+            var package = client.FindEntry("Packages?$filter=Title eq 'EntityFramework'");
+            Assert.NotNull(package["Id"]);
+        }
+
+        [Fact]
         public void GetEntryExisting()
         {
             var product = _client.GetEntry("Products", new Entry() { { "ProductID", 1 } });
