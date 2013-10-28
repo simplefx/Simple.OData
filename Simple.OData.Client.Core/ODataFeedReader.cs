@@ -10,10 +10,28 @@ namespace Simple.OData.Client
     class ODataFeedReader
     {
         private readonly bool _includeResourceTypeInEntryProperties;
+        private readonly ISchema _schema;
 
-        public ODataFeedReader(bool includeResourceTypeInEntryProperties = false)
+        public ODataFeedReader(ISchema schema, bool includeResourceTypeInEntryProperties = false)
         {
+            _schema = schema;
             _includeResourceTypeInEntryProperties = includeResourceTypeInEntryProperties;
+        }
+
+        public static EdmSchema GetSchema(Stream stream)
+        {
+            return GetSchema(Utils.StreamToString(stream));
+        }
+
+        public static string GetSchemaAsString(Stream stream)
+        {
+            return Utils.StreamToString(stream);
+        }
+
+        public static EdmSchema GetSchema(string text)
+        {
+            var feed = XElement.Parse(text);
+            return EdmSchemaParser.ParseSchema(feed);
         }
 
         public IEnumerable<IDictionary<string, object>> GetData(Stream stream, bool scalarResult = false)
@@ -25,16 +43,6 @@ namespace Simple.OData.Client
         {
             var text = Utils.StreamToString(stream);
             return GetData(text, out totalCount);
-        }
-
-        public EdmSchema GetSchema(Stream stream)
-        {
-            return GetSchema(Utils.StreamToString(stream));
-        }
-
-        public string GetSchemaAsString(Stream stream)
-        {
-            return Utils.StreamToString(stream);
         }
 
         public IEnumerable<IDictionary<string, object>> GetData(string text, bool scalarResult = false)
@@ -57,12 +65,6 @@ namespace Simple.OData.Client
             return GetData(feed);
         }
 
-        public EdmSchema GetSchema(string text)
-        {
-            var feed = XElement.Parse(text);
-            return EdmSchemaParser.ParseSchema(feed);
-        }
-
         public IEnumerable<IDictionary<string, object>> GetFunctionResult(Stream stream)
         {
             var text = Utils.StreamToString(stream);
@@ -73,7 +75,7 @@ namespace Simple.OData.Client
             }
             else
             {
-                Func<object, Dictionary<string, object>> ValueToResultDictionary = v => 
+                Func<object, Dictionary<string, object>> ValueToResultDictionary = v =>
                     new Dictionary<string, object>() { { ODataCommand.ResultLiteral, v } };
 
                 object value;
@@ -82,7 +84,7 @@ namespace Simple.OData.Client
                     var collectionElements = element.Elements(null, "element");
                     if (collectionElements.Any())
                     {
-                        return collectionElements.Select(x => 
+                        return collectionElements.Select(x =>
                             ValueToResultDictionary(EdmTypeSerializer.Read(x).Value));
                     }
                     else
@@ -99,7 +101,7 @@ namespace Simple.OData.Client
 
         private IEnumerable<IDictionary<string, object>> GetData(XElement feed)
         {
-            bool mediaStream = feed.Element(null, "entry") != null &&
+            var mediaStream = feed.Element(null, "entry") != null &&
                                feed.Element(null, "entry").Descendants(null, "link").Attributes("rel").Any(
                                    x => x.Value == "edit-media");
 
@@ -118,11 +120,20 @@ namespace Simple.OData.Client
                     entryData.Add(linkElement.Attribute("title").Value, linkData);
                 }
 
+                var keys = GetKeys(entry);
+                foreach (var kv in keys)
+                {
+                    if (!string.IsNullOrEmpty(kv.Key))
+                        entryData.Add(kv.Key, kv.Value);
+                }
+
                 var entityElement = mediaStream ? entry : entry.Element(null, "content");
                 var properties = GetProperties(entityElement).ToIDictionary();
+
                 foreach (var property in properties)
                 {
-                    entryData.Add(property.Key, property.Value);
+                    if (!entryData.ContainsKey(property.Key))
+                        entryData.Add(property.Key, property.Value);
                 }
 
                 if (_includeResourceTypeInEntryProperties)
@@ -139,6 +150,19 @@ namespace Simple.OData.Client
         {
             var count = feed.Elements("m", "count").SingleOrDefault();
             return count == null ? 0 : Convert.ToInt32(count.Value);
+        }
+
+        private IEnumerable<KeyValuePair<string, object>> GetKeys(XElement element)
+        {
+            var content = element.Element(null, "id").Value;
+            var start = content.IndexOf('(') + 1;
+            var end = content.LastIndexOf(')');
+            var prefix = content.Substring(0, start);
+            var tableName = prefix.Substring(prefix.LastIndexOf('/') + 1);
+            content = content.Substring(start, end - start);
+
+            var table = _schema.FindBaseTable(tableName);
+            return new ValueParser(table).Parse(content);
         }
 
         private IEnumerable<KeyValuePair<string, object>> GetProperties(XElement element)

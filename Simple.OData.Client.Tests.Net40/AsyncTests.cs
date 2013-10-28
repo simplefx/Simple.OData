@@ -134,6 +134,7 @@ namespace Simple.OData.Client.Tests
         {
             var category = await _client.InsertEntryAsync("Categories", new Entry() { { "CategoryName", "Test6" } }, true);
             var product = await _client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test7" }, { "CategoryID", category["CategoryID"] } }, true);
+            Assert.NotNull(product["CategoryID"]);
             product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'Test7'");
             Assert.NotNull(product["CategoryID"]);
             Assert.Equal(category["CategoryID"], product["CategoryID"]);

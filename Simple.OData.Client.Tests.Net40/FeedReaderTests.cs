@@ -8,15 +8,15 @@ using Xunit;
 
 namespace Simple.OData.Client.Tests
 {
-    public class FeedReaderTests
+    public class FeedReaderTests : TestBase
     {
-        private ODataFeedReader _feedReader;
+        private readonly ODataFeedReader _feedReader;
         private const int productProperties = 10;
         private const int categoryProperties = 4;
 
         public FeedReaderTests()
         {
-            _feedReader = new ODataFeedReader();
+            _feedReader = new ODataFeedReader(_client.Schema);
         }
 
         [Fact]
@@ -194,7 +194,7 @@ namespace Simple.OData.Client.Tests
         private void ParseSchema(string schemaName)
         {
             var document = GetResourceAsString(schemaName + ".edmx");
-            var result = _feedReader.GetSchema(document);
+            var result = ODataFeedReader.GetSchema(document);
             Assert.Equal(1, result.EntityTypes.Count());
             Assert.Equal(schemaName, result.EntityTypes.First().Name);
         }

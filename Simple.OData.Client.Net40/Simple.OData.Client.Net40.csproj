@@ -67,12 +67,6 @@
     <Compile Include="..\CommonAssemblyVersion.cs">
       <Link>Properties\CommonAssemblyVersion.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\BatchRequestBuilder.cs">
-      <Link>BatchRequestBuilder.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\BatchRequestRunner.cs">
-      <Link>BatchRequestRunner.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Edm\EdmSchemaParser.cs">
       <Link>Edm\EdmSchemaParser.cs</Link>
     </Compile>
@@ -154,6 +148,39 @@
     <Compile Include="..\Simple.OData.Client.Core\Filter\FunctionMapping.cs">
       <Link>Filter\FunctionMapping.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Http\BatchRequestBuilder.cs">
+      <Link>Http\BatchRequestBuilder.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Http\BatchRequestRunner.cs">
+      <Link>Http\BatchRequestRunner.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Http\CommandRequestBuilder.cs">
+      <Link>Http\CommandRequestBuilder.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Http\CommandRequestRunner.cs">
+      <Link>Http\CommandRequestRunner.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Http\HttpCommand.cs">
+      <Link>Http\HttpCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Http\RequestBuilder.cs">
+      <Link>Http\RequestBuilder.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Http\RequestRunner.cs">
+      <Link>Http\RequestRunner.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Http\RequestRunnerBase.cs">
+      <Link>Http\RequestRunnerBase.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Http\RestVerbs.cs">
+      <Link>Http\RestVerbs.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Http\SchemaRequestRunner.cs">
+      <Link>Http\SchemaRequestRunner.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Http\WebRequestException.cs">
+      <Link>Http\WebRequestException.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\IClient.cs">
       <Link>IClient.cs</Link>
     </Compile>
@@ -177,12 +204,6 @@
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ODataClientWithCommand.cs">
       <Link>ODataClientWithCommand.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\CommandRequestBuilder.cs">
-      <Link>CommandRequestBuilder.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\CommandRequestRunner.cs">
-      <Link>CommandRequestRunner.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Edm\EdmTypeSerializer.cs">
       <Link>Edm\EdmTypeSerializer.cs</Link>
@@ -241,26 +262,14 @@
     <Compile Include="..\Simple.OData.Client.Core\Extensions\StringExtensions.cs">
       <Link>Extensions\StringExtensions.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\HttpCommand.cs">
-      <Link>HttpCommand.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ODataFeedReader.cs">
       <Link>ODataFeedReader.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Properties\AssemblyInfo.cs">
       <Link>Properties\AssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\RequestBuilder.cs">
-      <Link>RequestBuilder.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ODataClient.cs">
       <Link>ODataClient.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\RequestRunner.cs">
-      <Link>RequestRunner.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\RestVerbs.cs">
-      <Link>RestVerbs.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Schema\Association.cs">
       <Link>Schema\Association.cs</Link>
@@ -295,11 +304,11 @@
     <Compile Include="..\Simple.OData.Client.Core\Schema\TableCollection.cs">
       <Link>Schema\TableCollection.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\WebRequestException.cs">
-      <Link>WebRequestException.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\UnresolvableObjectException.cs">
       <Link>UnresolvableObjectException.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ValueParser.cs">
+      <Link>ValueParser.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Dynamic\DynamicFilterExpression.cs">
       <Link>Filter\DynamicFilterExpression.cs</Link>
