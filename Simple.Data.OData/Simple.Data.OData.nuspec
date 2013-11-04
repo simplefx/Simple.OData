@@ -2,7 +2,7 @@
 <package xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
     <id>Simple.Data.OData</id>
-    <version>$version$</version>
+    <version>0.0.0.0</version>
     <authors>$author$</authors>
     <owners>Mark Rendle, Vagif Abilov</owners>
     <description>$description$</description>
@@ -13,7 +13,7 @@
     <language>en-us</language>
     <dependencies>
       <dependency id="Simple.Data.Core" version="0.18.1.0" />
-      <dependency id="Simple.OData.Client" version="0.17.0.0" />
+      <dependency id="Simple.OData.Client" version="0.18.0.0" />
     </dependencies>
   </metadata>
   <files>

@@ -1,3 +1,3 @@
 cd .\%1
-call ..\.nuget\nuget pack -sym %1.csproj -Symbols -Properties Configuration=Release
+call ..\.nuget\nuget pack -sym %1.csproj -Version %2 -Symbols -Properties Configuration=Release
 cd ..\

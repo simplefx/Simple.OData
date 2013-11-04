@@ -16,7 +16,7 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 
-[assembly: EdmSchemaAttribute()]
+[assembly: EdmSchema()]
 #region EDM Relationship Metadata
 
 [assembly: EdmRelationshipAttribute("NorthwindModel", "Products_FK01", "Category", System.Data.Metadata.Edm.RelationshipMultiplicity.ZeroOrOne, typeof(Simple.Data.OData.NorthwindModel.Categories), "Products", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(Simple.Data.OData.NorthwindModel.Products), true)]
