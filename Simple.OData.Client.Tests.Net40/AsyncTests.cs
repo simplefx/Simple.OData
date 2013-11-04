@@ -61,7 +61,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task GetEntryNonExisting()
         {
-            Assert.Throws<WebRequestException>(async () => await _client.GetEntryAsync("Products", new Entry() { { "ProductID", -1 } }));
+            await AssertThrowsAsync<WebRequestException>(async () => await _client.GetEntryAsync("Products", new Entry() { { "ProductID", -1 } }));
         }
 
         [Fact]
@@ -73,7 +73,7 @@ namespace Simple.OData.Client.Tests
                 IgnoreResourceNotFoundException = true,
             };
             var client = new ODataClient(settings);
-            var product = await client.GetEntryAsync("Products", new Entry() {{"ProductID", -1}});
+            var product = await client.GetEntryAsync("Products", new Entry() { { "ProductID", -1 } });
 
             Assert.Null(product);
         }
@@ -203,7 +203,7 @@ namespace Simple.OData.Client.Tests
                 BeforeRequest = x => x.Method = "PUT",
             };
             var client = new ODataClient(settings);
-            Assert.Throws<WebRequestException>(async () => await client.FindEntriesAsync("Products"));
+            await AssertThrowsAsync<WebRequestException>(async () => await client.FindEntriesAsync("Products"));
         }
 
         [Fact]
@@ -215,7 +215,7 @@ namespace Simple.OData.Client.Tests
                 AfterResponse = x => { throw new InvalidOperationException(); },
             };
             var client = new ODataClient(settings);
-            Assert.Throws<InvalidOperationException>(async () => await client.FindEntriesAsync("Products"));
+            await AssertThrowsAsync<InvalidOperationException>(async () => await client.FindEntriesAsync("Products"));
         }
 
         [Fact]
@@ -233,6 +233,20 @@ namespace Simple.OData.Client.Tests
             string filter = _client.FormatFilter<Product>("Products", x => x.ProductName == "Chai");
             var product = await _client.FindEntryAsync(filter);
             Assert.Equal("Chai", product["ProductName"]);
+        }
+
+        public async static Task<T> AssertThrowsAsync<T>(Func<Task> testCode) where T : Exception
+        {
+            try
+            {
+                await testCode();
+                Assert.Throws<T>(() => { });
+            }
+            catch (T exception)
+            {
+                return exception;
+            }
+            return null;
         }
     }
 }
