@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Simple.OData.Client.Tests
@@ -9,62 +10,62 @@ namespace Simple.OData.Client.Tests
     public class AsyncTests : TestBase
     {
         [Fact]
-        public async void FindEntries()
+        public async Task FindEntries()
         {
             var products = await _client.FindEntriesAsync("Products");
             Assert.True(products.Count() > 0);
         }
 
         [Fact]
-        public async void FindEntriesNonExisting()
+        public async Task FindEntriesNonExisting()
         {
             var products = await _client.FindEntriesAsync("Products?$filter=ProductID eq -1");
             Assert.True(products.Count() == 0);
         }
 
         [Fact]
-        public async void FindEntriesNonExistingLong()
+        public async Task FindEntriesNonExistingLong()
         {
             var products = await _client.FindEntriesAsync("Products?$filter=ProductID eq 999999999999L");
             Assert.True(products.Count() == 0);
         }
 
         [Fact]
-        public async void FindEntryExisting()
+        public async Task FindEntryExisting()
         {
             var product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'Chai'");
             Assert.Equal("Chai", product["ProductName"]);
         }
 
         [Fact]
-        public async void FindEntryNonExisting()
+        public async Task FindEntryNonExisting()
         {
             var product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'XYZ'");
             Assert.Null(product);
         }
 
         [Fact]
-        public async void GetEntryExisting()
+        public async Task GetEntryExisting()
         {
             var product = await _client.GetEntryAsync("Products", new Entry() { { "ProductID", 1 } });
             Assert.Equal("Chai", product["ProductName"]);
         }
 
         [Fact]
-        public async void GetEntryExistingCompoundKey()
+        public async Task GetEntryExistingCompoundKey()
         {
             var orderDetail = await _client.GetEntryAsync("OrderDetails", new Entry() { { "OrderID", 10248 }, { "ProductID", 11 } });
             Assert.Equal(11, orderDetail["ProductID"]);
         }
 
         [Fact]
-        public async void GetEntryNonExisting()
+        public async Task GetEntryNonExisting()
         {
             Assert.Throws<WebRequestException>(async () => await _client.GetEntryAsync("Products", new Entry() { { "ProductID", -1 } }));
         }
 
         [Fact]
-        public async void GetEntryNonExistingIgnoreException()
+        public async Task GetEntryNonExistingIgnoreException()
         {
             var settings = new ODataClientSettings
             {
@@ -78,7 +79,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async void InsertEntryWithResult()
+        public async Task InsertEntryWithResult()
         {
             var product = await _client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test1" }, { "UnitPrice", 18m } }, true);
 
@@ -86,7 +87,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async void InsertEntryNoResult()
+        public async Task InsertEntryNoResult()
         {
             var product = await _client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test2" }, { "UnitPrice", 18m } }, false);
 
@@ -94,7 +95,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async void UpdateEntry()
+        public async Task UpdateEntry()
         {
             var key = new Entry() { { "ProductID", 1 } };
             await _client.UpdateEntryAsync("Products", key, new Entry() { { "ProductName", "Chai" }, { "UnitPrice", 123m } });
@@ -104,7 +105,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async void DeleteEntry()
+        public async Task DeleteEntry()
         {
             var product = await _client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test3" }, { "UnitPrice", 18m } }, true);
             product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'Test3'");
@@ -117,7 +118,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async void LinkEntry()
+        public async Task LinkEntry()
         {
             var category = await _client.InsertEntryAsync("Categories", new Entry() { { "CategoryName", "Test4" } }, true);
             var product = await _client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test5" } }, true);
@@ -130,7 +131,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async void UnlinkEntry()
+        public async Task UnlinkEntry()
         {
             var category = await _client.InsertEntryAsync("Categories", new Entry() { { "CategoryName", "Test6" } }, true);
             var product = await _client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test7" }, { "CategoryID", category["CategoryID"] } }, true);
@@ -146,14 +147,14 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async void ExecuteScalarFunction()
+        public async Task ExecuteScalarFunction()
         {
             var result = await _client.ExecuteFunctionAsScalarAsync<int>("ParseInt", new Entry() { { "number", "1" } });
             Assert.Equal(1, result);
         }
 
         [Fact]
-        public async void BatchWithSuccess()
+        public async Task BatchWithSuccess()
         {
             using (var batch = new ODataBatch(_serviceUri))
             {
@@ -170,7 +171,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async void BatchWithPartialFailures()
+        public async Task BatchWithPartialFailures()
         {
             using (var batch = new ODataBatch(_serviceUri))
             {
@@ -182,7 +183,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async void BatchWithAllFailures()
+        public async Task BatchWithAllFailures()
         {
             using (var batch = new ODataBatch(_serviceUri))
             {
@@ -194,7 +195,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async void InterceptRequest()
+        public async Task InterceptRequest()
         {
             var settings = new ODataClientSettings
             {
@@ -206,7 +207,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async void InterceptResponse()
+        public async Task InterceptResponse()
         {
             var settings = new ODataClientSettings
             {
@@ -218,7 +219,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async void FindEntryExistingDynamicFilter()
+        public async Task FindEntryExistingDynamicFilter()
         {
             var x = ODataFilter.Expression;
             string filter = _client.FormatFilter("Products", x.ProductName == "Chai");
@@ -227,7 +228,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async void FindEntryExistingTypedFilter()
+        public async Task FindEntryExistingTypedFilter()
         {
             string filter = _client.FormatFilter<Product>("Products", x => x.ProductName == "Chai");
             var product = await _client.FindEntryAsync(filter);
