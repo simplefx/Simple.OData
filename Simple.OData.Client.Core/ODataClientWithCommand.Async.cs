@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Simple.OData.Client
@@ -8,27 +9,27 @@ namespace Simple.OData.Client
     {
         public Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync()
         {
-            return _client.FindEntriesAsync(_command.ToString());
+            return RectifySelectionAsync(_client.FindEntriesAsync(_command.ToString()));
         }
 
         public Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(bool scalarResult)
         {
-            return _client.FindEntriesAsync(_command.ToString(), scalarResult);
+            return RectifySelectionAsync(_client.FindEntriesAsync(_command.ToString(), scalarResult));
         }
 
         public Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> FindEntriesWithCountAsync()
         {
-            return _client.FindEntriesWithCountAsync(_command.WithInlineCount().ToString());
+            return RectifySelectionAsync(_client.FindEntriesWithCountAsync(_command.WithInlineCount().ToString()));
         }
 
         public Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> FindEntriesWithCountAsync(bool scalarResult)
         {
-            return _client.FindEntriesWithCountAsync(_command.WithInlineCount().ToString(), scalarResult);
+            return RectifySelectionAsync(_client.FindEntriesWithCountAsync(_command.WithInlineCount().ToString(), scalarResult));
         }
 
         public Task<IDictionary<string, object>> FindEntryAsync()
         {
-            return _client.FindEntryAsync(_command.ToString());
+            return RectifySelectionAsync(_client.FindEntryAsync(_command.ToString()));
         }
 
         public Task<object> FindScalarAsync()
@@ -79,7 +80,7 @@ namespace Simple.OData.Client
 
         public Task<IEnumerable<IDictionary<string, object>>> ExecuteFunctionAsync(string functionName, IDictionary<string, object> parameters)
         {
-            return _client.ExecuteFunctionAsync(_command.ToString(), parameters);
+            return RectifySelectionAsync(_client.ExecuteFunctionAsync(_command.ToString(), parameters));
         }
 
         public Task<T> ExecuteFunctionAsync<T>(string functionName, IDictionary<string, object> parameters)
@@ -95,6 +96,27 @@ namespace Simple.OData.Client
         public Task<T[]> ExecuteFunctionAsArrayAsync<T>(string functionName, IDictionary<string, object> parameters)
         {
             return _client.ExecuteFunctionAsArrayAsync<T>(_command.ToString(), parameters);
+        }
+
+        private Task<IEnumerable<IDictionary<string, object>>> RectifySelectionAsync(Task<IEnumerable<IDictionary<string, object>>> entries)
+        {
+            return entries.ContinueWith(x => RectifySelection(x.Result));
+        }
+
+        private Task<IDictionary<string, object>> RectifySelectionAsync(Task<IDictionary<string, object>> entry)
+        {
+            return entry.ContinueWith(x => RectifySelection(x.Result));
+        }
+
+        private Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> RectifySelectionAsync(Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> entries)
+        {
+            return entries.ContinueWith(x =>
+            {
+                var result = x.Result;
+                return new Tuple<IEnumerable<IDictionary<string, object>>, int>(
+                    RectifySelection(result.Item1),
+                    result.Item2);
+            });
         }
     }
 }

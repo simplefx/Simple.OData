@@ -325,6 +325,11 @@ namespace Simple.OData.Client
             get { return _entryData; }
         }
 
+        internal IList<string> SelectedColumns
+        {
+            get { return _selectColumns; }
+        }
+
         private string Format()
         {
             string commandText = string.Empty;

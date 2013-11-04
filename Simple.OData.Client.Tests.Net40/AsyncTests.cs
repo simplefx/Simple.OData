@@ -31,6 +31,22 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task FindEntriesWithSelect()
+        {
+            var products = await _client.For("Products").Select("ProductName").FindEntriesAsync();
+            Assert.Equal(1, products.First().Count);
+            Assert.Equal("ProductName", products.First().First().Key);
+        }
+
+        [Fact]
+        public async Task FindEntriesWithSelectHomogenize()
+        {
+            var products = await _client.For("Products").Select("Product_Name").FindEntriesAsync();
+            Assert.Equal(1, products.First().Count);
+            Assert.Equal("ProductName", products.First().First().Key);
+        }
+
+        [Fact]
         public async Task FindEntryExisting()
         {
             var product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'Chai'");
@@ -42,6 +58,20 @@ namespace Simple.OData.Client.Tests
         {
             var product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'XYZ'");
             Assert.Null(product);
+        }
+
+        [Fact]
+        public async Task FindEntryWithSelect()
+        {
+            var product = await _client.For("Products").Select("ProductName").FindEntryAsync();
+            Assert.Equal("ProductName", product.First().Key);
+        }
+
+        [Fact]
+        public async Task FindEntryWithSelectHomogenize()
+        {
+            var product = await _client.For("Products").Select("Product_Name").FindEntryAsync();
+            Assert.Equal("ProductName", product.First().Key);
         }
 
         [Fact]

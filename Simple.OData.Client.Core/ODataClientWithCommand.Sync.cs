@@ -1,4 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
@@ -6,29 +9,27 @@ namespace Simple.OData.Client
     {
         public IEnumerable<IDictionary<string, object>> FindEntries()
         {
-            return _client.FindEntries(_command.ToString());
+            return RectifySelection(_client.FindEntries(_command.ToString()));
         }
 
         public IEnumerable<IDictionary<string, object>> FindEntries(bool scalarResult)
         {
-            return _client.FindEntries(_command.ToString(), scalarResult);
+            return RectifySelection(_client.FindEntries(_command.ToString(), scalarResult));
         }
 
         public IEnumerable<IDictionary<string, object>> FindEntries(out int totalCount)
         {
-            var result = _client.FindEntries(_command.WithInlineCount().ToString(), out totalCount);
-            return result;
+            return RectifySelection(_client.FindEntries(_command.WithInlineCount().ToString(), out totalCount));
         }
 
         public IEnumerable<IDictionary<string, object>> FindEntries(bool scalarResult, out int totalCount)
         {
-            var result = _client.FindEntries(_command.WithInlineCount().ToString(), scalarResult, out totalCount);
-            return result;
+            return RectifySelection(_client.FindEntries(_command.WithInlineCount().ToString(), scalarResult, out totalCount));
         }
 
         public IDictionary<string, object> FindEntry()
         {
-            return _client.FindEntry(_command.ToString());
+            return RectifySelection(_client.FindEntry(_command.ToString()));
         }
 
         public object FindScalar()
@@ -79,7 +80,7 @@ namespace Simple.OData.Client
 
         public IEnumerable<IDictionary<string, object>> ExecuteFunction(string functionName, IDictionary<string, object> parameters)
         {
-            return _client.ExecuteFunction(_command.ToString(), parameters);
+            return RectifySelection(_client.ExecuteFunction(_command.ToString(), parameters));
         }
 
         public T ExecuteFunctionAsScalar<T>(string functionName, IDictionary<string, object> parameters)
@@ -90,6 +91,23 @@ namespace Simple.OData.Client
         public T[] ExecuteFunctionAsArray<T>(string functionName, IDictionary<string, object> parameters)
         {
             return _client.ExecuteFunctionAsArray<T>(_command.ToString(), parameters);
+        }
+
+        private IEnumerable<IDictionary<string, object>> RectifySelection(IEnumerable<IDictionary<string, object>> entries)
+        {
+            return entries.Select(RectifySelection);
+        }
+
+        private IDictionary<string, object> RectifySelection(IDictionary<string, object> entry)
+        {
+            if (_command.SelectedColumns == null || !_command.SelectedColumns.Any())
+            {
+                return entry;
+            }
+            else
+            {
+                return entry.Where(x => _command.SelectedColumns.Any(y => x.Key.Homogenize() == y.Homogenize())).ToIDictionary();
+            }
         }
     }
 }
