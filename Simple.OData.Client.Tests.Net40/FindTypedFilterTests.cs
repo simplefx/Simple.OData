@@ -13,7 +13,7 @@ namespace Simple.OData.Client.Tests
         public void SingleCondition()
         {
             var product = _client
-                .For("Products")
+                .For<Product>()
                 .Filter<Product>(x => x.ProductName == "Chai")
                 .FindEntry();
             Assert.Equal("Chai", product["ProductName"]);
@@ -24,7 +24,7 @@ namespace Simple.OData.Client.Tests
         {
             var productName = "Chai";
             var product = _client
-                .For("Products")
+                .For<Product>()
                 .Filter<Product>(x => x.ProductName == productName)
                 .FindEntry();
             Assert.Equal("Chai", product["ProductName"]);
@@ -34,7 +34,7 @@ namespace Simple.OData.Client.Tests
         public void CombinedConditions()
         {
             var product = _client
-                .For("Employees")
+                .For<Employee>()
                 .Filter<Employee>(x => x.FirstName == "Nancy" && x.HireDate < DateTime.Now)
                 .FindEntry();
             Assert.Equal("Davolio", product["LastName"]);
@@ -44,7 +44,7 @@ namespace Simple.OData.Client.Tests
         public void StringContains()
         {
             var products = _client
-                .For("Products")
+                .For<Product>()
                 .Filter<Product>(x => x.ProductName.Contains("ai"))
                 .FindEntries();
             Assert.Equal("Chai", products.Single()["ProductName"]);
@@ -54,7 +54,7 @@ namespace Simple.OData.Client.Tests
         public void StringNotContains()
         {
             var products = _client
-                .For("Products")
+                .For<Product>()
                 .Filter<Product>(x => !x.ProductName.Contains("ai"))
                 .FindEntries();
             Assert.NotEqual("Chai", products.First()["ProductName"]);
@@ -64,7 +64,7 @@ namespace Simple.OData.Client.Tests
         public void StringStartsWith()
         {
             var products = _client
-                .For("Products")
+                .For<Product>()
                 .Filter<Product>(x => x.ProductName.StartsWith("Ch"))
                 .FindEntries();
             Assert.Equal("Chai", products.First()["ProductName"]);
@@ -74,7 +74,7 @@ namespace Simple.OData.Client.Tests
         public void LengthOfStringEqual()
         {
             var products = _client
-                .For("Products")
+                .For<Product>()
                 .Filter<Product>(x => x.ProductName.Length == 4)
                 .FindEntries();
             Assert.Equal("Chai", products.First()["ProductName"]);
@@ -84,7 +84,7 @@ namespace Simple.OData.Client.Tests
         public void SubstringWithPositionAndLengthEqual()
         {
             var products = _client
-                .For("Products")
+                .For<Product>()
                 .Filter<Product>(x => x.ProductName.Substring(1, 2) == "ha")
                 .FindEntries();
             Assert.Equal("Chai", products.First()["ProductName"]);
@@ -94,7 +94,7 @@ namespace Simple.OData.Client.Tests
         public void TopOne()
         {
             var products = _client
-                .For("Products")
+                .For<Product>()
                 .Filter<Product>(x => x.ProductName == "Chai")
                 .Top(1)
                 .FindEntries();
@@ -105,7 +105,7 @@ namespace Simple.OData.Client.Tests
         public void Count()
         {
             var count = _client
-                .For("Products")
+                .For<Product>()
                 .Filter<Product>(x => x.ProductName == "Chai")
                 .Count()
                 .FindScalar();

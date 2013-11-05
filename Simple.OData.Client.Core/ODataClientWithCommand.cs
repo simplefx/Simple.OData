@@ -45,9 +45,19 @@ namespace Simple.OData.Client
             return _command.For(collectionName);
         }
 
+        public IClientWithCommand For<T>()
+        {
+            return _command.For(typeof(T).Name);
+        }
+
         public IClientWithCommand As(string derivedCollectionName)
         {
             return _command.As(derivedCollectionName);
+        }
+
+        public IClientWithCommand As<T>()
+        {
+            return _command.As(typeof(T).Name);
         }
 
         public IClientWithCommand Key(params object[] key)
@@ -153,6 +163,11 @@ namespace Simple.OData.Client
         public IClientWithCommand NavigateTo(string linkName)
         {
             return _command.NavigateTo(linkName);
+        }
+
+        public IClientWithCommand NavigateTo<T>()
+        {
+            return _command.NavigateTo(typeof(T).Name);
         }
 
         public bool FilterIsKey

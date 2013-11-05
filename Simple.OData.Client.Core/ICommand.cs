@@ -7,7 +7,9 @@ namespace Simple.OData.Client
     public interface ICommand
     {
         IClientWithCommand For(string collectionName);
+        IClientWithCommand For<T>();
         IClientWithCommand As(string derivedCollectionName);
+        IClientWithCommand As<T>();
         IClientWithCommand Key(params object[] entryKey);
         IClientWithCommand Key(IEnumerable<object> entryKey);
         IClientWithCommand Key(IDictionary<string, object> entryKey);
@@ -25,6 +27,7 @@ namespace Simple.OData.Client
         IClientWithCommand OrderByDescending(params string[] columns);
         IClientWithCommand Count();
         IClientWithCommand NavigateTo(string linkName);
+        IClientWithCommand NavigateTo<T>();
         IClientWithCommand Set(object value);
         IClientWithCommand Set(IDictionary<string, object> value);
         IClientWithCommand Function(string functionName);
