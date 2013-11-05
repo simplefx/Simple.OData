@@ -63,9 +63,9 @@ namespace Simple.OData.Client
             return new ODataClientWithCommand(this, _schema).For(collectionName);
         }
 
-        public IClientWithCommand For<T>()
+        public IClientWithCommand<T> For<T>(string collectionName = null)
         {
-            return For(typeof(T).Name);
+            return new ODataClientWithCommand<T>(this, _schema).For(collectionName);
         }
 
         public string FormatFilter(string collection, FilterExpression filterExpression)

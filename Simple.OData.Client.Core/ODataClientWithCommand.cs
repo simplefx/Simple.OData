@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -12,15 +13,35 @@ namespace Simple.OData.Client
 
     public partial class ODataClientWithCommand : IClientWithCommand
     {
-        private readonly ODataClient _client;
-        private readonly ISchema _schema;
-        private readonly ODataCommand _command;
+        protected internal readonly ODataClient _client;
+        protected internal readonly ISchema _schema;
+        protected internal ODataCommand _parent;
+        protected ODataCommand _command;
 
         public ODataClientWithCommand(ODataClient client, ISchema schema, ODataCommand parent = null)
         {
             _client = client;
             _schema = schema;
-            _command = new ODataCommand(this, parent);
+            _parent = parent;
+        }
+
+        protected ODataCommand Command
+        {
+            get
+            {
+                if (_command != null)
+                    return _command;
+
+                lock (this)
+                {
+                    return _command ?? (_command = CreateCommand());
+                }
+            }
+        }
+
+        protected virtual ODataCommand CreateCommand()
+        {
+            return new ODataCommand(this, _parent);
         }
 
         public ISchema Schema
@@ -30,179 +51,212 @@ namespace Simple.OData.Client
 
         public string CommandText
         {
-            get { return _command.ToString(); }
+            get { return this.Command.ToString(); }
         }
 
         public ODataClientWithCommand Link(ODataCommand command, string linkName)
         {
             var linkedClient = new ODataClientWithCommand(_client, _schema, command);
-            linkedClient._command.Link(linkName);
+            linkedClient.Command.Link(linkName);
             return linkedClient;
         }
 
         public IClientWithCommand For(string collectionName)
         {
-            return _command.For(collectionName);
-        }
-
-        public IClientWithCommand For<T>()
-        {
-            return _command.For(typeof(T).Name);
+            return this.Command.For(collectionName);
         }
 
         public IClientWithCommand As(string derivedCollectionName)
         {
-            return _command.As(derivedCollectionName);
-        }
-
-        public IClientWithCommand As<T>()
-        {
-            return _command.As(typeof(T).Name);
+            return this.Command.As(derivedCollectionName);
         }
 
         public IClientWithCommand Key(params object[] key)
         {
-            return _command.Key(key);
+            return this.Command.Key(key);
         }
 
         public IClientWithCommand Key(IEnumerable<object> key)
         {
-            return _command.Key(key);
+            return this.Command.Key(key);
         }
 
         public IClientWithCommand Key(IDictionary<string, object> key)
         {
-            return _command.Key(key);
+            return this.Command.Key(key);
         }
 
         public IClientWithCommand Filter(string filter)
         {
-            return _command.Filter(filter);
+            return this.Command.Filter(filter);
         }
 
         public IClientWithCommand Filter(FilterExpression expression)
         {
-            return _command.Filter(expression);
-        }
-
-        public IClientWithCommand Filter<T>(Expression<Func<T, bool>> expression)
-        {
-            return _command.Filter(expression);
+            return this.Command.Filter(expression);
         }
 
         public IClientWithCommand Skip(int count)
         {
-            return _command.Skip(count);
+            return this.Command.Skip(count);
         }
 
         public IClientWithCommand Top(int count)
         {
-            return _command.Top(count);
+            return this.Command.Top(count);
         }
 
         public IClientWithCommand Expand(IEnumerable<string> associations)
         {
-            return _command.Expand(associations);
+            return this.Command.Expand(associations);
         }
 
         public IClientWithCommand Expand(params string[] associations)
         {
-            return _command.Expand(associations);
-        }
-
-        public IClientWithCommand Expand<T>(Expression<Func<T, object>> expression)
-        {
-            return _command.Expand(expression);
+            return this.Command.Expand(associations);
         }
 
         public IClientWithCommand Select(IEnumerable<string> columns)
         {
-            return _command.Select(columns);
+            return this.Command.Select(columns);
         }
 
         public IClientWithCommand Select(params string[] columns)
         {
-            return _command.Select(columns);
+            return this.Command.Select(columns);
         }
 
-        public IClientWithCommand Select<T>(Expression<Func<T, object>> expression)
+        public IClientWithCommand OrderBy(IEnumerable<KeyValuePair<string, bool>> columns)
         {
-            return _command.Select(expression);
-        }
-
-        public IClientWithCommand OrderBy(IEnumerable<KeyValuePair<string,bool>> columns)
-        {
-            return _command.OrderBy(columns);
+            return this.Command.OrderBy(columns);
         }
 
         public IClientWithCommand OrderBy(params string[] columns)
         {
-            return _command.OrderBy(columns);
-        }
-
-        public IClientWithCommand OrderBy<T>(Expression<Func<T, object>> expression)
-        {
-            return _command.OrderBy(expression);
+            return this.Command.OrderBy(columns);
         }
 
         public IClientWithCommand OrderByDescending(params string[] columns)
         {
-            return _command.OrderByDescending(columns);
-        }
-
-        public IClientWithCommand OrderByDescending<T>(Expression<Func<T, object>> expression)
-        {
-            return _command.OrderByDescending(expression);
+            return this.Command.OrderByDescending(columns);
         }
 
         public IClientWithCommand Count()
         {
-            return _command.Count();
+            return this.Command.Count();
         }
 
         public IClientWithCommand Set(object value)
         {
-            return _command.Set(value);
+            return this.Command.Set(value);
         }
 
         public IClientWithCommand Set(IDictionary<string, object> value)
         {
-            return _command.Set(value);
+            return this.Command.Set(value);
         }
 
         public IClientWithCommand Function(string functionName)
         {
-            return _command.Function(functionName);
+            return this.Command.Function(functionName);
         }
 
         public IClientWithCommand Parameters(IDictionary<string, object> parameters)
         {
-            return _command.Parameters(parameters);
+            return this.Command.Parameters(parameters);
         }
 
         public IClientWithCommand NavigateTo(string linkName)
         {
-            return _command.NavigateTo(linkName);
-        }
-
-        public IClientWithCommand NavigateTo<T>()
-        {
-            return _command.NavigateTo(typeof(T).Name);
+            return this.Command.NavigateTo(linkName);
         }
 
         public bool FilterIsKey
         {
-            get { return _command.FilterIsKey; }
+            get { return this.Command.FilterIsKey; }
         }
 
         public IDictionary<string, object> FilterAsKey
         {
-            get { return _command.FilterAsKey; }
+            get { return this.Command.FilterAsKey; }
         }
 
         public IDictionary<string, object> NewValues
         {
-            get { return _command.EntryData; }
+            get { return this.Command.EntryData; }
+        }
+    }
+
+    public partial class ODataClientWithCommand<T> : ODataClientWithCommand, IClientWithCommand<T>
+    {
+        public ODataClientWithCommand(ODataClient client, ISchema schema, ODataCommand parent = null)
+            : base(client, schema, parent)
+        {
+        }
+
+        internal ODataClientWithCommand(ODataClientWithCommand ancestor)
+            : base(ancestor._client, ancestor._schema, ancestor._parent)
+        {
+        }
+
+        protected override ODataCommand CreateCommand()
+        {
+            return new ODataCommand<T>(this, _parent);
+        }
+
+        private ODataCommand<T> CastCommand
+        {
+            get
+            {
+                return this.Command as ODataCommand<T>;
+            }
+        }
+
+        public ODataClientWithCommand<U> Link<U>(ODataCommand command, string linkName = null)
+        {
+            var linkedClient = new ODataClientWithCommand<U>(_client, _schema, command);
+            linkedClient.Command.Link(linkName ?? typeof(U).Name);
+            return linkedClient;
+        }
+
+        public new IClientWithCommand<T> For(string collectionName = null)
+        {
+            return CastCommand.For(collectionName);
+        }
+
+        public IClientWithCommand<U> As<U>(string derivedCollectionName = null)
+        {
+            return CastCommand.As<U>(derivedCollectionName);
+        }
+
+        public IClientWithCommand<T> Filter(Expression<Func<T, bool>> expression)
+        {
+            return CastCommand.Filter(expression);
+        }
+
+        public IClientWithCommand<T> Expand(Expression<Func<T, object>> expression)
+        {
+            return CastCommand.Expand(expression);
+        }
+
+        public IClientWithCommand<T> Select(Expression<Func<T, object>> expression)
+        {
+            return CastCommand.Select(expression);
+        }
+
+        public IClientWithCommand<T> OrderBy(Expression<Func<T, object>> expression)
+        {
+            return CastCommand.OrderBy(expression);
+        }
+
+        public IClientWithCommand<T> OrderByDescending(Expression<Func<T, object>> expression)
+        {
+            return CastCommand.OrderByDescending(expression);
+        }
+
+        public IClientWithCommand<U> NavigateTo<U>(string linkName = null)
+        {
+            return CastCommand.NavigateTo<U>(linkName);
         }
     }
 }
