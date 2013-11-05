@@ -55,19 +55,41 @@ namespace Simple.OData.Client
         {
             var memberExpression = expression as MemberExpression;
             if (memberExpression.Expression == null)
+            {
                 return new FilterExpression(EvaluateStaticMember(memberExpression));
+            }
             else
-                return new FilterExpression(memberExpression.Member.Name);
+            {
+                FunctionMapping mapping;
+                if (memberExpression.Expression.NodeType == ExpressionType.MemberAccess &&
+                    FunctionMapping.SupportedFunctions.TryGetValue(new ExpressionFunction.FunctionCall(memberExpression.Member.Name, 0), out mapping))
+                {
+                    var contextExpression = memberExpression.Expression as MemberExpression;
+                    return FromFunction(memberExpression.Member.Name, contextExpression.Member.Name, new List<object>());
+                }
+                else
+                {
+                    return new FilterExpression(memberExpression.Member.Name);
+                }
+            }
         }
 
         private static FilterExpression ParseCallExpression(Expression expression)
         {
             var callExpression = expression as MethodCallExpression;
+
             var memberExpression = callExpression.Object as MemberExpression;
+            if (memberExpression == null)
+                throw new NotSupportedException(string.Format("Not supported object expression of type {0} in method {1}: {2}",
+                    memberExpression.NodeType, callExpression.Method.Name, memberExpression));
+
+            if (callExpression.Arguments.Any(x => x.NodeType != ExpressionType.Constant))
+                throw new NotSupportedException(string.Format("Not supported arguments in method {0}",
+                    callExpression.Method.Name));
             var arguments = new List<object>();
-            var extraArguments = callExpression.Arguments.Select(x => (x as ConstantExpression).Value);
-            arguments.AddRange(extraArguments);
-            return FilterExpression.FromFunction(callExpression.Method.Name, memberExpression.Member.Name, arguments);
+            arguments.AddRange(callExpression.Arguments.Select(x => (x as ConstantExpression).Value));
+
+            return FromFunction(callExpression.Method.Name, memberExpression.Member.Name, arguments);
         }
 
         private static FilterExpression ParseUnaryExpression(Expression expression)

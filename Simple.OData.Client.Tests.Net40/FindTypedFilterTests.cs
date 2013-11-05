@@ -41,7 +41,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public void StringFunction()
+        public void StringContains()
         {
             var products = _client
                 .For("Products")
@@ -51,13 +51,43 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public void NegatedStringFunction()
+        public void StringNotContains()
         {
             var products = _client
                 .For("Products")
                 .Filter<Product>(x => !x.ProductName.Contains("ai"))
                 .FindEntries();
             Assert.NotEqual("Chai", products.First()["ProductName"]);
+        }
+
+        [Fact]
+        public void StringStartsWith()
+        {
+            var products = _client
+                .For("Products")
+                .Filter<Product>(x => x.ProductName.StartsWith("Ch"))
+                .FindEntries();
+            Assert.Equal("Chai", products.First()["ProductName"]);
+        }
+
+        [Fact]
+        public void LengthOfStringEqual()
+        {
+            var products = _client
+                .For("Products")
+                .Filter<Product>(x => x.ProductName.Length == 4)
+                .FindEntries();
+            Assert.Equal("Chai", products.First()["ProductName"]);
+        }
+
+        [Fact]
+        public void SubstringWithPositionAndLengthEqual()
+        {
+            var products = _client
+                .For("Products")
+                .Filter<Product>(x => x.ProductName.Substring(1, 2) == "ha")
+                .FindEntries();
+            Assert.Equal("Chai", products.First()["ProductName"]);
         }
 
         [Fact]

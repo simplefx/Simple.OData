@@ -44,10 +44,10 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public void StringFunction()
+        public void StringContains()
         {
             var x = ODataFilter.Expression;
-            var products = _client
+            IEnumerable<dynamic> products = _client
                 .For("Products")
                 .Filter(x.ProductName.Contains("ai"))
                 .FindEntries();
@@ -55,14 +55,47 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public void NegatedStringFunction()
+        public void StringNotContains()
         {
             var x = ODataFilter.Expression;
-            var products = _client
+            IEnumerable<dynamic> products = _client
                 .For("Products")
                 .Filter(!x.ProductName.Contains("ai"))
                 .FindEntries();
             Assert.NotEqual("Chai", products.First()["ProductName"]);
+        }
+
+        [Fact]
+        public void StringStartsWith()
+        {
+            var x = ODataFilter.Expression;
+            IEnumerable<dynamic> products = _client
+                .For("Products")
+                .Filter(x.ProductName.StartsWith("Ch"))
+                .FindEntries();
+            Assert.Equal("Chai", products.First()["ProductName"]);
+        }
+
+        [Fact]
+        public void LengthOfStringEqual()
+        {
+            var x = ODataFilter.Expression;
+            IEnumerable<dynamic> products = _client
+                .For("Products")
+                .Filter(x.ProductName.Length == 4)
+                .FindEntries();
+            Assert.Equal("Chai", products.First()["ProductName"]);
+        }
+
+        [Fact]
+        public void SubstringWithPositionAndLengthEqual()
+        {
+            var x = ODataFilter.Expression;
+            IEnumerable<dynamic> products = _client
+                .For("Products")
+                .Filter(x.ProductName.Substring(1, 2) == "ha")
+                .FindEntries();
+            Assert.Equal("Chai", products.First()["ProductName"]);
         }
 
         [Fact]
