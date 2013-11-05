@@ -125,6 +125,11 @@ namespace Simple.OData.Client
             return _command.Select(columns);
         }
 
+        public IClientWithCommand Select(FilterExpression expression)
+        {
+            return _command.Select(expression);
+        }
+
         public IClientWithCommand Select<T>(Expression<Func<T, object>> expression)
         {
             return _command.Select(expression);

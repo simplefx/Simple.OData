@@ -123,6 +123,54 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void SelectSingle()
+        {
+            var x = ODataFilter.Expression;
+            var product = _client
+                .For("Products")
+                .Filter(x.ProductName == "Chai")
+                .Select(x.ProductName)
+                .FindEntry();
+            Assert.Equal("Chai", product["ProductName"]);
+        }
+
+        [Fact]
+        public void SelectMultiple()
+        {
+            var x = ODataFilter.Expression;
+            var product = _client
+                .For("Products")
+                .Filter(x.ProductName == "Chai")
+                .Select(x.ProductID, x.ProductName)
+                .FindEntry();
+            Assert.Equal("Chai", product["ProductName"]);
+        }
+
+        [Fact]
+        public void OrderBySingle()
+        {
+            var x = ODataFilter.Expression;
+            var product = _client
+                .For("Products")
+                .Filter(x.ProductName == "Chai")
+                .OrderBy(x.ProductName)
+                .FindEntry();
+            Assert.Equal("Chai", product["ProductName"]);
+        }
+
+        [Fact]
+        public void OrderByMultiple()
+        {
+            var x = ODataFilter.Expression;
+            var product = _client
+                .For("Products")
+                .Filter(x.ProductName == "Chai")
+                .OrderBy(x.ProductID, x.ProductName)
+                .FindEntry();
+            Assert.Equal("Chai", product["ProductName"]);
+        }
+
+        [Fact]
         public void CombinedConditionsFromODataOrg()
         {
             var client = new ODataClient("http://services.odata.org/V3/OData/OData.svc/");

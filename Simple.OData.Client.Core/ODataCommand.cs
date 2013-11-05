@@ -202,6 +202,11 @@ namespace Simple.OData.Client
             return _client;
         }
 
+        public IClientWithCommand Select(FilterExpression expression)
+        {
+            throw new NotImplementedException();
+        }
+
         public IClientWithCommand Select<T>(Expression<Func<T, object>> expression)
         {
             return Select(ExtractColumnNames(expression));

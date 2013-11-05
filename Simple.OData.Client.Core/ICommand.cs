@@ -23,6 +23,7 @@ namespace Simple.OData.Client
         IClientWithCommand Expand<T>(Expression<Func<T, object>> expression);
         IClientWithCommand Select(IEnumerable<string> columns);
         IClientWithCommand Select(params string[] columns);
+        IClientWithCommand Select(FilterExpression expression);
         IClientWithCommand Select<T>(Expression<Func<T, object>> expression);
         IClientWithCommand OrderBy(IEnumerable<KeyValuePair<string, bool>> columns);
         IClientWithCommand OrderBy(params string[] columns);
