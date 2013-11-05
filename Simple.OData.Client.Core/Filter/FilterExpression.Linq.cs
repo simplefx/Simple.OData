@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -12,6 +14,9 @@ namespace Simple.OData.Client
             {
                 case ExpressionType.MemberAccess:
                     return ParseMemberExpression(expression);
+
+                case ExpressionType.Call:
+                    return ParseCallExpression(expression);
 
                 case ExpressionType.Constant:
                     return new FilterExpression((expression as ConstantExpression).Value);
@@ -42,7 +47,7 @@ namespace Simple.OData.Client
                     return ParseBinaryExpression(expression);
             }
 
-            throw new NotSupportedException(string.Format("Not supported expression of type {0} ({1}): {2}", 
+            throw new NotSupportedException(string.Format("Not supported expression of type {0} ({1}): {2}",
                 expression.GetType(), expression.NodeType, expression));
         }
 
@@ -53,6 +58,16 @@ namespace Simple.OData.Client
                 return new FilterExpression(EvaluateStaticMember(memberExpression));
             else
                 return new FilterExpression(memberExpression.Member.Name);
+        }
+
+        private static FilterExpression ParseCallExpression(Expression expression)
+        {
+            var callExpression = expression as MethodCallExpression;
+            var memberExpression = callExpression.Object as MemberExpression;
+            var arguments = new List<object>();
+            var extraArguments = callExpression.Arguments.Select(x => (x as ConstantExpression).Value);
+            arguments.AddRange(extraArguments);
+            return FilterExpression.FromFunction(callExpression.Method.Name, memberExpression.Member.Name, arguments);
         }
 
         private static FilterExpression ParseUnaryExpression(Expression expression)

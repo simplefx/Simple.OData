@@ -44,6 +44,28 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void StringFunction()
+        {
+            var x = ODataFilter.Expression;
+            var products = _client
+                .For("Products")
+                .Filter(x.ProductName.Contains("ai"))
+                .FindEntries();
+            Assert.Equal("Chai", products.Single()["ProductName"]);
+        }
+
+        [Fact]
+        public void NegatedStringFunction()
+        {
+            var x = ODataFilter.Expression;
+            var products = _client
+                .For("Products")
+                .Filter(!x.ProductName.Contains("ai"))
+                .FindEntries();
+            Assert.NotEqual("Chai", products.First()["ProductName"]);
+        }
+
+        [Fact]
         public void TopOne()
         {
             var x = ODataFilter.Expression;

@@ -246,6 +246,22 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void StringContains()
+        {
+            var x = ODataFilter.Expression;
+            var filter = x.ProductName.Contains("ai");
+            Assert.Equal("substringof('ai',ProductName)", filter.ToString());
+        }
+
+        [Fact]
+        public void StringNotContains()
+        {
+            var x = ODataFilter.Expression;
+            var filter = !x.ProductName.Contains("ai");
+            Assert.Equal("not substringof('ai',ProductName)", filter.ToString());
+        }
+
+        [Fact]
         public void IndexOfStringEqual()
         {
             var x = ODataFilter.Expression;

@@ -20,6 +20,16 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void FilterStringExpression()
+        {
+            var products = _client
+                .For("Products")
+                .Filter("substringof('ai',ProductName)")
+                .FindEntries();
+            Assert.Equal("Chai", products.Single()["ProductName"]);
+        }
+
+        [Fact]
         public void Get()
         {
             var category = _client
