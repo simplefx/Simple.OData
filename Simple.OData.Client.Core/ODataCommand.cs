@@ -185,6 +185,11 @@ namespace Simple.OData.Client
             return _client;
         }
 
+        public IClientWithCommand Expand<T>(Expression<Func<T, object>> expression)
+        {
+            return Expand(ExtractColumnNames(expression));
+        }
+
         public IClientWithCommand Select(IEnumerable<string> columns)
         {
             _selectColumns = columns.ToList();
@@ -195,6 +200,11 @@ namespace Simple.OData.Client
         {
             _selectColumns = columns.ToList();
             return _client;
+        }
+
+        public IClientWithCommand Select<T>(Expression<Func<T, object>> expression)
+        {
+            return Select(ExtractColumnNames(expression));
         }
 
         public IClientWithCommand OrderBy(IEnumerable<KeyValuePair<string, bool>> columns)
@@ -208,9 +218,19 @@ namespace Simple.OData.Client
             return OrderBy(columns.Select(x => new KeyValuePair<string, bool>(x, false)));
         }
 
+        public IClientWithCommand OrderBy<T>(Expression<Func<T, object>> expression)
+        {
+            return Select(ExtractColumnNames(expression));
+        }
+
         public IClientWithCommand OrderByDescending(params string[] columns)
         {
             return OrderBy(columns.Select(x => new KeyValuePair<string, bool>(x, true)));
+        }
+
+        public IClientWithCommand OrderByDescending<T>(Expression<Func<T, object>> expression)
+        {
+            return OrderBy(ExtractColumnNames(expression).Select(x => new KeyValuePair<string, bool>(x, true)));
         }
 
         public IClientWithCommand Count()
@@ -455,6 +475,25 @@ namespace Simple.OData.Client
             return ok && 
                 this.Table.GetKeyNames().Count == namedKeyValues.Count() && 
                 this.Table.GetKeyNames().All(namedKeyValues.ContainsKey) ? namedKeyValues : null;
+        }
+
+        private IEnumerable<string> ExtractColumnNames<T>(Expression<Func<T, object>> expression)
+        {
+            var lambdaExpression = Utils.CastExpressionWithTypeCheck<LambdaExpression>(expression);
+            switch (lambdaExpression.Body.NodeType)
+            {
+                case ExpressionType.MemberAccess:
+                    return new [] { (lambdaExpression.Body as MemberExpression).Member.Name };
+
+                case ExpressionType.New:
+                    var newExpression = lambdaExpression.Body as NewExpression;
+                    if (newExpression.Arguments.Any(x => x.NodeType != ExpressionType.MemberAccess))
+                        throw new NotSupportedException(string.Format("Not supported arguments in anonymous type creation expression {0}", expression));
+                    return newExpression.Arguments.Select(x => (x as MemberExpression).Member.Name);
+
+                default:
+                    throw Utils.NotSupportedExpression(lambdaExpression.Body);
+            }
         }
     }
 }

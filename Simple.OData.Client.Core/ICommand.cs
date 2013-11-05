@@ -20,11 +20,15 @@ namespace Simple.OData.Client
         IClientWithCommand Top(int count);
         IClientWithCommand Expand(IEnumerable<string> associations);
         IClientWithCommand Expand(params string[] associations);
+        IClientWithCommand Expand<T>(Expression<Func<T, object>> expression);
         IClientWithCommand Select(IEnumerable<string> columns);
         IClientWithCommand Select(params string[] columns);
+        IClientWithCommand Select<T>(Expression<Func<T, object>> expression);
         IClientWithCommand OrderBy(IEnumerable<KeyValuePair<string, bool>> columns);
         IClientWithCommand OrderBy(params string[] columns);
+        IClientWithCommand OrderBy<T>(Expression<Func<T, object>> expression);
         IClientWithCommand OrderByDescending(params string[] columns);
+        IClientWithCommand OrderByDescending<T>(Expression<Func<T, object>> expression);
         IClientWithCommand Count();
         IClientWithCommand NavigateTo(string linkName);
         IClientWithCommand NavigateTo<T>();

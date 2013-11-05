@@ -47,8 +47,7 @@ namespace Simple.OData.Client
                     return ParseBinaryExpression(expression);
             }
 
-            throw new NotSupportedException(string.Format("Not supported expression of type {0} ({1}): {2}",
-                expression.GetType(), expression.NodeType, expression));
+            throw Utils.NotSupportedExpression(expression);
         }
 
         private static FilterExpression ParseMemberExpression(Expression expression)
@@ -77,15 +76,9 @@ namespace Simple.OData.Client
         private static FilterExpression ParseCallExpression(Expression expression)
         {
             var callExpression = expression as MethodCallExpression;
-
-            var memberExpression = callExpression.Object as MemberExpression;
-            if (memberExpression == null)
-                throw new NotSupportedException(string.Format("Not supported object expression of type {0} in method {1}: {2}",
-                    memberExpression.NodeType, callExpression.Method.Name, memberExpression));
-
+            var memberExpression = Utils.CastExpressionWithTypeCheck<MemberExpression>(callExpression.Object);
             if (callExpression.Arguments.Any(x => x.NodeType != ExpressionType.Constant))
-                throw new NotSupportedException(string.Format("Not supported arguments in method {0}",
-                    callExpression.Method.Name));
+                throw new NotSupportedException(string.Format("Not supported arguments in method {0}", callExpression.Method.Name));
             var arguments = new List<object>();
             arguments.AddRange(callExpression.Arguments.Select(x => (x as ConstantExpression).Value));
 
@@ -106,8 +99,7 @@ namespace Simple.OData.Client
                     return -filterExpression;
             }
 
-            throw new NotSupportedException(string.Format("Not supported expression of type {0} ({1}): {2}",
-                expression.GetType(), expression.NodeType, expression));
+            throw Utils.NotSupportedExpression(expression);
         }
 
         private static FilterExpression ParseBinaryExpression(Expression expression)
@@ -151,8 +143,7 @@ namespace Simple.OData.Client
                     return leftExpression % rightExpression;
             }
 
-            throw new NotSupportedException(string.Format("Not supported expression of type {0} ({1}): {2}",
-                expression.GetType(), expression.NodeType, expression));
+            throw Utils.NotSupportedExpression(expression);
         }
 
         private static object EvaluateStaticMember(MemberExpression expression)

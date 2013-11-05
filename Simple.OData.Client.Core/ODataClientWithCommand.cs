@@ -110,6 +110,11 @@ namespace Simple.OData.Client
             return _command.Expand(associations);
         }
 
+        public IClientWithCommand Expand<T>(Expression<Func<T, object>> expression)
+        {
+            return _command.Expand(expression);
+        }
+
         public IClientWithCommand Select(IEnumerable<string> columns)
         {
             return _command.Select(columns);
@@ -118,6 +123,11 @@ namespace Simple.OData.Client
         public IClientWithCommand Select(params string[] columns)
         {
             return _command.Select(columns);
+        }
+
+        public IClientWithCommand Select<T>(Expression<Func<T, object>> expression)
+        {
+            return _command.Select(expression);
         }
 
         public IClientWithCommand OrderBy(IEnumerable<KeyValuePair<string,bool>> columns)
@@ -130,9 +140,19 @@ namespace Simple.OData.Client
             return _command.OrderBy(columns);
         }
 
+        public IClientWithCommand OrderBy<T>(Expression<Func<T, object>> expression)
+        {
+            return _command.OrderBy(expression);
+        }
+
         public IClientWithCommand OrderByDescending(params string[] columns)
         {
             return _command.OrderByDescending(columns);
+        }
+
+        public IClientWithCommand OrderByDescending<T>(Expression<Func<T, object>> expression)
+        {
+            return _command.OrderByDescending(expression);
         }
 
         public IClientWithCommand Count()

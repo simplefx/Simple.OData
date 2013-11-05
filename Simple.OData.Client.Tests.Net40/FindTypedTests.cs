@@ -7,7 +7,7 @@ using Entry = System.Collections.Generic.Dictionary<string, object>;
 
 namespace Simple.OData.Client.Tests
 {
-    public class FindTypedFilterTests : TestBase
+    public class FindTypedTests : TestBase
     {
         [Fact]
         public void SingleCondition()
@@ -110,6 +110,50 @@ namespace Simple.OData.Client.Tests
                 .Count()
                 .FindScalar();
             Assert.Equal(1, int.Parse(count.ToString()));
+        }
+
+        [Fact]
+        public void SelectSingle()
+        {
+            var product = _client
+                .For<Product>()
+                .Filter<Product>(x => x.ProductName == "Chai")
+                .Select<Product>(x => x.ProductName)
+                .FindEntry();
+            Assert.Equal("Chai", product["ProductName"]);
+        }
+
+        [Fact]
+        public void SelectMultiple()
+        {
+            var product = _client
+                .For<Product>()
+                .Filter<Product>(x => x.ProductName == "Chai")
+                .Select<Product>(x => new { x.ProductID, x.ProductName })
+                .FindEntry();
+            Assert.Equal("Chai", product["ProductName"]);
+        }
+
+        [Fact]
+        public void OrderBySingle()
+        {
+            var product = _client
+                .For<Product>()
+                .Filter<Product>(x => x.ProductName == "Chai")
+                .OrderBy<Product>(x => x.ProductName)
+                .FindEntry();
+            Assert.Equal("Chai", product["ProductName"]);
+        }
+
+        [Fact]
+        public void OrderByMultiple()
+        {
+            var product = _client
+                .For<Product>()
+                .Filter<Product>(x => x.ProductName == "Chai")
+                .OrderBy<Product>(x => new { x.ProductID, x.ProductName })
+                .FindEntry();
+            Assert.Equal("Chai", product["ProductName"]);
         }
 
         public class ODataOrgProduct

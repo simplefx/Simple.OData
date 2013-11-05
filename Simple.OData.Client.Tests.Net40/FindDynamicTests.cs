@@ -7,7 +7,7 @@ using Entry = System.Collections.Generic.Dictionary<string, object>;
 
 namespace Simple.OData.Client.Tests
 {
-    public class FindDynamicFilterTests : TestBase
+    public class FindDynamicTests : TestBase
     {
         [Fact]
         public void SingleCondition()

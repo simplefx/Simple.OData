@@ -133,10 +133,10 @@
     <Compile Include="..\Simple.OData.Client.Tests.Net40\FilterExpressionTests.cs">
       <Link>FilterExpressionTests.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\FindDynamicFilterTests.cs">
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\FindDynamicTests.cs">
       <Link>FindDynamicFilterTests.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\FindTypedFilterTests.cs">
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\FindTypedTests.cs">
       <Link>FindTypedFilterTests.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\FunctionTests.cs">
