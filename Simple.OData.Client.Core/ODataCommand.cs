@@ -52,6 +52,28 @@ namespace Simple.OData.Client
             _parent = parent;
         }
 
+        internal ODataCommand(ODataCommand ancestor)
+        {
+            _client = ancestor._client;
+            _parent = ancestor._parent;
+            _collectionName = ancestor._collectionName;
+            _derivedCollectionName = ancestor._derivedCollectionName;
+            _functionName = ancestor._functionName;
+            _keyValues = ancestor._keyValues;
+            _namedKeyValues = ancestor._namedKeyValues;
+            _entryData = ancestor._entryData;
+            _parameters = ancestor._parameters;
+            _filter = ancestor._filter;
+            _skipCount = ancestor._skipCount;
+            _topCount = ancestor._topCount;
+            _expandAssociations = ancestor._expandAssociations;
+            _selectColumns = ancestor._selectColumns;
+            _orderbyColumns = ancestor._orderbyColumns;
+            _computeCount = ancestor._computeCount;
+            _inlineCount = ancestor._inlineCount;
+            _linkName = ancestor._linkName;
+        }
+
         private Table Table
         {
             get
@@ -464,12 +486,22 @@ namespace Simple.OData.Client
         {
         }
 
+        internal ODataCommand(ODataCommand ancestor)
+            : base(ancestor)
+        {
+        }
+
         private ODataClientWithCommand<T> CastClient
         {
             get
             {
                 return _client as ODataClientWithCommand<T>;
             }
+        }
+
+        internal ODataClientWithCommand<T> Client
+        {
+            set { _client = value; }
         }
 
         public new IClientWithCommand<T> For(string collectionName = null)
@@ -481,8 +513,7 @@ namespace Simple.OData.Client
         public IClientWithCommand<U> As<U>(string derivedCollectionName = null)
         {
             base.As(derivedCollectionName ?? typeof(U).Name);
-            _client = new ODataClientWithCommand<U>(_client);
-            return _client as ODataClientWithCommand<U>;
+            return new ODataClientWithCommand<U>(_client, this);
         }
 
         public IClientWithCommand<T> Filter(Expression<Func<T, bool>> expression)

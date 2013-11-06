@@ -13,9 +13,9 @@ namespace Simple.OData.Client
 
     public partial class ODataClientWithCommand : IClientWithCommand
     {
-        protected internal readonly ODataClient _client;
-        protected internal readonly ISchema _schema;
-        protected internal ODataCommand _parent;
+        protected readonly ODataClient _client;
+        protected readonly ISchema _schema;
+        protected ODataCommand _parent;
         protected ODataCommand _command;
 
         public ODataClientWithCommand(ODataClient client, ISchema schema, ODataCommand parent = null)
@@ -23,6 +23,14 @@ namespace Simple.OData.Client
             _client = client;
             _schema = schema;
             _parent = parent;
+        }
+
+        protected ODataClientWithCommand(ODataClientWithCommand ancestor, ODataCommand command)
+        {
+            _client = ancestor._client;
+            _schema = ancestor._schema;
+            _parent = ancestor._parent;
+            _command = command;
         }
 
         protected ODataCommand Command
@@ -194,9 +202,10 @@ namespace Simple.OData.Client
         {
         }
 
-        internal ODataClientWithCommand(ODataClientWithCommand ancestor)
-            : base(ancestor._client, ancestor._schema, ancestor._parent)
+        internal ODataClientWithCommand(ODataClientWithCommand ancestor, ODataCommand command)
+            : base(ancestor, new ODataCommand<T>(command))
         {
+            CastCommand.Client = this;
         }
 
         protected override ODataCommand CreateCommand()
