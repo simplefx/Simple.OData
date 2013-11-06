@@ -111,10 +111,20 @@ namespace Simple.OData.Client
             return _client;
         }
 
+        public IClientWithCommand For(ODataExpression expression)
+        {
+            return For(expression.Reference);
+        }
+
         public IClientWithCommand As(string derivedCollectionName)
         {
             _derivedCollectionName = derivedCollectionName;
             return _client;
+        }
+
+        public IClientWithCommand As(ODataExpression expression)
+        {
+            return As(expression.Reference);
         }
 
         public IClientWithCommand Link(string linkName)
@@ -279,6 +289,11 @@ namespace Simple.OData.Client
         public IClientWithCommand NavigateTo(string linkName)
         {
             return _client.Link(this, linkName);
+        }
+
+        public IClientWithCommand NavigateTo(ODataExpression expression)
+        {
+            return NavigateTo(expression.Reference);
         }
 
         public bool FilterIsKey

@@ -63,6 +63,11 @@ namespace Simple.OData.Client
             return new ODataClientWithCommand(this, _schema).For(collectionName);
         }
 
+        public IClientWithCommand For(ODataExpression expression)
+        {
+            return new ODataClientWithCommand(this, _schema).For(expression);
+        }
+
         public IClientWithCommand<T> For<T>(string collectionName = null)
         {
             return new ODataClientWithCommand<T>(this, _schema).For(collectionName);

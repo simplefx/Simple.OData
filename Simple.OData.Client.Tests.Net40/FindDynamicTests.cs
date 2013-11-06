@@ -14,7 +14,7 @@ namespace Simple.OData.Client.Tests
         {
             var x = ODataDynamic.Expression;
             var product = _client
-                .For("Products")
+                .For(x.Products)
                 .Filter(x.ProductName == "Chai")
                 .FindEntry();
             Assert.Equal("Chai", product["ProductName"]);
@@ -26,7 +26,7 @@ namespace Simple.OData.Client.Tests
             var productName = "Chai";
             var x = ODataDynamic.Expression;
             var product = _client
-                .For("Products")
+                .For(x.Products)
                 .Filter(x.ProductName == productName)
                 .FindEntry();
             Assert.Equal("Chai", product["ProductName"]);
@@ -37,7 +37,7 @@ namespace Simple.OData.Client.Tests
         {
             var x = ODataDynamic.Expression;
             var product = _client
-                .For("Employees")
+                .For(x.Employees)
                 .Filter(x.FirstName == "Nancy" && x.HireDate < DateTime.Now)
                 .FindEntry();
             Assert.Equal("Davolio", product["LastName"]);
@@ -48,7 +48,7 @@ namespace Simple.OData.Client.Tests
         {
             var x = ODataDynamic.Expression;
             IEnumerable<dynamic> products = _client
-                .For("Products")
+                .For(x.Products)
                 .Filter(x.ProductName.Contains("ai"))
                 .FindEntries();
             Assert.Equal("Chai", products.Single()["ProductName"]);
@@ -59,7 +59,7 @@ namespace Simple.OData.Client.Tests
         {
             var x = ODataDynamic.Expression;
             IEnumerable<dynamic> products = _client
-                .For("Products")
+                .For(x.Products)
                 .Filter(!x.ProductName.Contains("ai"))
                 .FindEntries();
             Assert.NotEqual("Chai", products.First()["ProductName"]);
@@ -70,7 +70,7 @@ namespace Simple.OData.Client.Tests
         {
             var x = ODataDynamic.Expression;
             IEnumerable<dynamic> products = _client
-                .For("Products")
+                .For(x.Products)
                 .Filter(x.ProductName.StartsWith("Ch"))
                 .FindEntries();
             Assert.Equal("Chai", products.First()["ProductName"]);
@@ -81,7 +81,7 @@ namespace Simple.OData.Client.Tests
         {
             var x = ODataDynamic.Expression;
             IEnumerable<dynamic> products = _client
-                .For("Products")
+                .For(x.Products)
                 .Filter(x.ProductName.Length == 4)
                 .FindEntries();
             Assert.Equal("Chai", products.First()["ProductName"]);
@@ -92,7 +92,7 @@ namespace Simple.OData.Client.Tests
         {
             var x = ODataDynamic.Expression;
             IEnumerable<dynamic> products = _client
-                .For("Products")
+                .For(x.Products)
                 .Filter(x.ProductName.Substring(1, 2) == "ha")
                 .FindEntries();
             Assert.Equal("Chai", products.First()["ProductName"]);
@@ -103,7 +103,7 @@ namespace Simple.OData.Client.Tests
         {
             var x = ODataDynamic.Expression;
             IEnumerable<dynamic> products = _client
-                .For("Products")
+                .For(x.Products)
                 .Filter(x.ProductName == "Chai")
                 .Top(1)
                 .FindEntries();
@@ -115,7 +115,7 @@ namespace Simple.OData.Client.Tests
         {
             var x = ODataDynamic.Expression;
             var count = _client
-                .For("Products")
+                .For(x.Products)
                 .Filter(x.ProductName == "Chai")
                 .Count()
                 .FindScalar();
@@ -127,7 +127,7 @@ namespace Simple.OData.Client.Tests
         {
             var x = ODataDynamic.Expression;
             var product = _client
-                .For("Products")
+                .For(x.Products)
                 .Filter(x.ProductName == "Chai")
                 .Select(x.ProductName)
                 .FindEntry();
@@ -139,7 +139,7 @@ namespace Simple.OData.Client.Tests
         {
             var x = ODataDynamic.Expression;
             var product = _client
-                .For("Products")
+                .For(x.Products)
                 .Filter(x.ProductName == "Chai")
                 .Select(x.ProductID, x.ProductName)
                 .FindEntry();
@@ -151,7 +151,7 @@ namespace Simple.OData.Client.Tests
         {
             var x = ODataDynamic.Expression;
             var product = _client
-                .For("Products")
+                .For(x.Products)
                 .Filter(x.ProductName == "Chai")
                 .OrderBy(x.ProductName)
                 .FindEntry();
@@ -163,7 +163,7 @@ namespace Simple.OData.Client.Tests
         {
             var x = ODataDynamic.Expression;
             var product = _client
-                .For("Products")
+                .For(x.Products)
                 .Filter(x.ProductName == "Chai")
                 .OrderBy(x.ProductID, x.ProductName)
                 .FindEntry();
@@ -176,7 +176,7 @@ namespace Simple.OData.Client.Tests
             var client = new ODataClient("http://services.odata.org/V3/OData/OData.svc/");
             var x = ODataDynamic.Expression;
             var product = client
-                .For("Product")
+                .For(x.Product)
                 .Filter(x.Name == "Bread" && x.Price < 1000)
                 .FindEntry();
             Assert.Equal(2.5m, product["Price"]);

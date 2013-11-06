@@ -73,9 +73,19 @@ namespace Simple.OData.Client
             return this.Command.For(collectionName);
         }
 
+        public IClientWithCommand For(ODataExpression expression)
+        {
+            return this.Command.For(expression);
+        }
+
         public IClientWithCommand As(string derivedCollectionName)
         {
             return this.Command.As(derivedCollectionName);
+        }
+
+        public IClientWithCommand As(ODataExpression expression)
+        {
+            return this.Command.As(expression);
         }
 
         public IClientWithCommand Key(params object[] key)
@@ -196,6 +206,11 @@ namespace Simple.OData.Client
         public IClientWithCommand NavigateTo(string linkName)
         {
             return this.Command.NavigateTo(linkName);
+        }
+
+        public IClientWithCommand NavigateTo(ODataExpression expression)
+        {
+            return this.Command.NavigateTo(expression);
         }
 
         public bool FilterIsKey
