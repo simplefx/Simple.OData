@@ -6,52 +6,52 @@ using System.Reflection;
 
 namespace Simple.OData.Client
 {
-    public class DynamicFilterExpression : FilterExpression,  IDynamicMetaObjectProvider
+    public class DynamicODataExpression : ODataExpression,  IDynamicMetaObjectProvider
     {
-        internal DynamicFilterExpression()
+        internal DynamicODataExpression()
         {
         }
 
-        protected DynamicFilterExpression(object value)
+        protected DynamicODataExpression(object value)
             : base(value)
         {
         }
 
-        protected DynamicFilterExpression(string reference)
+        protected DynamicODataExpression(string reference)
             : base(reference)
         {
         }
 
-        protected DynamicFilterExpression(ExpressionFunction function)
+        protected DynamicODataExpression(ExpressionFunction function)
             : base(function)
         {
         }
 
-        protected DynamicFilterExpression(FilterExpression left, FilterExpression right, ExpressionOperator expressionOperator)
+        protected DynamicODataExpression(ODataExpression left, ODataExpression right, ExpressionOperator expressionOperator)
             : base(left, right, expressionOperator)
         {
         }
 
-        protected DynamicFilterExpression(FilterExpression caller, string reference)
+        protected DynamicODataExpression(ODataExpression caller, string reference)
             : base(caller, reference)
         {
         }
 
-        protected DynamicFilterExpression(FilterExpression caller, ExpressionFunction function)
+        protected DynamicODataExpression(ODataExpression caller, ExpressionFunction function)
             : base(caller, function)
         {
         }
 
         public DynamicMetaObject GetMetaObject(Expression parameter)
         {
-            return new DynamicFilterExpression.DynamicDictionaryMetaObject(parameter, this);
+            return new DynamicODataExpression.DynamicDictionaryMetaObject(parameter, this);
         }
 
         private class DynamicDictionaryMetaObject : DynamicMetaObject
         {
             internal DynamicDictionaryMetaObject(
                 Expression parameter,
-                DynamicFilterExpression value)
+                DynamicODataExpression value)
                 : base(parameter, BindingRestrictions.Empty, value)
             {
             }
@@ -63,7 +63,7 @@ namespace Simple.OData.Client
                 FunctionMapping mapping;
                 if (FunctionMapping.SupportedFunctions.TryGetValue(new ExpressionFunction.FunctionCall(binder.Name, 0), out mapping))
                 {
-                    ctor = CtorWithFilterExpressionAndString;
+                    ctor = CtorWithExpressionAndString;
                     ctorArguments = new[] { Expression.Constant(this.Value), Expression.Constant(binder.Name) };
                 }
                 else
@@ -83,7 +83,7 @@ namespace Simple.OData.Client
                 FunctionMapping mapping;
                 if (FunctionMapping.SupportedFunctions.TryGetValue(new ExpressionFunction.FunctionCall(binder.Name, args.Count()), out mapping))
                 {
-                    var expression = Expression.New(CtorWithFilterExpressionAndExpressionFunction,
+                    var expression = Expression.New(CtorWithExpressionAndExpressionFunction,
                         new[]
                         {
                             Expression.Constant(this.Value), 
@@ -104,7 +104,7 @@ namespace Simple.OData.Client
         private static IEnumerable<ConstructorInfo> GetConstructorInfo()
         {
             return _ctors ??
-                (_ctors = typeof(DynamicFilterExpression).GetConstructors(
+                (_ctors = typeof(DynamicODataExpression).GetConstructors(
                     BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic));
         }
 
@@ -119,33 +119,33 @@ namespace Simple.OData.Client
             }
         }
 
-        private static ConstructorInfo CtorWithFilterExpressionAndString
+        private static ConstructorInfo CtorWithExpressionAndString
         {
             get
             {
-                return _ctorWithFilterExpressionAndString ??
-                       (_ctorWithFilterExpressionAndString = GetConstructorInfo().Single(x =>
+                return _ctorWithExpressionAndString ??
+                       (_ctorWithExpressionAndString = GetConstructorInfo().Single(x =>
                            x.GetParameters().Count() == 2 &&
-                           x.GetParameters()[0].ParameterType == typeof(FilterExpression) &&
+                           x.GetParameters()[0].ParameterType == typeof(ODataExpression) &&
                            x.GetParameters()[1].ParameterType == typeof(string)));
             }
         }
 
-        private static ConstructorInfo CtorWithFilterExpressionAndExpressionFunction
+        private static ConstructorInfo CtorWithExpressionAndExpressionFunction
         {
             get
             {
-                return _ctorWithFilterExpressionAndExpressionFunction ??
-                       (_ctorWithFilterExpressionAndExpressionFunction = GetConstructorInfo().Single(x =>
+                return _ctorWithExpressionAndFunction ??
+                       (_ctorWithExpressionAndFunction = GetConstructorInfo().Single(x =>
                            x.GetParameters().Count() == 2 &&
-                           x.GetParameters()[0].ParameterType == typeof(FilterExpression) &&
+                           x.GetParameters()[0].ParameterType == typeof(ODataExpression) &&
                            x.GetParameters()[1].ParameterType == typeof(ExpressionFunction)));
             }
         }
 
         private static ConstructorInfo[] _ctors;
         private static ConstructorInfo _ctorWithString;
-        private static ConstructorInfo _ctorWithFilterExpressionAndString;
-        private static ConstructorInfo _ctorWithFilterExpressionAndExpressionFunction;
+        private static ConstructorInfo _ctorWithExpressionAndString;
+        private static ConstructorInfo _ctorWithExpressionAndFunction;
     }
 }

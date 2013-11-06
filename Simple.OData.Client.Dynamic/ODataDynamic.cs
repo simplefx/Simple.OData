@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
+﻿using System.Collections.Generic;
 
 namespace Simple.OData.Client
 {
-    [Obsolete("Use ODataDynamic.Expression instead of ODataFilter.Expression", false)]
-    public static class ODataFilter
+    public static class ODataDynamic
     {
         public static dynamic Expression
         {

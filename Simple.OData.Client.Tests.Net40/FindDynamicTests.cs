@@ -12,7 +12,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void SingleCondition()
         {
-            var x = ODataFilter.Expression;
+            var x = ODataDynamic.Expression;
             var product = _client
                 .For("Products")
                 .Filter(x.ProductName == "Chai")
@@ -24,7 +24,7 @@ namespace Simple.OData.Client.Tests
         public void SingleConditionWithVariable()
         {
             var productName = "Chai";
-            var x = ODataFilter.Expression;
+            var x = ODataDynamic.Expression;
             var product = _client
                 .For("Products")
                 .Filter(x.ProductName == productName)
@@ -35,7 +35,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void CombinedConditions()
         {
-            var x = ODataFilter.Expression;
+            var x = ODataDynamic.Expression;
             var product = _client
                 .For("Employees")
                 .Filter(x.FirstName == "Nancy" && x.HireDate < DateTime.Now)
@@ -46,7 +46,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void StringContains()
         {
-            var x = ODataFilter.Expression;
+            var x = ODataDynamic.Expression;
             IEnumerable<dynamic> products = _client
                 .For("Products")
                 .Filter(x.ProductName.Contains("ai"))
@@ -57,7 +57,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void StringNotContains()
         {
-            var x = ODataFilter.Expression;
+            var x = ODataDynamic.Expression;
             IEnumerable<dynamic> products = _client
                 .For("Products")
                 .Filter(!x.ProductName.Contains("ai"))
@@ -68,7 +68,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void StringStartsWith()
         {
-            var x = ODataFilter.Expression;
+            var x = ODataDynamic.Expression;
             IEnumerable<dynamic> products = _client
                 .For("Products")
                 .Filter(x.ProductName.StartsWith("Ch"))
@@ -79,7 +79,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void LengthOfStringEqual()
         {
-            var x = ODataFilter.Expression;
+            var x = ODataDynamic.Expression;
             IEnumerable<dynamic> products = _client
                 .For("Products")
                 .Filter(x.ProductName.Length == 4)
@@ -90,7 +90,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void SubstringWithPositionAndLengthEqual()
         {
-            var x = ODataFilter.Expression;
+            var x = ODataDynamic.Expression;
             IEnumerable<dynamic> products = _client
                 .For("Products")
                 .Filter(x.ProductName.Substring(1, 2) == "ha")
@@ -101,7 +101,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void TopOne()
         {
-            var x = ODataFilter.Expression;
+            var x = ODataDynamic.Expression;
             IEnumerable<dynamic> products = _client
                 .For("Products")
                 .Filter(x.ProductName == "Chai")
@@ -113,7 +113,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void Count()
         {
-            var x = ODataFilter.Expression;
+            var x = ODataDynamic.Expression;
             var count = _client
                 .For("Products")
                 .Filter(x.ProductName == "Chai")
@@ -125,7 +125,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void SelectSingle()
         {
-            var x = ODataFilter.Expression;
+            var x = ODataDynamic.Expression;
             var product = _client
                 .For("Products")
                 .Filter(x.ProductName == "Chai")
@@ -137,7 +137,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void SelectMultiple()
         {
-            var x = ODataFilter.Expression;
+            var x = ODataDynamic.Expression;
             var product = _client
                 .For("Products")
                 .Filter(x.ProductName == "Chai")
@@ -149,7 +149,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void OrderBySingle()
         {
-            var x = ODataFilter.Expression;
+            var x = ODataDynamic.Expression;
             var product = _client
                 .For("Products")
                 .Filter(x.ProductName == "Chai")
@@ -161,7 +161,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void OrderByMultiple()
         {
-            var x = ODataFilter.Expression;
+            var x = ODataDynamic.Expression;
             var product = _client
                 .For("Products")
                 .Filter(x.ProductName == "Chai")
@@ -174,7 +174,7 @@ namespace Simple.OData.Client.Tests
         public void CombinedConditionsFromODataOrg()
         {
             var client = new ODataClient("http://services.odata.org/V3/OData/OData.svc/");
-            var x = ODataFilter.Expression;
+            var x = ODataDynamic.Expression;
             var product = client
                 .For("Product")
                 .Filter(x.Name == "Bread" && x.Price < 1000)

@@ -8,7 +8,7 @@ namespace Simple.OData.Client
     public class ExpressionFunction
     {
         public string FunctionName { get; set; }
-        public List<FilterExpression> Arguments { get; set; }
+        public List<ODataExpression> Arguments { get; set; }
 
         public class FunctionCall
         {
@@ -47,7 +47,7 @@ namespace Simple.OData.Client
         public ExpressionFunction(string functionName, IEnumerable<object> arguments)
         {
             this.FunctionName = functionName;
-            this.Arguments = arguments.Select(FilterExpression.FromValue).ToList();
+            this.Arguments = arguments.Select(ODataExpression.FromValue).ToList();
         }
     }
 }

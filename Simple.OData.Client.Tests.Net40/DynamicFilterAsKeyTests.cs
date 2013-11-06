@@ -8,7 +8,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void FindAllByFilterAsKeyEqual()
         {
-            var x = ODataFilter.Expression;
+            var x = ODataDynamic.Expression;
             var command = _client
                 .For("Products")
                 .Filter(x.ProductID == 1);
@@ -19,7 +19,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void FindAllByFilterAsKeyNotEqual()
         {
-            var x = ODataFilter.Expression;
+            var x = ODataDynamic.Expression;
             var command = _client
                 .For("Products")
                 .Filter(x.ProductID != 1);
@@ -30,7 +30,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void FindAllByFilterAsNotKeyEqual()
         {
-            var x = ODataFilter.Expression;
+            var x = ODataDynamic.Expression;
             var command = _client
                 .For("Products")
                 .Filter(!(x.ProductID == 1));
@@ -42,7 +42,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void FindAllByFilterAsKeyEqualLong()
         {
-            var x = ODataFilter.Expression;
+            var x = ODataDynamic.Expression;
             var command = _client
                 .For("Products")
                 .Filter(x.ProductID == 1L);
@@ -53,7 +53,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void FindAllByFilterAsKeyEqualAndExtraClause()
         {
-            var x = ODataFilter.Expression;
+            var x = ODataDynamic.Expression;
             var command = _client
                 .For("Products")
                 .Filter(x.ProductID == 1 && x.ProductName == "abc");
@@ -65,7 +65,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void FindAllByFilterAsKeyEqualDuplicateClause()
         {
-            var x = ODataFilter.Expression;
+            var x = ODataDynamic.Expression;
             var command = _client
                 .For("Products")
                 .Filter(x.ProductID == 1 && x.ProductID == 1);
@@ -76,7 +76,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void FindAllByFilterAsCompleteCompoundKey()
         {
-            var x = ODataFilter.Expression;
+            var x = ODataDynamic.Expression;
             var command = _client
                 .For("OrderDetails")
                 .Filter(x.OrderID == 1 && x.ProductID == 2);
@@ -87,7 +87,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void FindAllByFilterAsInCompleteCompoundKey()
         {
-            var x = ODataFilter.Expression;
+            var x = ODataDynamic.Expression;
             var command = _client
                 .For("OrderDetails")
                 .Filter(x.OrderID == 1);
@@ -98,7 +98,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void FindAllEmployeeSuperiors()
         {
-            var x = ODataFilter.Expression;
+            var x = ODataDynamic.Expression;
             var command = _client
                 .For("Employees")
                 .Filter(x.EmployeeID == 1)
@@ -110,7 +110,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void FindAllCustomerOrders()
         {
-            var x = ODataFilter.Expression;
+            var x = ODataDynamic.Expression;
             var command = _client
                 .For("Customers")
                 .Filter(x.CustomerID == "ALFKI")
@@ -122,7 +122,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void FindAllEmployeeSubordinates()
         {
-            var x = ODataFilter.Expression;
+            var x = ODataDynamic.Expression;
             var command = _client
                 .For("Employees")
                 .Filter(x.EmployeeID == 2)
@@ -134,7 +134,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void FindAllOrderOrderDetails()
         {
-            var x = ODataFilter.Expression;
+            var x = ODataDynamic.Expression;
             var command = _client
                 .For("Orders")
                 .Filter(x.OrderID == 10952)
@@ -146,7 +146,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void FindEmployeeSuperior()
         {
-            var x = ODataFilter.Expression;
+            var x = ODataDynamic.Expression;
             var command = _client
                 .For("Employees")
                 .Filter(x.EmployeeID == 1)
@@ -158,7 +158,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void FindAllFromBaseTableByFilterAsKeyEqual()
         {
-            var x = ODataFilter.Expression;
+            var x = ODataDynamic.Expression;
             var command = _client
                 .For("Transport")
                 .Filter(x.TransportID == 1);
@@ -169,7 +169,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void FindAllFromDerivedTableByFilterAsKeyEqual()
         {
-            var x = ODataFilter.Expression;
+            var x = ODataDynamic.Expression;
             var command = _client
                 .For("Transport")
                 .As("Ship")

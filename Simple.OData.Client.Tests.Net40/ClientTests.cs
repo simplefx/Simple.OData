@@ -326,7 +326,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void FindEntryExistingDynamicFilter()
         {
-            var x = ODataFilter.Expression;
+            var x = ODataDynamic.Expression;
             string filter = _client.FormatFilter("Products", x.ProductName == "Chai");
             var product = _client.FindEntry(filter);
             Assert.Equal("Chai", product["ProductName"]);
@@ -335,7 +335,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void FindBaseClassEntryDynamicFilter()
         {
-            var x = ODataFilter.Expression;
+            var x = ODataDynamic.Expression;
             string filter = _client.FormatFilter("Transport", x.TransportID == 1);
             var ship = _client.FindEntry(filter);
             Assert.Equal("Titanic", ship["ShipName"]);
@@ -344,7 +344,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void FindDerivedClassEntryDynamicFilter()
         {
-            var x = ODataFilter.Expression;
+            var x = ODataDynamic.Expression;
             string filter = _client.FormatFilter("Transport/Ships", x.ShipName == "Titanic");
             var ship = _client.FindEntry(filter);
             Assert.Equal("Titanic", ship["ShipName"]);

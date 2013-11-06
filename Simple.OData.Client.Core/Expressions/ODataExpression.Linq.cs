@@ -6,9 +6,9 @@ using System.Reflection;
 
 namespace Simple.OData.Client
 {
-    public partial class FilterExpression
+    public partial class ODataExpression
     {
-        private static FilterExpression ParseLinqExpression(Expression expression)
+        private static ODataExpression ParseLinqExpression(Expression expression)
         {
             switch (expression.NodeType)
             {
@@ -19,7 +19,7 @@ namespace Simple.OData.Client
                     return ParseCallExpression(expression);
 
                 case ExpressionType.Constant:
-                    return new FilterExpression((expression as ConstantExpression).Value);
+                    return new ODataExpression((expression as ConstantExpression).Value);
 
                 case ExpressionType.Not:
                 case ExpressionType.Convert:
@@ -50,12 +50,12 @@ namespace Simple.OData.Client
             throw Utils.NotSupportedExpression(expression);
         }
 
-        private static FilterExpression ParseMemberExpression(Expression expression)
+        private static ODataExpression ParseMemberExpression(Expression expression)
         {
             var memberExpression = expression as MemberExpression;
             if (memberExpression.Expression == null)
             {
-                return new FilterExpression(EvaluateStaticMember(memberExpression));
+                return new ODataExpression(EvaluateStaticMember(memberExpression));
             }
             else
             {
@@ -68,12 +68,12 @@ namespace Simple.OData.Client
                 }
                 else
                 {
-                    return new FilterExpression(memberExpression.Member.Name);
+                    return new ODataExpression(memberExpression.Member.Name);
                 }
             }
         }
 
-        private static FilterExpression ParseCallExpression(Expression expression)
+        private static ODataExpression ParseCallExpression(Expression expression)
         {
             var callExpression = expression as MethodCallExpression;
             var memberExpression = Utils.CastExpressionWithTypeCheck<MemberExpression>(callExpression.Object);
@@ -85,24 +85,24 @@ namespace Simple.OData.Client
             return FromFunction(callExpression.Method.Name, memberExpression.Member.Name, arguments);
         }
 
-        private static FilterExpression ParseUnaryExpression(Expression expression)
+        private static ODataExpression ParseUnaryExpression(Expression expression)
         {
             var unaryExpression = (expression as UnaryExpression).Operand;
-            var filterExpression = ParseLinqExpression(unaryExpression);
+            var odataExpression = ParseLinqExpression(unaryExpression);
             switch (expression.NodeType)
             {
                 case ExpressionType.Not:
-                    return !filterExpression;
+                    return !odataExpression;
                 case ExpressionType.Convert:
-                    return filterExpression;
+                    return odataExpression;
                 case ExpressionType.Negate:
-                    return -filterExpression;
+                    return -odataExpression;
             }
 
             throw Utils.NotSupportedExpression(expression);
         }
 
-        private static FilterExpression ParseBinaryExpression(Expression expression)
+        private static ODataExpression ParseBinaryExpression(Expression expression)
         {
             var binaryExpression = expression as BinaryExpression;
             var leftExpression = ParseLinqExpression(binaryExpression.Left);

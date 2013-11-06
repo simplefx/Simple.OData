@@ -5,78 +5,78 @@ using System.Linq.Expressions;
 
 namespace Simple.OData.Client
 {
-    public partial class FilterExpression
+    public partial class ODataExpression
     {
-        private readonly FilterExpression _functionCaller;
-        private readonly FilterExpression _left;
-        private readonly FilterExpression _right;
+        private readonly ODataExpression _functionCaller;
+        private readonly ODataExpression _left;
+        private readonly ODataExpression _right;
         private readonly ExpressionOperator _operator;
 
         public string Reference { get; private set; }
         public object Value { get; private set; }
         public ExpressionFunction Function { get; private set; }
 
-        internal FilterExpression()
+        internal ODataExpression()
         {
         }
 
-        protected FilterExpression(object value)
+        protected ODataExpression(object value)
         {
             this.Value = value;
         }
 
-        protected FilterExpression(string reference)
+        protected ODataExpression(string reference)
         {
             this.Reference = reference;
         }
 
-        protected FilterExpression(ExpressionFunction function)
+        protected ODataExpression(ExpressionFunction function)
         {
             this.Function = function;
         }
 
-        protected FilterExpression(FilterExpression left, FilterExpression right, ExpressionOperator expressionOperator)
+        protected ODataExpression(ODataExpression left, ODataExpression right, ExpressionOperator expressionOperator)
         {
             _left = left;
             _right = right;
             _operator = expressionOperator;
         }
 
-        protected FilterExpression(FilterExpression caller, string reference)
+        protected ODataExpression(ODataExpression caller, string reference)
         {
             _functionCaller = caller;
             this.Reference = reference;
         }
 
-        protected FilterExpression(FilterExpression caller, ExpressionFunction function)
+        protected ODataExpression(ODataExpression caller, ExpressionFunction function)
         {
             _functionCaller = caller;
             this.Function = function;
         }
 
-        internal static FilterExpression FromReference(string reference)
+        internal static ODataExpression FromReference(string reference)
         {
-            return new FilterExpression(reference);
+            return new ODataExpression(reference);
         }
 
-        internal static FilterExpression FromValue(object value)
+        internal static ODataExpression FromValue(object value)
         {
-            return new FilterExpression(value);
+            return new ODataExpression(value);
         }
 
-        internal static FilterExpression FromFunction(ExpressionFunction function)
+        internal static ODataExpression FromFunction(ExpressionFunction function)
         {
-            return new FilterExpression(function);
+            return new ODataExpression(function);
         }
 
-        internal static FilterExpression FromFunction(string functionName, string targetName, IEnumerable<object> arguments)
+        internal static ODataExpression FromFunction(string functionName, string targetName, IEnumerable<object> arguments)
         {
-            return new FilterExpression(
-                new FilterExpression(targetName),
+            return new ODataExpression(
+                new ODataExpression(targetName),
                 new ExpressionFunction(functionName, arguments));
         }
 
-        internal static FilterExpression FromLinqExpression(Expression expression)
+        internal static ODataExpression FromLinqExpression(Expression expression)
         {
             return ParseLinqExpression(expression);
         }

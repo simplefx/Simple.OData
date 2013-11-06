@@ -147,7 +147,7 @@ namespace Simple.OData.Client
             return _client;
         }
 
-        public IClientWithCommand Filter(FilterExpression expression)
+        public IClientWithCommand Filter(ODataExpression expression)
         {
             _namedKeyValues = TryInterpretFilterExpressionAsKey(expression);
             if (_namedKeyValues == null)
@@ -192,7 +192,7 @@ namespace Simple.OData.Client
             return _client;
         }
 
-        public IClientWithCommand Expand(params FilterExpression[] columns)
+        public IClientWithCommand Expand(params ODataExpression[] columns)
         {
             return Expand(columns.Select(x => x.Reference));
         }
@@ -209,7 +209,7 @@ namespace Simple.OData.Client
             return _client;
         }
 
-        public IClientWithCommand Select(params FilterExpression[] columns)
+        public IClientWithCommand Select(params ODataExpression[] columns)
         {
             return Select(columns.Select(x => x.Reference));
         }
@@ -225,7 +225,7 @@ namespace Simple.OData.Client
             return OrderBy(columns.Select(x => new KeyValuePair<string, bool>(x, false)));
         }
 
-        public IClientWithCommand OrderBy(params FilterExpression[] columns)
+        public IClientWithCommand OrderBy(params ODataExpression[] columns)
         {
             return OrderBy(columns.Select(x => new KeyValuePair<string, bool>(x.Reference, false)));
         }
@@ -235,7 +235,7 @@ namespace Simple.OData.Client
             return OrderBy(columns.Select(x => new KeyValuePair<string, bool>(x, true)));
         }
 
-        public IClientWithCommand OrderByDescending(params FilterExpression[] columns)
+        public IClientWithCommand OrderByDescending(params ODataExpression[] columns)
         {
             return OrderBy(columns.Select(x => new KeyValuePair<string, bool>(x.Reference, true)));
         }
@@ -347,8 +347,8 @@ namespace Simple.OData.Client
                     }
                     if (found)
                     {
-                        var value = keyValue is FilterExpression ? 
-                            (keyValue as FilterExpression).Value : 
+                        var value = keyValue is ODataExpression ? 
+                            (keyValue as ODataExpression).Value : 
                             keyValue;
                         namedKeyValues.Add(keyNames[index], value);
                     }
@@ -466,7 +466,7 @@ namespace Simple.OData.Client
             return "(" + formattedKeyValues + ")";
         }
 
-        protected IDictionary<string, object> TryInterpretFilterExpressionAsKey(FilterExpression expression)
+        protected IDictionary<string, object> TryInterpretFilterExpressionAsKey(ODataExpression expression)
         {
             bool ok = false;
             IDictionary<string, object> namedKeyValues = new Dictionary<string, object>();
@@ -538,7 +538,7 @@ namespace Simple.OData.Client
 
         public IClientWithCommand<T> Filter(Expression<Func<T, bool>> expression)
         {
-            base.Filter(FilterExpression.FromLinqExpression(expression.Body));
+            base.Filter(ODataExpression.FromLinqExpression(expression.Body));
             return CastClient;
         }
 

@@ -10,18 +10,18 @@ namespace Simple.OData.Client
 
         // see http://stackoverflow.com/questions/10531575/passing-a-dynamic-parameter-throws-runtimebinderexception-when-calling-method-fr
         new IClientWithCommand Filter(string filter);
-        new IClientWithCommand Filter(FilterExpression expression);
+        new IClientWithCommand Filter(ODataExpression expression);
         new IClientWithCommand Expand(IEnumerable<string> associations);
         new IClientWithCommand Expand(params string[] associations);
-        new IClientWithCommand Expand(params FilterExpression[] associations);
+        new IClientWithCommand Expand(params ODataExpression[] associations);
         new IClientWithCommand Select(IEnumerable<string> columns);
         new IClientWithCommand Select(params string[] columns);
-        new IClientWithCommand Select(params FilterExpression[] columns);
+        new IClientWithCommand Select(params ODataExpression[] columns);
         new IClientWithCommand OrderBy(IEnumerable<KeyValuePair<string, bool>> columns);
         new IClientWithCommand OrderBy(params string[] columns);
-        new IClientWithCommand OrderBy(params FilterExpression[] columns);
+        new IClientWithCommand OrderBy(params ODataExpression[] columns);
         new IClientWithCommand OrderByDescending(params string[] columns);
-        new IClientWithCommand OrderByDescending(params FilterExpression[] columns);
+        new IClientWithCommand OrderByDescending(params ODataExpression[] columns);
         new IClientWithCommand Set(object value);
         new IClientWithCommand Set(IDictionary<string, object> value);
     }

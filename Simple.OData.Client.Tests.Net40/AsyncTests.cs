@@ -251,7 +251,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task FindEntryExistingDynamicFilter()
         {
-            var x = ODataFilter.Expression;
+            var x = ODataDynamic.Expression;
             string filter = _client.FormatFilter("Products", x.ProductName == "Chai");
             var product = await _client.FindEntryAsync(filter);
             Assert.Equal("Chai", product["ProductName"]);

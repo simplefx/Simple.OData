@@ -7,7 +7,7 @@ namespace Simple.OData.Client
     internal class FunctionMapping
     {
         public string FunctionName { get; private set; }
-        public Func<string, string, IEnumerable<object>, FilterExpression> FunctionMapper { get; private set; }
+        public Func<string, string, IEnumerable<object>, ODataExpression> FunctionMapper { get; private set; }
 
         public FunctionMapping(string functionName)
         {
@@ -15,34 +15,34 @@ namespace Simple.OData.Client
             this.FunctionMapper = FunctionWithTarget;
         }
 
-        public FunctionMapping(string functionName, Func<string, string, IEnumerable<object>, FilterExpression> functionMapper)
+        public FunctionMapping(string functionName, Func<string, string, IEnumerable<object>, ODataExpression> functionMapper)
         {
             this.FunctionName = functionName;
             this.FunctionMapper = functionMapper;
         }
 
-        private readonly static Func<string, string, IEnumerable<object>, FilterExpression> FunctionWithTarget =
-                (functionName, targetName, arguments) => FilterExpression.FromFunction(
+        private readonly static Func<string, string, IEnumerable<object>, ODataExpression> FunctionWithTarget =
+                (functionName, targetName, arguments) => ODataExpression.FromFunction(
                 new ExpressionFunction()
                 {
                     FunctionName = SupportedFunctions[new ExpressionFunction.FunctionCall(functionName, 0)].FunctionName,
-                    Arguments = new List<FilterExpression>() { FilterExpression.FromReference(targetName) },
+                    Arguments = new List<ODataExpression>() { ODataExpression.FromReference(targetName) },
                 });
 
-        private readonly static Func<string, string, IEnumerable<object>, FilterExpression> FunctionWithTargetAndArguments =
-                (functionName, targetName, arguments) => FilterExpression.FromFunction(
+        private readonly static Func<string, string, IEnumerable<object>, ODataExpression> FunctionWithTargetAndArguments =
+                (functionName, targetName, arguments) => ODataExpression.FromFunction(
                 new ExpressionFunction()
                 {
                     FunctionName = SupportedFunctions[new ExpressionFunction.FunctionCall(functionName, arguments.Count())].FunctionName,
-                    Arguments = MergeArguments(FilterExpression.FromReference(targetName), arguments),
+                    Arguments = MergeArguments(ODataExpression.FromReference(targetName), arguments),
                 });
 
-        private readonly static Func<string, string, IEnumerable<object>, FilterExpression> FunctionWithArgumentsAndTarget =
-                (functionName, targetName, arguments) => FilterExpression.FromFunction(
+        private readonly static Func<string, string, IEnumerable<object>, ODataExpression> FunctionWithArgumentsAndTarget =
+                (functionName, targetName, arguments) => ODataExpression.FromFunction(
                 new ExpressionFunction()
                 {
                     FunctionName = SupportedFunctions[new ExpressionFunction.FunctionCall(functionName, arguments.Count())].FunctionName,
-                    Arguments = MergeArguments(arguments, FilterExpression.FromReference(targetName)),
+                    Arguments = MergeArguments(arguments, ODataExpression.FromReference(targetName)),
                 });
 
         public static Dictionary<ExpressionFunction.FunctionCall, FunctionMapping> SupportedFunctions = new Dictionary<ExpressionFunction.FunctionCall, FunctionMapping>()
@@ -70,18 +70,18 @@ namespace Simple.OData.Client
                 {new ExpressionFunction.FunctionCall("Ceiling", 0), new FunctionMapping("ceiling")},
             };
 
-        private static List<FilterExpression> MergeArguments(FilterExpression argument, IEnumerable<object> arguments)
+        private static List<ODataExpression> MergeArguments(ODataExpression argument, IEnumerable<object> arguments)
         {
-            var collection = new List<FilterExpression>();
+            var collection = new List<ODataExpression>();
             collection.Add(argument);
-            collection.AddRange(arguments.Select(FilterExpression.FromValue));
+            collection.AddRange(arguments.Select(ODataExpression.FromValue));
             return collection;
         }
 
-        private static List<FilterExpression> MergeArguments(IEnumerable<object> arguments, FilterExpression argument)
+        private static List<ODataExpression> MergeArguments(IEnumerable<object> arguments, ODataExpression argument)
         {
-            var collection = new List<FilterExpression>();
-            collection.AddRange(arguments.Select(FilterExpression.FromValue));
+            var collection = new List<ODataExpression>();
+            collection.AddRange(arguments.Select(ODataExpression.FromValue));
             collection.Add(argument);
             return collection;
         }

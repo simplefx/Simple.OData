@@ -124,29 +124,29 @@
     <Compile Include="..\Simple.OData.Client.Core\Extensions\XmlElementAsDictionary.cs">
       <Link>Extensions\XmlElementAsDictionary.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Filter\ExpressionContext.cs">
-      <Link>Filter\ExpressionContext.cs</Link>
+    <Compile Include="..\Simple.OData.Client.Core\Expressions\ExpressionContext.cs">
+      <Link>Expressions\ExpressionContext.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Filter\ExpressionFunction.cs">
-      <Link>Filter\ExpressionFunction.cs</Link>
+    <Compile Include="..\Simple.OData.Client.Core\Expressions\ExpressionFunction.cs">
+      <Link>Expressions\ExpressionFunction.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Filter\ExpressionOperator.cs">
-      <Link>Filter\ExpressionOperator.cs</Link>
+    <Compile Include="..\Simple.OData.Client.Core\Expressions\ExpressionOperator.cs">
+      <Link>Expressions\ExpressionOperator.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Filter\FilterExpression.cs">
-      <Link>Filter\FilterExpression.cs</Link>
+    <Compile Include="..\Simple.OData.Client.Core\Expressions\ODataExpression.cs">
+      <Link>Expressions\ODataExpression.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Filter\FilterExpression.Linq.cs">
-      <Link>Filter\FilterExpression.Linq.cs</Link>
+    <Compile Include="..\Simple.OData.Client.Core\Expressions\ODataExpression.Linq.cs">
+      <Link>Expressions\ODataExpression.Linq.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Filter\FilterExpression.Operators.cs">
-      <Link>Filter\FilterExpression.Operators.cs</Link>
+    <Compile Include="..\Simple.OData.Client.Core\Expressions\ODataExpression.Operators.cs">
+      <Link>Expressions\ODataExpression.Operators.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Filter\FilterExpression.Format.cs">
-      <Link>Filter\FilterExpression.Format.cs</Link>
+    <Compile Include="..\Simple.OData.Client.Core\Expressions\ODataExpression.Format.cs">
+      <Link>Expressions\ODataExpression.Format.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Filter\FunctionMapping.cs">
-      <Link>Filter\FunctionMapping.cs</Link>
+    <Compile Include="..\Simple.OData.Client.Core\Expressions\FunctionMapping.cs">
+      <Link>Expressions\FunctionMapping.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Http\BatchRequestBuilder.cs">
       <Link>Http\BatchRequestBuilder.cs</Link>
@@ -310,8 +310,11 @@
     <Compile Include="..\Simple.OData.Client.Core\ValueParser.cs">
       <Link>ValueParser.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Dynamic\DynamicFilterExpression.cs">
-      <Link>Filter\DynamicFilterExpression.cs</Link>
+    <Compile Include="..\Simple.OData.Client.Dynamic\DynamicODataExpression.cs">
+      <Link>Expressions\DynamicODataExpression.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Dynamic\ODataDynamic.cs">
+      <Link>Expressions\ODataDynamic.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Dynamic\ODataFilter.cs">
       <Link>ODataFilter.cs</Link>

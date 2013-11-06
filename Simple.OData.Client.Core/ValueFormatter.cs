@@ -46,7 +46,7 @@ namespace Simple.OData.Client
         private string FormatValue(object value, FormattingStyle formattingStyle, ExpressionContext context)
         {
             return value == null ? "null"
-                : value is FilterExpression ? (value as FilterExpression).Format(context)
+                : value is ODataExpression ? (value as ODataExpression).Format(context)
                 : value is string ? string.Format("'{0}'", value)
                 : value is DateTime ? ((DateTime)value).ToODataString(formattingStyle)
                 : value is DateTimeOffset ? ((DateTimeOffset)value).ToODataString(formattingStyle)

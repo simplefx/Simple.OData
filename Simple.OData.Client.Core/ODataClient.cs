@@ -68,20 +68,20 @@ namespace Simple.OData.Client
             return new ODataClientWithCommand<T>(this, _schema).For(collectionName);
         }
 
-        public string FormatFilter(string collection, FilterExpression filterExpression)
+        public string FormatFilter(string collection, ODataExpression expression)
         {
-            return FormatFilterExpression(collection, filterExpression);
+            return FormatFilterExpression(collection, expression);
         }
 
-        public string FormatFilter<T>(string collection, Expression<Func<T, bool>> filterExpression)
+        public string FormatFilter<T>(string collection, Expression<Func<T, bool>> expression)
         {
-            return FormatFilterExpression(collection, FilterExpression.FromLinqExpression(filterExpression.Body));
+            return FormatFilterExpression(collection, ODataExpression.FromLinqExpression(expression.Body));
         }
 
-        private string FormatFilterExpression(string collection, FilterExpression filterExpression)
+        private string FormatFilterExpression(string collection, ODataExpression expression)
         {
             var clientWithCommand = new ODataClientWithCommand(this, _schema);
-            var filter = filterExpression.Format(clientWithCommand, collection);
+            var filter = expression.Format(clientWithCommand, collection);
 
             return clientWithCommand
                 .For(collection)

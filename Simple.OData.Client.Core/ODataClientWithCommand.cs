@@ -98,7 +98,7 @@ namespace Simple.OData.Client
             return this.Command.Filter(filter);
         }
 
-        public IClientWithCommand Filter(FilterExpression expression)
+        public IClientWithCommand Filter(ODataExpression expression)
         {
             return this.Command.Filter(expression);
         }
@@ -123,7 +123,7 @@ namespace Simple.OData.Client
             return this.Command.Expand(associations);
         }
 
-        public IClientWithCommand Expand(params FilterExpression[] associations)
+        public IClientWithCommand Expand(params ODataExpression[] associations)
         {
             return this.Command.Expand(associations);
         }
@@ -138,7 +138,7 @@ namespace Simple.OData.Client
             return this.Command.Select(columns);
         }
 
-        public IClientWithCommand Select(params FilterExpression[] columns)
+        public IClientWithCommand Select(params ODataExpression[] columns)
         {
             return this.Command.Select(columns);
         }
@@ -153,7 +153,7 @@ namespace Simple.OData.Client
             return this.Command.OrderBy(columns);
         }
 
-        public IClientWithCommand OrderBy(params FilterExpression[] columns)
+        public IClientWithCommand OrderBy(params ODataExpression[] columns)
         {
             return this.Command.OrderBy(columns);
         }
@@ -163,7 +163,7 @@ namespace Simple.OData.Client
             return this.Command.OrderByDescending(columns);
         }
 
-        public IClientWithCommand OrderByDescending(params FilterExpression[] columns)
+        public IClientWithCommand OrderByDescending(params ODataExpression[] columns)
         {
             return this.Command.OrderByDescending(columns);
         }
