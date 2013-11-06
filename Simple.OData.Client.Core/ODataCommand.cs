@@ -500,16 +500,30 @@ namespace Simple.OData.Client
             switch (lambdaExpression.Body.NodeType)
             {
                 case ExpressionType.MemberAccess:
-                    return new [] { (lambdaExpression.Body as MemberExpression).Member.Name };
+                case ExpressionType.Convert:
+                    return new[] { ExtractColumnName(lambdaExpression.Body) };
 
                 case ExpressionType.New:
                     var newExpression = lambdaExpression.Body as NewExpression;
-                    if (newExpression.Arguments.Any(x => x.NodeType != ExpressionType.MemberAccess))
-                        throw new NotSupportedException(string.Format("Not supported arguments in anonymous type creation expression {0}", expression));
-                    return newExpression.Arguments.Select(x => (x as MemberExpression).Member.Name);
+                    return newExpression.Arguments.Select(ExtractColumnName);
 
                 default:
                     throw Utils.NotSupportedExpression(lambdaExpression.Body);
+            }
+        }
+
+        protected string ExtractColumnName(Expression expression)
+        {
+            switch (expression.NodeType)
+            {
+                case ExpressionType.MemberAccess:
+                    return (expression as MemberExpression).Member.Name;
+
+                case ExpressionType.Convert:
+                    return ExtractColumnName((expression as UnaryExpression).Operand);
+
+                default:
+                    throw Utils.NotSupportedExpression(expression);
             }
         }
     }
