@@ -12,7 +12,7 @@ namespace Simple.Data.OData
             _excludeResourceTypeExpressions = excludeResourceTypeExpressions;
         }
 
-        public FilterExpression ConvertExpression(SimpleExpression expression)
+        public ODataExpression ConvertExpression(SimpleExpression expression)
         {
             return Convert(expression);
         }
@@ -22,7 +22,7 @@ namespace Simple.Data.OData
             return FindResourceType(expression);
         }
 
-        private FilterExpression Convert(object value)
+        private ODataExpression Convert(object value)
         {
             if (value is SimpleExpression)
                 return Convert(value as SimpleExpression);
@@ -34,7 +34,7 @@ namespace Simple.Data.OData
                 return ODataFilter.ExpressionFromValue(value);
         }
 
-        private FilterExpression Convert(SimpleExpression expression)
+        private ODataExpression Convert(SimpleExpression expression)
         {
             switch (expression.Type)
             {
@@ -71,7 +71,7 @@ namespace Simple.Data.OData
             }
         }
 
-        private FilterExpression Convert(SimpleReference reference)
+        private ODataExpression Convert(SimpleReference reference)
         {
             var formattedReference = reference.GetAliasOrName();
             if (reference is ObjectReference)
@@ -81,7 +81,7 @@ namespace Simple.Data.OData
             return ODataFilter.ExpressionFromReference(formattedReference);
         }
 
-        private FilterExpression Convert(FunctionReference function)
+        private ODataExpression Convert(FunctionReference function)
         {
             return ODataFilter.ExpressionFromFunction(function.Name,
                                                  function.Argument.GetAliasOrName(),

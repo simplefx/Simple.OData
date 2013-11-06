@@ -11,7 +11,7 @@ namespace Simple.Data.OData
         private readonly List<SimpleOrderByItem> _order;
 
         public SimpleExpression Criteria { get; set; }
-        public FilterExpression FilterExpression { get; set; }
+        public ODataExpression FilterExpression { get; set; }
         public List<object> KeyValues { get; set; }
         public Dictionary<string, object> NamedKeyValues { get; set; }
         public List<SimpleReference> Columns { get { return _columns; } }

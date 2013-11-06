@@ -39,7 +39,7 @@
     </Reference>
     <Reference Include="Simple.OData.Client.Net40, Version=0.18.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Simple.OData.Client.0.18.0\lib\net40\Simple.OData.Client.Net40.dll</HintPath>
+      <HintPath>..\packages\Simple.OData.Client.0.19.0\lib\net40\Simple.OData.Client.Net40.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
@@ -73,7 +73,9 @@
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="Simple.Data.OData.nuspec" />
+    <None Include="Simple.Data.OData.nuspec">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" />
