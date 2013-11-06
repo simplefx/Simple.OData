@@ -19,7 +19,10 @@ namespace Simple.OData.Client
         public Column Find(string columnName)
         {
             var column = TryFind(columnName);
-            if (column == null) throw new UnresolvableObjectException(columnName, string.Format("Column {0} not found", columnName));
+
+            if (column == null) 
+                throw new UnresolvableObjectException(columnName, string.Format("Column {0} not found", columnName));
+
             return column;
         }
 
@@ -31,9 +34,7 @@ namespace Simple.OData.Client
         private Column TryFind(string columnName)
         {
             columnName = columnName.Homogenize();
-            return this
-                .Where(c => c.HomogenizedName.Equals(columnName))
-                .SingleOrDefault();
+            return this.SingleOrDefault(c => c.HomogenizedName.Equals(columnName));
         }
     }
 }

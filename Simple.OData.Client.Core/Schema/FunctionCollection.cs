@@ -21,9 +21,7 @@ namespace Simple.OData.Client
             var function = TryFind(functionName);
 
             if (function == null)
-            {
                 throw new UnresolvableObjectException(functionName, string.Format("Function {0} not found", functionName));
-            }
 
             return function;
         }
@@ -36,9 +34,7 @@ namespace Simple.OData.Client
         private Function TryFind(string functionName)
         {
             functionName = functionName.Homogenize();
-            return this
-                .Where(f => f.HomogenizedName.Equals(functionName))
-                .SingleOrDefault();
+            return this.SingleOrDefault(f => f.HomogenizedName.Equals(functionName));
         }
     }
 }

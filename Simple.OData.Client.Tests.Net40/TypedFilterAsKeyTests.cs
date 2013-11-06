@@ -104,7 +104,7 @@ namespace Simple.OData.Client.Tests
             var command = _client
                 .For<Customer>()
                 .Filter(x => x.CustomerID == "ALFKI")
-                .NavigateTo("Orders");
+                .NavigateTo<Order>();
             string commandText = command.CommandText;
             Assert.Equal("Customers('ALFKI')/Orders", commandText);
         }
@@ -126,7 +126,7 @@ namespace Simple.OData.Client.Tests
             var command = _client
                 .For<Order>()
                 .Filter(x => x.OrderID == 10952)
-                .NavigateTo("OrderDetails");
+                .NavigateTo<OrderDetail>();
             string commandText = command.CommandText;
             Assert.Equal("Orders(10952)/Order_Details", commandText);
         }
