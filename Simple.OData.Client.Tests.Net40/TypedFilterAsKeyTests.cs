@@ -9,8 +9,8 @@ namespace Simple.OData.Client.Tests
         public void FindAllByTypedFilterAsKeyEqual()
         {
             var command = _client
-                .For("Products")
-                .Filter<Product>(x => x.ProductID == 1);
+                .For<Product>()
+                .Filter(x => x.ProductID == 1);
             string commandText = command.CommandText;
             Assert.Equal("Products(1)", commandText);
         }
@@ -19,8 +19,8 @@ namespace Simple.OData.Client.Tests
         public void FindAllByFilterAsKeyNotEqual()
         {
             var command = _client
-                .For("Products")
-                .Filter<Product>(x => x.ProductID != 1);
+                .For<Product>()
+                .Filter(x => x.ProductID != 1);
             string commandText = command.CommandText;
             Assert.Equal("Products?$filter=ProductID%20ne%201", commandText);
         }
@@ -29,8 +29,8 @@ namespace Simple.OData.Client.Tests
         public void FindAllByFilterAsNotKeyEqual()
         {
             var command = _client
-                .For("Products")
-                .Filter<Product>(x => !(x.ProductID == 1));
+                .For<Product>()
+                .Filter(x => !(x.ProductID == 1));
             string commandText = command.CommandText;
             Assert.Equal(string.Format("Products?$filter=not{0}ProductID%20eq%201{1}", 
                 Uri.EscapeDataString("("), Uri.EscapeDataString(")")), commandText);
@@ -40,8 +40,8 @@ namespace Simple.OData.Client.Tests
         public void FindAllByFilterAsKeyEqualLong()
         {
             var command = _client
-                .For("Products")
-                .Filter<Product>(x => x.ProductID == 1L);
+                .For<Product>()
+                .Filter(x => x.ProductID == 1L);
             string commandText = command.CommandText;
             Assert.Equal("Products(1L)", commandText);
         }
@@ -50,8 +50,8 @@ namespace Simple.OData.Client.Tests
         public void FindAllByFilterAsKeyEqualAndExtraClause()
         {
             var command = _client
-                .For("Products")
-                .Filter<Product>(x => x.ProductID == 1 && x.ProductName == "abc");
+                .For<Product>()
+                .Filter(x => x.ProductID == 1 && x.ProductName == "abc");
             string commandText = command.CommandText;
             Assert.Equal(string.Format("Products?$filter=ProductID%20eq%201%20and%20ProductName%20eq%20{0}abc{0}", 
                 Uri.EscapeDataString("'")), commandText);
@@ -61,8 +61,8 @@ namespace Simple.OData.Client.Tests
         public void FindAllByFilterAsKeyEqualDuplicateClause()
         {
             var command = _client
-                .For("Products")
-                .Filter<Product>(x => x.ProductID == 1 && x.ProductID == 1);
+                .For<Product>()
+                .Filter(x => x.ProductID == 1 && x.ProductID == 1);
             string commandText = command.CommandText;
             Assert.Equal("Products(1)", commandText);
         }
@@ -71,8 +71,8 @@ namespace Simple.OData.Client.Tests
         public void FindAllByFilterAsCompleteCompoundKey()
         {
             var command = _client
-                .For("OrderDetails")
-                .Filter<OrderDetail>(x => x.OrderID == 1 && x.ProductID == 2);
+                .For<OrderDetail>()
+                .Filter(x => x.OrderID == 1 && x.ProductID == 2);
             string commandText = command.CommandText;
             Assert.Equal("Order_Details(OrderID=1,ProductID=2)", commandText);
         }
@@ -81,8 +81,8 @@ namespace Simple.OData.Client.Tests
         public void FindAllByFilterAsInCompleteCompoundKey()
         {
             var command = _client
-                .For("OrderDetails")
-                .Filter<OrderDetail>(x => x.OrderID == 1);
+                .For<OrderDetail>()
+                .Filter(x => x.OrderID == 1);
             string commandText = command.CommandText;
             Assert.Equal("Order_Details?$filter=OrderID%20eq%201", commandText);
         }
@@ -91,8 +91,8 @@ namespace Simple.OData.Client.Tests
         public void FindAllEmployeeSuperiors()
         {
             var command = _client
-                .For("Employees")
-                .Filter<Employee>(x => x.EmployeeID == 1)
+                .For<Employee>()
+                .Filter(x => x.EmployeeID == 1)
                 .NavigateTo("Superior");
             string commandText = command.CommandText;
             Assert.Equal("Employees(1)/Superior", commandText);
@@ -102,9 +102,9 @@ namespace Simple.OData.Client.Tests
         public void FindAllCustomerOrders()
         {
             var command = _client
-                .For("Customers")
-                .Filter<Customer>(x => x.CustomerID == "ALFKI")
-                .NavigateTo("Orders");
+                .For<Customer>()
+                .Filter(x => x.CustomerID == "ALFKI")
+                .NavigateTo<Order>();
             string commandText = command.CommandText;
             Assert.Equal("Customers('ALFKI')/Orders", commandText);
         }
@@ -113,8 +113,8 @@ namespace Simple.OData.Client.Tests
         public void FindAllEmployeeSubordinates()
         {
             var command = _client
-                .For("Employees")
-                .Filter<Employee>(x => x.EmployeeID == 2)
+                .For<Employee>()
+                .Filter(x => x.EmployeeID == 2)
                 .NavigateTo("Subordinates");
             string commandText = command.CommandText;
             Assert.Equal("Employees(2)/Subordinates", commandText);
@@ -124,9 +124,9 @@ namespace Simple.OData.Client.Tests
         public void FindAllOrderOrderDetails()
         {
             var command = _client
-                .For("Orders")
-                .Filter<Order>(x => x.OrderID == 10952)
-                .NavigateTo("OrderDetails");
+                .For<Order>()
+                .Filter(x => x.OrderID == 10952)
+                .NavigateTo<OrderDetail>();
             string commandText = command.CommandText;
             Assert.Equal("Orders(10952)/Order_Details", commandText);
         }
@@ -135,8 +135,8 @@ namespace Simple.OData.Client.Tests
         public void FindEmployeeSuperior()
         {
             var command = _client
-                .For("Employees")
-                .Filter<Employee>(x => x.EmployeeID == 1)
+                .For<Employee>()
+                .Filter(x => x.EmployeeID == 1)
                 .NavigateTo("Superior");
             string commandText = command.CommandText;
             Assert.Equal("Employees(1)/Superior", commandText);
@@ -146,8 +146,8 @@ namespace Simple.OData.Client.Tests
         public void FindAllFromBaseTableByFilterAsKeyEqual()
         {
             var command = _client
-                .For("Transport")
-                .Filter<Transport>(x => x.TransportID == 1);
+                .For<Transport>()
+                .Filter(x => x.TransportID == 1);
             string commandText = command.CommandText;
             Assert.Equal("Transport(1)", commandText);
         }
@@ -156,9 +156,9 @@ namespace Simple.OData.Client.Tests
         public void FindAllFromDerivedTableByFilterAsKeyEqual()
         {
             var command = _client
-                .For("Transport")
-                .As("Ship")
-                .Filter<Ship>(x => x.TransportID == 1);
+                .For<Transport>()
+                .As<Ship>()
+                .Filter(x => x.TransportID == 1);
             string commandText = command.CommandText;
             Assert.Equal("Transport/NorthwindModel.Ship(1)", commandText);
         }

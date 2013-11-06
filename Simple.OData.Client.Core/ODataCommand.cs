@@ -13,24 +13,24 @@ namespace Simple.OData.Client
 
     public class ODataCommand : ICommand
     {
-        private readonly ODataClientWithCommand _client;
-        private readonly ODataCommand _parent;
-        private string _collectionName;
-        private string _derivedCollectionName;
-        private string _functionName;
-        private IList<object> _keyValues;
-        private IDictionary<string, object> _namedKeyValues;
-        private IDictionary<string, object> _entryData;
-        private Dictionary<string, object> _parameters = new Dictionary<string, object>();
-        private string _filter;
-        private int _skipCount = -1;
-        private int _topCount = -1;
-        private List<string> _expandAssociations = new List<string>();
-        private List<string> _selectColumns = new List<string>();
-        private readonly List<KeyValuePair<string, bool>> _orderbyColumns = new List<KeyValuePair<string, bool>>();
-        private bool _computeCount;
-        private bool _inlineCount;
-        private string _linkName;
+        protected ODataClientWithCommand _client;
+        protected readonly ODataCommand _parent;
+        protected string _collectionName;
+        protected string _derivedCollectionName;
+        protected string _functionName;
+        protected IList<object> _keyValues;
+        protected IDictionary<string, object> _namedKeyValues;
+        protected IDictionary<string, object> _entryData;
+        protected Dictionary<string, object> _parameters = new Dictionary<string, object>();
+        protected string _filter;
+        protected int _skipCount = -1;
+        protected int _topCount = -1;
+        protected List<string> _expandAssociations = new List<string>();
+        protected List<string> _selectColumns = new List<string>();
+        protected readonly List<KeyValuePair<string, bool>> _orderbyColumns = new List<KeyValuePair<string, bool>>();
+        protected bool _computeCount;
+        protected bool _inlineCount;
+        protected string _linkName;
 
         internal static readonly string MetadataLiteral = "$metadata";
         internal static readonly string FilterLiteral = "$filter";
@@ -50,6 +50,28 @@ namespace Simple.OData.Client
         {
             _client = client;
             _parent = parent;
+        }
+
+        internal ODataCommand(ODataCommand ancestor)
+        {
+            _client = ancestor._client;
+            _parent = ancestor._parent;
+            _collectionName = ancestor._collectionName;
+            _derivedCollectionName = ancestor._derivedCollectionName;
+            _functionName = ancestor._functionName;
+            _keyValues = ancestor._keyValues;
+            _namedKeyValues = ancestor._namedKeyValues;
+            _entryData = ancestor._entryData;
+            _parameters = ancestor._parameters;
+            _filter = ancestor._filter;
+            _skipCount = ancestor._skipCount;
+            _topCount = ancestor._topCount;
+            _expandAssociations = ancestor._expandAssociations;
+            _selectColumns = ancestor._selectColumns;
+            _orderbyColumns = ancestor._orderbyColumns;
+            _computeCount = ancestor._computeCount;
+            _inlineCount = ancestor._inlineCount;
+            _linkName = ancestor._linkName;
         }
 
         private Table Table
@@ -89,20 +111,10 @@ namespace Simple.OData.Client
             return _client;
         }
 
-        public IClientWithCommand For<T>()
-        {
-            return For(typeof (T).Name);
-        }
-
         public IClientWithCommand As(string derivedCollectionName)
         {
             _derivedCollectionName = derivedCollectionName;
             return _client;
-        }
-
-        public IClientWithCommand As<T>()
-        {
-            return As(typeof(T).Name);
         }
 
         public IClientWithCommand Link(string linkName)
@@ -149,11 +161,6 @@ namespace Simple.OData.Client
             return _client;
         }
 
-        public IClientWithCommand Filter<T>(Expression<Func<T, bool>> expression)
-        {
-            return Filter(FilterExpression.FromLinqExpression(expression.Body));
-        }
-
         public IClientWithCommand Skip(int count)
         {
             _skipCount = count;
@@ -185,11 +192,6 @@ namespace Simple.OData.Client
             return _client;
         }
 
-        public IClientWithCommand Expand<T>(Expression<Func<T, object>> expression)
-        {
-            return Expand(ExtractColumnNames(expression));
-        }
-
         public IClientWithCommand Select(IEnumerable<string> columns)
         {
             _selectColumns = columns.ToList();
@@ -207,11 +209,6 @@ namespace Simple.OData.Client
             throw new NotImplementedException();
         }
 
-        public IClientWithCommand Select<T>(Expression<Func<T, object>> expression)
-        {
-            return Select(ExtractColumnNames(expression));
-        }
-
         public IClientWithCommand OrderBy(IEnumerable<KeyValuePair<string, bool>> columns)
         {
             _orderbyColumns.AddRange(columns);
@@ -223,19 +220,9 @@ namespace Simple.OData.Client
             return OrderBy(columns.Select(x => new KeyValuePair<string, bool>(x, false)));
         }
 
-        public IClientWithCommand OrderBy<T>(Expression<Func<T, object>> expression)
-        {
-            return Select(ExtractColumnNames(expression));
-        }
-
         public IClientWithCommand OrderByDescending(params string[] columns)
         {
             return OrderBy(columns.Select(x => new KeyValuePair<string, bool>(x, true)));
-        }
-
-        public IClientWithCommand OrderByDescending<T>(Expression<Func<T, object>> expression)
-        {
-            return OrderBy(ExtractColumnNames(expression).Select(x => new KeyValuePair<string, bool>(x, true)));
         }
 
         public IClientWithCommand Count()
@@ -277,11 +264,6 @@ namespace Simple.OData.Client
         public IClientWithCommand NavigateTo(string linkName)
         {
             return _client.Link(this, linkName);
-        }
-
-        public IClientWithCommand NavigateTo<T>()
-        {
-            return NavigateTo(typeof(T).Name);
         }
 
         public bool FilterIsKey
@@ -370,7 +352,7 @@ namespace Simple.OData.Client
             get { return _selectColumns; }
         }
 
-        private string Format()
+        protected string Format()
         {
             string commandText = string.Empty;
             if (!string.IsNullOrEmpty(_collectionName))
@@ -400,7 +382,7 @@ namespace Simple.OData.Client
             return commandText;
         }
 
-        private string FormatClauses()
+        protected string FormatClauses()
         {
             var text = string.Empty;
             var extraClauses = new List<string>();
@@ -442,24 +424,24 @@ namespace Simple.OData.Client
             return text;
         }
 
-        private string FormatExpandItem(string item)
+        protected string FormatExpandItem(string item)
         {
             return this.Table.FindAssociation(item).ActualName;
         }
 
-        private string FormatSelectItem(string item)
+        protected string FormatSelectItem(string item)
         {
             return this.Table.HasColumn(item)
                 ? this.Table.FindColumn(item).ActualName
                 : this.Table.FindAssociation(item).ActualName;
         }
 
-        private string FormatOrderByItem(KeyValuePair<string, bool> item)
+        protected string FormatOrderByItem(KeyValuePair<string, bool> item)
         {
             return this.Table.FindColumn(item.Key) + (item.Value ? " desc" : string.Empty);
         }
 
-        private string FormatKey()
+        protected string FormatKey()
         {
             var namedKeyValues = this.KeyValues;
             var valueFormatter = new ValueFormatter();
@@ -469,7 +451,7 @@ namespace Simple.OData.Client
             return "(" + formattedKeyValues + ")";
         }
 
-        private IDictionary<string, object> TryInterpretFilterExpressionAsKey(FilterExpression expression)
+        protected IDictionary<string, object> TryInterpretFilterExpressionAsKey(FilterExpression expression)
         {
             bool ok = false;
             IDictionary<string, object> namedKeyValues = new Dictionary<string, object>();
@@ -482,7 +464,7 @@ namespace Simple.OData.Client
                 this.Table.GetKeyNames().All(namedKeyValues.ContainsKey) ? namedKeyValues : null;
         }
 
-        private IEnumerable<string> ExtractColumnNames<T>(Expression<Func<T, object>> expression)
+        protected IEnumerable<string> ExtractColumnNames<T>(Expression<Func<T, object>> expression)
         {
             var lambdaExpression = Utils.CastExpressionWithTypeCheck<LambdaExpression>(expression);
             switch (lambdaExpression.Body.NodeType)
@@ -499,6 +481,79 @@ namespace Simple.OData.Client
                 default:
                     throw Utils.NotSupportedExpression(lambdaExpression.Body);
             }
+        }
+    }
+
+    public class ODataCommand<T> : ODataCommand, ICommand<T>
+    {
+        public ODataCommand(ODataClientWithCommand<T> client, ODataCommand parent)
+            : base(client, parent)
+        {
+        }
+
+        internal ODataCommand(ODataCommand ancestor)
+            : base(ancestor)
+        {
+        }
+
+        private ODataClientWithCommand<T> CastClient
+        {
+            get
+            {
+                return _client as ODataClientWithCommand<T>;
+            }
+        }
+
+        internal ODataClientWithCommand<T> Client
+        {
+            set { _client = value; }
+        }
+
+        public new IClientWithCommand<T> For(string collectionName = null)
+        {
+            base.For(collectionName ?? typeof(T).Name);
+            return CastClient;
+        }
+
+        public IClientWithCommand<U> As<U>(string derivedCollectionName = null)
+        {
+            base.As(derivedCollectionName ?? typeof(U).Name);
+            return new ODataClientWithCommand<U>(_client, this);
+        }
+
+        public IClientWithCommand<T> Filter(Expression<Func<T, bool>> expression)
+        {
+            base.Filter(FilterExpression.FromLinqExpression(expression.Body));
+            return CastClient;
+        }
+
+        public IClientWithCommand<T> Expand(Expression<Func<T, object>> expression)
+        {
+            base.Expand(ExtractColumnNames(expression));
+            return CastClient;
+        }
+
+        public IClientWithCommand<T> Select(Expression<Func<T, object>> expression)
+        {
+            base.Select(ExtractColumnNames(expression));
+            return CastClient;
+        }
+
+        public IClientWithCommand<T> OrderBy(Expression<Func<T, object>> expression)
+        {
+            base.Select(ExtractColumnNames(expression));
+            return CastClient;
+        }
+
+        public IClientWithCommand<T> OrderByDescending(Expression<Func<T, object>> expression)
+        {
+            base.OrderBy(ExtractColumnNames(expression).Select(x => new KeyValuePair<string, bool>(x, true)));
+            return CastClient;
+        }
+
+        public IClientWithCommand<U> NavigateTo<U>(string linkName = null)
+        {
+            return CastClient.Link<U>(this, linkName);
         }
     }
 }

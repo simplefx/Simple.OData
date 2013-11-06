@@ -21,7 +21,7 @@ namespace Simple.OData.Client
             return _actualName;
         }
 
-        public string HomogenizedActualName
+        public string HomogenizedName
         {
             get { return ActualName.Homogenize(); }
         }

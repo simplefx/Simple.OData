@@ -18,8 +18,13 @@ namespace Simple.OData.Client
 
         public Association Find(string associationName)
         {
-            var association = TryFind(associationName);
-            if (association == null) throw new UnresolvableObjectException(associationName, string.Format("Association {0} not found", associationName));
+            var association = TryFind(associationName)
+                   ?? TryFind(associationName.Singularize())
+                   ?? TryFind(associationName.Pluralize());
+
+            if (association == null) 
+                throw new UnresolvableObjectException(associationName, string.Format("Association {0} not found", associationName));
+
             return association;
         }
 
@@ -31,9 +36,7 @@ namespace Simple.OData.Client
         private Association TryFind(string associationName)
         {
             associationName = associationName.Homogenize(); 
-            return this
-                .Where(c => c.HomogenizedActualName.Equals(associationName))
-                .SingleOrDefault();
+            return this.SingleOrDefault(c => c.HomogenizedName.Equals(associationName));
         }
     }
 }
