@@ -192,6 +192,11 @@ namespace Simple.OData.Client
             return _client;
         }
 
+        public IClientWithCommand Expand(params FilterExpression[] columns)
+        {
+            return Expand(columns.Select(x => x.Reference));
+        }
+
         public IClientWithCommand Select(IEnumerable<string> columns)
         {
             _selectColumns = columns.ToList();
@@ -204,9 +209,9 @@ namespace Simple.OData.Client
             return _client;
         }
 
-        public IClientWithCommand Select(FilterExpression expression)
+        public IClientWithCommand Select(params FilterExpression[] columns)
         {
-            throw new NotImplementedException();
+            return Select(columns.Select(x => x.Reference));
         }
 
         public IClientWithCommand OrderBy(IEnumerable<KeyValuePair<string, bool>> columns)
@@ -220,9 +225,19 @@ namespace Simple.OData.Client
             return OrderBy(columns.Select(x => new KeyValuePair<string, bool>(x, false)));
         }
 
+        public IClientWithCommand OrderBy(params FilterExpression[] columns)
+        {
+            return OrderBy(columns.Select(x => new KeyValuePair<string, bool>(x.Reference, false)));
+        }
+
         public IClientWithCommand OrderByDescending(params string[] columns)
         {
             return OrderBy(columns.Select(x => new KeyValuePair<string, bool>(x, true)));
+        }
+
+        public IClientWithCommand OrderByDescending(params FilterExpression[] columns)
+        {
+            return OrderBy(columns.Select(x => new KeyValuePair<string, bool>(x.Reference, true)));
         }
 
         public IClientWithCommand Count()

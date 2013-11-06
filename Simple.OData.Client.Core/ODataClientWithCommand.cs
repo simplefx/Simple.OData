@@ -123,6 +123,11 @@ namespace Simple.OData.Client
             return this.Command.Expand(associations);
         }
 
+        public IClientWithCommand Expand(params FilterExpression[] associations)
+        {
+            return this.Command.Expand(associations);
+        }
+
         public IClientWithCommand Select(IEnumerable<string> columns)
         {
             return this.Command.Select(columns);
@@ -133,9 +138,9 @@ namespace Simple.OData.Client
             return this.Command.Select(columns);
         }
 
-        public IClientWithCommand Select(FilterExpression expression)
+        public IClientWithCommand Select(params FilterExpression[] columns)
         {
-            return this.Command.Select(expression);
+            return this.Command.Select(columns);
         }
 
         public IClientWithCommand OrderBy(IEnumerable<KeyValuePair<string, bool>> columns)
@@ -148,7 +153,17 @@ namespace Simple.OData.Client
             return this.Command.OrderBy(columns);
         }
 
+        public IClientWithCommand OrderBy(params FilterExpression[] columns)
+        {
+            return this.Command.OrderBy(columns);
+        }
+
         public IClientWithCommand OrderByDescending(params string[] columns)
+        {
+            return this.Command.OrderByDescending(columns);
+        }
+
+        public IClientWithCommand OrderByDescending(params FilterExpression[] columns)
         {
             return this.Command.OrderByDescending(columns);
         }

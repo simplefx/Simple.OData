@@ -16,12 +16,15 @@ namespace Simple.OData.Client
         IClientWithCommand Top(int count);
         IClientWithCommand Expand(IEnumerable<string> associations);
         IClientWithCommand Expand(params string[] associations);
+        IClientWithCommand Expand(params FilterExpression[] associations);
         IClientWithCommand Select(IEnumerable<string> columns);
         IClientWithCommand Select(params string[] columns);
-        IClientWithCommand Select(FilterExpression expression);
+        IClientWithCommand Select(params FilterExpression[] columns);
         IClientWithCommand OrderBy(IEnumerable<KeyValuePair<string, bool>> columns);
         IClientWithCommand OrderBy(params string[] columns);
+        IClientWithCommand OrderBy(params FilterExpression[] columns);
         IClientWithCommand OrderByDescending(params string[] columns);
+        IClientWithCommand OrderByDescending(params FilterExpression[] columns);
         IClientWithCommand Count();
         IClientWithCommand NavigateTo(string linkName);
         IClientWithCommand Set(object value);
