@@ -40,6 +40,7 @@ namespace Simple.OData.Client
         public static readonly EdmType GeometryMultiPoint = new EdmType("Edm.GeometryMultiPoint");
         public static readonly EdmType GeometryMultiLineString = new EdmType("Edm.GeometryMultiLineString");
         public static readonly EdmType GeometryMultiPolygon = new EdmType("Edm.GeometryMultiPolygon");
+        public static readonly EdmType Stream = new EdmType("Edm.Stream");
 
         private static readonly Dictionary<Type, EdmType> EdmTypeMap = new Dictionary<Type, EdmType>
         {
