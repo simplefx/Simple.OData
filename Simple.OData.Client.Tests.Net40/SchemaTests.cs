@@ -108,6 +108,24 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void CheckODataOrgAdventureWorksSchema()
+        {
+            var client = new ODataClient("http://services.odata.org/AdventureWorksV3/AdventureWorks.svc/");
+
+            var table = client.Schema.FindTable("ProductCatalog");
+            Assert.Equal("ID", table.PrimaryKey[0]);
+
+            Assert.Equal(15, table.Columns.Count());
+
+            var column = table.FindColumn("ThumbNailPhoto");
+            Assert.Equal("Edm.Stream", column.PropertyType.Name);
+            Assert.Equal(false, column.IsNullable);
+
+            Assert.Equal(5, client.Schema.EntityTypes.Count());
+            Assert.Equal(0, client.Schema.ComplexTypes.Count());
+        }
+
+        [Fact]
         public void CheckODataOrgNorthwindSchema()
         {
             var client = new ODataClient("http://services.odata.org/Northwind/Northwind.svc/");
