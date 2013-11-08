@@ -62,6 +62,8 @@ namespace Simple.OData.Client.Extensions
 
         public string Pluralize(string word)
         {
+            if (word.EndsWith("y", StringComparison.OrdinalIgnoreCase))
+                word = word.Substring(0, word.Length-1) + (word.IsAllUpperCase() ? "IE" : "ie");
             return string.Concat(word, word.IsAllUpperCase() ? "S" : "s");
         }
 

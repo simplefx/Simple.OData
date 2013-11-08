@@ -567,9 +567,51 @@ namespace Simple.OData.Client
             return new ODataClientWithCommand<U>(_client, this);
         }
 
+        public new IClientWithCommand<T> Key(params object[] entryKey)
+        {
+            base.Key(entryKey);
+            return CastClient;
+        }
+
+        public new IClientWithCommand<T> Key(IEnumerable<object> entryKey)
+        {
+            base.Key(entryKey);
+            return CastClient;
+        }
+
+        public new IClientWithCommand<T> Key(IDictionary<string, object> entryKey)
+        {
+            base.Key(entryKey);
+            return CastClient;
+        }
+
+        public new IClientWithCommand<T> Key(T entryKey)
+        {
+            base.Key(entryKey);
+            return CastClient;
+        }
+
+        public new IClientWithCommand<T> Filter(string filter)
+        {
+            base.Filter(filter);
+            return CastClient;
+        }
+
         public IClientWithCommand<T> Filter(Expression<Func<T, bool>> expression)
         {
             base.Filter(ODataExpression.FromLinqExpression(expression.Body));
+            return CastClient;
+        }
+
+        public new IClientWithCommand<T> Expand(IEnumerable<string> associations)
+        {
+            base.Expand(associations);
+            return CastClient;
+        }
+
+        public new IClientWithCommand<T> Expand(params string[] associations)
+        {
+            base.Expand(associations);
             return CastClient;
         }
 
@@ -579,15 +621,45 @@ namespace Simple.OData.Client
             return CastClient;
         }
 
+        public new IClientWithCommand<T> Select(IEnumerable<string> columns)
+        {
+            base.Select(columns);
+            return CastClient;
+        }
+
+        public new IClientWithCommand<T> Select(params string[] columns)
+        {
+            base.Select(columns);
+            return CastClient;
+        }
+
         public IClientWithCommand<T> Select(Expression<Func<T, object>> expression)
         {
             base.Select(ExtractColumnNames(expression));
             return CastClient;
         }
 
+        public new IClientWithCommand<T> OrderBy(IEnumerable<KeyValuePair<string, bool>> columns)
+        {
+            base.OrderBy(columns);
+            return CastClient;
+        }
+
+        public new IClientWithCommand<T> OrderBy(params string[] columns)
+        {
+            base.OrderBy(columns);
+            return CastClient;
+        }
+
         public IClientWithCommand<T> OrderBy(Expression<Func<T, object>> expression)
         {
             base.Select(ExtractColumnNames(expression));
+            return CastClient;
+        }
+
+        public new IClientWithCommand<T> OrderByDescending(params string[] columns)
+        {
+            base.OrderByDescending(columns);
             return CastClient;
         }
 
@@ -601,6 +673,18 @@ namespace Simple.OData.Client
         where U : class, new()
         {
             return CastClient.Link<U>(this, linkName);
+        }
+
+        public new IClientWithCommand<T> Set(object value)
+        {
+            base.Set(value);
+            return CastClient;
+        }
+
+        public new IClientWithCommand<T> Set(T entry)
+        {
+            base.Set(entry);
+            return CastClient;
         }
     }
 }

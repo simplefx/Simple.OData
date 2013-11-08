@@ -63,6 +63,7 @@ namespace Simple.OData.Client
         new IClientWithCommand<T> Key(params object[] entryKey);
         new IClientWithCommand<T> Key(IEnumerable<object> entryKey);
         new IClientWithCommand<T> Key(IDictionary<string, object> entryKey);
+        new IClientWithCommand<T> Key(T entryKey);
         new IClientWithCommand<T> Filter(string filter);
         new IClientWithCommand<T> Filter(Expression<Func<T, bool>> expression);
         new IClientWithCommand<T> Expand(IEnumerable<string> associations);
@@ -78,6 +79,6 @@ namespace Simple.OData.Client
         new IClientWithCommand<T> OrderByDescending(Expression<Func<T, object>> expression);
         new IClientWithCommand<U> NavigateTo<U>(string linkName = null) where U : class, new();
         new IClientWithCommand<T> Set(object value);
-        new IClientWithCommand<T> Set(T value);
+        new IClientWithCommand<T> Set(T entry);
     }
 }
