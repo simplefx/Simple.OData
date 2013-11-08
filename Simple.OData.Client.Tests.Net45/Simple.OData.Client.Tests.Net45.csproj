@@ -76,8 +76,14 @@
     <Compile Include="..\Simple.OData.Client.Tests.Net40\ClientTests.cs">
       <Link>ClientTests.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\DeleteDynamicTests.cs">
+      <Link>DeleteDynamicTests.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\DeleteTests.cs">
       <Link>DeleteTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\DeleteTypedTests.cs">
+      <Link>DeleteTypedTests.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\DynamicFilterAsKeyTests.cs">
       <Link>DynamicFilterAsKeyTests.cs</Link>
@@ -148,14 +154,26 @@
     <Compile Include="..\Simple.OData.Client.Tests.Net40\FunctionTests.cs">
       <Link>FunctionTests.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\InsertDynamicTests.cs">
+      <Link>InsertDynamicTests.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\InsertTests.cs">
       <Link>InsertTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\InsertTypedTests.cs">
+      <Link>InsertTypedTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\LinkDynamicTests.cs">
+      <Link>LinkDynamicTests.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\LinkTests.cs">
       <Link>LinkTests.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\FindTests.cs">
       <Link>FindTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\LinkTypedTests.cs">
+      <Link>LinkTypedTests.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\Properties\AssemblyInfo.cs">
       <Link>Properties\AssemblyInfo.cs</Link>
@@ -175,8 +193,14 @@
     <Compile Include="..\Simple.OData.Client.Tests.Net40\TypedFilterAsKeyTests.cs">
       <Link>TypedFilterAsKeyTests.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\UpdateDynamicTests.cs">
+      <Link>UpdateDynamicTests.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\UpdateTests.cs">
       <Link>UpdateTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\UpdateTypedTests.cs">
+      <Link>UpdateTypedTests.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>

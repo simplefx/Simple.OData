@@ -167,7 +167,7 @@ namespace Simple.OData.Client
 
         public new Task LinkEntryAsync<U>(U linkedEntryKey, Expression<Func<T, U>> expression)
         {
-            throw new NotImplementedException();
+            return LinkEntryAsync(linkedEntryKey, ODataCommand.ExtractColumnName(expression));
         }
 
         public new Task UnlinkEntryAsync<U>(string linkName = null)
@@ -177,7 +177,7 @@ namespace Simple.OData.Client
 
         public new Task UnlinkEntryAsync<U>(Expression<Func<T, U>> expression)
         {
-            throw new NotImplementedException();
+            return UnlinkEntryAsync(ODataCommand.ExtractColumnName(expression));
         }
 
         public new Task<IEnumerable<T>> ExecuteFunctionAsync(string functionName, IDictionary<string, object> parameters)

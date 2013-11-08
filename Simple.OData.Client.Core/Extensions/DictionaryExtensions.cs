@@ -10,6 +10,9 @@ namespace Simple.OData.Client.Extensions
         public static T AsObjectOfType<T>(this IDictionary<string, object> source)
             where T : class, new()
         {
+            if (source == null)
+                return null;
+
             var value = new T();
             var type = value.GetType();
             return (T)AsObjectOfType(source, type, value);
@@ -17,6 +20,9 @@ namespace Simple.OData.Client.Extensions
 
         public static object AsObjectOfType(this IDictionary<string, object> source, Type type, object value = null)
         {
+            if (source == null)
+                return null;
+
             if (value == null)
             {
                 var defaultConstructor = type.GetConstructor(new Type[] {});
@@ -83,6 +89,9 @@ namespace Simple.OData.Client.Extensions
         public static IDictionary<string, object> AsDictionary(this object source,
             BindingFlags bindingAttr = BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Instance)
         {
+            if (source == null)
+                return new Dictionary<string, object>();
+
             return source.GetType().GetProperties(bindingAttr).ToDictionary
             (
                 propInfo => propInfo.Name,

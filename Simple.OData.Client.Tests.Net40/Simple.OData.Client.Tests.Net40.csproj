@@ -138,7 +138,9 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
     <EmbeddedResource Include="Properties\XmlSamples.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>XmlSamples.Designer.cs</LastGenOutput>

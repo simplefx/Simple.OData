@@ -159,7 +159,7 @@ namespace Simple.OData.Client
 
         public new void LinkEntry<U>(U linkedEntryKey, Expression<Func<T, U>> expression)
         {
-            throw new NotImplementedException();
+            LinkEntry(linkedEntryKey, ODataCommand.ExtractColumnName(expression));
         }
 
         public new void UnlinkEntry<U>(string linkName = null)
@@ -169,7 +169,7 @@ namespace Simple.OData.Client
 
         public new void UnlinkEntry<U>(Expression<Func<T, U>> expression)
         {
-            throw new NotImplementedException();
+            UnlinkEntry(ODataCommand.ExtractColumnName(expression));
         }
 
         public new IEnumerable<T> ExecuteFunction(string functionName, IDictionary<string, object> parameters)

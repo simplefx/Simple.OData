@@ -125,8 +125,17 @@
     <Compile Include="..\Simple.OData.Client.Tests.Net40\ClientTests.cs">
       <Link>ClientTests.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\DeleteDynamicTests.cs">
+      <Link>DeleteDynamicTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\DeleteTypedTests.cs">
+      <Link>DeleteTypedTests.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\DynamicFilterAsKeyTests.cs">
       <Link>DynamicFilterAsKeyTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\Entities\Category.cs">
+      <Link>Entities\Category.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\Entities\Customer.cs">
       <Link>Entities\Customer.cs</Link>
@@ -161,8 +170,26 @@
     <Compile Include="..\Simple.OData.Client.Tests.Net40\FunctionTests.cs">
       <Link>FunctionTests.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\InsertDynamicTests.cs">
+      <Link>InsertDynamicTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\InsertTypedTests.cs">
+      <Link>InsertTypedTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\LinkDynamicTests.cs">
+      <Link>LinkDynamicTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\LinkTypedTests.cs">
+      <Link>LinkTypedTests.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\TypedFilterAsKeyTests.cs">
       <Link>TypedFilterAsKeyTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\UpdateDynamicTests.cs">
+      <Link>UpdateDynamicTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\UpdateTypedTests.cs">
+      <Link>UpdateTypedTests.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.TestUtils.Net40\ContainTest.cs">
       <Link>ContainTest.cs</Link>

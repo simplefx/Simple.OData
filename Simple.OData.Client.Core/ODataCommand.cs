@@ -494,7 +494,7 @@ namespace Simple.OData.Client
                 this.Table.GetKeyNames().All(namedKeyValues.ContainsKey) ? namedKeyValues : null;
         }
 
-        protected IEnumerable<string> ExtractColumnNames<T>(Expression<Func<T, object>> expression)
+        protected internal static IEnumerable<string> ExtractColumnNames<T>(Expression<Func<T, object>> expression)
         {
             var lambdaExpression = Utils.CastExpressionWithTypeCheck<LambdaExpression>(expression);
             switch (lambdaExpression.Body.NodeType)
@@ -512,7 +512,7 @@ namespace Simple.OData.Client
             }
         }
 
-        protected string ExtractColumnName(Expression expression)
+        protected internal static string ExtractColumnName(Expression expression)
         {
             switch (expression.NodeType)
             {
@@ -587,7 +587,7 @@ namespace Simple.OData.Client
 
         public new IClientWithCommand<T> Key(T entryKey)
         {
-            base.Key(entryKey);
+            base.Key(entryKey.AsDictionary());
             return CastClient;
         }
 
@@ -683,7 +683,7 @@ namespace Simple.OData.Client
 
         public new IClientWithCommand<T> Set(T entry)
         {
-            base.Set(entry);
+            base.Set(entry.AsDictionary());
             return CastClient;
         }
     }
