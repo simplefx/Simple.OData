@@ -82,6 +82,9 @@
     <Compile Include="..\Simple.OData.Client.Tests.Net40\DynamicFilterAsKeyTests.cs">
       <Link>DynamicFilterAsKeyTests.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\Entities\Category.cs">
+      <Link>Entities\Category.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\Entities\Customer.cs">
       <Link>Entities\Customer.cs</Link>
     </Compile>

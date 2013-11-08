@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace Simple.OData.Client
@@ -49,7 +50,10 @@ namespace Simple.OData.Client
         new IEnumerable<T> FindEntries(bool scalarResult, out int totalCount);
         new T FindEntry();
         new T InsertEntry(bool resultRequired = true);
-        new void LinkEntry(string linkName, T linkedEntryKey);
+        new void LinkEntry<U>(U linkedEntryKey, string linkName = null);
+        new void LinkEntry<U>(U linkedEntryKey, Expression<Func<T, U>> expression);
+        new void UnlinkEntry<U>(string linkName = null);
+        new void UnlinkEntry<U>(Expression<Func<T, U>> expression);
         new IEnumerable<T> ExecuteFunction(string functionName, IDictionary<string, object> parameters);
 
         new Task<IEnumerable<T>> FindEntriesAsync();
@@ -58,7 +62,10 @@ namespace Simple.OData.Client
         new Task<Tuple<IEnumerable<T>, int>> FindEntriesWithCountAsync(bool scalarResult);
         new Task<T> FindEntryAsync();
         new Task<T> InsertEntryAsync(bool resultRequired = true);
-        new Task LinkEntryAsync(string linkName, T linkedEntryKey);
+        new Task LinkEntryAsync<U>(U linkedEntryKey, string linkName = null);
+        new Task LinkEntryAsync<U>(U linkedEntryKey, Expression<Func<T, U>> expression);
+        new Task UnlinkEntryAsync<U>(string linkName = null);
+        new Task UnlinkEntryAsync<U>(Expression<Func<T, U>> expression);
         new Task<IEnumerable<T>> ExecuteFunctionAsync(string functionName, IDictionary<string, object> parameters);
     }
 }

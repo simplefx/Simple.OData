@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Simple.OData.Client.Extensions;
 
@@ -125,32 +126,32 @@ namespace Simple.OData.Client
 
     partial class ODataClientWithCommand<T>
     {
-        new public Task<IEnumerable<T>> FindEntriesAsync()
+        public new Task<IEnumerable<T>> FindEntriesAsync()
         {
             return RectifyColumnSelectionAsync(_client.FindEntriesAsync(_command.ToString()), _command.SelectedColumns);
         }
 
-        new public Task<IEnumerable<T>> FindEntriesAsync(bool scalarResult)
+        public new Task<IEnumerable<T>> FindEntriesAsync(bool scalarResult)
         {
             return RectifyColumnSelectionAsync(_client.FindEntriesAsync(_command.ToString(), scalarResult), _command.SelectedColumns);
         }
 
-        new public Task<Tuple<IEnumerable<T>, int>> FindEntriesWithCountAsync()
+        public new Task<Tuple<IEnumerable<T>, int>> FindEntriesWithCountAsync()
         {
             return RectifyColumnSelectionAsync(_client.FindEntriesWithCountAsync(_command.WithInlineCount().ToString()), _command.SelectedColumns);
         }
 
-        new public Task<Tuple<IEnumerable<T>, int>> FindEntriesWithCountAsync(bool scalarResult)
+        public new Task<Tuple<IEnumerable<T>, int>> FindEntriesWithCountAsync(bool scalarResult)
         {
             return RectifyColumnSelectionAsync(_client.FindEntriesWithCountAsync(_command.WithInlineCount().ToString(), scalarResult), _command.SelectedColumns);
         }
 
-        new public Task<T> FindEntryAsync()
+        public new Task<T> FindEntryAsync()
         {
             return RectifyColumnSelectionAsync(_client.FindEntryAsync(_command.ToString()), _command.SelectedColumns);
         }
 
-        new public Task<T> InsertEntryAsync(bool resultRequired = true)
+        public new Task<T> InsertEntryAsync(bool resultRequired = true)
         {
             return _client.InsertEntryAsync(_command.CollectionName, _command.EntryData, resultRequired).ContinueWith(x =>
             {
@@ -159,12 +160,27 @@ namespace Simple.OData.Client
             });
         }
 
-        new public Task LinkEntryAsync(string linkName, T linkedEntryKey)
+        public new Task LinkEntryAsync<U>(U linkedEntryKey, string linkName = null)
         {
-            return _client.LinkEntryAsync(_command.CollectionName, _command.KeyValues, linkName, linkedEntryKey.AsDictionary());
+            return _client.LinkEntryAsync(_command.CollectionName, _command.KeyValues, linkName ?? typeof(U).Name, linkedEntryKey.AsDictionary());
         }
 
-        new public Task<IEnumerable<T>> ExecuteFunctionAsync(string functionName, IDictionary<string, object> parameters)
+        public new Task LinkEntryAsync<U>(U linkedEntryKey, Expression<Func<T, U>> expression)
+        {
+            throw new NotImplementedException();
+        }
+
+        public new Task UnlinkEntryAsync<U>(string linkName = null)
+        {
+            return _client.UnlinkEntryAsync(_command.CollectionName, _command.KeyValues, linkName ?? typeof(U).Name);
+        }
+
+        public new Task UnlinkEntryAsync<U>(Expression<Func<T, U>> expression)
+        {
+            throw new NotImplementedException();
+        }
+
+        public new Task<IEnumerable<T>> ExecuteFunctionAsync(string functionName, IDictionary<string, object> parameters)
         {
             return RectifyColumnSelectionAsync(_client.ExecuteFunctionAsync(_command.ToString(), parameters), _command.SelectedColumns);
         }

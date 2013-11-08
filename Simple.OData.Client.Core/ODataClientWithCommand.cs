@@ -275,9 +275,39 @@ namespace Simple.OData.Client
             return CastCommand.As<U>(derivedCollectionName);
         }
 
+        public new IClientWithCommand<T> Key(params object[] entryKey)
+        {
+            throw new NotImplementedException();
+        }
+
+        public new IClientWithCommand<T> Key(IEnumerable<object> entryKey)
+        {
+            throw new NotImplementedException();
+        }
+
+        public new IClientWithCommand<T> Key(IDictionary<string, object> entryKey)
+        {
+            throw new NotImplementedException();
+        }
+
+        public new IClientWithCommand<T> Filter(string filter)
+        {
+            throw new NotImplementedException();
+        }
+
         public IClientWithCommand<T> Filter(Expression<Func<T, bool>> expression)
         {
             return CastCommand.Filter(expression);
+        }
+
+        public new IClientWithCommand<T> Expand(IEnumerable<string> columns)
+        {
+            throw new NotImplementedException();
+        }
+
+        public new IClientWithCommand<T> Expand(params string[] columns)
+        {
+            throw new NotImplementedException();
         }
 
         public IClientWithCommand<T> Expand(Expression<Func<T, object>> expression)
@@ -285,14 +315,39 @@ namespace Simple.OData.Client
             return CastCommand.Expand(expression);
         }
 
+        public new IClientWithCommand<T> Select(IEnumerable<string> columns)
+        {
+            throw new NotImplementedException();
+        }
+
+        public new IClientWithCommand<T> Select(params string[] columns)
+        {
+            throw new NotImplementedException();
+        }
+
         public IClientWithCommand<T> Select(Expression<Func<T, object>> expression)
         {
             return CastCommand.Select(expression);
         }
 
+        public new IClientWithCommand<T> OrderBy(IEnumerable<KeyValuePair<string, bool>> columns)
+        {
+            throw new NotImplementedException();
+        }
+
+        public new IClientWithCommand<T> OrderBy(params string[] columns)
+        {
+            throw new NotImplementedException();
+        }
+
         public IClientWithCommand<T> OrderBy(Expression<Func<T, object>> expression)
         {
             return CastCommand.OrderBy(expression);
+        }
+
+        public new IClientWithCommand<T> OrderByDescending(params string[] columns)
+        {
+            throw new NotImplementedException();
         }
 
         public IClientWithCommand<T> OrderByDescending(Expression<Func<T, object>> expression)
@@ -304,6 +359,16 @@ namespace Simple.OData.Client
         where U : class, new()
         {
             return CastCommand.NavigateTo<U>(linkName);
+        }
+
+        public new IClientWithCommand<T> Set(object value)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IClientWithCommand<T> Set(T value)
+        {
+            throw new NotImplementedException();
         }
     }
 }

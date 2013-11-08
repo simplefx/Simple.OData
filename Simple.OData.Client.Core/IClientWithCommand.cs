@@ -45,7 +45,8 @@ namespace Simple.OData.Client
         new IEnumerable<T> FindEntries(bool scalarResult, out int totalCount);
         new T FindEntry();
         new T InsertEntry(bool resultRequired = true);
-        new void LinkEntry(string linkName, T linkedEntryKey);
+        new void LinkEntry<U>(U linkedEntryKey, string linkName = null);
+        new void UnlinkEntry<U>(string linkName = null);
         new IEnumerable<T> ExecuteFunction(string functionName, IDictionary<string, object> parameters);
 
         new Task<IEnumerable<T>> FindEntriesAsync();
@@ -54,15 +55,29 @@ namespace Simple.OData.Client
         new Task<Tuple<IEnumerable<T>, int>> FindEntriesWithCountAsync(bool scalarResult);
         new Task<T> FindEntryAsync();
         new Task<T> InsertEntryAsync(bool resultRequired = true);
-        new Task LinkEntryAsync(string linkName, T linkedEntryKey);
+        new Task LinkEntryAsync<U>(U linkedEntryKey, string linkName = null);
+        new Task UnlinkEntryAsync<U>(string linkName = null);
         new Task<IEnumerable<T>> ExecuteFunctionAsync(string functionName, IDictionary<string, object> parameters);
 
         new IClientWithCommand<U> As<U>(string derivedCollectionName = null) where U : class, new();
+        new IClientWithCommand<T> Key(params object[] entryKey);
+        new IClientWithCommand<T> Key(IEnumerable<object> entryKey);
+        new IClientWithCommand<T> Key(IDictionary<string, object> entryKey);
+        new IClientWithCommand<T> Filter(string filter);
         new IClientWithCommand<T> Filter(Expression<Func<T, bool>> expression);
+        new IClientWithCommand<T> Expand(IEnumerable<string> associations);
+        new IClientWithCommand<T> Expand(params string[] associations);
         new IClientWithCommand<T> Expand(Expression<Func<T, object>> expression);
+        new IClientWithCommand<T> Select(IEnumerable<string> columns);
+        new IClientWithCommand<T> Select(params string[] columns);
         new IClientWithCommand<T> Select(Expression<Func<T, object>> expression);
+        new IClientWithCommand<T> OrderBy(IEnumerable<KeyValuePair<string, bool>> columns);
+        new IClientWithCommand<T> OrderBy(params string[] columns);
         new IClientWithCommand<T> OrderBy(Expression<Func<T, object>> expression);
+        new IClientWithCommand<T> OrderByDescending(params string[] columns);
         new IClientWithCommand<T> OrderByDescending(Expression<Func<T, object>> expression);
         new IClientWithCommand<U> NavigateTo<U>(string linkName = null) where U : class, new();
+        new IClientWithCommand<T> Set(object value);
+        new IClientWithCommand<T> Set(T value);
     }
 }

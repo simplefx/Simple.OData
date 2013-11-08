@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
@@ -115,48 +116,63 @@ namespace Simple.OData.Client
 
     partial class ODataClientWithCommand<T>
     {
-        new public IEnumerable<T> FindEntries()
+        public new IEnumerable<T> FindEntries()
         {
             return RectifyColumnSelection(_client.FindEntries(_command.ToString()), _command.SelectedColumns)
                 .Select(x => x.AsObjectOfType<T>());
         }
 
-        new public IEnumerable<T> FindEntries(bool scalarResult)
+        public new IEnumerable<T> FindEntries(bool scalarResult)
         {
             return RectifyColumnSelection(_client.FindEntries(_command.ToString(), scalarResult), _command.SelectedColumns)
                 .Select(x => x.AsObjectOfType<T>());
         }
 
-        new public IEnumerable<T> FindEntries(out int totalCount)
+        public new IEnumerable<T> FindEntries(out int totalCount)
         {
             return RectifyColumnSelection(_client.FindEntries(_command.WithInlineCount().ToString(), out totalCount), _command.SelectedColumns)
                 .Select(x => x.AsObjectOfType<T>());
         }
 
-        new public IEnumerable<T> FindEntries(bool scalarResult, out int totalCount)
+        public new IEnumerable<T> FindEntries(bool scalarResult, out int totalCount)
         {
             return RectifyColumnSelection(_client.FindEntries(_command.WithInlineCount().ToString(), scalarResult, out totalCount), _command.SelectedColumns)
                 .Select(x => x.AsObjectOfType<T>());
         }
 
-        new public T FindEntry()
+        public new T FindEntry()
         {
             return RectifyColumnSelection(_client.FindEntry(_command.ToString()), _command.SelectedColumns)
                 .AsObjectOfType<T>();
         }
 
-        new public T InsertEntry(bool resultRequired = true)
+        public new T InsertEntry(bool resultRequired = true)
         {
             return _client.InsertEntry(_command.CollectionName, _command.EntryData, resultRequired)
                 .AsObjectOfType<T>();
         }
 
-        new public void LinkEntry(string linkName, T linkedEntryKey)
+        public new void LinkEntry<U>(U linkedEntryKey, string linkName = null)
         {
-            _client.LinkEntry(_command.CollectionName, _command.KeyValues, linkName, linkedEntryKey.AsDictionary());
+            _client.LinkEntry(_command.CollectionName, _command.KeyValues, linkName ?? typeof(U).Name, linkedEntryKey.AsDictionary());
         }
 
-        new public IEnumerable<T> ExecuteFunction(string functionName, IDictionary<string, object> parameters)
+        public new void LinkEntry<U>(U linkedEntryKey, Expression<Func<T, U>> expression)
+        {
+            throw new NotImplementedException();
+        }
+
+        public new void UnlinkEntry<U>(string linkName = null)
+        {
+            _client.UnlinkEntry(_command.CollectionName, _command.KeyValues, linkName ?? typeof(U).Name);
+        }
+
+        public new void UnlinkEntry<U>(Expression<Func<T, U>> expression)
+        {
+            throw new NotImplementedException();
+        }
+
+        public new IEnumerable<T> ExecuteFunction(string functionName, IDictionary<string, object> parameters)
         {
             return RectifyColumnSelection(_client.ExecuteFunction(_command.ToString(), parameters), _command.SelectedColumns)
                 .Select(x => x.AsObjectOfType<T>());
