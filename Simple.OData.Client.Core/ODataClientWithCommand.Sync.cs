@@ -5,31 +5,31 @@ using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
-    partial class ODataClientWithCommand : IClientWithCommand
+    partial class ODataClientWithCommand
     {
         public IEnumerable<IDictionary<string, object>> FindEntries()
         {
-            return RectifySelection(_client.FindEntries(_command.ToString()));
+            return RectifyColumnSelection(_client.FindEntries(_command.ToString()), _command.SelectedColumns);
         }
 
         public IEnumerable<IDictionary<string, object>> FindEntries(bool scalarResult)
         {
-            return RectifySelection(_client.FindEntries(_command.ToString(), scalarResult));
+            return RectifyColumnSelection(_client.FindEntries(_command.ToString(), scalarResult), _command.SelectedColumns);
         }
 
         public IEnumerable<IDictionary<string, object>> FindEntries(out int totalCount)
         {
-            return RectifySelection(_client.FindEntries(_command.WithInlineCount().ToString(), out totalCount));
+            return RectifyColumnSelection(_client.FindEntries(_command.WithInlineCount().ToString(), out totalCount), _command.SelectedColumns);
         }
 
         public IEnumerable<IDictionary<string, object>> FindEntries(bool scalarResult, out int totalCount)
         {
-            return RectifySelection(_client.FindEntries(_command.WithInlineCount().ToString(), scalarResult, out totalCount));
+            return RectifyColumnSelection(_client.FindEntries(_command.WithInlineCount().ToString(), scalarResult, out totalCount), _command.SelectedColumns);
         }
 
         public IDictionary<string, object> FindEntry()
         {
-            return RectifySelection(_client.FindEntry(_command.ToString()));
+            return RectifyColumnSelection(_client.FindEntry(_command.ToString()), _command.SelectedColumns);
         }
 
         public object FindScalar()
@@ -80,34 +80,86 @@ namespace Simple.OData.Client
 
         public IEnumerable<IDictionary<string, object>> ExecuteFunction(string functionName, IDictionary<string, object> parameters)
         {
-            return RectifySelection(_client.ExecuteFunction(_command.ToString(), parameters));
+            return RectifyColumnSelection(_client.ExecuteFunction(_command.ToString(), parameters), _command.SelectedColumns);
         }
 
         public T ExecuteFunctionAsScalar<T>(string functionName, IDictionary<string, object> parameters)
+        where T : class, new()
         {
             return _client.ExecuteFunctionAsScalar<T>(_command.ToString(), parameters);
         }
 
         public T[] ExecuteFunctionAsArray<T>(string functionName, IDictionary<string, object> parameters)
+        where T : class, new()
         {
             return _client.ExecuteFunctionAsArray<T>(_command.ToString(), parameters);
         }
 
-        private IEnumerable<IDictionary<string, object>> RectifySelection(IEnumerable<IDictionary<string, object>> entries)
+        internal static IEnumerable<IDictionary<string, object>> RectifyColumnSelection(IEnumerable<IDictionary<string, object>> entries, IList<string> selectedColumns)
         {
-            return entries.Select(RectifySelection);
+            return entries.Select<IDictionary<string, object>, IDictionary<string, object>>(x => RectifyColumnSelection(x, selectedColumns));
         }
 
-        private IDictionary<string, object> RectifySelection(IDictionary<string, object> entry)
+        internal static IDictionary<string, object> RectifyColumnSelection(IDictionary<string, object> entry, IList<string> selectedColumns)
         {
-            if (_command.SelectedColumns == null || !_command.SelectedColumns.Any())
+            if (selectedColumns == null || !selectedColumns.Any())
             {
                 return entry;
             }
             else
             {
-                return entry.Where(x => _command.SelectedColumns.Any(y => x.Key.Homogenize() == y.Homogenize())).ToIDictionary();
+                return entry.Where(x => selectedColumns.Any(y => x.Key.Homogenize() == y.Homogenize())).ToIDictionary();
             }
+        }
+    }
+
+    partial class ODataClientWithCommand<T>
+    {
+        new public IEnumerable<T> FindEntries()
+        {
+            return RectifyColumnSelection(_client.FindEntries(_command.ToString()), _command.SelectedColumns)
+                .Select(x => x.AsObjectOfType<T>());
+        }
+
+        new public IEnumerable<T> FindEntries(bool scalarResult)
+        {
+            return RectifyColumnSelection(_client.FindEntries(_command.ToString(), scalarResult), _command.SelectedColumns)
+                .Select(x => x.AsObjectOfType<T>());
+        }
+
+        new public IEnumerable<T> FindEntries(out int totalCount)
+        {
+            return RectifyColumnSelection(_client.FindEntries(_command.WithInlineCount().ToString(), out totalCount), _command.SelectedColumns)
+                .Select(x => x.AsObjectOfType<T>());
+        }
+
+        new public IEnumerable<T> FindEntries(bool scalarResult, out int totalCount)
+        {
+            return RectifyColumnSelection(_client.FindEntries(_command.WithInlineCount().ToString(), scalarResult, out totalCount), _command.SelectedColumns)
+                .Select(x => x.AsObjectOfType<T>());
+        }
+
+        new public T FindEntry()
+        {
+            return RectifyColumnSelection(_client.FindEntry(_command.ToString()), _command.SelectedColumns)
+                .AsObjectOfType<T>();
+        }
+
+        new public T InsertEntry(bool resultRequired = true)
+        {
+            return _client.InsertEntry(_command.CollectionName, _command.EntryData, resultRequired)
+                .AsObjectOfType<T>();
+        }
+
+        new public void LinkEntry(string linkName, T linkedEntryKey)
+        {
+            _client.LinkEntry(_command.CollectionName, _command.KeyValues, linkName, linkedEntryKey.AsDictionary());
+        }
+
+        new public IEnumerable<T> ExecuteFunction(string functionName, IDictionary<string, object> parameters)
+        {
+            return RectifyColumnSelection(_client.ExecuteFunction(_command.ToString(), parameters), _command.SelectedColumns)
+                .Select(x => x.AsObjectOfType<T>());
         }
     }
 }

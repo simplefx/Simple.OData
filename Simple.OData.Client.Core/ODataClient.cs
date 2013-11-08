@@ -69,6 +69,7 @@ namespace Simple.OData.Client
         }
 
         public IClientWithCommand<T> For<T>(string collectionName = null)
+        where T : class, new()
         {
             return new ODataClientWithCommand<T>(this, _schema).For(collectionName);
         }

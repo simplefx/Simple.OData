@@ -87,6 +87,7 @@
       <Link>Properties\CommonAssemblyVersion.cs</Link>
     </Compile>
     <Compile Include="AsyncTests.cs" />
+    <Compile Include="Extensions\DictionaryExtensionsTests.cs" />
     <Compile Include="Entities\Customer.cs" />
     <Compile Include="DeleteTests.cs" />
     <Compile Include="Entities\Employee.cs" />

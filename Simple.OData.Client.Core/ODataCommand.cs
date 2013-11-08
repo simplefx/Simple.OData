@@ -529,6 +529,7 @@ namespace Simple.OData.Client
     }
 
     public class ODataCommand<T> : ODataCommand, ICommand<T>
+        where T : class, new()
     {
         public ODataCommand(ODataClientWithCommand<T> client, ODataCommand parent)
             : base(client, parent)
@@ -560,6 +561,7 @@ namespace Simple.OData.Client
         }
 
         public IClientWithCommand<U> As<U>(string derivedCollectionName = null)
+        where U : class, new()
         {
             base.As(derivedCollectionName ?? typeof(U).Name);
             return new ODataClientWithCommand<U>(_client, this);
@@ -596,6 +598,7 @@ namespace Simple.OData.Client
         }
 
         public IClientWithCommand<U> NavigateTo<U>(string linkName = null)
+        where U : class, new()
         {
             return CastClient.Link<U>(this, linkName);
         }

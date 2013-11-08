@@ -20,8 +20,8 @@ namespace Simple.OData.Client
         void LinkEntry(string linkName, IDictionary<string, object> linkedEntryKey);
         void UnlinkEntry(string linkName);
         IEnumerable<IDictionary<string, object>> ExecuteFunction(string functionName, IDictionary<string, object> parameters);
-        T ExecuteFunctionAsScalar<T>(string functionName, IDictionary<string, object> parameters);
-        T[] ExecuteFunctionAsArray<T>(string functionName, IDictionary<string, object> parameters);
+        T ExecuteFunctionAsScalar<T>(string functionName, IDictionary<string, object> parameters) where T : class, new();
+        T[] ExecuteFunctionAsArray<T>(string functionName, IDictionary<string, object> parameters) where T : class, new();
     
         Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync();
         Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(bool scalarResult);
@@ -36,7 +36,29 @@ namespace Simple.OData.Client
         Task LinkEntryAsync(string linkName, IDictionary<string, object> linkedEntryKey);
         Task UnlinkEntryAsync(string linkName);
         Task<IEnumerable<IDictionary<string, object>>> ExecuteFunctionAsync(string functionName, IDictionary<string, object> parameters);
-        Task<T> ExecuteFunctionAsScalarAsync<T>(string functionName, IDictionary<string, object> parameters);
-        Task<T[]> ExecuteFunctionAsArrayAsync<T>(string functionName, IDictionary<string, object> parameters);
+        Task<T> ExecuteFunctionAsScalarAsync<T>(string functionName, IDictionary<string, object> parameters) where T : class, new();
+        Task<T[]> ExecuteFunctionAsArrayAsync<T>(string functionName, IDictionary<string, object> parameters) where T : class, new();
+    }
+
+    public interface IClient<T> : IClient 
+        where T : class, new()
+    {
+        new IEnumerable<T> FindEntries();
+        new IEnumerable<T> FindEntries(bool scalarResult);
+        new IEnumerable<T> FindEntries(out int totalCount);
+        new IEnumerable<T> FindEntries(bool scalarResult, out int totalCount);
+        new T FindEntry();
+        new T InsertEntry(bool resultRequired = true);
+        new void LinkEntry(string linkName, T linkedEntryKey);
+        new IEnumerable<T> ExecuteFunction(string functionName, IDictionary<string, object> parameters);
+
+        new Task<IEnumerable<T>> FindEntriesAsync();
+        new Task<IEnumerable<T>> FindEntriesAsync(bool scalarResult);
+        new Task<Tuple<IEnumerable<T>, int>> FindEntriesWithCountAsync();
+        new Task<Tuple<IEnumerable<T>, int>> FindEntriesWithCountAsync(bool scalarResult);
+        new Task<T> FindEntryAsync();
+        new Task<T> InsertEntryAsync(bool resultRequired = true);
+        new Task LinkEntryAsync(string linkName, T linkedEntryKey);
+        new Task<IEnumerable<T>> ExecuteFunctionAsync(string functionName, IDictionary<string, object> parameters);
     }
 }

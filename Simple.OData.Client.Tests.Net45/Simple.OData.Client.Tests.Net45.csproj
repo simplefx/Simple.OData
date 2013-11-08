@@ -106,6 +106,9 @@
     <Compile Include="..\Simple.OData.Client.Tests.Net40\Extensions\DateTimeExtensionsTests.cs">
       <Link>Extensions\DateTimeExtensionsTests.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\Extensions\DictionaryExtensionsTests.cs">
+      <Link>Extensions\DictionaryExtensionsTests.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\Extensions\EnumerableExtensionTests.cs">
       <Link>Extensions\EnumerableExtensionTests.cs</Link>
     </Compile>

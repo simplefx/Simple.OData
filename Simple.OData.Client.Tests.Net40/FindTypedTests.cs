@@ -16,7 +16,7 @@ namespace Simple.OData.Client.Tests
                 .For<Product>()
                 .Filter(x => x.ProductName == "Chai")
                 .FindEntry();
-            Assert.Equal("Chai", product["ProductName"]);
+            Assert.Equal("Chai", product.ProductName);
         }
 
         [Fact]
@@ -27,7 +27,7 @@ namespace Simple.OData.Client.Tests
                 .For<Product>()
                 .Filter(x => x.ProductName == productName)
                 .FindEntry();
-            Assert.Equal("Chai", product["ProductName"]);
+            Assert.Equal("Chai", product.ProductName);
         }
 
         [Fact]
@@ -37,7 +37,7 @@ namespace Simple.OData.Client.Tests
                 .For<Employee>()
                 .Filter(x => x.FirstName == "Nancy" && x.HireDate < DateTime.Now)
                 .FindEntry();
-            Assert.Equal("Davolio", product["LastName"]);
+            Assert.Equal("Davolio", product.LastName);
         }
 
         [Fact]
@@ -47,7 +47,7 @@ namespace Simple.OData.Client.Tests
                 .For<Product>()
                 .Filter(x => x.ProductName.Contains("ai"))
                 .FindEntries();
-            Assert.Equal("Chai", products.Single()["ProductName"]);
+            Assert.Equal("Chai", products.Single().ProductName);
         }
 
         [Fact]
@@ -57,7 +57,7 @@ namespace Simple.OData.Client.Tests
                 .For<Product>()
                 .Filter(x => !x.ProductName.Contains("ai"))
                 .FindEntries();
-            Assert.NotEqual("Chai", products.First()["ProductName"]);
+            Assert.NotEqual("Chai", products.First().ProductName);
         }
 
         [Fact]
@@ -67,7 +67,7 @@ namespace Simple.OData.Client.Tests
                 .For<Product>()
                 .Filter(x => x.ProductName.StartsWith("Ch"))
                 .FindEntries();
-            Assert.Equal("Chai", products.First()["ProductName"]);
+            Assert.Equal("Chai", products.First().ProductName);
         }
 
         [Fact]
@@ -77,7 +77,7 @@ namespace Simple.OData.Client.Tests
                 .For<Product>()
                 .Filter(x => x.ProductName.Length == 4)
                 .FindEntries();
-            Assert.Equal("Chai", products.First()["ProductName"]);
+            Assert.Equal("Chai", products.First().ProductName);
         }
 
         [Fact]
@@ -87,7 +87,7 @@ namespace Simple.OData.Client.Tests
                 .For<Product>()
                 .Filter(x => x.ProductName.Substring(1, 2) == "ha")
                 .FindEntries();
-            Assert.Equal("Chai", products.First()["ProductName"]);
+            Assert.Equal("Chai", products.First().ProductName);
         }
 
         [Fact]
@@ -120,7 +120,7 @@ namespace Simple.OData.Client.Tests
                 .Filter(x => x.ProductName == "Chai")
                 .Select(x => x.ProductName)
                 .FindEntry();
-            Assert.Equal("Chai", product["ProductName"]);
+            Assert.Equal("Chai", product.ProductName);
         }
 
         [Fact]
@@ -131,7 +131,7 @@ namespace Simple.OData.Client.Tests
                 .Filter(x => x.ProductName == "Chai")
                 .Select(x => new { x.ProductID, x.ProductName })
                 .FindEntry();
-            Assert.Equal("Chai", product["ProductName"]);
+            Assert.Equal("Chai", product.ProductName);
         }
 
         [Fact]
@@ -142,7 +142,7 @@ namespace Simple.OData.Client.Tests
                 .Filter(x => x.ProductName == "Chai")
                 .OrderBy(x => x.ProductName)
                 .FindEntry();
-            Assert.Equal("Chai", product["ProductName"]);
+            Assert.Equal("Chai", product.ProductName);
         }
 
         [Fact]
@@ -153,7 +153,7 @@ namespace Simple.OData.Client.Tests
                 .Filter(x => x.ProductName == "Chai")
                 .OrderBy(x => new { x.ProductID, x.ProductName })
                 .FindEntry();
-            Assert.Equal("Chai", product["ProductName"]);
+            Assert.Equal("Chai", product.ProductName);
         }
 
         public class ODataOrgProduct
@@ -170,7 +170,7 @@ namespace Simple.OData.Client.Tests
                 .For<ODataOrgProduct>("Product")
                 .Filter(x => x.Name == "Bread" && x.Price < 1000)
                 .FindEntry();
-            Assert.Equal(2.5m, product["Price"]);
+            Assert.Equal(2.5m, product.Price);
         }
     }
 }

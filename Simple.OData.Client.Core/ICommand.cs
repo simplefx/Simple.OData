@@ -38,13 +38,14 @@ namespace Simple.OData.Client
     }
 
     public interface ICommand<T> : ICommand
+        where T : class, new()
     {
-        IClientWithCommand<U> As<U>(string derivedCollectionName = null);
+        IClientWithCommand<U> As<U>(string derivedCollectionName = null) where U : class, new();
         IClientWithCommand<T> Filter(Expression<Func<T, bool>> expression);
         IClientWithCommand<T> Expand(Expression<Func<T, object>> expression);
         IClientWithCommand<T> Select(Expression<Func<T, object>> expression);
         IClientWithCommand<T> OrderBy(Expression<Func<T, object>> expression);
         IClientWithCommand<T> OrderByDescending(Expression<Func<T, object>> expression);
-        IClientWithCommand<U> NavigateTo<U>(string linkName = null);
+        IClientWithCommand<U> NavigateTo<U>(string linkName = null) where U : class, new();
     }
 }

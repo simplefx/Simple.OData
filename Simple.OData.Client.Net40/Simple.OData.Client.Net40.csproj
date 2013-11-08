@@ -79,6 +79,9 @@
     <Compile Include="..\Simple.OData.Client.Core\Extensions\DecimalExtensions.cs">
       <Link>Extensions\DecimalExtensions.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Extensions\DictionaryExtensions.cs">
+      <Link>Extensions\DictionaryExtensions.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Extensions\EnumerableExtensions.cs">
       <Link>Extensions\EnumerableExtensions.cs</Link>
     </Compile>
