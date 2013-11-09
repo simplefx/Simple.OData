@@ -131,6 +131,9 @@
     <Compile Include="..\Simple.OData.Client.Tests.Net40\DeleteTypedTests.cs">
       <Link>DeleteTypedTests.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\DynamicExpressionTests.cs">
+      <Link>DynamicExpressionTests.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\DynamicFilterAsKeyTests.cs">
       <Link>DynamicFilterAsKeyTests.cs</Link>
     </Compile>
@@ -181,6 +184,9 @@
     </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\LinkTypedTests.cs">
       <Link>LinkTypedTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\TypedExpressionsTests.cs">
+      <Link>TypedExpressionsTests.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\TypedFilterAsKeyTests.cs">
       <Link>TypedFilterAsKeyTests.cs</Link>
@@ -238,9 +244,6 @@
     </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\Extensions\XmlElementAsDictionaryWriteTests.cs">
       <Link>Extensions\XmlElementAsDictionaryWriteTests.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\FilterExpressionTests.cs">
-      <Link>FilterExpressionTests.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\InsertTests.cs">
       <Link>InsertTests.cs</Link>

@@ -102,7 +102,7 @@
     <Compile Include="Extensions\XmlAttributesAsDictionaryWriteTests.cs" />
     <Compile Include="Extensions\XmlElementAsDictionaryReadTests.cs" />
     <Compile Include="Extensions\XmlElementAsDictionaryWriteTests.cs" />
-    <Compile Include="FilterExpressionTests.cs" />
+    <Compile Include="DynamicExpressionTests.cs" />
     <Compile Include="DynamicFilterAsKeyTests.cs" />
     <Compile Include="FindDynamicTests.cs" />
     <Compile Include="FindTypedTests.cs" />
@@ -129,6 +129,7 @@
     <Compile Include="Entities\Ship.cs" />
     <Compile Include="TestBase.cs" />
     <Compile Include="Entities\Transport.cs" />
+    <Compile Include="TypedExpressionsTests.cs" />
     <Compile Include="TypedFilterAsKeyTests.cs" />
     <Compile Include="UpdateDynamicTests.cs" />
     <Compile Include="UpdateTests.cs" />

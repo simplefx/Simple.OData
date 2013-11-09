@@ -18,8 +18,11 @@ namespace Simple.OData.Client
                 case ExpressionType.Call:
                     return ParseCallExpression(expression);
 
+                case ExpressionType.Lambda:
+                    return ParseLambdaExpression(expression);
+
                 case ExpressionType.Constant:
-                    return new ODataExpression((expression as ConstantExpression).Value);
+                    return ParseConstantExpression(expression);
 
                 case ExpressionType.Not:
                 case ExpressionType.Convert:
@@ -45,6 +48,9 @@ namespace Simple.OData.Client
                 case ExpressionType.Divide:
                 case ExpressionType.Modulo:
                     return ParseBinaryExpression(expression);
+
+                case ExpressionType.New:
+                    return ParseNewExpression(expression);
             }
 
             throw Utils.NotSupportedExpression(expression);
@@ -59,16 +65,26 @@ namespace Simple.OData.Client
             }
             else
             {
-                FunctionMapping mapping;
-                if (memberExpression.Expression.NodeType == ExpressionType.MemberAccess &&
-                    FunctionMapping.SupportedFunctions.TryGetValue(new ExpressionFunction.FunctionCall(memberExpression.Member.Name, 0), out mapping))
+                switch (memberExpression.Expression.NodeType)
                 {
-                    var contextExpression = memberExpression.Expression as MemberExpression;
-                    return FromFunction(memberExpression.Member.Name, contextExpression.Member.Name, new List<object>());
-                }
-                else
-                {
-                    return new ODataExpression(memberExpression.Member.Name);
+                    case ExpressionType.Parameter:
+                        return new ODataExpression(memberExpression.Member.Name);
+                    case ExpressionType.Constant:
+                        return ParseConstantExpression(memberExpression.Expression, memberExpression.Member.Name);
+                    case ExpressionType.MemberAccess:
+                        FunctionMapping mapping;
+                        if (FunctionMapping.SupportedFunctions.TryGetValue(new ExpressionFunction.FunctionCall(memberExpression.Member.Name, 0), out mapping))
+                        {
+                            var contextExpression = memberExpression.Expression as MemberExpression;
+                            return FromFunction(memberExpression.Member.Name, contextExpression.Member.Name, new List<object>());
+                        }
+                        else
+                        {
+                            return ParseMemberExpression(memberExpression.Expression as MemberExpression);
+                        }
+
+                    default:
+                        throw Utils.NotSupportedExpression(expression);
                 }
             }
         }
@@ -83,6 +99,37 @@ namespace Simple.OData.Client
             arguments.AddRange(callExpression.Arguments.Select(x => (x as ConstantExpression).Value));
 
             return FromFunction(callExpression.Method.Name, memberExpression.Member.Name, arguments);
+        }
+
+        private static ODataExpression ParseLambdaExpression(Expression expression)
+        {
+            var lambdaExpression = expression as LambdaExpression;
+
+            return ParseLinqExpression(lambdaExpression.Body);
+        }
+
+        private static ODataExpression ParseConstantExpression(Expression expression, string memberName = null)
+        {
+            var constExpression = expression as ConstantExpression;
+
+            if (constExpression.Type.IsValueType || constExpression.Type == typeof(string))
+            {
+                return new ODataExpression(constExpression.Value);
+            }
+            else if (constExpression.Type.GetProperties().Any(x => x.Name == memberName))
+            {
+                return new ODataExpression(constExpression.Type.GetProperties().Single(x => x.Name == memberName)
+                    .GetValue(constExpression.Value, null));
+            }
+            else if (constExpression.Type.GetFields().Any(x => x.Name == memberName))
+            {
+                return new ODataExpression(constExpression.Type.GetFields().Single(x => x.Name == memberName)
+                    .GetValue(constExpression.Value));
+            }
+            else
+            {
+                throw Utils.NotSupportedExpression(expression);
+            }
         }
 
         private static ODataExpression ParseUnaryExpression(Expression expression)
@@ -144,6 +191,12 @@ namespace Simple.OData.Client
             }
 
             throw Utils.NotSupportedExpression(expression);
+        }
+
+        private static ODataExpression ParseNewExpression(Expression expression)
+        {
+            var newExpression = expression as NewExpression;
+            return FromValue(newExpression.Constructor.Invoke(newExpression.Arguments.Select(x => ParseLinqExpression(x).Value).ToArray()));
         }
 
         private static object EvaluateStaticMember(MemberExpression expression)

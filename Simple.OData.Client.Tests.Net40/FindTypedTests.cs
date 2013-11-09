@@ -20,7 +20,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public void SingleConditionWithVariable()
+        public void SingleConditionWithLocalVariable()
         {
             var productName = "Chai";
             var product = _client
@@ -28,6 +28,21 @@ namespace Simple.OData.Client.Tests
                 .Filter(x => x.ProductName == productName)
                 .FindEntry();
             Assert.Equal("Chai", product.ProductName);
+        }
+
+        [Fact]
+        public void SingleConditionWithMemberVariable()
+        {
+            var productName = "Chai";
+            var product = _client
+                .For<Product>()
+                .Filter(x => x.ProductName == productName)
+                .FindEntry();
+            var sameProduct = _client
+                .For<Product>()
+                .Filter(x => x.ProductName != product.ProductName)
+                .FindEntry();
+            Assert.NotEqual(product.ProductName, sameProduct.ProductName);
         }
 
         [Fact]
