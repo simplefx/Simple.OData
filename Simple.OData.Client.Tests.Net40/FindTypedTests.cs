@@ -56,6 +56,34 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void CombineAll()
+        {
+            var product = _client
+                .For<Product>()
+                .OrderBy(x => x.ProductName)
+                .Skip(2)
+                .Top(1)
+                .Expand(x => x.Category)
+                .Select(x => x.Category)
+                .FindEntries().Single();
+            Assert.Equal("Seafood", product.Category.CategoryName);
+        }
+
+        [Fact]
+        public void CombineAllReverse()
+        {
+            var product = _client
+                .For<Product>()
+                .Select(x => x.Category)
+                .Expand(x => x.Category)
+                .Top(1)
+                .Skip(2)
+                .OrderBy(x => x.ProductName)
+                .FindEntries().Single();
+            Assert.Equal("Seafood", product.Category.CategoryName);
+        }
+
+        [Fact]
         public void StringContains()
         {
             var products = _client
@@ -169,6 +197,114 @@ namespace Simple.OData.Client.Tests
                 .OrderBy(x => new { x.ProductID, x.ProductName })
                 .FindEntry();
             Assert.Equal("Chai", product.ProductName);
+        }
+
+        [Fact]
+        public void NavigateToSingle()
+        {
+            var category = _client
+                .For<Product>()
+                .Key(new { ProductID = 2 })
+                .NavigateTo<Category>()
+                .FindEntry();
+            Assert.Equal("Beverages", category.CategoryName);
+        }
+
+        [Fact]
+        public void NavigateToMultiple()
+        {
+            var products = _client
+                .For<Category>()
+                .Key(2)
+                .NavigateTo<Product>()
+                .FindEntries();
+            Assert.Equal(12, products.Count());
+        }
+
+        [Fact]
+        public void NavigateToRecursive()
+        {
+            var employee = _client
+                .For<Employee>()
+                .Key(14)
+                .NavigateTo<Employee>("Superior")
+                .NavigateTo<Employee>("Superior")
+                .NavigateTo<Employee>("Subordinates")
+                .Key(3)
+                .FindEntry();
+            Assert.Equal("Janet", employee.FirstName);
+        }
+
+        [Fact]
+        public void BaseClassEntries()
+        {
+            var transport = _client
+                .For<Transport>()
+                .FindEntries();
+            Assert.Equal(2, transport.Count());
+        }
+
+        [Fact]
+        public void BaseClassEntriesWithResourceTypes()
+        {
+            var clientSettings = new ODataClientSettings
+            {
+                UrlBase = _serviceUri,
+                IncludeResourceTypeInEntryProperties = true,
+            };
+            var client = new ODataClient(clientSettings);
+            var transport = client
+                .For<Transport>()
+                .FindEntries();
+            Assert.Equal(2, transport.Count());
+        }
+
+        [Fact]
+        public void AllDerivedClassEntries()
+        {
+            var transport = _client
+                .For<Transport>()
+                .As<Ship>()
+                .FindEntries();
+            Assert.Equal("Titanic", transport.Single().ShipName);
+        }
+
+        [Fact]
+        public void AllDerivedClassEntriesWithResourceTypes()
+        {
+            var clientSettings = new ODataClientSettings
+            {
+                UrlBase = _serviceUri,
+                IncludeResourceTypeInEntryProperties = true,
+            };
+            var client = new ODataClient(clientSettings);
+            var transport = client
+                .For<Transport>()
+                .As<Ship>()
+                .FindEntries();
+            Assert.Equal("Titanic", transport.Single().ShipName);
+        }
+
+        [Fact]
+        public void DerivedClassEntry()
+        {
+            var transport = _client
+                .For<Transport>()
+                .As<Ship>()
+                .Filter(x => x.ShipName == "Titanic")
+                .FindEntry();
+            Assert.Equal("Titanic", transport.ShipName);
+        }
+
+        [Fact]
+        public void DerivedClassEntryBaseAndDerivedFields()
+        {
+            var transport = _client
+                .For<Transport>()
+                .As<Ship>()
+                .Filter(x => x.TransportID == 1 && x.ShipName == "Titanic")
+                .FindEntry();
+            Assert.Equal("Titanic", transport.ShipName);
         }
 
         public class ODataOrgProduct

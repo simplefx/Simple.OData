@@ -603,6 +603,18 @@ namespace Simple.OData.Client
             return CastClient;
         }
 
+        public new IClientWithCommand<T> Skip(int count)
+        {
+            base.Skip(count);
+            return CastClient;
+        }
+
+        public new IClientWithCommand<T> Top(int count)
+        {
+            base.Top(count);
+            return CastClient;
+        }
+
         public new IClientWithCommand<T> Expand(IEnumerable<string> associations)
         {
             base.Expand(associations);
@@ -669,6 +681,12 @@ namespace Simple.OData.Client
             return CastClient;
         }
 
+        public new IClientWithCommand<T> Count()
+        {
+            base.Count();
+            return CastClient;
+        }
+
         public IClientWithCommand<U> NavigateTo<U>(string linkName = null)
         where U : class, new()
         {
@@ -684,6 +702,18 @@ namespace Simple.OData.Client
         public new IClientWithCommand<T> Set(T entry)
         {
             base.Set(entry.AsDictionary());
+            return CastClient;
+        }
+
+        public new IClientWithCommand<T> Function(string functionName)
+        {
+            base.Function(functionName);
+            return CastClient;
+        }
+
+        public new IClientWithCommand<T> Parameters(IDictionary<string, object> parameters)
+        {
+            base.Parameters(parameters);
             return CastClient;
         }
     }

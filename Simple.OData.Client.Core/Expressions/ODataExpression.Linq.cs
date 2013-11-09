@@ -92,13 +92,30 @@ namespace Simple.OData.Client
         private static ODataExpression ParseCallExpression(Expression expression)
         {
             var callExpression = expression as MethodCallExpression;
-            var memberExpression = Utils.CastExpressionWithTypeCheck<MemberExpression>(callExpression.Object);
-            if (callExpression.Arguments.Any(x => x.NodeType != ExpressionType.Constant))
-                throw new NotSupportedException(string.Format("Not supported arguments in method {0}", callExpression.Method.Name));
-            var arguments = new List<object>();
-            arguments.AddRange(callExpression.Arguments.Select(x => (x as ConstantExpression).Value));
+            if (callExpression.Object == null)
+            {
+                var target = callExpression.Arguments.FirstOrDefault();
+                if (target != null)
+                {
+                    return FromFunction(callExpression.Method.Name, ParseLinqExpression(target).Reference, 
+                        callExpression.Arguments.Except(new [] {callExpression.Arguments.First()})
+                        .Select(x => ParseConstantExpression(x)));
+                }
+                else
+                {
+                    throw Utils.NotSupportedExpression(expression);
+                }
+            }
+            else
+            {
+                var memberExpression = Utils.CastExpressionWithTypeCheck<MemberExpression>(callExpression.Object);
+                if (callExpression.Arguments.Any(x => x.NodeType != ExpressionType.Constant))
+                    throw new NotSupportedException(string.Format("Not supported arguments in method {0}", callExpression.Method.Name));
+                var arguments = new List<object>();
+                arguments.AddRange(callExpression.Arguments.Select(x => ParseConstantExpression(x as ConstantExpression).Value));
 
-            return FromFunction(callExpression.Method.Name, memberExpression.Member.Name, arguments);
+                return FromFunction(callExpression.Method.Name, memberExpression.Member.Name, arguments);
+            }
         }
 
         private static ODataExpression ParseLambdaExpression(Expression expression)
@@ -112,23 +129,30 @@ namespace Simple.OData.Client
         {
             var constExpression = expression as ConstantExpression;
 
-            if (constExpression.Type.IsValueType || constExpression.Type == typeof(string))
+            if (constExpression.Value is Expression)
             {
-                return new ODataExpression(constExpression.Value);
-            }
-            else if (constExpression.Type.GetProperties().Any(x => x.Name == memberName))
-            {
-                return new ODataExpression(constExpression.Type.GetProperties().Single(x => x.Name == memberName)
-                    .GetValue(constExpression.Value, null));
-            }
-            else if (constExpression.Type.GetFields().Any(x => x.Name == memberName))
-            {
-                return new ODataExpression(constExpression.Type.GetFields().Single(x => x.Name == memberName)
-                    .GetValue(constExpression.Value));
+                return ParseConstantExpression(constExpression.Value as Expression, memberName);
             }
             else
             {
-                throw Utils.NotSupportedExpression(expression);
+                if (constExpression.Type.IsValueType || constExpression.Type == typeof(string))
+                {
+                    return new ODataExpression(constExpression.Value);
+                }
+                else if (constExpression.Type.GetProperties().Any(x => x.Name == memberName))
+                {
+                    return new ODataExpression(constExpression.Type.GetProperties().Single(x => x.Name == memberName)
+                        .GetValue(constExpression.Value, null));
+                }
+                else if (constExpression.Type.GetFields().Any(x => x.Name == memberName))
+                {
+                    return new ODataExpression(constExpression.Type.GetFields().Single(x => x.Name == memberName)
+                        .GetValue(constExpression.Value));
+                }
+                else
+                {
+                    throw Utils.NotSupportedExpression(expression);
+                }
             }
         }
 

@@ -305,6 +305,16 @@ namespace Simple.OData.Client
             return CastCommand.Filter(expression);
         }
 
+        public new IClientWithCommand<T> Skip(int count)
+        {
+            return CastCommand.Skip(count);
+        }
+
+        public new IClientWithCommand<T> Top(int count)
+        {
+            return CastCommand.Top(count);
+        }
+
         public new IClientWithCommand<T> Expand(IEnumerable<string> columns)
         {
             return CastCommand.Expand(columns);
@@ -360,6 +370,11 @@ namespace Simple.OData.Client
             return CastCommand.OrderByDescending(expression);
         }
 
+        public new IClientWithCommand<T> Count()
+        {
+            return CastCommand.Count();
+        }
+
         public IClientWithCommand<U> NavigateTo<U>(string linkName = null)
         where U : class, new()
         {
@@ -374,6 +389,16 @@ namespace Simple.OData.Client
         public IClientWithCommand<T> Set(T entry)
         {
             return CastCommand.Set(entry);
+        }
+
+        public new IClientWithCommand<T> Function(string functionName)
+        {
+            return CastCommand.Function(functionName);
+        }
+
+        public new IClientWithCommand<T> Parameters(IDictionary<string, object> parameters)
+        {
+            return CastCommand.Parameters(parameters);
         }
     }
 }

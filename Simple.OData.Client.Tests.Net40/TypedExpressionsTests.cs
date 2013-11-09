@@ -330,7 +330,7 @@ namespace Simple.OData.Client.Tests
         public void RoundEqual()
         {
             Expression<Func<TestEntity, bool>> filter = x => decimal.Round(x.Price) == 1;
-            Assert.Equal("round(Price) eq 1", ODataExpression.FromLinqExpression(filter).ToString());
+            Assert.Equal("round(Price) eq 1.00M", ODataExpression.FromLinqExpression(filter).ToString());
         }
 #endif
 
@@ -338,14 +338,14 @@ namespace Simple.OData.Client.Tests
         public void FloorEqual()
         {
             Expression<Func<TestEntity, bool>> filter = x => decimal.Floor(x.Price) == 1;
-            Assert.Equal("floor(Price) eq 1", ODataExpression.FromLinqExpression(filter).ToString());
+            Assert.Equal("floor(Price) eq 1.00M", ODataExpression.FromLinqExpression(filter).ToString());
         }
 
         [Fact]
         public void CeilingEqual()
         {
             Expression<Func<TestEntity, bool>> filter = x => decimal.Ceiling(x.Price) == 2;
-            Assert.Equal("ceiling(Price) eq 2", ODataExpression.FromLinqExpression(filter).ToString());
+            Assert.Equal("ceiling(Price) eq 2.00M", ODataExpression.FromLinqExpression(filter).ToString());
         }
     }
 }
