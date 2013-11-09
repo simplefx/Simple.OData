@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -19,6 +20,11 @@ namespace Simple.OData.Client
 
         protected DynamicODataExpression(string reference)
             : base(reference)
+        {
+        }
+
+        protected DynamicODataExpression(string reference, object value)
+            : base(reference, value)
         {
         }
 
@@ -44,7 +50,7 @@ namespace Simple.OData.Client
 
         public DynamicMetaObject GetMetaObject(Expression parameter)
         {
-            return new DynamicODataExpression.DynamicDictionaryMetaObject(parameter, this);
+            return new DynamicDictionaryMetaObject(parameter, this);
         }
 
         private class DynamicDictionaryMetaObject : DynamicMetaObject
@@ -71,6 +77,21 @@ namespace Simple.OData.Client
                     ctor = CtorWithString;
                     ctorArguments = new[] { Expression.Constant(binder.Name) };
                 }
+
+                return new DynamicMetaObject(
+                    Expression.New(ctor, ctorArguments),
+                    BindingRestrictions.GetTypeRestriction(Expression, LimitType));
+            }
+
+            public override DynamicMetaObject BindSetMember(SetMemberBinder binder, DynamicMetaObject value)
+            {
+                var ctor = CtorWithStringAndValue;
+                Expression objectExpression = Expression.Constant(value.Value);
+                if (value.HasValue && value.Value.GetType() != typeof (object))
+                {
+                    objectExpression = Expression.Convert(objectExpression, typeof (object));
+                }
+                var ctorArguments = new[] { Expression.Constant(binder.Name), objectExpression };
 
                 return new DynamicMetaObject(
                     Expression.New(ctor, ctorArguments),
@@ -119,6 +140,18 @@ namespace Simple.OData.Client
             }
         }
 
+        private static ConstructorInfo CtorWithStringAndValue
+        {
+            get
+            {
+                return _ctorWithStringAndValue ??
+                    (_ctorWithStringAndValue = GetConstructorInfo().Single(x =>
+                    x.GetParameters().Count() == 2 &&
+                    x.GetParameters()[0].ParameterType == typeof(string) &&
+                    x.GetParameters()[1].ParameterType == typeof(object)));
+            }
+        }
+
         private static ConstructorInfo CtorWithExpressionAndString
         {
             get
@@ -145,6 +178,7 @@ namespace Simple.OData.Client
 
         private static ConstructorInfo[] _ctors;
         private static ConstructorInfo _ctorWithString;
+        private static ConstructorInfo _ctorWithStringAndValue;
         private static ConstructorInfo _ctorWithExpressionAndString;
         private static ConstructorInfo _ctorWithExpressionAndFunction;
     }

@@ -31,6 +31,7 @@ namespace Simple.OData.Client
         IClientWithCommand NavigateTo(ODataExpression expression);
         IClientWithCommand Set(object value);
         IClientWithCommand Set(IDictionary<string, object> value);
+        IClientWithCommand Set(params ODataExpression[] value);
         IClientWithCommand Function(string functionName);
         IClientWithCommand Parameters(IDictionary<string, object> parameters);
         bool FilterIsKey { get; }

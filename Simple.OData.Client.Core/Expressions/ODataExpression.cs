@@ -30,6 +30,12 @@ namespace Simple.OData.Client
             this.Reference = reference;
         }
 
+        protected ODataExpression(string reference, object value)
+        {
+            this.Reference = reference;
+            this.Value = value;
+        }
+
         protected ODataExpression(ExpressionFunction function)
         {
             this.Function = function;
@@ -62,6 +68,11 @@ namespace Simple.OData.Client
         internal static ODataExpression FromValue(object value)
         {
             return new ODataExpression(value);
+        }
+
+        internal static ODataExpression FromAssignment(string reference, object value)
+        {
+            return new ODataExpression(reference, value);
         }
 
         internal static ODataExpression FromFunction(ExpressionFunction function)

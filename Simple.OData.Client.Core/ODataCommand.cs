@@ -274,6 +274,12 @@ namespace Simple.OData.Client
             return _client;
         }
 
+        public IClientWithCommand Set(params ODataExpression[] value)
+        {
+            _entryData = value.Select(x => new KeyValuePair<string, object>(x.Reference, x.Value)).ToIDictionary();
+            return _client;
+        }
+
         public IClientWithCommand Function(string functionName)
         {
             _functionName = functionName;

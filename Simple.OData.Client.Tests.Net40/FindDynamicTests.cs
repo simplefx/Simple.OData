@@ -47,30 +47,30 @@ namespace Simple.OData.Client.Tests
         public void CombineAll()
         {
             var x = ODataDynamic.Expression;
-            var product = _client
+            IEnumerable<dynamic> products = _client
                 .For(x.Products)
                 .OrderBy(x.ProductName)
                 .Skip(2)
                 .Top(1)
                 .Expand(x.Category)
                 .Select(x.Category)
-                .FindEntries().Single();
-            Assert.Equal("Seafood", (product["Category"] as IDictionary<string, object>)["CategoryName"]);
+                .FindEntries();
+            Assert.Equal("Seafood", (products.Single()["Category"] as IDictionary<string, object>)["CategoryName"]);
         }
 
         [Fact]
         public void CombineAllReverse()
         {
             var x = ODataDynamic.Expression;
-            var product = _client
+            IEnumerable<dynamic> products = _client
                 .For(x.Products)
                 .Select(x.Category)
                 .Expand(x.Category)
                 .Top(1)
                 .Skip(2)
                 .OrderBy(x.ProductName)
-                .FindEntries().Single();
-            Assert.Equal("Seafood", (product["Category"] as IDictionary<string, object>)["CategoryName"]);
+                .FindEntries();
+            Assert.Equal("Seafood", (products.Single()["Category"] as IDictionary<string, object>)["CategoryName"]);
         }
 
         [Fact]
@@ -206,7 +206,7 @@ namespace Simple.OData.Client.Tests
             var x = ODataDynamic.Expression;
             var category = _client
                 .For(x.Products)
-                .Key(x.ProductID = 2)
+                .Key(2)
                 .NavigateTo(x.Category)
                 .FindEntry();
             Assert.Equal("Beverages", category["CategoryName"]);
@@ -216,7 +216,7 @@ namespace Simple.OData.Client.Tests
         public void NavigateToMultiple()
         {
             var x = ODataDynamic.Expression;
-            var products = _client
+            IEnumerable<dynamic> products = _client
                 .For(x.Categories)
                 .Key(2)
                 .NavigateTo(x.Products)
@@ -271,7 +271,7 @@ namespace Simple.OData.Client.Tests
         public void AllDerivedClassEntries()
         {
             var x = ODataDynamic.Expression;
-            var transport = _client
+            IEnumerable<dynamic> transport = _client
                 .For(x.Transport)
                 .As(x.Ships)
                 .FindEntries();
@@ -288,7 +288,7 @@ namespace Simple.OData.Client.Tests
                 IncludeResourceTypeInEntryProperties = true,
             };
             var client = new ODataClient(clientSettings);
-            var transport = client
+            IEnumerable<dynamic> transport = client
                 .For(x.Transport)
                 .As(x.Ships)
                 .FindEntries();

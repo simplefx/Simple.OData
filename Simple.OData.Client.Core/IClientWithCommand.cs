@@ -32,6 +32,7 @@ namespace Simple.OData.Client
         new IClientWithCommand NavigateTo(ODataExpression expression);
         new IClientWithCommand Set(object value);
         new IClientWithCommand Set(IDictionary<string, object> value);
+        new IClientWithCommand Set(params ODataExpression[] value);
     }
 
     public interface IClientWithCommand<T> : IClientWithCommand, IClient<T>, ICommand<T>

@@ -193,6 +193,11 @@ namespace Simple.OData.Client
             return this.Command.Set(value);
         }
 
+        public IClientWithCommand Set(params ODataExpression[] value)
+        {
+            return this.Command.Set(value);
+        }
+
         public IClientWithCommand Function(string functionName)
         {
             return this.Command.Function(functionName);
