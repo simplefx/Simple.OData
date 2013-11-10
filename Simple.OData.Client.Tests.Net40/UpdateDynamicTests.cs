@@ -20,7 +20,7 @@ namespace Simple.OData.Client.Tests
 
             _client
                 .For(x.Products)
-                .Key(product.ProductID)
+                .Key(product["ProductID"])
                 .Set(x.UnitPrice = 123m)
                 .UpdateEntry();
 
@@ -92,13 +92,13 @@ namespace Simple.OData.Client.Tests
 
             _client
                 .For(x.Employees)
-                .Key(x.EmployeeID)
+                .Key(employee["EmployeeID"])
                 .Set(x.HireDate = tomorrow)
                 .UpdateEntry();
 
             employee = _client
                 .For(x.Employees)
-                .Key(x.EmployeeID)
+                .Key(employee["EmployeeID"])
                 .FindEntry();
 
             Assert.Equal(tomorrow, employee["HireDate"]);
@@ -119,7 +119,7 @@ namespace Simple.OData.Client.Tests
 
             _client
                 .For(x.Products)
-                .Key(x.ProductID)
+                .Key(product["ProductID"])
                 .Set(x.Category = category)
                 .UpdateEntry();
 
@@ -151,7 +151,7 @@ namespace Simple.OData.Client.Tests
 
             _client
                 .For(x.Products)
-                .Key(x.ProductID)
+                .Key(product["ProductID"])
                 .Set(x.Category = category)
                 .UpdateEntry();
 
@@ -183,8 +183,8 @@ namespace Simple.OData.Client.Tests
 
             _client
                 .For(x.Products)
-                .Key(x.ProductID)
-                .Set(x.Category = (int?)null)
+                .Key(product["ProductID"])
+                .Set(x.Category = null)
                 .UpdateEntry();
 
             product = _client
@@ -213,7 +213,7 @@ namespace Simple.OData.Client.Tests
 
             _client
                 .For(x.Categories)
-                .Key(x.CategoryID)
+                .Key(category["CategoryID"])
                 .Set(x.Products = new[] { product1, product2 })
                 .UpdateEntry();
 

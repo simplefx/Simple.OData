@@ -87,7 +87,7 @@ namespace Simple.OData.Client
             {
                 var ctor = CtorWithStringAndValue;
                 Expression objectExpression = Expression.Constant(value.Value);
-                if (value.HasValue && value.Value.GetType() != typeof (object))
+                if (value.Value != null && value.Value.GetType() != typeof (object))
                 {
                     objectExpression = Expression.Convert(objectExpression, typeof (object));
                 }
