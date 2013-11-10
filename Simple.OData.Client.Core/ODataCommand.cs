@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
@@ -135,7 +137,16 @@ namespace Simple.OData.Client
 
         public IClientWithCommand Key(params object[] key)
         {
-            _keyValues = key.ToList();
+            if (key != null && key.Length == 1 && IsAnonymousType(key.First().GetType()))
+            {
+                var namedKeyValues = key.First();
+                _namedKeyValues = namedKeyValues.GetType().GetProperties()
+                    .Select(x => new KeyValuePair<string, object>(x.Name, x.GetValue(namedKeyValues, null))).ToIDictionary();
+            }
+            else
+            {
+                _keyValues = key.ToList();
+            }
             return _client;
         }
 
@@ -368,8 +379,8 @@ namespace Simple.OData.Client
                     }
                     if (found)
                     {
-                        var value = keyValue is ODataExpression ? 
-                            (keyValue as ODataExpression).Value : 
+                        var value = keyValue is ODataExpression ?
+                            (keyValue as ODataExpression).Value :
                             keyValue;
                         namedKeyValues.Add(keyNames[index], value);
                     }
@@ -495,8 +506,8 @@ namespace Simple.OData.Client
             {
                 ok = expression.ExtractEqualityComparisons(namedKeyValues);
             }
-            return ok && 
-                this.Table.GetKeyNames().Count == namedKeyValues.Count() && 
+            return ok &&
+                this.Table.GetKeyNames().Count == namedKeyValues.Count() &&
                 this.Table.GetKeyNames().All(namedKeyValues.ContainsKey) ? namedKeyValues : null;
         }
 
@@ -531,6 +542,16 @@ namespace Simple.OData.Client
                 default:
                     throw Utils.NotSupportedExpression(expression);
             }
+        }
+
+        private static bool IsAnonymousType(Type type)
+        {
+            // HACK: The only way to detect anonymous types right now.
+            return Attribute.IsDefined(type, typeof(CompilerGeneratedAttribute), false)
+                       && type.IsGenericType && type.Name.Contains("AnonymousType")
+                       && (type.Name.StartsWith("<>", StringComparison.OrdinalIgnoreCase) ||
+                           type.Name.StartsWith("VB$", StringComparison.OrdinalIgnoreCase))
+                       && (type.Attributes & TypeAttributes.NotPublic) == TypeAttributes.NotPublic;
         }
     }
 
