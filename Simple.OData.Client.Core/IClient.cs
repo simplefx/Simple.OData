@@ -19,7 +19,9 @@ namespace Simple.OData.Client
         int DeleteEntry();
         int DeleteEntries();
         void LinkEntry(string linkName, IDictionary<string, object> linkedEntryKey);
+        void LinkEntry(ODataExpression expression, IDictionary<string, object> linkedEntryKey);
         void UnlinkEntry(string linkName);
+        void UnlinkEntry(ODataExpression expression);
         IEnumerable<IDictionary<string, object>> ExecuteFunction(string functionName, IDictionary<string, object> parameters);
         T ExecuteFunctionAsScalar<T>(string functionName, IDictionary<string, object> parameters) where T : class, new();
         T[] ExecuteFunctionAsArray<T>(string functionName, IDictionary<string, object> parameters) where T : class, new();
@@ -35,7 +37,9 @@ namespace Simple.OData.Client
         Task<int> DeleteEntryAsync();
         Task<int> DeleteEntriesAsync();
         Task LinkEntryAsync(string linkName, IDictionary<string, object> linkedEntryKey);
+        Task LinkEntryAsync(ODataExpression expression, IDictionary<string, object> linkedEntryKey);
         Task UnlinkEntryAsync(string linkName);
+        Task UnlinkEntryAsync(ODataExpression expression);
         Task<IEnumerable<IDictionary<string, object>>> ExecuteFunctionAsync(string functionName, IDictionary<string, object> parameters);
         Task<T> ExecuteFunctionAsScalarAsync<T>(string functionName, IDictionary<string, object> parameters) where T : class, new();
         Task<T[]> ExecuteFunctionAsArrayAsync<T>(string functionName, IDictionary<string, object> parameters) where T : class, new();
@@ -51,7 +55,7 @@ namespace Simple.OData.Client
         new T FindEntry();
         new T InsertEntry(bool resultRequired = true);
         new void LinkEntry<U>(U linkedEntryKey, string linkName = null);
-        new void LinkEntry<U>(U linkedEntryKey, Expression<Func<T, U>> expression);
+        new void LinkEntry<U>(Expression<Func<T, U>> expression, U linkedEntryKey);
         new void UnlinkEntry<U>(string linkName = null);
         new void UnlinkEntry<U>(Expression<Func<T, U>> expression);
         new IEnumerable<T> ExecuteFunction(string functionName, IDictionary<string, object> parameters);
@@ -63,7 +67,7 @@ namespace Simple.OData.Client
         new Task<T> FindEntryAsync();
         new Task<T> InsertEntryAsync(bool resultRequired = true);
         new Task LinkEntryAsync<U>(U linkedEntryKey, string linkName = null);
-        new Task LinkEntryAsync<U>(U linkedEntryKey, Expression<Func<T, U>> expression);
+        new Task LinkEntryAsync<U>(Expression<Func<T, U>> expression, U linkedEntryKey);
         new Task UnlinkEntryAsync<U>(string linkName = null);
         new Task UnlinkEntryAsync<U>(Expression<Func<T, U>> expression);
         new Task<IEnumerable<T>> ExecuteFunctionAsync(string functionName, IDictionary<string, object> parameters);

@@ -20,7 +20,7 @@ namespace Simple.OData.Client.Tests
 
             _client
                 .For(x.Products)
-                .Key(x.ProductID)
+                .Key(product.ProductID)
                 .Set(x.UnitPrice = 123m)
                 .UpdateEntry();
 
