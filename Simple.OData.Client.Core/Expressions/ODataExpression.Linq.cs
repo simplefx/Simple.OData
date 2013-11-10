@@ -56,7 +56,7 @@ namespace Simple.OData.Client
             throw Utils.NotSupportedExpression(expression);
         }
 
-        private static ODataExpression ParseMemberExpression(Expression expression)
+        private static ODataExpression ParseMemberExpression(Expression expression, string memberNames = null)
         {
             var memberExpression = expression as MemberExpression;
             if (memberExpression.Expression == null)
@@ -65,22 +65,25 @@ namespace Simple.OData.Client
             }
             else
             {
+                var memberName = memberExpression.Member.Name;
+                memberNames = memberNames == null ? memberName : string.Join(".", memberName, memberNames);
                 switch (memberExpression.Expression.NodeType)
                 {
                     case ExpressionType.Parameter:
-                        return new ODataExpression(memberExpression.Member.Name);
+                        return new ODataExpression(memberName);
                     case ExpressionType.Constant:
-                        return ParseConstantExpression(memberExpression.Expression, memberExpression.Member.Name);
+                        return ParseConstantExpression(memberExpression.Expression, memberNames);
                     case ExpressionType.MemberAccess:
                         FunctionMapping mapping;
-                        if (FunctionMapping.SupportedFunctions.TryGetValue(new ExpressionFunction.FunctionCall(memberExpression.Member.Name, 0), out mapping))
+                        if (FunctionMapping.SupportedFunctions.TryGetValue(
+                            new ExpressionFunction.FunctionCall(memberName, 0), out mapping))
                         {
                             var contextExpression = memberExpression.Expression as MemberExpression;
-                            return FromFunction(memberExpression.Member.Name, contextExpression.Member.Name, new List<object>());
+                            return FromFunction(memberName, contextExpression.Member.Name, new List<object>());
                         }
                         else
                         {
-                            return ParseMemberExpression(memberExpression.Expression as MemberExpression);
+                            return ParseMemberExpression(memberExpression.Expression as MemberExpression, memberNames);
                         }
 
                     default:
@@ -125,13 +128,13 @@ namespace Simple.OData.Client
             return ParseLinqExpression(lambdaExpression.Body);
         }
 
-        private static ODataExpression ParseConstantExpression(Expression expression, string memberName = null)
+        private static ODataExpression ParseConstantExpression(Expression expression, string memberNames = null)
         {
             var constExpression = expression as ConstantExpression;
 
             if (constExpression.Value is Expression)
             {
-                return ParseConstantExpression(constExpression.Value as Expression, memberName);
+                return ParseConstantExpression(constExpression.Value as Expression, memberNames);
             }
             else
             {
@@ -139,19 +142,11 @@ namespace Simple.OData.Client
                 {
                     return new ODataExpression(constExpression.Value);
                 }
-                else if (constExpression.Type.GetProperties().Any(x => x.Name == memberName))
-                {
-                    return new ODataExpression(constExpression.Type.GetProperties().Single(x => x.Name == memberName)
-                        .GetValue(constExpression.Value, null));
-                }
-                else if (constExpression.Type.GetFields().Any(x => x.Name == memberName))
-                {
-                    return new ODataExpression(constExpression.Type.GetFields().Single(x => x.Name == memberName)
-                        .GetValue(constExpression.Value));
-                }
                 else
                 {
-                    throw Utils.NotSupportedExpression(expression);
+                    return new ODataExpression(EvaluateConstValue(
+                        constExpression.Type, constExpression.Value, 
+                        memberNames == null ? new List<string>() : memberNames.Split('.').ToList()));
                 }
             }
         }
@@ -239,6 +234,37 @@ namespace Simple.OData.Client
                 value = pi.GetValue(null, null);
             }
             return value;
+        }
+
+        private static object EvaluateConstValue(Type type, object value, IList<string>memberNames)
+        {
+            string memberName = null;
+            if (memberNames.Any())
+            {
+                memberName = memberNames.First();
+                memberNames = memberNames.Skip(1).ToList();
+            }
+
+            Type itemType;
+            object itemValue;
+            if (type.GetProperties().Any(x => x.Name == memberName))
+            {
+                var property = type.GetProperties().Single(x => x.Name == memberName);
+                itemType = property.PropertyType;
+                itemValue = property.GetValue(value, null);
+            }
+            else if (type.GetFields().Any(x => x.Name == memberName))
+            {
+                var field = type.GetFields().Single(x => x.Name == memberName);
+                itemType = field.FieldType;
+                itemValue = field.GetValue(value);
+            }
+            else
+            {
+                return value;
+            }
+
+            return EvaluateConstValue(itemType, itemValue, memberNames);
         }
     }
 }
