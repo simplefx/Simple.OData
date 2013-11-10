@@ -76,6 +76,29 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void UpdateObjectValue()
+        {
+            var product = _client
+                .For<Product>()
+                .Set(new { ProductName = "Test1", UnitPrice = 18m })
+                .InsertEntry();
+
+            product.UnitPrice = 456m;
+            _client
+                .For<Product>()
+                .Key(product)
+                .Set(product)
+                .UpdateEntry();
+
+            product = _client
+                .For<Product>()
+                .Filter(x => x.ProductName == "Test1")
+                .FindEntry();
+
+            Assert.Equal(456m, product.UnitPrice);
+        }
+
+        [Fact]
         public void UpdateDate()
         {
             var today = DateTime.Now.Date;

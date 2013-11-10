@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
@@ -134,9 +135,45 @@ namespace Simple.OData.Client
             get { return _lazyEntityTypes.Value.AsEnumerable(); }
         }
 
+        public EdmEntityType FindEntityType(string typeName)
+        {
+            Func<string, EdmEntityType> TryFind = x =>
+            {
+                x = x.Homogenize();
+                return _lazyEntityTypes.Value.SingleOrDefault(t => t.Name.Homogenize().Equals(x));
+            };
+
+            var entityType = TryFind(typeName)
+                   ?? TryFind(typeName.Singularize())
+                   ?? TryFind(typeName.Pluralize());
+
+            if (entityType == null)
+                throw new UnresolvableObjectException(typeName, string.Format("Entity type {0} not found", typeName));
+
+            return entityType;
+        }
+
         public IEnumerable<EdmComplexType> ComplexTypes
         {
             get { return _lazyComplexTypes.Value.AsEnumerable(); }
+        }
+
+        public EdmComplexType FindComplexType(string typeName)
+        {
+            Func<string, EdmComplexType> TryFind = x =>
+            {
+                x = x.Homogenize();
+                return _lazyComplexTypes.Value.SingleOrDefault(t => t.Name.Homogenize().Equals(x));
+            };
+
+            var complexType = TryFind(typeName)
+                   ?? TryFind(typeName.Singularize())
+                   ?? TryFind(typeName.Pluralize());
+
+            if (complexType == null)
+                throw new UnresolvableObjectException(typeName, string.Format("Complex type {0} not found", typeName));
+
+            return complexType;
         }
 
         private TableCollection CreateTableCollection()

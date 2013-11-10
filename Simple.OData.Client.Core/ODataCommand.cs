@@ -406,7 +406,9 @@ namespace Simple.OData.Client
             {
                 commandText += _client.Schema.FindTable(_collectionName).ActualName;
                 if (!string.IsNullOrEmpty(_derivedCollectionName))
-                    commandText += "/" + string.Join(".", _client.Schema.TypesNamespace, _derivedCollectionName);
+                    commandText += "/" + string.Join(".", 
+                        _client.Schema.TypesNamespace, 
+                        _client.Schema.FindEntityType(_derivedCollectionName).Name);
             }
             else if (!string.IsNullOrEmpty(_linkName))
             {
