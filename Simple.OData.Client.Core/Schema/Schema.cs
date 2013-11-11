@@ -8,7 +8,7 @@ namespace Simple.OData.Client
 {
     class Schema : ISchema
     {
-        private static readonly SimpleDictionary<string, Schema> Instances = new SimpleDictionary<string, Schema>();
+        private static readonly SimpleDictionary<string, ISchema> Instances = new SimpleDictionary<string, ISchema>();
 
         private readonly SchemaProvider _schemaProvider;
         private readonly string _typesNamespace;
@@ -205,6 +205,11 @@ namespace Simple.OData.Client
         internal static ISchema Get(SchemaProvider schemaProvider)
         {
             return new Schema(schemaProvider);
+        }
+
+        internal static void Add(string urlBase, ISchema schema)
+        {
+            Instances.GetOrAdd(urlBase, sp => schema);
         }
 
         internal static void ClearCache()

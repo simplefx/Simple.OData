@@ -86,24 +86,39 @@
     <Compile Include="..\CommonAssemblyVersion.cs">
       <Link>Properties\CommonAssemblyVersion.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Core\Entities\Category.cs">
+      <Link>Entities\Category.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Core\Entities\Customer.cs">
+      <Link>Entities\Customer.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Core\Entities\Employee.cs">
+      <Link>Entities\Employee.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Core\Entities\Order.cs">
+      <Link>Entities\Order.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Core\Entities\OrderDetail.cs">
+      <Link>Entities\OrderDetail.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Core\Entities\Product.cs">
+      <Link>Entities\Product.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Core\Entities\Ship.cs">
+      <Link>Entities\Ship.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Core\Entities\Transport.cs">
+      <Link>Entities\Transport.cs</Link>
+    </Compile>
     <Compile Include="AsyncTests.cs" />
     <Compile Include="DeleteDynamicTests.cs" />
     <Compile Include="DeleteTypedTests.cs" />
-    <Compile Include="Entities\Category.cs" />
-    <Compile Include="Extensions\DictionaryExtensionsTests.cs" />
-    <Compile Include="Entities\Customer.cs" />
     <Compile Include="DeleteTests.cs" />
-    <Compile Include="Entities\Employee.cs" />
-    <Compile Include="Extensions\DateTimeExtensionsTests.cs" />
-    <Compile Include="Extensions\EnumerableExtensionTests.cs" />
-    <Compile Include="Extensions\StringExtensionTests.cs" />
     <Compile Include="Extensions\XElementExtensionsTests.cs" />
     <Compile Include="Extensions\XmlAttributesAsDictionaryReadTests.cs" />
     <Compile Include="Extensions\XmlAttributesAsDictionaryWriteTests.cs" />
     <Compile Include="Extensions\XmlElementAsDictionaryReadTests.cs" />
     <Compile Include="Extensions\XmlElementAsDictionaryWriteTests.cs" />
-    <Compile Include="DynamicExpressionTests.cs" />
-    <Compile Include="DynamicFilterAsKeyTests.cs" />
     <Compile Include="FindDynamicTests.cs" />
     <Compile Include="FindTypedTests.cs" />
     <Compile Include="FunctionTests.cs" />
@@ -114,10 +129,6 @@
     <Compile Include="LinkTests.cs" />
     <Compile Include="ClientTests.cs" />
     <Compile Include="FindTests.cs" />
-    <Compile Include="FeedReaderTests.cs" />
-    <Compile Include="Entities\Order.cs" />
-    <Compile Include="Entities\OrderDetail.cs" />
-    <Compile Include="Entities\Product.cs" />
     <Compile Include="LinkTypedTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\XmlSamples.Designer.cs">
@@ -126,11 +137,7 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="SchemaTests.cs" />
-    <Compile Include="Entities\Ship.cs" />
     <Compile Include="TestBase.cs" />
-    <Compile Include="Entities\Transport.cs" />
-    <Compile Include="TypedExpressionsTests.cs" />
-    <Compile Include="TypedFilterAsKeyTests.cs" />
     <Compile Include="UpdateDynamicTests.cs" />
     <Compile Include="UpdateTests.cs" />
     <Compile Include="UpdateTypedTests.cs" />
@@ -145,56 +152,6 @@
     <EmbeddedResource Include="Properties\XmlSamples.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>XmlSamples.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Resources\Colors.edmx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Resources\Facebook.edmx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Resources\Flickr.edmx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Resources\GoogleMaps.edmx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Resources\iPhone.edmx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Resources\Twitter.edmx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Resources\YouTube.edmx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Resources\Nested.edmx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Resources\ArrayOfNested.edmx">
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\SingleProduct.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\MultipleProducts.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\MultipleCategoriesWithProducts.xml" />
-    <EmbeddedResource Include="Resources\MultipleProductsWithCategory.xml" />
-    <EmbeddedResource Include="Resources\SingleCategoryWithProducts.xml" />
-    <EmbeddedResource Include="Resources\SingleProductWithCategory.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\SingleProductWithComplexProperty.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\SingleProductWithCollectionOfPrimitiveProperties.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Resources\SingleProductWithCollectionOfComplexProperties.xml">
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
@@ -213,9 +170,13 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\SingleProductWithEmptyCollectionOfComplexProperties.xml" />
+    <EmbeddedResource Include="Resources\TwitterStatusesSample.txt" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\XmlWithDefaultNamespace.txt" />
+    <EmbeddedResource Include="Resources\XmlWithNoNamespace.txt" />
+    <EmbeddedResource Include="Resources\XmlWithPrefixedNamespace.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" />
   <Import Project="..\Solutions\packages\Microsoft.Bcl.Build.1.0.10\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\Solutions\packages\Microsoft.Bcl.Build.1.0.10\tools\Microsoft.Bcl.Build.targets')" />

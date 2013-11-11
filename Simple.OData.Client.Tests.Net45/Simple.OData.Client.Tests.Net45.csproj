@@ -70,6 +70,30 @@
     <Compile Include="..\CommonAssemblyVersion.cs">
       <Link>Properties\CommonAssemblyVersion.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Core\Entities\Category.cs">
+      <Link>Entities\Category.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Core\Entities\Customer.cs">
+      <Link>Entities\Customer.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Core\Entities\Employee.cs">
+      <Link>Entities\Employee.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Core\Entities\Order.cs">
+      <Link>Entities\Order.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Core\Entities\OrderDetail.cs">
+      <Link>Entities\OrderDetail.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Core\Entities\Product.cs">
+      <Link>Entities\Product.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Core\Entities\Ship.cs">
+      <Link>Entities\Ship.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Core\Entities\Transport.cs">
+      <Link>Entities\Transport.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\AsyncTests.cs">
       <Link>AsyncTests.cs</Link>
     </Compile>
@@ -85,48 +109,6 @@
     <Compile Include="..\Simple.OData.Client.Tests.Net40\DeleteTypedTests.cs">
       <Link>DeleteTypedTests.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\DynamicExpressionTests.cs">
-      <Link>DynamicExpressionTests.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\DynamicFilterAsKeyTests.cs">
-      <Link>DynamicFilterAsKeyTests.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\Entities\Category.cs">
-      <Link>Entities\Category.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\Entities\Customer.cs">
-      <Link>Entities\Customer.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\Entities\Employee.cs">
-      <Link>Entities\Employee.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\Entities\Order.cs">
-      <Link>Entities\Order.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\Entities\OrderDetail.cs">
-      <Link>Entities\OrderDetail.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\Entities\Product.cs">
-      <Link>Entities\Product.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\Entities\Ship.cs">
-      <Link>Entities\Ship.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\Entities\Transport.cs">
-      <Link>Entities\Transport.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\Extensions\DateTimeExtensionsTests.cs">
-      <Link>Extensions\DateTimeExtensionsTests.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\Extensions\DictionaryExtensionsTests.cs">
-      <Link>Extensions\DictionaryExtensionsTests.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\Extensions\EnumerableExtensionTests.cs">
-      <Link>Extensions\EnumerableExtensionTests.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\Extensions\StringExtensionTests.cs">
-      <Link>Extensions\StringExtensionTests.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\Extensions\XElementExtensionsTests.cs">
       <Link>Extensions\XElementExtensionsTests.cs</Link>
     </Compile>
@@ -141,9 +123,6 @@
     </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\Extensions\XmlElementAsDictionaryWriteTests.cs">
       <Link>Extensions\XmlElementAsDictionaryWriteTests.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\FeedReaderTests.cs">
-      <Link>FeedReaderTests.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\FindDynamicTests.cs">
       <Link>FindDynamicFilterTests.cs</Link>
@@ -190,12 +169,6 @@
     <Compile Include="..\Simple.OData.Client.Tests.Net40\TestBase.cs">
       <Link>TestBase.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\TypedExpressionsTests.cs">
-      <Link>TypedExpressionsTests.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\TypedFilterAsKeyTests.cs">
-      <Link>TypedFilterAsKeyTests.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\UpdateDynamicTests.cs">
       <Link>UpdateDynamicTests.cs</Link>
     </Compile>
@@ -218,84 +191,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>XmlSamples.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="..\Simple.OData.Client.Tests.Net40\Resources\Colors.edmx">
-      <SubType>Designer</SubType>
-      <Link>Resources\Colors.edmx</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Simple.OData.Client.Tests.Net40\Resources\Facebook.edmx">
-      <SubType>Designer</SubType>
-      <Link>Resources\Facebook.edmx</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Simple.OData.Client.Tests.Net40\Resources\Flickr.edmx">
-      <SubType>Designer</SubType>
-      <Link>Resources\Flickr.edmx</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Simple.OData.Client.Tests.Net40\Resources\GoogleMaps.edmx">
-      <SubType>Designer</SubType>
-      <Link>Resources\GoogleMaps.edmx</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Simple.OData.Client.Tests.Net40\Resources\iPhone.edmx">
-      <SubType>Designer</SubType>
-      <Link>Resources\iPhone.edmx</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Simple.OData.Client.Tests.Net40\Resources\Twitter.edmx">
-      <SubType>Designer</SubType>
-      <Link>Resources\Twitter.edmx</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Simple.OData.Client.Tests.Net40\Resources\YouTube.edmx">
-      <SubType>Designer</SubType>
-      <Link>Resources\YouTube.edmx</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Simple.OData.Client.Tests.Net40\Resources\Nested.edmx">
-      <SubType>Designer</SubType>
-      <Link>Resources\Nested.edmx</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Simple.OData.Client.Tests.Net40\Resources\ArrayOfNested.edmx">
-      <SubType>Designer</SubType>
-      <Link>Resources\ArrayOfNested.edmx</Link>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="..\Simple.OData.Client.Tests.Net40\Resources\SingleProduct.xml">
-      <Link>Resources\SingleProduct.xml</Link>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="..\Simple.OData.Client.Tests.Net40\Resources\MultipleProducts.xml">
-      <Link>Resources\MultipleProducts.xml</Link>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="..\Simple.OData.Client.Tests.Net40\Resources\MultipleCategoriesWithProducts.xml">
-      <Link>Resources\MultipleCategoriesWithProducts.xml</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Simple.OData.Client.Tests.Net40\Resources\MultipleProductsWithCategory.xml">
-      <Link>Resources\MultipleProductsWithCategory.xml</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Simple.OData.Client.Tests.Net40\Resources\SingleCategoryWithProducts.xml">
-      <Link>Resources\SingleCategoryWithProducts.xml</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Simple.OData.Client.Tests.Net40\Resources\SingleProductWithCategory.xml">
-      <Link>Resources\SingleProductWithCategory.xml</Link>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="..\Simple.OData.Client.Tests.Net40\Resources\SingleProductWithComplexProperty.xml">
-      <Link>Resources\SingleProductWithComplexProperty.xml</Link>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="..\Simple.OData.Client.Tests.Net40\Resources\SingleProductWithCollectionOfPrimitiveProperties.xml">
-      <Link>Resources\SingleProductWithCollectionOfPrimitiveProperties.xml</Link>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="..\Simple.OData.Client.Tests.Net40\Resources\SingleProductWithCollectionOfComplexProperties.xml">
-      <Link>Resources\SingleProductWithCollectionOfComplexProperties.xml</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Simple.OData.Client.Tests.Net40\Resources\SingleProductWithEmptyCollectionOfComplexProperties.xml">
-      <Link>Resources\SingleProductWithEmptyCollectionOfComplexProperties.xml</Link>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Simple.OData.Client.Core\Simple.OData.Client.Core.csproj">
@@ -315,7 +210,20 @@
       <Name>Simple.OData.NorthwindModel</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="..\Simple.OData.Client.Tests.Net40\Resources\TwitterStatusesSample.txt">
+      <Link>Resources\TwitterStatusesSample.txt</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Simple.OData.Client.Tests.Net40\Resources\XmlWithDefaultNamespace.txt">
+      <Link>Resources\XmlWithDefaultNamespace.txt</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Simple.OData.Client.Tests.Net40\Resources\XmlWithNoNamespace.txt">
+      <Link>Resources\XmlWithNoNamespace.txt</Link>
+    </EmbeddedResource>
+    <EmbeddedResource Include="..\Simple.OData.Client.Tests.Net40\Resources\XmlWithPrefixedNamespace.txt">
+      <Link>Resources\XmlWithPrefixedNamespace.txt</Link>
+    </EmbeddedResource>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

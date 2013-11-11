@@ -198,24 +198,5 @@ namespace Simple.OData.Client.Tests
             Assert.Equal(1, result.EntityTypes.Count());
             Assert.Equal(schemaName, result.EntityTypes.First().Name);
         }
-
-#if NETFX_CORE
-        private string GetResourceAsString(string resourceName)
-        {
-            return ResourceLoader.LoadFileAsString("Resources", resourceName);
-        }
-#else
-        private string GetResourceAsString(string resourceName)
-        {
-            var assembly = Assembly.GetExecutingAssembly();
-            var resourceNames = assembly.GetManifestResourceNames();
-            string completeResourceName = resourceNames.FirstOrDefault(o => o.EndsWith(resourceName, StringComparison.CurrentCultureIgnoreCase));
-            using (Stream resourceStream = assembly.GetManifestResourceStream(completeResourceName))
-            {
-                TextReader reader = new StreamReader(resourceStream);
-                return reader.ReadToEnd();
-            }
-        }
-#endif
     }
 }

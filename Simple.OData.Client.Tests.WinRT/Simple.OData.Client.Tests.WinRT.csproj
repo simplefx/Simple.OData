@@ -119,6 +119,30 @@
     <Compile Include="..\CommonAssemblyVersion.cs">
       <Link>Properties\CommonAssemblyVersion.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Core\Entities\Category.cs">
+      <Link>Entities\Category.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Core\Entities\Customer.cs">
+      <Link>Entities\Customer.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Core\Entities\Employee.cs">
+      <Link>Entities\Employee.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Core\Entities\Order.cs">
+      <Link>Entities\Order.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Core\Entities\OrderDetail.cs">
+      <Link>Entities\OrderDetail.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Core\Entities\Product.cs">
+      <Link>Entities\Product.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Core\Entities\Ship.cs">
+      <Link>Entities\Ship.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Core\Entities\Transport.cs">
+      <Link>Entities\Transport.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\AsyncTests.cs">
       <Link>AsyncTests.cs</Link>
     </Compile>
@@ -130,39 +154,6 @@
     </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\DeleteTypedTests.cs">
       <Link>DeleteTypedTests.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\DynamicExpressionTests.cs">
-      <Link>DynamicExpressionTests.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\DynamicFilterAsKeyTests.cs">
-      <Link>DynamicFilterAsKeyTests.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\Entities\Category.cs">
-      <Link>Entities\Category.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\Entities\Customer.cs">
-      <Link>Entities\Customer.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\Entities\Employee.cs">
-      <Link>Entities\Employee.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\Entities\Order.cs">
-      <Link>Entities\Order.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\Entities\OrderDetail.cs">
-      <Link>Entities\OrderDetail.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\Entities\Product.cs">
-      <Link>Entities\Product.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\Entities\Ship.cs">
-      <Link>Entities\Ship.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\Entities\Transport.cs">
-      <Link>Entities\Transport.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\FeedReaderTests.cs">
-      <Link>FeedReaderTests.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\FindDynamicTests.cs">
       <Link>FindDynamicFilterTests.cs</Link>
@@ -184,12 +175,6 @@
     </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\LinkTypedTests.cs">
       <Link>LinkTypedTests.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\TypedExpressionsTests.cs">
-      <Link>TypedExpressionsTests.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\TypedFilterAsKeyTests.cs">
-      <Link>TypedFilterAsKeyTests.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\UpdateDynamicTests.cs">
       <Link>UpdateDynamicTests.cs</Link>
@@ -217,18 +202,6 @@
     </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\DeleteTests.cs">
       <Link>DeleteTests.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\Extensions\DateTimeExtensionsTests.cs">
-      <Link>Extensions\DateTimeExtensionsTests.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\Extensions\DictionaryExtensionsTests.cs">
-      <Link>Extensions\DictionaryExtensionsTests.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\Extensions\EnumerableExtensionTests.cs">
-      <Link>Extensions\EnumerableExtensionTests.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\Extensions\StringExtensionTests.cs">
-      <Link>Extensions\StringExtensionTests.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\Extensions\XElementExtensionsTests.cs">
       <Link>Extensions\XElementExtensionsTests.cs</Link>
@@ -273,24 +246,6 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-    <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\Colors.edmx">
-      <Link>Resources\Colors.edmx</Link>
-    </Content>
-    <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\Facebook.edmx">
-      <Link>Resources\Facebook.edmx</Link>
-    </Content>
-    <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\Flickr.edmx">
-      <Link>Resources\Flickr.edmx</Link>
-    </Content>
-    <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\GoogleMaps.edmx">
-      <Link>Resources\GoogleMaps.edmx</Link>
-    </Content>
-    <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\iPhone.edmx">
-      <Link>Resources\iPhone.edmx</Link>
-    </Content>
-    <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\Twitter.edmx">
-      <Link>Resources\Twitter.edmx</Link>
-    </Content>
     <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\TwitterStatusesSample.txt">
       <Link>Resources\TwitterStatusesSample.txt</Link>
     </Content>
@@ -302,45 +257,6 @@
     </Content>
     <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\XmlWithPrefixedNamespace.txt">
       <Link>Resources\XmlWithPrefixedNamespace.txt</Link>
-    </Content>
-    <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\YouTube.edmx">
-      <Link>Resources\YouTube.edmx</Link>
-    </Content>
-    <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\Nested.edmx">
-      <Link>Resources\Nested.edmx</Link>
-    </Content>
-    <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\ArrayOfNested.edmx">
-      <Link>Resources\ArrayOfNested.edmx</Link>
-    </Content>
-    <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\SingleProduct.xml">
-      <Link>Resources\SingleProduct.xml</Link>
-    </Content>
-    <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\MultipleProducts.xml">
-      <Link>Resources\MultipleProducts.xml</Link>
-    </Content>
-    <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\MultipleCategoriesWithProducts.xml">
-      <Link>Resources\MultipleCategoriesWithProducts.xml</Link>
-    </Content>
-    <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\MultipleProductsWithCategory.xml">
-      <Link>Resources\MultipleProductsWithCategory.xml</Link>
-    </Content>
-    <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\SingleCategoryWithProducts.xml">
-      <Link>Resources\SingleCategoryWithProducts.xml</Link>
-    </Content>
-    <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\SingleProductWithCategory.xml">
-      <Link>Resources\SingleProductWithCategory.xml</Link>
-    </Content>
-    <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\SingleProductWithComplexProperty.xml">
-      <Link>Resources\SingleProductWithComplexProperty.xml</Link>
-    </Content>
-    <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\SingleProductWithCollectionOfPrimitiveProperties.xml">
-      <Link>Resources\SingleProductWithCollectionOfPrimitiveProperties.xml</Link>
-    </Content>
-    <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\SingleProductWithCollectionOfComplexProperties.xml">
-      <Link>Resources\SingleProductWithCollectionOfComplexProperties.xml</Link>
-    </Content>
-    <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\SingleProductWithEmptyCollectionOfComplexProperties.xml">
-      <Link>Resources\SingleProductWithEmptyCollectionOfComplexProperties.xml</Link>
     </Content>
     <None Include="Simple.OData.Client.Tests.WinRT_TemporaryKey.pfx" />
   </ItemGroup>
