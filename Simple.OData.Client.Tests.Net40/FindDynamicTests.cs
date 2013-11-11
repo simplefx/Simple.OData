@@ -50,6 +50,7 @@ namespace Simple.OData.Client.Tests
             IEnumerable<dynamic> products = _client
                 .For(x.Products)
                 .OrderBy(x.ProductName)
+                .ThenByDescending(x.UnitPrice)
                 .Skip(2)
                 .Top(1)
                 .Expand(x.Category)
@@ -69,6 +70,7 @@ namespace Simple.OData.Client.Tests
                 .Top(1)
                 .Skip(2)
                 .OrderBy(x.ProductName)
+                .ThenByDescending(x.UnitPrice)
                 .FindEntries();
             Assert.Equal("Seafood", (products.Single()["Category"] as IDictionary<string, object>)["CategoryName"]);
         }

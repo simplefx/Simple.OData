@@ -237,6 +237,7 @@ namespace Simple.OData.Client
 
         public IClientWithCommand OrderBy(IEnumerable<KeyValuePair<string, bool>> columns)
         {
+            _orderbyColumns.Clear();
             _orderbyColumns.AddRange(columns);
             return _client;
         }
@@ -251,6 +252,17 @@ namespace Simple.OData.Client
             return OrderBy(columns.Select(x => new KeyValuePair<string, bool>(x.Reference, false)));
         }
 
+        public IClientWithCommand ThenBy(params string[] columns)
+        {
+            _orderbyColumns.AddRange(columns.Select(x => new KeyValuePair<string, bool>(x, false)));
+            return _client;
+        }
+
+        public IClientWithCommand ThenBy(params ODataExpression[] columns)
+        {
+            return ThenBy(columns.Select(x => x.Reference).ToArray());
+        }
+
         public IClientWithCommand OrderByDescending(params string[] columns)
         {
             return OrderBy(columns.Select(x => new KeyValuePair<string, bool>(x, true)));
@@ -259,6 +271,17 @@ namespace Simple.OData.Client
         public IClientWithCommand OrderByDescending(params ODataExpression[] columns)
         {
             return OrderBy(columns.Select(x => new KeyValuePair<string, bool>(x.Reference, true)));
+        }
+
+        public IClientWithCommand ThenByDescending(params string[] columns)
+        {
+            _orderbyColumns.AddRange(columns.Select(x => new KeyValuePair<string, bool>(x, true)));
+            return _client;
+        }
+
+        public IClientWithCommand ThenByDescending(params ODataExpression[] columns)
+        {
+            return ThenByDescending(columns.Select(x => x.Reference).ToArray());
         }
 
         public IClientWithCommand Count()
@@ -698,15 +721,27 @@ namespace Simple.OData.Client
             return CastClient;
         }
 
+        public IClientWithCommand<T> ThenBy(Expression<Func<T, object>> expression)
+        {
+            base.ThenBy(ExtractColumnNames(expression).ToArray());
+            return CastClient;
+        }
+
         public new IClientWithCommand<T> OrderByDescending(params string[] columns)
         {
-            base.OrderByDescending(columns);
+            base.ThenBy(columns);
             return CastClient;
         }
 
         public IClientWithCommand<T> OrderByDescending(Expression<Func<T, object>> expression)
         {
             base.OrderBy(ExtractColumnNames(expression).Select(x => new KeyValuePair<string, bool>(x, true)));
+            return CastClient;
+        }
+
+        public IClientWithCommand<T> ThenByDescending(Expression<Func<T, object>> expression)
+        {
+            base.ThenByDescending(ExtractColumnNames(expression).ToArray());
             return CastClient;
         }
 

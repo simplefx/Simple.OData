@@ -7,7 +7,7 @@ namespace Simple.OData.Client.Extensions
 {
     internal static class DictionaryExtensions
     {
-        public static T AsObjectOfType<T>(this IDictionary<string, object> source)
+        public static T AsObjectOf<T>(this IDictionary<string, object> source)
             where T : class, new()
         {
             if (source == null)
@@ -15,10 +15,10 @@ namespace Simple.OData.Client.Extensions
 
             var value = new T();
             var type = value.GetType();
-            return (T)AsObjectOfType(source, type, value);
+            return (T)AsObjectOf(source, type, value);
         }
 
-        public static object AsObjectOfType(this IDictionary<string, object> source, Type type, object value = null)
+        public static object AsObjectOf(this IDictionary<string, object> source, Type type, object value = null)
         {
             if (source == null)
                 return null;
@@ -45,7 +45,7 @@ namespace Simple.OData.Client.Extensions
             Func<Type, object, object> ConvertSingle = (fieldOrPropertyType, itemValue) =>
             {
                 return IsCompoundType(fieldOrPropertyType)
-                    ? (itemValue as IDictionary<string, object>).AsObjectOfType(fieldOrPropertyType)
+                    ? (itemValue as IDictionary<string, object>).AsObjectOf(fieldOrPropertyType)
                     : itemValue;
             };
 

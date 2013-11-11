@@ -82,8 +82,10 @@ namespace Simple.OData.Client
         new IClientWithCommand<T> OrderBy(IEnumerable<KeyValuePair<string, bool>> columns);
         new IClientWithCommand<T> OrderBy(params string[] columns);
         new IClientWithCommand<T> OrderBy(Expression<Func<T, object>> expression);
+        new IClientWithCommand<T> ThenBy(Expression<Func<T, object>> expression);
         new IClientWithCommand<T> OrderByDescending(params string[] columns);
         new IClientWithCommand<T> OrderByDescending(Expression<Func<T, object>> expression);
+        new IClientWithCommand<T> ThenByDescending(Expression<Func<T, object>> expression);
         new IClientWithCommand<T> Count();
         new IClientWithCommand<U> NavigateTo<U>(string linkName = null) where U : class, new();
         new IClientWithCommand<T> Set(object value);

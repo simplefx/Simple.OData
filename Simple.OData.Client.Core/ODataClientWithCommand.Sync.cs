@@ -129,37 +129,37 @@ namespace Simple.OData.Client
         public new IEnumerable<T> FindEntries()
         {
             return RectifyColumnSelection(_client.FindEntries(_command.ToString()), _command.SelectedColumns)
-                .Select(x => x.AsObjectOfType<T>());
+                .Select(x => x.AsObjectOf<T>());
         }
 
         public new IEnumerable<T> FindEntries(bool scalarResult)
         {
             return RectifyColumnSelection(_client.FindEntries(_command.ToString(), scalarResult), _command.SelectedColumns)
-                .Select(x => x.AsObjectOfType<T>());
+                .Select(x => x.AsObjectOf<T>());
         }
 
         public new IEnumerable<T> FindEntries(out int totalCount)
         {
             return RectifyColumnSelection(_client.FindEntries(_command.WithInlineCount().ToString(), out totalCount), _command.SelectedColumns)
-                .Select(x => x.AsObjectOfType<T>());
+                .Select(x => x.AsObjectOf<T>());
         }
 
         public new IEnumerable<T> FindEntries(bool scalarResult, out int totalCount)
         {
             return RectifyColumnSelection(_client.FindEntries(_command.WithInlineCount().ToString(), scalarResult, out totalCount), _command.SelectedColumns)
-                .Select(x => x.AsObjectOfType<T>());
+                .Select(x => x.AsObjectOf<T>());
         }
 
         public new T FindEntry()
         {
             return RectifyColumnSelection(_client.FindEntry(_command.ToString()), _command.SelectedColumns)
-                .AsObjectOfType<T>();
+                .AsObjectOf<T>();
         }
 
         public new T InsertEntry(bool resultRequired = true)
         {
             return _client.InsertEntry(_command.CollectionName, _command.EntryData, resultRequired)
-                .AsObjectOfType<T>();
+                .AsObjectOf<T>();
         }
 
         public new void LinkEntry<U>(U linkedEntryKey, string linkName = null)
@@ -185,7 +185,7 @@ namespace Simple.OData.Client
         public new IEnumerable<T> ExecuteFunction(string functionName, IDictionary<string, object> parameters)
         {
             return RectifyColumnSelection(_client.ExecuteFunction(_command.ToString(), parameters), _command.SelectedColumns)
-                .Select(x => x.AsObjectOfType<T>());
+                .Select(x => x.AsObjectOf<T>());
         }
     }
 }

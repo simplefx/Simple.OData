@@ -168,6 +168,16 @@ namespace Simple.OData.Client
             return this.Command.OrderBy(columns);
         }
 
+        public IClientWithCommand ThenBy(params string[] columns)
+        {
+            return this.Command.ThenBy(columns);
+        }
+
+        public IClientWithCommand ThenBy(params ODataExpression[] columns)
+        {
+            return this.Command.ThenBy(columns);
+        }
+
         public IClientWithCommand OrderByDescending(params string[] columns)
         {
             return this.Command.OrderByDescending(columns);
@@ -176,6 +186,16 @@ namespace Simple.OData.Client
         public IClientWithCommand OrderByDescending(params ODataExpression[] columns)
         {
             return this.Command.OrderByDescending(columns);
+        }
+
+        public IClientWithCommand ThenByDescending(params string[] columns)
+        {
+            return this.Command.ThenByDescending(columns);
+        }
+
+        public IClientWithCommand ThenByDescending(params ODataExpression[] columns)
+        {
+            return this.Command.ThenByDescending(columns);
         }
 
         public IClientWithCommand Count()
@@ -365,6 +385,11 @@ namespace Simple.OData.Client
             return CastCommand.OrderBy(expression);
         }
 
+        public IClientWithCommand<T> ThenBy(Expression<Func<T, object>> expression)
+        {
+            return CastCommand.ThenBy(expression);
+        }
+
         public new IClientWithCommand<T> OrderByDescending(params string[] columns)
         {
             return CastCommand.OrderByDescending(columns);
@@ -373,6 +398,11 @@ namespace Simple.OData.Client
         public IClientWithCommand<T> OrderByDescending(Expression<Func<T, object>> expression)
         {
             return CastCommand.OrderByDescending(expression);
+        }
+
+        public IClientWithCommand<T> ThenByDescending(Expression<Func<T, object>> expression)
+        {
+            return CastCommand.ThenByDescending(expression);
         }
 
         public new IClientWithCommand<T> Count()

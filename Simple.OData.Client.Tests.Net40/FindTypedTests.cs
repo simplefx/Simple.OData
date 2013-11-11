@@ -61,6 +61,7 @@ namespace Simple.OData.Client.Tests
             var product = _client
                 .For<Product>()
                 .OrderBy(x => x.ProductName)
+                .ThenByDescending(x => x.UnitPrice)
                 .Skip(2)
                 .Top(1)
                 .Expand(x => x.Category)
@@ -79,6 +80,7 @@ namespace Simple.OData.Client.Tests
                 .Top(1)
                 .Skip(2)
                 .OrderBy(x => x.ProductName)
+                .ThenByDescending(x => x.UnitPrice)
                 .FindEntries().Single();
             Assert.Equal("Seafood", product.Category.CategoryName);
         }
