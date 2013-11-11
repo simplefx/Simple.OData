@@ -694,7 +694,7 @@ namespace Simple.OData.Client
 
         public IClientWithCommand<T> OrderBy(Expression<Func<T, object>> expression)
         {
-            base.Select(ExtractColumnNames(expression));
+            base.OrderBy(ExtractColumnNames(expression).Select(x => new KeyValuePair<string, bool>(x, false)));
             return CastClient;
         }
 
