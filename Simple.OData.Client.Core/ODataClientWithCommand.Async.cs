@@ -166,13 +166,13 @@ namespace Simple.OData.Client
             return _client.InsertEntryAsync(_command.CollectionName, _command.EntryData, resultRequired).ContinueWith(x =>
             {
                 var result = x.Result;
-                return result.AsObjectOf<T>();
+                return result.ToObject<T>();
             });
         }
 
         public new Task LinkEntryAsync<U>(U linkedEntryKey, string linkName = null)
         {
-            return _client.LinkEntryAsync(_command.CollectionName, _command.KeyValues, linkName ?? typeof(U).Name, linkedEntryKey.AsDictionary());
+            return _client.LinkEntryAsync(_command.CollectionName, _command.KeyValues, linkName ?? typeof(U).Name, linkedEntryKey.ToDictionary());
         }
 
         public new Task LinkEntryAsync<U>(Expression<Func<T, U>> expression, U linkedEntryKey)
@@ -197,12 +197,12 @@ namespace Simple.OData.Client
 
         new internal static Task<IEnumerable<T>> RectifyColumnSelectionAsync(Task<IEnumerable<IDictionary<string, object>>> entries, IList<string> selectedColumns)
         {
-            return entries.ContinueWith(x => RectifyColumnSelection(x.Result, selectedColumns).Select(y => y.AsObjectOf<T>()));
+            return entries.ContinueWith(x => RectifyColumnSelection(x.Result, selectedColumns).Select(y => y.ToObject<T>()));
         }
 
         new internal static Task<T> RectifyColumnSelectionAsync(Task<IDictionary<string, object>> entry, IList<string> selectedColumns)
         {
-            return entry.ContinueWith(x => RectifyColumnSelection(x.Result, selectedColumns).AsObjectOf<T>());
+            return entry.ContinueWith(x => RectifyColumnSelection(x.Result, selectedColumns).ToObject<T>());
         }
 
         new internal static Task<Tuple<IEnumerable<T>, int>> RectifyColumnSelectionAsync(Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> entries, IList<string> selectedColumns)
@@ -211,7 +211,7 @@ namespace Simple.OData.Client
             {
                 var result = x.Result;
                 return new Tuple<IEnumerable<T>, int>(
-                    RectifyColumnSelection(result.Item1, selectedColumns).Select(y => y.AsObjectOf<T>()),
+                    RectifyColumnSelection(result.Item1, selectedColumns).Select(y => y.ToObject<T>()),
                     result.Item2);
             });
         }

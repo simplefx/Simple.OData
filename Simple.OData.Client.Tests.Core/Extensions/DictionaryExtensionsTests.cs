@@ -36,7 +36,7 @@ namespace Simple.OData.Client.Tests
                 { "IntProperty", 1 },
             };
 
-            var value = dict.AsObjectOf<ClassType>();
+            var value = dict.ToObject<ClassType>();
             Assert.Equal("a", value.StringProperty);
             Assert.Equal(1, value.IntProperty);
         }
@@ -51,7 +51,7 @@ namespace Simple.OData.Client.Tests
                 { "UnknownProperty", "u" }
             };
 
-            var value = dict.AsObjectOf<ClassType>();
+            var value = dict.ToObject<ClassType>();
             Assert.Equal("a", value.StringProperty);
             Assert.Equal(1, value.IntProperty);
         }
@@ -66,7 +66,7 @@ namespace Simple.OData.Client.Tests
                 { "StringPropertyPrivateSetter", "p" }
             };
 
-            var value = dict.AsObjectOf<ClassType>();
+            var value = dict.ToObject<ClassType>();
             Assert.Equal("a", value.StringProperty);
             Assert.Equal(1, value.IntProperty);
             Assert.Equal("p", value.StringPropertyPrivateSetter);
@@ -82,7 +82,7 @@ namespace Simple.OData.Client.Tests
                 { "StringField", "f" }
             };
 
-            var value = dict.AsObjectOf<ClassType>();
+            var value = dict.ToObject<ClassType>();
             Assert.Equal("a", value.StringProperty);
             Assert.Equal(1, value.IntProperty);
             Assert.Equal(null, value.StringField);
@@ -98,7 +98,7 @@ namespace Simple.OData.Client.Tests
                 { "StringCollectionProperty", new [] {"x", "y", "z"}  }
             };
 
-            var value = dict.AsObjectOf<ClassType>();
+            var value = dict.ToObject<ClassType>();
             Assert.Equal("a", value.StringProperty);
             Assert.Equal(1, value.IntProperty);
             for (var index = 0; index < 3; index++)
@@ -117,7 +117,7 @@ namespace Simple.OData.Client.Tests
                 { "IntCollectionProperty", new [] {1, 2, 3}  }
             };
 
-            var value = dict.AsObjectOf<ClassType>();
+            var value = dict.ToObject<ClassType>();
             Assert.Equal("a", value.StringProperty);
             Assert.Equal(1, value.IntProperty);
             for (var index = 0; index < 3; index++)
@@ -136,7 +136,7 @@ namespace Simple.OData.Client.Tests
                 { "CompoundProperty", new Dictionary<string, object>() { { "StringProperty", "z" }, { "IntProperty", 0 } }  }
             };
 
-            var value = dict.AsObjectOf<ClassType>();
+            var value = dict.ToObject<ClassType>();
             Assert.Equal("a", value.StringProperty);
             Assert.Equal(1, value.IntProperty);
             Assert.Equal("z", value.CompoundProperty.StringProperty);
@@ -159,7 +159,7 @@ namespace Simple.OData.Client.Tests
                 }
             };
 
-            var value = dict.AsObjectOf<ClassType>();
+            var value = dict.ToObject<ClassType>();
             Assert.Equal("a", value.StringProperty);
             Assert.Equal(1, value.IntProperty);
             for (var index = 0; index < 3; index++)

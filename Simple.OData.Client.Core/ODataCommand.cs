@@ -639,7 +639,7 @@ namespace Simple.OData.Client
 
         public new IClientWithCommand<T> Key(T entryKey)
         {
-            base.Key(entryKey.AsDictionary());
+            base.Key(entryKey.ToDictionary());
             return CastClient;
         }
 
@@ -765,7 +765,7 @@ namespace Simple.OData.Client
 
         public new IClientWithCommand<T> Set(T entry)
         {
-            base.Set(entry.AsDictionary());
+            base.Set(entry.ToDictionary());
             return CastClient;
         }
 
