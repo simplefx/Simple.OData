@@ -79,7 +79,7 @@ namespace Simple.OData.Client
             var entryMembers = ParseEntryMembers(table, entryData);
 
             var feedWriter = new ODataFeedWriter();
-            var entry = feedWriter.CreateDataElement(_schema.TypesNamespace, table.ActualName, entryMembers.Properties);
+            var entry = feedWriter.CreateDataElement(_schema.TypesNamespace, table.EntityType.Name, entryMembers.Properties);
             foreach (var associatedData in entryMembers.AssociationsByValue)
             {
                 CreateLinkElement(entry, collection, associatedData);
