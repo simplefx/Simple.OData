@@ -67,6 +67,48 @@
     <Compile Include="..\CommonAssemblyVersion.cs">
       <Link>Properties\CommonAssemblyVersion.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Commands\IClient.cs">
+      <Link>Commands\IClient.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Commands\IClient.T.cs">
+      <Link>Commands\IClient.T.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Commands\IClientWithCommand.cs">
+      <Link>Commands\IClientWithCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Commands\IClientWithCommand.T.cs">
+      <Link>Commands\IClientWithCommand.T.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Commands\ICommand.cs">
+      <Link>Commands\ICommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Commands\ICommand.T.cs">
+      <Link>Commands\ICommand.T.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Commands\ODataClientWithCommand.Async.cs">
+      <Link>Commands\ODataClientWithCommand.Async.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Commands\ODataClientWithCommand.cs">
+      <Link>Commands\ODataClientWithCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Commands\ODataClientWithCommand.Sync.cs">
+      <Link>Commands\ODataClientWithCommand.Sync.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Commands\ODataClientWithCommand.T.Async.cs">
+      <Link>Commands\ODataClientWithCommand.T.Async.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Commands\ODataClientWithCommand.T.cs">
+      <Link>Commands\ODataClientWithCommand.T.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Commands\ODataClientWithCommand.T.Sync.cs">
+      <Link>Commands\ODataClientWithCommand.T.Sync.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Commands\ODataCommand.cs">
+      <Link>Commands\ODataCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Commands\ODataCommand.T.cs">
+      <Link>Commands\ODataCommand.T.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Edm\EdmSchemaParser.cs">
       <Link>Edm\EdmSchemaParser.cs</Link>
     </Compile>
@@ -184,12 +226,6 @@
     <Compile Include="..\Simple.OData.Client.Core\Http\WebRequestException.cs">
       <Link>Http\WebRequestException.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\IClient.cs">
-      <Link>IClient.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\ICommand.cs">
-      <Link>ICommand.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ODataClient.Async.cs">
       <Link>ODataClient.Async.cs</Link>
     </Compile>
@@ -201,12 +237,6 @@
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ODataClientSettings.cs">
       <Link>ODataClientSettings.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\ODataClientWithCommand.Async.cs">
-      <Link>ODataClientWithCommand.Async.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\ODataClientWithCommand.cs">
-      <Link>ODataClientWithCommand.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Edm\EdmTypeSerializer.cs">
       <Link>Edm\EdmTypeSerializer.cs</Link>
@@ -220,17 +250,8 @@
     <Compile Include="..\Simple.OData.Client.Core\Edm\EdmType.cs">
       <Link>Edm\EdmType.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\IClientWithCommand.cs">
-      <Link>IClientWithCommand.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ODataBatch.cs">
       <Link>ODataBatch.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\ODataClientWithCommand.Sync.cs">
-      <Link>ODataClientWithCommand.Sync.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\ODataCommand.cs">
-      <Link>ODataCommand.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ODataFeedWriter.cs">
       <Link>ODataFeedWriter.cs</Link>
