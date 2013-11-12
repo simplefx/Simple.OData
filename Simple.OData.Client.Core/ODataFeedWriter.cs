@@ -8,11 +8,11 @@ namespace Simple.OData.Client
 {
     class ODataFeedWriter
     {
-        public XElement CreateDataElement(string namespaceName, string collectionName, IDictionary<string, object> row)
+        public XElement CreateDataElement(string namespaceName, string entityTypeName, IDictionary<string, object> row)
         {
             var entry = CreateEmptyEntryWithNamespaces();
 
-            var resourceName = GetQualifiedResourceName(namespaceName, collectionName);
+            var resourceName = GetQualifiedResourceName(namespaceName, entityTypeName);
             entry.Element(null, "category").SetAttributeValue("term", resourceName);
             var properties = entry.Element(null, "content").Element("m", "properties");
 

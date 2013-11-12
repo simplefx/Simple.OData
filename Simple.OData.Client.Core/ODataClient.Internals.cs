@@ -54,7 +54,7 @@ namespace Simple.OData.Client
 
             var feedWriter = new ODataFeedWriter();
             var table = _schema.FindConcreteTable(collection);
-            var entryElement = feedWriter.CreateDataElement(_schema.TypesNamespace, table.ActualName, entryMembers.Properties);
+            var entryElement = feedWriter.CreateDataElement(_schema.TypesNamespace, table.EntityType.Name, entryMembers.Properties);
             var unlinkAssociationNames = new List<string>();
             foreach (var associatedData in entryMembers.AssociationsByValue)
             {
