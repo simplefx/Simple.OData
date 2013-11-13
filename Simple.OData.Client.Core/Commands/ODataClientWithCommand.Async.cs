@@ -98,13 +98,11 @@ namespace Simple.OData.Client
         }
 
         public Task<T> ExecuteFunctionAsScalarAsync<T>(string functionName, IDictionary<string, object> parameters)
-        where T : class, new()
         {
             return _client.ExecuteFunctionAsScalarAsync<T>(_command.ToString(), parameters);
         }
 
         public Task<T[]> ExecuteFunctionAsArrayAsync<T>(string functionName, IDictionary<string, object> parameters)
-        where T : class, new()
         {
             return _client.ExecuteFunctionAsArrayAsync<T>(_command.ToString(), parameters);
         }

@@ -94,13 +94,11 @@ namespace Simple.OData.Client
         }
 
         public T ExecuteFunctionAsScalar<T>(string functionName, IDictionary<string, object> parameters)
-        where T : class, new()
         {
             return _client.ExecuteFunctionAsScalar<T>(_command.ToString(), parameters);
         }
 
         public T[] ExecuteFunctionAsArray<T>(string functionName, IDictionary<string, object> parameters)
-        where T : class, new()
         {
             return _client.ExecuteFunctionAsArray<T>(_command.ToString(), parameters);
         }

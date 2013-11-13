@@ -23,8 +23,8 @@ namespace Simple.OData.Client
         void UnlinkEntry(string linkName);
         void UnlinkEntry(ODataExpression expression);
         IEnumerable<IDictionary<string, object>> ExecuteFunction(string functionName, IDictionary<string, object> parameters);
-        T ExecuteFunctionAsScalar<T>(string functionName, IDictionary<string, object> parameters) where T : class, new();
-        T[] ExecuteFunctionAsArray<T>(string functionName, IDictionary<string, object> parameters) where T : class, new();
+        T ExecuteFunctionAsScalar<T>(string functionName, IDictionary<string, object> parameters);
+        T[] ExecuteFunctionAsArray<T>(string functionName, IDictionary<string, object> parameters);
     
         Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync();
         Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(bool scalarResult);
@@ -41,7 +41,7 @@ namespace Simple.OData.Client
         Task UnlinkEntryAsync(string linkName);
         Task UnlinkEntryAsync(ODataExpression expression);
         Task<IEnumerable<IDictionary<string, object>>> ExecuteFunctionAsync(string functionName, IDictionary<string, object> parameters);
-        Task<T> ExecuteFunctionAsScalarAsync<T>(string functionName, IDictionary<string, object> parameters) where T : class, new();
-        Task<T[]> ExecuteFunctionAsArrayAsync<T>(string functionName, IDictionary<string, object> parameters) where T : class, new();
+        Task<T> ExecuteFunctionAsScalarAsync<T>(string functionName, IDictionary<string, object> parameters);
+        Task<T[]> ExecuteFunctionAsArrayAsync<T>(string functionName, IDictionary<string, object> parameters);
     }
 }
