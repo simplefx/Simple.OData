@@ -7,13 +7,15 @@ namespace Simple.OData.Client.Extensions
 {
     internal static class DictionaryExtensions
     {
+        private static readonly Dictionary<Type, ConstructorInfo> _constructors = new Dictionary<Type, ConstructorInfo>(); 
+
         public static T ToObject<T>(this IDictionary<string, object> source)
-            where T : class, new()
+            where T : class
         {
             if (source == null)
-                return null;
+                return default(T);
 
-            var value = new T();
+            var value = CreateInstance<T>();
             var type = value.GetType();
             return (T)ToObject(source, type, value);
         }
@@ -98,6 +100,37 @@ namespace Simple.OData.Client.Extensions
                 propInfo => propInfo.GetValue(source, null)
             );
 
+        }
+
+        private static T CreateInstance<T>()
+            where T : class
+        {
+            ConstructorInfo ctor = null;
+            
+            if (!_constructors.TryGetValue(typeof(T), out ctor))
+            {
+                if (typeof(T) == typeof(IDictionary<string, object>))
+                {
+                    return new Dictionary<string, object>() as T;
+                }
+                else
+                {
+                    ctor = typeof(T).GetConstructor(new Type[] { });
+                    lock (_constructors)
+                    {
+                        if (!_constructors.ContainsKey(typeof(T)))
+                            _constructors.Add(typeof(T), ctor);
+                    }
+                }
+            }
+
+            if (ctor == null)
+            {
+                throw new InvalidOperationException(
+                    string.Format("Unable to create an instance of type {0} that does not have a default constructor."));
+            }
+
+            return ctor.Invoke(new object[] { }) as T;
         }
     }
 }

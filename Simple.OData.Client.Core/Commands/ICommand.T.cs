@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 namespace Simple.OData.Client
 {
     public interface ICommand<T> : ICommand
-        where T : class, new()
+        where T : class
     {
         new IClientWithCommand<U> As<U>(string derivedCollectionName = null) where U : class, new();
         new IClientWithCommand<T> Key(params object[] entryKey);

@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 namespace Simple.OData.Client
 {
     public partial class ODataClientWithCommand<T> : ODataClientWithCommand, IClientWithCommand<T>
-        where T : class, new()
+        where T : class
     {
         public ODataClientWithCommand(ODataClient client, ISchema schema, ODataCommand parent = null)
             : base(client, schema, parent)

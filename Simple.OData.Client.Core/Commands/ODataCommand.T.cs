@@ -7,7 +7,7 @@ using Simple.OData.Client.Extensions;
 namespace Simple.OData.Client
 {
     public class ODataCommand<T> : ODataCommand, ICommand<T>
-        where T : class, new()
+        where T : class
     {
         public ODataCommand(ODataClientWithCommand<T> client, ODataCommand parent)
             : base(client, parent)

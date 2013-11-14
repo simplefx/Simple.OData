@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace Simple.OData.Client
 {
     public interface IClient<T> : IClient
-        where T : class, new()
+        where T : class
     {
         new IEnumerable<T> FindEntries();
         new IEnumerable<T> FindEntries(bool scalarResult);

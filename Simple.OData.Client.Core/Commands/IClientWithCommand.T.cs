@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 namespace Simple.OData.Client
 {
     public interface IClientWithCommand<T> : IClientWithCommand, IClient<T>, ICommand<T>
-        where T : class, new()
+        where T : class
     {
         // see http://stackoverflow.com/questions/10531575/passing-a-dynamic-parameter-throws-runtimebinderexception-when-calling-method-fr
 
