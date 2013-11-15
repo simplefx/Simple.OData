@@ -20,6 +20,7 @@ namespace Simple.OData.Client
         new T InsertEntry(bool resultRequired = true);
         new void LinkEntry<U>(U linkedEntryKey, string linkName = null);
         new void LinkEntry<U>(Expression<Func<T, U>> expression, U linkedEntryKey);
+        new void LinkEntry(ODataExpression expression, IDictionary<string, object> linkedEntryKey);
         new void LinkEntry(ODataExpression expression, ODataEntry linkedEntryKey);
         new void UnlinkEntry<U>(string linkName = null);
         new void UnlinkEntry<U>(Expression<Func<T, U>> expression);
@@ -34,6 +35,7 @@ namespace Simple.OData.Client
         new Task<T> InsertEntryAsync(bool resultRequired = true);
         new Task LinkEntryAsync<U>(U linkedEntryKey, string linkName = null);
         new Task LinkEntryAsync<U>(Expression<Func<T, U>> expression, U linkedEntryKey);
+        new Task LinkEntryAsync(ODataExpression expression, IDictionary<string, object> linkedEntryKey);
         new Task LinkEntryAsync(ODataExpression expression, ODataEntry linkedEntryKey);
         new Task UnlinkEntryAsync<U>(string linkName = null);
         new Task UnlinkEntryAsync<U>(Expression<Func<T, U>> expression);

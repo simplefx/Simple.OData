@@ -67,9 +67,6 @@
     <Compile Include="..\CommonAssemblyVersion.cs">
       <Link>Properties\CommonAssemblyVersion.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Commands\IClient.cs">
-      <Link>Commands\IClient.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Commands\IClient.T.cs">
       <Link>Commands\IClient.T.cs</Link>
     </Compile>

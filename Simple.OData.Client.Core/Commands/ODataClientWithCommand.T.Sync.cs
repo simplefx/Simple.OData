@@ -54,6 +54,11 @@ namespace Simple.OData.Client
             LinkEntry(linkedEntryKey, ODataCommand.ExtractColumnName(expression));
         }
 
+        public new void LinkEntry(ODataExpression expression, IDictionary<string, object> linkedEntryKey)
+        {
+            LinkEntry(linkedEntryKey, expression.ToString());
+        }
+
         public new void LinkEntry(ODataExpression expression, ODataEntry linkedEntryKey)
         {
             LinkEntry(linkedEntryKey, expression.ToString());

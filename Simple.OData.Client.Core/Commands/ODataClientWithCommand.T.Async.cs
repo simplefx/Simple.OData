@@ -53,6 +53,11 @@ namespace Simple.OData.Client
             return LinkEntryAsync(linkedEntryKey, ODataCommand.ExtractColumnName(expression));
         }
 
+        public new Task LinkEntryAsync(ODataExpression expression, IDictionary<string, object> linkedEntryKey)
+        {
+            return LinkEntryAsync(linkedEntryKey, expression.ToString());
+        }
+
         public new Task LinkEntryAsync(ODataExpression expression, ODataEntry linkedEntryKey)
         {
             return LinkEntryAsync(linkedEntryKey, expression.ToString());
