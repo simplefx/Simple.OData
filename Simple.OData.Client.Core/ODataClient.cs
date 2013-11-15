@@ -87,7 +87,7 @@ namespace Simple.OData.Client
         private string FormatFilterExpression(string collection, ODataExpression expression)
         {
             var clientWithCommand = new ODataClientWithCommand<IDictionary<string, object>>(this, _schema);
-            var filter = expression.Format(clientWithCommand, collection);
+            var filter = expression.Format(clientWithCommand.Schema, collection);
 
             return clientWithCommand
                 .For(collection)

@@ -166,7 +166,7 @@ namespace Simple.OData.Client
             _namedKeyValues = TryInterpretFilterExpressionAsKey(expression);
             if (_namedKeyValues == null)
             {
-                _filter = expression.Format(_client, this.Table);
+                _filter = expression.Format(_client.Schema, this.Table);
             }
             else
             {

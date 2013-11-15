@@ -6,18 +6,18 @@ namespace Simple.OData.Client
 {
     public partial class ODataExpression
     {
-        internal string Format(ODataClientWithCommand client, Table table)
+        internal string Format(ISchema schema, Table table)
         {
             return this.Format(new ExpressionContext()
                                    {
-                                       Client = client, 
+                                       Schema = schema, 
                                        Table = table
                                    });
         }
 
-        internal string Format(ODataClientWithCommand client, string collection)
+        internal string Format(ISchema schema, string collection)
         {
-            return this.Format(new ExpressionContext { Client = client, Collection = collection });
+            return this.Format(new ExpressionContext { Schema = schema, Collection = collection });
         }
 
         internal string Format(ExpressionContext context)
@@ -149,7 +149,7 @@ namespace Simple.OData.Client
                 {
                     var association = table.FindAssociation(objectName);
                     pathNames.Add(association.ActualName);
-                    return BuildReferencePath(pathNames, context.Client.Schema.FindTable(association.ReferenceTableName), elementNames.Skip(1).ToList(), context);
+                    return BuildReferencePath(pathNames, context.Schema.FindTable(association.ReferenceTableName), elementNames.Skip(1).ToList(), context);
                 }
                 else
                 {
