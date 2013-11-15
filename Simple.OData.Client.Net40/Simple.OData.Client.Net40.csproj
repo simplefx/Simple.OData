@@ -160,15 +160,6 @@
     <Compile Include="..\Simple.OData.Client.Core\Fluent\FluentClient.Sync.cs">
       <Link>Fluent\FluentClient.Sync.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Fluent\FluentClient.T.Async.cs">
-      <Link>Fluent\FluentClient.T.Async.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Fluent\FluentClient.T.cs">
-      <Link>Fluent\FluentClient.T.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Fluent\FluentClient.T.Sync.cs">
-      <Link>Fluent\FluentClient.T.Sync.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Fluent\IFluentClient.cs">
       <Link>Fluent\IFluentClient.cs</Link>
     </Compile>

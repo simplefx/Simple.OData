@@ -1,32 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
+using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
-    partial class FluentClient
+    partial class FluentClient<T>
     {
-        public Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync()
+        public new Task<IEnumerable<T>> FindEntriesAsync()
         {
             return RectifyColumnSelectionAsync(_client.FindEntriesAsync(_command.ToString()), _command.SelectedColumns);
         }
 
-        public Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(bool scalarResult)
+        public new Task<IEnumerable<T>> FindEntriesAsync(bool scalarResult)
         {
             return RectifyColumnSelectionAsync(_client.FindEntriesAsync(_command.ToString(), scalarResult), _command.SelectedColumns);
         }
 
-        public Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> FindEntriesWithCountAsync()
+        public new Task<Tuple<IEnumerable<T>, int>> FindEntriesWithCountAsync()
         {
             return RectifyColumnSelectionAsync(_client.FindEntriesWithCountAsync(_command.WithInlineCount().ToString()), _command.SelectedColumns);
         }
 
-        public Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> FindEntriesWithCountAsync(bool scalarResult)
+        public new Task<Tuple<IEnumerable<T>, int>> FindEntriesWithCountAsync(bool scalarResult)
         {
             return RectifyColumnSelectionAsync(_client.FindEntriesWithCountAsync(_command.WithInlineCount().ToString(), scalarResult), _command.SelectedColumns);
         }
 
-        public Task<IDictionary<string, object>> FindEntryAsync()
+        public new Task<T> FindEntryAsync()
         {
             return RectifyColumnSelectionAsync(_client.FindEntryAsync(_command.ToString()), _command.SelectedColumns);
         }
@@ -36,9 +39,13 @@ namespace Simple.OData.Client
             return _client.FindScalarAsync(_command.ToString());
         }
 
-        public Task<IDictionary<string, object>> InsertEntryAsync(bool resultRequired = true)
+        public new Task<T> InsertEntryAsync(bool resultRequired = true)
         {
-            return _client.InsertEntryAsync(_command.CollectionName, _command.EntryData, resultRequired);
+            return _client.InsertEntryAsync(_command.CollectionName, _command.EntryData, resultRequired).ContinueWith(x =>
+            {
+                var result = x.Result;
+                return result.ToObject<T>();
+            });
         }
 
         public Task<int> UpdateEntryAsync()
@@ -67,63 +74,76 @@ namespace Simple.OData.Client
             return _client.DeleteEntriesAsync(_command.CollectionName, _command.ToString());
         }
 
-        public Task LinkEntryAsync(string linkName, IDictionary<string, object> linkedEntryKey)
+        public Task LinkEntryAsync<U>(U linkedEntryKey, string linkName = null)
         {
-            return _client.LinkEntryAsync(_command.CollectionName, _command.KeyValues, linkName, linkedEntryKey);
+            return _client.LinkEntryAsync(_command.CollectionName, _command.KeyValues, linkName ?? typeof(U).Name, linkedEntryKey.ToDictionary());
         }
 
-        public Task LinkEntryAsync(ODataExpression expression, IDictionary<string, object> linkedEntryKey)
+        public Task LinkEntryAsync<U>(Expression<Func<T, U>> expression, U linkedEntryKey)
         {
-            throw new NotImplementedException();
+            return LinkEntryAsync(linkedEntryKey, ExtractColumnName(expression));
         }
 
-        public Task UnlinkEntryAsync(string linkName)
+        public new Task LinkEntryAsync(ODataExpression expression, IDictionary<string, object> linkedEntryKey)
         {
-            return _client.UnlinkEntryAsync(_command.CollectionName, _command.KeyValues, linkName);
+            return LinkEntryAsync(linkedEntryKey, expression.ToString());
         }
 
-        public Task UnlinkEntryAsync(ODataExpression expression)
+        public Task LinkEntryAsync(ODataExpression expression, ODataEntry linkedEntryKey)
         {
-            throw new NotImplementedException();
+            return LinkEntryAsync(linkedEntryKey, expression.ToString());
         }
 
-        public Task<IEnumerable<IDictionary<string, object>>> ExecuteFunctionAsync(string functionName, IDictionary<string, object> parameters)
+        public Task UnlinkEntryAsync<U>(string linkName = null)
+        {
+            return _client.UnlinkEntryAsync(_command.CollectionName, _command.KeyValues, linkName ?? typeof(U).Name);
+        }
+
+        public Task UnlinkEntryAsync<U>(Expression<Func<T, U>> expression)
+        {
+            return UnlinkEntryAsync(ExtractColumnName(expression));
+        }
+
+        public new Task UnlinkEntryAsync(ODataExpression expression)
+        {
+            return UnlinkEntryAsync(expression.ToString());
+        }
+
+        public Task<IEnumerable<T>> ExecuteFunctionAsync(string functionName, IDictionary<string, object> parameters)
         {
             return RectifyColumnSelectionAsync(_client.ExecuteFunctionAsync(_command.ToString(), parameters), _command.SelectedColumns);
         }
 
-        public Task<T> ExecuteFunctionAsync<T>(string functionName, IDictionary<string, object> parameters)
+        public Task<T> ExecuteFunctionAsScalarAsync(string functionName, IDictionary<string, object> parameters)
         {
             return _client.ExecuteFunctionAsScalarAsync<T>(_command.ToString(), parameters);
         }
 
-        public Task<T> ExecuteFunctionAsScalarAsync<T>(string functionName, IDictionary<string, object> parameters)
-        {
-            return _client.ExecuteFunctionAsScalarAsync<T>(_command.ToString(), parameters);
-        }
-
-        public Task<T[]> ExecuteFunctionAsArrayAsync<T>(string functionName, IDictionary<string, object> parameters)
+        public Task<T[]> ExecuteFunctionAsArrayAsync(string functionName, IDictionary<string, object> parameters)
         {
             return _client.ExecuteFunctionAsArrayAsync<T>(_command.ToString(), parameters);
         }
 
-        internal static Task<IEnumerable<IDictionary<string, object>>> RectifyColumnSelectionAsync(Task<IEnumerable<IDictionary<string, object>>> entries, IList<string> selectedColumns)
+        internal static Task<IEnumerable<T>> RectifyColumnSelectionAsync(Task<IEnumerable<IDictionary<string, object>>> entries, IList<string> selectedColumns)
         {
-            return entries.ContinueWith(x => RectifyColumnSelection(x.Result, selectedColumns));
+            return entries.ContinueWith(
+                x => RectifyColumnSelection(x.Result, selectedColumns)).ContinueWith(
+                y => y.Result.Select(z => z.ToObject<T>()));
         }
 
-        internal static Task<IDictionary<string, object>> RectifyColumnSelectionAsync(Task<IDictionary<string, object>> entry, IList<string> selectedColumns)
+        internal static Task<T> RectifyColumnSelectionAsync(Task<IDictionary<string, object>> entry, IList<string> selectedColumns)
         {
-            return entry.ContinueWith(x => RectifyColumnSelection(x.Result, selectedColumns));
+            return entry.ContinueWith(
+                x => RectifyColumnSelection(x.Result, selectedColumns).ToObject<T>());
         }
 
-        internal static Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> RectifyColumnSelectionAsync(Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> entries, IList<string> selectedColumns)
+        internal static Task<Tuple<IEnumerable<T>, int>> RectifyColumnSelectionAsync(Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> entries, IList<string> selectedColumns)
         {
             return entries.ContinueWith(x =>
             {
                 var result = x.Result;
-                return new Tuple<IEnumerable<IDictionary<string, object>>, int>(
-                    RectifyColumnSelection(result.Item1, selectedColumns),
+                return new Tuple<IEnumerable<T>, int>(
+                    RectifyColumnSelection(result.Item1, selectedColumns).Select(y => y.ToObject<T>()),
                     result.Item2);
             });
         }

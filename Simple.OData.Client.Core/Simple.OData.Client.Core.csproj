@@ -95,8 +95,6 @@
     <Compile Include="Fluent\FluentClient.Async.cs" />
     <Compile Include="Fluent\FluentClient.cs" />
     <Compile Include="Fluent\FluentClient.Sync.cs" />
-    <Compile Include="Fluent\FluentClient.T.cs" />
-    <Compile Include="Fluent\FluentClient.T.Async.cs" />
     <Compile Include="ODataCommand.cs" />
     <Compile Include="ODataEntry.cs" />
     <Compile Include="ODataFeedReader.cs" />
@@ -134,7 +132,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <Compile Include="Fluent\FluentClient.T.Sync.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
