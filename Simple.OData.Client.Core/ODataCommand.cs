@@ -503,39 +503,6 @@ namespace Simple.OData.Client
                 this.Table.GetKeyNames().All(namedKeyValues.ContainsKey) ? namedKeyValues : null;
         }
 
-        protected internal static IEnumerable<string> ExtractColumnNames<T>(Expression<Func<T, object>> expression)
-        {
-            var lambdaExpression = Utils.CastExpressionWithTypeCheck<LambdaExpression>(expression);
-            switch (lambdaExpression.Body.NodeType)
-            {
-                case ExpressionType.MemberAccess:
-                case ExpressionType.Convert:
-                    return new[] { ExtractColumnName(lambdaExpression.Body) };
-
-                case ExpressionType.New:
-                    var newExpression = lambdaExpression.Body as NewExpression;
-                    return newExpression.Arguments.Select(ExtractColumnName);
-
-                default:
-                    throw Utils.NotSupportedExpression(lambdaExpression.Body);
-            }
-        }
-
-        protected internal static string ExtractColumnName(Expression expression)
-        {
-            switch (expression.NodeType)
-            {
-                case ExpressionType.MemberAccess:
-                    return (expression as MemberExpression).Member.Name;
-
-                case ExpressionType.Convert:
-                    return ExtractColumnName((expression as UnaryExpression).Operand);
-
-                default:
-                    throw Utils.NotSupportedExpression(expression);
-            }
-        }
-
         private static bool IsAnonymousType(Type type)
         {
             // HACK: The only way to detect anonymous types right now.

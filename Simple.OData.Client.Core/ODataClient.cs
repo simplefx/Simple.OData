@@ -14,7 +14,7 @@ namespace Simple.OData.Client
         private readonly RequestRunner _requestRunner;
 
         public ODataClient(string urlBase)
-            : this(new ODataClientSettings { UrlBase = urlBase })
+            : this(new ODataClientSettings {UrlBase = urlBase})
         {
         }
 
@@ -60,7 +60,7 @@ namespace Simple.OData.Client
 
         public IFluentClient<IDictionary<string, object>> For(string collectionName)
         {
-            return new FluentClient<IDictionary<string, object>>(this).For(collectionName);
+            return GetFluentClient().For(collectionName);
         }
 
         public IFluentClient<ODataEntry> For(ODataExpression expression)
@@ -86,12 +86,15 @@ namespace Simple.OData.Client
 
         private string FormatFilterExpression(string collection, ODataExpression expression)
         {
-            var clientWithCommand = new FluentClient<IDictionary<string, object>>(this);
-            var filter = expression.Format(clientWithCommand.Schema, collection);
-
-            return clientWithCommand
+            return GetFluentClient()
                 .For(collection)
-                .Filter(filter).CommandText;
+                .Filter(expression.Format(this.Schema, collection))
+                .CommandText;
+        }
+
+        private FluentClient<IDictionary<string, object>> GetFluentClient()
+        {
+            return new FluentClient<IDictionary<string, object>>(this);
         }
     }
 }

@@ -98,7 +98,6 @@
     <Compile Include="Fluent\FluentClient.T.cs" />
     <Compile Include="Fluent\FluentClient.T.Async.cs" />
     <Compile Include="ODataCommand.cs" />
-    <Compile Include="ODataCommand.T.cs" />
     <Compile Include="ODataEntry.cs" />
     <Compile Include="ODataFeedReader.cs" />
     <Compile Include="ODataFeedWriter.cs" />

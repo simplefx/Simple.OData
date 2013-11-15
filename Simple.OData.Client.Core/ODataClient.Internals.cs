@@ -50,7 +50,10 @@ namespace Simple.OData.Client
         {
             bool hasPropertiesToUpdate = entryMembers.Properties.Count > 0;
             bool merge = !hasPropertiesToUpdate || CheckMergeConditions(collection, entryKey, entryData);
-            var commandText = new FluentClient<IDictionary<string, object>>(this).For(_schema.FindBaseTable(collection).ActualName).Key(entryKey).CommandText;
+            var commandText = GetFluentClient()
+                .For(_schema.FindBaseTable(collection).ActualName)
+                .Key(entryKey)
+                .CommandText;
 
             var feedWriter = new ODataFeedWriter();
             var table = _schema.FindConcreteTable(collection);

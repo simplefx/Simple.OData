@@ -43,14 +43,14 @@ namespace Simple.OData.Client
             });
         }
 
-        public new Task LinkEntryAsync<U>(U linkedEntryKey, string linkName = null)
+        public Task LinkEntryAsync<U>(U linkedEntryKey, string linkName = null)
         {
             return _client.LinkEntryAsync(_command.CollectionName, _command.KeyValues, linkName ?? typeof(U).Name, linkedEntryKey.ToDictionary());
         }
 
-        public new Task LinkEntryAsync<U>(Expression<Func<T, U>> expression, U linkedEntryKey)
+        public Task LinkEntryAsync<U>(Expression<Func<T, U>> expression, U linkedEntryKey)
         {
-            return LinkEntryAsync(linkedEntryKey, ODataCommand.ExtractColumnName(expression));
+            return LinkEntryAsync(linkedEntryKey, ExtractColumnName(expression));
         }
 
         public new Task LinkEntryAsync(ODataExpression expression, IDictionary<string, object> linkedEntryKey)
@@ -58,19 +58,19 @@ namespace Simple.OData.Client
             return LinkEntryAsync(linkedEntryKey, expression.ToString());
         }
 
-        public new Task LinkEntryAsync(ODataExpression expression, ODataEntry linkedEntryKey)
+        public Task LinkEntryAsync(ODataExpression expression, ODataEntry linkedEntryKey)
         {
             return LinkEntryAsync(linkedEntryKey, expression.ToString());
         }
 
-        public new Task UnlinkEntryAsync<U>(string linkName = null)
+        public Task UnlinkEntryAsync<U>(string linkName = null)
         {
             return _client.UnlinkEntryAsync(_command.CollectionName, _command.KeyValues, linkName ?? typeof(U).Name);
         }
 
-        public new Task UnlinkEntryAsync<U>(Expression<Func<T, U>> expression)
+        public Task UnlinkEntryAsync<U>(Expression<Func<T, U>> expression)
         {
-            return UnlinkEntryAsync(ODataCommand.ExtractColumnName(expression));
+            return UnlinkEntryAsync(ExtractColumnName(expression));
         }
 
         public new Task UnlinkEntryAsync(ODataExpression expression)
@@ -81,6 +81,16 @@ namespace Simple.OData.Client
         public new Task<IEnumerable<T>> ExecuteFunctionAsync(string functionName, IDictionary<string, object> parameters)
         {
             return RectifyColumnSelectionAsync(_client.ExecuteFunctionAsync(_command.ToString(), parameters), _command.SelectedColumns);
+        }
+
+        public new Task<T> ExecuteFunctionAsScalarAsync(string functionName, IDictionary<string, object> parameters)
+        {
+            return _client.ExecuteFunctionAsScalarAsync<T>(_command.ToString(), parameters);
+        }
+
+        public new Task<T[]> ExecuteFunctionAsArrayAsync(string functionName, IDictionary<string, object> parameters)
+        {
+            return _client.ExecuteFunctionAsArrayAsync<T>(_command.ToString(), parameters);
         }
 
         new internal static Task<IEnumerable<T>> RectifyColumnSelectionAsync(Task<IEnumerable<IDictionary<string, object>>> entries, IList<string> selectedColumns)

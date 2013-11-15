@@ -44,17 +44,17 @@ namespace Simple.OData.Client
                 .ToObject<T>();
         }
 
-        public new void LinkEntry<U>(U linkedEntryKey, string linkName = null)
+        public void LinkEntry<U>(U linkedEntryKey, string linkName = null)
         {
             _client.LinkEntry(_command.CollectionName, _command.KeyValues, linkName ?? typeof(U).Name, linkedEntryKey.ToDictionary());
         }
 
-        public new void LinkEntry<U>(Expression<Func<T, U>> expression, U linkedEntryKey)
+        public void LinkEntry<U>(Expression<Func<T, U>> expression, U linkedEntryKey)
         {
-            LinkEntry(linkedEntryKey, ODataCommand.ExtractColumnName(expression));
+            LinkEntry(linkedEntryKey, ExtractColumnName(expression));
         }
 
-        public new void LinkEntry(ODataExpression expression, IDictionary<string, object> linkedEntryKey)
+        public void LinkEntry(ODataExpression expression, IDictionary<string, object> linkedEntryKey)
         {
             LinkEntry(linkedEntryKey, expression.ToString());
         }
@@ -64,14 +64,14 @@ namespace Simple.OData.Client
             LinkEntry(linkedEntryKey, expression.ToString());
         }
 
-        public new void UnlinkEntry<U>(string linkName = null)
+        public void UnlinkEntry<U>(string linkName = null)
         {
             _client.UnlinkEntry(_command.CollectionName, _command.KeyValues, linkName ?? typeof(U).Name);
         }
 
-        public new void UnlinkEntry<U>(Expression<Func<T, U>> expression)
+        public void UnlinkEntry<U>(Expression<Func<T, U>> expression)
         {
-            UnlinkEntry(ODataCommand.ExtractColumnName(expression));
+            UnlinkEntry(ExtractColumnName(expression));
         }
 
         public new void UnlinkEntry(ODataExpression expression)
@@ -83,6 +83,16 @@ namespace Simple.OData.Client
         {
             return RectifyColumnSelection(_client.ExecuteFunction(_command.ToString(), parameters), _command.SelectedColumns)
                 .Select(x => x.ToObject<T>());
+        }
+
+        public new T ExecuteFunctionAsScalar(string functionName, IDictionary<string, object> parameters)
+        {
+            return _client.ExecuteFunctionAsScalar<T>(_command.ToString(), parameters);
+        }
+
+        public new T[] ExecuteFunctionAsArray(string functionName, IDictionary<string, object> parameters)
+        {
+            return _client.ExecuteFunctionAsArray<T>(_command.ToString(), parameters);
         }
     }
 }

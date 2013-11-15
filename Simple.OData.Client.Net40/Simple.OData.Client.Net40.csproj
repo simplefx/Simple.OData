@@ -235,9 +235,6 @@
     <Compile Include="..\Simple.OData.Client.Core\ODataCommand.cs">
       <Link>ODataCommand.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\ODataCommand.T.cs">
-      <Link>ODataCommand.T.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ODataEntry.cs">
       <Link>ODataEntry.cs</Link>
     </Compile>

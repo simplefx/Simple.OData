@@ -29,8 +29,8 @@ namespace Simple.OData.Client
         void UnlinkEntry<U>(Expression<Func<T, U>> expression);
         void UnlinkEntry(ODataExpression expression);
         IEnumerable<T> ExecuteFunction(string functionName, IDictionary<string, object> parameters);
-        T ExecuteFunctionAsScalar<T>(string functionName, IDictionary<string, object> parameters);
-        T[] ExecuteFunctionAsArray<T>(string functionName, IDictionary<string, object> parameters);
+        T ExecuteFunctionAsScalar(string functionName, IDictionary<string, object> parameters);
+        T[] ExecuteFunctionAsArray(string functionName, IDictionary<string, object> parameters);
 
         Task<IEnumerable<T>> FindEntriesAsync();
         Task<IEnumerable<T>> FindEntriesAsync(bool scalarResult);
@@ -50,8 +50,8 @@ namespace Simple.OData.Client
         Task UnlinkEntryAsync<U>(Expression<Func<T, U>> expression);
         Task UnlinkEntryAsync(ODataExpression expression);
         Task<IEnumerable<T>> ExecuteFunctionAsync(string functionName, IDictionary<string, object> parameters);
-        Task<T> ExecuteFunctionAsScalarAsync<T>(string functionName, IDictionary<string, object> parameters);
-        Task<T[]> ExecuteFunctionAsArrayAsync<T>(string functionName, IDictionary<string, object> parameters);
+        Task<T> ExecuteFunctionAsScalarAsync(string functionName, IDictionary<string, object> parameters);
+        Task<T[]> ExecuteFunctionAsArrayAsync(string functionName, IDictionary<string, object> parameters);
 
         IFluentClient<U> As<U>(string derivedCollectionName = null) where U : class;
         IFluentClient<ODataEntry> As(ODataExpression expression);
