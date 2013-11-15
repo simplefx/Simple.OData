@@ -3,26 +3,26 @@ using System.Collections.Generic;
 
 namespace Simple.OData.Client
 {
-    // ALthough ODataClientWithCommand is never instantiated directly (only via IClientWithCommand interface)
+    // ALthough FluentFluentClient is never instantiated directly (only via IFluentClient interface)
     // it's declared as public in order to resolve problem when it is used with dynamic C#
     // For the same reason ODataCommand is also declared as public
     // More: http://bloggingabout.net/blogs/vagif/archive/2013/08/05/we-need-better-interoperability-between-dynamic-and-statically-compiled-c.aspx
 
-    public partial class ODataClientWithCommand
+    public partial class FluentClient
     {
         protected readonly ODataClient _client;
         protected readonly ISchema _schema;
         protected ODataCommand _parent;
         protected ODataCommand _command;
 
-        public ODataClientWithCommand(ODataClient client, ISchema schema, ODataCommand parent = null)
+        public FluentClient(ODataClient client, ISchema schema, ODataCommand parent = null)
         {
             _client = client;
             _schema = schema;
             _parent = parent;
         }
 
-        protected ODataClientWithCommand(ODataClientWithCommand ancestor, ODataCommand command)
+        protected FluentClient(FluentClient ancestor, ODataCommand command)
         {
             _client = ancestor._client;
             _schema = ancestor._schema;
@@ -46,7 +46,7 @@ namespace Simple.OData.Client
 
         protected virtual ODataCommand CreateCommand()
         {
-            return new ODataCommand(this, _parent);
+            return new ODataCommand(this.Schema, _parent);
         }
 
         public ISchema Schema
@@ -59,9 +59,9 @@ namespace Simple.OData.Client
             get { return this.Command.ToString(); }
         }
 
-        public ODataClientWithCommand Link(ODataCommand command, string linkName)
+        public FluentClient Link(ODataCommand command, string linkName)
         {
-            var linkedClient = new ODataClientWithCommand(_client, _schema, command);
+            var linkedClient = new FluentClient(_client, _schema, command);
             linkedClient.Command.Link(linkName);
             return linkedClient;
         }
@@ -228,12 +228,12 @@ namespace Simple.OData.Client
 
         public void NavigateTo(string linkName)
         {
-            this.Command.NavigateTo(linkName);
+            Link(this.Command, linkName);
         }
 
         public void NavigateTo(ODataExpression expression)
         {
-            this.Command.NavigateTo(expression);
+            Link(this.Command, expression.ToString());
         }
 
         public bool FilterIsKey

@@ -7,7 +7,7 @@ using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
-    partial class ODataClientWithCommand<T>
+    partial class FluentClient<T>
     {
         public new Task<IEnumerable<T>> FindEntriesAsync()
         {

@@ -10,12 +10,12 @@ namespace Simple.OData.Client
 {
     // ALthough ODataCommand is never instantiated directly (only via ICommand interface)
     // it's declared as public in order to resolve problem when it is used with dynamic C#
-    // For the same reason ODataClientWithCommand is also declared as public
+    // For the same reason FluentFluentClient is also declared as public
     // More: http://bloggingabout.net/blogs/vagif/archive/2013/08/05/we-need-better-interoperability-between-dynamic-and-statically-compiled-c.aspx
 
     public class ODataCommand
     {
-        protected ODataClientWithCommand _client;
+        protected ISchema _schema;
         protected readonly ODataCommand _parent;
         protected string _collectionName;
         protected string _derivedCollectionName;
@@ -48,15 +48,15 @@ namespace Simple.OData.Client
         internal static readonly string ResultLiteral = "__result";
         internal static readonly string ResourceTypeLiteral = "__resourcetype";
 
-        public ODataCommand(ODataClientWithCommand client, ODataCommand parent)
+        public ODataCommand(ISchema schema, ODataCommand parent)
         {
-            _client = client;
+            _schema = schema;
             _parent = parent;
         }
 
         internal ODataCommand(ODataCommand ancestor)
         {
-            _client = ancestor._client;
+            _schema = ancestor._schema;
             _parent = ancestor._parent;
             _collectionName = ancestor._collectionName;
             _derivedCollectionName = ancestor._derivedCollectionName;
@@ -82,14 +82,14 @@ namespace Simple.OData.Client
             {
                 if (!string.IsNullOrEmpty(_collectionName))
                 {
-                    var table = _client.Schema.FindTable(_collectionName);
+                    var table = _schema.FindTable(_collectionName);
                     return string.IsNullOrEmpty(_derivedCollectionName)
                                ? table
                                : table.FindDerivedTable(_derivedCollectionName);
                 }
                 else if (!string.IsNullOrEmpty(_linkName))
                 {
-                    return _client.Schema.FindTable(_parent.Table.FindAssociation(_linkName).ReferenceTableName);
+                    return _schema.FindTable(_parent.Table.FindAssociation(_linkName).ReferenceTableName);
                 }
                 else
                 {
@@ -166,7 +166,7 @@ namespace Simple.OData.Client
             _namedKeyValues = TryInterpretFilterExpressionAsKey(expression);
             if (_namedKeyValues == null)
             {
-                _filter = expression.Format(_client.Schema, this.Table);
+                _filter = expression.Format(_schema, this.Table);
             }
             else
             {
@@ -303,16 +303,6 @@ namespace Simple.OData.Client
             _parameters = parameters.ToDictionary();
         }
 
-        public void NavigateTo(string linkName)
-        {
-            _client.Link(this, linkName);
-        }
-
-        public void NavigateTo(ODataExpression expression)
-        {
-            NavigateTo(expression.ToString());
-        }
-
         public bool FilterIsKey
         {
             get
@@ -342,7 +332,7 @@ namespace Simple.OData.Client
 
         internal string CollectionName
         {
-            get { return _client.Schema.FindTable(_collectionName).ActualName; }
+            get { return _schema.FindTable(_collectionName).ActualName; }
         }
 
         internal bool HasKey
@@ -404,11 +394,11 @@ namespace Simple.OData.Client
             string commandText = string.Empty;
             if (!string.IsNullOrEmpty(_collectionName))
             {
-                commandText += _client.Schema.FindTable(_collectionName).ActualName;
+                commandText += _schema.FindTable(_collectionName).ActualName;
                 if (!string.IsNullOrEmpty(_derivedCollectionName))
-                    commandText += "/" + string.Join(".", 
-                        _client.Schema.TypesNamespace, 
-                        _client.Schema.FindEntityType(_derivedCollectionName).Name);
+                    commandText += "/" + string.Join(".",
+                        _schema.TypesNamespace,
+                        _schema.FindEntityType(_derivedCollectionName).Name);
             }
             else if (!string.IsNullOrEmpty(_linkName))
             {
@@ -417,7 +407,7 @@ namespace Simple.OData.Client
             }
             else if (!string.IsNullOrEmpty(_functionName))
             {
-                commandText += _client.Schema.FindFunction(_functionName).ActualName;
+                commandText += _schema.FindFunction(_functionName).ActualName;
             }
 
             if (HasKey && HasFilter)

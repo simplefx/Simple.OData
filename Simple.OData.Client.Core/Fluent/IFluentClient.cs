@@ -5,9 +5,11 @@ using System.Threading.Tasks;
 
 namespace Simple.OData.Client
 {
-    public interface IClient<T>
+    public interface IFluentClient<T>
         where T : class
     {
+        string CommandText { get; }
+
         IEnumerable<T> FindEntries();
         IEnumerable<T> FindEntries(bool scalarResult);
         IEnumerable<T> FindEntries(out int totalCount);
@@ -50,5 +52,43 @@ namespace Simple.OData.Client
         Task<IEnumerable<T>> ExecuteFunctionAsync(string functionName, IDictionary<string, object> parameters);
         Task<T> ExecuteFunctionAsScalarAsync<T>(string functionName, IDictionary<string, object> parameters);
         Task<T[]> ExecuteFunctionAsArrayAsync<T>(string functionName, IDictionary<string, object> parameters);
+
+        IFluentClient<U> As<U>(string derivedCollectionName = null) where U : class;
+        IFluentClient<ODataEntry> As(ODataExpression expression);
+        IFluentClient<T> Key(params object[] entryKey);
+        IFluentClient<T> Key(IEnumerable<object> entryKey);
+        IFluentClient<T> Key(IDictionary<string, object> entryKey);
+        IFluentClient<T> Key(T entryKey);
+        IFluentClient<T> Filter(string filter);
+        IFluentClient<ODataEntry> Filter(ODataExpression expression);
+        IFluentClient<T> Filter(Expression<Func<T, bool>> expression);
+        IFluentClient<T> Skip(int count);
+        IFluentClient<T> Top(int count);
+        IFluentClient<T> Expand(IEnumerable<string> associations);
+        IFluentClient<T> Expand(params string[] associations);
+        IFluentClient<ODataEntry> Expand(params ODataExpression[] associations);
+        IFluentClient<T> Expand(Expression<Func<T, object>> expression);
+        IFluentClient<T> Select(IEnumerable<string> columns);
+        IFluentClient<T> Select(params string[] columns);
+        IFluentClient<ODataEntry> Select(params ODataExpression[] columns);
+        IFluentClient<T> Select(Expression<Func<T, object>> expression);
+        IFluentClient<T> OrderBy(IEnumerable<KeyValuePair<string, bool>> columns);
+        IFluentClient<T> OrderBy(params string[] columns);
+        IFluentClient<ODataEntry> OrderBy(params ODataExpression[] columns);
+        IFluentClient<T> OrderBy(Expression<Func<T, object>> expression);
+        IFluentClient<T> ThenBy(Expression<Func<T, object>> expression);
+        IFluentClient<T> OrderByDescending(params string[] columns);
+        IFluentClient<ODataEntry> OrderByDescending(params ODataExpression[] columns);
+        IFluentClient<T> OrderByDescending(Expression<Func<T, object>> expression);
+        IFluentClient<T> ThenByDescending(Expression<Func<T, object>> expression);
+        IFluentClient<T> Count();
+        IFluentClient<U> NavigateTo<U>(string linkName = null) where U : class;
+        IFluentClient<ODataEntry> NavigateTo(ODataExpression expression);
+        IFluentClient<T> Set(object value);
+        IFluentClient<T> Set(IDictionary<string, object> value);
+        IFluentClient<T> Set(T entry);
+        IFluentClient<ODataEntry> Set(params ODataExpression[] value);
+        IFluentClient<T> Function(string functionName);
+        IFluentClient<T> Parameters(IDictionary<string, object> parameters);
     }
 }

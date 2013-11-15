@@ -66,7 +66,7 @@ namespace Simple.OData.Client
 
         public IDictionary<string, object> GetEntry(string collection, IDictionary<string, object> entryKey)
         {
-            var commandText = new ODataClientWithCommand<IDictionary<string, object>>(this, _schema).For(collection).Key(entryKey).CommandText;
+            var commandText = new FluentClient<IDictionary<string, object>>(this, _schema).For(collection).Key(entryKey).CommandText;
             var command = HttpCommand.Get(commandText);
             _requestBuilder.AddCommandToRequest(command);
             return _requestRunner.GetEntry(command);
@@ -126,7 +126,7 @@ namespace Simple.OData.Client
         public int DeleteEntry(string collection, IDictionary<string, object> entryKey)
         {
             RemoveSystemProperties(entryKey);
-            var commandText = new ODataClientWithCommand<IDictionary<string, object>>(this, _schema).For(collection).Key(entryKey).CommandText;
+            var commandText = new FluentClient<IDictionary<string, object>>(this, _schema).For(collection).Key(entryKey).CommandText;
             var command = HttpCommand.Delete(commandText);
             _requestBuilder.AddCommandToRequest(command);
             return _requestRunner.DeleteEntry(command);
@@ -138,8 +138,8 @@ namespace Simple.OData.Client
             RemoveSystemProperties(linkedEntryKey);
             var association = _schema.FindAssociation(collection, linkName);
             var command = CreateLinkCommand(collection, association.ActualName,
-                new ODataClientWithCommand<IDictionary<string, object>>(this, _schema).For(collection).Key(entryKey).CommandText,
-                new ODataClientWithCommand<IDictionary<string, object>>(this, _schema).For(association.ReferenceTableName).Key(linkedEntryKey).CommandText);
+                new FluentClient<IDictionary<string, object>>(this, _schema).For(collection).Key(entryKey).CommandText,
+                new FluentClient<IDictionary<string, object>>(this, _schema).For(association.ReferenceTableName).Key(linkedEntryKey).CommandText);
             _requestBuilder.AddCommandToRequest(command);
             _requestRunner.UpdateEntry(command);
         }
@@ -149,7 +149,7 @@ namespace Simple.OData.Client
             RemoveSystemProperties(entryKey);
             var association = _schema.FindAssociation(collection, linkName);
             var command = CreateUnlinkCommand(collection, association.ActualName,
-                new ODataClientWithCommand<IDictionary<string, object>>(this, _schema).For(collection).Key(entryKey).CommandText);
+                new FluentClient<IDictionary<string, object>>(this, _schema).For(collection).Key(entryKey).CommandText);
             _requestBuilder.AddCommandToRequest(command);
             _requestRunner.UpdateEntry(command);
         }
@@ -158,7 +158,7 @@ namespace Simple.OData.Client
         {
             var function = _schema.FindFunction(functionName);
             var command = new HttpCommand(function.HttpMethod.ToUpper(),
-                new ODataClientWithCommand<IDictionary<string, object>>(this, _schema).Function(functionName).Parameters(parameters).CommandText);
+                new FluentClient<IDictionary<string, object>>(this, _schema).Function(functionName).Parameters(parameters).CommandText);
             _requestBuilder.AddCommandToRequest(command);
             return _requestRunner.ExecuteFunction(command);
         }

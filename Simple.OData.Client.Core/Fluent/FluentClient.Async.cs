@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace Simple.OData.Client
 {
-    partial class ODataClientWithCommand
+    partial class FluentClient
     {
         public Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync()
         {

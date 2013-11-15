@@ -45,7 +45,7 @@
     <Compile Include="..\CommonAssemblyVersion.cs">
       <Link>Properties\CommonAssemblyVersion.cs</Link>
     </Compile>
-    <Compile Include="Commands\IClientWithCommand.T.cs" />
+    <Compile Include="Fluent\IFluentClient.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />
     <Compile Include="Http\BatchRequestBuilder.cs" />
     <Compile Include="Http\BatchRequestRunner.cs" />
@@ -85,8 +85,6 @@
     <Compile Include="Expressions\ODataExpression.Linq.cs" />
     <Compile Include="Expressions\FunctionMapping.cs" />
     <Compile Include="Http\HttpCommand.cs" />
-    <Compile Include="Commands\IClient.T.cs" />
-    <Compile Include="Commands\ICommand.T.cs" />
     <Compile Include="IPluralizer.cs" />
     <Compile Include="ODataBatch.cs" />
     <Compile Include="ODataClient.Async.cs" />
@@ -94,13 +92,13 @@
     <Compile Include="ODataClient.Sync.cs" />
     <Compile Include="ODataClient.Internals.cs" />
     <Compile Include="ODataClientSettings.cs" />
-    <Compile Include="Commands\ODataClientWithCommand.Async.cs" />
-    <Compile Include="Commands\ODataClientWithCommand.cs" />
-    <Compile Include="Commands\ODataClientWithCommand.Sync.cs" />
-    <Compile Include="Commands\ODataClientWithCommand.T.cs" />
-    <Compile Include="Commands\ODataClientWithCommand.T.Async.cs" />
-    <Compile Include="Commands\ODataCommand.cs" />
-    <Compile Include="Commands\ODataCommand.T.cs" />
+    <Compile Include="Fluent\FluentClient.Async.cs" />
+    <Compile Include="Fluent\FluentClient.cs" />
+    <Compile Include="Fluent\FluentClient.Sync.cs" />
+    <Compile Include="Fluent\FluentClient.T.cs" />
+    <Compile Include="Fluent\FluentClient.T.Async.cs" />
+    <Compile Include="ODataCommand.cs" />
+    <Compile Include="ODataCommand.T.cs" />
     <Compile Include="ODataEntry.cs" />
     <Compile Include="ODataFeedReader.cs" />
     <Compile Include="ODataFeedWriter.cs" />
@@ -137,7 +135,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <Compile Include="Commands\ODataClientWithCommand.T.Sync.cs" />
+    <Compile Include="Fluent\FluentClient.T.Sync.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />

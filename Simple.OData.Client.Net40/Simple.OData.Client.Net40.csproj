@@ -67,39 +67,6 @@
     <Compile Include="..\CommonAssemblyVersion.cs">
       <Link>Properties\CommonAssemblyVersion.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Commands\IClient.T.cs">
-      <Link>Commands\IClient.T.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Commands\IClientWithCommand.T.cs">
-      <Link>Commands\IClientWithCommand.T.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Commands\ICommand.T.cs">
-      <Link>Commands\ICommand.T.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Commands\ODataClientWithCommand.Async.cs">
-      <Link>Commands\ODataClientWithCommand.Async.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Commands\ODataClientWithCommand.cs">
-      <Link>Commands\ODataClientWithCommand.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Commands\ODataClientWithCommand.Sync.cs">
-      <Link>Commands\ODataClientWithCommand.Sync.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Commands\ODataClientWithCommand.T.Async.cs">
-      <Link>Commands\ODataClientWithCommand.T.Async.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Commands\ODataClientWithCommand.T.cs">
-      <Link>Commands\ODataClientWithCommand.T.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Commands\ODataClientWithCommand.T.Sync.cs">
-      <Link>Commands\ODataClientWithCommand.T.Sync.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Commands\ODataCommand.cs">
-      <Link>Commands\ODataCommand.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Commands\ODataCommand.T.cs">
-      <Link>Commands\ODataCommand.T.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Edm\EdmSchemaParser.cs">
       <Link>Edm\EdmSchemaParser.cs</Link>
     </Compile>
@@ -184,6 +151,27 @@
     <Compile Include="..\Simple.OData.Client.Core\Expressions\FunctionMapping.cs">
       <Link>Expressions\FunctionMapping.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Fluent\FluentClient.Async.cs">
+      <Link>Fluent\FluentClient.Async.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Fluent\FluentClient.cs">
+      <Link>Fluent\FluentClient.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Fluent\FluentClient.Sync.cs">
+      <Link>Fluent\FluentClient.Sync.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Fluent\FluentClient.T.Async.cs">
+      <Link>Fluent\FluentClient.T.Async.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Fluent\FluentClient.T.cs">
+      <Link>Fluent\FluentClient.T.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Fluent\FluentClient.T.Sync.cs">
+      <Link>Fluent\FluentClient.T.Sync.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Fluent\IFluentClient.cs">
+      <Link>Fluent\IFluentClient.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Http\BatchRequestBuilder.cs">
       <Link>Http\BatchRequestBuilder.cs</Link>
     </Compile>
@@ -243,6 +231,12 @@
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ODataBatch.cs">
       <Link>ODataBatch.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ODataCommand.cs">
+      <Link>ODataCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ODataCommand.T.cs">
+      <Link>ODataCommand.T.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ODataEntry.cs">
       <Link>ODataEntry.cs</Link>

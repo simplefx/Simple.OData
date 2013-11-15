@@ -5,7 +5,7 @@ using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
-    partial class ODataClientWithCommand
+    partial class FluentClient
     {
         public IEnumerable<IDictionary<string, object>> FindEntries()
         {
