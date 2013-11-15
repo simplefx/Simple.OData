@@ -15,10 +15,10 @@ namespace Simple.OData.Client
         protected ODataCommand _parent;
         protected ODataCommand _command;
 
-        public FluentClient(ODataClient client, ISchema schema, ODataCommand parent = null)
+        public FluentClient(ODataClient client, ODataCommand parent = null)
         {
             _client = client;
-            _schema = schema;
+            _schema = client.Schema;
             _parent = parent;
         }
 
@@ -61,7 +61,7 @@ namespace Simple.OData.Client
 
         public FluentClient Link(ODataCommand command, string linkName)
         {
-            var linkedClient = new FluentClient(_client, _schema, command);
+            var linkedClient = new FluentClient(_client, command);
             linkedClient.Command.Link(linkName);
             return linkedClient;
         }

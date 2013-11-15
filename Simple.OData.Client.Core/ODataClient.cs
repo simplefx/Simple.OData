@@ -60,18 +60,18 @@ namespace Simple.OData.Client
 
         public IFluentClient<IDictionary<string, object>> For(string collectionName)
         {
-            return new FluentClient<IDictionary<string, object>>(this, _schema).For(collectionName);
+            return new FluentClient<IDictionary<string, object>>(this).For(collectionName);
         }
 
         public IFluentClient<ODataEntry> For(ODataExpression expression)
         {
-            return new FluentClient<ODataEntry>(this, _schema).For(expression);
+            return new FluentClient<ODataEntry>(this).For(expression);
         }
 
         public IFluentClient<T> For<T>(string collectionName = null)
             where T : class
         {
-            return new FluentClient<T>(this, _schema).For(collectionName);
+            return new FluentClient<T>(this).For(collectionName);
         }
 
         public string FormatFilter(string collection, ODataExpression expression)
@@ -86,7 +86,7 @@ namespace Simple.OData.Client
 
         private string FormatFilterExpression(string collection, ODataExpression expression)
         {
-            var clientWithCommand = new FluentClient<IDictionary<string, object>>(this, _schema);
+            var clientWithCommand = new FluentClient<IDictionary<string, object>>(this);
             var filter = expression.Format(clientWithCommand.Schema, collection);
 
             return clientWithCommand

@@ -7,8 +7,8 @@ namespace Simple.OData.Client
     public partial class FluentClient<T> : FluentClient, IFluentClient<T>
         where T : class
     {
-        public FluentClient(ODataClient client, ISchema schema, ODataCommand parent = null)
-            : base(client, schema, parent)
+        public FluentClient(ODataClient client, ODataCommand parent = null)
+            : base(client, parent)
         {
         }
 
@@ -41,7 +41,7 @@ namespace Simple.OData.Client
         public FluentClient<U> Link<U>(ODataCommand command, string linkName = null)
         where U : class
         {
-            var linkedClient = new FluentClient<U>(_client, _schema, command);
+            var linkedClient = new FluentClient<U>(_client, command);
             linkedClient.Command.Link(linkName ?? typeof(U).Name);
             return linkedClient;
         }
