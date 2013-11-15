@@ -249,7 +249,7 @@ namespace Simple.OData.Client.Tests
                 .For(x.Transport)
                 .FindEntries();
             Assert.Equal(2, transport.Count());
-            Assert.False(transport.Any(y => y.ContainsKey(ODataCommand.ResourceTypeLiteral)));
+            Assert.False(transport.Any(y => y.AsDictionary().ContainsKey(ODataCommand.ResourceTypeLiteral)));
         }
 
         [Fact]
@@ -266,7 +266,7 @@ namespace Simple.OData.Client.Tests
                 .For(x.Transport)
                 .FindEntries();
             Assert.Equal(2, transport.Count());
-            Assert.True(transport.All(y => y.ContainsKey(ODataCommand.ResourceTypeLiteral)));
+            Assert.True(transport.All(y => y.AsDictionary().ContainsKey(ODataCommand.ResourceTypeLiteral)));
         }
 
         [Fact]

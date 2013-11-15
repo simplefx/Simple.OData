@@ -54,6 +54,11 @@ namespace Simple.OData.Client
             LinkEntry(linkedEntryKey, ODataCommand.ExtractColumnName(expression));
         }
 
+        public new void LinkEntry(ODataExpression expression, ODataEntry linkedEntryKey)
+        {
+            LinkEntry(linkedEntryKey, expression.ToString());
+        }
+
         public new void UnlinkEntry<U>(string linkName = null)
         {
             _client.UnlinkEntry(_command.CollectionName, _command.KeyValues, linkName ?? typeof(U).Name);
@@ -62,6 +67,11 @@ namespace Simple.OData.Client
         public new void UnlinkEntry<U>(Expression<Func<T, U>> expression)
         {
             UnlinkEntry(ODataCommand.ExtractColumnName(expression));
+        }
+
+        public new void UnlinkEntry(ODataExpression expression)
+        {
+            _client.UnlinkEntry(_command.CollectionName, _command.KeyValues, expression.ToString());
         }
 
         public new IEnumerable<T> ExecuteFunction(string functionName, IDictionary<string, object> parameters)

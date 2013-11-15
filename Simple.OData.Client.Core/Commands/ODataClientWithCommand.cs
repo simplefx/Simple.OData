@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
 
 namespace Simple.OData.Client
 {
@@ -10,7 +8,7 @@ namespace Simple.OData.Client
     // For the same reason ODataCommand is also declared as public
     // More: http://bloggingabout.net/blogs/vagif/archive/2013/08/05/we-need-better-interoperability-between-dynamic-and-statically-compiled-c.aspx
 
-    public partial class ODataClientWithCommand : IClientWithCommand
+    public partial class ODataClientWithCommand
     {
         protected readonly ODataClient _client;
         protected readonly ISchema _schema;
@@ -68,174 +66,174 @@ namespace Simple.OData.Client
             return linkedClient;
         }
 
-        public IClientWithCommand For(string collectionName)
+        public void For(string collectionName)
         {
-            return this.Command.For(collectionName);
+            this.Command.For(collectionName);
         }
 
-        public IClientWithCommand For(ODataExpression expression)
+        public void For(ODataExpression expression)
         {
-            return this.Command.For(expression);
+            this.Command.For(expression);
         }
 
-        public IClientWithCommand As(string derivedCollectionName)
+        public void As(string derivedCollectionName)
         {
-            return this.Command.As(derivedCollectionName);
+            this.Command.As(derivedCollectionName);
         }
 
-        public IClientWithCommand As(ODataExpression expression)
+        public void As(ODataExpression expression)
         {
-            return this.Command.As(expression);
+            this.Command.As(expression);
         }
 
-        public IClientWithCommand Key(params object[] key)
+        public void Key(params object[] key)
         {
-            return this.Command.Key(key);
+            this.Command.Key(key);
         }
 
-        public IClientWithCommand Key(IEnumerable<object> key)
+        public void Key(IEnumerable<object> key)
         {
-            return this.Command.Key(key);
+            this.Command.Key(key);
         }
 
-        public IClientWithCommand Key(IDictionary<string, object> key)
+        public void Key(IDictionary<string, object> key)
         {
-            return this.Command.Key(key);
+            this.Command.Key(key);
         }
 
-        public IClientWithCommand Filter(string filter)
+        public void Filter(string filter)
         {
-            return this.Command.Filter(filter);
+            this.Command.Filter(filter);
         }
 
-        public IClientWithCommand Filter(ODataExpression expression)
+        public void Filter(ODataExpression expression)
         {
-            return this.Command.Filter(expression);
+            this.Command.Filter(expression);
         }
 
-        public IClientWithCommand Skip(int count)
+        public void Skip(int count)
         {
-            return this.Command.Skip(count);
+            this.Command.Skip(count);
         }
 
-        public IClientWithCommand Top(int count)
+        public void Top(int count)
         {
-            return this.Command.Top(count);
+            this.Command.Top(count);
         }
 
-        public IClientWithCommand Expand(IEnumerable<string> associations)
+        public void Expand(IEnumerable<string> associations)
         {
-            return this.Command.Expand(associations);
+            this.Command.Expand(associations);
         }
 
-        public IClientWithCommand Expand(params string[] associations)
+        public void Expand(params string[] associations)
         {
-            return this.Command.Expand(associations);
+            this.Command.Expand(associations);
         }
 
-        public IClientWithCommand Expand(params ODataExpression[] associations)
+        public void Expand(params ODataExpression[] associations)
         {
-            return this.Command.Expand(associations);
+            this.Command.Expand(associations);
         }
 
-        public IClientWithCommand Select(IEnumerable<string> columns)
+        public void Select(IEnumerable<string> columns)
         {
-            return this.Command.Select(columns);
+            this.Command.Select(columns);
         }
 
-        public IClientWithCommand Select(params string[] columns)
+        public void Select(params string[] columns)
         {
-            return this.Command.Select(columns);
+            this.Command.Select(columns);
         }
 
-        public IClientWithCommand Select(params ODataExpression[] columns)
+        public void Select(params ODataExpression[] columns)
         {
-            return this.Command.Select(columns);
+            this.Command.Select(columns);
         }
 
-        public IClientWithCommand OrderBy(IEnumerable<KeyValuePair<string, bool>> columns)
+        public void OrderBy(IEnumerable<KeyValuePair<string, bool>> columns)
         {
-            return this.Command.OrderBy(columns);
+            this.Command.OrderBy(columns);
         }
 
-        public IClientWithCommand OrderBy(params string[] columns)
+        public void OrderBy(params string[] columns)
         {
-            return this.Command.OrderBy(columns);
+            this.Command.OrderBy(columns);
         }
 
-        public IClientWithCommand OrderBy(params ODataExpression[] columns)
+        public void OrderBy(params ODataExpression[] columns)
         {
-            return this.Command.OrderBy(columns);
+            this.Command.OrderBy(columns);
         }
 
-        public IClientWithCommand ThenBy(params string[] columns)
+        public void ThenBy(params string[] columns)
         {
-            return this.Command.ThenBy(columns);
+            this.Command.ThenBy(columns);
         }
 
-        public IClientWithCommand ThenBy(params ODataExpression[] columns)
+        public void ThenBy(params ODataExpression[] columns)
         {
-            return this.Command.ThenBy(columns);
+            this.Command.ThenBy(columns);
         }
 
-        public IClientWithCommand OrderByDescending(params string[] columns)
+        public void OrderByDescending(params string[] columns)
         {
-            return this.Command.OrderByDescending(columns);
+            this.Command.OrderByDescending(columns);
         }
 
-        public IClientWithCommand OrderByDescending(params ODataExpression[] columns)
+        public void OrderByDescending(params ODataExpression[] columns)
         {
-            return this.Command.OrderByDescending(columns);
+            this.Command.OrderByDescending(columns);
         }
 
-        public IClientWithCommand ThenByDescending(params string[] columns)
+        public void ThenByDescending(params string[] columns)
         {
-            return this.Command.ThenByDescending(columns);
+            this.Command.ThenByDescending(columns);
         }
 
-        public IClientWithCommand ThenByDescending(params ODataExpression[] columns)
+        public void ThenByDescending(params ODataExpression[] columns)
         {
-            return this.Command.ThenByDescending(columns);
+            this.Command.ThenByDescending(columns);
         }
 
-        public IClientWithCommand Count()
+        public void Count()
         {
-            return this.Command.Count();
+            this.Command.Count();
         }
 
-        public IClientWithCommand Set(object value)
+        public void Set(object value)
         {
-            return this.Command.Set(value);
+            this.Command.Set(value);
         }
 
-        public IClientWithCommand Set(IDictionary<string, object> value)
+        public void Set(IDictionary<string, object> value)
         {
-            return this.Command.Set(value);
+            this.Command.Set(value);
         }
 
-        public IClientWithCommand Set(params ODataExpression[] value)
+        public void Set(params ODataExpression[] value)
         {
-            return this.Command.Set(value);
+            this.Command.Set(value);
         }
 
-        public IClientWithCommand Function(string functionName)
+        public void Function(string functionName)
         {
-            return this.Command.Function(functionName);
+            this.Command.Function(functionName);
         }
 
-        public IClientWithCommand Parameters(IDictionary<string, object> parameters)
+        public void Parameters(IDictionary<string, object> parameters)
         {
-            return this.Command.Parameters(parameters);
+            this.Command.Parameters(parameters);
         }
 
-        public IClientWithCommand NavigateTo(string linkName)
+        public void NavigateTo(string linkName)
         {
-            return this.Command.NavigateTo(linkName);
+            this.Command.NavigateTo(linkName);
         }
 
-        public IClientWithCommand NavigateTo(ODataExpression expression)
+        public void NavigateTo(ODataExpression expression)
         {
-            return this.Command.NavigateTo(expression);
+            this.Command.NavigateTo(expression);
         }
 
         public bool FilterIsKey

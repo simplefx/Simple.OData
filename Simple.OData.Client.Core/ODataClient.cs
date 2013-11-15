@@ -58,14 +58,14 @@ namespace Simple.OData.Client
             StringExtensions.SetPluralizer(pluralizer);
         }
 
-        public IClientWithCommand For(string collectionName)
+        public IClientWithCommand<IDictionary<string, object>> For(string collectionName)
         {
-            return new ODataClientWithCommand(this, _schema).For(collectionName);
+            return new ODataClientWithCommand<IDictionary<string, object>>(this, _schema).For(collectionName);
         }
 
-        public IClientWithCommand For(ODataExpression expression)
+        public IClientWithCommand<ODataEntry> For(ODataExpression expression)
         {
-            return new ODataClientWithCommand(this, _schema).For(expression);
+            return new ODataClientWithCommand<ODataEntry>(this, _schema).For(expression);
         }
 
         public IClientWithCommand<T> For<T>(string collectionName = null)
@@ -86,7 +86,7 @@ namespace Simple.OData.Client
 
         private string FormatFilterExpression(string collection, ODataExpression expression)
         {
-            var clientWithCommand = new ODataClientWithCommand(this, _schema);
+            var clientWithCommand = new ODataClientWithCommand<IDictionary<string, object>>(this, _schema);
             var filter = expression.Format(clientWithCommand, collection);
 
             return clientWithCommand

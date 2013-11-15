@@ -73,14 +73,8 @@
     <Compile Include="..\Simple.OData.Client.Core\Commands\IClient.T.cs">
       <Link>Commands\IClient.T.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Commands\IClientWithCommand.cs">
-      <Link>Commands\IClientWithCommand.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Commands\IClientWithCommand.T.cs">
       <Link>Commands\IClientWithCommand.T.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Commands\ICommand.cs">
-      <Link>Commands\ICommand.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Commands\ICommand.T.cs">
       <Link>Commands\ICommand.T.cs</Link>
@@ -252,6 +246,9 @@
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ODataBatch.cs">
       <Link>ODataBatch.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ODataEntry.cs">
+      <Link>ODataEntry.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ODataFeedWriter.cs">
       <Link>ODataFeedWriter.cs</Link>

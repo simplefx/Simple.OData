@@ -45,6 +45,7 @@
     <Compile Include="..\CommonAssemblyVersion.cs">
       <Link>Properties\CommonAssemblyVersion.cs</Link>
     </Compile>
+    <Compile Include="Commands\IClientWithCommand.T.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />
     <Compile Include="Http\BatchRequestBuilder.cs" />
     <Compile Include="Http\BatchRequestRunner.cs" />
@@ -86,9 +87,6 @@
     <Compile Include="Http\HttpCommand.cs" />
     <Compile Include="Commands\IClient.cs" />
     <Compile Include="Commands\IClient.T.cs" />
-    <Compile Include="Commands\IClientWithCommand.cs" />
-    <Compile Include="Commands\IClientWithCommand.T.cs" />
-    <Compile Include="Commands\ICommand.cs" />
     <Compile Include="Commands\ICommand.T.cs" />
     <Compile Include="IPluralizer.cs" />
     <Compile Include="ODataBatch.cs" />
@@ -104,6 +102,7 @@
     <Compile Include="Commands\ODataClientWithCommand.T.Async.cs" />
     <Compile Include="Commands\ODataCommand.cs" />
     <Compile Include="Commands\ODataCommand.T.cs" />
+    <Compile Include="ODataEntry.cs" />
     <Compile Include="ODataFeedReader.cs" />
     <Compile Include="ODataFeedWriter.cs" />
     <Compile Include="Pluralizer.cs" />

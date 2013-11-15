@@ -50,7 +50,7 @@ namespace Simple.OData.Client
         {
             bool hasPropertiesToUpdate = entryMembers.Properties.Count > 0;
             bool merge = !hasPropertiesToUpdate || CheckMergeConditions(collection, entryKey, entryData);
-            var commandText = new ODataClientWithCommand(this, _schema).For(_schema.FindBaseTable(collection).ActualName).Key(entryKey).CommandText;
+            var commandText = new ODataClientWithCommand<IDictionary<string, object>>(this, _schema).For(_schema.FindBaseTable(collection).ActualName).Key(entryKey).CommandText;
 
             var feedWriter = new ODataFeedWriter();
             var table = _schema.FindConcreteTable(collection);
@@ -137,6 +137,9 @@ namespace Simple.OData.Client
 
         private IDictionary<string, object> GetLinkedEntryProperties(object entryData)
         {
+            if (entryData is ODataEntry)
+                return (Dictionary<string, object>)(entryData as ODataEntry);
+
             var entryProperties = entryData as IDictionary<string, object>;
             if (entryProperties == null)
             {

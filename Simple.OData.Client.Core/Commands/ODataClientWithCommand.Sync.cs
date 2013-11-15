@@ -73,9 +73,9 @@ namespace Simple.OData.Client
             _client.LinkEntry(_command.CollectionName, _command.KeyValues, linkName, linkedEntryKey);
         }
 
-        public void LinkEntry(ODataExpression expression, IDictionary<string, object> linkedEntryKey)
+        public void LinkEntry(ODataExpression expression, ODataEntry linkedEntryKey)
         {
-            _client.LinkEntry(_command.CollectionName, _command.KeyValues, expression.Reference, linkedEntryKey);
+            _client.LinkEntry(_command.CollectionName, _command.KeyValues, expression.Reference, linkedEntryKey.AsDictionary());
         }
 
         public void UnlinkEntry(string linkName)

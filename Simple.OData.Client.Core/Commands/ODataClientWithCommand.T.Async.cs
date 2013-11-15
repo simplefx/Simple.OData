@@ -53,6 +53,11 @@ namespace Simple.OData.Client
             return LinkEntryAsync(linkedEntryKey, ODataCommand.ExtractColumnName(expression));
         }
 
+        public new Task LinkEntryAsync(ODataExpression expression, ODataEntry linkedEntryKey)
+        {
+            return LinkEntryAsync(linkedEntryKey, expression.ToString());
+        }
+
         public new Task UnlinkEntryAsync<U>(string linkName = null)
         {
             return _client.UnlinkEntryAsync(_command.CollectionName, _command.KeyValues, linkName ?? typeof(U).Name);
@@ -61,6 +66,11 @@ namespace Simple.OData.Client
         public new Task UnlinkEntryAsync<U>(Expression<Func<T, U>> expression)
         {
             return UnlinkEntryAsync(ODataCommand.ExtractColumnName(expression));
+        }
+
+        public new Task UnlinkEntryAsync(ODataExpression expression)
+        {
+            return UnlinkEntryAsync(expression.ToString());
         }
 
         public new Task<IEnumerable<T>> ExecuteFunctionAsync(string functionName, IDictionary<string, object> parameters)

@@ -13,7 +13,7 @@ namespace Simple.OData.Client
     // For the same reason ODataClientWithCommand is also declared as public
     // More: http://bloggingabout.net/blogs/vagif/archive/2013/08/05/we-need-better-interoperability-between-dynamic-and-statically-compiled-c.aspx
 
-    public class ODataCommand : ICommand
+    public class ODataCommand
     {
         protected ODataClientWithCommand _client;
         protected readonly ODataCommand _parent;
@@ -98,7 +98,7 @@ namespace Simple.OData.Client
             }
         }
 
-        public IClientWithCommand For(string collectionName)
+        public void For(string collectionName)
         {
             var items = collectionName.Split('/');
             if (items.Count() > 1)
@@ -110,32 +110,29 @@ namespace Simple.OData.Client
             {
                 _collectionName = collectionName;
             }
-            return _client;
         }
 
-        public IClientWithCommand For(ODataExpression expression)
+        public void For(ODataExpression expression)
         {
-            return For(expression.Reference);
+            For(expression.ToString());
         }
 
-        public IClientWithCommand As(string derivedCollectionName)
+        public void As(string derivedCollectionName)
         {
             _derivedCollectionName = derivedCollectionName;
-            return _client;
         }
 
-        public IClientWithCommand As(ODataExpression expression)
+        public void As(ODataExpression expression)
         {
-            return As(expression.Reference);
+            As(expression.ToString());
         }
 
-        public IClientWithCommand Link(string linkName)
+        public void Link(string linkName)
         {
             _linkName = linkName;
-            return _client;
         }
 
-        public IClientWithCommand Key(params object[] key)
+        public void Key(params object[] key)
         {
             if (key != null && key.Length == 1 && IsAnonymousType(key.First().GetType()))
             {
@@ -147,28 +144,24 @@ namespace Simple.OData.Client
             {
                 _keyValues = key.ToList();
             }
-            return _client;
         }
 
-        public IClientWithCommand Key(IEnumerable<object> key)
+        public void Key(IEnumerable<object> key)
         {
             _keyValues = key.ToList();
-            return _client;
         }
 
-        public IClientWithCommand Key(IDictionary<string, object> key)
+        public void Key(IDictionary<string, object> key)
         {
             _namedKeyValues = key;
-            return _client;
         }
 
-        public IClientWithCommand Filter(string filter)
+        public void Filter(string filter)
         {
             _filter = filter;
-            return _client;
         }
 
-        public IClientWithCommand Filter(ODataExpression expression)
+        public void Filter(ODataExpression expression)
         {
             _namedKeyValues = TryInterpretFilterExpressionAsKey(expression);
             if (_namedKeyValues == null)
@@ -179,16 +172,14 @@ namespace Simple.OData.Client
             {
                 _topCount = -1;
             }
-            return _client;
         }
 
-        public IClientWithCommand Skip(int count)
+        public void Skip(int count)
         {
             _skipCount = count;
-            return _client;
         }
 
-        public IClientWithCommand Top(int count)
+        public void Top(int count)
         {
             if (!HasKey)
             {
@@ -198,99 +189,90 @@ namespace Simple.OData.Client
             {
                 throw new InvalidOperationException("Top count may only be assigned to 1 when key is assigned");
             }
-            return _client;
         }
 
-        public IClientWithCommand Expand(IEnumerable<string> associations)
+        public void Expand(IEnumerable<string> associations)
         {
             _expandAssociations = associations.ToList();
-            return _client;
         }
 
-        public IClientWithCommand Expand(params string[] associations)
+        public void Expand(params string[] associations)
         {
             _expandAssociations = associations.ToList();
-            return _client;
         }
 
-        public IClientWithCommand Expand(params ODataExpression[] columns)
+        public void Expand(params ODataExpression[] columns)
         {
-            return Expand(columns.Select(x => x.Reference));
+            Expand(columns.Select(x => x.Reference));
         }
 
-        public IClientWithCommand Select(IEnumerable<string> columns)
-        {
-            _selectColumns = columns.ToList();
-            return _client;
-        }
-
-        public IClientWithCommand Select(params string[] columns)
+        public void Select(IEnumerable<string> columns)
         {
             _selectColumns = columns.ToList();
-            return _client;
         }
 
-        public IClientWithCommand Select(params ODataExpression[] columns)
+        public void Select(params string[] columns)
         {
-            return Select(columns.Select(x => x.Reference));
+            _selectColumns = columns.ToList();
         }
 
-        public IClientWithCommand OrderBy(IEnumerable<KeyValuePair<string, bool>> columns)
+        public void Select(params ODataExpression[] columns)
+        {
+            Select(columns.Select(x => x.Reference));
+        }
+
+        public void OrderBy(IEnumerable<KeyValuePair<string, bool>> columns)
         {
             _orderbyColumns.Clear();
             _orderbyColumns.AddRange(columns);
-            return _client;
         }
 
-        public IClientWithCommand OrderBy(params string[] columns)
+        public void OrderBy(params string[] columns)
         {
-            return OrderBy(columns.Select(x => new KeyValuePair<string, bool>(x, false)));
+            OrderBy(columns.Select(x => new KeyValuePair<string, bool>(x, false)));
         }
 
-        public IClientWithCommand OrderBy(params ODataExpression[] columns)
+        public void OrderBy(params ODataExpression[] columns)
         {
-            return OrderBy(columns.Select(x => new KeyValuePair<string, bool>(x.Reference, false)));
+            OrderBy(columns.Select(x => new KeyValuePair<string, bool>(x.Reference, false)));
         }
 
-        public IClientWithCommand ThenBy(params string[] columns)
+        public void ThenBy(params string[] columns)
         {
             _orderbyColumns.AddRange(columns.Select(x => new KeyValuePair<string, bool>(x, false)));
-            return _client;
         }
 
-        public IClientWithCommand ThenBy(params ODataExpression[] columns)
+        public void ThenBy(params ODataExpression[] columns)
         {
-            return ThenBy(columns.Select(x => x.Reference).ToArray());
+            ThenBy(columns.Select(x => x.Reference).ToArray());
         }
 
-        public IClientWithCommand OrderByDescending(params string[] columns)
+        public void OrderByDescending(params string[] columns)
         {
-            return OrderBy(columns.Select(x => new KeyValuePair<string, bool>(x, true)));
+            OrderBy(columns.Select(x => new KeyValuePair<string, bool>(x, true)));
         }
 
-        public IClientWithCommand OrderByDescending(params ODataExpression[] columns)
+        public void OrderByDescending(params ODataExpression[] columns)
         {
-            return OrderBy(columns.Select(x => new KeyValuePair<string, bool>(x.Reference, true)));
+            OrderBy(columns.Select(x => new KeyValuePair<string, bool>(x.Reference, true)));
         }
 
-        public IClientWithCommand ThenByDescending(params string[] columns)
+        public void ThenByDescending(params string[] columns)
         {
             _orderbyColumns.AddRange(columns.Select(x => new KeyValuePair<string, bool>(x, true)));
-            return _client;
         }
 
-        public IClientWithCommand ThenByDescending(params ODataExpression[] columns)
+        public void ThenByDescending(params ODataExpression[] columns)
         {
-            return ThenByDescending(columns.Select(x => x.Reference).ToArray());
+            ThenByDescending(columns.Select(x => x.Reference).ToArray());
         }
 
-        public IClientWithCommand Count()
+        public void Count()
         {
             _computeCount = true;
-            return _client;
         }
 
-        public IClientWithCommand Set(object value)
+        public void Set(object value)
         {
             var properties = value.GetType().GetDeclaredProperties();
             var dict = new Dictionary<string, object>();
@@ -299,41 +281,36 @@ namespace Simple.OData.Client
                 dict.Add(property.Name, property.GetValue(value, null));
             }
             _entryData = dict;
-            return _client;
         }
 
-        public IClientWithCommand Set(IDictionary<string, object> value)
+        public void Set(IDictionary<string, object> value)
         {
             _entryData = value;
-            return _client;
         }
 
-        public IClientWithCommand Set(params ODataExpression[] value)
+        public void Set(params ODataExpression[] value)
         {
             _entryData = value.Select(x => new KeyValuePair<string, object>(x.Reference, x.Value)).ToIDictionary();
-            return _client;
         }
 
-        public IClientWithCommand Function(string functionName)
+        public void Function(string functionName)
         {
             _functionName = functionName;
-            return _client;
         }
 
-        public IClientWithCommand Parameters(IDictionary<string, object> parameters)
+        public void Parameters(IDictionary<string, object> parameters)
         {
             _parameters = parameters.ToDictionary();
-            return _client;
         }
 
-        public IClientWithCommand NavigateTo(string linkName)
+        public void NavigateTo(string linkName)
         {
-            return _client.Link(this, linkName);
+            _client.Link(this, linkName);
         }
 
-        public IClientWithCommand NavigateTo(ODataExpression expression)
+        public void NavigateTo(ODataExpression expression)
         {
-            return NavigateTo(expression.Reference);
+            NavigateTo(expression.ToString());
         }
 
         public bool FilterIsKey

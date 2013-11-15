@@ -14,6 +14,10 @@ namespace Simple.OData.Client.Extensions
         {
             if (source == null)
                 return default(T);
+            if (typeof (IDictionary<string, object>).IsAssignableFrom(typeof(T)))
+                return source as T;
+            if (typeof(T) == typeof(ODataEntry))
+                return new ODataEntry(source) as T;
 
             var value = CreateInstance<T>();
             var type = value.GetType();
@@ -24,6 +28,10 @@ namespace Simple.OData.Client.Extensions
         {
             if (source == null)
                 return null;
+            if (typeof(IDictionary<string, object>).IsAssignableFrom(type))
+                return source;
+            if (type == typeof(ODataEntry))
+                return new ODataEntry(source);
 
             if (value == null)
             {
@@ -93,6 +101,10 @@ namespace Simple.OData.Client.Extensions
         {
             if (source == null)
                 return new Dictionary<string, object>();
+            if (source is IDictionary<string, object>)
+                return source as IDictionary<string, object>;
+            if (source is ODataEntry)
+                return (Dictionary<string, object>)(source as ODataEntry);
 
             return source.GetType().GetProperties(bindingAttr).ToDictionary
             (
