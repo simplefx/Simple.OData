@@ -7,9 +7,11 @@ namespace Simple.OData.Client.Extensions
 {
     internal static class DictionaryExtensions
     {
-        private static readonly Dictionary<Type, ConstructorInfo> _constructors = new Dictionary<Type, ConstructorInfo>(); 
+        private static readonly Dictionary<Type, ConstructorInfo> _constructors = new Dictionary<Type, ConstructorInfo>();
 
-        public static T ToObject<T>(this IDictionary<string, object> source)
+        internal static Func<IDictionary<string, object>, ODataEntry> CreateDynamicODataEntry { get; set; }
+
+        public static T ToObject<T>(this IDictionary<string, object> source, bool dynamicObject = false)
             where T : class
         {
             if (source == null)
@@ -17,21 +19,21 @@ namespace Simple.OData.Client.Extensions
             if (typeof (IDictionary<string, object>).IsAssignableFrom(typeof(T)))
                 return source as T;
             if (typeof(T) == typeof(ODataEntry))
-                return new ODataEntry(source) as T;
+                return CreateODataEntry(source, dynamicObject) as T;
 
             var value = CreateInstance<T>();
             var type = value.GetType();
-            return (T)ToObject(source, type, value);
+            return (T)ToObject(source, type, value, dynamicObject);
         }
 
-        public static object ToObject(this IDictionary<string, object> source, Type type, object value = null)
+        public static object ToObject(this IDictionary<string, object> source, Type type, object value = null, bool dynamicObject = false)
         {
             if (source == null)
                 return null;
             if (typeof(IDictionary<string, object>).IsAssignableFrom(type))
                 return source;
             if (type == typeof(ODataEntry))
-                return new ODataEntry(source);
+                return CreateODataEntry(source, dynamicObject);
 
             if (value == null)
             {
@@ -143,6 +145,13 @@ namespace Simple.OData.Client.Extensions
             }
 
             return ctor.Invoke(new object[] { }) as T;
+        }
+
+        private static ODataEntry CreateODataEntry(IDictionary<string, object> source, bool dynamicObject = false)
+        {
+            return dynamicObject && CreateDynamicODataEntry != null ?
+                CreateDynamicODataEntry(source) : 
+                new ODataEntry(source);
         }
     }
 }

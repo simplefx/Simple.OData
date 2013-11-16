@@ -14,17 +14,19 @@ namespace Simple.OData.Client
     public partial class FluentClient<T> : IFluentClient<T>
         where T : class
     {
-        protected readonly ODataClient _client;
-        protected readonly ISchema _schema;
-        protected ODataCommand _parent;
-        protected ODataCommand _command;
+        private readonly ODataClient _client;
+        private readonly ISchema _schema;
+        private readonly ODataCommand _parentCommand;
+        private ODataCommand _command;
+        private bool _dynamicResults;
 
-        public FluentClient(ODataClient client, ODataCommand parent = null, ODataCommand command = null)
+        public FluentClient(ODataClient client, ODataCommand parentCommand = null, ODataCommand command = null, bool dynamicResults = false)
         {
             _client = client;
             _schema = client.Schema;
-            _parent = parent;
+            _parentCommand = parentCommand;
             _command = command;
+            _dynamicResults = dynamicResults;
         }
 
         private ODataCommand Command
@@ -43,7 +45,7 @@ namespace Simple.OData.Client
 
         private ODataCommand CreateCommand()
         {
-            return new ODataCommand(this.Schema, _parent);
+            return new ODataCommand(this.Schema, _parentCommand);
         }
 
         public ISchema Schema
@@ -59,7 +61,7 @@ namespace Simple.OData.Client
         public FluentClient<U> Link<U>(ODataCommand command, string linkName = null)
         where U : class
         {
-            var linkedClient = new FluentClient<U>(_client, command);
+            var linkedClient = new FluentClient<U>(_client, command, null, _dynamicResults);
             linkedClient.Command.Link(linkName ?? typeof(U).Name);
             return linkedClient;
         }
@@ -70,38 +72,38 @@ namespace Simple.OData.Client
             return this;
         }
 
-        public new IFluentClient<ODataEntry> For(ODataExpression expression)
+        public IFluentClient<ODataEntry> For(ODataExpression expression)
         {
             this.Command.For(expression.Reference);
-            return new FluentClient<ODataEntry>(_client, _parent, this.Command);
+            return CreateClientForODataEntry();
         }
 
         public IFluentClient<U> As<U>(string derivedCollectionName = null)
         where U : class
         {
             this.Command.As(derivedCollectionName ?? typeof(U).Name);
-            return new FluentClient<U>(_client, _parent, this.Command);
+            return new FluentClient<U>(_client, _parentCommand, this.Command, _dynamicResults);
         }
 
-        public new IFluentClient<ODataEntry> As(ODataExpression expression)
+        public IFluentClient<ODataEntry> As(ODataExpression expression)
         {
             this.Command.As(expression.ToString());
-            return new FluentClient<ODataEntry>(_client, _parent, this.Command);
+            return CreateClientForODataEntry();
         }
 
-        public new IFluentClient<T> Key(params object[] entryKey)
+        public IFluentClient<T> Key(params object[] entryKey)
         {
             this.Command.Key(entryKey);
             return this;
         }
 
-        public new IFluentClient<T> Key(IEnumerable<object> entryKey)
+        public IFluentClient<T> Key(IEnumerable<object> entryKey)
         {
             this.Command.Key(entryKey);
             return this;
         }
 
-        public new IFluentClient<T> Key(IDictionary<string, object> entryKey)
+        public IFluentClient<T> Key(IDictionary<string, object> entryKey)
         {
             this.Command.Key(entryKey);
             return this;
@@ -113,16 +115,16 @@ namespace Simple.OData.Client
             return this;
         }
 
-        public new IFluentClient<T> Filter(string filter)
+        public IFluentClient<T> Filter(string filter)
         {
             this.Command.Filter(filter);
             return this;
         }
 
-        public new IFluentClient<ODataEntry> Filter(ODataExpression expression)
+        public IFluentClient<ODataEntry> Filter(ODataExpression expression)
         {
             this.Command.Filter(expression);
-            return new FluentClient<ODataEntry>(_client, _parent, this.Command);
+            return CreateClientForODataEntry();
         }
 
         public IFluentClient<T> Filter(Expression<Func<T, bool>> expression)
@@ -131,34 +133,34 @@ namespace Simple.OData.Client
             return this;
         }
 
-        public new IFluentClient<T> Skip(int count)
+        public IFluentClient<T> Skip(int count)
         {
             this.Command.Skip(count);
             return this;
         }
 
-        public new IFluentClient<T> Top(int count)
+        public IFluentClient<T> Top(int count)
         {
             this.Command.Top(count);
             return this;
         }
 
-        public new IFluentClient<T> Expand(IEnumerable<string> columns)
+        public IFluentClient<T> Expand(IEnumerable<string> columns)
         {
             this.Command.Expand(columns);
             return this;
         }
 
-        public new IFluentClient<T> Expand(params string[] columns)
+        public IFluentClient<T> Expand(params string[] columns)
         {
             this.Command.Expand(columns);
             return this;
         }
 
-        public new IFluentClient<ODataEntry> Expand(params ODataExpression[] associations)
+        public IFluentClient<ODataEntry> Expand(params ODataExpression[] associations)
         {
             this.Command.Expand(associations);
-            return new FluentClient<ODataEntry>(_client, _parent, this.Command);
+            return CreateClientForODataEntry();
         }
 
         public IFluentClient<T> Expand(Expression<Func<T, object>> expression)
@@ -167,22 +169,22 @@ namespace Simple.OData.Client
             return this;
         }
 
-        public new IFluentClient<T> Select(IEnumerable<string> columns)
+        public IFluentClient<T> Select(IEnumerable<string> columns)
         {
             this.Command.Select(columns);
             return this;
         }
 
-        public new IFluentClient<T> Select(params string[] columns)
+        public IFluentClient<T> Select(params string[] columns)
         {
             this.Command.Select(columns);
             return this;
         }
 
-        public new IFluentClient<ODataEntry> Select(params ODataExpression[] columns)
+        public IFluentClient<ODataEntry> Select(params ODataExpression[] columns)
         {
             this.Command.Select(columns);
-            return new FluentClient<ODataEntry>(_client, _parent, this.Command);
+            return CreateClientForODataEntry();
         }
 
         public IFluentClient<T> Select(Expression<Func<T, object>> expression)
@@ -191,22 +193,22 @@ namespace Simple.OData.Client
             return this;
         }
 
-        public new IFluentClient<T> OrderBy(IEnumerable<KeyValuePair<string, bool>> columns)
+        public IFluentClient<T> OrderBy(IEnumerable<KeyValuePair<string, bool>> columns)
         {
             this.Command.OrderBy(columns);
             return this;
         }
 
-        public new IFluentClient<T> OrderBy(params string[] columns)
+        public IFluentClient<T> OrderBy(params string[] columns)
         {
             this.Command.OrderBy(columns);
             return this;
         }
 
-        public new IFluentClient<ODataEntry> OrderBy(params ODataExpression[] columns)
+        public IFluentClient<ODataEntry> OrderBy(params ODataExpression[] columns)
         {
             this.Command.OrderBy(columns);
-            return new FluentClient<ODataEntry>(_client, _parent, this.Command);
+            return CreateClientForODataEntry();
         }
 
         public IFluentClient<T> OrderBy(Expression<Func<T, object>> expression)
@@ -215,10 +217,10 @@ namespace Simple.OData.Client
             return this;
         }
 
-        public new IFluentClient<ODataEntry> ThenBy(params ODataExpression[] columns)
+        public IFluentClient<ODataEntry> ThenBy(params ODataExpression[] columns)
         {
             this.Command.ThenBy(columns);
-            return new FluentClient<ODataEntry>(_client, _parent, this.Command);
+            return CreateClientForODataEntry();
         }
 
         public IFluentClient<T> ThenBy(Expression<Func<T, object>> expression)
@@ -227,16 +229,16 @@ namespace Simple.OData.Client
             return this;
         }
 
-        public new IFluentClient<T> OrderByDescending(params string[] columns)
+        public IFluentClient<T> OrderByDescending(params string[] columns)
         {
             this.Command.OrderByDescending(columns);
             return this;
         }
 
-        public new IFluentClient<ODataEntry> OrderByDescending(params ODataExpression[] columns)
+        public IFluentClient<ODataEntry> OrderByDescending(params ODataExpression[] columns)
         {
             this.Command.OrderByDescending(columns);
-            return new FluentClient<ODataEntry>(_client, _parent, this.Command);
+            return CreateClientForODataEntry();
         }
 
         public IFluentClient<T> OrderByDescending(Expression<Func<T, object>> expression)
@@ -245,10 +247,10 @@ namespace Simple.OData.Client
             return this;
         }
 
-        public new IFluentClient<ODataEntry> ThenByDescending(params ODataExpression[] columns)
+        public IFluentClient<ODataEntry> ThenByDescending(params ODataExpression[] columns)
         {
             this.Command.ThenByDescending(columns);
-            return new FluentClient<ODataEntry>(_client, _parent, this.Command);
+            return CreateClientForODataEntry();
         }
 
         public IFluentClient<T> ThenByDescending(Expression<Func<T, object>> expression)
@@ -257,28 +259,28 @@ namespace Simple.OData.Client
             return this;
         }
 
-        public new IFluentClient<T> Count()
+        public IFluentClient<T> Count()
         {
             this.Command.Count();
             return this;
         }
 
-        public new IFluentClient<T> Set(object value)
+        public IFluentClient<T> Set(object value)
         {
             this.Command.Set(value);
             return this;
         }
 
-        public new IFluentClient<T> Set(IDictionary<string, object> value)
+        public IFluentClient<T> Set(IDictionary<string, object> value)
         {
             this.Command.Set(value);
             return this;
         }
 
-        public new IFluentClient<ODataEntry> Set(params ODataExpression[] value)
+        public IFluentClient<ODataEntry> Set(params ODataExpression[] value)
         {
             this.Command.Set(value);
-            return new FluentClient<ODataEntry>(_client, _parent, this.Command);
+            return CreateClientForODataEntry();
         }
 
         public IFluentClient<T> Set(T entry)
@@ -288,9 +290,35 @@ namespace Simple.OData.Client
         }
 
         public IFluentClient<U> NavigateTo<U>(string linkName = null)
-        where U : class
+            where U : class
         {
             return this.Link<U>(this.Command, linkName);
+        }
+
+        public IFluentClient<U> NavigateTo<U>(Expression<Func<T, U>> expression)
+            where U : class
+        {
+            return this.Link<U>(this.Command, ExtractColumnName(expression));
+        }
+
+        public IFluentClient<U> NavigateTo<U>(Expression<Func<T, IEnumerable<U>>> expression) where U : class
+        {
+            return this.Link<U>(this.Command, ExtractColumnName(expression));
+        }
+
+        public IFluentClient<U> NavigateTo<U>(Expression<Func<T, IList<U>>> expression) where U : class
+        {
+            return this.Link<U>(this.Command, ExtractColumnName(expression));
+        }
+
+        public IFluentClient<U> NavigateTo<U>(Expression<Func<T, U[]>> expression) where U : class
+        {
+            return this.Link<U>(this.Command, ExtractColumnName(expression));
+        }
+
+        public IFluentClient<ODataEntry> NavigateTo(string linkName)
+        {
+            return this.Link<ODataEntry>(this.Command, linkName);
         }
 
         public IFluentClient<ODataEntry> NavigateTo(ODataExpression expression)
@@ -298,19 +326,19 @@ namespace Simple.OData.Client
             return this.Link<ODataEntry>(this.Command, expression.ToString());
         }
 
-        public new IFluentClient<T> Function(string functionName)
+        public IFluentClient<T> Function(string functionName)
         {
             this.Command.Function(functionName);
             return this;
         }
 
-        public new IFluentClient<T> Parameters(IDictionary<string, object> parameters)
+        public IFluentClient<T> Parameters(IDictionary<string, object> parameters)
         {
             this.Command.Parameters(parameters);
             return this;
         }
 
-        protected internal static IEnumerable<string> ExtractColumnNames(Expression<Func<T, object>> expression)
+        internal static IEnumerable<string> ExtractColumnNames(Expression<Func<T, object>> expression)
         {
             var lambdaExpression = Utils.CastExpressionWithTypeCheck<LambdaExpression>(expression);
             switch (lambdaExpression.Body.NodeType)
@@ -328,7 +356,7 @@ namespace Simple.OData.Client
             }
         }
 
-        protected internal static string ExtractColumnName(Expression expression)
+        internal static string ExtractColumnName(Expression expression)
         {
             switch (expression.NodeType)
             {
@@ -337,6 +365,9 @@ namespace Simple.OData.Client
 
                 case ExpressionType.Convert:
                     return ExtractColumnName((expression as UnaryExpression).Operand);
+
+                case ExpressionType.Lambda:
+                    return ExtractColumnName((expression as LambdaExpression).Body);
 
                 default:
                     throw Utils.NotSupportedExpression(expression);
@@ -356,6 +387,11 @@ namespace Simple.OData.Client
         public IDictionary<string, object> NewValues
         {
             get { return this.Command.EntryData; }
+        }
+
+        private FluentClient<ODataEntry> CreateClientForODataEntry() 
+        {
+            return new FluentClient<ODataEntry>(_client, _parentCommand, this.Command, true); ;
         }
     }
 }

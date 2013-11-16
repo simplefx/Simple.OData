@@ -310,6 +310,9 @@
     <Compile Include="..\Simple.OData.Client.Core\ValueParser.cs">
       <Link>ValueParser.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Dynamic\DynamicODataEntry.cs">
+      <Link>DynamicODataEntry.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Dynamic\DynamicODataExpression.cs">
       <Link>Expressions\DynamicODataExpression.cs</Link>
     </Compile>

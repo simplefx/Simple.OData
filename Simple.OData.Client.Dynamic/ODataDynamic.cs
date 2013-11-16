@@ -1,9 +1,15 @@
 ﻿using System.Collections.Generic;
+using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
     public static class ODataDynamic
     {
+        static ODataDynamic()
+        {
+            DictionaryExtensions.CreateDynamicODataEntry = (x) => new DynamicODataEntry(x);
+        }
+
         public static dynamic Expression
         {
             get { return new DynamicODataExpression(); }

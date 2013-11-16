@@ -83,6 +83,11 @@ namespace Simple.OData.Client
         IFluentClient<T> ThenByDescending(Expression<Func<T, object>> expression);
         IFluentClient<T> Count();
         IFluentClient<U> NavigateTo<U>(string linkName = null) where U : class;
+        IFluentClient<U> NavigateTo<U>(Expression<Func<T, U>> expression) where U : class;
+        IFluentClient<U> NavigateTo<U>(Expression<Func<T, IEnumerable<U>>> expression) where U : class;
+        IFluentClient<U> NavigateTo<U>(Expression<Func<T, IList<U>>> expression) where U : class;
+        IFluentClient<U> NavigateTo<U>(Expression<Func<T, U[]>> expression) where U : class;
+        IFluentClient<ODataEntry> NavigateTo(string linkName);
         IFluentClient<ODataEntry> NavigateTo(ODataExpression expression);
         IFluentClient<T> Set(object value);
         IFluentClient<T> Set(IDictionary<string, object> value);

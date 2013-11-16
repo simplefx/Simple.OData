@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
-using Entry = System.Collections.Generic.Dictionary<string, object>;
-
 namespace Simple.OData.Client.Tests
 {
     public class InsertDynamicTests : TestBase
@@ -18,7 +16,7 @@ namespace Simple.OData.Client.Tests
                 .Set(x.ProductName = "Test1", x.UnitPrice = 18m)
                 .InsertEntry();
 
-            Assert.Equal("Test1", product["ProductName"]);
+            Assert.Equal("Test1", product.ProductName);
         }
 
         [Fact]
@@ -30,8 +28,8 @@ namespace Simple.OData.Client.Tests
                 .Set(x.ProductName = "Test1", x.UnitPrice = 18m)
                 .InsertEntry();
 
-            Assert.True((int)product["ProductID"] > 0);
-            Assert.Equal("Test1", product["ProductName"]);
+            Assert.True((int)product.ProductID > 0);
+            Assert.Equal("Test1", product.ProductName);
         }
 
         [Fact]
@@ -44,17 +42,17 @@ namespace Simple.OData.Client.Tests
                 .InsertEntry();
             var product = _client
                 .For(x.Products)
-                .Set(x.ProductName = "Test4", x.UnitPrice = 18m, x.CategoryID = category["CategoryID"])
+                .Set(x.ProductName = "Test4", x.UnitPrice = 18m, x.CategoryID = category.CategoryID)
                 .InsertEntry();
 
-            Assert.Equal("Test4", product["ProductName"]);
-            Assert.Equal(category["CategoryID"], product["CategoryID"]);
+            Assert.Equal("Test4", product.ProductName);
+            Assert.Equal(category.CategoryID, product.CategoryID);
             category = _client
                 .For(x.Categories)
                 .Expand(x.Products)
                 .Filter(x.CategoryName == "Test3")
                 .FindEntry();
-            Assert.True((category["Products"] as IEnumerable<object>).Count() == 1);
+            Assert.True((category.Products as IEnumerable<dynamic>).Count() == 1);
         }
 
         [Fact]
@@ -70,14 +68,14 @@ namespace Simple.OData.Client.Tests
                 .Set(x.ProductName = "Test6", x.UnitPrice = 18m, x.Category = category)
                 .InsertEntry();
 
-            Assert.Equal("Test6", product["ProductName"]);
-            Assert.Equal(category["CategoryID"], product["CategoryID"]);
+            Assert.Equal("Test6", product.ProductName);
+            Assert.Equal(category.CategoryID, product.CategoryID);
             category = _client
                 .For(x.Categories)
                 .Expand(x.Products)
                 .Filter(x.CategoryName == "Test5")
                 .FindEntry();
-            Assert.True((category["Products"] as IEnumerable<object>).Count() == 1);
+            Assert.True((category.Products as IEnumerable<dynamic>).Count() == 1);
         }
     }
 }

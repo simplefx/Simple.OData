@@ -9,27 +9,27 @@ namespace Simple.OData.Client
 {
     partial class FluentClient<T>
     {
-        public new Task<IEnumerable<T>> FindEntriesAsync()
+        public Task<IEnumerable<T>> FindEntriesAsync()
         {
             return RectifyColumnSelectionAsync(_client.FindEntriesAsync(_command.ToString()), _command.SelectedColumns);
         }
 
-        public new Task<IEnumerable<T>> FindEntriesAsync(bool scalarResult)
+        public Task<IEnumerable<T>> FindEntriesAsync(bool scalarResult)
         {
             return RectifyColumnSelectionAsync(_client.FindEntriesAsync(_command.ToString(), scalarResult), _command.SelectedColumns);
         }
 
-        public new Task<Tuple<IEnumerable<T>, int>> FindEntriesWithCountAsync()
+        public Task<Tuple<IEnumerable<T>, int>> FindEntriesWithCountAsync()
         {
             return RectifyColumnSelectionAsync(_client.FindEntriesWithCountAsync(_command.WithInlineCount().ToString()), _command.SelectedColumns);
         }
 
-        public new Task<Tuple<IEnumerable<T>, int>> FindEntriesWithCountAsync(bool scalarResult)
+        public Task<Tuple<IEnumerable<T>, int>> FindEntriesWithCountAsync(bool scalarResult)
         {
             return RectifyColumnSelectionAsync(_client.FindEntriesWithCountAsync(_command.WithInlineCount().ToString(), scalarResult), _command.SelectedColumns);
         }
 
-        public new Task<T> FindEntryAsync()
+        public Task<T> FindEntryAsync()
         {
             return RectifyColumnSelectionAsync(_client.FindEntryAsync(_command.ToString()), _command.SelectedColumns);
         }
@@ -39,12 +39,12 @@ namespace Simple.OData.Client
             return _client.FindScalarAsync(_command.ToString());
         }
 
-        public new Task<T> InsertEntryAsync(bool resultRequired = true)
+        public Task<T> InsertEntryAsync(bool resultRequired = true)
         {
             return _client.InsertEntryAsync(_command.CollectionName, _command.EntryData, resultRequired).ContinueWith(x =>
             {
                 var result = x.Result;
-                return result.ToObject<T>();
+                return result.ToObject<T>(_dynamicResults);
             });
         }
 
@@ -84,7 +84,7 @@ namespace Simple.OData.Client
             return LinkEntryAsync(linkedEntryKey, ExtractColumnName(expression));
         }
 
-        public new Task LinkEntryAsync(ODataExpression expression, IDictionary<string, object> linkedEntryKey)
+        public Task LinkEntryAsync(ODataExpression expression, IDictionary<string, object> linkedEntryKey)
         {
             return LinkEntryAsync(linkedEntryKey, expression.ToString());
         }
@@ -104,7 +104,7 @@ namespace Simple.OData.Client
             return UnlinkEntryAsync(ExtractColumnName(expression));
         }
 
-        public new Task UnlinkEntryAsync(ODataExpression expression)
+        public Task UnlinkEntryAsync(ODataExpression expression)
         {
             return UnlinkEntryAsync(expression.ToString());
         }
@@ -124,26 +124,26 @@ namespace Simple.OData.Client
             return _client.ExecuteFunctionAsArrayAsync<T>(_command.ToString(), parameters);
         }
 
-        internal static Task<IEnumerable<T>> RectifyColumnSelectionAsync(Task<IEnumerable<IDictionary<string, object>>> entries, IList<string> selectedColumns)
+        internal Task<IEnumerable<T>> RectifyColumnSelectionAsync(Task<IEnumerable<IDictionary<string, object>>> entries, IList<string> selectedColumns)
         {
             return entries.ContinueWith(
                 x => RectifyColumnSelection(x.Result, selectedColumns)).ContinueWith(
-                y => y.Result.Select(z => z.ToObject<T>()));
+                y => y.Result.Select(z => z.ToObject<T>(_dynamicResults)));
         }
 
-        internal static Task<T> RectifyColumnSelectionAsync(Task<IDictionary<string, object>> entry, IList<string> selectedColumns)
+        internal Task<T> RectifyColumnSelectionAsync(Task<IDictionary<string, object>> entry, IList<string> selectedColumns)
         {
             return entry.ContinueWith(
-                x => RectifyColumnSelection(x.Result, selectedColumns).ToObject<T>());
+                x => RectifyColumnSelection(x.Result, selectedColumns).ToObject<T>(_dynamicResults));
         }
 
-        internal static Task<Tuple<IEnumerable<T>, int>> RectifyColumnSelectionAsync(Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> entries, IList<string> selectedColumns)
+        internal Task<Tuple<IEnumerable<T>, int>> RectifyColumnSelectionAsync(Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> entries, IList<string> selectedColumns)
         {
             return entries.ContinueWith(x =>
             {
                 var result = x.Result;
                 return new Tuple<IEnumerable<T>, int>(
-                    RectifyColumnSelection(result.Item1, selectedColumns).Select(y => y.ToObject<T>()),
+                    RectifyColumnSelection(result.Item1, selectedColumns).Select(y => y.ToObject<T>(_dynamicResults)),
                     result.Item2);
             });
         }

@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
-using Entry = System.Collections.Generic.Dictionary<string, object>;
-
 namespace Simple.OData.Client.Tests
 {
     public class LinkDynamicTests : TestBase
@@ -31,8 +29,8 @@ namespace Simple.OData.Client.Tests
                 .For(x.Products)
                 .Filter(x.ProductName == "Test5")
                 .FindEntry();
-            Assert.NotNull(product["CategoryID"]);
-            Assert.Equal(category["CategoryID"], product["CategoryID"]);
+            Assert.NotNull(product.CategoryID);
+            Assert.Equal(category.CategoryID, product.CategoryID);
         }
 
         [Fact]
@@ -45,7 +43,7 @@ namespace Simple.OData.Client.Tests
                 .InsertEntry();
             var product = _client
                 .For(x.Products)
-                .Set(x.ProductName = "Test5", x.CategoryID = category["CategoryID"])
+                .Set(x.ProductName = "Test5", x.CategoryID = category.CategoryID)
                 .InsertEntry();
 
             _client
@@ -57,7 +55,7 @@ namespace Simple.OData.Client.Tests
                 .For(x.Products)
                 .Filter(x.ProductName == "Test5")
                 .FindEntry();
-            Assert.Null(product["CategoryID"]);
+            Assert.Null(product.CategoryID);
         }
     }
 }

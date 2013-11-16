@@ -8,34 +8,34 @@ namespace Simple.OData.Client
 {
     partial class FluentClient<T>
     {
-        public new IEnumerable<T> FindEntries()
+        public IEnumerable<T> FindEntries()
         {
             return RectifyColumnSelection(_client.FindEntries(_command.ToString()), _command.SelectedColumns)
-                .Select(x => x.ToObject<T>());
+                .Select(x => x.ToObject<T>(_dynamicResults));
         }
 
-        public new IEnumerable<T> FindEntries(bool scalarResult)
+        public IEnumerable<T> FindEntries(bool scalarResult)
         {
             return RectifyColumnSelection(_client.FindEntries(_command.ToString(), scalarResult), _command.SelectedColumns)
-                .Select(x => x.ToObject<T>());
+                .Select(x => x.ToObject<T>(_dynamicResults));
         }
 
-        public new IEnumerable<T> FindEntries(out int totalCount)
+        public IEnumerable<T> FindEntries(out int totalCount)
         {
             return RectifyColumnSelection(_client.FindEntries(_command.WithInlineCount().ToString(), out totalCount), _command.SelectedColumns)
-                .Select(x => x.ToObject<T>());
+                .Select(x => x.ToObject<T>(_dynamicResults));
         }
 
-        public new IEnumerable<T> FindEntries(bool scalarResult, out int totalCount)
+        public IEnumerable<T> FindEntries(bool scalarResult, out int totalCount)
         {
             return RectifyColumnSelection(_client.FindEntries(_command.WithInlineCount().ToString(), scalarResult, out totalCount), _command.SelectedColumns)
-                .Select(x => x.ToObject<T>());
+                .Select(x => x.ToObject<T>(_dynamicResults));
         }
 
         public T FindEntry()
         {
             return RectifyColumnSelection(_client.FindEntry(_command.ToString()), _command.SelectedColumns)
-                .ToObject<T>();
+                .ToObject<T>(_dynamicResults);
         }
 
         public object FindScalar()
@@ -46,7 +46,7 @@ namespace Simple.OData.Client
         public T InsertEntry(bool resultRequired = true)
         {
             return _client.InsertEntry(_command.CollectionName, _command.EntryData, resultRequired)
-                .ToObject<T>();
+                .ToObject<T>(_dynamicResults);
         }
 
         public int UpdateEntry()
@@ -90,7 +90,7 @@ namespace Simple.OData.Client
             LinkEntry(linkedEntryKey, expression.ToString());
         }
 
-        public new void LinkEntry(ODataExpression expression, ODataEntry linkedEntryKey)
+        public void LinkEntry(ODataExpression expression, ODataEntry linkedEntryKey)
         {
             LinkEntry(linkedEntryKey, expression.ToString());
         }
@@ -105,23 +105,23 @@ namespace Simple.OData.Client
             UnlinkEntry(ExtractColumnName(expression));
         }
 
-        public new void UnlinkEntry(ODataExpression expression)
+        public void UnlinkEntry(ODataExpression expression)
         {
             _client.UnlinkEntry(_command.CollectionName, _command.KeyValues, expression.ToString());
         }
 
-        public new IEnumerable<T> ExecuteFunction(string functionName, IDictionary<string, object> parameters)
+        public IEnumerable<T> ExecuteFunction(string functionName, IDictionary<string, object> parameters)
         {
             return RectifyColumnSelection(_client.ExecuteFunction(_command.ToString(), parameters), _command.SelectedColumns)
-                .Select(x => x.ToObject<T>());
+                .Select(x => x.ToObject<T>(_dynamicResults));
         }
 
-        public new T ExecuteFunctionAsScalar(string functionName, IDictionary<string, object> parameters)
+        public T ExecuteFunctionAsScalar(string functionName, IDictionary<string, object> parameters)
         {
             return _client.ExecuteFunctionAsScalar<T>(_command.ToString(), parameters);
         }
 
-        public new T[] ExecuteFunctionAsArray(string functionName, IDictionary<string, object> parameters)
+        public T[] ExecuteFunctionAsArray(string functionName, IDictionary<string, object> parameters)
         {
             return _client.ExecuteFunctionAsArray<T>(_command.ToString(), parameters);
         }

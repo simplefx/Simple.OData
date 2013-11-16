@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
-using Entry = System.Collections.Generic.Dictionary<string, object>;
-
 namespace Simple.OData.Client.Tests
 {
     public class UpdateDynamicTests : TestBase
@@ -20,7 +18,7 @@ namespace Simple.OData.Client.Tests
 
             _client
                 .For(x.Products)
-                .Key(product["ProductID"])
+                .Key(product.ProductID)
                 .Set(x.UnitPrice = 123m)
                 .UpdateEntry();
 
@@ -29,7 +27,7 @@ namespace Simple.OData.Client.Tests
                 .Filter(x.ProductName == "Test1")
                 .FindEntry();
 
-            Assert.Equal(123m, product["UnitPrice"]);
+            Assert.Equal(123m, product.UnitPrice);
         }
 
         [Fact]
@@ -52,7 +50,7 @@ namespace Simple.OData.Client.Tests
                 .Filter(x.ProductName == "Test1")
                 .FindEntry();
 
-            Assert.Equal(123m, product["UnitPrice"]);
+            Assert.Equal(123m, product.UnitPrice);
         }
 
         [Fact]
@@ -75,7 +73,7 @@ namespace Simple.OData.Client.Tests
                 .Filter(x.ProductName == "Test1")
                 .FindEntry();
 
-            Assert.Equal(456m, product["UnitPrice"]);
+            Assert.Equal(456m, product.UnitPrice);
         }
 
         [Fact]
@@ -92,16 +90,16 @@ namespace Simple.OData.Client.Tests
 
             _client
                 .For(x.Employees)
-                .Key(employee["EmployeeID"])
+                .Key(employee.EmployeeID)
                 .Set(x.HireDate = tomorrow)
                 .UpdateEntry();
 
             employee = _client
                 .For(x.Employees)
-                .Key(employee["EmployeeID"])
+                .Key(employee.EmployeeID)
                 .FindEntry();
 
-            Assert.Equal(tomorrow, employee["HireDate"]);
+            Assert.Equal(tomorrow, employee.HireDate);
         }
 
         [Fact]
@@ -119,21 +117,21 @@ namespace Simple.OData.Client.Tests
 
             _client
                 .For(x.Products)
-                .Key(product["ProductID"])
+                .Key(product.ProductID)
                 .Set(x.Category = category)
                 .UpdateEntry();
 
             product = _client
                 .For(x.Products)
-                .Filter(x.ProductID == product["ProductID"])
+                .Filter(x.ProductID == product.ProductID)
                 .FindEntry();
-            Assert.Equal(category["CategoryID"], product["CategoryID"]);
+            Assert.Equal(category.CategoryID, product.CategoryID);
             category = _client
                 .For(x.Categories)
-                .Filter(x.CategoryID == category["CategoryID"])
+                .Filter(x.CategoryID == category.CategoryID)
                 .Expand(x.Products)
                 .FindEntry();
-            Assert.Equal(1, (category["Products"] as IEnumerable<object>).Count());
+            Assert.Equal(1, (category.Products as IEnumerable<dynamic>).Count());
         }
 
         [Fact]
@@ -151,21 +149,21 @@ namespace Simple.OData.Client.Tests
 
             _client
                 .For(x.Products)
-                .Key(product["ProductID"])
+                .Key(product.ProductID)
                 .Set(x.Category = category)
                 .UpdateEntry();
 
             product = _client
                 .For(x.Products)
-                .Filter(x.ProductID == product["ProductID"])
+                .Filter(x.ProductID == product.ProductID)
                 .FindEntry();
-            Assert.Equal(category["CategoryID"], product["CategoryID"]);
+            Assert.Equal(category.CategoryID, product.CategoryID);
             category = _client
                 .For(x.Categories)
-                .Filter(x.CategoryID == category["CategoryID"])
+                .Filter(x.CategoryID == category.CategoryID)
                 .Expand(x.Products)
                 .FindEntry();
-            Assert.Equal(1, (category["Products"] as IEnumerable<object>).Count());
+            Assert.Equal(1, (category.Products as IEnumerable<dynamic>).Count());
         }
 
         [Fact]
@@ -183,15 +181,15 @@ namespace Simple.OData.Client.Tests
 
             _client
                 .For(x.Products)
-                .Key(product["ProductID"])
+                .Key(product.ProductID)
                 .Set(x.Category = null)
                 .UpdateEntry();
 
             product = _client
                 .For(x.Products)
-                .Filter(x.ProductID == product["ProductID"])
+                .Filter(x.ProductID == product.ProductID)
                 .FindEntry();
-            Assert.Null(product["CategoryID"]);
+            Assert.Null(product.CategoryID);
         }
 
         [Fact]
@@ -213,16 +211,16 @@ namespace Simple.OData.Client.Tests
 
             _client
                 .For(x.Categories)
-                .Key(category["CategoryID"])
+                .Key(category.CategoryID)
                 .Set(x.Products = new[] { product1, product2 })
                 .UpdateEntry();
 
             category = _client
                 .For(x.Categories)
-                .Filter(x.CategoryID == category["CategoryID"])
+                .Filter(x.CategoryID == category.CategoryID)
                 .Expand(x.Products)
                 .FindEntry();
-            Assert.Equal(2, (category["Products"] as IEnumerable<object>).Count());
+            Assert.Equal(2, (category.Products as IEnumerable<dynamic>).Count());
         }
     }
 }

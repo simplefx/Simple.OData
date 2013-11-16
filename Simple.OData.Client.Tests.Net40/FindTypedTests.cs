@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
-using Entry = System.Collections.Generic.Dictionary<string, object>;
-
 namespace Simple.OData.Client.Tests
 {
     public class FindTypedTests : TestBase
@@ -213,6 +211,17 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void NavigateToSingleByExpression()
+        {
+            var category = _client
+                .For<Product>()
+                .Key(new { ProductID = 2 })
+                .NavigateTo(x => x.Category)
+                .FindEntry();
+            Assert.Equal("Beverages", category.CategoryName);
+        }
+
+        [Fact]
         public void NavigateToMultiple()
         {
             var products = _client
@@ -232,6 +241,20 @@ namespace Simple.OData.Client.Tests
                 .NavigateTo<Employee>("Superior")
                 .NavigateTo<Employee>("Superior")
                 .NavigateTo<Employee>("Subordinates")
+                .Key(3)
+                .FindEntry();
+            Assert.Equal("Janet", employee.FirstName);
+        }
+
+        [Fact]
+        public void NavigateToRecursiveByExpression()
+        {
+            var employee = _client
+                .For<Employee>()
+                .Key(14)
+                .NavigateTo(x => x.Superior)
+                .NavigateTo(x => x.Superior)
+                .NavigateTo(x => x.Subordinates)
                 .Key(3)
                 .FindEntry();
             Assert.Equal("Janet", employee.FirstName);

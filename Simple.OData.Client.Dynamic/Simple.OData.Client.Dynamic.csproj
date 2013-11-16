@@ -48,6 +48,7 @@
     <Compile Include="..\CommonAssemblyVersion.cs">
       <Link>Properties\CommonAssemblyVersion.cs</Link>
     </Compile>
+    <Compile Include="DynamicODataEntry.cs" />
     <Compile Include="DynamicODataExpression.cs" />
     <Compile Include="ODataDynamic.cs" />
     <Compile Include="ODataFilter.cs" />

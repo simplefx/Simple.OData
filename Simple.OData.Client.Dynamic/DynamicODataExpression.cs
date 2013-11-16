@@ -50,12 +50,12 @@ namespace Simple.OData.Client
 
         public DynamicMetaObject GetMetaObject(Expression parameter)
         {
-            return new DynamicDictionaryMetaObject(parameter, this);
+            return new DynamicExpressionMetaObject(parameter, this);
         }
 
-        private class DynamicDictionaryMetaObject : DynamicMetaObject
+        private class DynamicExpressionMetaObject : DynamicMetaObject
         {
-            internal DynamicDictionaryMetaObject(
+            internal DynamicExpressionMetaObject(
                 Expression parameter,
                 DynamicODataExpression value)
                 : base(parameter, BindingRestrictions.Empty, value)
@@ -87,7 +87,7 @@ namespace Simple.OData.Client
             {
                 var ctor = CtorWithStringAndValue;
                 Expression objectExpression = Expression.Constant(value.Value);
-                if (value.Value != null && value.Value.GetType() != typeof (object))
+                if (value.Value != null && value.Value.GetType().IsValueType)
                 {
                     objectExpression = Expression.Convert(objectExpression, typeof (object));
                 }

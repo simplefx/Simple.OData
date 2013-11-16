@@ -4,7 +4,7 @@ namespace Simple.OData.Client
 {
     public class ODataEntry
     {
-        private Dictionary<string, object> _entry;
+        protected Dictionary<string, object> _entry;
 
         public ODataEntry()
         {
@@ -36,12 +36,12 @@ namespace Simple.OData.Client
             return _entry;
         }
 
-        public static implicit operator ODataEntry(Dictionary<string, object> entry)
+        public static explicit operator ODataEntry(Dictionary<string, object> entry)
         {
             return new ODataEntry() { _entry = entry };
         }
 
-        public static implicit operator Dictionary<string, object>(ODataEntry entry)
+        public static explicit operator Dictionary<string, object>(ODataEntry entry)
         {
             return entry._entry;
         }

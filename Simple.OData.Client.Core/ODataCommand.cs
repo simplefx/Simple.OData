@@ -15,24 +15,24 @@ namespace Simple.OData.Client
 
     public class ODataCommand
     {
-        protected ISchema _schema;
-        protected readonly ODataCommand _parent;
-        protected string _collectionName;
-        protected string _derivedCollectionName;
-        protected string _functionName;
-        protected IList<object> _keyValues;
-        protected IDictionary<string, object> _namedKeyValues;
-        protected IDictionary<string, object> _entryData;
-        protected Dictionary<string, object> _parameters = new Dictionary<string, object>();
-        protected string _filter;
-        protected int _skipCount = -1;
-        protected int _topCount = -1;
-        protected List<string> _expandAssociations = new List<string>();
-        protected List<string> _selectColumns = new List<string>();
-        protected readonly List<KeyValuePair<string, bool>> _orderbyColumns = new List<KeyValuePair<string, bool>>();
-        protected bool _computeCount;
-        protected bool _inlineCount;
-        protected string _linkName;
+        private readonly ISchema _schema;
+        private readonly ODataCommand _parent;
+        private string _collectionName;
+        private string _derivedCollectionName;
+        private string _functionName;
+        private IList<object> _keyValues;
+        private IDictionary<string, object> _namedKeyValues;
+        private IDictionary<string, object> _entryData;
+        private Dictionary<string, object> _parameters = new Dictionary<string, object>();
+        private string _filter;
+        private int _skipCount = -1;
+        private int _topCount = -1;
+        private List<string> _expandAssociations = new List<string>();
+        private List<string> _selectColumns = new List<string>();
+        private readonly List<KeyValuePair<string, bool>> _orderbyColumns = new List<KeyValuePair<string, bool>>();
+        private bool _computeCount;
+        private bool _inlineCount;
+        private string _linkName;
 
         internal static readonly string MetadataLiteral = "$metadata";
         internal static readonly string FilterLiteral = "$filter";
@@ -389,7 +389,7 @@ namespace Simple.OData.Client
             get { return _selectColumns; }
         }
 
-        protected string Format()
+        private string Format()
         {
             string commandText = string.Empty;
             if (!string.IsNullOrEmpty(_collectionName))
@@ -421,7 +421,7 @@ namespace Simple.OData.Client
             return commandText;
         }
 
-        protected string FormatClauses()
+        private string FormatClauses()
         {
             var text = string.Empty;
             var extraClauses = new List<string>();
@@ -463,24 +463,24 @@ namespace Simple.OData.Client
             return text;
         }
 
-        protected string FormatExpandItem(string item)
+        private string FormatExpandItem(string item)
         {
             return this.Table.FindAssociation(item).ActualName;
         }
 
-        protected string FormatSelectItem(string item)
+        private string FormatSelectItem(string item)
         {
             return this.Table.HasColumn(item)
                 ? this.Table.FindColumn(item).ActualName
                 : this.Table.FindAssociation(item).ActualName;
         }
 
-        protected string FormatOrderByItem(KeyValuePair<string, bool> item)
+        private string FormatOrderByItem(KeyValuePair<string, bool> item)
         {
             return this.Table.FindColumn(item.Key) + (item.Value ? " desc" : string.Empty);
         }
 
-        protected string FormatKey()
+        private string FormatKey()
         {
             var namedKeyValues = this.KeyValues;
             var valueFormatter = new ValueFormatter();
@@ -490,7 +490,7 @@ namespace Simple.OData.Client
             return "(" + formattedKeyValues + ")";
         }
 
-        protected IDictionary<string, object> TryInterpretFilterExpressionAsKey(ODataExpression expression)
+        private IDictionary<string, object> TryInterpretFilterExpressionAsKey(ODataExpression expression)
         {
             bool ok = false;
             IDictionary<string, object> namedKeyValues = new Dictionary<string, object>();
