@@ -53,6 +53,7 @@ namespace Simple.OData.Client
         Task<T> ExecuteFunctionAsScalarAsync(string functionName, IDictionary<string, object> parameters);
         Task<T[]> ExecuteFunctionAsArrayAsync(string functionName, IDictionary<string, object> parameters);
 
+        IFluentClient<IDictionary<string, object>> As(string derivedCollectionName);
         IFluentClient<U> As<U>(string derivedCollectionName = null) where U : class;
         IFluentClient<ODataEntry> As(ODataExpression expression);
         IFluentClient<T> Key(params object[] entryKey);
@@ -87,7 +88,7 @@ namespace Simple.OData.Client
         IFluentClient<U> NavigateTo<U>(Expression<Func<T, IEnumerable<U>>> expression) where U : class;
         IFluentClient<U> NavigateTo<U>(Expression<Func<T, IList<U>>> expression) where U : class;
         IFluentClient<U> NavigateTo<U>(Expression<Func<T, U[]>> expression) where U : class;
-        IFluentClient<ODataEntry> NavigateTo(string linkName);
+        IFluentClient<IDictionary<string, object>> NavigateTo(string linkName);
         IFluentClient<ODataEntry> NavigateTo(ODataExpression expression);
         IFluentClient<T> Set(object value);
         IFluentClient<T> Set(IDictionary<string, object> value);
@@ -95,5 +96,8 @@ namespace Simple.OData.Client
         IFluentClient<ODataEntry> Set(params ODataExpression[] value);
         IFluentClient<T> Function(string functionName);
         IFluentClient<T> Parameters(IDictionary<string, object> parameters);
+
+        bool FilterIsKey { get; }
+        IDictionary<string, object> FilterAsKey { get; }
     }
 }

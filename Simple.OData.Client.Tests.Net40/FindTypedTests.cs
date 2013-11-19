@@ -156,6 +156,25 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void Get()
+        {
+            var category = _client
+                .For<Category>()
+                .Key(1)
+                .FindEntry();
+            Assert.Equal(1, category.CategoryID);
+        }
+
+        [Fact]
+        public void GetNonExisting()
+        {
+            Assert.Throws<WebRequestException>(() => _client
+                .For<Category>()
+                .Key(-1)
+                .FindEntry());
+        }
+
+        [Fact]
         public void SelectSingle()
         {
             var product = _client

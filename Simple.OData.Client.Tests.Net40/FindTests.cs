@@ -40,6 +40,15 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void GetNonExisting()
+        {
+            Assert.Throws<WebRequestException>(() => _client
+                .For("Categories")
+                .Key(-1)
+                .FindEntry());
+        }
+
+        [Fact]
         public void SkipOne()
         {
             var products = _client

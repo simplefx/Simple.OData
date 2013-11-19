@@ -78,6 +78,12 @@ namespace Simple.OData.Client
             return CreateClientForODataEntry();
         }
 
+        public IFluentClient<IDictionary<string, object>> As(string derivedCollectionName)
+        {
+            this.Command.As(derivedCollectionName);
+            return new FluentClient<IDictionary<string, object>>(_client, _parentCommand, this.Command, _dynamicResults);
+        }
+
         public IFluentClient<U> As<U>(string derivedCollectionName = null)
         where U : class
         {
@@ -118,6 +124,12 @@ namespace Simple.OData.Client
         public IFluentClient<T> Filter(string filter)
         {
             this.Command.Filter(filter);
+            return this;
+        }
+
+        public IFluentClient<T> TypedFilter(ODataExpression expression)
+        {
+            this.Command.Filter(expression);
             return this;
         }
 
@@ -316,9 +328,9 @@ namespace Simple.OData.Client
             return this.Link<U>(this.Command, ExtractColumnName(expression));
         }
 
-        public IFluentClient<ODataEntry> NavigateTo(string linkName)
+        public IFluentClient<IDictionary<string, object>> NavigateTo(string linkName)
         {
-            return this.Link<ODataEntry>(this.Command, linkName);
+            return this.Link<IDictionary<string, object>>(this.Command, linkName);
         }
 
         public IFluentClient<ODataEntry> NavigateTo(ODataExpression expression)
@@ -382,11 +394,6 @@ namespace Simple.OData.Client
         public IDictionary<string, object> FilterAsKey
         {
             get { return this.Command.FilterAsKey; }
-        }
-
-        public IDictionary<string, object> NewValues
-        {
-            get { return this.Command.EntryData; }
         }
 
         private FluentClient<ODataEntry> CreateClientForODataEntry() 

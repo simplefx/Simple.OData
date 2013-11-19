@@ -153,6 +153,27 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void Get()
+        {
+            var x = ODataDynamic.Expression;
+            var category = _client
+                .For(x.Categories)
+                .Key(1)
+                .FindEntry();
+            Assert.Equal(1, category.CategoryID);
+        }
+
+        [Fact]
+        public void GetNonExisting()
+        {
+            var x = ODataDynamic.Expression;
+            Assert.Throws<WebRequestException>(() => _client
+                .For(x.Categories)
+                .Key(-1)
+                .FindEntry());
+        }
+
+        [Fact]
         public void SelectSingle()
         {
             var x = ODataDynamic.Expression;
