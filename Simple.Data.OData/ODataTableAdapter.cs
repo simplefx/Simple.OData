@@ -182,7 +182,7 @@ namespace Simple.Data.OData
             return client;
         }
 
-        private IClientWithCommand GetODataClientCommand(QueryCommand cmd)
+        private IFluentClient<IDictionary<string, object>> GetODataClientCommand(QueryCommand cmd)
         {
             var linkNames = cmd.TablePath.Split('.');
             var client = GetODataClient();
@@ -200,7 +200,7 @@ namespace Simple.Data.OData
                 clientCommand = clientCommand.Key(cmd.KeyValues);
 
             if (!ReferenceEquals(cmd.FilterExpression, null))
-                clientCommand = clientCommand.Filter(cmd.FilterExpression);
+                clientCommand = (clientCommand as FluentClient<IDictionary<string, object>>).TypedFilter(cmd.FilterExpression);
 
             if (cmd.Expand.Count > 0)
                 clientCommand = clientCommand.Expand(cmd.Expand);

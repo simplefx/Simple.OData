@@ -13,7 +13,7 @@
     <language>en-us</language>
     <dependencies>
       <dependency id="Simple.Data.Core" version="0.18.1.0" />
-      <dependency id="Simple.OData.Client" version="0.18.0.0" />
+      <dependency id="Simple.OData.Client" version="0.21.0.0" />
     </dependencies>
   </metadata>
   <files>
