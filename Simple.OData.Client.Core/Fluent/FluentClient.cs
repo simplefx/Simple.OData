@@ -127,16 +127,10 @@ namespace Simple.OData.Client
             return this;
         }
 
-        public IFluentClient<T> TypedFilter(ODataExpression expression)
+        public IFluentClient<T> Filter(ODataExpression expression)
         {
             this.Command.Filter(expression);
             return this;
-        }
-
-        public IFluentClient<ODataEntry> Filter(ODataExpression expression)
-        {
-            this.Command.Filter(expression);
-            return CreateClientForODataEntry();
         }
 
         public IFluentClient<T> Filter(Expression<Func<T, bool>> expression)
@@ -169,10 +163,10 @@ namespace Simple.OData.Client
             return this;
         }
 
-        public IFluentClient<ODataEntry> Expand(params ODataExpression[] associations)
+        public IFluentClient<T> Expand(params ODataExpression[] associations)
         {
             this.Command.Expand(associations);
-            return CreateClientForODataEntry();
+            return this;
         }
 
         public IFluentClient<T> Expand(Expression<Func<T, object>> expression)
@@ -193,10 +187,10 @@ namespace Simple.OData.Client
             return this;
         }
 
-        public IFluentClient<ODataEntry> Select(params ODataExpression[] columns)
+        public IFluentClient<T> Select(params ODataExpression[] columns)
         {
             this.Command.Select(columns);
-            return CreateClientForODataEntry();
+            return this;
         }
 
         public IFluentClient<T> Select(Expression<Func<T, object>> expression)
@@ -217,10 +211,10 @@ namespace Simple.OData.Client
             return this;
         }
 
-        public IFluentClient<ODataEntry> OrderBy(params ODataExpression[] columns)
+        public IFluentClient<T> OrderBy(params ODataExpression[] columns)
         {
             this.Command.OrderBy(columns);
-            return CreateClientForODataEntry();
+            return this;
         }
 
         public IFluentClient<T> OrderBy(Expression<Func<T, object>> expression)
@@ -229,10 +223,10 @@ namespace Simple.OData.Client
             return this;
         }
 
-        public IFluentClient<ODataEntry> ThenBy(params ODataExpression[] columns)
+        public IFluentClient<T> ThenBy(params ODataExpression[] columns)
         {
             this.Command.ThenBy(columns);
-            return CreateClientForODataEntry();
+            return this;
         }
 
         public IFluentClient<T> ThenBy(Expression<Func<T, object>> expression)
@@ -247,10 +241,10 @@ namespace Simple.OData.Client
             return this;
         }
 
-        public IFluentClient<ODataEntry> OrderByDescending(params ODataExpression[] columns)
+        public IFluentClient<T> OrderByDescending(params ODataExpression[] columns)
         {
             this.Command.OrderByDescending(columns);
-            return CreateClientForODataEntry();
+            return this;
         }
 
         public IFluentClient<T> OrderByDescending(Expression<Func<T, object>> expression)
@@ -259,10 +253,10 @@ namespace Simple.OData.Client
             return this;
         }
 
-        public IFluentClient<ODataEntry> ThenByDescending(params ODataExpression[] columns)
+        public IFluentClient<T> ThenByDescending(params ODataExpression[] columns)
         {
             this.Command.ThenByDescending(columns);
-            return CreateClientForODataEntry();
+            return this;
         }
 
         public IFluentClient<T> ThenByDescending(Expression<Func<T, object>> expression)
@@ -289,10 +283,10 @@ namespace Simple.OData.Client
             return this;
         }
 
-        public IFluentClient<ODataEntry> Set(params ODataExpression[] value)
+        public IFluentClient<T> Set(params ODataExpression[] value)
         {
             this.Command.Set(value);
-            return CreateClientForODataEntry();
+            return this;
         }
 
         public IFluentClient<T> Set(T entry)
@@ -333,9 +327,9 @@ namespace Simple.OData.Client
             return this.Link<IDictionary<string, object>>(this.Command, linkName);
         }
 
-        public IFluentClient<ODataEntry> NavigateTo(ODataExpression expression)
+        public IFluentClient<T> NavigateTo(ODataExpression expression)
         {
-            return this.Link<ODataEntry>(this.Command, expression.ToString());
+            return this.Link<T>(this.Command, expression.ToString());
         }
 
         public IFluentClient<T> Function(string functionName)
