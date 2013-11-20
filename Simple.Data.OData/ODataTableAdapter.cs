@@ -200,7 +200,7 @@ namespace Simple.Data.OData
                 clientCommand = clientCommand.Key(cmd.KeyValues);
 
             if (!ReferenceEquals(cmd.FilterExpression, null))
-                clientCommand = (clientCommand as FluentClient<IDictionary<string, object>>).TypedFilter(cmd.FilterExpression);
+                clientCommand = clientCommand.Filter(cmd.FilterExpression);
 
             if (cmd.Expand.Count > 0)
                 clientCommand = clientCommand.Expand(cmd.Expand);
