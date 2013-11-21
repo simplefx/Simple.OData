@@ -252,7 +252,7 @@ namespace Simple.OData.Client.Tests
         public async Task FindEntryExistingDynamicFilter()
         {
             var x = ODataDynamic.Expression;
-            string filter = _client.FormatFilter("Products", x.ProductName == "Chai");
+            string filter = _client.FormatCommand("Products", x.ProductName == "Chai");
             var product = await _client.FindEntryAsync(filter);
             Assert.Equal("Chai", product["ProductName"]);
         }
@@ -260,7 +260,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task FindEntryExistingTypedFilter()
         {
-            string filter = _client.FormatFilter<Product>("Products", x => x.ProductName == "Chai");
+            string filter = _client.FormatCommand<Product>("Products", x => x.ProductName == "Chai");
             var product = await _client.FindEntryAsync(filter);
             Assert.Equal("Chai", product["ProductName"]);
         }

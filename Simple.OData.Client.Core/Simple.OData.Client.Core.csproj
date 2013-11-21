@@ -85,6 +85,7 @@
     <Compile Include="Expressions\ODataExpression.Linq.cs" />
     <Compile Include="Expressions\FunctionMapping.cs" />
     <Compile Include="Http\HttpCommand.cs" />
+    <Compile Include="IODataClient.cs" />
     <Compile Include="IPluralizer.cs" />
     <Compile Include="ODataBatch.cs" />
     <Compile Include="ODataClient.Async.cs" />

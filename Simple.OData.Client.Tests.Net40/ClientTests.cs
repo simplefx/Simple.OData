@@ -327,7 +327,7 @@ namespace Simple.OData.Client.Tests
         public void FindEntryExistingDynamicFilter()
         {
             var x = ODataDynamic.Expression;
-            string filter = _client.FormatFilter("Products", x.ProductName == "Chai");
+            string filter = _client.FormatCommand("Products", x.ProductName == "Chai");
             var product = _client.FindEntry(filter);
             Assert.Equal("Chai", product["ProductName"]);
         }
@@ -336,7 +336,7 @@ namespace Simple.OData.Client.Tests
         public void FindBaseClassEntryDynamicFilter()
         {
             var x = ODataDynamic.Expression;
-            string filter = _client.FormatFilter("Transport", x.TransportID == 1);
+            string filter = _client.FormatCommand("Transport", x.TransportID == 1);
             var ship = _client.FindEntry(filter);
             Assert.Equal("Titanic", ship["ShipName"]);
         }
@@ -345,7 +345,7 @@ namespace Simple.OData.Client.Tests
         public void FindDerivedClassEntryDynamicFilter()
         {
             var x = ODataDynamic.Expression;
-            string filter = _client.FormatFilter("Transport/Ships", x.ShipName == "Titanic");
+            string filter = _client.FormatCommand("Transport/Ships", x.ShipName == "Titanic");
             var ship = _client.FindEntry(filter);
             Assert.Equal("Titanic", ship["ShipName"]);
         }
@@ -353,7 +353,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void FindEntryExistingTypedFilter()
         {
-            string filter = _client.FormatFilter<Product>("Products", x => x.ProductName == "Chai");
+            string filter = _client.FormatCommand<Product>("Products", x => x.ProductName == "Chai");
             var product = _client.FindEntry(filter);
             Assert.Equal("Chai", product["ProductName"]);
         }
@@ -361,7 +361,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void FindBaseClassEntryTypedFilter()
         {
-            string filter = _client.FormatFilter<Transport>("Transport", x => x.TransportID == 1);
+            string filter = _client.FormatCommand<Transport>("Transport", x => x.TransportID == 1);
             var ship = _client.FindEntry(filter);
             Assert.Equal("Titanic", ship["ShipName"]);
         }
@@ -369,7 +369,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void FindDerivedClassEntryTypedFilter()
         {
-            string filter = _client.FormatFilter<Ship>("Transport/Ships", x => x.ShipName == "Titanic");
+            string filter = _client.FormatCommand<Ship>("Transport/Ships", x => x.ShipName == "Titanic");
             var ship = _client.FindEntry(filter);
             Assert.Equal("Titanic", ship["ShipName"]);
         }

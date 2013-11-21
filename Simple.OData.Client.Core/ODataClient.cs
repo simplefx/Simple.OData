@@ -6,7 +6,7 @@ using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
-    public partial class ODataClient
+    public partial class ODataClient : IODataClient
     {
         private readonly ODataClientSettings _settings;
         private readonly ISchema _schema;
@@ -74,17 +74,17 @@ namespace Simple.OData.Client
             return new FluentClient<T>(this).For(collectionName);
         }
 
-        public string FormatFilter(string collection, ODataExpression expression)
+        public string FormatCommand(string collection, ODataExpression expression)
         {
-            return FormatFilterExpression(collection, expression);
+            return GetCommandText(collection, expression);
         }
 
-        public string FormatFilter<T>(string collection, Expression<Func<T, bool>> expression)
+        public string FormatCommand<T>(string collection, Expression<Func<T, bool>> expression)
         {
-            return FormatFilterExpression(collection, ODataExpression.FromLinqExpression(expression.Body));
+            return GetCommandText(collection, ODataExpression.FromLinqExpression(expression.Body));
         }
 
-        private string FormatFilterExpression(string collection, ODataExpression expression)
+        private string GetCommandText(string collection, ODataExpression expression)
         {
             return GetFluentClient()
                 .For(collection)

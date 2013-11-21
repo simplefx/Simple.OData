@@ -8,14 +8,14 @@ namespace Simple.OData.Client.Tests
 {
     public class TestBase : IDisposable
     {
-        protected ODataClient _client;
+        protected IODataClient _client;
 
         public TestBase()
         {
             _client = CreateClientWithDefaultSettings();
         }
 
-        public ODataClient CreateClientWithDefaultSettings()
+        public IODataClient CreateClientWithDefaultSettings()
         {
             var urlBase = "http://localhost/FakeClient";
             var schemaString = GetResourceAsString(@"Resources.Northwind.edmx");

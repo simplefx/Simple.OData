@@ -14,7 +14,7 @@ namespace Simple.OData.Client.Tests
 # if !NETFX_CORE
         protected TestService _service;
 #endif
-        protected ODataClient _client;
+        protected IODataClient _client;
 
         public TestBase()
         {
@@ -27,7 +27,7 @@ namespace Simple.OData.Client.Tests
             _client = CreateClientWithDefaultSettings();
         }
 
-        public ODataClient CreateClientWithDefaultSettings()
+        public IODataClient CreateClientWithDefaultSettings()
         {
             return new ODataClient(_serviceUri);
         }

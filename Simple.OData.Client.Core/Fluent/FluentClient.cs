@@ -14,13 +14,13 @@ namespace Simple.OData.Client
     public partial class FluentClient<T> : IFluentClient<T>
         where T : class
     {
-        private readonly ODataClient _client;
+        private readonly IODataClient _client;
         private readonly ISchema _schema;
         private readonly ODataCommand _parentCommand;
         private ODataCommand _command;
-        private bool _dynamicResults;
+        private readonly bool _dynamicResults;
 
-        public FluentClient(ODataClient client, ODataCommand parentCommand = null, ODataCommand command = null, bool dynamicResults = false)
+        public FluentClient(IODataClient client, ODataCommand parentCommand = null, ODataCommand command = null, bool dynamicResults = false)
         {
             _client = client;
             _schema = client.Schema;
