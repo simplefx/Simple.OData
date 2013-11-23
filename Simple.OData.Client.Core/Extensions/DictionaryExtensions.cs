@@ -130,10 +130,13 @@ namespace Simple.OData.Client.Extensions
                 else
                 {
                     ctor = typeof(T).GetConstructor(new Type[] { });
-                    lock (_constructors)
+                    if (ctor != null)
                     {
-                        if (!_constructors.ContainsKey(typeof(T)))
-                            _constructors.Add(typeof(T), ctor);
+                        lock (_constructors)
+                        {
+                            if (!_constructors.ContainsKey(typeof(T)))
+                                _constructors.Add(typeof(T), ctor);
+                        }
                     }
                 }
             }
@@ -141,7 +144,7 @@ namespace Simple.OData.Client.Extensions
             if (ctor == null)
             {
                 throw new InvalidOperationException(
-                    string.Format("Unable to create an instance of type {0} that does not have a default constructor."));
+                    string.Format("Unable to create an instance of type {0} that does not have a default constructor.", typeof(T).Name));
             }
 
             return ctor.Invoke(new object[] { }) as T;
