@@ -18,6 +18,14 @@ namespace Simple.OData.Client
         {
         }
 
+        private object GetEntryValue(string propertyName)
+        {
+            var value = base[propertyName];
+            if (value is IDictionary<string, object>)
+                value = new DynamicODataEntry(value as IDictionary<string, object>);
+            return value;
+        }
+
         public DynamicMetaObject GetMetaObject(Expression parameter)
         {
             return new DynamicEntryMetaObject(parameter, this);
@@ -34,23 +42,15 @@ namespace Simple.OData.Client
 
             public override DynamicMetaObject BindGetMember(GetMemberBinder binder)
             {
-                var odataEntry = base.Value as DynamicODataEntry;
-                if (odataEntry.AsDictionary().ContainsKey(binder.Name))
+                var methodInfo = typeof(DynamicODataEntry).GetMethod("GetEntryValue", BindingFlags.Instance | BindingFlags.NonPublic);
+                var arguments = new Expression[]
                 {
-                    var value = odataEntry.AsDictionary()[binder.Name];
-                    if (value is IDictionary<string, object>)
-                        value = new DynamicODataEntry(value as IDictionary<string, object>);
-                    Expression objectExpression = Expression.Constant(value);
-                    if (value != null && value.GetType().IsValueType)
-                    {
-                        objectExpression = Expression.Convert(objectExpression, typeof(object));
-                    }
+                    Expression.Constant(binder.Name)
+                };
 
-                    return new DynamicMetaObject(
-                        objectExpression, 
-                        BindingRestrictions.GetTypeRestriction(Expression, LimitType));
-                }
-                return base.BindGetMember(binder);
+                return new DynamicMetaObject(
+                    Expression.Call(Expression.Convert(Expression, LimitType), methodInfo, arguments), 
+                    BindingRestrictions.GetTypeRestriction(Expression, LimitType));
             }
         }
     }

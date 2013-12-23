@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 using Simple.OData.Client.Extensions;
 
@@ -28,7 +29,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public void AsObjectPrimitiveProperties()
+        public void ToObjectPrimitiveProperties()
         {
             var dict = new Dictionary<string, object>()
             {
@@ -42,7 +43,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public void AsObjectUnknownProperty()
+        public void ToObjectUnknownProperty()
         {
             var dict = new Dictionary<string, object>()
             {
@@ -57,7 +58,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public void AsObjectPrivateSetter()
+        public void ToObjectPrivateSetter()
         {
             var dict = new Dictionary<string, object>()
             {
@@ -73,7 +74,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public void AsObjectField()
+        public void ToObjectField()
         {
             var dict = new Dictionary<string, object>()
             {
@@ -89,7 +90,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public void AsObjectStringCollection()
+        public void ToObjectStringCollection()
         {
             var dict = new Dictionary<string, object>()
             {
@@ -108,7 +109,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public void AsObjectIntCollection()
+        public void ToObjectIntCollection()
         {
             var dict = new Dictionary<string, object>()
             {
@@ -127,7 +128,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public void AsObjectCompoundProperty()
+        public void ToObjectCompoundProperty()
         {
             var dict = new Dictionary<string, object>()
             {
@@ -144,7 +145,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public void AsObjectCompoundCollectionProperty()
+        public void ToObjectCompoundCollectionProperty()
         {
             var dict = new Dictionary<string, object>()
             {
@@ -167,6 +168,53 @@ namespace Simple.OData.Client.Tests
                 var kv = (dict["CompoundCollectionProperty"] as IList<IDictionary<string, object>>)[index];
                 Assert.Equal(kv["StringProperty"], value.CompoundCollectionProperty[index].StringProperty);
                 Assert.Equal(kv["IntProperty"], value.CompoundCollectionProperty[index].IntProperty);
+            }
+        }
+
+        [Fact]
+        public void ToObjectODataEntry()
+        {
+            var dict = new Dictionary<string, object>()
+            {
+                { "StringProperty", "a" }, 
+                { "IntProperty", 1 },
+            };
+
+            var value = dict.ToObject<ODataEntry>(false);
+            Assert.Equal("a", value["StringProperty"]);
+            Assert.Equal(1, value["IntProperty"]);
+        }
+
+        [Fact]
+        public void ToObjectDynamicODataEntry()
+        {
+            var _ = ODataDynamic.Expression;
+            var dict = new Dictionary<string, object>()
+            {
+                { "StringProperty", "a" }, 
+                { "IntProperty", 1 },
+            };
+
+            dynamic value = dict.ToObject<ODataEntry>(true);
+            Assert.Equal("a", value.StringProperty);
+            Assert.Equal(1, value.IntProperty);
+        }
+
+        [Fact]
+        public void ToObjectCollectionDynamicODataEntry()
+        {
+            var _ = ODataDynamic.Expression;
+            var dict = new[]
+            {
+                new Dictionary<string, object>() {{"StringProperty", "a"}, {"IntProperty", 1}},
+                new Dictionary<string, object>() {{"StringProperty", "b"}, {"IntProperty", 2}},
+            };
+
+            var values = (dict.Select(x => x.ToObject<ODataEntry>(true)) as IEnumerable<dynamic>).ToArray();
+            for (var index = 0; index < values.Count(); index++)
+            {
+                Assert.Equal(dict[index]["StringProperty"], values[index].StringProperty);
+                Assert.Equal(dict[index]["IntProperty"], values[index].IntProperty);
             }
         }
     }
