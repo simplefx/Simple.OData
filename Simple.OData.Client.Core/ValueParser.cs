@@ -51,7 +51,7 @@ namespace Simple.OData.Client
                 : propertyType.Name == EdmType.Float.Name ? float.Parse(value, CultureInfo.InvariantCulture)
                 : propertyType.Name == EdmType.Double.Name ? double.Parse(value, CultureInfo.InvariantCulture)
                 : propertyType.Name == EdmType.Decimal.Name ? decimal.Parse(value.TrimEnd('M', 'm'), CultureInfo.InvariantCulture)
-                : propertyType.Name == EdmType.Guid.Name ? Guid.Parse(value)
+                : propertyType.Name == EdmType.Guid.Name ? Guid.Parse(value.Replace("'", "").Replace("guid", ""))
                 : propertyType.Name == EdmType.String.Name ? Uri.UnescapeDataString(value.Substring(1, value.Length - 2))
                 : propertyType.Name == EdmType.Time.Name ? TimeSpan.Parse(value, CultureInfo.InvariantCulture)
                 : (object)value;
