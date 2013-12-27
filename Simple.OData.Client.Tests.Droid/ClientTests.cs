@@ -1,12 +1,12 @@
 using System.Linq;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+using NUnit.Framework;
 
 namespace Simple.OData.Client.Tests
 {
-    [TestClass]
+	[TestFixture]
     public class ClientTests
     {
-        [TestMethod]
+        [Test]
         public void CheckODataOrgNorthwindSchema()
         {
 			var client = new ODataClient("http://services.odata.org/V2/Northwind/Northwind.svc/");
@@ -27,7 +27,7 @@ namespace Simple.OData.Client.Tests
             Assert.AreEqual(0, client.Schema.ComplexTypes.Count());
         }
 
-        [TestMethod]
+        [Test]
 		public void CheckODataOrgODataSchema()
         {
 			var client = new ODataClient("http://services.odata.org/V3/OData/OData.svc/");
@@ -48,7 +48,7 @@ namespace Simple.OData.Client.Tests
             Assert.AreEqual(5, client.Schema.ComplexTypes.First().Properties.Count());
         }
 
-        [TestMethod]
+        [Test]
         public void AllEntriesFromODataOrg()
         {
             var client = new ODataClient("http://services.odata.org/V3/OData/OData.svc/");
@@ -59,7 +59,7 @@ namespace Simple.OData.Client.Tests
             Assert.AreNotEqual(0, products.Count());
         }
 
-        [TestMethod]
+        [Test]
         public void DynamicCombinedConditionsFromODataOrg()
         {
 			var client = new ODataClient("http://services.odata.org/V2/OData/OData.svc/");
@@ -77,7 +77,7 @@ namespace Simple.OData.Client.Tests
 			public decimal Price { get; set; }
 		}
 
-        [TestMethod]
+        [Test]
         public void TypedCombinedConditionsFromODataOrg()
         {
 			var client = new ODataClient("http://services.odata.org/V2/OData/OData.svc/");
