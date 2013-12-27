@@ -9,7 +9,7 @@ namespace Simple.OData.Client.Tests
         [TestMethod]
         public void CheckODataOrgNorthwindSchema()
         {
-            var client = new ODataClient("http://services.odata.org/Northwind/Northwind.svc/");
+            var client = new ODataClient("http://services.odata.org/V2/Northwind/Northwind.svc/");
 
             var table = client.Schema.FindTable("Product");
             Assert.AreEqual("ProductID", table.PrimaryKey[0]);
@@ -30,7 +30,7 @@ namespace Simple.OData.Client.Tests
         [TestMethod]
         public void CheckODataOrgODataSchema()
         {
-            var client = new ODataClient("http://services.odata.org/OData/OData.svc/");
+            var client = new ODataClient("http://services.odata.org/V2/OData/OData.svc/");
 
             var table = client.Schema.FindTable("Product");
             Assert.AreEqual("ID", table.PrimaryKey[0]);

@@ -344,7 +344,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void CombinedConditionsFromODataOrg()
         {
-            var client = new ODataClient("http://services.odata.org/V3/OData/OData.svc/");
+            var client = new ODataClient("http://services.odata.org/V2/OData/OData.svc/");
             var x = ODataDynamic.Expression;
             var product = client
                 .For(x.Product)

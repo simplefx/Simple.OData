@@ -360,7 +360,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void TypedCombinedConditionsFromODataOrg()
         {
-            var client = new ODataClient("http://services.odata.org/V3/OData/OData.svc/");
+            var client = new ODataClient("http://services.odata.org/V2/OData/OData.svc/");
             var product = client
                 .For<ODataOrgProduct>("Product")
                 .Filter(x => x.Name == "Bread" && x.Price < 1000)

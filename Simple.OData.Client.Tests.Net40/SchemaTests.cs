@@ -128,7 +128,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void CheckODataOrgNorthwindSchema()
         {
-            var client = new ODataClient("http://services.odata.org/Northwind/Northwind.svc/");
+            var client = new ODataClient("http://services.odata.org/V2/Northwind/Northwind.svc/");
 
             var table = client.Schema.FindTable("Product");
             Assert.Equal("ProductID", table.PrimaryKey[0]);
@@ -147,9 +147,9 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public void CheckODataOrgODataSchema()
+        public void CheckODataOrgODataV2Schema()
         {
-            var client = new ODataClient("http://services.odata.org/OData/OData.svc/");
+            var client = new ODataClient("http://services.odata.org/V2/OData/OData.svc/");
 
             var table = client.Schema.FindTable("Product");
             Assert.Equal("ID", table.PrimaryKey[0]);
@@ -162,7 +162,7 @@ namespace Simple.OData.Client.Tests
             Assert.Equal(RestVerbs.GET, function.HttpMethod);
             Assert.Equal("rating", function.Parameters[0]);
 
-            Assert.Equal(5, client.Schema.EntityTypes.Count());
+            Assert.Equal(3, client.Schema.EntityTypes.Count());
             Assert.Equal(1, client.Schema.ComplexTypes.Count());
             Assert.Equal(5, client.Schema.ComplexTypes.First().Properties.Count());
         }
@@ -177,13 +177,13 @@ namespace Simple.OData.Client.Tests
 
             var association = table.FindAssociation("Category_Products");
             Assert.Equal("Categories", association.ReferenceTableName);
-            Assert.Equal("0..1", association.Multiplicity);
+            Assert.Equal("*", association.Multiplicity);
 
             var function = client.Schema.FindFunction("GetProductsByRating");
             Assert.Equal(RestVerbs.GET, function.HttpMethod);
             Assert.Equal("rating", function.Parameters[0]);
 
-            Assert.Equal(5, client.Schema.EntityTypes.Count());
+            Assert.Equal(10, client.Schema.EntityTypes.Count());
             Assert.Equal(1, client.Schema.ComplexTypes.Count());
             Assert.Equal(5, client.Schema.ComplexTypes.First().Properties.Count());
         }
