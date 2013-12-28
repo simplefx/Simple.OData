@@ -312,7 +312,7 @@ Global
 		{E20D9290-DDCF-4779-9121-509C54F0E7BB} = {78D04AF9-B9B4-4025-93C6-B3DB01EDAAE9}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
-		StartupItem = ..\Simple.OData.Client.Tests.Droid\Simple.OData.Client.Tests.Droid.csproj
+		StartupItem = ..\Simple.OData.Client.Tests.Touch\Simple.OData.Client.Tests.Touch.csproj
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

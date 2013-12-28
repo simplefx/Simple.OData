@@ -1,0 +1,15 @@
+mono .xpkg/xamarin-component.exe create-manually Simple.OData.Client-1.0.xam \
+    --name="Simple OData Client" \
+    --summary="Cross-platform library to consume data from OData feeds." \
+    --publisher="Vagif Abilov" \
+    --website="https://github.com/object/Simple.OData.Client" \
+    --details="Details.md" \
+    --license="License.md" \
+    --getting-started="GettingStarted.md" \
+    --icon="icons/Simple.OData.Client_128x128.png" \
+    --icon="icons/Simple.OData.Client_512x512.png" \
+    --library="ios":"bin/Simple.OData.Client.Core.dll" \
+    --library="android":"bin/Simple.OData.Client.Core.dll" \
+    --library="android":"bin/Simple.OData.Client.Dynamic.dll" \
+    --sample="iOS Sample. iOS platform tests.":"samples/iOS/Simple.OData.Client.Tests.iOS.sln" \
+    --sample="Android Sample. Android platform tests.":"samples/Android/Simple.OData.Client.Tests.Android.sln"
