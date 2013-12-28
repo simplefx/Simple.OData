@@ -22,5 +22,6 @@ NDependOut
 packages/
 *_mm_cache.bin
 *.user
-
 *.userprefs
+.DS_Store
+*.xam
