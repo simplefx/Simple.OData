@@ -82,7 +82,7 @@ namespace Simple.Data.OData.Tests
         [Fact]
         public void GetProductsByRatingWithNonEmptyResultSet()
         {
-            var db = Database.Opener.Open("http://services.odata.org/OData/OData.svc/");
+            var db = Database.Opener.Open("http://services.odata.org/V2/OData/OData.svc/");
             IEnumerable<dynamic> products  = db.GetProductsByRating(rating: 3);
 
             Assert.NotEmpty(products);
@@ -95,7 +95,7 @@ namespace Simple.Data.OData.Tests
         [Fact]
         public void GetProductsByRatingWithEmptyResultSet()
         {
-            var db = Database.Opener.Open("http://services.odata.org/OData/OData.svc/");
+            var db = Database.Opener.Open("http://services.odata.org/V2/OData/OData.svc/");
             IEnumerable<dynamic> products = db.GetProductsByRating(rating: 999);
 
             Assert.Empty(products);

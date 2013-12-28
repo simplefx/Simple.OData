@@ -5,7 +5,7 @@ namespace Simple.Data.OData.Tests
     public class SpecialTest
     {
         private const string _nugetUrl = "http://packages.nuget.org/v1/FeedService.svc/";
-        private const string _odataOrgUrl = "http://services.odata.org/OData/OData.svc/";
+        private const string _odataOrgUrl = "http://services.odata.org/V2/OData/OData.svc/";
 
         public SpecialTest()
         {
