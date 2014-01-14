@@ -11,5 +11,7 @@ mono .xpkg/xamarin-component.exe create-manually Simple.OData.Client-1.0.xam \
     --library="ios":"bin/Simple.OData.Client.Core.dll" \
     --library="android":"bin/Simple.OData.Client.Core.dll" \
     --library="android":"bin/Simple.OData.Client.Dynamic.dll" \
+    --library="wp8":"bin/Simple.OData.Client.Core.dll" \
+    --library="wp8":"bin/Simple.OData.Client.Dynamic.dll" \
     --sample="iOS Sample. iOS platform tests.":"samples/iOS/Simple.OData.Client.Tests.iOS.sln" \
     --sample="Android Sample. Android platform tests.":"samples/Android/Simple.OData.Client.Tests.Android.sln"

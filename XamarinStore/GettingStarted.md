@@ -6,7 +6,8 @@ To use Simple.OData.Client import its namespace in the source file where you wil
 
 Create an instance of ODataClient by passing an OData service URL:
 
-<pre>var client = new ODataClient("http://packages.nuget.org/v1/FeedService.svc/");</pre>
+<pre>var client = new ODataClient("http://packages.nuget.org/v1/FeedService.svc/");
+</pre>
 
 Now you can access data from the OData server using either basic or fluent API. Basic and typed fluent APIs are supported on all platforms, and dynamic fluent API is supported on Windows, Windows Phone and Android.
 
