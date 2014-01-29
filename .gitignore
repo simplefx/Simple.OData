@@ -25,3 +25,4 @@ packages/
 *.userprefs
 .DS_Store
 *.xam
+*.ldf

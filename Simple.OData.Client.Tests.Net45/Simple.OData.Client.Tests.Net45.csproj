@@ -178,6 +178,9 @@
     <Compile Include="..\Simple.OData.Client.Tests.Net40\UpdateTypedTests.cs">
       <Link>UpdateTypedTests.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\WebApiTests.cs">
+      <Link>WebApiTests.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
