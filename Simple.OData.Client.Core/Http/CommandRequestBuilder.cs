@@ -29,6 +29,10 @@ namespace Simple.OData.Client
                 request.ContentType = command.ContentType;
                 request.SetContent(command.FormattedContent);
             }
+            else if (!command.ReturnsScalarResult)
+            {
+                request.Accept = "application/text,application/xml,application/atom+xml";
+            }
 
             command.Request = request;
         }

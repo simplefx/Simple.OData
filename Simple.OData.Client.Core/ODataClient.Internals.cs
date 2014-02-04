@@ -10,7 +10,7 @@ namespace Simple.OData.Client
     {
         private IEnumerable<IDictionary<string, object>> FindEntries(string commandText, bool scalarResult, bool setTotalCount, out int totalCount)
         {
-            var command = HttpCommand.Get(commandText);
+            var command = HttpCommand.Get(commandText, scalarResult);
             _requestBuilder.AddCommandToRequest(command);
             return _requestRunner.FindEntries(command, scalarResult, setTotalCount, out totalCount);
         }

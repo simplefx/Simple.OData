@@ -10,11 +10,18 @@ namespace Simple.OData.Client
         public IDictionary<string, object> OriginalContent { get; set; }
         public string FormattedContent { get; set; }
         public bool IsLink { get; set; }
+        public bool ReturnsScalarResult { get; set; }
         public HttpWebRequest Request { get; set; }
         public int ContentId { get; set; }
         public string ContentType
         {
-            get { return this.IsLink ? "application/xml" : "application/atom+xml;type=entry"; }
+            get
+            {
+                if (this.IsLink)
+                    return "application/xml";
+                else
+                    return "application/atom+xml";
+            }
         }
 
         private HttpCommand()
@@ -35,11 +42,11 @@ namespace Simple.OData.Client
             IsLink = isLink;
         }
 
-        public static HttpCommand Get(string commandText)
+        public static HttpCommand Get(string commandText, bool scalarResult = false)
         {
             return new HttpCommand
                 {
-                    CommandText = commandText, Method = RestVerbs.GET
+                    CommandText = commandText, Method = RestVerbs.GET, ReturnsScalarResult = scalarResult
                 };
         }
 
