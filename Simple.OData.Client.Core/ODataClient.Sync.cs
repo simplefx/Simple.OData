@@ -82,8 +82,8 @@ namespace Simple.OData.Client
             var table = _schema.FindConcreteTable(collection);
             var entryMembers = ParseEntryMembers(table, entryData);
 
-            var feedWriter = new ODataFeedWriter();
-            var entry = feedWriter.CreateDataElement(_schema.TypesNamespace, table.EntityType.Name, entryMembers.Properties);
+            var commandWriter = new CommandWriter();
+            var entry = commandWriter.CreateDataElement(_schema.TypesNamespace, table.EntityType.Name, entryMembers.Properties);
             foreach (var associatedData in entryMembers.AssociationsByValue)
             {
                 CreateLinkElement(entry, collection, associatedData);
@@ -97,8 +97,8 @@ namespace Simple.OData.Client
             foreach (var associatedData in entryMembers.AssociationsByContentId)
             {
                 var linkCommand = CreateLinkCommand(collection, associatedData.Key,
-                    feedWriter.CreateLinkPath(command.ContentId),
-                    feedWriter.CreateLinkPath(associatedData.Value));
+                    commandWriter.CreateLinkPath(command.ContentId),
+                    commandWriter.CreateLinkPath(associatedData.Value));
                 _requestBuilder.AddCommandToRequest(linkCommand);
                 _requestRunner.InsertEntry(linkCommand, resultRequired);
             }

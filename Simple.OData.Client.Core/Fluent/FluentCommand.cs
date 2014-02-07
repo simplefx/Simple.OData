@@ -1,22 +1,21 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
-    // ALthough ODataCommand is never instantiated directly (only via ICommand interface)
+    // ALthough FluentCommand is never instantiated directly (only via ICommand interface)
     // it's declared as public in order to resolve problem when it is used with dynamic C#
-    // For the same reason FluentFluentClient is also declared as public
+    // For the same reason FluentClient is also declared as public
     // More: http://bloggingabout.net/blogs/vagif/archive/2013/08/05/we-need-better-interoperability-between-dynamic-and-statically-compiled-c.aspx
 
-    public class ODataCommand
+    public class FluentCommand
     {
         private readonly ISchema _schema;
-        private readonly ODataCommand _parent;
+        private readonly FluentCommand _parent;
         private string _collectionName;
         private string _derivedCollectionName;
         private string _functionName;
@@ -48,13 +47,13 @@ namespace Simple.OData.Client
         internal static readonly string ResultLiteral = "__result";
         internal static readonly string ResourceTypeLiteral = "__resourcetype";
 
-        public ODataCommand(ISchema schema, ODataCommand parent)
+        public FluentCommand(ISchema schema, FluentCommand parent)
         {
             _schema = schema;
             _parent = parent;
         }
 
-        internal ODataCommand(ODataCommand ancestor)
+        internal FluentCommand(FluentCommand ancestor)
         {
             _schema = ancestor._schema;
             _parent = ancestor._parent;
@@ -319,7 +318,7 @@ namespace Simple.OData.Client
             }
         }
 
-        public ODataCommand WithInlineCount()
+        public FluentCommand WithInlineCount()
         {
             _inlineCount = true;
             return this;

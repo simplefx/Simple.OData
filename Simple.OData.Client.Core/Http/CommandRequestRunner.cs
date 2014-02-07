@@ -6,12 +6,12 @@ namespace Simple.OData.Client
 {
     class CommandRequestRunner : RequestRunner
     {
-        private readonly ODataFeedReader _feedReader;
+        private readonly ResponseReader _responseReader;
         private readonly bool _ignoreResourceNotFoundException;
 
         public CommandRequestRunner(ISchema schema, ODataClientSettings settings)
         {
-            _feedReader = new ODataFeedReader(schema, settings.IncludeResourceTypeInEntryProperties);
+            _responseReader = new ResponseReader(schema, settings.IncludeResourceTypeInEntryProperties);
             _ignoreResourceNotFoundException = settings.IgnoreResourceNotFoundException;
         }
 
@@ -31,9 +31,9 @@ namespace Simple.OData.Client
                     {
                         var stream = response.GetResponseStream();
                         if (setTotalCount)
-                            result = _feedReader.GetData(stream, out totalCount);
+                            result = _responseReader.GetData(stream, out totalCount);
                         else
-                            result = _feedReader.GetData(response.GetResponseStream(), scalarResult);
+                            result = _responseReader.GetData(response.GetResponseStream(), scalarResult);
                     }
 
                     return result;
@@ -53,7 +53,7 @@ namespace Simple.OData.Client
             try
             {
                 var text = ExecuteRequestAndGetResponse(command.Request);
-                return _feedReader.GetData(text).First();
+                return _responseReader.GetData(text).First();
             }
             catch (WebRequestException ex)
             {
@@ -69,7 +69,7 @@ namespace Simple.OData.Client
             var text = ExecuteRequestAndGetResponse(command.Request);
             if (resultRequired)
             {
-                return _feedReader.GetData(text).First();
+                return _responseReader.GetData(text).First();
             }
             else
             {
@@ -106,7 +106,7 @@ namespace Simple.OData.Client
                 }
                 else
                 {
-                    result = _feedReader.GetFunctionResult(response.GetResponseStream());
+                    result = _responseReader.GetFunctionResult(response.GetResponseStream());
                 }
 
                 return result;

@@ -226,13 +226,13 @@
     <Compile Include="..\Simple.OData.Client.Core\ODataBatch.cs">
       <Link>ODataBatch.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\ODataCommand.cs">
-      <Link>ODataCommand.cs</Link>
+    <Compile Include="..\Simple.OData.Client.Core\Fluent\FluentCommand.cs">
+      <Link>Fluent\FluentCommand.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ODataEntry.cs">
       <Link>ODataEntry.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\ODataFeedWriter.cs">
+    <Compile Include="..\Simple.OData.Client.Core\CommandWriter.cs">
       <Link>ODataFeedWriter.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Pluralizer.cs">
@@ -265,7 +265,7 @@
     <Compile Include="..\Simple.OData.Client.Core\Extensions\StringExtensions.cs">
       <Link>Extensions\StringExtensions.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\ODataFeedReader.cs">
+    <Compile Include="..\Simple.OData.Client.Core\ResponseReader.cs">
       <Link>ODataFeedReader.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Properties\AssemblyInfo.cs">

@@ -22,7 +22,7 @@ namespace Simple.OData.Client
 
         public void BeginBatch()
         {
-            var uri = CreateRequestUrl(ODataCommand.BatchLiteral);
+            var uri = CreateRequestUrl(FluentCommand.BatchLiteral);
             this.Request = CreateWebRequest(uri);
             this.Request.Method = RestVerbs.POST;
             _batchId = Guid.NewGuid().ToString();

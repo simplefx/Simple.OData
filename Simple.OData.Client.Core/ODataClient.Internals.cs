@@ -55,9 +55,9 @@ namespace Simple.OData.Client
                 .Key(entryKey)
                 .CommandText;
 
-            var feedWriter = new ODataFeedWriter();
+            var commandWriter = new CommandWriter();
             var table = _schema.FindConcreteTable(collection);
-            var entryElement = feedWriter.CreateDataElement(_schema.TypesNamespace, table.EntityType.Name, entryMembers.Properties);
+            var entryElement = commandWriter.CreateDataElement(_schema.TypesNamespace, table.EntityType.Name, entryMembers.Properties);
             var unlinkAssociationNames = new List<string>();
             foreach (var associatedData in entryMembers.AssociationsByValue)
             {
@@ -79,8 +79,8 @@ namespace Simple.OData.Client
             foreach (var associatedData in entryMembers.AssociationsByContentId)
             {
                 var linkCommand = CreateLinkCommand(collection, associatedData.Key,
-                    feedWriter.CreateLinkPath(command.ContentId),
-                    feedWriter.CreateLinkPath(associatedData.Value));
+                    commandWriter.CreateLinkPath(command.ContentId),
+                    commandWriter.CreateLinkPath(associatedData.Value));
                 _requestBuilder.AddCommandToRequest(linkCommand);
                 _requestRunner.UpdateEntry(linkCommand);
             }
@@ -95,19 +95,19 @@ namespace Simple.OData.Client
 
         private HttpCommand CreateLinkCommand(string collection, string associationName, string entryPath, string linkPath)
         {
-            var feedWriter = new ODataFeedWriter();
-            var linkEntry = feedWriter.CreateLinkElement(linkPath);
+            var commandWriter = new CommandWriter();
+            var linkEntry = commandWriter.CreateLinkElement(linkPath);
             var linkMethod = _schema.FindAssociation(collection, associationName).IsMultiple ?
                 RestVerbs.POST :
                 RestVerbs.PUT;
 
-            var commandText = feedWriter.CreateLinkCommand(entryPath, associationName);
+            var commandText = commandWriter.CreateLinkCommand(entryPath, associationName);
             return new HttpCommand(linkMethod, commandText, null, linkEntry.ToString(), true);
         }
 
         private HttpCommand CreateUnlinkCommand(string collection, string associationName, string entryPath)
         {
-            var commandText = new ODataFeedWriter().CreateLinkCommand(entryPath, associationName);
+            var commandText = new CommandWriter().CreateLinkCommand(entryPath, associationName);
             return HttpCommand.Delete(commandText);
         }
 
@@ -120,7 +120,7 @@ namespace Simple.OData.Client
             var associatedKeyValues = GetLinkedEntryKeyValues(association.ReferenceTableName, associatedData);
             if (associatedKeyValues != null)
             {
-                new ODataFeedWriter().AddDataLink(entry, association.ActualName, association.ReferenceTableName, associatedKeyValues);
+                new CommandWriter().AddDataLink(entry, association.ActualName, association.ReferenceTableName, associatedKeyValues);
             }
         }
 
@@ -222,9 +222,9 @@ namespace Simple.OData.Client
 
         private void RemoveSystemProperties(IDictionary<string, object> entryData)
         {
-            if (_settings.IncludeResourceTypeInEntryProperties && entryData.ContainsKey(ODataCommand.ResourceTypeLiteral))
+            if (_settings.IncludeResourceTypeInEntryProperties && entryData.ContainsKey(FluentCommand.ResourceTypeLiteral))
             {
-                entryData.Remove(ODataCommand.ResourceTypeLiteral);
+                entryData.Remove(FluentCommand.ResourceTypeLiteral);
             }
         }
 

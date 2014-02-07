@@ -10,13 +10,13 @@ namespace Simple.OData.Client.Tests
 {
     public class FeedReaderTests : TestBase
     {
-        private readonly ODataFeedReader _feedReader;
+        private readonly ResponseReader _feedReader;
         private const int productProperties = 10;
         private const int categoryProperties = 4;
 
         public FeedReaderTests()
         {
-            _feedReader = new ODataFeedReader(_client.Schema);
+            _feedReader = new ResponseReader(_client.Schema);
         }
 
         [Fact]
@@ -194,7 +194,7 @@ namespace Simple.OData.Client.Tests
         private void ParseSchema(string schemaName)
         {
             var document = GetResourceAsString(schemaName + ".edmx");
-            var result = ODataFeedReader.GetSchema(document);
+            var result = ResponseReader.GetSchema(document);
             Assert.Equal(1, result.EntityTypes.Count());
             Assert.Equal(schemaName, result.EntityTypes.First().Name);
         }
