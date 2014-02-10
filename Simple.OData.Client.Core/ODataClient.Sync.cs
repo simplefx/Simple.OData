@@ -71,7 +71,7 @@ namespace Simple.OData.Client
                 .Key(entryKey)
                 .CommandText;
 
-            var command = HttpCommand.Get(commandText);
+            var command = new CommandWriter(_schema).CreateGetCommand(commandText);
             _requestBuilder.AddCommandToRequest(command);
             return _requestRunner.GetEntry(command);
         }
@@ -89,8 +89,7 @@ namespace Simple.OData.Client
                 commandWriter.AddLink(entryContent, collection, associatedData);
             }
 
-            var commandText = _schema.FindBaseTable(collection).ActualName;
-            var command = HttpCommand.Post(commandText, entryData, entryContent.ToString());
+            var command = commandWriter.CreateInsertCommand(_schema.FindBaseTable(collection).ActualName, entryData, entryContent);
             _requestBuilder.AddCommandToRequest(command);
             var result = _requestRunner.InsertEntry(command, resultRequired);
 
@@ -133,7 +132,7 @@ namespace Simple.OData.Client
                 .Key(entryKey)
                 .CommandText;
 
-            var command = HttpCommand.Delete(commandText);
+            var command = new CommandWriter(_schema).CreateDeleteCommand(commandText);
             _requestBuilder.AddCommandToRequest(command);
             return _requestRunner.DeleteEntry(command);
         }

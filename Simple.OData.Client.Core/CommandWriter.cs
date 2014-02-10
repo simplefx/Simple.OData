@@ -15,6 +15,31 @@ namespace Simple.OData.Client
             _schema = schema;
         }
 
+        public HttpCommand CreateGetCommand(string commandText, bool scalarResult = false)
+        {
+            return HttpCommand.Get(commandText, scalarResult);
+        }
+
+        public HttpCommand CreateInsertCommand(string commandText, IDictionary<string, object> entryData, CommandContent entryContent)
+        {
+            return HttpCommand.Post(commandText, entryData, entryContent.ToString());
+        }
+
+        public HttpCommand CreateUpdateCommand(string commandText, IDictionary<string, object> entryData, CommandContent entryContent, bool merge = false)
+        {
+            return new HttpCommand(merge ? RestVerbs.MERGE : RestVerbs.PUT, commandText, entryData, entryContent.ToString());
+        }
+
+        public HttpCommand CreateDeleteCommand(string commandText)
+        {
+            return HttpCommand.Delete(commandText);
+        }
+
+        public HttpCommand CreateLinkCommand(string collection, string associationName, int contentId, int associationId)
+        {
+            return CreateLinkCommand(collection, associationName, FormatLinkPath(contentId), FormatLinkPath(associationId));
+        }
+
         public HttpCommand CreateLinkCommand(string collection, string associationName, string entryPath, string linkPath)
         {
             var linkEntry = CreateLinkElement(linkPath);
@@ -24,11 +49,6 @@ namespace Simple.OData.Client
 
             var commandText = FormatLinkPath(entryPath, associationName);
             return new HttpCommand(linkMethod, commandText, null, linkEntry.ToString(), true);
-        }
-
-        public HttpCommand CreateLinkCommand(string collection, string associationName, int contentId, int associationId)
-        {
-            return CreateLinkCommand(collection, associationName, FormatLinkPath(contentId), FormatLinkPath(associationId));
         }
 
         public HttpCommand CreateUnlinkCommand(string collection, string associationName, string entryPath)

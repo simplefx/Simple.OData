@@ -8,7 +8,7 @@ namespace Simple.OData.Client
     {
         private IEnumerable<IDictionary<string, object>> FindEntries(string commandText, bool scalarResult, bool setTotalCount, out int totalCount)
         {
-            var command = HttpCommand.Get(commandText, scalarResult);
+            var command = new CommandWriter(_schema).CreateGetCommand(commandText, scalarResult);
             _requestBuilder.AddCommandToRequest(command);
             return _requestRunner.FindEntries(command, scalarResult, setTotalCount, out totalCount);
         }
@@ -70,7 +70,7 @@ namespace Simple.OData.Client
                 }
             }
 
-            var command = new HttpCommand(merge ? RestVerbs.MERGE : RestVerbs.PUT, commandText, entryData, entryContent.ToString());
+            var command = commandWriter.CreateUpdateCommand(commandText, entryData, entryContent, merge);
             _requestBuilder.AddCommandToRequest(command);
             var result = _requestRunner.UpdateEntry(command);
 
