@@ -37,11 +37,11 @@ namespace Simple.OData.Client
             return HttpCommand.Delete(commandText);
         }
 
-        public XElement CreateDataElement(string namespaceName, string entityTypeName, IDictionary<string, object> row)
+        public CommandContent CreateEntry(string entityTypeName, IDictionary<string, object> row)
         {
             var entry = CreateEmptyEntryWithNamespaces();
 
-            var resourceName = GetQualifiedResourceName(namespaceName, entityTypeName);
+            var resourceName = GetQualifiedResourceName(_schema.TypesNamespace, entityTypeName);
             entry.Element(null, "category").SetAttributeValue("term", resourceName);
             var properties = entry.Element(null, "content").Element("m", "properties");
 
@@ -50,10 +50,10 @@ namespace Simple.OData.Client
                 EdmTypeSerializer.Write(properties, prop);
             }
 
-            return entry;
+            return new CommandContent(entry);
         }
 
-        public void AddLinkElement(XElement entry, string collection, KeyValuePair<string, object> associatedData)
+        public void AddLink(CommandContent content, string collection, KeyValuePair<string, object> associatedData)
         {
             if (associatedData.Value == null)
                 return;
@@ -62,7 +62,7 @@ namespace Simple.OData.Client
             var associatedKeyValues = GetLinkedEntryKeyValues(association.ReferenceTableName, associatedData);
             if (associatedKeyValues != null)
             {
-                AddDataLink(entry, association.ActualName, association.ReferenceTableName, associatedKeyValues);
+                AddDataLink(content.Entry, association.ActualName, association.ReferenceTableName, associatedKeyValues);
             }
         }
 

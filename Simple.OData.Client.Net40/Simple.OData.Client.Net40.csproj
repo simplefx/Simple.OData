@@ -67,6 +67,9 @@
     <Compile Include="..\CommonAssemblyVersion.cs">
       <Link>Properties\CommonAssemblyVersion.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\CommandContent.cs">
+      <Link>CommandContent.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Edm\EdmSchemaParser.cs">
       <Link>Edm\EdmSchemaParser.cs</Link>
     </Compile>

@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Linq;
-using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
@@ -57,14 +55,14 @@ namespace Simple.OData.Client
 
             var commandWriter = new CommandWriter(_schema);
             var table = _schema.FindConcreteTable(collection);
-            var entryElement = commandWriter.CreateDataElement(_schema.TypesNamespace, table.EntityType.Name, entryMembers.Properties);
+            var entryContent = commandWriter.CreateEntry(table.EntityType.Name, entryMembers.Properties);
             var unlinkAssociationNames = new List<string>();
             foreach (var associatedData in entryMembers.AssociationsByValue)
             {
                 var association = table.FindAssociation(associatedData.Key);
                 if (associatedData.Value != null)
                 {
-                    commandWriter.AddLinkElement(entryElement, collection, associatedData);
+                    commandWriter.AddLink(entryContent, collection, associatedData);
                 }
                 else
                 {
@@ -72,7 +70,7 @@ namespace Simple.OData.Client
                 }
             }
 
-            var command = new HttpCommand(merge ? RestVerbs.MERGE : RestVerbs.PUT, commandText, entryData, entryElement.ToString());
+            var command = new HttpCommand(merge ? RestVerbs.MERGE : RestVerbs.PUT, commandText, entryData, entryContent.ToString());
             _requestBuilder.AddCommandToRequest(command);
             var result = _requestRunner.UpdateEntry(command);
 

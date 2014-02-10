@@ -83,14 +83,14 @@ namespace Simple.OData.Client
             var entryMembers = ParseEntryMembers(table, entryData);
 
             var commandWriter = new CommandWriter(_schema);
-            var entry = commandWriter.CreateDataElement(_schema.TypesNamespace, table.EntityType.Name, entryMembers.Properties);
+            var entryContent = commandWriter.CreateEntry(table.EntityType.Name, entryMembers.Properties);
             foreach (var associatedData in entryMembers.AssociationsByValue)
             {
-                commandWriter.AddLinkElement(entry, collection, associatedData);
+                commandWriter.AddLink(entryContent, collection, associatedData);
             }
 
             var commandText = _schema.FindBaseTable(collection).ActualName;
-            var command = HttpCommand.Post(commandText, entryData, entry.ToString());
+            var command = HttpCommand.Post(commandText, entryData, entryContent.ToString());
             _requestBuilder.AddCommandToRequest(command);
             var result = _requestRunner.InsertEntry(command, resultRequired);
 

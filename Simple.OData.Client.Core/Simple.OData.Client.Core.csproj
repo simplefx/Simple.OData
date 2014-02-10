@@ -45,6 +45,7 @@
     <Compile Include="..\CommonAssemblyVersion.cs">
       <Link>Properties\CommonAssemblyVersion.cs</Link>
     </Compile>
+    <Compile Include="CommandContent.cs" />
     <Compile Include="Fluent\IFluentClient.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />
     <Compile Include="Http\BatchRequestBuilder.cs" />
