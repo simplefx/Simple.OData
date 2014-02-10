@@ -82,11 +82,11 @@ namespace Simple.OData.Client
             var table = _schema.FindConcreteTable(collection);
             var entryMembers = ParseEntryMembers(table, entryData);
 
-            var commandWriter = new CommandWriter();
+            var commandWriter = new CommandWriter(_schema);
             var entry = commandWriter.CreateDataElement(_schema.TypesNamespace, table.EntityType.Name, entryMembers.Properties);
             foreach (var associatedData in entryMembers.AssociationsByValue)
             {
-                CreateLinkElement(entry, collection, associatedData);
+                commandWriter.AddLinkElement(entry, collection, associatedData);
             }
 
             var commandText = _schema.FindBaseTable(collection).ActualName;
@@ -96,9 +96,7 @@ namespace Simple.OData.Client
 
             foreach (var associatedData in entryMembers.AssociationsByContentId)
             {
-                var linkCommand = CreateLinkCommand(collection, associatedData.Key,
-                    commandWriter.CreateLinkPath(command.ContentId),
-                    commandWriter.CreateLinkPath(associatedData.Value));
+                var linkCommand = commandWriter.CreateLinkCommand(collection, associatedData.Key, command.ContentId, associatedData.Value);
                 _requestBuilder.AddCommandToRequest(linkCommand);
                 _requestRunner.InsertEntry(linkCommand, resultRequired);
             }
@@ -155,7 +153,7 @@ namespace Simple.OData.Client
                 .Key(linkedEntryKey)
                 .CommandText;
 
-            var command = CreateLinkCommand(collection, association.ActualName, entryPath, linkPath);
+            var command = new CommandWriter(_schema).CreateLinkCommand(collection, association.ActualName, entryPath, linkPath);
             _requestBuilder.AddCommandToRequest(command);
             _requestRunner.UpdateEntry(command);
         }
@@ -169,7 +167,7 @@ namespace Simple.OData.Client
                 .Key(entryKey)
                 .CommandText;
 
-            var command = CreateUnlinkCommand(collection, association.ActualName, commandText);
+            var command = new CommandWriter(_schema).CreateUnlinkCommand(collection, association.ActualName, commandText);
             _requestBuilder.AddCommandToRequest(command);
             _requestRunner.UpdateEntry(command);
         }

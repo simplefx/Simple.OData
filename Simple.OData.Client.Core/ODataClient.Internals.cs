@@ -55,7 +55,7 @@ namespace Simple.OData.Client
                 .Key(entryKey)
                 .CommandText;
 
-            var commandWriter = new CommandWriter();
+            var commandWriter = new CommandWriter(_schema);
             var table = _schema.FindConcreteTable(collection);
             var entryElement = commandWriter.CreateDataElement(_schema.TypesNamespace, table.EntityType.Name, entryMembers.Properties);
             var unlinkAssociationNames = new List<string>();
@@ -64,7 +64,7 @@ namespace Simple.OData.Client
                 var association = table.FindAssociation(associatedData.Key);
                 if (associatedData.Value != null)
                 {
-                    CreateLinkElement(entryElement, collection, associatedData);
+                    commandWriter.AddLinkElement(entryElement, collection, associatedData);
                 }
                 else
                 {
@@ -78,9 +78,7 @@ namespace Simple.OData.Client
 
             foreach (var associatedData in entryMembers.AssociationsByContentId)
             {
-                var linkCommand = CreateLinkCommand(collection, associatedData.Key,
-                    commandWriter.CreateLinkPath(command.ContentId),
-                    commandWriter.CreateLinkPath(associatedData.Value));
+                var linkCommand = commandWriter.CreateLinkCommand(collection, associatedData.Key, command.ContentId, associatedData.Value);
                 _requestBuilder.AddCommandToRequest(linkCommand);
                 _requestRunner.UpdateEntry(linkCommand);
             }
@@ -91,71 +89,6 @@ namespace Simple.OData.Client
             }
 
             return result;
-        }
-
-        private HttpCommand CreateLinkCommand(string collection, string associationName, string entryPath, string linkPath)
-        {
-            var commandWriter = new CommandWriter();
-            var linkEntry = commandWriter.CreateLinkElement(linkPath);
-            var linkMethod = _schema.FindAssociation(collection, associationName).IsMultiple ?
-                RestVerbs.POST :
-                RestVerbs.PUT;
-
-            var commandText = commandWriter.CreateLinkCommand(entryPath, associationName);
-            return new HttpCommand(linkMethod, commandText, null, linkEntry.ToString(), true);
-        }
-
-        private HttpCommand CreateUnlinkCommand(string collection, string associationName, string entryPath)
-        {
-            var commandText = new CommandWriter().CreateLinkCommand(entryPath, associationName);
-            return HttpCommand.Delete(commandText);
-        }
-
-        private void CreateLinkElement(XElement entry, string collection, KeyValuePair<string, object> associatedData)
-        {
-            if (associatedData.Value == null)
-                return;
-
-            var association = _schema.FindAssociation(collection, associatedData.Key);
-            var associatedKeyValues = GetLinkedEntryKeyValues(association.ReferenceTableName, associatedData);
-            if (associatedKeyValues != null)
-            {
-                new CommandWriter().AddDataLink(entry, association.ActualName, association.ReferenceTableName, associatedKeyValues);
-            }
-        }
-
-        private IEnumerable<object> GetLinkedEntryKeyValues(string collection, KeyValuePair<string, object> entryData)
-        {
-            var entryProperties = GetLinkedEntryProperties(entryData.Value);
-            var associatedKeyNames = _schema.FindConcreteTable(collection).GetKeyNames();
-            var associatedKeyValues = new object[associatedKeyNames.Count()];
-            for (int index = 0; index < associatedKeyNames.Count(); index++)
-            {
-                bool ok = entryProperties.TryGetValue(associatedKeyNames[index], out associatedKeyValues[index]);
-                if (!ok)
-                    return null;
-            }
-            return associatedKeyValues;
-        }
-
-        private IDictionary<string, object> GetLinkedEntryProperties(object entryData)
-        {
-            if (entryData is ODataEntry)
-                return (Dictionary<string, object>)(entryData as ODataEntry);
-
-            var entryProperties = entryData as IDictionary<string, object>;
-            if (entryProperties == null)
-            {
-                entryProperties = new Dictionary<string, object>();
-                var entryType = entryData.GetType();
-                foreach (var entryProperty in entryType.GetDeclaredProperties())
-                {
-                    entryProperties.Add(
-                        entryProperty.Name,
-                        entryType.GetDeclaredProperty(entryProperty.Name).GetValue(entryData, null));
-                }
-            }
-            return entryProperties;
         }
 
         private EntryMembers ParseEntryMembers(Table table, IDictionary<string, object> entryData)

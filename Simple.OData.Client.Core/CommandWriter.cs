@@ -8,6 +8,35 @@ namespace Simple.OData.Client
 {
     class CommandWriter
     {
+        private readonly ISchema _schema;
+
+        public CommandWriter(ISchema schema)
+        {
+            _schema = schema;
+        }
+
+        public HttpCommand CreateLinkCommand(string collection, string associationName, string entryPath, string linkPath)
+        {
+            var linkEntry = CreateLinkElement(linkPath);
+            var linkMethod = _schema.FindAssociation(collection, associationName).IsMultiple ?
+                RestVerbs.POST :
+                RestVerbs.PUT;
+
+            var commandText = FormatLinkPath(entryPath, associationName);
+            return new HttpCommand(linkMethod, commandText, null, linkEntry.ToString(), true);
+        }
+
+        public HttpCommand CreateLinkCommand(string collection, string associationName, int contentId, int associationId)
+        {
+            return CreateLinkCommand(collection, associationName, FormatLinkPath(contentId), FormatLinkPath(associationId));
+        }
+
+        public HttpCommand CreateUnlinkCommand(string collection, string associationName, string entryPath)
+        {
+            var commandText = FormatLinkPath(entryPath, associationName);
+            return HttpCommand.Delete(commandText);
+        }
+
         public XElement CreateDataElement(string namespaceName, string entityTypeName, IDictionary<string, object> row)
         {
             var entry = CreateEmptyEntryWithNamespaces();
@@ -24,7 +53,20 @@ namespace Simple.OData.Client
             return entry;
         }
 
-        public XElement CreateLinkElement(string link)
+        public void AddLinkElement(XElement entry, string collection, KeyValuePair<string, object> associatedData)
+        {
+            if (associatedData.Value == null)
+                return;
+
+            var association = _schema.FindAssociation(collection, associatedData.Key);
+            var associatedKeyValues = GetLinkedEntryKeyValues(association.ReferenceTableName, associatedData);
+            if (associatedKeyValues != null)
+            {
+                AddDataLink(entry, association.ActualName, association.ReferenceTableName, associatedKeyValues);
+            }
+        }
+
+        private XElement CreateLinkElement(string link)
         {
             var entry = CreateEmptyMetadataWithNamespaces();
 
@@ -33,22 +75,17 @@ namespace Simple.OData.Client
             return entry;
         }
 
-        public XElement CreateLinkElement(int contentId)
+        private string FormatLinkPath(int contentId)
         {
-            return CreateLinkElement(CreateLinkPath(contentId));
+            return "$" + contentId;
         }
 
-        public string CreateLinkPath(int contentId)
-        {
-            return "$" + contentId.ToString();
-        }
-
-        public string CreateLinkCommand(string entryPath, string linkName)
+        private string FormatLinkPath(string entryPath, string linkName)
         {
             return string.Format("{0}/$links/{1}", entryPath, linkName);
         }
 
-        public void AddDataLink(XElement container, string associationName, string linkedEntityName, IEnumerable<object> linkedEntityKeyValues)
+        private void AddDataLink(XElement container, string associationName, string linkedEntityName, IEnumerable<object> linkedEntityKeyValues)
         {
             var entry = XElement.Parse(Properties.Resources.DataServicesAtomEntryXml).Element(null, "link");
             var rel = entry.Attribute("rel");
@@ -58,6 +95,40 @@ namespace Simple.OData.Client
                 linkedEntityName,
                 string.Join(",", linkedEntityKeyValues.Select(new ValueFormatter().FormatContentValue))));
             container.Add(entry);
+        }
+
+        private IEnumerable<object> GetLinkedEntryKeyValues(string collection, KeyValuePair<string, object> entryData)
+        {
+            var entryProperties = GetLinkedEntryProperties(entryData.Value);
+            var associatedKeyNames = _schema.FindConcreteTable(collection).GetKeyNames();
+            var associatedKeyValues = new object[associatedKeyNames.Count()];
+            for (int index = 0; index < associatedKeyNames.Count(); index++)
+            {
+                bool ok = entryProperties.TryGetValue(associatedKeyNames[index], out associatedKeyValues[index]);
+                if (!ok)
+                    return null;
+            }
+            return associatedKeyValues;
+        }
+
+        private IDictionary<string, object> GetLinkedEntryProperties(object entryData)
+        {
+            if (entryData is ODataEntry)
+                return (Dictionary<string, object>)(entryData as ODataEntry);
+
+            var entryProperties = entryData as IDictionary<string, object>;
+            if (entryProperties == null)
+            {
+                entryProperties = new Dictionary<string, object>();
+                var entryType = entryData.GetType();
+                foreach (var entryProperty in entryType.GetDeclaredProperties())
+                {
+                    entryProperties.Add(
+                        entryProperty.Name,
+                        entryType.GetDeclaredProperty(entryProperty.Name).GetValue(entryData, null));
+                }
+            }
+            return entryProperties;
         }
 
         private XElement CreateEmptyEntryWithNamespaces()
