@@ -8,7 +8,7 @@ namespace Simple.OData.Client
 {
     // ALthough FluentFluentClient is never instantiated directly (only via IFluentClient interface)
     // it's declared as public in order to resolve problem when it is used with dynamic C#
-    // For the same reason ODataCommand is also declared as public
+    // For the same reason FluentCommand is also declared as public
     // More: http://bloggingabout.net/blogs/vagif/archive/2013/08/05/we-need-better-interoperability-between-dynamic-and-statically-compiled-c.aspx
 
     public partial class FluentClient<T> : IFluentClient<T>
@@ -16,11 +16,11 @@ namespace Simple.OData.Client
     {
         private readonly IODataClient _client;
         private readonly ISchema _schema;
-        private readonly ODataCommand _parentCommand;
-        private ODataCommand _command;
+        private readonly FluentCommand _parentCommand;
+        private FluentCommand _command;
         private readonly bool _dynamicResults;
 
-        public FluentClient(IODataClient client, ODataCommand parentCommand = null, ODataCommand command = null, bool dynamicResults = false)
+        public FluentClient(IODataClient client, FluentCommand parentCommand = null, FluentCommand command = null, bool dynamicResults = false)
         {
             _client = client;
             _schema = client.Schema;
@@ -29,7 +29,7 @@ namespace Simple.OData.Client
             _dynamicResults = dynamicResults;
         }
 
-        private ODataCommand Command
+        private FluentCommand Command
         {
             get
             {
@@ -43,9 +43,9 @@ namespace Simple.OData.Client
             }
         }
 
-        private ODataCommand CreateCommand()
+        private FluentCommand CreateCommand()
         {
-            return new ODataCommand(this.Schema, _parentCommand);
+            return new FluentCommand(this.Schema, _parentCommand);
         }
 
         public ISchema Schema
@@ -58,7 +58,7 @@ namespace Simple.OData.Client
             get { return this.Command.ToString(); }
         }
 
-        public FluentClient<U> Link<U>(ODataCommand command, string linkName = null)
+        public FluentClient<U> Link<U>(FluentCommand command, string linkName = null)
         where U : class
         {
             var linkedClient = new FluentClient<U>(_client, command, null, _dynamicResults);

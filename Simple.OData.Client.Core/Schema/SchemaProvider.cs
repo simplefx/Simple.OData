@@ -21,7 +21,7 @@ namespace Simple.OData.Client
             {
                 _metadataString = new Lazy<string>(() => RequestMetadataAsString(urlBase, credentials));
             }
-            _metadata = new Lazy<EdmSchema>(() => ODataFeedReader.GetSchema(_metadataString.Value));
+            _metadata = new Lazy<EdmSchema>(() => ResponseReader.GetSchema(_metadataString.Value));
             _schema = new Lazy<Schema>(() => Schema.Get(this) as Schema);
         }
 
@@ -184,13 +184,13 @@ namespace Simple.OData.Client
         private string RequestMetadataAsString(string urlBase, ICredentials credentials = null)
         {
             var requestBuilder = new CommandRequestBuilder(urlBase, credentials);
-            var command = HttpCommand.Get(ODataCommand.MetadataLiteral);
+            var command = HttpCommand.Get(FluentCommand.MetadataLiteral);
             requestBuilder.AddCommandToRequest(command);
             using (var response = new SchemaRequestRunner(new ODataClientSettings()).ExecuteRequest(command.Request))
             {
                 if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    return ODataFeedReader.GetSchemaAsString(response.GetResponseStream());
+                    return ResponseReader.GetSchemaAsString(response.GetResponseStream());
                 }
             }
             // TODO

@@ -71,7 +71,7 @@ namespace Simple.OData.Client
                 .Key(entryKey)
                 .CommandText;
 
-            var command = HttpCommand.Get(commandText);
+            var command = new CommandWriter(_schema).CreateGetCommand(commandText);
             _requestBuilder.AddCommandToRequest(command);
             return _requestRunner.GetEntry(command);
         }
@@ -82,23 +82,20 @@ namespace Simple.OData.Client
             var table = _schema.FindConcreteTable(collection);
             var entryMembers = ParseEntryMembers(table, entryData);
 
-            var feedWriter = new ODataFeedWriter();
-            var entry = feedWriter.CreateDataElement(_schema.TypesNamespace, table.EntityType.Name, entryMembers.Properties);
+            var commandWriter = new CommandWriter(_schema);
+            var entryContent = commandWriter.CreateEntry(table.EntityType.Name, entryMembers.Properties);
             foreach (var associatedData in entryMembers.AssociationsByValue)
             {
-                CreateLinkElement(entry, collection, associatedData);
+                commandWriter.AddLink(entryContent, collection, associatedData);
             }
 
-            var commandText = _schema.FindBaseTable(collection).ActualName;
-            var command = HttpCommand.Post(commandText, entryData, entry.ToString());
+            var command = commandWriter.CreateInsertCommand(_schema.FindBaseTable(collection).ActualName, entryData, entryContent);
             _requestBuilder.AddCommandToRequest(command);
             var result = _requestRunner.InsertEntry(command, resultRequired);
 
             foreach (var associatedData in entryMembers.AssociationsByContentId)
             {
-                var linkCommand = CreateLinkCommand(collection, associatedData.Key,
-                    feedWriter.CreateLinkPath(command.ContentId),
-                    feedWriter.CreateLinkPath(associatedData.Value));
+                var linkCommand = commandWriter.CreateLinkCommand(collection, associatedData.Key, command.ContentId, associatedData.Value);
                 _requestBuilder.AddCommandToRequest(linkCommand);
                 _requestRunner.InsertEntry(linkCommand, resultRequired);
             }
@@ -135,7 +132,7 @@ namespace Simple.OData.Client
                 .Key(entryKey)
                 .CommandText;
 
-            var command = HttpCommand.Delete(commandText);
+            var command = new CommandWriter(_schema).CreateDeleteCommand(commandText);
             _requestBuilder.AddCommandToRequest(command);
             return _requestRunner.DeleteEntry(command);
         }
@@ -155,7 +152,7 @@ namespace Simple.OData.Client
                 .Key(linkedEntryKey)
                 .CommandText;
 
-            var command = CreateLinkCommand(collection, association.ActualName, entryPath, linkPath);
+            var command = new CommandWriter(_schema).CreateLinkCommand(collection, association.ActualName, entryPath, linkPath);
             _requestBuilder.AddCommandToRequest(command);
             _requestRunner.UpdateEntry(command);
         }
@@ -169,7 +166,7 @@ namespace Simple.OData.Client
                 .Key(entryKey)
                 .CommandText;
 
-            var command = CreateUnlinkCommand(collection, association.ActualName, commandText);
+            var command = new CommandWriter(_schema).CreateUnlinkCommand(collection, association.ActualName, commandText);
             _requestBuilder.AddCommandToRequest(command);
             _requestRunner.UpdateEntry(command);
         }

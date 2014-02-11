@@ -45,6 +45,7 @@
     <Compile Include="..\CommonAssemblyVersion.cs">
       <Link>Properties\CommonAssemblyVersion.cs</Link>
     </Compile>
+    <Compile Include="CommandContent.cs" />
     <Compile Include="Fluent\IFluentClient.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />
     <Compile Include="Http\BatchRequestBuilder.cs" />
@@ -96,10 +97,10 @@
     <Compile Include="Fluent\FluentClient.Async.cs" />
     <Compile Include="Fluent\FluentClient.cs" />
     <Compile Include="Fluent\FluentClient.Sync.cs" />
-    <Compile Include="ODataCommand.cs" />
+    <Compile Include="Fluent\FluentCommand.cs" />
     <Compile Include="ODataEntry.cs" />
-    <Compile Include="ODataFeedReader.cs" />
-    <Compile Include="ODataFeedWriter.cs" />
+    <Compile Include="ResponseReader.cs" />
+    <Compile Include="CommandWriter.cs" />
     <Compile Include="Pluralizer.cs" />
     <Compile Include="Properties.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

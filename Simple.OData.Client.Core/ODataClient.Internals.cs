@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Linq;
-using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
@@ -10,7 +8,7 @@ namespace Simple.OData.Client
     {
         private IEnumerable<IDictionary<string, object>> FindEntries(string commandText, bool scalarResult, bool setTotalCount, out int totalCount)
         {
-            var command = HttpCommand.Get(commandText, scalarResult);
+            var command = new CommandWriter(_schema).CreateGetCommand(commandText, scalarResult);
             _requestBuilder.AddCommandToRequest(command);
             return _requestRunner.FindEntries(command, scalarResult, setTotalCount, out totalCount);
         }
@@ -55,16 +53,16 @@ namespace Simple.OData.Client
                 .Key(entryKey)
                 .CommandText;
 
-            var feedWriter = new ODataFeedWriter();
+            var commandWriter = new CommandWriter(_schema);
             var table = _schema.FindConcreteTable(collection);
-            var entryElement = feedWriter.CreateDataElement(_schema.TypesNamespace, table.EntityType.Name, entryMembers.Properties);
+            var entryContent = commandWriter.CreateEntry(table.EntityType.Name, entryMembers.Properties);
             var unlinkAssociationNames = new List<string>();
             foreach (var associatedData in entryMembers.AssociationsByValue)
             {
                 var association = table.FindAssociation(associatedData.Key);
                 if (associatedData.Value != null)
                 {
-                    CreateLinkElement(entryElement, collection, associatedData);
+                    commandWriter.AddLink(entryContent, collection, associatedData);
                 }
                 else
                 {
@@ -72,15 +70,13 @@ namespace Simple.OData.Client
                 }
             }
 
-            var command = new HttpCommand(merge ? RestVerbs.MERGE : RestVerbs.PUT, commandText, entryData, entryElement.ToString());
+            var command = commandWriter.CreateUpdateCommand(commandText, entryData, entryContent, merge);
             _requestBuilder.AddCommandToRequest(command);
             var result = _requestRunner.UpdateEntry(command);
 
             foreach (var associatedData in entryMembers.AssociationsByContentId)
             {
-                var linkCommand = CreateLinkCommand(collection, associatedData.Key,
-                    feedWriter.CreateLinkPath(command.ContentId),
-                    feedWriter.CreateLinkPath(associatedData.Value));
+                var linkCommand = commandWriter.CreateLinkCommand(collection, associatedData.Key, command.ContentId, associatedData.Value);
                 _requestBuilder.AddCommandToRequest(linkCommand);
                 _requestRunner.UpdateEntry(linkCommand);
             }
@@ -91,71 +87,6 @@ namespace Simple.OData.Client
             }
 
             return result;
-        }
-
-        private HttpCommand CreateLinkCommand(string collection, string associationName, string entryPath, string linkPath)
-        {
-            var feedWriter = new ODataFeedWriter();
-            var linkEntry = feedWriter.CreateLinkElement(linkPath);
-            var linkMethod = _schema.FindAssociation(collection, associationName).IsMultiple ?
-                RestVerbs.POST :
-                RestVerbs.PUT;
-
-            var commandText = feedWriter.CreateLinkCommand(entryPath, associationName);
-            return new HttpCommand(linkMethod, commandText, null, linkEntry.ToString(), true);
-        }
-
-        private HttpCommand CreateUnlinkCommand(string collection, string associationName, string entryPath)
-        {
-            var commandText = new ODataFeedWriter().CreateLinkCommand(entryPath, associationName);
-            return HttpCommand.Delete(commandText);
-        }
-
-        private void CreateLinkElement(XElement entry, string collection, KeyValuePair<string, object> associatedData)
-        {
-            if (associatedData.Value == null)
-                return;
-
-            var association = _schema.FindAssociation(collection, associatedData.Key);
-            var associatedKeyValues = GetLinkedEntryKeyValues(association.ReferenceTableName, associatedData);
-            if (associatedKeyValues != null)
-            {
-                new ODataFeedWriter().AddDataLink(entry, association.ActualName, association.ReferenceTableName, associatedKeyValues);
-            }
-        }
-
-        private IEnumerable<object> GetLinkedEntryKeyValues(string collection, KeyValuePair<string, object> entryData)
-        {
-            var entryProperties = GetLinkedEntryProperties(entryData.Value);
-            var associatedKeyNames = _schema.FindConcreteTable(collection).GetKeyNames();
-            var associatedKeyValues = new object[associatedKeyNames.Count()];
-            for (int index = 0; index < associatedKeyNames.Count(); index++)
-            {
-                bool ok = entryProperties.TryGetValue(associatedKeyNames[index], out associatedKeyValues[index]);
-                if (!ok)
-                    return null;
-            }
-            return associatedKeyValues;
-        }
-
-        private IDictionary<string, object> GetLinkedEntryProperties(object entryData)
-        {
-            if (entryData is ODataEntry)
-                return (Dictionary<string, object>)(entryData as ODataEntry);
-
-            var entryProperties = entryData as IDictionary<string, object>;
-            if (entryProperties == null)
-            {
-                entryProperties = new Dictionary<string, object>();
-                var entryType = entryData.GetType();
-                foreach (var entryProperty in entryType.GetDeclaredProperties())
-                {
-                    entryProperties.Add(
-                        entryProperty.Name,
-                        entryType.GetDeclaredProperty(entryProperty.Name).GetValue(entryData, null));
-                }
-            }
-            return entryProperties;
         }
 
         private EntryMembers ParseEntryMembers(Table table, IDictionary<string, object> entryData)
@@ -222,9 +153,9 @@ namespace Simple.OData.Client
 
         private void RemoveSystemProperties(IDictionary<string, object> entryData)
         {
-            if (_settings.IncludeResourceTypeInEntryProperties && entryData.ContainsKey(ODataCommand.ResourceTypeLiteral))
+            if (_settings.IncludeResourceTypeInEntryProperties && entryData.ContainsKey(FluentCommand.ResourceTypeLiteral))
             {
-                entryData.Remove(ODataCommand.ResourceTypeLiteral);
+                entryData.Remove(FluentCommand.ResourceTypeLiteral);
             }
         }
 

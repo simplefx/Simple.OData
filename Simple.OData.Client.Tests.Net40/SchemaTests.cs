@@ -187,34 +187,5 @@ namespace Simple.OData.Client.Tests
             Assert.Equal(1, client.Schema.ComplexTypes.Count());
             Assert.Equal(5, client.Schema.ComplexTypes.First().Properties.Count());
         }
-
-        [Fact]
-        public void CheckPluralsightComSchema()
-        {
-            var client = new ODataClient("http://pluralsight.com/odata/");
-
-            var table = client.Schema.FindTable("Modules");
-            Assert.Equal("Title", table.PrimaryKey[0]);
-
-            Assert.NotNull(table.FindColumn("Author"));
-            Assert.NotNull(table.FindColumn("Description"));
-
-            var association = table.FindAssociation("Course");
-            Assert.Equal("Courses", association.ReferenceTableName);
-            Assert.Equal("*", association.Multiplicity);
-
-            Assert.Equal(5, client.Schema.EntityTypes.Count());
-            Assert.Equal(0, client.Schema.ComplexTypes.Count());
-        }
-
-        //[Fact]
-        //public void RetrieveSchemaFromUrlWithoutFilename()
-        //{
-        //    var client = new ODataClient("http://vancouverdataservice.cloudapp.net/v1/impark");
-
-        //    var schema = client.Schema;
-
-        //    Assert.NotEmpty(schema.Tables);
-        //}
     }
 }

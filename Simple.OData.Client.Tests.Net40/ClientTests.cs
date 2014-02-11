@@ -149,7 +149,7 @@ namespace Simple.OData.Client.Tests
             var client = new ODataClient(clientSettings);
             var ship = client.InsertEntry("Transport/Ships", new Entry() { { "ShipName", "Test1" } }, true);
             var key = new Entry() { { "TransportID", ship["TransportID"] } };
-            client.UpdateEntry("Transport/Ships", key, new Entry() { { "ShipName", "Test2" }, { ODataCommand.ResourceTypeLiteral, "Ships" } });
+            client.UpdateEntry("Transport/Ships", key, new Entry() { { "ShipName", "Test2" }, { FluentCommand.ResourceTypeLiteral, "Ships" } });
 
             ship = client.GetEntry("Transport", key);
             Assert.Equal("Test2", ship["ShipName"]);
