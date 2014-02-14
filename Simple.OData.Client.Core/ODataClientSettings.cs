@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using System.Net.Http;
 
 namespace Simple.OData.Client
 {
@@ -10,8 +11,8 @@ namespace Simple.OData.Client
         public bool IncludeResourceTypeInEntryProperties { get; set; }
         public bool IgnoreResourceNotFoundException { get; set; }
 
-        public Action<HttpWebRequest> BeforeRequest { get; set; }
-        public Action<HttpWebResponse> AfterResponse { get; set; }
+        public Action<HttpRequestMessage> BeforeRequest { get; set; }
+        public Action<HttpResponseMessage> AfterResponse { get; set; }
 
         public ODataClientSettings()
         {
