@@ -50,12 +50,9 @@ namespace Simple.OData.Client
         {
             var request = new CommandRequestBuilder(this.UrlBase, this.Credentials).CreateRequest(command);
             HttpContent content = null;
-            if (request.Content != null)
-            {
-                content = new StringContent(FormatBatchItem(command));
-                content.Headers.ContentType = new MediaTypeHeaderValue("application/http");
-                content.Headers.Add("Content-Transfer-Encoding", "binary");
-            }
+            content = new StringContent(FormatBatchItem(command));
+            content.Headers.ContentType = new MediaTypeHeaderValue("application/http");
+            content.Headers.Add("Content-Transfer-Encoding", "binary");
 
             var requestMessage = new HttpRequestMessage(new HttpMethod(request.Method), request.Uri);
             requestMessage.Content = content;
@@ -91,7 +88,9 @@ namespace Simple.OData.Client
         private string FormatBatchItem(HttpCommand command)
         {
             var sb = new StringBuilder();
-            sb.AppendLine(string.Format("{0} {1} HTTP/{2}", command.Method, command.IsLink ? command.CommandText : CreateRequestUrl(command.CommandText), "1.1"));
+            sb.AppendLine(string.Format("{0} {1} HTTP/{2}",
+                command.Method, command.IsLink ? command.CommandText : CreateRequestUrl(command.CommandText), "1.1"));
+
             if (command.FormattedContent != null)
             {
                 sb.AppendLine(string.Format("Content-ID: {0}", ++_contentId));
@@ -100,6 +99,7 @@ namespace Simple.OData.Client
                 sb.AppendLine();
                 sb.Append(command.FormattedContent);
             }
+
             return sb.ToString();
         }
     }
