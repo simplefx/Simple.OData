@@ -126,12 +126,6 @@
     <Compile Include="..\Simple.OData.Client.Core\Extensions\ULongExtensions.cs">
       <Link>Extensions\ULongExtensions.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Extensions\WebRequestExtensions.cs">
-      <Link>Extensions\WebRequestExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Extensions\WebResponseExtensions.cs">
-      <Link>Extensions\WebResponseExtensions.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Extensions\XAttributeExtensions.cs">
       <Link>Extensions\XAttributeExtensions.cs</Link>
     </Compile>

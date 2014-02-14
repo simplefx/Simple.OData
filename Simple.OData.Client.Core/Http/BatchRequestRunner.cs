@@ -6,44 +6,37 @@ namespace Simple.OData.Client
 {
     class BatchRequestRunner : RequestRunner
     {
-        private RequestBuilder _requestBuilder;
-
-        public BatchRequestRunner(RequestBuilder requestBuilder)
-        {
-            _requestBuilder = requestBuilder;
-        }
-
-        public override Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(HttpCommand command, bool scalarResult)
+        public override Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(HttpRequest request, bool scalarResult)
         {
             return null;
         }
 
-        public override Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> FindEntriesWithCountAsync(HttpCommand command, bool scalarResult)
+        public override Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> FindEntriesWithCountAsync(HttpRequest request, bool scalarResult)
         {
             return null;
         }
 
-        public override Task<IDictionary<string, object>> GetEntryAsync(HttpCommand command)
+        public override Task<IDictionary<string, object>> GetEntryAsync(HttpRequest request)
         {
             return null;
         }
 
-        public override async Task<IDictionary<string, object>> InsertEntryAsync(HttpCommand command, bool resultRequired = true)
+        public override async Task<IDictionary<string, object>> InsertEntryAsync(HttpRequest request, bool resultRequired = true)
         {
-            return await TaskEx.FromResult(command.OriginalContent);
+            return await TaskEx.FromResult(request.OriginalContent);
         }
 
-        public override Task<int> UpdateEntryAsync(HttpCommand command)
+        public override Task<int> UpdateEntryAsync(HttpRequest request)
         {
             return TaskEx.FromResult(0);
         }
 
-        public override Task<int> DeleteEntryAsync(HttpCommand command)
+        public override Task<int> DeleteEntryAsync(HttpRequest request)
         {
             return TaskEx.FromResult(0);
         }
 
-        public override Task<IEnumerable<IDictionary<string, object>>> ExecuteFunctionAsync(HttpCommand command)
+        public override Task<IEnumerable<IDictionary<string, object>>> ExecuteFunctionAsync(HttpRequest request)
         {
             return null;
         }

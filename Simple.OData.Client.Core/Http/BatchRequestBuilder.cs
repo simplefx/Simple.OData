@@ -1,17 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
-using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
-    class BatchRequestBuilder : RequestBuilder
+    internal class BatchRequestBuilder : RequestBuilder
     {
         private string _batchId;
         private string _changesetId;
         private int _contentId;
-        private StringBuilder _contentBuilder;
+        private MultipartContent _content;
 
         public HttpRequest Request { get; private set; }
 
@@ -22,63 +23,55 @@ namespace Simple.OData.Client
 
         public void BeginBatch()
         {
-            var uri = CreateRequestUrl(FluentCommand.BatchLiteral);
-            this.Request = CreateRequest(uri);
-            this.Request.Method = RestVerbs.POST;
             _batchId = Guid.NewGuid().ToString();
-            this.Request.ContentType = string.Format("multipart/mixed; boundary=batch_{0}", _batchId);
-
-            _contentBuilder = new StringBuilder();
-            _contentBuilder.AppendLine();
-            _contentBuilder.AppendLine(string.Format("--batch_{0}", _batchId));
-
             _changesetId = Guid.NewGuid().ToString();
-            _contentBuilder.AppendLine(string.Format("Content-Type: multipart/mixed; boundary=changeset_{0}", _changesetId));
-            _contentBuilder.AppendLine();
+
+            this.Request = CreateRequest(CreateRequestUrl(FluentCommand.BatchLiteral));
+            this.Request.Method = RestVerbs.POST;
+            var batchContent = new MultipartContent("mixed", "batch_" + _batchId);
+            this.Request.Content = batchContent;
+            this.Request.ContentType = "application/http";
+            var changesetContent = new MultipartContent("mixed", "changeset_" + _changesetId);
+            batchContent.Add(changesetContent);
+            _content = changesetContent;
         }
 
         public void EndBatch()
         {
-            _contentBuilder.AppendLine(string.Format("--changeset_{0}--", _changesetId));
-            _contentBuilder.AppendLine(string.Format("--batch_{0}--", _batchId));
-            var content = this._contentBuilder.ToString();
-            this.Request.Content = content;
-            _contentBuilder.Clear();
+            _content = null;
         }
 
         public void CancelBatch()
         {
-            _contentBuilder.Clear();
+            _content = null;
         }
 
-        public override void AddCommandToRequest(HttpCommand command)
+        public override HttpRequest CreateRequest(HttpCommand command)
         {
-            _contentBuilder.AppendLine(string.Format("--changeset_{0}", _changesetId));
-            _contentBuilder.AppendLine("Content-Type: application/http");
-            _contentBuilder.AppendLine("Content-Transfer-Encoding:binary");
-            _contentBuilder.AppendLine();
-
-            _contentBuilder.AppendLine(string.Format("{0} {1} HTTP/{2}", command.Method, command.IsLink ? command.CommandText : CreateRequestUrl(command.CommandText), "1.1"));
-
-            if (command.FormattedContent != null)
+            var request = new CommandRequestBuilder(this.UrlBase, this.Credentials).CreateRequest(command);
+            HttpContent content = null;
+            if (request.Content != null)
             {
-                _contentBuilder.AppendLine(string.Format("Content-ID: {0}", ++_contentId));
-                _contentBuilder.AppendLine(string.Format("Content-Type: {0}", command.ContentType));
-                _contentBuilder.AppendLine(string.Format("Content-Length: {0}", (command.FormattedContent ?? string.Empty).Length));
-                _contentBuilder.AppendLine();
-                _contentBuilder.Append(command.FormattedContent);
+                content = new StringContent(FormatBatchItem(command));
+                content.Headers.ContentType = new MediaTypeHeaderValue("application/http");
+                content.Headers.Add("Content-Transfer-Encoding", "binary");
             }
 
-            _contentBuilder.AppendLine();
-
-            command.Request = this.Request;
-            command.ContentId = _contentId;
-
-            if (command.OriginalContent != null)
+            var requestMessage = new HttpRequestMessage(new HttpMethod(request.Method), request.Uri);
+            requestMessage.Content = content;
+            if (requestMessage.Content != null)
             {
-                command.OriginalContent.Add("$Batch-ID", _batchId);
-                command.OriginalContent.Add("$Content-ID", command.ContentId);
+                _content.Add(requestMessage.Content);
             }
+
+            request.OriginalContent = command.OriginalContent;
+            if (request.OriginalContent != null)
+            {
+                request.OriginalContent.Add("$Batch-ID", _batchId);
+                request.OriginalContent.Add("$Content-ID", _contentId);
+            }
+
+            return request;
         }
 
         public override int GetContentId(object content)
@@ -93,6 +86,21 @@ namespace Simple.OData.Client
                 }
             }
             return 0;
+        }
+
+        private string FormatBatchItem(HttpCommand command)
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine(string.Format("{0} {1} HTTP/{2}", command.Method, command.IsLink ? command.CommandText : CreateRequestUrl(command.CommandText), "1.1"));
+            if (command.FormattedContent != null)
+            {
+                sb.AppendLine(string.Format("Content-ID: {0}", ++_contentId));
+                sb.AppendLine(string.Format("Content-Type: {0}", command.ContentType));
+                sb.AppendLine(string.Format("Content-Length: {0}", (command.FormattedContent ?? string.Empty).Length));
+                sb.AppendLine();
+                sb.Append(command.FormattedContent);
+            }
+            return sb.ToString();
         }
     }
 }

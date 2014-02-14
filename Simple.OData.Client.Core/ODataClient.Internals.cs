@@ -10,15 +10,15 @@ namespace Simple.OData.Client
         private async Task<IEnumerable<IDictionary<string, object>>> RetrieveEntriesAsync(string commandText, bool scalarResult)
         {
             var command = new CommandWriter(_schema).CreateGetCommand(commandText, scalarResult);
-            _requestBuilder.AddCommandToRequest(command);
-            return await _requestRunner.FindEntriesAsync(command, scalarResult);
+            var request = _requestBuilder.CreateRequest(command);
+            return await _requestRunner.FindEntriesAsync(request, scalarResult);
         }
 
         private async Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> RetrieveEntriesWithCountAsync(string commandText, bool scalarResult)
         {
             var command = new CommandWriter(_schema).CreateGetCommand(commandText, scalarResult);
-            _requestBuilder.AddCommandToRequest(command);
-            var result = await _requestRunner.FindEntriesWithCountAsync(command, scalarResult);
+            var request = _requestBuilder.CreateRequest(command);
+            var result = await _requestRunner.FindEntriesWithCountAsync(request, scalarResult);
             return Tuple.Create(result.Item1, result.Item2);
         }
 
@@ -81,14 +81,14 @@ namespace Simple.OData.Client
             }
 
             var command = commandWriter.CreateUpdateCommand(commandText, entryData, entryContent, merge);
-            _requestBuilder.AddCommandToRequest(command);
-            var result = await _requestRunner.UpdateEntryAsync(command);
+            var request = _requestBuilder.CreateRequest(command);
+            var result = await _requestRunner.UpdateEntryAsync(request);
 
             foreach (var associatedData in entryMembers.AssociationsByContentId)
             {
                 var linkCommand = commandWriter.CreateLinkCommand(collection, associatedData.Key, command.ContentId, associatedData.Value);
-                _requestBuilder.AddCommandToRequest(linkCommand);
-                await _requestRunner.UpdateEntryAsync(linkCommand);
+                request = _requestBuilder.CreateRequest(linkCommand);
+                await _requestRunner.UpdateEntryAsync(request);
             }
 
             foreach (var associationName in unlinkAssociationNames)

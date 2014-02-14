@@ -18,20 +18,20 @@ namespace Simple.OData.Client
             _ignoreResourceNotFoundException = settings.IgnoreResourceNotFoundException;
         }
 
-        public override async Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(HttpCommand command, bool scalarResult)
+        public override async Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(HttpRequest request, bool scalarResult)
         {
             try
             {
-                using (var response = await ExecuteRequestAsync(command.Request))
+                using (var response = await ExecuteRequestAsync(request))
                 {
                     IEnumerable<IDictionary<string, object>> result = null;
-                    if (response.StatusCode != HttpStatusCode.OK)
+                    if (!response.IsSuccessStatusCode)
                     {
                         result = Enumerable.Empty<IDictionary<string, object>>();
                     }
                     else
                     {
-                        result = _responseReader.GetData(response.GetResponseStream(), scalarResult);
+                        result = _responseReader.GetData(await response.Content.ReadAsStringAsync(), scalarResult);
                     }
 
                     return result;
@@ -46,12 +46,12 @@ namespace Simple.OData.Client
             }
         }
 
-        public override async Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> FindEntriesWithCountAsync(HttpCommand command, bool scalarResult)
+        public override async Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> FindEntriesWithCountAsync(HttpRequest request, bool scalarResult)
         {
             int totalCount = 0;
             try
             {
-                using (var response = await ExecuteRequestAsync(command.Request))
+                using (var response = await ExecuteRequestAsync(request))
                 {
                     IEnumerable<IDictionary<string, object>> result = null;
                     if (response.StatusCode != HttpStatusCode.OK)
@@ -60,7 +60,7 @@ namespace Simple.OData.Client
                     }
                     else
                     {
-                        result = _responseReader.GetData(response.GetResponseStream(), out totalCount);
+                        result = _responseReader.GetData(await response.Content.ReadAsStringAsync(), out totalCount);
                     }
 
                     return Tuple.Create(result, totalCount);
@@ -80,12 +80,15 @@ namespace Simple.OData.Client
             }
         }
 
-        public override async Task<IDictionary<string, object>> GetEntryAsync(HttpCommand command)
+        public override async Task<IDictionary<string, object>> GetEntryAsync(HttpRequest request)
         {
             try
             {
-                var text = await ExecuteRequestAndGetResponseAsync(command.Request);
-                return _responseReader.GetData(text).First();
+                using (var response = await ExecuteRequestAsync(request))
+                {
+                    var text = response.Content.ReadAsStringAsync().Result;
+                    return _responseReader.GetData(text).First();
+                }
             }
             catch (WebRequestException ex)
             {
@@ -96,49 +99,52 @@ namespace Simple.OData.Client
             }
         }
 
-        public override async Task<IDictionary<string, object>> InsertEntryAsync(HttpCommand command, bool resultRequired = true)
+        public override async Task<IDictionary<string, object>> InsertEntryAsync(HttpRequest request, bool resultRequired = true)
         {
-            var text = await ExecuteRequestAndGetResponseAsync(command.Request);
-            if (resultRequired)
+            using (var response = await ExecuteRequestAsync(request))
             {
-                return _responseReader.GetData(text).First();
-            }
-            else
-            {
-                return null;
+                var text = response.Content.ReadAsStringAsync().Result;
+                if (resultRequired)
+                {
+                    return _responseReader.GetData(text).First();
+                }
+                else
+                {
+                    return null;
+                }
             }
         }
 
-        public override async Task<int> UpdateEntryAsync(HttpCommand command)
+        public override async Task<int> UpdateEntryAsync(HttpRequest request)
         {
-            using (var response = await ExecuteRequestAsync(command.Request))
+            using (var response = await ExecuteRequestAsync(request))
             {
                 // TODO
-                return response.StatusCode == HttpStatusCode.OK ? 1 : 0;
+                return response.IsSuccessStatusCode ? 1 : 0;
             }
         }
 
-        public override async Task<int> DeleteEntryAsync(HttpCommand command)
+        public override async Task<int> DeleteEntryAsync(HttpRequest request)
         {
-            using (var response = await ExecuteRequestAsync(command.Request))
+            using (var response = await ExecuteRequestAsync(request))
             {
                 // TODO: check response code
-                return response.StatusCode == HttpStatusCode.OK ? 1 : 0;
+                return response.IsSuccessStatusCode ? 1 : 0;
             }
         }
 
-        public override async Task<IEnumerable<IDictionary<string, object>>> ExecuteFunctionAsync(HttpCommand command)
+        public override async Task<IEnumerable<IDictionary<string, object>>> ExecuteFunctionAsync(HttpRequest request)
         {
-            using (var response = await ExecuteRequestAsync(command.Request))
+            using (var response = await ExecuteRequestAsync(request))
             {
                 IEnumerable<IDictionary<string, object>> result = null;
-                if (response.StatusCode != HttpStatusCode.OK)
+                if (!response.IsSuccessStatusCode)
                 {
                     result = Enumerable.Empty<IDictionary<string, object>>();
                 }
                 else
                 {
-                    result = _responseReader.GetFunctionResult(response.GetResponseStream());
+                    result = _responseReader.GetFunctionResult(response.Content.ReadAsStreamAsync().Result);
                 }
 
                 return result;
@@ -147,13 +153,7 @@ namespace Simple.OData.Client
 
         private bool IsResourceNotFoundException(WebRequestException ex)
         {
-            var innerException = ex.InnerException as WebException;
-            if (innerException != null)
-            {
-                var statusCode = (innerException.Response as HttpWebResponse).StatusCode;
-                return statusCode == HttpStatusCode.NotFound;
-            }
-            return false;
+            return ex.Code == HttpStatusCode.NotFound;
         }
     }
 }

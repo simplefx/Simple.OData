@@ -18,11 +18,11 @@ namespace Simple.OData.Client
         {
             var requestBuilder = new CommandRequestBuilder(urlBase, credentials);
             var command = HttpCommand.Get(FluentCommand.MetadataLiteral);
-            requestBuilder.AddCommandToRequest(command);
+            var request = requestBuilder.CreateRequest(command);
             var requestRunner = new SchemaRequestRunner(new ODataClientSettings());
-            using (var response = await requestRunner.ExecuteRequestAsync(command.Request))
+            using (var response = await requestRunner.ExecuteRequestAsync(request))
             {
-                return ResponseReader.GetSchemaAsString(response.GetResponseStream());
+                return await response.Content.ReadAsStringAsync();
             }
         }
 
@@ -114,8 +114,8 @@ namespace Simple.OData.Client
                 .GetCommandTextAsync();
 
             var command = new CommandWriter(_schema).CreateGetCommand(commandText);
-            _requestBuilder.AddCommandToRequest(command);
-            return await _requestRunner.GetEntryAsync(command);
+            var request = _requestBuilder.CreateRequest(command);
+            return await _requestRunner.GetEntryAsync(request);
         }
 
         public async Task<IDictionary<string, object>> InsertEntryAsync(string collection, IDictionary<string, object> entryData, bool resultRequired = true)
@@ -133,14 +133,14 @@ namespace Simple.OData.Client
             }
 
             var command = commandWriter.CreateInsertCommand(_schema.FindBaseTable(collection).ActualName, entryData, entryContent);
-            _requestBuilder.AddCommandToRequest(command);
-            var result = await _requestRunner.InsertEntryAsync(command, resultRequired);
+            var request = _requestBuilder.CreateRequest(command);
+            var result = await _requestRunner.InsertEntryAsync(request, resultRequired);
 
             foreach (var associatedData in entryMembers.AssociationsByContentId)
             {
                 var linkCommand = commandWriter.CreateLinkCommand(collection, associatedData.Key, command.ContentId, associatedData.Value);
-                _requestBuilder.AddCommandToRequest(linkCommand);
-                await _requestRunner.InsertEntryAsync(linkCommand, resultRequired);
+                request = _requestBuilder.CreateRequest(linkCommand);
+                await _requestRunner.InsertEntryAsync(request, resultRequired);
             }
 
             return result;
@@ -180,8 +180,8 @@ namespace Simple.OData.Client
                 .GetCommandTextAsync();
 
             var command = new CommandWriter(_schema).CreateDeleteCommand(commandText);
-            _requestBuilder.AddCommandToRequest(command);
-            return await _requestRunner.DeleteEntryAsync(command);
+            var request = _requestBuilder.CreateRequest(command);
+            return await _requestRunner.DeleteEntryAsync(request);
         }
 
         public async Task LinkEntryAsync(string collection, IDictionary<string, object> entryKey, string linkName, IDictionary<string, object> linkedEntryKey)
@@ -201,8 +201,8 @@ namespace Simple.OData.Client
                 .GetCommandTextAsync();
 
             var command = new CommandWriter(_schema).CreateLinkCommand(collection, association.ActualName, entryPath, linkPath);
-            _requestBuilder.AddCommandToRequest(command);
-            await _requestRunner.UpdateEntryAsync(command);
+            var request = _requestBuilder.CreateRequest(command);
+            await _requestRunner.UpdateEntryAsync(request);
         }
 
         public async Task UnlinkEntryAsync(string collection, IDictionary<string, object> entryKey, string linkName)
@@ -216,8 +216,8 @@ namespace Simple.OData.Client
                 .GetCommandTextAsync();
 
             var command = new CommandWriter(_schema).CreateUnlinkCommand(collection, association.ActualName, commandText);
-            _requestBuilder.AddCommandToRequest(command);
-            await _requestRunner.UpdateEntryAsync(command);
+            var request = _requestBuilder.CreateRequest(command);
+            await _requestRunner.UpdateEntryAsync(request);
         }
 
         public async Task<IEnumerable<IDictionary<string, object>>> ExecuteFunctionAsync(string functionName, IDictionary<string, object> parameters)
@@ -230,8 +230,8 @@ namespace Simple.OData.Client
                 .GetCommandTextAsync();
 
             var command = new HttpCommand(function.HttpMethod.ToUpper(), commandText);
-            _requestBuilder.AddCommandToRequest(command);
-            return await _requestRunner.ExecuteFunctionAsync(command);
+            var request = _requestBuilder.CreateRequest(command);
+            return await _requestRunner.ExecuteFunctionAsync(request);
         }
 
         public async Task<T> ExecuteFunctionAsScalarAsync<T>(string functionName, IDictionary<string, object> parameters)

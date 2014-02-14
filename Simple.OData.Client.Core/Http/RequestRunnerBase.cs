@@ -1,8 +1,8 @@
 ﻿using System;
-using System.IO;
 using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
-using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
@@ -11,21 +11,34 @@ namespace Simple.OData.Client
         public Action<HttpWebRequest> BeforeRequest { get; set; }
         public Action<HttpWebResponse> AfterResponse { get; set; }
 
-        public async Task<HttpWebResponse> ExecuteRequestAsync(HttpRequest request)
+        public async Task<HttpResponseMessage> ExecuteRequestAsync(HttpRequest request)
         {
             try
             {
-                var webRequest = CreateWebRequest(request);
-                
-                if (this.BeforeRequest != null)
-                    this.BeforeRequest(webRequest);
+                var clientHandler = new HttpClientHandler();
+                clientHandler.Credentials = request.Credentials;
+                clientHandler.PreAuthenticate = request.PreAuthenticate;
 
-                var webResponse = (HttpWebResponse)(await webRequest.GetResponseAsync());
+                using (var httpClient = new HttpClient(clientHandler))
+                {
+                    if (request.Accept != null)
+                    {
+                        foreach (var accept in request.Accept)
+                        {
+                            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(accept));
+                        }
+                    }
 
-                if (this.AfterResponse != null)
-                    this.AfterResponse(webResponse);
+                    var requestMessage = CreateRequestMessage(request);
+                    var response = await httpClient.SendAsync(requestMessage);
 
-                return webResponse;
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        throw new WebRequestException(response.ReasonPhrase, response.StatusCode);
+                    }
+
+                    return response;
+                }
             }
             catch (WebException ex)
             {
@@ -44,24 +57,15 @@ namespace Simple.OData.Client
             }
         }
 
-        private HttpWebRequest CreateWebRequest(HttpRequest request)
+        private HttpRequestMessage CreateRequestMessage(HttpRequest request)
         {
-            var webRequest = (HttpWebRequest)WebRequest.Create(request.Uri);
-            webRequest.Method = request.Method;
-            webRequest.ContentType = request.ContentType;
-            if (!string.IsNullOrEmpty(request.Content))
-                webRequest.SetContent(request.Content);
-            webRequest.Accept = request.Accept;
+            var requestMessage = new HttpRequestMessage(new HttpMethod(request.Method), request.Uri);
 
-            webRequest.Credentials = request.Credentials;
-#if NET40
-            if (webRequest.Credentials != null)
+            if (request.Content != null)
             {
-                webRequest.PreAuthenticate = request.PreAuthenticate;
-                webRequest.KeepAlive = request.KeepAlive;
+                requestMessage.Content = request.Content;
             }
-#endif
-            return webRequest;
+            return requestMessage;
         }
     }
 }

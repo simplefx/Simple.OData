@@ -222,7 +222,7 @@ namespace Simple.OData.Client.Tests
             await AssertThrowsAsync<WebRequestException>(async () => await batch.CompleteAsync());
         }
 
-        [Fact]
+        [Fact(Skip = "Interception is not supported")]
         public async Task InterceptRequest()
         {
             var settings = new ODataClientSettings
@@ -234,7 +234,7 @@ namespace Simple.OData.Client.Tests
             await AssertThrowsAsync<WebRequestException>(async () => await client.FindEntriesAsync("Products"));
         }
 
-        [Fact]
+        [Fact(Skip = "Interception is not supported")]
         public async Task InterceptResponse()
         {
             var settings = new ODataClientSettings

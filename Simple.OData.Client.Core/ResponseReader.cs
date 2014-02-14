@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using Simple.OData.Client.Extensions;
 
@@ -18,31 +20,10 @@ namespace Simple.OData.Client
             _includeResourceTypeInEntryProperties = includeResourceTypeInEntryProperties;
         }
 
-        public static EdmSchema GetSchema(Stream stream)
-        {
-            return GetSchema(Utils.StreamToString(stream));
-        }
-
-        public static string GetSchemaAsString(Stream stream)
-        {
-            return Utils.StreamToString(stream);
-        }
-
         public static EdmSchema GetSchema(string text)
         {
             var feed = XElement.Parse(text);
             return EdmSchemaParser.ParseSchema(feed);
-        }
-
-        public IEnumerable<IDictionary<string, object>> GetData(Stream stream, bool scalarResult = false)
-        {
-            return GetData(Utils.StreamToString(stream), scalarResult);
-        }
-
-        public IEnumerable<IDictionary<string, object>> GetData(Stream stream, out int totalCount)
-        {
-            var text = Utils.StreamToString(stream);
-            return GetData(text, out totalCount);
         }
 
         public IEnumerable<IDictionary<string, object>> GetData(string text, bool scalarResult = false)

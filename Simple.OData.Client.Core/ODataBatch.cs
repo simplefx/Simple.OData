@@ -1,7 +1,7 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -23,7 +23,7 @@ namespace Simple.OData.Client
         {
             this.Settings = settings;
             this.RequestBuilder = new BatchRequestBuilder(this.Settings.UrlBase, this.Settings.Credentials);
-            this.RequestRunner = new BatchRequestRunner(this.RequestBuilder);
+            this.RequestRunner = new BatchRequestRunner();
 
             this.RequestBuilder.BeginBatch();
             _active = true;
@@ -53,7 +53,7 @@ namespace Simple.OData.Client
             this.RequestBuilder.EndBatch();
             using (var response = await this.RequestRunner.ExecuteRequestAsync(this.RequestBuilder.Request))
             {
-                ParseResponse(response.GetResponseStream());
+                await ParseResponseAsync(response);
             }
             _active = false;
         }
@@ -64,9 +64,9 @@ namespace Simple.OData.Client
             _active = false;
         }
 
-        private void ParseResponse(Stream stream)
+        private async Task ParseResponseAsync(HttpResponseMessage response)
         {
-            var content = Utils.StreamToString(stream);
+            var content = await response.Content.ReadAsStringAsync();
             var batchMarker = Regex.Match(content, @"--batchresponse_[a-zA-Z0-9\-]+").Value;
             var batchResponse = content.Split(new string[] {batchMarker}, StringSplitOptions.None)[1];
             var changesetMarker = Regex.Match(batchResponse, @"--changesetresponse_[a-zA-Z0-9\-]+").Value;
@@ -80,7 +80,7 @@ namespace Simple.OData.Client
                 var message = match.Groups[2].Value;
                 if (statusCode >= 400)
                 {
-                    throw new WebRequestException(message, statusCode.ToString());
+                    throw new WebRequestException(message, (HttpStatusCode)statusCode);
                 }
             }
         }

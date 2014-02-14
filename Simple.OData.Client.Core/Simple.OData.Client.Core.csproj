@@ -70,8 +70,6 @@
     <Compile Include="Extensions\TupleExtensions.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
     <Compile Include="Extensions\ULongExtensions.cs" />
-    <Compile Include="Extensions\WebRequestExtensions.cs" />
-    <Compile Include="Extensions\WebResponseExtensions.cs" />
     <Compile Include="Extensions\XAttributeExtensions.cs" />
     <Compile Include="Extensions\XElementAsDictionaryExtension.cs" />
     <Compile Include="Extensions\XElementExtensions.cs" />
