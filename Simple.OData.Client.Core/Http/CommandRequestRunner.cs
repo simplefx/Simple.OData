@@ -33,7 +33,7 @@ namespace Simple.OData.Client
                         if (setTotalCount)
                             result = _responseReader.GetData(stream, out totalCount);
                         else
-                            result = _responseReader.GetData(response.GetResponseStream(), scalarResult);
+                            result = _responseReader.GetData(stream, scalarResult);
                     }
 
                     return result;

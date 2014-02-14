@@ -30,17 +30,16 @@ namespace Simple.OData.Client
             return url + command;
         }
 
-        protected HttpWebRequest CreateWebRequest(string uri)
+        protected HttpRequest CreateRequest(string uri)
         {
-            var request = (HttpWebRequest)WebRequest.Create(uri);
+            var request = new HttpRequest();
+            request.Uri = uri;
             request.Credentials = this.Credentials;
-#if NET40
             if (this.Credentials != null)
             {
                 request.PreAuthenticate = true;
                 request.KeepAlive = true;
             }
-#endif
             return request;
         }
 

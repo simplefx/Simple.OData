@@ -15,17 +15,14 @@ namespace Simple.OData.Client
         public abstract int DeleteEntry(HttpCommand command);
         public abstract IEnumerable<IDictionary<string, object>> ExecuteFunction(HttpCommand command);
 
-        protected string ExecuteRequestAndGetResponse(HttpWebRequest request)
+        protected string ExecuteRequestAndGetResponse(HttpRequest request)
         {
             using (var response = ExecuteRequest(request))
             {
-                if (response != null)
+                var stream = response.GetResponseStream();
+                if (stream != null)
                 {
-                    var stream = response.GetResponseStream();
-                    if (stream != null)
-                    {
-                        return Utils.StreamToString(stream);
-                    }
+                    return Utils.StreamToString(stream);
                 }
 
                 return String.Empty;
