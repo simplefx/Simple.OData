@@ -15,21 +15,21 @@ namespace Simple.OData.Client
             _ignoreResourceNotFoundException = settings.IgnoreResourceNotFoundException;
         }
 
-        public override IEnumerable<IDictionary<string, object>> FindEntries(HttpCommand command, bool scalarResult, bool setTotalCount, out int totalCount)
+        public override IEnumerable<IDictionary<string, object>> FindEntries(HttpRequest request, bool scalarResult, bool setTotalCount, out int totalCount)
         {
             totalCount = 0;
             try
             {
-                using (var response = ExecuteRequest(command.Request))
+                using (var response = ExecuteRequest(request))
                 {
                     IEnumerable<IDictionary<string, object>> result = null;
-                    if (response.StatusCode != HttpStatusCode.OK)
+                    if (!response.IsSuccessStatusCode)
                     {
                         result = Enumerable.Empty<IDictionary<string, object>>();
                     }
                     else
                     {
-                        var stream = response.GetResponseStream();
+                        var stream = response.Content.ReadAsStreamAsync().Result;
                         if (setTotalCount)
                             result = _responseReader.GetData(stream, out totalCount);
                         else
@@ -48,12 +48,15 @@ namespace Simple.OData.Client
             }
         }
 
-        public override IDictionary<string, object> GetEntry(HttpCommand command)
+        public override IDictionary<string, object> GetEntry(HttpRequest request)
         {
             try
             {
-                var text = ExecuteRequestAndGetResponse(command.Request);
-                return _responseReader.GetData(text).First();
+                using (var response = ExecuteRequest(request))
+                {
+                    var text = response.Content.ReadAsStringAsync().Result;
+                    return _responseReader.GetData(text).First();
+                }
             }
             catch (WebRequestException ex)
             {
@@ -64,49 +67,52 @@ namespace Simple.OData.Client
             }
         }
 
-        public override IDictionary<string, object> InsertEntry(HttpCommand command, bool resultRequired = true)
+        public override IDictionary<string, object> InsertEntry(HttpRequest request, bool resultRequired = true)
         {
-            var text = ExecuteRequestAndGetResponse(command.Request);
-            if (resultRequired)
+            using (var response = ExecuteRequest(request))
             {
-                return _responseReader.GetData(text).First();
-            }
-            else
-            {
-                return null;
+                var text = response.Content.ReadAsStringAsync().Result;
+                if (resultRequired)
+                {
+                    return _responseReader.GetData(text).First();
+                }
+                else
+                {
+                    return null;
+                }
             }
         }
 
-        public override int UpdateEntry(HttpCommand command)
+        public override int UpdateEntry(HttpRequest request)
         {
-            using (var response = ExecuteRequest(command.Request))
+            using (var response = ExecuteRequest(request))
             {
                 // TODO
-                return response.StatusCode == HttpStatusCode.OK ? 1 : 0;
+                return response.IsSuccessStatusCode ? 1 : 0;
             }
         }
 
-        public override int DeleteEntry(HttpCommand command)
+        public override int DeleteEntry(HttpRequest request)
         {
-            using (var response = ExecuteRequest(command.Request))
+            using (var response = ExecuteRequest(request))
             {
                 // TODO: check response code
-                return response.StatusCode == HttpStatusCode.OK ? 1 : 0;
+                return response.IsSuccessStatusCode ? 1 : 0;
             }
         }
 
-        public override IEnumerable<IDictionary<string, object>> ExecuteFunction(HttpCommand command)
+        public override IEnumerable<IDictionary<string, object>> ExecuteFunction(HttpRequest request)
         {
-            using (var response = ExecuteRequest(command.Request))
+            using (var response = ExecuteRequest(request))
             {
                 IEnumerable<IDictionary<string, object>> result = null;
-                if (response.StatusCode != HttpStatusCode.OK)
+                if (!response.IsSuccessStatusCode)
                 {
                     result = Enumerable.Empty<IDictionary<string, object>>();
                 }
                 else
                 {
-                    result = _responseReader.GetFunctionResult(response.GetResponseStream());
+                    result = _responseReader.GetFunctionResult(response.Content.ReadAsStreamAsync().Result);
                 }
 
                 return result;
@@ -115,13 +121,7 @@ namespace Simple.OData.Client
 
         private bool IsResourceNotFoundException(WebRequestException ex)
         {
-            var innerException = ex.InnerException as WebException;
-            if (innerException != null)
-            {
-                var statusCode = (innerException.Response as HttpWebResponse).StatusCode;
-                return statusCode == HttpStatusCode.NotFound;
-            }
-            return false;
+            return ex.Code == HttpStatusCode.NotFound;
         }
     }
 }

@@ -11,7 +11,6 @@ namespace Simple.OData.Client
         public string FormattedContent { get; set; }
         public bool IsLink { get; set; }
         public bool ReturnsScalarResult { get; set; }
-        public HttpRequest Request { get; set; }
         public int ContentId { get; set; }
         public string ContentType
         {

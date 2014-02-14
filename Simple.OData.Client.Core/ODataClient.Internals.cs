@@ -9,8 +9,8 @@ namespace Simple.OData.Client
         private IEnumerable<IDictionary<string, object>> FindEntries(string commandText, bool scalarResult, bool setTotalCount, out int totalCount)
         {
             var command = new CommandWriter(_schema).CreateGetCommand(commandText, scalarResult);
-            _requestBuilder.AddCommandToRequest(command);
-            return _requestRunner.FindEntries(command, scalarResult, setTotalCount, out totalCount);
+            var request = _requestBuilder.CreateRequest(command);
+            return _requestRunner.FindEntries(request, scalarResult, setTotalCount, out totalCount);
         }
 
         private int IterateEntries(string collection, string commandText, IDictionary<string, object> entryData,
@@ -71,14 +71,14 @@ namespace Simple.OData.Client
             }
 
             var command = commandWriter.CreateUpdateCommand(commandText, entryData, entryContent, merge);
-            _requestBuilder.AddCommandToRequest(command);
-            var result = _requestRunner.UpdateEntry(command);
+            var request = _requestBuilder.CreateRequest(command);
+            var result = _requestRunner.UpdateEntry(request);
 
             foreach (var associatedData in entryMembers.AssociationsByContentId)
             {
                 var linkCommand = commandWriter.CreateLinkCommand(collection, associatedData.Key, command.ContentId, associatedData.Value);
-                _requestBuilder.AddCommandToRequest(linkCommand);
-                _requestRunner.UpdateEntry(linkCommand);
+                request = _requestBuilder.CreateRequest(linkCommand);
+                _requestRunner.UpdateEntry(request);
             }
 
             foreach (var associationName in unlinkAssociationNames)

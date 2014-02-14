@@ -9,7 +9,7 @@ namespace Simple.OData.Client
 #endif
     public class WebRequestException : Exception
     {
-        private readonly string _code;
+        private readonly HttpStatusCode _code;
         private readonly string _response;
 
         public static WebRequestException CreateFromWebException(WebException ex)
@@ -25,7 +25,7 @@ namespace Simple.OData.Client
         {
         }
 
-        public WebRequestException(string message, string code)
+        public WebRequestException(string message, HttpStatusCode code)
             : base(message)
         {
             _code = code;
@@ -39,11 +39,11 @@ namespace Simple.OData.Client
         public WebRequestException(string message, HttpWebResponse response, Exception inner)
             : base(message, inner)
         {
-            _code = response.StatusCode.ToString();
+            _code = response.StatusCode;
             _response = Utils.StreamToString(response.GetResponseStream());
         }
 
-        public WebRequestException(string message, string code, Exception inner)
+        public WebRequestException(string message, HttpStatusCode code, Exception inner)
             : base(message, inner)
         {
             _code = code;
@@ -62,7 +62,7 @@ namespace Simple.OData.Client
         }
 #endif
 
-        public string Code
+        public HttpStatusCode Code
         {
             get { return _code; }
         }

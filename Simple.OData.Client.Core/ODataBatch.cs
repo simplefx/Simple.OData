@@ -22,7 +22,7 @@ namespace Simple.OData.Client
         {
             this.Settings = settings;
             this.RequestBuilder = new BatchRequestBuilder(this.Settings.UrlBase, this.Settings.Credentials);
-            this.RequestRunner = new BatchRequestRunner(this.RequestBuilder);
+            this.RequestRunner = new BatchRequestRunner();
 
             this.RequestBuilder.BeginBatch();
             _active = true;
@@ -38,9 +38,12 @@ namespace Simple.OData.Client
         public void Complete()
         {
             this.RequestBuilder.EndBatch();
-            using (var stream = this.RequestRunner.ExecuteRequest(this.RequestBuilder.Request).GetResponseStream())
+            using (var response = this.RequestRunner.ExecuteRequest(this.RequestBuilder.Request))
             {
-                ParseResponse(stream);
+                using (var stream = response.Content.ReadAsStreamAsync().Result)
+                {
+                    ParseResponse(stream);
+                }
             }
             _active = false;
         }
@@ -66,7 +69,7 @@ namespace Simple.OData.Client
                 var message = match.Groups[2].Value;
                 if (statusCode >= 400)
                 {
-                    throw new WebRequestException(message, statusCode.ToString());
+                    throw new WebRequestException(message, (HttpStatusCode)statusCode);
                 }
             }
         }

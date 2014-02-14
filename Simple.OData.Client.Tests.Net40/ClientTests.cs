@@ -299,7 +299,7 @@ namespace Simple.OData.Client.Tests
             }
         }
 
-        [Fact]
+        [Fact(Skip = "Interception not supported")]
         public void InterceptRequest()
         {
             var settings = new ODataClientSettings
@@ -311,7 +311,7 @@ namespace Simple.OData.Client.Tests
             Assert.Throws<WebRequestException>(() => client.FindEntries("Products"));
         }
 
-        [Fact]
+        [Fact(Skip = "Interception not supported")]
         public void InterceptResponse()
         {
             var settings = new ODataClientSettings

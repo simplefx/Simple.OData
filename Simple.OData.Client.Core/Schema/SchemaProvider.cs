@@ -185,12 +185,12 @@ namespace Simple.OData.Client
         {
             var requestBuilder = new CommandRequestBuilder(urlBase, credentials);
             var command = HttpCommand.Get(FluentCommand.MetadataLiteral);
-            requestBuilder.AddCommandToRequest(command);
-            using (var response = new SchemaRequestRunner(new ODataClientSettings()).ExecuteRequest(command.Request))
+            var request = requestBuilder.CreateRequest(command);
+            using (var response = new SchemaRequestRunner(new ODataClientSettings()).ExecuteRequest(request))
             {
-                if (response.StatusCode == HttpStatusCode.OK)
+                if (response.IsSuccessStatusCode)
                 {
-                    return ResponseReader.GetSchemaAsString(response.GetResponseStream());
+                    return ResponseReader.GetSchemaAsString(response.Content.ReadAsStreamAsync().Result);
                 }
             }
             // TODO

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Net;
+using System.Net.Http;
 using System.Text;
-using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
@@ -12,7 +12,7 @@ namespace Simple.OData.Client
         {
         }
 
-        public override void AddCommandToRequest(HttpCommand command)
+        public override HttpRequest CreateRequest(HttpCommand command)
         {
             var uri = CreateRequestUrl(command.CommandText);
             var request = CreateRequest(uri);
@@ -27,14 +27,14 @@ namespace Simple.OData.Client
             if (command.FormattedContent != null)
             {
                 request.ContentType = command.ContentType;
-                request.Content = command.FormattedContent;
+                request.Content = new StringContent(command.FormattedContent, Encoding.UTF8, command.ContentType);
             }
             else if (!command.ReturnsScalarResult)
             {
-                request.Accept = "application/text,application/xml,application/atom+xml";
+                request.Accept = new[] { "application/text", "application/xml", "application/atom+xml" };
             }
 
-            command.Request = request;
+            return request;
         }
 
         public override int GetContentId(object content)

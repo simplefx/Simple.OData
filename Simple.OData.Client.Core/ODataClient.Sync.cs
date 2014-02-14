@@ -72,8 +72,8 @@ namespace Simple.OData.Client
                 .CommandText;
 
             var command = new CommandWriter(_schema).CreateGetCommand(commandText);
-            _requestBuilder.AddCommandToRequest(command);
-            return _requestRunner.GetEntry(command);
+            var request = _requestBuilder.CreateRequest(command);
+            return _requestRunner.GetEntry(request);
         }
 
         public IDictionary<string, object> InsertEntry(string collection, IDictionary<string, object> entryData, bool resultRequired = true)
@@ -90,14 +90,14 @@ namespace Simple.OData.Client
             }
 
             var command = commandWriter.CreateInsertCommand(_schema.FindBaseTable(collection).ActualName, entryData, entryContent);
-            _requestBuilder.AddCommandToRequest(command);
-            var result = _requestRunner.InsertEntry(command, resultRequired);
+            var request = _requestBuilder.CreateRequest(command);
+            var result = _requestRunner.InsertEntry(request, resultRequired);
 
             foreach (var associatedData in entryMembers.AssociationsByContentId)
             {
                 var linkCommand = commandWriter.CreateLinkCommand(collection, associatedData.Key, command.ContentId, associatedData.Value);
-                _requestBuilder.AddCommandToRequest(linkCommand);
-                _requestRunner.InsertEntry(linkCommand, resultRequired);
+                request = _requestBuilder.CreateRequest(linkCommand);
+                _requestRunner.InsertEntry(request, resultRequired);
             }
 
             return result;
@@ -133,8 +133,8 @@ namespace Simple.OData.Client
                 .CommandText;
 
             var command = new CommandWriter(_schema).CreateDeleteCommand(commandText);
-            _requestBuilder.AddCommandToRequest(command);
-            return _requestRunner.DeleteEntry(command);
+            var request = _requestBuilder.CreateRequest(command);
+            return _requestRunner.DeleteEntry(request);
         }
 
         public void LinkEntry(string collection, IDictionary<string, object> entryKey, string linkName, IDictionary<string, object> linkedEntryKey)
@@ -153,8 +153,8 @@ namespace Simple.OData.Client
                 .CommandText;
 
             var command = new CommandWriter(_schema).CreateLinkCommand(collection, association.ActualName, entryPath, linkPath);
-            _requestBuilder.AddCommandToRequest(command);
-            _requestRunner.UpdateEntry(command);
+            var request = _requestBuilder.CreateRequest(command);
+            _requestRunner.UpdateEntry(request);
         }
 
         public void UnlinkEntry(string collection, IDictionary<string, object> entryKey, string linkName)
@@ -167,8 +167,8 @@ namespace Simple.OData.Client
                 .CommandText;
 
             var command = new CommandWriter(_schema).CreateUnlinkCommand(collection, association.ActualName, commandText);
-            _requestBuilder.AddCommandToRequest(command);
-            _requestRunner.UpdateEntry(command);
+            var request = _requestBuilder.CreateRequest(command);
+            _requestRunner.UpdateEntry(request);
         }
 
         public IEnumerable<IDictionary<string, object>> ExecuteFunction(string functionName, IDictionary<string, object> parameters)
@@ -180,8 +180,8 @@ namespace Simple.OData.Client
                 .CommandText;
 
             var command = new HttpCommand(function.HttpMethod.ToUpper(), commandText);
-            _requestBuilder.AddCommandToRequest(command);
-            return _requestRunner.ExecuteFunction(command);
+            var request = _requestBuilder.CreateRequest(command);
+            return _requestRunner.ExecuteFunction(request);
         }
 
         public T ExecuteFunctionAsScalar<T>(string functionName, IDictionary<string, object> parameters)
