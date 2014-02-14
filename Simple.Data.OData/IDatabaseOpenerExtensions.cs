@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using System.Net.Http;
 
 namespace Simple.Data.OData
 {
@@ -31,8 +32,8 @@ namespace Simple.Data.OData
             ICredentials credentials,
             bool includeResourceTypeInEntryProperties,
             bool ignoreResourceNotFoundException,
-            Action<HttpWebRequest> beforeRequest,
-            Action<HttpWebResponse> afterResponse)
+            Action<HttpRequestMessage> beforeRequest,
+            Action<HttpResponseMessage> afterResponse)
         {
             return new
                        {

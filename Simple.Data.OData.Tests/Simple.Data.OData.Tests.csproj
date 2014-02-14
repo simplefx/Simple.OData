@@ -51,7 +51,7 @@
     </Reference>
     <Reference Include="Simple.OData.Client.Net40, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Simple.OData.Client.1.0.0\lib\net40\Simple.OData.Client.Net40.dll</HintPath>
+      <HintPath>..\..\Simple.OData.Client\Simple.OData.Client.Net40\bin\Debug\Simple.OData.Client.Net40.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
