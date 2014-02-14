@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -222,19 +223,19 @@ namespace Simple.OData.Client.Tests
             await AssertThrowsAsync<WebRequestException>(async () => await batch.CompleteAsync());
         }
 
-        [Fact(Skip = "Interception is not supported")]
+        [Fact]
         public async Task InterceptRequest()
         {
             var settings = new ODataClientSettings
             {
                 UrlBase = _serviceUri,
-                BeforeRequest = x => x.Method = "PUT",
+                BeforeRequest = x => x.Method = new HttpMethod("PUT"),
             };
             var client = new ODataClient(settings);
             await AssertThrowsAsync<WebRequestException>(async () => await client.FindEntriesAsync("Products"));
         }
 
-        [Fact(Skip = "Interception is not supported")]
+        [Fact]
         public async Task InterceptResponse()
         {
             var settings = new ODataClientSettings

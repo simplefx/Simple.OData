@@ -8,8 +8,8 @@ namespace Simple.OData.Client
 {
     public abstract class RequestRunnerBase
     {
-        public Action<HttpWebRequest> BeforeRequest { get; set; }
-        public Action<HttpWebResponse> AfterResponse { get; set; }
+        public Action<HttpRequestMessage> BeforeRequest { get; set; }
+        public Action<HttpResponseMessage> AfterResponse { get; set; }
 
         public async Task<HttpResponseMessage> ExecuteRequestAsync(HttpRequest request)
         {
@@ -30,14 +30,20 @@ namespace Simple.OData.Client
                     }
 
                     var requestMessage = CreateRequestMessage(request);
-                    var response = await httpClient.SendAsync(requestMessage);
+                    if (this.BeforeRequest != null)
+                        this.BeforeRequest(requestMessage);
 
-                    if (!response.IsSuccessStatusCode)
+                    var responseMessage = await httpClient.SendAsync(requestMessage);
+
+                    if (this.AfterResponse != null)
+                        this.AfterResponse(responseMessage);
+
+                    if (!responseMessage.IsSuccessStatusCode)
                     {
-                        throw new WebRequestException(response.ReasonPhrase, response.StatusCode);
+                        throw new WebRequestException(responseMessage.ReasonPhrase, responseMessage.StatusCode);
                     }
 
-                    return response;
+                    return responseMessage;
                 }
             }
             catch (WebException ex)

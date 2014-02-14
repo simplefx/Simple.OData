@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Net.Http;
 using Xunit;
 
 namespace Simple.OData.Client.Tests
@@ -299,19 +300,19 @@ namespace Simple.OData.Client.Tests
             }
         }
 
-        [Fact(Skip = "Interception not supported")]
+        [Fact]
         public void InterceptRequest()
         {
             var settings = new ODataClientSettings
                                {
                                    UrlBase = _serviceUri,
-                                   BeforeRequest = x => x.Method = "PUT",
+                                   BeforeRequest = x => x.Method = new HttpMethod("PUT"),
                                };
             var client = new ODataClient(settings);
             Assert.Throws<WebRequestException>(() => client.FindEntries("Products"));
         }
 
-        [Fact(Skip = "Interception not supported")]
+        [Fact]
         public void InterceptResponse()
         {
             var settings = new ODataClientSettings
