@@ -60,11 +60,11 @@ namespace Simple.OData.Client
                 _content.Add(requestMessage.Content);
             }
 
-            request.OriginalContent = command.OriginalContent;
-            if (request.OriginalContent != null)
+            request.EntryData = command.EntryData;
+            if (request.EntryData != null)
             {
-                request.OriginalContent.Add("$Batch-ID", _batchId);
-                request.OriginalContent.Add("$Content-ID", _contentId);
+                request.EntryData.Add("$Batch-ID", _batchId);
+                request.EntryData.Add("$Content-ID", _contentId);
             }
             command.ContentId = _contentId;
 

@@ -17,7 +17,7 @@ namespace Simple.OData.Client
 
         public override IDictionary<string, object> InsertEntry(HttpRequest request, bool resultRequired = true)
         {
-            return request.OriginalContent;
+            return request.EntryData;
         }
 
         public override int UpdateEntry(HttpRequest request)

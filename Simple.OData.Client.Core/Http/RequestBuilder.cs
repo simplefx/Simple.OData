@@ -38,7 +38,6 @@ namespace Simple.OData.Client
             if (this.Credentials != null)
             {
                 request.PreAuthenticate = true;
-                request.KeepAlive = true;
             }
             return request;
         }
