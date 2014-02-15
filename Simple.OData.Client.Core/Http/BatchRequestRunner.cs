@@ -23,7 +23,7 @@ namespace Simple.OData.Client
 
         public override async Task<IDictionary<string, object>> InsertEntryAsync(HttpRequest request, bool resultRequired = true)
         {
-            return await TaskEx.FromResult(request.OriginalContent);
+            return await TaskEx.FromResult(request.EntryData);
         }
 
         public override Task<int> UpdateEntryAsync(HttpRequest request)
