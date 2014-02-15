@@ -146,6 +146,9 @@
     <Compile Include="..\Simple.OData.Client.Tests.Net40\AsyncTests.cs">
       <Link>AsyncTests.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\BatchTests.cs">
+      <Link>BatchTests.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\ClientTests.cs">
       <Link>ClientTests.cs</Link>
     </Compile>

@@ -185,47 +185,6 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task BatchWithSuccess()
-        {
-            using (var batch = new ODataBatch(_serviceUri))
-            {
-                var client = new ODataClient(batch);
-                await client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test1" }, { "UnitPrice", 10m } }, false);
-                await client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test2" }, { "UnitPrice", 20m } }, false);
-                batch.Complete();
-            }
-
-            var product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'Test1'");
-            Assert.NotNull(product);
-            product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'Test2'");
-            Assert.NotNull(product);
-        }
-
-        [Fact]
-        public async Task BatchWithPartialFailures()
-        {
-            using (var batch = new ODataBatch(_serviceUri))
-            {
-                var client = new ODataClient(batch);
-                await client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test1" }, { "UnitPrice", 10m } }, false);
-                await client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test2" }, { "UnitPrice", 10m }, { "SupplierID", 0xFFFF } }, false);
-                Assert.Throws<WebRequestException>(() => batch.Complete());
-            }
-        }
-
-        [Fact]
-        public async Task BatchWithAllFailures()
-        {
-            using (var batch = new ODataBatch(_serviceUri))
-            {
-                var client = new ODataClient(batch);
-                await client.InsertEntryAsync("Products", new Entry() { { "UnitPrice", 10m } }, false);
-                await client.InsertEntryAsync("Products", new Entry() { { "UnitPrice", 20m } }, false);
-                Assert.Throws<WebRequestException>(() => batch.Complete());
-            }
-        }
-
-        [Fact]
         public async Task InterceptRequest()
         {
             var settings = new ODataClientSettings
