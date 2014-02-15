@@ -131,10 +131,7 @@
     <Compile Include="DeleteTypedTests.cs" />
     <Compile Include="DeleteTests.cs" />
     <Compile Include="Extensions\XElementExtensionsTests.cs" />
-    <Compile Include="Extensions\XmlAttributesAsDictionaryReadTests.cs" />
-    <Compile Include="Extensions\XmlAttributesAsDictionaryWriteTests.cs" />
     <Compile Include="Extensions\XmlElementAsDictionaryReadTests.cs" />
-    <Compile Include="Extensions\XmlElementAsDictionaryWriteTests.cs" />
     <Compile Include="FindDynamicTests.cs" />
     <Compile Include="FindTypedTests.cs" />
     <Compile Include="FunctionTests.cs" />
