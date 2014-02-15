@@ -260,47 +260,6 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public void BatchWithSuccess()
-        {
-            using (var batch = new ODataBatch(_serviceUri))
-            {
-                var client = new ODataClient(batch);
-                client.InsertEntry("Products", new Entry() { { "ProductName", "Test1" }, { "UnitPrice", 10m } }, false);
-                client.InsertEntry("Products", new Entry() { { "ProductName", "Test2" }, { "UnitPrice", 20m } }, false);
-                batch.Complete();
-            }
-
-            var product = _client.FindEntry("Products?$filter=ProductName eq 'Test1'");
-            Assert.NotNull(product);
-            product = _client.FindEntry("Products?$filter=ProductName eq 'Test2'");
-            Assert.NotNull(product);
-        }
-
-        [Fact]
-        public void BatchWithPartialFailures()
-        {
-            using (var batch = new ODataBatch(_serviceUri))
-            {
-                var client = new ODataClient(batch);
-                client.InsertEntry("Products", new Entry() { { "ProductName", "Test1" }, { "UnitPrice", 10m } }, false);
-                client.InsertEntry("Products", new Entry() { { "ProductName", "Test2" }, { "UnitPrice", 10m }, { "SupplierID", 0xFFFF } }, false);
-                Assert.Throws<WebRequestException>(() => batch.Complete());
-            }
-        }
-
-        [Fact]
-        public void BatchWithAllFailures()
-        {
-            using (var batch = new ODataBatch(_serviceUri))
-            {
-                var client = new ODataClient(batch);
-                client.InsertEntry("Products", new Entry() { { "UnitPrice", 10m } }, false);
-                client.InsertEntry("Products", new Entry() { { "UnitPrice", 20m } }, false);
-                Assert.Throws<WebRequestException>(() => batch.Complete());
-            }
-        }
-
-        [Fact]
         public void InterceptRequest()
         {
             var settings = new ODataClientSettings

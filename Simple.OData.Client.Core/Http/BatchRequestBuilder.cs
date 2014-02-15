@@ -49,8 +49,7 @@ namespace Simple.OData.Client
         public override HttpRequest CreateRequest(HttpCommand command)
         {
             var request = new CommandRequestBuilder(this.UrlBase, this.Credentials).CreateRequest(command);
-            HttpContent content = null;
-            content = new StringContent(FormatBatchItem(command));
+            var content = new StringContent(FormatBatchItem(command));
             content.Headers.ContentType = new MediaTypeHeaderValue("application/http");
             content.Headers.Add("Content-Transfer-Encoding", "binary");
 
@@ -67,6 +66,7 @@ namespace Simple.OData.Client
                 request.OriginalContent.Add("$Batch-ID", _batchId);
                 request.OriginalContent.Add("$Content-ID", _contentId);
             }
+            command.ContentId = _contentId;
 
             return request;
         }
