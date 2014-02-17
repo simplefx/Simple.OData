@@ -85,6 +85,18 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void StringContainsWithLocalVariable()
+        {
+            var text = "ai";
+            var x = ODataDynamic.Expression;
+            IEnumerable<dynamic> products = _client
+                .For(x.Products)
+                .Filter(x.ProductName.Contains(text))
+                .FindEntries();
+            Assert.Equal("Chai", products.Single().ProductName);
+        }
+
+        [Fact]
         public void StringNotContains()
         {
             var x = ODataDynamic.Expression;
@@ -124,6 +136,18 @@ namespace Simple.OData.Client.Tests
             IEnumerable<dynamic> products = _client
                 .For(x.Products)
                 .Filter(x.ProductName.Substring(1, 2) == "ha")
+                .FindEntries();
+            Assert.Equal("Chai", products.First().ProductName);
+        }
+
+        [Fact]
+        public void SubstringWithPositionAndLengthEqualWithLocalVariable()
+        {
+            var text = "ha";
+            var x = ODataDynamic.Expression;
+            IEnumerable<dynamic> products = _client
+                .For(x.Products)
+                .Filter(x.ProductName.Substring(1, 2) == text)
                 .FindEntries();
             Assert.Equal("Chai", products.First().ProductName);
         }

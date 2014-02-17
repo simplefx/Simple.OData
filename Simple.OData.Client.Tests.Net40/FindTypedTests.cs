@@ -94,6 +94,17 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void StringContainsWithLocalVariable()
+        {
+            var text = "ai";
+            var products = _client
+                .For<Product>()
+                .Filter(x => x.ProductName.Contains(text))
+                .FindEntries();
+            Assert.Equal("Chai", products.Single().ProductName);
+        }
+
+        [Fact]
         public void StringNotContains()
         {
             var products = _client
@@ -129,6 +140,17 @@ namespace Simple.OData.Client.Tests
             var products = _client
                 .For<Product>()
                 .Filter(x => x.ProductName.Substring(1, 2) == "ha")
+                .FindEntries();
+            Assert.Equal("Chai", products.First().ProductName);
+        }
+
+        [Fact]
+        public void SubstringWithPositionAndLengthEqualWithLocalVariable()
+        {
+            var text = "ha";
+            var products = _client
+                .For<Product>()
+                .Filter(x => x.ProductName.Substring(1, 2) == text)
                 .FindEntries();
             Assert.Equal("Chai", products.First().ProductName);
         }
