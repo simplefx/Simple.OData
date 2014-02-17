@@ -111,12 +111,24 @@ namespace Simple.OData.Client
             else
             {
                 var memberExpression = Utils.CastExpressionWithTypeCheck<MemberExpression>(callExpression.Object);
-                if (callExpression.Arguments.Any(x => x.NodeType != ExpressionType.Constant))
-                    throw new NotSupportedException(string.Format("Not supported arguments in method {0}", callExpression.Method.Name));
                 var arguments = new List<object>();
-                arguments.AddRange(callExpression.Arguments.Select(x => ParseConstantExpression(x as ConstantExpression).Value));
+                arguments.AddRange(callExpression.Arguments.Select(ParseCallArgumentExpression));
 
                 return FromFunction(callExpression.Method.Name, memberExpression.Member.Name, arguments);
+            }
+        }
+
+        private static ODataExpression ParseCallArgumentExpression(Expression expression)
+        {
+            switch (expression.NodeType)
+            {
+                case ExpressionType.Constant:
+                    return new ODataExpression(ParseConstantExpression(expression).Value);
+                case ExpressionType.MemberAccess:
+                    return new ODataExpression(ParseMemberExpression(expression).Value);
+
+                default:
+                    throw Utils.NotSupportedExpression(expression);
             }
         }
 
