@@ -34,10 +34,12 @@ namespace Simple.OData.Client
         {
             var request = new HttpRequest();
             request.Uri = uri;
-            request.Credentials = this.Credentials;
             if (this.Credentials != null)
             {
+                request.Credentials = this.Credentials;
+#if NET40
                 request.PreAuthenticate = true;
+#endif
             }
             return request;
         }
