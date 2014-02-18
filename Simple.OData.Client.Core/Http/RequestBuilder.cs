@@ -33,14 +33,14 @@ namespace Simple.OData.Client
         protected HttpWebRequest CreateWebRequest(string uri)
         {
             var request = (HttpWebRequest)WebRequest.Create(uri);
-            request.Credentials = this.Credentials;
-#if NET40
             if (this.Credentials != null)
             {
+                request.Credentials = this.Credentials;
+#if NET40
                 request.PreAuthenticate = true;
                 request.KeepAlive = true;
-            }
 #endif
+            }
             return request;
         }
 
