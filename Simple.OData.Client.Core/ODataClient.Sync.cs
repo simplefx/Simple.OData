@@ -19,63 +19,97 @@ namespace Simple.OData.Client
 
         public IEnumerable<IDictionary<string, object>> FindEntries(string commandText)
         {
-            int totalCount;
-            return FindEntries(commandText, false, false, out totalCount);
+            try
+            {
+                return FindEntriesAsync(commandText).Result;
+            }
+            catch (AggregateException exception)
+            {
+                throw exception.InnerException;
+            }
         }
 
         public IEnumerable<IDictionary<string, object>> FindEntries(string commandText, bool scalarResult)
         {
-            int totalCount;
-            return FindEntries(commandText, scalarResult, false, out totalCount);
+            try
+            {
+                return FindEntriesAsync(commandText, scalarResult).Result;
+            }
+            catch (AggregateException exception)
+            {
+                throw exception.InnerException;
+            }
         }
 
         public IEnumerable<IDictionary<string, object>> FindEntries(string commandText, out int totalCount)
         {
-            return FindEntries(commandText, false, true, out totalCount);
+            try
+            {
+                var result = FindEntriesWithCountAsync(commandText, false).Result;
+                totalCount = result.Item2;
+                return result.Item1;
+            }
+            catch (AggregateException exception)
+            {
+                throw exception.InnerException;
+            }
         }
 
         public IEnumerable<IDictionary<string, object>> FindEntries(string commandText, bool scalarResult, out int totalCount)
         {
-            return FindEntries(commandText, scalarResult, true, out totalCount);
+            try
+            {
+                var result = FindEntriesWithCountAsync(commandText, scalarResult).Result;
+                totalCount = result.Item2;
+                return result.Item1;
+            }
+            catch (AggregateException exception)
+            {
+                throw exception.InnerException;
+            }
         }
 
         public IDictionary<string, object> FindEntry(string commandText)
         {
-            int totalCount;
-            var result = FindEntries(commandText, false, false, out totalCount);
-            return result == null ? null : result.FirstOrDefault();
+            try
+            {
+                return FindEntryAsync(commandText).Result;
+            }
+            catch (AggregateException exception)
+            {
+                throw exception.InnerException;
+            }
         }
 
         public object FindScalar(string commandText)
         {
-            int totalCount;
-            var result = FindEntries(commandText, true, false, out totalCount);
-            return result == null ? null : result.FirstOrDefault().Values.First();
+            try
+            {
+                return FindScalarAsync(commandText).Result;
+            }
+            catch (AggregateException exception)
+            {
+                throw exception.InnerException;
+            }
         }
 
         public IDictionary<string, object> GetEntry(string collection, params object[] entryKey)
         {
-            var entryKeyWithNames = new Dictionary<string, object>();
-            var keyNames = _schema.FindConcreteTable(collection).GetKeyNames();
-            for (int index = 0; index < keyNames.Count; index++)
+            try
             {
-                entryKeyWithNames.Add(keyNames[index], entryKey.ElementAt(index));
+                return GetEntryAsync(collection, entryKey).Result;
             }
-            return GetEntry(collection, entryKeyWithNames);
+            catch (AggregateException exception)
+            {
+                throw exception.InnerException;
+            }
         }
 
         public IDictionary<string, object> GetEntry(string collection, IDictionary<string, object> entryKey)
         {
             try
             {
-                var commandText = GetFluentClient()
-                    .For(collection)
-                    .Key(entryKey)
-                    .CommandText;
-
-                var command = new CommandWriter(_schema).CreateGetCommand(commandText);
-                _requestBuilder.AddCommandToRequest(command);
-                return _requestRunner.GetEntryAsync(command).Result;
+                return GetEntryAsync(collection, entryKey).Result;
             }
             catch (AggregateException exception)
             {
@@ -85,123 +119,52 @@ namespace Simple.OData.Client
 
         public IDictionary<string, object> InsertEntry(string collection, IDictionary<string, object> entryData, bool resultRequired = true)
         {
-            RemoveSystemProperties(entryData);
-            var table = _schema.FindConcreteTable(collection);
-            var entryMembers = ParseEntryMembers(table, entryData);
-
-            var commandWriter = new CommandWriter(_schema);
-            var entryContent = commandWriter.CreateEntry(table.EntityType.Name, entryMembers.Properties);
-            foreach (var associatedData in entryMembers.AssociationsByValue)
-            {
-                commandWriter.AddLink(entryContent, collection, associatedData);
-            }
-
-            var command = commandWriter.CreateInsertCommand(_schema.FindBaseTable(collection).ActualName, entryData, entryContent);
-            _requestBuilder.AddCommandToRequest(command);
-            var result = _requestRunner.InsertEntryAsync(command, resultRequired).Result;
-
-            foreach (var associatedData in entryMembers.AssociationsByContentId)
-            {
-                var linkCommand = commandWriter.CreateLinkCommand(collection, associatedData.Key, command.ContentId, associatedData.Value);
-                _requestBuilder.AddCommandToRequest(linkCommand);
-                _requestRunner.InsertEntryAsync(linkCommand, resultRequired).Wait();
-            }
-
-            return result;
+            return InsertEntryAsync(collection, entryData, resultRequired).Result;
         }
 
         public int UpdateEntries(string collection, string commandText, IDictionary<string, object> entryData)
         {
-            RemoveSystemProperties(entryData);
-            return IterateEntries(collection, commandText, entryData, UpdateEntry);
+            return UpdateEntriesAsync(collection, commandText, entryData).Result;
         }
 
         public int UpdateEntry(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
         {
-            RemoveSystemProperties(entryKey);
-            RemoveSystemProperties(entryData);
-            var table = _schema.FindConcreteTable(collection);
-            var entryMembers = ParseEntryMembers(table, entryData);
-
-            return UpdateEntryPropertiesAndAssociations(collection, entryKey, entryData, entryMembers);
+            return UpdateEntryAsync(collection, entryKey, entryData).Result;
         }
 
         public int DeleteEntries(string collection, string commandText)
         {
-            return IterateEntries(collection, commandText, null, (x, y, z) => DeleteEntry(x, y));
+            return DeleteEntriesAsync(collection, commandText).Result;
         }
 
         public int DeleteEntry(string collection, IDictionary<string, object> entryKey)
         {
-            RemoveSystemProperties(entryKey);
-            var commandText = GetFluentClient()
-                .For(collection)
-                .Key(entryKey)
-                .CommandText;
-
-            var command = new CommandWriter(_schema).CreateDeleteCommand(commandText);
-            _requestBuilder.AddCommandToRequest(command);
-            return _requestRunner.DeleteEntryAsync(command).Result;
+            return DeleteEntryAsync(collection, entryKey).Result;
         }
 
         public void LinkEntry(string collection, IDictionary<string, object> entryKey, string linkName, IDictionary<string, object> linkedEntryKey)
         {
-            RemoveSystemProperties(entryKey);
-            RemoveSystemProperties(linkedEntryKey);
-            var association = _schema.FindAssociation(collection, linkName);
-
-            var entryPath = GetFluentClient()
-                .For(collection)
-                .Key(entryKey)
-                .CommandText;
-            var linkPath = GetFluentClient()
-                .For(association.ReferenceTableName)
-                .Key(linkedEntryKey)
-                .CommandText;
-
-            var command = new CommandWriter(_schema).CreateLinkCommand(collection, association.ActualName, entryPath, linkPath);
-            _requestBuilder.AddCommandToRequest(command);
-            _requestRunner.UpdateEntryAsync(command).Wait();
+            LinkEntryAsync(collection, entryKey, linkName, linkedEntryKey).Wait();
         }
 
         public void UnlinkEntry(string collection, IDictionary<string, object> entryKey, string linkName)
         {
-            RemoveSystemProperties(entryKey);
-            var association = _schema.FindAssociation(collection, linkName);
-            var commandText = GetFluentClient()
-                .For(collection)
-                .Key(entryKey)
-                .CommandText;
-
-            var command = new CommandWriter(_schema).CreateUnlinkCommand(collection, association.ActualName, commandText);
-            _requestBuilder.AddCommandToRequest(command);
-            _requestRunner.UpdateEntryAsync(command).Wait();
+            UnlinkEntryAsync(collection, entryKey, linkName).Wait();
         }
 
         public IEnumerable<IDictionary<string, object>> ExecuteFunction(string functionName, IDictionary<string, object> parameters)
         {
-            var function = _schema.FindFunction(functionName);
-            var commandText = GetFluentClient()
-                .Function(functionName)
-                .Parameters(parameters)
-                .CommandText;
-
-            var command = new HttpCommand(function.HttpMethod.ToUpper(), commandText);
-            _requestBuilder.AddCommandToRequest(command);
-            return _requestRunner.ExecuteFunctionAsync(command).Result;
+            return ExecuteFunctionAsync(functionName, parameters).Result;
         }
 
         public T ExecuteFunctionAsScalar<T>(string functionName, IDictionary<string, object> parameters)
         {
-            return (T)ExecuteFunction(functionName, parameters).First().First().Value;
+            return ExecuteFunctionAsScalarAsync<T>(functionName, parameters).Result;
         }
 
         public T[] ExecuteFunctionAsArray<T>(string functionName, IDictionary<string, object> parameters)
         {
-            return ExecuteFunction(functionName, parameters)
-                .SelectMany(x => x.Values)
-                .Select(y => (T)y)
-                .ToArray();
+            return ExecuteFunctionAsArrayAsync<T>(functionName, parameters).Result;
         }
     }
 }

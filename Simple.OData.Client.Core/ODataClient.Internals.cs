@@ -1,70 +1,56 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Simple.OData.Client
 {
     public partial class ODataClient
     {
-        private IEnumerable<IDictionary<string, object>> FindEntries(string commandText, bool scalarResult, bool setTotalCount, out int totalCount)
+        private async Task<IEnumerable<IDictionary<string, object>>> RetrieveEntriesAsync(string commandText, bool scalarResult)
         {
-            try
-            {
-                var command = new CommandWriter(_schema).CreateGetCommand(commandText, scalarResult);
-                _requestBuilder.AddCommandToRequest(command);
-                if (setTotalCount)
-                {
-                    var result = _requestRunner.FindEntriesWithCountAsync(command, scalarResult).Result;
-                    totalCount = result.Item2;
-                    return result.Item1;
-                }
-                else
-                {
-                    totalCount = 0;
-                    return _requestRunner.FindEntriesAsync(command, scalarResult).Result;
-                }
-            }
-            catch (AggregateException exception)
-            {
-                throw exception.InnerException;
-            }
+            var command = new CommandWriter(_schema).CreateGetCommand(commandText, scalarResult);
+            _requestBuilder.AddCommandToRequest(command);
+            return await _requestRunner.FindEntriesAsync(command, scalarResult);
         }
 
-        private int IterateEntries(string collection, string commandText, IDictionary<string, object> entryData,
+        private async Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> RetrieveEntriesWithCountAsync(string commandText, bool scalarResult)
+        {
+            var command = new CommandWriter(_schema).CreateGetCommand(commandText, scalarResult);
+            _requestBuilder.AddCommandToRequest(command);
+            var result = await _requestRunner.FindEntriesWithCountAsync(command, scalarResult);
+            return Tuple.Create(result.Item1, result.Item2);
+        }
+
+        private async Task<int> IterateEntriesAsync(string collection, string commandText, IDictionary<string, object> entryData,
             Func<string, IDictionary<string, object>, IDictionary<string, object>, int> func)
         {
-            try
+            var result = 0;
+
+            var entryKey = ExtractKeyFromCommandText(collection, commandText);
+            if (entryKey != null)
             {
-                var entryKey = ExtractKeyFromCommandText(collection, commandText);
-                if (entryKey != null)
+                result = func(collection, entryKey, entryData);
+            }
+            else
+            {
+                var client = new ODataClient(_settings);
+                var entries = await client.FindEntriesAsync(commandText);
+                if (entries != null)
                 {
-                    return func(collection, entryKey, entryData);
-                }
-                else
-                {
-                    var entries = new ODataClient(_settings).FindEntries(commandText);
-                    if (entries != null)
+                    var entryList = entries.ToList();
+                    foreach (var entry in entryList)
                     {
-                        var entryList = entries.ToList();
-                        foreach (var entry in entryList)
-                        {
-                            func(collection, entry, entryData);
-                        }
-                        return entryList.Count;
+                        func(collection, entry, entryData);
                     }
-                    else
-                    {
-                        return 0;
-                    }
+                    result = entryList.Count;
                 }
             }
-            catch (AggregateException exception)
-            {
-                throw exception.InnerException;
-            }
+
+            return result;
         }
 
-        private int UpdateEntryPropertiesAndAssociations(
+        private async Task<int> UpdateEntryPropertiesAndAssociationsAsync(
             string collection,
             IDictionary<string, object> entryKey,
             IDictionary<string, object> entryData,
@@ -96,13 +82,13 @@ namespace Simple.OData.Client
 
             var command = commandWriter.CreateUpdateCommand(commandText, entryData, entryContent, merge);
             _requestBuilder.AddCommandToRequest(command);
-            var result = _requestRunner.UpdateEntryAsync(command).Result;
+            var result = await _requestRunner.UpdateEntryAsync(command);
 
             foreach (var associatedData in entryMembers.AssociationsByContentId)
             {
                 var linkCommand = commandWriter.CreateLinkCommand(collection, associatedData.Key, command.ContentId, associatedData.Value);
                 _requestBuilder.AddCommandToRequest(linkCommand);
-                _requestRunner.UpdateEntryAsync(linkCommand).Wait();
+                await _requestRunner.UpdateEntryAsync(linkCommand);
             }
 
             foreach (var associationName in unlinkAssociationNames)
