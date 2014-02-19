@@ -37,7 +37,12 @@ namespace Simple.OData.Client
 
         public void Complete()
         {
-            CompleteAsync().Wait();
+            this.RequestBuilder.EndBatch();
+            using (var response = this.RequestRunner.ExecuteRequestAsync(this.RequestBuilder.Request).Result)
+            {
+                ParseResponse(response);
+            }
+            _active = false;
         }
 
         public async Task CompleteAsync()
