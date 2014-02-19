@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace Simple.OData.Client
 {
@@ -19,26 +19,12 @@ namespace Simple.OData.Client
 
         public IEnumerable<IDictionary<string, object>> FindEntries(string commandText)
         {
-            try
-            {
-                return FindEntriesAsync(commandText).Result;
-            }
-            catch (AggregateException exception)
-            {
-                throw exception.InnerException;
-            }
+            return ExecuteAndUnwrap(() => FindEntriesAsync(commandText));
         }
 
         public IEnumerable<IDictionary<string, object>> FindEntries(string commandText, bool scalarResult)
         {
-            try
-            {
-                return FindEntriesAsync(commandText, scalarResult).Result;
-            }
-            catch (AggregateException exception)
-            {
-                throw exception.InnerException;
-            }
+            return ExecuteAndUnwrap(() => FindEntriesAsync(commandText, scalarResult));
         }
 
         public IEnumerable<IDictionary<string, object>> FindEntries(string commandText, out int totalCount)
@@ -71,45 +57,79 @@ namespace Simple.OData.Client
 
         public IDictionary<string, object> FindEntry(string commandText)
         {
-            try
-            {
-                return FindEntryAsync(commandText).Result;
-            }
-            catch (AggregateException exception)
-            {
-                throw exception.InnerException;
-            }
+            return ExecuteAndUnwrap(() => FindEntryAsync(commandText));
         }
 
         public object FindScalar(string commandText)
         {
-            try
-            {
-                return FindScalarAsync(commandText).Result;
-            }
-            catch (AggregateException exception)
-            {
-                throw exception.InnerException;
-            }
+            return ExecuteAndUnwrap(() => FindScalarAsync(commandText));
         }
 
         public IDictionary<string, object> GetEntry(string collection, params object[] entryKey)
         {
-            try
-            {
-                return GetEntryAsync(collection, entryKey).Result;
-            }
-            catch (AggregateException exception)
-            {
-                throw exception.InnerException;
-            }
+            return ExecuteAndUnwrap(() => GetEntryAsync(collection, entryKey));
         }
 
         public IDictionary<string, object> GetEntry(string collection, IDictionary<string, object> entryKey)
         {
+            return ExecuteAndUnwrap(() => GetEntryAsync(collection, entryKey));
+        }
+
+        public IDictionary<string, object> InsertEntry(string collection, IDictionary<string, object> entryData, bool resultRequired = true)
+        {
+            return ExecuteAndUnwrap(() => InsertEntryAsync(collection, entryData, resultRequired));
+        }
+
+        public int UpdateEntries(string collection, string commandText, IDictionary<string, object> entryData)
+        {
+            return ExecuteAndUnwrap(() => UpdateEntriesAsync(collection, commandText, entryData));
+        }
+
+        public int UpdateEntry(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
+        {
+            return ExecuteAndUnwrap(() => UpdateEntryAsync(collection, entryKey, entryData));
+        }
+
+        public int DeleteEntries(string collection, string commandText)
+        {
+            return ExecuteAndUnwrap(() => DeleteEntriesAsync(collection, commandText));
+        }
+
+        public int DeleteEntry(string collection, IDictionary<string, object> entryKey)
+        {
+            return ExecuteAndUnwrap(() => DeleteEntryAsync(collection, entryKey));
+        }
+
+        public void LinkEntry(string collection, IDictionary<string, object> entryKey, string linkName, IDictionary<string, object> linkedEntryKey)
+        {
+            ExecuteAndUnwrap(() => LinkEntryAsync(collection, entryKey, linkName, linkedEntryKey));
+        }
+
+        public void UnlinkEntry(string collection, IDictionary<string, object> entryKey, string linkName)
+        {
+            ExecuteAndUnwrap(() => UnlinkEntryAsync(collection, entryKey, linkName));
+        }
+
+        public IEnumerable<IDictionary<string, object>> ExecuteFunction(string functionName, IDictionary<string, object> parameters)
+        {
+            return ExecuteAndUnwrap(() => ExecuteFunctionAsync(functionName, parameters));
+        }
+
+        public T ExecuteFunctionAsScalar<T>(string functionName, IDictionary<string, object> parameters)
+        {
+            return ExecuteAndUnwrap(() => ExecuteFunctionAsScalarAsync<T>(functionName, parameters));
+        }
+
+        public T[] ExecuteFunctionAsArray<T>(string functionName, IDictionary<string, object> parameters)
+        {
+            return ExecuteAndUnwrap(() => ExecuteFunctionAsArrayAsync<T>(functionName, parameters));
+        }
+
+        private T ExecuteAndUnwrap<T>(Func<Task<T>> func)
+        {
             try
             {
-                return GetEntryAsync(collection, entryKey).Result;
+                return func().Result;
             }
             catch (AggregateException exception)
             {
@@ -117,54 +137,16 @@ namespace Simple.OData.Client
             }
         }
 
-        public IDictionary<string, object> InsertEntry(string collection, IDictionary<string, object> entryData, bool resultRequired = true)
+        private void ExecuteAndUnwrap(Func<Task> func)
         {
-            return InsertEntryAsync(collection, entryData, resultRequired).Result;
-        }
-
-        public int UpdateEntries(string collection, string commandText, IDictionary<string, object> entryData)
-        {
-            return UpdateEntriesAsync(collection, commandText, entryData).Result;
-        }
-
-        public int UpdateEntry(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
-        {
-            return UpdateEntryAsync(collection, entryKey, entryData).Result;
-        }
-
-        public int DeleteEntries(string collection, string commandText)
-        {
-            return DeleteEntriesAsync(collection, commandText).Result;
-        }
-
-        public int DeleteEntry(string collection, IDictionary<string, object> entryKey)
-        {
-            return DeleteEntryAsync(collection, entryKey).Result;
-        }
-
-        public void LinkEntry(string collection, IDictionary<string, object> entryKey, string linkName, IDictionary<string, object> linkedEntryKey)
-        {
-            LinkEntryAsync(collection, entryKey, linkName, linkedEntryKey).Wait();
-        }
-
-        public void UnlinkEntry(string collection, IDictionary<string, object> entryKey, string linkName)
-        {
-            UnlinkEntryAsync(collection, entryKey, linkName).Wait();
-        }
-
-        public IEnumerable<IDictionary<string, object>> ExecuteFunction(string functionName, IDictionary<string, object> parameters)
-        {
-            return ExecuteFunctionAsync(functionName, parameters).Result;
-        }
-
-        public T ExecuteFunctionAsScalar<T>(string functionName, IDictionary<string, object> parameters)
-        {
-            return ExecuteFunctionAsScalarAsync<T>(functionName, parameters).Result;
-        }
-
-        public T[] ExecuteFunctionAsArray<T>(string functionName, IDictionary<string, object> parameters)
-        {
-            return ExecuteFunctionAsArrayAsync<T>(functionName, parameters).Result;
+            try
+            {
+                func().Wait();
+            }
+            catch (AggregateException exception)
+            {
+                throw exception.InnerException;
+            }
         }
     }
 }

@@ -37,12 +37,14 @@ namespace Simple.OData.Client
 
         public void Complete()
         {
-            this.RequestBuilder.EndBatch();
-            using (var response = this.RequestRunner.ExecuteRequestAsync(this.RequestBuilder.Request).Result)
+            try
             {
-                ParseResponse(response);
+                CompleteAsync().Wait();
             }
-            _active = false;
+            catch (AggregateException exception)
+            {
+                throw exception.InnerException;
+            }
         }
 
         public async Task CompleteAsync()
@@ -65,9 +67,10 @@ namespace Simple.OData.Client
         {
             var content = Utils.StreamToString(response.GetResponseStream());
             var batchMarker = Regex.Match(content, @"--batchresponse_[a-zA-Z0-9\-]+").Value;
-            var batchResponse = content.Split(new string[] { batchMarker }, StringSplitOptions.None)[1];
+            var batchResponse = content.Split(new string[] {batchMarker}, StringSplitOptions.None)[1];
             var changesetMarker = Regex.Match(batchResponse, @"--changesetresponse_[a-zA-Z0-9\-]+").Value;
-            var changesetResponses = batchResponse.Split(new string[] { changesetMarker }, StringSplitOptions.None).ToList();
+            var changesetResponses =
+                batchResponse.Split(new string[] {changesetMarker}, StringSplitOptions.None).ToList();
             changesetResponses = changesetResponses.Skip(1).Take(changesetResponses.Count - 2).ToList();
             foreach (var changesetResponse in changesetResponses)
             {

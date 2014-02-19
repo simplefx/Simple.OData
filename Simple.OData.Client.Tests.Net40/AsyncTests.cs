@@ -191,7 +191,7 @@ namespace Simple.OData.Client.Tests
                 var client = new ODataClient(batch);
                 await client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test1" }, { "UnitPrice", 10m } }, false);
                 await client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test2" }, { "UnitPrice", 20m } }, false);
-                batch.Complete();
+                await batch.CompleteAsync();
             }
 
             var product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'Test1'");
@@ -203,25 +203,23 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task BatchWithPartialFailures()
         {
-            using (var batch = new ODataBatch(_serviceUri))
-            {
-                var client = new ODataClient(batch);
-                await client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test1" }, { "UnitPrice", 10m } }, false);
-                await client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test2" }, { "UnitPrice", 10m }, { "SupplierID", 0xFFFF } }, false);
-                Assert.Throws<WebRequestException>(() => batch.Complete());
-            }
+            var batch = new ODataBatch(_serviceUri);
+            var client = new ODataClient(batch);
+            await client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test1" }, { "UnitPrice", 10m } }, false);
+            await client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test2" }, { "UnitPrice", 10m }, { "SupplierID", 0xFFFF } }, false);
+
+            await AssertThrowsAsync<WebRequestException>(async () => await batch.CompleteAsync());
         }
 
         [Fact]
         public async Task BatchWithAllFailures()
         {
-            using (var batch = new ODataBatch(_serviceUri))
-            {
-                var client = new ODataClient(batch);
-                await client.InsertEntryAsync("Products", new Entry() { { "UnitPrice", 10m } }, false);
-                await client.InsertEntryAsync("Products", new Entry() { { "UnitPrice", 20m } }, false);
-                Assert.Throws<WebRequestException>(() => batch.Complete());
-            }
+            var batch = new ODataBatch(_serviceUri);
+            var client = new ODataClient(batch);
+            await client.InsertEntryAsync("Products", new Entry() { { "UnitPrice", 10m } }, false);
+            await client.InsertEntryAsync("Products", new Entry() { { "UnitPrice", 20m } }, false);
+            
+            await AssertThrowsAsync<WebRequestException>(async () => await batch.CompleteAsync());
         }
 
         [Fact]
