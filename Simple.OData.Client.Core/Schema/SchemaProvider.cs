@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace Simple.OData.Client
 {
@@ -19,7 +20,7 @@ namespace Simple.OData.Client
             }
             else
             {
-                _metadataString = new Lazy<string>(() => RequestMetadataAsString(urlBase, credentials));
+                _metadataString = new Lazy<string>(() => RequestMetadataAsStringAsync(urlBase, credentials).Result);
             }
             _metadata = new Lazy<EdmSchema>(() => ResponseReader.GetSchema(_metadataString.Value));
             _schema = new Lazy<Schema>(() => Schema.Get(this) as Schema);
@@ -181,12 +182,13 @@ namespace Simple.OData.Client
             }
         }
 
-        private string RequestMetadataAsString(string urlBase, ICredentials credentials = null)
+        private async Task<string> RequestMetadataAsStringAsync(string urlBase, ICredentials credentials = null)
         {
             var requestBuilder = new CommandRequestBuilder(urlBase, credentials);
             var command = HttpCommand.Get(FluentCommand.MetadataLiteral);
             requestBuilder.AddCommandToRequest(command);
-            using (var response = new SchemaRequestRunner(new ODataClientSettings()).ExecuteRequest(command.Request))
+            var requestRunner = new SchemaRequestRunner(new ODataClientSettings());
+            using (var response = await requestRunner.ExecuteRequestAsync(command.Request))
             {
                 if (response.StatusCode == HttpStatusCode.OK)
                 {

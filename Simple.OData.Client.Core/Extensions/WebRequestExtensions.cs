@@ -20,15 +20,6 @@ namespace Simple.OData.Client.Extensions
             }
         }
 
-#if !NET40
-        public static WebResponse GetResponse(this HttpWebRequest request)
-        {
-            return Task.Factory.FromAsync<WebResponse>(
-                request.BeginGetResponse,
-                request.EndGetResponse, null).Result;
-        }
-#endif
-
         private static Task<Stream> GetRequestStreamAsync(this WebRequest request)
         {
             return Task.Factory.FromAsync<Stream>(

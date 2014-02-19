@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using System.Threading.Tasks;
 using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
@@ -9,14 +10,14 @@ namespace Simple.OData.Client
         public Action<HttpWebRequest> BeforeRequest { get; set; }
         public Action<HttpWebResponse> AfterResponse { get; set; }
 
-        public HttpWebResponse ExecuteRequest(HttpWebRequest request)
+        public async Task<HttpWebResponse> ExecuteRequestAsync(HttpWebRequest request)
         {
             try
             {
                 if (this.BeforeRequest != null)
                     this.BeforeRequest(request);
 
-                var response = (HttpWebResponse)request.GetResponse();
+                var response = (HttpWebResponse)(await request.GetResponseAsync());
 
                 if (this.AfterResponse != null)
                     this.AfterResponse(response);

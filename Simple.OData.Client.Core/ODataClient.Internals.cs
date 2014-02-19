@@ -8,35 +8,59 @@ namespace Simple.OData.Client
     {
         private IEnumerable<IDictionary<string, object>> FindEntries(string commandText, bool scalarResult, bool setTotalCount, out int totalCount)
         {
-            var command = new CommandWriter(_schema).CreateGetCommand(commandText, scalarResult);
-            _requestBuilder.AddCommandToRequest(command);
-            return _requestRunner.FindEntries(command, scalarResult, setTotalCount, out totalCount);
+            try
+            {
+                var command = new CommandWriter(_schema).CreateGetCommand(commandText, scalarResult);
+                _requestBuilder.AddCommandToRequest(command);
+                if (setTotalCount)
+                {
+                    var result = _requestRunner.FindEntriesWithCountAsync(command, scalarResult).Result;
+                    totalCount = result.Item2;
+                    return result.Item1;
+                }
+                else
+                {
+                    totalCount = 0;
+                    return _requestRunner.FindEntriesAsync(command, scalarResult).Result;
+                }
+            }
+            catch (AggregateException exception)
+            {
+                throw exception.InnerException;
+            }
         }
 
         private int IterateEntries(string collection, string commandText, IDictionary<string, object> entryData,
             Func<string, IDictionary<string, object>, IDictionary<string, object>, int> func)
         {
-            var entryKey = ExtractKeyFromCommandText(collection, commandText);
-            if (entryKey != null)
+            try
             {
-                return func(collection, entryKey, entryData);
-            }
-            else
-            {
-                var entries = new ODataClient(_settings).FindEntries(commandText);
-                if (entries != null)
+                var entryKey = ExtractKeyFromCommandText(collection, commandText);
+                if (entryKey != null)
                 {
-                    var entryList = entries.ToList();
-                    foreach (var entry in entryList)
-                    {
-                        func(collection, entry, entryData);
-                    }
-                    return entryList.Count;
+                    return func(collection, entryKey, entryData);
                 }
                 else
                 {
-                    return 0;
+                    var entries = new ODataClient(_settings).FindEntries(commandText);
+                    if (entries != null)
+                    {
+                        var entryList = entries.ToList();
+                        foreach (var entry in entryList)
+                        {
+                            func(collection, entry, entryData);
+                        }
+                        return entryList.Count;
+                    }
+                    else
+                    {
+                        return 0;
+                    }
                 }
+            }
+            catch (AggregateException exception)
+            {
+                throw exception.InnerException;
             }
         }
 
@@ -72,13 +96,13 @@ namespace Simple.OData.Client
 
             var command = commandWriter.CreateUpdateCommand(commandText, entryData, entryContent, merge);
             _requestBuilder.AddCommandToRequest(command);
-            var result = _requestRunner.UpdateEntry(command);
+            var result = _requestRunner.UpdateEntryAsync(command).Result;
 
             foreach (var associatedData in entryMembers.AssociationsByContentId)
             {
                 var linkCommand = commandWriter.CreateLinkCommand(collection, associatedData.Key, command.ContentId, associatedData.Value);
                 _requestBuilder.AddCommandToRequest(linkCommand);
-                _requestRunner.UpdateEntry(linkCommand);
+                _requestRunner.UpdateEntryAsync(linkCommand).Wait();
             }
 
             foreach (var associationName in unlinkAssociationNames)

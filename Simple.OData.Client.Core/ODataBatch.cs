@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace Simple.OData.Client
 {
@@ -36,8 +37,13 @@ namespace Simple.OData.Client
 
         public void Complete()
         {
+            CompleteAsync().Wait();
+        }
+
+        public async Task CompleteAsync()
+        {
             this.RequestBuilder.EndBatch();
-            using (var response = this.RequestRunner.ExecuteRequest(this.RequestBuilder.Request))
+            using (var response = await this.RequestRunner.ExecuteRequestAsync(this.RequestBuilder.Request))
             {
                 ParseResponse(response);
             }

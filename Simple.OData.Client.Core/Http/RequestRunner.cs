@@ -8,16 +8,17 @@ namespace Simple.OData.Client
 {
     abstract class RequestRunner : RequestRunnerBase
     {
-        public abstract IEnumerable<IDictionary<string, object>> FindEntries(HttpCommand command, bool scalarResult, bool setTotalCount, out int totalCount);
-        public abstract IDictionary<string, object> GetEntry(HttpCommand command);
-        public abstract IDictionary<string, object> InsertEntry(HttpCommand command, bool resultRequired);
-        public abstract int UpdateEntry(HttpCommand command);
-        public abstract int DeleteEntry(HttpCommand command);
-        public abstract IEnumerable<IDictionary<string, object>> ExecuteFunction(HttpCommand command);
+        public abstract Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(HttpCommand command, bool scalarResult);
+        public abstract Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> FindEntriesWithCountAsync(HttpCommand command, bool scalarResult);
+        public abstract Task<IDictionary<string, object>> GetEntryAsync(HttpCommand command);
+        public abstract Task<IDictionary<string, object>> InsertEntryAsync(HttpCommand command, bool resultRequired);
+        public abstract Task<int> UpdateEntryAsync(HttpCommand command);
+        public abstract Task<int> DeleteEntryAsync(HttpCommand command);
+        public abstract Task<IEnumerable<IDictionary<string, object>>> ExecuteFunctionAsync(HttpCommand command);
 
-        protected string ExecuteRequestAndGetResponse(HttpWebRequest request)
+        protected async Task<string> ExecuteRequestAndGetResponseAsync(HttpWebRequest request)
         {
-            using (var response = ExecuteRequest(request))
+            using (var response = await ExecuteRequestAsync(request))
             {
                 if (response != null)
                 {

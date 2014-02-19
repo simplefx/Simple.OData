@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Simple.OData.Client
 {
@@ -11,33 +13,37 @@ namespace Simple.OData.Client
             _requestBuilder = requestBuilder;
         }
 
-        public override IEnumerable<IDictionary<string, object>> FindEntries(HttpCommand command, bool scalarResult, bool setTotalCount, out int totalCount)
-        {
-            totalCount = 0;
-            return null;
-        }
-
-        public override IDictionary<string, object> GetEntry(HttpCommand command)
+        public override Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(HttpCommand command, bool scalarResult)
         {
             return null;
         }
 
-        public override IDictionary<string, object> InsertEntry(HttpCommand command, bool resultRequired = true)
+        public override Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> FindEntriesWithCountAsync(HttpCommand command, bool scalarResult)
         {
-            return command.OriginalContent;
+            return null;
         }
 
-        public override int UpdateEntry(HttpCommand command)
+        public override Task<IDictionary<string, object>> GetEntryAsync(HttpCommand command)
         {
-            return 0;
+            return null;
         }
 
-        public override int DeleteEntry(HttpCommand command)
+        public override async Task<IDictionary<string, object>> InsertEntryAsync(HttpCommand command, bool resultRequired = true)
         {
-            return 0;
+            return await TaskEx.FromResult(command.OriginalContent);
         }
 
-        public override IEnumerable<IDictionary<string, object>> ExecuteFunction(HttpCommand command)
+        public override Task<int> UpdateEntryAsync(HttpCommand command)
+        {
+            return TaskEx.FromResult(0);
+        }
+
+        public override Task<int> DeleteEntryAsync(HttpCommand command)
+        {
+            return TaskEx.FromResult(0);
+        }
+
+        public override Task<IEnumerable<IDictionary<string, object>>> ExecuteFunctionAsync(HttpCommand command)
         {
             return null;
         }

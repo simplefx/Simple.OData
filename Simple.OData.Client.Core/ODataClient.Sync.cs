@@ -66,14 +66,21 @@ namespace Simple.OData.Client
 
         public IDictionary<string, object> GetEntry(string collection, IDictionary<string, object> entryKey)
         {
-            var commandText = GetFluentClient()
-                .For(collection)
-                .Key(entryKey)
-                .CommandText;
+            try
+            {
+                var commandText = GetFluentClient()
+                    .For(collection)
+                    .Key(entryKey)
+                    .CommandText;
 
-            var command = new CommandWriter(_schema).CreateGetCommand(commandText);
-            _requestBuilder.AddCommandToRequest(command);
-            return _requestRunner.GetEntry(command);
+                var command = new CommandWriter(_schema).CreateGetCommand(commandText);
+                _requestBuilder.AddCommandToRequest(command);
+                return _requestRunner.GetEntryAsync(command).Result;
+            }
+            catch (AggregateException exception)
+            {
+                throw exception.InnerException;
+            }
         }
 
         public IDictionary<string, object> InsertEntry(string collection, IDictionary<string, object> entryData, bool resultRequired = true)
@@ -91,13 +98,13 @@ namespace Simple.OData.Client
 
             var command = commandWriter.CreateInsertCommand(_schema.FindBaseTable(collection).ActualName, entryData, entryContent);
             _requestBuilder.AddCommandToRequest(command);
-            var result = _requestRunner.InsertEntry(command, resultRequired);
+            var result = _requestRunner.InsertEntryAsync(command, resultRequired).Result;
 
             foreach (var associatedData in entryMembers.AssociationsByContentId)
             {
                 var linkCommand = commandWriter.CreateLinkCommand(collection, associatedData.Key, command.ContentId, associatedData.Value);
                 _requestBuilder.AddCommandToRequest(linkCommand);
-                _requestRunner.InsertEntry(linkCommand, resultRequired);
+                _requestRunner.InsertEntryAsync(linkCommand, resultRequired).Wait();
             }
 
             return result;
@@ -134,7 +141,7 @@ namespace Simple.OData.Client
 
             var command = new CommandWriter(_schema).CreateDeleteCommand(commandText);
             _requestBuilder.AddCommandToRequest(command);
-            return _requestRunner.DeleteEntry(command);
+            return _requestRunner.DeleteEntryAsync(command).Result;
         }
 
         public void LinkEntry(string collection, IDictionary<string, object> entryKey, string linkName, IDictionary<string, object> linkedEntryKey)
@@ -154,7 +161,7 @@ namespace Simple.OData.Client
 
             var command = new CommandWriter(_schema).CreateLinkCommand(collection, association.ActualName, entryPath, linkPath);
             _requestBuilder.AddCommandToRequest(command);
-            _requestRunner.UpdateEntry(command);
+            _requestRunner.UpdateEntryAsync(command).Wait();
         }
 
         public void UnlinkEntry(string collection, IDictionary<string, object> entryKey, string linkName)
@@ -168,7 +175,7 @@ namespace Simple.OData.Client
 
             var command = new CommandWriter(_schema).CreateUnlinkCommand(collection, association.ActualName, commandText);
             _requestBuilder.AddCommandToRequest(command);
-            _requestRunner.UpdateEntry(command);
+            _requestRunner.UpdateEntryAsync(command).Wait();
         }
 
         public IEnumerable<IDictionary<string, object>> ExecuteFunction(string functionName, IDictionary<string, object> parameters)
@@ -181,7 +188,7 @@ namespace Simple.OData.Client
 
             var command = new HttpCommand(function.HttpMethod.ToUpper(), commandText);
             _requestBuilder.AddCommandToRequest(command);
-            return _requestRunner.ExecuteFunction(command);
+            return _requestRunner.ExecuteFunctionAsync(command).Result;
         }
 
         public T ExecuteFunctionAsScalar<T>(string functionName, IDictionary<string, object> parameters)

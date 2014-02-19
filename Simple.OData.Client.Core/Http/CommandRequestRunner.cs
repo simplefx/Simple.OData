@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace Simple.OData.Client
 {
@@ -15,12 +18,11 @@ namespace Simple.OData.Client
             _ignoreResourceNotFoundException = settings.IgnoreResourceNotFoundException;
         }
 
-        public override IEnumerable<IDictionary<string, object>> FindEntries(HttpCommand command, bool scalarResult, bool setTotalCount, out int totalCount)
+        public override async Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(HttpCommand command, bool scalarResult)
         {
-            totalCount = 0;
             try
             {
-                using (var response = ExecuteRequest(command.Request))
+                using (var response = await ExecuteRequestAsync(command.Request))
                 {
                     IEnumerable<IDictionary<string, object>> result = null;
                     if (response.StatusCode != HttpStatusCode.OK)
@@ -29,11 +31,7 @@ namespace Simple.OData.Client
                     }
                     else
                     {
-                        var stream = response.GetResponseStream();
-                        if (setTotalCount)
-                            result = _responseReader.GetData(stream, out totalCount);
-                        else
-                            result = _responseReader.GetData(response.GetResponseStream(), scalarResult);
+                        result = _responseReader.GetData(response.GetResponseStream(), scalarResult);
                     }
 
                     return result;
@@ -48,11 +46,45 @@ namespace Simple.OData.Client
             }
         }
 
-        public override IDictionary<string, object> GetEntry(HttpCommand command)
+        public override async Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> FindEntriesWithCountAsync(HttpCommand command, bool scalarResult)
+        {
+            int totalCount = 0;
+            try
+            {
+                using (var response = await ExecuteRequestAsync(command.Request))
+                {
+                    IEnumerable<IDictionary<string, object>> result = null;
+                    if (response.StatusCode != HttpStatusCode.OK)
+                    {
+                        result = Enumerable.Empty<IDictionary<string, object>>();
+                    }
+                    else
+                    {
+                        result = _responseReader.GetData(response.GetResponseStream(), out totalCount);
+                    }
+
+                    return Tuple.Create(result, totalCount);
+                }
+            }
+            catch (WebRequestException ex)
+            {
+                if (_ignoreResourceNotFoundException && IsResourceNotFoundException(ex))
+                {
+                    return new Tuple<IEnumerable<IDictionary<string, object>>, int>(
+                        new[] {(IDictionary<string, object>) null}, 0);
+                }
+                else
+                {
+                    throw;
+                }
+            }
+        }
+
+        public override async Task<IDictionary<string, object>> GetEntryAsync(HttpCommand command)
         {
             try
             {
-                var text = ExecuteRequestAndGetResponse(command.Request);
+                var text = await ExecuteRequestAndGetResponseAsync(command.Request);
                 return _responseReader.GetData(text).First();
             }
             catch (WebRequestException ex)
@@ -64,9 +96,9 @@ namespace Simple.OData.Client
             }
         }
 
-        public override IDictionary<string, object> InsertEntry(HttpCommand command, bool resultRequired = true)
+        public override async Task<IDictionary<string, object>> InsertEntryAsync(HttpCommand command, bool resultRequired = true)
         {
-            var text = ExecuteRequestAndGetResponse(command.Request);
+            var text = await ExecuteRequestAndGetResponseAsync(command.Request);
             if (resultRequired)
             {
                 return _responseReader.GetData(text).First();
@@ -77,27 +109,27 @@ namespace Simple.OData.Client
             }
         }
 
-        public override int UpdateEntry(HttpCommand command)
+        public override async Task<int> UpdateEntryAsync(HttpCommand command)
         {
-            using (var response = ExecuteRequest(command.Request))
+            using (var response = await ExecuteRequestAsync(command.Request))
             {
                 // TODO
                 return response.StatusCode == HttpStatusCode.OK ? 1 : 0;
             }
         }
 
-        public override int DeleteEntry(HttpCommand command)
+        public override async Task<int> DeleteEntryAsync(HttpCommand command)
         {
-            using (var response = ExecuteRequest(command.Request))
+            using (var response = await ExecuteRequestAsync(command.Request))
             {
                 // TODO: check response code
                 return response.StatusCode == HttpStatusCode.OK ? 1 : 0;
             }
         }
 
-        public override IEnumerable<IDictionary<string, object>> ExecuteFunction(HttpCommand command)
+        public override async Task<IEnumerable<IDictionary<string, object>>> ExecuteFunctionAsync(HttpCommand command)
         {
-            using (var response = ExecuteRequest(command.Request))
+            using (var response = await ExecuteRequestAsync(command.Request))
             {
                 IEnumerable<IDictionary<string, object>> result = null;
                 if (response.StatusCode != HttpStatusCode.OK)
