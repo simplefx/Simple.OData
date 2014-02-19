@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
+using System.Threading.Tasks;
 using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
@@ -45,7 +45,12 @@ namespace Simple.OData.Client
 
         public string SchemaAsString
         {
-            get { return SchemaProvider.FromUrl(_settings.UrlBase, _settings.Credentials).SchemaAsString; }
+            get { return SchemaAsStringAsync.Result; }
+        }
+
+        public Task<string> SchemaAsStringAsync
+        {
+            get { return GetSchemaAsStringAsync(_settings.UrlBase, _settings.Credentials); }
         }
 
         public static ISchema ParseSchemaString(string schemaString)

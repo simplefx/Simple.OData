@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Threading.Tasks;
 
 namespace Simple.OData.Client
 {
@@ -12,7 +11,7 @@ namespace Simple.OData.Client
         private readonly Lazy<string> _metadataString;
         private readonly Lazy<Schema> _schema;
 
-        private SchemaProvider(Func<string> metadataStringFunc)
+        internal SchemaProvider(Func<string> metadataStringFunc)
         {
             _metadataString = new Lazy<string>(metadataStringFunc);
             _metadata = new Lazy<EdmSchema>(() => ResponseReader.GetSchema(_metadataString.Value));
