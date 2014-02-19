@@ -9,6 +9,7 @@ namespace Simple.OData.Client
     {
         ISchema Schema { get; }
         string SchemaAsString { get; }
+        Task<string> SchemaAsStringAsync { get; }
 
         IFluentClient<IDictionary<string, object>> For(string collectionName);
         IFluentClient<ODataEntry> For(ODataExpression expression);
