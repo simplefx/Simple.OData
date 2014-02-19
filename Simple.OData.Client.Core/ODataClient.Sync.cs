@@ -14,7 +14,7 @@ namespace Simple.OData.Client
 
         public static string GetSchemaAsString(string urlBase, ICredentials credentials = null)
         {
-            return SchemaProvider.FromUrl(urlBase, credentials).SchemaAsString;
+            return ExecuteAndUnwrap(() => GetSchemaAsStringAsync(urlBase, credentials));
         }
 
         public IEnumerable<IDictionary<string, object>> FindEntries(string commandText)
@@ -125,7 +125,7 @@ namespace Simple.OData.Client
             return ExecuteAndUnwrap(() => ExecuteFunctionAsArrayAsync<T>(functionName, parameters));
         }
 
-        private T ExecuteAndUnwrap<T>(Func<Task<T>> func)
+        private static T ExecuteAndUnwrap<T>(Func<Task<T>> func)
         {
             try
             {
@@ -137,7 +137,7 @@ namespace Simple.OData.Client
             }
         }
 
-        private void ExecuteAndUnwrap(Func<Task> func)
+        private static void ExecuteAndUnwrap(Func<Task> func)
         {
             try
             {

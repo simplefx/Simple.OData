@@ -12,28 +12,21 @@ namespace Simple.OData.Client
         private readonly Lazy<string> _metadataString;
         private readonly Lazy<Schema> _schema;
 
-        private SchemaProvider(string urlBase, ICredentials credentials, string metadataString)
+        private SchemaProvider(Func<string> metadataStringFunc)
         {
-            if (!string.IsNullOrEmpty(metadataString))
-            {
-                _metadataString = new Lazy<string>(() => metadataString);
-            }
-            else
-            {
-                _metadataString = new Lazy<string>(() => RequestMetadataAsStringAsync(urlBase, credentials).Result);
-            }
+            _metadataString = new Lazy<string>(metadataStringFunc);
             _metadata = new Lazy<EdmSchema>(() => ResponseReader.GetSchema(_metadataString.Value));
             _schema = new Lazy<Schema>(() => Schema.Get(this) as Schema);
         }
 
         public static SchemaProvider FromUrl(string urlBase, ICredentials credentials)
         {
-            return new SchemaProvider(urlBase, credentials, null);
+            return new SchemaProvider(() => ODataClient.GetSchemaAsStringAsync(urlBase, credentials).Result);
         }
 
         public static SchemaProvider FromMetadata(string metadataString)
         {
-            return new SchemaProvider(null, null, metadataString);
+            return new SchemaProvider(() => metadataString);
         }
 
         public Schema Schema
@@ -66,7 +59,7 @@ namespace Simple.OData.Client
         public IEnumerable<Table> GetDerivedTables(Table table)
         {
             return from et in _metadata.Value.EntityTypes
-                   where et.BaseType != null && et.BaseType.Name == table.EntityType.Name 
+                   where et.BaseType != null && et.BaseType.Name == table.EntityType.Name
                    select new Table(et.Name, et, table, _schema.Value);
         }
 
@@ -180,23 +173,6 @@ namespace Simple.OData.Client
                 }
                 yield return entityType;
             }
-        }
-
-        private async Task<string> RequestMetadataAsStringAsync(string urlBase, ICredentials credentials = null)
-        {
-            var requestBuilder = new CommandRequestBuilder(urlBase, credentials);
-            var command = HttpCommand.Get(FluentCommand.MetadataLiteral);
-            requestBuilder.AddCommandToRequest(command);
-            var requestRunner = new SchemaRequestRunner(new ODataClientSettings());
-            using (var response = await requestRunner.ExecuteRequestAsync(command.Request))
-            {
-                if (response.StatusCode == HttpStatusCode.OK)
-                {
-                    return ResponseReader.GetSchemaAsString(response.GetResponseStream());
-                }
-            }
-            // TODO
-            return null;
         }
     }
 }

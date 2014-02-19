@@ -13,9 +13,16 @@ namespace Simple.OData.Client
             return Task.Factory.StartNew(() => Client.Schema.Get(urlBase, credentials));
         }
 
-        public static Task<string> GetSchemaAsStringAsync(string urlBase, ICredentials credentials = null)
+        public static async Task<string> GetSchemaAsStringAsync(string urlBase, ICredentials credentials = null)
         {
-            return Task.Factory.StartNew(() => SchemaProvider.FromUrl(urlBase, credentials).SchemaAsString);
+            var requestBuilder = new CommandRequestBuilder(urlBase, credentials);
+            var command = HttpCommand.Get(FluentCommand.MetadataLiteral);
+            requestBuilder.AddCommandToRequest(command);
+            var requestRunner = new SchemaRequestRunner(new ODataClientSettings());
+            using (var response = await requestRunner.ExecuteRequestAsync(command.Request))
+            {
+                return ResponseReader.GetSchemaAsString(response.GetResponseStream());
+            }
         }
 
         public Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(string commandText)
@@ -183,7 +190,7 @@ namespace Simple.OData.Client
 
         public async Task<T> ExecuteFunctionAsScalarAsync<T>(string functionName, IDictionary<string, object> parameters)
         {
-            return (T) (await ExecuteFunctionAsync(functionName, parameters)).First().First().Value;
+            return (T)(await ExecuteFunctionAsync(functionName, parameters)).First().First().Value;
         }
 
         public async Task<T[]> ExecuteFunctionAsArrayAsync<T>(string functionName, IDictionary<string, object> parameters)

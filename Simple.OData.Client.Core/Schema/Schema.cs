@@ -21,6 +21,7 @@ namespace Simple.OData.Client
         private Schema(SchemaProvider schemaProvider)
         {
             _schemaProvider = schemaProvider;
+
             _lazyTypesNamespace = new Lazy<string>(_schemaProvider.GetTypesNamespace);
             _lazyContainersNamespace = new Lazy<string>(_schemaProvider.GetContainersNamespace);
             _lazyTables = new Lazy<TableCollection>(CreateTableCollection);
@@ -199,7 +200,7 @@ namespace Simple.OData.Client
 
         internal static ISchema Get(string urlBase, ICredentials credentials = null)
         {
-            return Instances.GetOrAdd(urlBase, sp => new Schema(Client.SchemaProvider.FromUrl(urlBase, credentials)));
+            return Instances.GetOrAdd(urlBase, sp => new Schema(SchemaProvider.FromUrl(urlBase, credentials)));
         }
 
         internal static ISchema Get(SchemaProvider schemaProvider)
