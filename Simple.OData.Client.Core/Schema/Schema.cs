@@ -11,6 +11,10 @@ namespace Simple.OData.Client
         private static readonly SimpleDictionary<string, ISchema> Instances = new SimpleDictionary<string, ISchema>();
 
         private readonly SchemaProvider _schemaProvider;
+
+        private readonly Lazy<EdmSchema> _lazyMetadata;
+        private readonly Lazy<string> _lazyMetadataString;
+
         private readonly Lazy<string> _lazyTypesNamespace;
         private readonly Lazy<string> _lazyContainersNamespace;
         private readonly Lazy<TableCollection> _lazyTables;
@@ -18,9 +22,13 @@ namespace Simple.OData.Client
         private readonly Lazy<List<EdmEntityType>> _lazyEntityTypes;
         private readonly Lazy<List<EdmComplexType>> _lazyComplexTypes;
 
-        internal Schema(SchemaProvider schemaProvider)
+
+        private Schema(Func<string> metadataStringFunc)
         {
-            _schemaProvider = schemaProvider;
+            _schemaProvider = new SchemaProvider(this);
+
+            _lazyMetadataString = new Lazy<string>(metadataStringFunc);
+            _lazyMetadata = new Lazy<EdmSchema>(() => ResponseReader.GetSchema(_lazyMetadataString.Value));
 
             _lazyTypesNamespace = new Lazy<string>(_schemaProvider.GetTypesNamespace);
             _lazyContainersNamespace = new Lazy<string>(_schemaProvider.GetContainersNamespace);
@@ -33,6 +41,16 @@ namespace Simple.OData.Client
         internal SchemaProvider SchemaProvider
         {
             get { return _schemaProvider; }
+        }
+
+        public EdmSchema Metadata
+        {
+            get { return _lazyMetadata.Value; }
+        }
+
+        public string MetadataString
+        {
+            get { return _lazyMetadataString.Value; }
         }
 
         public string TypesNamespace
@@ -179,7 +197,7 @@ namespace Simple.OData.Client
 
         private TableCollection CreateTableCollection()
         {
-            return new TableCollection(_schemaProvider.GetTables(this)
+            return new TableCollection(_schemaProvider.GetTables()
                 .Select(table => new Table(table.ActualName, table.EntityType, null, this)));
         }
 
@@ -198,14 +216,14 @@ namespace Simple.OData.Client
             return new List<EdmComplexType>(_schemaProvider.GetComplexTypes());
         }
 
-        internal static ISchema Get(string urlBase, ICredentials credentials = null)
+        internal static ISchema FromUrl(string urlBase, ICredentials credentials = null)
         {
-            return Instances.GetOrAdd(urlBase, sp => new Schema(SchemaProvider.FromUrl(urlBase, credentials)));
+            return Instances.GetOrAdd(urlBase, sp => new Schema(() => ODataClient.GetSchemaAsStringAsync(urlBase, credentials).Result));
         }
 
-        internal static ISchema Get(SchemaProvider schemaProvider)
+        internal static ISchema FromMetadata(string metadataString)
         {
-            return new Schema(schemaProvider);
+            return new Schema(() => metadataString);
         }
 
         internal static void Add(string urlBase, ISchema schema)

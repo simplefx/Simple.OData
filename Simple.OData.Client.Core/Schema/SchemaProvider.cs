@@ -1,58 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 
 namespace Simple.OData.Client
 {
     class SchemaProvider
     {
-        private readonly Lazy<EdmSchema> _metadata;
-        private readonly Lazy<string> _metadataString;
+        private readonly Schema _schema;
 
-        internal SchemaProvider(Func<string> metadataStringFunc)
+        internal SchemaProvider(Schema schema)
         {
-            _metadataString = new Lazy<string>(metadataStringFunc);
-            _metadata = new Lazy<EdmSchema>(() => ResponseReader.GetSchema(_metadataString.Value));
-        }
-
-        public static SchemaProvider FromUrl(string urlBase, ICredentials credentials)
-        {
-            return new SchemaProvider(() => ODataClient.GetSchemaAsStringAsync(urlBase, credentials).Result);
-        }
-
-        public static SchemaProvider FromMetadata(string metadataString)
-        {
-            return new SchemaProvider(() => metadataString);
-        }
-
-        public string SchemaAsString
-        {
-            get { return _metadataString.Value; }
+            _schema = schema;
         }
 
         public string GetTypesNamespace()
         {
-            return _metadata.Value.TypesNamespace;
+            return _schema.Metadata.TypesNamespace;
         }
 
         public string GetContainersNamespace()
         {
-            return _metadata.Value.ContainersNamespace;
+            return _schema.Metadata.ContainersNamespace;
         }
 
-        public IEnumerable<Table> GetTables(Schema schema)
+        public IEnumerable<Table> GetTables()
         {
             return from s in GetEntitySets()
                    from et in GetEntitySetType(s)
-                   select new Table(s.Name, et, null, schema);
+                   select new Table(s.Name, et, null, _schema);
         }
 
-        public IEnumerable<Table> GetDerivedTables(Schema schema, Table table)
+        public IEnumerable<Table> GetDerivedTables(Table table)
         {
-            return from et in _metadata.Value.EntityTypes
+            return from et in _schema.Metadata.EntityTypes
                    where et.BaseType != null && et.BaseType.Name == table.EntityType.Name
-                   select new Table(et.Name, et, table, schema);
+                   select new Table(et.Name, et, table, _schema);
         }
 
         public IEnumerable<Column> GetColumns(Table table)
@@ -64,21 +46,21 @@ namespace Simple.OData.Client
 
         public IEnumerable<Association> GetAssociations(Table table)
         {
-            var principals = from e in _metadata.Value.EntityContainers
+            var principals = from e in _schema.Metadata.EntityContainers
                              where e.IsDefaulEntityContainer
                              from s in e.AssociationSets
                              where s.End.First().EntitySet == table.ActualName
-                             from a in _metadata.Value.Associations
-                             where s.Association == GetQualifiedName(_metadata.Value.TypesNamespace, a.Name)
+                             from a in _schema.Metadata.Associations
+                             where s.Association == GetQualifiedName(_schema.Metadata.TypesNamespace, a.Name)
                              from n in a.End
                              where n.Role == s.End.Last().Role
                              select CreateAssociation(s.End.Last(), n);
-            var dependents = from e in _metadata.Value.EntityContainers
+            var dependents = from e in _schema.Metadata.EntityContainers
                              where e.IsDefaulEntityContainer
                              from s in e.AssociationSets
                              where s.End.Last().EntitySet == table.ActualName
-                             from a in _metadata.Value.Associations
-                             where s.Association == GetQualifiedName(_metadata.Value.TypesNamespace, a.Name)
+                             from a in _schema.Metadata.Associations
+                             where s.Association == GetQualifiedName(_schema.Metadata.TypesNamespace, a.Name)
                              from n in a.End
                              where n.Role == s.End.First().Role
                              select CreateAssociation(s.End.First(), n);
@@ -97,7 +79,7 @@ namespace Simple.OData.Client
 
         public IEnumerable<Function> GetFunctions()
         {
-            return from e in _metadata.Value.EntityContainers
+            return from e in _schema.Metadata.EntityContainers
                    where e.IsDefaulEntityContainer
                    from f in e.FunctionImports
                    select CreateFunction(f);
@@ -105,19 +87,19 @@ namespace Simple.OData.Client
 
         public IEnumerable<EdmEntityType> GetEntityTypes()
         {
-            return from t in _metadata.Value.EntityTypes
+            return from t in _schema.Metadata.EntityTypes
                    select t;
         }
 
         public IEnumerable<EdmComplexType> GetComplexTypes()
         {
-            return from t in _metadata.Value.ComplexTypes
+            return from t in _schema.Metadata.ComplexTypes
                    select t;
         }
 
         private IEnumerable<EdmEntitySet> GetEntitySets()
         {
-            return from e in _metadata.Value.EntityContainers
+            return from e in _schema.Metadata.EntityContainers
                    where e.IsDefaulEntityContainer
                    from s in e.EntitySets
                    select s;
@@ -125,7 +107,7 @@ namespace Simple.OData.Client
 
         private IEnumerable<EdmEntityType> GetEntitySetType(EdmEntitySet entitySet)
         {
-            return from et in _metadata.Value.EntityTypes
+            return from et in _schema.Metadata.EntityTypes
                    where entitySet.EntityType.Split('.').Last() == et.Name
                    select et;
         }

@@ -21,7 +21,7 @@ namespace Simple.OData.Client
         public ODataClient(ODataClientSettings settings)
         {
             _settings = settings;
-            _schema = Client.Schema.Get(_settings.UrlBase, _settings.Credentials);
+            _schema = Client.Schema.FromUrl(_settings.UrlBase, _settings.Credentials);
 
             _requestBuilder = new CommandRequestBuilder(_settings.UrlBase, _settings.Credentials);
             _requestRunner = new CommandRequestRunner(_schema, _settings);
@@ -32,7 +32,7 @@ namespace Simple.OData.Client
         public ODataClient(ODataBatch batch)
         {
             _settings = batch.Settings;
-            _schema = Client.Schema.Get(_settings.UrlBase, _settings.Credentials);
+            _schema = Client.Schema.FromUrl(_settings.UrlBase, _settings.Credentials);
 
             _requestBuilder = batch.RequestBuilder;
             _requestRunner = batch.RequestRunner;
@@ -55,7 +55,7 @@ namespace Simple.OData.Client
 
         public static ISchema ParseSchemaString(string schemaString)
         {
-            return Client.Schema.Get(SchemaProvider.FromMetadata(schemaString));
+            return Client.Schema.FromMetadata(schemaString);
         }
 
         public static void SetPluralizer(IPluralizer pluralizer)
