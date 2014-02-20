@@ -9,13 +9,11 @@ namespace Simple.OData.Client
     {
         private readonly Lazy<EdmSchema> _metadata;
         private readonly Lazy<string> _metadataString;
-        private readonly Lazy<Schema> _schema;
 
         internal SchemaProvider(Func<string> metadataStringFunc)
         {
             _metadataString = new Lazy<string>(metadataStringFunc);
             _metadata = new Lazy<EdmSchema>(() => ResponseReader.GetSchema(_metadataString.Value));
-            _schema = new Lazy<Schema>(() => Schema.Get(this) as Schema);
         }
 
         public static SchemaProvider FromUrl(string urlBase, ICredentials credentials)
@@ -26,11 +24,6 @@ namespace Simple.OData.Client
         public static SchemaProvider FromMetadata(string metadataString)
         {
             return new SchemaProvider(() => metadataString);
-        }
-
-        public Schema Schema
-        {
-            get { return _schema.Value; }
         }
 
         public string SchemaAsString
@@ -48,18 +41,18 @@ namespace Simple.OData.Client
             return _metadata.Value.ContainersNamespace;
         }
 
-        public IEnumerable<Table> GetTables()
+        public IEnumerable<Table> GetTables(Schema schema)
         {
             return from s in GetEntitySets()
                    from et in GetEntitySetType(s)
-                   select new Table(s.Name, et, null, _schema.Value);
+                   select new Table(s.Name, et, null, schema);
         }
 
-        public IEnumerable<Table> GetDerivedTables(Table table)
+        public IEnumerable<Table> GetDerivedTables(Schema schema, Table table)
         {
             return from et in _metadata.Value.EntityTypes
                    where et.BaseType != null && et.BaseType.Name == table.EntityType.Name
-                   select new Table(et.Name, et, table, _schema.Value);
+                   select new Table(et.Name, et, table, schema);
         }
 
         public IEnumerable<Column> GetColumns(Table table)

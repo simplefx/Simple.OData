@@ -136,7 +136,7 @@ namespace Simple.OData.Client
 
         private TableCollection GetDerivedTables()
         {
-            return new TableCollection(_schema.SchemaProvider.GetDerivedTables(this));
+            return new TableCollection(_schema.SchemaProvider.GetDerivedTables(_schema, this));
         }
 
         private ColumnCollection GetColumns()

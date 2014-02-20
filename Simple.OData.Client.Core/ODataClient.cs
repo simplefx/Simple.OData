@@ -55,7 +55,7 @@ namespace Simple.OData.Client
 
         public static ISchema ParseSchemaString(string schemaString)
         {
-            return SchemaProvider.FromMetadata(schemaString).Schema;
+            return Client.Schema.Get(SchemaProvider.FromMetadata(schemaString));
         }
 
         public static void SetPluralizer(IPluralizer pluralizer)

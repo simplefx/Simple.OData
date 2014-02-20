@@ -18,7 +18,7 @@ namespace Simple.OData.Client
         private readonly Lazy<List<EdmEntityType>> _lazyEntityTypes;
         private readonly Lazy<List<EdmComplexType>> _lazyComplexTypes;
 
-        private Schema(SchemaProvider schemaProvider)
+        internal Schema(SchemaProvider schemaProvider)
         {
             _schemaProvider = schemaProvider;
 
@@ -179,7 +179,7 @@ namespace Simple.OData.Client
 
         private TableCollection CreateTableCollection()
         {
-            return new TableCollection(_schemaProvider.GetTables()
+            return new TableCollection(_schemaProvider.GetTables(this)
                 .Select(table => new Table(table.ActualName, table.EntityType, null, this)));
         }
 
