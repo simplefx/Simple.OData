@@ -8,8 +8,6 @@ namespace Simple.OData.Client
     public interface IFluentClient<T>
         where T : class
     {
-        string CommandText { get; }
-
         IEnumerable<T> FindEntries();
         IEnumerable<T> FindEntries(bool scalarResult);
         IEnumerable<T> FindEntries(out int totalCount);
@@ -31,6 +29,7 @@ namespace Simple.OData.Client
         IEnumerable<T> ExecuteFunction(string functionName, IDictionary<string, object> parameters);
         T ExecuteFunctionAsScalar(string functionName, IDictionary<string, object> parameters);
         T[] ExecuteFunctionAsArray(string functionName, IDictionary<string, object> parameters);
+        string GetCommandText();
 
         Task<IEnumerable<T>> FindEntriesAsync();
         Task<IEnumerable<T>> FindEntriesAsync(bool scalarResult);
@@ -52,6 +51,7 @@ namespace Simple.OData.Client
         Task<IEnumerable<T>> ExecuteFunctionAsync(string functionName, IDictionary<string, object> parameters);
         Task<T> ExecuteFunctionAsScalarAsync(string functionName, IDictionary<string, object> parameters);
         Task<T[]> ExecuteFunctionAsArrayAsync(string functionName, IDictionary<string, object> parameters);
+        Task<string> GetCommandTextAsync();
 
         IFluentClient<IDictionary<string, object>> As(string derivedCollectionName);
         IFluentClient<U> As<U>(string derivedCollectionName = null) where U : class;

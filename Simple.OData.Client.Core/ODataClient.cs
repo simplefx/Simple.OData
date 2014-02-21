@@ -40,7 +40,11 @@ namespace Simple.OData.Client
 
         public ISchema Schema
         {
-            get { return _schema; }
+            get
+            {
+                (_schema as Schema).ResolveMetadataAsync().Wait();
+                return _schema; 
+            }
         }
 
         public string SchemaAsString
@@ -77,24 +81,6 @@ namespace Simple.OData.Client
             where T : class
         {
             return new FluentClient<T>(this).For(collectionName);
-        }
-
-        public string FormatCommand(string collection, ODataExpression expression)
-        {
-            return GetCommandText(collection, expression);
-        }
-
-        public string FormatCommand<T>(string collection, Expression<Func<T, bool>> expression)
-        {
-            return GetCommandText(collection, ODataExpression.FromLinqExpression(expression.Body));
-        }
-
-        private string GetCommandText(string collection, ODataExpression expression)
-        {
-            return GetFluentClient()
-                .For(collection)
-                .Filter(expression.Format(this.Schema, collection))
-                .CommandText;
         }
 
         private FluentClient<IDictionary<string, object>> GetFluentClient()

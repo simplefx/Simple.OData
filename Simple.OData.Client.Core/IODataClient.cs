@@ -33,6 +33,8 @@ namespace Simple.OData.Client
         IEnumerable<IDictionary<string, object>> ExecuteFunction(string functionName, IDictionary<string, object> parameters);
         T ExecuteFunctionAsScalar<T>(string functionName, IDictionary<string, object> parameters);
         T[] ExecuteFunctionAsArray<T>(string functionName, IDictionary<string, object> parameters);
+        string GetCommandText(string collection, ODataExpression expression);
+        string GetCommandText<T>(string collection, Expression<Func<T, bool>> expression);
 
         Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(string commandText);
         Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(string commandText, bool scalarResult);
@@ -52,8 +54,7 @@ namespace Simple.OData.Client
         Task<IEnumerable<IDictionary<string, object>>> ExecuteFunctionAsync(string functionName, IDictionary<string, object> parameters);
         Task<T> ExecuteFunctionAsScalarAsync<T>(string functionName, IDictionary<string, object> parameters);
         Task<T[]> ExecuteFunctionAsArrayAsync<T>(string functionName, IDictionary<string, object> parameters);
-
-        string FormatCommand(string collection, ODataExpression expression);
-        string FormatCommand<T>(string collection, Expression<Func<T, bool>> expression);
+        Task<string> GetCommandTextAsync(string collection, ODataExpression expression);
+        Task<string> GetCommandTextAsync<T>(string collection, Expression<Func<T, bool>> expression);
     }
 }

@@ -97,6 +97,11 @@ namespace Simple.OData.Client
             return Format(new ExpressionContext());
         }
 
+        public string ConvertToText()
+        {
+            return Format(new ExpressionContext());
+        }
+
         internal bool ExtractEqualityComparisons(IDictionary<string, object> columnEqualityComparisons)
         {
             switch (_operator)

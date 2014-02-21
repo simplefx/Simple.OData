@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
@@ -24,6 +25,7 @@ namespace Simple.OData.Client
         private IDictionary<string, object> _entryData;
         private Dictionary<string, object> _parameters = new Dictionary<string, object>();
         private string _filter;
+        private ODataExpression _filterExpression;
         private int _skipCount = -1;
         private int _topCount = -1;
         private List<string> _expandAssociations = new List<string>();
@@ -65,6 +67,7 @@ namespace Simple.OData.Client
             _entryData = ancestor._entryData;
             _parameters = ancestor._parameters;
             _filter = ancestor._filter;
+            _filterExpression = ancestor._filterExpression;
             _skipCount = ancestor._skipCount;
             _topCount = ancestor._topCount;
             _expandAssociations = ancestor._expandAssociations;
@@ -97,6 +100,28 @@ namespace Simple.OData.Client
             }
         }
 
+        public string GetCommandText()
+        {
+            return GetCommandTextAsync().Result;
+        }
+
+        public async Task<string> GetCommandTextAsync()
+        {
+            await (_schema as Schema).ResolveMetadataAsync();
+            return Format();
+        }
+
+        public string GetCollectionName()
+        {
+            return GetCollectionNameAsync().Result;
+        }
+
+        public async Task<string> GetCollectionNameAsync()
+        {
+            await (_schema as Schema).ResolveMetadataAsync();
+            return _schema.FindTable(_collectionName).ActualName;
+        }
+
         public void For(string collectionName)
         {
             var items = collectionName.Split('/');
@@ -113,7 +138,7 @@ namespace Simple.OData.Client
 
         public void For(ODataExpression expression)
         {
-            For(expression.ToString());
+            For(expression.ConvertToText());
         }
 
         public void As(string derivedCollectionName)
@@ -123,7 +148,7 @@ namespace Simple.OData.Client
 
         public void As(ODataExpression expression)
         {
-            As(expression.ToString());
+            As(expression.ConvertToText());
         }
 
         public void Link(string linkName)
@@ -162,15 +187,7 @@ namespace Simple.OData.Client
 
         public void Filter(ODataExpression expression)
         {
-            _namedKeyValues = TryInterpretFilterExpressionAsKey(expression);
-            if (_namedKeyValues == null)
-            {
-                _filter = expression.Format(_schema, this.Table);
-            }
-            else
-            {
-                _topCount = -1;
-            }
+            _filterExpression = expression;
         }
 
         public void Skip(int count)
@@ -329,11 +346,6 @@ namespace Simple.OData.Client
             return Format();
         }
 
-        internal string CollectionName
-        {
-            get { return _schema.FindTable(_collectionName).ActualName; }
-        }
-
         internal bool HasKey
         {
             get { return _keyValues != null && _keyValues.Count > 0 || _namedKeyValues != null && _namedKeyValues.Count > 0; }
@@ -341,7 +353,7 @@ namespace Simple.OData.Client
 
         internal bool HasFilter
         {
-            get { return !string.IsNullOrEmpty(_filter); }
+            get { return !string.IsNullOrEmpty(_filter) || !ReferenceEquals(_filterExpression, null); }
         }
 
         internal IDictionary<string, object> KeyValues
@@ -407,6 +419,20 @@ namespace Simple.OData.Client
             else if (!string.IsNullOrEmpty(_functionName))
             {
                 commandText += _schema.FindFunction(_functionName).ActualName;
+            }
+
+            if (!ReferenceEquals(_filterExpression, null))
+            {
+                _namedKeyValues = TryInterpretFilterExpressionAsKey(_filterExpression);
+                if (_namedKeyValues == null)
+                {
+                    _filter = _filterExpression.Format(_schema, this.Table);
+                }
+                else
+                {
+                    _topCount = -1;
+                }
+                _filterExpression = null;
             }
 
             if (HasKey && HasFilter)

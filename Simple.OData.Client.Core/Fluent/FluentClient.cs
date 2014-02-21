@@ -53,11 +53,6 @@ namespace Simple.OData.Client
             get { return _schema; }
         }
 
-        public string CommandText
-        {
-            get { return this.Command.ToString(); }
-        }
-
         public FluentClient<U> Link<U>(FluentCommand command, string linkName = null)
         where U : class
         {
@@ -93,7 +88,7 @@ namespace Simple.OData.Client
 
         public IFluentClient<ODataEntry> As(ODataExpression expression)
         {
-            this.Command.As(expression.ToString());
+            this.Command.As(expression.ConvertToText());
             return CreateClientForODataEntry();
         }
 
@@ -329,7 +324,7 @@ namespace Simple.OData.Client
 
         public IFluentClient<T> NavigateTo(ODataExpression expression)
         {
-            return this.Link<T>(this.Command, expression.ToString());
+            return this.Link<T>(this.Command, expression.ConvertToText());
         }
 
         public IFluentClient<T> Function(string functionName)

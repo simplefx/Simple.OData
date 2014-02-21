@@ -11,37 +11,48 @@ namespace Simple.OData.Client
     {
         public Task<IEnumerable<T>> FindEntriesAsync()
         {
-            return RectifyColumnSelectionAsync(_client.FindEntriesAsync(_command.ToString()), _command.SelectedColumns);
+            return RectifyColumnSelectionAsync((_client as ODataClient).FindEntriesAsync(_command), _command.SelectedColumns);
         }
 
         public Task<IEnumerable<T>> FindEntriesAsync(bool scalarResult)
         {
-            return RectifyColumnSelectionAsync(_client.FindEntriesAsync(_command.ToString(), scalarResult), _command.SelectedColumns);
+            return RectifyColumnSelectionAsync((_client as ODataClient).FindEntriesAsync(_command, scalarResult), _command.SelectedColumns);
         }
 
-        public Task<Tuple<IEnumerable<T>, int>> FindEntriesWithCountAsync()
+        public async Task<Tuple<IEnumerable<T>, int>> FindEntriesWithCountAsync1()
         {
-            return RectifyColumnSelectionAsync(_client.FindEntriesWithCountAsync(_command.WithInlineCount().ToString()), _command.SelectedColumns);
+            var commandText = await _command.WithInlineCount().GetCommandTextAsync();
+            var result = _client.FindEntriesWithCountAsync(commandText);
+            return await RectifyColumnSelectionAsync(result, _command.SelectedColumns);
         }
 
-        public Task<Tuple<IEnumerable<T>, int>> FindEntriesWithCountAsync(bool scalarResult)
+        public async Task<Tuple<IEnumerable<T>, int>> FindEntriesWithCountAsync()
         {
-            return RectifyColumnSelectionAsync(_client.FindEntriesWithCountAsync(_command.WithInlineCount().ToString(), scalarResult), _command.SelectedColumns);
+            var commandText = await _command.WithInlineCount().GetCommandTextAsync();
+            var result = _client.FindEntriesWithCountAsync(commandText);
+            return await RectifyColumnSelectionAsync(result, _command.SelectedColumns);
+        }
+
+        public async Task<Tuple<IEnumerable<T>, int>> FindEntriesWithCountAsync(bool scalarResult)
+        {
+            var commandText = await _command.WithInlineCount().GetCommandTextAsync();
+            var result = _client.FindEntriesWithCountAsync(commandText, scalarResult);
+            return await RectifyColumnSelectionAsync(result, _command.SelectedColumns);
         }
 
         public Task<T> FindEntryAsync()
         {
-            return RectifyColumnSelectionAsync(_client.FindEntryAsync(_command.ToString()), _command.SelectedColumns);
+            return RectifyColumnSelectionAsync((_client as ODataClient).FindEntryAsync(_command), _command.SelectedColumns);
         }
 
         public Task<object> FindScalarAsync()
         {
-            return _client.FindScalarAsync(_command.ToString());
+            return (_client as ODataClient).FindScalarAsync(_command);
         }
 
         public Task<T> InsertEntryAsync(bool resultRequired = true)
         {
-            return _client.InsertEntryAsync(_command.CollectionName, _command.EntryData, resultRequired).ContinueWith(x =>
+            return (_client as ODataClient).InsertEntryAsync(_command, _command.EntryData, resultRequired).ContinueWith(x =>
             {
                 var result = x.Result;
                 return result.ToObject<T>(_dynamicResults);
@@ -53,12 +64,12 @@ namespace Simple.OData.Client
             if (_command.HasFilter)
                 return UpdateEntriesAsync();
             else
-                return _client.UpdateEntryAsync(_command.CollectionName, _command.KeyValues, _command.EntryData);
+                return (_client as ODataClient).UpdateEntryAsync(_command, _command.KeyValues, _command.EntryData);
         }
 
         public Task<int> UpdateEntriesAsync()
         {
-            return _client.UpdateEntriesAsync(_command.CollectionName, _command.ToString(), _command.EntryData);
+            return (_client as ODataClient).UpdateEntriesAsync(_command, _command.EntryData);
         }
 
         public Task<int> DeleteEntryAsync()
@@ -66,17 +77,17 @@ namespace Simple.OData.Client
             if (_command.HasFilter)
                 return DeleteEntriesAsync();
             else
-                return _client.DeleteEntryAsync(_command.CollectionName, _command.KeyValues);
+                return (_client as ODataClient).DeleteEntryAsync(_command, _command.KeyValues);
         }
 
         public Task<int> DeleteEntriesAsync()
         {
-            return _client.DeleteEntriesAsync(_command.CollectionName, _command.ToString());
+            return (_client as ODataClient).DeleteEntriesAsync(_command);
         }
 
         public Task LinkEntryAsync<U>(U linkedEntryKey, string linkName = null)
         {
-            return _client.LinkEntryAsync(_command.CollectionName, _command.KeyValues, linkName ?? typeof(U).Name, linkedEntryKey.ToDictionary());
+            return (_client as ODataClient).LinkEntryAsync(_command, _command.KeyValues, linkName ?? typeof(U).Name, linkedEntryKey.ToDictionary());
         }
 
         public Task LinkEntryAsync<U>(Expression<Func<T, U>> expression, U linkedEntryKey)
@@ -86,17 +97,17 @@ namespace Simple.OData.Client
 
         public Task LinkEntryAsync(ODataExpression expression, IDictionary<string, object> linkedEntryKey)
         {
-            return LinkEntryAsync(linkedEntryKey, expression.ToString());
+            return LinkEntryAsync(linkedEntryKey, expression.ConvertToText());
         }
 
         public Task LinkEntryAsync(ODataExpression expression, ODataEntry linkedEntryKey)
         {
-            return LinkEntryAsync(linkedEntryKey, expression.ToString());
+            return LinkEntryAsync(linkedEntryKey, expression.ConvertToText());
         }
 
         public Task UnlinkEntryAsync<U>(string linkName = null)
         {
-            return _client.UnlinkEntryAsync(_command.CollectionName, _command.KeyValues, linkName ?? typeof(U).Name);
+            return (_client as ODataClient).UnlinkEntryAsync(_command, _command.KeyValues, linkName ?? typeof(U).Name);
         }
 
         public Task UnlinkEntryAsync<U>(Expression<Func<T, U>> expression)
@@ -106,22 +117,28 @@ namespace Simple.OData.Client
 
         public Task UnlinkEntryAsync(ODataExpression expression)
         {
-            return UnlinkEntryAsync(expression.ToString());
+            return UnlinkEntryAsync(expression.ConvertToText());
         }
 
         public Task<IEnumerable<T>> ExecuteFunctionAsync(string functionName, IDictionary<string, object> parameters)
         {
-            return RectifyColumnSelectionAsync(_client.ExecuteFunctionAsync(_command.ToString(), parameters), _command.SelectedColumns);
+            return RectifyColumnSelectionAsync((_client as ODataClient).ExecuteFunctionAsync(_command, parameters), _command.SelectedColumns);
         }
 
         public Task<T> ExecuteFunctionAsScalarAsync(string functionName, IDictionary<string, object> parameters)
         {
-            return _client.ExecuteFunctionAsScalarAsync<T>(_command.ToString(), parameters);
+            return (_client as ODataClient).ExecuteFunctionAsScalarAsync<T>(_command, parameters);
         }
 
         public Task<T[]> ExecuteFunctionAsArrayAsync(string functionName, IDictionary<string, object> parameters)
         {
-            return _client.ExecuteFunctionAsArrayAsync<T>(_command.ToString(), parameters);
+            return (_client as ODataClient).ExecuteFunctionAsArrayAsync<T>(_command, parameters);
+        }
+
+        public async Task<string> GetCommandTextAsync()
+        {
+            await ((_client as ODataClient).Schema as Schema).ResolveMetadataAsync();
+            return await this.Command.GetCommandTextAsync();
         }
 
         internal Task<IEnumerable<T>> RectifyColumnSelectionAsync(Task<IEnumerable<IDictionary<string, object>>> entries, IList<string> selectedColumns)

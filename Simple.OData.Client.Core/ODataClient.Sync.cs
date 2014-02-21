@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Net;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace Simple.OData.Client
 {
@@ -123,6 +125,114 @@ namespace Simple.OData.Client
         public T[] ExecuteFunctionAsArray<T>(string functionName, IDictionary<string, object> parameters)
         {
             return ExecuteAndUnwrap(() => ExecuteFunctionAsArrayAsync<T>(functionName, parameters));
+        }
+
+        public string GetCommandText(string collection, ODataExpression expression)
+        {
+            return ExecuteAndUnwrap(() => GetCommandTextAsync(collection, expression));
+        }
+
+        public string GetCommandText<T>(string collection, Expression<Func<T, bool>> expression)
+        {
+            return ExecuteAndUnwrap(() => GetCommandTextAsync(collection, expression));
+        }
+
+        internal IEnumerable<IDictionary<string, object>> FindEntries(FluentCommand command)
+        {
+            return ExecuteAndUnwrap(() => FindEntriesAsync(command));
+        }
+
+        internal IEnumerable<IDictionary<string, object>> FindEntries(FluentCommand command, bool scalarResult)
+        {
+            return ExecuteAndUnwrap(() => FindEntriesAsync(command, scalarResult));
+        }
+
+        internal IEnumerable<IDictionary<string, object>> FindEntries(FluentCommand command, out int totalCount)
+        {
+            try
+            {
+                var result = FindEntriesWithCountAsync(command).Result;
+                totalCount = result.Item2;
+                return result.Item1;
+            }
+            catch (AggregateException exception)
+            {
+                throw exception.InnerException;
+            }
+        }
+
+        internal IEnumerable<IDictionary<string, object>> FindEntries(FluentCommand command, bool scalarResult, out int totalCount)
+        {
+            try
+            {
+                var result = FindEntriesWithCountAsync(command, scalarResult).Result;
+                totalCount = result.Item2;
+                return result.Item1;
+            }
+            catch (AggregateException exception)
+            {
+                throw exception.InnerException;
+            }
+        }
+
+        internal IDictionary<string, object> FindEntry(FluentCommand command)
+        {
+            return ExecuteAndUnwrap(() => FindEntryAsync(command));
+        }
+
+        internal object FindScalar(FluentCommand command)
+        {
+            return ExecuteAndUnwrap(() => FindScalarAsync(command));
+        }
+
+        internal IDictionary<string, object> InsertEntry(FluentCommand command, IDictionary<string, object> entryData, bool resultRequired = true)
+        {
+            return ExecuteAndUnwrap(() => InsertEntryAsync(command, entryData, resultRequired));
+        }
+
+        internal int UpdateEntries(FluentCommand command, IDictionary<string, object> entryData)
+        {
+            return ExecuteAndUnwrap(() => UpdateEntriesAsync(command, entryData));
+        }
+
+        public int UpdateEntry(FluentCommand command, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
+        {
+            return ExecuteAndUnwrap(() => UpdateEntryAsync(command, entryKey, entryData));
+        }
+
+        internal int DeleteEntries(FluentCommand command)
+        {
+            return ExecuteAndUnwrap(() => DeleteEntriesAsync(command));
+        }
+
+        public int DeleteEntry(FluentCommand command, IDictionary<string, object> entryKey)
+        {
+            return ExecuteAndUnwrap(() => DeleteEntryAsync(command, entryKey));
+        }
+
+        public void LinkEntry(FluentCommand command, IDictionary<string, object> entryKey, string linkName, IDictionary<string, object> linkedEntryKey)
+        {
+            ExecuteAndUnwrap(() => LinkEntryAsync(command, entryKey, linkName, linkedEntryKey));
+        }
+
+        public void UnlinkEntry(FluentCommand command, IDictionary<string, object> entryKey, string linkName)
+        {
+            ExecuteAndUnwrap(() => UnlinkEntryAsync(command, entryKey, linkName));
+        }
+
+        internal IEnumerable<IDictionary<string, object>> ExecuteFunction(FluentCommand command, IDictionary<string, object> parameters)
+        {
+            return ExecuteAndUnwrap(() => ExecuteFunctionAsync(command, parameters));
+        }
+
+        internal T ExecuteFunctionAsScalar<T>(FluentCommand command, IDictionary<string, object> parameters)
+        {
+            return ExecuteAndUnwrap(() => ExecuteFunctionAsScalarAsync<T>(command, parameters));
+        }
+
+        internal T[] ExecuteFunctionAsArray<T>(FluentCommand command, IDictionary<string, object> parameters)
+        {
+            return ExecuteAndUnwrap(() => ExecuteFunctionAsArrayAsync<T>(command, parameters));
         }
 
         private static T ExecuteAndUnwrap<T>(Func<Task<T>> func)
