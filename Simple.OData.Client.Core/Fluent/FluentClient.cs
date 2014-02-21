@@ -23,7 +23,7 @@ namespace Simple.OData.Client
         public FluentClient(IODataClient client, FluentCommand parentCommand = null, FluentCommand command = null, bool dynamicResults = false)
         {
             _client = client;
-            _schema = client.Schema;
+            _schema = (client as ODataClient).Schema;
             _parentCommand = parentCommand;
             _command = command;
             _dynamicResults = dynamicResults;

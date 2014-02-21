@@ -38,24 +38,17 @@ namespace Simple.OData.Client
             _requestRunner = batch.RequestRunner;
         }
 
-        public ISchema Schema
-        {
-            get
-            {
-                (_schema as Schema).ResolveMetadataAsync().Wait();
-                return _schema; 
-            }
-        }
+        //public string SchemaAsString
+        //{
+        //    get { return SchemaAsStringAsync.Result; }
+        //}
 
-        public string SchemaAsString
-        {
-            get { return SchemaAsStringAsync.Result; }
-        }
+        //public Task<string> SchemaAsStringAsync
+        //{
+        //    get { return GetSchemaAsStringAsync(_settings.UrlBase, _settings.Credentials); }
+        //}
 
-        public Task<string> SchemaAsStringAsync
-        {
-            get { return GetSchemaAsStringAsync(_settings.UrlBase, _settings.Credentials); }
-        }
+        internal ISchema Schema { get { return _schema; } }
 
         public static ISchema ParseSchemaString(string schemaString)
         {

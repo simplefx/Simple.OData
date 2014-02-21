@@ -16,7 +16,7 @@ namespace Simple.OData.Client.Tests
 
         public FeedReaderTests()
         {
-            _feedReader = new ResponseReader(_client.Schema);
+            _feedReader = new ResponseReader(_client.GetSchema());
         }
 
         [Fact]

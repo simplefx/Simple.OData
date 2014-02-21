@@ -19,6 +19,26 @@ namespace Simple.OData.Client
             return ExecuteAndUnwrap(() => GetSchemaAsStringAsync(urlBase, credentials));
         }
 
+        public ISchema GetSchema()
+        {
+            return GetSchemaAsync().Result;
+        }
+
+        public string GetSchemaAsString()
+        {
+            return ExecuteAndUnwrap(GetSchemaAsStringAsync);
+        }
+
+        public string GetCommandText(string collection, ODataExpression expression)
+        {
+            return ExecuteAndUnwrap(() => GetCommandTextAsync(collection, expression));
+        }
+
+        public string GetCommandText<T>(string collection, Expression<Func<T, bool>> expression)
+        {
+            return ExecuteAndUnwrap(() => GetCommandTextAsync(collection, expression));
+        }
+
         public IEnumerable<IDictionary<string, object>> FindEntries(string commandText)
         {
             return ExecuteAndUnwrap(() => FindEntriesAsync(commandText));
@@ -125,16 +145,6 @@ namespace Simple.OData.Client
         public T[] ExecuteFunctionAsArray<T>(string functionName, IDictionary<string, object> parameters)
         {
             return ExecuteAndUnwrap(() => ExecuteFunctionAsArrayAsync<T>(functionName, parameters));
-        }
-
-        public string GetCommandText(string collection, ODataExpression expression)
-        {
-            return ExecuteAndUnwrap(() => GetCommandTextAsync(collection, expression));
-        }
-
-        public string GetCommandText<T>(string collection, Expression<Func<T, bool>> expression)
-        {
-            return ExecuteAndUnwrap(() => GetCommandTextAsync(collection, expression));
         }
 
         internal IEnumerable<IDictionary<string, object>> FindEntries(FluentCommand command)

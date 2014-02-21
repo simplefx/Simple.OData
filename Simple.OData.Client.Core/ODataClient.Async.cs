@@ -26,6 +26,36 @@ namespace Simple.OData.Client
             }
         }
 
+        public async Task<ISchema> GetSchemaAsync()
+        {
+            await (_schema as Schema).ResolveMetadataAsync();
+            return _schema;
+        }
+
+        public async Task<string> GetSchemaAsStringAsync()
+        {
+            await (_schema as Schema).ResolveMetadataAsync();
+            return (_schema as Schema).MetadataString;
+        }
+
+        public async Task<string> GetCommandTextAsync(string collection, ODataExpression expression)
+        {
+            await (_schema as Schema).ResolveMetadataAsync();
+            return await GetFluentClient()
+                .For(collection)
+                .Filter(expression.Format(this.Schema, collection))
+                .GetCommandTextAsync();
+        }
+
+        public async Task<string> GetCommandTextAsync<T>(string collection, Expression<Func<T, bool>> expression)
+        {
+            await (_schema as Schema).ResolveMetadataAsync();
+            return await GetFluentClient()
+                .For(collection)
+                .Filter(ODataExpression.FromLinqExpression(expression.Body).Format(this.Schema, collection))
+                .GetCommandTextAsync();
+        }
+
         public async Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(string commandText)
         {
             await (_schema as Schema).ResolveMetadataAsync();
@@ -34,19 +64,19 @@ namespace Simple.OData.Client
 
         public async Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(string commandText, bool scalarResult)
         {
-            await(_schema as Schema).ResolveMetadataAsync();
+            await (_schema as Schema).ResolveMetadataAsync();
             return await RetrieveEntriesAsync(commandText, scalarResult);
         }
 
         public async Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> FindEntriesWithCountAsync(string commandText)
         {
-            await(_schema as Schema).ResolveMetadataAsync();
+            await (_schema as Schema).ResolveMetadataAsync();
             return await RetrieveEntriesWithCountAsync(commandText, false);
         }
 
         public async Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> FindEntriesWithCountAsync(string commandText, bool scalarResult)
         {
-            await(_schema as Schema).ResolveMetadataAsync();
+            await (_schema as Schema).ResolveMetadataAsync();
             return await RetrieveEntriesWithCountAsync(commandText, scalarResult);
         }
 
@@ -66,7 +96,7 @@ namespace Simple.OData.Client
 
         public async Task<IDictionary<string, object>> GetEntryAsync(string collection, params object[] entryKey)
         {
-            await(_schema as Schema).ResolveMetadataAsync();
+            await (_schema as Schema).ResolveMetadataAsync();
             var entryKeyWithNames = new Dictionary<string, object>();
             var keyNames = _schema.FindConcreteTable(collection).GetKeyNames();
             for (int index = 0; index < keyNames.Count; index++)
@@ -119,14 +149,14 @@ namespace Simple.OData.Client
 
         public async Task<int> UpdateEntriesAsync(string collection, string commandText, IDictionary<string, object> entryData)
         {
-            await(_schema as Schema).ResolveMetadataAsync();
+            await (_schema as Schema).ResolveMetadataAsync();
             RemoveSystemProperties(entryData);
             return await IterateEntriesAsync(collection, commandText, entryData, UpdateEntry);
         }
 
         public async Task<int> UpdateEntryAsync(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
         {
-            await(_schema as Schema).ResolveMetadataAsync();
+            await (_schema as Schema).ResolveMetadataAsync();
             RemoveSystemProperties(entryKey);
             RemoveSystemProperties(entryData);
             var table = _schema.FindConcreteTable(collection);
@@ -137,13 +167,13 @@ namespace Simple.OData.Client
 
         public async Task<int> DeleteEntriesAsync(string collection, string commandText)
         {
-            await(_schema as Schema).ResolveMetadataAsync();
+            await (_schema as Schema).ResolveMetadataAsync();
             return await IterateEntriesAsync(collection, commandText, null, (x, y, z) => DeleteEntry(x, y));
         }
 
         public async Task<int> DeleteEntryAsync(string collection, IDictionary<string, object> entryKey)
         {
-            await(_schema as Schema).ResolveMetadataAsync();
+            await (_schema as Schema).ResolveMetadataAsync();
             RemoveSystemProperties(entryKey);
             var commandText = await GetFluentClient()
                 .For(collection)
@@ -157,7 +187,7 @@ namespace Simple.OData.Client
 
         public async Task LinkEntryAsync(string collection, IDictionary<string, object> entryKey, string linkName, IDictionary<string, object> linkedEntryKey)
         {
-            await(_schema as Schema).ResolveMetadataAsync();
+            await (_schema as Schema).ResolveMetadataAsync();
             RemoveSystemProperties(entryKey);
             RemoveSystemProperties(linkedEntryKey);
             var association = _schema.FindAssociation(collection, linkName);
@@ -193,7 +223,7 @@ namespace Simple.OData.Client
 
         public async Task<IEnumerable<IDictionary<string, object>>> ExecuteFunctionAsync(string functionName, IDictionary<string, object> parameters)
         {
-            await(_schema as Schema).ResolveMetadataAsync();
+            await (_schema as Schema).ResolveMetadataAsync();
             var function = _schema.FindFunction(functionName);
             var commandText = await GetFluentClient()
                 .Function(functionName)
@@ -219,24 +249,6 @@ namespace Simple.OData.Client
                 .SelectMany(x => x.Values)
                 .Select(y => (T)y)
                 .ToArray();
-        }
-
-        public async Task<string> GetCommandTextAsync(string collection, ODataExpression expression)
-        {
-            await(_schema as Schema).ResolveMetadataAsync();
-            return await GetFluentClient()
-                .For(collection)
-                .Filter(expression.Format(this.Schema, collection))
-                .GetCommandTextAsync();
-        }
-
-        public async Task<string> GetCommandTextAsync<T>(string collection, Expression<Func<T, bool>> expression)
-        {
-            await(_schema as Schema).ResolveMetadataAsync();
-            return await GetFluentClient()
-                .For(collection)
-                .Filter(ODataExpression.FromLinqExpression(expression.Body).Format(this.Schema, collection))
-                .GetCommandTextAsync();
         }
 
         internal async Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(FluentCommand command)
