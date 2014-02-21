@@ -151,7 +151,7 @@ namespace Simple.OData.Client
         {
             await (_schema as Schema).ResolveMetadataAsync();
             RemoveSystemProperties(entryData);
-            return await IterateEntriesAsync(collection, commandText, entryData, UpdateEntry);
+            return await IterateEntriesAsync(collection, commandText, entryData, async (x, y, z) => await UpdateEntryAsync(x, y, z));
         }
 
         public async Task<int> UpdateEntryAsync(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
@@ -168,7 +168,7 @@ namespace Simple.OData.Client
         public async Task<int> DeleteEntriesAsync(string collection, string commandText)
         {
             await (_schema as Schema).ResolveMetadataAsync();
-            return await IterateEntriesAsync(collection, commandText, null, (x, y, z) => DeleteEntry(x, y));
+            return await IterateEntriesAsync(collection, commandText, null, async (x, y, z) => await DeleteEntryAsync(x, y));
         }
 
         public async Task<int> DeleteEntryAsync(string collection, IDictionary<string, object> entryKey)

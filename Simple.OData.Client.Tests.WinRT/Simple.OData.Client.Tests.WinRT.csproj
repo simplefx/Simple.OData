@@ -146,6 +146,9 @@
     <Compile Include="..\Simple.OData.Client.Tests.Net40\AsyncTests.cs">
       <Link>AsyncTests.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\ClientAdapterTests.cs">
+      <Link>ClientAdapterTests.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\ClientTests.cs">
       <Link>ClientTests.cs</Link>
     </Compile>
@@ -282,6 +285,10 @@
     <ProjectReference Include="..\Simple.OData.Client.Dynamic\Simple.OData.Client.Dynamic.csproj">
       <Project>{c025fb0f-452b-4795-b9a4-64c9e6abbeee}</Project>
       <Name>Simple.OData.Client.Dynamic</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Simple.OData.Client.TestPcl\Simple.OData.Client.TestPcl.csproj">
+      <Project>{27429d8f-fa57-43ca-a13a-b3de6987eb76}</Project>
+      <Name>Simple.OData.Client.TestPcl</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '11.0' ">

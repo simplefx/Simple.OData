@@ -23,14 +23,14 @@ namespace Simple.OData.Client
         }
 
         private async Task<int> IterateEntriesAsync(string collection, string commandText, IDictionary<string, object> entryData,
-            Func<string, IDictionary<string, object>, IDictionary<string, object>, int> func)
+            Func<string, IDictionary<string, object>, IDictionary<string, object>, Task<int>> func)
         {
             var result = 0;
 
             var entryKey = ExtractKeyFromCommandText(collection, commandText);
             if (entryKey != null)
             {
-                result = func(collection, entryKey, entryData);
+                result = await func(collection, entryKey, entryData);
             }
             else
             {
@@ -41,7 +41,7 @@ namespace Simple.OData.Client
                     var entryList = entries.ToList();
                     foreach (var entry in entryList)
                     {
-                        func(collection, entry, entryData);
+                        await func(collection, entry, entryData);
                     }
                     result = entryList.Count;
                 }
@@ -93,7 +93,7 @@ namespace Simple.OData.Client
 
             foreach (var associationName in unlinkAssociationNames)
             {
-                UnlinkEntry(collection, entryKey, associationName);
+                await UnlinkEntryAsync(collection, entryKey, associationName);
             }
 
             return result;

@@ -164,5 +164,22 @@ namespace Simple.OData.Client
                     result.Item2);
             });
         }
+
+        internal static IEnumerable<IDictionary<string, object>> RectifyColumnSelection(IEnumerable<IDictionary<string, object>> entries, IList<string> selectedColumns)
+        {
+            return entries.Select(x => RectifyColumnSelection(x, selectedColumns));
+        }
+
+        internal static IDictionary<string, object> RectifyColumnSelection(IDictionary<string, object> entry, IList<string> selectedColumns)
+        {
+            if (selectedColumns == null || !selectedColumns.Any())
+            {
+                return entry;
+            }
+            else
+            {
+                return entry.Where(x => selectedColumns.Any(y => x.Key.Homogenize() == y.Homogenize())).ToIDictionary();
+            }
+        }
     }
 }

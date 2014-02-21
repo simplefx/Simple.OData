@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq.Expressions;
-using System.Threading.Tasks;
 using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
@@ -37,16 +35,6 @@ namespace Simple.OData.Client
             _requestBuilder = batch.RequestBuilder;
             _requestRunner = batch.RequestRunner;
         }
-
-        //public string SchemaAsString
-        //{
-        //    get { return SchemaAsStringAsync.Result; }
-        //}
-
-        //public Task<string> SchemaAsStringAsync
-        //{
-        //    get { return GetSchemaAsStringAsync(_settings.UrlBase, _settings.Credentials); }
-        //}
 
         internal ISchema Schema { get { return _schema; } }
 
