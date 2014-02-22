@@ -11,7 +11,7 @@ namespace Simple.OData.Client
     {
         public static Task<ISchema> GetSchemaAsync(string urlBase, ICredentials credentials = null)
         {
-            return Task.Factory.StartNew(() => Client.Schema.FromUrl(urlBase, credentials));
+            return Schema.FromUrl(urlBase, credentials).ResolveAsync();
         }
 
         public static async Task<string> GetSchemaAsStringAsync(string urlBase, ICredentials credentials = null)

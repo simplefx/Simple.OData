@@ -11,27 +11,49 @@ namespace Simple.OData.Client
         IFluentClient<ODataEntry> For(ODataExpression expression);
         IFluentClient<T> For<T>(string collectionName = null) where T : class;
 
+        [Obsolete("Use asynchronous method instead version", false)]
         ISchema GetSchema();
+        [Obsolete("Use asynchronous method instead version", false)]
         string GetSchemaAsString();
+        [Obsolete("Use asynchronous method instead version", false)]
         string GetCommandText(string collection, ODataExpression expression);
+        [Obsolete("Use asynchronous method instead version", false)]
         string GetCommandText<T>(string collection, Expression<Func<T, bool>> expression);
+        [Obsolete("Use asynchronous method instead version", false)]
         IEnumerable<IDictionary<string, object>> FindEntries(string commandText);
+        [Obsolete("Use asynchronous method instead version", false)]
         IEnumerable<IDictionary<string, object>> FindEntries(string commandText, bool scalarResult);
+        [Obsolete("Use asynchronous method instead version", false)]
         IEnumerable<IDictionary<string, object>> FindEntries(string commandText, out int totalCount);
+        [Obsolete("Use asynchronous method instead version", false)]
         IEnumerable<IDictionary<string, object>> FindEntries(string commandText, bool scalarResult, out int totalCount);
+        [Obsolete("Use asynchronous method instead version", false)]
         IDictionary<string, object> FindEntry(string commandText);
+        [Obsolete("Use asynchronous method instead version", false)]
         object FindScalar(string commandText);
+        [Obsolete("Use asynchronous method instead version", false)]
         IDictionary<string, object> GetEntry(string collection, params object[] entryKey);
+        [Obsolete("Use asynchronous method instead version", false)]
         IDictionary<string, object> GetEntry(string collection, IDictionary<string, object> entryKey);
+        [Obsolete("Use asynchronous method instead version", false)]
         IDictionary<string, object> InsertEntry(string collection, IDictionary<string, object> entryData, bool resultRequired = true);
+        [Obsolete("Use asynchronous method instead version", false)]
         int UpdateEntries(string collection, string commandText, IDictionary<string, object> entryData);
+        [Obsolete("Use asynchronous method instead version", false)]
         int UpdateEntry(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData);
+        [Obsolete("Use asynchronous method instead version", false)]
         int DeleteEntries(string collection, string commandText);
+        [Obsolete("Use asynchronous method instead version", false)]
         int DeleteEntry(string collection, IDictionary<string, object> entryKey);
+        [Obsolete("Use asynchronous method instead version", false)]
         void LinkEntry(string collection, IDictionary<string, object> entryKey, string linkName, IDictionary<string, object> linkedEntryKey);
+        [Obsolete("Use asynchronous method instead version", false)]
         void UnlinkEntry(string collection, IDictionary<string, object> entryKey, string linkName);
+        [Obsolete("Use asynchronous method instead version", false)]
         IEnumerable<IDictionary<string, object>> ExecuteFunction(string functionName, IDictionary<string, object> parameters);
+        [Obsolete("Use asynchronous method instead version", false)]
         T ExecuteFunctionAsScalar<T>(string functionName, IDictionary<string, object> parameters);
+        [Obsolete("Use asynchronous method instead version", false)]
         T[] ExecuteFunctionAsArray<T>(string functionName, IDictionary<string, object> parameters);
 
         Task<ISchema> GetSchemaAsync();

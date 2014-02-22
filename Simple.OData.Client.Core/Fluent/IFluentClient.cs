@@ -8,27 +8,49 @@ namespace Simple.OData.Client
     public interface IFluentClient<T>
         where T : class
     {
+        [Obsolete("Use asynchronous method instead version", false)]
         IEnumerable<T> FindEntries();
+        [Obsolete("Use asynchronous method instead version", false)]
         IEnumerable<T> FindEntries(bool scalarResult);
+        [Obsolete("Use asynchronous method instead version", false)]
         IEnumerable<T> FindEntries(out int totalCount);
+        [Obsolete("Use asynchronous method instead version", false)]
         IEnumerable<T> FindEntries(bool scalarResult, out int totalCount);
+        [Obsolete("Use asynchronous method instead version", false)]
         T FindEntry();
+        [Obsolete("Use asynchronous method instead version", false)]
         object FindScalar();
+        [Obsolete("Use asynchronous method instead version", false)]
         T InsertEntry(bool resultRequired = true);
+        [Obsolete("Use asynchronous method instead version", false)]
         int UpdateEntry();
+        [Obsolete("Use asynchronous method instead version", false)]
         int UpdateEntries();
+        [Obsolete("Use asynchronous method instead version", false)]
         int DeleteEntry();
+        [Obsolete("Use asynchronous method instead version", false)]
         int DeleteEntries();
+        [Obsolete("Use asynchronous method instead version", false)]
         void LinkEntry<U>(U linkedEntryKey, string linkName = null);
+        [Obsolete("Use asynchronous method instead version", false)]
         void LinkEntry<U>(Expression<Func<T, U>> expression, U linkedEntryKey);
+        [Obsolete("Use asynchronous method instead version", false)]
         void LinkEntry(ODataExpression expression, IDictionary<string, object> linkedEntryKey);
+        [Obsolete("Use asynchronous method instead version", false)]
         void LinkEntry(ODataExpression expression, ODataEntry linkedEntryKey);
+        [Obsolete("Use asynchronous method instead version", false)]
         void UnlinkEntry<U>(string linkName = null);
+        [Obsolete("Use asynchronous method instead version", false)]
         void UnlinkEntry<U>(Expression<Func<T, U>> expression);
+        [Obsolete("Use asynchronous method instead version", false)]
         void UnlinkEntry(ODataExpression expression);
+        [Obsolete("Use asynchronous method instead version", false)]
         IEnumerable<T> ExecuteFunction(string functionName, IDictionary<string, object> parameters);
+        [Obsolete("Use asynchronous method instead version", false)]
         T ExecuteFunctionAsScalar(string functionName, IDictionary<string, object> parameters);
+        [Obsolete("Use asynchronous method instead version", false)]
         T[] ExecuteFunctionAsArray(string functionName, IDictionary<string, object> parameters);
+        [Obsolete("Use asynchronous method instead version", false)]
         string GetCommandText();
 
         Task<IEnumerable<T>> FindEntriesAsync();

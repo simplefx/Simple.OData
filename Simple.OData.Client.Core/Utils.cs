@@ -47,9 +47,7 @@ namespace Simple.OData.Client
             }
             catch (AggregateException exception)
             {
-                throw exception.InnerException is AggregateException
-                    ? exception.InnerException.InnerException
-                    : exception.InnerException;
+                throw UnwrapException(exception);
             }
         }
 
@@ -61,8 +59,17 @@ namespace Simple.OData.Client
             }
             catch (AggregateException exception)
             {
-                throw exception.InnerException;
+                throw UnwrapException(exception);
             }
+        }
+
+        private static Exception UnwrapException(Exception exception)
+        {
+            while (exception is AggregateException)
+            {
+                exception = exception.InnerException;
+            }
+            return exception;
         }
     }
 }

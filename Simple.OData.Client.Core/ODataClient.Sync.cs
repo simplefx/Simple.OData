@@ -9,7 +9,7 @@ namespace Simple.OData.Client
     {
         public static ISchema GetSchema(string urlBase, ICredentials credentials = null)
         {
-            return Client.Schema.FromUrl(urlBase, credentials);
+            return GetSchemaAsync(urlBase, credentials).Result;
         }
 
         public static string GetSchemaAsString(string urlBase, ICredentials credentials = null)
