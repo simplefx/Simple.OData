@@ -31,7 +31,7 @@ namespace Simple.Data.OData
             else if (value is SimpleReference)
                 return Convert(value as SimpleReference);
             else
-                return ODataFilter.ExpressionFromValue(value);
+                return ODataDynamic.ExpressionFromValue(value);
         }
 
         private ODataExpression Convert(SimpleExpression expression)
@@ -78,12 +78,12 @@ namespace Simple.Data.OData
             {
                 formattedReference = string.Join(".", (reference as ObjectReference).GetAllObjectNames().Skip(1));
             }
-            return ODataFilter.ExpressionFromReference(formattedReference);
+            return ODataDynamic.ExpressionFromReference(formattedReference);
         }
 
         private ODataExpression Convert(FunctionReference function)
         {
-            return ODataFilter.ExpressionFromFunction(function.Name,
+            return ODataDynamic.ExpressionFromFunction(function.Name,
                                                  function.Argument.GetAliasOrName(),
                                                  function.AdditionalArguments);
         }
