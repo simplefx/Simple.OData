@@ -139,7 +139,7 @@ namespace Simple.Data.OData
 
             return clientCommand.FilterIsKey ?
                 client.UpdateEntry(tablePath, clientCommand.FilterAsKey, data) :
-                client.UpdateEntries(tablePath, clientCommand.CommandText, data);
+                client.UpdateEntries(tablePath, clientCommand.GetCommandText(), data);
         }
 
         private int DeleteByExpression(string tableName, 
@@ -155,7 +155,7 @@ namespace Simple.Data.OData
 
             return clientCommand.FilterIsKey ?
                 client.DeleteEntry(tablePath, clientCommand.FilterAsKey) :
-                client.DeleteEntries(tablePath, clientCommand.CommandText);
+                client.DeleteEntries(tablePath, clientCommand.GetCommandText());
         }
 
         private ODataClient GetODataClient(IAdapterTransaction transaction = null)
