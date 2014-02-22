@@ -14,16 +14,16 @@ namespace Simple.OData.Client
     public partial class FluentClient<T> : IFluentClient<T>
         where T : class
     {
-        private readonly IODataClient _client;
+        private readonly ODataClient _client;
         private readonly ISchema _schema;
         private readonly FluentCommand _parentCommand;
         private FluentCommand _command;
         private readonly bool _dynamicResults;
 
-        public FluentClient(IODataClient client, FluentCommand parentCommand = null, FluentCommand command = null, bool dynamicResults = false)
+        internal FluentClient(ODataClient client, ISchema schema, FluentCommand parentCommand = null, FluentCommand command = null, bool dynamicResults = false)
         {
             _client = client;
-            _schema = (client as ODataClient).Schema;
+            _schema = schema;
             _parentCommand = parentCommand;
             _command = command;
             _dynamicResults = dynamicResults;
@@ -56,7 +56,7 @@ namespace Simple.OData.Client
         public FluentClient<U> Link<U>(FluentCommand command, string linkName = null)
         where U : class
         {
-            var linkedClient = new FluentClient<U>(_client, command, null, _dynamicResults);
+            var linkedClient = new FluentClient<U>(_client, _schema, command, null, _dynamicResults);
             linkedClient.Command.Link(linkName ?? typeof(U).Name);
             return linkedClient;
         }
@@ -64,7 +64,7 @@ namespace Simple.OData.Client
         public FluentClient<U> Link<U>(FluentCommand command, ODataExpression expression)
         where U : class
         {
-            var linkedClient = new FluentClient<U>(_client, command, null, _dynamicResults);
+            var linkedClient = new FluentClient<U>(_client, _schema, command, null, _dynamicResults);
             linkedClient.Command.Link(expression);
             return linkedClient;
         }
@@ -84,14 +84,14 @@ namespace Simple.OData.Client
         public IFluentClient<IDictionary<string, object>> As(string derivedCollectionName)
         {
             this.Command.As(derivedCollectionName);
-            return new FluentClient<IDictionary<string, object>>(_client, _parentCommand, this.Command, _dynamicResults);
+            return new FluentClient<IDictionary<string, object>>(_client, _schema, _parentCommand, this.Command, _dynamicResults);
         }
 
         public IFluentClient<U> As<U>(string derivedCollectionName = null)
         where U : class
         {
             this.Command.As(derivedCollectionName ?? typeof(U).Name);
-            return new FluentClient<U>(_client, _parentCommand, this.Command, _dynamicResults);
+            return new FluentClient<U>(_client, _schema, _parentCommand, this.Command, _dynamicResults);
         }
 
         public IFluentClient<ODataEntry> As(ODataExpression expression)
@@ -395,7 +395,7 @@ namespace Simple.OData.Client
 
         private FluentClient<ODataEntry> CreateClientForODataEntry() 
         {
-            return new FluentClient<ODataEntry>(_client, _parentCommand, this.Command, true); ;
+            return new FluentClient<ODataEntry>(_client, _schema, _parentCommand, this.Command, true); ;
         }
     }
 }

@@ -45,13 +45,14 @@ namespace Simple.OData.Client
             get { return _schemaProvider; }
         }
 
-        public async Task ResolveMetadataAsync()
+        public async Task<ISchema> ResolveAsync()
         {
             if (_metadataString == null)
             {
                 _metadataString = await _resolveMetadataAsync();
                 _lazyMetadata = new Lazy<EdmSchema>(() => ResponseReader.GetSchema(_metadataString));
             }
+            return this;
         }
 
         public EdmSchema Metadata
@@ -59,7 +60,7 @@ namespace Simple.OData.Client
             get { return _lazyMetadata.Value; }
         }
 
-        public string MetadataString
+        public string MetadataAsString
         {
             get { return _metadataString; }
         }

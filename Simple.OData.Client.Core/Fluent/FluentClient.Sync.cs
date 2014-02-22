@@ -10,42 +10,42 @@ namespace Simple.OData.Client
     {
         public IEnumerable<T> FindEntries()
         {
-            return RectifyColumnSelection((_client as ODataClient).FindEntries(_command), _command.SelectedColumns)
+            return RectifyColumnSelection(_client.FindEntries(_command), _command.SelectedColumns)
                 .Select(x => x.ToObject<T>(_dynamicResults));
         }
 
         public IEnumerable<T> FindEntries(bool scalarResult)
         {
-            return RectifyColumnSelection((_client as ODataClient).FindEntries(_command, scalarResult), _command.SelectedColumns)
+            return RectifyColumnSelection(_client.FindEntries(_command, scalarResult), _command.SelectedColumns)
                 .Select(x => x.ToObject<T>(_dynamicResults));
         }
 
         public IEnumerable<T> FindEntries(out int totalCount)
         {
-            return RectifyColumnSelection((_client as ODataClient).FindEntries(_command.WithInlineCount(), out totalCount), _command.SelectedColumns)
+            return RectifyColumnSelection(_client.FindEntries(_command.WithInlineCount(), out totalCount), _command.SelectedColumns)
                 .Select(x => x.ToObject<T>(_dynamicResults));
         }
 
         public IEnumerable<T> FindEntries(bool scalarResult, out int totalCount)
         {
-            return RectifyColumnSelection((_client as ODataClient).FindEntries(_command.WithInlineCount(), scalarResult, out totalCount), _command.SelectedColumns)
+            return RectifyColumnSelection(_client.FindEntries(_command.WithInlineCount(), scalarResult, out totalCount), _command.SelectedColumns)
                 .Select(x => x.ToObject<T>(_dynamicResults));
         }
 
         public T FindEntry()
         {
-            return RectifyColumnSelection((_client as ODataClient).FindEntry(_command), _command.SelectedColumns)
+            return RectifyColumnSelection(_client.FindEntry(_command), _command.SelectedColumns)
                 .ToObject<T>(_dynamicResults);
         }
 
         public object FindScalar()
         {
-            return (_client as ODataClient).FindScalar(_command);
+            return _client.FindScalar(_command);
         }
 
         public T InsertEntry(bool resultRequired = true)
         {
-            return (_client as ODataClient).InsertEntry(_command, _command.EntryData, resultRequired)
+            return _client.InsertEntry(_command, _command.EntryData, resultRequired)
                 .ToObject<T>(_dynamicResults);
         }
 
@@ -54,12 +54,12 @@ namespace Simple.OData.Client
             if (_command.HasFilter)
                 return UpdateEntries();
             else
-                return (_client as ODataClient).UpdateEntry(_command, _command.KeyValues, _command.EntryData);
+                return _client.UpdateEntry(_command, _command.KeyValues, _command.EntryData);
         }
 
         public int UpdateEntries()
         {
-            return (_client as ODataClient).UpdateEntries(_command, _command.EntryData);
+            return _client.UpdateEntries(_command, _command.EntryData);
         }
 
         public int DeleteEntry()
@@ -67,17 +67,17 @@ namespace Simple.OData.Client
             if (_command.HasFilter)
                 return DeleteEntries();
             else
-                return (_client as ODataClient).DeleteEntry(_command, _command.KeyValues);
+                return _client.DeleteEntry(_command, _command.KeyValues);
         }
 
         public int DeleteEntries()
         {
-            return (_client as ODataClient).DeleteEntries(_command);
+            return _client.DeleteEntries(_command);
         }
 
         public void LinkEntry<U>(U linkedEntryKey, string linkName = null)
         {
-            (_client as ODataClient).LinkEntry(_command, _command.KeyValues, linkName ?? typeof(U).Name, linkedEntryKey.ToDictionary());
+            _client.LinkEntry(_command, _command.KeyValues, linkName ?? typeof(U).Name, linkedEntryKey.ToDictionary());
         }
 
         public void LinkEntry<U>(Expression<Func<T, U>> expression, U linkedEntryKey)
@@ -97,7 +97,7 @@ namespace Simple.OData.Client
 
         public void UnlinkEntry<U>(string linkName = null)
         {
-            (_client as ODataClient).UnlinkEntry(_command, _command.KeyValues, linkName ?? typeof(U).Name);
+            _client.UnlinkEntry(_command, _command.KeyValues, linkName ?? typeof(U).Name);
         }
 
         public void UnlinkEntry<U>(Expression<Func<T, U>> expression)
@@ -107,23 +107,23 @@ namespace Simple.OData.Client
 
         public void UnlinkEntry(ODataExpression expression)
         {
-            (_client as ODataClient).UnlinkEntry(_command, _command.KeyValues, expression.AsString());
+            _client.UnlinkEntry(_command, _command.KeyValues, expression.AsString());
         }
 
         public IEnumerable<T> ExecuteFunction(string functionName, IDictionary<string, object> parameters)
         {
-            return RectifyColumnSelection((_client as ODataClient).ExecuteFunction(_command, parameters), _command.SelectedColumns)
+            return RectifyColumnSelection(_client.ExecuteFunction(_command, parameters), _command.SelectedColumns)
                 .Select(x => x.ToObject<T>(_dynamicResults));
         }
 
         public T ExecuteFunctionAsScalar(string functionName, IDictionary<string, object> parameters)
         {
-            return (_client as ODataClient).ExecuteFunctionAsScalar<T>(_command, parameters);
+            return _client.ExecuteFunctionAsScalar<T>(_command, parameters);
         }
 
         public T[] ExecuteFunctionAsArray(string functionName, IDictionary<string, object> parameters)
         {
-            return (_client as ODataClient).ExecuteFunctionAsArray<T>(_command, parameters);
+            return _client.ExecuteFunctionAsArray<T>(_command, parameters);
         }
 
         public string GetCommandText()

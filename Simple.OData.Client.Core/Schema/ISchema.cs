@@ -1,9 +1,13 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Simple.OData.Client
 {
     public interface ISchema
     {
+        Task<ISchema> ResolveAsync();
+
+        string MetadataAsString { get; }
         string TypesNamespace { get; }
         string ContainersNamespace { get; }
         IEnumerable<Table> Tables { get; }

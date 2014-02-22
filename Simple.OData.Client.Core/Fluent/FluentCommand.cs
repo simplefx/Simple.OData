@@ -152,19 +152,8 @@ namespace Simple.OData.Client
 
         public async Task<string> GetCommandTextAsync()
         {
-            await (_schema as Schema).ResolveMetadataAsync();
+            await _schema.ResolveAsync();
             return new FluentCommand(this).Resolve().Format();
-        }
-
-        public string GetCollectionName()
-        {
-            return GetCollectionNameAsync().Result;
-        }
-
-        public async Task<string> GetCollectionNameAsync()
-        {
-            await (_schema as Schema).ResolveMetadataAsync();
-            return _schema.FindTable(_collectionName).ActualName;
         }
 
         public void For(string collectionName)
@@ -394,6 +383,11 @@ namespace Simple.OData.Client
         public override string ToString()
         {
             return Format();
+        }
+
+        internal string CollectionName
+        {
+            get { return new FluentCommand(this).Resolve()._collectionName; }
         }
 
         internal bool HasKey

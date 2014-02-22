@@ -19,7 +19,7 @@ namespace Simple.OData.Client
         public ODataClient(ODataClientSettings settings)
         {
             _settings = settings;
-            _schema = Client.Schema.FromUrl(_settings.UrlBase, _settings.Credentials);
+            _schema = Schema.FromUrl(_settings.UrlBase, _settings.Credentials);
 
             _requestBuilder = new CommandRequestBuilder(_settings.UrlBase, _settings.Credentials);
             _requestRunner = new CommandRequestRunner(_schema, _settings);
@@ -30,13 +30,11 @@ namespace Simple.OData.Client
         public ODataClient(ODataBatch batch)
         {
             _settings = batch.Settings;
-            _schema = Client.Schema.FromUrl(_settings.UrlBase, _settings.Credentials);
+            _schema = Schema.FromUrl(_settings.UrlBase, _settings.Credentials);
 
             _requestBuilder = batch.RequestBuilder;
             _requestRunner = batch.RequestRunner;
         }
-
-        internal ISchema Schema { get { return _schema; } }
 
         public static ISchema ParseSchemaString(string schemaString)
         {
@@ -55,18 +53,18 @@ namespace Simple.OData.Client
 
         public IFluentClient<ODataEntry> For(ODataExpression expression)
         {
-            return new FluentClient<ODataEntry>(this).For(expression);
+            return new FluentClient<ODataEntry>(this, _schema).For(expression);
         }
 
         public IFluentClient<T> For<T>(string collectionName = null)
             where T : class
         {
-            return new FluentClient<T>(this).For(collectionName);
+            return new FluentClient<T>(this, _schema).For(collectionName);
         }
 
         private FluentClient<IDictionary<string, object>> GetFluentClient()
         {
-            return new FluentClient<IDictionary<string, object>>(this);
+            return new FluentClient<IDictionary<string, object>>(this, _schema);
         }
     }
 }
