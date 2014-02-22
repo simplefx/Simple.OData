@@ -97,12 +97,12 @@ namespace Simple.OData.Client
 
         public Task LinkEntryAsync(ODataExpression expression, IDictionary<string, object> linkedEntryKey)
         {
-            return LinkEntryAsync(linkedEntryKey, expression.ConvertToText());
+            return LinkEntryAsync(linkedEntryKey, expression.AsString());
         }
 
         public Task LinkEntryAsync(ODataExpression expression, ODataEntry linkedEntryKey)
         {
-            return LinkEntryAsync(linkedEntryKey, expression.ConvertToText());
+            return LinkEntryAsync(linkedEntryKey, expression.AsString());
         }
 
         public Task UnlinkEntryAsync<U>(string linkName = null)
@@ -117,7 +117,7 @@ namespace Simple.OData.Client
 
         public Task UnlinkEntryAsync(ODataExpression expression)
         {
-            return UnlinkEntryAsync(expression.ConvertToText());
+            return UnlinkEntryAsync(expression.AsString());
         }
 
         public Task<IEnumerable<T>> ExecuteFunctionAsync(string functionName, IDictionary<string, object> parameters)

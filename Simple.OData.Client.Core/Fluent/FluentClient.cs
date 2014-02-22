@@ -61,6 +61,14 @@ namespace Simple.OData.Client
             return linkedClient;
         }
 
+        public FluentClient<U> Link<U>(FluentCommand command, ODataExpression expression)
+        where U : class
+        {
+            var linkedClient = new FluentClient<U>(_client, command, null, _dynamicResults);
+            linkedClient.Command.Link(expression);
+            return linkedClient;
+        }
+
         public IFluentClient<T> For(string collectionName = null)
         {
             this.Command.For(collectionName ?? typeof(T).Name);
@@ -88,7 +96,7 @@ namespace Simple.OData.Client
 
         public IFluentClient<ODataEntry> As(ODataExpression expression)
         {
-            this.Command.As(expression.ConvertToText());
+            this.Command.As(expression);
             return CreateClientForODataEntry();
         }
 
@@ -324,7 +332,7 @@ namespace Simple.OData.Client
 
         public IFluentClient<T> NavigateTo(ODataExpression expression)
         {
-            return this.Link<T>(this.Command, expression.ConvertToText());
+            return this.Link<T>(this.Command, expression);
         }
 
         public IFluentClient<T> Function(string functionName)

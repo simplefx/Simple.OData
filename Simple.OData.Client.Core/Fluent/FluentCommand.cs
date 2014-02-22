@@ -18,7 +18,9 @@ namespace Simple.OData.Client
         private readonly ISchema _schema;
         private readonly FluentCommand _parent;
         private string _collectionName;
+        private ODataExpression _collectionExpression;
         private string _derivedCollectionName;
+        private ODataExpression _derivedCollectionExpression;
         private string _functionName;
         private IList<object> _keyValues;
         private IDictionary<string, object> _namedKeyValues;
@@ -34,6 +36,7 @@ namespace Simple.OData.Client
         private bool _computeCount;
         private bool _inlineCount;
         private string _linkName;
+        private ODataExpression _linkExpression;
 
         internal static readonly string MetadataLiteral = "$metadata";
         internal static readonly string FilterLiteral = "$filter";
@@ -60,13 +63,16 @@ namespace Simple.OData.Client
             _schema = ancestor._schema;
             _parent = ancestor._parent;
             _collectionName = ancestor._collectionName;
+            _collectionExpression = ancestor._collectionExpression;
             _derivedCollectionName = ancestor._derivedCollectionName;
+            _derivedCollectionExpression = ancestor._derivedCollectionExpression;
             _functionName = ancestor._functionName;
             _keyValues = ancestor._keyValues;
             _namedKeyValues = ancestor._namedKeyValues;
             _entryData = ancestor._entryData;
             _parameters = ancestor._parameters;
             _filter = ancestor._filter;
+            _filterExpression = ancestor._filterExpression;
             _filterExpression = ancestor._filterExpression;
             _skipCount = ancestor._skipCount;
             _topCount = ancestor._topCount;
@@ -76,6 +82,44 @@ namespace Simple.OData.Client
             _computeCount = ancestor._computeCount;
             _inlineCount = ancestor._inlineCount;
             _linkName = ancestor._linkName;
+            _linkExpression = ancestor._linkExpression;
+        }
+
+        private FluentCommand Resolve()
+        {
+            if (!ReferenceEquals(_collectionExpression, null))
+            {
+                For(_collectionExpression.AsString());
+                _collectionExpression = null;
+            }
+
+            if (!ReferenceEquals(_derivedCollectionExpression, null))
+            {
+                As(_derivedCollectionExpression.AsString());
+                _derivedCollectionExpression = null;
+            }
+
+            if (!ReferenceEquals(_filterExpression, null))
+            {
+                _namedKeyValues = TryInterpretFilterExpressionAsKey(_filterExpression);
+                if (_namedKeyValues == null)
+                {
+                    _filter = _filterExpression.Format(_schema, this.Table);
+                }
+                else
+                {
+                    _topCount = -1;
+                }
+                _filterExpression = null;
+            }
+
+            if (!ReferenceEquals(_linkExpression, null))
+            {
+                Link(_linkExpression.AsString());
+                _linkExpression = null;
+            }
+
+            return this;
         }
 
         private Table Table
@@ -91,7 +135,8 @@ namespace Simple.OData.Client
                 }
                 else if (!string.IsNullOrEmpty(_linkName))
                 {
-                    return _schema.FindTable(_parent.Table.FindAssociation(_linkName).ReferenceTableName);
+                    var parent = new FluentCommand(_parent).Resolve();
+                    return _schema.FindTable(parent.Table.FindAssociation(_linkName).ReferenceTableName);
                 }
                 else
                 {
@@ -108,7 +153,7 @@ namespace Simple.OData.Client
         public async Task<string> GetCommandTextAsync()
         {
             await (_schema as Schema).ResolveMetadataAsync();
-            return Format();
+            return new FluentCommand(this).Resolve().Format();
         }
 
         public string GetCollectionName()
@@ -138,7 +183,7 @@ namespace Simple.OData.Client
 
         public void For(ODataExpression expression)
         {
-            For(expression.ConvertToText());
+            _collectionExpression = expression;
         }
 
         public void As(string derivedCollectionName)
@@ -148,12 +193,17 @@ namespace Simple.OData.Client
 
         public void As(ODataExpression expression)
         {
-            As(expression.ConvertToText());
+            _derivedCollectionExpression = expression;
         }
 
         public void Link(string linkName)
         {
             _linkName = linkName;
+        }
+
+        public void Link(ODataExpression expression)
+        {
+            _linkExpression = expression;
         }
 
         public void Key(params object[] key)
@@ -413,26 +463,13 @@ namespace Simple.OData.Client
             }
             else if (!string.IsNullOrEmpty(_linkName))
             {
-                commandText += _parent + "/";
-                commandText += _parent.Table.FindAssociation(_linkName).ActualName;
+                var parent = new FluentCommand(_parent).Resolve();
+                commandText += parent.Format() + "/";
+                commandText += parent.Table.FindAssociation(_linkName).ActualName;
             }
             else if (!string.IsNullOrEmpty(_functionName))
             {
                 commandText += _schema.FindFunction(_functionName).ActualName;
-            }
-
-            if (!ReferenceEquals(_filterExpression, null))
-            {
-                _namedKeyValues = TryInterpretFilterExpressionAsKey(_filterExpression);
-                if (_namedKeyValues == null)
-                {
-                    _filter = _filterExpression.Format(_schema, this.Table);
-                }
-                else
-                {
-                    _topCount = -1;
-                }
-                _filterExpression = null;
             }
 
             if (HasKey && HasFilter)
@@ -455,7 +492,7 @@ namespace Simple.OData.Client
             if (_parameters.Any())
                 extraClauses.Add(new ValueFormatter().Format(_parameters, "&"));
 
-            if (HasFilter)
+            if (_filter != null)
                 extraClauses.Add(string.Format("{0}={1}", FilterLiteral, Uri.EscapeDataString(_filter)));
 
             if (_skipCount >= 0)

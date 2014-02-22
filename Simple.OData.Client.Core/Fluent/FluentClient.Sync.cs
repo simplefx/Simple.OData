@@ -87,12 +87,12 @@ namespace Simple.OData.Client
 
         public void LinkEntry(ODataExpression expression, IDictionary<string, object> linkedEntryKey)
         {
-            LinkEntry(linkedEntryKey, expression.ConvertToText());
+            LinkEntry(linkedEntryKey, expression.AsString());
         }
 
         public void LinkEntry(ODataExpression expression, ODataEntry linkedEntryKey)
         {
-            LinkEntry(linkedEntryKey, expression.ConvertToText());
+            LinkEntry(linkedEntryKey, expression.AsString());
         }
 
         public void UnlinkEntry<U>(string linkName = null)
@@ -107,7 +107,7 @@ namespace Simple.OData.Client
 
         public void UnlinkEntry(ODataExpression expression)
         {
-            (_client as ODataClient).UnlinkEntry(_command, _command.KeyValues, expression.ConvertToText());
+            (_client as ODataClient).UnlinkEntry(_command, _command.KeyValues, expression.AsString());
         }
 
         public IEnumerable<T> ExecuteFunction(string functionName, IDictionary<string, object> parameters)
