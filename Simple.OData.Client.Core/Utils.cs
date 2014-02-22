@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq.Expressions;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Simple.OData.Client
 {
@@ -36,6 +37,32 @@ namespace Simple.OData.Client
         {
             return new NotSupportedException(string.Format("Not supported expression of type {0} ({1}): {2}",
                 expression.GetType(), expression.NodeType, expression));
+        }
+
+        public static T ExecuteAndUnwrap<T>(Func<Task<T>> func)
+        {
+            try
+            {
+                return func().Result;
+            }
+            catch (AggregateException exception)
+            {
+                throw exception.InnerException is AggregateException
+                    ? exception.InnerException.InnerException
+                    : exception.InnerException;
+            }
+        }
+
+        public static void ExecuteAndUnwrap(Func<Task> func)
+        {
+            try
+            {
+                func().Wait();
+            }
+            catch (AggregateException exception)
+            {
+                throw exception.InnerException;
+            }
         }
     }
 }

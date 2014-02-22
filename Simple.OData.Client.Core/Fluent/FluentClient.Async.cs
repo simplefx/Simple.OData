@@ -19,13 +19,6 @@ namespace Simple.OData.Client
             return RectifyColumnSelectionAsync(_client.FindEntriesAsync(_command, scalarResult), _command.SelectedColumns);
         }
 
-        public async Task<Tuple<IEnumerable<T>, int>> FindEntriesWithCountAsync1()
-        {
-            var commandText = await _command.WithInlineCount().GetCommandTextAsync();
-            var result = _client.FindEntriesWithCountAsync(commandText);
-            return await RectifyColumnSelectionAsync(result, _command.SelectedColumns);
-        }
-
         public async Task<Tuple<IEnumerable<T>, int>> FindEntriesWithCountAsync()
         {
             var commandText = await _command.WithInlineCount().GetCommandTextAsync();
@@ -92,17 +85,17 @@ namespace Simple.OData.Client
 
         public Task LinkEntryAsync<U>(Expression<Func<T, U>> expression, U linkedEntryKey)
         {
-            return LinkEntryAsync(linkedEntryKey, ExtractColumnName(expression));
+            return _client.LinkEntryAsync(_command, _command.KeyValues, ExtractColumnName(expression), linkedEntryKey.ToDictionary());
         }
 
         public Task LinkEntryAsync(ODataExpression expression, IDictionary<string, object> linkedEntryKey)
         {
-            return LinkEntryAsync(linkedEntryKey, expression.AsString());
+            return _client.LinkEntryAsync(_command, _command.KeyValues, expression.AsString(), linkedEntryKey.ToDictionary());
         }
 
         public Task LinkEntryAsync(ODataExpression expression, ODataEntry linkedEntryKey)
         {
-            return LinkEntryAsync(linkedEntryKey, expression.AsString());
+            return _client.LinkEntryAsync(_command, _command.KeyValues, expression.AsString(), linkedEntryKey.ToDictionary());
         }
 
         public Task UnlinkEntryAsync<U>(string linkName = null)
@@ -112,12 +105,12 @@ namespace Simple.OData.Client
 
         public Task UnlinkEntryAsync<U>(Expression<Func<T, U>> expression)
         {
-            return UnlinkEntryAsync(ExtractColumnName(expression));
+            return _client.UnlinkEntryAsync(_command, _command.KeyValues, ExtractColumnName(expression));
         }
 
         public Task UnlinkEntryAsync(ODataExpression expression)
         {
-            return UnlinkEntryAsync(expression.AsString());
+            return _client.UnlinkEntryAsync(_command, _command.KeyValues, expression.AsString());
         }
 
         public Task<IEnumerable<T>> ExecuteFunctionAsync(string functionName, IDictionary<string, object> parameters)

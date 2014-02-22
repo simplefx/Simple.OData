@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
@@ -10,125 +8,116 @@ namespace Simple.OData.Client
     {
         public IEnumerable<T> FindEntries()
         {
-            return RectifyColumnSelection(_client.FindEntries(_command), _command.SelectedColumns)
-                .Select(x => x.ToObject<T>(_dynamicResults));
+            return Utils.ExecuteAndUnwrap(() => RectifyColumnSelectionAsync(_client.FindEntriesAsync(_command), _command.SelectedColumns));
         }
 
         public IEnumerable<T> FindEntries(bool scalarResult)
         {
-            return RectifyColumnSelection(_client.FindEntries(_command, scalarResult), _command.SelectedColumns)
-                .Select(x => x.ToObject<T>(_dynamicResults));
+            return Utils.ExecuteAndUnwrap(() => RectifyColumnSelectionAsync(_client.FindEntriesAsync(_command, scalarResult), _command.SelectedColumns));
         }
 
         public IEnumerable<T> FindEntries(out int totalCount)
         {
-            return RectifyColumnSelection(_client.FindEntries(_command.WithInlineCount(), out totalCount), _command.SelectedColumns)
-                .Select(x => x.ToObject<T>(_dynamicResults));
+            var result = Utils.ExecuteAndUnwrap(FindEntriesWithCountAsync);
+            totalCount = result.Item2;
+            return result.Item1;
         }
 
         public IEnumerable<T> FindEntries(bool scalarResult, out int totalCount)
         {
-            return RectifyColumnSelection(_client.FindEntries(_command.WithInlineCount(), scalarResult, out totalCount), _command.SelectedColumns)
-                .Select(x => x.ToObject<T>(_dynamicResults));
+            var result = Utils.ExecuteAndUnwrap(() => FindEntriesWithCountAsync(scalarResult));
+            totalCount = result.Item2;
+            return result.Item1;
         }
 
         public T FindEntry()
         {
-            return RectifyColumnSelection(_client.FindEntry(_command), _command.SelectedColumns)
-                .ToObject<T>(_dynamicResults);
+            return Utils.ExecuteAndUnwrap(FindEntryAsync);
         }
 
         public object FindScalar()
         {
-            return _client.FindScalar(_command);
+            return Utils.ExecuteAndUnwrap(FindScalarAsync);
         }
 
         public T InsertEntry(bool resultRequired = true)
         {
-            return _client.InsertEntry(_command, _command.EntryData, resultRequired)
-                .ToObject<T>(_dynamicResults);
+            return Utils.ExecuteAndUnwrap(() => InsertEntryAsync(resultRequired));
         }
 
         public int UpdateEntry()
         {
-            if (_command.HasFilter)
-                return UpdateEntries();
-            else
-                return _client.UpdateEntry(_command, _command.KeyValues, _command.EntryData);
+            return Utils.ExecuteAndUnwrap(UpdateEntryAsync);
         }
 
         public int UpdateEntries()
         {
-            return _client.UpdateEntries(_command, _command.EntryData);
+            return Utils.ExecuteAndUnwrap(UpdateEntriesAsync);
         }
 
         public int DeleteEntry()
         {
-            if (_command.HasFilter)
-                return DeleteEntries();
-            else
-                return _client.DeleteEntry(_command, _command.KeyValues);
+            return Utils.ExecuteAndUnwrap(DeleteEntryAsync);
         }
 
         public int DeleteEntries()
         {
-            return _client.DeleteEntries(_command);
+            return Utils.ExecuteAndUnwrap(DeleteEntriesAsync);
         }
 
         public void LinkEntry<U>(U linkedEntryKey, string linkName = null)
         {
-            _client.LinkEntry(_command, _command.KeyValues, linkName ?? typeof(U).Name, linkedEntryKey.ToDictionary());
+            LinkEntryAsync(linkedEntryKey, linkName ?? typeof(U).Name).Wait();
         }
 
         public void LinkEntry<U>(Expression<Func<T, U>> expression, U linkedEntryKey)
         {
-            LinkEntry(linkedEntryKey, ExtractColumnName(expression));
+            LinkEntryAsync(expression, linkedEntryKey).Wait();
         }
 
         public void LinkEntry(ODataExpression expression, IDictionary<string, object> linkedEntryKey)
         {
-            LinkEntry(linkedEntryKey, expression.AsString());
+            LinkEntryAsync(expression, linkedEntryKey).Wait();
         }
 
         public void LinkEntry(ODataExpression expression, ODataEntry linkedEntryKey)
         {
-            LinkEntry(linkedEntryKey, expression.AsString());
+            LinkEntryAsync(expression, linkedEntryKey).Wait();
         }
 
         public void UnlinkEntry<U>(string linkName = null)
         {
-            _client.UnlinkEntry(_command, _command.KeyValues, linkName ?? typeof(U).Name);
+            UnlinkEntryAsync(linkName ?? typeof(U).Name).Wait();
         }
 
         public void UnlinkEntry<U>(Expression<Func<T, U>> expression)
         {
-            UnlinkEntry(ExtractColumnName(expression));
+            UnlinkEntryAsync(expression).Wait();
         }
 
         public void UnlinkEntry(ODataExpression expression)
         {
-            _client.UnlinkEntry(_command, _command.KeyValues, expression.AsString());
+            UnlinkEntryAsync(expression).Wait();
         }
 
         public IEnumerable<T> ExecuteFunction(string functionName, IDictionary<string, object> parameters)
         {
-            return RectifyColumnSelection(_client.ExecuteFunction(_command, parameters), _command.SelectedColumns)
-                .Select(x => x.ToObject<T>(_dynamicResults));
+            return Utils.ExecuteAndUnwrap(() => ExecuteFunctionAsync(functionName, parameters));
         }
 
         public T ExecuteFunctionAsScalar(string functionName, IDictionary<string, object> parameters)
         {
-            return _client.ExecuteFunctionAsScalar<T>(_command, parameters);
+            return Utils.ExecuteAndUnwrap(() => ExecuteFunctionAsScalarAsync(functionName, parameters));
         }
 
         public T[] ExecuteFunctionAsArray(string functionName, IDictionary<string, object> parameters)
         {
-            return _client.ExecuteFunctionAsArray<T>(_command, parameters);
+            return Utils.ExecuteAndUnwrap(() => ExecuteFunctionAsArrayAsync(functionName, parameters));
         }
 
         public string GetCommandText()
         {
-            return GetCommandTextAsync().Result;
+            return Utils.ExecuteAndUnwrap(GetCommandTextAsync);
         }
     }
 }
