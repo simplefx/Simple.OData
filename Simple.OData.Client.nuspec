@@ -5,18 +5,19 @@
     <authors>Vagif Abilov</authors>
     <version>0.0.0.0</version>
     <owners>Vagif Abilov</owners>
-    <description>Simple.OData.Client is a multiplatform OData client library supporting .NET 4.x, Silverlight 5, Windows Phone 8, Android and iOS. The adapter provides a great alternative to WCF Data Services client. It does not require generation of context or entity classes and fits RESTful nature of OData services.</description>
-    <summary>Simple.OData.Client is a multiplatform OData client library supporting .NET 4.x, Silverlight 5, Windows Phone 8, Android and iOS. The adapter provides a great alternative to WCF Data Services client. It does not require generation of context or entity classes and fits RESTful nature of OData services.</summary>
+    <description>Simple.OData.Client is a multiplatform OData client library supporting .NET 4.x, Windows Store, Windows Phone 8, Silverlight 5, iOS and Android. The adapter provides a great alternative to WCF Data Services client. It does not require generation of context or entity classes and fits RESTful nature of OData services.</description>
+    <summary>Simple.OData.Client is a multiplatform OData client library supporting .NET 4.x, Windows Store, Windows Phone 8, Silverlight 5, iOS and Android. The adapter provides a great alternative to WCF Data Services client. It does not require generation of context or entity classes and fits RESTful nature of OData services.</summary>
     <projectUrl>https://github.com/object/Simple.OData.Client</projectUrl>
     <licenseUrl>http://www.opensource.org/licenses/mit-license.php</licenseUrl>
     <iconUrl>http://www.odata.org/images/odata128.png</iconUrl>
-    <copyright>Copyright 2012-2013 Vagif Abilov</copyright>
+    <copyright>Copyright 2012-2014 Vagif Abilov</copyright>
     <language>en-us</language>
     <tags>odata data rest client portable pcl net40 net45 silverlight windows8 winrt win8 wp8</tags>
     <dependencies>
-      <dependency id="Microsoft.Bcl.Build" version="1.0" />
-      <dependency id="Microsoft.Bcl" version="1.1" />
-      <dependency id="Microsoft.Bcl.Async" version="1.0" />
+      <group targetFramework="net40">
+        <dependency id="Microsoft.Bcl.Build" version="1.0" />
+        <dependency id="Microsoft.Bcl" version="1.1" />
+      </group>
     </dependencies>
   </metadata>
   <files>
