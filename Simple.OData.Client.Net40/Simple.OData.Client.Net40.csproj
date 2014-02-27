@@ -198,6 +198,9 @@
     <Compile Include="..\Simple.OData.Client.Core\Http\HttpCommand.cs">
       <Link>Http\HttpCommand.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Http\HttpRequest.cs">
+      <Link>Http\HttpRequest.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Http\RequestBuilder.cs">
       <Link>Http\RequestBuilder.cs</Link>
     </Compile>

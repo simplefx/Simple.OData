@@ -13,7 +13,7 @@ namespace Simple.OData.Client
         private int _contentId;
         private StringBuilder _contentBuilder;
 
-        public HttpWebRequest Request { get; private set; }
+        public HttpRequest Request { get; private set; }
 
         public BatchRequestBuilder(string urlBase, ICredentials credentials = null)
             : base(urlBase, credentials)
@@ -23,7 +23,7 @@ namespace Simple.OData.Client
         public void BeginBatch()
         {
             var uri = CreateRequestUrl(FluentCommand.BatchLiteral);
-            this.Request = CreateWebRequest(uri);
+            this.Request = CreateRequest(uri);
             this.Request.Method = RestVerbs.POST;
             _batchId = Guid.NewGuid().ToString();
             this.Request.ContentType = string.Format("multipart/mixed; boundary=batch_{0}", _batchId);
@@ -42,7 +42,7 @@ namespace Simple.OData.Client
             _contentBuilder.AppendLine(string.Format("--changeset_{0}--", _changesetId));
             _contentBuilder.AppendLine(string.Format("--batch_{0}--", _batchId));
             var content = this._contentBuilder.ToString();
-            this.Request.SetContent(content);
+            this.Request.Content = content;
             _contentBuilder.Clear();
         }
 

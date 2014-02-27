@@ -16,17 +16,14 @@ namespace Simple.OData.Client
         public abstract Task<int> DeleteEntryAsync(HttpCommand command);
         public abstract Task<IEnumerable<IDictionary<string, object>>> ExecuteFunctionAsync(HttpCommand command);
 
-        protected async Task<string> ExecuteRequestAndGetResponseAsync(HttpWebRequest request)
+        protected async Task<string> ExecuteRequestAndGetResponseAsync(HttpRequest request)
         {
             using (var response = await ExecuteRequestAsync(request))
             {
-                if (response != null)
+                var stream = response.GetResponseStream();
+                if (stream != null)
                 {
-                    var stream = response.GetResponseStream();
-                    if (stream != null)
-                    {
-                        return Utils.StreamToString(stream);
-                    }
+                    return Utils.StreamToString(stream);
                 }
 
                 return String.Empty;

@@ -15,7 +15,7 @@ namespace Simple.OData.Client
         public override void AddCommandToRequest(HttpCommand command)
         {
             var uri = CreateRequestUrl(command.CommandText);
-            var request = CreateWebRequest(uri);
+            var request = CreateRequest(uri);
             request.Method = command.Method;
 
             // TODO: revise
@@ -27,7 +27,7 @@ namespace Simple.OData.Client
             if (command.FormattedContent != null)
             {
                 request.ContentType = command.ContentType;
-                request.SetContent(command.FormattedContent);
+                request.Content = command.FormattedContent;
             }
             else if (!command.ReturnsScalarResult)
             {

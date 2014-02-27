@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -52,7 +53,7 @@ namespace Simple.OData.Client
             this.RequestBuilder.EndBatch();
             using (var response = await this.RequestRunner.ExecuteRequestAsync(this.RequestBuilder.Request))
             {
-                ParseResponse(response);
+                ParseResponse(response.GetResponseStream());
             }
             _active = false;
         }
@@ -63,9 +64,9 @@ namespace Simple.OData.Client
             _active = false;
         }
 
-        private void ParseResponse(HttpWebResponse response)
+        private void ParseResponse(Stream stream)
         {
-            var content = Utils.StreamToString(response.GetResponseStream());
+            var content = Utils.StreamToString(stream);
             var batchMarker = Regex.Match(content, @"--batchresponse_[a-zA-Z0-9\-]+").Value;
             var batchResponse = content.Split(new string[] {batchMarker}, StringSplitOptions.None)[1];
             var changesetMarker = Regex.Match(batchResponse, @"--changesetresponse_[a-zA-Z0-9\-]+").Value;
