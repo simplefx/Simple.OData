@@ -86,7 +86,7 @@ namespace Simple.OData.Client
             {
                 using (var response = await ExecuteRequestAsync(request))
                 {
-                    var text = response.Content.ReadAsStringAsync().Result;
+                    var text = await response.Content.ReadAsStringAsync();
                     return _responseReader.GetData(text).First();
                 }
             }
@@ -103,7 +103,7 @@ namespace Simple.OData.Client
         {
             using (var response = await ExecuteRequestAsync(request))
             {
-                var text = response.Content.ReadAsStringAsync().Result;
+                var text = await response.Content.ReadAsStringAsync();
                 if (resultRequired)
                 {
                     return _responseReader.GetData(text).First();
@@ -144,7 +144,7 @@ namespace Simple.OData.Client
                 }
                 else
                 {
-                    result = _responseReader.GetFunctionResult(response.Content.ReadAsStreamAsync().Result);
+                    result = _responseReader.GetFunctionResult(await response.Content.ReadAsStreamAsync());
                 }
 
                 return result;
