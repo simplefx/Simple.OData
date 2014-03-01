@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -115,21 +114,17 @@ namespace Simple.OData.Client
             }
         }
 
-        public override async Task<int> UpdateEntryAsync(HttpRequest request)
+        public override async Task UpdateEntryAsync(HttpRequest request)
         {
-            using (var response = await ExecuteRequestAsync(request))
+            using (await ExecuteRequestAsync(request))
             {
-                // TODO
-                return response.IsSuccessStatusCode ? 1 : 0;
             }
         }
 
-        public override async Task<int> DeleteEntryAsync(HttpRequest request)
+        public override async Task DeleteEntryAsync(HttpRequest request)
         {
-            using (var response = await ExecuteRequestAsync(request))
+            using (await ExecuteRequestAsync(request))
             {
-                // TODO: check response code
-                return response.IsSuccessStatusCode ? 1 : 0;
             }
         }
 

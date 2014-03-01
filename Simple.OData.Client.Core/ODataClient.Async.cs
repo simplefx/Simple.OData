@@ -153,7 +153,7 @@ namespace Simple.OData.Client
             return await IterateEntriesAsync(collection, commandText, entryData, async (x, y, z) => await UpdateEntryAsync(x, y, z));
         }
 
-        public async Task<int> UpdateEntryAsync(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
+        public async Task UpdateEntryAsync(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
         {
             await _schema.ResolveAsync();
             RemoveSystemProperties(entryKey);
@@ -161,7 +161,7 @@ namespace Simple.OData.Client
             var table = _schema.FindConcreteTable(collection);
             var entryMembers = ParseEntryMembers(table, entryData);
 
-            return await UpdateEntryPropertiesAndAssociationsAsync(collection, entryKey, entryData, entryMembers);
+            await UpdateEntryPropertiesAndAssociationsAsync(collection, entryKey, entryData, entryMembers);
         }
 
         public async Task<int> DeleteEntriesAsync(string collection, string commandText)
@@ -170,7 +170,7 @@ namespace Simple.OData.Client
             return await IterateEntriesAsync(collection, commandText, null, async (x, y, z) => await DeleteEntryAsync(x, y));
         }
 
-        public async Task<int> DeleteEntryAsync(string collection, IDictionary<string, object> entryKey)
+        public async Task DeleteEntryAsync(string collection, IDictionary<string, object> entryKey)
         {
             await _schema.ResolveAsync();
             RemoveSystemProperties(entryKey);
@@ -181,7 +181,7 @@ namespace Simple.OData.Client
 
             var command = new CommandWriter(_schema).CreateDeleteCommand(commandText);
             var request = _requestBuilder.CreateRequest(command);
-            return await _requestRunner.DeleteEntryAsync(request);
+            await _requestRunner.DeleteEntryAsync(request);
         }
 
         public async Task LinkEntryAsync(string collection, IDictionary<string, object> entryKey, string linkName, IDictionary<string, object> linkedEntryKey)
@@ -307,11 +307,11 @@ namespace Simple.OData.Client
             return await UpdateEntriesAsync(collectionName, commandText, entryData);
         }
 
-        internal async Task<int> UpdateEntryAsync(FluentCommand command, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
+        internal async Task UpdateEntryAsync(FluentCommand command, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
         {
             await _schema.ResolveAsync();
             var collectionName = _schema.FindTable(command.CollectionName).ActualName;
-            return await UpdateEntryAsync(collectionName, entryKey, entryData);
+            await UpdateEntryAsync(collectionName, entryKey, entryData);
         }
 
         internal async Task<int> DeleteEntriesAsync(FluentCommand command)
@@ -322,11 +322,11 @@ namespace Simple.OData.Client
             return await DeleteEntriesAsync(collectionName, commandText);
         }
 
-        internal async Task<int> DeleteEntryAsync(FluentCommand command, IDictionary<string, object> entryKey)
+        internal async Task DeleteEntryAsync(FluentCommand command, IDictionary<string, object> entryKey)
         {
             await _schema.ResolveAsync();
             var collectionName = _schema.FindTable(command.CollectionName).ActualName;
-            return await DeleteEntryAsync(collectionName, entryKey);
+            await DeleteEntryAsync(collectionName, entryKey);
         }
 
         internal async Task LinkEntryAsync(FluentCommand command, IDictionary<string, object> entryKey, string linkName, IDictionary<string, object> linkedEntryKey)

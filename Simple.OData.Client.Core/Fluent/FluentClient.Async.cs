@@ -52,7 +52,7 @@ namespace Simple.OData.Client
             });
         }
 
-        public Task<int> UpdateEntryAsync()
+        public Task UpdateEntryAsync()
         {
             if (_command.HasFilter)
                 return UpdateEntriesAsync();
@@ -65,7 +65,7 @@ namespace Simple.OData.Client
             return _client.UpdateEntriesAsync(_command, _command.EntryData);
         }
 
-        public Task<int> DeleteEntryAsync()
+        public Task DeleteEntryAsync()
         {
             if (_command.HasFilter)
                 return DeleteEntriesAsync();

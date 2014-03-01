@@ -59,7 +59,6 @@ namespace Simple.OData.Client
                 Func<object, Dictionary<string, object>> ValueToResultDictionary = v =>
                     new Dictionary<string, object>() { { FluentCommand.ResultLiteral, v } };
 
-                object value;
                 try
                 {
                     var collectionElements = element.Elements(null, "element");

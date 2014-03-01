@@ -105,9 +105,9 @@ namespace Simple.OData.Client
             return Utils.ExecuteAndUnwrap(() => UpdateEntriesAsync(collection, commandText, entryData));
         }
 
-        public int UpdateEntry(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
+        public void UpdateEntry(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
         {
-            return Utils.ExecuteAndUnwrap(() => UpdateEntryAsync(collection, entryKey, entryData));
+            Utils.ExecuteAndUnwrap(() => UpdateEntryAsync(collection, entryKey, entryData));
         }
 
         public int DeleteEntries(string collection, string commandText)
@@ -115,9 +115,9 @@ namespace Simple.OData.Client
             return Utils.ExecuteAndUnwrap(() => DeleteEntriesAsync(collection, commandText));
         }
 
-        public int DeleteEntry(string collection, IDictionary<string, object> entryKey)
+        public void DeleteEntry(string collection, IDictionary<string, object> entryKey)
         {
-            return Utils.ExecuteAndUnwrap(() => DeleteEntryAsync(collection, entryKey));
+            Utils.ExecuteAndUnwrap(() => DeleteEntryAsync(collection, entryKey));
         }
 
         public void LinkEntry(string collection, IDictionary<string, object> entryKey, string linkName, IDictionary<string, object> linkedEntryKey)
@@ -203,9 +203,9 @@ namespace Simple.OData.Client
             return Utils.ExecuteAndUnwrap(() => UpdateEntriesAsync(command, entryData));
         }
 
-        public int UpdateEntry(FluentCommand command, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
+        public void UpdateEntry(FluentCommand command, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
         {
-            return Utils.ExecuteAndUnwrap(() => UpdateEntryAsync(command, entryKey, entryData));
+            Utils.ExecuteAndUnwrap(() => UpdateEntryAsync(command, entryKey, entryData));
         }
 
         internal int DeleteEntries(FluentCommand command)
@@ -213,9 +213,9 @@ namespace Simple.OData.Client
             return Utils.ExecuteAndUnwrap(() => DeleteEntriesAsync(command));
         }
 
-        public int DeleteEntry(FluentCommand command, IDictionary<string, object> entryKey)
+        public void DeleteEntry(FluentCommand command, IDictionary<string, object> entryKey)
         {
-            return Utils.ExecuteAndUnwrap(() => DeleteEntryAsync(command, entryKey));
+            Utils.ExecuteAndUnwrap(() => DeleteEntryAsync(command, entryKey));
         }
 
         public void LinkEntry(FluentCommand command, IDictionary<string, object> entryKey, string linkName, IDictionary<string, object> linkedEntryKey)

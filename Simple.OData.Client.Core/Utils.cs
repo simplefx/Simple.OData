@@ -35,7 +35,7 @@ namespace Simple.OData.Client
 
         public static Exception NotSupportedExpression(Expression expression)
         {
-            return new NotSupportedException(string.Format("Not supported expression of type {0} ({1}): {2}",
+            return new NotSupportedException(String.Format("Not supported expression of type {0} ({1}): {2}",
                 expression.GetType(), expression.NodeType, expression));
         }
 
@@ -70,6 +70,18 @@ namespace Simple.OData.Client
                 exception = exception.InnerException;
             }
             return exception;
+        }
+
+        public static class EmptyTask
+        {
+            public static Task Task { get { return TaskEx.FromResult(0); } }
+        }
+
+        public static class EmptyTask<T>
+        {
+            public static Task<T> Task { get { return _task; } }
+
+            private static readonly Task<T> _task = TaskEx.FromResult(default(T));
         }
     }
 }

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Simple.OData.Client.TestPcl
@@ -35,14 +33,14 @@ namespace Simple.OData.Client.TestPcl
             return _client.InsertEntryAsync(collection, entryData, resultRequired);
         }
 
-        public Task<int> UpdateEntryAsync(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
+        public async Task UpdateEntryAsync(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
         {
-            return _client.UpdateEntryAsync(collection, entryKey, entryData);
+            await _client.UpdateEntryAsync(collection, entryKey, entryData);
         }
 
-        public Task<int> DeleteEntryAsync(string collection, IDictionary<string, object> entrykey)
+        public async Task DeleteEntryAsync(string collection, IDictionary<string, object> entrykey)
         {
-            return _client.DeleteEntryAsync(collection, entrykey);
+            await _client.DeleteEntryAsync(collection, entrykey);
         }
     }
 }

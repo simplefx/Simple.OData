@@ -45,9 +45,9 @@ namespace Simple.OData.Client
             return Utils.ExecuteAndUnwrap(() => InsertEntryAsync(resultRequired));
         }
 
-        public int UpdateEntry()
+        public void UpdateEntry()
         {
-            return Utils.ExecuteAndUnwrap(UpdateEntryAsync);
+            Utils.ExecuteAndUnwrap(UpdateEntryAsync);
         }
 
         public int UpdateEntries()
@@ -55,9 +55,9 @@ namespace Simple.OData.Client
             return Utils.ExecuteAndUnwrap(UpdateEntriesAsync);
         }
 
-        public int DeleteEntry()
+        public void DeleteEntry()
         {
-            return Utils.ExecuteAndUnwrap(DeleteEntryAsync);
+            Utils.ExecuteAndUnwrap(DeleteEntryAsync);
         }
 
         public int DeleteEntries()

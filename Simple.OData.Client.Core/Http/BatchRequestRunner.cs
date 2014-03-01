@@ -8,17 +8,17 @@ namespace Simple.OData.Client
     {
         public override Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(HttpRequest request, bool scalarResult)
         {
-            return null;
+            return Utils.EmptyTask<IEnumerable<IDictionary<string, object>>>.Task;
         }
 
         public override Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> FindEntriesWithCountAsync(HttpRequest request, bool scalarResult)
         {
-            return null;
+            return Utils.EmptyTask<Tuple<IEnumerable<IDictionary<string, object>>, int>>.Task;
         }
 
         public override Task<IDictionary<string, object>> GetEntryAsync(HttpRequest request)
         {
-            return null;
+            return Utils.EmptyTask<IDictionary<string, object>>.Task;
         }
 
         public override async Task<IDictionary<string, object>> InsertEntryAsync(HttpRequest request, bool resultRequired = true)
@@ -26,19 +26,19 @@ namespace Simple.OData.Client
             return await TaskEx.FromResult(request.EntryData);
         }
 
-        public override Task<int> UpdateEntryAsync(HttpRequest request)
+        public override Task UpdateEntryAsync(HttpRequest request)
         {
-            return TaskEx.FromResult(0);
+            return Utils.EmptyTask.Task;
         }
 
-        public override Task<int> DeleteEntryAsync(HttpRequest request)
+        public override Task DeleteEntryAsync(HttpRequest request)
         {
-            return TaskEx.FromResult(0);
+            return Utils.EmptyTask.Task;
         }
 
         public override Task<IEnumerable<IDictionary<string, object>>> ExecuteFunctionAsync(HttpRequest request)
         {
-            return null;
+            return Utils.EmptyTask<IEnumerable<IDictionary<string, object>>>.Task;
         }
     }
 }

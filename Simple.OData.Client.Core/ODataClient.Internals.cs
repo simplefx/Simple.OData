@@ -23,14 +23,15 @@ namespace Simple.OData.Client
         }
 
         private async Task<int> IterateEntriesAsync(string collection, string commandText, IDictionary<string, object> entryData,
-            Func<string, IDictionary<string, object>, IDictionary<string, object>, Task<int>> func)
+            Func<string, IDictionary<string, object>, IDictionary<string, object>, Task> func)
         {
             var result = 0;
 
             var entryKey = ExtractKeyFromCommandText(collection, commandText);
             if (entryKey != null)
             {
-                result = await func(collection, entryKey, entryData);
+                await func(collection, entryKey, entryData);
+                result = 1;
             }
             else
             {
@@ -50,7 +51,7 @@ namespace Simple.OData.Client
             return result;
         }
 
-        private async Task<int> UpdateEntryPropertiesAndAssociationsAsync(
+        private async Task UpdateEntryPropertiesAndAssociationsAsync(
             string collection,
             IDictionary<string, object> entryKey,
             IDictionary<string, object> entryData,
@@ -82,7 +83,7 @@ namespace Simple.OData.Client
 
             var command = commandWriter.CreateUpdateCommand(commandText, entryData, entryContent, merge);
             var request = _requestBuilder.CreateRequest(command);
-            var result = await _requestRunner.UpdateEntryAsync(request);
+            await _requestRunner.UpdateEntryAsync(request);
 
             foreach (var associatedData in entryMembers.AssociationsByContentId)
             {
@@ -95,8 +96,6 @@ namespace Simple.OData.Client
             {
                 await UnlinkEntryAsync(collection, entryKey, associationName);
             }
-
-            return result;
         }
 
         private EntryMembers ParseEntryMembers(Table table, IDictionary<string, object> entryData)

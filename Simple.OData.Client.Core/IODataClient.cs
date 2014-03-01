@@ -40,11 +40,11 @@ namespace Simple.OData.Client
         [Obsolete("Use asynchronous method instead version", false)]
         int UpdateEntries(string collection, string commandText, IDictionary<string, object> entryData);
         [Obsolete("Use asynchronous method instead version", false)]
-        int UpdateEntry(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData);
+        void UpdateEntry(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData);
         [Obsolete("Use asynchronous method instead version", false)]
         int DeleteEntries(string collection, string commandText);
         [Obsolete("Use asynchronous method instead version", false)]
-        int DeleteEntry(string collection, IDictionary<string, object> entryKey);
+        void DeleteEntry(string collection, IDictionary<string, object> entryKey);
         [Obsolete("Use asynchronous method instead version", false)]
         void LinkEntry(string collection, IDictionary<string, object> entryKey, string linkName, IDictionary<string, object> linkedEntryKey);
         [Obsolete("Use asynchronous method instead version", false)]
@@ -70,9 +70,9 @@ namespace Simple.OData.Client
         Task<IDictionary<string, object>> GetEntryAsync(string collection, IDictionary<string, object> entryKey);
         Task<IDictionary<string, object>> InsertEntryAsync(string collection, IDictionary<string, object> entryData, bool resultRequired = true);
         Task<int> UpdateEntriesAsync(string collection, string commandText, IDictionary<string, object> entryData);
-        Task<int> UpdateEntryAsync(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData);
+        Task UpdateEntryAsync(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData);
         Task<int> DeleteEntriesAsync(string collection, string commandText);
-        Task<int> DeleteEntryAsync(string collection, IDictionary<string, object> entryKey);
+        Task DeleteEntryAsync(string collection, IDictionary<string, object> entryKey);
         Task LinkEntryAsync(string collection, IDictionary<string, object> entryKey, string linkName, IDictionary<string, object> linkedEntryKey);
         Task UnlinkEntryAsync(string collection, IDictionary<string, object> entryKey, string linkName);
         Task<IEnumerable<IDictionary<string, object>>> ExecuteFunctionAsync(string functionName, IDictionary<string, object> parameters);

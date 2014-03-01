@@ -23,11 +23,11 @@ namespace Simple.OData.Client
         [Obsolete("Use asynchronous method instead version", false)]
         T InsertEntry(bool resultRequired = true);
         [Obsolete("Use asynchronous method instead version", false)]
-        int UpdateEntry();
+        void UpdateEntry();
         [Obsolete("Use asynchronous method instead version", false)]
         int UpdateEntries();
         [Obsolete("Use asynchronous method instead version", false)]
-        int DeleteEntry();
+        void DeleteEntry();
         [Obsolete("Use asynchronous method instead version", false)]
         int DeleteEntries();
         [Obsolete("Use asynchronous method instead version", false)]
@@ -60,8 +60,9 @@ namespace Simple.OData.Client
         Task<T> FindEntryAsync();
         Task<object> FindScalarAsync();
         Task<T> InsertEntryAsync(bool resultRequired = true);
-        Task<int> UpdateEntryAsync();
-        Task<int> DeleteEntryAsync();
+        Task UpdateEntryAsync();
+        Task<int> UpdateEntriesAsync();
+        Task DeleteEntryAsync();
         Task<int> DeleteEntriesAsync();
         Task LinkEntryAsync<U>(U linkedEntryKey, string linkName = null);
         Task LinkEntryAsync<U>(Expression<Func<T, U>> expression, U linkedEntryKey);

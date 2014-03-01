@@ -13,8 +13,8 @@ namespace Simple.OData.Client
         public abstract Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> FindEntriesWithCountAsync(HttpRequest request, bool scalarResult);
         public abstract Task<IDictionary<string, object>> GetEntryAsync(HttpRequest request);
         public abstract Task<IDictionary<string, object>> InsertEntryAsync(HttpRequest request, bool resultRequired);
-        public abstract Task<int> UpdateEntryAsync(HttpRequest request);
-        public abstract Task<int> DeleteEntryAsync(HttpRequest request);
+        public abstract Task UpdateEntryAsync(HttpRequest request);
+        public abstract Task DeleteEntryAsync(HttpRequest request);
         public abstract Task<IEnumerable<IDictionary<string, object>>> ExecuteFunctionAsync(HttpRequest request);
     }
 }
