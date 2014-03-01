@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Dynamic;
 using System.Net;
+using System.Net.Http;
 using Simple.OData.Client;
 
 namespace Simple.Data.OData
@@ -39,13 +40,13 @@ namespace Simple.Data.OData
             set { _clientSettings.IgnoreResourceNotFoundException = value; }
         }
 
-        public Action<HttpWebRequest> BeforeRequest
+        public Action<HttpRequestMessage> BeforeRequest
         {
             get { return _clientSettings.BeforeRequest; }
             set { _clientSettings.BeforeRequest = value; }
         }
 
-        public Action<HttpWebResponse> AfterResponse
+        public Action<HttpResponseMessage> AfterResponse
         {
             get { return _clientSettings.AfterResponse; }
             set { _clientSettings.AfterResponse = value; }

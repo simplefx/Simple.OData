@@ -49,13 +49,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\packages\Simple.Data.Core.0.19.0.0\lib\net40\Simple.Data.dll</HintPath>
     </Reference>
-    <Reference Include="Simple.Data.OData, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Simple.Data.OData.1.1.0-rc1\lib\net40\Simple.Data.OData.dll</HintPath>
-    </Reference>
     <Reference Include="Simple.OData.Client.Net40, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Simple.OData.Client.2.0.0-rc1\lib\net40\Simple.OData.Client.Net40.dll</HintPath>
+      <HintPath>..\..\Simple.OData.Client\Simple.OData.Client.Net40\bin\Debug\Simple.OData.Client.Net40.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
@@ -122,6 +118,10 @@
     <ProjectReference Include="..\Simple.Data.OData.NorthwindModel\Simple.Data.OData.NorthwindModel.csproj">
       <Project>{2A909E4D-6493-4D36-9FDE-786B89F9A387}</Project>
       <Name>Simple.Data.OData.NorthwindModel</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Simple.Data.OData\Simple.Data.OData.csproj">
+      <Project>{e6ec2c3a-a7d8-41c3-adcb-37b44f12b6f8}</Project>
+      <Name>Simple.Data.OData</Name>
     </ProjectReference>
     <ProjectReference Include="..\Simple.OData.TestUtils\Simple.OData.TestUtils.csproj">
       <Project>{858775EA-ECF6-458E-AD96-CF67CF730395}</Project>
