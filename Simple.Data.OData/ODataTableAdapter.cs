@@ -137,9 +137,17 @@ namespace Simple.Data.OData
             var clientCommand = GetODataClientCommand(cmd);
             var client = GetODataClient(transaction);
 
-            return clientCommand.FilterIsKey ?
-                client.UpdateEntry(tablePath, clientCommand.FilterAsKey, data) :
-                client.UpdateEntries(tablePath, clientCommand.GetCommandText(), data);
+            int result;
+            if (clientCommand.FilterIsKey)
+            {
+                client.UpdateEntry(tablePath, clientCommand.FilterAsKey, data);
+                result = 1;
+            }
+            else
+            {
+                result = client.UpdateEntries(tablePath, clientCommand.GetCommandText(), data);
+            }
+            return result;
         }
 
         private int DeleteByExpression(string tableName, 
@@ -152,10 +160,18 @@ namespace Simple.Data.OData
             var cmd = GetCommandBuilder().BuildCommand(concreteTableName, criteria);
             var clientCommand = GetODataClientCommand(cmd);
             var client = GetODataClient(transaction);
-
-            return clientCommand.FilterIsKey ?
-                client.DeleteEntry(tablePath, clientCommand.FilterAsKey) :
-                client.DeleteEntries(tablePath, clientCommand.GetCommandText());
+                
+            int result;
+            if (clientCommand.FilterIsKey)
+            {
+                client.DeleteEntry(tablePath, clientCommand.FilterAsKey);
+                result = 1;
+            }
+            else
+            {
+                result = client.DeleteEntries(tablePath, clientCommand.GetCommandText());
+            }
+            return result;
         }
 
         private ODataClient GetODataClient(IAdapterTransaction transaction = null)
