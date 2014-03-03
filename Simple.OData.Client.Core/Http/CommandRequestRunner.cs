@@ -103,7 +103,7 @@ namespace Simple.OData.Client
             using (var response = await ExecuteRequestAsync(request))
             {
                 var text = await response.Content.ReadAsStringAsync();
-                if (resultRequired)
+                if (resultRequired && response.StatusCode == HttpStatusCode.Created)
                 {
                     return _responseReader.GetData(text).First();
                 }
@@ -133,15 +133,17 @@ namespace Simple.OData.Client
             using (var response = await ExecuteRequestAsync(request))
             {
                 IEnumerable<IDictionary<string, object>> result = null;
-                if (!response.IsSuccessStatusCode)
+                switch (response.StatusCode)
                 {
-                    result = Enumerable.Empty<IDictionary<string, object>>();
-                }
-                else
-                {
-                    result = _responseReader.GetFunctionResult(await response.Content.ReadAsStreamAsync());
-                }
+                    case HttpStatusCode.OK:
+                    case HttpStatusCode.Created:
+                        result = _responseReader.GetFunctionResult(await response.Content.ReadAsStreamAsync());
+                        break;
 
+                    default:
+                        result = Enumerable.Empty<IDictionary<string, object>>();
+                        break;
+                }
                 return result;
             }
         }
