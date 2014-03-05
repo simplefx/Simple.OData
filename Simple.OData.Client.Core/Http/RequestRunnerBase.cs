@@ -8,6 +8,11 @@ namespace Simple.OData.Client
 {
     public abstract class RequestRunnerBase
     {
+        private const string PreferHeaderName = "Prefer";
+        private const string PreferenceAppliedHeaderName = "Preference-Applied";
+        private const string ReturnContentHeaderValue = "return-content";
+        private const string ReturnNoContentHeaderValue = "return-no-content";
+
         public Action<HttpRequestMessage> BeforeRequest { get; set; }
         public Action<HttpResponseMessage> AfterResponse { get; set; }
 
@@ -36,6 +41,10 @@ namespace Simple.OData.Client
                     var requestMessage = CreateRequestMessage(request);
                     if (this.BeforeRequest != null)
                         this.BeforeRequest(requestMessage);
+
+                    requestMessage.Headers.Add(
+                        PreferHeaderName,
+                        request.ReturnContent ? ReturnContentHeaderValue : ReturnNoContentHeaderValue);
 
                     var responseMessage = await httpClient.SendAsync(requestMessage);
 

@@ -46,7 +46,7 @@ namespace Simple.OData.Client
             _content = null;
         }
 
-        public override HttpRequest CreateRequest(HttpCommand command)
+        public override HttpRequest CreateRequest(HttpCommand command, bool returnContent = false)
         {
             var request = new CommandRequestBuilder(this.UrlBase, this.Credentials).CreateRequest(command);
             var content = new StringContent(FormatBatchItem(command));

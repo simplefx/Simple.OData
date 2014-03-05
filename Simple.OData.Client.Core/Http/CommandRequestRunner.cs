@@ -98,12 +98,12 @@ namespace Simple.OData.Client
             }
         }
 
-        public override async Task<IDictionary<string, object>> InsertEntryAsync(HttpRequest request, bool resultRequired = true)
+        public override async Task<IDictionary<string, object>> InsertEntryAsync(HttpRequest request)
         {
             using (var response = await ExecuteRequestAsync(request))
             {
                 var text = await response.Content.ReadAsStringAsync();
-                if (resultRequired && response.StatusCode == HttpStatusCode.Created)
+                if (request.ReturnContent && response.StatusCode == HttpStatusCode.Created)
                 {
                     return _responseReader.GetData(text).First();
                 }
@@ -114,10 +114,19 @@ namespace Simple.OData.Client
             }
         }
 
-        public override async Task UpdateEntryAsync(HttpRequest request)
+        public override async Task<IDictionary<string, object>> UpdateEntryAsync(HttpRequest request)
         {
-            using (await ExecuteRequestAsync(request))
+            using (var response = await ExecuteRequestAsync(request))
             {
+                var text = await response.Content.ReadAsStringAsync();
+                if (request.ReturnContent && response.StatusCode == HttpStatusCode.OK)
+                {
+                    return _responseReader.GetData(text).First();
+                }
+                else
+                {
+                    return null;
+                }
             }
         }
 

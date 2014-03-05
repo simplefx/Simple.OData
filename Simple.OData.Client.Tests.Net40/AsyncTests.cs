@@ -126,12 +126,22 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task UpdateEntry()
+        public async Task UpdateEntryWithResult()
         {
             var key = new Entry() { { "ProductID", 1 } };
-            await _client.UpdateEntryAsync("Products", key, new Entry() { { "ProductName", "Chai" }, { "UnitPrice", 123m } });
+            var product = await _client.UpdateEntryAsync("Products", key, new Entry() { { "ProductName", "Chai" }, { "UnitPrice", 123m } }, true);
 
-            var product = await _client.GetEntryAsync("Products", key);
+            Assert.Equal(123m, product["UnitPrice"]);
+        }
+
+        [Fact]
+        public async Task UpdateEntryNoResult()
+        {
+            var key = new Entry() { { "ProductID", 1 } };
+            var product = await _client.UpdateEntryAsync("Products", key, new Entry() { { "ProductName", "Chai" }, { "UnitPrice", 123m } }, false);
+            Assert.Null(product);
+
+            product = await _client.GetEntryAsync("Products", key);
             Assert.Equal(123m, product["UnitPrice"]);
         }
 

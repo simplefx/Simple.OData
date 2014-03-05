@@ -100,24 +100,24 @@ namespace Simple.OData.Client
             return Utils.ExecuteAndUnwrap(() => InsertEntryAsync(collection, entryData, resultRequired));
         }
 
-        public int UpdateEntries(string collection, string commandText, IDictionary<string, object> entryData)
+        public IDictionary<string, object> UpdateEntry(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData, bool resultRequired = true)
         {
-            return Utils.ExecuteAndUnwrap(() => UpdateEntriesAsync(collection, commandText, entryData));
+            return Utils.ExecuteAndUnwrap(() => UpdateEntryAsync(collection, entryKey, entryData, resultRequired));
         }
 
-        public void UpdateEntry(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
+        public IEnumerable<IDictionary<string, object>> UpdateEntries(string collection, string commandText, IDictionary<string, object> entryData, bool resultRequired = true)
         {
-            Utils.ExecuteAndUnwrap(() => UpdateEntryAsync(collection, entryKey, entryData));
-        }
-
-        public int DeleteEntries(string collection, string commandText)
-        {
-            return Utils.ExecuteAndUnwrap(() => DeleteEntriesAsync(collection, commandText));
+            return Utils.ExecuteAndUnwrap(() => UpdateEntriesAsync(collection, commandText, entryData, resultRequired));
         }
 
         public void DeleteEntry(string collection, IDictionary<string, object> entryKey)
         {
             Utils.ExecuteAndUnwrap(() => DeleteEntryAsync(collection, entryKey));
+        }
+
+        public int DeleteEntries(string collection, string commandText)
+        {
+            return Utils.ExecuteAndUnwrap(() => DeleteEntriesAsync(collection, commandText));
         }
 
         public void LinkEntry(string collection, IDictionary<string, object> entryKey, string linkName, IDictionary<string, object> linkedEntryKey)
@@ -198,14 +198,14 @@ namespace Simple.OData.Client
             return Utils.ExecuteAndUnwrap(() => InsertEntryAsync(command, entryData, resultRequired));
         }
 
-        internal int UpdateEntries(FluentCommand command, IDictionary<string, object> entryData)
+        public IDictionary<string, object> UpdateEntry(FluentCommand command, IDictionary<string, object> entryKey, IDictionary<string, object> entryData, bool resultRequired = true)
         {
-            return Utils.ExecuteAndUnwrap(() => UpdateEntriesAsync(command, entryData));
+            return Utils.ExecuteAndUnwrap(() => UpdateEntryAsync(command, entryKey, entryData, resultRequired));
         }
 
-        public void UpdateEntry(FluentCommand command, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
+        internal IEnumerable<IDictionary<string, object>> UpdateEntries(FluentCommand command, IDictionary<string, object> entryData, bool resultRequired = true)
         {
-            Utils.ExecuteAndUnwrap(() => UpdateEntryAsync(command, entryKey, entryData));
+            return Utils.ExecuteAndUnwrap(() => UpdateEntriesAsync(command, entryData, resultRequired));
         }
 
         internal int DeleteEntries(FluentCommand command)

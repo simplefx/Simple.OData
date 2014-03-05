@@ -44,7 +44,7 @@ namespace Simple.OData.Client
             return request;
         }
 
-        public abstract HttpRequest CreateRequest(HttpCommand command);
+        public abstract HttpRequest CreateRequest(HttpCommand command, bool returnContent = false);
         public abstract int GetContentId(object content);
     }
 }

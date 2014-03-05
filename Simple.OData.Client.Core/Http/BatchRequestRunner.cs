@@ -21,14 +21,14 @@ namespace Simple.OData.Client
             return Utils.EmptyTask<IDictionary<string, object>>.Task;
         }
 
-        public override async Task<IDictionary<string, object>> InsertEntryAsync(HttpRequest request, bool resultRequired = true)
+        public override async Task<IDictionary<string, object>> InsertEntryAsync(HttpRequest request)
         {
             return await TaskEx.FromResult(request.EntryData);
         }
 
-        public override Task UpdateEntryAsync(HttpRequest request)
+        public override async Task<IDictionary<string, object>> UpdateEntryAsync(HttpRequest request)
         {
-            return Utils.EmptyTask.Task;
+            return await TaskEx.FromResult(request.EntryData);
         }
 
         public override Task DeleteEntryAsync(HttpRequest request)

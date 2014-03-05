@@ -45,14 +45,14 @@ namespace Simple.OData.Client
             return Utils.ExecuteAndUnwrap(() => InsertEntryAsync(resultRequired));
         }
 
-        public void UpdateEntry()
+        public T UpdateEntry(bool resultRequired = true)
         {
-            Utils.ExecuteAndUnwrap(UpdateEntryAsync);
+            return Utils.ExecuteAndUnwrap(() => UpdateEntryAsync(resultRequired));
         }
 
-        public int UpdateEntries()
+        public IEnumerable<T> UpdateEntries(bool resultRequired = true)
         {
-            return Utils.ExecuteAndUnwrap(UpdateEntriesAsync);
+            return Utils.ExecuteAndUnwrap(() => UpdateEntriesAsync(resultRequired));
         }
 
         public void DeleteEntry()

@@ -52,6 +52,46 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void UpdateMultipleWithResult()
+        {
+            var product = _client
+                .For<Product>()
+                .Set(new { ProductName = "Test1", UnitPrice = 18m })
+                .InsertEntry();
+
+            product = _client
+                .For<Product>()
+                .Filter(x => x.ProductName == "Test1")
+                .Set(new { UnitPrice = 123m })
+                .UpdateEntries().Single();
+
+            Assert.Equal(123m, product.UnitPrice);
+        }
+
+        [Fact]
+        public void UpdateMultipleNoResult()
+        {
+            var product = _client
+                .For<Product>()
+                .Set(new { ProductName = "Test1", UnitPrice = 18m })
+                .InsertEntry();
+
+            product = _client
+                .For<Product>()
+                .Filter(x => x.ProductName == "Test1")
+                .Set(new { UnitPrice = 123m })
+                .UpdateEntries(false).Single();
+            Assert.Null(product);
+
+            product = _client
+                .For<Product>()
+                .Filter(x => x.ProductName == "Test1")
+                .FindEntry();
+
+            Assert.Equal(123m, product.UnitPrice);
+        }
+
+        [Fact]
         public void UpdateByObjectAsKey()
         {
             var product = _client

@@ -119,12 +119,22 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public void UpdateEntry()
+        public void UpdateEntryWithResult()
         {
             var key = new Entry() { { "ProductID", 1 } };
-            _client.UpdateEntry("Products", key, new Entry() { { "ProductName", "Chai" }, { "UnitPrice", 123m } });
+            var product = _client.UpdateEntry("Products", key, new Entry() { { "ProductName", "Chai" }, { "UnitPrice", 123m } }, true);
 
-            var product = _client.GetEntry("Products", key);
+            Assert.Equal(123m, product["UnitPrice"]);
+        }
+
+        [Fact]
+        public void UpdateEntryNoResult()
+        {
+            var key = new Entry() { { "ProductID", 1 } };
+            var product = _client.UpdateEntry("Products", key, new Entry() { { "ProductName", "Chai" }, { "UnitPrice", 123m } }, false);
+            Assert.Null(product);
+
+            product = _client.GetEntry("Products", key);
             Assert.Equal(123m, product["UnitPrice"]);
         }
 

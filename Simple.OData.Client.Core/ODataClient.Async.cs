@@ -133,27 +133,20 @@ namespace Simple.OData.Client
             }
 
             var command = commandWriter.CreateInsertCommand(_schema.FindBaseTable(collection).ActualName, entryData, entryContent);
-            var request = _requestBuilder.CreateRequest(command);
-            var result = await _requestRunner.InsertEntryAsync(request, resultRequired);
+            var request = _requestBuilder.CreateRequest(command, resultRequired);
+            var result = await _requestRunner.InsertEntryAsync(request);
 
             foreach (var associatedData in entryMembers.AssociationsByContentId)
             {
                 var linkCommand = commandWriter.CreateLinkCommand(collection, associatedData.Key, command.ContentId, associatedData.Value);
-                request = _requestBuilder.CreateRequest(linkCommand);
-                await _requestRunner.InsertEntryAsync(request, resultRequired);
+                request = _requestBuilder.CreateRequest(linkCommand, resultRequired);
+                await _requestRunner.InsertEntryAsync(request);
             }
 
             return result;
         }
 
-        public async Task<int> UpdateEntriesAsync(string collection, string commandText, IDictionary<string, object> entryData)
-        {
-            await _schema.ResolveAsync();
-            RemoveSystemProperties(entryData);
-            return await IterateEntriesAsync(collection, commandText, entryData, async (x, y, z) => await UpdateEntryAsync(x, y, z));
-        }
-
-        public async Task UpdateEntryAsync(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
+        public async Task<IDictionary<string, object>> UpdateEntryAsync(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData, bool resultRequired = true)
         {
             await _schema.ResolveAsync();
             RemoveSystemProperties(entryKey);
@@ -161,13 +154,16 @@ namespace Simple.OData.Client
             var table = _schema.FindConcreteTable(collection);
             var entryMembers = ParseEntryMembers(table, entryData);
 
-            await UpdateEntryPropertiesAndAssociationsAsync(collection, entryKey, entryData, entryMembers);
+            return await UpdateEntryPropertiesAndAssociationsAsync(collection, entryKey, entryData, entryMembers, resultRequired);
         }
 
-        public async Task<int> DeleteEntriesAsync(string collection, string commandText)
+        public async Task<IEnumerable<IDictionary<string, object>>> UpdateEntriesAsync(string collection, string commandText, IDictionary<string, object> entryData, bool resultRequired = true)
         {
             await _schema.ResolveAsync();
-            return await IterateEntriesAsync(collection, commandText, null, async (x, y, z) => await DeleteEntryAsync(x, y));
+            RemoveSystemProperties(entryData);
+            return await IterateEntriesAsync(
+                collection, commandText, entryData, resultRequired, 
+                async (x, y, z, w) => await UpdateEntryAsync(x, y, z, w));
         }
 
         public async Task DeleteEntryAsync(string collection, IDictionary<string, object> entryKey)
@@ -182,6 +178,14 @@ namespace Simple.OData.Client
             var command = new CommandWriter(_schema).CreateDeleteCommand(commandText);
             var request = _requestBuilder.CreateRequest(command);
             await _requestRunner.DeleteEntryAsync(request);
+        }
+
+        public async Task<int> DeleteEntriesAsync(string collection, string commandText)
+        {
+            await _schema.ResolveAsync();
+            return await IterateEntriesAsync(
+                collection, commandText, 
+                async (x, y) => await DeleteEntryAsync(x, y));
         }
 
         public async Task LinkEntryAsync(string collection, IDictionary<string, object> entryKey, string linkName, IDictionary<string, object> linkedEntryKey)
@@ -299,19 +303,26 @@ namespace Simple.OData.Client
             return await InsertEntryAsync(collectionName, entryData, resultRequired);
         }
 
-        internal async Task<int> UpdateEntriesAsync(FluentCommand command, IDictionary<string, object> entryData)
+        internal async Task<IDictionary<string, object>> UpdateEntryAsync(FluentCommand command, IDictionary<string, object> entryKey, IDictionary<string, object> entryData, bool resultRequired = true)
+        {
+            await _schema.ResolveAsync();
+            var collectionName = _schema.FindTable(command.CollectionName).ActualName;
+            return await UpdateEntryAsync(collectionName, entryKey, entryData, resultRequired);
+        }
+
+        internal async Task<IEnumerable<IDictionary<string, object>>> UpdateEntriesAsync(FluentCommand command, IDictionary<string, object> entryData, bool resultRequired = true)
         {
             await _schema.ResolveAsync();
             var collectionName = _schema.FindTable(command.CollectionName).ActualName;
             var commandText = await command.GetCommandTextAsync();
-            return await UpdateEntriesAsync(collectionName, commandText, entryData);
+            return await UpdateEntriesAsync(collectionName, commandText, entryData, resultRequired);
         }
 
-        internal async Task UpdateEntryAsync(FluentCommand command, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
+        internal async Task DeleteEntryAsync(FluentCommand command, IDictionary<string, object> entryKey)
         {
             await _schema.ResolveAsync();
             var collectionName = _schema.FindTable(command.CollectionName).ActualName;
-            await UpdateEntryAsync(collectionName, entryKey, entryData);
+            await DeleteEntryAsync(collectionName, entryKey);
         }
 
         internal async Task<int> DeleteEntriesAsync(FluentCommand command)
@@ -320,13 +331,6 @@ namespace Simple.OData.Client
             var collectionName = _schema.FindTable(command.CollectionName).ActualName;
             var commandText = await command.GetCommandTextAsync();
             return await DeleteEntriesAsync(collectionName, commandText);
-        }
-
-        internal async Task DeleteEntryAsync(FluentCommand command, IDictionary<string, object> entryKey)
-        {
-            await _schema.ResolveAsync();
-            var collectionName = _schema.FindTable(command.CollectionName).ActualName;
-            await DeleteEntryAsync(collectionName, entryKey);
         }
 
         internal async Task LinkEntryAsync(FluentCommand command, IDictionary<string, object> entryKey, string linkName, IDictionary<string, object> linkedEntryKey)

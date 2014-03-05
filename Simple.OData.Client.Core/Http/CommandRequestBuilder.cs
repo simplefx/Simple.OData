@@ -12,11 +12,12 @@ namespace Simple.OData.Client
         {
         }
 
-        public override HttpRequest CreateRequest(HttpCommand command)
+        public override HttpRequest CreateRequest(HttpCommand command, bool returnContent = false)
         {
             var uri = CreateRequestUrl(command.CommandText);
             var request = CreateRequest(uri);
             request.Method = command.Method;
+            request.ReturnContent = returnContent;
 
             // TODO: revise
             //if (method == "PUT" || method == "DELETE" || method == "MERGE")

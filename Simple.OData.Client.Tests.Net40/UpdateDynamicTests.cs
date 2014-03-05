@@ -54,6 +54,48 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void UpdateMultipleWithResult()
+        {
+            var x = ODataDynamic.Expression;
+            var product = _client
+                .For(x.Products)
+                .Set(x.ProductName = "Test1", x.UnitPrice = 18m)
+                .InsertEntry();
+
+            product = (_client
+                .For(x.Products)
+                .Filter(x.ProductName == "Test1")
+                .Set(x.UnitPrice = 123m)
+                .UpdateEntries() as IEnumerable<dynamic>).Single();
+
+            Assert.Equal(123m, product.UnitPrice);
+        }
+
+        [Fact]
+        public void UpdateMultipleNoResult()
+        {
+            var x = ODataDynamic.Expression;
+            var product = _client
+                .For(x.Products)
+                .Set(x.ProductName = "Test1", x.UnitPrice = 18m)
+                .InsertEntry();
+
+            product = (_client
+                .For(x.Products)
+                .Filter(x.ProductName == "Test1")
+                .Set(x.UnitPrice = 123m)
+                .UpdateEntries(false) as IEnumerable<dynamic>).Single();
+            Assert.Null(product);
+
+            product = _client
+                .For(x.Products)
+                .Filter(x.ProductName == "Test1")
+                .FindEntry();
+
+            Assert.Equal(123m, product.UnitPrice);
+        }
+
+        [Fact]
         public void UpdateByObjectAsKey()
         {
             var x = ODataDynamic.Expression;

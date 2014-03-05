@@ -52,17 +52,47 @@ namespace Simple.OData.Client
             });
         }
 
-        public Task UpdateEntryAsync()
+        public async Task<T> UpdateEntryAsync(bool resultRequired = true)
         {
             if (_command.HasFilter)
-                return UpdateEntriesAsync();
+            {
+                return await UpdateEntriesAsync(resultRequired).ContinueWith(x =>
+                {
+                    if (resultRequired)
+                    {
+                        var result = x.Result;
+                        return result == null ? null : result.First();
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                });
+            }
             else
-                return _client.UpdateEntryAsync(_command, _command.KeyValues, _command.EntryData);
+            {
+                return await _client.UpdateEntryAsync(_command, _command.KeyValues, _command.EntryData, resultRequired).ContinueWith(x =>
+                {
+                    if (resultRequired)
+                    {
+                        var result = x.Result;
+                        return result == null ? null : result.ToObject<T>(_dynamicResults);
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                });
+            }
         }
 
-        public Task<int> UpdateEntriesAsync()
+        public Task<IEnumerable<T>> UpdateEntriesAsync(bool resultRequired = true)
         {
-            return _client.UpdateEntriesAsync(_command, _command.EntryData);
+            return _client.UpdateEntriesAsync(_command, _command.EntryData, resultRequired).ContinueWith(x =>
+            {
+                var result = x.Result;
+                return result.Select(y => y.ToObject<T>(_dynamicResults));
+            });
         }
 
         public Task DeleteEntryAsync()
