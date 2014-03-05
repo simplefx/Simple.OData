@@ -62,11 +62,11 @@
     </Reference>
     <Reference Include="Simple.Data.OData, Version=1.1.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Simple.Data.OData.1.1.0-rc1\lib\net40\Simple.Data.OData.dll</HintPath>
+      <HintPath>..\packages\Simple.Data.OData.1.1.0-rc2\lib\net40\Simple.Data.OData.dll</HintPath>
     </Reference>
     <Reference Include="Simple.OData.Client.Net40, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Simple.OData.Client.2.0.0-rc2\lib\net40\Simple.OData.Client.Net40.dll</HintPath>
+      <HintPath>..\packages\Simple.OData.Client.2.0.0-rc3\lib\net40\Simple.OData.Client.Net40.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.DataAnnotations" />

@@ -145,7 +145,7 @@ namespace Simple.Data.OData
             }
             else
             {
-                result = client.UpdateEntries(tablePath, clientCommand.GetCommandText(), data);
+                result = client.UpdateEntries(tablePath, clientCommand.GetCommandText(), data).Count();
             }
             return result;
         }

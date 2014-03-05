@@ -48,7 +48,7 @@
     </Reference>
     <Reference Include="Simple.OData.Client.Net40, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Simple.OData.Client.2.0.0-rc2\lib\net40\Simple.OData.Client.Net40.dll</HintPath>
+      <HintPath>..\packages\Simple.OData.Client.2.0.0-rc3\lib\net40\Simple.OData.Client.Net40.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Composition" />
