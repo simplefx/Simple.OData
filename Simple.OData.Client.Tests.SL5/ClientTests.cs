@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Simple.OData.Client.Tests
 {
@@ -19,9 +19,9 @@ namespace Simple.OData.Client.Tests
         }
 
         [TestMethod]
-        public async Task FindEntries()
+        public void FindEntries()
         {
-            var products = await _client.FindEntriesAsync("Products");
+            var products = _client.FindEntries("Products");
             Assert.IsTrue(products.Count() > 0);
         }
 
