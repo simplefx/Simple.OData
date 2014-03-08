@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Xml.Linq;
@@ -106,25 +105,12 @@ namespace Simple.OData.Client
             return properties;
         }
 
-        public static void Write(XElement container, KeyValuePair<string, object> kvp)
+        public static void Write(ISchema schema, string entityTypeName, XElement container, IDictionary<string, object> row)
         {
-            var element = new XElement(container.GetNamespaceOfPrefix("d") + kvp.Key); ;
-
-            if (kvp.Value == null)
+            foreach (var prop in row)
             {
-                element.SetAttributeValue(container.GetNamespaceOfPrefix("m") + "null", "true");
+                Write(schema, entityTypeName, container, container, prop);
             }
-            else
-            {
-                var type = EdmType.FromSystemType(kvp.Value.GetType());
-                if (type != EdmType.String)
-                {
-                    element.SetAttributeValue(container.GetNamespaceOfPrefix("m") + "type", type.ToString());
-                }
-                element.SetValue(Writers[type](kvp.Value));
-            }
-
-            container.Add(element);
         }
 
         public static object ReadEdmBinary(string source)
@@ -287,6 +273,47 @@ namespace Simple.OData.Client
                 });
 
             return func;
+        }
+
+        private static void Write(ISchema schema, string typeName, XElement root, XElement container, KeyValuePair<string, object> kvp)
+        {
+            var element = new XElement(root.GetNamespaceOfPrefix("d") + kvp.Key);
+
+            if (kvp.Value == null)
+            {
+                element.SetAttributeValue(container.GetNamespaceOfPrefix("m") + "null", "true");
+            }
+            else
+            {
+                var property = root == container
+                    ? schema
+                        .EntityTypes.Single(x => x.Name == typeName)
+                        .Properties.Single(x => x.Name == kvp.Key)
+                    : schema
+                        .ComplexTypes.Single(x => x.Name == typeName)
+                        .Properties.Single(x => x.Name == kvp.Key);
+
+                if (property.Type is EdmComplexPropertyType)
+                {
+                    var edmType = (property.Type as EdmComplexPropertyType).Type;
+                    element.SetAttributeValue(root.GetNamespaceOfPrefix("m") + "type", edmType.Name);
+                    foreach (var prop in kvp.Value as IDictionary<string, object>)
+                    {
+                        Write(schema, property.Type.Name, root, element, prop);
+                    }
+                }
+                else if (property.Type is EdmPrimitivePropertyType)
+                {
+                    var edmType = (property.Type as EdmPrimitivePropertyType).Type;
+                    if (edmType != EdmType.String)
+                    {
+                        element.SetAttributeValue(root.GetNamespaceOfPrefix("m") + "type", edmType.Name);
+                    }
+                    element.SetValue(Writers[edmType](kvp.Value));
+                }
+            }
+
+            container.Add(element);
         }
     }
 }

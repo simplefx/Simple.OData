@@ -63,12 +63,8 @@ namespace Simple.OData.Client
 
             var resourceName = GetQualifiedResourceName(_schema.TypesNamespace, entityTypeName);
             entry.Element(null, "category").SetAttributeValue("term", resourceName);
-            var properties = entry.Element(null, "content").Element("m", "properties");
 
-            foreach (var prop in row)
-            {
-                EdmTypeSerializer.Write(properties, prop);
-            }
+            EdmTypeSerializer.Write(_schema, entityTypeName, entry.Element(null, "content").Element("m", "properties"), row);
 
             return new CommandContent(entry);
         }
