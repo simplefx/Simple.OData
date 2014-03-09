@@ -30,7 +30,8 @@ namespace Simple.OData.Client
                 request.ContentType = command.ContentType;
                 request.Content = new StringContent(command.FormattedContent, Encoding.UTF8, command.ContentType);
             }
-            else if (!command.ReturnsScalarResult)
+
+            if (request.Method == RestVerbs.GET && !command.ReturnsScalarResult || request.ReturnContent)
             {
                 request.Accept = new[] { "application/text", "application/xml", "application/atom+xml" };
             }

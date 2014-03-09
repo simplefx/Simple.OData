@@ -13,7 +13,7 @@ namespace Simple.OData.Client.Tests
 
         public WebApiTests()
         {
-            _client = new ODataClient("http://localhost:51849/odata");
+            _client = new ODataClient("http://" + "WEBAPI-PRODUCTS/odata");
         }
 
         public void Dispose()
@@ -58,16 +58,11 @@ namespace Simple.OData.Client.Tests
                 .Set(new { Name = "Test1", Price = 18m })
                 .InsertEntry();
 
-            _client
+            product = _client
                 .For("Products")
                 .Key(product["ID"])
                 .Set(new { Price = 123m })
                 .UpdateEntry();
-
-            product = _client
-                .For("Products")
-                .Filter("Name eq 'Test1'")
-                .FindEntry();
 
             Assert.Equal(123m, product["Price"]);
         }
