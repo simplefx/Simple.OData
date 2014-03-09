@@ -6,7 +6,7 @@ namespace Simple.OData.Client.Extensions
 {
     public static class TypeExtensions
     {
-#if NET40 || PORTABLE_LEGACY
+#if NET40 || SILVERLIGHT || PORTABLE_LEGACY
         public static IEnumerable<PropertyInfo> GetDeclaredProperties(this Type type)
         {
             return type.GetProperties();

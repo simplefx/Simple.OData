@@ -19,7 +19,7 @@ namespace Simple.OData.Client.Tests
         public TestBase()
         {
 #if NETFX_CORE
-            _serviceUri = "http://NORTHWIND/Northwind/Northwind.svc/";
+            _serviceUri = "http://NORTHWIND/Northwind.svc/";
 #else
             _service = new TestService(typeof(NorthwindService));
             _serviceUri = _service.ServiceUri.AbsoluteUri;

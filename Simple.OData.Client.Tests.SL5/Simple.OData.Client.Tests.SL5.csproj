@@ -91,13 +91,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Simple.OData.Client.Core\Simple.OData.Client.Core.csproj">
-      <Project>{361868b8-a63e-4c74-aa87-b70e1ab22313}</Project>
-      <Name>Simple.OData.Client.Core</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Simple.OData.Client.Dynamic\Simple.OData.Client.Dynamic.csproj">
-      <Project>{c025fb0f-452b-4795-b9a4-64c9e6abbeee}</Project>
-      <Name>Simple.OData.Client.Dynamic</Name>
+    <ProjectReference Include="..\Simple.OData.Client.SL5\Simple.OData.Client.SL5.csproj">
+      <Project>{440e6ae0-f3de-4bfd-913d-0bc76c538de0}</Project>
+      <Name>Simple.OData.Client.SL5</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Silverlight\$(SilverlightVersion)\Microsoft.Silverlight.CSharp.targets" />

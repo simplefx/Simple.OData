@@ -101,7 +101,7 @@
     <Compile Include="ResponseReader.cs" />
     <Compile Include="CommandWriter.cs" />
     <Compile Include="Pluralizer.cs" />
-    <Compile Include="Properties.cs" />
+    <Compile Include="Resources\Resources.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Http\RequestBuilder.cs" />
     <Compile Include="Http\RequestRunner.cs" />
@@ -126,10 +126,6 @@
     <Compile Include="ValueFormatter.cs" />
     <Compile Include="Http\WebRequestException.cs" />
     <Compile Include="ValueParser.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Resources\DataServicesAtomEntryXml.txt" />
-    <Content Include="Resources\DataServicesMetadataEntryXml.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

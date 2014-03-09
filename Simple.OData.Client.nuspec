@@ -23,6 +23,12 @@
         <dependency id="Microsoft.Bcl.Async" version="1.0" />
         <dependency id="Microsoft.Net.Http" version="2.2" />
       </group>
+      <group targetFramework="sl5">
+        <dependency id="Microsoft.Bcl.Build" version="1.0" />
+        <dependency id="Microsoft.Bcl" version="1.1" />
+        <dependency id="Microsoft.Bcl.Async" version="1.0" />
+        <dependency id="Microsoft.Net.Http" version="2.2" />
+      </group>
     </dependencies>
   </metadata>
   <files>
@@ -32,6 +38,9 @@
 
     <!-- NET40 -->
     <file src="Simple.OData.Client.Net40\bin\Release\Simple.OData.Client.Net40.dll" target="lib\net40\Simple.OData.Client.Net40.dll" />
+
+    <!-- Silverlight 5 -->
+    <file src="Simple.OData.Client.SL5\bin\Release\Simple.OData.Client.SL5.dll" target="lib\sl5\Simple.OData.Client.SL5.dll" />
 
     <!-- Droid -->
     <file src="Simple.OData.Client.Core\bin\Release\Simple.OData.Client.Core.dll" target="lib\MonoAndroid\Simple.OData.Client.Core.dll" />

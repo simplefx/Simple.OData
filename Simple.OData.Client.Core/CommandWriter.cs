@@ -103,7 +103,7 @@ namespace Simple.OData.Client
 
         private void AddDataLink(XElement container, string associationName, string linkedEntityName, IEnumerable<object> linkedEntityKeyValues)
         {
-            var entry = XElement.Parse(Properties.Resources.DataServicesAtomEntryXml).Element(null, "link");
+            var entry = XElement.Parse(Resources.DataServicesAtomEntryXml).Element(null, "link");
             var rel = entry.Attribute("rel");
             rel.SetValue(rel.Value + associationName);
             entry.SetAttributeValue("title", associationName);
@@ -149,7 +149,7 @@ namespace Simple.OData.Client
 
         private XElement CreateEmptyEntryWithNamespaces()
         {
-            var entry = XElement.Parse(Properties.Resources.DataServicesAtomEntryXml);
+            var entry = XElement.Parse(Resources.DataServicesAtomEntryXml);
             entry.Element(null, "updated").SetValue(DateTime.UtcNow.ToIso8601String());
             entry.Element(null, "link").Remove();
             return entry;
@@ -157,7 +157,7 @@ namespace Simple.OData.Client
 
         private XElement CreateEmptyMetadataWithNamespaces()
         {
-            var entry = XElement.Parse(Properties.Resources.DataServicesMetadataEntryXml);
+            var entry = XElement.Parse(Resources.DataServicesMetadataEntryXml);
             return entry;
         }
 

@@ -255,11 +255,8 @@
     <Compile Include="..\Simple.OData.Client.Core\Pluralizer.cs">
       <Link>Pluralizer.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Properties\Resources.Designer.cs">
-      <Link>Properties\Resources.Designer.cs</Link>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
+    <Compile Include="..\Simple.OData.Client.Core\Resources\Resources.cs">
+      <Link>Resources\Resources.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Schema\ISchema.cs">
       <Link>Schema\ISchema.cs</Link>
@@ -344,22 +341,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Simple.OData.Client.Core\Resources\DataServicesMetadataEntryXml.txt">
-      <Link>DataServicesMetadataEntryXml.txt</Link>
-    </None>
-    <None Include="..\Simple.OData.Client.Core\Resources\DataServicesAtomEntryXml.txt">
-      <Link>DataServicesAtomEntryXml.txt</Link>
-    </None>
     <None Include="app.config" />
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="..\Simple.OData.Client.Core\Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-      <Link>Properties\Resources.resx</Link>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
