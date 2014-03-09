@@ -17,8 +17,13 @@ namespace Simple.OData.Client.Tests
 
         public IODataClient CreateClientWithDefaultSettings()
         {
-            var urlBase = "http://localhost/FakeClient";
-            var schemaString = GetResourceAsString(@"Resources.Northwind.edmx");
+            return CreateClient("Northwind.edmx");
+        }
+
+        public IODataClient CreateClient(string metadataFile)
+        {
+            var urlBase = "http://localhost/" + metadataFile;
+            var schemaString = GetResourceAsString(@"Resources." + metadataFile);
             Schema.Add(urlBase, ODataClient.ParseSchemaString(schemaString));
             return new ODataClient(urlBase);
         }

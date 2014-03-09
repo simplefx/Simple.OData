@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<entry xml:base="http://services.odata.org/WorkTask/WorkTask.svc/" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns="http://www.w3.org/2005/Atom">
+  <id>http://services.odata.org/WorkTask/WorkTask.svc/WorkTaskModel(1410B0C6-68B0-4820-8310-FBD45DB6D71D)</id>
+  <title type="text" />
+  <updated>2012-02-24T09:39:04Z</updated>
+  <author>
+    <name />
+  </author>
+  <link rel="edit" title="Customer" href="Customers(1410B0C6-68B0-4820-8310-FBD45DB6D71D)" />
+  <category term="QAS.Multiplatform.Demo.Models.WorkTaskModel" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <content type="application/xml">
+    <m:properties>
+      <d:Id m:type="Edm.Guid">1410B0C6-68B0-4820-8310-FBD45DB6D71D</d:Id>
+      <d:Code>TaskCode</d:Code>
+      <d:StartDate m:type="Edm.DateTime">2014-01-01T01:02:03+00:00</d:StartDate>
+      <d:EndDate m:type="Edm.DateTime">2014-02-01T11:12:13+00:00</d:EndDate>
+      <d:State m:type="Edm.Guid">42260DE0-C714-417D-B2CA-13C4013ECDC0</d:State>
+      <d:Location m:type="QAS.Multiplatform.Demo.Models.GeoLocationModel">
+        <d:Latitude m:type="Edm.Double">123.45</d:Latitude>
+        <d:Longitude m:type="Edm.Double">678.90</d:Longitude>
+      </d:Location>
+      <d:WorkerId m:type="Edm.Guid">E21D290C-4C9E-415F-9FD1-5473B88B504D</d:WorkerId>
+      <d:CustomerId m:type="Edm.Guid">DA4A36CC-3412-4608-B2E0-FD436521841F</d:CustomerId>
+    </m:properties>
+  </content>
+</entry>

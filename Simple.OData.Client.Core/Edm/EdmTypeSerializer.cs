@@ -295,11 +295,18 @@ namespace Simple.OData.Client
 
                 if (property.Type is EdmComplexPropertyType)
                 {
-                    var edmType = (property.Type as EdmComplexPropertyType).Type;
-                    element.SetAttributeValue(root.GetNamespaceOfPrefix("m") + "type", edmType.Name);
-                    foreach (var prop in kvp.Value as IDictionary<string, object>)
+                    if (kvp.Value.ToString() == string.Empty)
                     {
-                        Write(schema, property.Type.Name, root, element, prop);
+                        element.SetAttributeValue(container.GetNamespaceOfPrefix("m") + "null", "true");
+                    }
+                    else
+                    {
+                        var edmType = (property.Type as EdmComplexPropertyType).Type;
+                        element.SetAttributeValue(root.GetNamespaceOfPrefix("m") + "type", edmType.Name);
+                        foreach (var prop in kvp.Value as IDictionary<string, object>)
+                        {
+                            Write(schema, property.Type.Name, root, element, prop);
+                        }
                     }
                 }
                 else if (property.Type is EdmPrimitivePropertyType)
@@ -308,6 +315,10 @@ namespace Simple.OData.Client
                     if (edmType != EdmType.String)
                     {
                         element.SetAttributeValue(root.GetNamespaceOfPrefix("m") + "type", edmType.Name);
+                        if (kvp.Value.ToString() == string.Empty)
+                        {
+                            element.SetAttributeValue(container.GetNamespaceOfPrefix("m") + "null", "true");
+                        }
                     }
                     element.SetValue(Writers[edmType](kvp.Value));
                 }

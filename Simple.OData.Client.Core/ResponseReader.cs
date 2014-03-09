@@ -135,11 +135,12 @@ namespace Simple.OData.Client
         private IEnumerable<KeyValuePair<string, object>> GetKeys(XElement element)
         {
             var content = element.Element(null, "id").Value;
-            var start = content.IndexOf('(') + 1;
-            var end = content.LastIndexOf(')');
-            var prefix = content.Substring(0, start);
-            var tableName = prefix.Substring(prefix.LastIndexOf('/') + 1);
-            content = content.Substring(start, end - start);
+            var startOfKey = content.IndexOf('(') + 1;
+            var endOfKey = content.LastIndexOf(')');
+            var prefix = content.Substring(0, startOfKey);
+            var startOfTableName = prefix.LastIndexOf('/') + 1;
+            var tableName = prefix.Substring(startOfTableName, prefix.Length - startOfTableName - 1);
+            content = content.Substring(startOfKey, endOfKey - startOfKey);
 
             var table = _schema.FindBaseTable(tableName);
             return new ValueParser(table).Parse(content);
