@@ -195,17 +195,17 @@ namespace Simple.OData.Client
 
         public static string WriteEdmBoolean(object source)
         {
-            return (Boolean)source ? "true" : "false";
+            return Convert.ToBoolean(source) ? "true" : "false";
         }
 
         public static string WriteEdmByte(object source)
         {
-            return ((Byte)source).ToString();
+            return (Convert.ToByte(source)).ToString();
         }
 
         public static string WriteEdmDateTime(object source)
         {
-            return ((DateTime)source).ToIso8601String();
+            return (Convert.ToDateTime(source)).ToIso8601String();
         }
 
         public static string WriteEdmDateTimeOffset(object source)
@@ -215,12 +215,12 @@ namespace Simple.OData.Client
 
         public static string WriteEdmDouble(object source)
         {
-            return ((Double)source).ToString(CultureInfo.InvariantCulture);
+            return (Convert.ToDouble(source)).ToString(CultureInfo.InvariantCulture);
         }
 
         public static string WriteEdmDecimal(object source)
         {
-            return ((Decimal)source).ToString(CultureInfo.InvariantCulture);
+            return (Convert.ToDecimal(source)).ToString(CultureInfo.InvariantCulture);
         }
 
         public static string WriteEdmGuid(object source)
@@ -230,27 +230,27 @@ namespace Simple.OData.Client
 
         public static string WriteEdmInt16(object source)
         {
-            return ((Int16)source).ToString();
+            return (Convert.ToInt16(source)).ToString();
         }
 
         public static string WriteEdmInt32(object source)
         {
-            return ((Int32)source).ToString();
+            return (Convert.ToInt32(source)).ToString();
         }
 
         public static string WriteEdmInt64(object source)
         {
-            return ((Int64)source).ToString();
+            return (Convert.ToInt64(source)).ToString();
         }
 
         public static string WriteEdmSByte(object source)
         {
-            return ((SByte)source).ToString();
+            return (Convert.ToSByte(source)).ToString();
         }
 
         public static string WriteEdmSingle(object source)
         {
-            return ((Single)source).ToString(CultureInfo.InvariantCulture);
+            return (Convert.ToSingle(source)).ToString(CultureInfo.InvariantCulture);
         }
 
         public static string WriteEdmString(object source)

@@ -104,6 +104,7 @@
     </Compile>
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\ProductsController.cs" />
+    <Compile Include="Controllers\WorkTaskModelsController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -112,8 +113,13 @@
       <DependentUpon>201401161840343_Initial.cs</DependentUpon>
     </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="Models\BaseModel.cs" />
+    <Compile Include="Models\GeoLocationModel.cs" />
     <Compile Include="Models\Product.cs" />
     <Compile Include="Models\ProductServiceContext.cs" />
+    <Compile Include="Models\WorkActivityReportModel.cs" />
+    <Compile Include="Models\WorkTaskAttachmentModel.cs" />
+    <Compile Include="Models\WorkTaskModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

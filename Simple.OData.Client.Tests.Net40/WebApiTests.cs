@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
@@ -25,6 +26,13 @@ namespace Simple.OData.Client.Tests
                 {
                     if (product["Name"].ToString().StartsWith("Test"))
                         _client.DeleteEntry("Products", product);
+                }
+
+                var workTaskModels = _client.FindEntries("WorkTaskModels");
+                foreach (var workTaskModel in workTaskModels)
+                {
+                    if (workTaskModel["Code"].ToString().StartsWith("Test"))
+                        _client.DeleteEntry("workTaskModels", workTaskModel);
                 }
             }
         }
@@ -86,6 +94,110 @@ namespace Simple.OData.Client.Tests
                 .FindEntry();
 
             Assert.Null(product);
+        }
+
+        [Fact]
+        public void InsertWorkTaskModel()
+        {
+            var workTaskModel = _client
+                .For("WorkTaskModels")
+                .Set(new Entry()
+                {
+                    { "Id", Guid.NewGuid() }, 
+                    { "Code", "Test1" }, 
+                    { "StartDate", DateTime.Now.AddDays(-1) },
+                    { "EndDate", DateTime.Now.AddDays(1) },
+                    { "Location", new Entry() {{"Latitude", 1.0f},{"Longitude", 2.0f}}  },
+                })
+                .InsertEntry();
+
+            Assert.Equal("Test1", workTaskModel["Code"]);
+        }
+
+        [Fact]
+        public void UpdateWorkTaskModel()
+        {
+            var workTaskModel = _client
+                .For("WorkTaskModels")
+                .Set(new Entry()
+                {
+                    { "Id", Guid.NewGuid() }, 
+                    { "Code", "Test1" }, 
+                    { "StartDate", DateTime.Now.AddDays(-1) },
+                    { "EndDate", DateTime.Now.AddDays(1) },
+                    { "Location", new Entry() {{"Latitude", 1.0f},{"Longitude", 2.0f}}  },
+                })
+                .InsertEntry();
+
+            workTaskModel = _client
+                .For("WorkTaskModels")
+                .Key(workTaskModel["Id"])
+                .Set(new { Code = "Test2" })
+                .UpdateEntry();
+
+            Assert.Equal("Test2", workTaskModel["Code"]);
+        }
+
+        [Fact]
+        public void UpdateWorkTaskModelWithEmptyLists()
+        {
+            var workTaskModel = _client
+                .For("WorkTaskModels")
+                .Set(new Entry()
+                {
+                    { "Id", Guid.NewGuid() }, 
+                    { "Code", "Test1" }, 
+                    { "StartDate", DateTime.Now.AddDays(-1) },
+                    { "EndDate", DateTime.Now.AddDays(1) },
+                    { "Location", new Entry() {{"Latitude", 1.0f},{"Longitude", 2.0f}}  },
+                })
+                .InsertEntry();
+
+            workTaskModel = _client
+                .For("WorkTaskModels")
+                .Key(workTaskModel["Id"])
+                .Set(new Entry() { {"Code", "Test2"}, {"Attachments", new List<IDictionary<string, object>>()}, {"WorkActivityReports", null } })
+                .UpdateEntry();
+
+            Assert.Equal("Test2", workTaskModel["Code"]);
+        }
+
+        [Fact]
+        public void UpdateWorkTaskModelWholeObject()
+        {
+            var workTaskModel = _client
+                .For("WorkTaskModels")
+                .Set(new Entry()
+                {
+                    { "Id", Guid.NewGuid() }, 
+                    { "Code", "Test1" }, 
+                    { "StartDate", DateTime.Now.AddDays(-1) },
+                    { "EndDate", DateTime.Now.AddDays(1) },
+                    { "Location", new Entry() {{"Latitude", 1.0f},{"Longitude", 2.0f}}  },
+                })
+                .InsertEntry();
+
+            workTaskModel["Code"] = "Test2";
+            workTaskModel["Attachments"] = new List<IDictionary<string, object>>();
+            workTaskModel["WorkActivityReports"] = null;
+            workTaskModel = _client
+                .For("WorkTaskModels")
+                .Key(workTaskModel["Id"])
+                .Set(workTaskModel)
+                .UpdateEntry();
+
+            Assert.Equal("Test2", workTaskModel["Code"]);
+
+            workTaskModel["Code"] = "Test3";
+            workTaskModel["Attachments"] = null;
+            workTaskModel["WorkActivityReports"] = new List<IDictionary<string, object>>();
+            workTaskModel = _client
+                .For("WorkTaskModels")
+                .Key(workTaskModel["Id"])
+                .Set(workTaskModel)
+                .UpdateEntry();
+
+            Assert.Equal("Test3", workTaskModel["Code"]);
         }
     }
 }

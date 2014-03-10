@@ -16,6 +16,9 @@ namespace Simple.OData.ProductService.Models
         }
 
         public System.Data.Entity.DbSet<Product> Products { get; set; }
+        public System.Data.Entity.DbSet<WorkTaskModel> WorkTaskModels { get; set; }
+        public System.Data.Entity.DbSet<WorkTaskAttachmentModel> WorkTaskAttachmentModels { get; set; }
+        public System.Data.Entity.DbSet<WorkActivityReportModel> WorkActivityReportModels { get; set; }
     
     }
 }

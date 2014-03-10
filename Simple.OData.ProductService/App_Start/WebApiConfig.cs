@@ -10,6 +10,9 @@ namespace Simple.OData.ProductService.App_Start
         {
             var builder = new ODataConventionModelBuilder();
             builder.EntitySet<Product>("Products");
+            builder.EntitySet<WorkTaskModel>("WorkTaskModels");
+            builder.EntitySet<WorkTaskAttachmentModel>("WorkTaskAttachmentModels");
+            builder.EntitySet<WorkActivityReportModel>("WorkActivityReportModels");
             config.Routes.MapODataRoute("odata", "odata", builder.GetEdmModel());
         }
     }
