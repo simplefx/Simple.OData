@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using Xunit;
 
 using Entry = System.Collections.Generic.Dictionary<string, object>;
@@ -9,12 +10,21 @@ namespace Simple.OData.Client.Tests
 {
     public class WebApiTests : IDisposable
     {
-        protected string _serviceUri;
-        protected IODataClient _client;
+        private string _serviceUri;
+        private IODataClient _client;
+        private const bool _useBasicAuthentication = true;
+        private const string _user = "tester";
+        private const string _password = "tester123";
 
         public WebApiTests()
         {
-            _client = new ODataClient("http://" + "WEBAPI-PRODUCTS/odata");
+            var settings = new ODataClientSettings();
+            settings.UrlBase = "http://" + "WEBAPI-PRODUCTS/ProductService/odata";
+            if (_useBasicAuthentication)
+            {
+                settings.Credentials = new NetworkCredential(_user, _password);
+            }
+            _client = new ODataClient(settings);
         }
 
         public void Dispose()
