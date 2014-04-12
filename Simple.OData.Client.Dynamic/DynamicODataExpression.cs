@@ -4,6 +4,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
@@ -87,7 +88,7 @@ namespace Simple.OData.Client
             {
                 var ctor = CtorWithStringAndValue;
                 Expression objectExpression = Expression.Constant(value.Value);
-                if (value.Value != null && value.Value.GetType().IsValueType)
+                if (value.Value != null && value.Value.GetType().IsValue())
                 {
                     objectExpression = Expression.Convert(objectExpression, typeof (object));
                 }
@@ -124,9 +125,7 @@ namespace Simple.OData.Client
 
         private static IEnumerable<ConstructorInfo> GetConstructorInfo()
         {
-            return _ctors ??
-                (_ctors = typeof(DynamicODataExpression).GetConstructors(
-                    BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic));
+            return _ctors ?? (_ctors = typeof(DynamicODataExpression).GetDeclaredConstructors().ToArray());
         }
 
         private static ConstructorInfo CtorWithString

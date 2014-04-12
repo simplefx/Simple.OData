@@ -200,7 +200,7 @@ namespace Simple.OData.Client
             if (key != null && key.Length == 1 && IsAnonymousType(key.First().GetType()))
             {
                 var namedKeyValues = key.First();
-                _namedKeyValues = namedKeyValues.GetType().GetProperties()
+                _namedKeyValues = namedKeyValues.GetType().GetDeclaredProperties()
                     .Select(x => new KeyValuePair<string, object>(x.Name, x.GetValue(namedKeyValues, null))).ToIDictionary();
             }
             else
@@ -562,11 +562,11 @@ namespace Simple.OData.Client
         private static bool IsAnonymousType(Type type)
         {
             // HACK: The only way to detect anonymous types right now.
-            return Attribute.IsDefined(type, typeof(CompilerGeneratedAttribute), false)
-                       && type.IsGenericType && type.Name.Contains("AnonymousType")
+            return type.HasCustomAttribute(typeof(CompilerGeneratedAttribute), false)
+                       && type.IsGeneric() && type.Name.Contains("AnonymousType")
                        && (type.Name.StartsWith("<>", StringComparison.OrdinalIgnoreCase) ||
                            type.Name.StartsWith("VB$", StringComparison.OrdinalIgnoreCase))
-                       && (type.Attributes & TypeAttributes.NotPublic) == TypeAttributes.NotPublic;
+                       && (type.GetTypeAttributes() & TypeAttributes.NotPublic) == TypeAttributes.NotPublic;
         }
     }
 }

@@ -16,7 +16,7 @@ namespace Simple.OData.Client.Extensions
         {
             if (source == null)
                 return default(T);
-            if (typeof (IDictionary<string, object>).IsAssignableFrom(typeof(T)))
+            if (typeof (IDictionary<string, object>).IsTypeAssignableFrom(typeof(T)))
                 return source as T;
             if (typeof(T) == typeof(ODataEntry))
                 return CreateODataEntry(source, dynamicObject) as T;
@@ -30,14 +30,14 @@ namespace Simple.OData.Client.Extensions
         {
             if (source == null)
                 return null;
-            if (typeof(IDictionary<string, object>).IsAssignableFrom(type))
+            if (typeof(IDictionary<string, object>).IsTypeAssignableFrom(type))
                 return source;
             if (type == typeof(ODataEntry))
                 return CreateODataEntry(source, dynamicObject);
 
             if (value == null)
             {
-                var defaultConstructor = type.GetConstructor(new Type[] {});
+                var defaultConstructor = type.GetDefaultConstructor();
                 if (defaultConstructor != null)
                 {
                     value = defaultConstructor.Invoke(new object[] { });
@@ -46,7 +46,7 @@ namespace Simple.OData.Client.Extensions
 
             Func<Type, bool> IsCompoundType = fieldOrPropertyType =>
             {
-                return !fieldOrPropertyType.IsValueType && !fieldOrPropertyType.IsArray && fieldOrPropertyType != typeof(string);
+                return !fieldOrPropertyType.IsValue() && !fieldOrPropertyType.IsArray && fieldOrPropertyType != typeof(string);
             };
 
             Func<Type, object, bool> IsCollectionType = (fieldOrPropertyType, itemValue) =>
@@ -87,7 +87,7 @@ namespace Simple.OData.Client.Extensions
             {
                 if (item.Value != null)
                 {
-                    var property = type.GetProperty(item.Key);
+                    var property = type.GetDeclaredProperty(item.Key);
                     if (property != null)
                     {
                         property.SetValue(value, ConvertValue(property.PropertyType, item.Value), null);
@@ -98,8 +98,7 @@ namespace Simple.OData.Client.Extensions
             return value;
         }
 
-        public static IDictionary<string, object> ToDictionary(this object source,
-            BindingFlags bindingAttr = BindingFlags.DeclaredOnly | BindingFlags.Public | BindingFlags.Instance)
+        public static IDictionary<string, object> ToDictionary(this object source)
         {
             if (source == null)
                 return new Dictionary<string, object>();
@@ -108,7 +107,7 @@ namespace Simple.OData.Client.Extensions
             if (source is ODataEntry)
                 return (Dictionary<string, object>)(source as ODataEntry);
 
-            return source.GetType().GetProperties(bindingAttr).ToDictionary
+            return source.GetType().GetDeclaredProperties().ToDictionary
             (
                 propInfo => propInfo.Name,
                 propInfo => propInfo.GetValue(source, null)
@@ -129,7 +128,7 @@ namespace Simple.OData.Client.Extensions
                 }
                 else
                 {
-                    ctor = typeof(T).GetConstructor(new Type[] { });
+                    ctor = typeof(T).GetDefaultConstructor();
                     if (ctor != null)
                     {
                         lock (_constructors)

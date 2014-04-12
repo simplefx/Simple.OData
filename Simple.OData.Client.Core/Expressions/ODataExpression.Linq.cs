@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
@@ -149,7 +150,7 @@ namespace Simple.OData.Client
             }
             else
             {
-                if (constExpression.Type.IsValueType || constExpression.Type == typeof(string))
+                if (constExpression.Type.IsValue() || constExpression.Type == typeof(string))
                 {
                     return new ODataExpression(constExpression.Value);
                 }
@@ -258,15 +259,15 @@ namespace Simple.OData.Client
 
             Type itemType;
             object itemValue;
-            if (type.GetProperties().Any(x => x.Name == memberName))
+            if (type.GetDeclaredProperties().Any(x => x.Name == memberName))
             {
-                var property = type.GetProperties().Single(x => x.Name == memberName);
+                var property = type.GetDeclaredProperties().Single(x => x.Name == memberName);
                 itemType = property.PropertyType;
                 itemValue = property.GetValue(value, null);
             }
-            else if (type.GetFields().Any(x => x.Name == memberName))
+            else if (type.GetDeclaredFields().Any(x => x.Name == memberName))
             {
-                var field = type.GetFields().Single(x => x.Name == memberName);
+                var field = type.GetDeclaredFields().Single(x => x.Name == memberName);
                 itemType = field.FieldType;
                 itemValue = field.GetValue(value);
             }

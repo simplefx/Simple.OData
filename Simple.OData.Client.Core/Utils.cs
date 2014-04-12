@@ -72,16 +72,28 @@ namespace Simple.OData.Client
             return exception;
         }
 
+#if NET40 || SILVERLIGHT || PORTABLE_LEGACY
+        public static Task<T> GetTaskFromResult<T>(T result)
+        {
+            return TaskEx.FromResult(result);
+        }
+#else
+        public static Task<T> GetTaskFromResult<T>(T result)
+        {
+            return Task.FromResult(result);
+        }
+#endif
+
         public static class EmptyTask
         {
-            public static Task Task { get { return TaskEx.FromResult(0); } }
+            public static Task Task { get { return Utils.GetTaskFromResult(0); } }
         }
 
         public static class EmptyTask<T>
         {
             public static Task<T> Task { get { return _task; } }
 
-            private static readonly Task<T> _task = TaskEx.FromResult(default(T));
+            private static readonly Task<T> _task = Utils.GetTaskFromResult(default(T));
         }
     }
 }

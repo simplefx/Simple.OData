@@ -135,7 +135,7 @@ namespace Simple.OData.Client
 
         private static IEnumerable<FieldInfo> GetTypeFields()
         {
-            return typeof(EdmType).GetFields(BindingFlags.Public | BindingFlags.Static);
+            return typeof(EdmType).GetDeclaredFields();
         }
     }
 }

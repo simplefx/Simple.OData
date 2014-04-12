@@ -4,6 +4,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
@@ -42,7 +43,7 @@ namespace Simple.OData.Client
 
             public override DynamicMetaObject BindGetMember(GetMemberBinder binder)
             {
-                var methodInfo = typeof(DynamicODataEntry).GetMethod("GetEntryValue", BindingFlags.Instance | BindingFlags.NonPublic);
+                var methodInfo = typeof(DynamicODataEntry).GetDeclaredMethod("GetEntryValue");
                 var arguments = new Expression[]
                 {
                     Expression.Constant(binder.Name)
