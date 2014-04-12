@@ -48,9 +48,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Simple.OData.Client.Core\Simple.OData.Client.Core.csproj">
       <Project>{361868b8-a63e-4c74-aa87-b70e1ab22313}</Project>
       <Name>Simple.OData.Client.Core</Name>
