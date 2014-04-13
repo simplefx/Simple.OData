@@ -33,7 +33,7 @@ namespace Simple.OData.Client
 
         public override Task DeleteEntryAsync(HttpRequest request)
         {
-            return Utils.EmptyTask.Task;
+            return Utils.EmptyVoidTask.Task;
         }
 
         public override Task<IEnumerable<IDictionary<string, object>>> ExecuteFunctionAsync(HttpRequest request)

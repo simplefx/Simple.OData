@@ -84,7 +84,7 @@ namespace Simple.OData.Client
         }
 #endif
 
-        public static class EmptyTask
+        public static class EmptyVoidTask
         {
             public static Task Task { get { return Utils.GetTaskFromResult(0); } }
         }
