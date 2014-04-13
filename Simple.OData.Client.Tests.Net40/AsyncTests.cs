@@ -222,7 +222,7 @@ namespace Simple.OData.Client.Tests
         public async Task FindEntryExistingDynamicFilter()
         {
             var x = ODataDynamic.Expression;
-            string filter = await _client.GetCommandTextAsync("Products", x.ProductName == "Chai");
+            string filter = await (Task<string>)_client.GetCommandTextAsync("Products", x.ProductName == "Chai");
             var product = await _client.FindEntryAsync(filter);
             Assert.Equal("Chai", product["ProductName"]);
         }
