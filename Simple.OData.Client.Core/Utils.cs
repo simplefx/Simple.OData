@@ -83,17 +83,5 @@ namespace Simple.OData.Client
             return Task.FromResult(result);
         }
 #endif
-
-        public static class EmptyVoidTask
-        {
-            public static Task Task { get { return Utils.GetTaskFromResult(0); } }
-        }
-
-        public static class EmptyTask<T>
-        {
-            public static Task<T> Task { get { return _task; } }
-
-            private static readonly Task<T> _task = Utils.GetTaskFromResult(default(T));
-        }
     }
 }
