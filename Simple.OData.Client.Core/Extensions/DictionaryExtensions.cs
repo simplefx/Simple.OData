@@ -51,7 +51,9 @@ namespace Simple.OData.Client.Extensions
 
             Func<Type, object, bool> IsCollectionType = (fieldOrPropertyType, itemValue) =>
             {
-                return fieldOrPropertyType.IsArray && (itemValue as System.Collections.IEnumerable) != null;
+                return (fieldOrPropertyType.IsArray ||
+                    fieldOrPropertyType.IsGeneric() && typeof(System.Collections.IEnumerable).IsTypeAssignableFrom(fieldOrPropertyType)) && 
+                    (itemValue as System.Collections.IEnumerable) != null;
             };
 
             Func<Type, object, object> ConvertSingle = (fieldOrPropertyType, itemValue) =>
@@ -63,7 +65,14 @@ namespace Simple.OData.Client.Extensions
 
             Func<Type, object, object> ConvertCollection = (fieldOrPropertyType, itemValue) =>
             {
-                var elementType = fieldOrPropertyType.GetElementType();
+                var elementType = fieldOrPropertyType.IsArray
+                    ? fieldOrPropertyType.GetElementType()
+                    : fieldOrPropertyType.IsGeneric() && fieldOrPropertyType.GetGenericTypeArguments().Length == 1
+                        ? fieldOrPropertyType.GetGenericTypeArguments()[0]
+                        : null;
+                if (elementType == null)
+                    return null;
+
                 var count = 0;
                 foreach (var v in (itemValue as System.Collections.IEnumerable)) count++;
                 var arrayValue = Array.CreateInstance(elementType, count);
@@ -73,7 +82,21 @@ namespace Simple.OData.Client.Extensions
                 {
                     (arrayValue as Array).SetValue(ConvertSingle(elementType, item), count++);
                 }
-                return arrayValue;
+
+                if (fieldOrPropertyType.IsArray)
+                {
+                    return arrayValue;
+                }
+                else
+                {
+                    var typedef = typeof (IEnumerable<>);
+                    var enumerableType = typedef.MakeGenericType(elementType);
+                    var ctor = fieldOrPropertyType.GetDeclaredConstructors().FirstOrDefault(
+                        x => x.GetParameters().Length == 1 && x.GetParameters().First().ParameterType == enumerableType);
+                    return ctor != null 
+                        ? ctor.Invoke(new object[] { arrayValue}) 
+                        : null;
+                }
             };
 
             Func<Type, object, object> ConvertValue = (fieldOrPropertyType, itemValue) =>

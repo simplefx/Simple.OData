@@ -44,6 +44,11 @@ namespace Simple.OData.Client.Extensions
             return type.Attributes;
         }
 
+        public static Type[] GetGenericTypeArguments(this Type type)
+        {
+            return type.GetGenericArguments();
+        }
+
         public static bool IsTypeAssignableFrom(this Type type, Type otherType)
         {
             return type.IsAssignableFrom(otherType);
@@ -97,6 +102,11 @@ namespace Simple.OData.Client.Extensions
         public static TypeAttributes GetTypeAttributes(this Type type)
         {
             return type.GetTypeInfo().Attributes;
+        }
+
+        public static Type[] GetGenericTypeArguments(this Type type)
+        {
+            return type.GetTypeInfo().GenericTypeArguments;
         }
 
         public static bool IsTypeAssignableFrom(this Type type, Type otherType)

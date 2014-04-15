@@ -220,6 +220,38 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task ExpandOne()
+        {
+            var product = (await _client
+                .For<Product>()
+                .OrderBy(x => x.ProductID)
+                .Expand(x => x.Category)
+                .FindEntriesAsync()).Last();
+            Assert.Equal("Condiments", (product.Category.CategoryName));
+        }
+
+        [Fact]
+        public async Task ExpandManyAsArray()
+        {
+            var category = await _client
+                .For<Category>()
+                .Expand(x => x.Products)
+                .Filter(x => x.CategoryName == "Beverages")
+                .FindEntryAsync();
+            Assert.Equal(12, category.Products.Count());
+        }
+
+        [Fact]
+        public async Task ExpandManyAsList()
+        {
+            var category = await _client
+                .For<CategoryWithProductList>("Categories")
+                .Expand(x => x.Products)
+                .Filter(x => x.CategoryName == "Beverages")
+                .FindEntryAsync();
+            Assert.Equal(12, category.Products.Count());
+        }
+        [Fact]
         public async Task OrderBySingle()
         {
             var product = await _client

@@ -134,7 +134,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task Expand()
+        public async Task ExpandOne()
         {
             var product = (await _client
                 .For("Products")
@@ -142,6 +142,17 @@ namespace Simple.OData.Client.Tests
                 .Expand("Category")
                 .FindEntriesAsync()).Last();
             Assert.Equal("Condiments", (product["Category"] as IDictionary<string, object>)["CategoryName"]);
+        }
+
+        [Fact]
+        public async Task ExpandMany()
+        {
+            var category = await _client
+                .For("Categories")
+                .Expand("Products")
+                .Filter("CategoryName eq 'Beverages'")
+                .FindEntryAsync();
+            Assert.Equal(12, (category["Products"] as IEnumerable<object>).Count());
         }
 
         [Fact]
