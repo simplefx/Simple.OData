@@ -133,7 +133,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public void Expand()
+        public void ExpandOne()
         {
             var product = _client
                 .For("Products")
@@ -141,6 +141,17 @@ namespace Simple.OData.Client.Tests
                 .Expand("Category")
                 .FindEntries().Last();
             Assert.Equal("Condiments", (product["Category"] as IDictionary<string, object>)["CategoryName"]);
+        }
+
+        [Fact]
+        public void ExpandMany()
+        {
+            var category = _client
+                .For("Categories")
+                .Expand("Products")
+                .Filter("CategoryName eq 'Beverages'")
+                .FindEntry();
+            Assert.Equal(12, (category["Products"] as IEnumerable<object>).Count());
         }
 
         [Fact]

@@ -219,6 +219,39 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void ExpandOne()
+        {
+            var product = _client
+                .For<Product>()
+                .OrderBy(x => x.ProductID)
+                .Expand(x => x.Category)
+                .FindEntries().Last();
+            Assert.Equal("Condiments", (product.Category.CategoryName));
+        }
+
+        [Fact]
+        public void ExpandManyAsArray()
+        {
+            var category = _client
+                .For<Category>()
+                .Expand(x => x.Products)
+                .Filter(x => x.CategoryName == "Beverages")
+                .FindEntry();
+            Assert.Equal(12, category.Products.Count());
+        }
+
+        [Fact]
+        public void ExpandManyAsList()
+        {
+            var category = _client
+                .For<CategoryWithProductList>("Categories")
+                .Expand(x => x.Products)
+                .Filter(x => x.CategoryName == "Beverages")
+                .FindEntry();
+            Assert.Equal(12, category.Products.Count());
+        }
+
+        [Fact]
         public void OrderBySingle()
         {
             var product = _client

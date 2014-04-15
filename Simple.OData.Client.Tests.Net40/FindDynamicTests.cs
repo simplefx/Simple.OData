@@ -222,6 +222,30 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void ExpandOne()
+        {
+            var x = ODataDynamic.Expression;
+            var product = (_client
+                .For(x.Products)
+                .OrderBy(x.ProductID)
+                .Expand(x.Category)
+                .FindEntries() as IEnumerable<dynamic>).Last();
+            Assert.Equal("Condiments", (product.Category.CategoryName));
+        }
+
+        [Fact]
+        public void ExpandMany()
+        {
+            var x = ODataDynamic.Expression;
+            var category = _client
+                .For(x.Category)
+                .Expand(x.Products)
+                .Filter(x.CategoryName == "Beverages")
+                .FindEntry();
+            Assert.Equal(12, (category.Products as IEnumerable<dynamic>).Count());
+        }
+
+        [Fact]
         public void OrderBySingle()
         {
             var x = ODataDynamic.Expression;
