@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using Xunit;
 # if !NETFX_CORE
 using Simple.OData.Client.TestUtils;
 using Simple.OData.NorthwindModel;
@@ -36,30 +38,7 @@ namespace Simple.OData.Client.Tests
         {
             if (_client != null)
             {
-                var products = _client.FindEntries("Products");
-                foreach (var product in products)
-                {
-                    if (product["ProductName"].ToString().StartsWith("Test"))
-                        _client.DeleteEntry("Products", product);
-                }
-                var categories = _client.FindEntries("Categories");
-                foreach (var category in categories)
-                {
-                    if (category["CategoryName"].ToString().StartsWith("Test"))
-                        _client.DeleteEntry("Categories", category);
-                }
-                var transports = _client.FindEntries("Transport");
-                foreach (var transport in transports)
-                {
-                    if (int.Parse(transport["TransportID"].ToString()) > 2)
-                        _client.DeleteEntry("Transport", transport);
-                }
-                var employees = _client.FindEntries("Employees");
-                foreach (var employee in employees)
-                {
-                    if (employee["LastName"].ToString().StartsWith("Test"))
-                        _client.DeleteEntry("Employees", employee);
-                }
+                DeleteTestData().Wait();
             }
 
 #if NETFX_CORE
@@ -70,6 +49,50 @@ namespace Simple.OData.Client.Tests
                 _service = null;
             }
 #endif
+        }
+
+        private async Task DeleteTestData()
+        {
+            var products = await _client.FindEntriesAsync("Products");
+            foreach (var product in products)
+            {
+                if (product["ProductName"].ToString().StartsWith("Test"))
+                    await _client.DeleteEntryAsync("Products", product);
+            }
+            var categories = await _client.FindEntriesAsync("Categories");
+            foreach (var category in categories)
+            {
+                if (category["CategoryName"].ToString().StartsWith("Test"))
+                    await _client.DeleteEntryAsync("Categories", category);
+            }
+            var transports = await _client.FindEntriesAsync("Transport");
+            foreach (var transport in transports)
+            {
+                if (int.Parse(transport["TransportID"].ToString()) > 2)
+                    await _client.DeleteEntryAsync("Transport", transport);
+            }
+            var employees = await _client.FindEntriesAsync("Employees");
+            foreach (var employee in employees)
+            {
+                if (employee["LastName"].ToString().StartsWith("Test"))
+                    await _client.DeleteEntryAsync("Employees", employee);
+            }
+        }
+
+        public async static Task AssertThrowsAsync<T>(Func<Task> testCode) where T : Exception
+        {
+            try
+            {
+                await testCode();
+                throw new Exception(string.Format("Expected exception: {0}", typeof (T)));
+            }
+            catch (T)
+            {
+            }
+            catch (AggregateException exception)
+            {
+                Assert.IsType<T>(exception.InnerExceptions.Single());
+            }
         }
     }
 }

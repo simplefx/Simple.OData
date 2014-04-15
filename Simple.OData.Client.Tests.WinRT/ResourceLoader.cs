@@ -14,12 +14,5 @@ namespace Simple.OData.Client.Tests
                 .GetValueAsFileAsync();
             return await FileIO.ReadTextAsync(resourceFile);
         }
-
-        public static string LoadFileAsString(string folderName, string resourceName)
-        {
-            var content = LoadFileAsStringAsync(folderName, resourceName);
-            content.Wait();
-            return content.Result;
-        }
     }
 }

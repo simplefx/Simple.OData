@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Simple.OData.Client.Tests
@@ -10,61 +11,61 @@ namespace Simple.OData.Client.Tests
     public class FunctionTests : TestBase
     {
         [Fact]
-        public void FunctionWithString()
+        public async Task FunctionWithString()
         {
-            var result = _client.ExecuteFunctionAsScalar<int>("ParseInt", new Entry() { { "number", "1" } });
+            var result = await _client.ExecuteFunctionAsScalarAsync<int>("ParseInt", new Entry() { { "number", "1" } });
             
             Assert.Equal(1, result);
         }
 
         [Fact]
-        public void FunctionWithIntCollectionSingleElement()
+        public async Task FunctionWithIntCollectionSingleElement()
         {
-            var result = _client.ExecuteFunctionAsArray<int>("ReturnIntCollection", 
+            var result = await _client.ExecuteFunctionAsArrayAsync<int>("ReturnIntCollection", 
                 new Entry() { { "count", 1 } });
             
             Assert.Equal(new[] { 1 }, result);
         }
 
         [Fact]
-        public void FunctionWithIntCollectionMultipleElements()
+        public async Task FunctionWithIntCollectionMultipleElements()
         {
-            var result = _client.ExecuteFunctionAsArray<int>("ReturnIntCollection", 
+            var result = await _client.ExecuteFunctionAsArrayAsync<int>("ReturnIntCollection", 
                 new Entry() { { "count", 3 } });
             
             Assert.Equal(new[] { 1, 2, 3 }, result);
         }
 
         [Fact]
-        public void FunctionWithLong()
+        public async Task FunctionWithLong()
         {
-            var result = _client.ExecuteFunctionAsScalar<long>("PassThroughLong", new Entry() { { "number", 1L } });
+            var result = await _client.ExecuteFunctionAsScalarAsync<long>("PassThroughLong", new Entry() { { "number", 1L } });
             
             Assert.Equal(1L, result);
         }
 
         [Fact]
-        public void FunctionWithDateTime()
+        public async Task FunctionWithDateTime()
         {
             var dateTime = new DateTime(2013, 1, 1, 12, 13, 14);
-            var result = _client.ExecuteFunctionAsScalar<DateTime>("PassThroughDateTime", new Entry() { { "dateTime", dateTime } });
+            var result = await _client.ExecuteFunctionAsScalarAsync<DateTime>("PassThroughDateTime", new Entry() { { "dateTime", dateTime } });
             
             Assert.Equal(dateTime.ToLocalTime(), result);
         }
 
         [Fact]
-        public void FunctionWithGuid()
+        public async Task FunctionWithGuid()
         {
             var guid = Guid.NewGuid();
-            var result = _client.ExecuteFunctionAsScalar<Guid>("PassThroughGuid", new Entry() { { "guid", guid } });
+            var result = await _client.ExecuteFunctionAsScalarAsync<Guid>("PassThroughGuid", new Entry() { { "guid", guid } });
             
             Assert.Equal(guid, result);
         }
 
         [Fact]
-        public void FunctionWithComplexTypeCollectionSingleElement()
+        public async Task FunctionWithComplexTypeCollectionSingleElement()
         {
-            var result = _client.ExecuteFunctionAsArray<IDictionary<string, object>>("ReturnAddressCollection", 
+            var result = await _client.ExecuteFunctionAsArrayAsync<IDictionary<string, object>>("ReturnAddressCollection", 
                 new Entry() { { "count", 1 } });
 
             Assert.Equal("Oslo", result[0]["City"]);
@@ -72,9 +73,9 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public void FunctionWithComplexTypeCollectionMultipleElements()
+        public async Task FunctionWithComplexTypeCollectionMultipleElements()
         {
-            var result = _client.ExecuteFunctionAsArray<IDictionary<string, object>>("ReturnAddressCollection", 
+            var result = await _client.ExecuteFunctionAsArrayAsync<IDictionary<string, object>>("ReturnAddressCollection", 
                 new Entry() { { "count", 3 } });
 
             Assert.Equal("Oslo", result[0]["City"]);

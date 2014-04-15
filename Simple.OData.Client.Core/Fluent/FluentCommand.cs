@@ -145,11 +145,6 @@ namespace Simple.OData.Client
             }
         }
 
-        public string GetCommandText()
-        {
-            return GetCommandTextAsync().Result;
-        }
-
         public async Task<string> GetCommandTextAsync()
         {
             await _schema.ResolveAsync();

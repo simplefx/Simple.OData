@@ -88,12 +88,10 @@
     <Compile Include="ODataBatch.cs" />
     <Compile Include="ODataClient.Async.cs" />
     <Compile Include="ODataClient.cs" />
-    <Compile Include="ODataClient.Sync.cs" />
     <Compile Include="ODataClient.Internals.cs" />
     <Compile Include="ODataClientSettings.cs" />
     <Compile Include="Fluent\FluentClient.Async.cs" />
     <Compile Include="Fluent\FluentClient.cs" />
-    <Compile Include="Fluent\FluentClient.Sync.cs" />
     <Compile Include="Fluent\FluentCommand.cs" />
     <Compile Include="ODataEntry.cs" />
     <Compile Include="ResponseReader.cs" />

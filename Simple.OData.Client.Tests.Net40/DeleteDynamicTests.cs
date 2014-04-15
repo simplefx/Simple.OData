@@ -1,76 +1,79 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Simple.OData.Client.Tests
 {
+#if !NET40
     public class DeleteDynamicTests : TestBase
     {
         [Fact]
-        public void DeleteByKey()
+        public async Task DeleteByKey()
         {
             var x = ODataDynamic.Expression;
-            var product = _client
+            var product = await _client
                 .For(x.Products)
                 .Set(x.ProductName = "Test1", x.UnitPrice = 18m)
-                .InsertEntry();
+                .InsertEntryAsync();
 
-            _client
+            await _client
                 .For(x.Products)
                 .Key(product.ProductID)
-                .DeleteEntry();
+                .DeleteEntryAsync();
 
-            product = _client
+            product = await _client
                 .For(x.Products)
                 .Filter(x.ProductName == "Test1")
-                .FindEntry();
+                .FindEntryAsync();
 
             Assert.Null(product);
         }
 
         [Fact]
-        public void DeleteByFilter()
+        public async Task DeleteByFilter()
         {
             var x = ODataDynamic.Expression;
-            var product = _client
+            var product = await _client
                 .For(x.Products)
                 .Set(x.ProductName = "Test1", x.UnitPrice = 18m)
-                .InsertEntry();
+                .InsertEntryAsync();
 
-            _client
+            await _client
                 .For(x.Products)
                 .Filter(x.ProductName == "Test1")
-                .DeleteEntry();
+                .DeleteEntryAsync();
 
-            product = _client
+            product = await _client
                 .For(x.Products)
                 .Filter(x.ProductName == "Test1")
-                .FindEntry();
+                .FindEntryAsync();
 
             Assert.Null(product);
         }
 
         [Fact]
-        public void DeleteByObjectAsKey()
+        public async Task DeleteByObjectAsKey()
         {
             var x = ODataDynamic.Expression;
-            var product = _client
+            var product = await _client
                 .For(x.Products)
                 .Set(x.ProductName = "Test1", x.UnitPrice = 18m)
-                .InsertEntry();
+                .InsertEntryAsync();
 
-            _client
+            await _client
                 .For(x.Products)
                 .Key(product)
-                .DeleteEntry();
+                .DeleteEntryAsync();
 
-            product = _client
+            product = await _client
                 .For(x.Products)
                 .Filter(x.ProductName == "Test1")
-                .FindEntry();
+                .FindEntryAsync();
 
             Assert.Null(product);
         }
     }
+#endif
 }

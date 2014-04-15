@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Simple.OData.Client.Tests
@@ -8,51 +9,51 @@ namespace Simple.OData.Client.Tests
     public class LinkTypedTests : TestBase
     {
         [Fact]
-        public void LinkEntry()
+        public async Task LinkEntry()
         {
-            var category = _client
+            var category = await _client
                 .For<Category>()
                 .Set(new { CategoryName = "Test4" })
-                .InsertEntry();
-            var product = _client
+                .InsertEntryAsync();
+            var product = await _client
                 .For<Product>()
                 .Set(new { ProductName = "Test5" })
-                .InsertEntry();
+                .InsertEntryAsync();
 
-            _client
+            await _client
                 .For<Product>()
                 .Key(product)
-                .LinkEntry(category);
+                .LinkEntryAsync(category);
 
-            product = _client
+            product = await _client
                 .For<Product>()
                 .Filter(x => x.ProductName == "Test5")
-                .FindEntry();
+                .FindEntryAsync();
             Assert.NotNull(product.CategoryID);
             Assert.Equal(category.CategoryID, product.CategoryID);
         }
 
         [Fact]
-        public void UnlinkEntry()
+        public async Task UnlinkEntry()
         {
-            var category = _client
+            var category = await _client
                 .For<Category>()
                 .Set(new { CategoryName = "Test4" })
-                .InsertEntry();
-            var product = _client
+                .InsertEntryAsync();
+            var product = await _client
                 .For<Product>()
                 .Set(new { ProductName = "Test5", CategoryID = category.CategoryID })
-                .InsertEntry();
+                .InsertEntryAsync();
 
-            _client
+            await _client
                 .For<Product>()
                 .Key(product)
-                .UnlinkEntry<Category>();
+                .UnlinkEntryAsync<Category>();
 
-            product = _client
+            product = await _client
                 .For<Product>()
                 .Filter(x => x.ProductName == "Test5")
-                .FindEntry();
+                .FindEntryAsync();
             Assert.Null(product.CategoryID);
         }
     }

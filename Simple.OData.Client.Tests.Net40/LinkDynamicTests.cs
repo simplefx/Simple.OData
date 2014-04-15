@@ -1,61 +1,64 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Simple.OData.Client.Tests
 {
+#if !NET40
     public class LinkDynamicTests : TestBase
     {
         [Fact]
-        public void LinkEntry()
+        public async Task LinkEntry()
         {
             var x = ODataDynamic.Expression;
-            var category = _client
+            var category = await _client
                 .For(x.Categories)
                 .Set(x.CategoryName = "Test4")
-                .InsertEntry();
-            var product = _client
+                .InsertEntryAsync();
+            var product = await _client
                 .For(x.Products)
                 .Set(x.ProductName = "Test5")
-                .InsertEntry();
+                .InsertEntryAsync();
 
-            _client
+            await _client
                 .For(x.Products)
                 .Key(product)
-                .LinkEntry(x.Category, category);
+                .LinkEntryAsync(x.Category, category);
 
-            product = _client
+            product = await _client
                 .For(x.Products)
                 .Filter(x.ProductName == "Test5")
-                .FindEntry();
+                .FindEntryAsync();
             Assert.NotNull(product.CategoryID);
             Assert.Equal(category.CategoryID, product.CategoryID);
         }
 
         [Fact]
-        public void UnlinkEntry()
+        public async Task UnlinkEntry()
         {
             var x = ODataDynamic.Expression;
-            var category = _client
+            var category = await _client
                 .For(x.Categories)
                 .Set(x.CategoryName = "Test4")
-                .InsertEntry();
-            var product = _client
+                .InsertEntryAsync();
+            var product = await _client
                 .For(x.Products)
                 .Set(x.ProductName = "Test5", x.CategoryID = category.CategoryID)
-                .InsertEntry();
+                .InsertEntryAsync();
 
-            _client
+            await _client
                 .For(x.Products)
                 .Key(product)
-                .UnlinkEntry(x.Category);
+                .UnlinkEntryAsync(x.Category);
 
-            product = _client
+            product = await _client
                 .For(x.Products)
                 .Filter(x.ProductName == "Test5")
-                .FindEntry();
+                .FindEntryAsync();
             Assert.Null(product.CategoryID);
         }
     }
+#endif
 }

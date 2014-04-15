@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 using Entry = System.Collections.Generic.Dictionary<string, object>;
@@ -10,64 +11,64 @@ namespace Simple.OData.Client.Tests
     public class DeleteTests : TestBase
     {
         [Fact]
-        public void DeleteByKey()
+        public async Task DeleteByKey()
         {
-            var product = _client
+            var product = await _client
                 .For("Products")
                 .Set(new { ProductName = "Test1", UnitPrice = 18m })
-                .InsertEntry();
+                .InsertEntryAsync();
 
-            _client
+            await _client
                 .For("Products")
                 .Key(product["ProductID"])
-                .DeleteEntry();
+                .DeleteEntryAsync();
 
-            product = _client
+            product = await _client
                 .For("Products")
                 .Filter("ProductName eq 'Test1'")
-                .FindEntry();
+                .FindEntryAsync();
 
             Assert.Null(product);
         }
 
         [Fact]
-        public void DeleteByFilter()
+        public async Task DeleteByFilter()
         {
-            var product = _client
+            var product = await _client
                 .For("Products")
                 .Set(new { ProductName = "Test1", UnitPrice = 18m })
-                .InsertEntry();
+                .InsertEntryAsync();
 
-            _client
+            await _client
                 .For("Products")
                 .Filter("ProductName eq 'Test1'")
-                .DeleteEntry();
+                .DeleteEntryAsync();
 
-            product = _client
+            product = await _client
                 .For("Products")
                 .Filter("ProductName eq 'Test1'")
-                .FindEntry();
+                .FindEntryAsync();
 
             Assert.Null(product);
         }
 
         [Fact]
-        public void DeleteByObjectAsKey()
+        public async Task DeleteByObjectAsKey()
         {
-            var product = _client
+            var product = await _client
                 .For("Products")
                 .Set(new { ProductName = "Test1", UnitPrice = 18m })
-                .InsertEntry();
+                .InsertEntryAsync();
 
-            _client
+            await _client
                 .For("Products")
                 .Key(product)
-                .DeleteEntry();
+                .DeleteEntryAsync();
 
-            product = _client
+            product = await _client
                 .For("Products")
                 .Filter("ProductName eq 'Test1'")
-                .FindEntry();
+                .FindEntryAsync();
 
             Assert.Null(product);
         }

@@ -10,31 +10,14 @@ namespace Simple.OData.Client.Tests
     public class BatchTests : TestBase
     {
         [Fact]
-        public void SyncWithSuccess()
-        {
-            using (var batch = new ODataBatch(_serviceUri))
-            {
-                var client = new ODataClient(batch);
-                client.InsertEntry("Products", new Entry() { { "ProductName", "Test1" }, { "UnitPrice", 10m } }, false);
-                client.InsertEntry("Products", new Entry() { { "ProductName", "Test2" }, { "UnitPrice", 20m } }, false);
-                batch.Complete();
-            }
-
-            var product = _client.FindEntry("Products?$filter=ProductName eq 'Test1'");
-            Assert.NotNull(product);
-            product = _client.FindEntry("Products?$filter=ProductName eq 'Test2'");
-            Assert.NotNull(product);
-        }
-
-        [Fact]
-        public async Task AsyncWithSuccess()
+        public async Task Success()
         {
             using (var batch = new ODataBatch(_serviceUri))
             {
                 var client = new ODataClient(batch);
                 await client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test1" }, { "UnitPrice", 10m } }, false);
                 await client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test2" }, { "UnitPrice", 20m } }, false);
-                batch.Complete();
+                await batch.CompleteAsync();
             }
 
             var product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'Test1'");
@@ -44,141 +27,117 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public void SyncWithPartialFailures()
-        {
-            using (var batch = new ODataBatch(_serviceUri))
-            {
-                var client = new ODataClient(batch);
-                client.InsertEntry("Products", new Entry() { { "ProductName", "Test1" }, { "UnitPrice", 10m } }, false);
-                client.InsertEntry("Products", new Entry() { { "ProductName", "Test2" }, { "UnitPrice", 10m }, { "SupplierID", 0xFFFF } }, false);
-                Assert.Throws<WebRequestException>(() => batch.Complete());
-            }
-        }
-
-        [Fact]
-        public async Task AsyncWithPartialFailures()
+        public async Task PartialFailures()
         {
             using (var batch = new ODataBatch(_serviceUri))
             {
                 var client = new ODataClient(batch);
                 await client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test1" }, { "UnitPrice", 10m } }, false);
                 await client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test2" }, { "UnitPrice", 10m }, { "SupplierID", 0xFFFF } }, false);
-                Assert.Throws<WebRequestException>(() => batch.Complete());
+                await AssertThrowsAsync<WebRequestException>(async () => await batch.CompleteAsync());
             }
         }
 
         [Fact]
-        public void SyncWithAllFailures()
-        {
-            using (var batch = new ODataBatch(_serviceUri))
-            {
-                var client = new ODataClient(batch);
-                client.InsertEntry("Products", new Entry() { { "UnitPrice", 10m } }, false);
-                client.InsertEntry("Products", new Entry() { { "UnitPrice", 20m } }, false);
-                Assert.Throws<WebRequestException>(() => batch.Complete());
-            }
-        }
-
-        [Fact]
-        public async Task AsyncWithAllFailures()
+        public async Task AllFailures()
         {
             using (var batch = new ODataBatch(_serviceUri))
             {
                 var client = new ODataClient(batch);
                 await client.InsertEntryAsync("Products", new Entry() { { "UnitPrice", 10m } }, false);
                 await client.InsertEntryAsync("Products", new Entry() { { "UnitPrice", 20m } }, false);
-                Assert.Throws<WebRequestException>(() => batch.Complete());
+                await AssertThrowsAsync<WebRequestException>(async () => await batch.CompleteAsync());
             }
         }
 
         [Fact]
-        public void InsertUpdateDeleteSingleBatch()
+        public async Task InsertUpdateDeleteSingleBatch()
         {
             var key = new Entry() { { "ProductName", "Test11" } };
 
             using (var batch = new ODataBatch(_serviceUri))
             {
                 var client = new ODataClient(batch);
-                client.InsertEntry("Products", new Entry() { { "ProductName", "Test11" }, { "UnitPrice", 21m } }, false);
-                client.UpdateEntries("Products", "Products?$filter=ProductName eq 'Test11'", new Entry() { { "UnitPrice", 22m } });
-                client.DeleteEntries("Products", "Products?$filter=ProductName eq 'Test11'");
-                batch.Complete();
+                await client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test11" }, { "UnitPrice", 21m } }, false);
+                await client.UpdateEntriesAsync("Products", "Products?$filter=ProductName eq 'Test11'", new Entry() { { "UnitPrice", 22m } });
+                await client.DeleteEntriesAsync("Products", "Products?$filter=ProductName eq 'Test11'");
+                await batch.CompleteAsync();
             }
 
-            var product = _client.FindEntry("Products?$filter=ProductName eq 'Test11'");
+            var product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'Test11'");
             Assert.Equal(21m, product["UnitPrice"]);
         }
 
         [Fact]
-        public void InsertUpdateDeleteSeparateBatches()
+        public async Task InsertUpdateDeleteSeparateBatches()
         {
             using (var batch = new ODataBatch(_serviceUri))
             {
                 var client = new ODataClient(batch);
-                client.InsertEntry("Products", new Entry() { { "ProductName", "Test12" }, { "UnitPrice", 21m } }, false);
-                batch.Complete();
+                await client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test12" }, { "UnitPrice", 21m } }, false);
+                await batch.CompleteAsync();
             }
-            var product = _client.FindEntry("Products?$filter=ProductName eq 'Test12'");
+            var product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'Test12'");
             Assert.Equal(21m, product["UnitPrice"]);
             var key = new Entry() { { "ProductID", product["ProductID"] } };
 
             using (var batch = new ODataBatch(_serviceUri))
             {
                 var client = new ODataClient(batch);
-                client.UpdateEntry("Products", key, new Entry() { { "UnitPrice", 22m } });
-                batch.Complete();
+                await client.UpdateEntryAsync("Products", key, new Entry() { { "UnitPrice", 22m } });
+                await batch.CompleteAsync();
             }
-            product = _client.FindEntry("Products?$filter=ProductName eq 'Test12'");
+            product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'Test12'");
             Assert.Equal(22m, product["UnitPrice"]);
 
             using (var batch = new ODataBatch(_serviceUri))
             {
                 var client = new ODataClient(batch);
-                client.DeleteEntry("Products", key);
-                batch.Complete();
+                await client.DeleteEntryAsync("Products", key);
+                await batch.CompleteAsync();
             }
-            product = _client.FindEntry("Products?$filter=ProductName eq 'Test12'");
+            product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'Test12'");
             Assert.Null(product);
         }
 
         [Fact]
-        public void InsertSingleEntityWithSingleAssociationSingleBatch()
+        public async Task InsertSingleEntityWithSingleAssociationSingleBatch()
         {
             IDictionary<string, object> category;
             using (var batch = new ODataBatch(_serviceUri))
             {
                 var client = new ODataClient(batch);
-                category = client.InsertEntry("Categories", new Entry() { { "CategoryName", "Test13" } });
-                client.InsertEntry("Products", new Entry() { { "ProductName", "Test14" }, { "UnitPrice", 21m }, { "Category", category } }, false);
-                batch.Complete();
+                category = await client.InsertEntryAsync("Categories", new Entry() { { "CategoryName", "Test13" } });
+                client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test14" }, { "UnitPrice", 21m }, { "Category", category } }, false);
+                await batch.CompleteAsync();
             }
 
-            var product = _client
+            var product = await _client
                 .For("Products")
                 .Expand("Category")
                 .Filter("ProductName eq 'Test14'")
-                .FindEntry();
+                .FindEntryAsync();
             Assert.Equal("Test13", (product["Category"] as IDictionary<string, object>)["CategoryName"]);
         }
 
         [Fact]
-        public void InsertSingleEntityWithMultipleAssociationsSingleBatch()
+        public async Task InsertSingleEntityWithMultipleAssociationsSingleBatch()
         {
             IDictionary<string, object> category;
             using (var batch = new ODataBatch(_serviceUri))
             {
                 var client = new ODataClient(batch);
-                var product1 = client.InsertEntry("Products", new Entry() { { "ProductName", "Test15" }, { "UnitPrice", 21m } });
-                var product2 = client.InsertEntry("Products", new Entry() { { "ProductName", "Test16" }, { "UnitPrice", 22m } });
-                client.InsertEntry("Categories", new Entry() { { "CategoryName", "Test17" }, { "Products", new[] { product1, product2 } } }, false);
-                batch.Complete();
+                var product1 = await client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test15" }, { "UnitPrice", 21m } });
+                var product2 = await client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test16" }, { "UnitPrice", 22m } });
+                await client.InsertEntryAsync("Categories", new Entry() { { "CategoryName", "Test17" }, { "Products", new[] { product1, product2 } } }, false);
+                await batch.CompleteAsync();
             }
 
-            category = _client
+            category = await _client
                 .For("Categories")
                 .Expand("Products")
                 .Filter("CategoryName eq 'Test17'")
-                .FindEntry();
+                .FindEntryAsync();
             Assert.Equal(2, (category["Products"] as IEnumerable<object>).Count());
         }
     }

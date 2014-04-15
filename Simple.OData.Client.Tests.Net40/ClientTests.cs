@@ -1,6 +1,8 @@
 using System;
 using System.Linq;
 using System.Net.Http;
+using System.Threading.Tasks;
+using Simple.OData.Client.Extensions;
 using Xunit;
 
 namespace Simple.OData.Client.Tests
@@ -10,78 +12,94 @@ namespace Simple.OData.Client.Tests
     public class ClientTests : TestBase
     {
         [Fact]
-        public void FindEntries()
+        public async Task FindEntries()
         {
-            var products = _client.FindEntries("Products");
+            var products = await _client.FindEntriesAsync("Products");
             Assert.True(products.Count() > 0);
         }
 
         [Fact]
-        public void FindEntriesNonExisting()
+        public async Task FindEntriesNonExisting()
         {
-            var products = _client.FindEntries("Products?$filter=ProductID eq -1");
+            var products = await _client.FindEntriesAsync("Products?$filter=ProductID eq -1");
             Assert.True(products.Count() == 0);
         }
 
         [Fact]
-        public void FindEntriesNonExistingLong()
+        public async Task FindEntriesNonExistingLong()
         {
-            var products = _client.FindEntries("Products?$filter=ProductID eq 999999999999L");
+            var products = await _client.FindEntriesAsync("Products?$filter=ProductID eq 999999999999L");
             Assert.True(products.Count() == 0);
         }
 
         [Fact]
-        public void FindEntryExisting()
+        public async Task FindEntriesWithSelect()
         {
-            var product = _client.FindEntry("Products?$filter=ProductName eq 'Chai'");
+            var products = await _client.For("Products").Select("ProductName").FindEntriesAsync();
+            Assert.Equal(1, products.First().Count);
+            Assert.Equal("ProductName", products.First().First().Key);
+        }
+
+        [Fact]
+        public async Task FindEntriesWithSelectHomogenize()
+        {
+            var products = await _client.For("Products").Select("Product_Name").FindEntriesAsync();
+            Assert.Equal(1, products.First().Count);
+            Assert.Equal("ProductName", products.First().First().Key);
+        }
+
+        [Fact]
+        public async Task FindEntryExisting()
+        {
+            var product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'Chai'");
             Assert.Equal("Chai", product["ProductName"]);
         }
 
         [Fact]
-        public void FindEntryNonExisting()
+        public async Task FindEntryNonExisting()
         {
-            var product = _client.FindEntry("Products?$filter=ProductName eq 'XYZ'");
+            var product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'XYZ'");
             Assert.Null(product);
         }
 
         [Fact]
-        public void FindEntryNuGetV1()
+        public async Task FindEntryNuGetV1()
         {
             var client = new ODataClient("http://nuget.org/api/v1");
-            var package = client.FindEntry("Packages?$filter=Title eq 'EntityFramework'");
+            var package = await client.FindEntryAsync("Packages?$filter=Title eq 'EntityFramework'");
             Assert.NotNull(package["Id"]);
         }
 
         [Fact]
-        public void FindEntryNuGetV2()
+        public async Task FindEntryNuGetV2()
         {
             var client = new ODataClient("http://nuget.org/api/v2");
-            var package = client.FindEntry("Packages?$filter=Title eq 'EntityFramework'");
+            var package = await client.FindEntryAsync("Packages?$filter=Title eq 'EntityFramework'");
             Assert.NotNull(package["Id"]);
         }
 
         [Fact]
-        public void GetEntryExisting()
+        public async Task GetEntryExisting()
         {
-            var product = _client.GetEntry("Products", new Entry() { { "ProductID", 1 } });
+            var product = await _client.GetEntryAsync("Products", new Entry() { { "ProductID", 1 } });
             Assert.Equal("Chai", product["ProductName"]);
         }
 
         [Fact]
-        public void GetEntryExistingCompoundKey()
+        public async Task GetEntryExistingCompoundKey()
         {
-            var orderDetail = _client.GetEntry("OrderDetails", new Entry() { { "OrderID", 10248 }, { "ProductID", 11 } });
+            var orderDetail = await _client.GetEntryAsync("OrderDetails", new Entry() { { "OrderID", 10248 }, { "ProductID", 11 } });
             Assert.Equal(11, orderDetail["ProductID"]);
         }
 
         [Fact]
-        public void GetEntryNonExisting()
+        public async Task GetEntryNonExisting()
         {
-            Assert.Throws<WebRequestException>(() => _client.GetEntry("Products", new Entry() { { "ProductID", -1 } }));
+            await AssertThrowsAsync<WebRequestException>(async () => await _client.GetEntryAsync("Products", new Entry() { { "ProductID", -1 } }));
         }
 
         [Fact]
-        public void GetEntryNonExistingIgnoreException()
+        public async Task GetEntryNonExistingIgnoreException()
         {
             var settings = new ODataClientSettings
             {
@@ -89,68 +107,68 @@ namespace Simple.OData.Client.Tests
                 IgnoreResourceNotFoundException = true,
             };
             var client = new ODataClient(settings);
-            var product = client.GetEntry("Products", new Entry() {{"ProductID", -1}});
+            var product = await client.GetEntryAsync("Products", new Entry() {{"ProductID", -1}});
 
             Assert.Null(product);
         }
 
         [Fact]
-        public void InsertEntryWithResult()
+        public async Task InsertEntryWithResult()
         {
-            var product = _client.InsertEntry("Products", new Entry() { { "ProductName", "Test1" }, { "UnitPrice", 18m } }, true);
+            var product = await _client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test1" }, { "UnitPrice", 18m } }, true);
 
             Assert.Equal("Test1", product["ProductName"]);
         }
 
         [Fact]
-        public void InsertEntryNoResult()
+        public async Task InsertEntryNoResult()
         {
-            var product = _client.InsertEntry("Products", new Entry() { { "ProductName", "Test2" }, { "UnitPrice", 18m } }, false);
+            var product = await _client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test2" }, { "UnitPrice", 18m } }, false);
 
             Assert.Null(product);
         }
 
         [Fact]
-        public void InsertEntrySubcollection()
+        public async Task InsertEntrySubcollection()
         {
-            var ship = _client.InsertEntry("Transport/Ships", new Entry() { { "ShipName", "Test1" } }, true);
+            var ship = await _client.InsertEntryAsync("Transport/Ships", new Entry() { { "ShipName", "Test1" } }, true);
 
             Assert.Equal("Test1", ship["ShipName"]);
         }
 
         [Fact]
-        public void UpdateEntryWithResult()
+        public async Task UpdateEntryWithResult()
         {
             var key = new Entry() { { "ProductID", 1 } };
-            var product = _client.UpdateEntry("Products", key, new Entry() { { "ProductName", "Chai" }, { "UnitPrice", 123m } }, true);
+            var product = await _client.UpdateEntryAsync("Products", key, new Entry() { { "ProductName", "Chai" }, { "UnitPrice", 123m } }, true);
 
             Assert.Equal(123m, product["UnitPrice"]);
         }
 
         [Fact]
-        public void UpdateEntryNoResult()
+        public async Task UpdateEntryNoResult()
         {
             var key = new Entry() { { "ProductID", 1 } };
-            var product = _client.UpdateEntry("Products", key, new Entry() { { "ProductName", "Chai" }, { "UnitPrice", 123m } }, false);
+            var product = await _client.UpdateEntryAsync("Products", key, new Entry() { { "ProductName", "Chai" }, { "UnitPrice", 123m } }, false);
             Assert.Null(product);
 
-            product = _client.GetEntry("Products", key);
+            product = await _client.GetEntryAsync("Products", key);
             Assert.Equal(123m, product["UnitPrice"]);
         }
 
         [Fact]
-        public void UpdateEntrySubcollection()
+        public async Task UpdateEntrySubcollection()
         {
-            var ship = _client.InsertEntry("Transport/Ships", new Entry() { { "ShipName", "Test1" } }, true);
+            var ship = await _client.InsertEntryAsync("Transport/Ships", new Entry() { { "ShipName", "Test1" } }, true);
             var key = new Entry() { { "TransportID", ship["TransportID"] } };
-            _client.UpdateEntry("Transport/Ships", key, new Entry() { { "ShipName", "Test2" } });
+            await _client.UpdateEntryAsync("Transport/Ships", key, new Entry() { { "ShipName", "Test2" } });
 
-            ship = _client.GetEntry("Transport", key);
+            ship = await _client.GetEntryAsync("Transport", key);
             Assert.Equal("Test2", ship["ShipName"]);
         }
 
         [Fact]
-        public void UpdateEntrySubcollectionWithResourceType()
+        public async Task UpdateEntrySubcollectionWithResourceType()
         {
             var clientSettings = new ODataClientSettings
             {
@@ -158,42 +176,42 @@ namespace Simple.OData.Client.Tests
                 IncludeResourceTypeInEntryProperties = true,
             };
             var client = new ODataClient(clientSettings);
-            var ship = client.InsertEntry("Transport/Ships", new Entry() { { "ShipName", "Test1" } }, true);
+            var ship = await client.InsertEntryAsync("Transport/Ships", new Entry() { { "ShipName", "Test1" } }, true);
             var key = new Entry() { { "TransportID", ship["TransportID"] } };
-            client.UpdateEntry("Transport/Ships", key, new Entry() { { "ShipName", "Test2" }, { FluentCommand.ResourceTypeLiteral, "Ships" } });
+            await client.UpdateEntryAsync("Transport/Ships", key, new Entry() { { "ShipName", "Test2" }, { FluentCommand.ResourceTypeLiteral, "Ships" } });
 
-            ship = client.GetEntry("Transport", key);
+            ship = await client.GetEntryAsync("Transport", key);
             Assert.Equal("Test2", ship["ShipName"]);
         }
 
         [Fact]
-        public void DeleteEntry()
+        public async Task DeleteEntry()
         {
-            var product = _client.InsertEntry("Products", new Entry() { { "ProductName", "Test3" }, { "UnitPrice", 18m } }, true);
-            product = _client.FindEntry("Products?$filter=ProductName eq 'Test3'");
+            var product = await _client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test3" }, { "UnitPrice", 18m } }, true);
+            product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'Test3'");
             Assert.NotNull(product);
 
-            _client.DeleteEntry("Products", product);
+            await _client.DeleteEntryAsync("Products", product);
 
-            product = _client.FindEntry("Products?$filter=ProductName eq 'Test3'");
+            product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'Test3'");
             Assert.Null(product);
         }
 
         [Fact]
-        public void DeleteEntrySubCollection()
+        public async Task DeleteEntrySubCollection()
         {
-            var ship = _client.InsertEntry("Transport/Ships", new Entry() { { "ShipName", "Test3" } }, true);
-            ship = _client.FindEntry("Transport?$filter=TransportID eq " + ship["TransportID"]);
+            var ship = await _client.InsertEntryAsync("Transport/Ships", new Entry() { { "ShipName", "Test3" } }, true);
+            ship = await _client.FindEntryAsync("Transport?$filter=TransportID eq " + ship["TransportID"]);
             Assert.NotNull(ship);
 
-            _client.DeleteEntry("Transport", ship);
+            await _client.DeleteEntryAsync("Transport", ship);
 
-            ship = _client.FindEntry("Transport?$filter=TransportID eq " + ship["TransportID"]);
+            ship = await _client.FindEntryAsync("Transport?$filter=TransportID eq " + ship["TransportID"]);
             Assert.Null(ship);
         }
 
         [Fact]
-        public void DeleteEntrySubCollectionWithResourceType()
+        public async Task DeleteEntrySubCollectionWithResourceType()
         {
             var clientSettings = new ODataClientSettings
             {
@@ -201,76 +219,76 @@ namespace Simple.OData.Client.Tests
                 IncludeResourceTypeInEntryProperties = true,
             };
             var client = new ODataClient(clientSettings);
-            var ship = client.InsertEntry("Transport/Ships", new Entry() { { "ShipName", "Test3" } }, true);
-            ship = client.FindEntry("Transport?$filter=TransportID eq " + ship["TransportID"]);
+            var ship = await client.InsertEntryAsync("Transport/Ships", new Entry() { { "ShipName", "Test3" } }, true);
+            ship = await client.FindEntryAsync("Transport?$filter=TransportID eq " + ship["TransportID"]);
             Assert.NotNull(ship);
 
-            client.DeleteEntry("Transport", ship);
+            await client.DeleteEntryAsync("Transport", ship);
 
-            ship = client.FindEntry("Transport?$filter=TransportID eq " + ship["TransportID"]);
+            ship = await client.FindEntryAsync("Transport?$filter=TransportID eq " + ship["TransportID"]);
             Assert.Null(ship);
         }
 
         [Fact]
-        public void LinkEntry()
+        public async Task LinkEntry()
         {
-            var category = _client.InsertEntry("Categories", new Entry() { { "CategoryName", "Test4" } }, true);
-            var product = _client.InsertEntry("Products", new Entry() { { "ProductName", "Test5" } }, true);
+            var category = await _client.InsertEntryAsync("Categories", new Entry() { { "CategoryName", "Test4" } }, true);
+            var product = await _client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test5" } }, true);
 
-            _client.LinkEntry("Products", product, "Category", category);
+            await _client.LinkEntryAsync("Products", product, "Category", category);
 
-            product = _client.FindEntry("Products?$filter=ProductName eq 'Test5'");
+            product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'Test5'");
             Assert.NotNull(product["CategoryID"]);
             Assert.Equal(category["CategoryID"], product["CategoryID"]);
         }
 
         [Fact]
-        public void UnlinkEntry()
+        public async Task UnlinkEntry()
         {
-            var category = _client.InsertEntry("Categories", new Entry() { { "CategoryName", "Test6" } }, true);
-            var product = _client.InsertEntry("Products", new Entry() { { "ProductName", "Test7" }, { "CategoryID", category["CategoryID"] } }, true);
-            product = _client.FindEntry("Products?$filter=ProductName eq 'Test7'");
+            var category = await _client.InsertEntryAsync("Categories", new Entry() { { "CategoryName", "Test6" } }, true);
+            var product = await _client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test7" }, { "CategoryID", category["CategoryID"] } }, true);
+            product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'Test7'");
             Assert.NotNull(product["CategoryID"]);
             Assert.Equal(category["CategoryID"], product["CategoryID"]);
 
-            _client.UnlinkEntry("Products", product, "Category");
+            await _client.UnlinkEntryAsync("Products", product, "Category");
 
-            product = _client.FindEntry("Products?$filter=ProductName eq 'Test7'");
+            product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'Test7'");
             Assert.Null(product["CategoryID"]);
         }
 
         [Fact]
-        public void ExecuteScalarFunctionWithStringParameter()
+        public async Task ExecuteScalarFunctionWithStringParameter()
         {
-            var result = _client.ExecuteFunctionAsScalar<int>("ParseInt", new Entry() { { "number", "1" } });
+            var result = await _client.ExecuteFunctionAsScalarAsync<int>("ParseInt", new Entry() { { "number", "1" } });
             Assert.Equal(1, result);
         }
 
         [Fact]
-        public void ExecuteScalarFunctionWithLongParameter()
+        public async Task ExecuteScalarFunctionWithLongParameter()
         {
-            var result = _client.ExecuteFunctionAsScalar<long>("PassThroughLong", new Entry() { { "number", 1L } });
+            var result = await _client.ExecuteFunctionAsScalarAsync<long>("PassThroughLong", new Entry() { { "number", 1L } });
             Assert.Equal(1L, result);
         }
 
         [Fact]
-        public void ExecuteScalarFunctionWithDateTimeParameter()
+        public async Task ExecuteScalarFunctionWithDateTimeParameter()
         {
             var dateTime = new DateTime(2013, 1, 1, 12, 13, 14);
-            var result = _client.ExecuteFunctionAsScalar<DateTime>("PassThroughDateTime", new Entry() { { "dateTime", dateTime } });
+            var result = await _client.ExecuteFunctionAsScalarAsync<DateTime>("PassThroughDateTime", new Entry() { { "dateTime", dateTime } });
             Assert.Equal(dateTime.ToLocalTime(), result);
         }
 
         [Fact]
-        public void ExecuteScalarFunctionWithGuidParameter()
+        public async Task ExecuteScalarFunctionWithGuidParameter()
         {
             var guid = Guid.NewGuid();
-            var result = _client.ExecuteFunctionAsScalar<Guid>("PassThroughGuid", new Entry() { { "guid", guid } });
+            var result = await _client.ExecuteFunctionAsScalarAsync<Guid>("PassThroughGuid", new Entry() { { "guid", guid } });
             Assert.Equal(guid, result);
         }
 
         [Fact]
-        public void InterceptRequest()
+        public async Task InterceptRequest()
         {
             var settings = new ODataClientSettings
                                {
@@ -278,11 +296,11 @@ namespace Simple.OData.Client.Tests
                                    BeforeRequest = x => x.Method = new HttpMethod("PUT"),
                                };
             var client = new ODataClient(settings);
-            Assert.Throws<WebRequestException>(() => client.FindEntries("Products"));
+            await AssertThrowsAsync<WebRequestException>(async () => await client.FindEntriesAsync("Products"));
         }
 
         [Fact]
-        public void InterceptResponse()
+        public async Task InterceptResponse()
         {
             var settings = new ODataClientSettings
             {
@@ -290,57 +308,57 @@ namespace Simple.OData.Client.Tests
                 AfterResponse = x => { throw new InvalidOperationException(); },
             };
             var client = new ODataClient(settings);
-            Assert.Throws<InvalidOperationException>(() => client.FindEntries("Products"));
+            await AssertThrowsAsync<InvalidOperationException>(async () => await client.FindEntriesAsync("Products"));
         }
 
         [Fact]
-        public void FindEntryExistingDynamicFilter()
+        public async Task FindEntryExistingDynamicFilter()
         {
             var x = ODataDynamic.Expression;
-            string filter = _client.GetCommandText("Products", x.ProductName == "Chai");
-            var product = _client.FindEntry(filter);
+            string filter = await (Task<string>)_client.GetCommandTextAsync("Products", x.ProductName == "Chai");
+            var product = await _client.FindEntryAsync(filter);
             Assert.Equal("Chai", product["ProductName"]);
         }
 
         [Fact]
-        public void FindBaseClassEntryDynamicFilter()
+        public async Task FindBaseClassEntryDynamicFilter()
         {
             var x = ODataDynamic.Expression;
-            string filter = _client.GetCommandText("Transport", x.TransportID == 1);
-            var ship = _client.FindEntry(filter);
+            string filter = await (Task<string>)_client.GetCommandTextAsync("Transport", x.TransportID == 1);
+            var ship = await _client.FindEntryAsync(filter);
             Assert.Equal("Titanic", ship["ShipName"]);
         }
 
         [Fact]
-        public void FindDerivedClassEntryDynamicFilter()
+        public async Task FindDerivedClassEntryDynamicFilter()
         {
             var x = ODataDynamic.Expression;
-            string filter = _client.GetCommandText("Transport/Ships", x.ShipName == "Titanic");
-            var ship = _client.FindEntry(filter);
+            string filter = await (Task<string>)_client.GetCommandTextAsync("Transport/Ships", x.ShipName == "Titanic");
+            var ship = await _client.FindEntryAsync(filter);
             Assert.Equal("Titanic", ship["ShipName"]);
         }
 
         [Fact]
-        public void FindEntryExistingTypedFilter()
+        public async Task FindEntryExistingTypedFilter()
         {
-            string filter = _client.GetCommandText<Product>("Products", x => x.ProductName == "Chai");
-            var product = _client.FindEntry(filter);
+            string filter = await _client.GetCommandTextAsync<Product>("Products", x => x.ProductName == "Chai");
+            var product = await _client.FindEntryAsync(filter);
             Assert.Equal("Chai", product["ProductName"]);
         }
 
         [Fact]
-        public void FindBaseClassEntryTypedFilter()
+        public async Task FindBaseClassEntryTypedFilter()
         {
-            string filter = _client.GetCommandText<Transport>("Transport", x => x.TransportID == 1);
-            var ship = _client.FindEntry(filter);
+            string filter = await _client.GetCommandTextAsync<Transport>("Transport", x => x.TransportID == 1);
+            var ship = await _client.FindEntryAsync(filter);
             Assert.Equal("Titanic", ship["ShipName"]);
         }
 
         [Fact]
-        public void FindDerivedClassEntryTypedFilter()
+        public async Task FindDerivedClassEntryTypedFilter()
         {
-            string filter = _client.GetCommandText<Ship>("Transport/Ships", x => x.ShipName == "Titanic");
-            var ship = _client.FindEntry(filter);
+            string filter = await _client.GetCommandTextAsync<Ship>("Transport/Ships", x => x.ShipName == "Titanic");
+            var ship = await _client.FindEntryAsync(filter);
             Assert.Equal("Titanic", ship["ShipName"]);
         }
     }

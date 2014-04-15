@@ -36,18 +36,6 @@ namespace Simple.OData.Client
             _active = false;
         }
 
-        public void Complete()
-        {
-            try
-            {
-                CompleteAsync().Wait();
-            }
-            catch (AggregateException exception)
-            {
-                throw exception.InnerException;
-            }
-        }
-
         public async Task CompleteAsync()
         {
             this.RequestBuilder.EndBatch();

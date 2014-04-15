@@ -1,268 +1,271 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Simple.OData.Client.Tests
 {
+#if !NET40
     public class UpdateDynamicTests : TestBase
     {
         [Fact]
-        public void UpdateByKey()
+        public async Task UpdateByKey()
         {
             var x = ODataDynamic.Expression;
-            var product = _client
+            var product = await _client
                 .For(x.Products)
                 .Set(x.ProductName = "Test1", x.UnitPrice = 18m)
-                .InsertEntry();
+                .InsertEntryAsync();
 
-            _client
+            await _client
                 .For(x.Products)
                 .Key(product.ProductID)
                 .Set(x.UnitPrice = 123m)
-                .UpdateEntry();
+                .UpdateEntryAsync();
 
-            product = _client
+            product = await _client
                 .For(x.Products)
                 .Filter(x.ProductName == "Test1")
-                .FindEntry();
+                .FindEntryAsync();
 
             Assert.Equal(123m, product.UnitPrice);
         }
 
         [Fact]
-        public void UpdateByFilter()
+        public async Task UpdateByFilter()
         {
             var x = ODataDynamic.Expression;
-            var product = _client
+            var product = await _client
                 .For(x.Products)
                 .Set(x.ProductName = "Test1", x.UnitPrice = 18m)
-                .InsertEntry();
+                .InsertEntryAsync();
 
-            _client
+            await _client
                 .For(x.Products)
                 .Filter(x.ProductName == "Test1")
                 .Set(x.UnitPrice = 123m)
-                .UpdateEntry();
+                .UpdateEntryAsync();
 
-            product = _client
+            product = await _client
                 .For(x.Products)
                 .Filter(x.ProductName == "Test1")
-                .FindEntry();
+                .FindEntryAsync();
 
             Assert.Equal(123m, product.UnitPrice);
         }
 
         [Fact]
-        public void UpdateMultipleWithResult()
+        public async Task UpdateMultipleWithResult()
         {
             var x = ODataDynamic.Expression;
-            var product = _client
+            var product = await _client
                 .For(x.Products)
                 .Set(x.ProductName = "Test1", x.UnitPrice = 18m)
-                .InsertEntry();
+                .InsertEntryAsync();
 
-            product = (_client
+            product = (await _client
                 .For(x.Products)
                 .Filter(x.ProductName == "Test1")
                 .Set(x.UnitPrice = 123m)
-                .UpdateEntries() as IEnumerable<dynamic>).Single();
+                .UpdateEntriesAsync() as IEnumerable<dynamic>).Single();
 
             Assert.Equal(123m, product.UnitPrice);
         }
 
         [Fact]
-        public void UpdateMultipleNoResult()
+        public async Task UpdateMultipleNoResult()
         {
             var x = ODataDynamic.Expression;
-            var product = _client
+            var product = await _client
                 .For(x.Products)
                 .Set(x.ProductName = "Test1", x.UnitPrice = 18m)
-                .InsertEntry();
+                .InsertEntryAsync();
 
-            product = (_client
+            product = (await _client
                 .For(x.Products)
                 .Filter(x.ProductName == "Test1")
                 .Set(x.UnitPrice = 123m)
-                .UpdateEntries(false) as IEnumerable<dynamic>).Single();
+                .UpdateEntriesAsync(false) as IEnumerable<dynamic>).Single();
             Assert.Null(product);
 
-            product = _client
+            product = await _client
                 .For(x.Products)
                 .Filter(x.ProductName == "Test1")
-                .FindEntry();
+                .FindEntryAsync();
 
             Assert.Equal(123m, product.UnitPrice);
         }
 
         [Fact]
-        public void UpdateByObjectAsKey()
+        public async Task UpdateByObjectAsKey()
         {
             var x = ODataDynamic.Expression;
-            var product = _client
+            var product = await _client
                 .For(x.Products)
                 .Set(x.ProductName = "Test1", x.UnitPrice = 18m)
-                .InsertEntry();
+                .InsertEntryAsync();
 
-            _client
+            await _client
                 .For(x.Products)
                 .Key(product)
                 .Set(x.UnitPrice = 456m)
-                .UpdateEntry();
+                .UpdateEntryAsync();
 
-            product = _client
+            product = await _client
                 .For(x.Products)
                 .Filter(x.ProductName == "Test1")
-                .FindEntry();
+                .FindEntryAsync();
 
             Assert.Equal(456m, product.UnitPrice);
         }
 
         [Fact]
-        public void UpdateDate()
+        public async Task UpdateDate()
         {
             var x = ODataDynamic.Expression;
             var today = DateTime.Now.Date;
             var tomorrow = today.AddDays(1);
 
-            var employee = _client
+            var employee = await _client
                 .For(x.Employees)
                 .Set(x.FirstName = "Test1", x.LastName = "Test1", x.HireDate = today)
-                .InsertEntry();
+                .InsertEntryAsync();
 
-            _client
+            await _client
                 .For(x.Employees)
                 .Key(employee.EmployeeID)
                 .Set(x.HireDate = tomorrow)
-                .UpdateEntry();
+                .UpdateEntryAsync();
 
-            employee = _client
+            employee = await _client
                 .For(x.Employees)
                 .Key(employee.EmployeeID)
-                .FindEntry();
+                .FindEntryAsync();
 
             Assert.Equal(tomorrow, employee.HireDate);
         }
 
         [Fact]
-        public void AddSingleAssociation()
+        public async Task AddSingleAssociation()
         {
             var x = ODataDynamic.Expression;
-            var category = _client
+            var category = await _client
                 .For(x.Categories)
                 .Set(x.CategoryName = "Test1")
-                .InsertEntry();
-            var product = _client
+                .InsertEntryAsync();
+            var product = await _client
                 .For(x.Products)
                 .Set(x.ProductName = "Test2", x.UnitPrice = 18m)
-                .InsertEntry();
+                .InsertEntryAsync();
 
-            _client
+            await _client
                 .For(x.Products)
                 .Key(product.ProductID)
                 .Set(x.Category = category)
-                .UpdateEntry();
+                .UpdateEntryAsync();
 
-            product = _client
+            product = await _client
                 .For(x.Products)
                 .Filter(x.ProductID == product.ProductID)
-                .FindEntry();
+                .FindEntryAsync();
             Assert.Equal(category.CategoryID, product.CategoryID);
-            category = _client
+            category = await _client
                 .For(x.Categories)
                 .Filter(x.CategoryID == category.CategoryID)
                 .Expand(x.Products)
-                .FindEntry();
+                .FindEntryAsync();
             Assert.Equal(1, (category.Products as IEnumerable<dynamic>).Count());
         }
 
         [Fact]
-        public void UpdateSingleAssociation()
+        public async Task UpdateSingleAssociation()
         {
             var x = ODataDynamic.Expression;
-            var category = _client
+            var category = await _client
                 .For(x.Categories)
                 .Set(x.CategoryName = "Test1")
-                .InsertEntry();
-            var product = _client
+                .InsertEntryAsync();
+            var product = await _client
                 .For(x.Products)
                 .Set(x.ProductName = "Test2", x.UnitPrice = 18m, x.CategoryID = 1)
-                .InsertEntry();
+                .InsertEntryAsync();
 
-            _client
+            await _client
                 .For(x.Products)
                 .Key(product.ProductID)
                 .Set(x.Category = category)
-                .UpdateEntry();
+                .UpdateEntryAsync();
 
-            product = _client
+            product = await _client
                 .For(x.Products)
                 .Filter(x.ProductID == product.ProductID)
-                .FindEntry();
+                .FindEntryAsync();
             Assert.Equal(category.CategoryID, product.CategoryID);
-            category = _client
+            category = await _client
                 .For(x.Categories)
                 .Filter(x.CategoryID == category.CategoryID)
                 .Expand(x.Products)
-                .FindEntry();
+                .FindEntryAsync();
             Assert.Equal(1, (category.Products as IEnumerable<dynamic>).Count());
         }
 
         [Fact]
-        public void RemoveSingleAssociation()
+        public async Task RemoveSingleAssociation()
         {
             var x = ODataDynamic.Expression;
-            var category = _client
+            var category = await _client
                 .For(x.Categories)
                 .Set(x.CategoryName = "Test6")
-                .InsertEntry();
-            var product = _client
+                .InsertEntryAsync();
+            var product = await _client
                 .For(x.Products)
                 .Set(x.ProductName = "Test7", x.UnitPrice = 18m, x.Category = category)
-                .InsertEntry();
+                .InsertEntryAsync();
 
-            _client
+            await _client
                 .For(x.Products)
                 .Key(product.ProductID)
                 .Set(x.Category = null)
-                .UpdateEntry();
+                .UpdateEntryAsync();
 
-            product = _client
+            product = await _client
                 .For(x.Products)
                 .Filter(x.ProductID == product.ProductID)
-                .FindEntry();
+                .FindEntryAsync();
             Assert.Null(product.CategoryID);
         }
 
         [Fact]
-        public void UpdateMultipleAssociations()
+        public async Task UpdateMultipleAssociations()
         {
             var x = ODataDynamic.Expression;
-            var category = _client
+            var category = await _client
                 .For(x.Categories)
                 .Set(x.CategoryName = "Test3")
-                .InsertEntry();
-            var product1 = _client
+                .InsertEntryAsync();
+            var product1 = await _client
                 .For(x.Products)
                 .Set(x.ProductName = "Test4", x.UnitPrice = 18m, x.CategoryID = 1)
-                .InsertEntry();
-            var product2 = _client
+                .InsertEntryAsync();
+            var product2 = await _client
                 .For(x.Products)
                 .Set(x.ProductName = "Test5", x.UnitPrice = 18m, x.CategoryID = 1)
-                .InsertEntry();
+                .InsertEntryAsync();
 
-            _client
+            await _client
                 .For(x.Categories)
                 .Key(category.CategoryID)
                 .Set(x.Products = new[] { product1, product2 })
-                .UpdateEntry();
+                .UpdateEntryAsync();
 
-            category = _client
+            category = await _client
                 .For(x.Categories)
                 .Filter(x.CategoryID == category.CategoryID)
                 .Expand(x.Products)
-                .FindEntry();
+                .FindEntryAsync();
             Assert.Equal(2, (category.Products as IEnumerable<dynamic>).Count());
         }
     }
+#endif
 }

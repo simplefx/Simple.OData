@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Simple.OData.Client.Tests
@@ -8,55 +9,55 @@ namespace Simple.OData.Client.Tests
     public class FindTypedTests : TestBase
     {
         [Fact]
-        public void SingleCondition()
+        public async Task SingleCondition()
         {
-            var product = _client
+            var product = await _client
                 .For<Product>()
                 .Filter(x => x.ProductName == "Chai")
-                .FindEntry();
+                .FindEntryAsync();
             Assert.Equal("Chai", product.ProductName);
         }
 
         [Fact]
-        public void SingleConditionWithLocalVariable()
+        public async Task SingleConditionWithLocalVariable()
         {
             var productName = "Chai";
-            var product = _client
+            var product = await _client
                 .For<Product>()
                 .Filter(x => x.ProductName == productName)
-                .FindEntry();
+                .FindEntryAsync();
             Assert.Equal("Chai", product.ProductName);
         }
 
         [Fact]
-        public void SingleConditionWithMemberVariable()
+        public async Task SingleConditionWithMemberVariable()
         {
             var productName = "Chai";
-            var product = _client
+            var product = await _client
                 .For<Product>()
                 .Filter(x => x.ProductName == productName)
-                .FindEntry();
-            var sameProduct = _client
+                .FindEntryAsync();
+            var sameProduct = await _client
                 .For<Product>()
                 .Filter(x => x.ProductName != product.ProductName)
-                .FindEntry();
+                .FindEntryAsync();
             Assert.NotEqual(product.ProductName, sameProduct.ProductName);
         }
 
         [Fact]
-        public void CombinedConditions()
+        public async Task CombinedConditions()
         {
-            var product = _client
+            var product = await _client
                 .For<Employee>()
                 .Filter(x => x.FirstName == "Nancy" && x.HireDate < DateTime.Now)
-                .FindEntry();
+                .FindEntryAsync();
             Assert.Equal("Davolio", product.LastName);
         }
 
         [Fact]
-        public void CombineAll()
+        public async Task CombineAll()
         {
-            var product = _client
+            var product = (await _client
                 .For<Product>()
                 .OrderBy(x => x.ProductName)
                 .ThenByDescending(x => x.UnitPrice)
@@ -64,14 +65,14 @@ namespace Simple.OData.Client.Tests
                 .Top(1)
                 .Expand(x => x.Category)
                 .Select(x => x.Category)
-                .FindEntries().Single();
+                .FindEntriesAsync()).Single();
             Assert.Equal("Seafood", product.Category.CategoryName);
         }
 
         [Fact]
-        public void CombineAllReverse()
+        public async Task CombineAllReverse()
         {
-            var product = _client
+            var product = (await _client
                 .For<Product>()
                 .Select(x => x.Category)
                 .Expand(x => x.Category)
@@ -79,239 +80,239 @@ namespace Simple.OData.Client.Tests
                 .Skip(2)
                 .OrderBy(x => x.ProductName)
                 .ThenByDescending(x => x.UnitPrice)
-                .FindEntries().Single();
+                .FindEntriesAsync()).Single();
             Assert.Equal("Seafood", product.Category.CategoryName);
         }
 
         [Fact]
-        public void StringContains()
+        public async Task StringContains()
         {
-            var products = _client
+            var products = await _client
                 .For<Product>()
                 .Filter(x => x.ProductName.Contains("ai"))
-                .FindEntries();
+                .FindEntriesAsync();
             Assert.Equal("Chai", products.Single().ProductName);
         }
 
         [Fact]
-        public void StringContainsWithLocalVariable()
+        public async Task StringContainsWithLocalVariable()
         {
             var text = "ai";
-            var products = _client
+            var products = await _client
                 .For<Product>()
                 .Filter(x => x.ProductName.Contains(text))
-                .FindEntries();
+                .FindEntriesAsync();
             Assert.Equal("Chai", products.Single().ProductName);
         }
 
         [Fact]
-        public void StringNotContains()
+        public async Task StringNotContains()
         {
-            var products = _client
+            var products = await _client
                 .For<Product>()
                 .Filter(x => !x.ProductName.Contains("ai"))
-                .FindEntries();
+                .FindEntriesAsync();
             Assert.NotEqual("Chai", products.First().ProductName);
         }
 
         [Fact]
-        public void StringStartsWith()
+        public async Task StringStartsWith()
         {
-            var products = _client
+            var products = await _client
                 .For<Product>()
                 .Filter(x => x.ProductName.StartsWith("Ch"))
-                .FindEntries();
+                .FindEntriesAsync();
             Assert.Equal("Chai", products.First().ProductName);
         }
 
         [Fact]
-        public void LengthOfStringEqual()
+        public async Task LengthOfStringEqual()
         {
-            var products = _client
+            var products = await _client
                 .For<Product>()
                 .Filter(x => x.ProductName.Length == 4)
-                .FindEntries();
+                .FindEntriesAsync();
             Assert.Equal("Chai", products.First().ProductName);
         }
 
         [Fact]
-        public void SubstringWithPositionAndLengthEqual()
+        public async Task SubstringWithPositionAndLengthEqual()
         {
-            var products = _client
+            var products = await _client
                 .For<Product>()
                 .Filter(x => x.ProductName.Substring(1, 2) == "ha")
-                .FindEntries();
+                .FindEntriesAsync();
             Assert.Equal("Chai", products.First().ProductName);
         }
 
         [Fact]
-        public void SubstringWithPositionAndLengthEqualWithLocalVariable()
+        public async Task SubstringWithPositionAndLengthEqualWithLocalVariable()
         {
             var text = "ha";
-            var products = _client
+            var products = await _client
                 .For<Product>()
                 .Filter(x => x.ProductName.Substring(1, 2) == text)
-                .FindEntries();
+                .FindEntriesAsync();
             Assert.Equal("Chai", products.First().ProductName);
         }
 
         [Fact]
-        public void TopOne()
+        public async Task TopOne()
         {
-            var products = _client
+            var products = await _client
                 .For<Product>()
                 .Filter(x => x.ProductName == "Chai")
                 .Top(1)
-                .FindEntries();
+                .FindEntriesAsync();
             Assert.Equal(1, products.Count());
         }
 
         [Fact]
-        public void Count()
+        public async Task Count()
         {
-            var count = _client
+            var count = await _client
                 .For<Product>()
                 .Filter(x => x.ProductName == "Chai")
                 .Count()
-                .FindScalar();
+                .FindScalarAsync();
             Assert.Equal(1, int.Parse(count.ToString()));
         }
 
         [Fact]
-        public void Get()
+        public async Task Get()
         {
-            var category = _client
+            var category = await _client
                 .For<Category>()
                 .Key(1)
-                .FindEntry();
+                .FindEntryAsync();
             Assert.Equal(1, category.CategoryID);
         }
 
         [Fact]
-        public void GetNonExisting()
+        public async Task GetNonExisting()
         {
-            Assert.Throws<WebRequestException>(() => _client
+            await AssertThrowsAsync<WebRequestException>(async () => await _client
                 .For<Category>()
                 .Key(-1)
-                .FindEntry());
+                .FindEntryAsync());
         }
 
         [Fact]
-        public void SelectSingle()
+        public async Task SelectSingle()
         {
-            var product = _client
+            var product = await _client
                 .For<Product>()
                 .Filter(x => x.ProductName == "Chai")
                 .Select(x => x.ProductName)
-                .FindEntry();
+                .FindEntryAsync();
             Assert.Equal("Chai", product.ProductName);
         }
 
         [Fact]
-        public void SelectMultiple()
+        public async Task SelectMultiple()
         {
-            var product = _client
+            var product = await _client
                 .For<Product>()
                 .Filter(x => x.ProductName == "Chai")
                 .Select(x => new { x.ProductID, x.ProductName })
-                .FindEntry();
+                .FindEntryAsync();
             Assert.Equal("Chai", product.ProductName);
         }
 
         [Fact]
-        public void OrderBySingle()
+        public async Task OrderBySingle()
         {
-            var product = _client
+            var product = await _client
                 .For<Product>()
                 .Filter(x => x.ProductName == "Chai")
                 .OrderBy(x => x.ProductName)
-                .FindEntry();
+                .FindEntryAsync();
             Assert.Equal("Chai", product.ProductName);
         }
 
         [Fact]
-        public void OrderByMultiple()
+        public async Task OrderByMultiple()
         {
-            var product = _client
+            var product = await _client
                 .For<Product>()
                 .Filter(x => x.ProductName == "Chai")
                 .OrderBy(x => new { x.ProductID, x.ProductName })
-                .FindEntry();
+                .FindEntryAsync();
             Assert.Equal("Chai", product.ProductName);
         }
 
         [Fact]
-        public void NavigateToSingle()
+        public async Task NavigateToSingle()
         {
-            var category = _client
+            var category = await _client
                 .For<Product>()
                 .Key(new { ProductID = 2 })
                 .NavigateTo<Category>()
-                .FindEntry();
+                .FindEntryAsync();
             Assert.Equal("Beverages", category.CategoryName);
         }
 
         [Fact]
-        public void NavigateToSingleByExpression()
+        public async Task NavigateToSingleByExpression()
         {
-            var category = _client
+            var category = await _client
                 .For<Product>()
                 .Key(new { ProductID = 2 })
                 .NavigateTo(x => x.Category)
-                .FindEntry();
+                .FindEntryAsync();
             Assert.Equal("Beverages", category.CategoryName);
         }
 
         [Fact]
-        public void NavigateToMultiple()
+        public async Task NavigateToMultiple()
         {
-            var products = _client
+            var products = await _client
                 .For<Category>()
                 .Key(2)
                 .NavigateTo<Product>()
-                .FindEntries();
+                .FindEntriesAsync();
             Assert.Equal(12, products.Count());
         }
 
         [Fact]
-        public void NavigateToRecursive()
+        public async Task NavigateToRecursive()
         {
-            var employee = _client
+            var employee = await _client
                 .For<Employee>()
                 .Key(14)
                 .NavigateTo<Employee>("Superior")
                 .NavigateTo<Employee>("Superior")
                 .NavigateTo<Employee>("Subordinates")
                 .Key(3)
-                .FindEntry();
+                .FindEntryAsync();
             Assert.Equal("Janet", employee.FirstName);
         }
 
         [Fact]
-        public void NavigateToRecursiveByExpression()
+        public async Task NavigateToRecursiveByExpression()
         {
-            var employee = _client
+            var employee = await _client
                 .For<Employee>()
                 .Key(14)
                 .NavigateTo(x => x.Superior)
                 .NavigateTo(x => x.Superior)
                 .NavigateTo(x => x.Subordinates)
                 .Key(3)
-                .FindEntry();
+                .FindEntryAsync();
             Assert.Equal("Janet", employee.FirstName);
         }
 
         [Fact]
-        public void BaseClassEntries()
+        public async Task BaseClassEntries()
         {
-            var transport = _client
+            var transport = await _client
                 .For<Transport>()
-                .FindEntries();
+                .FindEntriesAsync();
             Assert.Equal(2, transport.Count());
         }
 
         [Fact]
-        public void BaseClassEntriesWithResourceTypes()
+        public async Task BaseClassEntriesWithResourceTypes()
         {
             var clientSettings = new ODataClientSettings
             {
@@ -319,24 +320,24 @@ namespace Simple.OData.Client.Tests
                 IncludeResourceTypeInEntryProperties = true,
             };
             var client = new ODataClient(clientSettings);
-            var transport = client
+            var transport = await client
                 .For<Transport>()
-                .FindEntries();
+                .FindEntriesAsync();
             Assert.Equal(2, transport.Count());
         }
 
         [Fact]
-        public void AllDerivedClassEntries()
+        public async Task AllDerivedClassEntries()
         {
-            var transport = _client
+            var transport = await _client
                 .For<Transport>()
                 .As<Ship>()
-                .FindEntries();
+                .FindEntriesAsync();
             Assert.Equal("Titanic", transport.Single().ShipName);
         }
 
         [Fact]
-        public void AllDerivedClassEntriesWithResourceTypes()
+        public async Task AllDerivedClassEntriesWithResourceTypes()
         {
             var clientSettings = new ODataClientSettings
             {
@@ -344,32 +345,32 @@ namespace Simple.OData.Client.Tests
                 IncludeResourceTypeInEntryProperties = true,
             };
             var client = new ODataClient(clientSettings);
-            var transport = client
+            var transport = await client
                 .For<Transport>()
                 .As<Ship>()
-                .FindEntries();
+                .FindEntriesAsync();
             Assert.Equal("Titanic", transport.Single().ShipName);
         }
 
         [Fact]
-        public void DerivedClassEntry()
+        public async Task DerivedClassEntry()
         {
-            var transport = _client
+            var transport = await _client
                 .For<Transport>()
                 .As<Ship>()
                 .Filter(x => x.ShipName == "Titanic")
-                .FindEntry();
+                .FindEntryAsync();
             Assert.Equal("Titanic", transport.ShipName);
         }
 
         [Fact]
-        public void DerivedClassEntryBaseAndDerivedFields()
+        public async Task DerivedClassEntryBaseAndDerivedFields()
         {
-            var transport = _client
+            var transport = await _client
                 .For<Transport>()
                 .As<Ship>()
                 .Filter(x => x.TransportID == 1 && x.ShipName == "Titanic")
-                .FindEntry();
+                .FindEntryAsync();
             Assert.Equal("Titanic", transport.ShipName);
         }
 
@@ -380,13 +381,13 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public void TypedCombinedConditionsFromODataOrg()
+        public async Task TypedCombinedConditionsFromODataOrg()
         {
             var client = new ODataClient("http://services.odata.org/V2/OData/OData.svc/");
-            var product = client
+            var product = await client
                 .For<ODataOrgProduct>("Product")
                 .Filter(x => x.Name == "Bread" && x.Price < 1000)
-                .FindEntry();
+                .FindEntryAsync();
             Assert.Equal(2.5m, product.Price);
         }
     }

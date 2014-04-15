@@ -213,9 +213,6 @@
     <Compile Include="..\Simple.OData.Client.Core\Fluent\FluentClient.cs">
       <Link>Fluent\FluentClient.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Fluent\FluentClient.Sync.cs">
-      <Link>Fluent\FluentClient.Sync.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Fluent\FluentCommand.cs">
       <Link>Fluent\FluentCommand.cs</Link>
     </Compile>
@@ -275,9 +272,6 @@
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ODataClient.Internals.cs">
       <Link>ODataClient.Internals.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\ODataClient.Sync.cs">
-      <Link>ODataClient.Sync.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ODataClientSettings.cs">
       <Link>ODataClientSettings.cs</Link>

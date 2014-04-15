@@ -130,7 +130,6 @@
     <Compile Include="..\Simple.OData.Client.Tests.Core\Entities\Transport.cs">
       <Link>Entities\Transport.cs</Link>
     </Compile>
-    <Compile Include="AsyncTests.cs" />
     <Compile Include="ClientAdapterTests.cs" />
     <Compile Include="BatchTests.cs" />
     <Compile Include="DeleteDynamicTests.cs" />
