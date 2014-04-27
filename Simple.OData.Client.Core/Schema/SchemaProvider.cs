@@ -47,7 +47,7 @@ namespace Simple.OData.Client
         public IEnumerable<Association> GetAssociations(Table table)
         {
             var principals = from e in _schema.Metadata.EntityContainers
-                             where e.IsDefaulEntityContainer
+                             //where e.IsDefaulEntityContainer
                              from s in e.AssociationSets
                              where s.End.First().EntitySet == table.ActualName
                              from a in _schema.Metadata.Associations
@@ -56,7 +56,7 @@ namespace Simple.OData.Client
                              where n.Role == s.End.Last().Role
                              select CreateAssociation(s.End.Last(), n);
             var dependents = from e in _schema.Metadata.EntityContainers
-                             where e.IsDefaulEntityContainer
+                             //where e.IsDefaulEntityContainer
                              from s in e.AssociationSets
                              where s.End.Last().EntitySet == table.ActualName
                              from a in _schema.Metadata.Associations
@@ -80,7 +80,7 @@ namespace Simple.OData.Client
         public IEnumerable<Function> GetFunctions()
         {
             return from e in _schema.Metadata.EntityContainers
-                   where e.IsDefaulEntityContainer
+                   //where e.IsDefaulEntityContainer
                    from f in e.FunctionImports
                    select CreateFunction(f);
         }
@@ -100,7 +100,7 @@ namespace Simple.OData.Client
         private IEnumerable<EdmEntitySet> GetEntitySets()
         {
             return from e in _schema.Metadata.EntityContainers
-                   where e.IsDefaulEntityContainer
+                   //where e.IsDefaulEntityContainer
                    from s in e.EntitySets
                    select s;
         }
