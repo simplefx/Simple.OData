@@ -54,10 +54,12 @@ namespace Simple.OData.Client
                                   Name = e.Attribute("Name").Value,
                                   Abstract = ParseBooleanAttribute(e.Attribute("Abstract")),
                                   OpenType = ParseBooleanAttribute(e.Attribute("OpenType")),
-                                  Properties = (from p in e.Descendants(null, "Property")
-                                                select ParseProperty(p, complexTypes, new EdmEntityType[] { })).ToArray(),
                                   Key = (from k in e.Descendants(null, "Key")
                                          select ParseKey(k)).SingleOrDefault(),
+                                  Properties = (from p in e.Descendants(null, "Property")
+                                                select ParseProperty(p, complexTypes, new EdmEntityType[] { })).ToArray(),
+                                  NavigationProperties = (from p in e.Descendants(null, "NavigationProperty")
+                                                select ParseNavigationProperty(p)).ToArray(),
                               },
                               BaseType = ParseStringAttribute(e.Attribute("BaseType")),
                           };
@@ -68,8 +70,9 @@ namespace Simple.OData.Client
                        BaseType = String.IsNullOrEmpty(r.BaseType) ? null : results.Single(y => y.EntityType.Name == r.BaseType.Split('.').Last()).EntityType,
                        Abstract = r.EntityType.Abstract,
                        OpenType = r.EntityType.OpenType,
-                       Properties = r.EntityType.Properties,
                        Key = r.EntityType.Key,
+                       Properties = r.EntityType.Properties,
+                       NavigationProperties = r.EntityType.NavigationProperties,
                    };
         }
 
@@ -168,6 +171,18 @@ namespace Simple.OData.Client
                 Name = element.Attribute("Name").Value,
                 Type = EdmPropertyType.Parse(element.Attribute("Type").Value, complexTypes, entityTypes),
                 Nullable = ParseBooleanAttribute(element.Attribute("Nullable"), true),
+            };
+        }
+
+        private static EdmNavigationProperty ParseNavigationProperty(
+            XElement element)
+        {
+            return new EdmNavigationProperty
+            {
+                Name = element.Attribute("Name").Value,
+                ToRole = element.Attribute("ToRole").Value,
+                FromRole = element.Attribute("FromRole").Value,
+                Relationship = element.Attribute("Relationship").Value,
             };
         }
 

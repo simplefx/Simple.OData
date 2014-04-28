@@ -9,7 +9,7 @@ using Entry = System.Collections.Generic.Dictionary<string, object>;
 
 namespace Simple.OData.Client.Tests
 {
-    class WebApiTests : IDisposable
+    public class WebApiTests : IDisposable
     {
         private string _serviceUri;
         private IODataClient _client;

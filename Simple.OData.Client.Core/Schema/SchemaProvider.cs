@@ -54,7 +54,10 @@ namespace Simple.OData.Client
                              where s.Association == GetQualifiedName(_schema.Metadata.TypesNamespace, a.Name)
                              from n in a.End
                              where n.Role == s.End.Last().Role
-                             select CreateAssociation(s.End.Last(), n);
+                             from t in GetEntityTypeWithBaseTypes(table.EntityType)
+                             from np in t.NavigationProperties
+                             where np.Relationship == GetQualifiedName(_schema.Metadata.TypesNamespace, a.Name) && np.ToRole == n.Role
+                             select CreateAssociation(np.Name, s.End.Last(), n);
             var dependents = from e in _schema.Metadata.EntityContainers
                              //where e.IsDefaulEntityContainer
                              from s in e.AssociationSets
@@ -63,7 +66,10 @@ namespace Simple.OData.Client
                              where s.Association == GetQualifiedName(_schema.Metadata.TypesNamespace, a.Name)
                              from n in a.End
                              where n.Role == s.End.First().Role
-                             select CreateAssociation(s.End.First(), n);
+                             from t in GetEntityTypeWithBaseTypes(table.EntityType)
+                             from np in t.NavigationProperties
+                             where np.Relationship == GetQualifiedName(_schema.Metadata.TypesNamespace, a.Name) && np.ToRole == n.Role
+                             select CreateAssociation(np.Name, s.End.First(), n);
             return principals.Union(dependents);
         }
 
@@ -117,9 +123,9 @@ namespace Simple.OData.Client
             return string.IsNullOrEmpty(schemaName) ? name : string.Format("{0}.{1}", schemaName, name);
         }
 
-        private Association CreateAssociation(EdmAssociationSetEnd associationSetEnd, EdmAssociationEnd associationEnd)
+        private Association CreateAssociation(string associationName, EdmAssociationSetEnd associationSetEnd, EdmAssociationEnd associationEnd)
         {
-            return new Association(associationSetEnd.Role, associationSetEnd.EntitySet, associationEnd.Multiplicity);
+            return new Association(associationName, associationSetEnd.EntitySet, associationEnd.Multiplicity);
         }
 
         private Function CreateFunction(EdmFunctionImport f)

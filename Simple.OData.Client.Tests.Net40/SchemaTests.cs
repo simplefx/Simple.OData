@@ -134,12 +134,12 @@ namespace Simple.OData.Client.Tests
             var table = (await client.GetSchemaAsync()).FindTable("Product");
             Assert.Equal("ProductID", table.PrimaryKey[0]);
 
-            var association = table.FindAssociation("Categories");
+            var association = table.FindAssociation("Category");
             Assert.Equal("Categories", association.ReferenceTableName);
             Assert.Equal("0..1", association.Multiplicity);
 
             table = (await client.GetSchemaAsync()).FindTable("Employees");
-            association = table.FindAssociation("Employees");
+            association = table.FindAssociation("Employee1");
             Assert.Equal("Employees", association.ReferenceTableName);
             Assert.Equal("0..1", association.Multiplicity);
 
@@ -155,7 +155,7 @@ namespace Simple.OData.Client.Tests
             var table = (await client.GetSchemaAsync()).FindTable("Product");
             Assert.Equal("ID", table.PrimaryKey[0]);
 
-            var association = table.FindAssociation("Category_Products");
+            var association = table.FindAssociation("Categories");
             Assert.Equal("Categories", association.ReferenceTableName);
             Assert.Equal("0..1", association.Multiplicity);
 
@@ -176,7 +176,7 @@ namespace Simple.OData.Client.Tests
             var table = (await client.GetSchemaAsync()).FindTable("Product");
             Assert.Equal("ID", table.PrimaryKey[0]);
 
-            var association = table.FindAssociation("Category_Products");
+            var association = table.FindAssociation("Category");
             Assert.Equal("Categories", association.ReferenceTableName);
             Assert.Equal("*", association.Multiplicity);
 

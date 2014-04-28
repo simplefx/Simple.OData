@@ -69,7 +69,12 @@ namespace Simple.OData.Client.Extensions
 
         public string Singularize(string word)
         {
-            return word.EndsWith("s", StringComparison.OrdinalIgnoreCase) ? word.Substring(0, word.Length - 1) : word;
+            if (word.EndsWith("ies", StringComparison.OrdinalIgnoreCase))
+                return word.Substring(0, word.Length - 3) + (word.IsAllUpperCase() ? "Y" : "y");
+            if (word.EndsWith("s", StringComparison.OrdinalIgnoreCase))
+                return word.Substring(0, word.Length - 1);
+            else
+                return word;
         }
 
     }

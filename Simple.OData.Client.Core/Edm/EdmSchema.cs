@@ -49,8 +49,9 @@ namespace Simple.OData.Client
         public EdmEntityType BaseType { get; set; }
         public bool Abstract { get; set; }
         public bool OpenType { get; set; }
-        public EdmProperty[] Properties { get; set; }
         public EdmKey Key { get; set; }
+        public EdmProperty[] Properties { get; set; }
+        public EdmNavigationProperty[] NavigationProperties { get; set; }
 
         public static Tuple<bool, EdmEntityType> TryParse(string s, IEnumerable<EdmEntityType> entityTypes)
         {
@@ -92,6 +93,14 @@ namespace Simple.OData.Client
         public string Name { get; set; }
         public EdmPropertyType Type { get; set; }
         public bool Nullable { get; set; }
+    }
+
+    public sealed class EdmNavigationProperty
+    {
+        public string Name { get; set; }
+        public string ToRole { get; set; }
+        public string FromRole { get; set; }
+        public string Relationship { get; set; }
     }
 
     public sealed class EdmKey

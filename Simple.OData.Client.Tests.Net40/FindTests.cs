@@ -156,6 +156,18 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task ExpandODataOrg()
+        {
+            var client = new ODataClient("http://services.odata.org/V3/OData/OData.svc/");
+            IEnumerable<object> productDetails = await client
+                .For("Product")
+                .Expand("ProductDetails")
+                .Filter("ID eq 0")
+                .FindEntriesAsync();
+            Assert.NotEqual(0, productDetails.Count());
+        }
+
+        [Fact]
         public async Task Count()
         {
             var count = await _client

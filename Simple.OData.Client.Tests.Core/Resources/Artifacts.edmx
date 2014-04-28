@@ -1,0 +1,156 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx">
+  <edmx:DataServices m:DataServiceVersion="1.0" m:MaxDataServiceVersion="3.0" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">
+    <Schema Namespace="KbeDesign.Admin" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <EntityType Name="Artifact">
+        <Key>
+          <PropertyRef Name="ID"/>
+        </Key>
+        <Property Name="ID" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Name" Type="Edm.String"/>
+        <Property Name="Description" Type="Edm.String"/>
+        <Property Name="IsServerSide" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="IsAmlBundle" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="ReleasePath" Type="Edm.String"/>
+        <Property Name="ProductId" Type="Edm.Int32" Nullable="false"/>
+        <NavigationProperty Name="Product" Relationship="KbeDesign.Admin.Artifact_Product_Product_Artifacts" ToRole="Product_Artifacts" FromRole="Artifact_Product"/>
+      </EntityType>
+      <EntityType Name="Product">
+        <Key>
+          <PropertyRef Name="ID"/>
+        </Key>
+        <Property Name="ID" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Name" Type="Edm.String"/>
+        <Property Name="Family" Type="Edm.String"/>
+        <Property Name="Description" Type="Edm.String"/>
+        <Property Name="ActiveDirectoryAuthenticationGroup" Type="Edm.String"/>
+        <NavigationProperty Name="Artifacts" Relationship="KbeDesign.Admin.Artifact_Product_Product_Artifacts" ToRole="Artifact_Product" FromRole="Product_Artifacts"/>
+        <NavigationProperty Name="ProductAccesses" Relationship="KbeDesign.Admin.Product_ProductAccesses_ProductAccess_Product" ToRole="ProductAccess_Product" FromRole="Product_ProductAccesses"/>
+        <NavigationProperty Name="Setups" Relationship="KbeDesign.Admin.Product_Setups_Setup_Product" ToRole="Setup_Product" FromRole="Product_Setups"/>
+      </EntityType>
+      <EntityType Name="ProductAccess">
+        <Key>
+          <PropertyRef Name="ProductId"/>
+          <PropertyRef Name="UserId"/>
+        </Key>
+        <Property Name="ProductId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="UserId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="IsApproved" Type="Edm.Boolean" Nullable="false"/>
+        <NavigationProperty Name="Product" Relationship="KbeDesign.Admin.Product_ProductAccesses_ProductAccess_Product" ToRole="Product_ProductAccesses" FromRole="ProductAccess_Product"/>
+        <NavigationProperty Name="User" Relationship="KbeDesign.Admin.ProductAccess_User_User_ProductAccesses" ToRole="User_ProductAccesses" FromRole="ProductAccess_User"/>
+      </EntityType>
+      <EntityType Name="User">
+        <Key>
+          <PropertyRef Name="ID"/>
+        </Key>
+        <Property Name="ID" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="FirstName" Type="Edm.String"/>
+        <Property Name="LastName" Type="Edm.String"/>
+        <Property Name="Email" Type="Edm.String"/>
+        <NavigationProperty Name="ProductAccesses" Relationship="KbeDesign.Admin.ProductAccess_User_User_ProductAccesses" ToRole="ProductAccess_User" FromRole="User_ProductAccesses"/>
+        <NavigationProperty Name="ProjectAccesses" Relationship="KbeDesign.Admin.User_ProjectAccesses_ProjectAccess_User" ToRole="ProjectAccess_User" FromRole="User_ProjectAccesses"/>
+      </EntityType>
+      <EntityType Name="ProjectAccess">
+        <Key>
+          <PropertyRef Name="ProjectId"/>
+          <PropertyRef Name="UserId"/>
+        </Key>
+        <Property Name="ProjectId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="UserId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Role" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="IsApproved" Type="Edm.Boolean" Nullable="false"/>
+        <NavigationProperty Name="Project" Relationship="KbeDesign.Admin.ProjectAccess_Project_Project_ProjectAccesses" ToRole="Project_ProjectAccesses" FromRole="ProjectAccess_Project"/>
+        <NavigationProperty Name="User" Relationship="KbeDesign.Admin.User_ProjectAccesses_ProjectAccess_User" ToRole="User_ProjectAccesses" FromRole="ProjectAccess_User"/>
+      </EntityType>
+      <EntityType Name="Project">
+        <Key>
+          <PropertyRef Name="ID"/>
+        </Key>
+        <Property Name="ID" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Name" Type="Edm.String"/>
+        <Property Name="Description" Type="Edm.String"/>
+        <Property Name="ClientProjectName" Type="Edm.String"/>
+        <NavigationProperty Name="ProjectAccesses" Relationship="KbeDesign.Admin.ProjectAccess_Project_Project_ProjectAccesses" ToRole="ProjectAccess_Project" FromRole="Project_ProjectAccesses"/>
+        <NavigationProperty Name="Setups" Relationship="KbeDesign.Admin.Project_Setups_Setup_Project" ToRole="Setup_Project" FromRole="Project_Setups"/>
+      </EntityType>
+      <EntityType Name="Setup">
+        <Key>
+          <PropertyRef Name="ProductId"/>
+          <PropertyRef Name="ProjectId"/>
+        </Key>
+        <Property Name="ProjectId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ProductId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ArtifactVersions" Type="Edm.String"/>
+        <Property Name="PdmsCode" Type="Edm.String"/>
+        <Property Name="XmlTablePath" Type="Edm.String"/>
+        <NavigationProperty Name="Product" Relationship="KbeDesign.Admin.Product_Setups_Setup_Product" ToRole="Product_Setups" FromRole="Setup_Product"/>
+        <NavigationProperty Name="Project" Relationship="KbeDesign.Admin.Project_Setups_Setup_Project" ToRole="Project_Setups" FromRole="Setup_Project"/>
+      </EntityType>
+      <Association Name="Artifact_Product_Product_Artifacts">
+        <End Type="KbeDesign.Admin.Product" Role="Product_Artifacts" Multiplicity="0..1"/>
+        <End Type="KbeDesign.Admin.Artifact" Role="Artifact_Product" Multiplicity="*"/>
+      </Association>
+      <Association Name="Product_ProductAccesses_ProductAccess_Product">
+        <End Type="KbeDesign.Admin.ProductAccess" Role="ProductAccess_Product" Multiplicity="*"/>
+        <End Type="KbeDesign.Admin.Product" Role="Product_ProductAccesses" Multiplicity="0..1"/>
+      </Association>
+      <Association Name="Product_Setups_Setup_Product">
+        <End Type="KbeDesign.Admin.Setup" Role="Setup_Product" Multiplicity="*"/>
+        <End Type="KbeDesign.Admin.Product" Role="Product_Setups" Multiplicity="0..1"/>
+      </Association>
+      <Association Name="ProductAccess_User_User_ProductAccesses">
+        <End Type="KbeDesign.Admin.User" Role="User_ProductAccesses" Multiplicity="0..1"/>
+        <End Type="KbeDesign.Admin.ProductAccess" Role="ProductAccess_User" Multiplicity="*"/>
+      </Association>
+      <Association Name="User_ProjectAccesses_ProjectAccess_User">
+        <End Type="KbeDesign.Admin.ProjectAccess" Role="ProjectAccess_User" Multiplicity="*"/>
+        <End Type="KbeDesign.Admin.User" Role="User_ProjectAccesses" Multiplicity="0..1"/>
+      </Association>
+      <Association Name="ProjectAccess_Project_Project_ProjectAccesses">
+        <End Type="KbeDesign.Admin.Project" Role="Project_ProjectAccesses" Multiplicity="0..1"/>
+        <End Type="KbeDesign.Admin.ProjectAccess" Role="ProjectAccess_Project" Multiplicity="*"/>
+      </Association>
+      <Association Name="Project_Setups_Setup_Project">
+        <End Type="KbeDesign.Admin.Setup" Role="Setup_Project" Multiplicity="*"/>
+        <End Type="KbeDesign.Admin.Project" Role="Project_Setups" Multiplicity="0..1"/>
+      </Association>
+      <EntityContainer Name="AdminDbContext" m:IsDefaultEntityContainer="true">
+        <EntitySet Name="Artifacts" EntityType="KbeDesign.Admin.Artifact"/>
+        <EntitySet Name="Products" EntityType="KbeDesign.Admin.Product"/>
+        <EntitySet Name="ProductAccesses" EntityType="KbeDesign.Admin.ProductAccess"/>
+        <EntitySet Name="Users" EntityType="KbeDesign.Admin.User"/>
+        <EntitySet Name="ProjectAccesses" EntityType="KbeDesign.Admin.ProjectAccess"/>
+        <EntitySet Name="Projects" EntityType="KbeDesign.Admin.Project"/>
+        <EntitySet Name="Setups" EntityType="KbeDesign.Admin.Setup"/>
+        <AssociationSet Name="Product_Artifacts" Association="KbeDesign.Admin.Artifact_Product_Product_Artifacts">
+          <End Role="Artifact_Product" EntitySet="Artifacts"/>
+          <End Role="Product_Artifacts" EntitySet="Products"/>
+        </AssociationSet>
+        <AssociationSet Name="ProductAccess_Product" Association="KbeDesign.Admin.Product_ProductAccesses_ProductAccess_Product">
+          <End Role="Product_ProductAccesses" EntitySet="Products"/>
+          <End Role="ProductAccess_Product" EntitySet="ProductAccesses"/>
+        </AssociationSet>
+        <AssociationSet Name="Setup_Product" Association="KbeDesign.Admin.Product_Setups_Setup_Product">
+          <End Role="Product_Setups" EntitySet="Products"/>
+          <End Role="Setup_Product" EntitySet="Setups"/>
+        </AssociationSet>
+        <AssociationSet Name="User_ProductAccesses" Association="KbeDesign.Admin.ProductAccess_User_User_ProductAccesses">
+          <End Role="ProductAccess_User" EntitySet="ProductAccesses"/>
+          <End Role="User_ProductAccesses" EntitySet="Users"/>
+        </AssociationSet>
+        <AssociationSet Name="ProjectAccess_User" Association="KbeDesign.Admin.User_ProjectAccesses_ProjectAccess_User">
+          <End Role="User_ProjectAccesses" EntitySet="Users"/>
+          <End Role="ProjectAccess_User" EntitySet="ProjectAccesses"/>
+        </AssociationSet>
+        <AssociationSet Name="Project_ProjectAccesses" Association="KbeDesign.Admin.ProjectAccess_Project_Project_ProjectAccesses">
+          <End Role="ProjectAccess_Project" EntitySet="ProjectAccesses"/>
+          <End Role="Project_ProjectAccesses" EntitySet="Projects"/>
+        </AssociationSet>
+        <AssociationSet Name="Setup_Project" Association="KbeDesign.Admin.Project_Setups_Setup_Project">
+          <End Role="Project_Setups" EntitySet="Projects"/>
+          <End Role="Setup_Project" EntitySet="Setups"/>
+        </AssociationSet>
+      </EntityContainer>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>

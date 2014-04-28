@@ -135,6 +135,26 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void GetNorthwindSchemaTableAssociations()
+        {
+            string document = GetResourceAsString("Northwind.edmx");
+            var schema = Schema.FromMetadata(document);
+            var table = schema.FindTable("Product");
+            var association = table.FindAssociation("OrderDetails");
+            Assert.NotNull(association);
+        }
+
+        [Fact]
+        public void GetArtifactsSchemaTableAssociations()
+        {
+            string document = GetResourceAsString("Artifacts.edmx");
+            var schema = Schema.FromMetadata(document);
+            var table = schema.FindTable("Product");
+            var association = table.FindAssociation("Artifacts");
+            Assert.NotNull(association);
+        }
+
+        [Fact]
         public void GetColorsSchema()
         {
             ParseSchema("Colors");
@@ -191,9 +211,9 @@ namespace Simple.OData.Client.Tests
         private void ParseSchema(string schemaName)
         {
             var document = GetResourceAsString(schemaName + ".edmx");
-            var result = ResponseReader.GetSchema(document);
-            Assert.Equal(1, result.EntityTypes.Count());
-            Assert.Equal(schemaName, result.EntityTypes.First().Name);
+            var schema = ResponseReader.GetSchema(document);
+            Assert.Equal(1, schema.EntityTypes.Count());
+            Assert.Equal(schemaName, schema.EntityTypes.First().Name);
         }
     }
 }
