@@ -74,6 +74,7 @@
     <Compile Include="TestBase.cs" />
     <Compile Include="TypedExpressionsTests.cs" />
     <Compile Include="TypedFilterAsKeyTests.cs" />
+    <Compile Include="ValueParseTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

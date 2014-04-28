@@ -36,25 +36,40 @@ namespace Simple.OData.Client
             }
         }
 
-        private object ParseValue(string value, EdmPropertyType propertyType)
+        public object ParseValue(string value, EdmPropertyType propertyType)
         {
             return value == "null" ? null
+                : propertyType.Name == EdmType.Binary.Name ? ParseBinary(value.Replace("'", "").Replace("binary", "").Replace("X", ""))
                 : propertyType.Name == EdmType.Boolean.Name ? bool.Parse(value)
                 : propertyType.Name == EdmType.Byte.Name ? byte.Parse(value)
                 : propertyType.Name == EdmType.SByte.Name ? sbyte.Parse(value)
-                : propertyType.Name == EdmType.DateTime.Name ? DateTime.Parse(value, CultureInfo.InvariantCulture)
-                : propertyType.Name == EdmType.DateTimeOffset.Name ? DateTimeOffset.Parse(value, CultureInfo.InvariantCulture)
+                : propertyType.Name == EdmType.DateTime.Name ? DateTime.Parse(value.Replace("'", "").Replace("datetime", ""), CultureInfo.InvariantCulture)
+                : propertyType.Name == EdmType.DateTimeOffset.Name ? DateTimeOffset.Parse(value.Replace("'", "").Replace("datetimeoffset", ""), CultureInfo.InvariantCulture)
                 : propertyType.Name == EdmType.Int16.Name ? short.Parse(value, CultureInfo.InvariantCulture)
                 : propertyType.Name == EdmType.Int32.Name ? int.Parse(value, CultureInfo.InvariantCulture)
                 : propertyType.Name == EdmType.Int64.Name ? long.Parse(value.TrimEnd('L'), CultureInfo.InvariantCulture)
                 : propertyType.Name == EdmType.Single.Name ? float.Parse(value.TrimEnd('f'), CultureInfo.InvariantCulture)
                 : propertyType.Name == EdmType.Float.Name ? float.Parse(value, CultureInfo.InvariantCulture)
-                : propertyType.Name == EdmType.Double.Name ? double.Parse(value, CultureInfo.InvariantCulture)
+                : propertyType.Name == EdmType.Double.Name ? double.Parse(value.TrimEnd('d'), CultureInfo.InvariantCulture)
                 : propertyType.Name == EdmType.Decimal.Name ? decimal.Parse(value.TrimEnd('M', 'm'), CultureInfo.InvariantCulture)
                 : propertyType.Name == EdmType.Guid.Name ? Guid.Parse(value.Replace("'", "").Replace("guid", ""))
                 : propertyType.Name == EdmType.String.Name ? Uri.UnescapeDataString(value.Substring(1, value.Length - 2))
-                : propertyType.Name == EdmType.Time.Name ? TimeSpan.Parse(value, CultureInfo.InvariantCulture)
+                : propertyType.Name == EdmType.Time.Name ? TimeSpan.Parse(value.Replace("'", "").Replace("time", ""), CultureInfo.InvariantCulture)
                 : (object)value;
+        }
+
+        private byte[] ParseBinary(string value)
+        {
+            var arrayParts = new List<byte>();
+            while (value.Length > 0)
+            {
+                var partLength = Math.Min(value.Length, 2);
+                var part = value.Substring(0, partLength);
+                var byteValue = byte.Parse(part, NumberStyles.AllowHexSpecifier);
+                arrayParts.Add(byteValue);
+                value = value.Substring(partLength);
+            }
+            return arrayParts.ToArray();
         }
     }
 }
