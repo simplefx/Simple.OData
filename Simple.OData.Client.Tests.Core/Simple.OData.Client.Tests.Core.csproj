@@ -77,7 +77,9 @@
     <Compile Include="ValueParseTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
     <EmbeddedResource Include="Resources\ArrayOfNested.edmx">
       <SubType>Designer</SubType>
     </EmbeddedResource>

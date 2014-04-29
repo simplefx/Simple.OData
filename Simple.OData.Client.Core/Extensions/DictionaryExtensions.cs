@@ -83,7 +83,7 @@ namespace Simple.OData.Client.Extensions
                     (arrayValue as Array).SetValue(ConvertSingle(elementType, item), count++);
                 }
 
-                if (fieldOrPropertyType.IsArray)
+                if (fieldOrPropertyType.IsArray || fieldOrPropertyType.IsTypeAssignableFrom(arrayValue.GetType()))
                 {
                     return arrayValue;
                 }

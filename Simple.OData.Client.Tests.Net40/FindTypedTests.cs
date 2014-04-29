@@ -245,7 +245,29 @@ namespace Simple.OData.Client.Tests
         public async Task ExpandManyAsList()
         {
             var category = await _client
-                .For<CategoryWithProductList>("Categories")
+                .For<CategoryWithList>("Categories")
+                .Expand(x => x.Products)
+                .Filter(x => x.CategoryName == "Beverages")
+                .FindEntryAsync();
+            Assert.Equal(12, category.Products.Count());
+        }
+
+        [Fact]
+        public async Task ExpandManyAsIList()
+        {
+            var category = await _client
+                .For<CategoryWithIList>("Categories")
+                .Expand(x => x.Products)
+                .Filter(x => x.CategoryName == "Beverages")
+                .FindEntryAsync();
+            Assert.Equal(12, category.Products.Count());
+        }
+
+        [Fact]
+        public async Task  ExpandManyAsICollection()
+        {
+            var category = await _client
+                .For<CategoryWithICollection>("Categories")
                 .Expand(x => x.Products)
                 .Filter(x => x.CategoryName == "Beverages")
                 .FindEntryAsync();
