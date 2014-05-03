@@ -53,6 +53,17 @@ namespace Simple.OData.Client
                     Expression.Call(Expression.Convert(Expression, LimitType), methodInfo, arguments), 
                     BindingRestrictions.GetTypeRestriction(Expression, LimitType));
             }
+
+            public override DynamicMetaObject BindConvert(ConvertBinder binder)
+            {
+                var value = this.HasValue
+                    ? (this.Value as ODataEntry).AsDictionary().ToObject(binder.Type)
+                    : null;
+
+                return new DynamicMetaObject(
+                    Expression.Constant(value),
+                    BindingRestrictions.GetTypeRestriction(Expression, LimitType));
+            }
         }
     }
 }
