@@ -106,6 +106,17 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task StringContainsWithArrayVariable()
+        {
+            var text = new [] {"ai"};
+            var products = await _client
+                .For<Product>()
+                .Filter(x => x.ProductName.Contains(text[0]))
+                .FindEntriesAsync();
+            Assert.Equal("Chai", products.Single().ProductName);
+        }
+
+        [Fact]
         public async Task StringNotContains()
         {
             var products = await _client

@@ -119,6 +119,15 @@ namespace Simple.OData.Client
             }
         }
 
+        private static ODataExpression ParseArrayExpression(Expression expression)
+        {
+            var binaryEpression = expression as BinaryExpression;
+            var arrayExpression = ParseMemberExpression(binaryEpression.Left);
+            var indexExpression = ParseConstantExpression(binaryEpression.Right);
+
+            return FromValue((arrayExpression.Value as Array).GetValue(int.Parse(indexExpression.Value.ToString())));
+        }
+
         private static ODataExpression ParseCallArgumentExpression(Expression expression)
         {
             switch (expression.NodeType)
@@ -127,6 +136,8 @@ namespace Simple.OData.Client
                     return new ODataExpression(ParseConstantExpression(expression).Value);
                 case ExpressionType.MemberAccess:
                     return new ODataExpression(ParseMemberExpression(expression).Value);
+                case ExpressionType.ArrayIndex:
+                    return new ODataExpression(ParseArrayExpression(expression).Value);
 
                 default:
                     throw Utils.NotSupportedExpression(expression);
