@@ -55,6 +55,7 @@ namespace Simple.OData.Client
                 : propertyType.Name == EdmType.Guid.Name ? Guid.Parse(RemoveLiteral(value, "guid"))
                 : propertyType.Name == EdmType.String.Name ? Uri.UnescapeDataString(value.Substring(1, value.Length - 2))
                 : propertyType.Name == EdmType.Time.Name ? TimeSpan.Parse(RemoveLiteral(value, "time"), CultureInfo.InvariantCulture)
+                : (propertyType is EdmEnumPropertyType) ? ParseEnum(value, propertyType as EdmEnumPropertyType)
                 : (object)value;
         }
 
@@ -83,6 +84,35 @@ namespace Simple.OData.Client
                 value = value.Substring(partLength);
             }
             return arrayParts.ToArray();
+        }
+
+        private object ParseEnum(string value, EdmEnumPropertyType enumPropertyType)
+        {
+            value = RemoveLiteral(value, enumPropertyType.Type.Name);
+            var values = value.Split(',');
+            Func<string, EdmEnumMember> FindMember = x => enumPropertyType.Type.Members.Single(y => y.Name == x);
+            try
+            {
+                var result = values.Select(FindMember).Sum(x => x == null ? 0 : x.EvaluatedValue);
+                switch (enumPropertyType.Type.UnderlyingType)
+                {
+                    case "Edm.Byte":
+                        return (byte)result;
+                    case "Edm.SByte":
+                        return (sbyte)result;
+                    case "Edm.Int16":
+                        return (short)result;
+                    case "Edm.Int64":
+                        return (long)result;
+                    case "Edm.Int32":
+                    default:
+                        return (int) result;
+                }
+            }
+            catch (Exception)
+            {
+                throw new FormatException(string.Format("Unable to format {0} as enum {1}", value, enumPropertyType.Type.Name));
+            }
         }
     }
 }

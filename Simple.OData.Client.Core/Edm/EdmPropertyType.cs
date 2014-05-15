@@ -12,9 +12,12 @@ namespace Simple.OData.Client
             return this.Name;
         }
 
-        public static EdmPropertyType Parse(string s, IEnumerable<EdmComplexType> complexTypes, IEnumerable<EdmEntityType> entityTypes)
+        public static EdmPropertyType Parse(string s, 
+            IEnumerable<EdmEntityType> entityTypes, 
+            IEnumerable<EdmComplexType> complexTypes,
+            IEnumerable<EdmEnumType> enumTypes)
         {
-            var result1 = TryParseCollectionType(s, complexTypes, entityTypes);
+            var result1 = TryParseCollectionType(s, entityTypes, complexTypes, enumTypes);
             if (result1.Item1)
             {
                 return result1.Item2;
@@ -26,28 +29,40 @@ namespace Simple.OData.Client
                 return result2.Item2;
             }
 
-            var result3 = TryParseComplexType(s, complexTypes);
+            var result3 = TryParseEnumType(s, enumTypes);
             if (result3.Item1)
             {
                 return result3.Item2;
             }
 
-            var result4 = TryParseEntityType(s, entityTypes);
+            var result4 = TryParseComplexType(s, complexTypes);
             if (result4.Item1)
             {
                 return result4.Item2;
             }
 
+            var result5 = TryParseEntityType(s, entityTypes);
+            if (result5.Item1)
+            {
+                return result5.Item2;
+            }
+
             throw new ArgumentException(string.Format("Unrecognized type {0}", s));
         }
 
-        private static Tuple<bool, EdmCollectionPropertyType> TryParseCollectionType(string s, IEnumerable<EdmComplexType> complexTypes, IEnumerable<EdmEntityType> entityTypes)
+        private static Tuple<bool, EdmCollectionPropertyType> TryParseCollectionType(string s, 
+            IEnumerable<EdmEntityType> entityTypes, 
+            IEnumerable<EdmComplexType> complexTypes,
+            IEnumerable<EdmEnumType> enumTypes)
         {
             if (s.StartsWith("Collection(") && s.EndsWith(")"))
             {
                 int start = s.IndexOf("(");
                 int end = s.LastIndexOf(")");
-                var baseType = EdmPropertyType.Parse(s.Substring(start + 1, end - start - 1), complexTypes, entityTypes);
+                var baseType = EdmPropertyType.Parse(s.Substring(start + 1, end - start - 1), 
+                    entityTypes, 
+                    complexTypes,
+                    enumTypes);
                 return new Tuple<bool, EdmCollectionPropertyType>(true, new EdmCollectionPropertyType() { BaseType = baseType });
             }
             else
@@ -66,6 +81,21 @@ namespace Simple.OData.Client
             else
             {
                 return new Tuple<bool, EdmPrimitivePropertyType>(false, null);
+            }
+        }
+
+        private static Tuple<bool, EdmEnumPropertyType> TryParseEnumType(string s, IEnumerable<EdmEnumType> enumTypes)
+        {
+            var result = EdmEnumType.TryParse(s, enumTypes);
+            if (!result.Item1)
+                result = EdmEnumType.TryParse(s.Split('.').Last(), enumTypes);
+            if (result.Item1)
+            {
+                return new Tuple<bool, EdmEnumPropertyType>(true, new EdmEnumPropertyType { Type = result.Item2 });
+            }
+            else
+            {
+                return new Tuple<bool, EdmEnumPropertyType>(false, null);
             }
         }
 
@@ -103,6 +133,12 @@ namespace Simple.OData.Client
     public class EdmPrimitivePropertyType : EdmPropertyType
     {
         public EdmType Type { get; set; }
+        public override string Name { get { return Type == null ? null : Type.Name; } }
+    }
+
+    public class EdmEnumPropertyType : EdmPropertyType
+    {
+        public EdmEnumType Type { get; set; }
         public override string Name { get { return Type == null ? null : Type.Name; } }
     }
 

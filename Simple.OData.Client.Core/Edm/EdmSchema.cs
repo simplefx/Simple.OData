@@ -10,23 +10,19 @@ namespace Simple.OData.Client
         public string ContainersNamespace { get; set; }
         public EdmEntityType[] EntityTypes { get; private set; }
         public EdmComplexType[] ComplexTypes { get; private set; }
+        public EdmEnumType[] EnumTypes { get; private set; }
         public EdmAssociation[] Associations { get; private set; }
         public EdmEntityContainer[] EntityContainers { get; private set; }
 
-        public EdmSchema(
-            string typesNamespace,
-            string containersNamespace,
-            IEnumerable<EdmEntityType> entityTypes,
-            IEnumerable<EdmComplexType> complexTypes,
-            IEnumerable<EdmAssociation> associations,
-            IEnumerable<EdmEntityContainer> entityContainers)
+        internal EdmSchema(EdmSchemaParser parser)
         {
-            this.TypesNamespace = typesNamespace;
-            this.ContainersNamespace = containersNamespace;
-            this.EntityTypes = entityTypes.ToArray();
-            this.ComplexTypes = complexTypes.ToArray();
-            this.Associations = associations.ToArray();
-            this.EntityContainers = entityContainers.ToArray();
+            this.TypesNamespace = parser.TypesNamespace;
+            this.ContainersNamespace = parser.ContainersNamespace;
+            this.EntityTypes = parser.EntityTypes.ToArray();
+            this.ComplexTypes = parser.ComplexTypes.ToArray();
+            this.EnumTypes = parser.EnumTypes.ToArray();
+            this.Associations = parser.Associations.ToArray();
+            this.EntityContainers = parser.EntityContainers.ToArray();
         }
     }
 
@@ -69,6 +65,20 @@ namespace Simple.OData.Client
         {
             var edmComplexType = complexTypes.SingleOrDefault(x => x.Name == s);
             return Tuple.Create(edmComplexType != null, edmComplexType);
+        }
+    }
+
+    public sealed class EdmEnumType
+    {
+        public string Name { get; set; }
+        public string UnderlyingType { get; set; }
+        public EdmEnumMember[] Members { get; set; }
+        public bool IsFlags { get; set; }
+
+        public static Tuple<bool, EdmEnumType> TryParse(string s, IEnumerable<EdmEnumType> enumTypes)
+        {
+            var edmEnumType = enumTypes.SingleOrDefault(x => x.Name == s);
+            return Tuple.Create(edmEnumType != null, edmEnumType);
         }
     }
 
@@ -147,5 +157,12 @@ namespace Simple.OData.Client
         public string Name { get; set; }
         public EdmPropertyType Type { get; set; }
         public string Mode { get; set; }
+    }
+
+    public sealed class EdmEnumMember
+    {
+        public string Name { get; set; }
+        public string Value { get; set; }
+        public long EvaluatedValue { get; set; }
     }
 }

@@ -130,11 +130,18 @@
         <Property Name="TruckNumber" Type="Edm.String" MaxLength="100" FixedLength="false" Unicode="true" />
       </EntityType>
       <ComplexType Name="Address">
+        <Property Name="Type" Type="NorthwindModel.AddressType" />
         <Property Name="City" Type="Edm.String" MaxLength="15" FixedLength="false" Unicode="true" />
         <Property Name="Region" Type="Edm.String" MaxLength="15" FixedLength="false" Unicode="true" />
         <Property Name="PostalCode" Type="Edm.String" MaxLength="10" FixedLength="false" Unicode="true" />
         <Property Name="Country" Type="Edm.String" MaxLength="15" FixedLength="false" Unicode="true" />
       </ComplexType>
+      <EnumType Name="AddressType">
+        <Member Name ="Unknown"/>
+        <Member Name ="Private"/>
+        <Member Name ="Corporate"/>
+        <Member Name ="Delivery" Value="10"/>
+      </EnumType>
       <Association Name="Products_FK01">
         <End Type="NorthwindModel.Categories" Role="Category" Multiplicity="0..1" />
         <End Type="NorthwindModel.Products" Role="Products" Multiplicity="*" />

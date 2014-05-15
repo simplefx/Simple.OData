@@ -17,13 +17,13 @@ namespace Simple.OData.Client.Tests
         {
             var propertyType = new EdmPrimitivePropertyType() { Type = EdmType.Binary };
             var value = _parser.ParseValue("123456789ABCDEF", propertyType);
-            Assert.Equal(new Byte[] {0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF}, value);
+            Assert.Equal(new Byte[] { 0x12, 0x34, 0x56, 0x78, 0x9A, 0xBC, 0xDE, 0xF }, value);
         }
 
         [Fact]
         public void ParseBinaryWithLiteral()
         {
-            var propertyType = new EdmPrimitivePropertyType() {Type = EdmType.Binary};
+            var propertyType = new EdmPrimitivePropertyType() { Type = EdmType.Binary };
             var value = _parser.ParseValue("binary'23ABFF'", propertyType);
             Assert.Equal(new Byte[] { 0x23, 0xAB, 0xFF }, value);
         }
@@ -261,6 +261,71 @@ namespace Simple.OData.Client.Tests
         {
             var propertyType = new EdmPrimitivePropertyType() { Type = EdmType.DateTimeOffset };
             Assert.Throws<FormatException>(() => _parser.ParseValue("today", propertyType));
+        }
+
+        [Fact]
+        public void ParseEnum()
+        {
+            var enumType = new EdmEnumType() { 
+                Name = "Namespace.Color", 
+                Members = new []
+                {
+                    new EdmEnumMember { Name = "Black", EvaluatedValue = 0},
+                    new EdmEnumMember { Name = "White", EvaluatedValue = 1},
+                }
+            };
+            var propertyType = new EdmEnumPropertyType() { Type = enumType };
+            Assert.Equal(0, _parser.ParseValue("Namespace.Color'Black'", propertyType));
+        }
+
+        [Fact]
+        public void ParseEnumLong()
+        {
+            var enumType = new EdmEnumType()
+            {
+                Name = "Namespace.Color",
+                UnderlyingType = "Edm.Int64",
+                Members = new[]
+                {
+                    new EdmEnumMember { Name = "Black", EvaluatedValue = 0},
+                    new EdmEnumMember { Name = "White", EvaluatedValue = 1},
+                }
+            };
+            var propertyType = new EdmEnumPropertyType() { Type = enumType };
+            Assert.Equal(1L, _parser.ParseValue("Namespace.Color'White'", propertyType));
+        }
+
+        [Fact]
+        public void ParseEnumFlags()
+        {
+            var enumType = new EdmEnumType()
+            {
+                Name = "Namespace.Color", 
+                IsFlags = true,
+                Members = new[]
+                {
+                    new EdmEnumMember { Name = "Black", EvaluatedValue = 1},
+                    new EdmEnumMember { Name = "White", EvaluatedValue = 2},
+                }
+            };
+            var propertyType = new EdmEnumPropertyType() { Type = enumType };
+            Assert.Equal(3, _parser.ParseValue("Namespace.Color'Black,White'", propertyType));
+        }
+
+        [Fact]
+        public void ParseEnumInvalid()
+        {
+            var enumType = new EdmEnumType()
+            {
+                Name = "Namespace.Color",
+                Members = new[]
+                {
+                    new EdmEnumMember { Name = "Black", EvaluatedValue = 0},
+                    new EdmEnumMember { Name = "White", EvaluatedValue = 1},
+                }
+            };
+            var propertyType = new EdmEnumPropertyType() { Type = enumType };
+            Assert.Throws<FormatException>(() => _parser.ParseValue("Namespace.Color'None'", propertyType));
         }
     }
 }

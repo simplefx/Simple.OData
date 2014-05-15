@@ -23,7 +23,7 @@ namespace Simple.OData.Client
         public static EdmSchema GetSchema(string text)
         {
             var feed = XElement.Parse(text);
-            return EdmSchemaParser.ParseSchema(feed);
+            return new EdmSchemaParser().ParseSchema(feed);
         }
 
         public IEnumerable<IDictionary<string, object>> GetData(string text, bool scalarResult = false)

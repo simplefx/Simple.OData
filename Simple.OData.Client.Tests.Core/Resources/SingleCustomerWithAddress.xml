@@ -13,6 +13,7 @@
       <d:CustomerID>CONTO</d:CustomerID>
       <d:CompanyName>Contoso</d:CompanyName>
       <d:Address m:type="NorthwindModel.Address">
+        <d:Type>Private</d:Type>
         <d:City>Oslo</d:City>
         <d:Region>Oslo</d:Region>
         <d:PostalCode>1410</d:PostalCode>

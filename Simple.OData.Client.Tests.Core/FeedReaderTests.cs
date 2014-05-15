@@ -135,6 +135,17 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void GetDataParsesSingleCustomerWithAddress()
+        {
+            string document = GetResourceAsString("SingleCustomerWithAddress.xml");
+            var result = _feedReader.GetData(document);
+            Assert.Equal(1, result.Count());
+            Assert.Equal(3, result.First().Count);
+            Assert.Equal(5, (result.First()["Address"] as IEnumerable<KeyValuePair<string, object>>).Count());
+            Assert.Equal("Private", ((result.First()["Address"] as IEnumerable<KeyValuePair<string, object>>)).First().Value);
+        }
+
+        [Fact]
         public void GetNorthwindSchemaTableAssociations()
         {
             string document = GetResourceAsString("Northwind.edmx");
