@@ -16,7 +16,7 @@ namespace Simple.OData.Client.Extensions
         {
             if (source == null)
                 return default(T);
-            if (typeof (IDictionary<string, object>).IsTypeAssignableFrom(typeof(T)))
+            if (typeof(IDictionary<string, object>).IsTypeAssignableFrom(typeof(T)))
                 return source as T;
             if (typeof(T) == typeof(ODataEntry))
                 return CreateODataEntry(source, dynamicObject) as T;
@@ -56,10 +56,28 @@ namespace Simple.OData.Client.Extensions
                     (itemValue as System.Collections.IEnumerable) != null;
             };
 
+            Func<Type, object, object> ConvertEnum = (fieldOrPropertyType, itemValue) =>
+            {
+                if (itemValue == null)
+                    return null;
+                var stringValue = itemValue.ToString();
+                int intValue;
+                if (int.TryParse(stringValue, out intValue))
+                {
+                    return Convert.ChangeType(intValue, fieldOrPropertyType, null);
+                }
+                else
+                {
+                    return Enum.Parse(fieldOrPropertyType, stringValue, false);
+                }
+            };
+
             Func<Type, object, object> ConvertSingle = (fieldOrPropertyType, itemValue) =>
             {
                 return IsCompoundType(fieldOrPropertyType)
                     ? (itemValue as IDictionary<string, object>).ToObject(fieldOrPropertyType)
+                    : fieldOrPropertyType.IsEnumType()
+                    ? ConvertEnum(fieldOrPropertyType, itemValue)
                     : itemValue;
             };
 
@@ -142,7 +160,7 @@ namespace Simple.OData.Client.Extensions
             where T : class
         {
             ConstructorInfo ctor = null;
-            
+
             if (!_constructors.TryGetValue(typeof(T), out ctor))
             {
                 if (typeof(T) == typeof(IDictionary<string, object>))
@@ -175,7 +193,7 @@ namespace Simple.OData.Client.Extensions
         private static ODataEntry CreateODataEntry(IDictionary<string, object> source, bool dynamicObject = false)
         {
             return dynamicObject && CreateDynamicODataEntry != null ?
-                CreateDynamicODataEntry(source) : 
+                CreateDynamicODataEntry(source) :
                 new ODataEntry(source);
         }
     }

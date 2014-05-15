@@ -8,6 +8,15 @@ namespace Simple.OData.Client.Tests
 {
     public class DictionaryExtensionsTests
     {
+        [Flags]
+        enum EnumType
+        {
+            Zero,
+            One,
+            Two,
+            Three,
+        }
+
         class ClassType
         {
             public string StringField;
@@ -16,6 +25,7 @@ namespace Simple.OData.Client.Tests
             public string StringProperty { get; set; }
             public string StringPropertyPrivateSetter { get; private set; }
             public int IntProperty { get; set; }
+            public EnumType EnumProperty { get; set; }
             public string[] StringCollectionProperty { get; set; }
             public int[] IntCollectionProperty { get; set; }
             public SubclassType CompoundProperty { get; set; }
@@ -40,6 +50,54 @@ namespace Simple.OData.Client.Tests
             var value = dict.ToObject<ClassType>();
             Assert.Equal("a", value.StringProperty);
             Assert.Equal(1, value.IntProperty);
+        }
+
+        [Fact]
+        public void ToObjectEnumPropertyFromInt()
+        {
+            var dict = new Dictionary<string, object>()
+            {
+                { "EnumProperty", EnumType.One },
+            };
+
+            var value = dict.ToObject<ClassType>();
+            Assert.Equal(EnumType.One, value.EnumProperty);
+        }
+
+        [Fact]
+        public void ToObjectEnumPropertyFromString()
+        {
+            var dict = new Dictionary<string, object>()
+            {
+                { "EnumProperty", "One" },
+            };
+
+            var value = dict.ToObject<ClassType>();
+            Assert.Equal(EnumType.One, value.EnumProperty);
+        }
+
+        [Fact]
+        public void ToObjectCombinedEnumPropertyFromInt()
+        {
+            var dict = new Dictionary<string, object>()
+            {
+                { "EnumProperty", EnumType.One | EnumType.Two },
+            };
+
+            var value = dict.ToObject<ClassType>();
+            Assert.Equal(EnumType.Three, value.EnumProperty);
+        }
+
+        [Fact]
+        public void ToObjectCombinedEnumPropertyFromString()
+        {
+            var dict = new Dictionary<string, object>()
+            {
+                { "EnumProperty", "One,Two" },
+            };
+
+            var value = dict.ToObject<ClassType>();
+            Assert.Equal(EnumType.Three, value.EnumProperty);
         }
 
         [Fact]

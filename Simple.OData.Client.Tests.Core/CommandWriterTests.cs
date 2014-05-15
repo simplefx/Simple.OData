@@ -24,7 +24,10 @@ namespace Simple.OData.Client.Tests
             AssertElementsContentEqual(document, entry, "d", "CustomerID");
             AssertElementsContentEqual(document, entry, "d", "CompanyName");
             AssertElementsContentEqual(document, entry, "d", "Address");
-            AssertElementsContentEqual(document, entry, "d", "City");
+            AssertElementsContentEqual(document, entry, "d", "Type");
+            AssertElementsContentEqual(document, entry, "d", "City1");
+            AssertElementsContentEqual(document, entry, "d", "Region");
+            AssertElementsContentEqual(document, entry, "d", "PostalCode");
             AssertElementsContentEqual(document, entry, "d", "Country");
         }
 
@@ -43,12 +46,12 @@ namespace Simple.OData.Client.Tests
             AssertElementsCountEqual(document, entry, "m", "properties");
             AssertElementsContentEqual(document, entry, "d", "Id");
             AssertElementsContentEqual(document, entry, "d", "Code");
-            AssertElementsContentEqual(document, entry, "d", "StartDate");
-            AssertElementsContentEqual(document, entry, "d", "EndDate");
+            AssertElementsContentEqual(document, entry, "d", "StartDate", false);
+            AssertElementsContentEqual(document, entry, "d", "EndDate", false);
             AssertElementsContentEqual(document, entry, "d", "State");
-            AssertElementsContentEqual(document, entry, "d", "Location");
-            AssertElementsContentEqual(document, entry, "d", "Latitude");
-            AssertElementsContentEqual(document, entry, "d", "Longitude");
+            AssertElementsContentEqual(document, entry, "d", "Location", false);
+            AssertElementsContentEqual(document, entry, "d", "Latitude", false);
+            AssertElementsContentEqual(document, entry, "d", "Longitude", false);
             AssertElementsContentEqual(document, entry, "d", "WorkerId");
             AssertElementsContentEqual(document, entry, "d", "CustomerId");
         }
@@ -67,8 +70,8 @@ namespace Simple.OData.Client.Tests
 
             AssertElementsCountEqual(document, entry, "m", "properties");
             AssertElementsContentEqual(document, entry, "d", "Id");
-            AssertElementsContentEqual(document, entry, "d", "StartDate");
-            AssertElementsContentEqual(document, entry, "d", "EndDate");
+            AssertElementsContentEqual(document, entry, "d", "StartDate", false);
+            AssertElementsContentEqual(document, entry, "d", "EndDate", false);
             AssertElementsContentEqual(document, entry, "d", "State");
             AssertElementsContentEqual(document, entry, "d", "WorkerId");
             AssertElementsContentEqual(document, entry, "d", "CustomerId");
@@ -81,20 +84,28 @@ namespace Simple.OData.Client.Tests
                 root2.Descendants(prefix, name).Elements().Count());
         }
 
-        private void AssertElementsContentEqual(XElement root1, XElement root2, string prefix, string name)
+        private void AssertElementsContentEqual(XElement root1, XElement root2, string prefix, string name, bool compareValues = true)
         {
             if (!root1.Descendants(prefix, name).Any() && !root2.Descendants(prefix, name).Any())
                 return;
 
             var element1 = root1.Descendants(prefix, name).Single();
             var element2 = root2.Descendants(prefix, name).Single();
-            //Assert.Equal(
-            //    element1.Value.ToLower().Substring(0, Math.Min(10, element1.Value.Length)),
-            //    element2.Value.ToLower().Substring(0, Math.Min(10, element1.Value.Length)));
             Assert.Equal(element1.Attributes().Count(), element2.Attributes().Count());
             Assert.Equal(0, 
                 element1.Attributes().Select(x => x.Value)
                 .Except(element2.Attributes().Select(x => x.Value)).Count());
+            if (compareValues)
+            {
+                Assert.Equal(element1.Value, element2.Value, StringComparer.InvariantCultureIgnoreCase);
+            }
+            else
+            {
+                if (element1.Value == null)
+                    Assert.Null(element2.Value);
+                if (element1.Value == string.Empty)
+                    Assert.Equal(string.Empty, element2.Value);
+            }
         }
     }
 }

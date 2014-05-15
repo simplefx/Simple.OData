@@ -68,6 +68,11 @@ namespace Simple.OData.Client.Extensions
         {
             return type.IsValueType;
         }
+
+        public static bool IsEnumType(this Type type)
+        {
+            return type.IsEnum;
+        }
 #else
         public static IEnumerable<PropertyInfo> GetDeclaredProperties(this Type type)
         {
@@ -127,6 +132,11 @@ namespace Simple.OData.Client.Extensions
         public static bool IsValue(this Type type)
         {
             return type.GetTypeInfo().IsValueType;
+        }
+
+        public static bool IsEnumType(this Type type)
+        {
+            return type.GetTypeInfo().IsEnum;
         }
 #endif
     }

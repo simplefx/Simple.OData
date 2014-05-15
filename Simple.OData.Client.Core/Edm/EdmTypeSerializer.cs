@@ -322,6 +322,16 @@ namespace Simple.OData.Client
                     }
                     element.SetValue(Writers[edmType](kvp.Value));
                 }
+                else if (property.Type is EdmEnumPropertyType)
+                {
+                    var edmType = (property.Type as EdmEnumPropertyType).Type;
+                    element.SetAttributeValue(root.GetNamespaceOfPrefix("m") + "type", edmType.Name);
+                    if (kvp.Value.ToString() == string.Empty)
+                    {
+                        element.SetAttributeValue(container.GetNamespaceOfPrefix("m") + "null", "true");
+                    }
+                    element.SetValue(kvp.Value);
+                }
             }
 
             container.Add(element);
