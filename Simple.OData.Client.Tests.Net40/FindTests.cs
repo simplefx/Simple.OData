@@ -191,7 +191,6 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task TotalCount()
         {
-            int count;
             var productsWithCount = await _client
                 .For("Products")
                 .FindEntriesWithCountAsync(true);

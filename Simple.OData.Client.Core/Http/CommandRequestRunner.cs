@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Simple.OData.Client
@@ -17,11 +18,11 @@ namespace Simple.OData.Client
             _ignoreResourceNotFoundException = settings.IgnoreResourceNotFoundException;
         }
 
-        public override async Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(HttpRequest request, bool scalarResult)
+        public override async Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(HttpRequest request, bool scalarResult, CancellationToken cancellationToken)
         {
             try
             {
-                using (var response = await ExecuteRequestAsync(request))
+                using (var response = await ExecuteRequestAsync(request, cancellationToken))
                 {
                     IEnumerable<IDictionary<string, object>> result = null;
                     if (!response.IsSuccessStatusCode)
@@ -45,12 +46,12 @@ namespace Simple.OData.Client
             }
         }
 
-        public override async Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> FindEntriesWithCountAsync(HttpRequest request, bool scalarResult)
+        public override async Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> FindEntriesWithCountAsync(HttpRequest request, bool scalarResult, CancellationToken cancellationToken)
         {
             int totalCount = 0;
             try
             {
-                using (var response = await ExecuteRequestAsync(request))
+                using (var response = await ExecuteRequestAsync(request, cancellationToken))
                 {
                     IEnumerable<IDictionary<string, object>> result = null;
                     if (response.StatusCode != HttpStatusCode.OK)
@@ -79,11 +80,11 @@ namespace Simple.OData.Client
             }
         }
 
-        public override async Task<IDictionary<string, object>> GetEntryAsync(HttpRequest request)
+        public override async Task<IDictionary<string, object>> GetEntryAsync(HttpRequest request, CancellationToken cancellationToken)
         {
             try
             {
-                using (var response = await ExecuteRequestAsync(request))
+                using (var response = await ExecuteRequestAsync(request, cancellationToken))
                 {
                     var text = await response.Content.ReadAsStringAsync();
                     return _responseReader.GetData(text).First();
@@ -98,9 +99,9 @@ namespace Simple.OData.Client
             }
         }
 
-        public override async Task<IDictionary<string, object>> InsertEntryAsync(HttpRequest request)
+        public override async Task<IDictionary<string, object>> InsertEntryAsync(HttpRequest request, CancellationToken cancellationToken)
         {
-            using (var response = await ExecuteRequestAsync(request))
+            using (var response = await ExecuteRequestAsync(request, cancellationToken))
             {
                 var text = await response.Content.ReadAsStringAsync();
                 if (request.ReturnContent && response.StatusCode == HttpStatusCode.Created)
@@ -114,9 +115,9 @@ namespace Simple.OData.Client
             }
         }
 
-        public override async Task<IDictionary<string, object>> UpdateEntryAsync(HttpRequest request)
+        public override async Task<IDictionary<string, object>> UpdateEntryAsync(HttpRequest request, CancellationToken cancellationToken)
         {
-            using (var response = await ExecuteRequestAsync(request))
+            using (var response = await ExecuteRequestAsync(request, cancellationToken))
             {
                 var text = await response.Content.ReadAsStringAsync();
                 if (request.ReturnContent && response.StatusCode == HttpStatusCode.OK)
@@ -130,16 +131,16 @@ namespace Simple.OData.Client
             }
         }
 
-        public override async Task DeleteEntryAsync(HttpRequest request)
+        public override async Task DeleteEntryAsync(HttpRequest request, CancellationToken cancellationToken)
         {
-            using (await ExecuteRequestAsync(request))
+            using (await ExecuteRequestAsync(request, cancellationToken))
             {
             }
         }
 
-        public override async Task<IEnumerable<IDictionary<string, object>>> ExecuteFunctionAsync(HttpRequest request)
+        public override async Task<IEnumerable<IDictionary<string, object>>> ExecuteFunctionAsync(HttpRequest request, CancellationToken cancellationToken)
         {
-            using (var response = await ExecuteRequestAsync(request))
+            using (var response = await ExecuteRequestAsync(request, cancellationToken))
             {
                 IEnumerable<IDictionary<string, object>> result = null;
                 switch (response.StatusCode)

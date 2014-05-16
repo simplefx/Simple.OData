@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Simple.OData.Client
@@ -36,10 +37,15 @@ namespace Simple.OData.Client
             _active = false;
         }
 
-        public async Task CompleteAsync()
+        public Task CompleteAsync()
+        {
+            return CompleteAsync(CancellationToken.None);
+        }
+
+        public async Task CompleteAsync(CancellationToken cancellationToken)
         {
             this.RequestBuilder.EndBatch();
-            using (var response = await this.RequestRunner.ExecuteRequestAsync(this.RequestBuilder.Request))
+            using (var response = await this.RequestRunner.ExecuteRequestAsync(this.RequestBuilder.Request, cancellationToken))
             {
                 await ParseResponseAsync(response);
             }

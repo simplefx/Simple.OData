@@ -108,7 +108,7 @@ namespace Simple.OData.Client.Tests
             {
                 var client = new ODataClient(batch);
                 category = await client.InsertEntryAsync("Categories", new Entry() { { "CategoryName", "Test13" } });
-                client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test14" }, { "UnitPrice", 21m }, { "Category", category } }, false);
+                await client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test14" }, { "UnitPrice", 21m }, { "Category", category } }, false);
                 await batch.CompleteAsync();
             }
 

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Threading;
 using System.Threading.Tasks;
 using Simple.OData.Client.Extensions;
 
@@ -45,7 +46,7 @@ namespace Simple.OData.Client
             get { return _schemaProvider; }
         }
 
-        public async Task<ISchema> ResolveAsync()
+        public async Task<ISchema> ResolveAsync(CancellationToken cancellationToken)
         {
             if (_metadataString == null)
             {

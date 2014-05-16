@@ -18,7 +18,7 @@ namespace Simple.OData.Client.Tests
     public class XElementExtensionsTests
     {
         [Fact]
-        public async Task TestXElementWithDefaultNamespace()
+        public void TestXElementWithDefaultNamespace()
         {
             var content = Properties.XmlSamples.XmlWithDefaultNamespace;
             var element = XElement.Parse(content);
@@ -29,7 +29,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task TestXElementWithNoNamespace()
+        public void TestXElementWithNoNamespace()
         {
             var content = Properties.XmlSamples.XmlWithNoNamespace;
             var element = XElement.Parse(content);
@@ -40,7 +40,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task TestXElementWithPrefixedNamespace()
+        public void TestXElementWithPrefixedNamespace()
         {
             var content = Properties.XmlSamples.XmlWithPrefixedNamespace;
             var element = XElement.Parse(content);

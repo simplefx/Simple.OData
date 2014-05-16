@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Simple.OData.Client
 {
     public interface ISchema
     {
-        Task<ISchema> ResolveAsync();
+        Task<ISchema> ResolveAsync(CancellationToken cancellationToken);
 
         string MetadataAsString { get; }
         string TypesNamespace { get; }

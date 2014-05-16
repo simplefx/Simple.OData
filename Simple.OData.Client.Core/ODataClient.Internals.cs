@@ -2,31 +2,33 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Simple.OData.Client
 {
     public partial class ODataClient
     {
-        private async Task<IEnumerable<IDictionary<string, object>>> RetrieveEntriesAsync(string commandText, bool scalarResult)
+        private async Task<IEnumerable<IDictionary<string, object>>> RetrieveEntriesAsync(
+            string commandText, bool scalarResult, CancellationToken cancellationToken)
         {
             var command = new CommandWriter(_schema).CreateGetCommand(commandText, scalarResult);
             var request = _requestBuilder.CreateRequest(command);
-            return await _requestRunner.FindEntriesAsync(request, scalarResult);
+            return await _requestRunner.FindEntriesAsync(request, scalarResult, cancellationToken);
         }
 
         private async Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> RetrieveEntriesWithCountAsync(
-            string commandText, bool scalarResult)
+            string commandText, bool scalarResult, CancellationToken cancellationToken)
         {
             var command = new CommandWriter(_schema).CreateGetCommand(commandText, scalarResult);
             var request = _requestBuilder.CreateRequest(command);
-            var result = await _requestRunner.FindEntriesWithCountAsync(request, scalarResult);
+            var result = await _requestRunner.FindEntriesWithCountAsync(request, scalarResult, cancellationToken);
             return Tuple.Create(result.Item1, result.Item2);
         }
 
         private async Task<IEnumerable<IDictionary<string, object>>> IterateEntriesAsync(
             string collection, string commandText, IDictionary<string, object> entryData, bool resultRequired,
-            Func<string, IDictionary<string, object>, IDictionary<string, object>, bool, Task<IDictionary<string, object>>> func)
+            Func<string, IDictionary<string, object>, IDictionary<string, object>, bool, Task<IDictionary<string, object>>> func, CancellationToken cancellationToken)
         {
             IEnumerable<IDictionary<string, object>> result = null;
 
@@ -38,7 +40,7 @@ namespace Simple.OData.Client
             else
             {
                 var client = new ODataClient(_settings);
-                var entries = await client.FindEntriesAsync(commandText);
+                var entries = await client.FindEntriesAsync(commandText, cancellationToken);
                 if (entries != null)
                 {
                     var entryList = entries.ToList();
@@ -55,8 +57,8 @@ namespace Simple.OData.Client
         }
 
         private async Task<int> IterateEntriesAsync(
-            string collection, string commandText, 
-            Func<string, IDictionary<string, object>, Task> func)
+            string collection, string commandText,
+            Func<string, IDictionary<string, object>, Task> func, CancellationToken cancellationToken)
         {
             var result = 0;
             var entryKey = ExtractKeyFromCommandText(collection, commandText);
@@ -68,7 +70,7 @@ namespace Simple.OData.Client
             else
             {
                 var client = new ODataClient(_settings);
-                var entries = await client.FindEntriesAsync(commandText);
+                var entries = await client.FindEntriesAsync(commandText, cancellationToken);
                 if (entries != null)
                 {
                     var entryList = entries.ToList();
@@ -87,14 +89,15 @@ namespace Simple.OData.Client
             IDictionary<string, object> entryKey,
             IDictionary<string, object> entryData,
             EntryMembers entryMembers,
-            bool resultRequired)
+            bool resultRequired, 
+            CancellationToken cancellationToken)
         {
             bool hasPropertiesToUpdate = entryMembers.Properties.Count > 0;
             bool merge = !hasPropertiesToUpdate || CheckMergeConditions(collection, entryKey, entryData);
             var commandText = await GetFluentClient()
                 .For(_schema.FindBaseTable(collection).ActualName)
                 .Key(entryKey)
-                .GetCommandTextAsync();
+                .GetCommandTextAsync(cancellationToken);
 
             var commandWriter = new CommandWriter(_schema);
             var table = _schema.FindConcreteTable(collection);
@@ -115,18 +118,18 @@ namespace Simple.OData.Client
 
             var command = commandWriter.CreateUpdateCommand(commandText, entryData, entryContent, merge);
             var request = _requestBuilder.CreateRequest(command, resultRequired);
-            var result = await _requestRunner.UpdateEntryAsync(request);
+            var result = await _requestRunner.UpdateEntryAsync(request, cancellationToken);
 
             foreach (var associatedData in entryMembers.AssociationsByContentId)
             {
                 var linkCommand = commandWriter.CreateLinkCommand(collection, associatedData.Key, command.ContentId, associatedData.Value);
                 request = _requestBuilder.CreateRequest(linkCommand);
-                await _requestRunner.UpdateEntryAsync(request);
+                await _requestRunner.UpdateEntryAsync(request, cancellationToken);
             }
 
             foreach (var associationName in unlinkAssociationNames)
             {
-                await UnlinkEntryAsync(collection, entryKey, associationName);
+                await UnlinkEntryAsync(collection, entryKey, associationName, cancellationToken);
             }
 
             return result;

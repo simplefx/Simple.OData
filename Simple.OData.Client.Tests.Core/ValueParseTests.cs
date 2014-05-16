@@ -192,7 +192,7 @@ namespace Simple.OData.Client.Tests
         {
             var propertyType = new EdmPrimitivePropertyType() { Type = EdmType.Int64 };
             var value = _parser.ParseValue("123", propertyType);
-            Assert.Equal(123l, value);
+            Assert.Equal(123L, value);
         }
 
         [Fact]

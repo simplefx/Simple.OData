@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using Simple.OData.Client.Extensions;
 
@@ -147,7 +148,13 @@ namespace Simple.OData.Client
 
         public async Task<string> GetCommandTextAsync()
         {
-            await _schema.ResolveAsync();
+            await _schema.ResolveAsync(CancellationToken.None);
+            return new FluentCommand(this).Resolve().Format();
+        }
+
+        public async Task<string> GetCommandTextAsync(CancellationToken cancellationToken)
+        {
+            await _schema.ResolveAsync(cancellationToken);
             return new FluentCommand(this).Resolve().Format();
         }
 

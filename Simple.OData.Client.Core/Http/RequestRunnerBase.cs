@@ -2,6 +2,7 @@
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Simple.OData.Client
@@ -16,7 +17,7 @@ namespace Simple.OData.Client
         public Action<HttpRequestMessage> BeforeRequest { get; set; }
         public Action<HttpResponseMessage> AfterResponse { get; set; }
 
-        public async Task<HttpResponseMessage> ExecuteRequestAsync(HttpRequest request)
+        public async Task<HttpResponseMessage> ExecuteRequestAsync(HttpRequest request, CancellationToken cancellationToken)
         {
             try
             {
@@ -46,7 +47,7 @@ namespace Simple.OData.Client
                         PreferHeaderName,
                         request.ReturnContent ? ReturnContentHeaderValue : ReturnNoContentHeaderValue);
 
-                    var responseMessage = await httpClient.SendAsync(requestMessage);
+                    var responseMessage = await httpClient.SendAsync(requestMessage, cancellationToken);
 
                     if (this.AfterResponse != null)
                         this.AfterResponse(responseMessage);

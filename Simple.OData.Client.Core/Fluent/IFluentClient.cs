@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Simple.OData.Client
@@ -9,27 +10,73 @@ namespace Simple.OData.Client
         where T : class
     {
         Task<IEnumerable<T>> FindEntriesAsync();
+        Task<IEnumerable<T>> FindEntriesAsync(CancellationToken cancellationToken);
         Task<IEnumerable<T>> FindEntriesAsync(bool scalarResult);
+        Task<IEnumerable<T>> FindEntriesAsync(bool scalarResult, CancellationToken cancellationToken);
+
         Task<Tuple<IEnumerable<T>, int>> FindEntriesWithCountAsync();
+        Task<Tuple<IEnumerable<T>, int>> FindEntriesWithCountAsync(CancellationToken cancellationToken);
         Task<Tuple<IEnumerable<T>, int>> FindEntriesWithCountAsync(bool scalarResult);
+        Task<Tuple<IEnumerable<T>, int>> FindEntriesWithCountAsync(bool scalarResult, CancellationToken cancellationToken);
+
         Task<T> FindEntryAsync();
+        Task<T> FindEntryAsync(CancellationToken cancellationToken);
+
         Task<object> FindScalarAsync();
-        Task<T> InsertEntryAsync(bool resultRequired = true);
-        Task<T> UpdateEntryAsync(bool resultRequired = true);
-        Task<IEnumerable<T>> UpdateEntriesAsync(bool resultRequired = true);
+        Task<object> FindScalarAsync(CancellationToken cancellationToken);
+
+        Task<T> InsertEntryAsync();
+        Task<T> InsertEntryAsync(CancellationToken cancellationToken);
+        Task<T> InsertEntryAsync(bool resultRequired);
+        Task<T> InsertEntryAsync(bool resultRequired, CancellationToken cancellationToken);
+
+        Task<T> UpdateEntryAsync();
+        Task<T> UpdateEntryAsync(CancellationToken cancellationToken);
+        Task<T> UpdateEntryAsync(bool resultRequired);
+        Task<T> UpdateEntryAsync(bool resultRequired, CancellationToken cancellationToken);
+
+        Task<IEnumerable<T>> UpdateEntriesAsync();
+        Task<IEnumerable<T>> UpdateEntriesAsync(CancellationToken cancellationToken);
+        Task<IEnumerable<T>> UpdateEntriesAsync(bool resultRequired);
+        Task<IEnumerable<T>> UpdateEntriesAsync(bool resultRequired, CancellationToken cancellationToken);
+
         Task DeleteEntryAsync();
+        Task DeleteEntryAsync(CancellationToken cancellationToken);
+        
         Task<int> DeleteEntriesAsync();
-        Task LinkEntryAsync<U>(U linkedEntryKey, string linkName = null);
+        Task<int> DeleteEntriesAsync(CancellationToken cancellationToken);
+        
+        Task LinkEntryAsync<U>(U linkedEntryKey);
+        Task LinkEntryAsync<U>(U linkedEntryKey, CancellationToken cancellationToken);
+        Task LinkEntryAsync<U>(U linkedEntryKey, string linkName);
+        Task LinkEntryAsync<U>(U linkedEntryKey, string linkName, CancellationToken cancellationToken);
         Task LinkEntryAsync<U>(Expression<Func<T, U>> expression, U linkedEntryKey);
+        Task LinkEntryAsync<U>(Expression<Func<T, U>> expression, U linkedEntryKey, CancellationToken cancellationToken);
         Task LinkEntryAsync(ODataExpression expression, IDictionary<string, object> linkedEntryKey);
+        Task LinkEntryAsync(ODataExpression expression, IDictionary<string, object> linkedEntryKey, CancellationToken cancellationToken);
         Task LinkEntryAsync(ODataExpression expression, ODataEntry linkedEntryKey);
-        Task UnlinkEntryAsync<U>(string linkName = null);
+        Task LinkEntryAsync(ODataExpression expression, ODataEntry linkedEntryKey, CancellationToken cancellationToken);
+        
+        Task UnlinkEntryAsync<U>();
+        Task UnlinkEntryAsync<U>(CancellationToken cancellationToken);
+        Task UnlinkEntryAsync<U>(string linkName);
+        Task UnlinkEntryAsync<U>(string linkName, CancellationToken cancellationToken);
         Task UnlinkEntryAsync<U>(Expression<Func<T, U>> expression);
+        Task UnlinkEntryAsync<U>(Expression<Func<T, U>> expression, CancellationToken cancellationToken);
         Task UnlinkEntryAsync(ODataExpression expression);
+        Task UnlinkEntryAsync(ODataExpression expression, CancellationToken cancellationToken);
+        
         Task<IEnumerable<T>> ExecuteFunctionAsync(string functionName, IDictionary<string, object> parameters);
+        Task<IEnumerable<T>> ExecuteFunctionAsync(string functionName, IDictionary<string, object> parameters, CancellationToken cancellationToken);
+        
         Task<T> ExecuteFunctionAsScalarAsync(string functionName, IDictionary<string, object> parameters);
+        Task<T> ExecuteFunctionAsScalarAsync(string functionName, IDictionary<string, object> parameters, CancellationToken cancellationToken);
+        
         Task<T[]> ExecuteFunctionAsArrayAsync(string functionName, IDictionary<string, object> parameters);
+        Task<T[]> ExecuteFunctionAsArrayAsync(string functionName, IDictionary<string, object> parameters, CancellationToken cancellationToken);
+        
         Task<string> GetCommandTextAsync();
+        Task<string> GetCommandTextAsync(CancellationToken cancellationToken);
 
         IFluentClient<IDictionary<string, object>> As(string derivedCollectionName);
         IFluentClient<U> As<U>(string derivedCollectionName = null) where U : class;

@@ -36,14 +36,14 @@ namespace Simple.OData.Client.Tests
                 foreach (var product in products)
                 {
                     if (product["Name"].ToString().StartsWith("Test"))
-                        _client.DeleteEntryAsync("Products", product);
+                        await _client.DeleteEntryAsync("Products", product);
                 }
 
                 var workTaskModels = await _client.FindEntriesAsync("WorkTaskModels");
                 foreach (var workTaskModel in workTaskModels)
                 {
                     if (workTaskModel["Code"].ToString().StartsWith("Test"))
-                        _client.DeleteEntryAsync("workTaskModels", workTaskModel);
+                        await _client.DeleteEntryAsync("workTaskModels", workTaskModel);
                 }
             }
         }
