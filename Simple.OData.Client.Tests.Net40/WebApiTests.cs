@@ -20,7 +20,7 @@ namespace Simple.OData.Client.Tests
         public WebApiTests()
         {
             var settings = new ODataClientSettings();
-            settings.UrlBase = "http://" + "WEBAPI-PRODUCTS/ProductService/odata";
+            settings.UrlBase = "http://va-odata-integration.azurewebsites.net/odata";
             if (_useBasicAuthentication)
             {
                 settings.Credentials = new NetworkCredential(_user, _password);

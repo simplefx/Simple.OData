@@ -27,3 +27,5 @@ packages/
 *.xam
 *.ldf
 TestResults/
+Simple.OData.ProductService/Properties/PublishProfiles/va-odata-integration - FTP.pubxml
+Simple.OData.ProductService/Properties/PublishProfiles/va-odata-integration - Web Deploy.pubxml
