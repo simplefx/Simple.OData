@@ -103,6 +103,10 @@
       <Link>Properties\CommonAssemblyVersion.cs</Link>
     </Compile>
     <Compile Include="App_Start\WebApiConfig.cs" />
+    <Compile Include="Authentication\BasicAuthenticationConfigurationSection.cs" />
+    <Compile Include="Authentication\BasicAuthenticationModule.cs" />
+    <Compile Include="Authentication\CredentialElement.cs" />
+    <Compile Include="Authentication\CredentialElementCollection.cs" />
     <Compile Include="Controllers\ProductsController.cs" />
     <Compile Include="Controllers\WorkTaskModelsController.cs" />
     <Compile Include="Global.asax.cs">
@@ -126,6 +130,7 @@
     <Content Include="packages.config">
       <SubType>Designer</SubType>
     </Content>
+    <Content Include="basicAuthentication.config" />
     <None Include="Properties\PublishProfiles\va-odata-integration - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\va-odata-integration - Web Deploy.pubxml" />
     <None Include="Web.Debug.config">
