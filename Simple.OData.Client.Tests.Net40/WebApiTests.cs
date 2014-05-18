@@ -9,22 +9,12 @@ using Entry = System.Collections.Generic.Dictionary<string, object>;
 
 namespace Simple.OData.Client.Tests
 {
-    public class WebApiTests : IDisposable
+    public abstract class WebApiTestsBase : IDisposable
     {
-        private string _serviceUri;
-        private IODataClient _client;
-        private const bool _useBasicAuthentication = true;
-        private const string _user = "tester";
-        private const string _password = "tester123";
+        protected IODataClient _client;
 
-        public WebApiTests()
+        protected WebApiTestsBase(ODataClientSettings settings)
         {
-            var settings = new ODataClientSettings();
-            settings.UrlBase = "http://va-odata-integration.azurewebsites.net/odata";
-            if (_useBasicAuthentication)
-            {
-                settings.Credentials = new NetworkCredential(_user, _password);
-            }
             _client = new ODataClient(settings);
         }
 
@@ -167,7 +157,7 @@ namespace Simple.OData.Client.Tests
             workTaskModel = await _client
                 .For("WorkTaskModels")
                 .Key(workTaskModel["Id"])
-                .Set(new Entry() { {"Code", "Test2"}, {"Attachments", new List<IDictionary<string, object>>()}, {"WorkActivityReports", null } })
+                .Set(new Entry() { { "Code", "Test2" }, { "Attachments", new List<IDictionary<string, object>>() }, { "WorkActivityReports", null } })
                 .UpdateEntryAsync();
 
             Assert.Equal("Test2", workTaskModel["Code"]);
@@ -209,6 +199,32 @@ namespace Simple.OData.Client.Tests
                 .UpdateEntryAsync();
 
             Assert.Equal("Test3", workTaskModel["Code"]);
+        }
+    }
+
+    public class WebApiTests : WebApiTestsBase
+    {
+        private string _serviceUri;
+
+        public WebApiTests()
+            : base(new ODataClientSettings("http://va-odata-integration.azurewebsites.net/odata/open"))
+        {
+        }
+
+    }
+
+    public class WebApiWithAuthenticationTests : WebApiTestsBase
+    {
+        private const string _user = "tester";
+        private const string _password = "tester123";
+
+        public WebApiWithAuthenticationTests()
+            : base(new ODataClientSettings()
+            {
+                UrlBase = "http://va-odata-integration.azurewebsites.net/odata/secure", 
+                Credentials = new NetworkCredential(_user, _password)
+            })
+        {
         }
     }
 }

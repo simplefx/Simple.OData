@@ -13,7 +13,10 @@ namespace Simple.OData.ProductService.App_Start
             builder.EntitySet<WorkTaskModel>("WorkTaskModels");
             builder.EntitySet<WorkTaskAttachmentModel>("WorkTaskAttachmentModels");
             builder.EntitySet<WorkActivityReportModel>("WorkActivityReportModels");
-            config.Routes.MapODataRoute("odata", "odata", builder.GetEdmModel());
+            var model = builder.GetEdmModel();
+
+            config.Routes.MapODataRoute("odata", "odata/open", model);
+            config.Routes.MapODataRoute("odatas", "odata/secure", model);
         }
     }
 }

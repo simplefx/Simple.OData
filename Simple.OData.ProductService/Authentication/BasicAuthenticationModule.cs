@@ -93,6 +93,8 @@ namespace Devbridge.BasicAuthentication
         public void IssueAuthenticationChallenge(Object source, EventArgs e)
         {
             var context = ((HttpApplication)source).Context;
+            if (!context.Request.Path.Contains("/secure"))
+                return;
 
             string authorizationHeader = context.Request.Headers[HttpAuthorizationHeader];
 
