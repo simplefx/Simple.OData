@@ -28,14 +28,14 @@ namespace Simple.OData.Client
 
         private async Task<IEnumerable<IDictionary<string, object>>> IterateEntriesAsync(
             string collection, string commandText, IDictionary<string, object> entryData, bool resultRequired,
-            Func<string, IDictionary<string, object>, IDictionary<string, object>, bool, Task<IDictionary<string, object>>> func, CancellationToken cancellationToken)
+            Func<string, IDictionary<string, object>, IDictionary<string, object>, bool, Task<IDictionary<string, object>>> funcAsync, CancellationToken cancellationToken)
         {
             IEnumerable<IDictionary<string, object>> result = null;
 
             var entryKey = ExtractKeyFromCommandText(collection, commandText);
             if (entryKey != null)
             {
-                result = new [] { await func(collection, entryKey, entryData, resultRequired) };
+                result = new [] { await funcAsync(collection, entryKey, entryData, resultRequired) };
             }
             else
             {
@@ -47,7 +47,8 @@ namespace Simple.OData.Client
                     var resultList = new List<IDictionary<string, object>>();
                     foreach (var entry in entryList)
                     {
-                        resultList.Add(await func(collection, entry, entryData, resultRequired));
+                        resultList.Add(await funcAsync(collection, entry, entryData, resultRequired));
+                        if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
                     }
                     result = resultList;
                 }
@@ -58,13 +59,13 @@ namespace Simple.OData.Client
 
         private async Task<int> IterateEntriesAsync(
             string collection, string commandText,
-            Func<string, IDictionary<string, object>, Task> func, CancellationToken cancellationToken)
+            Func<string, IDictionary<string, object>, Task> funcAsync, CancellationToken cancellationToken)
         {
             var result = 0;
             var entryKey = ExtractKeyFromCommandText(collection, commandText);
             if (entryKey != null)
             {
-                await func(collection, entryKey);
+                await funcAsync(collection, entryKey);
                 result = 1;
             }
             else
@@ -76,7 +77,8 @@ namespace Simple.OData.Client
                     var entryList = entries.ToList();
                     foreach (var entry in entryList)
                     {
-                        await func(collection, entry);
+                        await funcAsync(collection, entry);
+                        if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
                         ++result;
                     }
                 }
@@ -98,6 +100,7 @@ namespace Simple.OData.Client
                 .For(_schema.FindBaseTable(collection).ActualName)
                 .Key(entryKey)
                 .GetCommandTextAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var commandWriter = new CommandWriter(_schema);
             var table = _schema.FindConcreteTable(collection);
@@ -119,17 +122,20 @@ namespace Simple.OData.Client
             var command = commandWriter.CreateUpdateCommand(commandText, entryData, entryContent, merge);
             var request = _requestBuilder.CreateRequest(command, resultRequired);
             var result = await _requestRunner.UpdateEntryAsync(request, cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             foreach (var associatedData in entryMembers.AssociationsByContentId)
             {
                 var linkCommand = commandWriter.CreateLinkCommand(collection, associatedData.Key, command.ContentId, associatedData.Value);
                 request = _requestBuilder.CreateRequest(linkCommand);
                 await _requestRunner.UpdateEntryAsync(request, cancellationToken);
+                if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
             }
 
             foreach (var associationName in unlinkAssociationNames)
             {
                 await UnlinkEntryAsync(collection, entryKey, associationName, cancellationToken);
+                if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
             }
 
             return result;

@@ -86,6 +86,8 @@ namespace Simple.OData.Client
         public async Task<string> GetCommandTextAsync(string collection, ODataExpression expression, CancellationToken cancellationToken)
         {
             await _schema.ResolveAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             return await GetFluentClient()
                 .For(collection)
                 .Filter(expression.Format(_schema, collection))
@@ -100,6 +102,8 @@ namespace Simple.OData.Client
         public async Task<string> GetCommandTextAsync<T>(string collection, Expression<Func<T, bool>> expression, CancellationToken cancellationToken)
         {
             await _schema.ResolveAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             return await GetFluentClient()
                 .For(collection)
                 .Filter(ODataExpression.FromLinqExpression(expression.Body).Format(_schema, collection))
@@ -114,6 +118,8 @@ namespace Simple.OData.Client
         public async Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(string commandText, CancellationToken cancellationToken)
         {
             await _schema.ResolveAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             return await RetrieveEntriesAsync(commandText, false, cancellationToken);
         }
 
@@ -125,6 +131,8 @@ namespace Simple.OData.Client
         public async Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(string commandText, bool scalarResult, CancellationToken cancellationToken)
         {
             await _schema.ResolveAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             return await RetrieveEntriesAsync(commandText, scalarResult, cancellationToken);
         }
 
@@ -136,6 +144,8 @@ namespace Simple.OData.Client
         public async Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> FindEntriesWithCountAsync(string commandText, CancellationToken cancellationToken)
         {
             await _schema.ResolveAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             return await RetrieveEntriesWithCountAsync(commandText, false, cancellationToken);
         }
 
@@ -147,6 +157,8 @@ namespace Simple.OData.Client
         public async Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> FindEntriesWithCountAsync(string commandText, bool scalarResult, CancellationToken cancellationToken)
         {
             await _schema.ResolveAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             return await RetrieveEntriesWithCountAsync(commandText, scalarResult, cancellationToken);
         }
 
@@ -158,6 +170,8 @@ namespace Simple.OData.Client
         public async Task<IDictionary<string, object>> FindEntryAsync(string commandText, CancellationToken cancellationToken)
         {
             await _schema.ResolveAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             var result = await RetrieveEntriesAsync(commandText, false, cancellationToken);
             return result == null ? null : result.FirstOrDefault();
         }
@@ -170,6 +184,8 @@ namespace Simple.OData.Client
         public async Task<object> FindScalarAsync(string commandText, CancellationToken cancellationToken)
         {
             await _schema.ResolveAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             var result = await RetrieveEntriesAsync(commandText, true, cancellationToken);
             return result == null ? null : result.FirstOrDefault().Values.First();
         }
@@ -182,6 +198,8 @@ namespace Simple.OData.Client
         public async Task<IDictionary<string, object>> GetEntryAsync(string collection, CancellationToken cancellationToken, params object[] entryKey)
         {
             await _schema.ResolveAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             var entryKeyWithNames = new Dictionary<string, object>();
             var keyNames = _schema.FindConcreteTable(collection).GetKeyNames();
             for (int index = 0; index < keyNames.Count; index++)
@@ -199,10 +217,13 @@ namespace Simple.OData.Client
         public async Task<IDictionary<string, object>> GetEntryAsync(string collection, IDictionary<string, object> entryKey, CancellationToken cancellationToken)
         {
             await _schema.ResolveAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             var commandText = await GetFluentClient()
                 .For(collection)
                 .Key(entryKey)
                 .GetCommandTextAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var command = new CommandWriter(_schema).CreateGetCommand(commandText);
             var request = _requestBuilder.CreateRequest(command);
@@ -227,6 +248,8 @@ namespace Simple.OData.Client
         public async Task<IDictionary<string, object>> InsertEntryAsync(string collection, IDictionary<string, object> entryData, bool resultRequired, CancellationToken cancellationToken)
         {
             await _schema.ResolveAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             RemoveSystemProperties(entryData);
             var table = _schema.FindConcreteTable(collection);
             var entryMembers = ParseEntryMembers(table, entryData);
@@ -241,12 +264,14 @@ namespace Simple.OData.Client
             var command = commandWriter.CreateInsertCommand(_schema.FindBaseTable(collection).ActualName, entryData, entryContent);
             var request = _requestBuilder.CreateRequest(command, resultRequired);
             var result = await _requestRunner.InsertEntryAsync(request, cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             foreach (var associatedData in entryMembers.AssociationsByContentId)
             {
                 var linkCommand = commandWriter.CreateLinkCommand(collection, associatedData.Key, command.ContentId, associatedData.Value);
                 request = _requestBuilder.CreateRequest(linkCommand, resultRequired);
                 await _requestRunner.InsertEntryAsync(request, cancellationToken);
+                if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
             }
 
             return result;
@@ -270,6 +295,8 @@ namespace Simple.OData.Client
         public async Task<IDictionary<string, object>> UpdateEntryAsync(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData, bool resultRequired, CancellationToken cancellationToken)
         {
             await _schema.ResolveAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             RemoveSystemProperties(entryKey);
             RemoveSystemProperties(entryData);
             var table = _schema.FindConcreteTable(collection);
@@ -296,6 +323,8 @@ namespace Simple.OData.Client
         public async Task<IEnumerable<IDictionary<string, object>>> UpdateEntriesAsync(string collection, string commandText, IDictionary<string, object> entryData, bool resultRequired, CancellationToken cancellationToken)
         {
             await _schema.ResolveAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             RemoveSystemProperties(entryData);
             return await IterateEntriesAsync(
                 collection, commandText, entryData, resultRequired,
@@ -311,11 +340,14 @@ namespace Simple.OData.Client
         public async Task DeleteEntryAsync(string collection, IDictionary<string, object> entryKey, CancellationToken cancellationToken)
         {
             await _schema.ResolveAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             RemoveSystemProperties(entryKey);
             var commandText = await GetFluentClient()
                 .For(collection)
                 .Key(entryKey)
                 .GetCommandTextAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var command = new CommandWriter(_schema).CreateDeleteCommand(commandText);
             var request = _requestBuilder.CreateRequest(command);
@@ -330,6 +362,8 @@ namespace Simple.OData.Client
         public async Task<int> DeleteEntriesAsync(string collection, string commandText, CancellationToken cancellationToken)
         {
             await _schema.ResolveAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             return await IterateEntriesAsync(
                 collection, commandText,
                 async (x, y) => await DeleteEntryAsync(x, y, cancellationToken), 
@@ -344,6 +378,8 @@ namespace Simple.OData.Client
         public async Task LinkEntryAsync(string collection, IDictionary<string, object> entryKey, string linkName, IDictionary<string, object> linkedEntryKey, CancellationToken cancellationToken)
         {
             await _schema.ResolveAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             RemoveSystemProperties(entryKey);
             RemoveSystemProperties(linkedEntryKey);
             var association = _schema.FindAssociation(collection, linkName);
@@ -352,10 +388,13 @@ namespace Simple.OData.Client
                 .For(collection)
                 .Key(entryKey)
                 .GetCommandTextAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             var linkPath = await GetFluentClient()
                 .For(association.ReferenceTableName)
                 .Key(linkedEntryKey)
                 .GetCommandTextAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var command = new CommandWriter(_schema).CreateLinkCommand(collection, association.ActualName, entryPath, linkPath);
             var request = _requestBuilder.CreateRequest(command);
@@ -370,12 +409,15 @@ namespace Simple.OData.Client
         public async Task UnlinkEntryAsync(string collection, IDictionary<string, object> entryKey, string linkName, CancellationToken cancellationToken)
         {
             await _schema.ResolveAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             RemoveSystemProperties(entryKey);
             var association = _schema.FindAssociation(collection, linkName);
             var commandText = await GetFluentClient()
                 .For(collection)
                 .Key(entryKey)
                 .GetCommandTextAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var command = new CommandWriter(_schema).CreateUnlinkCommand(collection, association.ActualName, commandText);
             var request = _requestBuilder.CreateRequest(command);
@@ -390,11 +432,14 @@ namespace Simple.OData.Client
         public async Task<IEnumerable<IDictionary<string, object>>> ExecuteFunctionAsync(string functionName, IDictionary<string, object> parameters, CancellationToken cancellationToken)
         {
             await _schema.ResolveAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             var function = _schema.FindFunction(functionName);
             var commandText = await GetFluentClient()
                 .Function(functionName)
                 .Parameters(parameters)
                 .GetCommandTextAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var command = new HttpCommand(function.HttpMethod.ToUpper(), commandText);
             var request = _requestBuilder.CreateRequest(command);
@@ -409,7 +454,9 @@ namespace Simple.OData.Client
         public async Task<T> ExecuteFunctionAsScalarAsync<T>(string functionName, IDictionary<string, object> parameters, CancellationToken cancellationToken)
         {
             await _schema.ResolveAsync(cancellationToken);
-            return (T) (await ExecuteFunctionAsync(functionName, parameters, cancellationToken)).First().First().Value;
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+            return (T)(await ExecuteFunctionAsync(functionName, parameters, cancellationToken)).First().First().Value;
         }
 
         public Task<T[]> ExecuteFunctionAsArrayAsync<T>(string functionName, IDictionary<string, object> parameters)
@@ -420,6 +467,7 @@ namespace Simple.OData.Client
         public async Task<T[]> ExecuteFunctionAsArrayAsync<T>(string functionName, IDictionary<string, object> parameters, CancellationToken cancellationToken)
         {
             await _schema.ResolveAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             return (await ExecuteFunctionAsync(functionName, parameters, cancellationToken))
                 .SelectMany(x => x.Values)
@@ -430,48 +478,74 @@ namespace Simple.OData.Client
         internal async Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(FluentCommand command, CancellationToken cancellationToken)
         {
             await _schema.ResolveAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             var commandText = await command.GetCommandTextAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             return await FindEntriesAsync(commandText, cancellationToken);
         }
 
         internal async Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(FluentCommand command, bool scalarResult, CancellationToken cancellationToken)
         {
             await _schema.ResolveAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             var commandText = await command.GetCommandTextAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             return await FindEntriesAsync(commandText, scalarResult, cancellationToken);
         }
 
         internal async Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> FindEntriesWithCountAsync(FluentCommand command, CancellationToken cancellationToken)
         {
             await _schema.ResolveAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             var commandText = await command.GetCommandTextAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             return await FindEntriesWithCountAsync(commandText, cancellationToken);
         }
 
         internal async Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> FindEntriesWithCountAsync(FluentCommand command, bool scalarResult, CancellationToken cancellationToken)
         {
             await _schema.ResolveAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             var commandText = await command.GetCommandTextAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             return await FindEntriesWithCountAsync(commandText, scalarResult, cancellationToken);
         }
 
         internal async Task<IDictionary<string, object>> FindEntryAsync(FluentCommand command, CancellationToken cancellationToken)
         {
             await _schema.ResolveAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             var commandText = await command.GetCommandTextAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             return await FindEntryAsync(commandText, cancellationToken);
         }
 
         internal async Task<object> FindScalarAsync(FluentCommand command, CancellationToken cancellationToken)
         {
             await _schema.ResolveAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             var commandText = await command.GetCommandTextAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             return await FindScalarAsync(commandText, cancellationToken);
         }
 
         internal async Task<IDictionary<string, object>> InsertEntryAsync(FluentCommand command, IDictionary<string, object> entryData, bool resultRequired, CancellationToken cancellationToken)
         {
             await _schema.ResolveAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             var collectionName = _schema.FindTable(command.CollectionName).ActualName;
             return await InsertEntryAsync(collectionName, entryData, resultRequired, cancellationToken);
         }
@@ -479,6 +553,8 @@ namespace Simple.OData.Client
         internal async Task<IDictionary<string, object>> UpdateEntryAsync(FluentCommand command, IDictionary<string, object> entryKey, IDictionary<string, object> entryData, bool resultRequired, CancellationToken cancellationToken)
         {
             await _schema.ResolveAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             var collectionName = _schema.FindTable(command.CollectionName).ActualName;
             return await UpdateEntryAsync(collectionName, entryKey, entryData, resultRequired, cancellationToken);
         }
@@ -486,14 +562,20 @@ namespace Simple.OData.Client
         internal async Task<IEnumerable<IDictionary<string, object>>> UpdateEntriesAsync(FluentCommand command, IDictionary<string, object> entryData, bool resultRequired, CancellationToken cancellationToken)
         {
             await _schema.ResolveAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             var collectionName = _schema.FindTable(command.CollectionName).ActualName;
             var commandText = await command.GetCommandTextAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             return await UpdateEntriesAsync(collectionName, commandText, entryData, resultRequired, cancellationToken);
         }
 
         internal async Task DeleteEntryAsync(FluentCommand command, IDictionary<string, object> entryKey, CancellationToken cancellationToken)
         {
             await _schema.ResolveAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             var collectionName = _schema.FindTable(command.CollectionName).ActualName;
             await DeleteEntryAsync(collectionName, entryKey, cancellationToken);
         }
@@ -501,14 +583,20 @@ namespace Simple.OData.Client
         internal async Task<int> DeleteEntriesAsync(FluentCommand command, CancellationToken cancellationToken)
         {
             await _schema.ResolveAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             var collectionName = _schema.FindTable(command.CollectionName).ActualName;
             var commandText = await command.GetCommandTextAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             return await DeleteEntriesAsync(collectionName, commandText, cancellationToken);
         }
 
         internal async Task LinkEntryAsync(FluentCommand command, IDictionary<string, object> entryKey, string linkName, IDictionary<string, object> linkedEntryKey, CancellationToken cancellationToken)
         {
             await _schema.ResolveAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             var collectionName = _schema.FindTable(command.CollectionName).ActualName;
             await LinkEntryAsync(collectionName, entryKey, linkName, linkedEntryKey, cancellationToken);
         }
@@ -516,6 +604,8 @@ namespace Simple.OData.Client
         internal async Task UnlinkEntryAsync(FluentCommand command, IDictionary<string, object> entryKey, string linkName, CancellationToken cancellationToken)
         {
             await _schema.ResolveAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             var collectionName = _schema.FindTable(command.CollectionName).ActualName;
             await UnlinkEntryAsync(collectionName, entryKey, linkName, cancellationToken);
         }
@@ -523,21 +613,33 @@ namespace Simple.OData.Client
         internal async Task<IEnumerable<IDictionary<string, object>>> ExecuteFunctionAsync(FluentCommand command, IDictionary<string, object> parameters, CancellationToken cancellationToken)
         {
             await _schema.ResolveAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             var commandText = await command.GetCommandTextAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             return await ExecuteFunctionAsync(commandText, parameters, cancellationToken);
         }
 
         internal async Task<T> ExecuteFunctionAsScalarAsync<T>(FluentCommand command, IDictionary<string, object> parameters, CancellationToken cancellationToken)
         {
             await _schema.ResolveAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             var commandText = await command.GetCommandTextAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             return await ExecuteFunctionAsScalarAsync<T>(commandText, parameters, cancellationToken);
         }
 
         internal async Task<T[]> ExecuteFunctionAsArrayAsync<T>(FluentCommand command, IDictionary<string, object> parameters, CancellationToken cancellationToken)
         {
             await _schema.ResolveAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             var commandText = await command.GetCommandTextAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             return await ExecuteFunctionAsArrayAsync<T>(commandText, parameters, cancellationToken);
         }
     }

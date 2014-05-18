@@ -38,6 +38,9 @@ namespace Simple.OData.Client
         public async Task<Tuple<IEnumerable<T>, int>> FindEntriesWithCountAsync(CancellationToken cancellationToken)
         {
             var commandText = await _command.WithInlineCount().GetCommandTextAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested)
+                cancellationToken.ThrowIfCancellationRequested();
+
             var result = _client.FindEntriesWithCountAsync(commandText, cancellationToken);
             return await RectifyColumnSelectionAsync(result, _command.SelectedColumns);
         }
@@ -50,6 +53,9 @@ namespace Simple.OData.Client
         public async Task<Tuple<IEnumerable<T>, int>> FindEntriesWithCountAsync(bool scalarResult, CancellationToken cancellationToken)
         {
             var commandText = await _command.WithInlineCount().GetCommandTextAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested)
+                cancellationToken.ThrowIfCancellationRequested();
+
             var result = _client.FindEntriesWithCountAsync(commandText, scalarResult, cancellationToken);
             return await RectifyColumnSelectionAsync(result, _command.SelectedColumns);
         }
