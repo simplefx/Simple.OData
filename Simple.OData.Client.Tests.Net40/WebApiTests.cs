@@ -22,19 +22,24 @@ namespace Simple.OData.Client.Tests
         {
             if (_client != null)
             {
-                var products = await _client.FindEntriesAsync("Products");
-                foreach (var product in products)
-                {
-                    if (product["Name"].ToString().StartsWith("Test"))
-                        await _client.DeleteEntryAsync("Products", product);
-                }
+                DeleteTestData().Wait();
+            }
+        }
 
-                var workTaskModels = await _client.FindEntriesAsync("WorkTaskModels");
-                foreach (var workTaskModel in workTaskModels)
-                {
-                    if (workTaskModel["Code"].ToString().StartsWith("Test"))
-                        await _client.DeleteEntryAsync("workTaskModels", workTaskModel);
-                }
+        private async Task DeleteTestData()
+        {
+            var products = await _client.FindEntriesAsync("Products");
+            foreach (var product in products)
+            {
+                if (product["Name"].ToString().StartsWith("Test"))
+                    await _client.DeleteEntryAsync("Products", product);
+            }
+
+            var workTaskModels = await _client.FindEntriesAsync("WorkTaskModels");
+            foreach (var workTaskModel in workTaskModels)
+            {
+                if (workTaskModel["Code"].ToString().StartsWith("Test"))
+                    await _client.DeleteEntryAsync("workTaskModels", workTaskModel);
             }
         }
 
