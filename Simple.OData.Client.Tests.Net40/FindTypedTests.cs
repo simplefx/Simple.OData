@@ -293,7 +293,7 @@ namespace Simple.OData.Client.Tests
                 .OrderBy(x => x.ProductID)
                 .Expand(x => x.Category.Products)
                 .FindEntriesAsync()).Last();
-            Assert.Equal(10, product.Category.Products.Length);
+            Assert.Equal(12, product.Category.Products.Length);
         }
 
         [Fact]

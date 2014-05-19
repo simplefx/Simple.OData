@@ -523,7 +523,16 @@ namespace Simple.OData.Client
 
         private string FormatExpandItem(string item)
         {
-            return this.Table.FindAssociation(item).ActualName;
+            var names = new List<string>();
+            var items = item.Split('/');
+            var table = this.Table;
+            foreach (var associationName in items)
+            {
+                var association = table.FindAssociation(associationName);
+                names.Add(association.ActualName);
+                table = _schema.FindTable(association.ReferenceTableName);
+            }
+            return string.Join("/", names);
         }
 
         private string FormatSelectItem(string item)
