@@ -13,7 +13,6 @@ namespace Simple.OData.Client
         public string ContentType { get; set; }
         public string[] Accept { get; set; }
         public ICredentials Credentials { get; set; }
-        public bool PreAuthenticate { get; set; }
         public bool ReturnContent { get; set; }
     }
 }

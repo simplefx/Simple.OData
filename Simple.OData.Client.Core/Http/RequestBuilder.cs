@@ -8,7 +8,7 @@ namespace Simple.OData.Client
         public ICredentials Credentials { get; private set; }
         public string Host
         {
-            get 
+            get
             {
                 if (string.IsNullOrEmpty(UrlBase)) return null;
                 var substr = UrlBase.Substring(UrlBase.IndexOf("//") + 2);
@@ -34,13 +34,7 @@ namespace Simple.OData.Client
         {
             var request = new HttpRequest();
             request.Uri = uri;
-            if (this.Credentials != null)
-            {
-                request.Credentials = this.Credentials;
-#if NET40
-                request.PreAuthenticate = true;
-#endif
-            }
+            request.Credentials = this.Credentials;
             return request;
         }
 

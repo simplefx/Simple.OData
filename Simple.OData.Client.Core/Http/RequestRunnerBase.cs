@@ -25,9 +25,10 @@ namespace Simple.OData.Client
 
                 // Perform this test to prevent failure to access Credentials/PreAuthenticate properties on SL5
                 if (request.Credentials != null)
+                {
                     clientHandler.Credentials = request.Credentials;
-                if (request.PreAuthenticate)
-                    clientHandler.PreAuthenticate = request.PreAuthenticate;
+                    clientHandler.PreAuthenticate = true;
+                }
 
                 using (var httpClient = new HttpClient(clientHandler))
                 {
