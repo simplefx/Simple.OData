@@ -274,6 +274,18 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task NavigateToRecursiveSingleClause()
+        {
+            var employee = await _client
+                .For("Employees")
+                .Key(14)
+                .NavigateTo("Superior/Superior/Subordinates")
+                .Key(3)
+                .FindEntryAsync();
+            Assert.Equal("Janet", employee["FirstName"]);
+        }
+
+        [Fact]
         public async Task BaseClassEntries()
         {
             var transport = await _client
