@@ -75,8 +75,11 @@ namespace Simple.OData.Client
                 }
                 else
                 {
+                    var reference = this.HasValue && !string.IsNullOrEmpty((this.Value as ODataExpression).Reference)
+                        ? string.Join("/", (this.Value as ODataExpression).Reference, binder.Name)
+                        : binder.Name;
                     ctor = CtorWithString;
-                    ctorArguments = new[] { Expression.Constant(binder.Name) };
+                    ctorArguments = new[] { Expression.Constant(reference) };
                 }
 
                 return new DynamicMetaObject(

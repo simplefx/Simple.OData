@@ -56,17 +56,23 @@ namespace Simple.OData.Client
         public FluentClient<U> Link<U>(FluentCommand command, string linkName = null)
         where U : class
         {
-            var linkedClient = new FluentClient<U>(_client, _schema, command, null, _dynamicResults);
-            linkedClient.Command.Link(linkName ?? typeof(U).Name);
+            linkName = linkName ?? typeof (U).Name;
+            var links = linkName.Split('/');
+            var linkCommand = command;
+            FluentClient<U> linkedClient = null;
+            foreach (var link in links)
+            {
+                linkedClient = new FluentClient<U>(_client, _schema, linkCommand, null, _dynamicResults);
+                linkedClient.Command.Link(link);
+                linkCommand = linkedClient.Command;
+            }
             return linkedClient;
         }
 
         public FluentClient<U> Link<U>(FluentCommand command, ODataExpression expression)
         where U : class
         {
-            var linkedClient = new FluentClient<U>(_client, _schema, command, null, _dynamicResults);
-            linkedClient.Command.Link(expression);
-            return linkedClient;
+            return Link<U>(command, expression.Reference);
         }
 
         public IFluentClient<T> For(string collectionName = null)
@@ -370,7 +376,11 @@ namespace Simple.OData.Client
             switch (expression.NodeType)
             {
                 case ExpressionType.MemberAccess:
-                    return (expression as MemberExpression).Member.Name;
+                    var memberExpression = expression as MemberExpression;
+                    var memberName = memberExpression.Member.Name;
+                    return memberExpression.Expression is MemberExpression
+                        ? string.Join("/", ExtractColumnName(memberExpression.Expression), memberName)
+                        : memberName;
 
                 case ExpressionType.Convert:
                     return ExtractColumnName((expression as UnaryExpression).Operand);
