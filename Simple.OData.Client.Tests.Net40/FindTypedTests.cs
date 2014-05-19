@@ -238,7 +238,7 @@ namespace Simple.OData.Client.Tests
                 .OrderBy(x => x.ProductID)
                 .Expand(x => x.Category)
                 .FindEntriesAsync()).Last();
-            Assert.Equal("Condiments", (product.Category.CategoryName));
+            Assert.Equal("Condiments", product.Category.CategoryName);
         }
 
         [Fact]
@@ -284,6 +284,18 @@ namespace Simple.OData.Client.Tests
                 .FindEntryAsync();
             Assert.Equal(12, category.Products.Count());
         }
+
+        [Fact]
+        public async Task ExpandSecondLevel()
+        {
+            var product = (await _client
+                .For<Product>()
+                .OrderBy(x => x.ProductID)
+                .Expand(x => x.Category.Products)
+                .FindEntriesAsync()).Last();
+            Assert.Equal(10, product.Category.Products.Length);
+        }
+
         [Fact]
         public async Task OrderBySingle()
         {

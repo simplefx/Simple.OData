@@ -156,6 +156,17 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task ExpandSecondLevel()
+        {
+            var product = (await _client
+                .For("Products")
+                .OrderBy("ProductID")
+                .Expand("Category/Products")
+                .FindEntriesAsync()).Last();
+            Assert.Equal(10, ((product["Category"] as IDictionary<string, object>)["Products"] as IEnumerable<object>).Count());
+        }
+
+        [Fact]
         public async Task ExpandODataOrg()
         {
             var client = new ODataClient("http://services.odata.org/V3/OData/OData.svc/");
