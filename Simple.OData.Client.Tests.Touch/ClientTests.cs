@@ -19,13 +19,13 @@ namespace Simple.OData.Client.Tests
             Assert.AreEqual("Categories", association.ReferenceTableName);
             Assert.AreEqual("0..1", association.Multiplicity);
 
-            table = client.GetSchema().FindTable("Employees");
+            table = schema.FindTable("Employees");
             association = table.FindAssociation("Employees");
             Assert.AreEqual("Employees", association.ReferenceTableName);
             Assert.AreEqual("0..1", association.Multiplicity);
 
-            Assert.AreEqual(26, client.GetSchema().EntityTypes.Count());
-            Assert.AreEqual(0, client.GetSchema().ComplexTypes.Count());
+            Assert.AreEqual(26, schema.EntityTypes.Count());
+            Assert.AreEqual(0, schema.ComplexTypes.Count());
         }
 
         [Test]
@@ -41,13 +41,13 @@ namespace Simple.OData.Client.Tests
             Assert.AreEqual("Categories", association.ReferenceTableName);
             Assert.AreEqual("*", association.Multiplicity);
 
-            var function = client.GetSchema().FindFunction("GetProductsByRating");
+            var function = schema.FindFunction("GetProductsByRating");
             Assert.AreEqual(RestVerbs.GET, function.HttpMethod);
             Assert.AreEqual("rating", function.Parameters[0]);
 
-            Assert.AreEqual(10, client.GetSchema().EntityTypes.Count());
-            Assert.AreEqual(1, client.GetSchema().ComplexTypes.Count());
-            Assert.AreEqual(5, client.GetSchema().ComplexTypes.First().Properties.Count());
+            Assert.AreEqual(10, schema.EntityTypes.Count());
+            Assert.AreEqual(1, schema.ComplexTypes.Count());
+            Assert.AreEqual(5, schema.ComplexTypes.First().Properties.Count());
         }
 
         [Test]
