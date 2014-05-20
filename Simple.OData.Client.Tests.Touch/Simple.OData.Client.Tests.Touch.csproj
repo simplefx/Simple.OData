@@ -86,6 +86,7 @@
     <Reference Include="System.Net">
       <HintPath>..\lib\Touch\System.Net.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -98,6 +99,10 @@
     <ProjectReference Include="..\Simple.OData.Client.Core\Simple.OData.Client.Core.csproj">
       <Project>{361868B8-A63E-4C74-AA87-B70E1AB22313}</Project>
       <Name>Simple.OData.Client.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Simple.OData.Client.Dynamic\Simple.OData.Client.Dynamic.csproj">
+      <Project>{C025FB0F-452B-4795-B9A4-64C9E6ABBEEE}</Project>
+      <Name>Simple.OData.Client.Dynamic</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

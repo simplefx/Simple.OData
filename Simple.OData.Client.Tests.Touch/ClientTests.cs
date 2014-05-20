@@ -61,7 +61,6 @@ namespace Simple.OData.Client.Tests
             Assert.AreNotEqual(0, products.Count());
         }
 
-#if false
         [Test]
         public async void DynamicCombinedConditionsFromODataOrg()
         {
@@ -73,7 +72,6 @@ namespace Simple.OData.Client.Tests
                 .FindEntryAsync();
             Assert.AreEqual(2.5m, product.Price);
         }
-#endif
 
         public class ODataOrgProduct
         {
