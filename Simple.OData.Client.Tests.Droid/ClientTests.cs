@@ -3,7 +3,7 @@ using NUnit.Framework;
 
 namespace Simple.OData.Client.Tests
 {
-    [TestFixture]
+	[TestFixture]
     public class ClientTests
     {
         [Test]
@@ -15,12 +15,12 @@ namespace Simple.OData.Client.Tests
             var table = schema.FindTable("Product");
             Assert.AreEqual("ProductID", table.PrimaryKey[0]);
 
-            var association = table.FindAssociation("Categories");
+			var association = table.FindAssociation("Category");
             Assert.AreEqual("Categories", association.ReferenceTableName);
             Assert.AreEqual("0..1", association.Multiplicity);
 
             table = schema.FindTable("Employees");
-            association = table.FindAssociation("Employees");
+			association = table.FindAssociation("Employee1");
             Assert.AreEqual("Employees", association.ReferenceTableName);
             Assert.AreEqual("0..1", association.Multiplicity);
 
@@ -28,7 +28,7 @@ namespace Simple.OData.Client.Tests
             Assert.AreEqual(0, schema.ComplexTypes.Count());
         }
 
-        [Test]
+		[Test]
         public async void CheckODataOrgODataSchema()
         {
             var client = new ODataClient("http://services.odata.org/V3/OData/OData.svc/");
@@ -37,7 +37,7 @@ namespace Simple.OData.Client.Tests
             var table = schema.FindTable("Product");
             Assert.AreEqual("ID", table.PrimaryKey[0]);
 
-            var association = table.FindAssociation("Category_Products");
+            var association = table.FindAssociation("Category");
             Assert.AreEqual("Categories", association.ReferenceTableName);
             Assert.AreEqual("*", association.Multiplicity);
 
@@ -50,7 +50,7 @@ namespace Simple.OData.Client.Tests
             Assert.AreEqual(5, schema.ComplexTypes.First().Properties.Count());
         }
 
-        [Test]
+		[Test]
         public async void AllEntriesFromODataOrg()
         {
             var client = new ODataClient("http://services.odata.org/V3/OData/OData.svc/");
@@ -61,7 +61,7 @@ namespace Simple.OData.Client.Tests
             Assert.AreNotEqual(0, products.Count());
         }
 
-        [Test]
+		[Test]
         public async void DynamicCombinedConditionsFromODataOrg()
         {
             var client = new ODataClient("http://services.odata.org/V2/OData/OData.svc/");
@@ -79,7 +79,7 @@ namespace Simple.OData.Client.Tests
             public decimal Price { get; set; }
         }
 
-        [Test]
+		[Test]
         public async void TypedCombinedConditionsFromODataOrg()
         {
             var client = new ODataClient("http://services.odata.org/V2/OData/OData.svc/");
