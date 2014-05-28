@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using Nito.AsyncEx;
 using NUnit.Framework;
 
 using Entry = System.Collections.Generic.Dictionary<string, object>;
 
 namespace Simple.OData.Client.Tests
 {
-	public abstract class WebApiTestsBase
+    public abstract class WebApiTestsBase
     {
         protected IODataClient _client;
 
@@ -19,15 +20,18 @@ namespace Simple.OData.Client.Tests
         }
 
         [TearDown]
-        public async void TearDown()
+		public void TearDown()
         {
             if (_client != null)
             {
-                await DeleteTestData();
+                AsyncContext.Run(async () =>
+                {
+                    await DeleteTestData();
+                });
             }
         }
 
-        private async Task DeleteTestData()
+		private async Task DeleteTestData()
         {
             var products = await _client.FindEntriesAsync("Products");
             foreach (var product in products)
@@ -45,70 +49,84 @@ namespace Simple.OData.Client.Tests
         }
 
         [Test]
-        public async void GetProductsCount()
+        public void GetProductsCount()
         {
-            var products = await _client
-                .For("Products")
-                .FindEntriesAsync();
+            AsyncContext.Run(async () =>
+            {
+                var products = await _client
+                    .For("Products")
+                    .FindEntriesAsync();
 
-            Assert.AreEqual(5, products.Count());
+                Assert.AreEqual(5, products.Count());
+            }); 
         }
 
-        [Test]
-        public async void InsertProduct()
-        {
-            var product = await _client
-                .For("Products")
-                .Set(new Entry() { { "Name", "Test1" }, { "Price", 18m } })
-                .InsertEntryAsync();
+		[Test]
+        public void InsertProduct()
+	    {
+            AsyncContext.Run(async () =>
+            {
+                var product = await _client
+                    .For("Products")
+                    .Set(new Entry() { { "Name", "Test1" }, { "Price", 18m } })
+                    .InsertEntryAsync();
 
-            Assert.AreEqual("Test1", product["Name"]);
+                Assert.AreEqual("Test1", product["Name"]);
+            });
         }
 
-        [Test]
-        public async void UpdateProduct()
+		[Test]
+        public void UpdateProduct()
         {
-            var product = await _client
-                .For("Products")
-                .Set(new { Name = "Test1", Price = 18m })
-                .InsertEntryAsync();
+            AsyncContext.Run(async () =>
+            {
+                var product = await _client
+                     .For("Products")
+                     .Set(new { Name = "Test1", Price = 18m })
+                     .InsertEntryAsync();
 
-            product = await _client
-                .For("Products")
-                .Key(product["ID"])
-                .Set(new { Price = 123m })
-                .UpdateEntryAsync();
+                product = await _client
+                    .For("Products")
+                    .Key(product["ID"])
+                    .Set(new { Price = 123m })
+                    .UpdateEntryAsync();
 
-            Assert.AreEqual(123m, product["Price"]);
+                Assert.AreEqual(123m, product["Price"]);
+            });
         }
 
-        [Test]
-        public async void DeleteProduct()
+		[Test]
+        public void DeleteProduct()
         {
-            var product = await _client
-                .For("Products")
-                .Set(new { Name = "Test1", Price = 18m })
-                .InsertEntryAsync();
+            AsyncContext.Run(async () =>
+            {
+                var product = await _client
+                    .For("Products")
+                    .Set(new { Name = "Test1", Price = 18m })
+                    .InsertEntryAsync();
 
-            await _client
-                .For("Products")
-                .Key(product["ID"])
-                .DeleteEntryAsync();
+                await _client
+                    .For("Products")
+                    .Key(product["ID"])
+                    .DeleteEntryAsync();
 
-            product = await _client
-                .For("Products")
-                .Filter("Name eq 'Test1'")
-                .FindEntryAsync();
+                product = await _client
+                    .For("Products")
+                    .Filter("Name eq 'Test1'")
+                    .FindEntryAsync();
 
-            Assert.Null(product);
+                Assert.Null(product);
+            });
         }
 
-        [Test]
-        public async void InsertWorkTaskModel()
+		[Test]
+        public void InsertWorkTaskModel()
         {
-            var workTaskModel = await _client
-                .For("WorkTaskModels")
-                .Set(new Entry()
+            AsyncContext.Run(async () =>
+            {
+                var workTaskModel = await _client
+                    .For("WorkTaskModels")
+                    .Set(new Entry()
                 {
                     { "Id", Guid.NewGuid() }, 
                     { "Code", "Test1" }, 
@@ -116,17 +134,20 @@ namespace Simple.OData.Client.Tests
                     { "EndDate", DateTime.Now.AddDays(1) },
                     { "Location", new Entry() {{"Latitude", 1.0f},{"Longitude", 2.0f}}  },
                 })
-                .InsertEntryAsync();
+                    .InsertEntryAsync();
 
-            Assert.AreEqual("Test1", workTaskModel["Code"]);
+                Assert.AreEqual("Test1", workTaskModel["Code"]);
+            });
         }
 
-        [Test]
-        public async void UpdateWorkTaskModel()
+		[Test]
+        public void UpdateWorkTaskModel()
         {
-            var workTaskModel = await _client
-                .For("WorkTaskModels")
-                .Set(new Entry()
+            AsyncContext.Run(async () =>
+            {
+                var workTaskModel = await _client
+                    .For("WorkTaskModels")
+                    .Set(new Entry()
                 {
                     { "Id", Guid.NewGuid() }, 
                     { "Code", "Test1" }, 
@@ -134,23 +155,26 @@ namespace Simple.OData.Client.Tests
                     { "EndDate", DateTime.Now.AddDays(1) },
                     { "Location", new Entry() {{"Latitude", 1.0f},{"Longitude", 2.0f}}  },
                 })
-                .InsertEntryAsync();
+                    .InsertEntryAsync();
 
-            workTaskModel = await _client
-                .For("WorkTaskModels")
-                .Key(workTaskModel["Id"])
-                .Set(new { Code = "Test2" })
-                .UpdateEntryAsync();
+                workTaskModel = await _client
+                    .For("WorkTaskModels")
+                    .Key(workTaskModel["Id"])
+                    .Set(new { Code = "Test2" })
+                    .UpdateEntryAsync();
 
-            Assert.AreEqual("Test2", workTaskModel["Code"]);
+                Assert.AreEqual("Test2", workTaskModel["Code"]);
+            });
         }
 
-        [Test]
-        public async void UpdateWorkTaskModelWithEmptyLists()
+		[Test]
+        public void UpdateWorkTaskModelWithEmptyLists()
         {
-            var workTaskModel = await _client
-                .For("WorkTaskModels")
-                .Set(new Entry()
+            AsyncContext.Run(async () =>
+            {
+                var workTaskModel = await _client
+                    .For("WorkTaskModels")
+                    .Set(new Entry()
                 {
                     { "Id", Guid.NewGuid() }, 
                     { "Code", "Test1" }, 
@@ -158,23 +182,26 @@ namespace Simple.OData.Client.Tests
                     { "EndDate", DateTime.Now.AddDays(1) },
                     { "Location", new Entry() {{"Latitude", 1.0f},{"Longitude", 2.0f}}  },
                 })
-                .InsertEntryAsync();
+                    .InsertEntryAsync();
 
-            workTaskModel = await _client
-                .For("WorkTaskModels")
-                .Key(workTaskModel["Id"])
-                .Set(new Entry() { { "Code", "Test2" }, { "Attachments", new List<IDictionary<string, object>>() }, { "WorkActivityReports", null } })
-                .UpdateEntryAsync();
+                workTaskModel = await _client
+                    .For("WorkTaskModels")
+                    .Key(workTaskModel["Id"])
+                    .Set(new Entry() { { "Code", "Test2" }, { "Attachments", new List<IDictionary<string, object>>() }, { "WorkActivityReports", null } })
+                    .UpdateEntryAsync();
 
-            Assert.AreEqual("Test2", workTaskModel["Code"]);
+                Assert.AreEqual("Test2", workTaskModel["Code"]);
+            });
         }
 
-        [Test]
-        public async void UpdateWorkTaskModelWholeObject()
+		[Test]
+        public void UpdateWorkTaskModelWholeObject()
         {
-            var workTaskModel = await _client
-                .For("WorkTaskModels")
-                .Set(new Entry()
+            AsyncContext.Run(async () =>
+            {
+                var workTaskModel = await _client
+                    .For("WorkTaskModels")
+                    .Set(new Entry()
                 {
                     { "Id", Guid.NewGuid() }, 
                     { "Code", "Test1" }, 
@@ -182,33 +209,34 @@ namespace Simple.OData.Client.Tests
                     { "EndDate", DateTime.Now.AddDays(1) },
                     { "Location", new Entry() {{"Latitude", 1.0f},{"Longitude", 2.0f}}  },
                 })
-                .InsertEntryAsync();
+                    .InsertEntryAsync();
 
-            workTaskModel["Code"] = "Test2";
-            workTaskModel["Attachments"] = new List<IDictionary<string, object>>();
-            workTaskModel["WorkActivityReports"] = null;
-            workTaskModel = await _client
-                .For("WorkTaskModels")
-                .Key(workTaskModel["Id"])
-                .Set(workTaskModel)
-                .UpdateEntryAsync();
+                workTaskModel["Code"] = "Test2";
+                workTaskModel["Attachments"] = new List<IDictionary<string, object>>();
+                workTaskModel["WorkActivityReports"] = null;
+                workTaskModel = await _client
+                    .For("WorkTaskModels")
+                    .Key(workTaskModel["Id"])
+                    .Set(workTaskModel)
+                    .UpdateEntryAsync();
 
-            Assert.AreEqual("Test2", workTaskModel["Code"]);
+                Assert.AreEqual("Test2", workTaskModel["Code"]);
 
-            workTaskModel["Code"] = "Test3";
-            workTaskModel["Attachments"] = null;
-            workTaskModel["WorkActivityReports"] = new List<IDictionary<string, object>>();
-            workTaskModel = await _client
-                .For("WorkTaskModels")
-                .Key(workTaskModel["Id"])
-                .Set(workTaskModel)
-                .UpdateEntryAsync();
+                workTaskModel["Code"] = "Test3";
+                workTaskModel["Attachments"] = null;
+                workTaskModel["WorkActivityReports"] = new List<IDictionary<string, object>>();
+                workTaskModel = await _client
+                    .For("WorkTaskModels")
+                    .Key(workTaskModel["Id"])
+                    .Set(workTaskModel)
+                    .UpdateEntryAsync();
 
-            Assert.AreEqual("Test3", workTaskModel["Code"]);
+                Assert.AreEqual("Test3", workTaskModel["Code"]);
+            });
         }
     }
 
-    [TestFixture]
+	[TestFixture]
     public class WebApiTests : WebApiTestsBase
     {
         public WebApiTests()

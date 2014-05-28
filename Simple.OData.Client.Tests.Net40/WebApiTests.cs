@@ -46,6 +46,8 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task GetProductsCount()
         {
+            await DeleteTestData();
+
             var products = await _client
                 .For("Products")
                 .FindEntriesAsync();
@@ -56,6 +58,8 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task InsertProduct()
         {
+            await DeleteTestData();
+
             var product = await _client
                 .For("Products")
                 .Set(new Entry() { { "Name", "Test1" }, { "Price", 18m } })
@@ -67,6 +71,8 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task UpdateProduct()
         {
+            await DeleteTestData();
+
             var product = await _client
                 .For("Products")
                 .Set(new { Name = "Test1", Price = 18m })
@@ -84,6 +90,8 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task DeleteProduct()
         {
+            await DeleteTestData();
+
             var product = await _client
                 .For("Products")
                 .Set(new { Name = "Test1", Price = 18m })
@@ -105,6 +113,8 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task InsertWorkTaskModel()
         {
+            await DeleteTestData();
+
             var workTaskModel = await _client
                 .For("WorkTaskModels")
                 .Set(new Entry()
@@ -123,6 +133,8 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task UpdateWorkTaskModel()
         {
+            await DeleteTestData();
+
             var workTaskModel = await _client
                 .For("WorkTaskModels")
                 .Set(new Entry()
@@ -147,6 +159,8 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task UpdateWorkTaskModelWithEmptyLists()
         {
+            await DeleteTestData();
+
             var workTaskModel = await _client
                 .For("WorkTaskModels")
                 .Set(new Entry()
@@ -171,6 +185,8 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task UpdateWorkTaskModelWholeObject()
         {
+            await DeleteTestData();
+
             var workTaskModel = await _client
                 .For("WorkTaskModels")
                 .Set(new Entry()
