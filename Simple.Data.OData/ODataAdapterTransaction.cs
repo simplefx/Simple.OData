@@ -29,7 +29,7 @@ namespace Simple.Data.OData
 
         public void Commit()
         {
-            _batch.Complete();
+            Utils.ExecuteAndUnwrap(() => _batch.CompleteAsync());
         }
 
         public void Rollback()

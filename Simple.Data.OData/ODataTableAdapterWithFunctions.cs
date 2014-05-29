@@ -29,7 +29,8 @@ namespace Simple.Data.OData
         {
             return new[]
                    {
-                       GetODataClient(transaction).ExecuteFunction(functionName, parameters)
+                       Utils.ExecuteAndUnwrap(() => 
+                           GetODataClient(transaction).ExecuteFunctionAsync(functionName, parameters))
                    };
         }
     }
