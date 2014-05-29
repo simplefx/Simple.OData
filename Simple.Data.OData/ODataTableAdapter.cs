@@ -19,7 +19,8 @@ namespace Simple.Data.OData
 
         internal ISchema GetSchema()
         {
-            return _schema ?? (_schema = ODataClient.GetSchema(_clientSettings.UrlBase, _clientSettings.Credentials));
+            return _schema ?? (_schema = Utils.ExecuteAndUnwrap(() => 
+                ODataClient.GetSchemaAsync(_clientSettings.UrlBase, _clientSettings.Credentials)));
         }
 
         protected override void OnSetup()
@@ -28,7 +29,8 @@ namespace Simple.Data.OData
 
             var odataFeed = new ODataFeed(this.Settings);
             _clientSettings = odataFeed.ClientSettings;
-            _schema = ODataClient.GetSchema(_clientSettings.UrlBase, _clientSettings.Credentials);
+            _schema = Utils.ExecuteAndUnwrap(() => 
+                ODataClient.GetSchemaAsync(_clientSettings.UrlBase, _clientSettings.Credentials));
         }
 
         public override IEnumerable<IDictionary<string, object>> Find(string tableName, SimpleExpression criteria)
@@ -82,7 +84,8 @@ namespace Simple.Data.OData
             var concreteTableName = baseTable == null ? tableName : baseTable.ActualName;
 
             var cmd = GetCommandBuilder().BuildCommand(concreteTableName, criteria);
-            return GetODataClientCommand(cmd).FindEntries();
+            return Utils.ExecuteAndUnwrap(() => 
+                GetODataClientCommand(cmd).FindEntriesAsync());
         }
 
         private IEnumerable<IDictionary<string, object>> FindByQuery(SimpleQuery query, out IEnumerable<SimpleQueryClauseBase> unhandledClauses)
@@ -94,13 +97,14 @@ namespace Simple.Data.OData
             IEnumerable<IDictionary<string, object>> results;
             if (cmd.SetTotalCount == null)
             {
-                results = clientCommand.FindEntries(cmd.IsScalarResult);
+                results = Utils.ExecuteAndUnwrap(() => 
+                    clientCommand.FindEntriesAsync(cmd.IsScalarResult));
             }
             else
             {
-                int totalCount;
-                results = clientCommand.FindEntries(out totalCount);
-                cmd.SetTotalCount(totalCount);
+                var resultsWithCount = Utils.ExecuteAndUnwrap(clientCommand.FindEntriesWithCountAsync);
+                results = resultsWithCount.Item1;
+                cmd.SetTotalCount(resultsWithCount.Item2);
             }
             return results;
         }
@@ -111,7 +115,8 @@ namespace Simple.Data.OData
             var concreteTableName = baseTable == null ? tableName : baseTable.ActualName;
 
             var cmd = GetCommandBuilder().BuildCommand(concreteTableName, keyValues);
-            return GetODataClientCommand(cmd).FindEntries().SingleOrDefault();
+            return Utils.ExecuteAndUnwrap(() => 
+                GetODataClientCommand(cmd).FindEntriesAsync()).SingleOrDefault();
         }
 
         private IDictionary<string, object> InsertOne(string tableName, 
@@ -123,7 +128,8 @@ namespace Simple.Data.OData
 
             var client = GetODataClient(transaction);
 
-            return client.InsertEntry(tablePath, data, resultRequired);
+            return Utils.ExecuteAndUnwrap(() => 
+                client.InsertEntryAsync(tablePath, data, resultRequired));
         }
 
         private int UpdateByExpression(string tableName, 
@@ -140,12 +146,14 @@ namespace Simple.Data.OData
             int result;
             if (clientCommand.FilterIsKey)
             {
-                client.UpdateEntry(tablePath, clientCommand.FilterAsKey, data);
+                Utils.ExecuteAndUnwrap(() => 
+                    client.UpdateEntryAsync(tablePath, clientCommand.FilterAsKey, data));
                 result = 1;
             }
             else
             {
-                result = client.UpdateEntries(tablePath, clientCommand.GetCommandText(), data).Count();
+                result = Utils.ExecuteAndUnwrap(() => 
+                    client.UpdateEntriesAsync(tablePath, Utils.ExecuteAndUnwrap(clientCommand.GetCommandTextAsync), data)).Count();
             }
             return result;
         }
@@ -164,12 +172,14 @@ namespace Simple.Data.OData
             int result;
             if (clientCommand.FilterIsKey)
             {
-                client.DeleteEntry(tablePath, clientCommand.FilterAsKey);
+                Utils.ExecuteAndUnwrap(() => 
+                    client.DeleteEntryAsync(tablePath, clientCommand.FilterAsKey));
                 result = 1;
             }
             else
             {
-                result = client.DeleteEntries(tablePath, clientCommand.GetCommandText());
+                result = Utils.ExecuteAndUnwrap(() => 
+                    client.DeleteEntriesAsync(tablePath, Utils.ExecuteAndUnwrap(clientCommand.GetCommandTextAsync)));
             }
             return result;
         }
