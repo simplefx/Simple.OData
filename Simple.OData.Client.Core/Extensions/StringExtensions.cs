@@ -62,8 +62,14 @@ namespace Simple.OData.Client.Extensions
 
         public string Pluralize(string word)
         {
-            if (word.EndsWith("y", StringComparison.OrdinalIgnoreCase))
+            if (word.EndsWith("y", StringComparison.OrdinalIgnoreCase) && word.Length > 1 && !IsVowel(word[word.Length - 2]))
+            {
                 word = word.Substring(0, word.Length-1) + (word.IsAllUpperCase() ? "IE" : "ie");
+            }
+            else if (word.EndsWith("s", StringComparison.OrdinalIgnoreCase))
+            {
+                word = word + (word.IsAllUpperCase() ? "E" : "e");
+            }
             return string.Concat(word, word.IsAllUpperCase() ? "S" : "s");
         }
 
@@ -71,11 +77,17 @@ namespace Simple.OData.Client.Extensions
         {
             if (word.EndsWith("ies", StringComparison.OrdinalIgnoreCase))
                 return word.Substring(0, word.Length - 3) + (word.IsAllUpperCase() ? "Y" : "y");
-            if (word.EndsWith("s", StringComparison.OrdinalIgnoreCase))
+            else if (word.EndsWith("ses", StringComparison.OrdinalIgnoreCase))
+                return word.Substring(0, word.Length - 2);
+            else if (word.EndsWith("s", StringComparison.OrdinalIgnoreCase))
                 return word.Substring(0, word.Length - 1);
             else
                 return word;
         }
 
+        private bool IsVowel(char c)
+        {
+            return "aeiouAEIOU".IndexOf(c) >= 0;
+        }
     }
 }
