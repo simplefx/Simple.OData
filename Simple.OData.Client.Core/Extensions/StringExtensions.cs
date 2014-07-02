@@ -5,11 +5,6 @@ namespace Simple.OData.Client.Extensions
 {
     static class StringExtensions
     {
-        public static bool IsPlural(this string str)
-        {
-            return _pluralizer.IsPlural(str);
-        }
-
         public static string Pluralize(this string str)
         {
             return _pluralizer.Pluralize(str);
@@ -45,49 +40,6 @@ namespace Simple.OData.Client.Extensions
         public static string EnsureStartsWith(this string source, string value)
         {
             return (source == null || source.StartsWith(value)) ? source : value + source;
-        }
-    }
-
-    class SimplePluralizer : IPluralizer
-    {
-        public bool IsSingular(string word)
-        {
-            return !IsPlural(word);
-        }
-
-        public bool IsPlural(string word)
-        {
-            return word.EndsWith("s", StringComparison.OrdinalIgnoreCase);
-        }
-
-        public string Pluralize(string word)
-        {
-            if (word.EndsWith("y", StringComparison.OrdinalIgnoreCase) && word.Length > 1 && !IsVowel(word[word.Length - 2]))
-            {
-                word = word.Substring(0, word.Length-1) + (word.IsAllUpperCase() ? "IE" : "ie");
-            }
-            else if (word.EndsWith("s", StringComparison.OrdinalIgnoreCase))
-            {
-                word = word + (word.IsAllUpperCase() ? "E" : "e");
-            }
-            return string.Concat(word, word.IsAllUpperCase() ? "S" : "s");
-        }
-
-        public string Singularize(string word)
-        {
-            if (word.EndsWith("ies", StringComparison.OrdinalIgnoreCase))
-                return word.Substring(0, word.Length - 3) + (word.IsAllUpperCase() ? "Y" : "y");
-            else if (word.EndsWith("ses", StringComparison.OrdinalIgnoreCase))
-                return word.Substring(0, word.Length - 2);
-            else if (word.EndsWith("s", StringComparison.OrdinalIgnoreCase))
-                return word.Substring(0, word.Length - 1);
-            else
-                return word;
-        }
-
-        private bool IsVowel(char c)
-        {
-            return "aeiouAEIOU".IndexOf(c) >= 0;
         }
     }
 }

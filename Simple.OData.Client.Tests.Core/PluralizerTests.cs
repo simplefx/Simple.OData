@@ -13,6 +13,8 @@ namespace Simple.OData.Client.Tests
         [InlineData("Day", "Days")]
         [InlineData("Dummy", "Dummies")]
         [InlineData("Access", "Accesses")]
+        [InlineData("Life", "Lives")]
+        [InlineData("Codex", "Codices")]
         public void PluralizeWord(string word, string expectedResult)
         {
             Assert.Equal(expectedResult, _pluralizer.Pluralize(word));
@@ -23,6 +25,8 @@ namespace Simple.OData.Client.Tests
         [InlineData("Days", "Day")]
         [InlineData("Dummies", "Dummy")]
         [InlineData("Accesses", "Access")]
+        [InlineData("Lives", "Life")]
+        [InlineData("Codices", "Codex")]
         public void SingularizeWord(string word, string expectedResult)
         {
             Assert.Equal(expectedResult, _pluralizer.Singularize(word));
