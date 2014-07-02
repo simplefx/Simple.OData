@@ -200,8 +200,7 @@ namespace Simple.Data.OData
             var adapterPluralizer = Database.GetPluralizer();
             if (adapterPluralizer != null)
             {
-                var clientPluralizer = new Pluralizer(adapterPluralizer.IsPlural, adapterPluralizer.IsSingular,
-                                                      adapterPluralizer.Pluralize, adapterPluralizer.Singularize);
+                var clientPluralizer = new Pluralizer(adapterPluralizer.Pluralize, adapterPluralizer.Singularize);
                 ODataClient.SetPluralizer(clientPluralizer);
             }
 
