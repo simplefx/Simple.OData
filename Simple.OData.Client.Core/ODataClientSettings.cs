@@ -4,20 +4,71 @@ using System.Net.Http;
 
 namespace Simple.OData.Client
 {
+    /// <summary>
+    /// OData client configuration settings
+    /// </summary>
     public class ODataClientSettings
     {
+        /// <summary>
+        /// Gets or sets the OData service URL.
+        /// </summary>
+        /// <value>
+        /// The URL address.
+        /// </value>
         public string UrlBase { get; set; }
+
+        /// <summary>
+        /// Gets or sets the OData client credentials.
+        /// </summary>
+        /// <value>
+        /// The client credentials.
+        /// </value>
         public ICredentials Credentials { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether entry properties should be extended with the resource type.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> to include resource type in entry properties; otherwise, <c>false</c>.
+        /// </value>
         public bool IncludeResourceTypeInEntryProperties { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether resource not found exception (404) should be ignored.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> to ignore resource not found exception; otherwise, <c>false</c>.
+        /// </value>
         public bool IgnoreResourceNotFoundException { get; set; }
 
+        /// <summary>
+        /// Gets or sets the action executed before the OData request.
+        /// </summary>
+        /// <value>
+        /// The action on <see cref="HttpRequestMessage"/>.
+        /// </value>
         public Action<HttpRequestMessage> BeforeRequest { get; set; }
+        
+        /// <summary>
+        /// Gets or sets the action executed after the OData request.
+        /// </summary>
+        /// <value>
+        /// The action on <see cref="HttpResponseMessage"/>.
+        /// </value>
         public Action<HttpResponseMessage> AfterResponse { get; set; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ODataClientSettings"/> class.
+        /// </summary>
         public ODataClientSettings()
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ODataClientSettings"/> class.
+        /// </summary>
+        /// <param name="urlBase">The URL address.</param>
+        /// <param name="credentials">The client credentials.</param>
         public ODataClientSettings(string urlBase, ICredentials credentials = null)
         {
             this.UrlBase = urlBase;
