@@ -117,6 +117,7 @@
     <Compile Include="Schema\Table.cs" />
     <Compile Include="Schema\TableCollection.cs" />
     <Compile Include="SimpleDictionary.cs" />
+    <Compile Include="SimplePluralizer.cs" />
     <Compile Include="UnresolvableObjectException.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="ValueFormatter.cs" />

@@ -329,6 +329,9 @@
     <Compile Include="..\Simple.OData.Client.Core\SimpleDictionary.cs">
       <Link>SimpleDictionary.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\SimplePluralizer.cs">
+      <Link>SimplePluralizer.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\UnresolvableObjectException.cs">
       <Link>UnresolvableObjectException.cs</Link>
     </Compile>

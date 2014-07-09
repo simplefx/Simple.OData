@@ -263,6 +263,9 @@
     <Compile Include="..\Simple.OData.Client.Core\SimpleDictionary.cs">
       <Link>SimpleDictionary.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\SimplePluralizer.cs">
+      <Link>SimplePluralizer.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Utils.cs">
       <Link>Utils.cs</Link>
     </Compile>
