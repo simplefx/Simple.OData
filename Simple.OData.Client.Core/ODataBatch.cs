@@ -8,6 +8,9 @@ using System.Threading.Tasks;
 
 namespace Simple.OData.Client
 {
+    /// <summary>
+    /// Performs batch processing of OData requests by grouping multiple operations in a single HTTP POST request in accordance with OData protocol
+    /// </summary>
     public class ODataBatch : IDisposable
     {
         private bool _active;
@@ -15,11 +18,19 @@ namespace Simple.OData.Client
         internal BatchRequestBuilder RequestBuilder { get; set; }
         internal BatchRequestRunner RequestRunner { get; set; }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ODataBatch"/> class.
+        /// </summary>
+        /// <param name="urlBase">The URL base.</param>
         public ODataBatch(string urlBase)
             : this (new ODataClientSettings { UrlBase = urlBase })
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ODataBatch"/> class.
+        /// </summary>
+        /// <param name="settings">The settings.</param>
         public ODataBatch(ODataClientSettings settings)
         {
             this.Settings = settings;
@@ -30,6 +41,9 @@ namespace Simple.OData.Client
             _active = true;
         }
 
+        /// <summary>
+        /// Cancels pending OData batch and releases all resources used by <see cref="ODataBatch"/>.
+        /// </summary>
         public void Dispose()
         {
             if (_active)
@@ -37,11 +51,20 @@ namespace Simple.OData.Client
             _active = false;
         }
 
+        /// <summary>
+        /// Completes the OData batch by submitting pending requests to the OData service.
+        /// </summary>
+        /// <returns></returns>
         public Task CompleteAsync()
         {
             return CompleteAsync(CancellationToken.None);
         }
 
+        /// <summary>
+        /// Completes the OData batch by submitting pending requests to the OData service.
+        /// </summary>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
         public async Task CompleteAsync(CancellationToken cancellationToken)
         {
             this.RequestBuilder.EndBatch();
@@ -52,6 +75,9 @@ namespace Simple.OData.Client
             _active = false;
         }
 
+        /// <summary>
+        /// Cancels the pending OData batch.
+        /// </summary>
         public void Cancel()
         {
             this.RequestBuilder.CancelBatch();
