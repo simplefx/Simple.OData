@@ -48,6 +48,8 @@ namespace Simple.OData.Client
             return new FluentCommand(this.Schema, _parentCommand);
         }
 
+        #pragma warning disable 1591
+        
         public ISchema Schema
         {
             get { return _schema; }
@@ -352,6 +354,8 @@ namespace Simple.OData.Client
             this.Command.Parameters(parameters);
             return this;
         }
+
+        #pragma warning restore 1591
 
         internal static IEnumerable<string> ExtractColumnNames(Expression<Func<T, object>> expression)
         {

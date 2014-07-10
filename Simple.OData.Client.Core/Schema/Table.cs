@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Simple.OData.Client.Extensions;
 
+#pragma warning disable 1591
+
 namespace Simple.OData.Client
 {
-    /// <summary>
-    /// Represents an OData table and provides CRUD operations against it.
-    /// </summary>
     public class Table
     {
         private readonly Schema _schema;

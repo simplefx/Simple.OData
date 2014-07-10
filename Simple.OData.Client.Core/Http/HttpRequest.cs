@@ -4,7 +4,7 @@ using System.Net.Http;
 
 namespace Simple.OData.Client
 {
-    public class HttpRequest
+    class HttpRequest
     {
         public string Uri { get; set; }
         public string Method { get; set; }

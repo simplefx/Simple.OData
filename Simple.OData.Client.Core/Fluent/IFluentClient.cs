@@ -383,48 +383,278 @@ namespace Simple.OData.Client
         /// <returns>The command text.</returns>
         Task<string> GetCommandTextAsync(CancellationToken cancellationToken);
 
+        /// <summary>
+        /// Casts the collection of base entities as the collection of derived ones.
+        /// </summary>
+        /// <param name="derivedCollectionName">Name of the derived collection.</param>
+        /// <returns>Self.</returns>
         IFluentClient<IDictionary<string, object>> As(string derivedCollectionName);
+        /// <summary>
+        /// Casts the collection of base entities as the collection of derived ones.
+        /// </summary>
+        /// <param name="derivedCollectionName">Name of the derived collection.</param>
+        /// <returns>Self.</returns>
         IFluentClient<U> As<U>(string derivedCollectionName = null) where U : class;
+        /// <summary>
+        /// Casts the collection of base entities as the collection of derived ones.
+        /// </summary>
+        /// <param name="expression">The expression for the derived collection.</param>
+        /// <returns>Self.</returns>
         IFluentClient<ODataEntry> As(ODataExpression expression);
+
+        /// <summary>
+        /// Sets the specified entry key.
+        /// </summary>
+        /// <param name="entryKey">The entry key.</param>
+        /// <returns>Self.</returns>
         IFluentClient<T> Key(params object[] entryKey);
+        /// <summary>
+        /// Sets the specified entry key.
+        /// </summary>
+        /// <param name="entryKey">The entry key.</param>
+        /// <returns>Self.</returns>
         IFluentClient<T> Key(IEnumerable<object> entryKey);
+        /// <summary>
+        /// Sets the specified entry key.
+        /// </summary>
+        /// <param name="entryKey">The entry key.</param>
+        /// <returns>Self.</returns>
         IFluentClient<T> Key(IDictionary<string, object> entryKey);
+        /// <summary>
+        /// Sets the specified entry key.
+        /// </summary>
+        /// <param name="entryKey">The entry key.</param>
+        /// <returns>Self.</returns>
         IFluentClient<T> Key(T entryKey);
+
+        /// <summary>
+        /// Sets the specified OData filter.
+        /// </summary>
+        /// <param name="filter">The filter.</param>
+        /// <returns>Self.</returns>
         IFluentClient<T> Filter(string filter);
+        /// <summary>
+        /// Sets the specified OData filter.
+        /// </summary>
+        /// <param name="expression">The filter expression.</param>
+        /// <returns>Self.</returns>
         IFluentClient<T> Filter(ODataExpression expression);
+        /// <summary>
+        /// Sets the specified OData filter.
+        /// </summary>
+        /// <param name="expression">The filter expression.</param>
+        /// <returns>Self.</returns>
         IFluentClient<T> Filter(Expression<Func<T, bool>> expression);
+
+        /// <summary>
+        /// Skips the specified number of entries from the result.
+        /// </summary>
+        /// <param name="count">The count.</param>
+        /// <returns>Self.</returns>
         IFluentClient<T> Skip(int count);
+
+        /// <summary>
+        /// Limits the number of results with the specified value.
+        /// </summary>
+        /// <param name="count">The count.</param>
+        /// <returns>Self.</returns>
         IFluentClient<T> Top(int count);
+
+        /// <summary>
+        /// Expands the specified associations.
+        /// </summary>
+        /// <param name="associations">The associations to expand.</param>
+        /// <returns>Self.</returns>
         IFluentClient<T> Expand(IEnumerable<string> associations);
+        /// <summary>
+        /// Expands the specified associations.
+        /// </summary>
+        /// <param name="associations">The associations to expand.</param>
+        /// <returns>Self.</returns>
         IFluentClient<T> Expand(params string[] associations);
+        /// <summary>
+        /// Expands the specified associations.
+        /// </summary>
+        /// <param name="associations">The associations to expand.</param>
+        /// <returns>Self.</returns>
         IFluentClient<T> Expand(params ODataExpression[] associations);
+        /// <summary>
+        /// Expands the specified expression.
+        /// </summary>
+        /// <param name="expression">The expression for associations to expand.</param>
+        /// <returns>Self.</returns>
         IFluentClient<T> Expand(Expression<Func<T, object>> expression);
+
+        /// <summary>
+        /// Selects the specified result columns.
+        /// </summary>
+        /// <param name="columns">The selected columns.</param>
+        /// <returns>Self.</returns>
         IFluentClient<T> Select(IEnumerable<string> columns);
+        /// <summary>
+        /// Selects the specified result columns.
+        /// </summary>
+        /// <param name="columns">The selected columns.</param>
+        /// <returns>Self.</returns>
         IFluentClient<T> Select(params string[] columns);
+        /// <summary>
+        /// Selects the specified result columns.
+        /// </summary>
+        /// <param name="columns">The selected columns.</param>
+        /// <returns>Self.</returns>
         IFluentClient<T> Select(params ODataExpression[] columns);
+        /// <summary>
+        /// Selects the specified result columns.
+        /// </summary>
+        /// <param name="expression">The expression for the selected columns.</param>
+        /// <returns>Self.</returns>
         IFluentClient<T> Select(Expression<Func<T, object>> expression);
+
+        /// <summary>
+        /// Sorts the result by the specified columns in the specified order.
+        /// </summary>
+        /// <param name="columns">The sort columns.</param>
+        /// <returns>Self.</returns>
         IFluentClient<T> OrderBy(IEnumerable<KeyValuePair<string, bool>> columns);
+        /// <summary>
+        /// Sorts the result by the specified columns in ascending order.
+        /// </summary>
+        /// <param name="columns">The sort columns.</param>
+        /// <returns>Self.</returns>
         IFluentClient<T> OrderBy(params string[] columns);
+        /// <summary>
+        /// Sorts the result by the specified columns in ascending order.
+        /// </summary>
+        /// <param name="columns">The sort columns.</param>
+        /// <returns>Self.</returns>
         IFluentClient<T> OrderBy(params ODataExpression[] columns);
+        /// <summary>
+        /// Sorts the result by the specified columns in ascending order.
+        /// </summary>
+        /// <param name="expression">The expression for the sort columns.</param>
+        /// <returns>Self.</returns>
         IFluentClient<T> OrderBy(Expression<Func<T, object>> expression);
+        /// <summary>
+        /// Sorts the result by the specified columns in ascending order.
+        /// </summary>
+        /// <param name="expression">The expression for the sort columns.</param>
+        /// <returns>Self.</returns>
         IFluentClient<T> ThenBy(Expression<Func<T, object>> expression);
+        /// <summary>
+        /// Sorts the result by the specified columns in descending order.
+        /// </summary>
+        /// <param name="columns">The sort columns.</param>
+        /// <returns>Self.</returns>
         IFluentClient<T> OrderByDescending(params string[] columns);
+        /// <summary>
+        /// Sorts the result by the specified columns in descending order.
+        /// </summary>
+        /// <param name="columns">The sort columns.</param>
+        /// <returns>Self.</returns>
         IFluentClient<T> OrderByDescending(params ODataExpression[] columns);
+        /// <summary>
+        /// Sorts the result by the specified columns in descending order.
+        /// </summary>
+        /// <param name="expression">The expression for the sort columns.</param>
+        /// <returns>Self.</returns>
         IFluentClient<T> OrderByDescending(Expression<Func<T, object>> expression);
+        /// <summary>
+        /// Sorts the result by the specified columns in descending order.
+        /// </summary>
+        /// <param name="expression">The expression for the sort columns.</param>
+        /// <returns>Self.</returns>
         IFluentClient<T> ThenByDescending(Expression<Func<T, object>> expression);
+
+        /// <summary>
+        /// Requests the number of results.
+        /// </summary>
+        /// <returns>Self.</returns>
         IFluentClient<T> Count();
+
+        /// <summary>
+        /// Navigates to the linked entity.
+        /// </summary>
+        /// <typeparam name="U">The type of the linked entity.</typeparam>
+        /// <param name="linkName">Name of the link.</param>
+        /// <returns>Self.</returns>
         IFluentClient<U> NavigateTo<U>(string linkName = null) where U : class;
+        /// <summary>
+        /// Navigates to the linked entity.
+        /// </summary>
+        /// <typeparam name="U">The type of the linked entity.</typeparam>
+        /// <param name="expression">The expression for the link.</param>
+        /// <returns>Self.</returns>
         IFluentClient<U> NavigateTo<U>(Expression<Func<T, U>> expression) where U : class;
+        /// <summary>
+        /// Navigates to the linked entity.
+        /// </summary>
+        /// <typeparam name="U">The type of the linked entity.</typeparam>
+        /// <param name="expression">The expression for the link.</param>
+        /// <returns>Self.</returns>
         IFluentClient<U> NavigateTo<U>(Expression<Func<T, IEnumerable<U>>> expression) where U : class;
+        /// <summary>
+        /// Navigates to the linked entity.
+        /// </summary>
+        /// <typeparam name="U">The type of the linked entity.</typeparam>
+        /// <param name="expression">The expression for the link.</param>
+        /// <returns>Self.</returns>
         IFluentClient<U> NavigateTo<U>(Expression<Func<T, IList<U>>> expression) where U : class;
+        /// <summary>
+        /// Navigates to the linked entity.
+        /// </summary>
+        /// <typeparam name="U">The type of the linked entity.</typeparam>
+        /// <param name="expression">The expression for the link.</param>
+        /// <returns>Self.</returns>
         IFluentClient<U> NavigateTo<U>(Expression<Func<T, U[]>> expression) where U : class;
+        /// <summary>
+        /// Navigates to the linked entity.
+        /// </summary>
+        /// <param name="linkName">Name of the link.</param>
+        /// <returns>Self.</returns>
         IFluentClient<IDictionary<string, object>> NavigateTo(string linkName);
+        /// <summary>
+        /// Navigates to the linked entity.
+        /// </summary>
+        /// <param name="expression">The expression for the link.</param>
+        /// <returns>Self.</returns>
         IFluentClient<T> NavigateTo(ODataExpression expression);
+
+        /// <summary>
+        /// Sets the specified entry value for update.
+        /// </summary>
+        /// <param name="value">The value to update the entry with.</param>
+        /// <returns>Self.</returns>
         IFluentClient<T> Set(object value);
+        /// <summary>
+        /// Sets the specified entry value for update.
+        /// </summary>
+        /// <param name="value">The value to update the entry with.</param>
+        /// <returns></returns>
         IFluentClient<T> Set(IDictionary<string, object> value);
+        /// <summary>
+        /// Sets the specified entry value for update.
+        /// </summary>
+        /// <param name="entry">The entry with the updated value.</param>
+        /// <returns></returns>
         IFluentClient<T> Set(T entry);
+        /// <summary>
+        /// Sets the specified entry value for update.
+        /// </summary>
+        /// <param name="value">The value to update the entry with.</param>
+        /// <returns></returns>
         IFluentClient<T> Set(params ODataExpression[] value);
+
+        /// <summary>
+        /// Sets the OData function name.
+        /// </summary>
+        /// <param name="functionName">Name of the function.</param>
+        /// <returns>Self.</returns>
         IFluentClient<T> Function(string functionName);
+        /// <summary>
+        /// Assigns parameters to the OData function.
+        /// </summary>
+        /// <param name="parameters">The function parameters.</param>
+        /// <returns></returns>
         IFluentClient<T> Parameters(IDictionary<string, object> parameters);
 
         /// <summary>

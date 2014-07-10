@@ -7,6 +7,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Simple.OData.Client.Extensions;
 
+#pragma warning disable 1591
+
 namespace Simple.OData.Client
 {
     // ALthough FluentCommand is never instantiated directly (only via ICommand interface)

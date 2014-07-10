@@ -8,43 +8,94 @@ using System.Threading.Tasks;
 
 namespace Simple.OData.Client
 {
+    /// <summary>
+    /// Provides access to OData operations.
+    /// </summary>
     public partial class ODataClient
     {
+        /// <summary>
+        /// Retrieves the OData service schema.
+        /// </summary>
+        /// <param name="urlBase">The URL base of the OData service.</param>
+        /// <returns>The schema.</returns>
         public static Task<ISchema> GetSchemaAsync(string urlBase)
         {
             return Schema.FromUrl(urlBase, null).ResolveAsync(CancellationToken.None);
         }
 
+        /// <summary>
+        /// Retrieves the OData service schema.
+        /// </summary>
+        /// <param name="urlBase">The URL base of the OData service.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>The schema.</returns>
         public static Task<ISchema> GetSchemaAsync(string urlBase, CancellationToken cancellationToken)
         {
             return Schema.FromUrl(urlBase, null).ResolveAsync(cancellationToken);
         }
 
+        /// <summary>
+        /// Retrieves the OData service schema.
+        /// </summary>
+        /// <param name="urlBase">The URL base of the OData service.</param>
+        /// <param name="credentials">The OData service access credentials.</param>
+        /// <returns>The schema.</returns>
         public static Task<ISchema> GetSchemaAsync(string urlBase, ICredentials credentials)
         {
             return Schema.FromUrl(urlBase, credentials).ResolveAsync(CancellationToken.None);
         }
 
+        /// <summary>
+        /// Retrieves the OData service schema.
+        /// </summary>
+        /// <param name="urlBase">The URL base of the OData service.</param>
+        /// <param name="credentials">The OData service access credentials.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>The schema.</returns>
         public static Task<ISchema> GetSchemaAsync(string urlBase, ICredentials credentials, CancellationToken cancellationToken)
         {
             return Schema.FromUrl(urlBase, credentials).ResolveAsync(cancellationToken);
         }
 
+        /// <summary>
+        /// Retrieves the OData service schema as string.
+        /// </summary>
+        /// <param name="urlBase">The URL base of the OData service.</param>
+        /// <returns>The schema.</returns>
         public static Task<string> GetSchemaAsStringAsync(string urlBase)
         {
             return GetSchemaAsStringAsync(urlBase, null, CancellationToken.None);
         }
 
+        /// <summary>
+        /// Gets the schema as string asynchronous.
+        /// </summary>
+        /// <param name="urlBase">The URL base of the OData service.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>The schema.</returns>
         public static Task<string> GetSchemaAsStringAsync(string urlBase, CancellationToken cancellationToken)
         {
             return GetSchemaAsStringAsync(urlBase, null, CancellationToken.None);
         }
 
+        /// <summary>
+        /// Gets the schema as string asynchronous.
+        /// </summary>
+        /// <param name="urlBase">The URL base of the OData service.</param>
+        /// <param name="credentials">The OData service access credentials.</param>
+        /// <returns>The schema.</returns>
         public static Task<string> GetSchemaAsStringAsync(string urlBase, ICredentials credentials)
         {
             return GetSchemaAsStringAsync(urlBase, credentials, CancellationToken.None);
         }
 
+        /// <summary>
+        /// Gets the schema as string asynchronous.
+        /// </summary>
+        /// <param name="urlBase">The URL base.</param>
+        /// <param name="credentials">The OData service access credentials.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>The schema.</returns>
         public static async Task<string> GetSchemaAsStringAsync(string urlBase, ICredentials credentials, CancellationToken cancellationToken)
         {
             var requestBuilder = new CommandRequestBuilder(urlBase, credentials);
@@ -56,6 +107,8 @@ namespace Simple.OData.Client
                 return await response.Content.ReadAsStringAsync();
             }
         }
+
+        #pragma warning disable 1591
 
         public Task<ISchema> GetSchemaAsync()
         {
@@ -474,6 +527,8 @@ namespace Simple.OData.Client
                 .Select(y => (T)y)
                 .ToArray();
         }
+
+        #pragma warning restore 1591
 
         internal async Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(FluentCommand command, CancellationToken cancellationToken)
         {

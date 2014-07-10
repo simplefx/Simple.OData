@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Simple.OData.Client.Extensions
 {
-    public static class EnumerableExtensions
+    static class EnumerableExtensions
     {
         public static IEnumerable<Tuple<T, int>> WithIndex<T>(this IEnumerable<T> source)
         {

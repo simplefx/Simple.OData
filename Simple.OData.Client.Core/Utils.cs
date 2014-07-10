@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Simple.OData.Client
 {
-    public class Utils
+    class Utils
     {
         public static string StreamToString(Stream stream)
         {

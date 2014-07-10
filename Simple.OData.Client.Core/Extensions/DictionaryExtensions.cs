@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace Simple.OData.Client.Extensions
 {
-    internal static class DictionaryExtensions
+    static class DictionaryExtensions
     {
         private static readonly Dictionary<Type, ConstructorInfo> _constructors = new Dictionary<Type, ConstructorInfo>();
 

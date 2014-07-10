@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 
+#pragma warning disable 1591
+
 namespace Simple.OData.Client
 {
     public partial class ODataExpression

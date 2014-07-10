@@ -6,7 +6,7 @@ using System.Reflection;
 
 namespace Simple.OData.Client.Extensions
 {
-    public static class TypeExtensions
+    static class TypeExtensions
     {
 #if NET40 || SILVERLIGHT || PORTABLE_LEGACY
         public static IEnumerable<PropertyInfo> GetDeclaredProperties(this Type type)

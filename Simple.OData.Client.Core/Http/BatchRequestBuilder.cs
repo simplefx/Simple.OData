@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Simple.OData.Client
 {
-    internal class BatchRequestBuilder : RequestBuilder
+    class BatchRequestBuilder : RequestBuilder
     {
         private string _batchId;
         private string _changesetId;

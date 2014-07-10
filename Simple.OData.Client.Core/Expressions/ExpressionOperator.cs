@@ -1,4 +1,6 @@
-﻿namespace Simple.OData.Client
+﻿#pragma warning disable 1591
+
+namespace Simple.OData.Client
 {
     public enum ExpressionOperator
     {

@@ -6,7 +6,7 @@ using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
-    internal class EdmSchemaParser
+    class EdmSchemaParser
     {
         public string TypesNamespace { get; private set; }
         public string ContainersNamespace { get; private set; }

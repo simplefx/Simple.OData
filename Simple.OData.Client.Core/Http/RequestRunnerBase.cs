@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Simple.OData.Client
 {
-    public abstract class RequestRunnerBase
+    abstract class RequestRunnerBase
     {
         private const string PreferHeaderName = "Prefer";
         private const string PreferenceAppliedHeaderName = "Preference-Applied";

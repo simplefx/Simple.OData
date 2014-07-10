@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Dynamic;
 
+#pragma warning disable 1591
+
 namespace Simple.OData.Client
 {
     [Obsolete("Use ODataDynamic.Expression instead of ODataFilter.Expression", false)]

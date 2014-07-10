@@ -3,7 +3,7 @@ using System.Net;
 
 namespace Simple.OData.Client
 {
-    public class HttpCommand
+    class HttpCommand
     {
         public string Method { get; set; }
         public string CommandText { get; set; }

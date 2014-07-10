@@ -6,6 +6,8 @@ using System.Linq.Expressions;
 using System.Reflection;
 using Simple.OData.Client.Extensions;
 
+#pragma warning disable 1591
+
 namespace Simple.OData.Client
 {
     public class DynamicODataExpression : ODataExpression,  IDynamicMetaObjectProvider

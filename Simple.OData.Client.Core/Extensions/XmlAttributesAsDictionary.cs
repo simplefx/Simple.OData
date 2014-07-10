@@ -6,7 +6,7 @@ using System.Xml.Linq;
 
 namespace Simple.OData.Client.Extensions
 {
-    public class XmlAttributesAsDictionary
+    class XmlAttributesAsDictionary
     {
         private readonly XElement _element;
 

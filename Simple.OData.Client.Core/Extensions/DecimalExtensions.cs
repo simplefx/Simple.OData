@@ -2,7 +2,7 @@
 
 namespace Simple.OData.Client.Extensions
 {
-    internal static class DecimalExtensions
+    static class DecimalExtensions
     {
         public static string ToODataString(this decimal number, ValueFormatter.FormattingStyle formattingStyle)
         {

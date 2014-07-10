@@ -2,7 +2,7 @@
 
 namespace Simple.OData.Client.Extensions
 {
-    internal static class ULongExtensions
+    static class ULongExtensions
     {
         public static string ToODataString(this ulong number, ValueFormatter.FormattingStyle formattingStyle)
         {

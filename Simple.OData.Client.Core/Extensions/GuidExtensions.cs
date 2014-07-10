@@ -2,7 +2,7 @@
 
 namespace Simple.OData.Client.Extensions
 {
-    internal static class GuidExtensions
+    static class GuidExtensions
     {
         public static string ToODataString(this Guid guid, ValueFormatter.FormattingStyle formattingStyle)
         {

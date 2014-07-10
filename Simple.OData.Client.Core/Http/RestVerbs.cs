@@ -1,7 +1,7 @@
 ﻿
 namespace Simple.OData.Client
 {
-    public static class RestVerbs
+    internal static class RestVerbs
     {
         // ReSharper disable InconsistentNaming
         public const string GET = "GET";

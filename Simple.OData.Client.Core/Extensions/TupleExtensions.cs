@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Simple.OData.Client.Extensions
 {
-    public static class TupleExtensions
+    static class TupleExtensions
     {
         public static void Run<T1, T2>(this Tuple<T1, T2> tuple, Action<T1, T2> action)
         {

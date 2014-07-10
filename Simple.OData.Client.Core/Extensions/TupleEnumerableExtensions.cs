@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Simple.OData.Client.Extensions
 {
-    public static class TupleEnumerableExtensions
+    static class TupleEnumerableExtensions
     {
         public static bool Any<T1, T2>(this IEnumerable<Tuple<T1, T2>> source,
             Func<T1, T2, bool> predicate)

@@ -6,7 +6,7 @@ using System.Xml.Linq;
 
 namespace Simple.OData.Client.Extensions
 {
-    public static class XAttributeExtensions
+    static class XAttributeExtensions
     {
         /// <summary>
         /// Returns the string value of the Attribute or <c>null</c> if the attribute is null.

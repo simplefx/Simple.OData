@@ -2,7 +2,7 @@
 
 namespace Simple.OData.Client.Extensions
 {
-    internal static class LongExtensions
+    static class LongExtensions
     {
         public static string ToODataString(this long number, ValueFormatter.FormattingStyle formattingStyle)
         {

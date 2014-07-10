@@ -3,7 +3,7 @@ using System.Globalization;
 
 namespace Simple.OData.Client.Extensions
 {
-    internal static class DateTimeExtensions
+    static class DateTimeExtensions
     {
         public static string ToIso8601String(this DateTime dateTime)
         {

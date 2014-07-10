@@ -1,5 +1,8 @@
 ﻿using System;
 
+#pragma warning disable 1591
+#pragma warning disable 3001,3008
+
 namespace Simple.OData.Client
 {
     public partial class ODataExpression

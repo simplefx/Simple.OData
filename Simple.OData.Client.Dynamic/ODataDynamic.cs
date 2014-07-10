@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using Simple.OData.Client.Extensions;
 
+#pragma warning disable 1591
+
 namespace Simple.OData.Client
 {
     public static class ODataDynamic

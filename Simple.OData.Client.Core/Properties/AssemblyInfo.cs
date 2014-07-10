@@ -35,3 +35,5 @@ using System.Runtime.InteropServices;
 [assembly: InternalsVisibleTo("Simple.OData.Client.Tests.Net40")]
 [assembly: InternalsVisibleTo("Simple.OData.Client.Tests.Net45")]
 [assembly: InternalsVisibleTo("Simple.OData.Client.Tests.WinRT")]
+[assembly: InternalsVisibleTo("Simple.OData.Client.Tests.SL5")]
+[assembly: InternalsVisibleTo("Simple.OData.Client.Tests.WP8")]
