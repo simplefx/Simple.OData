@@ -2,7 +2,7 @@
 
 namespace Simple.OData.Client
 {
-    public class Pluralizer : IPluralizer
+    class Pluralizer : IPluralizer
     {
         private readonly Func<string, string> _pluralize;
         private readonly Func<string, string> _singularize;

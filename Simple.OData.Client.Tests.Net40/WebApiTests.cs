@@ -7,6 +7,8 @@ using Xunit;
 
 using Entry = System.Collections.Generic.Dictionary<string, object>;
 
+#pragma warning disable 3001,3008
+
 namespace Simple.OData.Client.Tests
 {
     public abstract class WebApiTestsBase : IDisposable

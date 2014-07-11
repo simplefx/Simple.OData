@@ -8,6 +8,8 @@ using Simple.OData.Client.TestUtils;
 using Simple.OData.NorthwindModel;
 #endif
 
+#pragma warning disable 3001,3008
+
 namespace Simple.OData.Client.Tests
 {
     public class TestBase : IDisposable

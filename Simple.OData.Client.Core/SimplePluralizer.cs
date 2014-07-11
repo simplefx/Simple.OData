@@ -5,7 +5,7 @@ namespace Simple.OData.Client
 {
     // Based on gist by Juliën Hanssens
     // https://gist.github.com/hanssens/2835960
-    public class SimplePluralizer : IPluralizer
+    internal class SimplePluralizer : IPluralizer
     {
         static Dictionary<string, Word> _specialSingulars;
         static Dictionary<string, Word> _specialPlurals;

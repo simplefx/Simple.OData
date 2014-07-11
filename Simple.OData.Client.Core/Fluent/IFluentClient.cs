@@ -9,7 +9,7 @@ namespace Simple.OData.Client
     /// <summary>
     /// Provides access to OData operations in a fluent style.
     /// </summary>
-    /// <typeparam name="T">The entry type.</typeparam>
+    /// <typeparam name="T">The entity type.</typeparam>
     public interface IFluentClient<T>
         where T : class
     {

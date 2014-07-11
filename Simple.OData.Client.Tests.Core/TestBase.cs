@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 
+#pragma warning disable 3008
+
 namespace Simple.OData.Client.Tests
 {
     public class TestBase : IDisposable

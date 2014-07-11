@@ -1,5 +1,6 @@
 ﻿using System;
 
+#pragma warning disable 0660,0661
 #pragma warning disable 1591
 #pragma warning disable 3001,3008
 

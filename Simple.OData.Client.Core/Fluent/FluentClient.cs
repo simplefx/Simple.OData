@@ -11,6 +11,10 @@ namespace Simple.OData.Client
     // For the same reason FluentCommand is also declared as public
     // More: http://bloggingabout.net/blogs/vagif/archive/2013/08/05/we-need-better-interoperability-between-dynamic-and-statically-compiled-c.aspx
 
+    /// <summary>
+    /// Provides access to OData operations in a fluent style.
+    /// </summary>
+    /// <typeparam name="T">The entry type.</typeparam>
     public partial class FluentClient<T> : IFluentClient<T>
         where T : class
     {
@@ -355,6 +359,16 @@ namespace Simple.OData.Client
             return this;
         }
 
+        public bool FilterIsKey
+        {
+            get { return this.Command.FilterIsKey; }
+        }
+
+        public IDictionary<string, object> FilterAsKey
+        {
+            get { return this.Command.FilterAsKey; }
+        }
+
         #pragma warning restore 1591
 
         internal static IEnumerable<string> ExtractColumnNames(Expression<Func<T, object>> expression)
@@ -395,16 +409,6 @@ namespace Simple.OData.Client
                 default:
                     throw Utils.NotSupportedExpression(expression);
             }
-        }
-
-        public bool FilterIsKey
-        {
-            get { return this.Command.FilterIsKey; }
-        }
-
-        public IDictionary<string, object> FilterAsKey
-        {
-            get { return this.Command.FilterAsKey; }
         }
 
         private FluentClient<ODataEntry> CreateClientForODataEntry() 
