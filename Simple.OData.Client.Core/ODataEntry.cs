@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 
-#pragma warning disable 3001,3008
-
 namespace Simple.OData.Client
 {
     /// <summary>
@@ -9,6 +7,9 @@ namespace Simple.OData.Client
     /// </summary>
     public class ODataEntry
     {
+        /// <summary>
+        /// The content of the OData entry.
+        /// </summary>
         protected Dictionary<string, object> _entry;
 
         /// <summary>

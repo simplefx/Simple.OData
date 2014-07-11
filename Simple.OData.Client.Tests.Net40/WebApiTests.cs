@@ -7,8 +7,6 @@ using Xunit;
 
 using Entry = System.Collections.Generic.Dictionary<string, object>;
 
-#pragma warning disable 3001,3008
-
 namespace Simple.OData.Client.Tests
 {
     public abstract class WebApiTestsBase : IDisposable
@@ -227,8 +225,6 @@ namespace Simple.OData.Client.Tests
 
     public class WebApiTests : WebApiTestsBase
     {
-        private string _serviceUri;
-
         public WebApiTests()
             : base(new ODataClientSettings("http://va-odata-integration.azurewebsites.net/odata/open"))
         {

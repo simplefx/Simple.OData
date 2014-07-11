@@ -25,4 +25,4 @@ using System.Runtime.InteropServices;
 #endif
 
 [assembly: NeutralResourcesLanguage("en-US")]
-[assembly: CLSCompliant(true)]
+[assembly: CLSCompliant(false)]
