@@ -5,14 +5,21 @@ namespace Simple.OData.Client.Extensions
 {
     static class StringExtensions
     {
+        private static IPluralizer _pluralizer = new SimplePluralizer();
+
+        internal static void SetPluralizer(IPluralizer pluralizer)
+        {
+            _pluralizer = pluralizer;
+        }
+
         public static string Pluralize(this string str)
         {
-            return _pluralizer.Pluralize(str);
+            return _pluralizer != null ? _pluralizer.Pluralize(str) : str;
         }
 
         public static string Singularize(this string str)
         {
-            return _pluralizer.Singularize(str);
+            return _pluralizer != null ? _pluralizer.Singularize(str) : str;
         }
 
         public static bool IsAllUpperCase(this string str)
@@ -28,13 +35,6 @@ namespace Simple.OData.Client.Extensions
         public static string OrDefault(this string str, string defaultValue)
         {
             return str ?? defaultValue;
-        }
-
-        private static IPluralizer _pluralizer = new SimplePluralizer();
-
-        internal static void SetPluralizer(IPluralizer pluralizer)
-        {
-            _pluralizer = pluralizer ?? new SimplePluralizer();
         }
 
         public static string EnsureStartsWith(this string source, string value)

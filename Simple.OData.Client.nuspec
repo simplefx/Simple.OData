@@ -41,12 +41,16 @@
   <files>
     <!-- PCL -->
     <file src="Simple.OData.Client.Core\bin\Release\Simple.OData.Client.Core.dll" target="lib\portable-net45+wp80+wpa81+win+MonoAndroid10+MonoTouch10\Simple.OData.Client.Core.dll" />
+    <file src="Simple.OData.Client.Core\bin\Release\Simple.OData.Client.Core.xml" target="lib\portable-net45+wp80+wpa81+win+MonoAndroid10+MonoTouch10\Simple.OData.Client.Core.xml" />
     <file src="Simple.OData.Client.Dynamic\bin\Release\Simple.OData.Client.Dynamic.dll" target="lib\portable-net45+wp80+wpa81+win+MonoAndroid10+MonoTouch10\Simple.OData.Client.Dynamic.dll" />
+    <file src="Simple.OData.Client.Dynamic\bin\Release\Simple.OData.Client.Dynamic.xml" target="lib\portable-net45+wp80+wpa81+win+MonoAndroid10+MonoTouch10\Simple.OData.Client.Dynamic.xml" />
 
     <!-- NET40 -->
     <file src="Simple.OData.Client.Net40\bin\Release\Simple.OData.Client.Net40.dll" target="lib\net40\Simple.OData.Client.Net40.dll" />
+    <file src="Simple.OData.Client.Net40\bin\Release\Simple.OData.Client.Net40.xml" target="lib\net40\Simple.OData.Client.Net40.xml" />
 
     <!-- Silverlight 5 -->
     <file src="Simple.OData.Client.SL5\bin\Release\Simple.OData.Client.SL5.dll" target="lib\sl5\Simple.OData.Client.SL5.dll" />
+    <file src="Simple.OData.Client.SL5\bin\Release\Simple.OData.Client.SL5.xml" target="lib\sl5\Simple.OData.Client.SL5.xml" />
   </files>
 </package>

@@ -463,6 +463,17 @@ namespace Simple.OData.Client.Tests
             Assert.Equal("Titanic", transport.ShipName);
         }
 
+        [Fact]
+        public async Task Pluralizer()
+        {
+            ODataClient.SetPluralizer(null);
+            await AssertThrowsAsync<AggregateException>(async () =>
+                await _client.For<Product>().FindEntriesAsync());
+            ODataClient.SetPluralizer(new SimplePluralizer());
+            var products = await _client.For<Product>().FindEntriesAsync();
+            Assert.NotEqual(0, products.Count());
+        }
+
         public class ODataOrgProduct
         {
             public string Name { get; set; }
