@@ -37,3 +37,5 @@ using System.Runtime.InteropServices;
 [assembly: InternalsVisibleTo("Simple.OData.Client.Tests.WinRT")]
 [assembly: InternalsVisibleTo("Simple.OData.Client.Tests.SL5")]
 [assembly: InternalsVisibleTo("Simple.OData.Client.Tests.WP8")]
+[assembly: InternalsVisibleTo("Simple.OData.Client.Tests.Droid")]
+[assembly: InternalsVisibleTo("Simple.OData.Client.Tests.Touch")]

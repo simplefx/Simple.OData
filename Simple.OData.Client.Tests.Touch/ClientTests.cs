@@ -49,7 +49,7 @@ namespace Simple.OData.Client.Tests
 					Assert.AreEqual("*", association.Multiplicity);
 
 					var function = schema.FindFunction("GetProductsByRating");
-					Assert.AreEqual(RestVerbs.GET, function.HttpMethod);
+					Assert.AreEqual("GET", function.HttpMethod);
 					Assert.AreEqual("rating", function.Parameters[0]);
 
 					Assert.AreEqual(10, schema.EntityTypes.Count());

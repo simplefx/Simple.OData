@@ -160,7 +160,7 @@ namespace Simple.OData.Client.Tests
             Assert.Equal("0..1", association.Multiplicity);
 
             var function = (await client.GetSchemaAsync()).FindFunction("GetProductsByRating");
-            Assert.Equal(RestVerbs.GET, function.HttpMethod);
+            Assert.Equal("GET", function.HttpMethod);
             Assert.Equal("rating", function.Parameters[0]);
 
             Assert.Equal(3, (await client.GetSchemaAsync()).EntityTypes.Count());
@@ -181,7 +181,7 @@ namespace Simple.OData.Client.Tests
             Assert.Equal("*", association.Multiplicity);
 
             var function = (await client.GetSchemaAsync()).FindFunction("GetProductsByRating");
-            Assert.Equal(RestVerbs.GET, function.HttpMethod);
+            Assert.Equal("GET", function.HttpMethod);
             Assert.Equal("rating", function.Parameters[0]);
 
             Assert.Equal(10, (await client.GetSchemaAsync()).EntityTypes.Count());

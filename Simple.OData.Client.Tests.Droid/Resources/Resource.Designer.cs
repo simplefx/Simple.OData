@@ -33,6 +33,7 @@ namespace Simple.OData.Client.Tests.Droid
 			global::Xamarin.Android.NUnitLite.Resource.Id.ResultFullName = global::Simple.OData.Client.Tests.Droid.Resource.Id.ResultFullName;
 			global::Xamarin.Android.NUnitLite.Resource.Id.ResultMessage = global::Simple.OData.Client.Tests.Droid.Resource.Id.ResultMessage;
 			global::Xamarin.Android.NUnitLite.Resource.Id.ResultResultState = global::Simple.OData.Client.Tests.Droid.Resource.Id.ResultResultState;
+			global::Xamarin.Android.NUnitLite.Resource.Id.ResultRunSingleMethodTest = global::Simple.OData.Client.Tests.Droid.Resource.Id.ResultRunSingleMethodTest;
 			global::Xamarin.Android.NUnitLite.Resource.Id.ResultStackTrace = global::Simple.OData.Client.Tests.Droid.Resource.Id.ResultStackTrace;
 			global::Xamarin.Android.NUnitLite.Resource.Id.ResultsFailed = global::Simple.OData.Client.Tests.Droid.Resource.Id.ResultsFailed;
 			global::Xamarin.Android.NUnitLite.Resource.Id.ResultsId = global::Simple.OData.Client.Tests.Droid.Resource.Id.ResultsId;
@@ -93,20 +94,23 @@ namespace Simple.OData.Client.Tests.Droid
 			// aapt resource value: 0x7f050001
 			public const int OptionRemoteServer = 2131034113;
 			
-			// aapt resource value: 0x7f050010
-			public const int OptionsButton = 2131034128;
-			
-			// aapt resource value: 0x7f05000b
-			public const int ResultFullName = 2131034123;
-			
-			// aapt resource value: 0x7f05000d
-			public const int ResultMessage = 2131034125;
+			// aapt resource value: 0x7f050011
+			public const int OptionsButton = 2131034129;
 			
 			// aapt resource value: 0x7f05000c
-			public const int ResultResultState = 2131034124;
+			public const int ResultFullName = 2131034124;
 			
 			// aapt resource value: 0x7f05000e
-			public const int ResultStackTrace = 2131034126;
+			public const int ResultMessage = 2131034126;
+			
+			// aapt resource value: 0x7f05000d
+			public const int ResultResultState = 2131034125;
+			
+			// aapt resource value: 0x7f05000b
+			public const int ResultRunSingleMethodTest = 2131034123;
+			
+			// aapt resource value: 0x7f05000f
+			public const int ResultStackTrace = 2131034127;
 			
 			// aapt resource value: 0x7f050007
 			public const int ResultsFailed = 2131034119;
@@ -129,11 +133,11 @@ namespace Simple.OData.Client.Tests.Droid
 			// aapt resource value: 0x7f050005
 			public const int ResultsResult = 2131034117;
 			
-			// aapt resource value: 0x7f05000f
-			public const int RunTestsButton = 2131034127;
+			// aapt resource value: 0x7f050010
+			public const int RunTestsButton = 2131034128;
 			
-			// aapt resource value: 0x7f050011
-			public const int TestSuiteListView = 2131034129;
+			// aapt resource value: 0x7f050012
+			public const int TestSuiteListView = 2131034130;
 			
 			static Id()
 			{
