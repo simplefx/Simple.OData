@@ -12,14 +12,17 @@ namespace Simple.OData.Client.Tests
     {
         protected IODataClient _client;
 
-        public TestBase()
+        public TestBase() 
+            : this("Northwind.edmx")
         {
-            _client = CreateClientWithDefaultSettings();
         }
 
-        public IODataClient CreateClientWithDefaultSettings()
+        public TestBase(string metadataFile)
         {
-            return CreateClient("Northwind.edmx");
+            if (!string.IsNullOrEmpty(metadataFile))
+            {
+                _client = CreateClient(metadataFile);
+            }
         }
 
         public IODataClient CreateClient(string metadataFile)
