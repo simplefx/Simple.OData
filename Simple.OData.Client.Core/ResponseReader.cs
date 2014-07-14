@@ -142,8 +142,15 @@ namespace Simple.OData.Client
             var tableName = prefix.Substring(startOfTableName, prefix.Length - startOfTableName - 1);
             content = content.Substring(startOfKey, endOfKey - startOfKey);
 
-            var table = _schema.FindBaseTable(tableName);
-            return new ValueParser(table).Parse(content);
+            if (!string.IsNullOrEmpty(content))
+            {
+                var table = _schema.FindBaseTable(tableName);
+                return new ValueParser(table).Parse(content);
+            }
+            else
+            {
+                return new KeyValuePair<string, object>[] {};
+            }
         }
 
         private IEnumerable<KeyValuePair<string, object>> GetProperties(XElement element)
