@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -23,6 +24,22 @@ namespace Simple.OData.Client
         /// The metadata as string.
         /// </value>
         string MetadataAsString { get; }
+        /// <summary>
+        /// Gets the schema types namespace.
+        /// </summary>
+        /// <value>
+        /// The types namespace.
+        /// </value>
+        [Obsolete("The value is unassigned. Use Namespace property for the specific type instead", false)]
+        string TypesNamespace { get; }
+        /// <summary>
+        /// Gets the schema containers namespace.
+        /// </summary>
+        /// <value>
+        /// The containers namespace.
+        /// </value>
+        [Obsolete("The value is unassigned.", false)]
+        string ContainersNamespace { get; }
         /// <summary>
         /// Gets the schema tables.
         /// </summary>

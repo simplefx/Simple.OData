@@ -62,6 +62,16 @@ namespace Simple.OData.Client
             get { return _metadataString; }
         }
 
+        public string TypesNamespace
+        {
+            get { return string.Empty; }
+        }
+
+        public string ContainersNamespace
+        {
+            get { return string.Empty; }
+        }
+
         public IEnumerable<Table> Tables
         {
             get { return _lazyTables.Value.AsEnumerable(); }
