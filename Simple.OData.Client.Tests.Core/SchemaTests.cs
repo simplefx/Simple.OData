@@ -14,9 +14,10 @@ namespace Simple.OData.Client.Tests
         public async void MultipleSchemas_Marathon()
         {
             _client = CreateClient("Marathon.edmx");
-            // TODO
-            //var schema = await _client.GetSchemaAsync();
-            //var table = schema.Tables;
+            var schema = await _client.GetSchemaAsync();
+            var table = schema.FindTable("Marathons");
+            Assert.NotNull(table);
+            Assert.Equal(8, table.Columns.Count());
         }
 
         [Fact]

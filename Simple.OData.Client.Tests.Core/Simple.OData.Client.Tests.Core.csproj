@@ -122,7 +122,7 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\QAS.Multiplatform.Demo.edmx" />
-    <None Include="Resources\Marathon.edmx" />
+    <EmbeddedResource Include="Resources\Marathon.edmx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Simple.OData.Client.Core\Simple.OData.Client.Core.csproj">
