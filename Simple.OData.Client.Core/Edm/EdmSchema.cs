@@ -8,8 +8,6 @@ namespace Simple.OData.Client
 {
     public sealed class EdmSchema
     {
-        public string TypesNamespace { get; set; }
-        public string ContainersNamespace { get; set; }
         public EdmEntityType[] EntityTypes { get; private set; }
         public EdmComplexType[] ComplexTypes { get; private set; }
         public EdmEnumType[] EnumTypes { get; private set; }
@@ -18,8 +16,6 @@ namespace Simple.OData.Client
 
         internal EdmSchema(EdmSchemaParser parser)
         {
-            this.TypesNamespace = parser.TypesNamespace;
-            this.ContainersNamespace = parser.ContainersNamespace;
             this.EntityTypes = parser.EntityTypes.ToArray();
             this.ComplexTypes = parser.ComplexTypes.ToArray();
             this.EnumTypes = parser.EnumTypes.ToArray();
@@ -43,6 +39,7 @@ namespace Simple.OData.Client
 
     public sealed class EdmEntityType
     {
+        public string Namespace { get; set; }
         public string Name { get; set; }
         public EdmEntityType BaseType { get; set; }
         public bool Abstract { get; set; }
@@ -60,6 +57,7 @@ namespace Simple.OData.Client
 
     public sealed class EdmComplexType
     {
+        public string Namespace { get; set; }
         public string Name { get; set; }
         public EdmProperty[] Properties { get; set; }
 
@@ -72,6 +70,7 @@ namespace Simple.OData.Client
 
     public sealed class EdmEnumType
     {
+        public string Namespace { get; set; }
         public string Name { get; set; }
         public string UnderlyingType { get; set; }
         public EdmEnumMember[] Members { get; set; }
@@ -93,6 +92,7 @@ namespace Simple.OData.Client
 
     public sealed class EdmEntityContainer
     {
+        public string Namespace { get; set; }
         public string Name { get; set; }
         public bool IsDefaulEntityContainer { get; set; }
         public EdmEntitySet[] EntitySets { get; set; }

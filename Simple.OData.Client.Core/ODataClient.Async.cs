@@ -308,7 +308,7 @@ namespace Simple.OData.Client
             var entryMembers = ParseEntryMembers(table, entryData);
 
             var commandWriter = new CommandWriter(_schema);
-            var entryContent = commandWriter.CreateEntry(table.EntityType.Name, entryMembers.Properties);
+            var entryContent = commandWriter.CreateEntry(table.EntityType.Namespace, table.EntityType.Name, entryMembers.Properties);
             foreach (var associatedData in entryMembers.AssociationsByValue)
             {
                 commandWriter.AddLink(entryContent, collection, associatedData);

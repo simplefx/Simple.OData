@@ -13,16 +13,6 @@ namespace Simple.OData.Client
             _schema = schema;
         }
 
-        public string GetTypesNamespace()
-        {
-            return _schema.Metadata.TypesNamespace;
-        }
-
-        public string GetContainersNamespace()
-        {
-            return _schema.Metadata.ContainersNamespace;
-        }
-
         public IEnumerable<Table> GetTables()
         {
             return from s in GetEntitySets()
@@ -51,24 +41,24 @@ namespace Simple.OData.Client
                              from s in e.AssociationSets
                              where s.End.First().EntitySet == table.ActualName
                              from a in _schema.Metadata.Associations
-                             where s.Association == GetQualifiedName(_schema.Metadata.TypesNamespace, a.Name)
+                             where s.Association == GetQualifiedName(table.EntityType.Namespace, a.Name)
                              from n in a.End
                              where n.Role == s.End.Last().Role
                              from t in GetEntityTypeWithBaseTypes(table.EntityType)
                              from np in t.NavigationProperties
-                             where np.Relationship == GetQualifiedName(_schema.Metadata.TypesNamespace, a.Name) && np.ToRole == n.Role
+                             where np.Relationship == GetQualifiedName(table.EntityType.Namespace, a.Name) && np.ToRole == n.Role
                              select CreateAssociation(np.Name, s.End.Last(), n);
             var dependents = from e in _schema.Metadata.EntityContainers
                              //where e.IsDefaulEntityContainer
                              from s in e.AssociationSets
                              where s.End.Last().EntitySet == table.ActualName
                              from a in _schema.Metadata.Associations
-                             where s.Association == GetQualifiedName(_schema.Metadata.TypesNamespace, a.Name)
+                             where s.Association == GetQualifiedName(table.EntityType.Namespace, a.Name)
                              from n in a.End
                              where n.Role == s.End.First().Role
                              from t in GetEntityTypeWithBaseTypes(table.EntityType)
                              from np in t.NavigationProperties
-                             where np.Relationship == GetQualifiedName(_schema.Metadata.TypesNamespace, a.Name) && np.ToRole == n.Role
+                             where np.Relationship == GetQualifiedName(table.EntityType.Namespace, a.Name) && np.ToRole == n.Role
                              select CreateAssociation(np.Name, s.End.First(), n);
             return principals.Union(dependents);
         }

@@ -8,8 +8,6 @@ namespace Simple.OData.Client
 {
     class EdmSchemaParser
     {
-        public string TypesNamespace { get; private set; }
-        public string ContainersNamespace { get; private set; }
         public IEnumerable<EdmEntityType> EntityTypes { get; private set; }
         public IEnumerable<EdmComplexType> ComplexTypes { get; private set; }
         public IEnumerable<EdmEnumType> EnumTypes { get; private set; }
@@ -29,11 +27,6 @@ namespace Simple.OData.Client
         {
             var schemaRoot = element.Descendants(null, "Schema");
 
-            this.TypesNamespace = schemaRoot
-                .Where(x => x.Descendants(null, "EntityType").Any()).FirstOrDefault().Attribute("Namespace").Value;
-            this.ContainersNamespace = schemaRoot
-                .Where(x => x.Descendants(null, "EntityContainer").Any()).FirstOrDefault().Attribute("Namespace").Value;
-
             ParseEnumTypes(schemaRoot.SelectMany(x => x.Descendants(null, "EnumType")));
             ParseComplexTypes(schemaRoot.SelectMany(x => x.Descendants(null, "ComplexType")));
             ParseEntityTypes(schemaRoot.SelectMany(x => x.Descendants(null, "EntityType")));
@@ -45,16 +38,18 @@ namespace Simple.OData.Client
 
         private void ParseEnumTypes(IEnumerable<XElement> elements)
         {
-            Func<XElement, string> GetEnumTypeName = x => String.Format("{0}.{1}", this.TypesNamespace, x.Attribute("Name").Value);
+            Func<XElement, string, string> GetEnumTypeName = (x,ns) => String.Format("{0}.{1}", ns, x.Attribute("Name").Value);
             this.EnumTypes = (from e in elements select new EdmEnumType
             {
-                Name = GetEnumTypeName(e),
+                Namespace = ParseNamespace(e),
+                Name = GetEnumTypeName(e, ParseNamespace(e)),
                 UnderlyingType = ParseStringAttribute(e.Attribute("UnderlyingType")),
                 IsFlags = ParseBooleanAttribute(e.Attribute("IsFlags"))
             }).ToList();
+
             foreach (var element in elements)
             {
-                var enumType = this.EnumTypes.Single(x => x.Name == GetEnumTypeName(element));
+                var enumType = this.EnumTypes.Single(x => x.Name == GetEnumTypeName(element, x.Namespace));
                 enumType.Members = (from m in element.Descendants(null, "Member")
                                           select ParseEnumMember(m)).ToArray();
                 long currentValue = 0;
@@ -71,11 +66,16 @@ namespace Simple.OData.Client
 
         private void ParseComplexTypes(IEnumerable<XElement> elements)
         {
-            Func<XElement, string> GetComplexTypeName = x => String.Format("{0}.{1}", this.TypesNamespace, x.Attribute("Name").Value);
-            this.ComplexTypes = (from e in elements select new EdmComplexType { Name = GetComplexTypeName(e) }).ToList();
+            Func<XElement, string, string> GetComplexTypeName = (x, ns) => String.Format("{0}.{1}", ns, x.Attribute("Name").Value);
+            this.ComplexTypes = (from e in elements select new EdmComplexType
+            {
+                Namespace = ParseNamespace(e),
+                Name = GetComplexTypeName(e, ParseNamespace(e))
+            }).ToList();
+            
             foreach (var element in elements)
             {
-                var complexType = this.ComplexTypes.Single(x => x.Name == GetComplexTypeName(element));
+                var complexType = this.ComplexTypes.Single(x => x.Name == GetComplexTypeName(element, x.Namespace));
                 complexType.Properties = (from p in element.Descendants(null, "Property")
                                           select ParseProperty(p)).ToArray();
             }
@@ -88,6 +88,7 @@ namespace Simple.OData.Client
                           {
                               EntityType = new EdmEntityType()
                               {
+                                  Namespace = ParseNamespace(e),
                                   Name = e.Attribute("Name").Value,
                                   Abstract = ParseBooleanAttribute(e.Attribute("Abstract")),
                                   OpenType = ParseBooleanAttribute(e.Attribute("OpenType")),
@@ -103,6 +104,7 @@ namespace Simple.OData.Client
             this.EntityTypes = from r in results
                    select new EdmEntityType()
                    {
+                       Namespace = r.EntityType.Namespace,
                        Name = r.EntityType.Name,
                        BaseType = String.IsNullOrEmpty(r.BaseType) ? null : results.Single(y => y.EntityType.Name == r.BaseType.Split('.').Last()).EntityType,
                        Abstract = r.EntityType.Abstract,
@@ -154,6 +156,7 @@ namespace Simple.OData.Client
             this.EntityContainers = from e in elements
                    select new EdmEntityContainer()
                    {
+                       Namespace = ParseNamespace(e),
                        Name = e.Attribute("Name").Value,
                        IsDefaulEntityContainer = ParseBooleanAttribute(e.Attribute("m", "IsDefaultEntityContainer")),
                        EntitySets = (from s in e.Descendants(null, "EntitySet")
@@ -191,6 +194,12 @@ namespace Simple.OData.Client
                                           }).ToArray(),
                    };
 
+        }
+
+        private string ParseNamespace(XElement element)
+        {
+            //XNamespace xlmns = "http://schemas.microsoft.com/ado/2009/11/edm";
+            return element.Ancestors(element.Name.Namespace + "Schema").Attributes("Namespace").Single().Value;
         }
 
         private EdmProperty ParseProperty(XElement element)

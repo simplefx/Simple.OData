@@ -18,7 +18,7 @@ namespace Simple.OData.Client.Tests
             string xml = GetResourceAsString("SingleCustomerWithAddress.xml");
             var document = XDocument.Parse(xml).Root;
             var row = feedReader.GetData(xml).Single();
-            var entry = commandWriter.CreateEntry("Customers", row).Entry;
+            var entry = commandWriter.CreateEntry("Northwind.Model", "Customers", row).Entry;
 
             AssertElementsCountEqual(document, entry, "m", "properties");
             AssertElementsContentEqual(document, entry, "d", "CustomerID");
@@ -41,7 +41,7 @@ namespace Simple.OData.Client.Tests
             string xml = GetResourceAsString("WorkTaskModel.xml");
             var document = XDocument.Parse(xml).Root;
             var row = feedReader.GetData(xml).Single();
-            var entry = commandWriter.CreateEntry("WorkTaskModel", row).Entry;
+            var entry = commandWriter.CreateEntry("QAS.Multiplatform.Demo.Models", "WorkTaskModel", row).Entry;
 
             AssertElementsCountEqual(document, entry, "m", "properties");
             AssertElementsContentEqual(document, entry, "d", "Id");
@@ -66,7 +66,7 @@ namespace Simple.OData.Client.Tests
             string xml = GetResourceAsString("WorkTaskModelWithNulls.xml");
             var document = XDocument.Parse(xml).Root;
             var row = feedReader.GetData(xml).Single();
-            var entry = commandWriter.CreateEntry("WorkTaskModel", row).Entry;
+            var entry = commandWriter.CreateEntry("QAS.Multiplatform.Demo.Models", "WorkTaskModel", row).Entry;
 
             AssertElementsCountEqual(document, entry, "m", "properties");
             AssertElementsContentEqual(document, entry, "d", "Id");

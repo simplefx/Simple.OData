@@ -104,7 +104,7 @@ namespace Simple.OData.Client
 
             var commandWriter = new CommandWriter(_schema);
             var table = _schema.FindConcreteTable(collection);
-            var entryContent = commandWriter.CreateEntry(table.EntityType.Name, entryMembers.Properties);
+            var entryContent = commandWriter.CreateEntry(table.EntityType.Namespace, table.EntityType.Name, entryMembers.Properties);
             var unlinkAssociationNames = new List<string>();
             foreach (var associatedData in entryMembers.AssociationsByValue)
             {
