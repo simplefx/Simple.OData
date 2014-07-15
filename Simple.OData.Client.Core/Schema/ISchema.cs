@@ -24,20 +24,6 @@ namespace Simple.OData.Client
         /// </value>
         string MetadataAsString { get; }
         /// <summary>
-        /// Gets the schema types namespace.
-        /// </summary>
-        /// <value>
-        /// The types namespace.
-        /// </value>
-        string TypesNamespace { get; }
-        /// <summary>
-        /// Gets the schema containers namespace.
-        /// </summary>
-        /// <value>
-        /// The containers namespace.
-        /// </value>
-        string ContainersNamespace { get; }
-        /// <summary>
         /// Gets the schema tables.
         /// </summary>
         /// <value>

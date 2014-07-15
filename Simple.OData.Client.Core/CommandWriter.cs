@@ -57,11 +57,11 @@ namespace Simple.OData.Client
             return HttpCommand.Delete(commandText);
         }
 
-        public CommandContent CreateEntry(string entityTypeName, IDictionary<string, object> row)
+        public CommandContent CreateEntry(string entityTypeNamespace, string entityTypeName, IDictionary<string, object> row)
         {
             var entry = CreateEmptyEntryWithNamespaces();
 
-            var resourceName = GetQualifiedResourceName(_schema.TypesNamespace, entityTypeName);
+            var resourceName = GetQualifiedResourceName(entityTypeNamespace, entityTypeName);
             entry.Element(null, "category").SetAttributeValue("term", resourceName);
 
             EdmTypeSerializer.Write(_schema, entityTypeName, entry.Element(null, "content").Element("m", "properties"), row);

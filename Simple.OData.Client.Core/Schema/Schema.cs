@@ -18,8 +18,6 @@ namespace Simple.OData.Client
         private string _metadataString;
 
         private Lazy<EdmSchema> _lazyMetadata;
-        private readonly Lazy<string> _lazyTypesNamespace;
-        private readonly Lazy<string> _lazyContainersNamespace;
         private readonly Lazy<TableCollection> _lazyTables;
         private readonly Lazy<FunctionCollection> _lazyFunctions;
         private readonly Lazy<List<EdmEntityType>> _lazyEntityTypes;
@@ -33,8 +31,6 @@ namespace Simple.OData.Client
             _resolveMetadataAsync = resolveMedatataAsync;
 
             _lazyMetadata = new Lazy<EdmSchema>(() => ResponseReader.GetSchema(_metadataString));
-            _lazyTypesNamespace = new Lazy<string>(_schemaProvider.GetTypesNamespace);
-            _lazyContainersNamespace = new Lazy<string>(_schemaProvider.GetContainersNamespace);
             _lazyTables = new Lazy<TableCollection>(CreateTableCollection);
             _lazyFunctions = new Lazy<FunctionCollection>(CreateFunctionCollection);
             _lazyEntityTypes = new Lazy<List<EdmEntityType>>(CreateEntityTypeCollection);
@@ -64,16 +60,6 @@ namespace Simple.OData.Client
         public string MetadataAsString
         {
             get { return _metadataString; }
-        }
-
-        public string TypesNamespace
-        {
-            get { return _lazyTypesNamespace.Value; }
-        }
-
-        public string ContainersNamespace
-        {
-            get { return _lazyContainersNamespace.Value; }
         }
 
         public IEnumerable<Table> Tables

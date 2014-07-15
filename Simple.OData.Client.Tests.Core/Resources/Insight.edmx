@@ -1,0 +1,502 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx">
+  <edmx:DataServices m:DataServiceVersion="3.0" m:MaxDataServiceVersion="3.0" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">
+    <Schema Namespace="INSiGHTCore.Models.BSTI" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <EntityType Name="vwCustomersWithDemog">
+        <Property Name="BizID" Type="Edm.String" />
+        <Property Name="KeyCustomer" Type="Edm.Int32" Nullable="false" />
+        <Property Name="CustomerName" Type="Edm.String" />
+        <Property Name="CustomerContact" Type="Edm.String" />
+        <Property Name="AlphabetizeBy" Type="Edm.String" />
+        <Property Name="AcctNmbr" Type="Edm.String" />
+        <Property Name="ShipAttnOf" Type="Edm.String" />
+        <Property Name="ShipSiteName" Type="Edm.String" />
+        <Property Name="ShipAddress1" Type="Edm.String" />
+        <Property Name="ShipAddress2" Type="Edm.String" />
+        <Property Name="ShipCity" Type="Edm.String" />
+        <Property Name="ShipCounty" Type="Edm.String" />
+        <Property Name="ShipState" Type="Edm.String" />
+        <Property Name="ShipCityState" Type="Edm.String" />
+        <Property Name="ShipZipCode" Type="Edm.String" />
+        <Property Name="ShipZipPlus4" Type="Edm.String" />
+        <Property Name="ShipZipFormat" Type="Edm.String" />
+        <Property Name="ShipCountry" Type="Edm.String" />
+        <Property Name="ShipAreaFormat" Type="Edm.String" />
+        <Property Name="ShipPhoneFormat" Type="Edm.String" />
+        <Property Name="DialShipDialingCode" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="DialShipAreaCode" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="ShipDialingCode" Type="Edm.String" />
+        <Property Name="ShipAreaCode" Type="Edm.String" />
+        <Property Name="ShipPhone" Type="Edm.String" />
+        <Property Name="ShipFaxAreaCode" Type="Edm.String" />
+        <Property Name="ShipFax" Type="Edm.String" />
+        <Property Name="ShipCellAreaCode" Type="Edm.String" />
+        <Property Name="ShipCell" Type="Edm.String" />
+        <Property Name="ShipEMail" Type="Edm.String" />
+        <Property Name="ShipInstructions" Type="Edm.String" />
+        <Property Name="ShipGPSLongitude" Type="Edm.Double" />
+        <Property Name="ShipGPSLatitude" Type="Edm.Double" />
+        <Property Name="UseDiffBillAddress" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="BillAttnOf" Type="Edm.String" />
+        <Property Name="BillToName" Type="Edm.String" />
+        <Property Name="BillAddress1" Type="Edm.String" />
+        <Property Name="BillAddress2" Type="Edm.String" />
+        <Property Name="BillCity" Type="Edm.String" />
+        <Property Name="BillCounty" Type="Edm.String" />
+        <Property Name="BillState" Type="Edm.String" />
+        <Property Name="BillCityState" Type="Edm.String" />
+        <Property Name="BillZipCode" Type="Edm.String" />
+        <Property Name="BillZipPlus4" Type="Edm.String" />
+        <Property Name="BillZipFormat" Type="Edm.String" />
+        <Property Name="BillCountry" Type="Edm.String" />
+        <Property Name="BillAreaFormat" Type="Edm.String" />
+        <Property Name="BillPhoneFormat" Type="Edm.String" />
+        <Property Name="DialBillDialingCode" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="DialBillAreaCode" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="BillDialingCode" Type="Edm.String" />
+        <Property Name="BillAreaCode" Type="Edm.String" />
+        <Property Name="BillPhone" Type="Edm.String" />
+        <Property Name="BillFaxAreaCode" Type="Edm.String" />
+        <Property Name="BillFax" Type="Edm.String" />
+        <Property Name="BillEMail" Type="Edm.String" />
+        <Property Name="IsBillTo" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="AllowShipTos" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="IsShipTo" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="IsBookBy" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="KeySendBillsTo" Type="Edm.Int32" />
+        <Property Name="IsFinancier" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="UseFinancing" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="KeyFinancierDflt" Type="Edm.Int32" />
+        <Property Name="IsSupplier" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="IsProspect" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="SendMailings" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="SendMailingsShipBill" Type="Edm.String" />
+        <Property Name="ShipViaDflt" Type="Edm.String" />
+        <Property Name="FOBdflt" Type="Edm.String" />
+        <Property Name="InvcFormatDflt" Type="Edm.String" />
+        <Property Name="ProdDescNmbrDflt" Type="Edm.Int16" />
+        <Property Name="Active" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="MarkedForDeletion" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="ViewFilter" Type="Edm.String" />
+        <Property Name="LuPriceNmbr0" Type="Edm.Int16" />
+        <Property Name="LuPriceNmbr1" Type="Edm.Int16" />
+        <Property Name="LuPriceNmbr2" Type="Edm.Int16" />
+        <Property Name="LuPriceNmbr3" Type="Edm.Int16" />
+        <Property Name="LuPriceNmbr4" Type="Edm.Int16" />
+        <Property Name="LuPriceNmbr5" Type="Edm.Int16" />
+        <Property Name="LuPriceNmbr6" Type="Edm.Int16" />
+        <Property Name="LuPriceNmbr7" Type="Edm.Int16" />
+        <Property Name="LuPriceNmbr8" Type="Edm.Int16" />
+        <Property Name="LuPriceNmbr9" Type="Edm.Int16" />
+        <Property Name="LuDiscNmbr0" Type="Edm.Int16" />
+        <Property Name="LuDiscNmbr1" Type="Edm.Int16" />
+        <Property Name="LuDiscNmbr2" Type="Edm.Int16" />
+        <Property Name="LuDiscNmbr3" Type="Edm.Int16" />
+        <Property Name="LuDiscNmbr4" Type="Edm.Int16" />
+        <Property Name="LuDiscNmbr5" Type="Edm.Int16" />
+        <Property Name="LuDiscNmbr6" Type="Edm.Int16" />
+        <Property Name="LuDiscNmbr7" Type="Edm.Int16" />
+        <Property Name="LuDiscNmbr8" Type="Edm.Int16" />
+        <Property Name="LuDiscNmbr9" Type="Edm.Int16" />
+        <Property Name="CustomerNotes" Type="Edm.String" />
+        <Property Name="KeySalesOrg" Type="Edm.Int32" />
+        <Property Name="KeyRegion" Type="Edm.Int32" />
+        <Property Name="KeyCustType" Type="Edm.Int32" />
+        <Property Name="KeyDeliver" Type="Edm.Int32" />
+        <Property Name="KeyMktSegA" Type="Edm.Int32" />
+        <Property Name="KeyMktSegB" Type="Edm.Int32" />
+        <Property Name="CustMisc0" Type="Edm.String" />
+        <Property Name="CustMisc1" Type="Edm.String" />
+        <Property Name="CustMisc2" Type="Edm.String" />
+        <Property Name="CustMisc3" Type="Edm.String" />
+        <Property Name="CustMisc4" Type="Edm.String" />
+        <Property Name="CustMisc5" Type="Edm.String" />
+        <Property Name="CustMisc6" Type="Edm.String" />
+        <Property Name="CustMisc7" Type="Edm.String" />
+        <Property Name="CustMisc8" Type="Edm.String" />
+        <Property Name="CustMisc9" Type="Edm.String" />
+        <Property Name="CustStat0" Type="Edm.Double" />
+        <Property Name="CustStat1" Type="Edm.Double" />
+        <Property Name="CustStat2" Type="Edm.Double" />
+        <Property Name="CustStat3" Type="Edm.Double" />
+        <Property Name="CustStat4" Type="Edm.Double" />
+        <Property Name="CustStat5" Type="Edm.Double" />
+        <Property Name="CustStat6" Type="Edm.Double" />
+        <Property Name="CustStat7" Type="Edm.Double" />
+        <Property Name="CustStat8" Type="Edm.Double" />
+        <Property Name="CustStat9" Type="Edm.Double" />
+        <Property Name="CustFlag00" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CustFlag01" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CustFlag02" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CustFlag03" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CustFlag04" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CustFlag05" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CustFlag06" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CustFlag07" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CustFlag08" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CustFlag09" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CustFlag10" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CustFlag11" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CustFlag12" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CustFlag13" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CustFlag14" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CustFlag15" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CustFlag16" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CustFlag17" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CustFlag18" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CustFlag19" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="Created" Type="Edm.DateTime" />
+        <Property Name="CreatedBy" Type="Edm.String" />
+        <Property Name="LastUpdated" Type="Edm.DateTime" />
+        <Property Name="LastUpdatedBy" Type="Edm.String" />
+        <Property Name="AgRProspectID" Type="Edm.Int32" />
+        <Property Name="CustFlag20" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CustFlag21" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CustFlag22" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CustFlag23" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CustFlag24" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CustFlag25" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CustFlag26" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CustFlag27" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CustFlag28" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="CustFlag29" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="BillGPSLongitude" Type="Edm.Double" />
+        <Property Name="BillGPSLatitude" Type="Edm.Double" />
+        <Property Name="ShipGPSQuality" Type="Edm.String" />
+        <Property Name="BillGPSQuality" Type="Edm.String" />
+        <Property Name="LandlordPercent" Type="Edm.Double" />
+        <Property Name="LandlordSplitAmt" Type="Edm.Decimal" />
+        <Property Name="LandlordCreditAmt" Type="Edm.Decimal" />
+        <Property Name="SoldBy" Type="Edm.String" />
+        <Property Name="SoldByName" Type="Edm.String" />
+        <Property Name="Region" Type="Edm.String" />
+        <Property Name="RegionMgrName" Type="Edm.String" />
+        <Property Name="CustType" Type="Edm.String" />
+        <Property Name="CustTypeName" Type="Edm.String" />
+        <Property Name="CornWhse" Type="Edm.String" />
+        <Property Name="CornWhseName" Type="Edm.String" />
+        <Property Name="SoyWhse" Type="Edm.String" />
+        <Property Name="SoyWhseName" Type="Edm.String" />
+        <Property Name="CSR" Type="Edm.String" />
+        <Property Name="CSRName" Type="Edm.String" />
+        <Property Name="DealerName" Type="Edm.String" />
+        <Property Name="RegionMgrLoginName" Type="Edm.String" />
+      </EntityType>
+    </Schema>
+    <Schema Namespace="INSiGHT.Models" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <EntityType Name="vwBkgsLinesDetail">
+        <Property Name="BizID" Type="Edm.String" />
+        <Property Name="KeyCustomer" Type="Edm.Int32" />
+        <Property Name="KeyBkgOrig" Type="Edm.Int32" />
+        <Property Name="KeyBkgLine" Type="Edm.Int32" Nullable="false" />
+        <Property Name="BkgStatus" Type="Edm.String" />
+        <Property Name="Selected" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="Cancelled" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="DateBooked" Type="Edm.DateTime" />
+        <Property Name="DateConfirmed" Type="Edm.DateTime" />
+        <Property Name="DateOkToRls" Type="Edm.DateTime" />
+        <Property Name="DateReleased" Type="Edm.DateTime" />
+        <Property Name="DateRequested" Type="Edm.DateTime" />
+        <Property Name="DateCancelled" Type="Edm.DateTime" />
+        <Property Name="RefBkg" Type="Edm.String" />
+        <Property Name="RefLineNmbr" Type="Edm.Int16" />
+        <Property Name="RefConfirm" Type="Edm.String" />
+        <Property Name="RefOkToRls" Type="Edm.String" />
+        <Property Name="RefRelease" Type="Edm.String" />
+        <Property Name="KeyProduct" Type="Edm.Int32" />
+        <Property Name="Qbooked" Type="Edm.Double" />
+        <Property Name="Qconfirmed" Type="Edm.Double" />
+        <Property Name="QokToRls" Type="Edm.Double" />
+        <Property Name="QtoRls" Type="Edm.Double" />
+        <Property Name="Qreleased" Type="Edm.Double" />
+        <Property Name="Qoriginal" Type="Edm.Double" />
+        <Property Name="UseFrAlloc" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="ProdDescNmbr" Type="Edm.Int16" />
+        <Property Name="KeyProduct2nd" Type="Edm.Int32" />
+        <Property Name="KeyProduct3rd" Type="Edm.Int32" />
+        <Property Name="Price" Type="Edm.Double" />
+        <Property Name="Discount" Type="Edm.Double" />
+        <Property Name="NetPrice" Type="Edm.Double" />
+        <Property Name="Extension" Type="Edm.Decimal" />
+        <Property Name="Royalty" Type="Edm.Decimal" />
+        <Property Name="RoyaltyAddOn" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="FeePerUnit" Type="Edm.Double" />
+        <Property Name="FeeRate" Type="Edm.Double" />
+        <Property Name="Fee" Type="Edm.Decimal" />
+        <Property Name="FeeAddOn" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="LuPriceNmbr" Type="Edm.Int16" />
+        <Property Name="LuDiscNmbr" Type="Edm.Int16" />
+        <Property Name="DiscReason" Type="Edm.String" />
+        <Property Name="DiscCalcMethod" Type="Edm.String" />
+        <Property Name="PriceSchedule" Type="Edm.String" />
+        <Property Name="DiscSchedule" Type="Edm.String" />
+        <Property Name="VolSchedule" Type="Edm.String" />
+        <Property Name="EPdiscElig" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="UseAltUnits" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="KeyAltQ" Type="Edm.Int32" />
+        <Property Name="AltQuantity" Type="Edm.Double" />
+        <Property Name="AltQunits" Type="Edm.String" />
+        <Property Name="KeyAltPrice" Type="Edm.Int32" />
+        <Property Name="AltPrice" Type="Edm.Double" />
+        <Property Name="AltPriceUnits" Type="Edm.String" />
+        <Property Name="BkgType" Type="Edm.String" />
+        <Property Name="BkgCustPO" Type="Edm.String" />
+        <Property Name="KeySoldBy" Type="Edm.Int32" />
+        <Property Name="KeyBookBy" Type="Edm.Int32" />
+        <Property Name="KeySpclInfo" Type="Edm.Int32" />
+        <Property Name="BkgNotesDoc" Type="Edm.String" />
+        <Property Name="BkgNotesInt" Type="Edm.String" />
+        <Property Name="BkgPromoCode" Type="Edm.String" />
+        <Property Name="BkgInternalFlag" Type="Edm.String" />
+        <Property Name="KeyPayTerms" Type="Edm.Int32" />
+        <Property Name="BkgFOB" Type="Edm.String" />
+        <Property Name="BkgShipVia" Type="Edm.String" />
+        <Property Name="BkgHdrNotesDoc" Type="Edm.String" />
+        <Property Name="BkgHdrNotesInt" Type="Edm.String" />
+        <Property Name="BkgMisc0" Type="Edm.String" />
+        <Property Name="BkgMisc1" Type="Edm.String" />
+        <Property Name="BkgMisc2" Type="Edm.String" />
+        <Property Name="BkgMisc3" Type="Edm.String" />
+        <Property Name="BkgMisc4" Type="Edm.String" />
+        <Property Name="BkgStat0" Type="Edm.Double" />
+        <Property Name="BkgStat1" Type="Edm.Double" />
+        <Property Name="BkgStat2" Type="Edm.Double" />
+        <Property Name="BkgStat3" Type="Edm.Double" />
+        <Property Name="BkgStat4" Type="Edm.Double" />
+        <Property Name="BKGStoOPref" Type="Edm.String" />
+        <Property Name="KeyLineItemPrelim" Type="Edm.Int32" />
+        <Property Name="KeyInvenItem" Type="Edm.Int32" />
+        <Property Name="KeyLotNmbr" Type="Edm.Int32" />
+        <Property Name="KeyLocation" Type="Edm.Int32" />
+        <Property Name="Created" Type="Edm.DateTime" />
+        <Property Name="CreatedBy" Type="Edm.String" />
+        <Property Name="LastUpdated" Type="Edm.DateTime" />
+        <Property Name="LastUpdatedBy" Type="Edm.String" />
+        <Property Name="SatID" Type="Edm.String" />
+        <Property Name="SatKey" Type="Edm.Int32" />
+        <Property Name="SatSendFlag" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="AGRchkConfirm" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="PrgmName" Type="Edm.String" />
+        <Property Name="PrgmVersion" Type="Edm.String" />
+        <Property Name="PrgmObject" Type="Edm.String" />
+        <Property Name="ClearDates" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="MONdate" Type="Edm.DateTime" />
+        <Property Name="TUEdate" Type="Edm.DateTime" />
+        <Property Name="WEDdate" Type="Edm.DateTime" />
+        <Property Name="THUdate" Type="Edm.DateTime" />
+        <Property Name="FRIdate" Type="Edm.DateTime" />
+        <Property Name="SATdate" Type="Edm.DateTime" />
+        <Property Name="SUNdate" Type="Edm.DateTime" />
+        <Property Name="MONcode" Type="Edm.String" />
+        <Property Name="TUEcode" Type="Edm.String" />
+        <Property Name="WEDcode" Type="Edm.String" />
+        <Property Name="THUcode" Type="Edm.String" />
+        <Property Name="FRIcode" Type="Edm.String" />
+        <Property Name="SATcode" Type="Edm.String" />
+        <Property Name="SUNcode" Type="Edm.String" />
+        <Property Name="UseAltKeyCustAddress" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="AltKeyCustomer" Type="Edm.Int32" />
+        <Property Name="RlsByBkBy" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="FlagCPU" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="AltWhse" Type="Edm.String" />
+        <Property Name="MonDateCreated" Type="Edm.DateTime" />
+        <Property Name="ProjMONdate" Type="Edm.DateTime" />
+        <Property Name="AGG_Commit" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="LikeToConfirm" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="KeyShipTo" Type="Edm.Int32" />
+        <Property Name="ShipToName" Type="Edm.String" />
+        <Property Name="KeyBillTo" Type="Edm.Int32" />
+        <Property Name="BillToName" Type="Edm.String" />
+        <Property Name="ProductCode" Type="Edm.String" />
+        <Property Name="ProdSub0" Type="Edm.String" />
+        <Property Name="PackageDesc" Type="Edm.String" />
+        <Property Name="KeyClass" Type="Edm.Int32" Nullable="false" />
+        <Property Name="ClassSub0" Type="Edm.String" />
+        <Property Name="ClassCode" Type="Edm.String" />
+      </EntityType>
+      <EntityType Name="vwProductDetailForSale">
+        <Property Name="BizID" Type="Edm.String" />
+        <Property Name="KeyClass" Type="Edm.Int32" Nullable="false" />
+        <Property Name="KeyProduct" Type="Edm.Int32" Nullable="false" />
+        <Property Name="ProductCode" Type="Edm.String" />
+        <Property Name="ProdSub0" Type="Edm.String" />
+        <Property Name="ProdSub1" Type="Edm.String" />
+        <Property Name="ProdSub2" Type="Edm.String" />
+        <Property Name="ProdSub3" Type="Edm.String" />
+        <Property Name="KeyPkg" Type="Edm.Int32" />
+        <Property Name="ProdName" Type="Edm.String" />
+        <Property Name="ExtDescriptn0" Type="Edm.String" />
+        <Property Name="ExtDescriptn1" Type="Edm.String" />
+        <Property Name="ExtDescriptn2" Type="Edm.String" />
+        <Property Name="ExtDescriptn3" Type="Edm.String" />
+        <Property Name="ExtDescriptn4" Type="Edm.String" />
+        <Property Name="ProductNotesDoc" Type="Edm.String" />
+        <Property Name="ProductNotesInt" Type="Edm.String" />
+        <Property Name="SafetyNotes" Type="Edm.String" />
+        <Property Name="CatalogID" Type="Edm.String" />
+        <Property Name="ProductBarCodeID" Type="Edm.String" />
+        <Property Name="dfltPurity" Type="Edm.Double" />
+        <Property Name="dfltLive" Type="Edm.Double" />
+        <Property Name="UseItems" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="UseQs" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="EnterUnitWts" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="UseInInven" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="UseInSales" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="UseInBulk" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="UseInPOs" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="UseInMisc" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="UseLots" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="UseLotPricing" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="UseContainers" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="UseAllocations" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="InclInPedigree" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="IsThisAMix" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="KeyMixTemplate" Type="Edm.String" />
+        <Property Name="KeyMfr" Type="Edm.Int32" />
+        <Property Name="MfrsID" Type="Edm.String" />
+        <Property Name="MfrsLicense" Type="Edm.String" />
+        <Property Name="Active" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="MarkedForDeletion" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="ViewFilter" Type="Edm.String" />
+        <Property Name="KeyGLacctSLS" Type="Edm.Int32" />
+        <Property Name="KeyGLorgSLS" Type="Edm.Int32" />
+        <Property Name="KeyGprojSLS" Type="Edm.Int32" />
+        <Property Name="KeyGLacctCOS" Type="Edm.Int32" />
+        <Property Name="KeyGLorgCOS" Type="Edm.Int32" />
+        <Property Name="KeyGprojCOS" Type="Edm.Int32" />
+        <Property Name="KeyGLacctINVN" Type="Edm.Int32" />
+        <Property Name="KeyGLorgINVN" Type="Edm.Int32" />
+        <Property Name="KeyGprojINVN" Type="Edm.Int32" />
+        <Property Name="Parent0" Type="Edm.String" />
+        <Property Name="Parent1" Type="Edm.String" />
+        <Property Name="Parent2" Type="Edm.String" />
+        <Property Name="ProdMisc0" Type="Edm.String" />
+        <Property Name="ProdMisc1" Type="Edm.String" />
+        <Property Name="ProdMisc2" Type="Edm.String" />
+        <Property Name="ProdMisc3" Type="Edm.String" />
+        <Property Name="ProdMisc4" Type="Edm.String" />
+        <Property Name="ProdMisc5" Type="Edm.String" />
+        <Property Name="ProdMisc6" Type="Edm.String" />
+        <Property Name="ProdMisc7" Type="Edm.String" />
+        <Property Name="ProdMisc8" Type="Edm.String" />
+        <Property Name="ProdMisc9" Type="Edm.String" />
+        <Property Name="ProdStat0" Type="Edm.Double" />
+        <Property Name="ProdStat1" Type="Edm.Double" />
+        <Property Name="ProdStat2" Type="Edm.Double" />
+        <Property Name="ProdStat3" Type="Edm.Double" />
+        <Property Name="ProdStat4" Type="Edm.Double" />
+        <Property Name="ProdStat5" Type="Edm.Double" />
+        <Property Name="ProdStat6" Type="Edm.Double" />
+        <Property Name="ProdStat7" Type="Edm.Double" />
+        <Property Name="ProdStat8" Type="Edm.Double" />
+        <Property Name="ProdStat9" Type="Edm.Double" />
+        <Property Name="PriceListSeq" Type="Edm.String" />
+        <Property Name="PriceMethod" Type="Edm.String" />
+        <Property Name="ProdPriceSched" Type="Edm.String" />
+        <Property Name="ProdVolPriceSched" Type="Edm.String" />
+        <Property Name="PriceLuGroup" Type="Edm.Int16" />
+        <Property Name="Price0" Type="Edm.Decimal" />
+        <Property Name="Price1" Type="Edm.Decimal" />
+        <Property Name="Price2" Type="Edm.Decimal" />
+        <Property Name="Price3" Type="Edm.Decimal" />
+        <Property Name="Price4" Type="Edm.Decimal" />
+        <Property Name="Price5" Type="Edm.Decimal" />
+        <Property Name="Price6" Type="Edm.Decimal" />
+        <Property Name="Price7" Type="Edm.Decimal" />
+        <Property Name="Price8" Type="Edm.Decimal" />
+        <Property Name="Price9" Type="Edm.Decimal" />
+        <Property Name="DiscPercentOrPerUnit" Type="Edm.String" />
+        <Property Name="ProdDiscSched" Type="Edm.String" />
+        <Property Name="ProdVolDiscSched" Type="Edm.String" />
+        <Property Name="DiscLuGroup" Type="Edm.Int16" />
+        <Property Name="Disc0" Type="Edm.Double" />
+        <Property Name="Disc1" Type="Edm.Double" />
+        <Property Name="Disc2" Type="Edm.Double" />
+        <Property Name="Disc3" Type="Edm.Double" />
+        <Property Name="Disc4" Type="Edm.Double" />
+        <Property Name="Disc5" Type="Edm.Double" />
+        <Property Name="Disc6" Type="Edm.Double" />
+        <Property Name="Disc7" Type="Edm.Double" />
+        <Property Name="Disc8" Type="Edm.Double" />
+        <Property Name="Disc9" Type="Edm.Double" />
+        <Property Name="Volume0" Type="Edm.Double" />
+        <Property Name="Volume1" Type="Edm.Double" />
+        <Property Name="Volume2" Type="Edm.Double" />
+        <Property Name="Volume3" Type="Edm.Double" />
+        <Property Name="Volume4" Type="Edm.Double" />
+        <Property Name="Volume5" Type="Edm.Double" />
+        <Property Name="Volume6" Type="Edm.Double" />
+        <Property Name="Volume7" Type="Edm.Double" />
+        <Property Name="Volume8" Type="Edm.Double" />
+        <Property Name="Volume9" Type="Edm.Double" />
+        <Property Name="TaxExempt" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="RoyaltyPerUnit" Type="Edm.Decimal" />
+        <Property Name="RoyaltyRate" Type="Edm.Single" />
+        <Property Name="RoyaltyAddOn" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="FeesPerUnit" Type="Edm.Decimal" />
+        <Property Name="FeeRate" Type="Edm.Single" />
+        <Property Name="FeeAddOn" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="dfltCostingMethod" Type="Edm.String" />
+        <Property Name="WtdAvgCost" Type="Edm.Decimal" />
+        <Property Name="StdCost" Type="Edm.Decimal" />
+        <Property Name="StdCostPrev" Type="Edm.Decimal" />
+        <Property Name="StdCostMaterial" Type="Edm.Double" />
+        <Property Name="StdCostDirect" Type="Edm.Double" />
+        <Property Name="StdCostOvrHd" Type="Edm.Double" />
+        <Property Name="CostCodeDirect" Type="Edm.String" />
+        <Property Name="CostCodeOvrHd" Type="Edm.String" />
+        <Property Name="InsuranceValue" Type="Edm.Decimal" />
+        <Property Name="Budget1Value" Type="Edm.Decimal" />
+        <Property Name="Budget2Value" Type="Edm.Decimal" />
+        <Property Name="Budget3Value" Type="Edm.Decimal" />
+        <Property Name="FIFOvalue" Type="Edm.Decimal" />
+        <Property Name="LIFOvalue" Type="Edm.Decimal" />
+        <Property Name="CostPlusBase" Type="Edm.Decimal" />
+        <Property Name="Created" Type="Edm.DateTime" />
+        <Property Name="CreatedBy" Type="Edm.String" />
+        <Property Name="LastUpdated" Type="Edm.DateTime" />
+        <Property Name="LastUpdatedBy" Type="Edm.String" />
+        <Property Name="SatID" Type="Edm.String" />
+        <Property Name="SatKey" Type="Edm.Int32" />
+        <Property Name="SatSendFlag" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="Price10" Type="Edm.Decimal" />
+        <Property Name="Price11" Type="Edm.Decimal" />
+        <Property Name="Price12" Type="Edm.Decimal" />
+        <Property Name="Price13" Type="Edm.Decimal" />
+        <Property Name="Price14" Type="Edm.Decimal" />
+        <Property Name="Disc10" Type="Edm.Double" />
+        <Property Name="Disc11" Type="Edm.Double" />
+        <Property Name="Disc12" Type="Edm.Double" />
+        <Property Name="Disc13" Type="Edm.Double" />
+        <Property Name="Disc14" Type="Edm.Double" />
+        <Property Name="SchedFlag" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="PackageDesc" Type="Edm.String" />
+        <Property Name="ClassSub0" Type="Edm.String" />
+        <Property Name="ClassCode" Type="Edm.String" />
+      </EntityType>
+      <EntityType Name="vwPromoCode">
+        <Property Name="BizID" Type="Edm.String" />
+        <Property Name="Module" Type="Edm.String" />
+        <Property Name="LookUpField" Type="Edm.String" />
+        <Property Name="LookUpValue" Type="Edm.String" />
+        <Property Name="Comments" Type="Edm.String" />
+        <Property Name="ListSeq" Type="Edm.String" />
+        <Property Name="Active" Type="Edm.Boolean" Nullable="false" />
+        <Property Name="ViewFilter" Type="Edm.String" />
+        <Property Name="LuKeyGLacct" Type="Edm.Int32" />
+        <Property Name="LuKeyGLorg" Type="Edm.Int32" />
+        <Property Name="LuKeyGLproj" Type="Edm.Int32" />
+        <Property Name="AgrUseInEdirect" Type="Edm.Boolean" Nullable="false" />
+      </EntityType>
+    </Schema>
+    <Schema Namespace="Default" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <EntityContainer Name="Container" m:IsDefaultEntityContainer="true">
+        <EntitySet Name="Customers" EntityType="INSiGHTCore.Models.BSTI.vwCustomersWithDemog" />
+        <EntitySet Name="CustomersV1" EntityType="INSiGHTCore.Models.BSTI.vwCustomersWithDemog" />
+        <EntitySet Name="BkgsLines" EntityType="INSiGHT.Models.vwBkgsLinesDetail" />
+        <EntitySet Name="Products" EntityType="INSiGHT.Models.vwProductDetailForSale" />
+        <EntitySet Name="PromoCodes" EntityType="INSiGHT.Models.vwPromoCode" />
+      </EntityContainer>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>

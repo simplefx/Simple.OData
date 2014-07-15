@@ -1,0 +1,333 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" Version="1.0">
+  <edmx:DataServices xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" m:DataServiceVersion="3.0" m:MaxDataServiceVersion="3.0">
+    <Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm" Namespace="Anonymized.Web.Entities">
+      <EntityType Name="MarathonEntity">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="BeginTime" Type="Edm.DateTime" Nullable="false"/>
+        <Property Name="Average" Type="Edm.Int32"/>
+        <Property Name="Raw" Type="Edm.String"/>
+        <Property Name="RawZero" Type="Edm.String"/>
+        <Property Name="WindowId" Type="Edm.Int32"/>
+        <Property Name="ZeroValue" Type="Edm.Int32"/>
+        <Property Name="WidgetId" Type="Edm.Int32" Nullable="false"/>
+        <NavigationProperty Name="Measurements" Relationship="Anonymized.Web.Entities.Anonymized_Web_Entities_MarathonEntity_Measurements_Anonymized_Web_Entities_MeasurementEntity_MeasurementsPartner" ToRole="Measurements" FromRole="MeasurementsPartner"/>
+      </EntityType>
+      <EntityType Name="MeasurementEntity">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Time" Type="Edm.DateTime"/>
+        <Property Name="Value" Type="Edm.Int32"/>
+        <Property Name="MarathonId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="DurationSeconds" Type="Edm.Int32"/>
+        <NavigationProperty Name="Marathon" Relationship="Anonymized.Web.Entities.Anonymized_Web_Entities_MeasurementEntity_Marathon_Anonymized_Web_Entities_MarathonEntity_MarathonPartner" ToRole="Marathon" FromRole="MarathonPartner"/>
+      </EntityType>
+      <EntityType Name="InvitationEntity">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="WidgetId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="InviteeId" Type="Edm.Int32"/>
+        <Property Name="InviterId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="CreationDate" Type="Edm.DateTime" Nullable="false"/>
+        <Property Name="InviteeEmail" Type="Edm.String"/>
+        <NavigationProperty Name="Widget" Relationship="Anonymized.Web.Entities.Anonymized_Web_Entities_InvitationEntity_Widget_Anonymized_Web_Entities_WidgetEntity_WidgetPartner" ToRole="Widget" FromRole="WidgetPartner"/>
+        <NavigationProperty Name="Invitee" Relationship="Anonymized.Web.Entities.Anonymized_Web_Entities_InvitationEntity_Invitee_Anonymized_Web_Entities_UserAccountEntity_InviteePartner" ToRole="Invitee" FromRole="InviteePartner"/>
+        <NavigationProperty Name="Inviter" Relationship="Anonymized.Web.Entities.Anonymized_Web_Entities_InvitationEntity_Inviter_Anonymized_Web_Entities_UserAccountEntity_InviterPartner" ToRole="Inviter" FromRole="InviterPartner"/>
+      </EntityType>
+      <EntityType Name="WidgetEntity">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Name" Type="Edm.String"/>
+        <Property Name="BirthDate" Type="Edm.DateTime" Nullable="false"/>
+        <Property Name="LastBodyWeight" Type="Edm.Int32"/>
+        <Property Name="OwnerId" Type="Edm.Int32" Nullable="false"/>
+        <NavigationProperty Name="Marathons" Relationship="Anonymized.Web.Entities.Anonymized_Web_Entities_WidgetEntity_Marathons_Anonymized_Web_Entities_MarathonEntity_MarathonsPartner" ToRole="Marathons" FromRole="MarathonsPartner"/>
+        <NavigationProperty Name="Subscriptions" Relationship="Anonymized.Web.Entities.Anonymized_Web_Entities_WidgetEntity_Subscriptions_Anonymized_Web_Entities_Subscription_SubscriptionsPartner" ToRole="Subscriptions" FromRole="SubscriptionsPartner"/>
+        <NavigationProperty Name="Invitations" Relationship="Anonymized.Web.Entities.Anonymized_Web_Entities_WidgetEntity_Invitations_Anonymized_Web_Entities_InvitationEntity_InvitationsPartner" ToRole="Invitations" FromRole="InvitationsPartner"/>
+        <NavigationProperty Name="Owner" Relationship="Anonymized.Web.Entities.Anonymized_Web_Entities_WidgetEntity_Owner_Anonymized_Web_Entities_UserAccountEntity_OwnerPartner" ToRole="Owner" FromRole="OwnerPartner"/>
+      </EntityType>
+      <EntityType Name="UserAccountEntity">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Email" Type="Edm.String"/>
+        <Property Name="PasswordHash" Type="Edm.String"/>
+        <Property Name="FirstName" Type="Edm.String"/>
+        <NavigationProperty Name="PushSubscriptions" Relationship="Anonymized.Web.Entities.Anonymized_Web_Entities_UserAccountEntity_PushSubscriptions_Anonymized_Web_Entities_PushSubscriptionEntity_PushSubscriptionsPartner" ToRole="PushSubscriptions" FromRole="PushSubscriptionsPartner"/>
+        <NavigationProperty Name="Subscriptions" Relationship="Anonymized.Web.Entities.Anonymized_Web_Entities_UserAccountEntity_Subscriptions_Anonymized_Web_Entities_Subscription_SubscriptionsPartner" ToRole="Subscriptions" FromRole="SubscriptionsPartner"/>
+        <NavigationProperty Name="Windows" Relationship="Anonymized.Web.Entities.Anonymized_Web_Entities_UserAccountEntity_Windows_Anonymized_Web_Entities_WindowEntity_WindowsPartner" ToRole="Windows" FromRole="WindowsPartner"/>
+      </EntityType>
+      <EntityType Name="Subscription">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="WidgetId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="SubscriberId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="CreationDate" Type="Edm.DateTime" Nullable="false"/>
+        <NavigationProperty Name="Widget" Relationship="Anonymized.Web.Entities.Anonymized_Web_Entities_Subscription_Widget_Anonymized_Web_Entities_WidgetEntity_WidgetPartner" ToRole="Widget" FromRole="WidgetPartner"/>
+        <NavigationProperty Name="UserAccount" Relationship="Anonymized.Web.Entities.Anonymized_Web_Entities_Subscription_UserAccount_Anonymized_Web_Entities_UserAccountEntity_UserAccountPartner" ToRole="UserAccount" FromRole="UserAccountPartner"/>
+      </EntityType>
+      <EntityType Name="PushSubscriptionEntity">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="LastPush" Type="Edm.DateTime"/>
+        <Property Name="Token" Type="Edm.String"/>
+        <Property Name="UserAccountId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="SubscribeDate" Type="Edm.DateTime" Nullable="false"/>
+        <Property Name="PushCount" Type="Edm.Int32" Nullable="false"/>
+        <NavigationProperty Name="UserAccount" Relationship="Anonymized.Web.Entities.Anonymized_Web_Entities_PushSubscriptionEntity_UserAccount_Anonymized_Web_Entities_UserAccountEntity_UserAccountPartner" ToRole="UserAccount" FromRole="UserAccountPartner"/>
+      </EntityType>
+      <EntityType Name="WindowEntity">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Version" Type="Edm.String"/>
+        <Property Name="HardwareId" Type="Edm.String"/>
+        <Property Name="ZeroValue" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="TimeZone" Type="Edm.String"/>
+        <Property Name="OwnerUserAccount" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="LastPing" Type="Edm.DateTime"/>
+        <Property Name="LastPingReason" Type="Edm.String"/>
+        <Property Name="CalibrationGradient" Type="Edm.Decimal"/>
+        <Property Name="CalibrationOffset" Type="Edm.Decimal"/>
+        <Property Name="IsCalibrating" Type="Edm.Boolean" Nullable="false"/>
+        <NavigationProperty Name="Marathons" Relationship="Anonymized.Web.Entities.Anonymized_Web_Entities_WindowEntity_Marathons_Anonymized_Web_Entities_MarathonEntity_MarathonsPartner" ToRole="Marathons" FromRole="MarathonsPartner"/>
+        <NavigationProperty Name="CalibrationHistories" Relationship="Anonymized.Web.Entities.Anonymized_Web_Entities_WindowEntity_CalibrationHistories_Anonymized_Web_Entities_CalibrationHistory_CalibrationHistoriesPartner" ToRole="CalibrationHistories" FromRole="CalibrationHistoriesPartner"/>
+        <NavigationProperty Name="Owner" Relationship="Anonymized.Web.Entities.Anonymized_Web_Entities_WindowEntity_Owner_Anonymized_Web_Entities_UserAccountEntity_OwnerPartner" ToRole="Owner" FromRole="OwnerPartner"/>
+      </EntityType>
+      <EntityType Name="CalibrationHistory">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="WindowId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="CommissionDate" Type="Edm.DateTime" Nullable="false"/>
+        <Property Name="Gradient" Type="Edm.Decimal" Nullable="false"/>
+        <Property Name="Offset" Type="Edm.Decimal" Nullable="false"/>
+        <NavigationProperty Name="Window" Relationship="Anonymized.Web.Entities.Anonymized_Web_Entities_CalibrationHistory_Window_Anonymized_Web_Entities_WindowEntity_WindowPartner" ToRole="Window" FromRole="WindowPartner"/>
+      </EntityType>
+      <Association Name="Anonymized_Web_Entities_MarathonEntity_Measurements_Anonymized_Web_Entities_MeasurementEntity_MeasurementsPartner">
+        <End Type="Anonymized.Web.Entities.MeasurementEntity" Role="Measurements" Multiplicity="*"/>
+        <End Type="Anonymized.Web.Entities.MarathonEntity" Role="MeasurementsPartner" Multiplicity="0..1"/>
+      </Association>
+      <Association Name="Anonymized_Web_Entities_MeasurementEntity_Marathon_Anonymized_Web_Entities_MarathonEntity_MarathonPartner">
+        <End Type="Anonymized.Web.Entities.MarathonEntity" Role="Marathon" Multiplicity="0..1"/>
+        <End Type="Anonymized.Web.Entities.MeasurementEntity" Role="MarathonPartner" Multiplicity="0..1"/>
+      </Association>
+      <Association Name="Anonymized_Web_Entities_InvitationEntity_Widget_Anonymized_Web_Entities_WidgetEntity_WidgetPartner">
+        <End Type="Anonymized.Web.Entities.WidgetEntity" Role="Widget" Multiplicity="0..1"/>
+        <End Type="Anonymized.Web.Entities.InvitationEntity" Role="WidgetPartner" Multiplicity="0..1"/>
+      </Association>
+      <Association Name="Anonymized_Web_Entities_InvitationEntity_Invitee_Anonymized_Web_Entities_UserAccountEntity_InviteePartner">
+        <End Type="Anonymized.Web.Entities.UserAccountEntity" Role="Invitee" Multiplicity="0..1"/>
+        <End Type="Anonymized.Web.Entities.InvitationEntity" Role="InviteePartner" Multiplicity="0..1"/>
+      </Association>
+      <Association Name="Anonymized_Web_Entities_InvitationEntity_Inviter_Anonymized_Web_Entities_UserAccountEntity_InviterPartner">
+        <End Type="Anonymized.Web.Entities.UserAccountEntity" Role="Inviter" Multiplicity="0..1"/>
+        <End Type="Anonymized.Web.Entities.InvitationEntity" Role="InviterPartner" Multiplicity="0..1"/>
+      </Association>
+      <Association Name="Anonymized_Web_Entities_WidgetEntity_Marathons_Anonymized_Web_Entities_MarathonEntity_MarathonsPartner">
+        <End Type="Anonymized.Web.Entities.MarathonEntity" Role="Marathons" Multiplicity="*"/>
+        <End Type="Anonymized.Web.Entities.WidgetEntity" Role="MarathonsPartner" Multiplicity="0..1"/>
+      </Association>
+      <Association Name="Anonymized_Web_Entities_WidgetEntity_Subscriptions_Anonymized_Web_Entities_Subscription_SubscriptionsPartner">
+        <End Type="Anonymized.Web.Entities.Subscription" Role="Subscriptions" Multiplicity="*"/>
+        <End Type="Anonymized.Web.Entities.WidgetEntity" Role="SubscriptionsPartner" Multiplicity="0..1"/>
+      </Association>
+      <Association Name="Anonymized_Web_Entities_WidgetEntity_Invitations_Anonymized_Web_Entities_InvitationEntity_InvitationsPartner">
+        <End Type="Anonymized.Web.Entities.InvitationEntity" Role="Invitations" Multiplicity="*"/>
+        <End Type="Anonymized.Web.Entities.WidgetEntity" Role="InvitationsPartner" Multiplicity="0..1"/>
+      </Association>
+      <Association Name="Anonymized_Web_Entities_WidgetEntity_Owner_Anonymized_Web_Entities_UserAccountEntity_OwnerPartner">
+        <End Type="Anonymized.Web.Entities.UserAccountEntity" Role="Owner" Multiplicity="0..1"/>
+        <End Type="Anonymized.Web.Entities.WidgetEntity" Role="OwnerPartner" Multiplicity="0..1"/>
+      </Association>
+      <Association Name="Anonymized_Web_Entities_UserAccountEntity_PushSubscriptions_Anonymized_Web_Entities_PushSubscriptionEntity_PushSubscriptionsPartner">
+        <End Type="Anonymized.Web.Entities.PushSubscriptionEntity" Role="PushSubscriptions" Multiplicity="*"/>
+        <End Type="Anonymized.Web.Entities.UserAccountEntity" Role="PushSubscriptionsPartner" Multiplicity="0..1"/>
+      </Association>
+      <Association Name="Anonymized_Web_Entities_UserAccountEntity_Subscriptions_Anonymized_Web_Entities_Subscription_SubscriptionsPartner">
+        <End Type="Anonymized.Web.Entities.Subscription" Role="Subscriptions" Multiplicity="*"/>
+        <End Type="Anonymized.Web.Entities.UserAccountEntity" Role="SubscriptionsPartner" Multiplicity="0..1"/>
+      </Association>
+      <Association Name="Anonymized_Web_Entities_UserAccountEntity_Windows_Anonymized_Web_Entities_WindowEntity_WindowsPartner">
+        <End Type="Anonymized.Web.Entities.WindowEntity" Role="Windows" Multiplicity="*"/>
+        <End Type="Anonymized.Web.Entities.UserAccountEntity" Role="WindowsPartner" Multiplicity="0..1"/>
+      </Association>
+      <Association Name="Anonymized_Web_Entities_Subscription_Widget_Anonymized_Web_Entities_WidgetEntity_WidgetPartner">
+        <End Type="Anonymized.Web.Entities.WidgetEntity" Role="Widget" Multiplicity="0..1"/>
+        <End Type="Anonymized.Web.Entities.Subscription" Role="WidgetPartner" Multiplicity="0..1"/>
+      </Association>
+      <Association Name="Anonymized_Web_Entities_Subscription_UserAccount_Anonymized_Web_Entities_UserAccountEntity_UserAccountPartner">
+        <End Type="Anonymized.Web.Entities.UserAccountEntity" Role="UserAccount" Multiplicity="0..1"/>
+        <End Type="Anonymized.Web.Entities.Subscription" Role="UserAccountPartner" Multiplicity="0..1"/>
+      </Association>
+      <Association Name="Anonymized_Web_Entities_PushSubscriptionEntity_UserAccount_Anonymized_Web_Entities_UserAccountEntity_UserAccountPartner">
+        <End Type="Anonymized.Web.Entities.UserAccountEntity" Role="UserAccount" Multiplicity="0..1"/>
+        <End Type="Anonymized.Web.Entities.PushSubscriptionEntity" Role="UserAccountPartner" Multiplicity="0..1"/>
+      </Association>
+      <Association Name="Anonymized_Web_Entities_WindowEntity_Marathons_Anonymized_Web_Entities_MarathonEntity_MarathonsPartner">
+        <End Type="Anonymized.Web.Entities.MarathonEntity" Role="Marathons" Multiplicity="*"/>
+        <End Type="Anonymized.Web.Entities.WindowEntity" Role="MarathonsPartner" Multiplicity="0..1"/>
+      </Association>
+      <Association Name="Anonymized_Web_Entities_WindowEntity_CalibrationHistories_Anonymized_Web_Entities_CalibrationHistory_CalibrationHistoriesPartner">
+        <End Type="Anonymized.Web.Entities.CalibrationHistory" Role="CalibrationHistories" Multiplicity="*"/>
+        <End Type="Anonymized.Web.Entities.WindowEntity" Role="CalibrationHistoriesPartner" Multiplicity="0..1"/>
+      </Association>
+      <Association Name="Anonymized_Web_Entities_WindowEntity_Owner_Anonymized_Web_Entities_UserAccountEntity_OwnerPartner">
+        <End Type="Anonymized.Web.Entities.UserAccountEntity" Role="Owner" Multiplicity="0..1"/>
+        <End Type="Anonymized.Web.Entities.WindowEntity" Role="OwnerPartner" Multiplicity="0..1"/>
+      </Association>
+      <Association Name="Anonymized_Web_Entities_CalibrationHistory_Window_Anonymized_Web_Entities_WindowEntity_WindowPartner">
+        <End Type="Anonymized.Web.Entities.WindowEntity" Role="Window" Multiplicity="0..1"/>
+        <End Type="Anonymized.Web.Entities.CalibrationHistory" Role="WindowPartner" Multiplicity="0..1"/>
+      </Association>
+    </Schema>
+    <Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm" Namespace="Anonymized.Common.Models">
+      <EntityType Name="Marathon">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="BeginTime" Type="Edm.DateTime" Nullable="false"/>
+        <Property Name="Average" Type="Edm.Int32"/>
+        <Property Name="Raw" Type="Edm.String"/>
+        <Property Name="RawZero" Type="Edm.String"/>
+        <Property Name="WindowId" Type="Edm.Int32"/>
+        <Property Name="ZeroValue" Type="Edm.Int32"/>
+        <Property Name="WidgetId" Type="Edm.Int32" Nullable="false"/>
+        <NavigationProperty Name="Measurements" Relationship="Anonymized.Common.Models.Anonymized_Common_Models_Marathon_Measurements_Anonymized_Common_Models_Measurement_MeasurementsPartner" ToRole="Measurements" FromRole="MeasurementsPartner"/>
+      </EntityType>
+      <EntityType Name="Measurement">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Time" Type="Edm.DateTime"/>
+        <Property Name="Value" Type="Edm.Int32"/>
+        <Property Name="MarathonId" Type="Edm.Int32"/>
+        <Property Name="DurationSeconds" Type="Edm.Int32"/>
+      </EntityType>
+      <EntityType Name="Invitation">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="WidgetId" Type="Edm.Int32"/>
+        <Property Name="InviteeId" Type="Edm.Int32"/>
+        <Property Name="Inviter" Type="Anonymized.Common.Models.InviterUserAccount"/>
+        <Property Name="InviterId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="WidgetName" Type="Edm.String"/>
+        <Property Name="CreationDate" Type="Edm.DateTime" Nullable="false"/>
+        <Property Name="InviteeEmail" Type="Edm.String"/>
+        <NavigationProperty Name="Widget" Relationship="Anonymized.Common.Models.Anonymized_Common_Models_Invitation_Widget_Anonymized_Common_Models_Widget_WidgetPartner" ToRole="Widget" FromRole="WidgetPartner"/>
+      </EntityType>
+      <EntityType Name="Widget">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Name" Type="Edm.String"/>
+        <Property Name="BirthDate" Type="Edm.DateTime" Nullable="false"/>
+        <Property Name="LastBodyWeight" Type="Edm.Int32"/>
+        <Property Name="OwnerId" Type="Edm.Int32" Nullable="false"/>
+        <NavigationProperty Name="Owner" Relationship="Anonymized.Common.Models.Anonymized_Common_Models_Widget_Owner_Anonymized_Common_Models_UserAccount_OwnerPartner" ToRole="Owner" FromRole="OwnerPartner"/>
+      </EntityType>
+      <EntityType Name="UserAccount">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Email" Type="Edm.String"/>
+        <Property Name="FirstName" Type="Edm.String"/>
+      </EntityType>
+      <ComplexType Name="InviterUserAccount">
+        <Property Name="FirstName" Type="Edm.String"/>
+      </ComplexType>
+      <Association Name="Anonymized_Common_Models_Marathon_Measurements_Anonymized_Common_Models_Measurement_MeasurementsPartner">
+        <End Type="Anonymized.Common.Models.Measurement" Role="Measurements" Multiplicity="*"/>
+        <End Type="Anonymized.Common.Models.Marathon" Role="MeasurementsPartner" Multiplicity="0..1"/>
+      </Association>
+      <Association Name="Anonymized_Common_Models_Invitation_Widget_Anonymized_Common_Models_Widget_WidgetPartner">
+        <End Type="Anonymized.Common.Models.Widget" Role="Widget" Multiplicity="0..1"/>
+        <End Type="Anonymized.Common.Models.Invitation" Role="WidgetPartner" Multiplicity="0..1"/>
+      </Association>
+      <Association Name="Anonymized_Common_Models_Widget_Owner_Anonymized_Common_Models_UserAccount_OwnerPartner">
+        <End Type="Anonymized.Common.Models.UserAccount" Role="Owner" Multiplicity="0..1"/>
+        <End Type="Anonymized.Common.Models.Widget" Role="OwnerPartner" Multiplicity="0..1"/>
+      </Association>
+    </Schema>
+    <Schema xmlns="http://schemas.microsoft.com/ado/2009/11/edm" Namespace="Default">
+      <EntityContainer Name="Container" m:IsDefaultEntityContainer="true">
+        <EntitySet Name="Marathons" EntityType="Anonymized.Web.Entities.MarathonEntity"/>
+        <EntitySet Name="MarathonsDto" EntityType="Anonymized.Common.Models.Marathon"/>
+        <EntitySet Name="Measurements" EntityType="Anonymized.Web.Entities.MeasurementEntity"/>
+        <EntitySet Name="MeasurementsDto" EntityType="Anonymized.Common.Models.Measurement"/>
+        <EntitySet Name="Invitations" EntityType="Anonymized.Web.Entities.InvitationEntity"/>
+        <EntitySet Name="InvitationsDto" EntityType="Anonymized.Common.Models.Invitation"/>
+        <EntitySet Name="Widget" EntityType="Anonymized.Web.Entities.WidgetEntity"/>
+        <EntitySet Name="WidgetsDto" EntityType="Anonymized.Common.Models.Widget"/>
+        <EntitySet Name="UserAccount" EntityType="Anonymized.Web.Entities.UserAccountEntity"/>
+        <EntitySet Name="UserAccountsDto" EntityType="Anonymized.Common.Models.UserAccount"/>
+        <AssociationSet Name="Anonymized_Web_Entities_MarathonEntity_Measurements_Anonymized_Web_Entities_MeasurementEntity_MeasurementsPartnerSet" Association="Anonymized.Web.Entities.Anonymized_Web_Entities_MarathonEntity_Measurements_Anonymized_Web_Entities_MeasurementEntity_MeasurementsPartner">
+          <End Role="MeasurementsPartner" EntitySet="Marathons"/>
+          <End Role="Measurements" EntitySet="Measurements"/>
+        </AssociationSet>
+        <AssociationSet Name="Anonymized_Common_Models_Marathon_Measurements_Anonymized_Common_Models_Measurement_MeasurementsPartnerSet" Association="Anonymized.Common.Models.Anonymized_Common_Models_Marathon_Measurements_Anonymized_Common_Models_Measurement_MeasurementsPartner">
+          <End Role="MeasurementsPartner" EntitySet="MarathonsDto"/>
+          <End Role="Measurements" EntitySet="MeasurementsDto"/>
+        </AssociationSet>
+        <AssociationSet Name="Anonymized_Web_Entities_MeasurementEntity_Marathon_Anonymized_Web_Entities_MarathonEntity_MarathonPartnerSet" Association="Anonymized.Web.Entities.Anonymized_Web_Entities_MeasurementEntity_Marathon_Anonymized_Web_Entities_MarathonEntity_MarathonPartner">
+          <End Role="MarathonPartner" EntitySet="Measurements"/>
+          <End Role="Marathon" EntitySet="Marathons"/>
+        </AssociationSet>
+        <AssociationSet Name="Anonymized_Web_Entities_InvitationEntity_Widget_Anonymized_Web_Entities_WidgetEntity_WidgetPartnerSet" Association="Anonymized.Web.Entities.Anonymized_Web_Entities_InvitationEntity_Widget_Anonymized_Web_Entities_WidgetEntity_WidgetPartner">
+          <End Role="WidgetPartner" EntitySet="Invitations"/>
+          <End Role="Widget" EntitySet="Widget"/>
+        </AssociationSet>
+        <AssociationSet Name="Anonymized_Web_Entities_InvitationEntity_Invitee_Anonymized_Web_Entities_UserAccountEntity_InviteePartnerSet" Association="Anonymized.Web.Entities.Anonymized_Web_Entities_InvitationEntity_Invitee_Anonymized_Web_Entities_UserAccountEntity_InviteePartner">
+          <End Role="InviteePartner" EntitySet="Invitations"/>
+          <End Role="Invitee" EntitySet="UserAccount"/>
+        </AssociationSet>
+        <AssociationSet Name="Anonymized_Web_Entities_InvitationEntity_Inviter_Anonymized_Web_Entities_UserAccountEntity_InviterPartnerSet" Association="Anonymized.Web.Entities.Anonymized_Web_Entities_InvitationEntity_Inviter_Anonymized_Web_Entities_UserAccountEntity_InviterPartner">
+          <End Role="InviterPartner" EntitySet="Invitations"/>
+          <End Role="Inviter" EntitySet="UserAccount"/>
+        </AssociationSet>
+        <AssociationSet Name="Anonymized_Common_Models_Invitation_Widget_Anonymized_Common_Models_Widget_WidgetPartnerSet" Association="Anonymized.Common.Models.Anonymized_Common_Models_Invitation_Widget_Anonymized_Common_Models_Widget_WidgetPartner">
+          <End Role="WidgetPartner" EntitySet="InvitationsDto"/>
+          <End Role="Widget" EntitySet="WidgetsDto"/>
+        </AssociationSet>
+        <AssociationSet Name="Anonymized_Web_Entities_WidgetEntity_Marathons_Anonymized_Web_Entities_MarathonEntity_MarathonsPartnerSet" Association="Anonymized.Web.Entities.Anonymized_Web_Entities_WidgetEntity_Marathons_Anonymized_Web_Entities_MarathonEntity_MarathonsPartner">
+          <End Role="MarathonsPartner" EntitySet="Widget"/>
+          <End Role="Marathons" EntitySet="Marathons"/>
+        </AssociationSet>
+        <AssociationSet Name="Anonymized_Web_Entities_WidgetEntity_Invitations_Anonymized_Web_Entities_InvitationEntity_InvitationsPartnerSet" Association="Anonymized.Web.Entities.Anonymized_Web_Entities_WidgetEntity_Invitations_Anonymized_Web_Entities_InvitationEntity_InvitationsPartner">
+          <End Role="InvitationsPartner" EntitySet="Widget"/>
+          <End Role="Invitations" EntitySet="Invitations"/>
+        </AssociationSet>
+        <AssociationSet Name="Anonymized_Web_Entities_WidgetEntity_Owner_Anonymized_Web_Entities_UserAccountEntity_OwnerPartnerSet" Association="Anonymized.Web.Entities.Anonymized_Web_Entities_WidgetEntity_Owner_Anonymized_Web_Entities_UserAccountEntity_OwnerPartner">
+          <End Role="OwnerPartner" EntitySet="Widget"/>
+          <End Role="Owner" EntitySet="UserAccount"/>
+        </AssociationSet>
+        <AssociationSet Name="Anonymized_Common_Models_Widget_Owner_Anonymized_Common_Models_UserAccount_OwnerPartnerSet" Association="Anonymized.Common.Models.Anonymized_Common_Models_Widget_Owner_Anonymized_Common_Models_UserAccount_OwnerPartner">
+          <End Role="OwnerPartner" EntitySet="WidgetsDto"/>
+          <End Role="Owner" EntitySet="UserAccountsDto"/>
+        </AssociationSet>
+      </EntityContainer>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>

@@ -453,10 +453,11 @@ namespace Simple.OData.Client
             string commandText = string.Empty;
             if (!string.IsNullOrEmpty(_collectionName))
             {
-                commandText += _schema.FindTable(_collectionName).ActualName;
+                var table = _schema.FindTable(_collectionName);
+                commandText += table.ActualName;
                 if (!string.IsNullOrEmpty(_derivedCollectionName))
                     commandText += "/" + string.Join(".",
-                        _schema.TypesNamespace,
+                        table.EntityType.Namespace,
                         _schema.FindEntityType(_derivedCollectionName).Name);
             }
             else if (!string.IsNullOrEmpty(_linkName))
