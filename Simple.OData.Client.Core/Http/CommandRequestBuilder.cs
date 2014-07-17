@@ -19,12 +19,6 @@ namespace Simple.OData.Client
             request.Method = command.Method;
             request.ReturnContent = returnContent;
 
-            // TODO: revise
-            //if (method == "PUT" || method == "DELETE" || method == "MERGE")
-            //{
-            //    request.Headers.Add("If-Match", "*");
-            //}
-
             if (command.FormattedContent != null)
             {
                 request.ContentType = command.ContentType;
