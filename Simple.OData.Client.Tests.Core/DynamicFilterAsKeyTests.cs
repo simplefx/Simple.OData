@@ -9,7 +9,7 @@ namespace Simple.OData.Client.Tests
         public async void FindAllByFilterAsKeyEqual()
         {
             var x = ODataDynamic.Expression;
-            var command = await _client
+            var command = _client
                 .For(x.Products)
                 .Filter(x.ProductID == 1);
             string commandText = await command.GetCommandTextAsync();
@@ -20,7 +20,7 @@ namespace Simple.OData.Client.Tests
         public async void FindAllByFilterAsKeyNotEqual()
         {
             var x = ODataDynamic.Expression;
-            var command = await _client
+            var command = _client
                 .For(x.Products)
                 .Filter(x.ProductID != 1);
             string commandText = await command.GetCommandTextAsync();
@@ -31,7 +31,7 @@ namespace Simple.OData.Client.Tests
         public async void FindAllByFilterAsNotKeyEqual()
         {
             var x = ODataDynamic.Expression;
-            var command = await _client
+            var command = _client
                 .For(x.Products)
                 .Filter(!(x.ProductID == 1));
             string commandText = await command.GetCommandTextAsync();
@@ -43,7 +43,7 @@ namespace Simple.OData.Client.Tests
         public async void FindAllByFilterAsKeyEqualLong()
         {
             var x = ODataDynamic.Expression;
-            var command = await _client
+            var command = _client
                 .For(x.Products)
                 .Filter(x.ProductID == 1L);
             string commandText = await command.GetCommandTextAsync();
@@ -54,7 +54,7 @@ namespace Simple.OData.Client.Tests
         public async void FindAllByFilterAsKeyEqualAndExtraClause()
         {
             var x = ODataDynamic.Expression;
-            var command = await _client
+            var command = _client
                 .For(x.Products)
                 .Filter(x.ProductID == 1 && x.ProductName == "abc");
             string commandText = await command.GetCommandTextAsync();
@@ -66,7 +66,7 @@ namespace Simple.OData.Client.Tests
         public async void FindAllByFilterAsKeyEqualDuplicateClause()
         {
             var x = ODataDynamic.Expression;
-            var command = await _client
+            var command = _client
                 .For(x.Products)
                 .Filter(x.ProductID == 1 && x.ProductID == 1);
             string commandText = await command.GetCommandTextAsync();
@@ -77,7 +77,7 @@ namespace Simple.OData.Client.Tests
         public async void FindAllByFilterAsCompleteCompoundKey()
         {
             var x = ODataDynamic.Expression;
-            var command = await _client
+            var command = _client
                 .For(x.OrderDetails)
                 .Filter(x.OrderID == 1 && x.ProductID == 2);
             string commandText = await command.GetCommandTextAsync();
@@ -88,7 +88,7 @@ namespace Simple.OData.Client.Tests
         public async void FindAllByFilterAsInCompleteCompoundKey()
         {
             var x = ODataDynamic.Expression;
-            var command = await _client
+            var command = _client
                 .For(x.OrderDetails)
                 .Filter(x.OrderID == 1);
             string commandText = await command.GetCommandTextAsync();
@@ -99,7 +99,7 @@ namespace Simple.OData.Client.Tests
         public async void FindAllEmployeeSuperiors()
         {
             var x = ODataDynamic.Expression;
-            var command = await _client
+            var command = _client
                 .For(x.Employees)
                 .Filter(x.EmployeeID == 1)
                 .NavigateTo(x.Superior);
@@ -111,7 +111,7 @@ namespace Simple.OData.Client.Tests
         public async void FindAllCustomerOrders()
         {
             var x = ODataDynamic.Expression;
-            var command = await _client
+            var command = _client
                 .For(x.Customers)
                 .Filter(x.CustomerID == "ALFKI")
                 .NavigateTo(x.Orders);
@@ -123,7 +123,7 @@ namespace Simple.OData.Client.Tests
         public async void FindAllEmployeeSubordinates()
         {
             var x = ODataDynamic.Expression;
-            var command = await _client
+            var command = _client
                 .For(x.Employees)
                 .Filter(x.EmployeeID == 2)
                 .NavigateTo(x.Subordinates);
@@ -135,7 +135,7 @@ namespace Simple.OData.Client.Tests
         public async void FindAllOrderOrderDetails()
         {
             var x = ODataDynamic.Expression;
-            var command = await _client
+            var command = _client
                 .For(x.Orders)
                 .Filter(x.OrderID == 10952)
                 .NavigateTo(x.OrderDetails);
@@ -147,7 +147,7 @@ namespace Simple.OData.Client.Tests
         public async void FindEmployeeSuperior()
         {
             var x = ODataDynamic.Expression;
-            var command = await _client
+            var command = _client
                 .For(x.Employees)
                 .Filter(x.EmployeeID == 1)
                 .NavigateTo(x.Superior);
@@ -159,7 +159,7 @@ namespace Simple.OData.Client.Tests
         public async void FindAllFromBaseTableByFilterAsKeyEqual()
         {
             var x = ODataDynamic.Expression;
-            var command = await _client
+            var command = _client
                 .For(x.Transport)
                 .Filter(x.TransportID == 1);
             string commandText = await command.GetCommandTextAsync();
@@ -170,7 +170,7 @@ namespace Simple.OData.Client.Tests
         public async void FindAllFromDerivedTableByFilterAsKeyEqual()
         {
             var x = ODataDynamic.Expression;
-            var command = await _client
+            var command = _client
                 .For(x.Transport)
                 .As(x.Ship)
                 .Filter(x.TransportID == 1);
