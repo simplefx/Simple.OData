@@ -403,7 +403,8 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var command = new CommandWriter(_schema).CreateDeleteCommand(commandText);
-            var request = _requestBuilder.CreateRequest(command);
+            var table = _schema.FindConcreteTable(collection);
+            var request = _requestBuilder.CreateRequest(command, false, table.EntityType.CheckOptimisticConcurrency);
             await _requestRunner.DeleteEntryAsync(request, cancellationToken);
         }
 

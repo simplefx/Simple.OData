@@ -120,7 +120,7 @@ namespace Simple.OData.Client
             }
 
             var command = commandWriter.CreateUpdateCommand(commandText, entryData, entryContent, merge);
-            var request = _requestBuilder.CreateRequest(command, resultRequired);
+            var request = _requestBuilder.CreateRequest(command, resultRequired, table.EntityType.CheckOptimisticConcurrency);
             var result = await _requestRunner.UpdateEntryAsync(request, cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 

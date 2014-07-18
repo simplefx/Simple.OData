@@ -12,12 +12,13 @@ namespace Simple.OData.Client
         {
         }
 
-        public override HttpRequest CreateRequest(HttpCommand command, bool returnContent = false)
+        public override HttpRequest CreateRequest(HttpCommand command, bool returnContent = false, bool checkOptimisticConcurrency = false)
         {
             var uri = CreateRequestUrl(command.CommandText);
             var request = CreateRequest(uri);
             request.Method = command.Method;
             request.ReturnContent = returnContent;
+            request.CheckOptimisticConcurrency = checkOptimisticConcurrency;
 
             if (command.FormattedContent != null)
             {
