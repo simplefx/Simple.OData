@@ -49,7 +49,7 @@ namespace Simple.OData.Client
         public override HttpRequest CreateRequest(HttpCommand command, bool returnContent = false, bool checkOptimisticConcurrency = false)
         {
             var request = new CommandRequestBuilder(this.UrlBase, this.Credentials).CreateRequest(command);
-            var content = new StringContent(FormatBatchItem(command));
+            var content = new StringContent(FormatBatchItem(command, checkOptimisticConcurrency));
             content.Headers.ContentType = new MediaTypeHeaderValue("application/http");
             content.Headers.Add("Content-Transfer-Encoding", "binary");
 
@@ -85,7 +85,7 @@ namespace Simple.OData.Client
             return 0;
         }
 
-        private string FormatBatchItem(HttpCommand command)
+        private string FormatBatchItem(HttpCommand command, bool checkOptimisticConcurrency)
         {
             var sb = new StringBuilder();
             sb.AppendLine(string.Format("{0} {1} HTTP/{2}",
@@ -96,8 +96,16 @@ namespace Simple.OData.Client
                 sb.AppendLine(string.Format("Content-ID: {0}", ++_contentId));
                 sb.AppendLine(string.Format("Content-Type: {0}", command.ContentType));
                 sb.AppendLine(string.Format("Content-Length: {0}", (command.FormattedContent ?? string.Empty).Length));
+                if (checkOptimisticConcurrency)
+                {
+                    sb.AppendLine(string.Format("If-Match: {0}", EntityTagHeaderValue.Any.Tag));
+                }
                 sb.AppendLine();
                 sb.Append(command.FormattedContent);
+            }
+            else if (checkOptimisticConcurrency)
+            {
+                sb.AppendLine(string.Format("If-Match: {0}", EntityTagHeaderValue.Any.Tag));
             }
 
             return sb.ToString();

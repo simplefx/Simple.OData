@@ -395,14 +395,14 @@
           <Property Name="ProductID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="SupplierID" Type="Int32" />
           <Property Name="CategoryID" Type="Int32" />
-          <Property Name="ProductName" Type="String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" />
-          <Property Name="EnglishName" Type="String" MaxLength="40" Unicode="true" FixedLength="false" />
-          <Property Name="QuantityPerUnit" Type="String" MaxLength="20" Unicode="true" FixedLength="false" />
-          <Property Name="UnitPrice" Type="Decimal" Precision="19" Scale="4" />
-          <Property Name="UnitsInStock" Type="Int16" />
-          <Property Name="UnitsOnOrder" Type="Int16" />
-          <Property Name="ReorderLevel" Type="Int16" />
-          <Property Name="Discontinued" Type="Boolean" Nullable="false" />
+          <Property Name="ProductName" Type="String" Nullable="false" MaxLength="40" Unicode="true" FixedLength="false" ConcurrencyMode="Fixed" />
+          <Property Name="EnglishName" Type="String" MaxLength="40" Unicode="true" FixedLength="false" ConcurrencyMode="Fixed" />
+          <Property Name="QuantityPerUnit" Type="String" MaxLength="20" Unicode="true" FixedLength="false" ConcurrencyMode="Fixed" />
+          <Property Name="UnitPrice" Type="Decimal" Precision="19" Scale="4" ConcurrencyMode="Fixed" />
+          <Property Name="UnitsInStock" Type="Int16" ConcurrencyMode="Fixed" />
+          <Property Name="UnitsOnOrder" Type="Int16" ConcurrencyMode="Fixed" />
+          <Property Name="ReorderLevel" Type="Int16" ConcurrencyMode="Fixed" />
+          <Property Name="Discontinued" Type="Boolean" Nullable="false" ConcurrencyMode="Fixed" />
           <NavigationProperty Name="Category" Relationship="NorthwindModel.Products_FK01" FromRole="Products" ToRole="Category" />
           <NavigationProperty Name="Order_Details" Relationship="NorthwindModel.Order_Details_FK00" FromRole="Product" ToRole="Order_Details" />
           <NavigationProperty Name="Supplier" Relationship="NorthwindModel.Products_FK00" FromRole="Products" ToRole="Supplier" />
@@ -537,10 +537,10 @@
           <Property Type="Int32" Name="TransportID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
         </EntityType>
         <EntityType Name="Ships" BaseType="NorthwindModel.Transport">
-          <Property Type="String" Name="ShipName" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="ShipName" MaxLength="100" FixedLength="false" Unicode="true" ConcurrencyMode="None" />
         </EntityType>
         <EntityType Name="Trucks" BaseType="NorthwindModel.Transport">
-          <Property Type="String" Name="TruckNumber" MaxLength="100" FixedLength="false" Unicode="true" />
+          <Property Type="String" Name="TruckNumber" MaxLength="100" FixedLength="false" Unicode="true" ConcurrencyMode="None" />
         </EntityType>
         <ComplexType Name="Address" >
           <Property Type="String" Name="City" Nullable="false" />
