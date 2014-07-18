@@ -14,5 +14,6 @@ namespace Simple.OData.Client
         public string[] Accept { get; set; }
         public ICredentials Credentials { get; set; }
         public bool ReturnContent { get; set; }
+        public bool CheckOptimisticConcurrency { get; set; }
     }
 }

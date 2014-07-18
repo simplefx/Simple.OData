@@ -209,6 +209,7 @@ namespace Simple.OData.Client
                 Name = element.Attribute("Name").Value,
                 Type = EdmPropertyType.Parse(element.Attribute("Type").Value, this.EntityTypes, this.ComplexTypes, this.EnumTypes),
                 Nullable = ParseBooleanAttribute(element.Attribute("Nullable"), true),
+                ConcurrencyMode = ParseStringAttribute(element.Attribute("ConcurrencyMode")),
             };
         }
 
