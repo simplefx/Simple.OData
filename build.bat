@@ -14,9 +14,18 @@ if "%nuget%" == "" (
 set nuget=nuget
 )
 
+REM NuGet Package Restore
+
 REM Compilation
 
-call %WINDIR%\Microsoft.NET\Framework\v4.0.30319\msbuild Solutions\MyGet.sln /p:Configuration="%config%" /m /v:M /fl /flp:LogFile=msbuild.log;Verbosity=diag /nr:false
+call %WINDIR%\Microsoft.NET\Framework\v4.0.30319\msbuild Simple.OData.Client.Core\Simple.OData.Client.Core.csproj /p:Configuration="%config%" /m /v:M /fl /flp:LogFile=msbuild.log;Verbosity=diag /nr:false
+call %WINDIR%\Microsoft.NET\Framework\v4.0.30319\msbuild Simple.OData.Client.Dynamic\Simple.OData.Client.Dynamic.csproj /p:Configuration="%config%" /m /v:M /fl /flp:LogFile=msbuild.log;Verbosity=diag /nr:false
+call %WINDIR%\Microsoft.NET\Framework\v4.0.30319\msbuild Simple.OData.Client.Net40\Simple.OData.Client.Net40.csproj /p:Configuration="%config%" /m /v:M /fl /flp:LogFile=msbuild.log;Verbosity=diag /nr:false
+call %WINDIR%\Microsoft.NET\Framework\v4.0.30319\msbuild Simple.OData.Client.SL5\Simple.OData.Client.SL5.csproj /p:Configuration="%config%" /m /v:M /fl /flp:LogFile=msbuild.log;Verbosity=diag /nr:false
+call %WINDIR%\Microsoft.NET\Framework\v4.0.30319\msbuild Simple.OData.Client.Tests.Core\Simple.OData.Client.Tests.Core.csproj /p:Configuration="%config%" /m /v:M /fl /flp:LogFile=msbuild.log;Verbosity=diag /nr:false
+call %WINDIR%\Microsoft.NET\Framework\v4.0.30319\msbuild Simple.OData.Client.Tests.Net40\Simple.OData.Client.Tests.Net40.csproj /p:Configuration="%config%" /m /v:M /fl /flp:LogFile=msbuild.log;Verbosity=diag /nr:false
+call %WINDIR%\Microsoft.NET\Framework\v4.0.30319\msbuild Simple.OData.Client.Tests.Net45\Simple.OData.Client.Tests.Net45.csproj /p:Configuration="%config%" /m /v:M /fl /flp:LogFile=msbuild.log;Verbosity=diag /nr:false
+call %WINDIR%\Microsoft.NET\Framework\v4.0.30319\msbuild Simple.OData.Client.Tests.SL5\Simple.OData.Client.Tests.SL5.csproj /p:Configuration="%config%" /m /v:M /fl /flp:LogFile=msbuild.log;Verbosity=diag /nr:false
 
 REM Test Execution
 
