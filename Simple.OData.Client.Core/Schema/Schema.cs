@@ -18,17 +18,24 @@ namespace Simple.OData.Client
         private string _metadataString;
 
         private Lazy<EdmSchema> _lazyMetadata;
-        private readonly Lazy<TableCollection> _lazyTables;
-        private readonly Lazy<FunctionCollection> _lazyFunctions;
-        private readonly Lazy<List<EdmEntityType>> _lazyEntityTypes;
-        private readonly Lazy<List<EdmComplexType>> _lazyComplexTypes;
+        private Lazy<TableCollection> _lazyTables;
+        private Lazy<FunctionCollection> _lazyFunctions;
+        private Lazy<List<EdmEntityType>> _lazyEntityTypes;
+        private Lazy<List<EdmComplexType>> _lazyComplexTypes;
 
         private Schema(string metadataString, Func<Task<string>> resolveMedatataAsync)
         {
             _schemaProvider = new SchemaProvider(this);
 
+            ResetCache();
+
             _metadataString = metadataString;
             _resolveMetadataAsync = resolveMedatataAsync;
+        }
+
+        internal void ResetCache()
+        {
+            _metadataString = null;
 
             _lazyMetadata = new Lazy<EdmSchema>(() => ResponseReader.GetSchema(_metadataString));
             _lazyTables = new Lazy<TableCollection>(CreateTableCollection);

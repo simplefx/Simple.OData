@@ -32,6 +32,28 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task DeleteByKeyResetSchemaCache()
+        {
+            var product = await _client
+                .For("Products")
+                .Set(new { ProductName = "Test1", UnitPrice = 18m })
+                .InsertEntryAsync();
+
+            ((await _client.GetSchemaAsync()) as Schema).ResetCache();
+            await _client
+                .For("Products")
+                .Key(product["ProductID"])
+                .DeleteEntryAsync();
+
+            product = await _client
+                .For("Products")
+                .Filter("ProductName eq 'Test1'")
+                .FindEntryAsync();
+
+            Assert.Null(product);
+        }
+
+        [Fact]
         public async Task DeleteByFilter()
         {
             var product = await _client

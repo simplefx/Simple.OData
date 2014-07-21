@@ -140,7 +140,7 @@ namespace Simple.OData.Client
             }
             else
             {
-                return await _client.UpdateEntryAsync(_command, _command.KeyValues, _command.EntryData, resultRequired, cancellationToken).ContinueWith(x =>
+                return await _client.UpdateEntryAsync(_command, resultRequired, cancellationToken).ContinueWith(x =>
                 {
                     if (resultRequired)
                     {
@@ -189,7 +189,7 @@ namespace Simple.OData.Client
             if (_command.HasFilter)
                 return DeleteEntriesAsync(cancellationToken);
             else
-                return _client.DeleteEntryAsync(_command, _command.KeyValues, cancellationToken);
+                return _client.DeleteEntryAsync(_command, cancellationToken);
         }
 
         public Task<int> DeleteEntriesAsync()

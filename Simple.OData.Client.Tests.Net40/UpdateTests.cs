@@ -33,6 +33,29 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task UpdateByKeyResetSchemaCache()
+        {
+            var product = await _client
+                .For("Products")
+                .Set(new { ProductName = "Test1", UnitPrice = 18m })
+                .InsertEntryAsync();
+
+            ((await _client.GetSchemaAsync()) as Schema).ResetCache();
+            await _client
+                .For("Products")
+                .Key(product["ProductID"])
+                .Set(new { UnitPrice = 123m })
+                .UpdateEntryAsync();
+
+            product = await _client
+                .For("Products")
+                .Filter("ProductName eq 'Test1'")
+                .FindEntryAsync();
+
+            Assert.Equal(123m, product["UnitPrice"]);
+        }
+
+        [Fact]
         public async Task UpdateByFilter()
         {
             var product = await _client

@@ -615,6 +615,15 @@ namespace Simple.OData.Client
             return await UpdateEntryAsync(collectionName, entryKey, entryData, resultRequired, cancellationToken);
         }
 
+        internal async Task<IDictionary<string, object>> UpdateEntryAsync(FluentCommand command, bool resultRequired, CancellationToken cancellationToken)
+        {
+            await _schema.ResolveAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+            var collectionName = _schema.FindTable(command.CollectionName).ActualName;
+            return await UpdateEntryAsync(collectionName, command.KeyValues, command.EntryData, resultRequired, cancellationToken);
+        }
+
         internal async Task<IEnumerable<IDictionary<string, object>>> UpdateEntriesAsync(FluentCommand command, IDictionary<string, object> entryData, bool resultRequired, CancellationToken cancellationToken)
         {
             await _schema.ResolveAsync(cancellationToken);
@@ -634,6 +643,15 @@ namespace Simple.OData.Client
 
             var collectionName = _schema.FindTable(command.CollectionName).ActualName;
             await DeleteEntryAsync(collectionName, entryKey, cancellationToken);
+        }
+
+        internal async Task DeleteEntryAsync(FluentCommand command, CancellationToken cancellationToken)
+        {
+            await _schema.ResolveAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+            var collectionName = _schema.FindTable(command.CollectionName).ActualName;
+            await DeleteEntryAsync(collectionName, command.KeyValues, cancellationToken);
         }
 
         internal async Task<int> DeleteEntriesAsync(FluentCommand command, CancellationToken cancellationToken)
