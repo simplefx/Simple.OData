@@ -1,1 +1,1 @@
-call .\.nuget\nuget push Packages\Simple.OData.Client.%1.nupkg %2
+call nuget push Packages\Simple.OData.Client.%1.nupkg %2
