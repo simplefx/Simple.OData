@@ -30,8 +30,8 @@ namespace Simple.OData.Client
             this.EntityTypes = parser.EntityTypes;
             this.ComplexTypes = parser.ComplexTypes;
             this.EnumTypes = parser.EnumTypes;
-            this.Associations = parser.Associations;
-            this.EntityContainers = parser.EntityContainers;
+            //this.Associations = parser.Associations;
+            //this.EntityContainers = parser.EntityContainers;
         }
     }
 
@@ -65,6 +65,24 @@ namespace Simple.OData.Client
             var edmEntityType = entityTypes.SingleOrDefault(x => x.Name == s);
             return Tuple.Create(edmEntityType != null, edmEntityType);
         }
+
+        public static EdmEntityType FromODataType(Microsoft.Data.Edm.IEdmEntityType type)
+        {
+            return new EdmEntityType
+            {
+                Namespace = type.Namespace,
+                Name = type.Name,
+            };
+        }
+
+        public static EdmEntityType FromODataType(Microsoft.OData.Edm.IEdmEntityType type)
+        {
+            return new EdmEntityType
+            {
+                Namespace = type.Namespace,
+                Name = type.Name,
+            };
+        }
     }
 
     public sealed class EdmComplexType
@@ -77,6 +95,24 @@ namespace Simple.OData.Client
         {
             var edmComplexType = complexTypes.SingleOrDefault(x => x.Name == s);
             return Tuple.Create(edmComplexType != null, edmComplexType);
+        }
+
+        public static EdmComplexType FromODataType(Microsoft.Data.Edm.IEdmComplexType type)
+        {
+            return new EdmComplexType
+            {
+                Namespace = type.Namespace,
+                Name = type.Name,
+            };
+        }
+
+        public static EdmComplexType FromODataType(Microsoft.OData.Edm.IEdmComplexType type)
+        {
+            return new EdmComplexType
+            {
+                Namespace = type.Namespace,
+                Name = type.Name,
+            };
         }
     }
 
@@ -92,6 +128,24 @@ namespace Simple.OData.Client
         {
             var edmEnumType = enumTypes.SingleOrDefault(x => x.Name == s);
             return Tuple.Create(edmEnumType != null, edmEnumType);
+        }
+
+        public static EdmEnumType FromODataType(Microsoft.Data.Edm.IEdmEnumType type)
+        {
+            return new EdmEnumType
+            {
+                Namespace = type.Namespace,
+                Name = type.Name,
+            };
+        }
+
+        public static EdmEnumType FromODataType(Microsoft.OData.Edm.IEdmEnumType type)
+        {
+            return new EdmEnumType
+            {
+                Namespace = type.Namespace,
+                Name = type.Name,
+            };
         }
     }
 

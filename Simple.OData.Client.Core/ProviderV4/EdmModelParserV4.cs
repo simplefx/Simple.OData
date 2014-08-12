@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Microsoft.OData.Edm;
 
 namespace Simple.OData.Client
@@ -24,7 +25,10 @@ namespace Simple.OData.Client
         {
             get
             {
-                throw new NotImplementedException();
+                return _model.SchemaElements
+                    .Where(x => x.SchemaElementKind == EdmSchemaElementKind.TypeDefinition &&
+                        (x as IEdmSchemaType).TypeKind == EdmTypeKind.Entity)
+                    .Select(x => EdmEntityType.FromODataType(x as IEdmEntityType)).ToArray();
             }
         }
 
@@ -32,7 +36,10 @@ namespace Simple.OData.Client
         {
             get
             {
-                throw new NotImplementedException();
+                return _model.SchemaElements
+                    .Where(x => x.SchemaElementKind == EdmSchemaElementKind.TypeDefinition &&
+                        (x as IEdmSchemaType).TypeKind == EdmTypeKind.Complex)
+                    .Select(x => EdmComplexType.FromODataType(x as IEdmComplexType)).ToArray();
             }
         }
 
@@ -40,7 +47,10 @@ namespace Simple.OData.Client
         {
             get
             {
-                throw new NotImplementedException();
+                return _model.SchemaElements
+                    .Where(x => x.SchemaElementKind == EdmSchemaElementKind.TypeDefinition &&
+                        (x as IEdmSchemaType).TypeKind == EdmTypeKind.Enum)
+                    .Select(x => EdmEnumType.FromODataType(x as IEdmEnumType)).ToArray();
             }
         }
 

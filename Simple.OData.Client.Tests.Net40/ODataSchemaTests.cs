@@ -12,7 +12,7 @@ namespace Simple.OData.Client.Tests
         [Theory]
         [InlineData("V2", 3)]
         [InlineData("V3", 10)]
-        //[InlineData("V4", 10)]
+        [InlineData("V4", 10)]
         public async Task EntityTypes(string protocolVersion, int typeCount)
         {
             var client = new ODataClient(string.Format(_serviceUrl, protocolVersion));
@@ -23,7 +23,7 @@ namespace Simple.OData.Client.Tests
         [Theory]
         [InlineData("V2")]
         [InlineData("V3")]
-        //[InlineData("V4")]
+        [InlineData("V4")]
         public async Task ComplexTypes(string protocolVersion)
         {
             var client = new ODataClient(string.Format(_serviceUrl, protocolVersion));
@@ -35,7 +35,7 @@ namespace Simple.OData.Client.Tests
         [Theory]
         [InlineData("V2")]
         [InlineData("V3")]
-        //[InlineData("V4")]
+        [InlineData("V4")]
         public async Task ProductsPrimaryKey(string protocolVersion)
         {
             var client = new ODataClient(string.Format(_serviceUrl, protocolVersion));
@@ -47,7 +47,7 @@ namespace Simple.OData.Client.Tests
         [Theory]
         [InlineData("V2", "0..1")]
         [InlineData("V3", "*")]
-        //[InlineData("V4", "*")]
+        [InlineData("V4", "*")]
         public async Task ProductCategory(string protocolVersion, string mulitiplicity)
         {
             var client = new ODataClient(string.Format(_serviceUrl, protocolVersion));
@@ -62,7 +62,7 @@ namespace Simple.OData.Client.Tests
         [Theory]
         [InlineData("V2")]
         [InlineData("V3")]
-        //[InlineData("V4")]
+        [InlineData("V4")]
         public async Task GetProductsByRating(string protocolVersion)
         {
             var client = new ODataClient(string.Format(_serviceUrl, protocolVersion));

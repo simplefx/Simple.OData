@@ -12,7 +12,7 @@ namespace Simple.OData.Client.Tests
         [Theory]
         [InlineData("V2", 26)]
         [InlineData("V3", 26)]
-        //[InlineData("V4", 26)]
+        [InlineData("V4", 26)]
         public async Task GetEntityTypesCount(string protocolVersion, int typeCount)
         {
             var client = new ODataClient(string.Format(_serviceUrl, protocolVersion));
@@ -25,7 +25,7 @@ namespace Simple.OData.Client.Tests
         [Theory]
         [InlineData("V2", 0)]
         [InlineData("V3", 0)]
-        //[InlineData("V4", 0)]
+        [InlineData("V4", 0)]
         public async Task GetComplexTypesCount(string protocolVersion, int typeCount)
         {
             var client = new ODataClient(string.Format(_serviceUrl, protocolVersion));
@@ -38,7 +38,7 @@ namespace Simple.OData.Client.Tests
         [Theory]
         [InlineData("V2", 26)]
         [InlineData("V3", 26)]
-        //[InlineData("V4", 26)]
+        [InlineData("V4", 26)]
         public async Task GetTablesCount(string protocolVersion, int tablesCount)
         {
             var client = new ODataClient(string.Format(_serviceUrl, protocolVersion));
@@ -51,7 +51,7 @@ namespace Simple.OData.Client.Tests
         [Theory]
         [InlineData("V2")]
         [InlineData("V3")]
-        //[InlineData("V4")]
+        [InlineData("V4")]
         public async Task FindTable(string protocolVersion)
         {
             var client = new ODataClient(string.Format(_serviceUrl, protocolVersion));
@@ -64,7 +64,7 @@ namespace Simple.OData.Client.Tests
         [Theory]
         [InlineData("V2")]
         [InlineData("V3")]
-        //[InlineData("V4")]
+        [InlineData("V4")]
         public async Task GetColumnsCount(string protocolVersion)
         {
             var client = new ODataClient(string.Format(_serviceUrl, protocolVersion));
@@ -77,7 +77,7 @@ namespace Simple.OData.Client.Tests
         [Theory]
         [InlineData("V2")]
         [InlineData("V3")]
-        //[InlineData("V4")]
+        [InlineData("V4")]
         public async Task FindColumn(string protocolVersion)
         {
             var client = new ODataClient(string.Format(_serviceUrl, protocolVersion));
@@ -91,7 +91,7 @@ namespace Simple.OData.Client.Tests
         [Theory]
         [InlineData("V2")]
         [InlineData("V3")]
-        //[InlineData("V4")]
+        [InlineData("V4")]
         public async Task ColumnNullability(string protocolVersion)
         {
             var client = new ODataClient(string.Format(_serviceUrl, protocolVersion));
@@ -106,7 +106,7 @@ namespace Simple.OData.Client.Tests
         [Theory]
         [InlineData("V2")]
         [InlineData("V3")]
-        //[InlineData("V4")]
+        [InlineData("V4")]
         public async Task GetAssociationsCount(string protocolVersion)
         {
             var client = new ODataClient(string.Format(_serviceUrl, protocolVersion));
@@ -119,7 +119,7 @@ namespace Simple.OData.Client.Tests
         [Theory]
         [InlineData("V2")]
         [InlineData("V3")]
-        //[InlineData("V4")]
+        [InlineData("V4")]
         public async Task FindAssociationToOne(string protocolVersion)
         {
             var client = new ODataClient(string.Format(_serviceUrl, protocolVersion));
@@ -133,7 +133,7 @@ namespace Simple.OData.Client.Tests
         [Theory]
         [InlineData("V2")]
         [InlineData("V3")]
-        //[InlineData("V4")]
+        [InlineData("V4")]
         public async Task FindAssociationToMany(string protocolVersion)
         {
             var client = new ODataClient(string.Format(_serviceUrl, protocolVersion));
@@ -147,7 +147,7 @@ namespace Simple.OData.Client.Tests
         [Theory]
         [InlineData("V2")]
         [InlineData("V3")]
-        //[InlineData("V4")]
+        [InlineData("V4")]
         public async Task GetScalarPrimaryKey(string protocolVersion)
         {
             var client = new ODataClient(string.Format(_serviceUrl, protocolVersion));
@@ -159,7 +159,7 @@ namespace Simple.OData.Client.Tests
         [Theory]
         [InlineData("V2")]
         [InlineData("V3")]
-        //[InlineData("V4")]
+        [InlineData("V4")]
         public async Task GetCompoundPrimaryKey(string protocolVersion)
         {
             var client = new ODataClient(string.Format(_serviceUrl, protocolVersion));
