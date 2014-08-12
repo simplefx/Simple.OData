@@ -8,6 +8,7 @@ namespace Simple.OData.Client
 {
     public sealed class EdmSchema
     {
+        public string[] SupportedProtocols { get; private set; }
         public EdmEntityType[] EntityTypes { get; private set; }
         public EdmComplexType[] ComplexTypes { get; private set; }
         public EdmEnumType[] EnumTypes { get; private set; }
@@ -21,6 +22,16 @@ namespace Simple.OData.Client
             this.EnumTypes = parser.EnumTypes.ToArray();
             this.Associations = parser.Associations.ToArray();
             this.EntityContainers = parser.EntityContainers.ToArray();
+        }
+
+        internal EdmSchema(IEdmModelParser parser)
+        {
+            this.SupportedProtocols = parser.SupportedProtocols;
+            this.EntityTypes = parser.EntityTypes;
+            this.ComplexTypes = parser.ComplexTypes;
+            this.EnumTypes = parser.EnumTypes;
+            this.Associations = parser.Associations;
+            this.EntityContainers = parser.EntityContainers;
         }
     }
 

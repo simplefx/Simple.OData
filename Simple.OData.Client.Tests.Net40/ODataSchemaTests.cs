@@ -13,7 +13,7 @@ namespace Simple.OData.Client.Tests
         [InlineData("V2", 3)]
         [InlineData("V3", 10)]
         //[InlineData("V4", 10)]
-        public async Task EntityTypeы(string protocolVersion, int typeCount)
+        public async Task EntityTypes(string protocolVersion, int typeCount)
         {
             var client = new ODataClient(string.Format(_serviceUrl, protocolVersion));
 

@@ -51,6 +51,21 @@
     <DocumentationFile>Bin\Release\Simple.OData.Client.SL5.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Data.Edm">
+      <HintPath>..\Solutions\packages\Microsoft.Data.Edm.5.6.2\lib\sl4\Microsoft.Data.Edm.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Data.OData">
+      <HintPath>..\Solutions\packages\Microsoft.Data.OData.5.6.2\lib\sl4\Microsoft.Data.OData.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.OData.Core">
+      <HintPath>..\Solutions\packages\Microsoft.OData.Core.6.6.0\lib\portable-net40+sl5+wp8+win8+wpa\Microsoft.OData.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.OData.Edm">
+      <HintPath>..\Solutions\packages\Microsoft.OData.Edm.6.6.0\lib\portable-net40+sl5+wp8+win8+wpa\Microsoft.OData.Edm.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Spatial">
+      <HintPath>..\Solutions\packages\Microsoft.Spatial.6.6.0\lib\portable-net40+sl5+wp8+win8+wpa\Microsoft.Spatial.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Threading.Tasks, Version=1.0.12.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Solutions\packages\Microsoft.Bcl.Async.1.0.168\lib\sl4\Microsoft.Threading.Tasks.dll</HintPath>
@@ -82,6 +97,9 @@
     </Reference>
     <Reference Include="System.Runtime">
       <HintPath>..\Solutions\packages\Microsoft.Bcl.1.1.9\lib\sl5\System.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Spatial">
+      <HintPath>..\Solutions\packages\System.Spatial.5.6.2\lib\sl4\System.Spatial.dll</HintPath>
     </Reference>
     <Reference Include="System.Threading.Tasks, Version=2.6.9.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -124,6 +142,9 @@
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Edm\EdmTypeSerializer.cs">
       <Link>Edm\EdmTypeSerializer.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Edm\IEdmModelParser.cs">
+      <Link>Edm\IEdmModelParser.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\EntryMembers.cs">
       <Link>EntryMembers.cs</Link>
@@ -287,6 +308,30 @@
     <Compile Include="..\Simple.OData.Client.Core\Properties\AssemblyInfo.cs">
       <Link>Properties\AssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ProviderV3\EdmModelParserV3.cs">
+      <Link>ProviderV3\EdmModelParserV3.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ProviderV3\ODataProviderV3.cs">
+      <Link>ProviderV3\ODataProviderV3.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ProviderV3\ODataV3RequestMessage.cs">
+      <Link>ProviderV3\ODataV3RequestMessage.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ProviderV3\ODataV3ResponseMessage.cs">
+      <Link>ProviderV3\ODataV3ResponseMessage.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ProviderV4\EdmModelParserV4.cs">
+      <Link>ProviderV4\EdmModelParserV4.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ProviderV4\ODataProviderV4.cs">
+      <Link>ProviderV4\ODataProviderV4.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ProviderV4\ODataV4RequestMessage.cs">
+      <Link>ProviderV4\ODataV4RequestMessage.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ProviderV4\ODataV4ResponseMessage.cs">
+      <Link>ProviderV4\ODataV4ResponseMessage.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Resources\Resources.cs">
       <Link>Resources\Resources.cs</Link>
     </Compile>
@@ -322,6 +367,9 @@
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Schema\Model.cs">
       <Link>Schema\Model.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Schema\SchemaProvider.cs">
+      <Link>Schema\SchemaProvider.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Schema\Table.cs">
       <Link>Schema\Table.cs</Link>

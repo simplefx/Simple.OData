@@ -98,14 +98,7 @@ namespace Simple.OData.Client
         /// <returns>The schema.</returns>
         public static async Task<string> GetSchemaAsStringAsync(string urlBase, ICredentials credentials, CancellationToken cancellationToken)
         {
-            var requestBuilder = new CommandRequestBuilder(urlBase, credentials);
-            var command = HttpCommand.Get(FluentCommand.MetadataLiteral);
-            var request = requestBuilder.CreateRequest(command);
-            var requestRunner = new SchemaRequestRunner(new ODataClientSettings());
-            using (var response = await requestRunner.ExecuteRequestAsync(request, cancellationToken))
-            {
-                return await response.Content.ReadAsStringAsync();
-            }
+            return await new SchemaProvider(urlBase, credentials).GetSchemaAsStringAsync(cancellationToken);
         }
 
         #pragma warning disable 1591
