@@ -320,8 +320,8 @@
     <Compile Include="..\Simple.OData.Client.Core\Schema\Schema.cs">
       <Link>Schema\Schema.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Schema\SchemaProvider.cs">
-      <Link>Schema\SchemaProvider.cs</Link>
+    <Compile Include="..\Simple.OData.Client.Core\Schema\Model.cs">
+      <Link>Schema\Model.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Schema\Table.cs">
       <Link>Schema\Table.cs</Link>

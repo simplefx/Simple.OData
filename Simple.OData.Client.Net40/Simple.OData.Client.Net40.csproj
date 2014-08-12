@@ -317,8 +317,8 @@
     <Compile Include="..\Simple.OData.Client.Core\Schema\Key.cs">
       <Link>Schema\Key.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Schema\SchemaProvider.cs">
-      <Link>Schema\SchemaProvider.cs</Link>
+    <Compile Include="..\Simple.OData.Client.Core\Schema\Model.cs">
+      <Link>Schema\Model.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Schema\Table.cs">
       <Link>Schema\Table.cs</Link>

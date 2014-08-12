@@ -135,22 +135,22 @@ namespace Simple.OData.Client
 
         private TableCollection GetDerivedTables()
         {
-            return new TableCollection(_schema.SchemaProvider.GetDerivedTables(this));
+            return new TableCollection(_schema.Model.GetDerivedTables(this));
         }
 
         private ColumnCollection GetColumns()
         {
-            return new ColumnCollection(_schema.SchemaProvider.GetColumns(this));
+            return new ColumnCollection(_schema.Model.GetColumns(this));
         }
 
         private AssociationCollection GetAssociations()
         {
-            return new AssociationCollection(_schema.SchemaProvider.GetAssociations(this));
+            return new AssociationCollection(_schema.Model.GetAssociations(this));
         }
 
         private Key GetPrimaryKey()
         {
-            return _schema.SchemaProvider.GetPrimaryKey(this);
+            return _schema.Model.GetPrimaryKey(this);
         }
     }
 }

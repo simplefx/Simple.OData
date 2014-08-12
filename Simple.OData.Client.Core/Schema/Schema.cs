@@ -12,7 +12,7 @@ namespace Simple.OData.Client
     {
         private static readonly SimpleDictionary<string, ISchema> Instances = new SimpleDictionary<string, ISchema>();
 
-        private readonly SchemaProvider _schemaProvider;
+        private readonly Model _model;
 
         private readonly Func<Task<string>> _resolveMetadataAsync;
         private string _metadataString;
@@ -25,7 +25,7 @@ namespace Simple.OData.Client
 
         private Schema(string metadataString, Func<Task<string>> resolveMedatataAsync)
         {
-            _schemaProvider = new SchemaProvider(this);
+            _model = new Model(this);
 
             ResetCache();
 
@@ -37,16 +37,16 @@ namespace Simple.OData.Client
         {
             _metadataString = null;
 
-            _lazyMetadata = new Lazy<EdmSchema>(() => ResponseReader.GetSchema(_metadataString));
+            _lazyMetadata = new Lazy<EdmSchema>(GetCreateSchemaFunc());
             _lazyTables = new Lazy<TableCollection>(CreateTableCollection);
             _lazyFunctions = new Lazy<FunctionCollection>(CreateFunctionCollection);
             _lazyEntityTypes = new Lazy<List<EdmEntityType>>(CreateEntityTypeCollection);
             _lazyComplexTypes = new Lazy<List<EdmComplexType>>(CreateComplexTypeCollection);
         }
 
-        internal SchemaProvider SchemaProvider
+        internal Model Model
         {
-            get { return _schemaProvider; }
+            get { return _model; }
         }
 
         public async Task<ISchema> ResolveAsync(CancellationToken cancellationToken)
@@ -54,7 +54,7 @@ namespace Simple.OData.Client
             if (_metadataString == null)
             {
                 _metadataString = await _resolveMetadataAsync();
-                _lazyMetadata = new Lazy<EdmSchema>(() => ResponseReader.GetSchema(_metadataString));
+                _lazyMetadata = new Lazy<EdmSchema>(GetCreateSchemaFunc());
             }
             return this;
         }
@@ -211,25 +211,30 @@ namespace Simple.OData.Client
             return complexType;
         }
 
+        private Func<EdmSchema> GetCreateSchemaFunc()
+        {
+            return () => ResponseReader.GetSchema(_metadataString);
+        }
+
         private TableCollection CreateTableCollection()
         {
-            return new TableCollection(_schemaProvider.GetTables()
+            return new TableCollection(_model.GetTables()
                 .Select(table => new Table(table.ActualName, table.EntityType, null, this)));
         }
 
         private FunctionCollection CreateFunctionCollection()
         {
-            return new FunctionCollection(_schemaProvider.GetFunctions());
+            return new FunctionCollection(_model.GetFunctions());
         }
 
         private List<EdmEntityType> CreateEntityTypeCollection()
         {
-            return new List<EdmEntityType>(_schemaProvider.GetEntityTypes());
+            return new List<EdmEntityType>(_model.GetEntityTypes());
         }
 
         private List<EdmComplexType> CreateComplexTypeCollection()
         {
-            return new List<EdmComplexType>(_schemaProvider.GetComplexTypes());
+            return new List<EdmComplexType>(_model.GetComplexTypes());
         }
 
         internal static ISchema FromUrl(string urlBase, ICredentials credentials = null)
