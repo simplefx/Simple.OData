@@ -48,7 +48,7 @@ namespace Simple.OData.Client
         public EdmAssociationSetEnd[] End { get; set; }
     }
 
-    public sealed class EdmEntityType
+    public sealed partial class EdmEntityType
     {
         public string Namespace { get; set; }
         public string Name { get; set; }
@@ -65,27 +65,9 @@ namespace Simple.OData.Client
             var edmEntityType = entityTypes.SingleOrDefault(x => x.Name == s);
             return Tuple.Create(edmEntityType != null, edmEntityType);
         }
-
-        public static EdmEntityType FromODataType(Microsoft.Data.Edm.IEdmEntityType type)
-        {
-            return new EdmEntityType
-            {
-                Namespace = type.Namespace,
-                Name = type.Name,
-            };
-        }
-
-        public static EdmEntityType FromODataType(Microsoft.OData.Edm.IEdmEntityType type)
-        {
-            return new EdmEntityType
-            {
-                Namespace = type.Namespace,
-                Name = type.Name,
-            };
-        }
     }
 
-    public sealed class EdmComplexType
+    public sealed partial class EdmComplexType
     {
         public string Namespace { get; set; }
         public string Name { get; set; }
@@ -95,24 +77,6 @@ namespace Simple.OData.Client
         {
             var edmComplexType = complexTypes.SingleOrDefault(x => x.Name == s);
             return Tuple.Create(edmComplexType != null, edmComplexType);
-        }
-
-        public static EdmComplexType FromODataType(Microsoft.Data.Edm.IEdmComplexType type)
-        {
-            return new EdmComplexType
-            {
-                Namespace = type.Namespace,
-                Name = type.Name,
-            };
-        }
-
-        public static EdmComplexType FromODataType(Microsoft.OData.Edm.IEdmComplexType type)
-        {
-            return new EdmComplexType
-            {
-                Namespace = type.Namespace,
-                Name = type.Name,
-            };
         }
     }
 
@@ -166,7 +130,7 @@ namespace Simple.OData.Client
         public EdmFunctionImport[] FunctionImports { get; set; }
     }
 
-    public sealed class EdmProperty
+    public sealed partial class EdmProperty
     {
         public string Name { get; set; }
         public EdmPropertyType Type { get; set; }

@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Simple.OData.Client
 {
-    public abstract class EdmPropertyType
+    public abstract partial class EdmPropertyType
     {
         public abstract string Name { get; }
         public override string ToString()
@@ -14,8 +14,8 @@ namespace Simple.OData.Client
             return this.Name;
         }
 
-        public static EdmPropertyType Parse(string s, 
-            IEnumerable<EdmEntityType> entityTypes, 
+        public static EdmPropertyType Parse(string s,
+            IEnumerable<EdmEntityType> entityTypes,
             IEnumerable<EdmComplexType> complexTypes,
             IEnumerable<EdmEnumType> enumTypes)
         {
@@ -52,8 +52,8 @@ namespace Simple.OData.Client
             throw new ArgumentException(string.Format("Unrecognized type {0}", s));
         }
 
-        private static Tuple<bool, EdmCollectionPropertyType> TryParseCollectionType(string s, 
-            IEnumerable<EdmEntityType> entityTypes, 
+        private static Tuple<bool, EdmCollectionPropertyType> TryParseCollectionType(string s,
+            IEnumerable<EdmEntityType> entityTypes,
             IEnumerable<EdmComplexType> complexTypes,
             IEnumerable<EdmEnumType> enumTypes)
         {
@@ -61,8 +61,8 @@ namespace Simple.OData.Client
             {
                 int start = s.IndexOf("(");
                 int end = s.LastIndexOf(")");
-                var baseType = EdmPropertyType.Parse(s.Substring(start + 1, end - start - 1), 
-                    entityTypes, 
+                var baseType = EdmPropertyType.Parse(s.Substring(start + 1, end - start - 1),
+                    entityTypes,
                     complexTypes,
                     enumTypes);
                 return new Tuple<bool, EdmCollectionPropertyType>(true, new EdmCollectionPropertyType() { BaseType = baseType });

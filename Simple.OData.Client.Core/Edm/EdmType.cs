@@ -8,7 +8,7 @@ using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
-    public sealed class EdmType : IEquatable<EdmType>
+    public sealed partial class EdmType : IEquatable<EdmType>
     {
         public static readonly EdmType Binary = new EdmType("Edm.Binary");
         public static readonly EdmType Boolean = new EdmType("Edm.Boolean");

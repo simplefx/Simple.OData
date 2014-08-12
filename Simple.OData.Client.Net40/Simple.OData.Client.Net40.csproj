@@ -116,8 +116,26 @@
     <Compile Include="..\Simple.OData.Client.Core\CommandContent.cs">
       <Link>CommandContent.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Edm\EdmPropertyType.V3.cs">
+      <Link>Edm\EdmPropertyType.V3.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Edm\EdmPropertyType.V4.cs">
+      <Link>Edm\EdmPropertyType.V4.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Edm\EdmSchema.V3.cs">
+      <Link>Edm\EdmSchema.V3.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Edm\EdmSchema.V4.cs">
+      <Link>Edm\EdmSchema.V4.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Edm\EdmSchemaParser.cs">
       <Link>Edm\EdmSchemaParser.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Edm\EdmType.V3.cs">
+      <Link>Edm\EdmType.V3.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Edm\EdmType.V4.cs">
+      <Link>Edm\EdmType.V4.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Edm\IEdmModelParser.cs">
       <Link>Edm\IEdmModelParser.cs</Link>
