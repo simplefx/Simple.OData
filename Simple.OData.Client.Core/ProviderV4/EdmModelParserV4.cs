@@ -66,7 +66,13 @@ namespace Simple.OData.Client
         {
             get
             {
-                throw new NotImplementedException();
+                return _model.SchemaElements.Where(x => x.SchemaElementKind == EdmSchemaElementKind.EntityContainer).Select(x =>
+                    new EdmEntityContainer()
+                    {
+                        Namespace = x.Namespace,
+                        Name = x.Name,
+                        EntitySets = (x as IEdmEntityContainer).EntitySets().Select(EdmEntitySet.FromODataEntitySet).ToArray(),
+                    }).ToArray();
             }
         }
     }

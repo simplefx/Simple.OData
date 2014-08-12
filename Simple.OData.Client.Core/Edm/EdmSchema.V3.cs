@@ -3,6 +3,18 @@ using Microsoft.Data.Edm;
 
 namespace Simple.OData.Client
 {
+    public sealed partial class EdmEntitySet
+    {
+        public static EdmEntitySet FromODataEntitySet(IEdmEntitySet entitySet)
+        {
+            return new EdmEntitySet
+            {
+                Name = entitySet.Name,
+                EntityType = entitySet.ElementType.Name,
+            };
+        }
+    }
+
     public sealed partial class EdmEntityType
     {
         public static EdmEntityType FromODataType(IEdmEntityType type)

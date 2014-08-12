@@ -31,11 +31,11 @@ namespace Simple.OData.Client
             this.ComplexTypes = parser.ComplexTypes;
             this.EnumTypes = parser.EnumTypes;
             //this.Associations = parser.Associations;
-            //this.EntityContainers = parser.EntityContainers;
+            this.EntityContainers = parser.EntityContainers;
         }
     }
 
-    public sealed class EdmEntitySet
+    public sealed partial class EdmEntitySet
     {
         public string Name { get; set; }
         public string EntityType { get; set; }

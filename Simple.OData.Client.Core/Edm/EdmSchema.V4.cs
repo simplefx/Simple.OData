@@ -3,6 +3,28 @@ using Microsoft.OData.Edm;
 
 namespace Simple.OData.Client
 {
+    public sealed partial class EdmEntitySet
+    {
+        public static EdmEntitySet FromODataEntitySet(IEdmEntitySet entitySet)
+        {
+            return new EdmEntitySet
+            {
+                Name = entitySet.Name,
+                EntityType = GetEntityTypeName(entitySet.Type),
+            };
+        }
+
+        private static string GetEntityTypeName(IEdmType type)
+        {
+            var typeName = type.FullTypeName();
+            const string collectionPrefix = "Collection(";
+            if (typeName.StartsWith(collectionPrefix))
+                return typeName.Substring(collectionPrefix.Length, typeName.Length - collectionPrefix.Length - 1);
+            else
+                return typeName;
+        }
+    }
+
     public sealed partial class EdmEntityType
     {
         public static EdmEntityType FromODataType(IEdmEntityType type)

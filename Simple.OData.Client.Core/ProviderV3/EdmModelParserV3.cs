@@ -71,6 +71,7 @@ namespace Simple.OData.Client
                     {
                         Namespace = x.Namespace,
                         Name = x.Name,
+                        EntitySets = x.EntitySets().Select(EdmEntitySet.FromODataEntitySet).ToArray(),
                     }).ToArray();
             }
         }
