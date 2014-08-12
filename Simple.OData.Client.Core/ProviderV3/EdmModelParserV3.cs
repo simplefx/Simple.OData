@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.Data.Edm;
+using Microsoft.Data.OData;
 
 namespace Simple.OData.Client
 {
@@ -28,7 +29,7 @@ namespace Simple.OData.Client
                 return _model.SchemaElements
                     .Where(x => x.SchemaElementKind == EdmSchemaElementKind.TypeDefinition &&
                         (x as IEdmSchemaType).TypeKind == EdmTypeKind.Entity)
-                    .Select(x => EdmEntityType.FromODataType(x as IEdmEntityType)).ToArray();
+                    .Select(x => EdmEntityType.FromModel(x as IEdmEntityType)).ToArray();
             }
         }
 
@@ -39,7 +40,7 @@ namespace Simple.OData.Client
                 return _model.SchemaElements
                     .Where(x => x.SchemaElementKind == EdmSchemaElementKind.TypeDefinition &&
                         (x as IEdmSchemaType).TypeKind == EdmTypeKind.Complex)
-                    .Select(x => EdmComplexType.FromODataType(x as IEdmComplexType)).ToArray();
+                    .Select(x => EdmComplexType.FromModel(x as IEdmComplexType)).ToArray();
             }
         }
 
@@ -50,7 +51,7 @@ namespace Simple.OData.Client
                 return _model.SchemaElements
                     .Where(x => x.SchemaElementKind == EdmSchemaElementKind.TypeDefinition &&
                         (x as IEdmSchemaType).TypeKind == EdmTypeKind.Enum)
-                    .Select(x => EdmEnumType.FromODataType(x as IEdmEnumType)).ToArray();
+                    .Select(x => EdmEnumType.FromModel(x as IEdmEnumType)).ToArray();
             }
         }
 
@@ -71,7 +72,9 @@ namespace Simple.OData.Client
                     {
                         Namespace = x.Namespace,
                         Name = x.Name,
-                        EntitySets = x.EntitySets().Select(EdmEntitySet.FromODataEntitySet).ToArray(),
+                        EntitySets = x.EntitySets().Select(EdmEntitySet.FromModel).ToArray(),
+                        FunctionImports = x.FunctionImports().Select(EdmFunctionImport.FromModel).ToArray(),
+                        IsDefaulEntityContainer = _model.IsDefaultEntityContainer(x)
                     }).ToArray();
             }
         }

@@ -94,7 +94,7 @@ namespace Simple.OData.Client
             return Tuple.Create(edmEnumType != null, edmEnumType);
         }
 
-        public static EdmEnumType FromODataType(Microsoft.Data.Edm.IEdmEnumType type)
+        public static EdmEnumType FromModel(Microsoft.Data.Edm.IEdmEnumType type)
         {
             return new EdmEnumType
             {
@@ -103,7 +103,7 @@ namespace Simple.OData.Client
             };
         }
 
-        public static EdmEnumType FromODataType(Microsoft.OData.Edm.IEdmEnumType type)
+        public static EdmEnumType FromModel(Microsoft.OData.Edm.IEdmEnumType type)
         {
             return new EdmEnumType
             {
@@ -138,7 +138,7 @@ namespace Simple.OData.Client
         public string ConcurrencyMode { get; set; }
     }
 
-    public sealed class EdmNavigationProperty
+    public sealed partial class EdmNavigationProperty
     {
         public string Name { get; set; }
         public string ToRole { get; set; }
@@ -146,7 +146,7 @@ namespace Simple.OData.Client
         public string Relationship { get; set; }
     }
 
-    public sealed class EdmKey
+    public sealed partial class EdmKey
     {
         public string[] Properties { get; set; }
     }
@@ -176,7 +176,7 @@ namespace Simple.OData.Client
         public string EntitySet { get; set; }
     }
 
-    public sealed class EdmFunctionImport
+    public sealed partial class EdmFunctionImport
     {
         public string Name { get; set; }
         public string HttpMethod { get; set; }
@@ -185,7 +185,7 @@ namespace Simple.OData.Client
         public EdmParameter[] Parameters { get; set; }
     }
 
-    public sealed class EdmParameter
+    public sealed partial class EdmParameter
     {
         public string Name { get; set; }
         public EdmPropertyType Type { get; set; }

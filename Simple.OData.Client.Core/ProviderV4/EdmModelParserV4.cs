@@ -28,7 +28,7 @@ namespace Simple.OData.Client
                 return _model.SchemaElements
                     .Where(x => x.SchemaElementKind == EdmSchemaElementKind.TypeDefinition &&
                         (x as IEdmSchemaType).TypeKind == EdmTypeKind.Entity)
-                    .Select(x => EdmEntityType.FromODataType(x as IEdmEntityType)).ToArray();
+                    .Select(x => EdmEntityType.FromModel(x as IEdmEntityType)).ToArray();
             }
         }
 
@@ -39,7 +39,7 @@ namespace Simple.OData.Client
                 return _model.SchemaElements
                     .Where(x => x.SchemaElementKind == EdmSchemaElementKind.TypeDefinition &&
                         (x as IEdmSchemaType).TypeKind == EdmTypeKind.Complex)
-                    .Select(x => EdmComplexType.FromODataType(x as IEdmComplexType)).ToArray();
+                    .Select(x => EdmComplexType.FromModel(x as IEdmComplexType)).ToArray();
             }
         }
 
@@ -50,7 +50,7 @@ namespace Simple.OData.Client
                 return _model.SchemaElements
                     .Where(x => x.SchemaElementKind == EdmSchemaElementKind.TypeDefinition &&
                         (x as IEdmSchemaType).TypeKind == EdmTypeKind.Enum)
-                    .Select(x => EdmEnumType.FromODataType(x as IEdmEnumType)).ToArray();
+                    .Select(x => EdmEnumType.FromModel(x as IEdmEnumType)).ToArray();
             }
         }
 
@@ -71,7 +71,9 @@ namespace Simple.OData.Client
                     {
                         Namespace = x.Namespace,
                         Name = x.Name,
-                        EntitySets = (x as IEdmEntityContainer).EntitySets().Select(EdmEntitySet.FromODataEntitySet).ToArray(),
+                        EntitySets = (x as IEdmEntityContainer).EntitySets().Select(EdmEntitySet.FromModel).ToArray(),
+                        FunctionImports = (x as IEdmEntityContainer).OperationImports().Select(EdmFunctionImport.FromModel).ToArray(),
+                        IsDefaulEntityContainer = false,
                     }).ToArray();
             }
         }

@@ -4,7 +4,7 @@ namespace Simple.OData.Client
 {
     public sealed partial class EdmType
     {
-        public static EdmType FromODataType(IEdmTypeReference type)
+        public static EdmType FromModel(IEdmTypeReference type)
         {
             return new EdmType(type.FullName());
         }

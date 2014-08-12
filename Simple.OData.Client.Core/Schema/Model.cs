@@ -36,6 +36,16 @@ namespace Simple.OData.Client
 
         public IEnumerable<Association> GetAssociations(Table table)
         {
+            var a1 = (from e in _schema.Metadata.EntityContainers
+                //where e.IsDefaulEntityContainer
+                from s in e.AssociationSets
+                select s).ToArray();
+            var a2 = (from e in _schema.Metadata.EntityContainers
+                //where e.IsDefaulEntityContainer
+                from s in e.AssociationSets
+                where s.End.First().EntitySet == table.ActualName
+                select s).ToArray();
+
             var principals = from e in _schema.Metadata.EntityContainers
                              //where e.IsDefaulEntityContainer
                              from s in e.AssociationSets

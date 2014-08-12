@@ -5,20 +5,32 @@ namespace Simple.OData.Client
 {
     public abstract partial class EdmPropertyType
     {
-        public static EdmPropertyType FromODataType(IEdmTypeReference type)
+        public static EdmPropertyType FromModel(IEdmTypeReference type)
         {
             switch (type.Definition.TypeKind)
             {
-                case EdmTypeKind.Primitive:
-                    return new EdmPrimitivePropertyType
+                case EdmTypeKind.Entity:
+                    return new EdmEntityPropertyType
                     {
-                        Type = EdmType.FromODataType(type),
+                        Type = EdmEntityType.FromModel(type.Definition as IEdmEntityType),
                     };
 
                 case EdmTypeKind.Complex:
-                    return new EdmComplexPropertyType()
+                    return new EdmComplexPropertyType
                     {
-                        Type = EdmComplexType.FromODataType(type.Definition as IEdmComplexType),
+                        Type = EdmComplexType.FromModel(type.Definition as IEdmComplexType),
+                    };
+
+                case EdmTypeKind.Primitive:
+                    return new EdmPrimitivePropertyType
+                    {
+                        Type = EdmType.FromModel(type),
+                    };
+
+                case EdmTypeKind.Collection:
+                    return new EdmCollectionPropertyType
+                    {
+                        BaseType = EdmPropertyType.FromModel((type.Definition as IEdmCollectionType).ElementType),
                     };
 
                 default:
