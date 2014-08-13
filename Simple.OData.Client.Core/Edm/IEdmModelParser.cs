@@ -6,7 +6,6 @@
         EdmEntityType[] EntityTypes { get; }
         EdmComplexType[] ComplexTypes { get; }
         EdmEnumType[] EnumTypes { get; }
-        EdmAssociation[] Associations { get; }
         EdmEntityContainer[] EntityContainers { get; }
     }
 }

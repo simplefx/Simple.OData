@@ -7,7 +7,7 @@ namespace Simple.OData.Client
 {
     class EdmModelParserV3 : IEdmModelParser
     {
-        private IEdmModel _model;
+        private readonly IEdmModel _model;
 
         public EdmModelParserV3(IEdmModel model)
         {
@@ -52,14 +52,6 @@ namespace Simple.OData.Client
                     .Where(x => x.SchemaElementKind == EdmSchemaElementKind.TypeDefinition &&
                         (x as IEdmSchemaType).TypeKind == EdmTypeKind.Enum)
                     .Select(x => EdmEnumType.FromModel(x as IEdmEnumType)).ToArray();
-            }
-        }
-
-        public EdmAssociation[] Associations
-        {
-            get
-            {
-                throw new NotImplementedException();
             }
         }
 

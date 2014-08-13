@@ -36,41 +36,10 @@ namespace Simple.OData.Client
 
         public IEnumerable<Association> GetAssociations(Table table)
         {
-            var a1 = (from e in _schema.Metadata.EntityContainers
-                //where e.IsDefaulEntityContainer
-                from s in e.AssociationSets
-                select s).ToArray();
-            var a2 = (from e in _schema.Metadata.EntityContainers
-                //where e.IsDefaulEntityContainer
-                from s in e.AssociationSets
-                where s.End.First().EntitySet == table.ActualName
-                select s).ToArray();
-
-            var principals = from e in _schema.Metadata.EntityContainers
-                             //where e.IsDefaulEntityContainer
-                             from s in e.AssociationSets
-                             where s.End.First().EntitySet == table.ActualName
-                             from a in _schema.Metadata.Associations
-                             where s.Association == GetQualifiedName(table.EntityType.Namespace, a.Name)
-                             from n in a.End
-                             where n.Role == s.End.Last().Role
-                             from t in GetEntityTypeWithBaseTypes(table.EntityType)
-                             from np in t.NavigationProperties
-                             where np.Relationship == GetQualifiedName(table.EntityType.Namespace, a.Name) && np.ToRole == n.Role
-                             select CreateAssociation(np.Name, s.End.Last(), n);
-            var dependents = from e in _schema.Metadata.EntityContainers
-                             //where e.IsDefaulEntityContainer
-                             from s in e.AssociationSets
-                             where s.End.Last().EntitySet == table.ActualName
-                             from a in _schema.Metadata.Associations
-                             where s.Association == GetQualifiedName(table.EntityType.Namespace, a.Name)
-                             from n in a.End
-                             where n.Role == s.End.First().Role
-                             from t in GetEntityTypeWithBaseTypes(table.EntityType)
-                             from np in t.NavigationProperties
-                             where np.Relationship == GetQualifiedName(table.EntityType.Namespace, a.Name) && np.ToRole == n.Role
-                             select CreateAssociation(np.Name, s.End.First(), n);
-            return principals.Union(dependents);
+            return from t in GetEntityTypeWithBaseTypes(table.EntityType)
+                   from np in t.NavigationProperties
+                   select CreateAssociation(np.Name, np.PartnerName, np.Multiplicity);
+            return null;
         }
 
         public Key GetPrimaryKey(Table table)
@@ -123,9 +92,9 @@ namespace Simple.OData.Client
             return string.IsNullOrEmpty(schemaName) ? name : string.Format("{0}.{1}", schemaName, name);
         }
 
-        private Association CreateAssociation(string associationName, EdmAssociationSetEnd associationSetEnd, EdmAssociationEnd associationEnd)
+        private Association CreateAssociation(string associationName, string partnerEntitySetName, string multiplicity)
         {
-            return new Association(associationName, associationSetEnd.EntitySet, associationEnd.Multiplicity);
+            return new Association(associationName, partnerEntitySetName, multiplicity);
         }
 
         private Function CreateFunction(EdmFunctionImport f)

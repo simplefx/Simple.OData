@@ -12,7 +12,6 @@ namespace Simple.OData.Client
         public EdmEntityType[] EntityTypes { get; private set; }
         public EdmComplexType[] ComplexTypes { get; private set; }
         public EdmEnumType[] EnumTypes { get; private set; }
-        public EdmAssociation[] Associations { get; private set; }
         public EdmEntityContainer[] EntityContainers { get; private set; }
 
         internal EdmSchema(EdmSchemaParser parser)
@@ -20,7 +19,6 @@ namespace Simple.OData.Client
             this.EntityTypes = parser.EntityTypes.ToArray();
             this.ComplexTypes = parser.ComplexTypes.ToArray();
             this.EnumTypes = parser.EnumTypes.ToArray();
-            this.Associations = parser.Associations.ToArray();
             this.EntityContainers = parser.EntityContainers.ToArray();
         }
 
@@ -30,7 +28,6 @@ namespace Simple.OData.Client
             this.EntityTypes = parser.EntityTypes;
             this.ComplexTypes = parser.ComplexTypes;
             this.EnumTypes = parser.EnumTypes;
-            //this.Associations = parser.Associations;
             this.EntityContainers = parser.EntityContainers;
         }
     }
@@ -39,13 +36,6 @@ namespace Simple.OData.Client
     {
         public string Name { get; set; }
         public string EntityType { get; set; }
-    }
-
-    public sealed class EdmAssociationSet
-    {
-        public string Name { get; set; }
-        public string Association { get; set; }
-        public EdmAssociationSetEnd[] End { get; set; }
     }
 
     public sealed partial class EdmEntityType
@@ -80,7 +70,7 @@ namespace Simple.OData.Client
         }
     }
 
-    public sealed class EdmEnumType
+    public sealed partial class EdmEnumType
     {
         public string Namespace { get; set; }
         public string Name { get; set; }
@@ -93,31 +83,6 @@ namespace Simple.OData.Client
             var edmEnumType = enumTypes.SingleOrDefault(x => x.Name == s);
             return Tuple.Create(edmEnumType != null, edmEnumType);
         }
-
-        public static EdmEnumType FromModel(Microsoft.Data.Edm.IEdmEnumType type)
-        {
-            return new EdmEnumType
-            {
-                Namespace = type.Namespace,
-                Name = type.Name,
-            };
-        }
-
-        public static EdmEnumType FromModel(Microsoft.OData.Edm.IEdmEnumType type)
-        {
-            return new EdmEnumType
-            {
-                Namespace = type.Namespace,
-                Name = type.Name,
-            };
-        }
-    }
-
-    public sealed class EdmAssociation
-    {
-        public string Name { get; set; }
-        public EdmAssociationEnd[] End { get; set; }
-        public EdmReferentialConstraint ReferentialConstraint { get; set; }
     }
 
     public sealed class EdmEntityContainer
@@ -126,7 +91,6 @@ namespace Simple.OData.Client
         public string Name { get; set; }
         public bool IsDefaulEntityContainer { get; set; }
         public EdmEntitySet[] EntitySets { get; set; }
-        public EdmAssociationSet[] AssociationSets { get; set; }
         public EdmFunctionImport[] FunctionImports { get; set; }
     }
 
@@ -141,39 +105,16 @@ namespace Simple.OData.Client
     public sealed partial class EdmNavigationProperty
     {
         public string Name { get; set; }
+        public string PartnerName { get; set; }
         public string ToRole { get; set; }
         public string FromRole { get; set; }
         public string Relationship { get; set; }
+        public string Multiplicity { get; set; }
     }
 
     public sealed partial class EdmKey
     {
         public string[] Properties { get; set; }
-    }
-
-    public sealed class EdmAssociationEnd
-    {
-        public string Role { get; set; }
-        public string Type { get; set; }
-        public string Multiplicity { get; set; }
-    }
-
-    public sealed class EdmReferentialConstraint
-    {
-        public EdmReferentialConstraintEnd Principal { get; set; }
-        public EdmReferentialConstraintEnd Dependent { get; set; }
-    }
-
-    public sealed class EdmReferentialConstraintEnd
-    {
-        public string Role { get; set; }
-        public string[] Properties { get; set; }
-    }
-
-    public sealed class EdmAssociationSetEnd
-    {
-        public string Role { get; set; }
-        public string EntitySet { get; set; }
     }
 
     public sealed partial class EdmFunctionImport

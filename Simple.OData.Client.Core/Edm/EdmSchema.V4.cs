@@ -69,6 +69,18 @@ namespace Simple.OData.Client
         }
     }
 
+    public sealed partial class EdmEnumType
+    {
+        public static EdmEnumType FromModel(IEdmEnumType type)
+        {
+            return new EdmEnumType
+            {
+                Namespace = type.Namespace,
+                Name = type.Name,
+            };
+        }
+    }
+
     public sealed partial class EdmProperty
     {
         public static EdmProperty FromModel(IEdmStructuralProperty property)
@@ -88,11 +100,29 @@ namespace Simple.OData.Client
         {
             return new EdmNavigationProperty()
             {
-                Name = property.Name, // TODO
-                FromRole = property.Name,
-                ToRole = property.Partner.Name,
+                // TODO
+                Name = property.Name,
+                PartnerName = (property.Partner.DeclaringType as IEdmEntityType).Name,
+                FromRole = property.Name, // TODO
+                ToRole = property.Partner.Name, // TODO
                 Relationship = "", // TODO
+                Multiplicity = GetMultiplicityString(property.Partner.TargetMultiplicity()),
             };
+        }
+
+        private static string GetMultiplicityString(EdmMultiplicity multiplicity)
+        {
+            switch (multiplicity)
+            {
+                case EdmMultiplicity.ZeroOrOne:
+                    return "0..1";
+                case EdmMultiplicity.One:
+                    return "1";
+                case EdmMultiplicity.Many:
+                    return "*";
+                default:
+                    throw new ArgumentException("Invalid multiplicity " + multiplicity);
+            }
         }
     }
 

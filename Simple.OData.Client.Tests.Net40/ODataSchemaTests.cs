@@ -55,7 +55,7 @@ namespace Simple.OData.Client.Tests
             var table = (await client.GetSchemaAsync()).FindTable("Product");
 
             var association = table.FindAssociation("Categories");
-            Assert.Equal("Categories", association.ReferenceTableName);
+            Assert.Equal("Category", association.ReferenceTableName);
             Assert.Equal(mulitiplicity, association.Multiplicity);
         }
 
