@@ -13,7 +13,7 @@ namespace Simple.OData.Client.Tests
         [InlineData("V2", 3)]
         [InlineData("V3", 10)]
         //[InlineData("V4", 10)]
-        public async Task EntityTypeы(string protocolVersion, int typeCount)
+        public async Task EntityTypes(string protocolVersion, int typeCount)
         {
             var client = new ODataClient(string.Format(_serviceUrl, protocolVersion));
 
@@ -68,8 +68,13 @@ namespace Simple.OData.Client.Tests
             var client = new ODataClient(string.Format(_serviceUrl, protocolVersion));
 
             var function = (await client.GetSchemaAsync()).FindFunction("GetProductsByRating");
+
+            Assert.Equal("GetProductsByRating", function.ActualName);
             Assert.Equal("GET", function.HttpMethod);
+            Assert.Equal(1, function.Parameters.Count);
             Assert.Equal("rating", function.Parameters[0]);
+            Assert.Equal("Collection(Product)", function.ReturnType);
+            Assert.Equal("Products", function.TableName);
         }
     }
 }
