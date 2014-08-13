@@ -65,6 +65,23 @@ namespace Simple.OData.Client.Tests
         [InlineData("V2")]
         [InlineData("V3")]
         [InlineData("V4")]
+        public async Task GetTableProperties(string protocolVersion)
+        {
+            var client = new ODataClient(string.Format(_serviceUrl, protocolVersion));
+
+            var table = (await client.GetSchemaAsync()).FindTable("Customers");
+
+            Assert.Equal("Customers", table.ActualName);
+            Assert.Null(table.BaseTable);
+            Assert.Equal("Customer", table.EntityType.Name);
+            Assert.Equal(1, table.PrimaryKey.AsEnumerable().Count());
+            Assert.Equal(2, table.Associations.Count());
+        }
+
+        [Theory]
+        [InlineData("V2")]
+        [InlineData("V3")]
+        [InlineData("V4")]
         public async Task GetColumnsCount(string protocolVersion)
         {
             var client = new ODataClient(string.Format(_serviceUrl, protocolVersion));
@@ -79,6 +96,19 @@ namespace Simple.OData.Client.Tests
         [InlineData("V3")]
         [InlineData("V4")]
         public async Task FindColumn(string protocolVersion)
+        {
+            var client = new ODataClient(string.Format(_serviceUrl, protocolVersion));
+
+            var column = (await client.GetSchemaAsync()).FindTable("Employees").FindColumn("first_name");
+
+            Assert.NotNull(column);
+        }
+
+        [Theory]
+        [InlineData("V2")]
+        [InlineData("V3")]
+        [InlineData("V4")]
+        public async Task GetColumnProperties(string protocolVersion)
         {
             var client = new ODataClient(string.Format(_serviceUrl, protocolVersion));
 
@@ -126,8 +156,10 @@ namespace Simple.OData.Client.Tests
 
             var association = (await client.GetSchemaAsync()).FindTable("Employees").FindAssociation("Employee1");
 
+            Assert.Equal("Employee1", association.ActualName);
             Assert.Equal("Employees", association.ReferenceTableName);
             Assert.Equal("0..1", association.Multiplicity);
+            Assert.False(association.IsMultiple);
         }
 
         [Theory]
@@ -140,8 +172,10 @@ namespace Simple.OData.Client.Tests
 
             var association = (await client.GetSchemaAsync()).FindTable("Employees").FindAssociation("Employees1");
 
+            Assert.Equal("Employees1", association.ActualName);
             Assert.Equal("Employees", association.ReferenceTableName);
             Assert.Equal("*", association.Multiplicity);
+            Assert.True(association.IsMultiple);
         }
 
         [Theory]
