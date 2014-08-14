@@ -12,7 +12,7 @@ namespace Simple.OData.Client.Extensions
 
         public static string ToIso8601String(this DateTimeOffset dateTimeOffset)
         {
-            return dateTimeOffset.ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
+            return dateTimeOffset.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz");
         }
 
         public static string ToIso8601String(this TimeSpan timeSpan)
@@ -28,7 +28,7 @@ namespace Simple.OData.Client.Extensions
 
         public static string ToODataString(this DateTimeOffset dateTimeOffset, ValueFormatter.FormattingStyle formattingStyle)
         {
-            var value = dateTimeOffset.ToString("yyyy-MM-ddTHH:mm:ss.fffffffZ");
+            var value = dateTimeOffset.ToString("yyyy-MM-ddTHH:mm:ss.fffffffzzz");
             return string.Format(@"datetimeoffset'{0}'", value);
         }
 

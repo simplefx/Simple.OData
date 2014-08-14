@@ -177,8 +177,8 @@ namespace Simple.OData.Client.Tests
         public void EqualDateTimeOffset()
         {
             var x = ODataDynamic.Expression;
-            var filter = x.Updated == new DateTimeOffset(new DateTime(2013, 1, 1));
-            Assert.Equal("Updated eq datetimeoffset'2013-01-01T00:00:00.0000000Z'", filter.ToString());
+            var filter = x.Updated == new DateTimeOffset(new DateTime(2013, 1, 1, 0, 0, 0, DateTimeKind.Utc));
+            Assert.Equal("Updated eq datetimeoffset'2013-01-01T00:00:00.0000000+00:00'", filter.ToString());
         }
 
         [Fact]

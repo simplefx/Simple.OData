@@ -167,8 +167,8 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void EqualDateTimeOffset()
         {
-            Expression<Func<TestEntity, bool>> filter = x => x.Updated == new DateTimeOffset(new DateTime(2013, 1, 1));
-            Assert.Equal("Updated eq datetimeoffset'2013-01-01T00:00:00.0000000Z'", ODataExpression.FromLinqExpression(filter).ToString());
+            Expression<Func<TestEntity, bool>> filter = x => x.Updated == new DateTimeOffset(new DateTime(2013, 1, 1, 0, 0, 0, DateTimeKind.Utc));
+            Assert.Equal("Updated eq datetimeoffset'2013-01-01T00:00:00.0000000+00:00'", ODataExpression.FromLinqExpression(filter).ToString());
         }
 
         [Fact]
