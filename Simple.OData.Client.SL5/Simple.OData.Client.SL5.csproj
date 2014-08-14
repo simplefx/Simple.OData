@@ -176,6 +176,9 @@
     <Compile Include="..\Simple.OData.Client.Core\Extensions\LongExtensions.cs">
       <Link>Extensions\LongExtensions.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Extensions\MemberInfoExtensions.cs">
+      <Link>Extensions\MemberInfoExtensions.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Extensions\StringExtensions.cs">
       <Link>Extensions\StringExtensions.cs</Link>
     </Compile>

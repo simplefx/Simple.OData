@@ -67,6 +67,7 @@
     <Compile Include="DynamicExpressionTests.cs" />
     <Compile Include="DynamicFilterAsKeyTests.cs" />
     <Compile Include="Entities\Category.cs" />
+    <Compile Include="Entities\CustomAttributes.cs" />
     <Compile Include="Entities\Customer.cs" />
     <Compile Include="Entities\Employee.cs" />
     <Compile Include="Entities\Order.cs" />

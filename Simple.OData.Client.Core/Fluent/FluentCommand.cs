@@ -337,7 +337,10 @@ namespace Simple.OData.Client
             var dict = new Dictionary<string, object>();
             foreach (var property in properties)
             {
-                dict.Add(property.Name, property.GetValue(value, null));
+                if (Utils.IsPropertyExcludedFromMapping(property))
+                    continue;
+
+                dict.Add(Utils.MapPropertyName(property), property.GetValue(value, null));
             }
             _entryData = dict;
         }

@@ -112,6 +112,9 @@
     <Compile Include="..\Simple.OData.Client.Tests.Core\Entities\Category.cs">
       <Link>Entities\Category.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Core\Entities\CustomAttributes.cs">
+      <Link>Entities\CustomAttributes.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Core\Entities\Customer.cs">
       <Link>Entities\Customer.cs</Link>
     </Compile>

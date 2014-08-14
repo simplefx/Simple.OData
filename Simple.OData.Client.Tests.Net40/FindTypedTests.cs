@@ -85,6 +85,21 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task MappedColumn()
+        {
+            await _client
+                .For<Product>()
+                .Set(new Product { ProductName = "Test1", UnitPrice = 18m, MappedEnglishName = "EnglishTest" })
+                .InsertEntryAsync(false);
+
+            var product = await _client
+                .For<Product>()
+                .Filter(x => x.ProductName == "Test1")
+                .FindEntryAsync();
+            Assert.Equal("EnglishTest", product.MappedEnglishName);
+        }
+
+        [Fact]
         public async Task StringContains()
         {
             var products = await _client
