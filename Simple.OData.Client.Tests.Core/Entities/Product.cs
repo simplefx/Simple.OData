@@ -7,6 +7,16 @@
         public decimal UnitPrice { get; set; }
         public int? CategoryID { get; set; }
 
+        [NotMapped]
+        public int NotMappedProperty { get; set; }
+        [Column(Name = "EnglishName")]
+        public string MappedEnglishName { get; set; }
+
         public Category Category { get; set; }
+
+        public Product()
+        {
+            this.NotMappedProperty = 42;
+        }
     }
 }

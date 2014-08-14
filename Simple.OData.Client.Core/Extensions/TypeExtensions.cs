@@ -9,6 +9,11 @@ namespace Simple.OData.Client.Extensions
     static class TypeExtensions
     {
 #if NET40 || SILVERLIGHT || PORTABLE_LEGACY
+        public static IEnumerable<PropertyInfo> GetAllProperties(this Type type)
+        {
+            return type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+        }
+
         public static IEnumerable<PropertyInfo> GetDeclaredProperties(this Type type)
         {
             return type.GetProperties();
@@ -74,6 +79,17 @@ namespace Simple.OData.Client.Extensions
             return type.IsEnum;
         }
 #else
+        public static IEnumerable<PropertyInfo> GetAllProperties(this Type type)
+        {
+            var properties = type.GetTypeInfo().DeclaredProperties.ToList();
+
+            var subtype = type.GetTypeInfo().BaseType;
+            if (subtype != null)
+                properties.AddRange(subtype.GetAllProperties());
+
+            return properties.ToArray();
+        }
+
         public static IEnumerable<PropertyInfo> GetDeclaredProperties(this Type type)
         {
             return type.GetTypeInfo().DeclaredProperties;

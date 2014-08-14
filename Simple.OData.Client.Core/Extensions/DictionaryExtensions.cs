@@ -129,7 +129,12 @@ namespace Simple.OData.Client.Extensions
                 if (item.Value != null)
                 {
                     var property = type.GetDeclaredProperty(item.Key);
-                    if (property != null)
+                    if (property == null)
+                    {
+                        property = type.GetDeclaredProperties()
+                            .FirstOrDefault(x => Utils.MapPropertyName(x) == item.Key);
+                    }
+                    if (property != null && !Utils.IsPropertyExcludedFromMapping(property))
                     {
                         property.SetValue(value, ConvertValue(property.PropertyType, item.Value), null);
                     }
@@ -153,7 +158,6 @@ namespace Simple.OData.Client.Extensions
                 propInfo => propInfo.Name,
                 propInfo => propInfo.GetValue(source, null)
             );
-
         }
 
         private static T CreateInstance<T>()

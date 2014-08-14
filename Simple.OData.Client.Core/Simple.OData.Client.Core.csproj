@@ -51,6 +51,7 @@
     <Compile Include="Edm\EdmSchema.V4.cs" />
     <Compile Include="Edm\EdmType.V3.cs" />
     <Compile Include="Edm\EdmType.V4.cs" />
+    <Compile Include="Extensions\MemberInfoExtensions.cs" />
     <Compile Include="Fluent\IFluentClient.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />
     <Compile Include="Http\BatchRequestBuilder.cs" />

@@ -33,6 +33,18 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task InsertWithMappedColumn()
+        {
+            var product = await _client
+                .For<Product>()
+                .Set(new Product { ProductName = "Test1", UnitPrice = 18m, MappedEnglishName  = "EnglishTest" })
+                .InsertEntryAsync();
+
+            Assert.Equal("Test1", product.ProductName);
+            Assert.Equal("EnglishTest", product.MappedEnglishName);
+        }
+
+        [Fact]
         public async Task InsertProductWithCategoryByID()
         {
             var category = await _client
