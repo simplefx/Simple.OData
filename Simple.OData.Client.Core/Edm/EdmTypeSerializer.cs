@@ -302,7 +302,7 @@ namespace Simple.OData.Client
                     else
                     {
                         var edmType = (property.Type as EdmComplexPropertyType).Type;
-                        element.SetAttributeValue(root.GetNamespaceOfPrefix("m") + "type", edmType.Name);
+                        element.SetAttributeValue(root.GetNamespaceOfPrefix("m") + "type", edmType.Namespace + "." + edmType.Name);
                         foreach (var prop in kvp.Value as IDictionary<string, object>)
                         {
                             Write(schema, property.Type.Name, root, element, prop);
