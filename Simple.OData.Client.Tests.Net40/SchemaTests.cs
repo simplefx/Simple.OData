@@ -75,6 +75,14 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task GetBaseType()
+        {
+            var entityType = (await _client.GetSchemaAsync()).EntityTypes.Single(x => x.Name == "Ships");
+
+            Assert.Equal("Transport", entityType.BaseType.Name);
+        }
+
+        [Fact]
         public async Task GetEntityTypesCount()
         {
             var entityTypes = (await _client.GetSchemaAsync()).EntityTypes;

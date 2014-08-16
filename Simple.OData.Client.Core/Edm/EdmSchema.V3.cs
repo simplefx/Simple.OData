@@ -36,13 +36,7 @@ namespace Simple.OData.Client
 
         public static EdmEntityType FromModel(IEdmStructuredType type)
         {
-            return type == null ? null : new EdmEntityType
-            {
-                BaseType = FromModel(type.BaseType),
-                Abstract = type.IsAbstract,
-                OpenType = type.IsOpen,
-                Properties = type.StructuralProperties().Select(EdmProperty.FromModel).ToArray(),
-            };
+            return type == null ? null : FromModel(type as IEdmEntityType);
         }
     }
 
