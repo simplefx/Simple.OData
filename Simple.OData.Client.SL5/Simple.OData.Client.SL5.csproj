@@ -371,12 +371,6 @@
     <Compile Include="..\Simple.OData.Client.Core\Schema\ColumnCollection.cs">
       <Link>Schema\ColumnCollection.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Schema\Function.cs">
-      <Link>Schema\Function.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Schema\FunctionCollection.cs">
-      <Link>Schema\FunctionCollection.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Schema\ISchema.cs">
       <Link>Schema\ISchema.cs</Link>
     </Compile>

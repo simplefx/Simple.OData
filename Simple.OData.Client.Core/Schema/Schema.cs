@@ -23,7 +23,7 @@ namespace Simple.OData.Client
         private Lazy<EdmSchema> _lazyMetadata;
         private Lazy<ProviderMetadata> _lazyProviderMetadata;
         private Lazy<TableCollection> _lazyTables;
-        private Lazy<FunctionCollection> _lazyFunctions;
+        //private Lazy<FunctionCollection> _lazyFunctions;
         private Lazy<List<EdmEntityType>> _lazyEntityTypes;
         private Lazy<List<EdmComplexType>> _lazyComplexTypes;
 
@@ -56,7 +56,7 @@ namespace Simple.OData.Client
             _lazyMetadata = new Lazy<EdmSchema>(CreateEdmSchema);
             _lazyProviderMetadata = new Lazy<ProviderMetadata>(CreateProviderMetadata);
             _lazyTables = new Lazy<TableCollection>(CreateTableCollection);
-            _lazyFunctions = new Lazy<FunctionCollection>(CreateFunctionCollection);
+            //_lazyFunctions = new Lazy<FunctionCollection>(CreateFunctionCollection);
             _lazyEntityTypes = new Lazy<List<EdmEntityType>>(CreateEntityTypeCollection);
             _lazyComplexTypes = new Lazy<List<EdmComplexType>>(CreateComplexTypeCollection);
         }
@@ -188,21 +188,6 @@ namespace Simple.OData.Client
             }
         }
 
-        public IEnumerable<Function> Functions
-        {
-            get { return _lazyFunctions.Value.AsEnumerable(); }
-        }
-
-        public bool HasFunction(string functionName)
-        {
-            return _lazyFunctions.Value.Contains(functionName);
-        }
-
-        public Function FindFunction(string functionName)
-        {
-            return _lazyFunctions.Value.Find(functionName);
-        }
-
         public IEnumerable<EdmEntityType> EntityTypes
         {
             get { return _lazyEntityTypes.Value.AsEnumerable(); }
@@ -265,10 +250,10 @@ namespace Simple.OData.Client
                 .Select(table => new Table(table.ActualName, table.EntityType, null, this)));
         }
 
-        private FunctionCollection CreateFunctionCollection()
-        {
-            return new FunctionCollection(_model.GetFunctions());
-        }
+        //private FunctionCollection CreateFunctionCollection()
+        //{
+        //    return new FunctionCollection(_model.GetFunctions());
+        //}
 
         private List<EdmEntityType> CreateEntityTypeCollection()
         {

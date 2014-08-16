@@ -383,12 +383,6 @@
     <Compile Include="..\Simple.OData.Client.Core\Schema\Schema.cs">
       <Link>Schema\Schema.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Schema\Function.cs">
-      <Link>Schema\Function.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Schema\FunctionCollection.cs">
-      <Link>Schema\FunctionCollection.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Schema\Key.cs">
       <Link>Schema\Key.cs</Link>
     </Compile>

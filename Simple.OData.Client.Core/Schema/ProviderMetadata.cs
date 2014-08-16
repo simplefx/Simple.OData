@@ -4,5 +4,7 @@
     {
         public string ProtocolVersion { get; set; }
         public object Model { get; set; }
+
+        public abstract string GetFunctionActualName(string functionName);
     }
 }

@@ -52,14 +52,6 @@ namespace Simple.OData.Client
                     select new Key(t.Key.Properties)).SingleOrDefault();
         }
 
-        public IEnumerable<Function> GetFunctions()
-        {
-            return from e in _schema.Metadata.EntityContainers
-                   //where e.IsDefaulEntityContainer
-                   from f in e.FunctionImports
-                   select CreateFunction(f);
-        }
-
         public IEnumerable<EdmEntityType> GetEntityTypes()
         {
             return from t in _schema.Metadata.EntityTypes
@@ -95,16 +87,6 @@ namespace Simple.OData.Client
         private Association CreateAssociation(string associationName, string partnerEntitySetName, string multiplicity)
         {
             return new Association(associationName, partnerEntitySetName, multiplicity);
-        }
-
-        private Function CreateFunction(EdmFunctionImport f)
-        {
-            return new Function(
-                f.Name,
-                f.HttpMethod,
-                f.EntitySet,
-                f.ReturnType == null ? null : f.ReturnType.Name,
-                f.Parameters.Select(p => p.Name));
         }
 
         private IEnumerable<EdmEntityType> GetEntityTypeWithBaseTypes(EdmEntityType entityType)

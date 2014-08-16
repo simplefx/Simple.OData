@@ -42,9 +42,8 @@ namespace Simple.OData.Client.Tests
             Assert.AreEqual("Categories", association.ReferenceTableName);
             Assert.AreEqual("0..1", association.Multiplicity);
 
-            var function = schema.FindFunction("GetProductsByRating");
-            Assert.AreEqual(RestVerbs.GET, function.HttpMethod);
-            Assert.AreEqual("rating", function.Parameters[0]);
+            //var function = schema.FindFunction("GetProductsByRating");
+            //Assert.AreEqual("rating", function.Parameters[0]);
 
             Assert.AreEqual(3, schema.EntityTypes.Count());
             Assert.AreEqual(1, schema.ComplexTypes.Count());
@@ -64,9 +63,8 @@ namespace Simple.OData.Client.Tests
             Assert.AreEqual("Categories", association.ReferenceTableName);
             Assert.AreEqual("*", association.Multiplicity);
 
-            var function = schema.FindFunction("GetProductsByRating");
-            Assert.AreEqual(RestVerbs.GET, function.HttpMethod);
-            Assert.AreEqual("rating", function.Parameters[0]);
+            //var function = schema.FindFunction("GetProductsByRating");
+            //Assert.AreEqual("rating", function.Parameters[0]);
 
             Assert.AreEqual(10, schema.EntityTypes.Count());
             Assert.AreEqual(1, schema.ComplexTypes.Count());

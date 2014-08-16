@@ -493,14 +493,13 @@ namespace Simple.OData.Client
             await _schema.ResolveAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var function = _schema.FindFunction(functionName);
             var commandText = await GetFluentClient()
                 .Function(functionName)
                 .Parameters(parameters)
                 .GetCommandTextAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var command = new HttpCommand(function.HttpMethod.ToUpper(), commandText);
+            var command = new HttpCommand(RestVerbs.GET, commandText);
             var request = _requestBuilder.CreateRequest(command);
             return await _requestRunner.ExecuteFunctionAsync(request, cancellationToken);
         }

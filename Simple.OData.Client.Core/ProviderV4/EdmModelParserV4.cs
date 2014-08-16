@@ -64,7 +64,6 @@ namespace Simple.OData.Client
                         Namespace = x.Namespace,
                         Name = x.Name,
                         EntitySets = (x as IEdmEntityContainer).EntitySets().Select(EdmEntitySet.FromModel).ToArray(),
-                        FunctionImports = (x as IEdmEntityContainer).OperationImports().Select(EdmFunctionImport.FromModel).ToArray(),
                         IsDefaulEntityContainer = false,
                     }).ToArray();
             }

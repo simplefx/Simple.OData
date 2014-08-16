@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Linq;
 using System.Net.Http;
 using Microsoft.OData.Core;
 using Microsoft.OData.Edm;
+using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
@@ -11,6 +13,20 @@ namespace Simple.OData.Client
         {
             get { return base.Model as IEdmModel; }
             set { base.Model = value; }
+        }
+
+        public override string GetFunctionActualName(string functionName)
+        {
+            var function = this.Model.SchemaElements
+                .Where(x => x.SchemaElementKind == EdmSchemaElementKind.EntityContainer)
+                .SelectMany(x => (x as IEdmEntityContainer).OperationImports()
+                    .Where(y => y.IsFunctionImport() && y.Name.Homogenize() == functionName.Homogenize()))
+                .SingleOrDefault();
+
+            if (function == null)
+                throw new UnresolvableObjectException(functionName, string.Format("Function {0} not found", functionName));
+
+            return function.Name;
         }
     }
 

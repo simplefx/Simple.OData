@@ -124,8 +124,6 @@
     <Compile Include="Schema\AssociationCollection.cs" />
     <Compile Include="Schema\Column.cs" />
     <Compile Include="Schema\ColumnCollection.cs" />
-    <Compile Include="Schema\Function.cs" />
-    <Compile Include="Schema\FunctionCollection.cs" />
     <Compile Include="Edm\IEdmModelParser.cs" />
     <Compile Include="Schema\ISchema.cs" />
     <Compile Include="Schema\Key.cs" />

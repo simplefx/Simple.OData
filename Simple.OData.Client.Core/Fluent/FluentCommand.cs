@@ -464,7 +464,7 @@ namespace Simple.OData.Client
             }
             else if (!string.IsNullOrEmpty(_functionName))
             {
-                commandText += _schema.FindFunction(_functionName).ActualName;
+                commandText += (_schema as Schema).ProviderMetadata.GetFunctionActualName(_functionName);
             }
 
             if (HasKey && HasFilter)

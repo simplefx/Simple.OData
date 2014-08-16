@@ -86,25 +86,6 @@ namespace Simple.OData.Client
         /// <returns>The association found.</returns>
         Association FindAssociation(string tablePath, string associationName);
         /// <summary>
-        /// Gets the schema functions.
-        /// </summary>
-        /// <value>
-        /// The functions.
-        /// </value>
-        IEnumerable<Function> Functions { get; }
-        /// <summary>
-        /// Determines whether the schema has the specified function.
-        /// </summary>
-        /// <param name="functionName">Name of the function.</param>
-        /// <returns><c>true</c> if the schema contains the function; otherwise, <c>false</c>.</returns>
-        bool HasFunction(string functionName);
-        /// <summary>
-        /// Finds the specified function.
-        /// </summary>
-        /// <param name="functionName">Name of the function.</param>
-        /// <returns>The function found.</returns>
-        Function FindFunction(string functionName);
-        /// <summary>
         /// Gets the schema entity types.
         /// </summary>
         /// <value>

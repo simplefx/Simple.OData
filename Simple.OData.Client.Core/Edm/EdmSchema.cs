@@ -91,7 +91,6 @@ namespace Simple.OData.Client
         public string Name { get; set; }
         public bool IsDefaulEntityContainer { get; set; }
         public EdmEntitySet[] EntitySets { get; set; }
-        public EdmFunctionImport[] FunctionImports { get; set; }
     }
 
     public sealed partial class EdmProperty
@@ -115,15 +114,6 @@ namespace Simple.OData.Client
     public sealed partial class EdmKey
     {
         public string[] Properties { get; set; }
-    }
-
-    public sealed partial class EdmFunctionImport
-    {
-        public string Name { get; set; }
-        public string HttpMethod { get; set; }
-        public string EntitySet { get; set; }
-        public EdmPropertyType ReturnType { get; set; }
-        public EdmParameter[] Parameters { get; set; }
     }
 
     public sealed partial class EdmParameter

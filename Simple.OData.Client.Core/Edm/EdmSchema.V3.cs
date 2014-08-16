@@ -128,21 +128,6 @@ namespace Simple.OData.Client
         }
     }
 
-    public sealed partial class EdmFunctionImport
-    {
-        public static EdmFunctionImport FromModel(IEdmFunctionImport function)
-        {
-            return new EdmFunctionImport()
-            {
-                Name = function.Name,
-                HttpMethod = "GET", // TODO
-                ReturnType = EdmPropertyType.FromModel(function.ReturnType),
-                EntitySet = function.EntitySet == null ? null : function.EntitySet.ToString(), // TODO
-                Parameters = function.Parameters.Select(EdmParameter.FromModel).ToArray(),
-            };
-        }
-    }
-
     public sealed partial class EdmParameter
     {
         public static EdmParameter FromModel(IEdmFunctionParameter parameter)
