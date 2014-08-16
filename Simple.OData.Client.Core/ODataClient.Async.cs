@@ -124,6 +124,18 @@ namespace Simple.OData.Client
             return _schema.MetadataAsString;
         }
 
+        public async Task<object> GetMetadataAsync()
+        {
+            await _schema.ResolveAsync(CancellationToken.None);
+            // HACK
+            return (_schema as Schema).ProviderMetadata.Model;
+        }
+
+        public async Task<T> GetMetadataAsync<T>()
+        {
+            return (T)(await GetMetadataAsync());
+        }
+
         public Task<string> GetCommandTextAsync(string collection, ODataExpression expression)
         {
             return GetCommandTextAsync(collection, expression, CancellationToken.None);

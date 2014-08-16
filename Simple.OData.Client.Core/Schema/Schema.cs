@@ -16,10 +16,12 @@ namespace Simple.OData.Client
 
         private readonly SchemaProvider _schemaProvider;
         private readonly Func<Task<string>> _resolveMetadataAsync;
-        private Func<EdmSchema> _createEdmSchema; 
+        private Func<EdmSchema> _createEdmSchema;
+        private Func<ProviderMetadata> _createProviderMetadata;
         private string _metadataString;
 
         private Lazy<EdmSchema> _lazyMetadata;
+        private Lazy<ProviderMetadata> _lazyProviderMetadata;
         private Lazy<TableCollection> _lazyTables;
         private Lazy<FunctionCollection> _lazyFunctions;
         private Lazy<List<EdmEntityType>> _lazyEntityTypes;
@@ -47,6 +49,7 @@ namespace Simple.OData.Client
             _metadataString = null;
 
             _lazyMetadata = new Lazy<EdmSchema>(CreateEdmSchema);
+            _lazyProviderMetadata = new Lazy<ProviderMetadata>(CreateProviderMetadata);
             _lazyTables = new Lazy<TableCollection>(CreateTableCollection);
             _lazyFunctions = new Lazy<FunctionCollection>(CreateFunctionCollection);
             _lazyEntityTypes = new Lazy<List<EdmEntityType>>(CreateEntityTypeCollection);
@@ -66,22 +69,32 @@ namespace Simple.OData.Client
                 {
                     var response = await _schemaProvider.SendSchemaRequestAsync(cancellationToken);
                     _metadataString = await _schemaProvider.GetSchemaAsStringAsync(response);
-                    var metadata = await _schemaProvider.GetSchemaAsync(response);
+                    var providerMetadata = await _schemaProvider.GetMetadataAsync(response);
+                    _createProviderMetadata = () => providerMetadata;
+                    var metadata = await _schemaProvider.GetSchemaAsync(providerMetadata);
                     _createEdmSchema = () => metadata;
                 }
                 else
                 {
                     _metadataString = await _resolveMetadataAsync();
                     _createEdmSchema = () => ResponseReader.GetSchema(_metadataString);
+                    // TODO
                 }
             }
+
             _lazyMetadata = new Lazy<EdmSchema>(CreateEdmSchema);
+            _lazyProviderMetadata = new Lazy<ProviderMetadata>(CreateProviderMetadata);
             return this;
         }
 
         public EdmSchema Metadata
         {
             get { return _lazyMetadata.Value; }
+        }
+
+        public ProviderMetadata ProviderMetadata
+        {
+            get { return _lazyProviderMetadata.Value; }
         }
 
         public string MetadataAsString
@@ -234,6 +247,11 @@ namespace Simple.OData.Client
         private EdmSchema CreateEdmSchema()
         {
             return _createEdmSchema();
+        }
+
+        private ProviderMetadata CreateProviderMetadata()
+        {
+            return _createProviderMetadata();
         }
 
         private TableCollection CreateTableCollection()

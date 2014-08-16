@@ -37,16 +37,26 @@ namespace Simple.OData.Client
             return await response.Content.ReadAsStringAsync();
         }
 
-        public async Task<EdmSchema> GetSchemaAsync(HttpResponseMessage response)
+        public async Task<EdmSchema> GetSchemaAsync(ProviderMetadata providerMetadata)
+        {
+            if (providerMetadata is ProviderMetadataV3)
+                return new ODataProviderV3().CreateEdmSchema(providerMetadata);
+            if (providerMetadata is ProviderMetadataV4)
+                return new ODataProviderV4().CreateEdmSchema(providerMetadata);
+
+            throw new ArgumentException(string.Format("Provider medata of type {0} is not supported", providerMetadata.GetType()), "providerMetadata");
+        }
+
+        public async Task<ProviderMetadata> GetMetadataAsync(HttpResponseMessage response)
         {
             var protocolVersions = GetSupportedProtocolVersions(response).ToArray();
 
             if (protocolVersions.Any(x => x == "4.0"))
-                return new ODataProviderV4().CreateEdmSchema(response);
+                return new ODataProviderV4().GetMetadata(response, protocolVersions.First());
             else if (protocolVersions.Any(x => x == "1.0" || x == "2.0" || x == "3.0"))
-                return new ODataProviderV3().CreateEdmSchema(response);
+                return new ODataProviderV3().GetMetadata(response, protocolVersions.First());
 
-            throw new NotImplementedException();
+            throw new NotSupportedException(string.Format("OData protocol {0} is not supported", protocolVersions));
         }
 
         internal async Task<HttpResponseMessage> SendSchemaRequestAsync(CancellationToken cancellationToken)

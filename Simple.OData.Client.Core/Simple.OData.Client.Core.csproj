@@ -129,6 +129,7 @@
     <Compile Include="Edm\IEdmModelParser.cs" />
     <Compile Include="Schema\ISchema.cs" />
     <Compile Include="Schema\Key.cs" />
+    <Compile Include="Schema\ProviderMetadata.cs" />
     <Compile Include="Schema\Schema.cs" />
     <Compile Include="Schema\Model.cs" />
     <Compile Include="Schema\SchemaProvider.cs" />

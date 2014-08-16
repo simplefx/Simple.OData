@@ -332,6 +332,9 @@
     <Compile Include="..\Simple.OData.Client.Core\Schema\ISchema.cs">
       <Link>Schema\ISchema.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Schema\ProviderMetadata.cs">
+      <Link>Schema\ProviderMetadata.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Schema\SchemaProvider.cs">
       <Link>Schema\SchemaProvider.cs</Link>
     </Compile>
