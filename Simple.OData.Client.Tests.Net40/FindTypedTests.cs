@@ -100,6 +100,16 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task Subclass()
+        {
+            var product = await _client
+                .For<ExtendedProduct>("Products")
+                .Filter(x => x.ProductName == "Chai")
+                .FindEntryAsync();
+            Assert.Equal("Chai", product.ProductName);
+        }
+
+        [Fact]
         public async Task StringContains()
         {
             var products = await _client

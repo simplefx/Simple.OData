@@ -204,7 +204,7 @@ namespace Simple.OData.Client
             if (key != null && key.Length == 1 && IsAnonymousType(key.First().GetType()))
             {
                 var namedKeyValues = key.First();
-                _namedKeyValues = namedKeyValues.GetType().GetDeclaredProperties()
+                _namedKeyValues = Utils.GetMappedProperties(namedKeyValues.GetType())
                     .Select(x => new KeyValuePair<string, object>(x.Name, x.GetValue(namedKeyValues, null))).ToIDictionary();
             }
             else
@@ -333,16 +333,9 @@ namespace Simple.OData.Client
 
         public void Set(object value)
         {
-            var properties = value.GetType().GetDeclaredProperties();
-            var dict = new Dictionary<string, object>();
-            foreach (var property in properties)
-            {
-                if (Utils.IsPropertyExcludedFromMapping(property))
-                    continue;
-
-                dict.Add(Utils.MapPropertyName(property), property.GetValue(value, null));
-            }
-            _entryData = dict;
+            _entryData = Utils.GetMappedProperties(value.GetType())
+                .Select(x => new KeyValuePair<string, object>(x.GetMappedName(), x.GetValue(value, null)))
+                .ToDictionary();
         }
 
         public void Set(IDictionary<string, object> value)

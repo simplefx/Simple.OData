@@ -11,27 +11,50 @@ namespace Simple.OData.Client.Extensions
 #if NET40 || SILVERLIGHT || PORTABLE_LEGACY
         public static IEnumerable<PropertyInfo> GetAllProperties(this Type type)
         {
-            return type.GetProperties(BindingFlags.Instance | BindingFlags.Public);
+            return type.GetProperties(BindingFlags.Instance | BindingFlags.Public)
+                .Where(x => x.DeclaringType != typeof(object));
+        }
+
+        public static PropertyInfo GetAnyProperty(this Type type, string propertyName)
+        {
+            var property = type.GetProperty(propertyName, BindingFlags.Instance | BindingFlags.Public);
+            return property == null || property.DeclaringType == typeof (object) ? null : property;
         }
 
         public static IEnumerable<PropertyInfo> GetDeclaredProperties(this Type type)
         {
-            return type.GetProperties();
+            return type.GetProperties(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
         }
 
         public static PropertyInfo GetDeclaredProperty(this Type type, string propertyName)
         {
-            return type.GetProperty(propertyName);
+            return type.GetProperty(propertyName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly);
+        }
+
+        public static IEnumerable<FieldInfo> GetAllFields(this Type type)
+        {
+            return type.GetFields(BindingFlags.Instance | BindingFlags.Public);
+        }
+
+        public static FieldInfo GetAnyField(this Type type, string fieldName)
+        {
+            var field = type.GetField(fieldName, BindingFlags.Instance | BindingFlags.Public);
+            return field == null || field.DeclaringType == typeof (object) ? null : field;
         }
 
         public static IEnumerable<FieldInfo> GetDeclaredFields(this Type type)
         {
-            return type.GetFields();
+            return type.GetFields(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly);
+        }
+
+        public static FieldInfo GetDeclaredField(this Type type, string fieldName)
+        {
+            return type.GetField(fieldName, BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly);
         }
 
         public static MethodInfo GetDeclaredMethod(this Type type, string methodName)
         {
-            return type.GetMethod(methodName, BindingFlags.Instance | BindingFlags.NonPublic);
+            return type.GetMethod(methodName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
         }
 
         public static IEnumerable<ConstructorInfo> GetDeclaredConstructors(this Type type)
@@ -83,11 +106,25 @@ namespace Simple.OData.Client.Extensions
         {
             var properties = type.GetTypeInfo().DeclaredProperties.ToList();
 
-            var subtype = type.GetTypeInfo().BaseType;
-            if (subtype != null)
-                properties.AddRange(subtype.GetAllProperties());
+            var baseType = type.GetTypeInfo().BaseType;
+            if (baseType != null && baseType != typeof(object))
+                properties.AddRange(baseType.GetAllProperties());
 
             return properties.ToArray();
+        }
+
+        public static PropertyInfo GetAnyProperty(this Type type, string propertyName)
+        {
+            var currentType = type;
+            while (currentType != null && currentType != typeof (object))
+            {
+                var property = currentType.GetTypeInfo().GetDeclaredProperty(propertyName);
+                    if (property != null)
+                        return property;
+
+                currentType = currentType.GetTypeInfo().BaseType;
+            }
+            return null;
         }
 
         public static IEnumerable<PropertyInfo> GetDeclaredProperties(this Type type)
@@ -100,9 +137,39 @@ namespace Simple.OData.Client.Extensions
             return type.GetTypeInfo().GetDeclaredProperty(propertyName);
         }
 
+        public static IEnumerable<FieldInfo> GetAllFields(this Type type)
+        {
+            var fields = type.GetTypeInfo().DeclaredFields.ToList();
+
+            var baseType = type.GetTypeInfo().BaseType;
+            if (baseType != null && baseType != typeof(object))
+                fields.AddRange(baseType.GetAllFields());
+
+            return fields.ToArray();
+        }
+
+        public static FieldInfo GetAnyField(this Type type, string fieldName)
+        {
+            var currentType = type;
+            while (currentType != null && currentType != typeof(object))
+            {
+                var field = currentType.GetTypeInfo().GetDeclaredField(fieldName);
+                if (field != null)
+                    return field;
+
+                currentType = currentType.GetTypeInfo().BaseType;
+            }
+            return null;
+        }
+
         public static IEnumerable<FieldInfo> GetDeclaredFields(this Type type)
         {
             return type.GetTypeInfo().DeclaredFields;
+        }
+
+        public static FieldInfo GetDeclaredField(this Type type, string fieldName)
+        {
+            return type.GetTypeInfo().GetDeclaredField(fieldName);
         }
 
         public static MethodInfo GetDeclaredMethod(this Type type, string methodName)

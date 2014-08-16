@@ -101,7 +101,7 @@ namespace Simple.OData.Client
                 var target = callExpression.Arguments.FirstOrDefault();
                 if (target != null)
                 {
-                    return FromFunction(callExpression.Method.Name, ParseLinqExpression(target).Reference, 
+                    return FromFunction(callExpression.Method.Name, ParseLinqExpression(target).Reference,
                         callExpression.Arguments.Skip(1).Select(x => ParseConstantExpression(x)));
                 }
                 else
@@ -168,7 +168,7 @@ namespace Simple.OData.Client
                 else
                 {
                     return new ODataExpression(EvaluateConstValue(
-                        constExpression.Type, constExpression.Value, 
+                        constExpression.Type, constExpression.Value,
                         memberNames == null ? new List<string>() : memberNames.Split('.').ToList()));
                 }
             }
@@ -259,32 +259,34 @@ namespace Simple.OData.Client
             return value;
         }
 
-        private static object EvaluateConstValue(Type type, object value, IList<string>memberNames)
+        private static object EvaluateConstValue(Type type, object value, IList<string> memberNames)
         {
-            string memberName = null;
-            if (memberNames.Any())
-            {
-                memberName = memberNames.First();
-                memberNames = memberNames.Skip(1).ToList();
-            }
+            if (!memberNames.Any())
+                return value;
+
+            var memberName = memberNames.First();
+            memberNames = memberNames.Skip(1).ToList();
 
             Type itemType;
             object itemValue;
-            if (type.GetDeclaredProperties().Any(x => x.Name == memberName))
+            var property = type.GetAnyProperty(memberName);
+            if (property != null)
             {
-                var property = type.GetDeclaredProperties().Single(x => x.Name == memberName);
                 itemType = property.PropertyType;
                 itemValue = property.GetValue(value, null);
             }
-            else if (type.GetDeclaredFields().Any(x => x.Name == memberName))
-            {
-                var field = type.GetDeclaredFields().Single(x => x.Name == memberName);
-                itemType = field.FieldType;
-                itemValue = field.GetValue(value);
-            }
             else
             {
-                return value;
+                var field = type.GetAnyField(memberName);
+                if (field != null)
+                {
+                    itemType = field.FieldType;
+                    itemValue = field.GetValue(value);
+                }
+                else
+                {
+                    return value;
+                }
             }
 
             return EvaluateConstValue(itemType, itemValue, memberNames);
