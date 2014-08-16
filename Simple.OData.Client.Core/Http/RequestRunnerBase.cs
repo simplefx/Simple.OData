@@ -27,7 +27,8 @@ namespace Simple.OData.Client
                 if (request.Credentials != null)
                 {
                     clientHandler.Credentials = request.Credentials;
-                    clientHandler.PreAuthenticate = true;
+                    if (clientHandler.SupportsPreAuthenticate())
+                        clientHandler.PreAuthenticate = true;
                 }
 
                 using (var httpClient = new HttpClient(clientHandler))
