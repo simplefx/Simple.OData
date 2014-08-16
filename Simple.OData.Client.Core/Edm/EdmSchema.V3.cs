@@ -79,7 +79,8 @@ namespace Simple.OData.Client
             {
                 Name = property.Name,
                 Type = EdmPropertyType.FromModel(property.Type),
-                Nullable = property.Type.IsNullable
+                Nullable = property.Type.IsNullable,
+                ConcurrencyMode = property.ConcurrencyMode.ToString(),
             };
         }
     }
