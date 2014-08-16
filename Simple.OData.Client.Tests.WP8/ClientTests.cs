@@ -32,6 +32,18 @@ namespace Simple.OData.Client.Tests
             Assert.IsTrue(products.Count() == 0);
         }
 
+        private class Product
+        {
+            public int ID { get; set; }
+        }
+
+        [TestMethod]
+        public async Task FindEntriesWithPluralizer()
+        {
+            var products = await _client.For<Product>().FindEntriesAsync();
+            Assert.IsTrue(products.Count() > 0);
+        }
+
         [TestMethod]
         public async Task GetEntryExisting()
         {
