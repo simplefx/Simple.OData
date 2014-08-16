@@ -106,5 +106,30 @@ namespace Simple.OData.Client.Tests
 					Assert.AreEqual(2.5m, product.Price);
 				});
         }
+
+        public class Product : ODataOrgProduct { }
+        public class Products : ODataOrgProduct { }
+
+        [Test]
+        public void TypedWithPluralizerFromODataOrg()
+        {
+            AsyncContext.Run(async () =>
+            {
+                var client = new ODataClient("http://services.odata.org/V2/OData/OData.svc/");
+                var products = await client
+                    .For<Product>()
+                    .FindEntriesAsync();
+                Assert.AreNotEqual(0, products.Count());
+            });
+
+            AsyncContext.Run(async () =>
+            {
+                var client = new ODataClient("http://services.odata.org/V2/OData/OData.svc/");
+                var products = await client
+                    .For<Products>()
+                    .FindEntriesAsync();
+                Assert.AreNotEqual(0, products.Count());
+            });
+        }
     }
 }
