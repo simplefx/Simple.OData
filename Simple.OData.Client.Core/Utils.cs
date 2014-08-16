@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
@@ -42,38 +43,15 @@ namespace Simple.OData.Client
                 expression.GetType(), expression.NodeType, expression));
         }
 
-        public static bool IsPropertyExcludedFromMapping(PropertyInfo property)
+        public static IEnumerable<PropertyInfo> GetMappedProperties(Type type)
         {
-            return property.GetCustomAttributes().Any(x => x.GetType().Name == "NotMappedAttribute");
+            return type.GetAllProperties().Where(x => !x.IsNotMapped());
         }
 
-        public static string MapPropertyName(PropertyInfo property)
+        public static PropertyInfo GetMappedProperty(Type type, string propertyName)
         {
-            string attributeName;
-            var propertyName = property.Name;
-            var mappingAttribute = property.GetCustomAttributes()
-                .FirstOrDefault(x => x.GetType().Name == "DataAttribute" || x.GetType().Name == "ColumnAttribute");
-            if (mappingAttribute != null)
-            {
-                attributeName = "Name";
-            }
-            else
-            {
-                attributeName = "PropertyName";
-                mappingAttribute = property.GetCustomAttributes()
-                    .FirstOrDefault(x => x.GetType().GetAllProperties().Any(y => y.Name == attributeName));
-            }
-
-            if (mappingAttribute != null)
-            {
-                var nameProperty = mappingAttribute.GetType().GetAllProperties().SingleOrDefault(x => x.Name == attributeName);
-                if (nameProperty != null)
-                {
-                    propertyName = nameProperty.GetValue(mappingAttribute, null).ToString();
-                }
-            }
-
-            return propertyName;
+            var property = type.GetAnyProperty(propertyName);
+            return property == null || property.IsNotMapped() ? null : property;
         }
 
 #if NET40 || SILVERLIGHT || PORTABLE_LEGACY

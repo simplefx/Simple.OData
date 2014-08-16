@@ -135,14 +135,12 @@ namespace Simple.OData.Client
             var entryProperties = entryData as IDictionary<string, object>;
             if (entryProperties == null)
             {
-                entryProperties = new Dictionary<string, object>();
                 var entryType = entryData.GetType();
-                foreach (var entryProperty in entryType.GetDeclaredProperties())
-                {
-                    entryProperties.Add(
-                        entryProperty.Name,
-                        entryType.GetDeclaredProperty(entryProperty.Name).GetValue(entryData, null));
-                }
+                entryProperties = Utils.GetMappedProperties(entryType).ToDictionary
+                (
+                    x => x.GetMappedName(),
+                    x => Utils.GetMappedProperty(entryType, x.Name).GetValue(entryData, null)
+                );
             }
             return entryProperties;
         }

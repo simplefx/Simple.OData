@@ -19,4 +19,8 @@
             this.NotMappedProperty = 42;
         }
     }
+
+    public class ExtendedProduct : Product
+    {
+    }
 }

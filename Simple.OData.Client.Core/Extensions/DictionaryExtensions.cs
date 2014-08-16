@@ -128,13 +128,13 @@ namespace Simple.OData.Client.Extensions
             {
                 if (item.Value != null)
                 {
-                    var property = type.GetDeclaredProperty(item.Key);
+                    var property = type.GetAnyProperty(item.Key);
                     if (property == null)
                     {
-                        property = type.GetDeclaredProperties()
-                            .FirstOrDefault(x => Utils.MapPropertyName(x) == item.Key);
+                        property = type.GetAllProperties()
+                            .FirstOrDefault(x => x.GetMappedName() == item.Key);
                     }
-                    if (property != null && !Utils.IsPropertyExcludedFromMapping(property))
+                    if (property != null && !property.IsNotMapped())
                     {
                         property.SetValue(value, ConvertValue(property.PropertyType, item.Value), null);
                     }
@@ -153,10 +153,10 @@ namespace Simple.OData.Client.Extensions
             if (source is ODataEntry)
                 return (Dictionary<string, object>)(source as ODataEntry);
 
-            return source.GetType().GetDeclaredProperties().ToDictionary
+            return source.GetType().GetAllProperties().ToDictionary
             (
-                propInfo => propInfo.Name,
-                propInfo => propInfo.GetValue(source, null)
+                x => x.GetMappedName(),
+                x => x.GetValue(source, null)
             );
         }
 
