@@ -146,7 +146,7 @@ namespace Simple.OData.Client
                 Name = function.Name,
                 HttpMethod = "", // TODO
                 ReturnType = EdmPropertyType.FromModel(function.Operation.ReturnType),
-                EntitySet = function.EntitySet.ToString(), // TODO
+                EntitySet = function.EntitySet == null ? null : function.EntitySet.ToString(), // TODO
                 Parameters = function.Operation.Parameters.Select(EdmParameter.FromModel).ToArray(),
             };
         }

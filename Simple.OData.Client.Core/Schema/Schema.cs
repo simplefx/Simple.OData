@@ -34,6 +34,11 @@ namespace Simple.OData.Client
 
             _metadataString = metadataString;
             _resolveMetadataAsync = resolveMedatataAsync;
+
+            if (_resolveMetadataAsync == null)
+            {
+                _createEdmSchema = () => ResponseReader.GetSchema(_metadataString);
+            }
         }
 
         private Schema(SchemaProvider schemaProvider)
