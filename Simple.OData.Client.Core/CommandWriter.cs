@@ -80,7 +80,7 @@ namespace Simple.OData.Client
             if (associatedKeyValues != null)
             {
                 AddDataLink(content.Entry, 
-                    (_schema as Schema).ProviderMetadata.GetNavigationPropertyActualName(collection, associatedData.Key),
+                    (_schema as Schema).ProviderMetadata.GetNavigationPropertyExactName(collection, associatedData.Key),
                     (_schema as Schema).ProviderMetadata.GetNavigationPropertyPartnerName(collection, associatedData.Key), 
                     associatedKeyValues);
             }

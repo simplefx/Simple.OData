@@ -20,7 +20,13 @@ namespace Simple.OData.Client
             if (_table.GetKeyNames().Count == 1)
             {
                 var columnName = _table.GetKeyNames()[0];
-                return new Dictionary<string, object>() { { columnName, ParseValue(keyValues, _table.FindColumn(columnName).PropertyType) } };
+                return new Dictionary<string, object>()
+                {
+                    { 
+                        columnName, 
+                        ParseValue(keyValues, _table.Schema.ProviderMetadata.GetStructuralPropertyType(_table.ActualName, columnName)) 
+                    }
+                };
             }
             else
             {
@@ -30,7 +36,9 @@ namespace Simple.OData.Client
                 {
                     var pair = kv.Split('=');
                     var columnName = pair.First();
-                    dict.Add(columnName, ParseValue(pair.Last(), _table.FindColumn(columnName).PropertyType));
+                    dict.Add(
+                        columnName, 
+                        ParseValue(pair.Last(), _table.Schema.ProviderMetadata.GetStructuralPropertyType(_table.ActualName, columnName)));
                 }
                 return dict;
             }

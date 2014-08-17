@@ -14,7 +14,7 @@ namespace Simple.OData.Client
         private readonly EdmEntityType _entityType;
         private readonly Table _baseTable;
         private readonly Lazy<TableCollection> _lazyDerivedTables;
-        private readonly Lazy<ColumnCollection> _lazyColumns;
+        //private readonly Lazy<ColumnCollection> _lazyColumns;
         private readonly Lazy<Key> _lazyPrimaryKey;
 
         internal Table(string name, EdmEntityType entityType, Table baseTable, Schema schema)
@@ -24,7 +24,7 @@ namespace Simple.OData.Client
             _baseTable = baseTable;
             _schema = schema;
             _lazyDerivedTables = new Lazy<TableCollection>(GetDerivedTables);
-            _lazyColumns = new Lazy<ColumnCollection>(GetColumns);
+            //_lazyColumns = new Lazy<ColumnCollection>(GetColumns);
             _lazyPrimaryKey = new Lazy<Key>(GetPrimaryKey);
         }
 
@@ -68,30 +68,6 @@ namespace Simple.OData.Client
             return _lazyDerivedTables.Value.Contains(tableName);
         }
 
-        public IEnumerable<Column> Columns
-        {
-            get { return _lazyColumns.Value.AsEnumerable(); }
-        }
-
-        public Column FindColumn(string columnName)
-        {
-            var columns = _lazyColumns.Value;
-            try
-            {
-                return columns.Find(columnName);
-            }
-            catch (UnresolvableObjectException ex)
-            {
-                string qualifiedName = _actualName + "." + ex.ObjectName;
-                throw new UnresolvableObjectException(qualifiedName, string.Format("Column {0} not found", qualifiedName), ex);
-            }
-        }
-
-        public bool HasColumn(string columnName)
-        {
-            return _lazyColumns.Value.Contains(columnName);
-        }
-
         public Key PrimaryKey
         {
             get { return _lazyPrimaryKey.Value; }
@@ -115,11 +91,6 @@ namespace Simple.OData.Client
         private TableCollection GetDerivedTables()
         {
             return new TableCollection(_schema.Model.GetDerivedTables(this));
-        }
-
-        private ColumnCollection GetColumns()
-        {
-            return new ColumnCollection(_schema.Model.GetColumns(this));
         }
 
         private Key GetPrimaryKey()

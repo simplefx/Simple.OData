@@ -460,7 +460,7 @@ namespace Simple.OData.Client
             {
                 var parent = new FluentCommand(_parent).Resolve();
                 commandText += parent.Format() + "/";
-                commandText += (_schema as Schema).ProviderMetadata.GetNavigationPropertyActualName(parent.Table.ActualName, _linkName);
+                commandText += (_schema as Schema).ProviderMetadata.GetNavigationPropertyExactName(parent.Table.ActualName, _linkName);
             }
             else if (!string.IsNullOrEmpty(_functionName))
             {
@@ -527,7 +527,7 @@ namespace Simple.OData.Client
             var table = this.Table;
             foreach (var associationName in items)
             {
-                names.Add(table.Schema.ProviderMetadata.GetNavigationPropertyActualName(table.ActualName, associationName));
+                names.Add(table.Schema.ProviderMetadata.GetNavigationPropertyExactName(table.ActualName, associationName));
                 table = _schema.FindTable(table.Schema.ProviderMetadata.GetNavigationPropertyPartnerName(table.ActualName, associationName));
             }
             return string.Join("/", names);
@@ -535,14 +535,14 @@ namespace Simple.OData.Client
 
         private string FormatSelectItem(string item)
         {
-            return this.Table.HasColumn(item)
-                ? this.Table.FindColumn(item).ActualName
-                : this.Table.Schema.ProviderMetadata.GetNavigationPropertyActualName(this.Table.ActualName, item);
+            return this.Table.Schema.ProviderMetadata.HasStructuralProperty(this.Table.ActualName, item)
+                ? this.Table.Schema.ProviderMetadata.GetStructuralPropertyExactName(this.Table.ActualName, item)
+                : this.Table.Schema.ProviderMetadata.GetNavigationPropertyExactName(this.Table.ActualName, item);
         }
 
         private string FormatOrderByItem(KeyValuePair<string, bool> item)
         {
-            return this.Table.FindColumn(item.Key) + (item.Value ? " desc" : string.Empty);
+            return this.Table.Schema.ProviderMetadata.GetStructuralPropertyExactName(this.Table.ActualName, item.Key) + (item.Value ? " desc" : string.Empty);
         }
 
         private string FormatKey()

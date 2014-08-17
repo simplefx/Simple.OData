@@ -22,31 +22,31 @@ namespace Simple.OData.Client.Tests
             Assert.NotNull(table);
         }
 
-        [Fact]
-        public async Task GetColumnsCount()
-        {
-            var columns = (await _client.GetSchemaAsync()).FindTable("Employees").Columns;
+        //[Fact]
+        //public async Task GetColumnsCount()
+        //{
+        //    var columns = (await _client.GetSchemaAsync()).FindTable("Employees").Columns;
 
-            Assert.Equal(16, columns.Count());
-        }
+        //    Assert.Equal(16, columns.Count());
+        //}
 
-        [Fact]
-        public async Task FindColumn()
-        {
-            var column = (await _client.GetSchemaAsync()).FindTable("Employees").FindColumn("first_name");
+        //[Fact]
+        //public async Task FindColumn()
+        //{
+        //    var column = (await _client.GetSchemaAsync()).FindTable("Employees").FindColumn("first_name");
 
-            Assert.Equal("FirstName", column.ActualName);
-        }
+        //    Assert.Equal("FirstName", column.ActualName);
+        //}
 
-        [Fact]
-        public async Task ColumnNullability()
-        {
-            var nonNullablecolumn = (await _client.GetSchemaAsync()).FindTable("Employees").FindColumn("EmployeeID");
-            var nullableColumn = (await _client.GetSchemaAsync()).FindTable("Employees").FindColumn("ReportsTo");
+        //[Fact]
+        //public async Task ColumnNullability()
+        //{
+        //    var nonNullablecolumn = (await _client.GetSchemaAsync()).FindTable("Employees").FindColumn("EmployeeID");
+        //    var nullableColumn = (await _client.GetSchemaAsync()).FindTable("Employees").FindColumn("ReportsTo");
 
-            Assert.Equal(false, nonNullablecolumn.IsNullable);
-            Assert.Equal(true, nullableColumn.IsNullable);
-        }
+        //    Assert.Equal(false, nonNullablecolumn.IsNullable);
+        //    Assert.Equal(true, nullableColumn.IsNullable);
+        //}
 
         //[Fact]
         //public async Task GetAssociationsCount()

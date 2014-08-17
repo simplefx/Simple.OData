@@ -72,13 +72,6 @@ namespace Simple.OData.Client
         /// <returns>The table found.</returns>
         Table FindConcreteTable(string tablePath);
         /// <summary>
-        /// Finds the specified column.
-        /// </summary>
-        /// <param name="tablePath">The table path.</param>
-        /// <param name="columnName">Name of the column.</param>
-        /// <returns>The column found.</returns>
-        Column FindColumn(string tablePath, string columnName);
-        /// <summary>
         /// Gets the schema entity types.
         /// </summary>
         /// <value>

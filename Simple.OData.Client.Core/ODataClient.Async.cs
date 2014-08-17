@@ -455,7 +455,7 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var command = new CommandWriter(_schema).CreateLinkCommand(
-                collection, (_schema as Schema).ProviderMetadata.GetNavigationPropertyActualName(collection, linkName), entryPath, linkPath);
+                collection, (_schema as Schema).ProviderMetadata.GetNavigationPropertyExactName(collection, linkName), entryPath, linkPath);
             var request = _requestBuilder.CreateRequest(command);
             await _requestRunner.UpdateEntryAsync(request, cancellationToken);
         }
@@ -478,7 +478,7 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var command = new CommandWriter(_schema).CreateUnlinkCommand(
-                collection, (_schema as Schema).ProviderMetadata.GetNavigationPropertyActualName(collection, linkName), commandText);
+                collection, (_schema as Schema).ProviderMetadata.GetNavigationPropertyExactName(collection, linkName), commandText);
             var request = _requestBuilder.CreateRequest(command);
             await _requestRunner.UpdateEntryAsync(request, cancellationToken);
         }

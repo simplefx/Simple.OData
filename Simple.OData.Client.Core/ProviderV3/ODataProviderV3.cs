@@ -16,13 +16,32 @@ namespace Simple.OData.Client
             set { base.Model = value; }
         }
 
-        public override bool HasNavigationProperty(string entitySetName, string propertyName)
+        public override IEnumerable<string> GetStructuralPropertiesNames(string entitySetName)
         {
-            return GetNavigationProperties(entitySetName).Any(
-                x => x.Name == propertyName || x.Name == propertyName.Singularize() || x.Name == propertyName.Pluralize());
+            return GetEntityType(entitySetName).StructuralProperties().Select(x => x.Name);
         }
 
-        public override string GetNavigationPropertyActualName(string entitySetName, string propertyName)
+        public override bool HasStructuralProperty(string entitySetName, string propertyName)
+        {
+            return GetEntityType(entitySetName).StructuralProperties().Any(x => NamesAreEqual(x.Name, propertyName));
+        }
+
+        public override string GetStructuralPropertyExactName(string entitySetName, string propertyName)
+        {
+            return GetStructuralProperty(entitySetName, propertyName).Name;
+        }
+
+        public override EdmPropertyType GetStructuralPropertyType(string entitySetName, string propertyName)
+        {
+            return EdmPropertyType.FromModel(GetStructuralProperty(entitySetName, propertyName).Type);
+        }
+
+        public override bool HasNavigationProperty(string entitySetName, string propertyName)
+        {
+            return GetEntityType(entitySetName).NavigationProperties().Any(x => NamesAreEqual(x.Name, propertyName));
+        }
+
+        public override string GetNavigationPropertyExactName(string entitySetName, string propertyName)
         {
             return GetNavigationProperty(entitySetName, propertyName).Name;
         }
@@ -51,21 +70,56 @@ namespace Simple.OData.Client
             return function.Name;
         }
 
-        private IEnumerable<IEdmNavigationProperty> GetNavigationProperties(string entitySetName)
+        private IEnumerable<IEdmEntitySet> GetEntitySets()
         {
             return this.Model.SchemaElements
                 .Where(x => x.SchemaElementKind == EdmSchemaElementKind.EntityContainer)
-                .SelectMany(x => (x as IEdmEntityContainer).EntitySets())
-                .Single(x => x.Name == entitySetName).ElementType
-                .NavigationProperties();
+                .SelectMany(x => (x as IEdmEntityContainer).EntitySets());
+        }
+
+        private IEnumerable<IEdmEntityType> GetEntityTypes()
+        {
+            return this.Model.SchemaElements
+                .Where(x => x.SchemaElementKind == EdmSchemaElementKind.TypeDefinition && (x as IEdmType).TypeKind == EdmTypeKind.Entity)
+                .Select(x => x as IEdmEntityType);
+        }
+
+        private IEdmEntityType GetEntityType(string entitySetName)
+        {
+            var entitySet = GetEntitySets()
+                .SingleOrDefault(x => NamesAreEqual(x.Name, entitySetName));
+
+            if (entitySet == null)
+            {
+                var entityType = GetEntityTypes().SingleOrDefault(x => NamesAreEqual(x.Name, entitySetName));
+                if (entityType != null)
+                {
+                    var baseType = GetEntityTypes()
+                        .SingleOrDefault(x => this.Model.FindDirectlyDerivedTypes(x).Contains(entityType));
+                    if (baseType != null && GetEntitySets().SingleOrDefault(x => x.ElementType == baseType) != null)
+                        return entityType;
+                }
+            }
+
+            if (entitySet == null)
+                throw new UnresolvableObjectException(entitySetName, string.Format("Entity set {0} not found", entitySetName));
+
+            return entitySet.ElementType;
+        }
+
+        private IEdmStructuralProperty GetStructuralProperty(string entitySetName, string propertyName)
+        {
+            var property = GetEntityType(entitySetName).StructuralProperties().Single(x => NamesAreEqual(x.Name, propertyName));
+
+            if (property == null)
+                throw new UnresolvableObjectException(propertyName, string.Format("Structural property {0} not found", propertyName));
+
+            return property;
         }
 
         private IEdmNavigationProperty GetNavigationProperty(string entitySetName, string propertyName)
         {
-            var property = GetNavigationProperties(entitySetName).SingleOrDefault(x => 
-                x.Name.Homogenize() == propertyName.Homogenize() ||
-                x.Name.Homogenize() == propertyName.Singularize().Homogenize() ||
-                x.Name.Homogenize() == propertyName.Pluralize().Homogenize());
+            var property = GetEntityType(entitySetName).NavigationProperties().SingleOrDefault(x => NamesAreEqual(x.Name, propertyName));
 
             if (property == null)
                 throw new UnresolvableObjectException(propertyName, string.Format("Navigation property {0} not found", propertyName));

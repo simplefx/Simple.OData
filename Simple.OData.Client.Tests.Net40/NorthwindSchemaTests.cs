@@ -82,61 +82,6 @@ namespace Simple.OData.Client.Tests
         [InlineData("V2")]
         [InlineData("V3")]
         [InlineData("V4")]
-        public async Task GetColumnsCount(string protocolVersion)
-        {
-            var client = new ODataClient(string.Format(_serviceUrl, protocolVersion));
-
-            var columns = (await client.GetSchemaAsync()).FindTable("Employees").Columns;
-
-            Assert.Equal(18, columns.Count());
-        }
-
-        [Theory]
-        [InlineData("V2")]
-        [InlineData("V3")]
-        [InlineData("V4")]
-        public async Task FindColumn(string protocolVersion)
-        {
-            var client = new ODataClient(string.Format(_serviceUrl, protocolVersion));
-
-            var column = (await client.GetSchemaAsync()).FindTable("Employees").FindColumn("first_name");
-
-            Assert.NotNull(column);
-        }
-
-        [Theory]
-        [InlineData("V2")]
-        [InlineData("V3")]
-        [InlineData("V4")]
-        public async Task GetColumnProperties(string protocolVersion)
-        {
-            var client = new ODataClient(string.Format(_serviceUrl, protocolVersion));
-
-            var column = (await client.GetSchemaAsync()).FindTable("Employees").FindColumn("first_name");
-
-            Assert.Equal("FirstName", column.ActualName);
-            Assert.Equal("Edm.String", column.PropertyType.Name);
-        }
-
-        [Theory]
-        [InlineData("V2")]
-        [InlineData("V3")]
-        [InlineData("V4")]
-        public async Task ColumnNullability(string protocolVersion)
-        {
-            var client = new ODataClient(string.Format(_serviceUrl, protocolVersion));
-
-            var nonNullablecolumn = (await client.GetSchemaAsync()).FindTable("Employees").FindColumn("EmployeeID");
-            var nullableColumn = (await client.GetSchemaAsync()).FindTable("Employees").FindColumn("ReportsTo");
-
-            Assert.Equal(false, nonNullablecolumn.IsNullable);
-            Assert.Equal(true, nullableColumn.IsNullable);
-        }
-
-        [Theory]
-        [InlineData("V2")]
-        [InlineData("V3")]
-        [InlineData("V4")]
         public async Task GetScalarPrimaryKey(string protocolVersion)
         {
             var client = new ODataClient(string.Format(_serviceUrl, protocolVersion));

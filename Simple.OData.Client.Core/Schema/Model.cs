@@ -27,13 +27,6 @@ namespace Simple.OData.Client
                    select new Table(et.Name, et, table, _schema);
         }
 
-        public IEnumerable<Column> GetColumns(Table table)
-        {
-            return from t in GetEntityTypeWithBaseTypes(table.EntityType)
-                   from p in t.Properties
-                   select new Column(p.Name, p.Type, p.Nullable);
-        }
-
         public Key GetPrimaryKey(Table table)
         {
             return (from s in GetEntitySets()

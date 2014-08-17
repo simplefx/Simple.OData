@@ -140,14 +140,14 @@ namespace Simple.OData.Client
             var objectName = elementNames.First();
             if (table != null)
             {
-                if (table.HasColumn(objectName))
+                if (table.Schema.ProviderMetadata.HasStructuralProperty(table.ActualName, objectName))
                 {
-                    pathNames.Add(table.FindColumn(objectName).ActualName);
+                    pathNames.Add(table.Schema.ProviderMetadata.GetStructuralPropertyExactName(table.ActualName, objectName));
                     return BuildReferencePath(pathNames, null, elementNames.Skip(1).ToList(), context);
                 }
                 else if (table.Schema.ProviderMetadata.HasNavigationProperty(table.ActualName, objectName))
                 {
-                    pathNames.Add(table.Schema.ProviderMetadata.GetNavigationPropertyActualName(table.ActualName, objectName));
+                    pathNames.Add(table.Schema.ProviderMetadata.GetNavigationPropertyExactName(table.ActualName, objectName));
                     return BuildReferencePath(pathNames, context.Schema.FindTable(
                         table.Schema.ProviderMetadata.GetNavigationPropertyPartnerName(table.ActualName, objectName)), 
                         elementNames.Skip(1).ToList(), context);

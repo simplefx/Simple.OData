@@ -359,12 +359,6 @@
     <Compile Include="..\Simple.OData.Client.Core\ResponseReader.cs">
       <Link>ResponseReader.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Schema\Column.cs">
-      <Link>Schema\Column.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Schema\ColumnCollection.cs">
-      <Link>Schema\ColumnCollection.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Schema\ISchema.cs">
       <Link>Schema\ISchema.cs</Link>
     </Compile>

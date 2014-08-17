@@ -108,7 +108,7 @@ namespace Simple.OData.Client
             var unlinkAssociationNames = new List<string>();
             foreach (var associatedData in entryMembers.AssociationsByValue)
             {
-                var associationName = table.Schema.ProviderMetadata.GetNavigationPropertyActualName(table.ActualName, associatedData.Key);
+                var associationName = table.Schema.ProviderMetadata.GetNavigationPropertyExactName(table.ActualName, associatedData.Key);
                 if (associatedData.Value != null)
                 {
                     commandWriter.AddLink(entryContent, collection, associatedData);
@@ -155,7 +155,7 @@ namespace Simple.OData.Client
 
         private void ParseEntryMember(Table table, KeyValuePair<string, object> item, EntryMembers entryMembers)
         {
-            if (table.HasColumn(item.Key))
+            if (table.Schema.ProviderMetadata.HasStructuralProperty(table.ActualName, item.Key))
             {
                 entryMembers.AddProperty(item.Key, item.Value);
             }
@@ -199,7 +199,8 @@ namespace Simple.OData.Client
         private bool CheckMergeConditions(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
         {
             var table = _schema.FindConcreteTable(collection);
-            return table.Columns.Any(x => !entryData.ContainsKey(x.ActualName));
+            return table.Schema.ProviderMetadata.GetStructuralPropertiesNames(table.ActualName)
+                .Any(x => !entryData.ContainsKey(x));
         }
 
         private void RemoveSystemProperties(IDictionary<string, object> entryData)
