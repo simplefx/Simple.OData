@@ -199,7 +199,7 @@ namespace Simple.OData.Client
         private bool CheckMergeConditions(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
         {
             var table = _schema.FindConcreteTable(collection);
-            return table.Schema.ProviderMetadata.GetStructuralPropertiesNames(table.ActualName)
+            return table.Schema.ProviderMetadata.GetStructuralPropertyNames(table.ActualName)
                 .Any(x => !entryData.ContainsKey(x));
         }
 

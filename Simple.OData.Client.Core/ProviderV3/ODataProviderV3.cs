@@ -16,7 +16,7 @@ namespace Simple.OData.Client
             set { base.Model = value; }
         }
 
-        public override IEnumerable<string> GetStructuralPropertiesNames(string entitySetName)
+        public override IEnumerable<string> GetStructuralPropertyNames(string entitySetName)
         {
             return GetEntityType(entitySetName).StructuralProperties().Select(x => x.Name);
         }
@@ -56,7 +56,21 @@ namespace Simple.OData.Client
             return GetNavigationProperty(entitySetName, propertyName).Partner.Multiplicity() == EdmMultiplicity.Many;
         }
 
-        public override string GetFunctionActualName(string functionName)
+        public override IEnumerable<string> GetDeclaredKeyPropertyNames(string entitySetName)
+        {
+            var entityType = GetEntityType(entitySetName);
+            while (entityType.DeclaredKey == null && entityType.BaseEntityType() != null)
+            {
+                entityType = entityType.BaseEntityType();
+            }
+
+            if (entityType.DeclaredKey == null)
+                throw new InvalidOperationException(string.Format("Entity set {0} doesn't declare a key", entitySetName));
+
+            return entityType.DeclaredKey.Select(x => x.Name);
+        }
+
+        public override string GetFunctionExactName(string functionName)
         {
             var function = this.Model.SchemaElements
                 .Where(x => x.SchemaElementKind == EdmSchemaElementKind.EntityContainer)

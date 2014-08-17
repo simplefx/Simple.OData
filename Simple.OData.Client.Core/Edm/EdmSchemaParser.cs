@@ -89,8 +89,8 @@ namespace Simple.OData.Client
                                   Name = e.Attribute("Name").Value,
                                   Abstract = ParseBooleanAttribute(e.Attribute("Abstract")),
                                   OpenType = ParseBooleanAttribute(e.Attribute("OpenType")),
-                                  Key = (from k in e.Descendants(null, "Key")
-                                         select ParseKey(k)).SingleOrDefault(),
+                                  //Key = (from k in e.Descendants(null, "Key")
+                                  //       select ParseKey(k)).SingleOrDefault(),
                                   Properties = (from p in e.Descendants(null, "Property")
                                                 select ParseProperty(p)).ToArray(),
                               },
@@ -104,7 +104,7 @@ namespace Simple.OData.Client
                        BaseType = String.IsNullOrEmpty(r.BaseType) ? null : results.Single(y => y.EntityType.Name == r.BaseType.Split('.').Last()).EntityType,
                        Abstract = r.EntityType.Abstract,
                        OpenType = r.EntityType.OpenType,
-                       Key = r.EntityType.Key,
+                       //Key = r.EntityType.Key,
                        Properties = r.EntityType.Properties,
                    };
         }
@@ -153,14 +153,14 @@ namespace Simple.OData.Client
             return EdmPropertyType.Parse(attritbuteValue, this.EntityTypes, this.ComplexTypes, this.EnumTypes);
         }
 
-        private EdmKey ParseKey(XElement element)
-        {
-            return new EdmKey()
-            {
-                Properties = (from p in element.Descendants(null, "PropertyRef")
-                              select p.Attribute("Name").Value).ToArray()
-            };
-        }
+        //private EdmKey ParseKey(XElement element)
+        //{
+        //    return new EdmKey()
+        //    {
+        //        Properties = (from p in element.Descendants(null, "PropertyRef")
+        //                      select p.Attribute("Name").Value).ToArray()
+        //    };
+        //}
 
         private EdmEnumMember ParseEnumMember(XElement element)
         {

@@ -46,7 +46,7 @@ namespace Simple.OData.Client
         public EdmEntityType BaseType { get; set; }
         public bool Abstract { get; set; }
         public bool OpenType { get; set; }
-        public EdmKey Key { get; set; }
+        //public EdmKey Key { get; set; }
         public EdmProperty[] Properties { get; set; }
         public bool CheckOptimisticConcurrency { get { return Properties.Any(x => x.ConcurrencyMode == "Fixed"); } }
 
@@ -105,10 +105,10 @@ namespace Simple.OData.Client
         public string ConcurrencyMode { get; set; }
     }
 
-    public sealed partial class EdmKey
-    {
-        public string[] Properties { get; set; }
-    }
+    //public sealed partial class EdmKey
+    //{
+    //    public string[] Properties { get; set; }
+    //}
 
     public sealed class EdmEnumMember
     {

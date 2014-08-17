@@ -8,17 +8,18 @@ namespace Simple.OData.Client
         public string ProtocolVersion { get; set; }
         public object Model { get; set; }
 
-        public abstract IEnumerable<string> GetStructuralPropertiesNames(string entitySetName);
+        public abstract IEnumerable<string> GetStructuralPropertyNames(string entitySetName);
         public abstract bool HasStructuralProperty(string entitySetName, string propertyName);
         public abstract string GetStructuralPropertyExactName(string entitySetName, string propertyName);
         public abstract EdmPropertyType GetStructuralPropertyType(string entitySetName, string propertyName);
+        public abstract IEnumerable<string> GetDeclaredKeyPropertyNames(string entitySetName);
 
         public abstract bool HasNavigationProperty(string entitySetName, string propertyName);
         public abstract string GetNavigationPropertyExactName(string entitySetName, string propertyName);
         public abstract string GetNavigationPropertyPartnerName(string entitySetName, string propertyName);
         public abstract bool IsNavigationPropertyMultiple(string entitySetName, string propertyName);
 
-        public abstract string GetFunctionActualName(string functionName);
+        public abstract string GetFunctionExactName(string functionName);
 
         protected bool NamesAreEqual(string actualName, string requestedName)
         {

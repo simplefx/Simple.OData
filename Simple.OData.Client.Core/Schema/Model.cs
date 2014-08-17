@@ -29,12 +29,7 @@ namespace Simple.OData.Client
 
         public Key GetPrimaryKey(Table table)
         {
-            return (from s in GetEntitySets()
-                    where s.Name == table.ActualName
-                    from et in GetEntitySetType(s)
-                    from t in GetEntityTypeWithBaseTypes(et)
-                    where t.Key != null
-                    select new Key(t.Key.Properties)).SingleOrDefault();
+            return new Key(table.Schema.ProviderMetadata.GetDeclaredKeyPropertyNames(table.ActualName));
         }
 
         public IEnumerable<EdmEntityType> GetEntityTypes()
