@@ -13,7 +13,7 @@ namespace Simple.OData.Client
         private readonly string _actualName;
         private readonly EdmEntityType _entityType;
         private readonly EntitySet _baseEntitySet;
-        private readonly Lazy<TableCollection> _lazyDerivedTables;
+        private readonly Lazy<EntitySetCollection> _lazyDerivedTables;
 
         internal EntitySet(string name, EdmEntityType entityType, EntitySet baseEntitySet, Schema schema)
         {
@@ -21,7 +21,7 @@ namespace Simple.OData.Client
             _entityType = entityType;
             _baseEntitySet = baseEntitySet;
             _schema = schema;
-            _lazyDerivedTables = new Lazy<TableCollection>(GetDerivedTables);
+            _lazyDerivedTables = new Lazy<EntitySetCollection>(GetDerivedTables);
         }
 
         public override string ToString()
@@ -75,9 +75,9 @@ namespace Simple.OData.Client
             return _schema.ProviderMetadata.GetDeclaredKeyPropertyNames(this.ActualName).ToList();
         }
 
-        private TableCollection GetDerivedTables()
+        private EntitySetCollection GetDerivedTables()
         {
-            return new TableCollection(_schema.Model.GetDerivedTables(this));
+            return new EntitySetCollection(_schema.Model.GetDerivedTables(this));
         }
     }
 }

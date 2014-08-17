@@ -22,7 +22,7 @@ namespace Simple.OData.Client
 
         private Lazy<EdmSchema> _lazyMetadata;
         private Lazy<ProviderMetadata> _lazyProviderMetadata;
-        private Lazy<TableCollection> _lazyTables;
+        private Lazy<EntitySetCollection> _lazyTables;
         private Lazy<List<EdmEntityType>> _lazyEntityTypes;
         private Lazy<List<EdmComplexType>> _lazyComplexTypes;
 
@@ -54,7 +54,7 @@ namespace Simple.OData.Client
 
             _lazyMetadata = new Lazy<EdmSchema>(CreateEdmSchema);
             _lazyProviderMetadata = new Lazy<ProviderMetadata>(CreateProviderMetadata);
-            _lazyTables = new Lazy<TableCollection>(CreateTableCollection);
+            _lazyTables = new Lazy<EntitySetCollection>(CreateTableCollection);
             _lazyEntityTypes = new Lazy<List<EdmEntityType>>(CreateEntityTypeCollection);
             _lazyComplexTypes = new Lazy<List<EdmComplexType>>(CreateComplexTypeCollection);
         }
@@ -208,9 +208,9 @@ namespace Simple.OData.Client
             return _createProviderMetadata();
         }
 
-        private TableCollection CreateTableCollection()
+        private EntitySetCollection CreateTableCollection()
         {
-            return new TableCollection(_model.GetTables()
+            return new EntitySetCollection(_model.GetTables()
                 .Select(table => new EntitySet(table.ActualName, table.EntityType, null, this)));
         }
 

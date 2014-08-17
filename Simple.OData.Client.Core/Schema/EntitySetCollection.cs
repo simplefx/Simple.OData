@@ -7,38 +7,38 @@ using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
-    public class TableCollection : Collection<EntitySet>
+    public class EntitySetCollection : Collection<EntitySet>
     {
-        public TableCollection()
+        public EntitySetCollection()
         {
         }
 
-        public TableCollection(IEnumerable<EntitySet> tables)
-            : base(tables.ToList())
+        public EntitySetCollection(IEnumerable<EntitySet> entitySets)
+            : base(entitySets.ToList())
         {
         }
 
-        public EntitySet Find(string tableName)
+        public EntitySet Find(string entitySetName)
         {
-            var table = TryFind(tableName)
-                   ?? TryFind(tableName.Singularize())
-                   ?? TryFind(tableName.Pluralize());
+            var entitySet = TryFind(entitySetName)
+                   ?? TryFind(entitySetName.Singularize())
+                   ?? TryFind(entitySetName.Pluralize());
 
-            if (table == null)
-                throw new UnresolvableObjectException(tableName, string.Format("EntitySet {0} not found", tableName));
+            if (entitySet == null)
+                throw new UnresolvableObjectException(entitySetName, string.Format("EntitySet {0} not found", entitySetName));
 
-            return table;
+            return entitySet;
         }
 
-        public bool Contains(string tableName)
+        public bool Contains(string entitySetName)
         {
-            return TryFind(tableName) != null;
+            return TryFind(entitySetName) != null;
         }
 
-        private EntitySet TryFind(string tableName)
+        private EntitySet TryFind(string entitySetName)
         {
-            tableName = tableName.Homogenize();
-            return this.SingleOrDefault(t => t.HomogenizedName.Equals(tableName));
+            entitySetName = entitySetName.Homogenize();
+            return this.SingleOrDefault(t => t.HomogenizedName.Equals(entitySetName));
         }
     }
 }
