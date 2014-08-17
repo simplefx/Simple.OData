@@ -10,14 +10,12 @@ namespace Simple.OData.Client
     {
         public IEnumerable<EdmEntityType> EntityTypes { get; private set; }
         public IEnumerable<EdmComplexType> ComplexTypes { get; private set; }
-        public IEnumerable<EdmEnumType> EnumTypes { get; private set; }
         public IEnumerable<EdmEntityContainer> EntityContainers { get; private set; }
 
         public EdmSchemaParser()
         {
             this.EntityTypes = new List<EdmEntityType>();
             this.ComplexTypes = new List<EdmComplexType>();
-            this.EnumTypes = new List<EdmEnumType>();
             this.EntityContainers = new List<EdmEntityContainer>();
         }
 
@@ -25,40 +23,12 @@ namespace Simple.OData.Client
         {
             var schemaRoot = element.Descendants(null, "Schema");
 
-            ParseEnumTypes(schemaRoot.SelectMany(x => x.Descendants(null, "EnumType")));
+            //ParseEnumTypes(schemaRoot.SelectMany(x => x.Descendants(null, "EnumType")));
             ParseComplexTypes(schemaRoot.SelectMany(x => x.Descendants(null, "ComplexType")));
             ParseEntityTypes(schemaRoot.SelectMany(x => x.Descendants(null, "EntityType")));
             ParseEntityContainers(schemaRoot.SelectMany(x => x.Descendants(null, "EntityContainer")));
 
             return new EdmSchema(this);
-        }
-
-        private void ParseEnumTypes(IEnumerable<XElement> elements)
-        {
-            Func<XElement, string, string> GetEnumTypeName = (x,ns) => String.Format("{0}.{1}", ns, x.Attribute("Name").Value);
-            this.EnumTypes = (from e in elements select new EdmEnumType
-            {
-                Namespace = ParseNamespace(e),
-                Name = GetEnumTypeName(e, ParseNamespace(e)),
-                UnderlyingType = ParseStringAttribute(e.Attribute("UnderlyingType")),
-                IsFlags = ParseBooleanAttribute(e.Attribute("IsFlags"))
-            }).ToList();
-
-            foreach (var element in elements)
-            {
-                var enumType = this.EnumTypes.Single(x => x.Name == GetEnumTypeName(element, x.Namespace));
-                enumType.Members = (from m in element.Descendants(null, "Member")
-                                          select ParseEnumMember(m)).ToArray();
-                long currentValue = 0;
-                foreach (var member in enumType.Members)
-                {
-                    long value;
-                    member.EvaluatedValue = long.TryParse(member.Value, out value) ? value : currentValue;
-                    currentValue = enumType.IsFlags
-                        ? currentValue == 0 ? 1 : currentValue*2
-                        : ++currentValue;
-                }
-            }
         }
 
         private void ParseComplexTypes(IEnumerable<XElement> elements)
@@ -138,7 +108,7 @@ namespace Simple.OData.Client
             return new EdmProperty
             {
                 Name = element.Attribute("Name").Value,
-                Type = EdmPropertyType.Parse(element.Attribute("Type").Value, this.EntityTypes, this.ComplexTypes, this.EnumTypes),
+                Type = EdmPropertyType.Parse(element.Attribute("Type").Value, this.EntityTypes, this.ComplexTypes),
                 Nullable = ParseBooleanAttribute(element.Attribute("Nullable"), true),
                 ConcurrencyMode = ParseStringAttribute(element.Attribute("ConcurrencyMode")),
             };
@@ -150,25 +120,7 @@ namespace Simple.OData.Client
                 return null;
 
             var attritbuteValue = ParseStringAttribute(attribute);
-            return EdmPropertyType.Parse(attritbuteValue, this.EntityTypes, this.ComplexTypes, this.EnumTypes);
-        }
-
-        //private EdmKey ParseKey(XElement element)
-        //{
-        //    return new EdmKey()
-        //    {
-        //        Properties = (from p in element.Descendants(null, "PropertyRef")
-        //                      select p.Attribute("Name").Value).ToArray()
-        //    };
-        //}
-
-        private EdmEnumMember ParseEnumMember(XElement element)
-        {
-            return new EdmEnumMember
-            {
-                Name = element.Attribute("Name").Value,
-                Value = ParseStringAttribute(element.Attribute("Value")),
-            };
+            return EdmPropertyType.Parse(attritbuteValue, this.EntityTypes, this.ComplexTypes);
         }
 
         private bool ParseBooleanAttribute(XAttribute attribute, bool @default = false)

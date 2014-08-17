@@ -5,7 +5,6 @@
         string[] SupportedProtocols { get; }
         EdmEntityType[] EntityTypes { get; }
         EdmComplexType[] ComplexTypes { get; }
-        EdmEnumType[] EnumTypes { get; }
         EdmEntityContainer[] EntityContainers { get; }
     }
 }

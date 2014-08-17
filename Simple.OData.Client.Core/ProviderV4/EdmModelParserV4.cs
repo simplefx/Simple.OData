@@ -43,17 +43,6 @@ namespace Simple.OData.Client
             }
         }
 
-        public EdmEnumType[] EnumTypes
-        {
-            get
-            {
-                return _model.SchemaElements
-                    .Where(x => x.SchemaElementKind == EdmSchemaElementKind.TypeDefinition &&
-                        (x as IEdmSchemaType).TypeKind == EdmTypeKind.Enum)
-                    .Select(x => EdmEnumType.FromModel(x as IEdmEnumType)).ToArray();
-            }
-        }
-
         public EdmEntityContainer[] EntityContainers
         {
             get

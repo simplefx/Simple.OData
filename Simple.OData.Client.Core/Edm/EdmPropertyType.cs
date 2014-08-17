@@ -16,10 +16,9 @@ namespace Simple.OData.Client
 
         public static EdmPropertyType Parse(string s,
             IEnumerable<EdmEntityType> entityTypes,
-            IEnumerable<EdmComplexType> complexTypes,
-            IEnumerable<EdmEnumType> enumTypes)
+            IEnumerable<EdmComplexType> complexTypes)
         {
-            var result1 = TryParseCollectionType(s, entityTypes, complexTypes, enumTypes);
+            var result1 = TryParseCollectionType(s, entityTypes, complexTypes);
             if (result1.Item1)
             {
                 return result1.Item2;
@@ -31,11 +30,11 @@ namespace Simple.OData.Client
                 return result2.Item2;
             }
 
-            var result3 = TryParseEnumType(s, enumTypes);
-            if (result3.Item1)
-            {
-                return result3.Item2;
-            }
+            //var result3 = TryParseEnumType(s, enumTypes);
+            //if (result3.Item1)
+            //{
+            //    return result3.Item2;
+            //}
 
             var result4 = TryParseComplexType(s, complexTypes);
             if (result4.Item1)
@@ -54,8 +53,7 @@ namespace Simple.OData.Client
 
         private static Tuple<bool, EdmCollectionPropertyType> TryParseCollectionType(string s,
             IEnumerable<EdmEntityType> entityTypes,
-            IEnumerable<EdmComplexType> complexTypes,
-            IEnumerable<EdmEnumType> enumTypes)
+            IEnumerable<EdmComplexType> complexTypes)
         {
             if (s.StartsWith("Collection(") && s.EndsWith(")"))
             {
@@ -63,8 +61,7 @@ namespace Simple.OData.Client
                 int end = s.LastIndexOf(")");
                 var baseType = EdmPropertyType.Parse(s.Substring(start + 1, end - start - 1),
                     entityTypes,
-                    complexTypes,
-                    enumTypes);
+                    complexTypes);
                 return new Tuple<bool, EdmCollectionPropertyType>(true, new EdmCollectionPropertyType() { BaseType = baseType });
             }
             else
@@ -83,21 +80,6 @@ namespace Simple.OData.Client
             else
             {
                 return new Tuple<bool, EdmPrimitivePropertyType>(false, null);
-            }
-        }
-
-        private static Tuple<bool, EdmEnumPropertyType> TryParseEnumType(string s, IEnumerable<EdmEnumType> enumTypes)
-        {
-            var result = EdmEnumType.TryParse(s, enumTypes);
-            if (!result.Item1)
-                result = EdmEnumType.TryParse(s.Split('.').Last(), enumTypes);
-            if (result.Item1)
-            {
-                return new Tuple<bool, EdmEnumPropertyType>(true, new EdmEnumPropertyType { Type = result.Item2 });
-            }
-            else
-            {
-                return new Tuple<bool, EdmEnumPropertyType>(false, null);
             }
         }
 
@@ -135,12 +117,6 @@ namespace Simple.OData.Client
     public class EdmPrimitivePropertyType : EdmPropertyType
     {
         public EdmType Type { get; set; }
-        public override string Name { get { return Type == null ? null : Type.Name; } }
-    }
-
-    public class EdmEnumPropertyType : EdmPropertyType
-    {
-        public EdmEnumType Type { get; set; }
         public override string Name { get { return Type == null ? null : Type.Name; } }
     }
 

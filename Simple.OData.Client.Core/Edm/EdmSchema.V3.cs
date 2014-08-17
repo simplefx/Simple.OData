@@ -28,7 +28,6 @@ namespace Simple.OData.Client
                 BaseType = FromModel(type.BaseType),
                 Abstract = type.IsAbstract,
                 OpenType = type.IsOpen,
-                //Key = EdmKey.FromModel(type.DeclaredKey),
                 Properties = type.DeclaredProperties.Where(x => x.PropertyKind == EdmPropertyKind.Structural)
                     .Select(x => EdmProperty.FromModel(x as IEdmStructuralProperty)).ToArray(),
             };
@@ -53,18 +52,6 @@ namespace Simple.OData.Client
         }
     }
 
-    public sealed partial class EdmEnumType
-    {
-        public static EdmEnumType FromModel(IEdmEnumType type)
-        {
-            return new EdmEnumType
-            {
-                Namespace = type.Namespace,
-                Name = type.Name,
-            };
-        }
-    }
-
     public sealed partial class EdmProperty
     {
         public static EdmProperty FromModel(IEdmStructuralProperty property)
@@ -78,15 +65,4 @@ namespace Simple.OData.Client
             };
         }
     }
-
-    //public sealed partial class EdmKey
-    //{
-    //    public static EdmKey FromModel(IEnumerable<IEdmStructuralProperty> properties)
-    //    {
-    //        return properties == null ? null : new EdmKey()
-    //        {
-    //            Properties = properties.Select(x => x.Name).ToArray()
-    //        };
-    //    }
-    //}
 }
