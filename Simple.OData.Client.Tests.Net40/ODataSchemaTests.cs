@@ -41,40 +41,5 @@ namespace Simple.OData.Client.Tests
             dynamic metadata = await client.GetMetadataAsync();
             Assert.Equal(12, (metadata.SchemaElements as IEnumerable<dynamic>).Count());
         }
-
-        [Theory]
-        [InlineData("V2", 3)]
-        [InlineData("V3", 10)]
-        [InlineData("V4", 10)]
-        public async Task EntityTypes(string protocolVersion, int typeCount)
-        {
-            var client = new ODataClient(string.Format(_serviceUrl, protocolVersion));
-
-            Assert.Equal(typeCount, (await client.GetSchemaAsync()).EntityTypes.Count());
-        }
-
-        [Theory]
-        [InlineData("V2")]
-        [InlineData("V3")]
-        [InlineData("V4")]
-        public async Task ComplexTypes(string protocolVersion)
-        {
-            var client = new ODataClient(string.Format(_serviceUrl, protocolVersion));
-
-            Assert.Equal(1, (await client.GetSchemaAsync()).ComplexTypes.Count());
-            Assert.Equal(5, (await client.GetSchemaAsync()).ComplexTypes.First().Properties.Count());
-        }
-
-        [Theory]
-        [InlineData("V2")]
-        [InlineData("V3")]
-        [InlineData("V4")]
-        public async Task ProductsPrimaryKey(string protocolVersion)
-        {
-            var client = new ODataClient(string.Format(_serviceUrl, protocolVersion));
-
-            var table = (await client.GetSchemaAsync()).FindTable("Product");
-            Assert.Equal("ID", table.PrimaryKey[0]);
-        }
     }
 }

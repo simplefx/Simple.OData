@@ -359,11 +359,14 @@
     <Compile Include="..\Simple.OData.Client.Core\ResponseReader.cs">
       <Link>ResponseReader.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Schema\EntitySet.cs">
+      <Link>Schema\EntitySet.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Schema\EntitySetCollection.cs">
+      <Link>Schema\EntitySetCollection.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Schema\ISchema.cs">
       <Link>Schema\ISchema.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Schema\Key.cs">
-      <Link>Schema\Key.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Schema\ProviderMetadata.cs">
       <Link>Schema\ProviderMetadata.cs</Link>
@@ -376,12 +379,6 @@
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Schema\SchemaProvider.cs">
       <Link>Schema\SchemaProvider.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Schema\Table.cs">
-      <Link>Schema\Table.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Schema\TableCollection.cs">
-      <Link>Schema\TableCollection.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\SimpleDictionary.cs">
       <Link>SimpleDictionary.cs</Link>

@@ -122,13 +122,12 @@
     <Compile Include="Http\SchemaRequestRunner.cs" />
     <Compile Include="Edm\IEdmModelParser.cs" />
     <Compile Include="Schema\ISchema.cs" />
-    <Compile Include="Schema\Key.cs" />
     <Compile Include="Schema\ProviderMetadata.cs" />
     <Compile Include="Schema\Schema.cs" />
     <Compile Include="Schema\Model.cs" />
     <Compile Include="Schema\SchemaProvider.cs" />
-    <Compile Include="Schema\Table.cs" />
-    <Compile Include="Schema\TableCollection.cs" />
+    <Compile Include="Schema\EntitySet.cs" />
+    <Compile Include="Schema\EntitySetCollection.cs" />
     <Compile Include="SimpleDictionary.cs" />
     <Compile Include="SimplePluralizer.cs" />
     <Compile Include="UnresolvableObjectException.cs" />

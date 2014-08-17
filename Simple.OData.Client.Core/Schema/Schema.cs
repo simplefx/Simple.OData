@@ -115,32 +115,32 @@ namespace Simple.OData.Client
             get { return string.Empty; }
         }
 
-        public IEnumerable<Table> Tables
+        public IEnumerable<EntitySet> EntitySets
         {
             get { return _lazyTables.Value.AsEnumerable(); }
         }
 
-        public bool HasTable(string tableName)
+        public bool HasTable(string entitySetName)
         {
-            return _lazyTables.Value.Contains(tableName);
+            return _lazyTables.Value.Contains(entitySetName);
         }
 
-        public Table FindTable(string tableName)
+        public EntitySet FindEntitySet(string entitySetName)
         {
-            return _lazyTables.Value.Find(tableName);
+            return _lazyTables.Value.Find(entitySetName);
         }
 
-        public Table FindBaseTable(string tablePath)
+        public EntitySet FindBaseEntitySet(string entitySetPath)
         {
-            return this.FindTable(tablePath.Split('/').First());
+            return this.FindEntitySet(entitySetPath.Split('/').First());
         }
 
-        public Table FindConcreteTable(string tablePath)
+        public EntitySet FindConcreteEntitySet(string entitySetPath)
         {
-            var items = tablePath.Split('/');
+            var items = entitySetPath.Split('/');
             if (items.Count() > 1)
             {
-                var baseTable = this.FindTable(items[0]);
+                var baseTable = this.FindEntitySet(items[0]);
                 var table = string.IsNullOrEmpty(items[1])
                     ? baseTable
                     : baseTable.FindDerivedTable(items[1]);
@@ -148,7 +148,7 @@ namespace Simple.OData.Client
             }
             else
             {
-                return this.FindTable(tablePath);
+                return this.FindEntitySet(entitySetPath);
             }
         }
 
@@ -211,7 +211,7 @@ namespace Simple.OData.Client
         private TableCollection CreateTableCollection()
         {
             return new TableCollection(_model.GetTables()
-                .Select(table => new Table(table.ActualName, table.EntityType, null, this)));
+                .Select(table => new EntitySet(table.ActualName, table.EntityType, null, this)));
         }
 
         private List<EdmEntityType> CreateEntityTypeCollection()

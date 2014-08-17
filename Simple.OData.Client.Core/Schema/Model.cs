@@ -13,23 +13,18 @@ namespace Simple.OData.Client
             _schema = schema;
         }
 
-        public IEnumerable<Table> GetTables()
+        public IEnumerable<EntitySet> GetTables()
         {
             return from s in GetEntitySets()
                    from et in GetEntitySetType(s)
-                   select new Table(s.Name, et, null, _schema);
+                   select new EntitySet(s.Name, et, null, _schema);
         }
 
-        public IEnumerable<Table> GetDerivedTables(Table table)
+        public IEnumerable<EntitySet> GetDerivedTables(EntitySet entitySet)
         {
             return from et in _schema.Metadata.EntityTypes
-                   where et.BaseType != null && et.BaseType.Name == table.EntityType.Name
-                   select new Table(et.Name, et, table, _schema);
-        }
-
-        public Key GetPrimaryKey(Table table)
-        {
-            return new Key(table.Schema.ProviderMetadata.GetDeclaredKeyPropertyNames(table.ActualName));
+                   where et.BaseType != null && et.BaseType.Name == entitySet.EntityType.Name
+                   select new EntitySet(et.Name, et, entitySet, _schema);
         }
 
         public IEnumerable<EdmEntityType> GetEntityTypes()

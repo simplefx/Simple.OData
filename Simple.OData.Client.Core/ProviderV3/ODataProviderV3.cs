@@ -65,7 +65,7 @@ namespace Simple.OData.Client
             }
 
             if (entityType.DeclaredKey == null)
-                throw new InvalidOperationException(string.Format("Entity set {0} doesn't declare a key", entitySetName));
+                return new string[] {};
 
             return entityType.DeclaredKey.Select(x => x.Name);
         }

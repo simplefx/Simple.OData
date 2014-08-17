@@ -259,7 +259,7 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var entryKeyWithNames = new Dictionary<string, object>();
-            var keyNames = _schema.FindConcreteTable(collection).GetKeyNames();
+            var keyNames = _schema.FindConcreteEntitySet(collection).GetKeyNames();
             for (int index = 0; index < keyNames.Count; index++)
             {
                 entryKeyWithNames.Add(keyNames[index], entryKey.ElementAt(index));
@@ -309,7 +309,7 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             RemoveSystemProperties(entryData);
-            var table = _schema.FindConcreteTable(collection);
+            var table = _schema.FindConcreteEntitySet(collection);
             var entryMembers = ParseEntryMembers(table, entryData);
 
             var commandWriter = new CommandWriter(_schema);
@@ -319,7 +319,7 @@ namespace Simple.OData.Client
                 commandWriter.AddLink(entryContent, collection, associatedData);
             }
 
-            var command = commandWriter.CreateInsertCommand(_schema.FindBaseTable(collection).ActualName, entryData, entryContent);
+            var command = commandWriter.CreateInsertCommand(_schema.FindBaseEntitySet(collection).ActualName, entryData, entryContent);
             var request = _requestBuilder.CreateRequest(command, resultRequired);
             var result = await _requestRunner.InsertEntryAsync(request, cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
@@ -357,7 +357,7 @@ namespace Simple.OData.Client
 
             RemoveSystemProperties(entryKey);
             RemoveSystemProperties(entryData);
-            var table = _schema.FindConcreteTable(collection);
+            var table = _schema.FindConcreteEntitySet(collection);
             var entryMembers = ParseEntryMembers(table, entryData);
 
             return await UpdateEntryPropertiesAndAssociationsAsync(collection, entryKey, entryData, entryMembers, resultRequired, cancellationToken);
@@ -408,7 +408,7 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var command = new CommandWriter(_schema).CreateDeleteCommand(commandText);
-            var table = _schema.FindConcreteTable(collection);
+            var table = _schema.FindConcreteEntitySet(collection);
             var request = _requestBuilder.CreateRequest(command, false, table.EntityType.CheckOptimisticConcurrency);
             await _requestRunner.DeleteEntryAsync(request, cancellationToken);
         }
@@ -606,7 +606,7 @@ namespace Simple.OData.Client
             await _schema.ResolveAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var collectionName = _schema.FindTable(command.CollectionName).ActualName;
+            var collectionName = _schema.FindEntitySet(command.CollectionName).ActualName;
             return await InsertEntryAsync(collectionName, entryData, resultRequired, cancellationToken);
         }
 
@@ -615,7 +615,7 @@ namespace Simple.OData.Client
             await _schema.ResolveAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var collectionName = _schema.FindTable(command.CollectionName).ActualName;
+            var collectionName = _schema.FindEntitySet(command.CollectionName).ActualName;
             return await UpdateEntryAsync(collectionName, entryKey, entryData, resultRequired, cancellationToken);
         }
 
@@ -624,7 +624,7 @@ namespace Simple.OData.Client
             await _schema.ResolveAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var collectionName = _schema.FindTable(command.CollectionName).ActualName;
+            var collectionName = _schema.FindEntitySet(command.CollectionName).ActualName;
             return await UpdateEntryAsync(collectionName, command.KeyValues, command.EntryData, resultRequired, cancellationToken);
         }
 
@@ -633,7 +633,7 @@ namespace Simple.OData.Client
             await _schema.ResolveAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var collectionName = _schema.FindTable(command.CollectionName).ActualName;
+            var collectionName = _schema.FindEntitySet(command.CollectionName).ActualName;
             var commandText = await command.GetCommandTextAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
@@ -645,7 +645,7 @@ namespace Simple.OData.Client
             await _schema.ResolveAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var collectionName = _schema.FindTable(command.CollectionName).ActualName;
+            var collectionName = _schema.FindEntitySet(command.CollectionName).ActualName;
             await DeleteEntryAsync(collectionName, entryKey, cancellationToken);
         }
 
@@ -654,7 +654,7 @@ namespace Simple.OData.Client
             await _schema.ResolveAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var collectionName = _schema.FindTable(command.CollectionName).ActualName;
+            var collectionName = _schema.FindEntitySet(command.CollectionName).ActualName;
             await DeleteEntryAsync(collectionName, command.KeyValues, cancellationToken);
         }
 
@@ -663,7 +663,7 @@ namespace Simple.OData.Client
             await _schema.ResolveAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var collectionName = _schema.FindTable(command.CollectionName).ActualName;
+            var collectionName = _schema.FindEntitySet(command.CollectionName).ActualName;
             var commandText = await command.GetCommandTextAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
@@ -675,7 +675,7 @@ namespace Simple.OData.Client
             await _schema.ResolveAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var collectionName = _schema.FindTable(command.CollectionName).ActualName;
+            var collectionName = _schema.FindEntitySet(command.CollectionName).ActualName;
             await LinkEntryAsync(collectionName, entryKey, linkName, linkedEntryKey, cancellationToken);
         }
 
@@ -684,7 +684,7 @@ namespace Simple.OData.Client
             await _schema.ResolveAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var collectionName = _schema.FindTable(command.CollectionName).ActualName;
+            var collectionName = _schema.FindEntitySet(command.CollectionName).ActualName;
             await UnlinkEntryAsync(collectionName, entryKey, linkName, cancellationToken);
         }
 

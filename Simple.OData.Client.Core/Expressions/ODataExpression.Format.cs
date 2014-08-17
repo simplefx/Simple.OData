@@ -6,12 +6,12 @@ namespace Simple.OData.Client
 {
     public partial class ODataExpression
     {
-        internal string Format(ISchema schema, Table table)
+        internal string Format(ISchema schema, EntitySet entitySet)
         {
             return this.Format(new ExpressionContext()
                                    {
                                        Schema = schema, 
-                                       Table = table
+                                       EntitySet = entitySet
                                    });
         }
 
@@ -67,7 +67,7 @@ namespace Simple.OData.Client
         private string FormatReference(ExpressionContext context)
         {
             var elementNames = new List<string>(this.Reference.Split('.'));
-            var pathNames = BuildReferencePath(new List<string>(), context.Table, elementNames, context);
+            var pathNames = BuildReferencePath(new List<string>(), context.EntitySet, elementNames, context);
             return string.Join("/", pathNames);
         }
 
@@ -130,7 +130,7 @@ namespace Simple.OData.Client
             }
         }
 
-        private IEnumerable<string> BuildReferencePath(List<string> pathNames, Table table, List<string> elementNames, ExpressionContext context)
+        private IEnumerable<string> BuildReferencePath(List<string> pathNames, EntitySet entitySet, List<string> elementNames, ExpressionContext context)
         {
             if (!elementNames.Any())
             {
@@ -138,18 +138,18 @@ namespace Simple.OData.Client
             }
 
             var objectName = elementNames.First();
-            if (table != null)
+            if (entitySet != null)
             {
-                if (table.Schema.ProviderMetadata.HasStructuralProperty(table.ActualName, objectName))
+                if (entitySet.Schema.ProviderMetadata.HasStructuralProperty(entitySet.ActualName, objectName))
                 {
-                    pathNames.Add(table.Schema.ProviderMetadata.GetStructuralPropertyExactName(table.ActualName, objectName));
+                    pathNames.Add(entitySet.Schema.ProviderMetadata.GetStructuralPropertyExactName(entitySet.ActualName, objectName));
                     return BuildReferencePath(pathNames, null, elementNames.Skip(1).ToList(), context);
                 }
-                else if (table.Schema.ProviderMetadata.HasNavigationProperty(table.ActualName, objectName))
+                else if (entitySet.Schema.ProviderMetadata.HasNavigationProperty(entitySet.ActualName, objectName))
                 {
-                    pathNames.Add(table.Schema.ProviderMetadata.GetNavigationPropertyExactName(table.ActualName, objectName));
-                    return BuildReferencePath(pathNames, context.Schema.FindTable(
-                        table.Schema.ProviderMetadata.GetNavigationPropertyPartnerName(table.ActualName, objectName)), 
+                    pathNames.Add(entitySet.Schema.ProviderMetadata.GetNavigationPropertyExactName(entitySet.ActualName, objectName));
+                    return BuildReferencePath(pathNames, context.Schema.FindEntitySet(
+                        entitySet.Schema.ProviderMetadata.GetNavigationPropertyPartnerName(entitySet.ActualName, objectName)), 
                         elementNames.Skip(1).ToList(), context);
                 }
                 else

@@ -107,7 +107,7 @@ namespace Simple.OData.Client
                 _namedKeyValues = TryInterpretFilterExpressionAsKey(_filterExpression);
                 if (_namedKeyValues == null)
                 {
-                    _filter = _filterExpression.Format(_schema, this.Table);
+                    _filter = _filterExpression.Format(_schema, this.EntitySet);
                 }
                 else
                 {
@@ -125,13 +125,13 @@ namespace Simple.OData.Client
             return this;
         }
 
-        private Table Table
+        private EntitySet EntitySet
         {
             get
             {
                 if (!string.IsNullOrEmpty(_collectionName))
                 {
-                    var table = _schema.FindTable(_collectionName);
+                    var table = _schema.FindEntitySet(_collectionName);
                     return string.IsNullOrEmpty(_derivedCollectionName)
                                ? table
                                : table.FindDerivedTable(_derivedCollectionName);
@@ -139,7 +139,7 @@ namespace Simple.OData.Client
                 else if (!string.IsNullOrEmpty(_linkName))
                 {
                     var parent = new FluentCommand(_parent).Resolve();
-                    return _schema.FindTable((_schema as Schema).ProviderMetadata.GetNavigationPropertyPartnerName(parent.Table.ActualName, _linkName));
+                    return _schema.FindEntitySet((_schema as Schema).ProviderMetadata.GetNavigationPropertyPartnerName(parent.EntitySet.ActualName, _linkName));
                 }
                 else
                 {
@@ -407,7 +407,7 @@ namespace Simple.OData.Client
                 if (!HasKey)
                     return null;
 
-                var keyNames = this.Table.GetKeyNames();
+                var keyNames = this.EntitySet.GetKeyNames();
                 var namedKeyValues = new Dictionary<string, object>();
                 for (int index = 0; index < keyNames.Count; index++)
                 {
@@ -449,7 +449,7 @@ namespace Simple.OData.Client
             string commandText = string.Empty;
             if (!string.IsNullOrEmpty(_collectionName))
             {
-                var table = _schema.FindTable(_collectionName);
+                var table = _schema.FindEntitySet(_collectionName);
                 commandText += table.ActualName;
                 if (!string.IsNullOrEmpty(_derivedCollectionName))
                     commandText += "/" + string.Join(".",
@@ -460,7 +460,7 @@ namespace Simple.OData.Client
             {
                 var parent = new FluentCommand(_parent).Resolve();
                 commandText += parent.Format() + "/";
-                commandText += (_schema as Schema).ProviderMetadata.GetNavigationPropertyExactName(parent.Table.ActualName, _linkName);
+                commandText += (_schema as Schema).ProviderMetadata.GetNavigationPropertyExactName(parent.EntitySet.ActualName, _linkName);
             }
             else if (!string.IsNullOrEmpty(_functionName))
             {
@@ -524,25 +524,25 @@ namespace Simple.OData.Client
         {
             var names = new List<string>();
             var items = item.Split('/');
-            var table = this.Table;
+            var table = this.EntitySet;
             foreach (var associationName in items)
             {
                 names.Add(table.Schema.ProviderMetadata.GetNavigationPropertyExactName(table.ActualName, associationName));
-                table = _schema.FindTable(table.Schema.ProviderMetadata.GetNavigationPropertyPartnerName(table.ActualName, associationName));
+                table = _schema.FindEntitySet(table.Schema.ProviderMetadata.GetNavigationPropertyPartnerName(table.ActualName, associationName));
             }
             return string.Join("/", names);
         }
 
         private string FormatSelectItem(string item)
         {
-            return this.Table.Schema.ProviderMetadata.HasStructuralProperty(this.Table.ActualName, item)
-                ? this.Table.Schema.ProviderMetadata.GetStructuralPropertyExactName(this.Table.ActualName, item)
-                : this.Table.Schema.ProviderMetadata.GetNavigationPropertyExactName(this.Table.ActualName, item);
+            return this.EntitySet.Schema.ProviderMetadata.HasStructuralProperty(this.EntitySet.ActualName, item)
+                ? this.EntitySet.Schema.ProviderMetadata.GetStructuralPropertyExactName(this.EntitySet.ActualName, item)
+                : this.EntitySet.Schema.ProviderMetadata.GetNavigationPropertyExactName(this.EntitySet.ActualName, item);
         }
 
         private string FormatOrderByItem(KeyValuePair<string, bool> item)
         {
-            return this.Table.Schema.ProviderMetadata.GetStructuralPropertyExactName(this.Table.ActualName, item.Key) + (item.Value ? " desc" : string.Empty);
+            return this.EntitySet.Schema.ProviderMetadata.GetStructuralPropertyExactName(this.EntitySet.ActualName, item.Key) + (item.Value ? " desc" : string.Empty);
         }
 
         private string FormatKey()
@@ -564,8 +564,8 @@ namespace Simple.OData.Client
                 ok = expression.ExtractEqualityComparisons(namedKeyValues);
             }
             return ok &&
-                this.Table.GetKeyNames().Count == namedKeyValues.Count() &&
-                this.Table.GetKeyNames().All(namedKeyValues.ContainsKey) ? namedKeyValues : null;
+                this.EntitySet.GetKeyNames().Count == namedKeyValues.Count() &&
+                this.EntitySet.GetKeyNames().All(namedKeyValues.ContainsKey) ? namedKeyValues : null;
         }
 
         private static bool IsAnonymousType(Type type)

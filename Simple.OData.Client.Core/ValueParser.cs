@@ -8,23 +8,23 @@ namespace Simple.OData.Client
 {
     internal class ValueParser
     {
-        private readonly Table _table;
+        private readonly EntitySet _entitySet;
 
-        public ValueParser(Table table)
+        public ValueParser(EntitySet entitySet)
         {
-            _table = table;
+            _entitySet = entitySet;
         }
 
         public IDictionary<string, object> Parse(string keyValues)
         {
-            if (_table.GetKeyNames().Count == 1)
+            if (_entitySet.GetKeyNames().Count == 1)
             {
-                var columnName = _table.GetKeyNames()[0];
+                var columnName = _entitySet.GetKeyNames()[0];
                 return new Dictionary<string, object>()
                 {
                     { 
                         columnName, 
-                        ParseValue(keyValues, _table.Schema.ProviderMetadata.GetStructuralPropertyType(_table.ActualName, columnName)) 
+                        ParseValue(keyValues, _entitySet.Schema.ProviderMetadata.GetStructuralPropertyType(_entitySet.ActualName, columnName)) 
                     }
                 };
             }
@@ -38,7 +38,7 @@ namespace Simple.OData.Client
                     var columnName = pair.First();
                     dict.Add(
                         columnName, 
-                        ParseValue(pair.Last(), _table.Schema.ProviderMetadata.GetStructuralPropertyType(_table.ActualName, columnName)));
+                        ParseValue(pair.Last(), _entitySet.Schema.ProviderMetadata.GetStructuralPropertyType(_entitySet.ActualName, columnName)));
                 }
                 return dict;
             }

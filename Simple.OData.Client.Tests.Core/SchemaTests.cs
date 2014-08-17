@@ -15,9 +15,9 @@ namespace Simple.OData.Client.Tests
         {
             _client = CreateClient("Marathon.edmx");
             var schema = await _client.GetSchemaAsync();
-            var table = schema.FindTable("Marathons");
+            var table = schema.FindEntitySet("Marathons");
             Assert.NotNull(table);
-            //Assert.Equal(8, table.Columns.Count());
+            //Assert.Equal(8, EntitySet.Columns.Count());
         }
 
         [Fact]
@@ -25,10 +25,10 @@ namespace Simple.OData.Client.Tests
         {
             _client = CreateClient("Insight.edmx");
             var schema = await _client.GetSchemaAsync();
-            var table = schema.FindTable("Customers");
+            var table = schema.FindEntitySet("Customers");
             Assert.NotNull(table);
-            //Assert.Equal(178, table.Columns.Count());
-            //var column = table.FindColumn("KeyCustomer");
+            //Assert.Equal(178, EntitySet.Columns.Count());
+            //var column = EntitySet.FindColumn("KeyCustomer");
             //Assert.NotNull(column);
             var commandText = await _client.For("Customers").OrderBy("KeyCustomer").GetCommandTextAsync();
             Assert.Equal("Customers?$orderby=KeyCustomer", commandText);

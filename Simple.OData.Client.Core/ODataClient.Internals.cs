@@ -97,13 +97,13 @@ namespace Simple.OData.Client
             bool hasPropertiesToUpdate = entryMembers.Properties.Count > 0;
             bool merge = !hasPropertiesToUpdate || CheckMergeConditions(collection, entryKey, entryData);
             var commandText = await GetFluentClient()
-                .For(_schema.FindBaseTable(collection).ActualName)
+                .For(_schema.FindBaseEntitySet(collection).ActualName)
                 .Key(entryKey)
                 .GetCommandTextAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var commandWriter = new CommandWriter(_schema);
-            var table = _schema.FindConcreteTable(collection);
+            var table = _schema.FindConcreteEntitySet(collection);
             var entryContent = commandWriter.CreateEntry(table.EntityType.Namespace, table.EntityType.Name, entryMembers.Properties);
             var unlinkAssociationNames = new List<string>();
             foreach (var associatedData in entryMembers.AssociationsByValue)
@@ -141,27 +141,27 @@ namespace Simple.OData.Client
             return result;
         }
 
-        private EntryMembers ParseEntryMembers(Table table, IDictionary<string, object> entryData)
+        private EntryMembers ParseEntryMembers(EntitySet entitySet, IDictionary<string, object> entryData)
         {
             var entryMembers = new EntryMembers();
 
             foreach (var item in entryData)
             {
-                ParseEntryMember(table, item, entryMembers);
+                ParseEntryMember(entitySet, item, entryMembers);
             }
 
             return entryMembers;
         }
 
-        private void ParseEntryMember(Table table, KeyValuePair<string, object> item, EntryMembers entryMembers)
+        private void ParseEntryMember(EntitySet entitySet, KeyValuePair<string, object> item, EntryMembers entryMembers)
         {
-            if (table.Schema.ProviderMetadata.HasStructuralProperty(table.ActualName, item.Key))
+            if (entitySet.Schema.ProviderMetadata.HasStructuralProperty(entitySet.ActualName, item.Key))
             {
                 entryMembers.AddProperty(item.Key, item.Value);
             }
-            else if (table.Schema.ProviderMetadata.HasNavigationProperty(table.ActualName, item.Key))
+            else if (entitySet.Schema.ProviderMetadata.HasNavigationProperty(entitySet.ActualName, item.Key))
             {
-                if (table.Schema.ProviderMetadata.IsNavigationPropertyMultiple(table.ActualName, item.Key))
+                if (entitySet.Schema.ProviderMetadata.IsNavigationPropertyMultiple(entitySet.ActualName, item.Key))
                 {
                     var collection = item.Value as IEnumerable<object>;
                     if (collection != null)
@@ -198,7 +198,7 @@ namespace Simple.OData.Client
 
         private bool CheckMergeConditions(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
         {
-            var table = _schema.FindConcreteTable(collection);
+            var table = _schema.FindConcreteEntitySet(collection);
             return table.Schema.ProviderMetadata.GetStructuralPropertyNames(table.ActualName)
                 .Any(x => !entryData.ContainsKey(x));
         }

@@ -2,31 +2,31 @@
 {
     internal class ExpressionContext
     {
-        private Table _table;
+        private EntitySet _entitySet;
 
         public ISchema Schema { get; set; }
-        public Table Table
+        public EntitySet EntitySet
         {
             get
             {
                 if (!IsSet)
                     return null;
-                if (_table != null)
-                    return _table;
+                if (_entitySet != null)
+                    return _entitySet;
 
-                return this.Schema.FindConcreteTable(this.Collection);
+                return this.Schema.FindConcreteEntitySet(this.Collection);
             }
 
             set 
             { 
-                _table = value; 
+                _entitySet = value; 
             }
         }
         public string Collection { get; set; }
 
         public bool IsSet
         {
-            get { return this.Schema != null && (this._table != null || !string.IsNullOrEmpty(this.Collection)); }
+            get { return this.Schema != null && (this._entitySet != null || !string.IsNullOrEmpty(this.Collection)); }
         }
     }
 }

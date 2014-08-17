@@ -150,8 +150,8 @@ namespace Simple.OData.Client.Tests
         //{
         //    string document = GetResourceAsString("Northwind.edmx");
         //    var schema = Schema.FromMetadata(document);
-        //    var table = schema.FindTable("Product");
-        //    //var association = table.FindAssociation("OrderDetails");
+        //    var EntitySet = schema.FindEntitySet("Product");
+        //    //var association = EntitySet.FindAssociation("OrderDetails");
         //    //Assert.NotNull(association);
         //}
 
@@ -160,8 +160,8 @@ namespace Simple.OData.Client.Tests
         //{
         //    string document = GetResourceAsString("Artifacts.edmx");
         //    var schema = Schema.FromMetadata(document);
-        //    var table = schema.FindTable("Product");
-        //    //var association = table.FindAssociation("Artifacts");
+        //    var EntitySet = schema.FindEntitySet("Product");
+        //    //var association = EntitySet.FindAssociation("Artifacts");
         //    Assert.NotNull(association);
         //}
 

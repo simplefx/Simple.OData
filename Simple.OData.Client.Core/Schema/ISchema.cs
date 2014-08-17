@@ -25,52 +25,36 @@ namespace Simple.OData.Client
         /// </value>
         string MetadataAsString { get; }
         /// <summary>
-        /// Gets the schema types namespace.
-        /// </summary>
-        /// <value>
-        /// The types namespace.
-        /// </value>
-        [Obsolete("The value is unassigned. Use Namespace property for the specific type instead", false)]
-        string TypesNamespace { get; }
-        /// <summary>
-        /// Gets the schema containers namespace.
-        /// </summary>
-        /// <value>
-        /// The containers namespace.
-        /// </value>
-        [Obsolete("The value is unassigned.", false)]
-        string ContainersNamespace { get; }
-        /// <summary>
         /// Gets the schema tables.
         /// </summary>
         /// <value>
         /// The tables.
         /// </value>
-        IEnumerable<Table> Tables { get; }
+        IEnumerable<EntitySet> EntitySets { get; }
         /// <summary>
-        /// Determines whether the schema has the specified table.
+        /// Determines whether the schema has the specified EntitySet.
         /// </summary>
-        /// <param name="tableName">Name of the table.</param>
-        /// <returns><c>true</c> if the schema contains the table; otherwise, <c>false</c>.</returns>
-        bool HasTable(string tableName);
+        /// <param name="entitySetName">Name of the EntitySet.</param>
+        /// <returns><c>true</c> if the schema contains the EntitySet; otherwise, <c>false</c>.</returns>
+        bool HasTable(string entitySetName);
         /// <summary>
-        /// Finds the specified table.
+        /// Finds the specified EntitySet.
         /// </summary>
-        /// <param name="tableName">Name of the table.</param>
-        /// <returns>The table found.</returns>
-        Table FindTable(string tableName);
+        /// <param name="entitySetName">Name of the EntitySet.</param>
+        /// <returns>The EntitySet found.</returns>
+        EntitySet FindEntitySet(string entitySetName);
         /// <summary>
-        /// Finds the base table.
+        /// Finds the base EntitySet.
         /// </summary>
-        /// <param name="tablePath">The table path.</param>
-        /// <returns>The table found.</returns>
-        Table FindBaseTable(string tablePath);
+        /// <param name="entitySetPath">The EntitySet path.</param>
+        /// <returns>The EntitySet found.</returns>
+        EntitySet FindBaseEntitySet(string entitySetPath);
         /// <summary>
-        /// Finds the concrete table.
+        /// Finds the concrete EntitySet.
         /// </summary>
-        /// <param name="tablePath">The table path.</param>
-        /// <returns>The table found.</returns>
-        Table FindConcreteTable(string tablePath);
+        /// <param name="entitySetPath">The EntitySet path.</param>
+        /// <returns>The EntitySet found.</returns>
+        EntitySet FindConcreteEntitySet(string entitySetPath);
         /// <summary>
         /// Gets the schema entity types.
         /// </summary>

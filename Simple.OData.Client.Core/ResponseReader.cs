@@ -144,7 +144,7 @@ namespace Simple.OData.Client
 
             if (!string.IsNullOrEmpty(content))
             {
-                var table = _schema.FindBaseTable(tableName);
+                var table = _schema.FindBaseEntitySet(tableName);
                 return new ValueParser(table).Parse(content);
             }
             else

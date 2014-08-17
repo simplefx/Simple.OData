@@ -179,9 +179,6 @@
     <Compile Include="..\Simple.OData.Client.Tests.Net40\LinkTypedTests.cs">
       <Link>LinkTypedTests.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\NorthwindSchemaTests.cs">
-      <Link>NorthwindSchemaTests.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\ODataSchemaTests.cs">
       <Link>ODataSchemaTests.cs</Link>
     </Compile>
