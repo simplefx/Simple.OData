@@ -39,7 +39,8 @@ namespace Simple.OData.Client
                 Abstract = type.IsAbstract,
                 OpenType = type.IsOpen,
                 Key = EdmKey.FromModel(type.DeclaredKey),
-                Properties = type.StructuralProperties().Select(EdmProperty.FromModel).ToArray(),
+                Properties = type.DeclaredProperties.Where(x => x.PropertyKind == EdmPropertyKind.Structural)
+                    .Select(x => EdmProperty.FromModel(x as IEdmStructuralProperty)).ToArray(),
                 NavigationProperties = type.NavigationProperties().Select(EdmNavigationProperty.FromModel).ToArray(),
             };
         }
