@@ -48,22 +48,22 @@ namespace Simple.OData.Client.Tests
             Assert.Equal(true, nullableColumn.IsNullable);
         }
 
-        [Fact]
-        public async Task GetAssociationsCount()
-        {
-            var associations = (await _client.GetSchemaAsync()).FindTable("Employees").Associations;
+        //[Fact]
+        //public async Task GetAssociationsCount()
+        //{
+        //    var associations = (await _client.GetSchemaAsync()).FindTable("Employees").Associations;
 
-            Assert.Equal(3, associations.Count());
-        }
+        //    Assert.Equal(3, associations.Count());
+        //}
 
-        [Fact]
-        public async Task FindAssociation()
-        {
-            var association = (await _client.GetSchemaAsync()).FindTable("Employees").FindAssociation("superior");
+        //[Fact]
+        //public async Task FindAssociation()
+        //{
+        //    var association = (await _client.GetSchemaAsync()).FindTable("Employees").FindAssociation("superior");
 
-            Assert.Equal("Employees", association.ReferenceTableName);
-            Assert.Equal("0..1", association.Multiplicity);
-        }
+        //    Assert.Equal("Employees", association.ReferenceTableName);
+        //    Assert.Equal("0..1", association.Multiplicity);
+        //}
 
         [Fact]
         public async Task GetCompoundPrimaryKey()

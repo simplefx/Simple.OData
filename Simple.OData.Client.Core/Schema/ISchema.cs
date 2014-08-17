@@ -79,13 +79,6 @@ namespace Simple.OData.Client
         /// <returns>The column found.</returns>
         Column FindColumn(string tablePath, string columnName);
         /// <summary>
-        /// Finds the specified association.
-        /// </summary>
-        /// <param name="tablePath">The table path.</param>
-        /// <param name="associationName">Name of the association.</param>
-        /// <returns>The association found.</returns>
-        Association FindAssociation(string tablePath, string associationName);
-        /// <summary>
         /// Gets the schema entity types.
         /// </summary>
         /// <value>

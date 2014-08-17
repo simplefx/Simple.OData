@@ -139,7 +139,7 @@ namespace Simple.OData.Client
                 else if (!string.IsNullOrEmpty(_linkName))
                 {
                     var parent = new FluentCommand(_parent).Resolve();
-                    return _schema.FindTable(parent.Table.FindAssociation(_linkName).ReferenceTableName);
+                    return _schema.FindTable((_schema as Schema).ProviderMetadata.GetNavigationPropertyPartnerName(parent.Table.ActualName, _linkName));
                 }
                 else
                 {
@@ -460,7 +460,7 @@ namespace Simple.OData.Client
             {
                 var parent = new FluentCommand(_parent).Resolve();
                 commandText += parent.Format() + "/";
-                commandText += parent.Table.FindAssociation(_linkName).ActualName;
+                commandText += (_schema as Schema).ProviderMetadata.GetNavigationPropertyActualName(parent.Table.ActualName, _linkName);
             }
             else if (!string.IsNullOrEmpty(_functionName))
             {
@@ -527,9 +527,8 @@ namespace Simple.OData.Client
             var table = this.Table;
             foreach (var associationName in items)
             {
-                var association = table.FindAssociation(associationName);
-                names.Add(association.ActualName);
-                table = _schema.FindTable(association.ReferenceTableName);
+                names.Add(table.Schema.ProviderMetadata.GetNavigationPropertyActualName(table.ActualName, associationName));
+                table = _schema.FindTable(table.Schema.ProviderMetadata.GetNavigationPropertyPartnerName(table.ActualName, associationName));
             }
             return string.Join("/", names);
         }
@@ -538,7 +537,7 @@ namespace Simple.OData.Client
         {
             return this.Table.HasColumn(item)
                 ? this.Table.FindColumn(item).ActualName
-                : this.Table.FindAssociation(item).ActualName;
+                : this.Table.Schema.ProviderMetadata.GetNavigationPropertyActualName(this.Table.ActualName, item);
         }
 
         private string FormatOrderByItem(KeyValuePair<string, bool> item)

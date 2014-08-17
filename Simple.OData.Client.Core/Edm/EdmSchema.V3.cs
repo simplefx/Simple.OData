@@ -31,7 +31,6 @@ namespace Simple.OData.Client
                 Key = EdmKey.FromModel(type.DeclaredKey),
                 Properties = type.DeclaredProperties.Where(x => x.PropertyKind == EdmPropertyKind.Structural)
                     .Select(x => EdmProperty.FromModel(x as IEdmStructuralProperty)).ToArray(),
-                NavigationProperties = type.NavigationProperties().Select(EdmNavigationProperty.FromModel).ToArray(),
             };
         }
 
@@ -80,38 +79,6 @@ namespace Simple.OData.Client
         }
     }
 
-    public sealed partial class EdmNavigationProperty
-    {
-        public static EdmNavigationProperty FromModel(IEdmNavigationProperty property)
-        {
-            return new EdmNavigationProperty()
-            {
-                // TODO
-                Name = property.Name,
-                PartnerName = (property.Partner.DeclaringType as IEdmEntityType).Name,
-                FromRole = property.Name, // TODO
-                ToRole = property.Partner.Name, // TODO
-                Relationship = "", // TODO
-                Multiplicity = GetMultiplicityString(property.Partner.Multiplicity()),
-            };
-        }
-
-        private static string GetMultiplicityString(EdmMultiplicity multiplicity)
-        {
-            switch (multiplicity)
-            {
-                case EdmMultiplicity.ZeroOrOne:
-                    return "0..1";
-                case EdmMultiplicity.One:
-                    return "1";
-                case EdmMultiplicity.Many:
-                    return "*";
-                default:
-                    throw new ArgumentException("Invalid multiplicity " + multiplicity);
-            }
-        }
-    }
-
     public sealed partial class EdmKey
     {
         public static EdmKey FromModel(IEnumerable<IEdmStructuralProperty> properties)
@@ -119,19 +86,6 @@ namespace Simple.OData.Client
             return properties == null ? null : new EdmKey()
             {
                 Properties = properties.Select(x => x.Name).ToArray()
-            };
-        }
-    }
-
-    public sealed partial class EdmParameter
-    {
-        public static EdmParameter FromModel(IEdmFunctionParameter parameter)
-        {
-            return new EdmParameter
-            {
-                Name = parameter.Name,
-                Type = EdmPropertyType.FromModel(parameter.Type),
-                Mode = parameter.Mode.ToString(), // TODO
             };
         }
     }

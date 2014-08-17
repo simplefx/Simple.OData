@@ -164,27 +164,10 @@ namespace Simple.OData.Client
             }
             else
             {
-                if (concreteTable.HasAssociation(columnName))
+                if (ProviderMetadata.HasNavigationProperty(concreteTable.ActualName, columnName))
                     return concreteTable.FindColumn(columnName);
                 else
                     return baseTable.FindColumn(columnName);
-            }
-        }
-
-        public Association FindAssociation(string tablePath, string associationName)
-        {
-            var baseTable = this.FindBaseTable(tablePath);
-            var concreteTable = this.FindConcreteTable(tablePath);
-            if (baseTable == concreteTable)
-            {
-                return concreteTable.FindAssociation(associationName);
-            }
-            else
-            {
-                if (concreteTable.HasAssociation(associationName))
-                    return concreteTable.FindAssociation(associationName);
-                else
-                    return baseTable.FindAssociation(associationName);
             }
         }
 

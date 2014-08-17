@@ -108,14 +108,14 @@ namespace Simple.OData.Client
             var unlinkAssociationNames = new List<string>();
             foreach (var associatedData in entryMembers.AssociationsByValue)
             {
-                var association = table.FindAssociation(associatedData.Key);
+                var associationName = table.Schema.ProviderMetadata.GetNavigationPropertyActualName(table.ActualName, associatedData.Key);
                 if (associatedData.Value != null)
                 {
                     commandWriter.AddLink(entryContent, collection, associatedData);
                 }
                 else
                 {
-                    unlinkAssociationNames.Add(association.ActualName);
+                    unlinkAssociationNames.Add(associationName);
                 }
             }
 
@@ -159,10 +159,9 @@ namespace Simple.OData.Client
             {
                 entryMembers.AddProperty(item.Key, item.Value);
             }
-            else if (table.HasAssociation(item.Key))
+            else if (table.Schema.ProviderMetadata.HasNavigationProperty(table.ActualName, item.Key))
             {
-                var association = table.FindAssociation(item.Key);
-                if (association.IsMultiple)
+                if (table.Schema.ProviderMetadata.IsNavigationPropertyMultiple(table.ActualName, item.Key))
                 {
                     var collection = item.Value as IEnumerable<object>;
                     if (collection != null)

@@ -75,7 +75,7 @@ namespace Simple.OData.Client.Tests
             Assert.Null(table.BaseTable);
             Assert.Equal("Customer", table.EntityType.Name);
             Assert.Equal(1, table.PrimaryKey.AsEnumerable().Count());
-            Assert.Equal(2, table.Associations.Count());
+            //Assert.Equal(2, table.Associations.Count());
         }
 
         [Theory]
@@ -131,51 +131,6 @@ namespace Simple.OData.Client.Tests
 
             Assert.Equal(false, nonNullablecolumn.IsNullable);
             Assert.Equal(true, nullableColumn.IsNullable);
-        }
-
-        [Theory]
-        [InlineData("V2")]
-        [InlineData("V3")]
-        [InlineData("V4")]
-        public async Task GetAssociationsCount(string protocolVersion)
-        {
-            var client = new ODataClient(string.Format(_serviceUrl, protocolVersion));
-
-            var associations = (await client.GetSchemaAsync()).FindTable("Employees").Associations;
-
-            Assert.Equal(4, associations.Count());
-        }
-
-        [Theory]
-        [InlineData("V2")]
-        [InlineData("V3")]
-        [InlineData("V4")]
-        public async Task FindAssociationToOne(string protocolVersion)
-        {
-            var client = new ODataClient(string.Format(_serviceUrl, protocolVersion));
-
-            var association = (await client.GetSchemaAsync()).FindTable("Employees").FindAssociation("Employee1");
-
-            Assert.Equal("Employee1", association.ActualName);
-            Assert.Equal("Employees", association.ReferenceTableName);
-            Assert.Equal("0..1", association.Multiplicity);
-            Assert.False(association.IsMultiple);
-        }
-
-        [Theory]
-        [InlineData("V2")]
-        [InlineData("V3")]
-        [InlineData("V4")]
-        public async Task FindAssociationToMany(string protocolVersion)
-        {
-            var client = new ODataClient(string.Format(_serviceUrl, protocolVersion));
-
-            var association = (await client.GetSchemaAsync()).FindTable("Employees").FindAssociation("Employees1");
-
-            Assert.Equal("Employees1", association.ActualName);
-            Assert.Equal("Employees", association.ReferenceTableName);
-            Assert.Equal("*", association.Multiplicity);
-            Assert.True(association.IsMultiple);
         }
 
         [Theory]

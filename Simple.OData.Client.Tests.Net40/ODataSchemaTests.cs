@@ -76,20 +76,5 @@ namespace Simple.OData.Client.Tests
             var table = (await client.GetSchemaAsync()).FindTable("Product");
             Assert.Equal("ID", table.PrimaryKey[0]);
         }
-
-        [Theory]
-        [InlineData("V2", "0..1")]
-        [InlineData("V3", "*")]
-        [InlineData("V4", "*")]
-        public async Task ProductCategory(string protocolVersion, string mulitiplicity)
-        {
-            var client = new ODataClient(string.Format(_serviceUrl, protocolVersion));
-
-            var table = (await client.GetSchemaAsync()).FindTable("Product");
-
-            var association = table.FindAssociation("Categories");
-            Assert.Equal("Category", association.ReferenceTableName);
-            Assert.Equal(mulitiplicity, association.Multiplicity);
-        }
     }
 }

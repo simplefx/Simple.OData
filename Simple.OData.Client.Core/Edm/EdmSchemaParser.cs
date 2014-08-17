@@ -28,7 +28,6 @@ namespace Simple.OData.Client
             ParseEnumTypes(schemaRoot.SelectMany(x => x.Descendants(null, "EnumType")));
             ParseComplexTypes(schemaRoot.SelectMany(x => x.Descendants(null, "ComplexType")));
             ParseEntityTypes(schemaRoot.SelectMany(x => x.Descendants(null, "EntityType")));
-            //ParseAssociations(schemaRoot.SelectMany(x => x.Descendants(null, "Association")));
             ParseEntityContainers(schemaRoot.SelectMany(x => x.Descendants(null, "EntityContainer")));
 
             return new EdmSchema(this);
@@ -94,8 +93,6 @@ namespace Simple.OData.Client
                                          select ParseKey(k)).SingleOrDefault(),
                                   Properties = (from p in e.Descendants(null, "Property")
                                                 select ParseProperty(p)).ToArray(),
-                                  NavigationProperties = (from p in e.Descendants(null, "NavigationProperty")
-                                                select ParseNavigationProperty(p)).ToArray(),
                               },
                               BaseType = ParseStringAttribute(e.Attribute("BaseType")),
                           };
@@ -109,7 +106,6 @@ namespace Simple.OData.Client
                        OpenType = r.EntityType.OpenType,
                        Key = r.EntityType.Key,
                        Properties = r.EntityType.Properties,
-                       NavigationProperties = r.EntityType.NavigationProperties,
                    };
         }
 
@@ -145,18 +141,6 @@ namespace Simple.OData.Client
                 Type = EdmPropertyType.Parse(element.Attribute("Type").Value, this.EntityTypes, this.ComplexTypes, this.EnumTypes),
                 Nullable = ParseBooleanAttribute(element.Attribute("Nullable"), true),
                 ConcurrencyMode = ParseStringAttribute(element.Attribute("ConcurrencyMode")),
-            };
-        }
-
-        private EdmNavigationProperty ParseNavigationProperty(
-            XElement element)
-        {
-            return new EdmNavigationProperty
-            {
-                Name = element.Attribute("Name").Value,
-                ToRole = element.Attribute("ToRole").Value,
-                FromRole = element.Attribute("FromRole").Value,
-                Relationship = element.Attribute("Relationship").Value,
             };
         }
 

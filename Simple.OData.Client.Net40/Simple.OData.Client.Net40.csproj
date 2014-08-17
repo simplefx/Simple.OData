@@ -368,12 +368,6 @@
     <Compile Include="..\Simple.OData.Client.Core\ODataClient.cs">
       <Link>ODataClient.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Schema\Association.cs">
-      <Link>Schema\Association.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Schema\AssociationCollection.cs">
-      <Link>Schema\AssociationCollection.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Schema\Column.cs">
       <Link>Schema\Column.cs</Link>
     </Compile>

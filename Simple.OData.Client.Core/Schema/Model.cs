@@ -34,14 +34,6 @@ namespace Simple.OData.Client
                    select new Column(p.Name, p.Type, p.Nullable);
         }
 
-        public IEnumerable<Association> GetAssociations(Table table)
-        {
-            return from t in GetEntityTypeWithBaseTypes(table.EntityType)
-                   from np in t.NavigationProperties
-                   select CreateAssociation(np.Name, np.PartnerName, np.Multiplicity);
-            return null;
-        }
-
         public Key GetPrimaryKey(Table table)
         {
             return (from s in GetEntitySets()
@@ -77,16 +69,6 @@ namespace Simple.OData.Client
             return from et in _schema.Metadata.EntityTypes
                    where entitySet.EntityType.Split('.').Last() == et.Name
                    select et;
-        }
-
-        private string GetQualifiedName(string schemaName, string name)
-        {
-            return string.IsNullOrEmpty(schemaName) ? name : string.Format("{0}.{1}", schemaName, name);
-        }
-
-        private Association CreateAssociation(string associationName, string partnerEntitySetName, string multiplicity)
-        {
-            return new Association(associationName, partnerEntitySetName, multiplicity);
         }
 
         private IEnumerable<EdmEntityType> GetEntityTypeWithBaseTypes(EdmEntityType entityType)

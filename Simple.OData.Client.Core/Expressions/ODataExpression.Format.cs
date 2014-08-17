@@ -145,11 +145,12 @@ namespace Simple.OData.Client
                     pathNames.Add(table.FindColumn(objectName).ActualName);
                     return BuildReferencePath(pathNames, null, elementNames.Skip(1).ToList(), context);
                 }
-                else if (table.HasAssociation(objectName))
+                else if (table.Schema.ProviderMetadata.HasNavigationProperty(table.ActualName, objectName))
                 {
-                    var association = table.FindAssociation(objectName);
-                    pathNames.Add(association.ActualName);
-                    return BuildReferencePath(pathNames, context.Schema.FindTable(association.ReferenceTableName), elementNames.Skip(1).ToList(), context);
+                    pathNames.Add(table.Schema.ProviderMetadata.GetNavigationPropertyActualName(table.ActualName, objectName));
+                    return BuildReferencePath(pathNames, context.Schema.FindTable(
+                        table.Schema.ProviderMetadata.GetNavigationPropertyPartnerName(table.ActualName, objectName)), 
+                        elementNames.Skip(1).ToList(), context);
                 }
                 else
                 {

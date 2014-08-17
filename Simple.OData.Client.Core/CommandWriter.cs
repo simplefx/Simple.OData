@@ -43,7 +43,7 @@ namespace Simple.OData.Client
         public HttpCommand CreateLinkCommand(string collection, string associationName, string entryPath, string linkPath)
         {
             var linkEntry = CreateLinkElement(linkPath);
-            var linkMethod = _schema.FindAssociation(collection, associationName).IsMultiple ?
+            var linkMethod = (_schema as Schema).ProviderMetadata.IsNavigationPropertyMultiple(collection, associationName) ?
                 RestVerbs.POST :
                 RestVerbs.PUT;
 
@@ -74,11 +74,15 @@ namespace Simple.OData.Client
             if (associatedData.Value == null)
                 return;
 
-            var association = _schema.FindAssociation(collection, associatedData.Key);
-            var associatedKeyValues = GetLinkedEntryKeyValues(association.ReferenceTableName, associatedData);
+            var associatedKeyValues = GetLinkedEntryKeyValues(
+                (_schema as Schema).ProviderMetadata.GetNavigationPropertyPartnerName(collection, associatedData.Key), 
+                associatedData);
             if (associatedKeyValues != null)
             {
-                AddDataLink(content.Entry, association.ActualName, association.ReferenceTableName, associatedKeyValues);
+                AddDataLink(content.Entry, 
+                    (_schema as Schema).ProviderMetadata.GetNavigationPropertyActualName(collection, associatedData.Key),
+                    (_schema as Schema).ProviderMetadata.GetNavigationPropertyPartnerName(collection, associatedData.Key), 
+                    associatedKeyValues);
             }
         }
 

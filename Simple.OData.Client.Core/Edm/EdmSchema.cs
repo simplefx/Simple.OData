@@ -48,7 +48,6 @@ namespace Simple.OData.Client
         public bool OpenType { get; set; }
         public EdmKey Key { get; set; }
         public EdmProperty[] Properties { get; set; }
-        public EdmNavigationProperty[] NavigationProperties { get; set; }
         public bool CheckOptimisticConcurrency { get { return Properties.Any(x => x.ConcurrencyMode == "Fixed"); } }
 
         public static Tuple<bool, EdmEntityType> TryParse(string s, IEnumerable<EdmEntityType> entityTypes)
@@ -106,26 +105,9 @@ namespace Simple.OData.Client
         public string ConcurrencyMode { get; set; }
     }
 
-    public sealed partial class EdmNavigationProperty
-    {
-        public string Name { get; set; }
-        public string PartnerName { get; set; }
-        public string ToRole { get; set; }
-        public string FromRole { get; set; }
-        public string Relationship { get; set; }
-        public string Multiplicity { get; set; }
-    }
-
     public sealed partial class EdmKey
     {
         public string[] Properties { get; set; }
-    }
-
-    public sealed partial class EdmParameter
-    {
-        public string Name { get; set; }
-        public EdmPropertyType Type { get; set; }
-        public string Mode { get; set; }
     }
 
     public sealed class EdmEnumMember

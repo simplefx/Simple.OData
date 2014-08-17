@@ -120,8 +120,6 @@
     <Compile Include="Http\RequestRunnerBase.cs" />
     <Compile Include="Http\RestVerbs.cs" />
     <Compile Include="Http\SchemaRequestRunner.cs" />
-    <Compile Include="Schema\Association.cs" />
-    <Compile Include="Schema\AssociationCollection.cs" />
     <Compile Include="Schema\Column.cs" />
     <Compile Include="Schema\ColumnCollection.cs" />
     <Compile Include="Edm\IEdmModelParser.cs" />

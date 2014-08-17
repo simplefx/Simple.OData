@@ -441,7 +441,6 @@ namespace Simple.OData.Client
 
             RemoveSystemProperties(entryKey);
             RemoveSystemProperties(linkedEntryKey);
-            var association = _schema.FindAssociation(collection, linkName);
 
             var entryPath = await GetFluentClient()
                 .For(collection)
@@ -450,12 +449,13 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var linkPath = await GetFluentClient()
-                .For(association.ReferenceTableName)
+                .For((_schema as Schema).ProviderMetadata.GetNavigationPropertyPartnerName(collection, linkName))
                 .Key(linkedEntryKey)
                 .GetCommandTextAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var command = new CommandWriter(_schema).CreateLinkCommand(collection, association.ActualName, entryPath, linkPath);
+            var command = new CommandWriter(_schema).CreateLinkCommand(
+                collection, (_schema as Schema).ProviderMetadata.GetNavigationPropertyActualName(collection, linkName), entryPath, linkPath);
             var request = _requestBuilder.CreateRequest(command);
             await _requestRunner.UpdateEntryAsync(request, cancellationToken);
         }
@@ -471,14 +471,14 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             RemoveSystemProperties(entryKey);
-            var association = _schema.FindAssociation(collection, linkName);
             var commandText = await GetFluentClient()
                 .For(collection)
                 .Key(entryKey)
                 .GetCommandTextAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var command = new CommandWriter(_schema).CreateUnlinkCommand(collection, association.ActualName, commandText);
+            var command = new CommandWriter(_schema).CreateUnlinkCommand(
+                collection, (_schema as Schema).ProviderMetadata.GetNavigationPropertyActualName(collection, linkName), commandText);
             var request = _requestBuilder.CreateRequest(command);
             await _requestRunner.UpdateEntryAsync(request, cancellationToken);
         }

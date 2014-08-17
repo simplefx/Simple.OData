@@ -15,7 +15,6 @@ namespace Simple.OData.Client
         private readonly Table _baseTable;
         private readonly Lazy<TableCollection> _lazyDerivedTables;
         private readonly Lazy<ColumnCollection> _lazyColumns;
-        private readonly Lazy<AssociationCollection> _lazyAssociations;
         private readonly Lazy<Key> _lazyPrimaryKey;
 
         internal Table(string name, EdmEntityType entityType, Table baseTable, Schema schema)
@@ -26,13 +25,17 @@ namespace Simple.OData.Client
             _schema = schema;
             _lazyDerivedTables = new Lazy<TableCollection>(GetDerivedTables);
             _lazyColumns = new Lazy<ColumnCollection>(GetColumns);
-            _lazyAssociations = new Lazy<AssociationCollection>(GetAssociations);
             _lazyPrimaryKey = new Lazy<Key>(GetPrimaryKey);
         }
 
         public override string ToString()
         {
             return _actualName;
+        }
+
+        internal Schema Schema
+        {
+            get { return _schema; }
         }
 
         internal string HomogenizedName
@@ -89,30 +92,6 @@ namespace Simple.OData.Client
             return _lazyColumns.Value.Contains(columnName);
         }
 
-        public IEnumerable<Association> Associations
-        {
-            get { return _lazyAssociations.Value.AsEnumerable(); }
-        }
-
-        public Association FindAssociation(string associationName)
-        {
-            var associations = _lazyAssociations.Value;
-            try
-            {
-                return associations.Find(associationName);
-            }
-            catch (UnresolvableObjectException ex)
-            {
-                string qualifiedName = _actualName + "." + ex.ObjectName;
-                throw new UnresolvableObjectException(qualifiedName, string.Format("Association {0} not found", qualifiedName), ex);
-            }
-        }
-
-        public bool HasAssociation(string associationName)
-        {
-            return _lazyAssociations.Value.Contains(associationName);
-        }
-
         public Key PrimaryKey
         {
             get { return _lazyPrimaryKey.Value; }
@@ -141,11 +120,6 @@ namespace Simple.OData.Client
         private ColumnCollection GetColumns()
         {
             return new ColumnCollection(_schema.Model.GetColumns(this));
-        }
-
-        private AssociationCollection GetAssociations()
-        {
-            return new AssociationCollection(_schema.Model.GetAssociations(this));
         }
 
         private Key GetPrimaryKey()
