@@ -42,6 +42,7 @@ namespace Simple.OData.Client
     {
         public string Namespace { get; set; }
         public string Name { get; set; }
+        public string QualifiedName { get { return Namespace + "." + Name; } }
         public EdmEntityType BaseType { get; set; }
         public bool Abstract { get; set; }
         public bool OpenType { get; set; }
@@ -61,6 +62,8 @@ namespace Simple.OData.Client
     {
         public string Namespace { get; set; }
         public string Name { get; set; }
+        public string QualifiedName { get { return Namespace + "." + Name; } }
+
         public EdmProperty[] Properties { get; set; }
 
         public static Tuple<bool, EdmComplexType> TryParse(string s, IEnumerable<EdmComplexType> complexTypes)
@@ -74,6 +77,7 @@ namespace Simple.OData.Client
     {
         public string Namespace { get; set; }
         public string Name { get; set; }
+        public string QualifiedName { get { return Namespace + "." + Name; } }
         public string UnderlyingType { get; set; }
         public EdmEnumMember[] Members { get; set; }
         public bool IsFlags { get; set; }
@@ -89,6 +93,7 @@ namespace Simple.OData.Client
     {
         public string Namespace { get; set; }
         public string Name { get; set; }
+        public string QualifiedName { get { return Namespace + "." + Name; } }
         public bool IsDefaulEntityContainer { get; set; }
         public EdmEntitySet[] EntitySets { get; set; }
     }

@@ -64,16 +64,16 @@ namespace Simple.OData.Client
 
         private void ParseComplexTypes(IEnumerable<XElement> elements)
         {
-            Func<XElement, string, string> GetComplexTypeName = (x, ns) => String.Format("{0}.{1}", ns, x.Attribute("Name").Value);
-            this.ComplexTypes = (from e in elements select new EdmComplexType
+            this.ComplexTypes = (from e in elements
+                                 select new EdmComplexType
             {
                 Namespace = ParseNamespace(e),
-                Name = GetComplexTypeName(e, ParseNamespace(e))
+                Name = e.Attribute("Name").Value
             }).ToList();
             
             foreach (var element in elements)
             {
-                var complexType = this.ComplexTypes.Single(x => x.Name == GetComplexTypeName(element, x.Namespace));
+                var complexType = this.ComplexTypes.Single(x => x.Name == element.Attribute("Name").Value);
                 complexType.Properties = (from p in element.Descendants(null, "Property")
                                           select ParseProperty(p)).ToArray();
             }
