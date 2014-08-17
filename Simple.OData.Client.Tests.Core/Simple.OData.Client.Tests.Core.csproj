@@ -79,6 +79,7 @@
     <Compile Include="Extensions\DictionaryExtensionsTests.cs" />
     <Compile Include="Extensions\EnumerableExtensionTests.cs" />
     <Compile Include="Extensions\StringExtensionTests.cs" />
+    <Compile Include="Extensions\TypeExtensionTests.cs" />
     <Compile Include="Extensions\XmlAttributesAsDictionaryTests.cs" />
     <Compile Include="Extensions\XmlElementAsDictionaryWriteTests.cs" />
     <Compile Include="FeedReaderTests.cs" />
