@@ -63,23 +63,11 @@ namespace Simple.OData.Client
         /// </value>
         IEnumerable<EdmEntityType> EntityTypes { get; }
         /// <summary>
-        /// Finds the type of the entity.
-        /// </summary>
-        /// <param name="typeName">Name of the type.</param>
-        /// <returns>The entity type found.</returns>
-        EdmEntityType FindEntityType(string typeName);
-        /// <summary>
         /// Gets the schema complex types.
         /// </summary>
         /// <value>
         /// The complex types.
         /// </value>
         IEnumerable<EdmComplexType> ComplexTypes { get; }
-        /// <summary>
-        /// Finds the the complex type.
-        /// </summary>
-        /// <param name="typeName">Name of the type.</param>
-        /// <returns>The complex type found.</returns>
-        EdmComplexType FindComplexType(string typeName);
     }
 }

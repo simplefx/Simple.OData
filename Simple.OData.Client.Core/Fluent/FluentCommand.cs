@@ -454,7 +454,7 @@ namespace Simple.OData.Client
                 if (!string.IsNullOrEmpty(_derivedCollectionName))
                     commandText += "/" + string.Join(".",
                         table.EntityType.Namespace,
-                        _schema.FindEntityType(_derivedCollectionName).Name);
+                        (_schema as Schema).ProviderMetadata.GetEntityTypeExactName(_derivedCollectionName));
             }
             else if (!string.IsNullOrEmpty(_linkName))
             {

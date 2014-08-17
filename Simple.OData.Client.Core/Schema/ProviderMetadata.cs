@@ -8,6 +8,8 @@ namespace Simple.OData.Client
         public string ProtocolVersion { get; set; }
         public object Model { get; set; }
 
+        public abstract string GetEntityTypeExactName(string entityTypeName);
+
         public abstract IEnumerable<string> GetStructuralPropertyNames(string entitySetName);
         public abstract bool HasStructuralProperty(string entitySetName, string propertyName);
         public abstract string GetStructuralPropertyExactName(string entitySetName, string propertyName);

@@ -16,6 +16,11 @@ namespace Simple.OData.Client
             set { base.Model = value; }
         }
 
+        public override string GetEntityTypeExactName(string entityTypeName)
+        {
+            return GetEntityTypes().Single(x => NamesAreEqual(x.Name, entityTypeName)).Name;
+        }
+
         public override IEnumerable<string> GetStructuralPropertyNames(string entitySetName)
         {
             return GetEntityType(entitySetName).StructuralProperties().Select(x => x.Name);
