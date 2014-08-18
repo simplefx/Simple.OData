@@ -28,8 +28,8 @@ namespace Simple.OData.Client.Tests
         public IODataClient CreateClient(string metadataFile)
         {
             var urlBase = "http://localhost/" + metadataFile;
-            var schemaString = GetResourceAsString(@"Resources." + metadataFile);
-            Schema.Add(urlBase, ODataClient.ParseSchemaString(schemaString));
+            var metadataString = GetResourceAsString(@"Resources." + metadataFile);
+            Schema.Add(urlBase, Schema.FromMetadata(metadataString));
             return new ODataClient(urlBase);
         }
 

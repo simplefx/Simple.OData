@@ -12,7 +12,7 @@ namespace Simple.OData.Client
         private readonly ResponseReader _responseReader;
         private readonly bool _ignoreResourceNotFoundException;
 
-        public CommandRequestRunner(ISchema schema, ODataClientSettings settings)
+        public CommandRequestRunner(Schema schema, ODataClientSettings settings)
         {
             _responseReader = new ResponseReader(schema, settings.IncludeResourceTypeInEntryProperties);
             _ignoreResourceNotFoundException = settings.IgnoreResourceNotFoundException;

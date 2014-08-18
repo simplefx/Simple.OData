@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Xml;
 using Microsoft.Data.Edm;
+using Microsoft.Data.Edm.Csdl;
 using Microsoft.Data.OData;
 using Simple.OData.Client.Extensions;
 
@@ -165,6 +168,18 @@ namespace Simple.OData.Client
                     Model = model,
                 };
             }
+        }
+
+        public ProviderMetadataV3 GetMetadata(string metadataString, string protocolVersion)
+        {
+            var reader = XmlReader.Create(new StringReader(metadataString));
+            reader.MoveToContent();
+            var model = EdmxReader.Parse(reader);
+            return new ProviderMetadataV3
+            {
+                ProtocolVersion = protocolVersion,
+                Model = model,
+            };
         }
     }
 }

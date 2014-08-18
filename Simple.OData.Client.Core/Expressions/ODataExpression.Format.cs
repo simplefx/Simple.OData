@@ -6,7 +6,7 @@ namespace Simple.OData.Client
 {
     public partial class ODataExpression
     {
-        internal string Format(ISchema schema, EntitySet entitySet)
+        internal string Format(Schema schema, EntitySet entitySet)
         {
             return this.Format(new ExpressionContext()
                                    {
@@ -15,7 +15,7 @@ namespace Simple.OData.Client
                                    });
         }
 
-        internal string Format(ISchema schema, string collection)
+        internal string Format(Schema schema, string collection)
         {
             return this.Format(new ExpressionContext { Schema = schema, Collection = collection });
         }

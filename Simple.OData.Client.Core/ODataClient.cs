@@ -10,7 +10,7 @@ namespace Simple.OData.Client
     public partial class ODataClient : IODataClient
     {
         private readonly ODataClientSettings _settings;
-        private readonly ISchema _schema;
+        private readonly Schema _schema;
         private readonly RequestBuilder _requestBuilder;
         private readonly RequestRunner _requestRunner;
 
@@ -51,14 +51,22 @@ namespace Simple.OData.Client
             _requestRunner = batch.RequestRunner;
         }
 
+        internal Schema Schema
+        {
+            get { return _schema; }
+        }
+
         /// <summary>
         /// Parses the OData service metadata schema string.
         /// </summary>
-        /// <param name="schemaString">The schema string.</param>
-        /// <returns>The schema.</returns>
-        public static ISchema ParseSchemaString(string schemaString)
+        /// <typeparam name="T">OData protocol specific metadata interface</typeparam>
+        /// <param name="metadataString">The metadata string.</param>
+        /// <returns>
+        /// The schema.
+        /// </returns>
+        public static T ParseMetadataString<T>(string metadataString)
         {
-            return Client.Schema.FromMetadata(schemaString);
+            return (T)Client.Schema.FromMetadata(metadataString).ProviderMetadata.Model;
         }
 
         /// <summary>

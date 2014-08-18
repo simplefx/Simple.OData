@@ -19,12 +19,12 @@ namespace Simple.OData.Client
         where T : class
     {
         private readonly ODataClient _client;
-        private readonly ISchema _schema;
+        private readonly Schema _schema;
         private readonly FluentCommand _parentCommand;
         private FluentCommand _command;
         private readonly bool _dynamicResults;
 
-        internal FluentClient(ODataClient client, ISchema schema, FluentCommand parentCommand = null, FluentCommand command = null, bool dynamicResults = false)
+        internal FluentClient(ODataClient client, Schema schema, FluentCommand parentCommand = null, FluentCommand command = null, bool dynamicResults = false)
         {
             _client = client;
             _schema = schema;
@@ -54,7 +54,7 @@ namespace Simple.OData.Client
 
         #pragma warning disable 1591
         
-        public ISchema Schema
+        internal Schema Schema
         {
             get { return _schema; }
         }

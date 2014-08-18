@@ -8,9 +8,9 @@ namespace Simple.OData.Client
 {
     class CommandWriter
     {
-        private readonly ISchema _schema;
+        private readonly Schema _schema;
 
-        public CommandWriter(ISchema schema)
+        public CommandWriter(Schema schema)
         {
             _schema = schema;
         }
@@ -43,7 +43,7 @@ namespace Simple.OData.Client
         public HttpCommand CreateLinkCommand(string collection, string associationName, string entryPath, string linkPath)
         {
             var linkEntry = CreateLinkElement(linkPath);
-            var linkMethod = (_schema as Schema).ProviderMetadata.IsNavigationPropertyMultiple(collection, associationName) ?
+            var linkMethod = _schema.ProviderMetadata.IsNavigationPropertyMultiple(collection, associationName) ?
                 RestVerbs.POST :
                 RestVerbs.PUT;
 
@@ -75,13 +75,13 @@ namespace Simple.OData.Client
                 return;
 
             var associatedKeyValues = GetLinkedEntryKeyValues(
-                (_schema as Schema).ProviderMetadata.GetNavigationPropertyPartnerName(collection, associatedData.Key), 
+                _schema.ProviderMetadata.GetNavigationPropertyPartnerName(collection, associatedData.Key), 
                 associatedData);
             if (associatedKeyValues != null)
             {
-                AddDataLink(content.Entry, 
-                    (_schema as Schema).ProviderMetadata.GetNavigationPropertyExactName(collection, associatedData.Key),
-                    (_schema as Schema).ProviderMetadata.GetNavigationPropertyPartnerName(collection, associatedData.Key), 
+                AddDataLink(content.Entry,
+                    _schema.ProviderMetadata.GetNavigationPropertyExactName(collection, associatedData.Key),
+                    _schema.ProviderMetadata.GetNavigationPropertyPartnerName(collection, associatedData.Key), 
                     associatedKeyValues);
             }
         }

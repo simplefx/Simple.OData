@@ -39,7 +39,7 @@ namespace Simple.OData.Client.Tests
                 .Set(new { ProductName = "Test1", UnitPrice = 18m })
                 .InsertEntryAsync();
 
-            ((await _client.GetSchemaAsync()) as Schema).ResetCache();
+            (_client as ODataClient).Schema.ResetCache();
             await _client
                 .For("Products")
                 .Key(product["ProductID"])

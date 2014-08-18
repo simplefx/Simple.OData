@@ -34,24 +34,41 @@ namespace Simple.OData.Client
         /// Gets the OData service metadata.
         /// </summary>
         /// <returns>The service metadata.</returns>
-        Task<ISchema> GetSchemaAsync();
+        Task<object> GetMetadataAsync();
         /// <summary>
         /// Gets the OData service metadata.
         /// </summary>
         /// <returns>The service metadata.</returns>
-        Task<ISchema> GetSchemaAsync(CancellationToken cancellationToken);
+        Task<object> GetMetadataAsync(CancellationToken cancellationToken);
+        /// <summary>
+        /// Gets the OData service metadata.
+        /// </summary>
+        /// <typeparam name="T">OData protocol specific metadata interface</typeparam>
+        /// <returns>
+        /// The service metadata.
+        /// </returns>
+        Task<T> GetMetadataAsync<T>();
+        /// <summary>
+        /// Gets the OData service metadata.
+        /// </summary>
+        /// <typeparam name="T">OData protocol specific metadata interface</typeparam>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>
+        /// The service metadata.
+        /// </returns>
+        Task<T> GetMetadataAsync<T>(CancellationToken cancellationToken);
 
         /// <summary>
         /// Gets the OData service metadata as string.
         /// </summary>
         /// <returns>The service metadata string.</returns>
-        Task<string> GetSchemaAsStringAsync();
+        Task<string> GetMetadataAsStringAsync();
         /// <summary>
         /// Gets the OData service metadata as string.
         /// </summary>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The service metadata string.</returns>
-        Task<string> GetSchemaAsStringAsync(CancellationToken cancellationToken);
+        Task<string> GetMetadataAsStringAsync(CancellationToken cancellationToken);
 
         /// <summary>
         /// Gets the OData command text.

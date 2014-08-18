@@ -12,9 +12,9 @@ namespace Simple.OData.Client
     class ResponseReader
     {
         private readonly bool _includeResourceTypeInEntryProperties;
-        private readonly ISchema _schema;
+        private readonly Schema _schema;
 
-        public ResponseReader(ISchema schema, bool includeResourceTypeInEntryProperties = false)
+        public ResponseReader(Schema schema, bool includeResourceTypeInEntryProperties = false)
         {
             _schema = schema;
             _includeResourceTypeInEntryProperties = includeResourceTypeInEntryProperties;

@@ -18,9 +18,9 @@ namespace Simple.OData.Client
         /// </summary>
         /// <param name="urlBase">The URL base of the OData service.</param>
         /// <returns>The schema.</returns>
-        public static Task<ISchema> GetSchemaAsync(string urlBase)
+        public static async Task<object> GetMetadataAsync(string urlBase)
         {
-            return Schema.FromUrl(urlBase, null).ResolveAsync(CancellationToken.None);
+            return (await Schema.FromUrl(urlBase, null).ResolveAsync(CancellationToken.None)).ProviderMetadata.Model;
         }
 
         /// <summary>
@@ -29,9 +29,9 @@ namespace Simple.OData.Client
         /// <param name="urlBase">The URL base of the OData service.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The schema.</returns>
-        public static Task<ISchema> GetSchemaAsync(string urlBase, CancellationToken cancellationToken)
+        public static async Task<object> GetMetadataAsync(string urlBase, CancellationToken cancellationToken)
         {
-            return Schema.FromUrl(urlBase, null).ResolveAsync(cancellationToken);
+            return (await Schema.FromUrl(urlBase, null).ResolveAsync(cancellationToken)).ProviderMetadata.Model;
         }
 
         /// <summary>
@@ -40,9 +40,9 @@ namespace Simple.OData.Client
         /// <param name="urlBase">The URL base of the OData service.</param>
         /// <param name="credentials">The OData service access credentials.</param>
         /// <returns>The schema.</returns>
-        public static Task<ISchema> GetSchemaAsync(string urlBase, ICredentials credentials)
+        public static async Task<object> GetMetadataAsync(string urlBase, ICredentials credentials)
         {
-            return Schema.FromUrl(urlBase, credentials).ResolveAsync(CancellationToken.None);
+            return (await Schema.FromUrl(urlBase, credentials).ResolveAsync(CancellationToken.None)).ProviderMetadata.Model;
         }
 
         /// <summary>
@@ -52,9 +52,59 @@ namespace Simple.OData.Client
         /// <param name="credentials">The OData service access credentials.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The schema.</returns>
-        public static Task<ISchema> GetSchemaAsync(string urlBase, ICredentials credentials, CancellationToken cancellationToken)
+        public static async Task<object> GetMetadataAsync(string urlBase, ICredentials credentials, CancellationToken cancellationToken)
         {
-            return Schema.FromUrl(urlBase, credentials).ResolveAsync(cancellationToken);
+            return (await Schema.FromUrl(urlBase, credentials).ResolveAsync(cancellationToken)).ProviderMetadata.Model;
+        }
+
+        /// <summary>
+        /// Retrieves the OData service schema.
+        /// </summary>
+        /// <typeparam name="T">OData protocol specific metadata interface</typeparam>
+        /// <param name="urlBase">The URL base of the OData service.</param>
+        /// <returns>The schema.</returns>
+        public static async Task<T> GetMetadataAsync<T>(string urlBase)
+        {
+            return (T)(await Schema.FromUrl(urlBase, null).ResolveAsync(CancellationToken.None)).ProviderMetadata.Model;
+        }
+
+        /// <summary>
+        /// Retrieves the OData service schema.
+        /// </summary>
+        /// <typeparam name="T">OData protocol specific metadata interface</typeparam>
+        /// <param name="urlBase">The URL base of the OData service.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>The schema.</returns>
+        public static async Task<T> GetMetadataAsync<T>(string urlBase, CancellationToken cancellationToken)
+        {
+            return (T)(await Schema.FromUrl(urlBase, null).ResolveAsync(cancellationToken)).ProviderMetadata.Model;
+        }
+
+        /// <summary>
+        /// Retrieves the OData service schema.
+        /// </summary>
+        /// <typeparam name="T">OData protocol specific metadata interface</typeparam>
+        /// <param name="urlBase">The URL base of the OData service.</param>
+        /// <param name="credentials">The OData service access credentials.</param>
+        /// <returns>The schema.</returns>
+        public static async Task<T> GetMetadataAsync<T>(string urlBase, ICredentials credentials)
+        {
+            return (T)(await Schema.FromUrl(urlBase, credentials).ResolveAsync(CancellationToken.None)).ProviderMetadata.Model;
+        }
+
+        /// <summary>
+        /// Retrieves the OData service schema.
+        /// </summary>
+        /// <typeparam name="T">OData protocol specific metadata interface</typeparam>
+        /// <param name="urlBase">The URL base of the OData service.</param>
+        /// <param name="credentials">The OData service access credentials.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>
+        /// The schema.
+        /// </returns>
+        public static async Task<T> GetMetadataAsync<T>(string urlBase, ICredentials credentials, CancellationToken cancellationToken)
+        {
+            return (T)(await Schema.FromUrl(urlBase, credentials).ResolveAsync(cancellationToken)).ProviderMetadata.Model;
         }
 
         /// <summary>
@@ -62,9 +112,9 @@ namespace Simple.OData.Client
         /// </summary>
         /// <param name="urlBase">The URL base of the OData service.</param>
         /// <returns>The schema.</returns>
-        public static Task<string> GetSchemaAsStringAsync(string urlBase)
+        public static Task<string> GetMetadataAsStringAsync(string urlBase)
         {
-            return GetSchemaAsStringAsync(urlBase, null, CancellationToken.None);
+            return GetMetadataAsStringAsync(urlBase, null, CancellationToken.None);
         }
 
         /// <summary>
@@ -73,9 +123,9 @@ namespace Simple.OData.Client
         /// <param name="urlBase">The URL base of the OData service.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The schema.</returns>
-        public static Task<string> GetSchemaAsStringAsync(string urlBase, CancellationToken cancellationToken)
+        public static Task<string> GetMetadataAsStringAsync(string urlBase, CancellationToken cancellationToken)
         {
-            return GetSchemaAsStringAsync(urlBase, null, CancellationToken.None);
+            return GetMetadataAsStringAsync(urlBase, null, CancellationToken.None);
         }
 
         /// <summary>
@@ -84,9 +134,9 @@ namespace Simple.OData.Client
         /// <param name="urlBase">The URL base of the OData service.</param>
         /// <param name="credentials">The OData service access credentials.</param>
         /// <returns>The schema.</returns>
-        public static Task<string> GetSchemaAsStringAsync(string urlBase, ICredentials credentials)
+        public static Task<string> GetMetadataAsStringAsync(string urlBase, ICredentials credentials)
         {
-            return GetSchemaAsStringAsync(urlBase, credentials, CancellationToken.None);
+            return GetMetadataAsStringAsync(urlBase, credentials, CancellationToken.None);
         }
 
         /// <summary>
@@ -96,44 +146,47 @@ namespace Simple.OData.Client
         /// <param name="credentials">The OData service access credentials.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The schema.</returns>
-        public static async Task<string> GetSchemaAsStringAsync(string urlBase, ICredentials credentials, CancellationToken cancellationToken)
+        public static async Task<string> GetMetadataAsStringAsync(string urlBase, ICredentials credentials, CancellationToken cancellationToken)
         {
             return await new SchemaProvider(urlBase, credentials).GetSchemaAsStringAsync(cancellationToken);
         }
 
         #pragma warning disable 1591
 
-        public Task<ISchema> GetSchemaAsync()
+        internal async Task<Schema> GetSchemaAsync()
         {
-            return _schema.ResolveAsync(CancellationToken.None);
-        }
-
-        public Task<ISchema> GetSchemaAsync(CancellationToken cancellationToken)
-        {
-            return _schema.ResolveAsync(cancellationToken);
-        }
-
-        public Task<string> GetSchemaAsStringAsync()
-        {
-            return GetSchemaAsStringAsync(CancellationToken.None);
-        }
-
-        public async Task<string> GetSchemaAsStringAsync(CancellationToken cancellationToken)
-        {
-            await _schema.ResolveAsync(cancellationToken);
-            return _schema.MetadataAsString;
+            return (await _schema.ResolveAsync(CancellationToken.None));
         }
 
         public async Task<object> GetMetadataAsync()
         {
-            await _schema.ResolveAsync(CancellationToken.None);
-            // HACK
-            return (_schema as Schema).ProviderMetadata.Model;
+            return (await _schema.ResolveAsync(CancellationToken.None)).ProviderMetadata.Model;
+        }
+
+        public async Task<object> GetMetadataAsync(CancellationToken cancellationToken)
+        {
+            return (await _schema.ResolveAsync(cancellationToken)).ProviderMetadata.Model;
         }
 
         public async Task<T> GetMetadataAsync<T>()
         {
-            return (T)(await GetMetadataAsync());
+            return (T)(await _schema.ResolveAsync(CancellationToken.None)).ProviderMetadata.Model;
+        }
+
+        public async Task<T> GetMetadataAsync<T>(CancellationToken cancellationToken)
+        {
+            return (T)(await _schema.ResolveAsync(cancellationToken)).ProviderMetadata.Model;
+        }
+
+        public Task<string> GetMetadataAsStringAsync()
+        {
+            return GetMetadataAsStringAsync(CancellationToken.None);
+        }
+
+        public async Task<string> GetMetadataAsStringAsync(CancellationToken cancellationToken)
+        {
+            await _schema.ResolveAsync(cancellationToken);
+            return _schema.MetadataAsString;
         }
 
         public Task<string> GetCommandTextAsync(string collection, ODataExpression expression)
@@ -449,13 +502,13 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var linkPath = await GetFluentClient()
-                .For((_schema as Schema).ProviderMetadata.GetNavigationPropertyPartnerName(collection, linkName))
+                .For(_schema.ProviderMetadata.GetNavigationPropertyPartnerName(collection, linkName))
                 .Key(linkedEntryKey)
                 .GetCommandTextAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var command = new CommandWriter(_schema).CreateLinkCommand(
-                collection, (_schema as Schema).ProviderMetadata.GetNavigationPropertyExactName(collection, linkName), entryPath, linkPath);
+                collection, _schema.ProviderMetadata.GetNavigationPropertyExactName(collection, linkName), entryPath, linkPath);
             var request = _requestBuilder.CreateRequest(command);
             await _requestRunner.UpdateEntryAsync(request, cancellationToken);
         }
@@ -478,7 +531,7 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var command = new CommandWriter(_schema).CreateUnlinkCommand(
-                collection, (_schema as Schema).ProviderMetadata.GetNavigationPropertyExactName(collection, linkName), commandText);
+                collection, _schema.ProviderMetadata.GetNavigationPropertyExactName(collection, linkName), commandText);
             var request = _requestBuilder.CreateRequest(command);
             await _requestRunner.UpdateEntryAsync(request, cancellationToken);
         }

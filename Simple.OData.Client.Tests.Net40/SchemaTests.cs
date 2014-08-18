@@ -6,21 +6,21 @@ namespace Simple.OData.Client.Tests
 {
     public class SchemaTests : TestBase
     {
-        [Fact]
-        public async Task GetTablesCount()
-        {
-            var tables = (await _client.GetSchemaAsync()).EntitySets;
+        //[Fact]
+        //public async Task GetTablesCount()
+        //{
+        //    var tables = (await _client.GetSchemaAsync()).EntitySets;
 
-            Assert.Equal(9, tables.Count());
-        }
+        //    Assert.Equal(9, tables.Count());
+        //}
 
-        [Fact]
-        public async Task FindTable()
-        {
-            var table = (await _client.GetSchemaAsync()).FindEntitySet("Customers");
+        //[Fact]
+        //public async Task FindTable()
+        //{
+        //    var table = (await _client.GetSchemaAsync()).FindEntitySet("Customers");
 
-            Assert.NotNull(table);
-        }
+        //    Assert.NotNull(table);
+        //}
 
         //[Fact]
         //public async Task GetColumnsCount()
@@ -74,46 +74,46 @@ namespace Simple.OData.Client.Tests
         //    Assert.Equal("ProductID", table.PrimaryKey[1]);
         //}
 
+        //[Fact]
+        //public async Task GetBaseType()
+        //{
+        //    var entityType = (await _client.GetSchemaAsync()).EntityTypes.Single(x => x.Name == "Ships");
+
+        //    Assert.Equal("Transport", entityType.BaseType.Name);
+        //}
+
+        //[Fact]
+        //public async Task GetEntityTypesCount()
+        //{
+        //    var entityTypes = (await _client.GetSchemaAsync()).EntityTypes;
+
+        //    Assert.Equal(11, entityTypes.Count());
+        //}
+
+        //[Fact]
+        //public async Task GetComplexTypesCount()
+        //{
+        //    var complexTypes = (await _client.GetSchemaAsync()).ComplexTypes;
+
+        //    Assert.Equal(1, complexTypes.Count());
+        //}
+
         [Fact]
-        public async Task GetBaseType()
+        public async Task GetMetadataAsString()
         {
-            var entityType = (await _client.GetSchemaAsync()).EntityTypes.Single(x => x.Name == "Ships");
-
-            Assert.Equal("Transport", entityType.BaseType.Name);
-        }
-
-        [Fact]
-        public async Task GetEntityTypesCount()
-        {
-            var entityTypes = (await _client.GetSchemaAsync()).EntityTypes;
-
-            Assert.Equal(11, entityTypes.Count());
-        }
-
-        [Fact]
-        public async Task GetComplexTypesCount()
-        {
-            var complexTypes = (await _client.GetSchemaAsync()).ComplexTypes;
-
-            Assert.Equal(1, complexTypes.Count());
-        }
-
-        [Fact]
-        public async Task GetSchemaAsString()
-        {
-            var schemaString = await _client.GetSchemaAsStringAsync();
+            var schemaString = await _client.GetMetadataAsStringAsync();
 
             Assert.Contains("Products", schemaString);
         }
 
-        [Fact]
-        public async Task ParseSchema()
-        {
-            var schemaString = await _client.GetSchemaAsStringAsync();
-            var schema = ODataClient.ParseSchemaString(schemaString);
+        //[Fact]
+        //public async Task ParseSchema()
+        //{
+        //    var schemaString = await _client.GetMetadataAsStringAsync();
+        //    var schema = ODataClient.ParseSchemaString(schemaString);
 
-            var table = schema.FindEntitySet("OrderDetails");
-            Assert.NotNull(table);
-        }
+        //    var table = schema.FindEntitySet("OrderDetails");
+        //    Assert.NotNull(table);
+        //}
     }
 }

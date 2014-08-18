@@ -121,7 +121,6 @@
     <Compile Include="Http\RestVerbs.cs" />
     <Compile Include="Http\SchemaRequestRunner.cs" />
     <Compile Include="Edm\IEdmModelParser.cs" />
-    <Compile Include="Schema\ISchema.cs" />
     <Compile Include="Schema\ProviderMetadata.cs" />
     <Compile Include="Schema\Schema.cs" />
     <Compile Include="Schema\Model.cs" />

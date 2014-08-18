@@ -12,8 +12,8 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void CreateEntryCustomerWithAddress()
         {
-            var feedReader = new ResponseReader(_client.GetSchemaAsync().Result);
-            var commandWriter = new CommandWriter(_client.GetSchemaAsync().Result);
+            var feedReader = new ResponseReader((_client as ODataClient).GetSchemaAsync().Result);
+            var commandWriter = new CommandWriter((_client as ODataClient).GetSchemaAsync().Result);
 
             string xml = GetResourceAsString("SingleCustomerWithAddress.xml");
             var document = XDocument.Parse(xml).Root;
@@ -34,7 +34,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void CreateEntryWorkTaskModel()
         {
-            var client = CreateClient("QAS.Multiplatform.Demo.edmx");
+            var client = CreateClient("QAS.Multiplatform.Demo.edmx") as ODataClient;
             var feedReader = new ResponseReader(client.GetSchemaAsync().Result);
             var commandWriter = new CommandWriter(client.GetSchemaAsync().Result);
 
@@ -59,7 +59,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void CreateEntryWorkTaskModelWithNulls()
         {
-            var client = CreateClient("QAS.Multiplatform.Demo.edmx");
+            var client = CreateClient("QAS.Multiplatform.Demo.edmx") as ODataClient;
             var feedReader = new ResponseReader(client.GetSchemaAsync().Result);
             var commandWriter = new CommandWriter(client.GetSchemaAsync().Result);
 

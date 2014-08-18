@@ -105,7 +105,7 @@ namespace Simple.OData.Client
             return properties;
         }
 
-        public static void Write(ISchema schema, string entityTypeName, XElement container, IDictionary<string, object> row)
+        public static void Write(Schema schema, string entityTypeName, XElement container, IDictionary<string, object> row)
         {
             foreach (var prop in row)
             {
@@ -275,7 +275,7 @@ namespace Simple.OData.Client
             return func;
         }
 
-        private static void Write(ISchema schema, string typeName, XElement root, XElement container, KeyValuePair<string, object> kvp)
+        private static void Write(Schema schema, string typeName, XElement root, XElement container, KeyValuePair<string, object> kvp)
         {
             var element = new XElement(root.GetNamespaceOfPrefix("d") + kvp.Key);
 

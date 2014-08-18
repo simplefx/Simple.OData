@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace Simple.OData.Client
 {
@@ -57,6 +59,20 @@ namespace Simple.OData.Client
                 return new ODataProviderV3().GetMetadata(response, protocolVersions.First());
 
             throw new NotSupportedException(string.Format("OData protocol {0} is not supported", protocolVersions));
+        }
+
+        public ProviderMetadata ParseMetadata(string metadataString)
+        {
+            var reader = XmlReader.Create(new StringReader(metadataString));
+            reader.MoveToContent();
+            var protocolVersion = reader.GetAttribute("Version");
+
+            if (protocolVersion == "4.0")
+                return new ODataProviderV4().GetMetadata(metadataString, protocolVersion);
+            else if (protocolVersion == "1.0" || protocolVersion == "2.0" || protocolVersion == "3.0")
+                return new ODataProviderV4().GetMetadata(metadataString, protocolVersion);
+
+            throw new NotSupportedException(string.Format("OData protocol {0} is not supported", protocolVersion));
         }
 
         internal async Task<HttpResponseMessage> SendSchemaRequestAsync(CancellationToken cancellationToken)

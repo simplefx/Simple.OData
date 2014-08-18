@@ -8,9 +8,9 @@ using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
-    class Schema : ISchema
+    class Schema
     {
-        private static readonly SimpleDictionary<string, ISchema> Instances = new SimpleDictionary<string, ISchema>();
+        private static readonly SimpleDictionary<string, Schema> Instances = new SimpleDictionary<string, Schema>();
 
         private readonly Model _model;
 
@@ -37,6 +37,7 @@ namespace Simple.OData.Client
             if (_resolveMetadataAsync == null)
             {
                 _createEdmSchema = () => ResponseReader.GetSchema(_metadataString);
+                _createProviderMetadata = () => _schemaProvider.ParseMetadata(_metadataString);
             }
         }
 
@@ -64,7 +65,7 @@ namespace Simple.OData.Client
             get { return _model; }
         }
 
-        public async Task<ISchema> ResolveAsync(CancellationToken cancellationToken)
+        public async Task<Schema> ResolveAsync(CancellationToken cancellationToken)
         {
             if (_metadataString == null)
             {
@@ -188,17 +189,17 @@ namespace Simple.OData.Client
             return new List<EdmComplexType>(_model.GetComplexTypes());
         }
 
-        internal static ISchema FromUrl(string urlBase, ICredentials credentials = null)
+        internal static Schema FromUrl(string urlBase, ICredentials credentials = null)
         {
             return Instances.GetOrAdd(urlBase, new Schema(new SchemaProvider(urlBase, credentials)));
         }
 
-        internal static ISchema FromMetadata(string metadataString)
+        internal static Schema FromMetadata(string metadataString)
         {
             return new Schema(metadataString, null);
         }
 
-        internal static void Add(string urlBase, ISchema schema)
+        internal static void Add(string urlBase, Schema schema)
         {
             Instances.GetOrAdd(urlBase, sp => schema);
         }

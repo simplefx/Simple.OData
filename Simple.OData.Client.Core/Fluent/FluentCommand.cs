@@ -18,7 +18,7 @@ namespace Simple.OData.Client
 
     public class FluentCommand
     {
-        private readonly ISchema _schema;
+        private readonly Schema _schema;
         private readonly FluentCommand _parent;
         private string _collectionName;
         private ODataExpression _collectionExpression;
@@ -55,7 +55,7 @@ namespace Simple.OData.Client
         internal static readonly string ResultLiteral = "__result";
         internal static readonly string ResourceTypeLiteral = "__resourcetype";
 
-        public FluentCommand(ISchema schema, FluentCommand parent)
+        internal FluentCommand(Schema schema, FluentCommand parent)
         {
             _schema = schema;
             _parent = parent;
@@ -139,7 +139,7 @@ namespace Simple.OData.Client
                 else if (!string.IsNullOrEmpty(_linkName))
                 {
                     var parent = new FluentCommand(_parent).Resolve();
-                    return _schema.FindEntitySet((_schema as Schema).ProviderMetadata.GetNavigationPropertyPartnerName(parent.EntitySet.ActualName, _linkName));
+                    return _schema.FindEntitySet(_schema.ProviderMetadata.GetNavigationPropertyPartnerName(parent.EntitySet.ActualName, _linkName));
                 }
                 else
                 {
@@ -454,17 +454,17 @@ namespace Simple.OData.Client
                 if (!string.IsNullOrEmpty(_derivedCollectionName))
                     commandText += "/" + string.Join(".",
                         table.EntityType.Namespace,
-                        (_schema as Schema).ProviderMetadata.GetEntityTypeExactName(_derivedCollectionName));
+                        _schema.ProviderMetadata.GetEntityTypeExactName(_derivedCollectionName));
             }
             else if (!string.IsNullOrEmpty(_linkName))
             {
                 var parent = new FluentCommand(_parent).Resolve();
                 commandText += parent.Format() + "/";
-                commandText += (_schema as Schema).ProviderMetadata.GetNavigationPropertyExactName(parent.EntitySet.ActualName, _linkName);
+                commandText += _schema.ProviderMetadata.GetNavigationPropertyExactName(parent.EntitySet.ActualName, _linkName);
             }
             else if (!string.IsNullOrEmpty(_functionName))
             {
-                commandText += (_schema as Schema).ProviderMetadata.GetFunctionExactName(_functionName);
+                commandText += _schema.ProviderMetadata.GetFunctionExactName(_functionName);
             }
 
             if (HasKey && HasFilter)

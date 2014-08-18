@@ -4,7 +4,7 @@
     {
         private EntitySet _entitySet;
 
-        public ISchema Schema { get; set; }
+        public Schema Schema { get; set; }
         public EntitySet EntitySet
         {
             get

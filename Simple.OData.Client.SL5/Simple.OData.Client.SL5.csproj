@@ -365,9 +365,6 @@
     <Compile Include="..\Simple.OData.Client.Core\Schema\EntitySetCollection.cs">
       <Link>Schema\EntitySetCollection.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Schema\ISchema.cs">
-      <Link>Schema\ISchema.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Schema\ProviderMetadata.cs">
       <Link>Schema\ProviderMetadata.cs</Link>
     </Compile>
