@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
@@ -12,31 +12,24 @@ namespace Simple.OData.Client
     {
         private static readonly SimpleDictionary<string, Schema> Instances = new SimpleDictionary<string, Schema>();
 
-        //private readonly Model _model;
-
         private readonly SchemaProvider _schemaProvider;
         private readonly Func<Task<string>> _resolveMetadataAsync;
-        //private Func<EdmSchema> _createEdmSchema;
         private Func<ProviderMetadata> _createProviderMetadata;
         private string _metadataString;
 
-        //private Lazy<EdmSchema> _lazyMetadata;
         private Lazy<ProviderMetadata> _lazyProviderMetadata;
-        private Lazy<EntitySetCollection> _lazyEntitySets;
-        //private Lazy<List<EdmEntityType>> _lazyEntityTypes;
-        //private Lazy<List<EdmComplexType>> _lazyComplexTypes;
+        private Lazy<Collection<EntitySet>> _lazyEntitySets;
 
         private Schema(string metadataString, Func<Task<string>> resolveMedatataAsync)
         {
             ResetCache();
-            //_model = new Model(this);
+            _schemaProvider = new SchemaProvider();
 
             _metadataString = metadataString;
             _resolveMetadataAsync = resolveMedatataAsync;
 
             if (_resolveMetadataAsync == null)
             {
-                //_createEdmSchema = () => ResponseReader.GetSchema(_metadataString);
                 _createProviderMetadata = () => _schemaProvider.ParseMetadata(_metadataString);
             }
         }
@@ -44,7 +37,6 @@ namespace Simple.OData.Client
         private Schema(SchemaProvider schemaProvider)
         {
             ResetCache();
-            //_model = new Model(this);
 
             _schemaProvider = schemaProvider;
         }
@@ -53,17 +45,9 @@ namespace Simple.OData.Client
         {
             _metadataString = null;
 
-            //_lazyMetadata = new Lazy<EdmSchema>(CreateEdmSchema);
             _lazyProviderMetadata = new Lazy<ProviderMetadata>(CreateProviderMetadata);
-            _lazyEntitySets = new Lazy<EntitySetCollection>(CreateEntitySetCollection);
-            //_lazyEntityTypes = new Lazy<List<EdmEntityType>>(CreateEntityTypeCollection);
-            //_lazyComplexTypes = new Lazy<List<EdmComplexType>>(CreateComplexTypeCollection);
+            _lazyEntitySets = new Lazy<Collection<EntitySet>>(CreateEntitySetCollection);
         }
-
-        //internal Model Model
-        //{
-        //    get { return _model; }
-        //}
 
         public async Task<Schema> ResolveAsync(CancellationToken cancellationToken)
         {
@@ -76,25 +60,16 @@ namespace Simple.OData.Client
                     var providerMetadata = await _schemaProvider.GetMetadataAsync(response);
                     _createProviderMetadata = () => providerMetadata;
                     var metadata = await _schemaProvider.GetSchemaAsync(providerMetadata);
-                    //_createEdmSchema = () => metadata;
                 }
                 else
                 {
                     _metadataString = await _resolveMetadataAsync();
-                    //_createEdmSchema = () => ResponseReader.GetSchema(_metadataString);
-                    // TODO
                 }
             }
 
-            //_lazyMetadata = new Lazy<EdmSchema>(CreateEdmSchema);
             _lazyProviderMetadata = new Lazy<ProviderMetadata>(CreateProviderMetadata);
             return this;
         }
-
-        //public EdmSchema Metadata
-        //{
-        //    get { return _lazyMetadata.Value; }
-        //}
 
         public ProviderMetadata ProviderMetadata
         {
@@ -118,7 +93,8 @@ namespace Simple.OData.Client
 
         public EntitySet FindEntitySet(string entitySetName)
         {
-            return _lazyEntitySets.Value.Find(entitySetName);
+            var actualName = ProviderMetadata.GetEntitySetExactName(entitySetName);
+            return _lazyEntitySets.Value.Single(x => x.ActualName == actualName);
         }
 
         public EntitySet FindBaseEntitySet(string entitySetPath)
@@ -143,40 +119,15 @@ namespace Simple.OData.Client
             }
         }
 
-        //public IEnumerable<EdmEntityType> EntityTypes
-        //{
-        //    get { return _lazyEntityTypes.Value.AsEnumerable(); }
-        //}
-
-        //public IEnumerable<EdmComplexType> ComplexTypes
-        //{
-        //    get { return _lazyComplexTypes.Value.AsEnumerable(); }
-        //}
-
-        //private EdmSchema CreateEdmSchema()
-        //{
-        //    return _createEdmSchema();
-        //}
-
         private ProviderMetadata CreateProviderMetadata()
         {
             return _createProviderMetadata();
         }
 
-        private EntitySetCollection CreateEntitySetCollection()
+        private Collection<EntitySet> CreateEntitySetCollection()
         {
-            return new EntitySetCollection(ProviderMetadata.GetEntitySetNames().Select(x => new EntitySet(x, null, this)));
+            return new Collection<EntitySet>(ProviderMetadata.GetEntitySetNames().Select(x => new EntitySet(x, null, this)).ToList());
         }
-
-        //private List<EdmEntityType> CreateEntityTypeCollection()
-        //{
-        //    return new List<EdmEntityType>(_model.GetEntityTypes());
-        //}
-
-        //private List<EdmComplexType> CreateComplexTypeCollection()
-        //{
-        //    return new List<EdmComplexType>(_model.GetComplexTypes());
-        //}
 
         internal static Schema FromUrl(string urlBase, ICredentials credentials = null)
         {

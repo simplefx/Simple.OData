@@ -15,6 +15,10 @@ namespace Simple.OData.Client
         private readonly string _urlBase;
         private readonly ICredentials _credentials;
 
+        public SchemaProvider()
+        {
+        }
+
         public SchemaProvider(string urlBase, ICredentials credentials)
         {
             _urlBase = urlBase;
@@ -70,7 +74,7 @@ namespace Simple.OData.Client
             if (protocolVersion == "4.0")
                 return new ODataProviderV4().GetMetadata(metadataString, protocolVersion);
             else if (protocolVersion == "1.0" || protocolVersion == "2.0" || protocolVersion == "3.0")
-                return new ODataProviderV4().GetMetadata(metadataString, protocolVersion);
+                return new ODataProviderV3().GetMetadata(metadataString, protocolVersion);
 
             throw new NotSupportedException(string.Format("OData protocol {0} is not supported", protocolVersion));
         }

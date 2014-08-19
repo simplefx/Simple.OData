@@ -223,7 +223,7 @@ namespace Simple.OData.Client.Tests
         private void ParseSchema(string schemaName)
         {
             var document = GetResourceAsString(schemaName + ".edmx");
-            var metadata = ODataClient.ParseMetadataString<Microsoft.Data.Edm.IEdmModel>(document);
+            var metadata = ODataClient.ParseMetadataString<IEdmModel>(document);
             Assert.Equal(1, metadata.SchemaElements.Count(x => x.SchemaElementKind == EdmSchemaElementKind.TypeDefinition));
             Assert.Equal(schemaName, metadata.SchemaElements.Single(x => x.SchemaElementKind == EdmSchemaElementKind.TypeDefinition).Name);
         }

@@ -362,17 +362,11 @@
     <Compile Include="..\Simple.OData.Client.Core\Schema\EntitySet.cs">
       <Link>Schema\EntitySet.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Schema\EntitySetCollection.cs">
-      <Link>Schema\EntitySetCollection.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Schema\ProviderMetadata.cs">
       <Link>Schema\ProviderMetadata.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Schema\Schema.cs">
       <Link>Schema\Schema.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Schema\Model.cs">
-      <Link>Schema\Model.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Schema\SchemaProvider.cs">
       <Link>Schema\SchemaProvider.cs</Link>

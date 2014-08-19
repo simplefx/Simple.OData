@@ -45,9 +45,33 @@ namespace Simple.OData.Client
                 .Any(x => x.ConcurrencyMode == EdmConcurrencyMode.Fixed);
         }
 
+        public override string GetDerivedEntityTypeExactName(string entitySetName, string entityTypeName)
+        {
+            var entitySet = GetEntitySet(entitySetName);
+            var entityType = (this.Model.FindDirectlyDerivedTypes(entitySet.ElementType)
+                .SingleOrDefault(x => NamesAreEqual((x as IEdmEntityType).Name, entityTypeName)) as IEdmEntityType);
+
+            if (entityType == null)
+                throw new UnresolvableObjectException(entityTypeName, string.Format("Entity type {0} not found", entityTypeName));
+
+            return entityType.Name;
+        }
+
+        public override IEnumerable<string> GetDerivedEntityTypeNames(string entitySetName)
+        {
+            var entitySet = GetEntitySet(entitySetName);
+            return this.Model.FindDirectlyDerivedTypes(entitySet.ElementType)
+                .Select(x => (x as IEdmEntityType).Name);
+        }
+
         public override string GetEntityTypeExactName(string entityTypeName)
         {
-            return GetEntityTypes().Single(x => NamesAreEqual(x.Name, entityTypeName)).Name;
+            var entityType = GetEntityTypes().SingleOrDefault(x => NamesAreEqual(x.Name, entityTypeName));
+
+            if (entityType == null)
+                throw new UnresolvableObjectException(entityTypeName, string.Format("Entity type {0} not found", entityTypeName));
+
+            return entityType.Name;
         }
 
         public override IEnumerable<string> GetStructuralPropertyNames(string entitySetName)
@@ -127,10 +151,15 @@ namespace Simple.OData.Client
 
         private IEdmEntitySet GetEntitySet(string entitySetName)
         {
-            return this.Model.SchemaElements
+            var entitySet = this.Model.SchemaElements
                 .Where(x => x.SchemaElementKind == EdmSchemaElementKind.EntityContainer)
                 .SelectMany(x => (x as IEdmEntityContainer).EntitySets())
-                .Single(x => NamesAreEqual(x.Name, entitySetName));
+                .SingleOrDefault(x => NamesAreEqual(x.Name, entitySetName));
+
+            if (entitySet == null)
+                throw new UnresolvableObjectException(entitySetName, string.Format("Entity set {0} not found", entitySetName));
+
+            return entitySet;
         }
 
         private IEnumerable<IEdmEntityType> GetEntityTypes()
@@ -165,7 +194,7 @@ namespace Simple.OData.Client
 
         private IEdmStructuralProperty GetStructuralProperty(string entitySetName, string propertyName)
         {
-            var property = GetEntityType(entitySetName).StructuralProperties().Single(x => NamesAreEqual(x.Name, propertyName));
+            var property = GetEntityType(entitySetName).StructuralProperties().SingleOrDefault(x => NamesAreEqual(x.Name, propertyName));
 
             if (property == null)
                 throw new UnresolvableObjectException(propertyName, string.Format("Structural property {0} not found", propertyName));

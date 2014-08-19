@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Simple.OData.Client.Extensions;
 
@@ -50,12 +51,14 @@ namespace Simple.OData.Client
 
         public EntitySet FindDerivedEntitySet(string entityTypeName)
         {
-            throw new NotImplementedException();
+            var actualName = _schema.ProviderMetadata.GetDerivedEntityTypeExactName(this.ActualName, entityTypeName);
+            return new EntitySet(actualName, this, _schema);
         }
 
         public bool HasDerivedEntitySet(string entityTypeName)
         {
-            throw new NotImplementedException();
+            return _schema.ProviderMetadata.GetDerivedEntityTypeNames(this.ActualName)
+                .Any(x => ProviderMetadata.NamesAreEqual(x, entityTypeName));
         }
 
         public IDictionary<string, object> GetKey(string entityTypeName, IDictionary<string, object> record)
@@ -67,11 +70,6 @@ namespace Simple.OData.Client
         public IList<string> GetKeyNames()
         {
             return _schema.ProviderMetadata.GetDeclaredKeyPropertyNames(this.ActualName).ToList();
-        }
-
-        private EntitySetCollection GetDerivedEntitySets()
-        {
-            throw new NotImplementedException();
         }
     }
 }
