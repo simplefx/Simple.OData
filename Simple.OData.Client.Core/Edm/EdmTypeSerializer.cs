@@ -285,43 +285,44 @@ namespace Simple.OData.Client
             }
             else
             {
-                var property = root == container
-                    ? schema
-                        .EntityTypes.Single(x => x.Name == typeName)
-                        .Properties.Single(x => x.Name == kvp.Key)
-                    : schema
-                        .ComplexTypes.Single(x => x.Name == typeName)
-                        .Properties.Single(x => x.Name == kvp.Key);
+                throw new NotImplementedException();
+                //var property = root == container
+                //    ? schema
+                //        .EntityTypes.Single(x => x.Name == typeName)
+                //        .Properties.Single(x => x.Name == kvp.Key)
+                //    : schema
+                //        .ComplexTypes.Single(x => x.Name == typeName)
+                //        .Properties.Single(x => x.Name == kvp.Key);
 
-                if (property.Type is EdmComplexPropertyType)
-                {
-                    if (kvp.Value.ToString() == string.Empty)
-                    {
-                        element.SetAttributeValue(container.GetNamespaceOfPrefix("m") + "null", "true");
-                    }
-                    else
-                    {
-                        var edmType = (property.Type as EdmComplexPropertyType).Type;
-                        element.SetAttributeValue(root.GetNamespaceOfPrefix("m") + "type", edmType.QualifiedName);
-                        foreach (var prop in kvp.Value as IDictionary<string, object>)
-                        {
-                            Write(schema, property.Type.Name, root, element, prop);
-                        }
-                    }
-                }
-                else if (property.Type is EdmPrimitivePropertyType)
-                {
-                    var edmType = (property.Type as EdmPrimitivePropertyType).Type;
-                    if (edmType != EdmType.String)
-                    {
-                        element.SetAttributeValue(root.GetNamespaceOfPrefix("m") + "type", edmType.Name);
-                        if (kvp.Value.ToString() == string.Empty)
-                        {
-                            element.SetAttributeValue(container.GetNamespaceOfPrefix("m") + "null", "true");
-                        }
-                    }
-                    element.SetValue(Writers[edmType](kvp.Value));
-                }
+                //if (property.Type is EdmComplexPropertyType)
+                //{
+                //    if (kvp.Value.ToString() == string.Empty)
+                //    {
+                //        element.SetAttributeValue(container.GetNamespaceOfPrefix("m") + "null", "true");
+                //    }
+                //    else
+                //    {
+                //        var edmType = (property.Type as EdmComplexPropertyType).Type;
+                //        element.SetAttributeValue(root.GetNamespaceOfPrefix("m") + "type", edmType.QualifiedName);
+                //        foreach (var prop in kvp.Value as IDictionary<string, object>)
+                //        {
+                //            Write(schema, property.Type.Name, root, element, prop);
+                //        }
+                //    }
+                //}
+                //else if (property.Type is EdmPrimitivePropertyType)
+                //{
+                //    var edmType = (property.Type as EdmPrimitivePropertyType).Type;
+                //    if (edmType != EdmType.String)
+                //    {
+                //        element.SetAttributeValue(root.GetNamespaceOfPrefix("m") + "type", edmType.Name);
+                //        if (kvp.Value.ToString() == string.Empty)
+                //        {
+                //            element.SetAttributeValue(container.GetNamespaceOfPrefix("m") + "null", "true");
+                //        }
+                //    }
+                //    element.SetValue(Writers[edmType](kvp.Value));
+                //}
             }
 
             container.Add(element);

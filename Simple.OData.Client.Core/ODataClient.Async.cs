@@ -362,11 +362,14 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             RemoveSystemProperties(entryData);
-            var table = _schema.FindConcreteEntitySet(collection);
-            var entryMembers = ParseEntryMembers(table, entryData);
+            var entitySet = _schema.FindConcreteEntitySet(collection);
+            var entryMembers = ParseEntryMembers(entitySet, entryData);
 
             var commandWriter = new CommandWriter(_schema);
-            var entryContent = commandWriter.CreateEntry(table.EntityType.Namespace, table.EntityType.Name, entryMembers.Properties);
+            var entryContent = commandWriter.CreateEntry(
+                _schema.ProviderMetadata.GetEntitySetTypeNamespace(collection),
+                _schema.ProviderMetadata.GetEntitySetTypeName(collection),
+                entryMembers.Properties);
             foreach (var associatedData in entryMembers.AssociationsByValue)
             {
                 commandWriter.AddLink(entryContent, collection, associatedData);
@@ -461,8 +464,7 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var command = new CommandWriter(_schema).CreateDeleteCommand(commandText);
-            var table = _schema.FindConcreteEntitySet(collection);
-            var request = _requestBuilder.CreateRequest(command, false, table.EntityType.CheckOptimisticConcurrency);
+            var request = _requestBuilder.CreateRequest(command, false, _schema.ProviderMetadata.EntitySetTypeRequiresOptimisticConcurrencyCheck(collection));
             await _requestRunner.DeleteEntryAsync(request, cancellationToken);
         }
 

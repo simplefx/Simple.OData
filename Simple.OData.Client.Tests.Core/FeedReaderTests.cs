@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Data.Edm;
 using Xunit;
 
 namespace Simple.OData.Client.Tests
@@ -222,9 +223,9 @@ namespace Simple.OData.Client.Tests
         private void ParseSchema(string schemaName)
         {
             var document = GetResourceAsString(schemaName + ".edmx");
-            var schema = ResponseReader.GetSchema(document);
-            Assert.Equal(1, schema.EntityTypes.Count());
-            Assert.Equal(schemaName, schema.EntityTypes.First().Name);
+            var metadata = ODataClient.ParseMetadataString<Microsoft.Data.Edm.IEdmModel>(document);
+            Assert.Equal(1, metadata.SchemaElements.Count(x => x.SchemaElementKind == EdmSchemaElementKind.TypeDefinition));
+            Assert.Equal(schemaName, metadata.SchemaElements.Single(x => x.SchemaElementKind == EdmSchemaElementKind.TypeDefinition).Name);
         }
     }
 }

@@ -37,8 +37,7 @@ namespace Simple.OData.Client
 
         private EntitySet TryFind(string entitySetName)
         {
-            entitySetName = entitySetName.Homogenize();
-            return this.SingleOrDefault(t => t.HomogenizedName.Equals(entitySetName));
+            return this.SingleOrDefault(t => t.ActualName.Homogenize().Equals(entitySetName.Homogenize()));
         }
     }
 }

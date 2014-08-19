@@ -131,10 +131,10 @@ namespace Simple.OData.Client
             {
                 if (!string.IsNullOrEmpty(_collectionName))
                 {
-                    var table = _schema.FindEntitySet(_collectionName);
+                    var entitySet = _schema.FindEntitySet(_collectionName);
                     return string.IsNullOrEmpty(_derivedCollectionName)
-                               ? table
-                               : table.FindDerivedTable(_derivedCollectionName);
+                               ? entitySet
+                               : entitySet.FindDerivedEntitySet(_derivedCollectionName);
                 }
                 else if (!string.IsNullOrEmpty(_linkName))
                 {
@@ -449,11 +449,12 @@ namespace Simple.OData.Client
             string commandText = string.Empty;
             if (!string.IsNullOrEmpty(_collectionName))
             {
-                var table = _schema.FindEntitySet(_collectionName);
-                commandText += table.ActualName;
+                var entitySetName = _schema.ProviderMetadata.GetEntitySetExactName(_collectionName);
+                var entityTypeNamespace = _schema.ProviderMetadata.GetEntitySetTypeNamespace(_collectionName);
+                commandText += entitySetName;
                 if (!string.IsNullOrEmpty(_derivedCollectionName))
                     commandText += "/" + string.Join(".",
-                        table.EntityType.Namespace,
+                        entityTypeNamespace,
                         _schema.ProviderMetadata.GetEntityTypeExactName(_derivedCollectionName));
             }
             else if (!string.IsNullOrEmpty(_linkName))

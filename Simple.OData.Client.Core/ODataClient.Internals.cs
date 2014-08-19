@@ -103,12 +103,14 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var commandWriter = new CommandWriter(_schema);
-            var table = _schema.FindConcreteEntitySet(collection);
-            var entryContent = commandWriter.CreateEntry(table.EntityType.Namespace, table.EntityType.Name, entryMembers.Properties);
+            var entitySetName = _schema.ProviderMetadata.GetEntitySetExactName(collection);
+            var entryContent = commandWriter.CreateEntry(
+                _schema.ProviderMetadata.GetEntitySetTypeNamespace(collection),
+                _schema.ProviderMetadata.GetEntitySetTypeName(collection), entryMembers.Properties);
             var unlinkAssociationNames = new List<string>();
             foreach (var associatedData in entryMembers.AssociationsByValue)
             {
-                var associationName = table.Schema.ProviderMetadata.GetNavigationPropertyExactName(table.ActualName, associatedData.Key);
+                var associationName = _schema.ProviderMetadata.GetNavigationPropertyExactName(entitySetName, associatedData.Key);
                 if (associatedData.Value != null)
                 {
                     commandWriter.AddLink(entryContent, collection, associatedData);
@@ -120,7 +122,8 @@ namespace Simple.OData.Client
             }
 
             var command = commandWriter.CreateUpdateCommand(commandText, entryData, entryContent, merge);
-            var request = _requestBuilder.CreateRequest(command, resultRequired, table.EntityType.CheckOptimisticConcurrency);
+            var request = _requestBuilder.CreateRequest(command, resultRequired, 
+                _schema.ProviderMetadata.EntitySetTypeRequiresOptimisticConcurrencyCheck(collection));
             var result = await _requestRunner.UpdateEntryAsync(request, cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 

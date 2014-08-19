@@ -8,6 +8,12 @@ namespace Simple.OData.Client
         public string ProtocolVersion { get; set; }
         public object Model { get; set; }
 
+        public abstract IEnumerable<string> GetEntitySetNames();
+        public abstract string GetEntitySetExactName(string entitySetName);
+        public abstract string GetEntitySetTypeName(string entitySetName);
+        public abstract string GetEntitySetTypeNamespace(string entitySetName);
+        public abstract bool EntitySetTypeRequiresOptimisticConcurrencyCheck(string entitySetName);
+
         public abstract string GetEntityTypeExactName(string entityTypeName);
 
         public abstract IEnumerable<string> GetStructuralPropertyNames(string entitySetName);
@@ -23,7 +29,7 @@ namespace Simple.OData.Client
 
         public abstract string GetFunctionExactName(string functionName);
 
-        protected bool NamesAreEqual(string actualName, string requestedName)
+        public static bool NamesAreEqual(string actualName, string requestedName)
         {
             return actualName.Homogenize() == requestedName.Homogenize()
                    || actualName.Homogenize() == requestedName.Singularize().Homogenize()

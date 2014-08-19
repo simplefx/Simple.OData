@@ -11,17 +11,16 @@ namespace Simple.OData.Client
     {
         private readonly Schema _schema;
         private readonly string _actualName;
-        private readonly EdmEntityType _entityType;
+        //private readonly EdmEntityType _entityType;
         private readonly EntitySet _baseEntitySet;
-        private readonly Lazy<EntitySetCollection> _lazyDerivedTables;
 
-        internal EntitySet(string name, EdmEntityType entityType, EntitySet baseEntitySet, Schema schema)
+        internal EntitySet(string name, EntitySet baseEntitySet, Schema schema)
+//        internal EntitySet(string name, EdmEntityType entityType, EntitySet baseEntitySet, Schema schema)
         {
             _actualName = name;
-            _entityType = entityType;
+            //_entityType = entityType;
             _baseEntitySet = baseEntitySet;
             _schema = schema;
-            _lazyDerivedTables = new Lazy<EntitySetCollection>(GetDerivedTables);
         }
 
         public override string ToString()
@@ -34,37 +33,32 @@ namespace Simple.OData.Client
             get { return _schema; }
         }
 
-        internal string HomogenizedName
-        {
-            get { return _actualName.Homogenize(); }
-        }
-
         public string ActualName
         {
             get { return _actualName; }
         }
 
-        public EdmEntityType EntityType
-        {
-            get { return _entityType; }
-        }
+        //public EdmEntityType EntityType
+        //{
+        //    get { return _entityType; }
+        //}
 
         public EntitySet BaseEntitySet
         {
             get { return _baseEntitySet; }
         }
 
-        public EntitySet FindDerivedTable(string tableName)
+        public EntitySet FindDerivedEntitySet(string entityTypeName)
         {
-            return _lazyDerivedTables.Value.Find(tableName);
+            throw new NotImplementedException();
         }
 
-        public bool HasDerivedTable(string tableName)
+        public bool HasDerivedEntitySet(string entityTypeName)
         {
-            return _lazyDerivedTables.Value.Contains(tableName);
+            throw new NotImplementedException();
         }
 
-        public IDictionary<string, object> GetKey(string tableName, IDictionary<string, object> record)
+        public IDictionary<string, object> GetKey(string entityTypeName, IDictionary<string, object> record)
         {
             var keyNames = GetKeyNames();
             return record.Where(x => keyNames.Contains(x.Key)).ToIDictionary();
@@ -75,9 +69,9 @@ namespace Simple.OData.Client
             return _schema.ProviderMetadata.GetDeclaredKeyPropertyNames(this.ActualName).ToList();
         }
 
-        private EntitySetCollection GetDerivedTables()
+        private EntitySetCollection GetDerivedEntitySets()
         {
-            return new EntitySetCollection(_schema.Model.GetDerivedTables(this));
+            throw new NotImplementedException();
         }
     }
 }

@@ -13,12 +13,12 @@ namespace Simple.OData.Client
         public EdmComplexType[] ComplexTypes { get; private set; }
         public EdmEntityContainer[] EntityContainers { get; private set; }
 
-        internal EdmSchema(EdmSchemaParser parser)
-        {
-            this.EntityTypes = parser.EntityTypes.ToArray();
-            this.ComplexTypes = parser.ComplexTypes.ToArray();
-            this.EntityContainers = parser.EntityContainers.ToArray();
-        }
+        //internal EdmSchema(EdmSchemaParser parser)
+        //{
+        //    this.EntityTypes = parser.EntityTypes.ToArray();
+        //    this.ComplexTypes = parser.ComplexTypes.ToArray();
+        //    this.EntityContainers = parser.EntityContainers.ToArray();
+        //}
 
         internal EdmSchema(IEdmModelParser parser)
         {

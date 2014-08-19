@@ -19,6 +19,32 @@ namespace Simple.OData.Client
             set { base.Model = value; }
         }
 
+        public override IEnumerable<string> GetEntitySetNames()
+        {
+            return GetEntitySets().Select(x => x.Name);
+        }
+
+        public override string GetEntitySetExactName(string entitySetName)
+        {
+            return GetEntitySet(entitySetName).Name;
+        }
+
+        public override string GetEntitySetTypeName(string entitySetName)
+        {
+            return GetEntityType(entitySetName).Name;
+        }
+
+        public override string GetEntitySetTypeNamespace(string entitySetName)
+        {
+            return GetEntityType(entitySetName).Namespace;
+        }
+
+        public override bool EntitySetTypeRequiresOptimisticConcurrencyCheck(string entitySetName)
+        {
+            return GetEntityType(entitySetName).StructuralProperties()
+                .Any(x => x.ConcurrencyMode == EdmConcurrencyMode.Fixed);
+        }
+
         public override string GetEntityTypeExactName(string entityTypeName)
         {
             return GetEntityTypes().Single(x => NamesAreEqual(x.Name, entityTypeName)).Name;
@@ -98,6 +124,14 @@ namespace Simple.OData.Client
             return this.Model.SchemaElements
                 .Where(x => x.SchemaElementKind == EdmSchemaElementKind.EntityContainer)
                 .SelectMany(x => (x as IEdmEntityContainer).EntitySets());
+        }
+
+        private IEdmEntitySet GetEntitySet(string entitySetName)
+        {
+            return this.Model.SchemaElements
+                .Where(x => x.SchemaElementKind == EdmSchemaElementKind.EntityContainer)
+                .SelectMany(x => (x as IEdmEntityContainer).EntitySets())
+                .Single(x => NamesAreEqual(x.Name, entitySetName));
         }
 
         private IEnumerable<IEdmEntityType> GetEntityTypes()

@@ -20,11 +20,11 @@ namespace Simple.OData.Client
             _includeResourceTypeInEntryProperties = includeResourceTypeInEntryProperties;
         }
 
-        public static EdmSchema GetSchema(string text)
-        {
-            var feed = XElement.Parse(text);
-            return new EdmSchemaParser().ParseSchema(feed);
-        }
+        //public static EdmSchema GetSchema(string text)
+        //{
+        //    var feed = XElement.Parse(text);
+        //    return new EdmSchemaParser().ParseSchema(feed);
+        //}
 
         public IEnumerable<IDictionary<string, object>> GetData(string text, bool scalarResult = false)
         {
