@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Xml;
+using System.Xml.Linq;
 using Microsoft.Data.Edm;
 using Microsoft.Data.Edm.Csdl;
 using Microsoft.Data.OData;
@@ -140,6 +141,21 @@ namespace Simple.OData.Client
                 throw new UnresolvableObjectException(functionName, string.Format("Function {0} not found", functionName));
 
             return function.Name;
+        }
+
+        public override XElement CreateEntry(string entityTypeNamespace, string entityTypeName,
+            IDictionary<string, object> row)
+        {
+            using (var messageWriter = new ODataMessageWriter(new ODataV3RequestMessage(null, null)))
+            {
+                var entryWriter = messageWriter.CreateODataEntryWriter();
+                var entry = new Microsoft.Data.OData.ODataEntry();
+                entry.Properties = row.Select(x => new ODataProperty() { Name = x.Key, Value = x.Value });
+                entryWriter.WriteStart(entry);
+                entryWriter.WriteEnd();
+            }
+
+            return null;
         }
 
         private IEnumerable<IEdmEntitySet> GetEntitySets()

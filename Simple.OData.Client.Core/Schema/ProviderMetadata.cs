@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Xml.Linq;
 using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
@@ -30,6 +31,8 @@ namespace Simple.OData.Client
         public abstract bool IsNavigationPropertyMultiple(string entitySetName, string propertyName);
 
         public abstract string GetFunctionExactName(string functionName);
+
+        public abstract XElement CreateEntry(string entityTypeNamespace, string entityTypeName, IDictionary<string, object> row);
 
         public static bool NamesAreEqual(string actualName, string requestedName)
         {

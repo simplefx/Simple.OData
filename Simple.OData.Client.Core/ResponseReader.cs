@@ -61,16 +61,17 @@ namespace Simple.OData.Client
 
                 try
                 {
-                    var collectionElements = element.Elements(null, "element");
-                    if (collectionElements.Any())
-                    {
-                        return collectionElements.Select(x =>
-                            ValueToResultDictionary(EdmTypeSerializer.Read(x).Value));
-                    }
-                    else
-                    {
-                        return new[] { ValueToResultDictionary(EdmTypeSerializer.Read(element).Value) };
-                    }
+                    throw new NotImplementedException();
+                    //var collectionElements = element.Elements(null, "element");
+                    //if (collectionElements.Any())
+                    //{
+                    //    return collectionElements.Select(x =>
+                    //        ValueToResultDictionary(EdmTypeSerializer.Read(x).Value));
+                    //}
+                    //else
+                    //{
+                    //    return new[] { ValueToResultDictionary(EdmTypeSerializer.Read(element).Value) };
+                    //}
                 }
                 catch (Exception)
                 {
@@ -161,10 +162,11 @@ namespace Simple.OData.Client
 
             if (properties == null) yield break;
 
-            foreach (var property in properties.Elements())
-            {
-                yield return EdmTypeSerializer.Read(property);
-            }
+            throw new NotImplementedException();
+            //foreach (var property in properties.Elements())
+            //{
+            //    yield return EdmTypeSerializer.Read(property);
+            //}
         }
 
         private object GetLinks(XElement element)

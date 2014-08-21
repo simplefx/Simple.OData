@@ -59,12 +59,13 @@ namespace Simple.OData.Client
 
         public CommandContent CreateEntry(string entityTypeNamespace, string entityTypeName, IDictionary<string, object> row)
         {
-            var entry = CreateEmptyEntryWithNamespaces();
+            var entry = _schema.ProviderMetadata.CreateEntry(entityTypeNamespace, entityTypeName, row);
+            //var entry = CreateEmptyEntryWithNamespaces();
 
-            var resourceName = GetQualifiedResourceName(entityTypeNamespace, entityTypeName);
-            entry.Element(null, "category").SetAttributeValue("term", resourceName);
+            //var resourceName = GetQualifiedResourceName(entityTypeNamespace, entityTypeName);
+            //entry.Element(null, "category").SetAttributeValue("term", resourceName);
 
-            EdmTypeSerializer.Write(_schema, entityTypeName, entry.Element(null, "content").Element("m", "properties"), row);
+            //EdmTypeSerializer.Write(_schema, entityTypeName, entry.Element(null, "content").Element("m", "properties"), row);
 
             return new CommandContent(entry);
         }
