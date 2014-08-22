@@ -164,7 +164,7 @@ namespace Simple.OData.Client
 
         public async override Task<IEnumerable<IDictionary<string, object>>> GetEntriesAsync(HttpResponseMessage response)
         {
-            using (var messageReader = new ODataMessageReader(new ODataV4ResponseMessage(response), new ODataMessageReaderSettings()))
+            using (var messageReader = new ODataMessageReader(new ODataV4ResponseMessage(response), new ODataMessageReaderSettings(), Model))
             {
                 var entries = new List<IDictionary<string, object>>();
                 var feedReader = messageReader.CreateODataFeedReader();
@@ -189,7 +189,7 @@ namespace Simple.OData.Client
 
         public async override Task<IDictionary<string, object>> GetEntryAsync(HttpResponseMessage response)
         {
-            using (var messageReader = new ODataMessageReader(new ODataV4ResponseMessage(response), new ODataMessageReaderSettings()))
+            using (var messageReader = new ODataMessageReader(new ODataV4ResponseMessage(response), new ODataMessageReaderSettings(), Model))
             {
                 var entryReader = messageReader.CreateODataEntryReader();
                 while (entryReader.Read())
