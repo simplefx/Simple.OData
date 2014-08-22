@@ -1,4 +1,8 @@
 ﻿using System.Collections.Generic;
+using System.IO;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
 using System.Xml.Linq;
 using Simple.OData.Client.Extensions;
 
@@ -32,13 +36,24 @@ namespace Simple.OData.Client
 
         public abstract string GetFunctionExactName(string functionName);
 
-        public abstract XElement CreateEntry(string entityTypeNamespace, string entityTypeName, IDictionary<string, object> row);
+        public abstract string CreateEntry(string entityTypeNamespace, string entityTypeName, IDictionary<string, object> row);
+        public abstract Task<IEnumerable<IDictionary<string, object>>> GetEntriesAsync(HttpResponseMessage response);
+        public abstract Task<IDictionary<string, object>> GetEntryAsync(HttpResponseMessage response);
 
         public static bool NamesAreEqual(string actualName, string requestedName)
         {
             return actualName.Homogenize() == requestedName.Homogenize()
                    || actualName.Homogenize() == requestedName.Singularize().Homogenize()
                    || actualName.Homogenize() == requestedName.Pluralize().Homogenize();
+        }
+
+        public static string StreamToString(Stream stream)
+        {
+            stream.Position = 0;
+            using (var reader = new StreamReader(stream, Encoding.UTF8))
+            {
+                return reader.ReadToEnd();
+            }
         }
     }
 }

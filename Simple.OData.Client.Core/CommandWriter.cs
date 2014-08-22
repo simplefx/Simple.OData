@@ -80,10 +80,11 @@ namespace Simple.OData.Client
                 associatedData);
             if (associatedKeyValues != null)
             {
-                AddDataLink(content.Entry,
-                    _schema.ProviderMetadata.GetNavigationPropertyExactName(collection, associatedData.Key),
-                    _schema.ProviderMetadata.GetNavigationPropertyPartnerName(collection, associatedData.Key), 
-                    associatedKeyValues);
+                throw new NotImplementedException();
+                //AddDataLink(content.Entry,
+                //    _schema.ProviderMetadata.GetNavigationPropertyExactName(collection, associatedData.Key),
+                //    _schema.ProviderMetadata.GetNavigationPropertyPartnerName(collection, associatedData.Key), 
+                //    associatedKeyValues);
             }
         }
 

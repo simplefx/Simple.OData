@@ -34,6 +34,10 @@ namespace Simple.OData.Client
 
         public string GetHeader(string headerName)
         {
+            if (headerName == "Content-Type")
+            {
+                return "application/atom+xml";
+            }
             return _request.Headers.GetValues(headerName).FirstOrDefault();
         }
 

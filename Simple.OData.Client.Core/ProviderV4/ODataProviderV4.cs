@@ -3,14 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Threading.Tasks;
 using System.Xml;
 using System.Xml.Linq;
 using Microsoft.OData.Core;
 using Microsoft.OData.Edm;
 using Microsoft.OData.Edm.Csdl;
 using Simple.OData.Client.Extensions;
-using ODataMessageWriter = Microsoft.Data.OData.ODataMessageWriter;
-using ODataProperty = Microsoft.Data.OData.ODataProperty;
 
 namespace Simple.OData.Client
 {
@@ -146,19 +145,69 @@ namespace Simple.OData.Client
             return function.Name;
         }
 
-        public override XElement CreateEntry(string entityTypeNamespace, string entityTypeName,
+        public override string CreateEntry(string entityTypeNamespace, string entityTypeName,
             IDictionary<string, object> row)
         {
-            using (var messageWriter = new ODataMessageWriter(new ODataV3RequestMessage(null, null)))
-            {
-                var entryWriter = messageWriter.CreateODataEntryWriter();
-                var entry = new Microsoft.Data.OData.ODataEntry();
-                entry.Properties = row.Select(x => new ODataProperty() { Name = x.Key, Value = x.Value });
-                entryWriter.WriteStart(entry);
-                entryWriter.WriteEnd();
-            }
+            // TODO: check dispose
+            var message = new ODataV4RequestMessage(null, null);
+            var messageWriter = new ODataMessageWriter(message);
+            var entryWriter = messageWriter.CreateODataEntryWriter();
+            var entry = new Microsoft.Data.OData.ODataEntry();
+            // TODO
+            //entry.Properties = row.Select(x => new ODataProperty() { Name = x.Key, Value = x.Value });
+            //entryWriter.WriteStart(entry);
+            //entryWriter.WriteEnd();
 
-            return null;
+            var text = StreamToString(message.GetStream());
+            return text;
+        }
+
+        public async override Task<IEnumerable<IDictionary<string, object>>> GetEntriesAsync(HttpResponseMessage response)
+        {
+            using (var messageReader = new ODataMessageReader(new ODataV4ResponseMessage(response), new ODataMessageReaderSettings()))
+            {
+                var entries = new List<IDictionary<string, object>>();
+                var feedReader = messageReader.CreateODataFeedReader();
+                while (feedReader.Read())
+                {
+                    switch (feedReader.State)
+                    {
+                        case ODataReaderState.FeedStart:
+                        case ODataReaderState.EntryStart:
+                        case ODataReaderState.FeedEnd:
+                        default:
+                            break;
+
+                        case ODataReaderState.EntryEnd:
+                            entries.Add((feedReader.Item as Microsoft.OData.Core.ODataEntry).Properties.ToDictionary(x => x.Name, x => x.Value));
+                            break;
+                    }
+                }
+                return entries;
+            }
+        }
+
+        public async override Task<IDictionary<string, object>> GetEntryAsync(HttpResponseMessage response)
+        {
+            using (var messageReader = new ODataMessageReader(new ODataV4ResponseMessage(response), new ODataMessageReaderSettings()))
+            {
+                var entryReader = messageReader.CreateODataEntryReader();
+                while (entryReader.Read())
+                {
+                    switch (entryReader.State)
+                    {
+                        case ODataReaderState.FeedStart:
+                        case ODataReaderState.EntryStart:
+                        case ODataReaderState.FeedEnd:
+                        default:
+                            break;
+
+                        case ODataReaderState.EntryEnd:
+                            return (entryReader.Item as Microsoft.OData.Core.ODataEntry).Properties.ToDictionary(x => x.Name, x => x.Value);
+                    }
+                }
+                return null;
+            }
         }
 
         private IEnumerable<IEdmEntitySet> GetEntitySets()

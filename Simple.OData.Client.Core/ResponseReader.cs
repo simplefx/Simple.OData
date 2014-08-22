@@ -9,174 +9,174 @@ using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
-    class ResponseReader
-    {
-        private readonly bool _includeResourceTypeInEntryProperties;
-        private readonly Schema _schema;
+    //class ResponseReader
+    //{
+    //    private readonly bool _includeResourceTypeInEntryProperties;
+    //    private readonly Schema _schema;
 
-        public ResponseReader(Schema schema, bool includeResourceTypeInEntryProperties = false)
-        {
-            _schema = schema;
-            _includeResourceTypeInEntryProperties = includeResourceTypeInEntryProperties;
-        }
+    //    public ResponseReader(Schema schema, bool includeResourceTypeInEntryProperties = false)
+    //    {
+    //        _schema = schema;
+    //        _includeResourceTypeInEntryProperties = includeResourceTypeInEntryProperties;
+    //    }
 
-        //public static EdmSchema GetSchema(string text)
-        //{
-        //    var feed = XElement.Parse(text);
-        //    return new EdmSchemaParser().ParseSchema(feed);
-        //}
+    //    //public static EdmSchema GetSchema(string text)
+    //    //{
+    //    //    var feed = XElement.Parse(text);
+    //    //    return new EdmSchemaParser().ParseSchema(feed);
+    //    //}
 
-        public IEnumerable<IDictionary<string, object>> GetData(string text, bool scalarResult = false)
-        {
-            if (scalarResult)
-            {
-                return new[] { new Dictionary<string, object>() { { FluentCommand.ResultLiteral, text } } };
-            }
-            else
-            {
-                var feed = XElement.Parse(text);
-                return GetData(feed);
-            }
-        }
+    //    public IEnumerable<IDictionary<string, object>> GetData(string text, bool scalarResult = false)
+    //    {
+    //        if (scalarResult)
+    //        {
+    //            return new[] { new Dictionary<string, object>() { { FluentCommand.ResultLiteral, text } } };
+    //        }
+    //        else
+    //        {
+    //            var feed = XElement.Parse(text);
+    //            return GetData(feed);
+    //        }
+    //    }
 
-        public IEnumerable<IDictionary<string, object>> GetData(string text, out int totalCount)
-        {
-            var feed = XElement.Parse(text);
-            totalCount = GetDataCount(feed);
-            return GetData(feed);
-        }
+    //    public IEnumerable<IDictionary<string, object>> GetData(string text, out int totalCount)
+    //    {
+    //        var feed = XElement.Parse(text);
+    //        totalCount = GetDataCount(feed);
+    //        return GetData(feed);
+    //    }
 
-        public IEnumerable<IDictionary<string, object>> GetFunctionResult(Stream stream)
-        {
-            var text = Utils.StreamToString(stream);
-            var element = XElement.Parse(text);
-            if (element.Name.LocalName == "feed")
-            {
-                return GetData(element);
-            }
-            else
-            {
-                Func<object, Dictionary<string, object>> ValueToResultDictionary = v =>
-                    new Dictionary<string, object>() { { FluentCommand.ResultLiteral, v } };
+    //    public IEnumerable<IDictionary<string, object>> GetFunctionResult(Stream stream)
+    //    {
+    //        var text = Utils.StreamToString(stream);
+    //        var element = XElement.Parse(text);
+    //        if (element.Name.LocalName == "feed")
+    //        {
+    //            return GetData(element);
+    //        }
+    //        else
+    //        {
+    //            Func<object, Dictionary<string, object>> ValueToResultDictionary = v =>
+    //                new Dictionary<string, object>() { { FluentCommand.ResultLiteral, v } };
 
-                try
-                {
-                    throw new NotImplementedException();
-                    //var collectionElements = element.Elements(null, "element");
-                    //if (collectionElements.Any())
-                    //{
-                    //    return collectionElements.Select(x =>
-                    //        ValueToResultDictionary(EdmTypeSerializer.Read(x).Value));
-                    //}
-                    //else
-                    //{
-                    //    return new[] { ValueToResultDictionary(EdmTypeSerializer.Read(element).Value) };
-                    //}
-                }
-                catch (Exception)
-                {
-                    return new[] { ValueToResultDictionary(text) };
-                }
-            }
-        }
+    //            try
+    //            {
+    //                throw new NotImplementedException();
+    //                //var collectionElements = element.Elements(null, "element");
+    //                //if (collectionElements.Any())
+    //                //{
+    //                //    return collectionElements.Select(x =>
+    //                //        ValueToResultDictionary(EdmTypeSerializer.Read(x).Value));
+    //                //}
+    //                //else
+    //                //{
+    //                //    return new[] { ValueToResultDictionary(EdmTypeSerializer.Read(element).Value) };
+    //                //}
+    //            }
+    //            catch (Exception)
+    //            {
+    //                return new[] { ValueToResultDictionary(text) };
+    //            }
+    //        }
+    //    }
 
-        private IEnumerable<IDictionary<string, object>> GetData(XElement feed)
-        {
-            var mediaStream = feed.Element(null, "entry") != null &&
-                               feed.Element(null, "entry").Descendants(null, "link").Attributes("rel").Any(
-                                   x => x.Value == "edit-media");
+    //    private IEnumerable<IDictionary<string, object>> GetData(XElement feed)
+    //    {
+    //        var mediaStream = feed.Element(null, "entry") != null &&
+    //                           feed.Element(null, "entry").Descendants(null, "link").Attributes("rel").Any(
+    //                               x => x.Value == "edit-media");
 
-            var entryElements = feed.Name.LocalName == "feed"
-                              ? feed.Elements(null, "entry")
-                              : new[] { feed };
+    //        var entryElements = feed.Name.LocalName == "feed"
+    //                          ? feed.Elements(null, "entry")
+    //                          : new[] { feed };
 
-            foreach (var entry in entryElements)
-            {
-                var entryData = new Dictionary<string, object>();
+    //        foreach (var entry in entryElements)
+    //        {
+    //            var entryData = new Dictionary<string, object>();
 
-                var linkElements = entry.Elements(null, "link").Where(x => x.Descendants("m", "inline").Any());
-                foreach (var linkElement in linkElements)
-                {
-                    var linkData = GetLinks(linkElement);
-                    entryData.Add(linkElement.Attribute("title").Value, linkData);
-                }
+    //            var linkElements = entry.Elements(null, "link").Where(x => x.Descendants("m", "inline").Any());
+    //            foreach (var linkElement in linkElements)
+    //            {
+    //                var linkData = GetLinks(linkElement);
+    //                entryData.Add(linkElement.Attribute("title").Value, linkData);
+    //            }
 
-                var keys = GetKeys(entry);
-                foreach (var kv in keys)
-                {
-                    if (!string.IsNullOrEmpty(kv.Key))
-                        entryData.Add(kv.Key, kv.Value);
-                }
+    //            var keys = GetKeys(entry);
+    //            foreach (var kv in keys)
+    //            {
+    //                if (!string.IsNullOrEmpty(kv.Key))
+    //                    entryData.Add(kv.Key, kv.Value);
+    //            }
 
-                var entityElement = mediaStream ? entry : entry.Element(null, "content");
-                var properties = GetProperties(entityElement).ToIDictionary();
+    //            var entityElement = mediaStream ? entry : entry.Element(null, "content");
+    //            var properties = GetProperties(entityElement).ToIDictionary();
 
-                foreach (var property in properties)
-                {
-                    if (!entryData.ContainsKey(property.Key))
-                        entryData.Add(property.Key, property.Value);
-                }
+    //            foreach (var property in properties)
+    //            {
+    //                if (!entryData.ContainsKey(property.Key))
+    //                    entryData.Add(property.Key, property.Value);
+    //            }
 
-                if (_includeResourceTypeInEntryProperties)
-                {
-                    var resourceType = entry.Element(null, "category").Attribute("term").Value.Split('.').Last();
-                    entryData.Add(FluentCommand.ResourceTypeLiteral, resourceType);
-                }
+    //            if (_includeResourceTypeInEntryProperties)
+    //            {
+    //                var resourceType = entry.Element(null, "category").Attribute("term").Value.Split('.').Last();
+    //                entryData.Add(FluentCommand.ResourceTypeLiteral, resourceType);
+    //            }
 
-                yield return entryData;
-            }
-        }
+    //            yield return entryData;
+    //        }
+    //    }
 
-        private int GetDataCount(XElement feed)
-        {
-            var count = feed.Elements("m", "count").SingleOrDefault();
-            return count == null ? 0 : Convert.ToInt32(count.Value);
-        }
+    //    private int GetDataCount(XElement feed)
+    //    {
+    //        var count = feed.Elements("m", "count").SingleOrDefault();
+    //        return count == null ? 0 : Convert.ToInt32(count.Value);
+    //    }
 
-        private IEnumerable<KeyValuePair<string, object>> GetKeys(XElement element)
-        {
-            var content = element.Element(null, "id").Value;
-            var startOfKey = content.IndexOf('(') + 1;
-            var endOfKey = content.LastIndexOf(')');
-            var prefix = content.Substring(0, startOfKey);
-            var startOfTableName = prefix.LastIndexOf('/') + 1;
-            var tableName = prefix.Substring(startOfTableName, prefix.Length - startOfTableName - 1);
-            content = content.Substring(startOfKey, endOfKey - startOfKey);
+    //    private IEnumerable<KeyValuePair<string, object>> GetKeys(XElement element)
+    //    {
+    //        var content = element.Element(null, "id").Value;
+    //        var startOfKey = content.IndexOf('(') + 1;
+    //        var endOfKey = content.LastIndexOf(')');
+    //        var prefix = content.Substring(0, startOfKey);
+    //        var startOfTableName = prefix.LastIndexOf('/') + 1;
+    //        var tableName = prefix.Substring(startOfTableName, prefix.Length - startOfTableName - 1);
+    //        content = content.Substring(startOfKey, endOfKey - startOfKey);
 
-            if (!string.IsNullOrEmpty(content))
-            {
-                var table = _schema.FindBaseEntitySet(tableName);
-                return new ValueParser(table).Parse(content);
-            }
-            else
-            {
-                return new KeyValuePair<string, object>[] {};
-            }
-        }
+    //        if (!string.IsNullOrEmpty(content))
+    //        {
+    //            var table = _schema.FindBaseEntitySet(tableName);
+    //            return new ValueParser(table).Parse(content);
+    //        }
+    //        else
+    //        {
+    //            return new KeyValuePair<string, object>[] {};
+    //        }
+    //    }
 
-        private IEnumerable<KeyValuePair<string, object>> GetProperties(XElement element)
-        {
-            if (element == null) throw new ArgumentNullException("element");
+    //    private IEnumerable<KeyValuePair<string, object>> GetProperties(XElement element)
+    //    {
+    //        if (element == null) throw new ArgumentNullException("element");
 
-            var properties = element.Element("m", "properties");
+    //        var properties = element.Element("m", "properties");
 
-            if (properties == null) yield break;
+    //        if (properties == null) yield break;
 
-            throw new NotImplementedException();
-            //foreach (var property in properties.Elements())
-            //{
-            //    yield return EdmTypeSerializer.Read(property);
-            //}
-        }
+    //        throw new NotImplementedException();
+    //        //foreach (var property in properties.Elements())
+    //        //{
+    //        //    yield return EdmTypeSerializer.Read(property);
+    //        //}
+    //    }
 
-        private object GetLinks(XElement element)
-        {
-            var feed = element.Element("m", "inline").Elements().SingleOrDefault();
-            if (feed == null)
-                return null;
+    //    private object GetLinks(XElement element)
+    //    {
+    //        var feed = element.Element("m", "inline").Elements().SingleOrDefault();
+    //        if (feed == null)
+    //            return null;
 
-            var linkData = GetData(feed);
-            return feed.Name.LocalName == "feed" ? (object)linkData : linkData.Single();
-        }
-    }
+    //        var linkData = GetData(feed);
+    //        return feed.Name.LocalName == "feed" ? (object)linkData : linkData.Single();
+    //    }
+    //}
 }
