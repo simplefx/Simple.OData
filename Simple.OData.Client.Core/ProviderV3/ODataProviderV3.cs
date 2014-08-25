@@ -166,10 +166,13 @@ namespace Simple.OData.Client
             using (var messageReader = new ODataMessageReader(new ODataV3ResponseMessage(response), new ODataMessageReaderSettings(), Model))
             {
                 var entries = new List<IDictionary<string, object>>();
-                var feedReader = messageReader.CreateODataFeedReader();
-                while (feedReader.Read())
+                var payloadKind = messageReader.DetectPayloadKind();
+                var odataReader = payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Feed)
+                    ? messageReader.CreateODataFeedReader()
+                    : messageReader.CreateODataEntryReader();
+                while (odataReader.Read())
                 {
-                    switch (feedReader.State)
+                    switch (odataReader.State)
                     {
                         case ODataReaderState.FeedStart:
                         case ODataReaderState.EntryStart:
@@ -178,7 +181,10 @@ namespace Simple.OData.Client
                             break;
 
                         case ODataReaderState.EntryEnd:
-                    entries.Add((feedReader.Item as Microsoft.Data.OData.ODataEntry).Properties.ToDictionary(x => x.Name, x => x.Value));
+                            if (odataReader.Item != null)
+                            {
+                                entries.Add((odataReader.Item as Microsoft.Data.OData.ODataEntry).Properties.ToDictionary(x => x.Name, x => x.Value));
+                            }
                             break;
                     }
                 }
@@ -202,7 +208,6 @@ namespace Simple.OData.Client
                             break;
 
                         case ODataReaderState.EntryEnd:
-                            var e = (entryReader.Item as Microsoft.Data.OData.ODataEntry);
                             return (entryReader.Item as Microsoft.Data.OData.ODataEntry).Properties.ToDictionary(x => x.Name, x => x.Value);
                     }
                 }

@@ -154,7 +154,7 @@ namespace Simple.OData.Client
                 {
                     case HttpStatusCode.OK:
                     case HttpStatusCode.Created:
-                        throw new NotImplementedException();
+                    return await _schema.ProviderMetadata.GetEntriesAsync(response);
                         //result = _responseReader.GetFunctionResult(await response.Content.ReadAsStreamAsync());
                         break;
 
