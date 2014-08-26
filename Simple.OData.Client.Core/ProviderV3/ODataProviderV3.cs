@@ -167,6 +167,16 @@ namespace Simple.OData.Client
             {
                 var entries = new List<IDictionary<string, object>>();
                 var payloadKind = messageReader.DetectPayloadKind();
+                if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Value))
+                {
+                    var text = await response.Content.ReadAsStringAsync();
+                    return new[] { new Dictionary<string, object>() { { FluentCommand.ResultLiteral, text } } };
+                }
+                if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Property))
+                {
+                    var property = messageReader.ReadProperty();
+                    return new[] { new Dictionary<string, object>() { { property.Name, property.Value } } };
+                }
                 var odataReader = payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Feed)
                     ? messageReader.CreateODataFeedReader()
                     : messageReader.CreateODataEntryReader();
@@ -196,10 +206,23 @@ namespace Simple.OData.Client
         {
             using (var messageReader = new ODataMessageReader(new ODataV3ResponseMessage(response), new ODataMessageReaderSettings(), Model))
             {
-                var entryReader = messageReader.CreateODataEntryReader();
-                while (entryReader.Read())
+                var payloadKind = messageReader.DetectPayloadKind();
+                if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Value))
                 {
-                    switch (entryReader.State)
+                    var text = await response.Content.ReadAsStringAsync();
+                    return new Dictionary<string, object>() { { FluentCommand.ResultLiteral, text } };
+                }
+                if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Property))
+                {
+                    var property = messageReader.ReadProperty();
+                    return new Dictionary<string, object>() { { property.Name, property.Value } };
+                }
+                var odataReader = payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Feed)
+                    ? messageReader.CreateODataFeedReader()
+                    : messageReader.CreateODataEntryReader();
+                while (odataReader.Read())
+                {
+                    switch (odataReader.State)
                     {
                         case ODataReaderState.FeedStart:
                         case ODataReaderState.EntryStart:
@@ -208,7 +231,7 @@ namespace Simple.OData.Client
                             break;
 
                         case ODataReaderState.EntryEnd:
-                            return (entryReader.Item as Microsoft.Data.OData.ODataEntry).Properties.ToDictionary(x => x.Name, x => x.Value);
+                            return (odataReader.Item as Microsoft.Data.OData.ODataEntry).Properties.ToDictionary(x => x.Name, x => x.Value);
                     }
                 }
                 return null;
