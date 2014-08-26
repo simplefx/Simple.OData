@@ -163,7 +163,9 @@ namespace Simple.OData.Client
 
         public async override Task<IEnumerable<IDictionary<string, object>>> GetEntriesAsync(HttpResponseMessage response)
         {
-            using (var messageReader = new ODataMessageReader(new ODataV3ResponseMessage(response), new ODataMessageReaderSettings(), Model))
+            var readerSettings = new ODataMessageReaderSettings();
+            readerSettings.MessageQuotas.MaxReceivedMessageSize = Int32.MaxValue;
+            using (var messageReader = new ODataMessageReader(new ODataV3ResponseMessage(response), readerSettings, Model))
             {
                 var entries = new List<IDictionary<string, object>>();
                 var payloadKind = messageReader.DetectPayloadKind();
@@ -204,7 +206,9 @@ namespace Simple.OData.Client
 
         public async override Task<IDictionary<string, object>> GetEntryAsync(HttpResponseMessage response)
         {
-            using (var messageReader = new ODataMessageReader(new ODataV3ResponseMessage(response), new ODataMessageReaderSettings(), Model))
+            var readerSettings = new ODataMessageReaderSettings();
+            readerSettings.MessageQuotas.MaxReceivedMessageSize = Int32.MaxValue;
+            using (var messageReader = new ODataMessageReader(new ODataV3ResponseMessage(response), readerSettings, Model))
             {
                 var payloadKind = messageReader.DetectPayloadKind();
                 if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Value))
