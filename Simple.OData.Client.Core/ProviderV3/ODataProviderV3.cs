@@ -182,24 +182,7 @@ namespace Simple.OData.Client
                 var odataReader = payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Feed)
                     ? messageReader.CreateODataFeedReader()
                     : messageReader.CreateODataEntryReader();
-                while (odataReader.Read())
-                {
-                    switch (odataReader.State)
-                    {
-                        case ODataReaderState.FeedStart:
-                        case ODataReaderState.EntryStart:
-                        case ODataReaderState.FeedEnd:
-                        default:
-                            break;
-
-                        case ODataReaderState.EntryEnd:
-                            if (odataReader.Item != null)
-                            {
-                                entries.Add((odataReader.Item as Microsoft.Data.OData.ODataEntry).Properties.ToDictionary(x => x.Name, x => x.Value));
-                            }
-                            break;
-                    }
-                }
+                entries.AddRange(ReadData(odataReader));
                 return entries;
             }
         }
@@ -224,22 +207,85 @@ namespace Simple.OData.Client
                 var odataReader = payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Feed)
                     ? messageReader.CreateODataFeedReader()
                     : messageReader.CreateODataEntryReader();
-                while (odataReader.Read())
-                {
-                    switch (odataReader.State)
-                    {
-                        case ODataReaderState.FeedStart:
-                        case ODataReaderState.EntryStart:
-                        case ODataReaderState.FeedEnd:
-                        default:
-                            break;
-
-                        case ODataReaderState.EntryEnd:
-                            return (odataReader.Item as Microsoft.Data.OData.ODataEntry).Properties.ToDictionary(x => x.Name, x => x.Value);
-                    }
-                }
-                return null;
+                return ReadData(odataReader).FirstOrDefault();
             }
+        }
+
+        private IEnumerable<IDictionary<string, object>> ReadData(ODataReader odataReader)
+        {
+            while (odataReader.Read())
+            {
+                switch (odataReader.State)
+                {
+                    case ODataReaderState.FeedStart:
+                        return ReadEntries(odataReader, false);
+                    case ODataReaderState.EntryStart:
+                        return new [] { ReadEntry(odataReader, false) };
+                }
+            }
+            return null;
+        }
+
+        private IEnumerable<IDictionary<string, object>> ReadEntries(ODataReader odataReader, bool isNavigation)
+        {
+            if (odataReader.State == ODataReaderState.Completed)
+                return null;
+
+            var entries = new List<IDictionary<string, object>>();
+            while (odataReader.State != ODataReaderState.Completed && odataReader.Read())
+            {
+                switch (odataReader.State)
+                {
+                    case ODataReaderState.FeedEnd:
+                    case ODataReaderState.NavigationLinkEnd:
+                    case ODataReaderState.Completed:
+                        return entries;
+
+                    case ODataReaderState.EntryStart:
+                        entries.Add(ReadEntry(odataReader, false));
+                        break;
+                }
+            }
+            return entries;
+        }
+
+        private IDictionary<string, object> ReadEntry(ODataReader odataReader, bool isNavigation)
+        {
+            if (odataReader.State == ODataReaderState.Completed)
+                return null;
+
+            var entry = new Dictionary<string, object>();
+            while (odataReader.State != ODataReaderState.Completed && odataReader.Read())
+            {
+                switch (odataReader.State)
+                {
+                    case ODataReaderState.EntryEnd:
+                        foreach (var property in (odataReader.Item as Microsoft.Data.OData.ODataEntry).Properties)
+                        {
+                            entry.Add(property.Name, property.Value);
+                        }
+                        return entry;
+
+                    case ODataReaderState.NavigationLinkEnd:
+                        return entry.Any() ? entry : null;
+
+                    case ODataReaderState.NavigationLinkStart:
+                        var link = odataReader.Item as ODataNavigationLink;
+                        if (link.IsCollection.HasValue && link.IsCollection.Value)
+                        {
+                            entry.Add(link.Name, ReadEntries(odataReader, true));
+                        }
+                        else
+                        {
+                            entry.Add(link.Name, ReadEntry(odataReader, true));
+                        }
+                        break;
+
+                    case ODataReaderState.Completed:
+                        return entry;
+                }
+            }
+            return entry;
         }
 
         private IEnumerable<IEdmEntitySet> GetEntitySets()
