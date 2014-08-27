@@ -187,6 +187,11 @@ namespace Simple.OData.Client
             }
         }
 
+        public override Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> GetEntriesWithCountAsync(HttpResponseMessage response)
+        {
+            throw new NotImplementedException();
+        }
+
         public async override Task<IDictionary<string, object>> GetEntryAsync(HttpResponseMessage response)
         {
             using (var messageReader = new ODataMessageReader(new ODataV4ResponseMessage(response), new ODataMessageReaderSettings(), Model))

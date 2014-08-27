@@ -60,14 +60,14 @@ namespace Simple.OData.Client
                     if (response.StatusCode != HttpStatusCode.OK)
                     {
                         result = Enumerable.Empty<IDictionary<string, object>>();
+
+                        return Tuple.Create(result, totalCount);
                     }
                     else
                     {
-                        result = await _schema.ProviderMetadata.GetEntriesAsync(response);
+                        return await _schema.ProviderMetadata.GetEntriesWithCountAsync(response);
                         //result = _responseReader.GetData(await response.Content.ReadAsStringAsync(), out totalCount);
                     }
-
-                    return Tuple.Create(result, totalCount);
                 }
             }
             catch (WebRequestException ex)

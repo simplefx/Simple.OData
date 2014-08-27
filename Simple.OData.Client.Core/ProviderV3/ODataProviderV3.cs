@@ -149,10 +149,12 @@ namespace Simple.OData.Client
             IDictionary<string, object> row)
         {
             // TODO: check dispose
+            var writerSettings = new ODataMessageWriterSettings();
             var message = new ODataV3RequestMessage(null, null);
-            var messageWriter = new ODataMessageWriter(message);
+            var messageWriter = new ODataMessageWriter(message, writerSettings, Model);
             var entryWriter = messageWriter.CreateODataEntryWriter();
             var entry = new Microsoft.Data.OData.ODataEntry();
+            entry.TypeName = string.Join(".", entityTypeNamespace, entityTypeName);
             entry.Properties = row.Select(x => new ODataProperty() { Name = x.Key, Value = x.Value });
             entryWriter.WriteStart(entry);
             entryWriter.WriteEnd();
@@ -184,6 +186,20 @@ namespace Simple.OData.Client
                     : messageReader.CreateODataEntryReader();
                 entries.AddRange(ReadData(odataReader));
                 return entries;
+            }
+        }
+
+        public override async Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> GetEntriesWithCountAsync(HttpResponseMessage response)
+        {
+            var readerSettings = new ODataMessageReaderSettings();
+            readerSettings.MessageQuotas.MaxReceivedMessageSize = Int32.MaxValue;
+            using (var messageReader = new ODataMessageReader(new ODataV3ResponseMessage(response), readerSettings, Model))
+            {
+                var entries = new List<IDictionary<string, object>>();
+                var odataReader = messageReader.CreateODataFeedReader();
+                long totalCount;
+                entries.AddRange(ReadData(odataReader, out totalCount));
+                return Tuple.Create(entries.AsEnumerable(), (int)totalCount);
             }
         }
 
@@ -221,6 +237,23 @@ namespace Simple.OData.Client
                         return ReadEntries(odataReader, false);
                     case ODataReaderState.EntryStart:
                         return new [] { ReadEntry(odataReader, false) };
+                }
+            }
+            return null;
+        }
+
+        private IEnumerable<IDictionary<string, object>> ReadData(ODataReader odataReader, out long totalCount)
+        {
+            totalCount = 0;
+            while (odataReader.Read())
+            {
+                switch (odataReader.State)
+                {
+                    case ODataReaderState.FeedStart:
+                        totalCount = (odataReader.Item as ODataFeed).Count.GetValueOrDefault();
+                        return ReadEntries(odataReader, false);
+                    case ODataReaderState.EntryStart:
+                        return new[] { ReadEntry(odataReader, false) };
                 }
             }
             return null;
@@ -297,6 +330,9 @@ namespace Simple.OData.Client
 
         private IEdmEntitySet GetEntitySet(string entitySetName)
         {
+            if (entitySetName.Contains("/"))
+                entitySetName = entitySetName.Split('/').First();
+
             var entitySet = this.Model.SchemaElements
                 .Where(x => x.SchemaElementKind == EdmSchemaElementKind.EntityContainer)
                 .SelectMany(x => (x as IEdmEntityContainer).EntitySets())
@@ -317,25 +353,49 @@ namespace Simple.OData.Client
 
         private IEdmEntityType GetEntityType(string entitySetName)
         {
-            var entitySet = GetEntitySets()
-                .SingleOrDefault(x => NamesAreEqual(x.Name, entitySetName));
-
-            if (entitySet == null)
+            if (entitySetName.Contains("/"))
             {
-                var entityType = GetEntityTypes().SingleOrDefault(x => NamesAreEqual(x.Name, entitySetName));
-                if (entityType != null)
+                var items = entitySetName.Split('/');
+                entitySetName = items.First();
+                var derivedTypeName = items.Last();
+
+                var entitySet = GetEntitySets()
+                    .SingleOrDefault(x => NamesAreEqual(x.Name, entitySetName));
+
+                if (entitySet != null)
                 {
-                    var baseType = GetEntityTypes()
-                        .SingleOrDefault(x => this.Model.FindDirectlyDerivedTypes(x).Contains(entityType));
-                    if (baseType != null && GetEntitySets().SingleOrDefault(x => x.ElementType == baseType) != null)
-                        return entityType;
+                    var derivedType = GetEntityTypes().SingleOrDefault(x => NamesAreEqual(x.Name, derivedTypeName));
+                    if (derivedType != null)
+                    {
+                        if (this.Model.FindDirectlyDerivedTypes(entitySet.ElementType).Contains(derivedType))
+                            return derivedType;
+                    }
                 }
-            }
 
-            if (entitySet == null)
                 throw new UnresolvableObjectException(entitySetName, string.Format("Entity set {0} not found", entitySetName));
+            }
+            else
+            {
+                var entitySet = GetEntitySets()
+                    .SingleOrDefault(x => NamesAreEqual(x.Name, entitySetName));
 
-            return entitySet.ElementType;
+                if (entitySet == null)
+                {
+                    var derivedType = GetEntityTypes().SingleOrDefault(x => NamesAreEqual(x.Name, entitySetName));
+                    if (derivedType != null)
+                    {
+                        var baseType = GetEntityTypes()
+                            .SingleOrDefault(x => this.Model.FindDirectlyDerivedTypes(x).Contains(derivedType));
+                        if (baseType != null && GetEntitySets().SingleOrDefault(x => x.ElementType == baseType) != null)
+                            return derivedType;
+                    }
+                }
+
+                if (entitySet == null)
+                    throw new UnresolvableObjectException(entitySetName, string.Format("Entity set {0} not found", entitySetName));
+
+                return entitySet.ElementType;
+            }
         }
 
         private IEdmStructuralProperty GetStructuralProperty(string entitySetName, string propertyName)

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Text;
@@ -38,6 +39,7 @@ namespace Simple.OData.Client
 
         public abstract string CreateEntry(string entityTypeNamespace, string entityTypeName, IDictionary<string, object> row);
         public abstract Task<IEnumerable<IDictionary<string, object>>> GetEntriesAsync(HttpResponseMessage response);
+        public abstract Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> GetEntriesWithCountAsync(HttpResponseMessage response);
         public abstract Task<IDictionary<string, object>> GetEntryAsync(HttpResponseMessage response);
 
         public static bool NamesAreEqual(string actualName, string requestedName)
