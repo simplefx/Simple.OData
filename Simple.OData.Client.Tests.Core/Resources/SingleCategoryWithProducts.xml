@@ -25,7 +25,7 @@
           <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(1)/Category" />
           <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(1)/Order_Details" />
           <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(1)/Supplier" />
-          <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <category term="NorthwindModel.Products" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
           <content type="application/xml">
             <m:properties>
               <d:ProductID m:type="Edm.Int32">1</d:ProductID>
@@ -52,7 +52,7 @@
           <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(2)/Category" />
           <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(2)/Order_Details" />
           <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(2)/Supplier" />
-          <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <category term="NorthwindModel.Products" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
           <content type="application/xml">
             <m:properties>
               <d:ProductID m:type="Edm.Int32">2</d:ProductID>
@@ -79,7 +79,7 @@
           <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(24)/Category" />
           <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(24)/Order_Details" />
           <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(24)/Supplier" />
-          <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <category term="NorthwindModel.Products" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
           <content type="application/xml">
             <m:properties>
               <d:ProductID m:type="Edm.Int32">24</d:ProductID>
@@ -106,7 +106,7 @@
           <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(34)/Category" />
           <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(34)/Order_Details" />
           <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(34)/Supplier" />
-          <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <category term="NorthwindModel.Products" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
           <content type="application/xml">
             <m:properties>
               <d:ProductID m:type="Edm.Int32">34</d:ProductID>
@@ -133,7 +133,7 @@
           <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(35)/Category" />
           <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(35)/Order_Details" />
           <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(35)/Supplier" />
-          <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <category term="NorthwindModel.Products" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
           <content type="application/xml">
             <m:properties>
               <d:ProductID m:type="Edm.Int32">35</d:ProductID>
@@ -160,7 +160,7 @@
           <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(38)/Category" />
           <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(38)/Order_Details" />
           <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(38)/Supplier" />
-          <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <category term="NorthwindModel.Products" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
           <content type="application/xml">
             <m:properties>
               <d:ProductID m:type="Edm.Int32">38</d:ProductID>
@@ -187,7 +187,7 @@
           <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(39)/Category" />
           <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(39)/Order_Details" />
           <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(39)/Supplier" />
-          <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <category term="NorthwindModel.Products" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
           <content type="application/xml">
             <m:properties>
               <d:ProductID m:type="Edm.Int32">39</d:ProductID>
@@ -214,7 +214,7 @@
           <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(43)/Category" />
           <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(43)/Order_Details" />
           <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(43)/Supplier" />
-          <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <category term="NorthwindModel.Products" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
           <content type="application/xml">
             <m:properties>
               <d:ProductID m:type="Edm.Int32">43</d:ProductID>
@@ -241,7 +241,7 @@
           <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(67)/Category" />
           <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(67)/Order_Details" />
           <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(67)/Supplier" />
-          <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <category term="NorthwindModel.Products" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
           <content type="application/xml">
             <m:properties>
               <d:ProductID m:type="Edm.Int32">67</d:ProductID>
@@ -268,7 +268,7 @@
           <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(70)/Category" />
           <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(70)/Order_Details" />
           <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(70)/Supplier" />
-          <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <category term="NorthwindModel.Products" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
           <content type="application/xml">
             <m:properties>
               <d:ProductID m:type="Edm.Int32">70</d:ProductID>
@@ -295,7 +295,7 @@
           <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(75)/Category" />
           <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(75)/Order_Details" />
           <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(75)/Supplier" />
-          <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <category term="NorthwindModel.Products" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
           <content type="application/xml">
             <m:properties>
               <d:ProductID m:type="Edm.Int32">75</d:ProductID>
@@ -322,7 +322,7 @@
           <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(76)/Category" />
           <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(76)/Order_Details" />
           <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(76)/Supplier" />
-          <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+          <category term="NorthwindModel.Products" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
           <content type="application/xml">
             <m:properties>
               <d:ProductID m:type="Edm.Int32">76</d:ProductID>
@@ -341,7 +341,7 @@
       </feed>
     </m:inline>
   </link>
-  <category term="NorthwindModel.Category" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <category term="NorthwindModel.Categories" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
   <content type="application/xml">
     <m:properties>
       <d:CategoryID m:type="Edm.Int32">1</d:CategoryID>
