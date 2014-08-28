@@ -56,6 +56,9 @@
       <HintPath>..\Solutions\packages\Microsoft.Spatial.6.6.0\lib\portable-net40+sl5+wp8+win8+wpa\Microsoft.Spatial.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Moq">
+      <HintPath>..\Solutions\packages\Moq.4.2.1408.0717\lib\net40\Moq.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net.Http" />
@@ -106,7 +109,7 @@
     <Compile Include="Extensions\TypeExtensionTests.cs" />
     <Compile Include="Extensions\XmlAttributesAsDictionaryTests.cs" />
     <Compile Include="Extensions\XmlElementAsDictionaryWriteTests.cs" />
-    <Compile Include="FeedReaderTests.cs" />
+    <Compile Include="ResponseReaderTests.cs" />
     <Compile Include="PluralizerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SchemaTests.cs" />

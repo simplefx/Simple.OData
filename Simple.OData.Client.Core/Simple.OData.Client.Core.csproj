@@ -106,6 +106,7 @@
     <Compile Include="ProviderV3\ODataV3RequestMessage.cs" />
     <Compile Include="ProviderV3\ODataV3ResponseMessage.cs" />
     <Compile Include="ProviderV3\ODataProviderV3.cs" />
+    <Compile Include="ProviderV3\ResponseReaderV3.cs" />
     <Compile Include="ProviderV4\EdmModelParserV4.cs" />
     <Compile Include="ProviderV4\ODataV4RequestMessage.cs" />
     <Compile Include="ProviderV4\ODataV4ResponseMessage.cs" />

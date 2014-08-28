@@ -314,6 +314,9 @@
     <Compile Include="..\Simple.OData.Client.Core\ProviderV3\ODataV3ResponseMessage.cs">
       <Link>ProviderV3\ODataV3ResponseMessage.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ProviderV3\ResponseReaderV3.cs">
+      <Link>ProviderV3\ResponseReaderV3.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ProviderV4\EdmModelParserV4.cs">
       <Link>ProviderV4\EdmModelParserV4.cs</Link>
     </Compile>

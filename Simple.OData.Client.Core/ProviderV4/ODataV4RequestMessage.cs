@@ -9,7 +9,7 @@ using Microsoft.OData.Core;
 
 namespace Simple.OData.Client
 {
-    class ODataV4RequestMessage : IODataRequestMessage, IDisposable
+    class ODataV4RequestMessage : IODataRequestMessageAsync, IDisposable
     {
         private bool _disposed = false;
         private MemoryStream _requestStream;

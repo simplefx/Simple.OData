@@ -8,7 +8,7 @@ using Microsoft.Data.OData;
 
 namespace Simple.OData.Client
 {
-    class ODataV3ResponseMessage : IODataResponseMessage
+    class ODataV3ResponseMessage : IODataResponseMessageAsync
     {
         private readonly HttpResponseMessage _response;
 
