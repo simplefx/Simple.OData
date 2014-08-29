@@ -1,65 +1,47 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Data.OData;
 using Microsoft.Data.Edm;
+using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
-    internal class ResponseReaderV3
+    internal class ResponseReaderV3 : IProviderResponseReader
     {
-        private readonly IODataResponseMessageAsync _response;
-        private readonly IEdmModel _model;
+        class ResponseNode
+        {
+            public IList<IDictionary<string, object>> Feed { get; set; }
+            public IDictionary<string, object> Entry { get; set; }
+            public string LinkName { get; set; }
+            public long? TotalCount { get; set; }
 
-        public ResponseReaderV3(IODataResponseMessageAsync response, IEdmModel model)
+            public object Value
+            {
+                get
+                {
+                    if (this.Feed != null && this.Feed.Any())
+                        return this.Feed.AsEnumerable();
+                    else
+                        return this.Entry;
+
+                }
+            }
+        }
+
+        private IODataResponseMessageAsync _response;
+        private readonly IEdmModel _model;
+        private readonly bool _includeResourceTypeInEntryProperties;
+
+        public ResponseReaderV3(IODataResponseMessageAsync response, IEdmModel model, bool includeResourceTypeInEntryProperties = false)
         {
             _response = response;
             _model = model;
+            _includeResourceTypeInEntryProperties = includeResourceTypeInEntryProperties;
         }
 
-        public async Task<IEnumerable<IDictionary<string, object>>> GetEntriesAsync()
-        {
-            var readerSettings = new ODataMessageReaderSettings();
-            readerSettings.MessageQuotas.MaxReceivedMessageSize = Int32.MaxValue;
-            using (var messageReader = new ODataMessageReader(_response, readerSettings, _model))
-            {
-                var entries = new List<IDictionary<string, object>>();
-                var payloadKind = messageReader.DetectPayloadKind();
-                if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Value))
-                {
-                    var text = ProviderMetadata.StreamToString(await _response.GetStreamAsync());
-                    return new[] { new Dictionary<string, object>() { { FluentCommand.ResultLiteral, text } } };
-                }
-                if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Property))
-                {
-                    var property = messageReader.ReadProperty();
-                    return new[] { new Dictionary<string, object>() { { property.Name, property.Value } } };
-                }
-                var odataReader = payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Feed)
-                    ? messageReader.CreateODataFeedReader()
-                    : messageReader.CreateODataEntryReader();
-                entries.AddRange(ReadData(odataReader));
-                return entries;
-            }
-        }
-
-        public async Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> GetEntriesWithCountAsync()
-        {
-            var readerSettings = new ODataMessageReaderSettings();
-            readerSettings.MessageQuotas.MaxReceivedMessageSize = Int32.MaxValue;
-            using (var messageReader = new ODataMessageReader(_response, readerSettings, _model))
-            {
-                var entries = new List<IDictionary<string, object>>();
-                var odataReader = messageReader.CreateODataFeedReader();
-                long totalCount;
-                entries.AddRange(ReadData(odataReader, out totalCount));
-                return Tuple.Create(entries.AsEnumerable(), (int)totalCount);
-            }
-        }
-
-        public async Task<IDictionary<string, object>> GetEntryAsync()
+        public async Task<ODataResponse> GetResponseAsync()
         {
             var readerSettings = new ODataMessageReaderSettings();
             readerSettings.MessageQuotas.MaxReceivedMessageSize = Int32.MaxValue;
@@ -69,112 +51,134 @@ namespace Simple.OData.Client
                 if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Value))
                 {
                     var text = ProviderMetadata.StreamToString(await _response.GetStreamAsync());
-                    return new Dictionary<string, object>() { { FluentCommand.ResultLiteral, text } };
+                    return new ODataResponse(new[] { new Dictionary<string, object>() { { FluentCommand.ResultLiteral, text } } });
                 }
                 if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Property))
                 {
                     var property = messageReader.ReadProperty();
-                    return new Dictionary<string, object>() { { property.Name, property.Value } };
+                    return new ODataResponse(new[] { new Dictionary<string, object>() { { property.Name, property.Value } } });
                 }
                 var odataReader = payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Feed)
                     ? messageReader.CreateODataFeedReader()
                     : messageReader.CreateODataEntryReader();
-                return ReadData(odataReader).FirstOrDefault();
+
+                return ReadResponse(odataReader);
             }
         }
 
-        private IEnumerable<IDictionary<string, object>> ReadData(ODataReader odataReader)
+        //public async override Task<IEnumerable<IDictionary<string, object>>> GetEntriesAsync(HttpResponseMessage response)
+        //{
+        //    var result = await new ResponseReaderV3(new ODataV3ResponseMessage(response), Model, _settings.IncludeResourceTypeInEntryProperties).GetResponseAsync();
+        //    return result.Entries;
+        //}
+
+        //public override async Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> GetEntriesWithCountAsync(HttpResponseMessage response)
+        //{
+        //    var result = await new ResponseReaderV3(new ODataV3ResponseMessage(response), Model, _settings.IncludeResourceTypeInEntryProperties).GetResponseAsync();
+        //    return Tuple.Create(result.Entries, (int)result.TotalCount.GetValueOrDefault());
+        //}
+
+        //public async override Task<IDictionary<string, object>> GetEntryAsync(HttpResponseMessage response)
+        //{
+        //    var result = await new ResponseReaderV3(new ODataV3ResponseMessage(response), Model, _settings.IncludeResourceTypeInEntryProperties).GetResponseAsync();
+        //    return result.Entry;
+        //}
+
+        private ODataResponse ReadResponse(ODataReader odataReader)
         {
+            ResponseNode rootNode = null;
+            var nodeStack = new Stack<ResponseNode>();
+
             while (odataReader.Read())
             {
+                if (odataReader.State == ODataReaderState.Completed)
+                    break;
+
                 switch (odataReader.State)
                 {
                     case ODataReaderState.FeedStart:
-                        return ReadEntries(odataReader, false);
-                    case ODataReaderState.EntryStart:
-                        return new[] { ReadEntry(odataReader, false) };
-                }
-            }
-            return null;
-        }
-
-        private IEnumerable<IDictionary<string, object>> ReadData(ODataReader odataReader, out long totalCount)
-        {
-            totalCount = 0;
-            while (odataReader.Read())
-            {
-                switch (odataReader.State)
-                {
-                    case ODataReaderState.FeedStart:
-                        totalCount = (odataReader.Item as ODataFeed).Count.GetValueOrDefault();
-                        return ReadEntries(odataReader, false);
-                    case ODataReaderState.EntryStart:
-                        return new[] { ReadEntry(odataReader, false) };
-                }
-            }
-            return null;
-        }
-
-        private IEnumerable<IDictionary<string, object>> ReadEntries(ODataReader odataReader, bool isNavigation)
-        {
-            if (odataReader.State == ODataReaderState.Completed)
-                return null;
-
-            var entries = new List<IDictionary<string, object>>();
-            while (odataReader.State != ODataReaderState.Completed && odataReader.Read())
-            {
-                switch (odataReader.State)
-                {
-                    case ODataReaderState.FeedEnd:
-                    case ODataReaderState.NavigationLinkEnd:
-                    case ODataReaderState.Completed:
-                        return entries;
-
-                    case ODataReaderState.EntryStart:
-                        entries.Add(ReadEntry(odataReader, false));
+                        nodeStack.Push(new ResponseNode
+                        {
+                            Feed = new List<IDictionary<string, object>>(),
+                            TotalCount = (odataReader.Item as ODataFeed).Count
+                        });
                         break;
-                }
-            }
-            return entries;
-        }
 
-        private IDictionary<string, object> ReadEntry(ODataReader odataReader, bool isNavigation)
-        {
-            if (odataReader.State == ODataReaderState.Completed)
-                return null;
+                    case ODataReaderState.FeedEnd:
+                        var feedNode = nodeStack.Pop();
+                        var entries = feedNode.Feed;
+                        if (nodeStack.Any())
+                            nodeStack.Peek().Feed = entries;
+                        else
+                            rootNode = feedNode;
+                        break;
 
-            var entry = new Dictionary<string, object>();
-            while (odataReader.State != ODataReaderState.Completed && odataReader.Read())
-            {
-                switch (odataReader.State)
-                {
+                    case ODataReaderState.EntryStart:
+                        nodeStack.Push(new ResponseNode
+                        {
+                            Entry = new Dictionary<string, object>()
+                        });
+                        break;
+
                     case ODataReaderState.EntryEnd:
-                        foreach (var property in (odataReader.Item as Microsoft.Data.OData.ODataEntry).Properties)
+                        var entry = (odataReader.Item as Microsoft.Data.OData.ODataEntry);
+                        var entryNode = nodeStack.Pop();
+                        foreach (var property in entry.Properties)
                         {
-                            entry.Add(property.Name, property.Value);
+                            entryNode.Entry.Add(property.Name, GetPropertyValue(property.Value));
                         }
-                        return entry;
-
-                    case ODataReaderState.NavigationLinkEnd:
-                        return entry.Any() ? entry : null;
-
-                    case ODataReaderState.NavigationLinkStart:
-                        var link = odataReader.Item as ODataNavigationLink;
-                        if (link.IsCollection.HasValue && link.IsCollection.Value)
+                        if (_includeResourceTypeInEntryProperties)
                         {
-                            entry.Add(link.Name, ReadEntries(odataReader, true));
+                            var resourceType = entry.TypeName;
+                            entryNode.Entry.Add(FluentCommand.ResourceTypeLiteral, resourceType);
+                        }
+                        if (nodeStack.Any())
+                        {
+                            if (nodeStack.Peek().Feed != null)
+                                nodeStack.Peek().Feed.Add(entryNode.Entry);
+                            else
+                                nodeStack.Peek().Entry = entryNode.Entry;
                         }
                         else
                         {
-                            entry.Add(link.Name, ReadEntry(odataReader, true));
+                            rootNode = entryNode;
                         }
                         break;
 
-                    case ODataReaderState.Completed:
-                        return entry;
+                    case ODataReaderState.NavigationLinkStart:
+                        var link = odataReader.Item as ODataNavigationLink;
+                        nodeStack.Push(new ResponseNode
+                        {
+                            LinkName = link.Name,
+                        });
+                        break;
+
+                    case ODataReaderState.NavigationLinkEnd:
+                        var linkNode = nodeStack.Pop();
+                        if (linkNode.Value != null)
+                        {
+                            nodeStack.Peek().Entry.Add(linkNode.LinkName, linkNode.Value);
+                        }
+                        break;
                 }
             }
-            return entry;
+
+            return rootNode.Feed != null 
+                ? new ODataResponse(rootNode.Feed, rootNode.TotalCount) 
+                : new ODataResponse(rootNode.Entry);
+        }
+
+        private object GetPropertyValue(object value)
+        {
+            if (value is ODataComplexValue)
+            {
+                return (value as ODataComplexValue).Properties.ToDictionary(
+                    x => x.Name, x => GetPropertyValue(x.Value));
+            }
+            else
+            {
+                return value;
+            }
         }
     }
 }

@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Xml;
-using System.Xml.Linq;
 using Microsoft.Data.Edm;
 using Microsoft.Data.Edm.Csdl;
 using Microsoft.Data.OData;
@@ -163,19 +161,9 @@ namespace Simple.OData.Client
             return text;
         }
 
-        public async override Task<IEnumerable<IDictionary<string, object>>> GetEntriesAsync(HttpResponseMessage response)
+        public override Func<HttpResponseMessage, IProviderResponseReader> GetResponseReaderFunc(bool includeResourceTypeInEntryProperties)
         {
-            return await new ResponseReaderV3(new ODataV3ResponseMessage(response), Model).GetEntriesAsync();
-        }
-
-        public override async Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> GetEntriesWithCountAsync(HttpResponseMessage response)
-        {
-            return await new ResponseReaderV3(new ODataV3ResponseMessage(response), Model).GetEntriesWithCountAsync();
-        }
-
-        public async override Task<IDictionary<string, object>> GetEntryAsync(HttpResponseMessage response)
-        {
-            return await new ResponseReaderV3(new ODataV3ResponseMessage(response), Model).GetEntryAsync();
+            return x => new ResponseReaderV3(new ODataV3ResponseMessage(x), Model, includeResourceTypeInEntryProperties);
         }
 
         private IEnumerable<IEdmEntitySet> GetEntitySets()
@@ -288,7 +276,7 @@ namespace Simple.OData.Client
             using (var messageReader = new ODataMessageReader(new ODataV3ResponseMessage(response)))
             {
                 var model = messageReader.ReadMetadataDocument();
-                return new ProviderMetadataV3
+                return new ProviderMetadataV3()
                 {
                     ProtocolVersion = protocolVersion,
                     Model = model,
@@ -301,7 +289,7 @@ namespace Simple.OData.Client
             var reader = XmlReader.Create(new StringReader(metadataString));
             reader.MoveToContent();
             var model = EdmxReader.Parse(reader);
-            return new ProviderMetadataV3
+            return new ProviderMetadataV3()
             {
                 ProtocolVersion = protocolVersion,
                 Model = model,

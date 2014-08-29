@@ -5,7 +5,6 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Xml;
-using System.Xml.Linq;
 using Microsoft.OData.Core;
 using Microsoft.OData.Edm;
 using Microsoft.OData.Edm.Csdl;
@@ -162,57 +161,9 @@ namespace Simple.OData.Client
             return text;
         }
 
-        public async override Task<IEnumerable<IDictionary<string, object>>> GetEntriesAsync(HttpResponseMessage response)
-        {
-            using (var messageReader = new ODataMessageReader(new ODataV4ResponseMessage(response), new ODataMessageReaderSettings(), Model))
-            {
-                var entries = new List<IDictionary<string, object>>();
-                var feedReader = messageReader.CreateODataFeedReader();
-                while (feedReader.Read())
-                {
-                    switch (feedReader.State)
-                    {
-                        case ODataReaderState.FeedStart:
-                        case ODataReaderState.EntryStart:
-                        case ODataReaderState.FeedEnd:
-                        default:
-                            break;
-
-                        case ODataReaderState.EntryEnd:
-                            entries.Add((feedReader.Item as Microsoft.OData.Core.ODataEntry).Properties.ToDictionary(x => x.Name, x => x.Value));
-                            break;
-                    }
-                }
-                return entries;
-            }
-        }
-
-        public override Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> GetEntriesWithCountAsync(HttpResponseMessage response)
+        public override Func<HttpResponseMessage, IProviderResponseReader> GetResponseReaderFunc(bool includeResourceTypeInEntryProperties)
         {
             throw new NotImplementedException();
-        }
-
-        public async override Task<IDictionary<string, object>> GetEntryAsync(HttpResponseMessage response)
-        {
-            using (var messageReader = new ODataMessageReader(new ODataV4ResponseMessage(response), new ODataMessageReaderSettings(), Model))
-            {
-                var entryReader = messageReader.CreateODataEntryReader();
-                while (entryReader.Read())
-                {
-                    switch (entryReader.State)
-                    {
-                        case ODataReaderState.FeedStart:
-                        case ODataReaderState.EntryStart:
-                        case ODataReaderState.FeedEnd:
-                        default:
-                            break;
-
-                        case ODataReaderState.EntryEnd:
-                            return (entryReader.Item as Microsoft.OData.Core.ODataEntry).Properties.ToDictionary(x => x.Name, x => x.Value);
-                    }
-                }
-                return null;
-            }
         }
 
         private IEnumerable<IEdmEntitySet> GetEntitySets()
@@ -298,7 +249,7 @@ namespace Simple.OData.Client
             using (var messageReader = new ODataMessageReader(new ODataV4ResponseMessage(response)))
             {
                 var model = messageReader.ReadMetadataDocument();
-                return new ProviderMetadataV4
+                return new ProviderMetadataV4()
                 {
                     ProtocolVersion = protocolVersion,
                     Model = model,
@@ -311,7 +262,7 @@ namespace Simple.OData.Client
             var reader = XmlReader.Create(new StringReader(metadataString));
             reader.MoveToContent();
             var model = EdmxReader.Parse(reader);
-            return new ProviderMetadataV4
+            return new ProviderMetadataV4()
                 {
                     ProtocolVersion = protocolVersion,
                     Model = model,

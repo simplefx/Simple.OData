@@ -38,9 +38,7 @@ namespace Simple.OData.Client
         public abstract string GetFunctionExactName(string functionName);
 
         public abstract string CreateEntry(string entityTypeNamespace, string entityTypeName, IDictionary<string, object> row);
-        public abstract Task<IEnumerable<IDictionary<string, object>>> GetEntriesAsync(HttpResponseMessage response);
-        public abstract Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> GetEntriesWithCountAsync(HttpResponseMessage response);
-        public abstract Task<IDictionary<string, object>> GetEntryAsync(HttpResponseMessage response);
+        public abstract Func<HttpResponseMessage, IProviderResponseReader> GetResponseReaderFunc(bool includeResourceTypeInEntryProperties);
 
         public static bool NamesAreEqual(string actualName, string requestedName)
         {

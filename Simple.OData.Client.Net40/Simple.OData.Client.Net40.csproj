@@ -245,6 +245,12 @@
     <Compile Include="..\Simple.OData.Client.Core\Http\HttpRequest.cs">
       <Link>Http\HttpRequest.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Http\IProviderResponseReader.cs">
+      <Link>Http\IProviderResponseReader.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Http\IResponseReader.cs">
+      <Link>Http\IResponseReader.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Http\RequestBuilder.cs">
       <Link>Http\RequestBuilder.cs</Link>
     </Compile>
@@ -253,6 +259,9 @@
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Http\RequestRunnerBase.cs">
       <Link>Http\RequestRunnerBase.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Http\ResponseReader.cs">
+      <Link>Http\ResponseReader.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Http\RestVerbs.cs">
       <Link>Http\RestVerbs.cs</Link>
@@ -298,6 +307,9 @@
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\CommandWriter.cs">
       <Link>ODataFeedWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ODataResponse.cs">
+      <Link>ODataResponse.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Pluralizer.cs">
       <Link>Pluralizer.cs</Link>

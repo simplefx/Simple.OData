@@ -91,8 +91,11 @@
     <Compile Include="Expressions\FunctionMapping.cs" />
     <Compile Include="Http\HttpCommand.cs" />
     <Compile Include="Http\HttpRequest.cs" />
+    <Compile Include="Http\IProviderResponseReader.cs" />
+    <Compile Include="Http\ResponseReader.cs" />
     <Compile Include="IODataClient.cs" />
     <Compile Include="IPluralizer.cs" />
+    <Compile Include="Http\IResponseReader.cs" />
     <Compile Include="ODataBatch.cs" />
     <Compile Include="ODataClient.Async.cs" />
     <Compile Include="ODataClient.cs" />
@@ -102,6 +105,7 @@
     <Compile Include="Fluent\FluentClient.cs" />
     <Compile Include="Fluent\FluentCommand.cs" />
     <Compile Include="ODataEntry.cs" />
+    <Compile Include="ODataResponse.cs" />
     <Compile Include="ProviderV3\EdmModelParserV3.cs" />
     <Compile Include="ProviderV3\ODataV3RequestMessage.cs" />
     <Compile Include="ProviderV3\ODataV3ResponseMessage.cs" />
