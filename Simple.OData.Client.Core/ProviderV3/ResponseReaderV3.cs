@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -174,6 +175,11 @@ namespace Simple.OData.Client
             {
                 return (value as ODataComplexValue).Properties.ToDictionary(
                     x => x.Name, x => GetPropertyValue(x.Value));
+            }
+            else if (value is ODataCollectionValue)
+            {
+                return (value as ODataCollectionValue).Items.Cast<object>()
+                    .Select(GetPropertyValue).ToList();
             }
             else
             {

@@ -4,10 +4,12 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Data.Edm;
 using Microsoft.Data.OData;
+using Microsoft.Data.Edm;
 using Xunit;
 using Moq;
+using EdmSchemaElementKind = Microsoft.Data.Edm.EdmSchemaElementKind;
+using IEdmModel = Microsoft.Data.Edm.IEdmModel;
 
 namespace Simple.OData.Client.Tests
 {
@@ -135,16 +137,17 @@ namespace Simple.OData.Client.Tests
             Assert.Equal(0, tags.Count);
         }
 
-        [Fact]
-        public async Task GetSingleCustomerWithAddress()
-        {
-            var response = SetUpMock("SingleCustomerWithAddress.xml");
-            var responseReader = new ResponseReaderV3(response, await _client.GetMetadataAsync<IEdmModel>());
-            var result = (await responseReader.GetResponseAsync()).Entry;
-            Assert.Equal(3, result.Count);
-            Assert.Equal(5, (result["Address"] as IEnumerable<KeyValuePair<string, object>>).Count());
-            Assert.Equal("Private", ((result["Address"] as IEnumerable<KeyValuePair<string, object>>)).First().Value);
-        }
+        // TODO: enums
+        //[Fact]
+        //public async Task GetSingleCustomerWithAddress()
+        //{
+        //    var response = SetUpMock("SingleCustomerWithAddress.xml");
+        //    var responseReader = new ResponseReaderV3(response, await _client.GetMetadataAsync<IEdmModel>());
+        //    var result = (await responseReader.GetResponseAsync()).Entry;
+        //    Assert.Equal(3, result.Count);
+        //    Assert.Equal(5, (result["Address"] as IEnumerable<KeyValuePair<string, object>>).Count());
+        //    Assert.Equal("Private", ((result["Address"] as IEnumerable<KeyValuePair<string, object>>)).First().Value);
+        //}
 
         //[Fact]
         //public async Task GetNorthwindSchemaTableAssociations()
@@ -235,8 +238,10 @@ namespace Simple.OData.Client.Tests
         {
             var document = GetResourceAsString(schemaName + ".edmx");
             var metadata = ODataClient.ParseMetadataString<IEdmModel>(document);
-            Assert.Equal(1, metadata.SchemaElements.Count(x => x.SchemaElementKind == EdmSchemaElementKind.TypeDefinition));
-            Assert.Equal(schemaName, metadata.SchemaElements.Single(x => x.SchemaElementKind == EdmSchemaElementKind.TypeDefinition).Name);
+            var entityType = metadata.SchemaElements
+                .Single(x => x.SchemaElementKind == EdmSchemaElementKind.TypeDefinition && 
+                    (x as IEdmType).TypeKind == EdmTypeKind.Entity);
+            Assert.Equal(schemaName, entityType.Name);
         }
     }
 }

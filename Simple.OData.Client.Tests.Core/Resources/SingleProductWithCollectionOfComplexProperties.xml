@@ -17,7 +17,7 @@
       <d:ProductName>Chai</d:ProductName>
       <d:SupplierID m:type="Edm.Int32">1</d:SupplierID>
       <d:CategoryID m:type="Edm.Int32">1</d:CategoryID>
-      <d:Tags m:type="Collection(Edm.String)">
+      <d:Tags m:type="Collection(NorthwindModel.Tags)">
         <d:element>
           <d:group>Food</d:group>
           <d:value>Bakery</d:value>
