@@ -40,6 +40,9 @@ namespace Simple.OData.Client
 
             foreach (var association in associationsByValue)
             {
+                if (association.Value == null)
+                    continue;
+
                 var property = (_model.FindDeclaredType(entry.TypeName) as IEdmEntityType).NavigationProperties()
                     .Single(x => Utils.NamesAreEqual(x.Name, association.Key));
                 var link = new ODataNavigationLink()
