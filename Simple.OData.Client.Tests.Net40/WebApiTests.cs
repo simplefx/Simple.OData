@@ -123,7 +123,7 @@ namespace Simple.OData.Client.Tests
                     { "Code", "Test1" }, 
                     { "StartDate", DateTime.Now.AddDays(-1) },
                     { "EndDate", DateTime.Now.AddDays(1) },
-                    { "Location", new Entry() {{"Latitude", 1.0f},{"Longitude", 2.0f}}  },
+                    { "Location", new Entry() {{"Latitude", 1.0d},{"Longitude", 2.0d}}  },
                 })
                 .InsertEntryAsync();
 
@@ -143,7 +143,7 @@ namespace Simple.OData.Client.Tests
                     { "Code", "Test1" }, 
                     { "StartDate", DateTime.Now.AddDays(-1) },
                     { "EndDate", DateTime.Now.AddDays(1) },
-                    { "Location", new Entry() {{"Latitude", 1.0f},{"Longitude", 2.0f}}  },
+                    { "Location", new Entry() {{"Latitude", 1.0d},{"Longitude", 2.0d}}  },
                 })
                 .InsertEntryAsync();
 
@@ -169,7 +169,7 @@ namespace Simple.OData.Client.Tests
                     { "Code", "Test1" }, 
                     { "StartDate", DateTime.Now.AddDays(-1) },
                     { "EndDate", DateTime.Now.AddDays(1) },
-                    { "Location", new Entry() {{"Latitude", 1.0f},{"Longitude", 2.0f}}  },
+                    { "Location", new Entry() {{"Latitude", 1.0d},{"Longitude", 2.0d}}  },
                 })
                 .InsertEntryAsync();
 
@@ -195,7 +195,7 @@ namespace Simple.OData.Client.Tests
                     { "Code", "Test1" }, 
                     { "StartDate", DateTime.Now.AddDays(-1) },
                     { "EndDate", DateTime.Now.AddDays(1) },
-                    { "Location", new Entry() {{"Latitude", 1.0f},{"Longitude", 2.0f}}  },
+                    { "Location", new Entry() {{"Latitude", 1.0d},{"Longitude", 2.0d}}  },
                 })
                 .InsertEntryAsync();
 

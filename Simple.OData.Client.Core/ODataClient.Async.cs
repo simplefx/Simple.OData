@@ -418,6 +418,13 @@ namespace Simple.OData.Client
             var table = _schema.FindConcreteEntitySet(collection);
             var entryMembers = ParseEntryMembers(table, entryData);
 
+            bool hasPropertiesToUpdate = entryMembers.Properties.Count > 0;
+            bool merge = !hasPropertiesToUpdate || CheckMergeConditions(collection, entryKey, entryData);
+            var commandText = await GetFluentClient()
+                .For(_schema.FindBaseEntitySet(collection).ActualName)
+                .Key(entryKey)
+                .GetCommandTextAsync(cancellationToken);
+
             var commandWriter = new CommandWriter(_schema);
             var entryContent = commandWriter.CreateEntry(
                 _schema.Provider.GetMetadata().GetEntitySetTypeNamespace(collection),
@@ -425,9 +432,12 @@ namespace Simple.OData.Client
                 entryMembers.Properties,
                 entryMembers.AssociationsByValue.ToDictionary(x => x.Key, x => x.Value),
                 entryMembers.AssociationsByContentId.ToDictionary(x => x.Key, x => x.Value));
-            var command = commandWriter.CreateUpdateCommand(_schema.FindBaseEntitySet(collection).ActualName, entryData, entryContent);
-            var request = _requestBuilder.CreateRequest(command, resultRequired);
-            var result = await _requestRunner.InsertEntryAsync(request, cancellationToken);
+
+            var command = commandWriter.CreateUpdateCommand(commandText, entryData, entryContent, merge);
+            var request = _requestBuilder.CreateRequest(command, resultRequired,
+                _schema.Provider.GetMetadata().EntitySetTypeRequiresOptimisticConcurrencyCheck(collection));
+            var result = await _requestRunner.UpdateEntryAsync(request, cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             return result;
             //return await UpdateEntryPropertiesAndAssociationsAsync(collection, entryKey, entryData, entryMembers, resultRequired, cancellationToken);

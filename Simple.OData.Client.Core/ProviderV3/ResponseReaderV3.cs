@@ -14,6 +14,7 @@ namespace Simple.OData.Client
         {
             public IList<IDictionary<string, object>> Feed { get; set; }
             public IDictionary<string, object> Entry { get; set; }
+            public IList<object> Collection { get; set; }
             public string LinkName { get; set; }
             public long? TotalCount { get; set; }
 
@@ -51,20 +52,60 @@ namespace Simple.OData.Client
                 var payloadKind = messageReader.DetectPayloadKind();
                 if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Value))
                 {
-                    var text = Utils.StreamToString(await responseMessage.GetStreamAsync());
-                    return new ODataResponse(new[] { new Dictionary<string, object>() { { FluentCommand.ResultLiteral, text } } });
+                    if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Collection))
+                    {
+                        throw new NotImplementedException();
+                    }
+                    else
+                    {
+                        var text = Utils.StreamToString(await responseMessage.GetStreamAsync());
+                        return ODataResponse.FromFeed(new[] { new Dictionary<string, object>() { { FluentCommand.ResultLiteral, text } } });
+                    }
                 }
-                if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Property))
+                if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Collection))
+                {
+                    return ReadResponse(messageReader.CreateODataCollectionReader(), includeResourceTypeInEntryProperties);
+                }
+                else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Property))
                 {
                     var property = messageReader.ReadProperty();
-                    return new ODataResponse(new[] { new Dictionary<string, object>() { { property.Name, property.Value } } });
+                    return ODataResponse.FromFeed(new[] { new Dictionary<string, object>() { { property.Name, GetPropertyValue(property.Value) } } });
                 }
-                var odataReader = payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Feed)
-                    ? messageReader.CreateODataFeedReader()
-                    : messageReader.CreateODataEntryReader();
-
-                return ReadResponse(odataReader, includeResourceTypeInEntryProperties);
+                else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Feed))
+                {
+                    return ReadResponse(messageReader.CreateODataFeedReader(), includeResourceTypeInEntryProperties);
+                }
+                else
+                {
+                    return ReadResponse(messageReader.CreateODataEntryReader(), includeResourceTypeInEntryProperties);
+                }
             }
+        }
+
+        private ODataResponse ReadResponse(ODataCollectionReader odataReader, bool includeResourceTypeInEntryProperties)
+        {
+            var collection = new List<object>();
+
+            while (odataReader.Read())
+            {
+                if (odataReader.State == ODataCollectionReaderState.Completed)
+                    break;
+
+                switch (odataReader.State)
+                {
+                    case ODataCollectionReaderState.CollectionStart:
+                        break;
+
+                    case ODataCollectionReaderState.Value:
+                        collection.Add(GetPropertyValue(odataReader.Item));
+                        break;
+
+                    case ODataCollectionReaderState.CollectionEnd:
+                        break;
+                }
+            }
+
+            return ODataResponse.FromCollection(collection);
         }
 
         private ODataResponse ReadResponse(ODataReader odataReader, bool includeResourceTypeInEntryProperties)
@@ -106,14 +147,17 @@ namespace Simple.OData.Client
                     case ODataReaderState.EntryEnd:
                         var entry = (odataReader.Item as Microsoft.Data.OData.ODataEntry);
                         var entryNode = nodeStack.Pop();
-                        foreach (var property in entry.Properties)
+                        if (entry != null)
                         {
-                            entryNode.Entry.Add(property.Name, GetPropertyValue(property.Value));
-                        }
-                        if (includeResourceTypeInEntryProperties)
-                        {
-                            var resourceType = entry.TypeName;
-                            entryNode.Entry.Add(FluentCommand.ResourceTypeLiteral, resourceType);
+                            foreach (var property in entry.Properties)
+                            {
+                                entryNode.Entry.Add(property.Name, GetPropertyValue(property.Value));
+                            }
+                            if (includeResourceTypeInEntryProperties)
+                            {
+                                var resourceType = entry.TypeName;
+                                entryNode.Entry.Add(FluentCommand.ResourceTypeLiteral, resourceType.Split('.').Last());
+                            }
                         }
                         if (nodeStack.Any())
                         {
@@ -146,9 +190,9 @@ namespace Simple.OData.Client
                 }
             }
 
-            return rootNode.Feed != null 
-                ? new ODataResponse(rootNode.Feed, rootNode.TotalCount) 
-                : new ODataResponse(rootNode.Entry);
+            return rootNode.Feed != null
+                ? ODataResponse.FromFeed(rootNode.Feed, rootNode.TotalCount)
+                : ODataResponse.FromEntry(rootNode.Entry);
         }
 
         private object GetPropertyValue(object value)

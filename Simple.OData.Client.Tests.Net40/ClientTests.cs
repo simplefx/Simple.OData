@@ -283,7 +283,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task ExecuteScalarFunctionWithDateTimeParameter()
         {
-            var dateTime = new DateTime(2013, 1, 1, 12, 13, 14);
+            var dateTime = new DateTime(2013, 1, 1, 12, 13, 14, DateTimeKind.Local);
             var result = await _client.ExecuteFunctionAsScalarAsync<DateTime>("PassThroughDateTime", new Entry() { { "dateTime", dateTime } });
             Assert.Equal(dateTime.ToLocalTime(), result);
         }

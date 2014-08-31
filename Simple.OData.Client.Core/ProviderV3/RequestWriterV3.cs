@@ -27,27 +27,71 @@ namespace Simple.OData.Client
             var message = new ODataV3RequestMessage(null, null);
             var messageWriter = new ODataMessageWriter(message, writerSettings, _model);
             var entryWriter = messageWriter.CreateODataEntryWriter();
-            var odataEntry = new Microsoft.Data.OData.ODataEntry();
-            odataEntry.TypeName = string.Join(".", entityTypeNamespace, entityTypeName);
-            odataEntry.Properties = properties.Select(x => new ODataProperty() { Name = x.Key, Value = x.Value });
+            var entry = new Microsoft.Data.OData.ODataEntry();
+            entry.TypeName = string.Join(".", entityTypeNamespace, entityTypeName);
+            var typeProperties = (_model.FindDeclaredType(entry.TypeName) as IEdmEntityType).Properties();
+            entry.Properties = properties.Select(x => new ODataProperty()
+            {
+                Name = typeProperties.Single(y => Utils.NamesAreEqual(y.Name, x.Key)).Name,
+                Value = GetPropertyValue(typeProperties, x.Key, x.Value)
+            });
             
-            entryWriter.WriteStart(odataEntry);
+            entryWriter.WriteStart(entry);
 
             foreach (var association in associationsByValue)
             {
-                //var link = new ODataNavigationLink()
-                //{
-                //    Name = association.Key,
-                //    Url = new Uri(new Uri(_urlBase, UriKind.Absolute), association.Value.ToString())
-                //};
+                var property = (_model.FindDeclaredType(entry.TypeName) as IEdmEntityType).NavigationProperties()
+                    .Single(x => Utils.NamesAreEqual(x.Name, association.Key));
+                var link = new ODataNavigationLink()
+                {
+                    Name = association.Key,
+                    IsCollection = property.Partner.Multiplicity() == EdmMultiplicity.Many,
+                    Url = new Uri("", UriKind.Relative),
+                };
 
-                //entryWriter.WriteStart(link);
-                //entryWriter.WriteEnd();
+                entryWriter.WriteStart(link);
+                entryWriter.WriteEnd();
             }
 
             entryWriter.WriteEnd();
 
             return Utils.StreamToString(message.GetStream());
+        }
+
+        private object GetPropertyValue(IEnumerable<IEdmProperty> properties, string key, object value)
+        {
+            if (value == null)
+                return value;
+
+            var property = properties.Single(x => Utils.NamesAreEqual(x.Name, key));
+            switch (property.Type.TypeKind())
+            {
+                case EdmTypeKind.Complex:
+                    value = new ODataComplexValue()
+                    {
+                        TypeName = property.Type.FullName(),
+                        Properties = (value as IDictionary<string, object>).Select(x => new ODataProperty()
+                        {
+                            Name = x.Key,
+                            Value = GetPropertyValue(property.Type.AsComplex().StructuralProperties(), x.Key, x.Value),
+                        }),
+                    };
+                    break;
+
+                case EdmTypeKind.Collection:
+                    value = new ODataCollectionValue()
+                    {
+                        TypeName = property.Type.FullName(),
+                        Items = (value as IEnumerable<object>).Select(x => GetPropertyValue(
+                            property.Type.AsCollection().AsStructured().StructuralProperties(), property.Name, x)),
+                    };
+                    break;
+
+                case EdmTypeKind.Primitive:
+                default:
+                    return value;
+            }
+            return value;
         }
     }
 }
