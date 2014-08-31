@@ -1,15 +1,14 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Data.OData;
 using Microsoft.Data.Edm;
-using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
-    internal class ResponseReaderV3 : IProviderResponseReader
+    internal class ResponseReaderV3 : IResponseReader
     {
         class ResponseNode
         {
@@ -31,27 +30,28 @@ namespace Simple.OData.Client
             }
         }
 
-        private IODataResponseMessageAsync _response;
         private readonly IEdmModel _model;
-        private readonly bool _includeResourceTypeInEntryProperties;
 
-        public ResponseReaderV3(IODataResponseMessageAsync response, IEdmModel model, bool includeResourceTypeInEntryProperties = false)
+        public ResponseReaderV3(IEdmModel model)
         {
-            _response = response;
             _model = model;
-            _includeResourceTypeInEntryProperties = includeResourceTypeInEntryProperties;
         }
 
-        public async Task<ODataResponse> GetResponseAsync()
+        public Task<ODataResponse> GetResponseAsync(HttpResponseMessage responseMessage, bool includeResourceTypeInEntryProperties = false)
+        {
+            return GetResponseAsync(new ODataV3ResponseMessage(responseMessage), includeResourceTypeInEntryProperties);
+        }
+
+        public async Task<ODataResponse> GetResponseAsync(IODataResponseMessageAsync responseMessage, bool includeResourceTypeInEntryProperties = false)
         {
             var readerSettings = new ODataMessageReaderSettings();
             readerSettings.MessageQuotas.MaxReceivedMessageSize = Int32.MaxValue;
-            using (var messageReader = new ODataMessageReader(_response, readerSettings, _model))
+            using (var messageReader = new ODataMessageReader(responseMessage, readerSettings, _model))
             {
                 var payloadKind = messageReader.DetectPayloadKind();
                 if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Value))
                 {
-                    var text = ProviderMetadata.StreamToString(await _response.GetStreamAsync());
+                    var text = Utils.StreamToString(await responseMessage.GetStreamAsync());
                     return new ODataResponse(new[] { new Dictionary<string, object>() { { FluentCommand.ResultLiteral, text } } });
                 }
                 if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Property))
@@ -63,29 +63,11 @@ namespace Simple.OData.Client
                     ? messageReader.CreateODataFeedReader()
                     : messageReader.CreateODataEntryReader();
 
-                return ReadResponse(odataReader);
+                return ReadResponse(odataReader, includeResourceTypeInEntryProperties);
             }
         }
 
-        //public async override Task<IEnumerable<IDictionary<string, object>>> GetEntriesAsync(HttpResponseMessage response)
-        //{
-        //    var result = await new ResponseReaderV3(new ODataV3ResponseMessage(response), Model, _settings.IncludeResourceTypeInEntryProperties).GetResponseAsync();
-        //    return result.Entries;
-        //}
-
-        //public override async Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> GetEntriesWithCountAsync(HttpResponseMessage response)
-        //{
-        //    var result = await new ResponseReaderV3(new ODataV3ResponseMessage(response), Model, _settings.IncludeResourceTypeInEntryProperties).GetResponseAsync();
-        //    return Tuple.Create(result.Entries, (int)result.TotalCount.GetValueOrDefault());
-        //}
-
-        //public async override Task<IDictionary<string, object>> GetEntryAsync(HttpResponseMessage response)
-        //{
-        //    var result = await new ResponseReaderV3(new ODataV3ResponseMessage(response), Model, _settings.IncludeResourceTypeInEntryProperties).GetResponseAsync();
-        //    return result.Entry;
-        //}
-
-        private ODataResponse ReadResponse(ODataReader odataReader)
+        private ODataResponse ReadResponse(ODataReader odataReader, bool includeResourceTypeInEntryProperties)
         {
             ResponseNode rootNode = null;
             var nodeStack = new Stack<ResponseNode>();
@@ -128,7 +110,7 @@ namespace Simple.OData.Client
                         {
                             entryNode.Entry.Add(property.Name, GetPropertyValue(property.Value));
                         }
-                        if (_includeResourceTypeInEntryProperties)
+                        if (includeResourceTypeInEntryProperties)
                         {
                             var resourceType = entry.TypeName;
                             entryNode.Entry.Add(FluentCommand.ResourceTypeLiteral, resourceType);

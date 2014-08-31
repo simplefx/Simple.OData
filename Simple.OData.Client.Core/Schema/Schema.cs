@@ -12,40 +12,40 @@ namespace Simple.OData.Client
     {
         private static readonly SimpleDictionary<string, Schema> Instances = new SimpleDictionary<string, Schema>();
 
-        private readonly SchemaProvider _schemaProvider;
+        private readonly ProviderFactory _providerFactory;
         private readonly Func<Task<string>> _resolveMetadataAsync;
-        private Func<ProviderMetadata> _createProviderMetadata;
+        private Func<ODataProvider> _createProvider;
         private string _metadataString;
 
-        private Lazy<ProviderMetadata> _lazyProviderMetadata;
+        private Lazy<ODataProvider> _lazyProvider;
         private Lazy<Collection<EntitySet>> _lazyEntitySets;
 
         private Schema(string metadataString, Func<Task<string>> resolveMedatataAsync)
         {
             ResetCache();
-            _schemaProvider = new SchemaProvider();
+            _providerFactory = new ProviderFactory();
 
             _metadataString = metadataString;
             _resolveMetadataAsync = resolveMedatataAsync;
 
             if (_resolveMetadataAsync == null)
             {
-                _createProviderMetadata = () => _schemaProvider.ParseMetadata(_metadataString);
+                _createProvider = () => _providerFactory.ParseMetadata(_metadataString);
             }
         }
 
-        private Schema(SchemaProvider schemaProvider)
+        private Schema(ProviderFactory providerFactory)
         {
             ResetCache();
 
-            _schemaProvider = schemaProvider;
+            _providerFactory = providerFactory;
         }
 
         internal void ResetCache()
         {
             _metadataString = null;
 
-            _lazyProviderMetadata = new Lazy<ProviderMetadata>(CreateProviderMetadata);
+            _lazyProvider = new Lazy<ODataProvider>(CreateProvider);
             _lazyEntitySets = new Lazy<Collection<EntitySet>>(CreateEntitySetCollection);
         }
 
@@ -53,13 +53,13 @@ namespace Simple.OData.Client
         {
             if (_metadataString == null)
             {
-                if (_schemaProvider != null)
+                if (_providerFactory != null)
                 {
-                    var response = await _schemaProvider.SendSchemaRequestAsync(cancellationToken);
-                    _metadataString = await _schemaProvider.GetSchemaAsStringAsync(response);
-                    var providerMetadata = await _schemaProvider.GetMetadataAsync(response);
-                    _createProviderMetadata = () => providerMetadata;
-                    var metadata = await _schemaProvider.GetSchemaAsync(providerMetadata);
+                    var response = await _providerFactory.SendSchemaRequestAsync(cancellationToken);
+                    _metadataString = await _providerFactory.GetSchemaAsStringAsync(response);
+                    var provider = await _providerFactory.GetMetadataAsync(response);
+                    _createProvider = () => provider;
+                    var metadata = await _providerFactory.GetSchemaAsync(provider);
                 }
                 else
                 {
@@ -67,13 +67,13 @@ namespace Simple.OData.Client
                 }
             }
 
-            _lazyProviderMetadata = new Lazy<ProviderMetadata>(CreateProviderMetadata);
+            _lazyProvider = new Lazy<ODataProvider>(CreateProvider);
             return this;
         }
 
-        public ProviderMetadata ProviderMetadata
+        public ODataProvider Provider
         {
-            get { return _lazyProviderMetadata.Value; }
+            get { return _lazyProvider.Value; }
         }
 
         public string MetadataAsString
@@ -88,12 +88,12 @@ namespace Simple.OData.Client
 
         public bool HasEntitySet(string entitySetName)
         {
-            return _lazyEntitySets.Value.Any(x => ProviderMetadata.NamesAreEqual(x.ActualName, entitySetName));
+            return _lazyEntitySets.Value.Any(x => Utils.NamesAreEqual(x.ActualName, entitySetName));
         }
 
         public EntitySet FindEntitySet(string entitySetName)
         {
-            var actualName = ProviderMetadata.GetEntitySetExactName(entitySetName);
+            var actualName = Provider.GetMetadata().GetEntitySetExactName(entitySetName);
             return _lazyEntitySets.Value.Single(x => x.ActualName == actualName);
         }
 
@@ -119,19 +119,19 @@ namespace Simple.OData.Client
             }
         }
 
-        private ProviderMetadata CreateProviderMetadata()
+        private ODataProvider CreateProvider()
         {
-            return _createProviderMetadata();
+            return _createProvider();
         }
 
         private Collection<EntitySet> CreateEntitySetCollection()
         {
-            return new Collection<EntitySet>(ProviderMetadata.GetEntitySetNames().Select(x => new EntitySet(x, null, this)).ToList());
+            return new Collection<EntitySet>(Provider.GetMetadata().GetEntitySetNames().Select(x => new EntitySet(x, null, this)).ToList());
         }
 
         internal static Schema FromUrl(string urlBase, ICredentials credentials = null)
         {
-            return Instances.GetOrAdd(urlBase, new Schema(new SchemaProvider(urlBase, credentials)));
+            return Instances.GetOrAdd(urlBase, new Schema(new ProviderFactory(urlBase, credentials)));
         }
 
         internal static Schema FromMetadata(string metadataString)

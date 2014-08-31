@@ -10,16 +10,16 @@ using System.Xml;
 
 namespace Simple.OData.Client
 {
-    class SchemaProvider
+    class ProviderFactory
     {
         private readonly string _urlBase;
         private readonly ICredentials _credentials;
 
-        public SchemaProvider()
+        public ProviderFactory()
         {
         }
 
-        public SchemaProvider(string urlBase, ICredentials credentials)
+        public ProviderFactory(string urlBase, ICredentials credentials)
         {
             _urlBase = urlBase;
             _credentials = credentials;
@@ -43,38 +43,38 @@ namespace Simple.OData.Client
             return await response.Content.ReadAsStringAsync();
         }
 
-        public async Task<EdmSchema> GetSchemaAsync(ProviderMetadata providerMetadata)
+        public async Task<EdmSchema> GetSchemaAsync(ODataProvider provider)
         {
-            if (providerMetadata is ProviderMetadataV3)
-                return new ODataProviderV3().CreateEdmSchema(providerMetadata);
-            if (providerMetadata is ProviderMetadataV4)
-                return new ODataProviderV4().CreateEdmSchema(providerMetadata);
+            if (provider is ODataProviderV3)
+                return new ODataProviderV3(_urlBase).CreateEdmSchema(provider);
+            if (provider is ODataProviderV4)
+                return new ODataProviderV4(_urlBase).CreateEdmSchema(provider);
 
-            throw new ArgumentException(string.Format("Provider medata of type {0} is not supported", providerMetadata.GetType()), "providerMetadata");
+            throw new ArgumentException(string.Format("Provider medata of type {0} is not supported", provider.GetType()), "providerMetadata");
         }
 
-        public async Task<ProviderMetadata> GetMetadataAsync(HttpResponseMessage response)
+        public async Task<ODataProvider> GetMetadataAsync(HttpResponseMessage response)
         {
             var protocolVersions = GetSupportedProtocolVersions(response).ToArray();
 
             if (protocolVersions.Any(x => x == "4.0"))
-                return new ODataProviderV4().GetMetadata(response, protocolVersions.First());
+                return new ODataProviderV4(_urlBase, protocolVersions.First(), response);
             else if (protocolVersions.Any(x => x == "1.0" || x == "2.0" || x == "3.0"))
-                return new ODataProviderV3().GetMetadata(response, protocolVersions.First());
+                return new ODataProviderV3(_urlBase, protocolVersions.First(), response);
 
             throw new NotSupportedException(string.Format("OData protocol {0} is not supported", protocolVersions));
         }
 
-        public ProviderMetadata ParseMetadata(string metadataString)
+        public ODataProvider ParseMetadata(string metadataString)
         {
             var reader = XmlReader.Create(new StringReader(metadataString));
             reader.MoveToContent();
             var protocolVersion = reader.GetAttribute("Version");
 
             if (protocolVersion == "4.0")
-                return new ODataProviderV4().GetMetadata(metadataString, protocolVersion);
+                return new ODataProviderV4(_urlBase, protocolVersion, metadataString);
             else if (protocolVersion == "1.0" || protocolVersion == "2.0" || protocolVersion == "3.0")
-                return new ODataProviderV3().GetMetadata(metadataString, protocolVersion);
+                return new ODataProviderV3(_urlBase, protocolVersion, metadataString);
 
             throw new NotSupportedException(string.Format("OData protocol {0} is not supported", protocolVersion));
         }

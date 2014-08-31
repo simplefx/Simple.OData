@@ -20,7 +20,7 @@ namespace Simple.OData.Client
         /// <returns>The schema.</returns>
         public static async Task<object> GetMetadataAsync(string urlBase)
         {
-            return (await Schema.FromUrl(urlBase, null).ResolveAsync(CancellationToken.None)).ProviderMetadata.Model;
+            return (await Schema.FromUrl(urlBase, null).ResolveAsync(CancellationToken.None)).Provider.Model;
         }
 
         /// <summary>
@@ -31,7 +31,7 @@ namespace Simple.OData.Client
         /// <returns>The schema.</returns>
         public static async Task<object> GetMetadataAsync(string urlBase, CancellationToken cancellationToken)
         {
-            return (await Schema.FromUrl(urlBase, null).ResolveAsync(cancellationToken)).ProviderMetadata.Model;
+            return (await Schema.FromUrl(urlBase, null).ResolveAsync(cancellationToken)).Provider.Model;
         }
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace Simple.OData.Client
         /// <returns>The schema.</returns>
         public static async Task<object> GetMetadataAsync(string urlBase, ICredentials credentials)
         {
-            return (await Schema.FromUrl(urlBase, credentials).ResolveAsync(CancellationToken.None)).ProviderMetadata.Model;
+            return (await Schema.FromUrl(urlBase, credentials).ResolveAsync(CancellationToken.None)).Provider.Model;
         }
 
         /// <summary>
@@ -54,7 +54,7 @@ namespace Simple.OData.Client
         /// <returns>The schema.</returns>
         public static async Task<object> GetMetadataAsync(string urlBase, ICredentials credentials, CancellationToken cancellationToken)
         {
-            return (await Schema.FromUrl(urlBase, credentials).ResolveAsync(cancellationToken)).ProviderMetadata.Model;
+            return (await Schema.FromUrl(urlBase, credentials).ResolveAsync(cancellationToken)).Provider.Model;
         }
 
         /// <summary>
@@ -65,7 +65,7 @@ namespace Simple.OData.Client
         /// <returns>The schema.</returns>
         public static async Task<T> GetMetadataAsync<T>(string urlBase)
         {
-            return (T)(await Schema.FromUrl(urlBase, null).ResolveAsync(CancellationToken.None)).ProviderMetadata.Model;
+            return (T)(await Schema.FromUrl(urlBase, null).ResolveAsync(CancellationToken.None)).Provider.Model;
         }
 
         /// <summary>
@@ -77,7 +77,7 @@ namespace Simple.OData.Client
         /// <returns>The schema.</returns>
         public static async Task<T> GetMetadataAsync<T>(string urlBase, CancellationToken cancellationToken)
         {
-            return (T)(await Schema.FromUrl(urlBase, null).ResolveAsync(cancellationToken)).ProviderMetadata.Model;
+            return (T)(await Schema.FromUrl(urlBase, null).ResolveAsync(cancellationToken)).Provider.Model;
         }
 
         /// <summary>
@@ -89,7 +89,7 @@ namespace Simple.OData.Client
         /// <returns>The schema.</returns>
         public static async Task<T> GetMetadataAsync<T>(string urlBase, ICredentials credentials)
         {
-            return (T)(await Schema.FromUrl(urlBase, credentials).ResolveAsync(CancellationToken.None)).ProviderMetadata.Model;
+            return (T)(await Schema.FromUrl(urlBase, credentials).ResolveAsync(CancellationToken.None)).Provider.Model;
         }
 
         /// <summary>
@@ -104,7 +104,7 @@ namespace Simple.OData.Client
         /// </returns>
         public static async Task<T> GetMetadataAsync<T>(string urlBase, ICredentials credentials, CancellationToken cancellationToken)
         {
-            return (T)(await Schema.FromUrl(urlBase, credentials).ResolveAsync(cancellationToken)).ProviderMetadata.Model;
+            return (T)(await Schema.FromUrl(urlBase, credentials).ResolveAsync(cancellationToken)).Provider.Model;
         }
 
         /// <summary>
@@ -148,7 +148,7 @@ namespace Simple.OData.Client
         /// <returns>The schema.</returns>
         public static async Task<string> GetMetadataAsStringAsync(string urlBase, ICredentials credentials, CancellationToken cancellationToken)
         {
-            return await new SchemaProvider(urlBase, credentials).GetSchemaAsStringAsync(cancellationToken);
+            return await new ProviderFactory(urlBase, credentials).GetSchemaAsStringAsync(cancellationToken);
         }
 
         #pragma warning disable 1591
@@ -160,22 +160,22 @@ namespace Simple.OData.Client
 
         public async Task<object> GetMetadataAsync()
         {
-            return (await _schema.ResolveAsync(CancellationToken.None)).ProviderMetadata.Model;
+            return (await _schema.ResolveAsync(CancellationToken.None)).Provider.Model;
         }
 
         public async Task<object> GetMetadataAsync(CancellationToken cancellationToken)
         {
-            return (await _schema.ResolveAsync(cancellationToken)).ProviderMetadata.Model;
+            return (await _schema.ResolveAsync(cancellationToken)).Provider.Model;
         }
 
         public async Task<T> GetMetadataAsync<T>()
         {
-            return (T)(await _schema.ResolveAsync(CancellationToken.None)).ProviderMetadata.Model;
+            return (T)(await _schema.ResolveAsync(CancellationToken.None)).Provider.Model;
         }
 
         public async Task<T> GetMetadataAsync<T>(CancellationToken cancellationToken)
         {
-            return (T)(await _schema.ResolveAsync(cancellationToken)).ProviderMetadata.Model;
+            return (T)(await _schema.ResolveAsync(cancellationToken)).Provider.Model;
         }
 
         public Task<string> GetMetadataAsStringAsync()
@@ -367,13 +367,15 @@ namespace Simple.OData.Client
 
             var commandWriter = new CommandWriter(_schema);
             var entryContent = commandWriter.CreateEntry(
-                _schema.ProviderMetadata.GetEntitySetTypeNamespace(collection),
-                _schema.ProviderMetadata.GetEntitySetTypeName(collection),
-                entryMembers.Properties);
-            foreach (var associatedData in entryMembers.AssociationsByValue)
-            {
-                commandWriter.AddLink(entryContent, collection, associatedData);
-            }
+                _schema.Provider.GetMetadata().GetEntitySetTypeNamespace(collection),
+                _schema.Provider.GetMetadata().GetEntitySetTypeName(collection),
+                entryMembers.Properties,
+                entryMembers.AssociationsByValue.ToDictionary(x => x.Key, x => x.Value),
+                entryMembers.AssociationsByContentId.ToDictionary(x => x.Key, x => x.Value));
+            //foreach (var associatedData in entryMembers.AssociationsByValue)
+            //{
+            //    commandWriter.AddLink(entryContent, collection, associatedData);
+            //}
 
             var command = commandWriter.CreateInsertCommand(_schema.FindBaseEntitySet(collection).ActualName, entryData, entryContent);
             var request = _requestBuilder.CreateRequest(command, resultRequired);
@@ -416,7 +418,19 @@ namespace Simple.OData.Client
             var table = _schema.FindConcreteEntitySet(collection);
             var entryMembers = ParseEntryMembers(table, entryData);
 
-            return await UpdateEntryPropertiesAndAssociationsAsync(collection, entryKey, entryData, entryMembers, resultRequired, cancellationToken);
+            var commandWriter = new CommandWriter(_schema);
+            var entryContent = commandWriter.CreateEntry(
+                _schema.Provider.GetMetadata().GetEntitySetTypeNamespace(collection),
+                _schema.Provider.GetMetadata().GetEntitySetTypeName(collection),
+                entryMembers.Properties,
+                entryMembers.AssociationsByValue.ToDictionary(x => x.Key, x => x.Value),
+                entryMembers.AssociationsByContentId.ToDictionary(x => x.Key, x => x.Value));
+            var command = commandWriter.CreateUpdateCommand(_schema.FindBaseEntitySet(collection).ActualName, entryData, entryContent);
+            var request = _requestBuilder.CreateRequest(command, resultRequired);
+            var result = await _requestRunner.InsertEntryAsync(request, cancellationToken);
+
+            return result;
+            //return await UpdateEntryPropertiesAndAssociationsAsync(collection, entryKey, entryData, entryMembers, resultRequired, cancellationToken);
         }
 
         public Task<IEnumerable<IDictionary<string, object>>> UpdateEntriesAsync(string collection, string commandText, IDictionary<string, object> entryData)
@@ -464,7 +478,8 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var command = new CommandWriter(_schema).CreateDeleteCommand(commandText);
-            var request = _requestBuilder.CreateRequest(command, false, _schema.ProviderMetadata.EntitySetTypeRequiresOptimisticConcurrencyCheck(collection));
+            var request = _requestBuilder.CreateRequest(command, false, _schema.Provider.GetMetadata()
+                .EntitySetTypeRequiresOptimisticConcurrencyCheck(collection));
             await _requestRunner.DeleteEntryAsync(request, cancellationToken);
         }
 
@@ -504,13 +519,13 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var linkPath = await GetFluentClient()
-                .For(_schema.ProviderMetadata.GetNavigationPropertyPartnerName(collection, linkName))
+                .For(_schema.Provider.GetMetadata().GetNavigationPropertyPartnerName(collection, linkName))
                 .Key(linkedEntryKey)
                 .GetCommandTextAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var command = new CommandWriter(_schema).CreateLinkCommand(
-                collection, _schema.ProviderMetadata.GetNavigationPropertyExactName(collection, linkName), entryPath, linkPath);
+                collection, _schema.Provider.GetMetadata().GetNavigationPropertyExactName(collection, linkName), entryPath, linkPath);
             var request = _requestBuilder.CreateRequest(command);
             await _requestRunner.UpdateEntryAsync(request, cancellationToken);
         }
@@ -533,7 +548,7 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var command = new CommandWriter(_schema).CreateUnlinkCommand(
-                collection, _schema.ProviderMetadata.GetNavigationPropertyExactName(collection, linkName), commandText);
+                collection, _schema.Provider.GetMetadata().GetNavigationPropertyExactName(collection, linkName), commandText);
             var request = _requestBuilder.CreateRequest(command);
             await _requestRunner.UpdateEntryAsync(request, cancellationToken);
         }

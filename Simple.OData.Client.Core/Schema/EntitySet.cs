@@ -51,14 +51,14 @@ namespace Simple.OData.Client
 
         public EntitySet FindDerivedEntitySet(string entityTypeName)
         {
-            var actualName = _schema.ProviderMetadata.GetDerivedEntityTypeExactName(this.ActualName, entityTypeName);
+            var actualName = _schema.Provider.GetMetadata().GetDerivedEntityTypeExactName(this.ActualName, entityTypeName);
             return new EntitySet(actualName, this, _schema);
         }
 
         public bool HasDerivedEntitySet(string entityTypeName)
         {
-            return _schema.ProviderMetadata.GetDerivedEntityTypeNames(this.ActualName)
-                .Any(x => ProviderMetadata.NamesAreEqual(x, entityTypeName));
+            return _schema.Provider.GetMetadata().GetDerivedEntityTypeNames(this.ActualName)
+                .Any(x => Utils.NamesAreEqual(x, entityTypeName));
         }
 
         public IDictionary<string, object> GetKey(string entityTypeName, IDictionary<string, object> record)
@@ -69,7 +69,7 @@ namespace Simple.OData.Client
 
         public IList<string> GetKeyNames()
         {
-            return _schema.ProviderMetadata.GetDeclaredKeyPropertyNames(this.ActualName).ToList();
+            return _schema.Provider.GetMetadata().GetDeclaredKeyPropertyNames(this.ActualName).ToList();
         }
     }
 }

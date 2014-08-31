@@ -43,7 +43,7 @@ namespace Simple.OData.Client
         public HttpCommand CreateLinkCommand(string collection, string associationName, string entryPath, string linkPath)
         {
             var linkEntry = CreateLinkElement(linkPath);
-            var linkMethod = _schema.ProviderMetadata.IsNavigationPropertyMultiple(collection, associationName) ?
+            var linkMethod = _schema.Provider.GetMetadata().IsNavigationPropertyMultiple(collection, associationName) ?
                 RestVerbs.POST :
                 RestVerbs.PUT;
 
@@ -57,9 +57,16 @@ namespace Simple.OData.Client
             return HttpCommand.Delete(commandText);
         }
 
-        public CommandContent CreateEntry(string entityTypeNamespace, string entityTypeName, IDictionary<string, object> row)
+        public CommandContent CreateEntry(string entityTypeNamespace, string entityTypeName,
+            IDictionary<string, object> properties, 
+            IDictionary<string, object> associationsByValue,
+            IDictionary<string, int> associationsByContentId)
         {
-            var entry = _schema.ProviderMetadata.CreateEntry(entityTypeNamespace, entityTypeName, row);
+            var entry = _schema.Provider.GetRequestWriter().CreateEntry(
+                entityTypeNamespace, entityTypeName, 
+                properties, 
+                associationsByValue, 
+                associationsByContentId);
             //var entry = CreateEmptyEntryWithNamespaces();
 
             //var resourceName = GetQualifiedResourceName(entityTypeNamespace, entityTypeName);
@@ -70,23 +77,23 @@ namespace Simple.OData.Client
             return new CommandContent(entry);
         }
 
-        public void AddLink(CommandContent content, string collection, KeyValuePair<string, object> associatedData)
-        {
-            if (associatedData.Value == null)
-                return;
+        //public void AddLink(CommandContent content, string collection, KeyValuePair<string, object> associatedData)
+        //{
+        //    if (associatedData.Value == null)
+        //        return;
 
-            var associatedKeyValues = GetLinkedEntryKeyValues(
-                _schema.ProviderMetadata.GetNavigationPropertyPartnerName(collection, associatedData.Key), 
-                associatedData);
-            if (associatedKeyValues != null)
-            {
-                throw new NotImplementedException();
-                //AddDataLink(content.Entry,
-                //    _schema.ProviderMetadata.GetNavigationPropertyExactName(collection, associatedData.Key),
-                //    _schema.ProviderMetadata.GetNavigationPropertyPartnerName(collection, associatedData.Key), 
-                //    associatedKeyValues);
-            }
-        }
+        //    var associatedKeyValues = GetLinkedEntryKeyValues(
+        //        _schema.ProviderMetadata.GetNavigationPropertyPartnerName(collection, associatedData.Key), 
+        //        associatedData);
+        //    if (associatedKeyValues != null)
+        //    {
+        //        throw new NotImplementedException();
+        //        //AddDataLink(content.Entry,
+        //        //    _schema.ProviderMetadata.GetNavigationPropertyExactName(collection, associatedData.Key),
+        //        //    _schema.ProviderMetadata.GetNavigationPropertyPartnerName(collection, associatedData.Key), 
+        //        //    associatedKeyValues);
+        //    }
+        //}
 
         private XElement CreateLinkElement(string link)
         {

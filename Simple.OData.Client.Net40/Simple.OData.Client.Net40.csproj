@@ -239,17 +239,14 @@
     <Compile Include="..\Simple.OData.Client.Core\Http\CommandRequestRunner.cs">
       <Link>Http\CommandRequestRunner.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Http\CommandWriter.cs">
+      <Link>Http\CommandWriter.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Http\HttpCommand.cs">
       <Link>Http\HttpCommand.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Http\HttpRequest.cs">
       <Link>Http\HttpRequest.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Http\IProviderResponseReader.cs">
-      <Link>Http\IProviderResponseReader.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Http\IResponseReader.cs">
-      <Link>Http\IResponseReader.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Http\RequestBuilder.cs">
       <Link>Http\RequestBuilder.cs</Link>
@@ -259,9 +256,6 @@
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Http\RequestRunnerBase.cs">
       <Link>Http\RequestRunnerBase.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Http\ResponseReader.cs">
-      <Link>Http\ResponseReader.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Http\RestVerbs.cs">
       <Link>Http\RestVerbs.cs</Link>
@@ -305,9 +299,6 @@
     <Compile Include="..\Simple.OData.Client.Core\ODataEntry.cs">
       <Link>ODataEntry.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\CommandWriter.cs">
-      <Link>ODataFeedWriter.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ODataResponse.cs">
       <Link>ODataResponse.cs</Link>
     </Compile>
@@ -316,6 +307,9 @@
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ProviderV3\EdmModelParserV3.cs">
       <Link>ProviderV3\EdmModelParserV3.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ProviderV3\MetadataV3.cs">
+      <Link>ProviderV3\MetadataV3.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ProviderV3\ODataProviderV3.cs">
       <Link>ProviderV3\ODataProviderV3.cs</Link>
@@ -326,11 +320,17 @@
     <Compile Include="..\Simple.OData.Client.Core\ProviderV3\ODataV3ResponseMessage.cs">
       <Link>ProviderV3\ODataV3ResponseMessage.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ProviderV3\RequestWriterV3.cs">
+      <Link>ProviderV3\RequestWriterV3.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ProviderV3\ResponseReaderV3.cs">
       <Link>ProviderV3\ResponseReaderV3.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ProviderV4\EdmModelParserV4.cs">
       <Link>ProviderV4\EdmModelParserV4.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ProviderV4\MetadataV4.cs">
+      <Link>ProviderV4\MetadataV4.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ProviderV4\ODataProviderV4.cs">
       <Link>ProviderV4\ODataProviderV4.cs</Link>
@@ -341,17 +341,26 @@
     <Compile Include="..\Simple.OData.Client.Core\ProviderV4\ODataV4ResponseMessage.cs">
       <Link>ProviderV4\ODataV4ResponseMessage.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Provider\IMetadata.cs">
+      <Link>Provider\IMetadata.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Provider\IRequestWriter.cs">
+      <Link>Provider\IRequestWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Provider\IResponseReader.cs">
+      <Link>Provider\IResponseReader.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Provider\ODataProvider.cs">
+      <Link>Provider\ODataProvider.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Provider\ProviderFactory.cs">
+      <Link>Provider\ProviderFactory.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Resources\Resources.cs">
       <Link>Resources\Resources.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Schema\EntitySet.cs">
       <Link>Schema\EntitySet.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Schema\ProviderMetadata.cs">
-      <Link>Schema\ProviderMetadata.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Schema\SchemaProvider.cs">
-      <Link>Schema\SchemaProvider.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\SimpleDictionary.cs">
       <Link>SimpleDictionary.cs</Link>
@@ -373,9 +382,6 @@
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Extensions\StringExtensions.cs">
       <Link>Extensions\StringExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\ResponseReader.cs">
-      <Link>ODataFeedReader.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Properties\AssemblyInfo.cs">
       <Link>Properties\AssemblyInfo.cs</Link>

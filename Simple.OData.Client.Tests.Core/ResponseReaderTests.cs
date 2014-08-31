@@ -22,8 +22,8 @@ namespace Simple.OData.Client.Tests
         public async Task GetSingleProduct()
         {
             var response = SetUpMock("SingleProduct.xml");
-            var responseReader = new ResponseReaderV3(response, await _client.GetMetadataAsync<IEdmModel>());
-            var result = (await responseReader.GetResponseAsync()).Entry;
+            var responseReader = new ResponseReaderV3(await _client.GetMetadataAsync<IEdmModel>());
+            var result = (await responseReader.GetResponseAsync(response)).Entry;
             Assert.Equal(productProperties, result.Count);
         }
 
@@ -31,8 +31,8 @@ namespace Simple.OData.Client.Tests
         public async Task GetMultipleProducts()
         {
             var response = SetUpMock("MultipleProducts.xml");
-            var responseReader = new ResponseReaderV3(response, await _client.GetMetadataAsync<IEdmModel>());
-            var result = (await responseReader.GetResponseAsync()).Entries;
+            var responseReader = new ResponseReaderV3(await _client.GetMetadataAsync<IEdmModel>());
+            var result = (await responseReader.GetResponseAsync(response)).Entries;
             Assert.Equal(20, result.Count());
             Assert.Equal(productProperties, result.First().Count);
         }
@@ -41,8 +41,8 @@ namespace Simple.OData.Client.Tests
         public async Task GetSingleProductWithCategory()
         {
             var response = SetUpMock("SingleProductWithCategory.xml");
-            var responseReader = new ResponseReaderV3(response, await _client.GetMetadataAsync<IEdmModel>());
-            var result = (await responseReader.GetResponseAsync()).Entry;
+            var responseReader = new ResponseReaderV3(await _client.GetMetadataAsync<IEdmModel>());
+            var result = (await responseReader.GetResponseAsync(response)).Entry;
             Assert.Equal(productProperties + 1, result.Count);
             Assert.Equal(categoryProperties, (result["Category"] as IDictionary<string, object>).Count);
         }
@@ -51,8 +51,8 @@ namespace Simple.OData.Client.Tests
         public async Task GetMultipleProductsWithCategory()
         {
             var response = SetUpMock("MultipleProductsWithCategory.xml");
-            var responseReader = new ResponseReaderV3(response, await _client.GetMetadataAsync<IEdmModel>());
-            var result = (await responseReader.GetResponseAsync()).Entries;
+            var responseReader = new ResponseReaderV3(await _client.GetMetadataAsync<IEdmModel>());
+            var result = (await responseReader.GetResponseAsync(response)).Entries;
             Assert.Equal(20, result.Count());
             Assert.Equal(productProperties + 1, result.First().Count);
             Assert.Equal(categoryProperties, (result.First()["Category"] as IDictionary<string, object>).Count);
@@ -62,8 +62,8 @@ namespace Simple.OData.Client.Tests
         public async Task GetSingleCategoryWithProducts()
         {
             var response = SetUpMock("SingleCategoryWithProducts.xml");
-            var responseReader = new ResponseReaderV3(response, await _client.GetMetadataAsync<IEdmModel>());
-            var result = (await responseReader.GetResponseAsync()).Entry;
+            var responseReader = new ResponseReaderV3(await _client.GetMetadataAsync<IEdmModel>());
+            var result = (await responseReader.GetResponseAsync(response)).Entry;
             Assert.Equal(categoryProperties + 1, result.Count);
             Assert.Equal(12, (result["Products"] as IEnumerable<IDictionary<string, object>>).Count());
             Assert.Equal(productProperties, (result["Products"] as IEnumerable<IDictionary<string, object>>).First().Count);
@@ -73,8 +73,8 @@ namespace Simple.OData.Client.Tests
         public async Task GetMultipleCategoriesWithProducts()
         {
             var response = SetUpMock("MultipleCategoriesWithProducts.xml");
-            var responseReader = new ResponseReaderV3(response, await _client.GetMetadataAsync<IEdmModel>());
-            var result = (await responseReader.GetResponseAsync()).Entries;
+            var responseReader = new ResponseReaderV3(await _client.GetMetadataAsync<IEdmModel>());
+            var result = (await responseReader.GetResponseAsync(response)).Entries;
             Assert.Equal(8, result.Count());
             Assert.Equal(categoryProperties + 1, result.First().Count);
             Assert.Equal(12, (result.First()["Products"] as IEnumerable<IDictionary<string, object>>).Count());
@@ -85,8 +85,8 @@ namespace Simple.OData.Client.Tests
         public async Task GetSingleProductWithComplexProperty()
         {
             var response = SetUpMock("SingleProductWithComplexProperty.xml");
-            var responseReader = new ResponseReaderV3(response, null);
-            var result = (await responseReader.GetResponseAsync()).Entry;
+            var responseReader = new ResponseReaderV3(null);
+            var result = (await responseReader.GetResponseAsync(response)).Entry;
             Assert.Equal(productProperties + 1, result.Count);
             var quantity = result["Quantity"] as IDictionary<string, object>;
             Assert.NotNull(quantity);
@@ -98,8 +98,8 @@ namespace Simple.OData.Client.Tests
         public async Task GetSingleProductWithCollectionOfPrimitiveProperties()
         {
             var response = SetUpMock("SingleProductWithCollectionOfPrimitiveProperties.xml");
-            var responseReader = new ResponseReaderV3(response, null);
-            var result = (await responseReader.GetResponseAsync()).Entry;
+            var responseReader = new ResponseReaderV3(null);
+            var result = (await responseReader.GetResponseAsync(response)).Entry;
             Assert.Equal(productProperties + 2, result.Count);
             var tags = result["Tags"] as IList<dynamic>;
             Assert.Equal(2, tags.Count);
@@ -115,8 +115,8 @@ namespace Simple.OData.Client.Tests
         public async Task GetSingleProductWithCollectionOfComplexProperties()
         {
             var response = SetUpMock("SingleProductWithCollectionOfComplexProperties.xml");
-            var responseReader = new ResponseReaderV3(response, null);
-            var result = (await responseReader.GetResponseAsync()).Entry;
+            var responseReader = new ResponseReaderV3(null);
+            var result = (await responseReader.GetResponseAsync(response)).Entry;
             Assert.Equal(productProperties + 1, result.Count);
             var tags = result["Tags"] as IList<dynamic>;
             Assert.Equal(2, tags.Count);
@@ -130,8 +130,8 @@ namespace Simple.OData.Client.Tests
         public async Task GetSingleProductWithEmptyCollectionOfComplexProperties()
         {
             var response = SetUpMock("SingleProductWithEmptyCollectionOfComplexProperties.xml");
-            var responseReader = new ResponseReaderV3(response, null);
-            var result = (await responseReader.GetResponseAsync()).Entry;
+            var responseReader = new ResponseReaderV3(null);
+            var result = (await responseReader.GetResponseAsync(response)).Entry;
             Assert.Equal(productProperties + 1, result.Count);
             var tags = result["Tags"] as IList<dynamic>;
             Assert.Equal(0, tags.Count);
@@ -142,8 +142,8 @@ namespace Simple.OData.Client.Tests
         //public async Task GetSingleCustomerWithAddress()
         //{
         //    var response = SetUpMock("SingleCustomerWithAddress.xml");
-        //    var responseReader = new ResponseReaderV3(response, await _client.GetMetadataAsync<IEdmModel>());
-        //    var result = (await responseReader.GetResponseAsync()).Entry;
+        //    var responseReader = new ResponseReaderV3(await _client.GetMetadataAsync<IEdmModel>());
+        //    var result = (await responseReader.GetResponseAsync(response)).Entry;
         //    Assert.Equal(3, result.Count);
         //    Assert.Equal(5, (result["Address"] as IEnumerable<KeyValuePair<string, object>>).Count());
         //    Assert.Equal("Private", ((result["Address"] as IEnumerable<KeyValuePair<string, object>>)).First().Value);

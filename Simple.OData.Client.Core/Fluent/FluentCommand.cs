@@ -139,7 +139,8 @@ namespace Simple.OData.Client
                 else if (!string.IsNullOrEmpty(_linkName))
                 {
                     var parent = new FluentCommand(_parent).Resolve();
-                    return _schema.FindEntitySet(_schema.ProviderMetadata.GetNavigationPropertyPartnerName(parent.EntitySet.ActualName, _linkName));
+                    return _schema.FindEntitySet(_schema.Provider.GetMetadata()
+                        .GetNavigationPropertyPartnerName(parent.EntitySet.ActualName, _linkName));
                 }
                 else
                 {
@@ -449,23 +450,23 @@ namespace Simple.OData.Client
             string commandText = string.Empty;
             if (!string.IsNullOrEmpty(_collectionName))
             {
-                var entitySetName = _schema.ProviderMetadata.GetEntitySetExactName(_collectionName);
-                var entityTypeNamespace = _schema.ProviderMetadata.GetEntitySetTypeNamespace(_collectionName);
+                var entitySetName = _schema.Provider.GetMetadata().GetEntitySetExactName(_collectionName);
+                var entityTypeNamespace = _schema.Provider.GetMetadata().GetEntitySetTypeNamespace(_collectionName);
                 commandText += entitySetName;
                 if (!string.IsNullOrEmpty(_derivedCollectionName))
                     commandText += "/" + string.Join(".",
                         entityTypeNamespace,
-                        _schema.ProviderMetadata.GetEntityTypeExactName(_derivedCollectionName));
+                        _schema.Provider.GetMetadata().GetEntityTypeExactName(_derivedCollectionName));
             }
             else if (!string.IsNullOrEmpty(_linkName))
             {
                 var parent = new FluentCommand(_parent).Resolve();
                 commandText += parent.Format() + "/";
-                commandText += _schema.ProviderMetadata.GetNavigationPropertyExactName(parent.EntitySet.ActualName, _linkName);
+                commandText += _schema.Provider.GetMetadata().GetNavigationPropertyExactName(parent.EntitySet.ActualName, _linkName);
             }
             else if (!string.IsNullOrEmpty(_functionName))
             {
-                commandText += _schema.ProviderMetadata.GetFunctionExactName(_functionName);
+                commandText += _schema.Provider.GetMetadata().GetFunctionExactName(_functionName);
             }
 
             if (HasKey && HasFilter)
@@ -528,22 +529,22 @@ namespace Simple.OData.Client
             var table = this.EntitySet;
             foreach (var associationName in items)
             {
-                names.Add(table.Schema.ProviderMetadata.GetNavigationPropertyExactName(table.ActualName, associationName));
-                table = _schema.FindEntitySet(table.Schema.ProviderMetadata.GetNavigationPropertyPartnerName(table.ActualName, associationName));
+                names.Add(table.Schema.Provider.GetMetadata().GetNavigationPropertyExactName(table.ActualName, associationName));
+                table = _schema.FindEntitySet(table.Schema.Provider.GetMetadata().GetNavigationPropertyPartnerName(table.ActualName, associationName));
             }
             return string.Join("/", names);
         }
 
         private string FormatSelectItem(string item)
         {
-            return this.EntitySet.Schema.ProviderMetadata.HasStructuralProperty(this.EntitySet.ActualName, item)
-                ? this.EntitySet.Schema.ProviderMetadata.GetStructuralPropertyExactName(this.EntitySet.ActualName, item)
-                : this.EntitySet.Schema.ProviderMetadata.GetNavigationPropertyExactName(this.EntitySet.ActualName, item);
+            return this.EntitySet.Schema.Provider.GetMetadata().HasStructuralProperty(this.EntitySet.ActualName, item)
+                ? this.EntitySet.Schema.Provider.GetMetadata().GetStructuralPropertyExactName(this.EntitySet.ActualName, item)
+                : this.EntitySet.Schema.Provider.GetMetadata().GetNavigationPropertyExactName(this.EntitySet.ActualName, item);
         }
 
         private string FormatOrderByItem(KeyValuePair<string, bool> item)
         {
-            return this.EntitySet.Schema.ProviderMetadata.GetStructuralPropertyExactName(this.EntitySet.ActualName, item.Key) + (item.Value ? " desc" : string.Empty);
+            return this.EntitySet.Schema.Provider.GetMetadata().GetStructuralPropertyExactName(this.EntitySet.ActualName, item.Key) + (item.Value ? " desc" : string.Empty);
         }
 
         private string FormatKey()

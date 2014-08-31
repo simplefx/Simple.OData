@@ -86,63 +86,63 @@ namespace Simple.OData.Client
             return result;
         }
 
-        private async Task<IDictionary<string, object>> UpdateEntryPropertiesAndAssociationsAsync(
-            string collection,
-            IDictionary<string, object> entryKey,
-            IDictionary<string, object> entryData,
-            EntryMembers entryMembers,
-            bool resultRequired, 
-            CancellationToken cancellationToken)
-        {
-            bool hasPropertiesToUpdate = entryMembers.Properties.Count > 0;
-            bool merge = !hasPropertiesToUpdate || CheckMergeConditions(collection, entryKey, entryData);
-            var commandText = await GetFluentClient()
-                .For(_schema.FindBaseEntitySet(collection).ActualName)
-                .Key(entryKey)
-                .GetCommandTextAsync(cancellationToken);
-            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+        //private async Task<IDictionary<string, object>> UpdateEntryPropertiesAndAssociationsAsync(
+        //    string collection,
+        //    IDictionary<string, object> entryKey,
+        //    IDictionary<string, object> entryData,
+        //    EntryMembers entryMembers,
+        //    bool resultRequired, 
+        //    CancellationToken cancellationToken)
+        //{
+        //    bool hasPropertiesToUpdate = entryMembers.Properties.Count > 0;
+        //    bool merge = !hasPropertiesToUpdate || CheckMergeConditions(collection, entryKey, entryData);
+        //    var commandText = await GetFluentClient()
+        //        .For(_schema.FindBaseEntitySet(collection).ActualName)
+        //        .Key(entryKey)
+        //        .GetCommandTextAsync(cancellationToken);
+        //    if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var commandWriter = new CommandWriter(_schema);
-            var entitySetName = _schema.ProviderMetadata.GetEntitySetExactName(collection);
-            var entryContent = commandWriter.CreateEntry(
-                _schema.ProviderMetadata.GetEntitySetTypeNamespace(collection),
-                _schema.ProviderMetadata.GetEntitySetTypeName(collection), entryMembers.Properties);
-            var unlinkAssociationNames = new List<string>();
-            foreach (var associatedData in entryMembers.AssociationsByValue)
-            {
-                var associationName = _schema.ProviderMetadata.GetNavigationPropertyExactName(entitySetName, associatedData.Key);
-                if (associatedData.Value != null)
-                {
-                    commandWriter.AddLink(entryContent, collection, associatedData);
-                }
-                else
-                {
-                    unlinkAssociationNames.Add(associationName);
-                }
-            }
+        //    var commandWriter = new CommandWriter(_schema);
+        //    var entitySetName = _schema.ProviderMetadata.GetEntitySetExactName(collection);
+        //    var entryContent = commandWriter.CreateEntry(
+        //        _schema.ProviderMetadata.GetEntitySetTypeNamespace(collection),
+        //        _schema.ProviderMetadata.GetEntitySetTypeName(collection), entryMembers.Properties);
+        //    var unlinkAssociationNames = new List<string>();
+        //    foreach (var associatedData in entryMembers.AssociationsByValue)
+        //    {
+        //        var associationName = _schema.ProviderMetadata.GetNavigationPropertyExactName(entitySetName, associatedData.Key);
+        //        if (associatedData.Value != null)
+        //        {
+        //            commandWriter.AddLink(entryContent, collection, associatedData);
+        //        }
+        //        else
+        //        {
+        //            unlinkAssociationNames.Add(associationName);
+        //        }
+        //    }
 
-            var command = commandWriter.CreateUpdateCommand(commandText, entryData, entryContent, merge);
-            var request = _requestBuilder.CreateRequest(command, resultRequired, 
-                _schema.ProviderMetadata.EntitySetTypeRequiresOptimisticConcurrencyCheck(collection));
-            var result = await _requestRunner.UpdateEntryAsync(request, cancellationToken);
-            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+        //    var command = commandWriter.CreateUpdateCommand(commandText, entryData, entryContent, merge);
+        //    var request = _requestBuilder.CreateRequest(command, resultRequired, 
+        //        _schema.ProviderMetadata.EntitySetTypeRequiresOptimisticConcurrencyCheck(collection));
+        //    var result = await _requestRunner.UpdateEntryAsync(request, cancellationToken);
+        //    if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            foreach (var associatedData in entryMembers.AssociationsByContentId)
-            {
-                var linkCommand = commandWriter.CreateLinkCommand(collection, associatedData.Key, command.ContentId, associatedData.Value);
-                request = _requestBuilder.CreateRequest(linkCommand);
-                await _requestRunner.UpdateEntryAsync(request, cancellationToken);
-                if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-            }
+        //    foreach (var associatedData in entryMembers.AssociationsByContentId)
+        //    {
+        //        var linkCommand = commandWriter.CreateLinkCommand(collection, associatedData.Key, command.ContentId, associatedData.Value);
+        //        request = _requestBuilder.CreateRequest(linkCommand);
+        //        await _requestRunner.UpdateEntryAsync(request, cancellationToken);
+        //        if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+        //    }
 
-            foreach (var associationName in unlinkAssociationNames)
-            {
-                await UnlinkEntryAsync(collection, entryKey, associationName, cancellationToken);
-                if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-            }
+        //    foreach (var associationName in unlinkAssociationNames)
+        //    {
+        //        await UnlinkEntryAsync(collection, entryKey, associationName, cancellationToken);
+        //        if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+        //    }
 
-            return result;
-        }
+        //    return result;
+        //}
 
         private EntryMembers ParseEntryMembers(EntitySet entitySet, IDictionary<string, object> entryData)
         {
@@ -158,13 +158,13 @@ namespace Simple.OData.Client
 
         private void ParseEntryMember(EntitySet entitySet, KeyValuePair<string, object> item, EntryMembers entryMembers)
         {
-            if (entitySet.Schema.ProviderMetadata.HasStructuralProperty(entitySet.ActualName, item.Key))
+            if (entitySet.Schema.Provider.GetMetadata().HasStructuralProperty(entitySet.ActualName, item.Key))
             {
                 entryMembers.AddProperty(item.Key, item.Value);
             }
-            else if (entitySet.Schema.ProviderMetadata.HasNavigationProperty(entitySet.ActualName, item.Key))
+            else if (entitySet.Schema.Provider.GetMetadata().HasNavigationProperty(entitySet.ActualName, item.Key))
             {
-                if (entitySet.Schema.ProviderMetadata.IsNavigationPropertyMultiple(entitySet.ActualName, item.Key))
+                if (entitySet.Schema.Provider.GetMetadata().IsNavigationPropertyMultiple(entitySet.ActualName, item.Key))
                 {
                     var collection = item.Value as IEnumerable<object>;
                     if (collection != null)
@@ -202,7 +202,7 @@ namespace Simple.OData.Client
         private bool CheckMergeConditions(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
         {
             var table = _schema.FindConcreteEntitySet(collection);
-            return table.Schema.ProviderMetadata.GetStructuralPropertyNames(table.ActualName)
+            return table.Schema.Provider.GetMetadata().GetStructuralPropertyNames(table.ActualName)
                 .Any(x => !entryData.ContainsKey(x));
         }
 

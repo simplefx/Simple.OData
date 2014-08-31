@@ -24,7 +24,7 @@ namespace Simple.OData.Client
                 {
                     { 
                         columnName, 
-                        ParseValue(keyValues, _entitySet.Schema.ProviderMetadata.GetStructuralPropertyType(_entitySet.ActualName, columnName)) 
+                        ParseValue(keyValues, _entitySet.Schema.Provider.GetMetadata().GetStructuralPropertyType(_entitySet.ActualName, columnName)) 
                     }
                 };
             }
@@ -37,8 +37,8 @@ namespace Simple.OData.Client
                     var pair = kv.Split('=');
                     var columnName = pair.First();
                     dict.Add(
-                        columnName, 
-                        ParseValue(pair.Last(), _entitySet.Schema.ProviderMetadata.GetStructuralPropertyType(_entitySet.ActualName, columnName)));
+                        columnName,
+                        ParseValue(pair.Last(), _entitySet.Schema.Provider.GetMetadata().GetStructuralPropertyType(_entitySet.ActualName, columnName)));
                 }
                 return dict;
             }

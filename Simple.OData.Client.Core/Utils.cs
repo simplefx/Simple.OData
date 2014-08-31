@@ -14,19 +14,23 @@ namespace Simple.OData.Client
     {
         public static string StreamToString(Stream stream)
         {
-            string result;
-
-            using (var reader = new StreamReader(stream))
+            stream.Position = 0;
+            using (var reader = new StreamReader(stream, Encoding.UTF8))
             {
-                result = reader.ReadToEnd();
+                return reader.ReadToEnd();
             }
-
-            return result;
         }
 
         public static Stream StringToStream(string str)
         {
             return new MemoryStream(Encoding.UTF8.GetBytes(str));
+        }
+
+        public static bool NamesAreEqual(string actualName, string requestedName)
+        {
+            return actualName.Homogenize() == requestedName.Homogenize()
+                   || actualName.Homogenize() == requestedName.Singularize().Homogenize()
+                   || actualName.Homogenize() == requestedName.Pluralize().Homogenize();
         }
 
         public static T CastExpressionWithTypeCheck<T>(Expression expression) where T : Expression

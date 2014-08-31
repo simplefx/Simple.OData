@@ -12,261 +12,60 @@ using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
-    class ProviderMetadataV4 : ProviderMetadata
+    class ODataProviderV4 : ODataProvider
     {
+        private readonly string _urlBase;
+
         public new IEdmModel Model
         {
             get { return base.Model as IEdmModel; }
             set { base.Model = value; }
         }
 
-        public override IEnumerable<string> GetEntitySetNames()
+        public ODataProviderV4(string urlBase)
         {
-            return GetEntitySets().Select(x => x.Name);
+            _urlBase = urlBase;
         }
 
-        public override string GetEntitySetExactName(string entitySetName)
+        public ODataProviderV4(string urlBase, string protocolVersion, HttpResponseMessage response)
         {
-            return GetEntitySet(entitySetName).Name;
-        }
+            _urlBase = urlBase;
+            ProtocolVersion = protocolVersion;
 
-        public override string GetEntitySetTypeName(string entitySetName)
-        {
-            return GetEntityType(entitySetName).Name;
-        }
-
-        public override string GetEntitySetTypeNamespace(string entitySetName)
-        {
-            return GetEntityType(entitySetName).Namespace;
-        }
-
-        public override bool EntitySetTypeRequiresOptimisticConcurrencyCheck(string entitySetName)
-        {
-            return GetEntityType(entitySetName).StructuralProperties()
-                .Any(x => x.ConcurrencyMode == EdmConcurrencyMode.Fixed);
-        }
-
-        public override string GetDerivedEntityTypeExactName(string entitySetName, string entityTypeName)
-        {
-            var entitySet = GetEntitySet(entitySetName);
-            var entityType = (this.Model.FindDirectlyDerivedTypes(entitySet.EntityType())
-                .SingleOrDefault(x => NamesAreEqual((x as IEdmEntityType).Name, entityTypeName)) as IEdmEntityType);
-
-            if (entityType == null)
-                throw new UnresolvableObjectException(entityTypeName, string.Format("Entity type {0} not found", entityTypeName));
-
-            return entityType.Name;
-        }
-
-        public override IEnumerable<string> GetDerivedEntityTypeNames(string entitySetName)
-        {
-            var entitySet = GetEntitySet(entitySetName);
-            return this.Model.FindDirectlyDerivedTypes(entitySet.EntityType())
-                .Select(x => (x as IEdmEntityType).Name);
-        }
-
-        public override string GetEntityTypeExactName(string entityTypeName)
-        {
-            var entityType = GetEntityTypes().SingleOrDefault(x => NamesAreEqual(x.Name, entityTypeName));
-
-            if (entityType == null)
-                throw new UnresolvableObjectException(entityTypeName, string.Format("Entity type {0} not found", entityTypeName));
-
-            return entityType.Name;
-        }
-
-        public override IEnumerable<string> GetStructuralPropertyNames(string entitySetName)
-        {
-            return GetEntityType(entitySetName).StructuralProperties().Select(x => x.Name);
-        }
-
-        public override bool HasStructuralProperty(string entitySetName, string propertyName)
-        {
-            return GetEntityType(entitySetName).StructuralProperties().Any(x => NamesAreEqual(x.Name, propertyName));
-        }
-
-        public override string GetStructuralPropertyExactName(string entitySetName, string propertyName)
-        {
-            return GetStructuralProperty(entitySetName, propertyName).Name;
-        }
-
-        public override EdmPropertyType GetStructuralPropertyType(string entitySetName, string propertyName)
-        {
-            return EdmPropertyType.FromModel(GetStructuralProperty(entitySetName, propertyName).Type);
-        }
-
-        public override bool HasNavigationProperty(string entitySetName, string propertyName)
-        {
-            return GetEntityType(entitySetName).NavigationProperties().Any(x => NamesAreEqual(x.Name, propertyName));
-        }
-
-        public override string GetNavigationPropertyExactName(string entitySetName, string propertyName)
-        {
-            return GetNavigationProperty(entitySetName, propertyName).Name;
-        }
-
-        public override string GetNavigationPropertyPartnerName(string entitySetName, string propertyName)
-        {
-            return (GetNavigationProperty(entitySetName, propertyName).Partner.DeclaringType as IEdmEntityType).Name;
-        }
-
-        public override bool IsNavigationPropertyMultiple(string entitySetName, string propertyName)
-        {
-            return GetNavigationProperty(entitySetName, propertyName).Partner.TargetMultiplicity() == EdmMultiplicity.Many;
-        }
-
-        public override IEnumerable<string> GetDeclaredKeyPropertyNames(string entitySetName)
-        {
-            var entityType = GetEntityType(entitySetName);
-            while (entityType.DeclaredKey == null && entityType.BaseEntityType() != null)
+            using (var messageReader = new ODataMessageReader(new ODataV4ResponseMessage(response)))
             {
-                entityType = entityType.BaseEntityType();
+                Model = messageReader.ReadMetadataDocument();
             }
-
-            if (entityType.DeclaredKey == null)
-                return new string[] { };
-
-            return entityType.DeclaredKey.Select(x => x.Name);
         }
 
-        public override string GetFunctionExactName(string functionName)
+        public ODataProviderV4(string urlBase, string metadataString, string protocolVersion)
         {
-            var function = this.Model.SchemaElements
-                .Where(x => x.SchemaElementKind == EdmSchemaElementKind.EntityContainer)
-                .SelectMany(x => (x as IEdmEntityContainer).OperationImports()
-                    .Where(y => y.IsFunctionImport() && y.Name.Homogenize() == functionName.Homogenize()))
-                .SingleOrDefault();
+            _urlBase = urlBase;
+            ProtocolVersion = protocolVersion;
 
-            if (function == null)
-                throw new UnresolvableObjectException(functionName,
-                    string.Format("Function {0} not found", functionName));
-
-            return function.Name;
+            var reader = XmlReader.Create(new StringReader(metadataString));
+            reader.MoveToContent();
+            Model = EdmxReader.Parse(reader);
         }
 
-        public override string CreateEntry(string entityTypeNamespace, string entityTypeName,
-            IDictionary<string, object> row)
+        public override IMetadata GetMetadata()
         {
-            // TODO: check dispose
-            var message = new ODataV4RequestMessage(null, null);
-            var messageWriter = new ODataMessageWriter(message);
-            var entryWriter = messageWriter.CreateODataEntryWriter();
-            var entry = new Microsoft.Data.OData.ODataEntry();
-            // TODO
-            //entry.Properties = row.Select(x => new ODataProperty() { Name = x.Key, Value = x.Value });
-            //entryWriter.WriteStart(entry);
-            //entryWriter.WriteEnd();
-
-            var text = StreamToString(message.GetStream());
-            return text;
+            return new MetadataV4(Model);
         }
 
-        public override Func<HttpResponseMessage, IProviderResponseReader> GetResponseReaderFunc(bool includeResourceTypeInEntryProperties)
+        public override IResponseReader GetResponseReader()
         {
             throw new NotImplementedException();
         }
 
-        private IEnumerable<IEdmEntitySet> GetEntitySets()
+        public override IRequestWriter GetRequestWriter()
         {
-            return this.Model.SchemaElements
-                .Where(x => x.SchemaElementKind == EdmSchemaElementKind.EntityContainer)
-                .SelectMany(x => (x as IEdmEntityContainer).EntitySets());
+            throw new NotImplementedException();
         }
 
-        private IEdmEntitySet GetEntitySet(string entitySetName)
+        public EdmSchema CreateEdmSchema(ODataProvider provider)
         {
-            var entitySet = this.Model.SchemaElements
-                .Where(x => x.SchemaElementKind == EdmSchemaElementKind.EntityContainer)
-                .SelectMany(x => (x as IEdmEntityContainer).EntitySets())
-                .SingleOrDefault(x => NamesAreEqual(x.Name, entitySetName));
-
-            if (entitySet == null)
-                throw new UnresolvableObjectException(entitySetName, string.Format("Entity set {0} not found", entitySetName));
-
-            return entitySet;
-        }
-
-        private IEnumerable<IEdmEntityType> GetEntityTypes()
-        {
-            return this.Model.SchemaElements
-                .Where(x => x.SchemaElementKind == EdmSchemaElementKind.TypeDefinition && (x as IEdmType).TypeKind == EdmTypeKind.Entity)
-                .Select(x => x as IEdmEntityType);
-        }
-
-        private IEdmEntityType GetEntityType(string entitySetName)
-        {
-            var entitySet = GetEntitySets()
-                .SingleOrDefault(x => NamesAreEqual(x.Name, entitySetName));
-
-            if (entitySet == null)
-            {
-                var entityType = GetEntityTypes().SingleOrDefault(x => NamesAreEqual(x.Name, entitySetName));
-                if (entityType != null)
-                {
-                    var baseType = GetEntityTypes()
-                        .SingleOrDefault(x => this.Model.FindDirectlyDerivedTypes(x).Contains(entityType));
-                    if (baseType != null && GetEntitySets().SingleOrDefault(x => x.EntityType() == baseType) != null)
-                        return entityType;
-                }
-            }
-
-            if (entitySet == null)
-                throw new UnresolvableObjectException(entitySetName, string.Format("Entity set {0} not found", entitySetName));
-
-            return entitySet.EntityType();
-        }
-
-        private IEdmStructuralProperty GetStructuralProperty(string entitySetName, string propertyName)
-        {
-            var property = GetEntityType(entitySetName).StructuralProperties().SingleOrDefault(x => NamesAreEqual(x.Name, propertyName));
-
-            if (property == null)
-                throw new UnresolvableObjectException(propertyName, string.Format("Structural property {0} not found", propertyName));
-
-            return property;
-        }
-
-        private IEdmNavigationProperty GetNavigationProperty(string entitySetName, string propertyName)
-        {
-            var property = GetEntityType(entitySetName).NavigationProperties().SingleOrDefault(x => NamesAreEqual(x.Name, propertyName));
-
-            if (property == null)
-                throw new UnresolvableObjectException(propertyName, string.Format("Association {0} not found", propertyName));
-
-            return property;
-        }
-    }
-
-    class ODataProviderV4
-    {
-        public EdmSchema CreateEdmSchema(ProviderMetadata providerMetadata)
-        {
-            return new EdmSchema(new EdmModelParserV4(providerMetadata.Model as IEdmModel));
-        }
-
-        public ProviderMetadataV4 GetMetadata(HttpResponseMessage response, string protocolVersion)
-        {
-            using (var messageReader = new ODataMessageReader(new ODataV4ResponseMessage(response)))
-            {
-                var model = messageReader.ReadMetadataDocument();
-                return new ProviderMetadataV4()
-                {
-                    ProtocolVersion = protocolVersion,
-                    Model = model,
-                };
-            }
-        }
-
-        public ProviderMetadataV4 GetMetadata(string metadataString, string protocolVersion)
-        {
-            var reader = XmlReader.Create(new StringReader(metadataString));
-            reader.MoveToContent();
-            var model = EdmxReader.Parse(reader);
-            return new ProviderMetadataV4()
-                {
-                    ProtocolVersion = protocolVersion,
-                    Model = model,
-                };
+            return new EdmSchema(new EdmModelParserV4(provider.Model as IEdmModel));
         }
     }
 }

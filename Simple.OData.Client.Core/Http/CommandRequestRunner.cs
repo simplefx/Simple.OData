@@ -34,8 +34,8 @@ namespace Simple.OData.Client
                     }
                     else
                     {
-                        var responseReaderFunc = _schema.ProviderMetadata.GetResponseReaderFunc(_includeResourceTypeInEntryProperties);
-                        var odataResponse = await responseReaderFunc(response).GetResponseAsync();
+                        var responseReader = _schema.Provider.GetResponseReader();
+                        var odataResponse = await responseReader.GetResponseAsync(response, _includeResourceTypeInEntryProperties);
                         result = odataResponse.Entries ?? new [] {odataResponse.Entry};
                         //result = _responseReader.GetData(await response.Content.ReadAsStringAsync(), scalarResult);
                     }
@@ -65,8 +65,8 @@ namespace Simple.OData.Client
                     }
                     else
                     {
-                        var responseReaderFunc = _schema.ProviderMetadata.GetResponseReaderFunc(_includeResourceTypeInEntryProperties);
-                        var result = await responseReaderFunc(response).GetResponseAsync();
+                        var responseReader = _schema.Provider.GetResponseReader();
+                        var result = await responseReader.GetResponseAsync(response, _includeResourceTypeInEntryProperties);
                         return Tuple.Create(result.Entries, (int)result.TotalCount.GetValueOrDefault());
                         //result = _responseReader.GetData(await response.Content.ReadAsStringAsync(), out totalCount);
                     }
@@ -92,8 +92,8 @@ namespace Simple.OData.Client
             {
                 using (var response = await ExecuteRequestAsync(request, cancellationToken))
                 {
-                    var responseReaderFunc = _schema.ProviderMetadata.GetResponseReaderFunc(_includeResourceTypeInEntryProperties);
-                    return (await responseReaderFunc(response).GetResponseAsync()).Entry;
+                    var responseReader = _schema.Provider.GetResponseReader();
+                    return (await responseReader.GetResponseAsync(response, _includeResourceTypeInEntryProperties)).Entry;
                     //var text = await response.Content.ReadAsStringAsync();
                     //return _responseReader.GetData(text).First();
                 }
@@ -114,8 +114,8 @@ namespace Simple.OData.Client
                 var text = await response.Content.ReadAsStringAsync();
                 if (request.ReturnContent && response.StatusCode == HttpStatusCode.Created)
                 {
-                    var responseReaderFunc = _schema.ProviderMetadata.GetResponseReaderFunc(_includeResourceTypeInEntryProperties);
-                    return (await responseReaderFunc(response).GetResponseAsync()).Entry;
+                    var responseReader = _schema.Provider.GetResponseReader();
+                    return (await responseReader.GetResponseAsync(response, _includeResourceTypeInEntryProperties)).Entry;
                     //return _responseReader.GetData(text).First();
                 }
                 else
@@ -132,8 +132,8 @@ namespace Simple.OData.Client
                 var text = await response.Content.ReadAsStringAsync();
                 if (request.ReturnContent && response.StatusCode == HttpStatusCode.OK)
                 {
-                    var responseReaderFunc = _schema.ProviderMetadata.GetResponseReaderFunc(_includeResourceTypeInEntryProperties);
-                    return (await responseReaderFunc(response).GetResponseAsync()).Entry;
+                    var responseReader = _schema.Provider.GetResponseReader();
+                    return (await responseReader.GetResponseAsync(response, _includeResourceTypeInEntryProperties)).Entry;
                     //return _responseReader.GetData(text).First();
                 }
                 else
@@ -159,8 +159,8 @@ namespace Simple.OData.Client
                 {
                     case HttpStatusCode.OK:
                     case HttpStatusCode.Created:
-                        var responseReaderFunc = _schema.ProviderMetadata.GetResponseReaderFunc(_includeResourceTypeInEntryProperties);
-                        var odataResponse = await responseReaderFunc(response).GetResponseAsync();
+                        var responseReader = _schema.Provider.GetResponseReader();
+                        var odataResponse = await responseReader.GetResponseAsync(response, _includeResourceTypeInEntryProperties);
                         return odataResponse.Entries ?? new [] {odataResponse.Entry};
                         //result = _responseReader.GetFunctionResult(await response.Content.ReadAsStreamAsync());
                         break;
