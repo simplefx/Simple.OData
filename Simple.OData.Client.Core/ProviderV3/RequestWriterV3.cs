@@ -38,22 +38,25 @@ namespace Simple.OData.Client
             
             entryWriter.WriteStart(entry);
 
-            foreach (var association in associationsByValue)
+            if (associationsByValue != null)
             {
-                if (association.Value == null)
-                    continue;
-
-                var property = (_model.FindDeclaredType(entry.TypeName) as IEdmEntityType).NavigationProperties()
-                    .Single(x => Utils.NamesAreEqual(x.Name, association.Key));
-                var link = new ODataNavigationLink()
+                foreach (var association in associationsByValue)
                 {
-                    Name = association.Key,
-                    IsCollection = property.Partner.Multiplicity() == EdmMultiplicity.Many,
-                    Url = new Uri("", UriKind.Relative),
-                };
+                    if (association.Value == null)
+                        continue;
 
-                entryWriter.WriteStart(link);
-                entryWriter.WriteEnd();
+                    var property = (_model.FindDeclaredType(entry.TypeName) as IEdmEntityType).NavigationProperties()
+                        .Single(x => Utils.NamesAreEqual(x.Name, association.Key));
+                    var link = new ODataNavigationLink()
+                    {
+                        Name = association.Key,
+                        IsCollection = property.Partner.Multiplicity() == EdmMultiplicity.Many,
+                        Url = new Uri("", UriKind.Relative),
+                    };
+
+                    entryWriter.WriteStart(link);
+                    entryWriter.WriteEnd();
+                }
             }
 
             entryWriter.WriteEnd();

@@ -21,7 +21,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task GetSingleProduct()
         {
-            var response = SetUpMock("SingleProduct.xml");
+            var response = SetUpResourceMock("SingleProduct.xml");
             var responseReader = new ResponseReaderV3(await _client.GetMetadataAsync<IEdmModel>());
             var result = (await responseReader.GetResponseAsync(response)).Entry;
             Assert.Equal(productProperties, result.Count);
@@ -30,7 +30,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task GetMultipleProducts()
         {
-            var response = SetUpMock("MultipleProducts.xml");
+            var response = SetUpResourceMock("MultipleProducts.xml");
             var responseReader = new ResponseReaderV3(await _client.GetMetadataAsync<IEdmModel>());
             var result = (await responseReader.GetResponseAsync(response)).Entries;
             Assert.Equal(20, result.Count());
@@ -40,7 +40,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task GetSingleProductWithCategory()
         {
-            var response = SetUpMock("SingleProductWithCategory.xml");
+            var response = SetUpResourceMock("SingleProductWithCategory.xml");
             var responseReader = new ResponseReaderV3(await _client.GetMetadataAsync<IEdmModel>());
             var result = (await responseReader.GetResponseAsync(response)).Entry;
             Assert.Equal(productProperties + 1, result.Count);
@@ -50,7 +50,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task GetMultipleProductsWithCategory()
         {
-            var response = SetUpMock("MultipleProductsWithCategory.xml");
+            var response = SetUpResourceMock("MultipleProductsWithCategory.xml");
             var responseReader = new ResponseReaderV3(await _client.GetMetadataAsync<IEdmModel>());
             var result = (await responseReader.GetResponseAsync(response)).Entries;
             Assert.Equal(20, result.Count());
@@ -61,7 +61,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task GetSingleCategoryWithProducts()
         {
-            var response = SetUpMock("SingleCategoryWithProducts.xml");
+            var response = SetUpResourceMock("SingleCategoryWithProducts.xml");
             var responseReader = new ResponseReaderV3(await _client.GetMetadataAsync<IEdmModel>());
             var result = (await responseReader.GetResponseAsync(response)).Entry;
             Assert.Equal(categoryProperties + 1, result.Count);
@@ -72,7 +72,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task GetMultipleCategoriesWithProducts()
         {
-            var response = SetUpMock("MultipleCategoriesWithProducts.xml");
+            var response = SetUpResourceMock("MultipleCategoriesWithProducts.xml");
             var responseReader = new ResponseReaderV3(await _client.GetMetadataAsync<IEdmModel>());
             var result = (await responseReader.GetResponseAsync(response)).Entries;
             Assert.Equal(8, result.Count());
@@ -84,7 +84,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task GetSingleProductWithComplexProperty()
         {
-            var response = SetUpMock("SingleProductWithComplexProperty.xml");
+            var response = SetUpResourceMock("SingleProductWithComplexProperty.xml");
             var responseReader = new ResponseReaderV3(null);
             var result = (await responseReader.GetResponseAsync(response)).Entry;
             Assert.Equal(productProperties + 1, result.Count);
@@ -97,7 +97,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task GetSingleProductWithCollectionOfPrimitiveProperties()
         {
-            var response = SetUpMock("SingleProductWithCollectionOfPrimitiveProperties.xml");
+            var response = SetUpResourceMock("SingleProductWithCollectionOfPrimitiveProperties.xml");
             var responseReader = new ResponseReaderV3(null);
             var result = (await responseReader.GetResponseAsync(response)).Entry;
             Assert.Equal(productProperties + 2, result.Count);
@@ -114,7 +114,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task GetSingleProductWithCollectionOfComplexProperties()
         {
-            var response = SetUpMock("SingleProductWithCollectionOfComplexProperties.xml");
+            var response = SetUpResourceMock("SingleProductWithCollectionOfComplexProperties.xml");
             var responseReader = new ResponseReaderV3(null);
             var result = (await responseReader.GetResponseAsync(response)).Entry;
             Assert.Equal(productProperties + 1, result.Count);
@@ -129,7 +129,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task GetSingleProductWithEmptyCollectionOfComplexProperties()
         {
-            var response = SetUpMock("SingleProductWithEmptyCollectionOfComplexProperties.xml");
+            var response = SetUpResourceMock("SingleProductWithEmptyCollectionOfComplexProperties.xml");
             var responseReader = new ResponseReaderV3(null);
             var result = (await responseReader.GetResponseAsync(response)).Entry;
             Assert.Equal(productProperties + 1, result.Count);
@@ -141,7 +141,7 @@ namespace Simple.OData.Client.Tests
         //[Fact]
         //public async Task GetSingleCustomerWithAddress()
         //{
-        //    var response = SetUpMock("SingleCustomerWithAddress.xml");
+        //    var response = SetUpResourceMock("SingleCustomerWithAddress.xml");
         //    var responseReader = new ResponseReaderV3(await _client.GetMetadataAsync<IEdmModel>());
         //    var result = (await responseReader.GetResponseAsync(response)).Entry;
         //    Assert.Equal(3, result.Count);
@@ -152,7 +152,7 @@ namespace Simple.OData.Client.Tests
         //[Fact]
         //public async Task GetNorthwindSchemaTableAssociations()
         //{
-        //    var response = SetUpMock("Northwind.edmx");
+        //    var response = SetUpResourceMock("Northwind.edmx");
         //    var schema = Schema.FromMetadata(document);
         //    var EntitySet = schema.FindEntitySet("Product");
         //    //var association = EntitySet.FindAssociation("OrderDetails");
@@ -162,7 +162,7 @@ namespace Simple.OData.Client.Tests
         //[Fact]
         //public async Task GetArtifactsSchemaTableAssociations()
         //{
-        //    var response = SetUpMock("Artifacts.edmx");
+        //    var response = SetUpResourceMock("Artifacts.edmx");
         //    var schema = Schema.FromMetadata(document);
         //    var EntitySet = schema.FindEntitySet("Product");
         //    //var association = EntitySet.FindAssociation("Artifacts");
@@ -221,17 +221,6 @@ namespace Simple.OData.Client.Tests
         public async Task GetArrayOfNestedSchema()
         {
             ParseSchema("ArrayOfNested");
-        }
-
-        private IODataResponseMessageAsync SetUpMock(string resourceName)
-        {
-            var document = GetResourceAsString(resourceName);
-            var mock = new Mock<IODataResponseMessageAsync>();
-            mock.Setup(x => x.GetStreamAsync()).ReturnsAsync(new MemoryStream(Encoding.UTF8.GetBytes(document)));
-            mock.Setup(x => x.GetStream()).Returns(new MemoryStream(Encoding.UTF8.GetBytes(document)));
-            mock.Setup(x => x.GetHeader("Content-Type")).Returns(() => "application/atom+xml; type=feed; charset=utf-8");
-            var response = mock.Object;
-            return response;
         }
 
         private void ParseSchema(string schemaName)

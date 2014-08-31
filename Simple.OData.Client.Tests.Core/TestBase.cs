@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
+using Microsoft.Data.OData;
+using Moq;
 
 #pragma warning disable 3008
 
@@ -47,6 +50,17 @@ namespace Simple.OData.Client.Tests
                 TextReader reader = new StreamReader(resourceStream);
                 return reader.ReadToEnd();
             }
+        }
+
+        public IODataResponseMessageAsync SetUpResourceMock(string resourceName)
+        {
+            var document = GetResourceAsString(resourceName);
+            var mock = new Mock<IODataResponseMessageAsync>();
+            mock.Setup(x => x.GetStreamAsync()).ReturnsAsync(new MemoryStream(Encoding.UTF8.GetBytes(document)));
+            mock.Setup(x => x.GetStream()).Returns(new MemoryStream(Encoding.UTF8.GetBytes(document)));
+            mock.Setup(x => x.GetHeader("Content-Type")).Returns(() => "application/atom+xml; type=feed; charset=utf-8");
+            var response = mock.Object;
+            return response;
         }
     }
 }
