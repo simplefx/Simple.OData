@@ -59,8 +59,8 @@ namespace Simple.OData.Client
 
         public CommandContent CreateEntry(string entityTypeNamespace, string entityTypeName,
             IDictionary<string, object> properties, 
-            IDictionary<string, object> associationsByValue,
-            IDictionary<string, int> associationsByContentId)
+            IEnumerable<KeyValuePair<string, object>> associationsByValue,
+            IEnumerable<KeyValuePair<string, int>> associationsByContentId)
         {
             var entry = _schema.Provider.GetRequestWriter().CreateEntry(
                 entityTypeNamespace, entityTypeName, 

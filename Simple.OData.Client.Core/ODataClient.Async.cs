@@ -430,8 +430,8 @@ namespace Simple.OData.Client
                 _schema.Provider.GetMetadata().GetEntitySetTypeNamespace(collection),
                 _schema.Provider.GetMetadata().GetEntitySetTypeName(collection),
                 entryMembers.Properties,
-                entryMembers.AssociationsByValue.ToDictionary(x => x.Key, x => x.Value),
-                entryMembers.AssociationsByContentId.ToDictionary(x => x.Key, x => x.Value));
+                entryMembers.AssociationsByValue,
+                entryMembers.AssociationsByContentId);
 
             var command = commandWriter.CreateUpdateCommand(commandText, entryData, entryContent, merge);
             var request = _requestBuilder.CreateRequest(command, resultRequired,

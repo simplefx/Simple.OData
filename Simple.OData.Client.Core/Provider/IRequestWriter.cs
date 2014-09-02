@@ -6,7 +6,7 @@ namespace Simple.OData.Client
     {
         string CreateEntry(string entityTypeNamespace, string entityTypeName, 
             IDictionary<string, object> properties,
-            IDictionary<string, object> associationsByValue,
-            IDictionary<string, int> associationsByContentId);
+            IEnumerable<KeyValuePair<string, object>> associationsByValue,
+            IEnumerable<KeyValuePair<string, int>> associationsByContentId);
     }
 }
