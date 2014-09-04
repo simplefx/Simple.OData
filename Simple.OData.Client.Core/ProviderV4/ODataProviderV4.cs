@@ -62,10 +62,5 @@ namespace Simple.OData.Client
         {
             throw new NotImplementedException();
         }
-
-        //public EdmSchema CreateEdmSchema(ODataProvider provider)
-        //{
-        //    return new EdmSchema(new EdmModelParserV4(provider.Model as IEdmModel));
-        //}
     }
 }

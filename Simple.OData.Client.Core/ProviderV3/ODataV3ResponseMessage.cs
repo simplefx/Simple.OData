@@ -8,7 +8,11 @@ using Microsoft.Data.OData;
 
 namespace Simple.OData.Client
 {
+#if SILVERLIGHT
+    class ODataV3ResponseMessage : IODataResponseMessage
+#else
     class ODataV3ResponseMessage : IODataResponseMessageAsync
+#endif
     {
         private readonly HttpResponseMessage _response;
 

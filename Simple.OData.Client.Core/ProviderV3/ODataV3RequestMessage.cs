@@ -9,7 +9,11 @@ using Microsoft.Data.OData;
 
 namespace Simple.OData.Client
 {
+#if SILVERLIGHT
+    class ODataV3RequestMessage : IODataRequestMessage, IDisposable
+#else
     class ODataV3RequestMessage : IODataRequestMessageAsync, IDisposable
+#endif
     {
         private bool _disposed = false;
         private MemoryStream _requestStream;
