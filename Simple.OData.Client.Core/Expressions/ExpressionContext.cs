@@ -4,7 +4,7 @@
     {
         private EntitySet _entitySet;
 
-        public Schema Schema { get; set; }
+        public Session Session { get; set; }
         public EntitySet EntitySet
         {
             get
@@ -14,7 +14,7 @@
                 if (_entitySet != null)
                     return _entitySet;
 
-                return this.Schema.FindConcreteEntitySet(this.Collection);
+                return this.Session.FindConcreteEntitySet(this.Collection);
             }
 
             set 
@@ -26,7 +26,7 @@
 
         public bool IsSet
         {
-            get { return this.Schema != null && (this._entitySet != null || !string.IsNullOrEmpty(this.Collection)); }
+            get { return this.Session != null && (this._entitySet != null || !string.IsNullOrEmpty(this.Collection)); }
         }
     }
 }

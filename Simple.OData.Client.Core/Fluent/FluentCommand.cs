@@ -18,7 +18,7 @@ namespace Simple.OData.Client
 
     public class FluentCommand
     {
-        private readonly Schema _schema;
+        private readonly Session _session;
         private readonly FluentCommand _parent;
         private string _collectionName;
         private ODataExpression _collectionExpression;
@@ -55,15 +55,15 @@ namespace Simple.OData.Client
         internal static readonly string ResultLiteral = "__result";
         internal static readonly string ResourceTypeLiteral = "__resourcetype";
 
-        internal FluentCommand(Schema schema, FluentCommand parent)
+        internal FluentCommand(Session session, FluentCommand parent)
         {
-            _schema = schema;
+            _session = session;
             _parent = parent;
         }
 
         internal FluentCommand(FluentCommand ancestor)
         {
-            _schema = ancestor._schema;
+            _session = ancestor._session;
             _parent = ancestor._parent;
             _collectionName = ancestor._collectionName;
             _collectionExpression = ancestor._collectionExpression;
@@ -107,7 +107,7 @@ namespace Simple.OData.Client
                 _namedKeyValues = TryInterpretFilterExpressionAsKey(_filterExpression);
                 if (_namedKeyValues == null)
                 {
-                    _filter = _filterExpression.Format(_schema, this.EntitySet);
+                    _filter = _filterExpression.Format(_session, this.EntitySet);
                 }
                 else
                 {
@@ -131,7 +131,7 @@ namespace Simple.OData.Client
             {
                 if (!string.IsNullOrEmpty(_collectionName))
                 {
-                    var entitySet = _schema.FindEntitySet(_collectionName);
+                    var entitySet = _session.FindEntitySet(_collectionName);
                     return string.IsNullOrEmpty(_derivedCollectionName)
                                ? entitySet
                                : entitySet.FindDerivedEntitySet(_derivedCollectionName);
@@ -139,7 +139,7 @@ namespace Simple.OData.Client
                 else if (!string.IsNullOrEmpty(_linkName))
                 {
                     var parent = new FluentCommand(_parent).Resolve();
-                    return _schema.FindEntitySet(_schema.Provider.GetMetadata()
+                    return _session.FindEntitySet(_session.Provider.GetMetadata()
                         .GetNavigationPropertyPartnerName(parent.EntitySet.ActualName, _linkName));
                 }
                 else
@@ -151,13 +151,13 @@ namespace Simple.OData.Client
 
         public async Task<string> GetCommandTextAsync()
         {
-            await _schema.ResolveAsync(CancellationToken.None);
+            await _session.ResolveAsync(CancellationToken.None);
             return new FluentCommand(this).Resolve().Format();
         }
 
         public async Task<string> GetCommandTextAsync(CancellationToken cancellationToken)
         {
-            await _schema.ResolveAsync(cancellationToken);
+            await _session.ResolveAsync(cancellationToken);
             return new FluentCommand(this).Resolve().Format();
         }
 
@@ -450,23 +450,23 @@ namespace Simple.OData.Client
             string commandText = string.Empty;
             if (!string.IsNullOrEmpty(_collectionName))
             {
-                var entitySetName = _schema.Provider.GetMetadata().GetEntitySetExactName(_collectionName);
-                var entityTypeNamespace = _schema.Provider.GetMetadata().GetEntitySetTypeNamespace(_collectionName);
+                var entitySetName = _session.Provider.GetMetadata().GetEntitySetExactName(_collectionName);
+                var entityTypeNamespace = _session.Provider.GetMetadata().GetEntitySetTypeNamespace(_collectionName);
                 commandText += entitySetName;
                 if (!string.IsNullOrEmpty(_derivedCollectionName))
                     commandText += "/" + string.Join(".",
                         entityTypeNamespace,
-                        _schema.Provider.GetMetadata().GetEntityTypeExactName(_derivedCollectionName));
+                        _session.Provider.GetMetadata().GetEntityTypeExactName(_derivedCollectionName));
             }
             else if (!string.IsNullOrEmpty(_linkName))
             {
                 var parent = new FluentCommand(_parent).Resolve();
                 commandText += parent.Format() + "/";
-                commandText += _schema.Provider.GetMetadata().GetNavigationPropertyExactName(parent.EntitySet.ActualName, _linkName);
+                commandText += _session.Provider.GetMetadata().GetNavigationPropertyExactName(parent.EntitySet.ActualName, _linkName);
             }
             else if (!string.IsNullOrEmpty(_functionName))
             {
-                commandText += _schema.Provider.GetMetadata().GetFunctionExactName(_functionName);
+                commandText += _session.Provider.GetMetadata().GetFunctionExactName(_functionName);
             }
 
             if (HasKey && HasFilter)
@@ -529,22 +529,22 @@ namespace Simple.OData.Client
             var table = this.EntitySet;
             foreach (var associationName in items)
             {
-                names.Add(table.Schema.Provider.GetMetadata().GetNavigationPropertyExactName(table.ActualName, associationName));
-                table = _schema.FindEntitySet(table.Schema.Provider.GetMetadata().GetNavigationPropertyPartnerName(table.ActualName, associationName));
+                names.Add(table.Session.Provider.GetMetadata().GetNavigationPropertyExactName(table.ActualName, associationName));
+                table = _session.FindEntitySet(table.Session.Provider.GetMetadata().GetNavigationPropertyPartnerName(table.ActualName, associationName));
             }
             return string.Join("/", names);
         }
 
         private string FormatSelectItem(string item)
         {
-            return this.EntitySet.Schema.Provider.GetMetadata().HasStructuralProperty(this.EntitySet.ActualName, item)
-                ? this.EntitySet.Schema.Provider.GetMetadata().GetStructuralPropertyExactName(this.EntitySet.ActualName, item)
-                : this.EntitySet.Schema.Provider.GetMetadata().GetNavigationPropertyExactName(this.EntitySet.ActualName, item);
+            return this.EntitySet.Session.Provider.GetMetadata().HasStructuralProperty(this.EntitySet.ActualName, item)
+                ? this.EntitySet.Session.Provider.GetMetadata().GetStructuralPropertyExactName(this.EntitySet.ActualName, item)
+                : this.EntitySet.Session.Provider.GetMetadata().GetNavigationPropertyExactName(this.EntitySet.ActualName, item);
         }
 
         private string FormatOrderByItem(KeyValuePair<string, bool> item)
         {
-            return this.EntitySet.Schema.Provider.GetMetadata().GetStructuralPropertyExactName(this.EntitySet.ActualName, item.Key) + (item.Value ? " desc" : string.Empty);
+            return this.EntitySet.Session.Provider.GetMetadata().GetStructuralPropertyExactName(this.EntitySet.ActualName, item.Key) + (item.Value ? " desc" : string.Empty);
         }
 
         private string FormatKey()

@@ -17,7 +17,6 @@ namespace Simple.OData.Client
         IEnumerable<string> GetStructuralPropertyNames(string entitySetName);
         bool HasStructuralProperty(string entitySetName, string propertyName);
         string GetStructuralPropertyExactName(string entitySetName, string propertyName);
-        EdmPropertyType GetStructuralPropertyType(string entitySetName, string propertyName);
         IEnumerable<string> GetDeclaredKeyPropertyNames(string entitySetName);
 
         bool HasNavigationProperty(string entitySetName, string propertyName);

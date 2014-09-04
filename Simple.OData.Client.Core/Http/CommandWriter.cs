@@ -8,11 +8,11 @@ namespace Simple.OData.Client
 {
     class CommandWriter
     {
-        private readonly Schema _schema;
+        private readonly Session _session;
 
-        public CommandWriter(Schema schema)
+        public CommandWriter(Session session)
         {
-            _schema = schema;
+            _session = session;
         }
 
         public HttpCommand CreateGetCommand(string commandText, bool scalarResult = false)
@@ -43,7 +43,7 @@ namespace Simple.OData.Client
         public HttpCommand CreateLinkCommand(string collection, string associationName, string entryPath, string linkPath)
         {
             var linkEntry = CreateLinkElement(linkPath);
-            var linkMethod = _schema.Provider.GetMetadata().IsNavigationPropertyMultiple(collection, associationName) ?
+            var linkMethod = _session.Provider.GetMetadata().IsNavigationPropertyMultiple(collection, associationName) ?
                 RestVerbs.POST :
                 RestVerbs.PUT;
 
@@ -62,7 +62,7 @@ namespace Simple.OData.Client
             IEnumerable<KeyValuePair<string, object>> associationsByValue,
             IEnumerable<KeyValuePair<string, int>> associationsByContentId)
         {
-            var entry = _schema.Provider.GetRequestWriter().CreateEntry(
+            var entry = _session.Provider.GetRequestWriter().CreateEntry(
                 entityTypeNamespace, entityTypeName, 
                 properties, 
                 associationsByValue, 
@@ -72,7 +72,7 @@ namespace Simple.OData.Client
             //var resourceName = GetQualifiedResourceName(entityTypeNamespace, entityTypeName);
             //entry.Element(null, "category").SetAttributeValue("term", resourceName);
 
-            //EdmTypeSerializer.Write(_schema, entityTypeName, entry.Element(null, "content").Element("m", "properties"), row);
+            //EdmTypeSerializer.Write(_session, entityTypeName, entry.Element(null, "content").Element("m", "properties"), row);
 
             return new CommandContent(entry);
         }
@@ -83,14 +83,14 @@ namespace Simple.OData.Client
         //        return;
 
         //    var associatedKeyValues = GetLinkedEntryKeyValues(
-        //        _schema.ProviderMetadata.GetNavigationPropertyPartnerName(collection, associatedData.Key), 
+        //        _session.ProviderMetadata.GetNavigationPropertyPartnerName(collection, associatedData.Key), 
         //        associatedData);
         //    if (associatedKeyValues != null)
         //    {
         //        throw new NotImplementedException();
         //        //AddDataLink(content.Entry,
-        //        //    _schema.ProviderMetadata.GetNavigationPropertyExactName(collection, associatedData.Key),
-        //        //    _schema.ProviderMetadata.GetNavigationPropertyPartnerName(collection, associatedData.Key), 
+        //        //    _session.ProviderMetadata.GetNavigationPropertyExactName(collection, associatedData.Key),
+        //        //    _session.ProviderMetadata.GetNavigationPropertyPartnerName(collection, associatedData.Key), 
         //        //    associatedKeyValues);
         //    }
         //}
@@ -129,7 +129,7 @@ namespace Simple.OData.Client
         private IEnumerable<object> GetLinkedEntryKeyValues(string collection, KeyValuePair<string, object> entryData)
         {
             var entryProperties = GetLinkedEntryProperties(entryData.Value);
-            var associatedKeyNames = _schema.FindConcreteEntitySet(collection).GetKeyNames();
+            var associatedKeyNames = _session.FindConcreteEntitySet(collection).GetKeyNames();
             var associatedKeyValues = new object[associatedKeyNames.Count()];
             for (int index = 0; index < associatedKeyNames.Count(); index++)
             {

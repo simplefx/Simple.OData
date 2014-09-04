@@ -25,34 +25,6 @@ namespace Simple.OData.Client
             _credentials = credentials;
         }
 
-        public Task<string> GetSchemaAsStringAsync()
-        {
-            return GetSchemaAsStringAsync(CancellationToken.None);
-        }
-
-        public async Task<string> GetSchemaAsStringAsync(CancellationToken cancellationToken)
-        {
-            using (var response = await SendSchemaRequestAsync(cancellationToken))
-            {
-                return await response.Content.ReadAsStringAsync();
-            }
-        }
-
-        public async Task<string> GetSchemaAsStringAsync(HttpResponseMessage response)
-        {
-            return await response.Content.ReadAsStringAsync();
-        }
-
-        public async Task<EdmSchema> GetSchemaAsync(ODataProvider provider)
-        {
-            if (provider is ODataProviderV3)
-                return new ODataProviderV3(_urlBase).CreateEdmSchema(provider);
-            if (provider is ODataProviderV4)
-                return new ODataProviderV4(_urlBase).CreateEdmSchema(provider);
-
-            throw new ArgumentException(string.Format("Provider medata of type {0} is not supported", provider.GetType()), "providerMetadata");
-        }
-
         public async Task<ODataProvider> GetMetadataAsync(HttpResponseMessage response)
         {
             var protocolVersions = GetSupportedProtocolVersions(response).ToArray();
@@ -63,6 +35,24 @@ namespace Simple.OData.Client
                 return new ODataProviderV3(_urlBase, protocolVersions.First(), response);
 
             throw new NotSupportedException(string.Format("OData protocol {0} is not supported", protocolVersions));
+        }
+
+        public Task<string> GetMetadataAsStringAsync()
+        {
+            return GetMetadataAsStringAsync(CancellationToken.None);
+        }
+
+        public async Task<string> GetMetadataAsStringAsync(CancellationToken cancellationToken)
+        {
+            using (var response = await SendSchemaRequestAsync(cancellationToken))
+            {
+                return await response.Content.ReadAsStringAsync();
+            }
+        }
+
+        public async Task<string> GetMetadataAsStringAsync(HttpResponseMessage response)
+        {
+            return await response.Content.ReadAsStringAsync();
         }
 
         public ODataProvider ParseMetadata(string metadataString)

@@ -84,11 +84,6 @@ namespace Simple.OData.Client
             return GetStructuralProperty(entitySetName, propertyName).Name;
         }
 
-        public EdmPropertyType GetStructuralPropertyType(string entitySetName, string propertyName)
-        {
-            return EdmPropertyType.FromModel(GetStructuralProperty(entitySetName, propertyName).Type);
-        }
-
         public bool HasNavigationProperty(string entitySetName, string propertyName)
         {
             return GetEntityType(entitySetName).NavigationProperties().Any(x => Utils.NamesAreEqual(x.Name, propertyName));

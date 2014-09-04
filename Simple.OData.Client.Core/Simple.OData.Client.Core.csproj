@@ -45,12 +45,6 @@
       <Link>Properties\CommonAssemblyVersion.cs</Link>
     </Compile>
     <Compile Include="CommandContent.cs" />
-    <Compile Include="Edm\EdmPropertyType.V3.cs" />
-    <Compile Include="Edm\EdmPropertyType.V4.cs" />
-    <Compile Include="Edm\EdmSchema.V3.cs" />
-    <Compile Include="Edm\EdmSchema.V4.cs" />
-    <Compile Include="Edm\EdmType.V3.cs" />
-    <Compile Include="Edm\EdmType.V4.cs" />
     <Compile Include="Extensions\MemberInfoExtensions.cs" />
     <Compile Include="Fluent\IFluentClient.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />
@@ -58,11 +52,6 @@
     <Compile Include="Http\BatchRequestRunner.cs" />
     <Compile Include="Http\CommandRequestBuilder.cs" />
     <Compile Include="Http\CommandRequestRunner.cs" />
-    <Compile Include="Edm\EdmPropertyType.cs" />
-    <Compile Include="Edm\EdmSchema.cs" />
-    <Compile Include="Edm\EdmSchemaParser.cs" />
-    <Compile Include="Edm\EdmType.cs" />
-    <Compile Include="Edm\EdmTypeSerializer.cs" />
     <Compile Include="EntryMembers.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Extensions\DecimalExtensions.cs" />
@@ -109,16 +98,13 @@
     <Compile Include="Fluent\FluentCommand.cs" />
     <Compile Include="ODataEntry.cs" />
     <Compile Include="ODataResponse.cs" />
-    <Compile Include="ProviderV3\EdmModelParserV3.cs" />
     <Compile Include="ProviderV3\ODataV3RequestMessage.cs" />
     <Compile Include="ProviderV3\ODataV3ResponseMessage.cs" />
     <Compile Include="ProviderV3\ODataProviderV3.cs" />
     <Compile Include="ProviderV3\ResponseReaderV3.cs" />
-    <Compile Include="ProviderV4\EdmModelParserV4.cs" />
     <Compile Include="ProviderV4\ODataV4RequestMessage.cs" />
     <Compile Include="ProviderV4\ODataV4ResponseMessage.cs" />
     <Compile Include="ProviderV4\ODataProviderV4.cs" />
-    <Compile Include="ResponseReader.cs" />
     <Compile Include="Http\CommandWriter.cs" />
     <Compile Include="Pluralizer.cs" />
     <Compile Include="Resources\Resources.cs" />
@@ -128,18 +114,16 @@
     <Compile Include="Http\RequestRunnerBase.cs" />
     <Compile Include="Http\RestVerbs.cs" />
     <Compile Include="Http\SchemaRequestRunner.cs" />
-    <Compile Include="Edm\IEdmModelParser.cs" />
     <Compile Include="Provider\ODataProvider.cs" />
-    <Compile Include="Schema\Schema.cs" />
+    <Compile Include="Session.cs" />
     <Compile Include="Provider\ProviderFactory.cs" />
-    <Compile Include="Schema\EntitySet.cs" />
+    <Compile Include="EntitySet.cs" />
     <Compile Include="SimpleDictionary.cs" />
     <Compile Include="SimplePluralizer.cs" />
     <Compile Include="UnresolvableObjectException.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="ValueFormatter.cs" />
     <Compile Include="Http\WebRequestException.cs" />
-    <Compile Include="ValueParser.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

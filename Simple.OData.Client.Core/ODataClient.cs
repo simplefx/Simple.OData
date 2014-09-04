@@ -10,7 +10,7 @@ namespace Simple.OData.Client
     public partial class ODataClient : IODataClient
     {
         private readonly ODataClientSettings _settings;
-        private readonly Schema _schema;
+        private readonly Session _session;
         private readonly RequestBuilder _requestBuilder;
         private readonly RequestRunner _requestRunner;
 
@@ -30,10 +30,10 @@ namespace Simple.OData.Client
         public ODataClient(ODataClientSettings settings)
         {
             _settings = settings;
-            _schema = Schema.FromUrl(_settings.UrlBase, _settings.Credentials);
+            _session = Session.FromUrl(_settings.UrlBase, _settings.Credentials);
 
             _requestBuilder = new CommandRequestBuilder(_settings.UrlBase, _settings.Credentials);
-            _requestRunner = new CommandRequestRunner(_schema, _settings);
+            _requestRunner = new CommandRequestRunner(_session, _settings);
             _requestRunner.BeforeRequest = _settings.BeforeRequest;
             _requestRunner.AfterResponse = _settings.AfterResponse;
         }
@@ -45,28 +45,28 @@ namespace Simple.OData.Client
         public ODataClient(ODataBatch batch)
         {
             _settings = batch.Settings;
-            _schema = Schema.FromUrl(_settings.UrlBase, _settings.Credentials);
+            _session = Session.FromUrl(_settings.UrlBase, _settings.Credentials);
 
             _requestBuilder = batch.RequestBuilder;
             _requestRunner = batch.RequestRunner;
         }
 
-        internal Schema Schema
+        internal Session Session
         {
-            get { return _schema; }
+            get { return _session; }
         }
 
         /// <summary>
-        /// Parses the OData service metadata schema string.
+        /// Parses the OData service metadata string.
         /// </summary>
         /// <typeparam name="T">OData protocol specific metadata interface</typeparam>
         /// <param name="metadataString">The metadata string.</param>
         /// <returns>
-        /// The schema.
+        /// The service metadata.
         /// </returns>
         public static T ParseMetadataString<T>(string metadataString)
         {
-            return (T)Client.Schema.FromMetadata("http://localhost/" + metadataString.GetHashCode() + "$metadata", metadataString).Provider.Model;
+            return (T)Client.Session.FromMetadata("http://localhost/" + metadataString.GetHashCode() + "$metadata", metadataString).Provider.Model;
         }
 
         /// <summary>
@@ -99,7 +99,7 @@ namespace Simple.OData.Client
         /// </returns>
         public IFluentClient<ODataEntry> For(ODataExpression expression)
         {
-            return new FluentClient<ODataEntry>(this, _schema).For(expression);
+            return new FluentClient<ODataEntry>(this, _session).For(expression);
         }
 
         /// <summary>
@@ -113,12 +113,12 @@ namespace Simple.OData.Client
         public IFluentClient<T> For<T>(string collectionName = null)
             where T : class
         {
-            return new FluentClient<T>(this, _schema).For(collectionName);
+            return new FluentClient<T>(this, _session).For(collectionName);
         }
 
         private FluentClient<IDictionary<string, object>> GetFluentClient()
         {
-            return new FluentClient<IDictionary<string, object>>(this, _schema);
+            return new FluentClient<IDictionary<string, object>>(this, _session);
         }
     }
 }

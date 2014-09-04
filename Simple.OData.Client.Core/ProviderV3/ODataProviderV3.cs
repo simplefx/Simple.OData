@@ -63,9 +63,9 @@ namespace Simple.OData.Client
             return new RequestWriterV3(_urlBase, Model);
         }
 
-        public EdmSchema CreateEdmSchema(ODataProvider providerMetadata)
-        {
-            return new EdmSchema(new EdmModelParserV3(providerMetadata.Model as IEdmModel));
-        }
+        //public EdmSchema CreateEdmSchema(ODataProvider providerMetadata)
+        //{
+        //    return new EdmSchema(new EdmModelParserV3(providerMetadata.Model as IEdmModel));
+        //}
     }
 }

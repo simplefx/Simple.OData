@@ -16,7 +16,7 @@ namespace Simple.OData.Client.Tests
         //{
         //    const string resourceName = "SingleCustomerWithAddress.xml";
         //    string xml = GetResourceAsString(resourceName);
-        //    var commandWriter = new CommandWriter((_client as ODataClient).GetSchemaAsync().Result);
+        //    var commandWriter = new CommandWriter((_client as ODataClient).GetSessionAsync().Result);
         //    var document = XDocument.Parse(xml).Root;
         //    var response = SetUpResourceMock(resourceName);
         //    var responseReader = new ResponseReaderV3(await _client.GetMetadataAsync<IEdmModel>());
@@ -41,7 +41,7 @@ namespace Simple.OData.Client.Tests
             var client = CreateClient("QAS.Multiplatform.Demo.edmx") as ODataClient;
             const string resourceName = "WorkTaskModel.xml";
             string xml = GetResourceAsString(resourceName);
-            var commandWriter = new CommandWriter(client.GetSchemaAsync().Result);
+            var commandWriter = new CommandWriter(client.GetSessionAsync().Result);
             var document = XDocument.Parse(xml).Root;
             var response = SetUpResourceMock(resourceName);
             var responseReader = new ResponseReaderV3(await client.GetMetadataAsync<IEdmModel>());
@@ -68,7 +68,7 @@ namespace Simple.OData.Client.Tests
             var client = CreateClient("QAS.Multiplatform.Demo.edmx") as ODataClient;
             const string resourceName = "WorkTaskModelWithNulls.xml";
             string xml = GetResourceAsString(resourceName);
-            var commandWriter = new CommandWriter(client.GetSchemaAsync().Result);
+            var commandWriter = new CommandWriter(client.GetSessionAsync().Result);
             var document = XDocument.Parse(xml).Root;
             var response = SetUpResourceMock(resourceName);
             var responseReader = new ResponseReaderV3(await client.GetMetadataAsync<IEdmModel>());

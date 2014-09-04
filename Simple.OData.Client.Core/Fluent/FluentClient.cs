@@ -19,15 +19,15 @@ namespace Simple.OData.Client
         where T : class
     {
         private readonly ODataClient _client;
-        private readonly Schema _schema;
+        private readonly Session _session;
         private readonly FluentCommand _parentCommand;
         private FluentCommand _command;
         private readonly bool _dynamicResults;
 
-        internal FluentClient(ODataClient client, Schema schema, FluentCommand parentCommand = null, FluentCommand command = null, bool dynamicResults = false)
+        internal FluentClient(ODataClient client, Session session, FluentCommand parentCommand = null, FluentCommand command = null, bool dynamicResults = false)
         {
             _client = client;
-            _schema = schema;
+            _session = session;
             _parentCommand = parentCommand;
             _command = command;
             _dynamicResults = dynamicResults;
@@ -49,14 +49,14 @@ namespace Simple.OData.Client
 
         private FluentCommand CreateCommand()
         {
-            return new FluentCommand(this.Schema, _parentCommand);
+            return new FluentCommand(this.Session, _parentCommand);
         }
 
         #pragma warning disable 1591
         
-        internal Schema Schema
+        internal Session Session
         {
-            get { return _schema; }
+            get { return _session; }
         }
 
         public FluentClient<U> Link<U>(FluentCommand command, string linkName = null)
@@ -68,7 +68,7 @@ namespace Simple.OData.Client
             FluentClient<U> linkedClient = null;
             foreach (var link in links)
             {
-                linkedClient = new FluentClient<U>(_client, _schema, linkCommand, null, _dynamicResults);
+                linkedClient = new FluentClient<U>(_client, _session, linkCommand, null, _dynamicResults);
                 linkedClient.Command.Link(link);
                 linkCommand = linkedClient.Command;
             }
@@ -96,14 +96,14 @@ namespace Simple.OData.Client
         public IFluentClient<IDictionary<string, object>> As(string derivedCollectionName)
         {
             this.Command.As(derivedCollectionName);
-            return new FluentClient<IDictionary<string, object>>(_client, _schema, _parentCommand, this.Command, _dynamicResults);
+            return new FluentClient<IDictionary<string, object>>(_client, _session, _parentCommand, this.Command, _dynamicResults);
         }
 
         public IFluentClient<U> As<U>(string derivedCollectionName = null)
         where U : class
         {
             this.Command.As(derivedCollectionName ?? typeof(U).Name);
-            return new FluentClient<U>(_client, _schema, _parentCommand, this.Command, _dynamicResults);
+            return new FluentClient<U>(_client, _session, _parentCommand, this.Command, _dynamicResults);
         }
 
         public IFluentClient<ODataEntry> As(ODataExpression expression)
@@ -413,7 +413,7 @@ namespace Simple.OData.Client
 
         private FluentClient<ODataEntry> CreateClientForODataEntry() 
         {
-            return new FluentClient<ODataEntry>(_client, _schema, _parentCommand, this.Command, true); ;
+            return new FluentClient<ODataEntry>(_client, _session, _parentCommand, this.Command, true); ;
         }
     }
 }

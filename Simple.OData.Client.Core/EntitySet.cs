@@ -10,18 +10,18 @@ namespace Simple.OData.Client
 {
     public class EntitySet
     {
-        private readonly Schema _schema;
+        private readonly Session _session;
         private readonly string _actualName;
         //private readonly EdmEntityType _entityType;
         private readonly EntitySet _baseEntitySet;
 
-        internal EntitySet(string name, EntitySet baseEntitySet, Schema schema)
-//        internal EntitySet(string name, EdmEntityType entityType, EntitySet baseEntitySet, Schema schema)
+        internal EntitySet(string name, EntitySet baseEntitySet, Session session)
+//        internal EntitySet(string name, EdmEntityType entityType, EntitySet baseEntitySet, Session Session)
         {
             _actualName = name;
             //_entityType = entityType;
             _baseEntitySet = baseEntitySet;
-            _schema = schema;
+            _session = session;
         }
 
         public override string ToString()
@@ -29,9 +29,9 @@ namespace Simple.OData.Client
             return _actualName;
         }
 
-        internal Schema Schema
+        internal Session Session
         {
-            get { return _schema; }
+            get { return _session; }
         }
 
         public string ActualName
@@ -51,13 +51,13 @@ namespace Simple.OData.Client
 
         public EntitySet FindDerivedEntitySet(string entityTypeName)
         {
-            var actualName = _schema.Provider.GetMetadata().GetDerivedEntityTypeExactName(this.ActualName, entityTypeName);
-            return new EntitySet(actualName, this, _schema);
+            var actualName = _session.Provider.GetMetadata().GetDerivedEntityTypeExactName(this.ActualName, entityTypeName);
+            return new EntitySet(actualName, this, _session);
         }
 
         public bool HasDerivedEntitySet(string entityTypeName)
         {
-            return _schema.Provider.GetMetadata().GetDerivedEntityTypeNames(this.ActualName)
+            return _session.Provider.GetMetadata().GetDerivedEntityTypeNames(this.ActualName)
                 .Any(x => Utils.NamesAreEqual(x, entityTypeName));
         }
 
@@ -69,7 +69,7 @@ namespace Simple.OData.Client
 
         public IList<string> GetKeyNames()
         {
-            return _schema.Provider.GetMetadata().GetDeclaredKeyPropertyNames(this.ActualName).ToList();
+            return _session.Provider.GetMetadata().GetDeclaredKeyPropertyNames(this.ActualName).ToList();
         }
     }
 }

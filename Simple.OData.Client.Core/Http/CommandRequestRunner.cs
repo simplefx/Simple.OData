@@ -9,14 +9,13 @@ namespace Simple.OData.Client
 {
     class CommandRequestRunner : RequestRunner
     {
-        private readonly Schema _schema;
-        //private readonly ResponseReader _responseReader;
+        private readonly Session _session;
         private readonly bool _includeResourceTypeInEntryProperties;
         private readonly bool _ignoreResourceNotFoundException;
 
-        public CommandRequestRunner(Schema schema, ODataClientSettings settings)
+        public CommandRequestRunner(Session session, ODataClientSettings settings)
         {
-            _schema = schema;
+            _session = session;
             _includeResourceTypeInEntryProperties = settings.IncludeResourceTypeInEntryProperties;
             _ignoreResourceNotFoundException = settings.IgnoreResourceNotFoundException;
         }
@@ -34,10 +33,9 @@ namespace Simple.OData.Client
                     }
                     else
                     {
-                        var responseReader = _schema.Provider.GetResponseReader();
+                        var responseReader = _session.Provider.GetResponseReader();
                         var odataResponse = await responseReader.GetResponseAsync(response, _includeResourceTypeInEntryProperties);
                         result = odataResponse.Entries ?? new [] {odataResponse.Entry};
-                        //result = _responseReader.GetData(await response.Content.ReadAsStringAsync(), scalarResult);
                     }
 
                     return result;
@@ -65,10 +63,9 @@ namespace Simple.OData.Client
                     }
                     else
                     {
-                        var responseReader = _schema.Provider.GetResponseReader();
+                        var responseReader = _session.Provider.GetResponseReader();
                         var result = await responseReader.GetResponseAsync(response, _includeResourceTypeInEntryProperties);
                         return Tuple.Create(result.Entries, (int)result.TotalCount.GetValueOrDefault());
-                        //result = _responseReader.GetData(await response.Content.ReadAsStringAsync(), out totalCount);
                     }
                 }
             }
@@ -92,10 +89,8 @@ namespace Simple.OData.Client
             {
                 using (var response = await ExecuteRequestAsync(request, cancellationToken))
                 {
-                    var responseReader = _schema.Provider.GetResponseReader();
+                    var responseReader = _session.Provider.GetResponseReader();
                     return (await responseReader.GetResponseAsync(response, _includeResourceTypeInEntryProperties)).Entry;
-                    //var text = await response.Content.ReadAsStringAsync();
-                    //return _responseReader.GetData(text).First();
                 }
             }
             catch (WebRequestException ex)
@@ -114,9 +109,8 @@ namespace Simple.OData.Client
                 var text = await response.Content.ReadAsStringAsync();
                 if (request.ReturnContent && response.StatusCode == HttpStatusCode.Created)
                 {
-                    var responseReader = _schema.Provider.GetResponseReader();
+                    var responseReader = _session.Provider.GetResponseReader();
                     return (await responseReader.GetResponseAsync(response, _includeResourceTypeInEntryProperties)).Entry;
-                    //return _responseReader.GetData(text).First();
                 }
                 else
                 {
@@ -132,9 +126,8 @@ namespace Simple.OData.Client
                 var text = await response.Content.ReadAsStringAsync();
                 if (request.ReturnContent && response.StatusCode == HttpStatusCode.OK)
                 {
-                    var responseReader = _schema.Provider.GetResponseReader();
+                    var responseReader = _session.Provider.GetResponseReader();
                     return (await responseReader.GetResponseAsync(response, _includeResourceTypeInEntryProperties)).Entry;
-                    //return _responseReader.GetData(text).First();
                 }
                 else
                 {
@@ -159,10 +152,9 @@ namespace Simple.OData.Client
                 {
                     case HttpStatusCode.OK:
                     case HttpStatusCode.Created:
-                        var responseReader = _schema.Provider.GetResponseReader();
+                        var responseReader = _session.Provider.GetResponseReader();
                         var odataResponse = await responseReader.GetResponseAsync(response, _includeResourceTypeInEntryProperties);
                         return odataResponse.Entries ?? new [] {odataResponse.Entry};
-                        //result = _responseReader.GetFunctionResult(await response.Content.ReadAsStreamAsync());
                         break;
 
                     default:

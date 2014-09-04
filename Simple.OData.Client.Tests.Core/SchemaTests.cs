@@ -14,8 +14,8 @@ namespace Simple.OData.Client.Tests
         //public async void MultipleSchemas_Marathon()
         //{
         //    _client = CreateClient("Marathon.edmx");
-        //    var schema = await _client.GetMetadataAsync();
-        //    var table = schema.FindEntitySet("Marathons");
+        //    var Session = await _client.GetMetadataAsync();
+        //    var table = Session.FindEntitySet("Marathons");
         //    Assert.NotNull(table);
         //    //Assert.Equal(8, EntitySet.Columns.Count());
         //}
@@ -24,8 +24,8 @@ namespace Simple.OData.Client.Tests
         //public async void MultipleSchemas_Insight()
         //{
         //    _client = CreateClient("Insight.edmx");
-        //    var schema = await _client.GetMetadataAsync();
-        //    var table = schema.FindEntitySet("Customers");
+        //    var Session = await _client.GetMetadataAsync();
+        //    var table = Session.FindEntitySet("Customers");
         //    Assert.NotNull(table);
         //    //Assert.Equal(178, EntitySet.Columns.Count());
         //    //var column = EntitySet.FindColumn("KeyCustomer");

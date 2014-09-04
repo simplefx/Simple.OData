@@ -153,8 +153,8 @@ namespace Simple.OData.Client.Tests
         //public async Task GetNorthwindSchemaTableAssociations()
         //{
         //    var response = SetUpResourceMock("Northwind.edmx");
-        //    var schema = Schema.FromMetadata(document);
-        //    var EntitySet = schema.FindEntitySet("Product");
+        //    var Session = Session.FromMetadata(document);
+        //    var EntitySet = Session.FindEntitySet("Product");
         //    //var association = EntitySet.FindAssociation("OrderDetails");
         //    //Assert.NotNull(association);
         //}
@@ -163,8 +163,8 @@ namespace Simple.OData.Client.Tests
         //public async Task GetArtifactsSchemaTableAssociations()
         //{
         //    var response = SetUpResourceMock("Artifacts.edmx");
-        //    var schema = Schema.FromMetadata(document);
-        //    var EntitySet = schema.FindEntitySet("Product");
+        //    var Session = Session.FromMetadata(document);
+        //    var EntitySet = Session.FindEntitySet("Product");
         //    //var association = EntitySet.FindAssociation("Artifacts");
         //    Assert.NotNull(association);
         //}
