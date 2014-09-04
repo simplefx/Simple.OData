@@ -32,7 +32,7 @@ namespace Simple.OData.Client.Tests
         {
             var urlBase = "http://localhost/" + metadataFile;
             var metadataString = GetResourceAsString(@"Resources." + metadataFile);
-            Schema.Add(urlBase, Schema.FromMetadata(metadataString));
+            Schema.Add(urlBase, Schema.FromMetadata(urlBase, metadataString));
             return new ODataClient(urlBase);
         }
 

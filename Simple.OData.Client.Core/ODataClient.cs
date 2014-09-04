@@ -66,7 +66,7 @@ namespace Simple.OData.Client
         /// </returns>
         public static T ParseMetadataString<T>(string metadataString)
         {
-            return (T)Client.Schema.FromMetadata(metadataString).Provider.Model;
+            return (T)Client.Schema.FromMetadata("http://localhost/" + metadataString.GetHashCode() + "$metadata", metadataString).Provider.Model;
         }
 
         /// <summary>

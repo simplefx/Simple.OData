@@ -76,7 +76,7 @@ namespace Simple.OData.Client.Tests
 
             var entry = XElement.Parse(commandWriter.CreateEntry("QAS.Multiplatform.Demo.Models", "WorkTaskModel", row, null, null).Entry);
 
-            AssertElementsCountEqual(document, entry, "m", "properties");
+            AssertElementsCountDiffs(document, entry, "m", "properties", 1);
             AssertElementsContentEqual(document, entry, "d", "Id");
             AssertElementsContentEqual(document, entry, "d", "StartDate", false);
             AssertElementsContentEqual(document, entry, "d", "EndDate", false);
@@ -90,6 +90,13 @@ namespace Simple.OData.Client.Tests
             Assert.Equal(
                 root1.Descendants(prefix, name).Elements().Count(),
                 root2.Descendants(prefix, name).Elements().Count());
+        }
+
+        private void AssertElementsCountDiffs(XElement root1, XElement root2, string prefix, string name, int diff)
+        {
+            Assert.Equal(
+                root1.Descendants(prefix, name).Elements().Count(),
+                root2.Descendants(prefix, name).Elements().Count() + 1);
         }
 
         private void AssertElementsContentEqual(XElement root1, XElement root2, string prefix, string name, bool compareValues = true)

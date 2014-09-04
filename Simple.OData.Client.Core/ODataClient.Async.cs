@@ -370,8 +370,8 @@ namespace Simple.OData.Client
                 _schema.Provider.GetMetadata().GetEntitySetTypeNamespace(collection),
                 _schema.Provider.GetMetadata().GetEntitySetTypeName(collection),
                 entryMembers.Properties,
-                entryMembers.AssociationsByValue.ToDictionary(x => x.Key, x => x.Value),
-                entryMembers.AssociationsByContentId.ToDictionary(x => x.Key, x => x.Value));
+                entryMembers.AssociationsByValue,
+                entryMembers.AssociationsByContentId);
             //foreach (var associatedData in entryMembers.AssociationsByValue)
             //{
             //    commandWriter.AddLink(entryContent, collection, associatedData);
@@ -438,6 +438,34 @@ namespace Simple.OData.Client
                 _schema.Provider.GetMetadata().EntitySetTypeRequiresOptimisticConcurrencyCheck(collection));
             var result = await _requestRunner.UpdateEntryAsync(request, cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+            foreach (var associatedData in entryMembers.AssociationsByContentId)
+            {
+                var linkCommand = commandWriter.CreateLinkCommand(collection, associatedData.Key, command.ContentId, associatedData.Value);
+                request = _requestBuilder.CreateRequest(linkCommand);
+                await _requestRunner.UpdateEntryAsync(request, cancellationToken);
+                if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+            }
+
+            var unlinkAssociationNames = new List<string>();
+            foreach (var associatedData in entryMembers.AssociationsByValue)
+            {
+                var associationName = _schema.Provider.GetMetadata().GetNavigationPropertyExactName(collection, associatedData.Key);
+                if (associatedData.Value != null)
+                {
+                    //commandWriter.AddLink(entryContent, collection, associatedData);
+                }
+                else
+                {
+                    unlinkAssociationNames.Add(associationName);
+                }
+            }
+
+            foreach (var associationName in unlinkAssociationNames)
+            {
+                await UnlinkEntryAsync(collection, entryKey, associationName, cancellationToken);
+                if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+            }
 
             return result;
             //return await UpdateEntryPropertiesAndAssociationsAsync(collection, entryKey, entryData, entryMembers, resultRequired, cancellationToken);

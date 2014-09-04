@@ -20,10 +20,10 @@ namespace Simple.OData.Client
         private Lazy<ODataProvider> _lazyProvider;
         private Lazy<Collection<EntitySet>> _lazyEntitySets;
 
-        private Schema(string metadataString, Func<Task<string>> resolveMedatataAsync)
+        private Schema(string urlBase, string metadataString, Func<Task<string>> resolveMedatataAsync)
         {
             ResetCache();
-            _providerFactory = new ProviderFactory();
+            _providerFactory = new ProviderFactory(urlBase, null);
 
             _metadataString = metadataString;
             _resolveMetadataAsync = resolveMedatataAsync;
@@ -134,9 +134,9 @@ namespace Simple.OData.Client
             return Instances.GetOrAdd(urlBase, new Schema(new ProviderFactory(urlBase, credentials)));
         }
 
-        internal static Schema FromMetadata(string metadataString)
+        internal static Schema FromMetadata(string urlBase, string metadataString)
         {
-            return new Schema(metadataString, null);
+            return new Schema(urlBase, metadataString, null);
         }
 
         internal static void Add(string urlBase, Schema schema)
