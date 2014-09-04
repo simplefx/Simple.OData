@@ -46,41 +46,44 @@ namespace Simple.OData.Client
             {
                 foreach (var association in associationsByValue)
                 {
-                    if (association.Value == null)
-                        continue;
-
-                    var navigationProperty = (_model.FindDeclaredType(entry.TypeName) as IEdmEntityType).NavigationProperties()
-                        .Single(x => Utils.NamesAreEqual(x.Name, association.Key, _session.Pluralizer));
-                    bool isCollection = navigationProperty.Partner.Multiplicity() == EdmMultiplicity.Many;
-
-                    IEdmEntityType linkType;
-                    if (navigationProperty.Type.Definition.TypeKind == EdmTypeKind.Collection)
-                        linkType = (navigationProperty.Type.Definition as IEdmCollectionType).ElementType.Definition as IEdmEntityType;
-                    else
-                        linkType = navigationProperty.Type.Definition as IEdmEntityType;
-
-                    entryWriter.WriteStart(new ODataNavigationLink()
-                    {
-                        Name = association.Key,
-                        IsCollection = isCollection,
-                        Url = new Uri("http://schemas.microsoft.com/ado/2007/08/dataservices/related/" + linkType, UriKind.Absolute),
-                    });
-
-                    var linkKey = linkType.DeclaredKey;
-                    var linkEntry = association.Value.ToDictionary();
-                    var formattedKey = "(" + string.Join(".", linkKey.Select(x => linkEntry[x.Name])) + ")";
-                    var linkSet = _model.EntityContainers().SelectMany(x => x.EntitySets())
-                        .Single(x => Utils.NamesAreEqual(x.ElementType.Name, linkType.Name, _session.Pluralizer));
-                    var link = new ODataEntityReferenceLink { Url = new Uri(linkSet.Name + formattedKey, UriKind.Relative) };
-                    entryWriter.WriteEntityReferenceLink(link);
-
-                    entryWriter.WriteEnd();
+                    if (association.Value != null)
+                        WriteLink(entryWriter, entry, association);
                 }
             }
 
             entryWriter.WriteEnd();
 
             return Utils.StreamToString(message.GetStream());
+        }
+
+        private void WriteLink(ODataWriter entryWriter, Microsoft.Data.OData.ODataEntry entry, KeyValuePair<string, object> linkData)
+        {
+            var navigationProperty = (_model.FindDeclaredType(entry.TypeName) as IEdmEntityType).NavigationProperties()
+                .Single(x => Utils.NamesAreEqual(x.Name, linkData.Key, _session.Pluralizer));
+            bool isCollection = navigationProperty.Partner.Multiplicity() == EdmMultiplicity.Many;
+
+            IEdmEntityType linkType;
+            if (navigationProperty.Type.Definition.TypeKind == EdmTypeKind.Collection)
+                linkType = (navigationProperty.Type.Definition as IEdmCollectionType).ElementType.Definition as IEdmEntityType;
+            else
+                linkType = navigationProperty.Type.Definition as IEdmEntityType;
+
+            entryWriter.WriteStart(new ODataNavigationLink()
+            {
+                Name = linkData.Key,
+                IsCollection = isCollection,
+                Url = new Uri("http://schemas.microsoft.com/ado/2007/08/dataservices/related/" + linkType, UriKind.Absolute),
+            });
+
+            var linkKey = linkType.DeclaredKey;
+            var linkEntry = linkData.Value.ToDictionary();
+            var formattedKey = "(" + string.Join(".", linkKey.Select(x => new ValueFormatter().FormatContentValue(linkEntry[x.Name]))) + ")";
+            var linkSet = _model.EntityContainers().SelectMany(x => x.EntitySets())
+                .Single(x => Utils.NamesAreEqual(x.ElementType.Name, linkType.Name, _session.Pluralizer));
+            var link = new ODataEntityReferenceLink { Url = new Uri(linkSet.Name + formattedKey, UriKind.Relative) };
+            entryWriter.WriteEntityReferenceLink(link);
+
+            entryWriter.WriteEnd();
         }
 
         private object GetPropertyValue(IEnumerable<IEdmProperty> properties, string key, object value)

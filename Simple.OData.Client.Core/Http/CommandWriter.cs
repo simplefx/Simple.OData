@@ -67,12 +67,6 @@ namespace Simple.OData.Client
                 properties, 
                 associationsByValue, 
                 associationsByContentId);
-            //var entry = CreateEmptyEntryWithNamespaces();
-
-            //var resourceName = GetQualifiedResourceName(entityTypeNamespace, entityTypeName);
-            //entry.Element(null, "category").SetAttributeValue("term", resourceName);
-
-            //EdmTypeSerializer.Write(_session, entityTypeName, entry.Element(null, "content").Element("m", "properties"), row);
 
             return new CommandContent(entry);
         }
@@ -114,57 +108,57 @@ namespace Simple.OData.Client
             return string.Format("{0}/$links/{1}", entryPath, linkName);
         }
 
-        private void AddDataLink(XElement container, string associationName, string linkedEntityName, IEnumerable<object> linkedEntityKeyValues)
-        {
-            var entry = XElement.Parse(Resources.DataServicesAtomEntryXml).Element(null, "link");
-            var rel = entry.Attribute("rel");
-            rel.SetValue(rel.Value + associationName);
-            entry.SetAttributeValue("title", associationName);
-            entry.SetAttributeValue("href", string.Format("{0}({1})",
-                linkedEntityName,
-                string.Join(",", linkedEntityKeyValues.Select(new ValueFormatter().FormatContentValue))));
-            container.Add(entry);
-        }
+        //private void AddDataLink(XElement container, string associationName, string linkedEntityName, IEnumerable<object> linkedEntityKeyValues)
+        //{
+        //    var entry = XElement.Parse(Resources.DataServicesAtomEntryXml).Element(null, "link");
+        //    var rel = entry.Attribute("rel");
+        //    rel.SetValue(rel.Value + associationName);
+        //    entry.SetAttributeValue("title", associationName);
+        //    entry.SetAttributeValue("href", string.Format("{0}({1})",
+        //        linkedEntityName,
+        //        string.Join(",", linkedEntityKeyValues.Select(new ValueFormatter().FormatContentValue))));
+        //    container.Add(entry);
+        //}
 
-        private IEnumerable<object> GetLinkedEntryKeyValues(string collection, KeyValuePair<string, object> entryData)
-        {
-            var entryProperties = GetLinkedEntryProperties(entryData.Value);
-            var associatedKeyNames = _session.MetadataCache.FindConcreteEntitySet(collection).GetKeyNames();
-            var associatedKeyValues = new object[associatedKeyNames.Count()];
-            for (int index = 0; index < associatedKeyNames.Count(); index++)
-            {
-                bool ok = entryProperties.TryGetValue(associatedKeyNames[index], out associatedKeyValues[index]);
-                if (!ok)
-                    return null;
-            }
-            return associatedKeyValues;
-        }
+        //private IEnumerable<object> GetLinkedEntryKeyValues(string collection, KeyValuePair<string, object> entryData)
+        //{
+        //    var entryProperties = GetLinkedEntryProperties(entryData.Value);
+        //    var associatedKeyNames = _session.MetadataCache.FindConcreteEntitySet(collection).GetKeyNames();
+        //    var associatedKeyValues = new object[associatedKeyNames.Count()];
+        //    for (int index = 0; index < associatedKeyNames.Count(); index++)
+        //    {
+        //        bool ok = entryProperties.TryGetValue(associatedKeyNames[index], out associatedKeyValues[index]);
+        //        if (!ok)
+        //            return null;
+        //    }
+        //    return associatedKeyValues;
+        //}
 
-        private IDictionary<string, object> GetLinkedEntryProperties(object entryData)
-        {
-            if (entryData is ODataEntry)
-                return (Dictionary<string, object>)(entryData as ODataEntry);
+        //private IDictionary<string, object> GetLinkedEntryProperties(object entryData)
+        //{
+        //    if (entryData is ODataEntry)
+        //        return (Dictionary<string, object>)(entryData as ODataEntry);
 
-            var entryProperties = entryData as IDictionary<string, object>;
-            if (entryProperties == null)
-            {
-                var entryType = entryData.GetType();
-                entryProperties = Utils.GetMappedProperties(entryType).ToDictionary
-                (
-                    x => x.GetMappedName(),
-                    x => Utils.GetMappedProperty(entryType, x.Name).GetValue(entryData, null)
-                );
-            }
-            return entryProperties;
-        }
+        //    var entryProperties = entryData as IDictionary<string, object>;
+        //    if (entryProperties == null)
+        //    {
+        //        var entryType = entryData.GetType();
+        //        entryProperties = Utils.GetMappedProperties(entryType).ToDictionary
+        //        (
+        //            x => x.GetMappedName(),
+        //            x => Utils.GetMappedProperty(entryType, x.Name).GetValue(entryData, null)
+        //        );
+        //    }
+        //    return entryProperties;
+        //}
 
-        private XElement CreateEmptyEntryWithNamespaces()
-        {
-            var entry = XElement.Parse(Resources.DataServicesAtomEntryXml);
-            entry.Element(null, "updated").SetValue(DateTime.UtcNow.ToIso8601String());
-            entry.Element(null, "link").Remove();
-            return entry;
-        }
+        //private XElement CreateEmptyEntryWithNamespaces()
+        //{
+        //    var entry = XElement.Parse(Resources.DataServicesAtomEntryXml);
+        //    entry.Element(null, "updated").SetValue(DateTime.UtcNow.ToIso8601String());
+        //    entry.Element(null, "link").Remove();
+        //    return entry;
+        //}
 
         private XElement CreateEmptyMetadataWithNamespaces()
         {
@@ -172,9 +166,9 @@ namespace Simple.OData.Client
             return entry;
         }
 
-        private string GetQualifiedResourceName(string namespaceName, string collectionName)
-        {
-            return string.Join(".", namespaceName, collectionName);
-        }
+        //private string GetQualifiedResourceName(string namespaceName, string collectionName)
+        //{
+        //    return string.Join(".", namespaceName, collectionName);
+        //}
     }
 }
