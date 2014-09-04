@@ -489,12 +489,23 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task Pluralizer()
+        public async Task PluralizerSingleClient()
         {
-            ODataClient.SetPluralizer(null);
+            _client.SetPluralizer(null);
             await AssertThrowsAsync<AggregateException>(async () =>
                 await _client.For<Product>().FindEntriesAsync());
-            ODataClient.SetPluralizer(new SimplePluralizer());
+            _client.SetPluralizer(new SimplePluralizer());
+            var products = await _client.For<Product>().FindEntriesAsync();
+            Assert.NotEqual(0, products.Count());
+        }
+
+        [Fact]
+        public async Task PluralizerMultipleClients()
+        {
+            var client = CreateClientWithDefaultSettings();
+            client.SetPluralizer(null);
+            await AssertThrowsAsync<AggregateException>(async () =>
+                await client.For<Product>().FindEntriesAsync());
             var products = await _client.For<Product>().FindEntriesAsync();
             Assert.NotEqual(0, products.Count());
         }

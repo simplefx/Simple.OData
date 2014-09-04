@@ -19,7 +19,7 @@ namespace Simple.OData.Client.Tests
         //    var commandWriter = new CommandWriter((_client as ODataClient).GetSessionAsync().Result);
         //    var document = XDocument.Parse(xml).Root;
         //    var response = SetUpResourceMock(resourceName);
-        //    var responseReader = new ResponseReaderV3(await _client.GetMetadataAsync<IEdmModel>());
+        //    var responseReader = new ResponseReaderV3(await _client.CreateProviderAsync<IEdmModel>());
         //    var row = (await responseReader.GetResponseAsync(response)).Entry;
 
         //    var entry = XElement.Parse(commandWriter.CreateEntry("Northwind.Model", "Customers", row, null, null).Entry);
@@ -44,7 +44,7 @@ namespace Simple.OData.Client.Tests
             var commandWriter = new CommandWriter(client.GetSessionAsync().Result);
             var document = XDocument.Parse(xml).Root;
             var response = SetUpResourceMock(resourceName);
-            var responseReader = new ResponseReaderV3(await client.GetMetadataAsync<IEdmModel>());
+            var responseReader = new ResponseReaderV3(_session, await client.GetMetadataAsync<IEdmModel>());
             var row = (await responseReader.GetResponseAsync(response)).Entry;
 
             var entry = XElement.Parse(commandWriter.CreateEntry("QAS.Multiplatform.Demo.Models", "WorkTaskModel", row, null, null).Entry);
@@ -71,7 +71,7 @@ namespace Simple.OData.Client.Tests
             var commandWriter = new CommandWriter(client.GetSessionAsync().Result);
             var document = XDocument.Parse(xml).Root;
             var response = SetUpResourceMock(resourceName);
-            var responseReader = new ResponseReaderV3(await client.GetMetadataAsync<IEdmModel>());
+            var responseReader = new ResponseReaderV3(_session, await client.GetMetadataAsync<IEdmModel>());
             var row = (await responseReader.GetResponseAsync(response)).Entry;
 
             var entry = XElement.Parse(commandWriter.CreateEntry("QAS.Multiplatform.Demo.Models", "WorkTaskModel", row, null, null).Entry);

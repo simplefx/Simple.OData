@@ -66,16 +66,8 @@ namespace Simple.OData.Client
         /// </returns>
         public static T ParseMetadataString<T>(string metadataString)
         {
-            return (T)Client.Session.FromMetadata("http://localhost/" + metadataString.GetHashCode() + "$metadata", metadataString).Provider.Model;
-        }
-
-        /// <summary>
-        /// Sets the word pluralizer used when resolving metadata objects.
-        /// </summary>
-        /// <param name="pluralizer">The pluralizer.</param>
-        public static void SetPluralizer(IPluralizer pluralizer)
-        {
-            StringExtensions.SetPluralizer(pluralizer);
+            var session = Session.FromMetadata("http://localhost/" + metadataString.GetHashCode() + "$metadata", metadataString);
+            return (T)session.Provider.Model;
         }
 
         /// <summary>
@@ -119,6 +111,15 @@ namespace Simple.OData.Client
         private FluentClient<IDictionary<string, object>> GetFluentClient()
         {
             return new FluentClient<IDictionary<string, object>>(this, _session);
+        }
+
+        /// <summary>
+        /// Sets the word pluralizer used when resolving metadata objects.
+        /// </summary>
+        /// <param name="pluralizer">The pluralizer.</param>
+        public void SetPluralizer(IPluralizer pluralizer)
+        {
+            _session.Pluralizer = pluralizer;
         }
     }
 }

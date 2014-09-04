@@ -158,13 +158,13 @@ namespace Simple.OData.Client
 
         private void ParseEntryMember(EntitySet entitySet, KeyValuePair<string, object> item, EntryMembers entryMembers)
         {
-            if (entitySet.Session.Provider.GetMetadata().HasStructuralProperty(entitySet.ActualName, item.Key))
+            if (entitySet.Metadata.HasStructuralProperty(entitySet.ActualName, item.Key))
             {
                 entryMembers.AddProperty(item.Key, item.Value);
             }
-            else if (entitySet.Session.Provider.GetMetadata().HasNavigationProperty(entitySet.ActualName, item.Key))
+            else if (entitySet.Metadata.HasNavigationProperty(entitySet.ActualName, item.Key))
             {
-                if (entitySet.Session.Provider.GetMetadata().IsNavigationPropertyMultiple(entitySet.ActualName, item.Key))
+                if (entitySet.Metadata.IsNavigationPropertyMultiple(entitySet.ActualName, item.Key))
                 {
                     var collection = item.Value as IEnumerable<object>;
                     if (collection != null)
@@ -201,8 +201,8 @@ namespace Simple.OData.Client
 
         private bool CheckMergeConditions(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
         {
-            var table = _session.FindConcreteEntitySet(collection);
-            return table.Session.Provider.GetMetadata().GetStructuralPropertyNames(table.ActualName)
+            var entitySet = _session.MetadataCache.FindConcreteEntitySet(collection);
+            return entitySet.Metadata.GetStructuralPropertyNames(entitySet.ActualName)
                 .Any(x => !entryData.ContainsKey(x));
         }
 

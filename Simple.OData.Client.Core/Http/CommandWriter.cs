@@ -129,7 +129,7 @@ namespace Simple.OData.Client
         private IEnumerable<object> GetLinkedEntryKeyValues(string collection, KeyValuePair<string, object> entryData)
         {
             var entryProperties = GetLinkedEntryProperties(entryData.Value);
-            var associatedKeyNames = _session.FindConcreteEntitySet(collection).GetKeyNames();
+            var associatedKeyNames = _session.MetadataCache.FindConcreteEntitySet(collection).GetKeyNames();
             var associatedKeyValues = new object[associatedKeyNames.Count()];
             for (int index = 0; index < associatedKeyNames.Count(); index++)
             {

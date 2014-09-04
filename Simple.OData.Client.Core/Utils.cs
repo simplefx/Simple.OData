@@ -26,11 +26,11 @@ namespace Simple.OData.Client
             return new MemoryStream(Encoding.UTF8.GetBytes(str));
         }
 
-        public static bool NamesAreEqual(string actualName, string requestedName)
+        public static bool NamesAreEqual(string actualName, string requestedName, IPluralizer pluralizer)
         {
             return actualName.Homogenize() == requestedName.Homogenize()
-                   || actualName.Homogenize() == requestedName.Singularize().Homogenize()
-                   || actualName.Homogenize() == requestedName.Pluralize().Homogenize();
+                   || pluralizer != null && actualName.Homogenize() == pluralizer.Singularize(requestedName).Homogenize()
+                   || pluralizer != null && actualName.Homogenize() == pluralizer.Pluralize(requestedName).Homogenize();
         }
 
         public static T CastExpressionWithTypeCheck<T>(Expression expression) where T : Expression

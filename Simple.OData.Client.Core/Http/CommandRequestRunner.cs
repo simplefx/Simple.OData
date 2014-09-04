@@ -9,11 +9,11 @@ namespace Simple.OData.Client
 {
     class CommandRequestRunner : RequestRunner
     {
-        private readonly Session _session;
+        private readonly ISession _session;
         private readonly bool _includeResourceTypeInEntryProperties;
         private readonly bool _ignoreResourceNotFoundException;
 
-        public CommandRequestRunner(Session session, ODataClientSettings settings)
+        public CommandRequestRunner(ISession session, ODataClientSettings settings)
         {
             _session = session;
             _includeResourceTypeInEntryProperties = settings.IncludeResourceTypeInEntryProperties;

@@ -448,5 +448,11 @@ namespace Simple.OData.Client
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Function execution result.</returns>
         Task<T[]> ExecuteFunctionAsArrayAsync<T>(string functionName, IDictionary<string, object> parameters, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Sets the word pluralizer used when resolving metadata objects.
+        /// </summary>
+        /// <param name="pluralizer">The pluralizer.</param>
+        void SetPluralizer(IPluralizer pluralizer);
     }
 }

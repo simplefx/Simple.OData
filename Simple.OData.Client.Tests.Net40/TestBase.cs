@@ -12,13 +12,13 @@ namespace Simple.OData.Client.Tests
 {
     public class TestBase : IDisposable
     {
-        protected string _serviceUri;
+        protected readonly string _serviceUri;
 # if !NETFX_CORE
         protected TestService _service;
 #endif
         protected IODataClient _client;
 
-        public TestBase()
+        protected TestBase()
         {
 #if NETFX_CORE
             _serviceUri = "http://NORTHWIND/Northwind.svc/";
@@ -29,7 +29,7 @@ namespace Simple.OData.Client.Tests
             _client = CreateClientWithDefaultSettings();
         }
 
-        public IODataClient CreateClientWithDefaultSettings()
+        protected IODataClient CreateClientWithDefaultSettings()
         {
             return new ODataClient(_serviceUri);
         }

@@ -140,16 +140,16 @@ namespace Simple.OData.Client
             var objectName = elementNames.First();
             if (entitySet != null)
             {
-                if (entitySet.Session.Provider.GetMetadata().HasStructuralProperty(entitySet.ActualName, objectName))
+                if (entitySet.Metadata.HasStructuralProperty(entitySet.ActualName, objectName))
                 {
-                    pathNames.Add(entitySet.Session.Provider.GetMetadata().GetStructuralPropertyExactName(entitySet.ActualName, objectName));
+                    pathNames.Add(entitySet.Metadata.GetStructuralPropertyExactName(entitySet.ActualName, objectName));
                     return BuildReferencePath(pathNames, null, elementNames.Skip(1).ToList(), context);
                 }
-                else if (entitySet.Session.Provider.GetMetadata().HasNavigationProperty(entitySet.ActualName, objectName))
+                else if (entitySet.Metadata.HasNavigationProperty(entitySet.ActualName, objectName))
                 {
-                    pathNames.Add(entitySet.Session.Provider.GetMetadata().GetNavigationPropertyExactName(entitySet.ActualName, objectName));
-                    return BuildReferencePath(pathNames, context.Session.FindEntitySet(
-                        entitySet.Session.Provider.GetMetadata().GetNavigationPropertyPartnerName(entitySet.ActualName, objectName)), 
+                    pathNames.Add(entitySet.Metadata.GetNavigationPropertyExactName(entitySet.ActualName, objectName));
+                    return BuildReferencePath(pathNames, context.Session.MetadataCache.FindEntitySet(
+                        entitySet.Metadata.GetNavigationPropertyPartnerName(entitySet.ActualName, objectName)), 
                         elementNames.Skip(1).ToList(), context);
                 }
                 else

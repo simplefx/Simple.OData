@@ -7,13 +7,15 @@ using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
-    public class RequestWriterV3 : IRequestWriter
+    class RequestWriterV3 : IRequestWriter
     {
+        private readonly ISession _session;
         private readonly string _urlBase;
         private readonly IEdmModel _model;
 
-        public RequestWriterV3(string urlBase, IEdmModel model)
+        public RequestWriterV3(ISession session, string urlBase, IEdmModel model)
         {
+            _session = session;
             _urlBase = urlBase;
             _model = model;
         }
@@ -34,7 +36,7 @@ namespace Simple.OData.Client
             var typeProperties = (_model.FindDeclaredType(entry.TypeName) as IEdmEntityType).Properties();
             entry.Properties = properties.Select(x => new ODataProperty()
             {
-                Name = typeProperties.Single(y => Utils.NamesAreEqual(y.Name, x.Key)).Name,
+                Name = typeProperties.Single(y => Utils.NamesAreEqual(y.Name, x.Key, _session.Pluralizer)).Name,
                 Value = GetPropertyValue(typeProperties, x.Key, x.Value)
             }).ToList();
 
@@ -48,7 +50,7 @@ namespace Simple.OData.Client
                         continue;
 
                     var navigationProperty = (_model.FindDeclaredType(entry.TypeName) as IEdmEntityType).NavigationProperties()
-                        .Single(x => Utils.NamesAreEqual(x.Name, association.Key));
+                        .Single(x => Utils.NamesAreEqual(x.Name, association.Key, _session.Pluralizer));
                     bool isCollection = navigationProperty.Partner.Multiplicity() == EdmMultiplicity.Many;
 
                     IEdmEntityType linkType;
@@ -68,7 +70,7 @@ namespace Simple.OData.Client
                     var linkEntry = association.Value.ToDictionary();
                     var formattedKey = "(" + string.Join(".", linkKey.Select(x => linkEntry[x.Name])) + ")";
                     var linkSet = _model.EntityContainers().SelectMany(x => x.EntitySets())
-                        .Single(x => Utils.NamesAreEqual(x.ElementType.Name, linkType.Name));
+                        .Single(x => Utils.NamesAreEqual(x.ElementType.Name, linkType.Name, _session.Pluralizer));
                     var link = new ODataEntityReferenceLink { Url = new Uri(linkSet.Name + formattedKey, UriKind.Relative) };
                     entryWriter.WriteEntityReferenceLink(link);
 
@@ -86,7 +88,7 @@ namespace Simple.OData.Client
             if (value == null)
                 return value;
 
-            var property = properties.Single(x => Utils.NamesAreEqual(x.Name, key));
+            var property = properties.Single(x => Utils.NamesAreEqual(x.Name, key, _session.Pluralizer));
             switch (property.Type.TypeKind())
             {
                 case EdmTypeKind.Complex:

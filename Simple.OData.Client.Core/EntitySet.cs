@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using Simple.OData.Client.Extensions;
 
@@ -10,18 +9,15 @@ namespace Simple.OData.Client
 {
     public class EntitySet
     {
-        private readonly Session _session;
         private readonly string _actualName;
-        //private readonly EdmEntityType _entityType;
         private readonly EntitySet _baseEntitySet;
+        private readonly IMetadata _metadata;
 
-        internal EntitySet(string name, EntitySet baseEntitySet, Session session)
-//        internal EntitySet(string name, EdmEntityType entityType, EntitySet baseEntitySet, Session Session)
+        internal EntitySet(string name, EntitySet baseEntitySet, IMetadata metadata)
         {
             _actualName = name;
-            //_entityType = entityType;
             _baseEntitySet = baseEntitySet;
-            _session = session;
+            _metadata = metadata;
         }
 
         public override string ToString()
@@ -29,47 +25,30 @@ namespace Simple.OData.Client
             return _actualName;
         }
 
-        internal Session Session
-        {
-            get { return _session; }
-        }
-
         public string ActualName
         {
             get { return _actualName; }
         }
-
-        //public EdmEntityType EntityType
-        //{
-        //    get { return _entityType; }
-        //}
 
         public EntitySet BaseEntitySet
         {
             get { return _baseEntitySet; }
         }
 
+        public IMetadata Metadata
+        {
+            get { return _metadata; }
+        }
+
         public EntitySet FindDerivedEntitySet(string entityTypeName)
         {
-            var actualName = _session.Provider.GetMetadata().GetDerivedEntityTypeExactName(this.ActualName, entityTypeName);
-            return new EntitySet(actualName, this, _session);
-        }
-
-        public bool HasDerivedEntitySet(string entityTypeName)
-        {
-            return _session.Provider.GetMetadata().GetDerivedEntityTypeNames(this.ActualName)
-                .Any(x => Utils.NamesAreEqual(x, entityTypeName));
-        }
-
-        public IDictionary<string, object> GetKey(string entityTypeName, IDictionary<string, object> record)
-        {
-            var keyNames = GetKeyNames();
-            return record.Where(x => keyNames.Contains(x.Key)).ToIDictionary();
+            var actualName = _metadata.GetDerivedEntityTypeExactName(this.ActualName, entityTypeName);
+            return new EntitySet(actualName, this, _metadata);
         }
 
         public IList<string> GetKeyNames()
         {
-            return _session.Provider.GetMetadata().GetDeclaredKeyPropertyNames(this.ActualName).ToList();
+            return _metadata.GetDeclaredKeyPropertyNames(this.ActualName).ToList();
         }
     }
 }

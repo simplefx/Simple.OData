@@ -9,8 +9,8 @@ namespace Simple.OData.Client
         private readonly List<KeyValuePair<string, int>> _associationsByContentId = new List<KeyValuePair<string, int>>();
 
         public IDictionary<string, object> Properties { get { return _properties; } }
-        public List<KeyValuePair<string, object>> AssociationsByValue { get { return _associationsByValue; } }
-        public List<KeyValuePair<string, int>> AssociationsByContentId { get { return _associationsByContentId; } }
+        public IEnumerable<KeyValuePair<string, object>> AssociationsByValue { get { return _associationsByValue; } }
+        public IEnumerable<KeyValuePair<string, int>> AssociationsByContentId { get { return _associationsByContentId; } }
 
         public void AddProperty(string propertyName, object propertyValue)
         {

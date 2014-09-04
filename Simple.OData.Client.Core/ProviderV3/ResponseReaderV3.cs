@@ -31,10 +31,12 @@ namespace Simple.OData.Client
             }
         }
 
+        private readonly ISession _session;
         private readonly IEdmModel _model;
 
-        public ResponseReaderV3(IEdmModel model)
+        public ResponseReaderV3(ISession session, IEdmModel model)
         {
+            _session = session;
             _model = model;
         }
 

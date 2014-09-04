@@ -14,7 +14,7 @@
                 if (_entitySet != null)
                     return _entitySet;
 
-                return this.Session.FindConcreteEntitySet(this.Collection);
+                return this.Session.MetadataCache.FindConcreteEntitySet(this.Collection);
             }
 
             set 

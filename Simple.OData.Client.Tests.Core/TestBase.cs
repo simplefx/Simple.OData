@@ -13,7 +13,8 @@ namespace Simple.OData.Client.Tests
 {
     public class TestBase : IDisposable
     {
-        protected IODataClient _client;
+        protected readonly IODataClient _client;
+        internal ISession _session;
 
         public TestBase() 
             : this("Northwind.edmx")
@@ -32,7 +33,7 @@ namespace Simple.OData.Client.Tests
         {
             var urlBase = "http://localhost/" + metadataFile;
             var metadataString = GetResourceAsString(@"Resources." + metadataFile);
-            Session.Add(urlBase, Session.FromMetadata(urlBase, metadataString));
+            _session = Session.FromMetadata(urlBase, metadataString);
             return new ODataClient(urlBase);
         }
 
@@ -59,8 +60,7 @@ namespace Simple.OData.Client.Tests
             mock.Setup(x => x.GetStreamAsync()).ReturnsAsync(new MemoryStream(Encoding.UTF8.GetBytes(document)));
             mock.Setup(x => x.GetStream()).Returns(new MemoryStream(Encoding.UTF8.GetBytes(document)));
             mock.Setup(x => x.GetHeader("Content-Type")).Returns(() => "application/atom+xml; type=feed; charset=utf-8");
-            var response = mock.Object;
-            return response;
+            return mock.Object;
         }
     }
 }

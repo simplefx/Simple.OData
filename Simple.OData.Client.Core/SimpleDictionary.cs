@@ -24,7 +24,13 @@ namespace Simple.OData.Client
         {
         }
 
-#if !NET40
+#if NET40
+        public void Remove(TKey key)
+        {
+            TValue value;
+            base.TryRemove(key, out value);
+        }
+#else
         public TValue GetOrAdd(TKey key, TValue value)
         {
             return GetOrAdd(key, x => value);

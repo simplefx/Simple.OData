@@ -227,6 +227,9 @@
     <Compile Include="..\Simple.OData.Client.Core\Http\HttpRequest.cs">
       <Link>Http\HttpRequest.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Http\MetadataRequestRunner.cs">
+      <Link>Http\MetadataRequestRunner.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Http\RequestBuilder.cs">
       <Link>Http\RequestBuilder.cs</Link>
     </Compile>
@@ -239,14 +242,17 @@
     <Compile Include="..\Simple.OData.Client.Core\Http\RestVerbs.cs">
       <Link>Http\RestVerbs.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Http\SchemaRequestRunner.cs">
-      <Link>Http\SchemaRequestRunner.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Http\WebRequestException.cs">
       <Link>Http\WebRequestException.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\IODataClient.cs">
       <Link>IODataClient.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ISession.cs">
+      <Link>ISession.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\MetadataCache.cs">
+      <Link>MetadataCache.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ODataClient.Async.cs">
       <Link>ODataClient.Async.cs</Link>

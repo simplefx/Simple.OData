@@ -82,6 +82,8 @@
     <Compile Include="Http\HttpRequest.cs" />
     <Compile Include="IODataClient.cs" />
     <Compile Include="IPluralizer.cs" />
+    <Compile Include="ISession.cs" />
+    <Compile Include="MetadataCache.cs" />
     <Compile Include="ProviderV3\MetadataV3.cs" />
     <Compile Include="ProviderV3\RequestWriterV3.cs" />
     <Compile Include="ProviderV4\MetadataV4.cs" />
@@ -113,7 +115,7 @@
     <Compile Include="Http\RequestRunner.cs" />
     <Compile Include="Http\RequestRunnerBase.cs" />
     <Compile Include="Http\RestVerbs.cs" />
-    <Compile Include="Http\SchemaRequestRunner.cs" />
+    <Compile Include="Http\MetadataRequestRunner.cs" />
     <Compile Include="Provider\ODataProvider.cs" />
     <Compile Include="Session.cs" />
     <Compile Include="Provider\ProviderFactory.cs" />

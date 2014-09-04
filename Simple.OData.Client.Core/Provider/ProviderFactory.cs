@@ -12,27 +12,25 @@ namespace Simple.OData.Client
 {
     class ProviderFactory
     {
+        private readonly ISession _session;
         private readonly string _urlBase;
         private readonly ICredentials _credentials;
 
-        public ProviderFactory()
+        public ProviderFactory(ISession session, string urlBase, ICredentials credentials)
         {
-        }
-
-        public ProviderFactory(string urlBase, ICredentials credentials)
-        {
+            _session = session;
             _urlBase = urlBase;
             _credentials = credentials;
         }
 
-        public async Task<ODataProvider> GetMetadataAsync(HttpResponseMessage response)
+        public async Task<ODataProvider> CreateProviderAsync(HttpResponseMessage response)
         {
             var protocolVersions = GetSupportedProtocolVersions(response).ToArray();
 
             if (protocolVersions.Any(x => x == "4.0"))
-                return new ODataProviderV4(_urlBase, protocolVersions.First(), response);
+                return new ODataProviderV4(_session, _urlBase, protocolVersions.First(), response);
             else if (protocolVersions.Any(x => x == "1.0" || x == "2.0" || x == "3.0"))
-                return new ODataProviderV3(_urlBase, protocolVersions.First(), response);
+                return new ODataProviderV3(_session, _urlBase, protocolVersions.First(), response);
 
             throw new NotSupportedException(string.Format("OData protocol {0} is not supported", protocolVersions));
         }
@@ -44,7 +42,7 @@ namespace Simple.OData.Client
 
         public async Task<string> GetMetadataAsStringAsync(CancellationToken cancellationToken)
         {
-            using (var response = await SendSchemaRequestAsync(cancellationToken))
+            using (var response = await SendMetadataRequestAsync(cancellationToken))
             {
                 return await response.Content.ReadAsStringAsync();
             }
@@ -62,19 +60,19 @@ namespace Simple.OData.Client
             var protocolVersion = reader.GetAttribute("Version");
 
             if (protocolVersion == "4.0")
-                return new ODataProviderV4(_urlBase, protocolVersion, metadataString);
+                return new ODataProviderV4(_session, _urlBase, protocolVersion, metadataString);
             else if (protocolVersion == "1.0" || protocolVersion == "2.0" || protocolVersion == "3.0")
-                return new ODataProviderV3(_urlBase, protocolVersion, metadataString);
+                return new ODataProviderV3(_session, _urlBase, protocolVersion, metadataString);
 
             throw new NotSupportedException(string.Format("OData protocol {0} is not supported", protocolVersion));
         }
 
-        internal async Task<HttpResponseMessage> SendSchemaRequestAsync(CancellationToken cancellationToken)
+        internal async Task<HttpResponseMessage> SendMetadataRequestAsync(CancellationToken cancellationToken)
         {
             var requestBuilder = new CommandRequestBuilder(_urlBase, _credentials);
             var command = HttpCommand.Get(FluentCommand.MetadataLiteral);
             var request = requestBuilder.CreateRequest(command);
-            var requestRunner = new SchemaRequestRunner(new ODataClientSettings());
+            var requestRunner = new MetadataRequestRunner(new ODataClientSettings());
 
             return await requestRunner.ExecuteRequestAsync(request, cancellationToken);
         }

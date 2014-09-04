@@ -14,6 +14,7 @@ namespace Simple.OData.Client
 {
     class ODataProviderV4 : ODataProvider
     {
+        private readonly ISession _session;
         private readonly string _urlBase;
 
         public new IEdmModel Model
@@ -22,13 +23,9 @@ namespace Simple.OData.Client
             set { base.Model = value; }
         }
 
-        public ODataProviderV4(string urlBase)
+        public ODataProviderV4(ISession session, string urlBase, string protocolVersion, HttpResponseMessage response)
         {
-            _urlBase = urlBase;
-        }
-
-        public ODataProviderV4(string urlBase, string protocolVersion, HttpResponseMessage response)
-        {
+            _session = session;
             _urlBase = urlBase;
             ProtocolVersion = protocolVersion;
 
@@ -38,8 +35,9 @@ namespace Simple.OData.Client
             }
         }
 
-        public ODataProviderV4(string urlBase, string metadataString, string protocolVersion)
+        public ODataProviderV4(ISession session, string urlBase, string protocolVersion, string metadataString)
         {
+            _session = session;
             _urlBase = urlBase;
             ProtocolVersion = protocolVersion;
 
@@ -50,7 +48,7 @@ namespace Simple.OData.Client
 
         public override IMetadata GetMetadata()
         {
-            return new MetadataV4(Model);
+            return new MetadataV4(_session, Model);
         }
 
         public override IResponseReader GetResponseReader()
