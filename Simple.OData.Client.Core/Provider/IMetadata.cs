@@ -9,7 +9,6 @@ namespace Simple.OData.Client
         string GetEntitySetTypeName(string entitySetName);
         string GetEntitySetTypeNamespace(string entitySetName);
         string GetDerivedEntityTypeExactName(string entitySetName, string entityTypeName);
-        IEnumerable<string> GetDerivedEntityTypeNames(string entitySetName);
         bool EntitySetTypeRequiresOptimisticConcurrencyCheck(string entitySetName);
 
         string GetEntityTypeExactName(string entityTypeName);

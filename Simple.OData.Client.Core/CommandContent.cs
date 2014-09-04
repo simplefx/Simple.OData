@@ -4,7 +4,6 @@ namespace Simple.OData.Client
 {
     class CommandContent
     {
-        //public XElement Entry { get; private set; }
         public string Entry { get; private set; }
 
         public CommandContent(XElement entry)

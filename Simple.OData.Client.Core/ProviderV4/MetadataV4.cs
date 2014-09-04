@@ -54,13 +54,6 @@ namespace Simple.OData.Client
             return entityType.Name;
         }
 
-        public IEnumerable<string> GetDerivedEntityTypeNames(string entitySetName)
-        {
-            var entitySet = GetEntitySet(entitySetName);
-            return _model.FindDirectlyDerivedTypes(entitySet.EntityType())
-                .Select(x => (x as IEdmEntityType).Name);
-        }
-
         public string GetEntityTypeExactName(string entityTypeName)
         {
             var entityType = GetEntityTypes().SingleOrDefault(x => Utils.NamesAreEqual(x.Name, entityTypeName, _session.Pluralizer));
