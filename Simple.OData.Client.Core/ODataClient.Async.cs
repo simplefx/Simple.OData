@@ -368,32 +368,7 @@ namespace Simple.OData.Client
             await _session.ResolveProviderAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            RemoveSystemProperties(entryData);
-            var entitySet = _session.MetadataCache.FindConcreteEntitySet(collection);
-            var entryMembers = ParseEntryMembers(entitySet, entryData);
-
-            var commandWriter = new CommandWriter(_session);
-            var entryContent = commandWriter.CreateEntry(
-                _session.Provider.GetMetadata().GetEntitySetTypeNamespace(collection),
-                _session.Provider.GetMetadata().GetEntitySetTypeName(collection),
-                entryMembers.Properties,
-                entryMembers.AssociationsByValue,
-                entryMembers.AssociationsByContentId);
-
-            var command = commandWriter.CreateInsertCommand(_session.MetadataCache.FindBaseEntitySet(collection).ActualName, entryData, entryContent);
-            var request = _requestBuilder.CreateRequest(command, resultRequired);
-            var result = await _requestRunner.InsertEntryAsync(request, cancellationToken);
-            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-
-            foreach (var associatedData in entryMembers.AssociationsByContentId)
-            {
-                var linkCommand = commandWriter.CreateLinkCommand(collection, associatedData.Key, command.ContentId, associatedData.Value);
-                request = _requestBuilder.CreateRequest(linkCommand, resultRequired);
-                await _requestRunner.InsertEntryAsync(request, cancellationToken);
-                if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-            }
-
-            return result;
+            return await InsertEntryAndLinksAsync(collection, entryData, resultRequired, cancellationToken);
         }
 
         public Task<IDictionary<string, object>> UpdateEntryAsync(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
@@ -416,53 +391,7 @@ namespace Simple.OData.Client
             await _session.ResolveProviderAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            RemoveSystemProperties(entryKey);
-            RemoveSystemProperties(entryData);
-            var table = _session.MetadataCache.FindConcreteEntitySet(collection);
-            var entryMembers = ParseEntryMembers(table, entryData);
-
-            bool hasPropertiesToUpdate = entryMembers.Properties.Count > 0;
-            bool merge = !hasPropertiesToUpdate || CheckMergeConditions(collection, entryKey, entryData);
-            var commandText = await GetFluentClient()
-                .For(_session.MetadataCache.FindBaseEntitySet(collection).ActualName)
-                .Key(entryKey)
-                .GetCommandTextAsync(cancellationToken);
-
-            var commandWriter = new CommandWriter(_session);
-            var entryContent = commandWriter.CreateEntry(
-                _session.Provider.GetMetadata().GetEntitySetTypeNamespace(collection),
-                _session.Provider.GetMetadata().GetEntitySetTypeName(collection),
-                entryMembers.Properties,
-                entryMembers.AssociationsByValue,
-                entryMembers.AssociationsByContentId);
-
-            var command = commandWriter.CreateUpdateCommand(commandText, entryData, entryContent, merge);
-            var request = _requestBuilder.CreateRequest(command, resultRequired,
-                _session.Provider.GetMetadata().EntitySetTypeRequiresOptimisticConcurrencyCheck(collection));
-            var result = await _requestRunner.UpdateEntryAsync(request, cancellationToken);
-            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-
-            foreach (var associatedData in entryMembers.AssociationsByContentId)
-            {
-                var linkCommand = commandWriter.CreateLinkCommand(collection, associatedData.Key, command.ContentId, associatedData.Value);
-                request = _requestBuilder.CreateRequest(linkCommand);
-                await _requestRunner.UpdateEntryAsync(request, cancellationToken);
-                if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-            }
-
-            var unlinkAssociationNames = entryMembers.AssociationsByValue
-                .Where(x => x.Value == null)
-                .Select(x => _session.Provider.GetMetadata().GetNavigationPropertyExactName(collection, x.Key))
-                .ToList();
-
-            foreach (var associationName in unlinkAssociationNames)
-            {
-                await UnlinkEntryAsync(collection, entryKey, associationName, cancellationToken);
-                if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-            }
-
-            return result;
-            //return await UpdateEntryPropertiesAndAssociationsAsync(collection, entryKey, entryData, entryMembers, resultRequired, cancellationToken);
+            return await UpdateEntryAndLinksAsync(collection, entryKey, entryData, resultRequired, cancellationToken);
         }
 
         public Task<IEnumerable<IDictionary<string, object>>> UpdateEntriesAsync(string collection, string commandText, IDictionary<string, object> entryData)

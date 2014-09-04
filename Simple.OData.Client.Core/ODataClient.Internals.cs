@@ -86,63 +86,87 @@ namespace Simple.OData.Client
             return result;
         }
 
-        //private async Task<IDictionary<string, object>> UpdateEntryPropertiesAndAssociationsAsync(
-        //    string collection,
-        //    IDictionary<string, object> entryKey,
-        //    IDictionary<string, object> entryData,
-        //    EntryMembers entryMembers,
-        //    bool resultRequired, 
-        //    CancellationToken cancellationToken)
-        //{
-        //    bool hasPropertiesToUpdate = entryMembers.Properties.Count > 0;
-        //    bool merge = !hasPropertiesToUpdate || CheckMergeConditions(collection, entryKey, entryData);
-        //    var commandText = await GetFluentClient()
-        //        .For(_session.FindBaseEntitySet(collection).ActualName)
-        //        .Key(entryKey)
-        //        .GetCommandTextAsync(cancellationToken);
-        //    if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+        private async Task<IDictionary<string, object>> InsertEntryAndLinksAsync(string collection, IDictionary<string, object> entryData, bool resultRequired, CancellationToken cancellationToken)
+        {
+            RemoveSystemProperties(entryData);
+            var entitySet = _session.MetadataCache.FindConcreteEntitySet(collection);
+            var entryMembers = ParseEntryMembers(entitySet, entryData);
 
-        //    var commandWriter = new CommandWriter(_session);
-        //    var entitySetName = _session.ProviderMetadata.GetEntitySetExactName(collection);
-        //    var entryContent = commandWriter.CreateEntry(
-        //        _session.ProviderMetadata.GetEntitySetTypeNamespace(collection),
-        //        _session.ProviderMetadata.GetEntitySetTypeName(collection), entryMembers.Properties);
-        //    var unlinkAssociationNames = new List<string>();
-        //    foreach (var associatedData in entryMembers.AssociationsByValue)
-        //    {
-        //        var associationName = _session.ProviderMetadata.GetNavigationPropertyExactName(entitySetName, associatedData.Key);
-        //        if (associatedData.Value != null)
-        //        {
-        //            commandWriter.AddLink(entryContent, collection, associatedData);
-        //        }
-        //        else
-        //        {
-        //            unlinkAssociationNames.Add(associationName);
-        //        }
-        //    }
+            var commandWriter = new CommandWriter(_session);
+            var entryContent = commandWriter.CreateEntry(
+                _session.Provider.GetMetadata().GetEntitySetTypeNamespace(collection),
+                _session.Provider.GetMetadata().GetEntitySetTypeName(collection),
+                entryMembers.Properties,
+                entryMembers.AssociationsByValue,
+                entryMembers.AssociationsByContentId);
 
-        //    var command = commandWriter.CreateUpdateCommand(commandText, entryData, entryContent, merge);
-        //    var request = _requestBuilder.CreateRequest(command, resultRequired, 
-        //        _session.ProviderMetadata.EntitySetTypeRequiresOptimisticConcurrencyCheck(collection));
-        //    var result = await _requestRunner.UpdateEntryAsync(request, cancellationToken);
-        //    if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+            var command = commandWriter.CreateInsertCommand(_session.MetadataCache.FindBaseEntitySet(collection).ActualName, entryData, entryContent);
+            var request = _requestBuilder.CreateRequest(command, resultRequired);
+            var result = await _requestRunner.InsertEntryAsync(request, cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-        //    foreach (var associatedData in entryMembers.AssociationsByContentId)
-        //    {
-        //        var linkCommand = commandWriter.CreateLinkCommand(collection, associatedData.Key, command.ContentId, associatedData.Value);
-        //        request = _requestBuilder.CreateRequest(linkCommand);
-        //        await _requestRunner.UpdateEntryAsync(request, cancellationToken);
-        //        if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-        //    }
+            foreach (var associatedData in entryMembers.AssociationsByContentId)
+            {
+                var linkCommand = commandWriter.CreateLinkCommand(collection, associatedData.Key, command.ContentId, associatedData.Value);
+                request = _requestBuilder.CreateRequest(linkCommand, resultRequired);
+                await _requestRunner.InsertEntryAsync(request, cancellationToken);
+                if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+            }
 
-        //    foreach (var associationName in unlinkAssociationNames)
-        //    {
-        //        await UnlinkEntryAsync(collection, entryKey, associationName, cancellationToken);
-        //        if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-        //    }
+            return result;
+        }
 
-        //    return result;
-        //}
+        public async Task<IDictionary<string, object>> UpdateEntryAndLinksAsync(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData, bool resultRequired, CancellationToken cancellationToken)
+        {
+            RemoveSystemProperties(entryKey);
+            RemoveSystemProperties(entryData);
+            var table = _session.MetadataCache.FindConcreteEntitySet(collection);
+            var entryMembers = ParseEntryMembers(table, entryData);
+
+            bool hasPropertiesToUpdate = entryMembers.Properties.Count > 0;
+            bool merge = !hasPropertiesToUpdate || CheckMergeConditions(collection, entryKey, entryData);
+            var commandText = await GetFluentClient()
+                .For(_session.MetadataCache.FindBaseEntitySet(collection).ActualName)
+                .Key(entryKey)
+                .GetCommandTextAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+            var commandWriter = new CommandWriter(_session);
+            var entitySetName = _session.Provider.GetMetadata().GetEntitySetExactName(collection);
+            var entryContent = commandWriter.CreateEntry(
+                _session.Provider.GetMetadata().GetEntitySetTypeNamespace(collection),
+                _session.Provider.GetMetadata().GetEntitySetTypeName(collection),
+                entryMembers.Properties,
+                entryMembers.AssociationsByValue,
+                entryMembers.AssociationsByContentId);
+
+            var command = commandWriter.CreateUpdateCommand(commandText, entryData, entryContent, merge);
+            var request = _requestBuilder.CreateRequest(command, resultRequired,
+                _session.Provider.GetMetadata().EntitySetTypeRequiresOptimisticConcurrencyCheck(collection));
+            var result = await _requestRunner.UpdateEntryAsync(request, cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+            foreach (var associatedData in entryMembers.AssociationsByContentId)
+            {
+                var linkCommand = commandWriter.CreateLinkCommand(collection, associatedData.Key, command.ContentId, associatedData.Value);
+                request = _requestBuilder.CreateRequest(linkCommand);
+                await _requestRunner.UpdateEntryAsync(request, cancellationToken);
+                if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+            }
+
+            var unlinkAssociationNames = entryMembers.AssociationsByValue
+                .Where(x => x.Value == null)
+                .Select(x => _session.Provider.GetMetadata().GetNavigationPropertyExactName(entitySetName, x.Key))
+                .ToList();
+
+            foreach (var associationName in unlinkAssociationNames)
+            {
+                await UnlinkEntryAsync(collection, entryKey, associationName, cancellationToken);
+                if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+            }
+
+            return result;
+        }
 
         private EntryMembers ParseEntryMembers(EntitySet entitySet, IDictionary<string, object> entryData)
         {
