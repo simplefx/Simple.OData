@@ -275,6 +275,9 @@
     <Compile Include="..\Simple.OData.Client.Core\Pluralizer.cs">
       <Link>Pluralizer.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ProviderV3\BatchWriterV3.cs">
+      <Link>ProviderV3\BatchWriterV3.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ProviderV3\MetadataV3.cs">
       <Link>ProviderV3\MetadataV3.cs</Link>
     </Compile>
@@ -304,6 +307,9 @@
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ProviderV4\ODataV4ResponseMessage.cs">
       <Link>ProviderV4\ODataV4ResponseMessage.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Provider\IBatchWriter.cs">
+      <Link>Provider\IBatchWriter.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Provider\IMetadata.cs">
       <Link>Provider\IMetadata.cs</Link>

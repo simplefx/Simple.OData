@@ -13,7 +13,6 @@ namespace Simple.OData.Client
     class ODataProviderV3 : ODataProvider
     {
         private readonly ISession _session;
-        private readonly string _urlBase;
 
         public new IEdmModel Model
         {
@@ -21,10 +20,9 @@ namespace Simple.OData.Client
             set { base.Model = value; }
         }
 
-        public ODataProviderV3(ISession session, string urlBase, string protocolVersion, HttpResponseMessage response)
+        public ODataProviderV3(ISession session, string protocolVersion, HttpResponseMessage response)
         {
             _session = session;
-            _urlBase = urlBase;
             ProtocolVersion = protocolVersion;
 
             using (var messageReader = new ODataMessageReader(new ODataV3ResponseMessage(response)))
@@ -33,10 +31,9 @@ namespace Simple.OData.Client
             }
         }
 
-        public ODataProviderV3(ISession session, string urlBase, string protocolVersion, string metadataString)
+        public ODataProviderV3(ISession session, string protocolVersion, string metadataString)
         {
             _session = session;
-            _urlBase = urlBase;
             ProtocolVersion = protocolVersion;
 
             var reader = XmlReader.Create(new StringReader(metadataString));
@@ -54,9 +51,14 @@ namespace Simple.OData.Client
             return new ResponseReaderV3(_session, Model);
         }
 
-        public override IRequestWriter GetRequestWriter()
+        public override IRequestWriter GetRequestWriter(IBatchWriter batchWriter = null)
         {
-            return new RequestWriterV3(_session, _urlBase, Model);
+            return new RequestWriterV3(_session, Model, batchWriter);
+        }
+
+        public override IBatchWriter GetBatchWriter()
+        {
+            return new BatchWriterV3(_session);
         }
     }
 }

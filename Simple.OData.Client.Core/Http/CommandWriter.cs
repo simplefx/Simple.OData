@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Simple.OData.Client
 {
@@ -15,15 +16,16 @@ namespace Simple.OData.Client
             _requestBuilder = requestBuilder;
         }
 
-        public HttpCommand CreateGetCommand(string commandText, bool scalarResult = false)
+        public async Task<HttpCommand> CreateGetCommandAsync(string commandText, bool scalarResult = false)
         {
             return HttpCommand.Get(commandText, scalarResult);
         }
 
-        public HttpCommand CreateInsertCommand(string commandText, IDictionary<string, object> entryData, string collection, EntitySet entitySet)
+        public async Task<HttpCommand> CreateInsertCommandAsync(string commandText, IDictionary<string, object> entryData, string collection, EntitySet entitySet)
         {
             var entryMembers = ParseEntryMembers(entitySet, entryData);
-            var entryContent = CreateEntry(
+            var entryContent = await CreateEntryAsync(
+                RestVerbs.POST,
                 _session.Provider.GetMetadata().GetEntitySetTypeNamespace(collection),
                 _session.Provider.GetMetadata().GetEntitySetTypeName(collection),
                 entryMembers.Properties,
@@ -33,10 +35,11 @@ namespace Simple.OData.Client
             return HttpCommand.Post(commandText, entryData, entryContent);
         }
 
-        public HttpCommand CreateUpdateCommand(string commandText, IDictionary<string, object> entryData, string collection, EntitySet entitySet, bool merge = false)
+        public async Task<HttpCommand> CreateUpdateCommandAsync(string commandText, IDictionary<string, object> entryData, string collection, EntitySet entitySet, bool merge = false)
         {
             var entryMembers = ParseEntryMembers(entitySet, entryData);
-            var entryContent = CreateEntry(
+            var entryContent = await CreateEntryAsync(
+                merge ? RestVerbs.MERGE : RestVerbs.PUT, 
                 _session.Provider.GetMetadata().GetEntitySetTypeNamespace(collection),
                 _session.Provider.GetMetadata().GetEntitySetTypeName(collection),
                 entryMembers.Properties,
@@ -46,19 +49,19 @@ namespace Simple.OData.Client
             return new HttpCommand(merge ? RestVerbs.MERGE : RestVerbs.PUT, commandText, entryData, entryContent);
         }
 
-        public HttpCommand CreateDeleteCommand(string commandText)
+        public async Task<HttpCommand> CreateDeleteCommandAsync(string commandText)
         {
             return HttpCommand.Delete(commandText);
         }
 
-        public HttpCommand CreateLinkCommand(string collection, string associationName, int contentId, int associationId)
+        public Task<HttpCommand> CreateLinkCommandAsync(string collection, string associationName, int contentId, int associationId)
         {
-            return CreateLinkCommand(collection, associationName, FormatLinkPath(contentId), FormatLinkPath(associationId));
+            return CreateLinkCommandAsync(collection, associationName, FormatLinkPath(contentId), FormatLinkPath(associationId));
         }
 
-        public HttpCommand CreateLinkCommand(string collection, string associationName, string entryPath, string linkPath)
+        public async Task<HttpCommand> CreateLinkCommandAsync(string collection, string associationName, string entryPath, string linkPath)
         {
-            var linkEntry = CreateLink(linkPath);
+            var linkEntry = await CreateLinkAsync(linkPath);
             var linkMethod = _session.Provider.GetMetadata().IsNavigationPropertyMultiple(collection, associationName) ?
                 RestVerbs.POST :
                 RestVerbs.PUT;
@@ -67,18 +70,19 @@ namespace Simple.OData.Client
             return new HttpCommand(linkMethod, commandText, null, linkEntry.ToString(), true);
         }
 
-        public HttpCommand CreateUnlinkCommand(string collection, string associationName, string entryPath)
+        public async Task<HttpCommand> CreateUnlinkCommandAsync(string collection, string associationName, string entryPath)
         {
             var commandText = FormatLinkPath(entryPath, associationName);
             return HttpCommand.Delete(commandText);
         }
 
-        public string CreateEntry(string entityTypeNamespace, string entityTypeName,
+        public async Task<string> CreateEntryAsync(string method, string entityTypeNamespace, string entityTypeName,
             IDictionary<string, object> properties, 
             IEnumerable<KeyValuePair<string, object>> associationsByValue,
             IEnumerable<KeyValuePair<string, int>> associationsByContentId)
         {
-            var entry = _session.Provider.GetRequestWriter().CreateEntry(
+            var entry = await _session.Provider.GetRequestWriter().CreateEntryAsync(
+                method,
                 entityTypeNamespace, entityTypeName, 
                 properties, 
                 associationsByValue, 
@@ -87,10 +91,9 @@ namespace Simple.OData.Client
             return entry;
         }
 
-        public string CreateLink(string linkPath)
+        public Task<string> CreateLinkAsync(string linkPath)
         {
-            var link = _session.Provider.GetRequestWriter().CreateLink(linkPath);
-            return link;
+            return _session.Provider.GetRequestWriter().CreateLinkAsync(linkPath);
         }
 
         //public void AddLink(CommandContent content, string collection, KeyValuePair<string, object> associatedData)

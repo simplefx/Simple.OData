@@ -1,14 +1,15 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Simple.OData.Client
 {
     interface IRequestWriter
     {
-        string CreateEntry(string entityTypeNamespace, string entityTypeName, 
+        Task<string> CreateEntryAsync(string operation, string entityTypeNamespace, string entityTypeName, 
             IDictionary<string, object> properties,
             IEnumerable<KeyValuePair<string, object>> associationsByValue,
             IEnumerable<KeyValuePair<string, int>> associationsByContentId);
 
-        string CreateLink(string linkPath);
+        Task<string> CreateLinkAsync(string linkPath);
     }
 }

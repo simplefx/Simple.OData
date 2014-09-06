@@ -12,7 +12,7 @@ namespace Simple.OData.Client
         private async Task<IEnumerable<IDictionary<string, object>>> RetrieveEntriesAsync(
             string commandText, bool scalarResult, CancellationToken cancellationToken)
         {
-            var command = new CommandWriter(_session, _requestBuilder).CreateGetCommand(commandText, scalarResult);
+            var command = await new CommandWriter(_session, _requestBuilder).CreateGetCommandAsync(commandText, scalarResult);
             var request = _requestBuilder.CreateRequest(command);
             return await _requestRunner.FindEntriesAsync(request, scalarResult, cancellationToken);
         }
@@ -20,7 +20,7 @@ namespace Simple.OData.Client
         private async Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> RetrieveEntriesWithCountAsync(
             string commandText, bool scalarResult, CancellationToken cancellationToken)
         {
-            var command = new CommandWriter(_session, _requestBuilder).CreateGetCommand(commandText, scalarResult);
+            var command = await new CommandWriter(_session, _requestBuilder).CreateGetCommandAsync(commandText, scalarResult);
             var request = _requestBuilder.CreateRequest(command);
             var result = await _requestRunner.FindEntriesWithCountAsync(request, scalarResult, cancellationToken);
             return Tuple.Create(result.Item1, result.Item2);
@@ -94,14 +94,14 @@ namespace Simple.OData.Client
             var commandWriter = new CommandWriter(_session, _requestBuilder);
             var entryMembers = commandWriter.ParseEntryMembers(entitySet, entryData);
 
-            var command = commandWriter.CreateInsertCommand(_session.MetadataCache.FindBaseEntitySet(collection).ActualName, entryData, collection, entitySet);
+            var command = await commandWriter.CreateInsertCommandAsync(_session.MetadataCache.FindBaseEntitySet(collection).ActualName, entryData, collection, entitySet);
             var request = _requestBuilder.CreateRequest(command, resultRequired);
             var result = await _requestRunner.InsertEntryAsync(request, cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             foreach (var associatedData in entryMembers.AssociationsByContentId)
             {
-                var linkCommand = commandWriter.CreateLinkCommand(collection, associatedData.Key, command.ContentId, associatedData.Value);
+                var linkCommand = await commandWriter.CreateLinkCommandAsync(collection, associatedData.Key, command.ContentId, associatedData.Value);
                 request = _requestBuilder.CreateRequest(linkCommand, resultRequired);
                 await _requestRunner.InsertEntryAsync(request, cancellationToken);
                 if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
@@ -128,7 +128,7 @@ namespace Simple.OData.Client
 
             var entitySetName = _session.Provider.GetMetadata().GetEntitySetExactName(collection);
 
-            var command = commandWriter.CreateUpdateCommand(commandText, entryData, collection, entitySet, merge);
+            var command = await commandWriter.CreateUpdateCommandAsync(commandText, entryData, collection, entitySet, merge);
             var request = _requestBuilder.CreateRequest(command, resultRequired,
                 _session.Provider.GetMetadata().EntitySetTypeRequiresOptimisticConcurrencyCheck(collection));
             var result = await _requestRunner.UpdateEntryAsync(request, cancellationToken);
@@ -136,7 +136,7 @@ namespace Simple.OData.Client
 
             foreach (var associatedData in entryMembers.AssociationsByContentId)
             {
-                var linkCommand = commandWriter.CreateLinkCommand(collection, associatedData.Key, command.ContentId, associatedData.Value);
+                var linkCommand = await commandWriter.CreateLinkCommandAsync(collection, associatedData.Key, command.ContentId, associatedData.Value);
                 request = _requestBuilder.CreateRequest(linkCommand);
                 await _requestRunner.UpdateEntryAsync(request, cancellationToken);
                 if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();

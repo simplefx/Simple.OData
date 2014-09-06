@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.Data.Edm;
 using Microsoft.Data.OData;
 using Simple.OData.Client.Extensions;
@@ -10,24 +11,31 @@ namespace Simple.OData.Client
     class RequestWriterV3 : IRequestWriter
     {
         private readonly ISession _session;
-        private readonly string _urlBase;
         private readonly IEdmModel _model;
+        private readonly IBatchWriter _batchWriter;
 
-        public RequestWriterV3(ISession session, string urlBase, IEdmModel model)
+        public RequestWriterV3(ISession session, IEdmModel model, IBatchWriter batchWriter)
         {
             _session = session;
-            _urlBase = urlBase;
             _model = model;
+            _batchWriter = batchWriter;
         }
 
-        public string CreateEntry(string entityTypeNamespace, string entityTypeName,
+        public async Task<string> CreateEntryAsync(string operation, string entityTypeNamespace, string entityTypeName,
             IDictionary<string, object> properties,
             IEnumerable<KeyValuePair<string, object>> associationsByValue,
             IEnumerable<KeyValuePair<string, int>> associationsByContentId)
         {
-            // TODO: check dispose
-            var writerSettings = new ODataMessageWriterSettings() { BaseUri = new Uri(_urlBase) };
-            var message = new ODataV3RequestMessage(ODataPayloadKind.Entry, null, null);
+            var writerSettings = new ODataMessageWriterSettings() { BaseUri = new Uri(_session.UrlBase) };
+            ODataV3RequestMessage message;
+            if (_batchWriter != null)
+            {
+                message = (await _batchWriter.CreateOperationRequestMessageAsync(operation, new Uri(_session.UrlBase))) as ODataV3RequestMessage;
+            }
+            else
+            {
+                message = new ODataV3RequestMessage(ODataPayloadKind.Entry, null, null);
+            }
             var messageWriter = new ODataMessageWriter(message, writerSettings, _model);
             var entryWriter = messageWriter.CreateODataEntryWriter();
             var entry = new Microsoft.Data.OData.ODataEntry();
@@ -56,9 +64,9 @@ namespace Simple.OData.Client
             return Utils.StreamToString(message.GetStream());
         }
 
-        public string CreateLink(string linkPath)
+        public async Task<string> CreateLinkAsync(string linkPath)
         {
-            var writerSettings = new ODataMessageWriterSettings() { BaseUri = new Uri(_urlBase) };
+            var writerSettings = new ODataMessageWriterSettings() { BaseUri = new Uri(_session.UrlBase) };
             var message = new ODataV3RequestMessage(ODataPayloadKind.EntityReferenceLink, null, null);
             var messageWriter = new ODataMessageWriter(message, writerSettings, _model);
 
@@ -66,6 +74,13 @@ namespace Simple.OData.Client
             messageWriter.WriteEntityReferenceLink(link);
 
             return Utils.StreamToString(message.GetStream());
+        }
+
+        private ODataMessageWriter CreateMessageWriter(ODataPayloadKind payloadKind)
+        {
+            var writerSettings = new ODataMessageWriterSettings() { BaseUri = new Uri(_session.UrlBase) };
+            var message = new ODataV3RequestMessage(payloadKind, null, null);
+            return new ODataMessageWriter(message, writerSettings, _model);
         }
 
         private void WriteLink(ODataWriter entryWriter, Microsoft.Data.OData.ODataEntry entry, KeyValuePair<string, object> linkData)

@@ -13,7 +13,6 @@ namespace Simple.OData.Client
     class ODataProviderV4 : ODataProvider
     {
         private readonly ISession _session;
-        private readonly string _urlBase;
 
         public new IEdmModel Model
         {
@@ -21,10 +20,9 @@ namespace Simple.OData.Client
             set { base.Model = value; }
         }
 
-        public ODataProviderV4(ISession session, string urlBase, string protocolVersion, HttpResponseMessage response)
+        public ODataProviderV4(ISession session, string protocolVersion, HttpResponseMessage response)
         {
             _session = session;
-            _urlBase = urlBase;
             ProtocolVersion = protocolVersion;
 
             using (var messageReader = new ODataMessageReader(new ODataV4ResponseMessage(response)))
@@ -33,10 +31,9 @@ namespace Simple.OData.Client
             }
         }
 
-        public ODataProviderV4(ISession session, string urlBase, string protocolVersion, string metadataString)
+        public ODataProviderV4(ISession session, string protocolVersion, string metadataString)
         {
             _session = session;
-            _urlBase = urlBase;
             ProtocolVersion = protocolVersion;
 
             var reader = XmlReader.Create(new StringReader(metadataString));
@@ -54,7 +51,12 @@ namespace Simple.OData.Client
             throw new NotImplementedException();
         }
 
-        public override IRequestWriter GetRequestWriter()
+        public override IRequestWriter GetRequestWriter(IBatchWriter batchWriter = null)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override IBatchWriter GetBatchWriter()
         {
             throw new NotImplementedException();
         }

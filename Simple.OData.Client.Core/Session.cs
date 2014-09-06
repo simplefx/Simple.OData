@@ -12,14 +12,17 @@ namespace Simple.OData.Client
         private Func<ODataProvider> _createProvider;
         private ODataProvider _provider;
 
+        public string UrlBase { get; private set; }
+        public ICredentials Credentials { get; private set; }
         public MetadataCache MetadataCache { get; private set; }
         public IPluralizer Pluralizer { get; internal set; }
 
         private Session(string urlBase, string metadataString)
         {
-            _providerFactory = new ProviderFactory(this, urlBase, null);
+            _providerFactory = new ProviderFactory(this);
             _createProvider = () => _providerFactory.ParseMetadata(metadataString);
 
+            this.UrlBase = urlBase;
             this.MetadataCache = MetadataCache.Instances.GetOrAdd(urlBase, new MetadataCache(_createProvider));
             this.MetadataCache.SetMetadataString(metadataString);
             this.Pluralizer = new SimplePluralizer();
@@ -27,9 +30,11 @@ namespace Simple.OData.Client
 
         private Session(string urlBase, ICredentials credentials)
         {
-            _providerFactory = new ProviderFactory(this, urlBase, credentials);
+            _providerFactory = new ProviderFactory(this);
             _createProvider = () => _providerFactory.ParseMetadata(this.MetadataCache.MetadataAsString);
 
+            this.UrlBase = urlBase;
+            this.Credentials = credentials;
             this.MetadataCache = MetadataCache.Instances.GetOrAdd(urlBase, new MetadataCache(_createProvider));
             this.Pluralizer = new SimplePluralizer();
         }

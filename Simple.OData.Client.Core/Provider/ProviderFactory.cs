@@ -13,14 +13,10 @@ namespace Simple.OData.Client
     class ProviderFactory
     {
         private readonly ISession _session;
-        private readonly string _urlBase;
-        private readonly ICredentials _credentials;
 
-        public ProviderFactory(ISession session, string urlBase, ICredentials credentials)
+        public ProviderFactory(ISession session)
         {
             _session = session;
-            _urlBase = urlBase;
-            _credentials = credentials;
         }
 
         public async Task<ODataProvider> CreateProviderAsync(HttpResponseMessage response)
@@ -28,9 +24,9 @@ namespace Simple.OData.Client
             var protocolVersions = GetSupportedProtocolVersions(response).ToArray();
 
             if (protocolVersions.Any(x => x == "4.0"))
-                return new ODataProviderV4(_session, _urlBase, protocolVersions.First(), response);
+                return new ODataProviderV4(_session, protocolVersions.First(), response);
             else if (protocolVersions.Any(x => x == "1.0" || x == "2.0" || x == "3.0"))
-                return new ODataProviderV3(_session, _urlBase, protocolVersions.First(), response);
+                return new ODataProviderV3(_session, protocolVersions.First(), response);
 
             throw new NotSupportedException(string.Format("OData protocol {0} is not supported", protocolVersions));
         }
@@ -60,16 +56,16 @@ namespace Simple.OData.Client
             var protocolVersion = reader.GetAttribute("Version");
 
             if (protocolVersion == "4.0")
-                return new ODataProviderV4(_session, _urlBase, protocolVersion, metadataString);
+                return new ODataProviderV4(_session, protocolVersion, metadataString);
             else if (protocolVersion == "1.0" || protocolVersion == "2.0" || protocolVersion == "3.0")
-                return new ODataProviderV3(_session, _urlBase, protocolVersion, metadataString);
+                return new ODataProviderV3(_session, protocolVersion, metadataString);
 
             throw new NotSupportedException(string.Format("OData protocol {0} is not supported", protocolVersion));
         }
 
         internal async Task<HttpResponseMessage> SendMetadataRequestAsync(CancellationToken cancellationToken)
         {
-            var requestBuilder = new CommandRequestBuilder(_urlBase, _credentials);
+            var requestBuilder = new CommandRequestBuilder(_session.UrlBase, _session.Credentials);
             var command = HttpCommand.Get(FluentCommand.MetadataLiteral);
             var request = requestBuilder.CreateRequest(command);
             var requestRunner = new MetadataRequestRunner(new ODataClientSettings());

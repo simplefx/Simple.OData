@@ -83,9 +83,11 @@
     <Compile Include="IPluralizer.cs" />
     <Compile Include="ISession.cs" />
     <Compile Include="MetadataCache.cs" />
+    <Compile Include="ProviderV3\BatchWriterV3.cs" />
     <Compile Include="ProviderV3\MetadataV3.cs" />
     <Compile Include="ProviderV3\RequestWriterV3.cs" />
     <Compile Include="ProviderV4\MetadataV4.cs" />
+    <Compile Include="Provider\IBatchWriter.cs" />
     <Compile Include="Provider\IMetadata.cs" />
     <Compile Include="Provider\IRequestWriter.cs" />
     <Compile Include="Provider\IResponseReader.cs" />
