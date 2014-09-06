@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Xml.Linq;
-using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
     class CommandWriter
     {
         private readonly Session _session;
+        private readonly RequestBuilder _requestBuilder;
 
-        public CommandWriter(Session session)
+        public CommandWriter(Session session, RequestBuilder requestBuilder)
         {
             _session = session;
+            _requestBuilder = requestBuilder;
         }
 
         public HttpCommand CreateGetCommand(string commandText, bool scalarResult = false)
@@ -20,14 +20,30 @@ namespace Simple.OData.Client
             return HttpCommand.Get(commandText, scalarResult);
         }
 
-        public HttpCommand CreateInsertCommand(string commandText, IDictionary<string, object> entryData, CommandContent entryContent)
+        public HttpCommand CreateInsertCommand(string commandText, IDictionary<string, object> entryData, string collection, EntitySet entitySet)
         {
-            return HttpCommand.Post(commandText, entryData, entryContent.ToString());
+            var entryMembers = ParseEntryMembers(entitySet, entryData);
+            var entryContent = CreateEntry(
+                _session.Provider.GetMetadata().GetEntitySetTypeNamespace(collection),
+                _session.Provider.GetMetadata().GetEntitySetTypeName(collection),
+                entryMembers.Properties,
+                entryMembers.AssociationsByValue,
+                entryMembers.AssociationsByContentId);
+
+            return HttpCommand.Post(commandText, entryData, entryContent);
         }
 
-        public HttpCommand CreateUpdateCommand(string commandText, IDictionary<string, object> entryData, CommandContent entryContent, bool merge = false)
+        public HttpCommand CreateUpdateCommand(string commandText, IDictionary<string, object> entryData, string collection, EntitySet entitySet, bool merge = false)
         {
-            return new HttpCommand(merge ? RestVerbs.MERGE : RestVerbs.PUT, commandText, entryData, entryContent.ToString());
+            var entryMembers = ParseEntryMembers(entitySet, entryData);
+            var entryContent = CreateEntry(
+                _session.Provider.GetMetadata().GetEntitySetTypeNamespace(collection),
+                _session.Provider.GetMetadata().GetEntitySetTypeName(collection),
+                entryMembers.Properties,
+                entryMembers.AssociationsByValue,
+                entryMembers.AssociationsByContentId);
+
+            return new HttpCommand(merge ? RestVerbs.MERGE : RestVerbs.PUT, commandText, entryData, entryContent);
         }
 
         public HttpCommand CreateDeleteCommand(string commandText)
@@ -42,7 +58,7 @@ namespace Simple.OData.Client
 
         public HttpCommand CreateLinkCommand(string collection, string associationName, string entryPath, string linkPath)
         {
-            var linkEntry = CreateLinkElement(linkPath);
+            var linkEntry = CreateLink(linkPath);
             var linkMethod = _session.Provider.GetMetadata().IsNavigationPropertyMultiple(collection, associationName) ?
                 RestVerbs.POST :
                 RestVerbs.PUT;
@@ -57,7 +73,7 @@ namespace Simple.OData.Client
             return HttpCommand.Delete(commandText);
         }
 
-        public CommandContent CreateEntry(string entityTypeNamespace, string entityTypeName,
+        public string CreateEntry(string entityTypeNamespace, string entityTypeName,
             IDictionary<string, object> properties, 
             IEnumerable<KeyValuePair<string, object>> associationsByValue,
             IEnumerable<KeyValuePair<string, int>> associationsByContentId)
@@ -68,7 +84,13 @@ namespace Simple.OData.Client
                 associationsByValue, 
                 associationsByContentId);
 
-            return new CommandContent(entry);
+            return entry;
+        }
+
+        public string CreateLink(string linkPath)
+        {
+            var link = _session.Provider.GetRequestWriter().CreateLink(linkPath);
+            return link;
         }
 
         //public void AddLink(CommandContent content, string collection, KeyValuePair<string, object> associatedData)
@@ -89,13 +111,59 @@ namespace Simple.OData.Client
         //    }
         //}
 
-        private XElement CreateLinkElement(string link)
+        public EntryMembers ParseEntryMembers(EntitySet entitySet, IDictionary<string, object> entryData)
         {
-            var entry = CreateEmptyMetadataWithNamespaces();
+            var entryMembers = new EntryMembers();
 
-            entry.SetValue(link);
+            foreach (var item in entryData)
+            {
+                ParseEntryMember(entitySet, item, entryMembers);
+            }
 
-            return entry;
+            return entryMembers;
+        }
+
+        private void ParseEntryMember(EntitySet entitySet, KeyValuePair<string, object> item, EntryMembers entryMembers)
+        {
+            if (entitySet.Metadata.HasStructuralProperty(entitySet.ActualName, item.Key))
+            {
+                entryMembers.AddProperty(item.Key, item.Value);
+            }
+            else if (entitySet.Metadata.HasNavigationProperty(entitySet.ActualName, item.Key))
+            {
+                if (entitySet.Metadata.IsNavigationPropertyMultiple(entitySet.ActualName, item.Key))
+                {
+                    var collection = item.Value as IEnumerable<object>;
+                    if (collection != null)
+                    {
+                        foreach (var element in collection)
+                        {
+                            AddEntryAssociation(entryMembers, item.Key, element);
+                        }
+                    }
+                }
+                else
+                {
+                    AddEntryAssociation(entryMembers, item.Key, item.Value);
+                }
+            }
+            else
+            {
+                throw new UnresolvableObjectException(item.Key, string.Format("No property or association found for {0}.", item.Key));
+            }
+        }
+
+        private void AddEntryAssociation(EntryMembers entryMembers, string associationName, object associatedData)
+        {
+            int contentId = _requestBuilder.GetContentId(associatedData);
+            if (contentId == 0)
+            {
+                entryMembers.AddAssociationByValue(associationName, associatedData);
+            }
+            else
+            {
+                entryMembers.AddAssociationByContentId(associationName, contentId);
+            }
         }
 
         private string FormatLinkPath(int contentId)
@@ -107,18 +175,6 @@ namespace Simple.OData.Client
         {
             return string.Format("{0}/$links/{1}", entryPath, linkName);
         }
-
-        //private void AddDataLink(XElement container, string associationName, string linkedEntityName, IEnumerable<object> linkedEntityKeyValues)
-        //{
-        //    var entry = XElement.Parse(Resources.DataServicesAtomEntryXml).Element(null, "link");
-        //    var rel = entry.Attribute("rel");
-        //    rel.SetValue(rel.Value + associationName);
-        //    entry.SetAttributeValue("title", associationName);
-        //    entry.SetAttributeValue("href", string.Format("{0}({1})",
-        //        linkedEntityName,
-        //        string.Join(",", linkedEntityKeyValues.Select(new ValueFormatter().FormatContentValue))));
-        //    container.Add(entry);
-        //}
 
         //private IEnumerable<object> GetLinkedEntryKeyValues(string collection, KeyValuePair<string, object> entryData)
         //{
@@ -151,20 +207,6 @@ namespace Simple.OData.Client
         //    }
         //    return entryProperties;
         //}
-
-        //private XElement CreateEmptyEntryWithNamespaces()
-        //{
-        //    var entry = XElement.Parse(Resources.DataServicesAtomEntryXml);
-        //    entry.Element(null, "updated").SetValue(DateTime.UtcNow.ToIso8601String());
-        //    entry.Element(null, "link").Remove();
-        //    return entry;
-        //}
-
-        private XElement CreateEmptyMetadataWithNamespaces()
-        {
-            var entry = XElement.Parse(Resources.DataServicesMetadataEntryXml);
-            return entry;
-        }
 
         //private string GetQualifiedResourceName(string namespaceName, string collectionName)
         //{

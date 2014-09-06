@@ -8,5 +8,7 @@ namespace Simple.OData.Client
             IDictionary<string, object> properties,
             IEnumerable<KeyValuePair<string, object>> associationsByValue,
             IEnumerable<KeyValuePair<string, int>> associationsByContentId);
+
+        string CreateLink(string linkPath);
     }
 }

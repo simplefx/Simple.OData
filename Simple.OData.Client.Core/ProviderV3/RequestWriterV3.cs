@@ -27,7 +27,7 @@ namespace Simple.OData.Client
         {
             // TODO: check dispose
             var writerSettings = new ODataMessageWriterSettings() { BaseUri = new Uri(_urlBase) };
-            var message = new ODataV3RequestMessage(null, null);
+            var message = new ODataV3RequestMessage(ODataPayloadKind.Entry, null, null);
             var messageWriter = new ODataMessageWriter(message, writerSettings, _model);
             var entryWriter = messageWriter.CreateODataEntryWriter();
             var entry = new Microsoft.Data.OData.ODataEntry();
@@ -52,6 +52,18 @@ namespace Simple.OData.Client
             }
 
             entryWriter.WriteEnd();
+
+            return Utils.StreamToString(message.GetStream());
+        }
+
+        public string CreateLink(string linkPath)
+        {
+            var writerSettings = new ODataMessageWriterSettings() { BaseUri = new Uri(_urlBase) };
+            var message = new ODataV3RequestMessage(ODataPayloadKind.EntityReferenceLink, null, null);
+            var messageWriter = new ODataMessageWriter(message, writerSettings, _model);
+
+            var link = new ODataEntityReferenceLink { Url = new Uri(linkPath, UriKind.Relative) };
+            messageWriter.WriteEntityReferenceLink(link);
 
             return Utils.StreamToString(message.GetStream());
         }

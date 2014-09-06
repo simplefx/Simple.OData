@@ -343,7 +343,7 @@ namespace Simple.OData.Client
                 .GetCommandTextAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var command = new CommandWriter(_session).CreateGetCommand(commandText);
+            var command = new CommandWriter(_session, _requestBuilder).CreateGetCommand(commandText);
             var request = _requestBuilder.CreateRequest(command);
             return await _requestRunner.GetEntryAsync(request, cancellationToken);
         }
@@ -438,7 +438,7 @@ namespace Simple.OData.Client
                 .GetCommandTextAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var command = new CommandWriter(_session).CreateDeleteCommand(commandText);
+            var command = new CommandWriter(_session, _requestBuilder).CreateDeleteCommand(commandText);
             var request = _requestBuilder.CreateRequest(command, false, _session.Provider.GetMetadata()
                 .EntitySetTypeRequiresOptimisticConcurrencyCheck(collection));
             await _requestRunner.DeleteEntryAsync(request, cancellationToken);
@@ -485,7 +485,7 @@ namespace Simple.OData.Client
                 .GetCommandTextAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var command = new CommandWriter(_session).CreateLinkCommand(
+            var command = new CommandWriter(_session, _requestBuilder).CreateLinkCommand(
                 collection, _session.Provider.GetMetadata().GetNavigationPropertyExactName(collection, linkName), entryPath, linkPath);
             var request = _requestBuilder.CreateRequest(command);
             await _requestRunner.UpdateEntryAsync(request, cancellationToken);
@@ -508,7 +508,7 @@ namespace Simple.OData.Client
                 .GetCommandTextAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var command = new CommandWriter(_session).CreateUnlinkCommand(
+            var command = new CommandWriter(_session, _requestBuilder).CreateUnlinkCommand(
                 collection, _session.Provider.GetMetadata().GetNavigationPropertyExactName(collection, linkName), commandText);
             var request = _requestBuilder.CreateRequest(command);
             await _requestRunner.UpdateEntryAsync(request, cancellationToken);

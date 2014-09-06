@@ -12,7 +12,7 @@ namespace Simple.OData.Client
         private async Task<IEnumerable<IDictionary<string, object>>> RetrieveEntriesAsync(
             string commandText, bool scalarResult, CancellationToken cancellationToken)
         {
-            var command = new CommandWriter(_session).CreateGetCommand(commandText, scalarResult);
+            var command = new CommandWriter(_session, _requestBuilder).CreateGetCommand(commandText, scalarResult);
             var request = _requestBuilder.CreateRequest(command);
             return await _requestRunner.FindEntriesAsync(request, scalarResult, cancellationToken);
         }
@@ -20,7 +20,7 @@ namespace Simple.OData.Client
         private async Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> RetrieveEntriesWithCountAsync(
             string commandText, bool scalarResult, CancellationToken cancellationToken)
         {
-            var command = new CommandWriter(_session).CreateGetCommand(commandText, scalarResult);
+            var command = new CommandWriter(_session, _requestBuilder).CreateGetCommand(commandText, scalarResult);
             var request = _requestBuilder.CreateRequest(command);
             var result = await _requestRunner.FindEntriesWithCountAsync(request, scalarResult, cancellationToken);
             return Tuple.Create(result.Item1, result.Item2);
@@ -90,17 +90,11 @@ namespace Simple.OData.Client
         {
             RemoveSystemProperties(entryData);
             var entitySet = _session.MetadataCache.FindConcreteEntitySet(collection);
-            var entryMembers = ParseEntryMembers(entitySet, entryData);
 
-            var commandWriter = new CommandWriter(_session);
-            var entryContent = commandWriter.CreateEntry(
-                _session.Provider.GetMetadata().GetEntitySetTypeNamespace(collection),
-                _session.Provider.GetMetadata().GetEntitySetTypeName(collection),
-                entryMembers.Properties,
-                entryMembers.AssociationsByValue,
-                entryMembers.AssociationsByContentId);
+            var commandWriter = new CommandWriter(_session, _requestBuilder);
+            var entryMembers = commandWriter.ParseEntryMembers(entitySet, entryData);
 
-            var command = commandWriter.CreateInsertCommand(_session.MetadataCache.FindBaseEntitySet(collection).ActualName, entryData, entryContent);
+            var command = commandWriter.CreateInsertCommand(_session.MetadataCache.FindBaseEntitySet(collection).ActualName, entryData, collection, entitySet);
             var request = _requestBuilder.CreateRequest(command, resultRequired);
             var result = await _requestRunner.InsertEntryAsync(request, cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
@@ -120,8 +114,9 @@ namespace Simple.OData.Client
         {
             RemoveSystemProperties(entryKey);
             RemoveSystemProperties(entryData);
-            var table = _session.MetadataCache.FindConcreteEntitySet(collection);
-            var entryMembers = ParseEntryMembers(table, entryData);
+            var entitySet = _session.MetadataCache.FindConcreteEntitySet(collection);
+            var commandWriter = new CommandWriter(_session, _requestBuilder);
+            var entryMembers = commandWriter.ParseEntryMembers(entitySet, entryData);
 
             bool hasPropertiesToUpdate = entryMembers.Properties.Count > 0;
             bool merge = !hasPropertiesToUpdate || CheckMergeConditions(collection, entryKey, entryData);
@@ -131,16 +126,9 @@ namespace Simple.OData.Client
                 .GetCommandTextAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var commandWriter = new CommandWriter(_session);
             var entitySetName = _session.Provider.GetMetadata().GetEntitySetExactName(collection);
-            var entryContent = commandWriter.CreateEntry(
-                _session.Provider.GetMetadata().GetEntitySetTypeNamespace(collection),
-                _session.Provider.GetMetadata().GetEntitySetTypeName(collection),
-                entryMembers.Properties,
-                entryMembers.AssociationsByValue,
-                entryMembers.AssociationsByContentId);
 
-            var command = commandWriter.CreateUpdateCommand(commandText, entryData, entryContent, merge);
+            var command = commandWriter.CreateUpdateCommand(commandText, entryData, collection, entitySet, merge);
             var request = _requestBuilder.CreateRequest(command, resultRequired,
                 _session.Provider.GetMetadata().EntitySetTypeRequiresOptimisticConcurrencyCheck(collection));
             var result = await _requestRunner.UpdateEntryAsync(request, cancellationToken);
@@ -166,61 +154,6 @@ namespace Simple.OData.Client
             }
 
             return result;
-        }
-
-        private EntryMembers ParseEntryMembers(EntitySet entitySet, IDictionary<string, object> entryData)
-        {
-            var entryMembers = new EntryMembers();
-
-            foreach (var item in entryData)
-            {
-                ParseEntryMember(entitySet, item, entryMembers);
-            }
-
-            return entryMembers;
-        }
-
-        private void ParseEntryMember(EntitySet entitySet, KeyValuePair<string, object> item, EntryMembers entryMembers)
-        {
-            if (entitySet.Metadata.HasStructuralProperty(entitySet.ActualName, item.Key))
-            {
-                entryMembers.AddProperty(item.Key, item.Value);
-            }
-            else if (entitySet.Metadata.HasNavigationProperty(entitySet.ActualName, item.Key))
-            {
-                if (entitySet.Metadata.IsNavigationPropertyMultiple(entitySet.ActualName, item.Key))
-                {
-                    var collection = item.Value as IEnumerable<object>;
-                    if (collection != null)
-                    {
-                        foreach (var element in collection)
-                        {
-                            AddEntryAssociation(entryMembers, item.Key, element);
-                        }
-                    }
-                }
-                else
-                {
-                    AddEntryAssociation(entryMembers, item.Key, item.Value);
-                }
-            }
-            else
-            {
-                throw new UnresolvableObjectException(item.Key, string.Format("No property or association found for {0}.", item.Key));
-            }
-        }
-
-        private void AddEntryAssociation(EntryMembers entryMembers, string associationName, object associatedData)
-        {
-            int contentId = _requestBuilder.GetContentId(associatedData);
-            if (contentId == 0)
-            {
-                entryMembers.AddAssociationByValue(associationName, associatedData);
-            }
-            else
-            {
-                entryMembers.AddAssociationByContentId(associationName, contentId);
-            }
         }
 
         private bool CheckMergeConditions(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)

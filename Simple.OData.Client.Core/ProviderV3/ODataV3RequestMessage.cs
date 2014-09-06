@@ -19,12 +19,14 @@ namespace Simple.OData.Client
         private MemoryStream _requestStream;
         private readonly ICredentials _credentials;
         private readonly HttpRequestMessage _request;
+        private readonly ODataPayloadKind _payloadKind;
 
-        public ODataV3RequestMessage(Uri url, ICredentials credentials)
+        public ODataV3RequestMessage(ODataPayloadKind payloadKind, Uri url, ICredentials credentials)
         {
             _request = new HttpRequestMessage() { RequestUri = url };
             _credentials = credentials;
             _request.Headers.Add("DataServiceVersion", "3.0");
+            _payloadKind = payloadKind;
         }
 
         public Task<Stream> GetStreamAsync()
@@ -41,7 +43,13 @@ namespace Simple.OData.Client
         {
             if (headerName == "Content-Type")
             {
-                return "application/atom+xml";
+                switch (_payloadKind)
+                {
+                    case ODataPayloadKind.EntityReferenceLink:
+                        return "application/xml";
+                    default:
+                        return "application/atom+xml";
+                }
             } 
             return _request.Headers.GetValues(headerName).FirstOrDefault();
         }

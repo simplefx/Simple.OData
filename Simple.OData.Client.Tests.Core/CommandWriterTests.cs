@@ -41,13 +41,13 @@ namespace Simple.OData.Client.Tests
             var client = CreateClient("QAS.Multiplatform.Demo.edmx") as ODataClient;
             const string resourceName = "WorkTaskModel.xml";
             string xml = GetResourceAsString(resourceName);
-            var commandWriter = new CommandWriter(client.GetSessionAsync().Result);
+            var commandWriter = new CommandWriter(client.GetSessionAsync().Result, null);
             var document = XDocument.Parse(xml).Root;
             var response = SetUpResourceMock(resourceName);
             var responseReader = new ResponseReaderV3(_session, await client.GetMetadataAsync<IEdmModel>());
             var row = (await responseReader.GetResponseAsync(response)).Entry;
 
-            var entry = XElement.Parse(commandWriter.CreateEntry("QAS.Multiplatform.Demo.Models", "WorkTaskModel", row, null, null).Entry);
+            var entry = XElement.Parse(commandWriter.CreateEntry("QAS.Multiplatform.Demo.Models", "WorkTaskModel", row, null, null));
 
             AssertElementsCountEqual(document, entry, "m", "properties");
             AssertElementsContentEqual(document, entry, "d", "Id");
@@ -68,13 +68,13 @@ namespace Simple.OData.Client.Tests
             var client = CreateClient("QAS.Multiplatform.Demo.edmx") as ODataClient;
             const string resourceName = "WorkTaskModelWithNulls.xml";
             string xml = GetResourceAsString(resourceName);
-            var commandWriter = new CommandWriter(client.GetSessionAsync().Result);
+            var commandWriter = new CommandWriter(client.GetSessionAsync().Result, null);
             var document = XDocument.Parse(xml).Root;
             var response = SetUpResourceMock(resourceName);
             var responseReader = new ResponseReaderV3(_session, await client.GetMetadataAsync<IEdmModel>());
             var row = (await responseReader.GetResponseAsync(response)).Entry;
 
-            var entry = XElement.Parse(commandWriter.CreateEntry("QAS.Multiplatform.Demo.Models", "WorkTaskModel", row, null, null).Entry);
+            var entry = XElement.Parse(commandWriter.CreateEntry("QAS.Multiplatform.Demo.Models", "WorkTaskModel", row, null, null));
 
             AssertElementsCountDiffs(document, entry, "m", "properties", 1);
             AssertElementsContentEqual(document, entry, "d", "Id");
