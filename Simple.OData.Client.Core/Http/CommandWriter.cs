@@ -81,7 +81,7 @@ namespace Simple.OData.Client
             IEnumerable<KeyValuePair<string, object>> associationsByValue,
             IEnumerable<KeyValuePair<string, int>> associationsByContentId)
         {
-            var entry = await _session.Provider.GetRequestWriter().CreateEntryAsync(
+            var entry = await _session.Provider.GetRequestWriter(_requestBuilder.GetDeferredBatchWriter()).CreateEntryAsync(
                 method,
                 entityTypeNamespace, entityTypeName, 
                 properties, 
@@ -93,7 +93,7 @@ namespace Simple.OData.Client
 
         public Task<string> CreateLinkAsync(string linkPath)
         {
-            return _session.Provider.GetRequestWriter().CreateLinkAsync(linkPath);
+            return _session.Provider.GetRequestWriter(_requestBuilder.GetDeferredBatchWriter()).CreateLinkAsync(linkPath);
         }
 
         //public void AddLink(CommandContent content, string collection, KeyValuePair<string, object> associatedData)
@@ -158,7 +158,7 @@ namespace Simple.OData.Client
 
         private void AddEntryAssociation(EntryMembers entryMembers, string associationName, object associatedData)
         {
-            int contentId = _requestBuilder.GetContentId(associatedData);
+            int contentId = _requestBuilder.GetBatchContentId(associatedData);
             if (contentId == 0)
             {
                 entryMembers.AddAssociationByValue(associationName, associatedData);

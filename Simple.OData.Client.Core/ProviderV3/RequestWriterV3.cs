@@ -12,13 +12,13 @@ namespace Simple.OData.Client
     {
         private readonly ISession _session;
         private readonly IEdmModel _model;
-        private readonly IBatchWriter _batchWriter;
+        private readonly Lazy<IBatchWriter> _deferredBatchWriter;
 
-        public RequestWriterV3(ISession session, IEdmModel model, IBatchWriter batchWriter)
+        public RequestWriterV3(ISession session, IEdmModel model, Lazy<IBatchWriter> deferredBatchWriter)
         {
             _session = session;
             _model = model;
-            _batchWriter = batchWriter;
+            _deferredBatchWriter = deferredBatchWriter;
         }
 
         public async Task<string> CreateEntryAsync(string operation, string entityTypeNamespace, string entityTypeName,
@@ -26,61 +26,59 @@ namespace Simple.OData.Client
             IEnumerable<KeyValuePair<string, object>> associationsByValue,
             IEnumerable<KeyValuePair<string, int>> associationsByContentId)
         {
-            var writerSettings = new ODataMessageWriterSettings() { BaseUri = new Uri(_session.UrlBase) };
-            ODataV3RequestMessage message;
-            if (_batchWriter != null)
+            var writerSettings = new ODataMessageWriterSettings() { BaseUri = new Uri(_session.UrlBase), Indent = true };
+            IODataRequestMessage message;
+            if (_deferredBatchWriter != null)
             {
-                message = (await _batchWriter.CreateOperationRequestMessageAsync(operation, new Uri(_session.UrlBase))) as ODataV3RequestMessage;
+                if (!_deferredBatchWriter.IsValueCreated)
+                    await _deferredBatchWriter.Value.StartBatchAsync();
+                message = (await _deferredBatchWriter.Value.CreateOperationRequestMessageAsync(operation, new Uri(_session.UrlBase))) as IODataRequestMessage;
             }
             else
             {
-                message = new ODataV3RequestMessage(ODataPayloadKind.Entry, null, null);
+                message = new ODataV3RequestMessage();
             }
-            var messageWriter = new ODataMessageWriter(message, writerSettings, _model);
-            var entryWriter = messageWriter.CreateODataEntryWriter();
-            var entry = new Microsoft.Data.OData.ODataEntry();
-            entry.TypeName = string.Join(".", entityTypeNamespace, entityTypeName);
 
-            var typeProperties = (_model.FindDeclaredType(entry.TypeName) as IEdmEntityType).Properties();
-            entry.Properties = properties.Select(x => new ODataProperty()
+            using (var messageWriter = new ODataMessageWriter(message, writerSettings, _model))
             {
-                Name = typeProperties.Single(y => Utils.NamesAreEqual(y.Name, x.Key, _session.Pluralizer)).Name,
-                Value = GetPropertyValue(typeProperties, x.Key, x.Value)
-            }).ToList();
+                var entryWriter = messageWriter.CreateODataEntryWriter();
+                var entry = new Microsoft.Data.OData.ODataEntry();
+                entry.TypeName = string.Join(".", entityTypeNamespace, entityTypeName);
 
-            entryWriter.WriteStart(entry);
-
-            if (associationsByValue != null)
-            {
-                foreach (var association in associationsByValue)
+                var typeProperties = (_model.FindDeclaredType(entry.TypeName) as IEdmEntityType).Properties();
+                entry.Properties = properties.Select(x => new ODataProperty()
                 {
-                    if (association.Value != null)
-                        WriteLink(entryWriter, entry, association);
+                    Name = typeProperties.Single(y => Utils.NamesAreEqual(y.Name, x.Key, _session.Pluralizer)).Name,
+                    Value = GetPropertyValue(typeProperties, x.Key, x.Value)
+                }).ToList();
+
+                entryWriter.WriteStart(entry);
+
+                if (associationsByValue != null)
+                {
+                    foreach (var association in associationsByValue)
+                    {
+                        if (association.Value != null)
+                            WriteLink(entryWriter, entry, association);
+                    }
                 }
+
+                entryWriter.WriteEnd();
+                return Utils.StreamToString(message.GetStream());
             }
-
-            entryWriter.WriteEnd();
-
-            return Utils.StreamToString(message.GetStream());
         }
 
         public async Task<string> CreateLinkAsync(string linkPath)
         {
-            var writerSettings = new ODataMessageWriterSettings() { BaseUri = new Uri(_session.UrlBase) };
-            var message = new ODataV3RequestMessage(ODataPayloadKind.EntityReferenceLink, null, null);
-            var messageWriter = new ODataMessageWriter(message, writerSettings, _model);
+            var writerSettings = new ODataMessageWriterSettings() { BaseUri = new Uri(_session.UrlBase), Indent = true };
+            var message = new ODataV3RequestMessage();
+            using (var messageWriter = new ODataMessageWriter(message, writerSettings, _model))
+            {
+                var link = new ODataEntityReferenceLink { Url = new Uri(linkPath, UriKind.Relative) };
+                messageWriter.WriteEntityReferenceLink(link);
 
-            var link = new ODataEntityReferenceLink { Url = new Uri(linkPath, UriKind.Relative) };
-            messageWriter.WriteEntityReferenceLink(link);
-
-            return Utils.StreamToString(message.GetStream());
-        }
-
-        private ODataMessageWriter CreateMessageWriter(ODataPayloadKind payloadKind)
-        {
-            var writerSettings = new ODataMessageWriterSettings() { BaseUri = new Uri(_session.UrlBase) };
-            var message = new ODataV3RequestMessage(payloadKind, null, null);
-            return new ODataMessageWriter(message, writerSettings, _model);
+                return Utils.StreamToString(message.GetStream());
+            }
         }
 
         private void WriteLink(ODataWriter entryWriter, Microsoft.Data.OData.ODataEntry entry, KeyValuePair<string, object> linkData)

@@ -12,15 +12,19 @@ namespace Simple.OData.Client
         private ODataBatchWriter _batchWriter;
         private ODataMessageWriter _messageWriter;
 
+        public bool IsAwaiting { get; set; }
+        public bool IsActive { get; set; }
+
         public BatchWriterV3(ISession session)
         {
             _session = session;
         }
 
-        public async Task StartBatch()
+        public async Task StartBatchAsync()
         {
-            _messageWriter = new ODataMessageWriter(
-                new ODataV3RequestMessage(ODataPayloadKind.Batch, new Uri(_session.UrlBase), _session.Credentials));
+            this.IsAwaiting = false;
+
+            _messageWriter = new ODataMessageWriter(new ODataV3RequestMessage());
 #if SILVERLIGHT
             _batchWriter = _messageWriter.CreateODataBatchWriter();
             _batchWriter.WriteStartBatch();
@@ -32,7 +36,7 @@ namespace Simple.OData.Client
 #endif
         }
 
-        public async Task EndBatch()
+        public async Task EndBatchAsync()
         {
 #if SILVERLIGHT
             _batchWriter.WriteEndChangeset();

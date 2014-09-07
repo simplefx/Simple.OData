@@ -32,7 +32,7 @@ namespace Simple.OData.Client
             _settings = settings;
             _session = Session.FromUrl(_settings.UrlBase, _settings.Credentials);
 
-            _requestBuilder = new CommandRequestBuilder(_settings.UrlBase, _settings.Credentials);
+            _requestBuilder = new CommandRequestBuilder(_session);
             _requestRunner = new CommandRequestRunner(_session, _settings);
             _requestRunner.BeforeRequest = _settings.BeforeRequest;
             _requestRunner.AfterResponse = _settings.AfterResponse;

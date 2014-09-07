@@ -34,10 +34,10 @@ namespace Simple.OData.Client
         public ODataBatch(ODataClientSettings settings)
         {
             this.Settings = settings;
-            this.RequestBuilder = new BatchRequestBuilder(this.Settings.UrlBase, this.Settings.Credentials);
+            this.RequestBuilder = new BatchRequestBuilder(Session.FromUrl(this.Settings.UrlBase, this.Settings.Credentials));
             this.RequestRunner = new BatchRequestRunner();
 
-            this.RequestBuilder.BeginBatch();
+            //this.RequestBuilder.BeginBatch();
             _active = true;
         }
 
@@ -46,8 +46,8 @@ namespace Simple.OData.Client
         /// </summary>
         public void Dispose()
         {
-            if (_active)
-                this.RequestBuilder.CancelBatch();
+            //if (_active)
+            //    this.RequestBuilder.CancelBatch();
             _active = false;
         }
 
@@ -67,7 +67,7 @@ namespace Simple.OData.Client
         /// <returns></returns>
         public async Task CompleteAsync(CancellationToken cancellationToken)
         {
-            this.RequestBuilder.EndBatch();
+            await this.RequestBuilder.CompleteBatchAsync();
             using (var response = await this.RequestRunner.ExecuteRequestAsync(this.RequestBuilder.Request, cancellationToken))
             {
                 await ParseResponseAsync(response);
@@ -80,7 +80,6 @@ namespace Simple.OData.Client
         /// </summary>
         public void Cancel()
         {
-            this.RequestBuilder.CancelBatch();
             _active = false;
         }
 

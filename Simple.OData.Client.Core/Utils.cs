@@ -14,11 +14,8 @@ namespace Simple.OData.Client
     {
         public static string StreamToString(Stream stream)
         {
-            stream.Position = 0;
-            using (var reader = new StreamReader(stream, Encoding.UTF8))
-            {
-                return reader.ReadToEnd();
-            }
+            stream.Seek(0, SeekOrigin.Begin);
+            return new StreamReader(stream).ReadToEnd();
         }
 
         public static Stream StringToStream(string str)

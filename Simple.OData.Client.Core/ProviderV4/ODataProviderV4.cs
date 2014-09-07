@@ -51,7 +51,7 @@ namespace Simple.OData.Client
             throw new NotImplementedException();
         }
 
-        public override IRequestWriter GetRequestWriter(IBatchWriter batchWriter = null)
+        public override IRequestWriter GetRequestWriter(Lazy<IBatchWriter> deferredBatchWriter)
         {
             throw new NotImplementedException();
         }

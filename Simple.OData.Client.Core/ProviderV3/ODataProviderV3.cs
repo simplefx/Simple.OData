@@ -51,9 +51,9 @@ namespace Simple.OData.Client
             return new ResponseReaderV3(_session, Model);
         }
 
-        public override IRequestWriter GetRequestWriter(IBatchWriter batchWriter = null)
+        public override IRequestWriter GetRequestWriter(Lazy<IBatchWriter> deferredBatchWriter)
         {
-            return new RequestWriterV3(_session, Model, batchWriter);
+            return new RequestWriterV3(_session, Model, deferredBatchWriter);
         }
 
         public override IBatchWriter GetBatchWriter()

@@ -7,8 +7,8 @@ namespace Simple.OData.Client
 {
     class CommandRequestBuilder : RequestBuilder
     {
-        public CommandRequestBuilder(string urlBase, ICredentials credentials)
-            : base(urlBase, credentials)
+        public CommandRequestBuilder(ISession session)
+            : base(session)
         {
         }
 
@@ -32,11 +32,6 @@ namespace Simple.OData.Client
             }
 
             return request;
-        }
-
-        public override int GetContentId(object content)
-        {
-            return 0;
         }
     }
 }

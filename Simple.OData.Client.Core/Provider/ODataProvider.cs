@@ -16,7 +16,7 @@ namespace Simple.OData.Client
 
         public abstract IMetadata GetMetadata();
         public abstract IResponseReader GetResponseReader();
-        public abstract IRequestWriter GetRequestWriter(IBatchWriter batchWriter = null);
+        public abstract IRequestWriter GetRequestWriter(Lazy<IBatchWriter> deferredBatchWriter);
         public abstract IBatchWriter GetBatchWriter();
     }
 }

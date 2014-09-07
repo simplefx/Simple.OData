@@ -21,6 +21,21 @@ namespace Simple.OData.Client
             _response = response;
         }
 
+        public string GetHeader(string headerName)
+        {
+            if (headerName == "Content-Type" && _response.Content.Headers.Contains(headerName))
+                return _response.Content.Headers.GetValues(headerName).FirstOrDefault();
+            else if (_response.Headers.Contains(headerName))
+                return _response.Headers.GetValues(headerName).FirstOrDefault();
+            else
+                return null;
+        }
+
+        public Stream GetStream()
+        {
+            return GetStreamAsync().Result;
+        }
+
         public Task<Stream> GetStreamAsync()
         {
             var responseContent = _response.Content as StreamContent;
@@ -36,38 +51,21 @@ namespace Simple.OData.Client
             }
         }
 
-        public string GetHeader(string headerName)
-        {
-            if (headerName == "Content-Type" && _response.Content.Headers.Contains(headerName))
-                return _response.Content.Headers.GetValues(headerName).FirstOrDefault();
-            else if (_response.Headers.Contains(headerName))
-                return _response.Headers.GetValues(headerName).FirstOrDefault();
-            else
-                return null;
-        }
-
-        public Stream GetStream()
-        {
-            var getStreamTask = GetStreamAsync();
-            getStreamTask.Wait();
-
-            return getStreamTask.Result;
-        }
-
         public IEnumerable<KeyValuePair<string, string>> Headers
         {
-            get { return _response.Headers.Select(h => new KeyValuePair<string, string>(h.Key, h.Value.FirstOrDefault())); }
+            get { return _response.Headers
+                .Select(h => new KeyValuePair<string, string>(h.Key, h.Value.FirstOrDefault())); }
         }
 
         public void SetHeader(string headerName, string headerValue)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
         public int StatusCode
         {
             get { return (int)_response.StatusCode; }
-            set { throw new NotImplementedException(); }
+            set { throw new NotSupportedException(); }
         }
     }
 }

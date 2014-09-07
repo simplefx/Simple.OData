@@ -1,30 +1,29 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 
 namespace Simple.OData.Client
 {
     abstract class RequestBuilder
     {
-        public string UrlBase { get; private set; }
-        public ICredentials Credentials { get; private set; }
+        public ISession Session { get; private set; }
         public string Host
         {
             get
             {
-                if (string.IsNullOrEmpty(UrlBase)) return null;
-                var substr = UrlBase.Substring(UrlBase.IndexOf("//") + 2);
+                if (string.IsNullOrEmpty(this.Session.UrlBase)) return null;
+                var substr = this.Session.UrlBase.Substring(this.Session.UrlBase.IndexOf("//") + 2);
                 return substr.Substring(0, substr.IndexOf("/"));
             }
         }
 
-        public RequestBuilder(string urlBase, ICredentials credentials)
+        protected RequestBuilder(ISession session)
         {
-            this.UrlBase = urlBase;
-            this.Credentials = credentials;
+            this.Session = session;
         }
 
         protected internal string CreateRequestUrl(string command)
         {
-            string url = string.IsNullOrEmpty(UrlBase) ? "http://" : UrlBase;
+            string url = string.IsNullOrEmpty(this.Session.UrlBase) ? "http://" : this.Session.UrlBase;
             if (!url.EndsWith("/"))
                 url += "/";
             return url + command;
@@ -34,11 +33,12 @@ namespace Simple.OData.Client
         {
             var request = new HttpRequest();
             request.Uri = uri;
-            request.Credentials = this.Credentials;
+            request.Credentials = this.Session.Credentials;
             return request;
         }
 
         public abstract HttpRequest CreateRequest(HttpCommand command, bool returnContent = false, bool checkOptimisticConcurrency = false);
-        public abstract int GetContentId(object content);
+        public virtual Lazy<IBatchWriter> GetDeferredBatchWriter() { return null; }
+        public virtual int GetBatchContentId(object content) { return 0; }
     }
 }
