@@ -32,7 +32,7 @@ namespace Simple.OData.Client
             {
                 if (!_deferredBatchWriter.IsValueCreated)
                     await _deferredBatchWriter.Value.StartBatchAsync();
-                message = (await _deferredBatchWriter.Value.CreateOperationRequestMessageAsync(operation, new Uri(_session.UrlBase))) as IODataRequestMessage;
+                message = (await _deferredBatchWriter.Value.CreateOperationRequestMessageAsync(operation, new Uri(_session.UrlBase + "Products"))) as IODataRequestMessage;
             }
             else
             {
@@ -64,7 +64,14 @@ namespace Simple.OData.Client
                 }
 
                 entryWriter.WriteEnd();
-                return Utils.StreamToString(message.GetStream());
+                if (_deferredBatchWriter != null)
+                {
+                    return null;
+                }
+                else
+                {
+                    return Utils.StreamToString(message.GetStream());
+                }
             }
         }
 

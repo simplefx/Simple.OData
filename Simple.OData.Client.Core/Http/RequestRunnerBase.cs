@@ -17,7 +17,7 @@ namespace Simple.OData.Client
         public Action<HttpRequestMessage> BeforeRequest { get; set; }
         public Action<HttpResponseMessage> AfterResponse { get; set; }
 
-        public async Task<HttpResponseMessage> ExecuteRequestAsync(HttpRequest request, CancellationToken cancellationToken)
+        public async Task<HttpResponseMessage> ExecuteRequestAsync(HttpRequest request, HttpRequestMessage requestMessage, CancellationToken cancellationToken)
         {
             try
             {
@@ -47,7 +47,7 @@ namespace Simple.OData.Client
                         httpClient.DefaultRequestHeaders.IfMatch.Add(EntityTagHeaderValue.Any);
                     }
 
-                    var requestMessage = CreateRequestMessage(request);
+                    requestMessage = requestMessage ?? CreateRequestMessage(request);
                     if (this.BeforeRequest != null)
                         this.BeforeRequest(requestMessage);
 
@@ -85,7 +85,7 @@ namespace Simple.OData.Client
             }
         }
 
-        private HttpRequestMessage CreateRequestMessage(HttpRequest request)
+        protected virtual HttpRequestMessage CreateRequestMessage(HttpRequest request)
         {
             var requestMessage = new HttpRequestMessage(new HttpMethod(request.Method), request.Uri);
 

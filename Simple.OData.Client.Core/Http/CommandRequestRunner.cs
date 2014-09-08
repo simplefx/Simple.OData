@@ -24,7 +24,7 @@ namespace Simple.OData.Client
         {
             try
             {
-                using (var response = await ExecuteRequestAsync(request, cancellationToken))
+                using (var response = await ExecuteRequestAsync(request, null, cancellationToken))
                 {
                     IEnumerable<IDictionary<string, object>> result = null;
                     if (!response.IsSuccessStatusCode)
@@ -55,7 +55,7 @@ namespace Simple.OData.Client
             int totalCount = 0;
             try
             {
-                using (var response = await ExecuteRequestAsync(request, cancellationToken))
+                using (var response = await ExecuteRequestAsync(request, null, cancellationToken))
                 {
                     if (response.StatusCode != HttpStatusCode.OK)
                     {
@@ -87,7 +87,7 @@ namespace Simple.OData.Client
         {
             try
             {
-                using (var response = await ExecuteRequestAsync(request, cancellationToken))
+                using (var response = await ExecuteRequestAsync(request, null, cancellationToken))
                 {
                     var responseReader = _session.Provider.GetResponseReader();
                     return (await responseReader.GetResponseAsync(response, _includeResourceTypeInEntryProperties)).Entry;
@@ -104,7 +104,7 @@ namespace Simple.OData.Client
 
         public override async Task<IDictionary<string, object>> InsertEntryAsync(HttpRequest request, CancellationToken cancellationToken)
         {
-            using (var response = await ExecuteRequestAsync(request, cancellationToken))
+            using (var response = await ExecuteRequestAsync(request, null, cancellationToken))
             {
                 var text = await response.Content.ReadAsStringAsync();
                 if (request.ReturnContent && response.StatusCode == HttpStatusCode.Created)
@@ -121,7 +121,7 @@ namespace Simple.OData.Client
 
         public override async Task<IDictionary<string, object>> UpdateEntryAsync(HttpRequest request, CancellationToken cancellationToken)
         {
-            using (var response = await ExecuteRequestAsync(request, cancellationToken))
+            using (var response = await ExecuteRequestAsync(request, null, cancellationToken))
             {
                 var text = await response.Content.ReadAsStringAsync();
                 if (request.ReturnContent && response.StatusCode == HttpStatusCode.OK)
@@ -138,14 +138,14 @@ namespace Simple.OData.Client
 
         public override async Task DeleteEntryAsync(HttpRequest request, CancellationToken cancellationToken)
         {
-            using (await ExecuteRequestAsync(request, cancellationToken))
+            using (await ExecuteRequestAsync(request, null, cancellationToken))
             {
             }
         }
 
         public override async Task<IEnumerable<IDictionary<string, object>>> ExecuteFunctionAsync(HttpRequest request, CancellationToken cancellationToken)
         {
-            using (var response = await ExecuteRequestAsync(request, cancellationToken))
+            using (var response = await ExecuteRequestAsync(request, null, cancellationToken))
             {
                 IEnumerable<IDictionary<string, object>> result = null;
                 switch (response.StatusCode)

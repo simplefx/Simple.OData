@@ -14,9 +14,8 @@ namespace Simple.OData.Client
         private string _batchId;
         private string _changesetId;
         private int _contentId;
-        private MultipartContent _content;
-
-        public HttpRequest Request { get; private set; }
+        //private MultipartContent _content;
+        private HttpRequestMessage _request;
 
         public BatchRequestBuilder(ISession session)
             : base(session)
@@ -41,9 +40,10 @@ namespace Simple.OData.Client
         //    //_content = changesetContent;
         //}
 
-        public async Task CompleteBatchAsync()
+        public async Task<HttpRequestMessage> CompleteBatchAsync()
         {
-            await _lazyBatchWriter.Value.EndBatchAsync();
+            _request = await _lazyBatchWriter.Value.EndBatchAsync();
+            return _request;
             //_content = null;
         }
 
@@ -70,6 +70,17 @@ namespace Simple.OData.Client
             //}
             //command.ContentId = _contentId;
 
+            return request;
+        }
+
+        public HttpRequest CreateBatchRequest()
+        {
+            var request = CreateRequest(CreateRequestUrl(FluentCommand.BatchLiteral));
+            request.Method = RestVerbs.POST;
+            //var batchContent = new MultipartContent("mixed", "batch_" + _batchId);
+            //request.Content = batchContent;
+            //request.Content = new StringContent(_content);
+            //request.ContentType = "application/http";
             return request;
         }
 

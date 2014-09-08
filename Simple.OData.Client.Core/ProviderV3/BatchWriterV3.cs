@@ -10,10 +10,8 @@ namespace Simple.OData.Client
     {
         private readonly ISession _session;
         private ODataBatchWriter _batchWriter;
+        private ODataV3RequestMessage _requestMessage;
         private ODataMessageWriter _messageWriter;
-
-        public bool IsAwaiting { get; set; }
-        public bool IsActive { get; set; }
 
         public BatchWriterV3(ISession session)
         {
@@ -22,9 +20,8 @@ namespace Simple.OData.Client
 
         public async Task StartBatchAsync()
         {
-            this.IsAwaiting = false;
-
-            _messageWriter = new ODataMessageWriter(new ODataV3RequestMessage());
+            _requestMessage = new ODataV3RequestMessage();
+            _messageWriter = new ODataMessageWriter(_requestMessage);
 #if SILVERLIGHT
             _batchWriter = _messageWriter.CreateODataBatchWriter();
             _batchWriter.WriteStartBatch();
@@ -36,7 +33,7 @@ namespace Simple.OData.Client
 #endif
         }
 
-        public async Task EndBatchAsync()
+        public async Task<HttpRequestMessage> EndBatchAsync()
         {
 #if SILVERLIGHT
             _batchWriter.WriteEndChangeset();
@@ -45,6 +42,15 @@ namespace Simple.OData.Client
             await _batchWriter.WriteEndChangesetAsync();
             await _batchWriter.WriteEndBatchAsync();
 #endif
+            _requestMessage.GetStream().Position = 0;
+            var httpRequest = new HttpRequestMessage()
+            {
+                RequestUri = new Uri("http://vagif-notebook/Temporary_Listen_Addresses/SimpleODataTestService2/" + FluentCommand.BatchLiteral), 
+                Method = HttpMethod.Post,
+                Content = new StreamContent(_requestMessage.GetStream()),
+            };
+            httpRequest.Content.Headers.Add("Content-Type", _requestMessage.GetHeader("Content-Type"));
+            return httpRequest;
         }
 
         public async Task<object> CreateOperationRequestMessageAsync(string method, Uri uri)

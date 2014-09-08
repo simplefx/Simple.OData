@@ -70,7 +70,7 @@ namespace Simple.OData.Client
             var request = requestBuilder.CreateRequest(command);
             var requestRunner = new MetadataRequestRunner(new ODataClientSettings());
 
-            return await requestRunner.ExecuteRequestAsync(request, cancellationToken);
+            return await requestRunner.ExecuteRequestAsync(request, null, cancellationToken);
         }
 
         private IEnumerable<string> GetSupportedProtocolVersions(HttpResponseMessage response)

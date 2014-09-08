@@ -1,14 +1,13 @@
 ﻿using System;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace Simple.OData.Client
 {
     interface IBatchWriter
     {
-        bool IsActive { get; set; }
-        
         Task StartBatchAsync();
-        Task EndBatchAsync();
+        Task<HttpRequestMessage> EndBatchAsync();
         Task<object> CreateOperationRequestMessageAsync(string method, Uri uri);
     }
 }
