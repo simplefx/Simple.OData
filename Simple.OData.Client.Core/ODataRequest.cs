@@ -14,6 +14,8 @@ namespace Simple.OData.Client
         public IDictionary<string, object> EntryData { get; set; }
         public HttpContent Content { get; set; }
         public string FormattedContent { get; set; }
+        public int ContentId { get; set; }
+
         public string ContentType
         {
             get
@@ -24,8 +26,18 @@ namespace Simple.OData.Client
                     return "application/atom+xml";
             }
         }
-        public int ContentId { get; set; }
-        public string[] Accept { get; set; }
+
+        public string[] Accept
+        {
+            get
+            {
+                if (this.Method == RestVerbs.GET && !this.ReturnsScalarResult || this.ReturnContent)
+                    return new[] {"application/text", "application/xml", "application/atom+xml"};
+                else
+                    return null;
+            }
+        }
+
         public bool IsLink { get; set; }
         public bool ReturnsScalarResult { get; set; }
         public bool ReturnContent { get; set; }
@@ -39,8 +51,6 @@ namespace Simple.OData.Client
             this.Uri = CreateRequestUrl(session, commandText);
             this.CommandText = commandText;
             this.Credentials = session.Credentials;
-
-            Enrich();
         }
 
         internal ODataRequest(string method, Session session, string commandText, IDictionary<string, object> entryData, string formattedContent)
@@ -52,7 +62,10 @@ namespace Simple.OData.Client
             EntryData = entryData;
             FormattedContent = formattedContent;
 
-            Enrich();
+            if (this.FormattedContent != null)
+            {
+                this.Content = new StringContent(this.FormattedContent, Encoding.UTF8, this.ContentType);
+            }
         }
 
         //public static ODataRequest Get(Session session, string commandText, bool scalarResult = false)
@@ -120,21 +133,6 @@ namespace Simple.OData.Client
             if (!url.EndsWith("/"))
                 url += "/";
             return url + commandText;
-        }
-
-        private ODataRequest Enrich()
-        {
-            if (this.FormattedContent != null)
-            {
-                this.Content = new StringContent(this.FormattedContent, Encoding.UTF8, this.ContentType);
-            }
-
-            if (this.Method == RestVerbs.GET && !this.ReturnsScalarResult || this.ReturnContent)
-            {
-                this.Accept = new[] { "application/text", "application/xml", "application/atom+xml" };
-            }
-
-            return this;
         }
     }
 }
