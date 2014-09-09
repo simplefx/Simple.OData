@@ -345,10 +345,7 @@ namespace Simple.OData.Client
             await _session.ResolveProviderAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var commandText = await GetFluentClient()
-                .For(collection)
-                .Key(entryKey)
-                .GetCommandTextAsync(cancellationToken);
+            var commandText = await FormatEntryKeyAsync(collection, entryKey, cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var request = await _requestBuilder.CreateGetRequestAsync(commandText);
@@ -478,16 +475,11 @@ namespace Simple.OData.Client
             RemoveSystemProperties(entryKey);
             RemoveSystemProperties(linkedEntryKey);
 
-            var entryPath = await GetFluentClient()
-                .For(collection)
-                .Key(entryKey)
-                .GetCommandTextAsync(cancellationToken);
+            var entryPath = await FormatEntryKeyAsync(collection, entryKey, cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var linkPath = await GetFluentClient()
-                .For(_session.Provider.GetMetadata().GetNavigationPropertyPartnerName(collection, linkName))
-                .Key(linkedEntryKey)
-                .GetCommandTextAsync(cancellationToken);
+            var linkedCollection = _session.Provider.GetMetadata().GetNavigationPropertyPartnerName(collection, linkName);
+            var linkPath = await FormatEntryKeyAsync(linkedCollection, linkedEntryKey, cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var request = await _requestBuilder.CreateLinkRequestAsync(collection, linkName, entryPath, linkPath);
@@ -505,10 +497,7 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             RemoveSystemProperties(entryKey);
-            var commandText = await GetFluentClient()
-                .For(collection)
-                .Key(entryKey)
-                .GetCommandTextAsync(cancellationToken);
+            var commandText = await FormatEntryKeyAsync(collection, entryKey, cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var request = await _requestBuilder.CreateUnlinkRequestAsync(commandText, collection, linkName);

@@ -203,29 +203,11 @@
     <Compile Include="..\Simple.OData.Client.Core\Fluent\IFluentClient.cs">
       <Link>Fluent\IFluentClient.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Http\BatchRequestBuilder.cs">
-      <Link>Http\BatchRequestBuilder.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Http\BatchRequestRunner.cs">
-      <Link>Http\BatchRequestRunner.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Http\CommandRequestBuilder.cs">
-      <Link>Http\CommandRequestBuilder.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Http\CommandRequestRunner.cs">
-      <Link>Http\CommandRequestRunner.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Http\MetadataRequestRunner.cs">
-      <Link>Http\MetadataRequestRunner.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Http\RequestBuilder.cs">
       <Link>Http\RequestBuilder.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Http\RequestRunner.cs">
       <Link>Http\RequestRunner.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Http\RequestRunnerBase.cs">
-      <Link>Http\RequestRunnerBase.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Http\RestVerbs.cs">
       <Link>Http\RestVerbs.cs</Link>

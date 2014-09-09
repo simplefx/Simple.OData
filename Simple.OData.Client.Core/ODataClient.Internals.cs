@@ -98,10 +98,7 @@ namespace Simple.OData.Client
             RemoveSystemProperties(entryKey);
             RemoveSystemProperties(entryData);
 
-            var commandText = await GetFluentClient()
-                .For(_session.MetadataCache.FindBaseEntitySet(collection).ActualName)
-                .Key(entryKey)
-                .GetCommandTextAsync(cancellationToken);
+            var commandText = await FormatEntryKeyAsync(collection, entryKey, cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var request = await _requestBuilder.CreateUpdateRequestAsync(commandText, collection, entryKey, entryData, resultRequired);
@@ -147,6 +144,14 @@ namespace Simple.OData.Client
         {
             // TODO
             return null;
+        }
+
+        private Task<string> FormatEntryKeyAsync(string collection, IDictionary<string, object> entryKey, CancellationToken cancellationToken)
+        {
+            return GetFluentClient()
+                .For(_session.MetadataCache.FindBaseEntitySet(collection).ActualName)
+                .Key(entryKey)
+                .GetCommandTextAsync(cancellationToken);
         }
     }
 }

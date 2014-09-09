@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -7,14 +8,22 @@ namespace Simple.OData.Client
 {
     class ODataRequest
     {
-        public string Uri { get; set; }
-        public ICredentials Credentials { get; set; }
-        public string Method { get; set; }
-        public string CommandText { get; set; }
-        public IDictionary<string, object> EntryData { get; set; }
-        public string FormattedContent { get; set; }
+        private HttpRequestMessage _requestMessage;
+
+        public string Uri { get; private set; }
+        public ICredentials Credentials { get; private set; }
+        public string Method { get; private set; }
+        public string CommandText { get; private set; }
+        public IDictionary<string, object> EntryData { get; private set; }
+        public string FormattedContent { get; private set; }
         public bool HasContent { get { return this.FormattedContent != null; }}
-        public int ContentId { get; set; }
+        public int ContentId { get; private set; }
+
+        public HttpRequestMessage RequestMessage
+        {
+            get { return GetOrCreateRequestMessage(); }
+            private set { _requestMessage = value; }
+        }
 
         public string ContentType
         {
@@ -60,74 +69,18 @@ namespace Simple.OData.Client
             this.Credentials = session.Credentials;
         }
 
-        internal ODataRequest(string method, Session session, string commandText, IDictionary<string, object> entryData, string formattedContent)
+        internal ODataRequest(string method, Session session, string commandText, HttpRequestMessage requestMessage)
+            : this(method, session, commandText)
         {
-            Method = method;
-            Uri = CreateRequestUrl(session, commandText);
-            CommandText = commandText;
-            Credentials = session.Credentials;
+            this.RequestMessage = requestMessage;
+        }
+
+        internal ODataRequest(string method, Session session, string commandText, IDictionary<string, object> entryData, string formattedContent)
+            : this(method, session, commandText)
+        {
             EntryData = entryData;
             FormattedContent = formattedContent;
         }
-
-        //public static ODataRequest Get(Session session, string commandText, bool scalarResult = false)
-        //{
-        //    return new ODataRequest(session, commandText)
-        //        {
-        //            Method = RestVerbs.GET, 
-        //            ReturnsScalarResult = scalarResult,
-        //            ReturnContent = false,
-        //            CheckOptimisticConcurrency = false,
-        //        }.Enrich();
-        //}
-
-        //public static ODataRequest Post(Session session, string commandText, IDictionary<string, object> entryData, string formattedContent, bool isLink, bool resultRequired)
-        //{
-        //    return new ODataRequest(session, commandText)
-        //    {
-        //            Method = RestVerbs.POST,
-        //            EntryData = entryData,
-        //            FormattedContent = formattedContent,
-        //            IsLink = isLink,
-        //            ReturnContent = resultRequired,
-        //            CheckOptimisticConcurrency = false,
-        //    }.Enrich();
-        //}
-
-        //public static ODataRequest Put(Session session, string commandText, IDictionary<string, object> entryData, string formattedContent, bool isLink, bool resultRequired, bool checkOptimisticConcurrency)
-        //{
-        //    return new ODataRequest(session, commandText)
-        //    {
-        //            Method = RestVerbs.PUT,
-        //            EntryData = entryData,
-        //            FormattedContent = formattedContent,
-        //            IsLink = isLink,
-        //            ReturnContent = resultRequired,
-        //            CheckOptimisticConcurrency = checkOptimisticConcurrency,
-        //    }.Enrich();
-        //}
-
-        //public static ODataRequest Merge(Session session, string commandText, IDictionary<string, object> entryData, string formattedContent, bool isLink, bool resultRequired, bool checkOptimisticConcurrency)
-        //{
-        //    return new ODataRequest(session, commandText)
-        //    {
-        //            Method = RestVerbs.MERGE,
-        //            EntryData = entryData,
-        //            FormattedContent = formattedContent,
-        //            IsLink = isLink,
-        //            ReturnContent = resultRequired,
-        //            CheckOptimisticConcurrency = checkOptimisticConcurrency,
-        //    }.Enrich();
-        //}
-
-        //public static ODataRequest Delete(Session session, string commandText, bool checkOptimisticConcurrency)
-        //{
-        //    return new ODataRequest(session, commandText)
-        //    {
-        //            Method = RestVerbs.DELETE,
-        //            CheckOptimisticConcurrency = checkOptimisticConcurrency,
-        //    }.Enrich();
-        //}
 
         private string CreateRequestUrl(Session session, string commandText)
         {
@@ -135,6 +88,20 @@ namespace Simple.OData.Client
             if (!url.EndsWith("/"))
                 url += "/";
             return url + commandText;
+        }
+
+        private HttpRequestMessage GetOrCreateRequestMessage()
+        {
+            if (_requestMessage != null)
+                return _requestMessage;
+
+            _requestMessage = new HttpRequestMessage(new HttpMethod(this.Method), this.Uri);
+
+            if (this.HasContent)
+            {
+                _requestMessage.Content = this.GetContent();
+            }
+            return _requestMessage;
         }
     }
 }

@@ -2,60 +2,63 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Simple.OData.Client
 {
     class RequestBuilder
     {
-        public Session Session { get; private set; }
+        private readonly Session _session;
+        private readonly Lazy<IBatchWriter> _lazyBatchWriter;
+
+        public bool IsBatch { get { return _lazyBatchWriter != null; } }
         public string Host
         {
             get
             {
-                if (string.IsNullOrEmpty(this.Session.UrlBase)) return null;
-                var substr = this.Session.UrlBase.Substring(this.Session.UrlBase.IndexOf("//") + 2);
+                if (string.IsNullOrEmpty(_session.UrlBase)) return null;
+                var substr = _session.UrlBase.Substring(_session.UrlBase.IndexOf("//") + 2);
                 return substr.Substring(0, substr.IndexOf("/"));
             }
         }
 
-        protected RequestBuilder(Session session)
+        public RequestBuilder(Session session, bool isBatch = false)
         {
-            this.Session = session;
+            _session = session;
+            if (isBatch)
+            {
+                _lazyBatchWriter = new Lazy<IBatchWriter>(() => _session.Provider.GetBatchWriter());
+            }
         }
 
-        public virtual Lazy<IBatchWriter> GetDeferredBatchWriter() { return null; }
-        public virtual int GetBatchContentId(object content) { return 0; }
-
-        public async Task<ODataRequest> CreateGetRequestAsync(string commandText, bool scalarResult = false)
+        public Task<ODataRequest> CreateGetRequestAsync(string commandText, bool scalarResult = false)
         {
-            var request = new ODataRequest(RestVerbs.GET, this.Session, commandText);
+            var request = new ODataRequest(RestVerbs.GET, _session, commandText);
             request.ReturnsScalarResult = scalarResult;
-            return request;
+            return Utils.GetTaskFromResult(request);
         }
 
         public async Task<ODataRequest> CreateInsertRequestAsync(string collection, IDictionary<string, object> entryData, bool resultRequired)
         {
-            var entitySet = this.Session.MetadataCache.FindConcreteEntitySet(collection);
+            var entitySet = _session.MetadataCache.FindConcreteEntitySet(collection);
 
             var entryMembers = ParseEntryMembers(entitySet, entryData);
             var entryContent = await CreateEntryAsync(
                 RestVerbs.POST,
-                this.Session.Provider.GetMetadata().GetEntitySetTypeNamespace(collection),
-                this.Session.Provider.GetMetadata().GetEntitySetTypeName(collection),
+                _session.Provider.GetMetadata().GetEntitySetTypeNamespace(collection),
+                _session.Provider.GetMetadata().GetEntitySetTypeName(collection),
                 entryMembers.Properties,
                 entryMembers.AssociationsByValue,
                 entryMembers.AssociationsByContentId);
 
-            var request = new ODataRequest(RestVerbs.POST, this.Session, this.Session.MetadataCache.FindBaseEntitySet(collection).ActualName, entryData, entryContent);
+            var request = new ODataRequest(RestVerbs.POST, _session, _session.MetadataCache.FindBaseEntitySet(collection).ActualName, entryData, entryContent);
             request.ReturnContent = resultRequired;
             return request;
         }
 
         public async Task<ODataRequest> CreateUpdateRequestAsync(string commandText, string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData, bool resultRequired)
         {
-            var entitySet = this.Session.MetadataCache.FindConcreteEntitySet(collection);
+            var entitySet = _session.MetadataCache.FindConcreteEntitySet(collection);
             var entryMembers = ParseEntryMembers(entitySet, entryData);
 
             bool hasPropertiesToUpdate = entryMembers.Properties.Count > 0;
@@ -63,15 +66,15 @@ namespace Simple.OData.Client
 
             var entryContent = await CreateEntryAsync(
                 merge ? RestVerbs.MERGE : RestVerbs.PUT,
-                this.Session.Provider.GetMetadata().GetEntitySetTypeNamespace(collection),
-                this.Session.Provider.GetMetadata().GetEntitySetTypeName(collection),
+                _session.Provider.GetMetadata().GetEntitySetTypeNamespace(collection),
+                _session.Provider.GetMetadata().GetEntitySetTypeName(collection),
                 entryMembers.Properties,
                 entryMembers.AssociationsByValue,
                 entryMembers.AssociationsByContentId);
 
             var updateMethod = merge ? RestVerbs.MERGE : RestVerbs.PUT;
-            bool checkOptimisticConcurrency = this.Session.Provider.GetMetadata().EntitySetTypeRequiresOptimisticConcurrencyCheck(collection);
-            var request = new ODataRequest(updateMethod, this.Session, commandText, entryData, entryContent);
+            bool checkOptimisticConcurrency = _session.Provider.GetMetadata().EntitySetTypeRequiresOptimisticConcurrencyCheck(collection);
+            var request = new ODataRequest(updateMethod, _session, commandText, entryData, entryContent);
             request.ReturnContent = resultRequired;
             request.CheckOptimisticConcurrency = checkOptimisticConcurrency;
             return request;
@@ -79,34 +82,41 @@ namespace Simple.OData.Client
 
         public async Task<ODataRequest> CreateDeleteRequestAsync(string commandText, string collection)
         {
-            var request = new ODataRequest(RestVerbs.DELETE, this.Session, commandText);
-            request.CheckOptimisticConcurrency = this.Session.Provider.GetMetadata().EntitySetTypeRequiresOptimisticConcurrencyCheck(collection);
+            var request = new ODataRequest(RestVerbs.DELETE, _session, commandText);
+            request.CheckOptimisticConcurrency = _session.Provider.GetMetadata().EntitySetTypeRequiresOptimisticConcurrencyCheck(collection);
             return request;
         }
 
         public async Task<ODataRequest> CreateLinkRequestAsync(string collection, string linkName, string entryPath, string linkPath)
         {
-            var associationName = this.Session.Provider.GetMetadata().GetNavigationPropertyExactName(collection, linkName);
-            var linkEntry = await CreateLinkAsync(linkPath);
-            var linkMethod = this.Session.Provider.GetMetadata().IsNavigationPropertyMultiple(collection, associationName) ?
+            var associationName = _session.Provider.GetMetadata().GetNavigationPropertyExactName(collection, linkName);
+            var linkEntry = await _session.Provider.GetRequestWriter(_lazyBatchWriter).CreateLinkAsync(linkPath);
+            var linkMethod = _session.Provider.GetMetadata().IsNavigationPropertyMultiple(collection, associationName) ?
                 RestVerbs.POST :
                 RestVerbs.PUT;
 
             var commandText = FormatLinkPath(entryPath, associationName);
-            var request = new ODataRequest(linkMethod, this.Session, commandText, null, linkEntry);
+            var request = new ODataRequest(linkMethod, _session, commandText, null, linkEntry);
             request.IsLink = true;
             return request;
         }
 
-        public async Task<ODataRequest> CreateUnlinkRequestAsync(string commandText, string collection, string linkName)
+        public Task<ODataRequest> CreateUnlinkRequestAsync(string commandText, string collection, string linkName)
         {
-            commandText = FormatLinkPath(commandText, this.Session.Provider.GetMetadata().GetNavigationPropertyExactName(collection, linkName));
-            return new ODataRequest(RestVerbs.DELETE, this.Session, commandText);
+            commandText = FormatLinkPath(commandText, _session.Provider.GetMetadata().GetNavigationPropertyExactName(collection, linkName));
+            var request = new ODataRequest(RestVerbs.DELETE, _session, commandText);
+            return Utils.GetTaskFromResult(request);
         }
 
-        private Task<string> CreateLinkAsync(string linkPath)
+        public Task<ODataRequest> CreateBatchRequestAsync(HttpRequestMessage requestMessage)
         {
-            return this.Session.Provider.GetRequestWriter(GetDeferredBatchWriter()).CreateLinkAsync(linkPath);
+            var request = new ODataRequest(RestVerbs.POST, _session, FluentCommand.BatchLiteral, requestMessage);
+            return Utils.GetTaskFromResult(request);
+        }
+
+        public Task<HttpRequestMessage> CompleteBatchAsync()
+        {
+            return _lazyBatchWriter.Value.EndBatchAsync();
         }
 
         //public Task<ODataRequest> CreateLinkCommandAsync(string collection, string associationName, int contentId, int associationId)
@@ -116,7 +126,7 @@ namespace Simple.OData.Client
 
         //public async Task<ODataRequest> CreateLinkRequestAsync(string collection, string linkName, IDictionary<string, object> linkData, bool resultRequired)
         //{
-        //    var commandWriter = new CommandWriter(this.Session, this);
+        //    var commandWriter = new CommandWriter(_session, this);
 
         //    var command = await commandWriter.CreateLinkCommandAsync(collection, linkName, 0, linkData);
         //    request = _requestBuilder.CreateRequest(linkCommand, resultRequired);
@@ -124,7 +134,7 @@ namespace Simple.OData.Client
 
         private bool CheckMergeConditions(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
         {
-            var entitySet = this.Session.MetadataCache.FindConcreteEntitySet(collection);
+            var entitySet = _session.MetadataCache.FindConcreteEntitySet(collection);
             return entitySet.Metadata.GetStructuralPropertyNames(entitySet.ActualName)
                 .Any(x => !entryData.ContainsKey(x));
         }
@@ -144,7 +154,7 @@ namespace Simple.OData.Client
             IEnumerable<KeyValuePair<string, object>> associationsByValue,
             IEnumerable<KeyValuePair<string, int>> associationsByContentId)
         {
-            var entry = await this.Session.Provider.GetRequestWriter(GetDeferredBatchWriter()).CreateEntryAsync(
+            var entry = await _session.Provider.GetRequestWriter(_lazyBatchWriter).CreateEntryAsync(
                 method,
                 entityTypeNamespace, entityTypeName,
                 properties,
@@ -198,7 +208,7 @@ namespace Simple.OData.Client
 
         private static void AddEntryAssociation(EntryMembers entryMembers, string associationName, object associatedData)
         {
-            int contentId = 0;//_requestBuilder.GetBatchContentId(associatedData);
+            int contentId = 0;
             if (contentId == 0)
             {
                 entryMembers.AddAssociationByValue(associationName, associatedData);

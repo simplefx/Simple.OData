@@ -13,10 +13,9 @@ namespace Simple.OData.Client
     /// </summary>
     public class ODataBatch : IDisposable
     {
-        private bool _active;
         internal ODataClientSettings Settings { get; set; }
-        internal BatchRequestBuilder RequestBuilder { get; set; }
-        internal BatchRequestRunner RequestRunner { get; set; }
+        internal RequestBuilder RequestBuilder { get; set; }
+        internal RequestRunner RequestRunner { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ODataBatch"/> class.
@@ -33,12 +32,10 @@ namespace Simple.OData.Client
         /// <param name="settings">The settings.</param>
         public ODataBatch(ODataClientSettings settings)
         {
+            var session = Session.FromUrl(settings.UrlBase, settings.Credentials);
             this.Settings = settings;
-            this.RequestBuilder = new BatchRequestBuilder(Session.FromUrl(this.Settings.UrlBase, this.Settings.Credentials));
-            this.RequestRunner = new BatchRequestRunner();
-
-            //this.RequestBuilder.BeginBatch();
-            _active = true;
+            this.RequestBuilder = new RequestBuilder(session, true);
+            this.RequestRunner = new RequestRunner(session, settings, true);
         }
 
         /// <summary>
@@ -46,9 +43,6 @@ namespace Simple.OData.Client
         /// </summary>
         public void Dispose()
         {
-            //if (_active)
-            //    this.RequestBuilder.CancelBatch();
-            _active = false;
         }
 
         /// <summary>
@@ -68,14 +62,12 @@ namespace Simple.OData.Client
         public async Task CompleteAsync(CancellationToken cancellationToken)
         {
             var requestMessage = await this.RequestBuilder.CompleteBatchAsync();
+
             using (var response = await this.RequestRunner.ExecuteRequestAsync(
-                this.RequestBuilder.CreateBatchRequest(), 
-                requestMessage,
-                cancellationToken))
+                await this.RequestBuilder.CreateBatchRequestAsync(requestMessage), cancellationToken))
             {
                 await ParseResponseAsync(response);
             }
-            _active = false;
         }
 
         /// <summary>
@@ -83,7 +75,6 @@ namespace Simple.OData.Client
         /// </summary>
         public void Cancel()
         {
-            _active = false;
         }
 
         private async Task ParseResponseAsync(HttpResponseMessage response)
