@@ -17,7 +17,7 @@ namespace Simple.OData.Client
         public Action<HttpRequestMessage> BeforeRequest { get; set; }
         public Action<HttpResponseMessage> AfterResponse { get; set; }
 
-        public async Task<HttpResponseMessage> ExecuteRequestAsync(HttpRequest request, HttpRequestMessage requestMessage, CancellationToken cancellationToken)
+        public async Task<HttpResponseMessage> ExecuteRequestAsync(ODataRequest request, HttpRequestMessage requestMessage, CancellationToken cancellationToken)
         {
             try
             {
@@ -85,7 +85,7 @@ namespace Simple.OData.Client
             }
         }
 
-        protected virtual HttpRequestMessage CreateRequestMessage(HttpRequest request)
+        protected virtual HttpRequestMessage CreateRequestMessage(ODataRequest request)
         {
             var requestMessage = new HttpRequestMessage(new HttpMethod(request.Method), request.Uri);
 

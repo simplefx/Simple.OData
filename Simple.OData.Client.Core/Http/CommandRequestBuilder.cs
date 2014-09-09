@@ -1,37 +1,19 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Simple.OData.Client
 {
     class CommandRequestBuilder : RequestBuilder
     {
-        public CommandRequestBuilder(ISession session)
+        public CommandRequestBuilder(Session session)
             : base(session)
         {
-        }
-
-        public override HttpRequest CreateRequest(HttpCommand command, bool returnContent = false, bool checkOptimisticConcurrency = false)
-        {
-            var uri = CreateRequestUrl(command.CommandText);
-            var request = CreateRequest(uri);
-            request.Method = command.Method;
-            request.ReturnContent = returnContent;
-            request.CheckOptimisticConcurrency = checkOptimisticConcurrency;
-
-            if (command.FormattedContent != null)
-            {
-                request.ContentType = command.ContentType;
-                request.Content = new StringContent(command.FormattedContent, Encoding.UTF8, command.ContentType);
-            }
-
-            if (request.Method == RestVerbs.GET && !command.ReturnsScalarResult || request.ReturnContent)
-            {
-                request.Accept = new[] { "application/text", "application/xml", "application/atom+xml" };
-            }
-
-            return request;
         }
     }
 }

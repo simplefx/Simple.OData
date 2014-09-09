@@ -236,15 +236,6 @@
     <Compile Include="..\Simple.OData.Client.Core\Http\CommandRequestRunner.cs">
       <Link>Http\CommandRequestRunner.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Http\CommandWriter.cs">
-      <Link>Http\CommandWriter.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Http\HttpCommand.cs">
-      <Link>Http\HttpCommand.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Http\HttpRequest.cs">
-      <Link>Http\HttpRequest.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Http\MetadataRequestRunner.cs">
       <Link>Http\MetadataRequestRunner.cs</Link>
     </Compile>
@@ -292,6 +283,9 @@
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ODataEntry.cs">
       <Link>ODataEntry.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ODataRequest.cs">
+      <Link>ODataRequest.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ODataResponse.cs">
       <Link>ODataResponse.cs</Link>

@@ -12,9 +12,9 @@ namespace Simple.OData.Client
 {
     class ProviderFactory
     {
-        private readonly ISession _session;
+        private readonly Session _session;
 
-        public ProviderFactory(ISession session)
+        public ProviderFactory(Session session)
         {
             _session = session;
         }
@@ -29,19 +29,6 @@ namespace Simple.OData.Client
                 return new ODataProviderV3(_session, protocolVersions.First(), response);
 
             throw new NotSupportedException(string.Format("OData protocol {0} is not supported", protocolVersions));
-        }
-
-        public Task<string> GetMetadataAsStringAsync()
-        {
-            return GetMetadataAsStringAsync(CancellationToken.None);
-        }
-
-        public async Task<string> GetMetadataAsStringAsync(CancellationToken cancellationToken)
-        {
-            using (var response = await SendMetadataRequestAsync(cancellationToken))
-            {
-                return await response.Content.ReadAsStringAsync();
-            }
         }
 
         public async Task<string> GetMetadataAsStringAsync(HttpResponseMessage response)
@@ -65,9 +52,7 @@ namespace Simple.OData.Client
 
         internal async Task<HttpResponseMessage> SendMetadataRequestAsync(CancellationToken cancellationToken)
         {
-            var requestBuilder = new CommandRequestBuilder(_session);
-            var command = HttpCommand.Get(FluentCommand.MetadataLiteral);
-            var request = requestBuilder.CreateRequest(command);
+            var request = await new CommandRequestBuilder(_session).CreateGetRequestAsync(FluentCommand.MetadataLiteral);
             var requestRunner = new MetadataRequestRunner(new ODataClientSettings());
 
             return await requestRunner.ExecuteRequestAsync(request, null, cancellationToken);

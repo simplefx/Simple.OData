@@ -9,23 +9,6 @@ namespace Simple.OData.Client
 {
     public partial class ODataClient
     {
-        private async Task<IEnumerable<IDictionary<string, object>>> RetrieveEntriesAsync(
-            string commandText, bool scalarResult, CancellationToken cancellationToken)
-        {
-            var command = await new CommandWriter(_session, _requestBuilder).CreateGetCommandAsync(commandText, scalarResult);
-            var request = _requestBuilder.CreateRequest(command);
-            return await _requestRunner.FindEntriesAsync(request, scalarResult, cancellationToken);
-        }
-
-        private async Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> RetrieveEntriesWithCountAsync(
-            string commandText, bool scalarResult, CancellationToken cancellationToken)
-        {
-            var command = await new CommandWriter(_session, _requestBuilder).CreateGetCommandAsync(commandText, scalarResult);
-            var request = _requestBuilder.CreateRequest(command);
-            var result = await _requestRunner.FindEntriesWithCountAsync(request, scalarResult, cancellationToken);
-            return Tuple.Create(result.Item1, result.Item2);
-        }
-
         private async Task<IEnumerable<IDictionary<string, object>>> IterateEntriesAsync(
             string collection, string commandText, IDictionary<string, object> entryData, bool resultRequired,
             Func<string, IDictionary<string, object>, IDictionary<string, object>, bool, Task<IDictionary<string, object>>> funcAsync, CancellationToken cancellationToken)
@@ -89,23 +72,23 @@ namespace Simple.OData.Client
         private async Task<IDictionary<string, object>> InsertEntryAndLinksAsync(string collection, IDictionary<string, object> entryData, bool resultRequired, CancellationToken cancellationToken)
         {
             RemoveSystemProperties(entryData);
-            var entitySet = _session.MetadataCache.FindConcreteEntitySet(collection);
 
-            var commandWriter = new CommandWriter(_session, _requestBuilder);
-            var entryMembers = commandWriter.ParseEntryMembers(entitySet, entryData);
+            var request = await _requestBuilder.CreateInsertRequestAsync(collection, entryData, resultRequired);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var command = await commandWriter.CreateInsertCommandAsync(_session.MetadataCache.FindBaseEntitySet(collection).ActualName, entryData, collection, entitySet);
-            var request = _requestBuilder.CreateRequest(command, resultRequired);
             var result = await _requestRunner.InsertEntryAsync(request, cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            foreach (var associatedData in entryMembers.AssociationsByContentId)
-            {
-                var linkCommand = await commandWriter.CreateLinkCommandAsync(collection, associatedData.Key, command.ContentId, associatedData.Value);
-                request = _requestBuilder.CreateRequest(linkCommand, resultRequired);
-                await _requestRunner.InsertEntryAsync(request, cancellationToken);
-                if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-            }
+            //var entryMembers = CommandWriter.ParseEntryMembers(entitySet, entryData);
+            //foreach (var associatedData in entryMembers.AssociationsByContentId)
+            //{
+            //    request = await _requestBuilder.CreateLinkRequestAsync(collection, associatedData.Key, associatedData.Value, resultRequired);
+
+            //    var linkCommand = await commandWriter.CreateLinkCommandAsync(collection, associatedData.Key, command.ContentId, associatedData.Value);
+            //    request = _requestBuilder.CreateRequest(linkCommand, resultRequired);
+            //    await _requestRunner.InsertEntryAsync(request, cancellationToken);
+            //    if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+            //}
 
             return result;
         }
@@ -114,34 +97,30 @@ namespace Simple.OData.Client
         {
             RemoveSystemProperties(entryKey);
             RemoveSystemProperties(entryData);
-            var entitySet = _session.MetadataCache.FindConcreteEntitySet(collection);
-            var commandWriter = new CommandWriter(_session, _requestBuilder);
-            var entryMembers = commandWriter.ParseEntryMembers(entitySet, entryData);
 
-            bool hasPropertiesToUpdate = entryMembers.Properties.Count > 0;
-            bool merge = !hasPropertiesToUpdate || CheckMergeConditions(collection, entryKey, entryData);
             var commandText = await GetFluentClient()
                 .For(_session.MetadataCache.FindBaseEntitySet(collection).ActualName)
                 .Key(entryKey)
                 .GetCommandTextAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var entitySetName = _session.Provider.GetMetadata().GetEntitySetExactName(collection);
+            var request = await _requestBuilder.CreateUpdateRequestAsync(commandText, collection, entryKey, entryData, resultRequired);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var command = await commandWriter.CreateUpdateCommandAsync(commandText, entryData, collection, entitySet, merge);
-            var request = _requestBuilder.CreateRequest(command, resultRequired,
-                _session.Provider.GetMetadata().EntitySetTypeRequiresOptimisticConcurrencyCheck(collection));
             var result = await _requestRunner.UpdateEntryAsync(request, cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            foreach (var associatedData in entryMembers.AssociationsByContentId)
-            {
-                var linkCommand = await commandWriter.CreateLinkCommandAsync(collection, associatedData.Key, command.ContentId, associatedData.Value);
-                request = _requestBuilder.CreateRequest(linkCommand);
-                await _requestRunner.UpdateEntryAsync(request, cancellationToken);
-                if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-            }
+            //foreach (var associatedData in entryMembers.AssociationsByContentId)
+            //{
+            //    var linkCommand = await commandWriter.CreateLinkCommandAsync(collection, associatedData.Key, command.ContentId, associatedData.Value);
+            //    request = _requestBuilder.CreateRequest(linkCommand);
+            //    await _requestRunner.UpdateEntryAsync(request, cancellationToken);
+            //    if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+            //}
 
+            var entitySet = this.Session.MetadataCache.FindConcreteEntitySet(collection);
+            var entitySetName = this.Session.Provider.GetMetadata().GetEntitySetExactName(collection);
+            var entryMembers = RequestBuilder.ParseEntryMembers(entitySet, entryData);
             var unlinkAssociationNames = entryMembers.AssociationsByValue
                 .Where(x => x.Value == null)
                 .Select(x => _session.Provider.GetMetadata().GetNavigationPropertyExactName(entitySetName, x.Key))
@@ -154,13 +133,6 @@ namespace Simple.OData.Client
             }
 
             return result;
-        }
-
-        private bool CheckMergeConditions(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
-        {
-            var entitySet = _session.MetadataCache.FindConcreteEntitySet(collection);
-            return entitySet.Metadata.GetStructuralPropertyNames(entitySet.ActualName)
-                .Any(x => !entryData.ContainsKey(x));
         }
 
         private void RemoveSystemProperties(IDictionary<string, object> entryData)

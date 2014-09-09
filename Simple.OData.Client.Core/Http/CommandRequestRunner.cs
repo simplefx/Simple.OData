@@ -20,7 +20,7 @@ namespace Simple.OData.Client
             _ignoreResourceNotFoundException = settings.IgnoreResourceNotFoundException;
         }
 
-        public override async Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(HttpRequest request, bool scalarResult, CancellationToken cancellationToken)
+        public override async Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(ODataRequest request, bool scalarResult, CancellationToken cancellationToken)
         {
             try
             {
@@ -50,7 +50,7 @@ namespace Simple.OData.Client
             }
         }
 
-        public override async Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> FindEntriesWithCountAsync(HttpRequest request, bool scalarResult, CancellationToken cancellationToken)
+        public override async Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> FindEntriesWithCountAsync(ODataRequest request, bool scalarResult, CancellationToken cancellationToken)
         {
             int totalCount = 0;
             try
@@ -83,7 +83,7 @@ namespace Simple.OData.Client
             }
         }
 
-        public override async Task<IDictionary<string, object>> GetEntryAsync(HttpRequest request, CancellationToken cancellationToken)
+        public override async Task<IDictionary<string, object>> GetEntryAsync(ODataRequest request, CancellationToken cancellationToken)
         {
             try
             {
@@ -102,7 +102,7 @@ namespace Simple.OData.Client
             }
         }
 
-        public override async Task<IDictionary<string, object>> InsertEntryAsync(HttpRequest request, CancellationToken cancellationToken)
+        public override async Task<IDictionary<string, object>> InsertEntryAsync(ODataRequest request, CancellationToken cancellationToken)
         {
             using (var response = await ExecuteRequestAsync(request, null, cancellationToken))
             {
@@ -119,7 +119,7 @@ namespace Simple.OData.Client
             }
         }
 
-        public override async Task<IDictionary<string, object>> UpdateEntryAsync(HttpRequest request, CancellationToken cancellationToken)
+        public override async Task<IDictionary<string, object>> UpdateEntryAsync(ODataRequest request, CancellationToken cancellationToken)
         {
             using (var response = await ExecuteRequestAsync(request, null, cancellationToken))
             {
@@ -136,14 +136,14 @@ namespace Simple.OData.Client
             }
         }
 
-        public override async Task DeleteEntryAsync(HttpRequest request, CancellationToken cancellationToken)
+        public override async Task DeleteEntryAsync(ODataRequest request, CancellationToken cancellationToken)
         {
             using (await ExecuteRequestAsync(request, null, cancellationToken))
             {
             }
         }
 
-        public override async Task<IEnumerable<IDictionary<string, object>>> ExecuteFunctionAsync(HttpRequest request, CancellationToken cancellationToken)
+        public override async Task<IEnumerable<IDictionary<string, object>>> ExecuteFunctionAsync(ODataRequest request, CancellationToken cancellationToken)
         {
             using (var response = await ExecuteRequestAsync(request, null, cancellationToken))
             {

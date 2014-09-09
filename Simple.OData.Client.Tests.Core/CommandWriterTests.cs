@@ -9,118 +9,118 @@ using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client.Tests
 {
-    public class CommandWriterTests : TestBase
-    {
-        //[Fact]
-        //public async Task CreateEntryCustomerWithAddress()
-        //{
-        //    const string resourceName = "SingleCustomerWithAddress.xml";
-        //    string xml = GetResourceAsString(resourceName);
-        //    var commandWriter = new CommandWriter((_client as ODataClient).GetSessionAsync().Result);
-        //    var document = XDocument.Parse(xml).Root;
-        //    var response = SetUpResourceMock(resourceName);
-        //    var responseReader = new ResponseReaderV3(await _client.CreateProviderAsync<IEdmModel>());
-        //    var row = (await responseReader.GetResponseAsync(response)).Entry;
+    //public class CommandWriterTests : TestBase
+    //{
+    //    //[Fact]
+    //    //public async Task CreateEntryCustomerWithAddress()
+    //    //{
+    //    //    const string resourceName = "SingleCustomerWithAddress.xml";
+    //    //    string xml = GetResourceAsString(resourceName);
+    //    //    var commandWriter = new CommandWriter((_client as ODataClient).GetSessionAsync().Result);
+    //    //    var document = XDocument.Parse(xml).Root;
+    //    //    var response = SetUpResourceMock(resourceName);
+    //    //    var responseReader = new ResponseReaderV3(await _client.CreateProviderAsync<IEdmModel>());
+    //    //    var row = (await responseReader.GetResponseAsync(response)).Entry;
 
-        //    var entry = XElement.Parse(commandWriter.CreateEntry("Northwind.Model", "Customers", row, null, null).Entry);
+    //    //    var entry = XElement.Parse(commandWriter.CreateEntry("Northwind.Model", "Customers", row, null, null).Entry);
 
-        //    AssertElementsCountEqual(document, entry, "m", "properties");
-        //    AssertElementsContentEqual(document, entry, "d", "CustomerID");
-        //    AssertElementsContentEqual(document, entry, "d", "CompanyName");
-        //    AssertElementsContentEqual(document, entry, "d", "Address");
-        //    AssertElementsContentEqual(document, entry, "d", "Type");
-        //    AssertElementsContentEqual(document, entry, "d", "City1");
-        //    AssertElementsContentEqual(document, entry, "d", "Region");
-        //    AssertElementsContentEqual(document, entry, "d", "PostalCode");
-        //    AssertElementsContentEqual(document, entry, "d", "Country");
-        //}
+    //    //    AssertElementsCountEqual(document, entry, "m", "properties");
+    //    //    AssertElementsContentEqual(document, entry, "d", "CustomerID");
+    //    //    AssertElementsContentEqual(document, entry, "d", "CompanyName");
+    //    //    AssertElementsContentEqual(document, entry, "d", "Address");
+    //    //    AssertElementsContentEqual(document, entry, "d", "Type");
+    //    //    AssertElementsContentEqual(document, entry, "d", "City1");
+    //    //    AssertElementsContentEqual(document, entry, "d", "Region");
+    //    //    AssertElementsContentEqual(document, entry, "d", "PostalCode");
+    //    //    AssertElementsContentEqual(document, entry, "d", "Country");
+    //    //}
 
-        [Fact]
-        public async Task CreateEntryWorkTaskModel()
-        {
-            var client = CreateClient("QAS.Multiplatform.Demo.edmx") as ODataClient;
-            const string resourceName = "WorkTaskModel.xml";
-            string xml = GetResourceAsString(resourceName);
-            var commandWriter = new CommandWriter(client.GetSessionAsync().Result, new CommandRequestBuilder(client.Session));
-            var document = XDocument.Parse(xml).Root;
-            var response = SetUpResourceMock(resourceName);
-            var responseReader = new ResponseReaderV3(_session, await client.GetMetadataAsync<IEdmModel>());
-            var row = (await responseReader.GetResponseAsync(response)).Entry;
+    //    [Fact]
+    //    public async Task CreateEntryWorkTaskModel()
+    //    {
+    //        var client = CreateClient("QAS.Multiplatform.Demo.edmx") as ODataClient;
+    //        const string resourceName = "WorkTaskModel.xml";
+    //        string xml = GetResourceAsString(resourceName);
+    //        var commandWriter = new CommandWriter(client.GetSessionAsync().Result, new CommandRequestBuilder(client.Session));
+    //        var document = XDocument.Parse(xml).Root;
+    //        var response = SetUpResourceMock(resourceName);
+    //        var responseReader = new ResponseReaderV3(_session, await client.GetMetadataAsync<IEdmModel>());
+    //        var row = (await responseReader.GetResponseAsync(response)).Entry;
 
-            var entry = XElement.Parse(await commandWriter.CreateEntryAsync("POST", "QAS.Multiplatform.Demo.Models", "WorkTaskModel", row, null, null));
+    //        var entry = XElement.Parse(await commandWriter.CreateEntryAsync("POST", "QAS.Multiplatform.Demo.Models", "WorkTaskModel", row, null, null));
 
-            AssertElementsCountEqual(document, entry, "m", "properties");
-            AssertElementsContentEqual(document, entry, "d", "Id");
-            AssertElementsContentEqual(document, entry, "d", "Code");
-            AssertElementsContentEqual(document, entry, "d", "StartDate", false);
-            AssertElementsContentEqual(document, entry, "d", "EndDate", false);
-            AssertElementsContentEqual(document, entry, "d", "State");
-            AssertElementsContentEqual(document, entry, "d", "Location", false);
-            AssertElementsContentEqual(document, entry, "d", "Latitude", false);
-            AssertElementsContentEqual(document, entry, "d", "Longitude", false);
-            AssertElementsContentEqual(document, entry, "d", "WorkerId");
-            AssertElementsContentEqual(document, entry, "d", "CustomerId");
-        }
+    //        AssertElementsCountEqual(document, entry, "m", "properties");
+    //        AssertElementsContentEqual(document, entry, "d", "Id");
+    //        AssertElementsContentEqual(document, entry, "d", "Code");
+    //        AssertElementsContentEqual(document, entry, "d", "StartDate", false);
+    //        AssertElementsContentEqual(document, entry, "d", "EndDate", false);
+    //        AssertElementsContentEqual(document, entry, "d", "State");
+    //        AssertElementsContentEqual(document, entry, "d", "Location", false);
+    //        AssertElementsContentEqual(document, entry, "d", "Latitude", false);
+    //        AssertElementsContentEqual(document, entry, "d", "Longitude", false);
+    //        AssertElementsContentEqual(document, entry, "d", "WorkerId");
+    //        AssertElementsContentEqual(document, entry, "d", "CustomerId");
+    //    }
 
-        [Fact]
-        public async Task CreateEntryWorkTaskModelWithNulls()
-        {
-            var client = CreateClient("QAS.Multiplatform.Demo.edmx") as ODataClient;
-            const string resourceName = "WorkTaskModelWithNulls.xml";
-            string xml = GetResourceAsString(resourceName);
-            var commandWriter = new CommandWriter(client.GetSessionAsync().Result, new CommandRequestBuilder(client.Session));
-            var document = XDocument.Parse(xml).Root;
-            var response = SetUpResourceMock(resourceName);
-            var responseReader = new ResponseReaderV3(_session, await client.GetMetadataAsync<IEdmModel>());
-            var row = (await responseReader.GetResponseAsync(response)).Entry;
+    //    [Fact]
+    //    public async Task CreateEntryWorkTaskModelWithNulls()
+    //    {
+    //        var client = CreateClient("QAS.Multiplatform.Demo.edmx") as ODataClient;
+    //        const string resourceName = "WorkTaskModelWithNulls.xml";
+    //        string xml = GetResourceAsString(resourceName);
+    //        var commandWriter = new CommandWriter(client.GetSessionAsync().Result, new CommandRequestBuilder(client.Session));
+    //        var document = XDocument.Parse(xml).Root;
+    //        var response = SetUpResourceMock(resourceName);
+    //        var responseReader = new ResponseReaderV3(_session, await client.GetMetadataAsync<IEdmModel>());
+    //        var row = (await responseReader.GetResponseAsync(response)).Entry;
 
-            var entry = XElement.Parse(await commandWriter.CreateEntryAsync("POST", "QAS.Multiplatform.Demo.Models", "WorkTaskModel", row, null, null));
+    //        var entry = XElement.Parse(await commandWriter.CreateEntryAsync("POST", "QAS.Multiplatform.Demo.Models", "WorkTaskModel", row, null, null));
 
-            AssertElementsCountDiffs(document, entry, "m", "properties", 1);
-            AssertElementsContentEqual(document, entry, "d", "Id");
-            AssertElementsContentEqual(document, entry, "d", "StartDate", false);
-            AssertElementsContentEqual(document, entry, "d", "EndDate", false);
-            AssertElementsContentEqual(document, entry, "d", "State");
-            AssertElementsContentEqual(document, entry, "d", "WorkerId");
-            AssertElementsContentEqual(document, entry, "d", "CustomerId");
-        }
+    //        AssertElementsCountDiffs(document, entry, "m", "properties", 1);
+    //        AssertElementsContentEqual(document, entry, "d", "Id");
+    //        AssertElementsContentEqual(document, entry, "d", "StartDate", false);
+    //        AssertElementsContentEqual(document, entry, "d", "EndDate", false);
+    //        AssertElementsContentEqual(document, entry, "d", "State");
+    //        AssertElementsContentEqual(document, entry, "d", "WorkerId");
+    //        AssertElementsContentEqual(document, entry, "d", "CustomerId");
+    //    }
 
-        private void AssertElementsCountEqual(XElement root1, XElement root2, string prefix, string name)
-        {
-            Assert.Equal(
-                root1.Descendants(prefix, name).Elements().Count(),
-                root2.Descendants(prefix, name).Elements().Count());
-        }
+    //    private void AssertElementsCountEqual(XElement root1, XElement root2, string prefix, string name)
+    //    {
+    //        Assert.Equal(
+    //            root1.Descendants(prefix, name).Elements().Count(),
+    //            root2.Descendants(prefix, name).Elements().Count());
+    //    }
 
-        private void AssertElementsCountDiffs(XElement root1, XElement root2, string prefix, string name, int diff)
-        {
-            Assert.Equal(
-                root1.Descendants(prefix, name).Elements().Count(),
-                root2.Descendants(prefix, name).Elements().Count() + 1);
-        }
+    //    private void AssertElementsCountDiffs(XElement root1, XElement root2, string prefix, string name, int diff)
+    //    {
+    //        Assert.Equal(
+    //            root1.Descendants(prefix, name).Elements().Count(),
+    //            root2.Descendants(prefix, name).Elements().Count() + 1);
+    //    }
 
-        private void AssertElementsContentEqual(XElement root1, XElement root2, string prefix, string name, bool compareValues = true)
-        {
-            if (!root1.Descendants(prefix, name).Any() && !root2.Descendants(prefix, name).Any())
-                return;
+    //    private void AssertElementsContentEqual(XElement root1, XElement root2, string prefix, string name, bool compareValues = true)
+    //    {
+    //        if (!root1.Descendants(prefix, name).Any() && !root2.Descendants(prefix, name).Any())
+    //            return;
 
-            var element1 = root1.Descendants(prefix, name).Single();
-            var element2 = root2.Descendants(prefix, name).Single();
-            Assert.Equal(element1.Attributes().Count(), element2.Attributes().Count());
-            Assert.Equal(0,
-                element1.Attributes().Select(x => x.Value)
-                .Except(element2.Attributes().Select(x => x.Value)).Count());
-            if (compareValues)
-            {
-                Assert.Equal(element1.Value, element2.Value, StringComparer.InvariantCultureIgnoreCase);
-            }
-            else
-            {
-                if (element1.Value == null)
-                    Assert.Null(element2.Value);
-                if (element1.Value == string.Empty)
-                    Assert.Equal(string.Empty, element2.Value);
-            }
-        }
-    }
+    //        var element1 = root1.Descendants(prefix, name).Single();
+    //        var element2 = root2.Descendants(prefix, name).Single();
+    //        Assert.Equal(element1.Attributes().Count(), element2.Attributes().Count());
+    //        Assert.Equal(0,
+    //            element1.Attributes().Select(x => x.Value)
+    //            .Except(element2.Attributes().Select(x => x.Value)).Count());
+    //        if (compareValues)
+    //        {
+    //            Assert.Equal(element1.Value, element2.Value, StringComparer.InvariantCultureIgnoreCase);
+    //        }
+    //        else
+    //        {
+    //            if (element1.Value == null)
+    //                Assert.Null(element2.Value);
+    //            if (element1.Value == string.Empty)
+    //                Assert.Equal(string.Empty, element2.Value);
+    //        }
+    //    }
+    //}
 }

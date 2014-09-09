@@ -17,7 +17,7 @@ namespace Simple.OData.Client
         //private MultipartContent _content;
         private HttpRequestMessage _request;
 
-        public BatchRequestBuilder(ISession session)
+        public BatchRequestBuilder(Session session)
             : base(session)
         {
             _lazyBatchWriter = new Lazy<IBatchWriter>(() => this.Session.Provider.GetBatchWriter());
@@ -47,36 +47,35 @@ namespace Simple.OData.Client
             //_content = null;
         }
 
-        public override HttpRequest CreateRequest(HttpCommand command, bool returnContent = false, bool checkOptimisticConcurrency = false)
+        //public override ODataRequest CreateRequest(ODataRequest command, bool returnContent = false, bool checkOptimisticConcurrency = false)
+        //{
+        //    var request = new CommandRequestBuilder(this.Session).CreateRequest(command);
+        //    //var content = new StringContent(FormatBatchItem(command, checkOptimisticConcurrency));
+        //    //content.Headers.ContentType = new MediaTypeHeaderValue("application/http");
+        //    //content.Headers.Add("Content-Transfer-Encoding", "binary");
+        //    //var content = command.FormattedContent;
+
+        //    //var requestMessage = new HttpRequestMessage(new HttpMethod(request.Method), request.Uri);
+        //    //requestMessage.Content = content;
+        //    //if (requestMessage.Content != null)
+        //    //{
+        //    //    _content.Add(requestMessage.Content);
+        //    //}
+
+        //    //request.EntryData = command.EntryData;
+        //    //if (request.EntryData != null)
+        //    //{
+        //    //    request.EntryData.Add("$Batch-ID", _batchId);
+        //    //    request.EntryData.Add("$Content-ID", _contentId);
+        //    //}
+        //    //command.ContentId = _contentId;
+
+        //    return request;
+        //}
+
+        public ODataRequest CreateBatchRequest()
         {
-            var request = new CommandRequestBuilder(this.Session).CreateRequest(command);
-            //var content = new StringContent(FormatBatchItem(command, checkOptimisticConcurrency));
-            //content.Headers.ContentType = new MediaTypeHeaderValue("application/http");
-            //content.Headers.Add("Content-Transfer-Encoding", "binary");
-            //var content = command.FormattedContent;
-
-            //var requestMessage = new HttpRequestMessage(new HttpMethod(request.Method), request.Uri);
-            //requestMessage.Content = content;
-            //if (requestMessage.Content != null)
-            //{
-            //    _content.Add(requestMessage.Content);
-            //}
-
-            //request.EntryData = command.EntryData;
-            //if (request.EntryData != null)
-            //{
-            //    request.EntryData.Add("$Batch-ID", _batchId);
-            //    request.EntryData.Add("$Content-ID", _contentId);
-            //}
-            //command.ContentId = _contentId;
-
-            return request;
-        }
-
-        public HttpRequest CreateBatchRequest()
-        {
-            var request = CreateRequest(CreateRequestUrl(FluentCommand.BatchLiteral));
-            request.Method = RestVerbs.POST;
+            var request = new ODataRequest(RestVerbs.POST, this.Session, FluentCommand.BatchLiteral);
             //var batchContent = new MultipartContent("mixed", "batch_" + _batchId);
             //request.Content = batchContent;
             //request.Content = new StringContent(_content);
