@@ -89,9 +89,9 @@ namespace Simple.OData.Client
         {
             var requestMessage = new HttpRequestMessage(new HttpMethod(request.Method), request.Uri);
 
-            if (request.Content != null)
+            if (request.HasContent)
             {
-                requestMessage.Content = request.Content;
+                requestMessage.Content = request.GetContent();
             }
             return requestMessage;
         }

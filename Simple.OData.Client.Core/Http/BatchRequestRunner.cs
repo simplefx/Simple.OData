@@ -48,10 +48,10 @@ namespace Simple.OData.Client
         {
             var requestMessage = new HttpRequestMessage(new HttpMethod(request.Method), request.Uri);
 
-            if (request.Content != null)
+            if (request.HasContent)
             {
-                requestMessage.Content = request.Content;
-                var batchId = GetBatchId(request.Content).Result;
+                requestMessage.Content = request.GetContent();
+                var batchId = GetBatchId(requestMessage.Content).Result;
                 var contentType = string.Format("multipart/mixed; boundary=\"{0}\"", batchId);
                 var headerValue = new MediaTypeHeaderValue(contentType);
                 requestMessage.Content.Headers.ContentType = headerValue;

@@ -12,8 +12,8 @@ namespace Simple.OData.Client
         public string Method { get; set; }
         public string CommandText { get; set; }
         public IDictionary<string, object> EntryData { get; set; }
-        public HttpContent Content { get; set; }
         public string FormattedContent { get; set; }
+        public bool HasContent { get { return this.FormattedContent != null; }}
         public int ContentId { get; set; }
 
         public string ContentType
@@ -36,6 +36,13 @@ namespace Simple.OData.Client
                 else
                     return null;
             }
+        }
+
+        public HttpContent GetContent()
+        {
+            return this.FormattedContent != null
+                ? new StringContent(this.FormattedContent, Encoding.UTF8, this.ContentType)
+                : null;
         }
 
         public bool IsLink { get; set; }
@@ -61,11 +68,6 @@ namespace Simple.OData.Client
             Credentials = session.Credentials;
             EntryData = entryData;
             FormattedContent = formattedContent;
-
-            if (this.FormattedContent != null)
-            {
-                this.Content = new StringContent(this.FormattedContent, Encoding.UTF8, this.ContentType);
-            }
         }
 
         //public static ODataRequest Get(Session session, string commandText, bool scalarResult = false)
