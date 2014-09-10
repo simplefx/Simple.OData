@@ -35,7 +35,7 @@ namespace Simple.OData.Client
             var session = Session.FromUrl(settings.UrlBase, settings.Credentials);
             this.Settings = settings;
             this.RequestBuilder = new RequestBuilder(session, true);
-            this.RequestRunner = new RequestRunner(session, settings, true);
+            this.RequestRunner = new RequestRunner(session);
         }
 
         /// <summary>

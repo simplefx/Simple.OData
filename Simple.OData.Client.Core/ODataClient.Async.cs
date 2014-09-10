@@ -233,13 +233,9 @@ namespace Simple.OData.Client
             return FindEntriesAsync(commandText, CancellationToken.None);
         }
 
-        public async Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(string commandText, CancellationToken cancellationToken)
+        public Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(string commandText, CancellationToken cancellationToken)
         {
-            await _session.ResolveProviderAsync(cancellationToken);
-            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-
-            var request = await _requestBuilder.CreateGetRequestAsync(commandText);
-            return await _requestRunner.FindEntriesAsync(request, false, cancellationToken);
+            return FindEntriesAsync(commandText, false, cancellationToken);
         }
 
         public Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(string commandText, bool scalarResult)
@@ -253,7 +249,7 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var request = await _requestBuilder.CreateGetRequestAsync(commandText, scalarResult);
-            return await _requestRunner.FindEntriesAsync(request, scalarResult, cancellationToken);
+            return await ExecuteFindEntriesRequestAsync(request, cancellationToken);
         }
 
         public Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> FindEntriesWithCountAsync(string commandText)
@@ -261,14 +257,9 @@ namespace Simple.OData.Client
             return FindEntriesWithCountAsync(commandText, CancellationToken.None);
         }
 
-        public async Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> FindEntriesWithCountAsync(string commandText, CancellationToken cancellationToken)
+        public Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> FindEntriesWithCountAsync(string commandText, CancellationToken cancellationToken)
         {
-            await _session.ResolveProviderAsync(cancellationToken);
-            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-
-            var request = await _requestBuilder.CreateGetRequestAsync(commandText);
-            var result = await _requestRunner.FindEntriesWithCountAsync(request, false, cancellationToken);
-            return Tuple.Create(result.Item1, result.Item2);
+            return FindEntriesWithCountAsync(commandText, false, CancellationToken.None);
         }
 
         public Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> FindEntriesWithCountAsync(string commandText, bool scalarResult)
@@ -282,8 +273,7 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var request = await _requestBuilder.CreateGetRequestAsync(commandText, scalarResult);
-            var result = await _requestRunner.FindEntriesWithCountAsync(request, scalarResult, cancellationToken);
-            return Tuple.Create(result.Item1, result.Item2);
+            return await ExecuteFindEntriesWithCountRequestAsync(request, cancellationToken);
         }
 
         public Task<IDictionary<string, object>> FindEntryAsync(string commandText)
@@ -297,7 +287,7 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var request = await _requestBuilder.CreateGetRequestAsync(commandText);
-            var result = await _requestRunner.FindEntriesAsync(request, false, cancellationToken);
+            var result = await ExecuteFindEntriesRequestAsync(request, cancellationToken);
             return result == null ? null : result.FirstOrDefault();
         }
 
@@ -312,7 +302,7 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var request = await _requestBuilder.CreateGetRequestAsync(commandText, true);
-            var result = await _requestRunner.FindEntriesAsync(request, true, cancellationToken);
+            var result = await ExecuteFindEntriesRequestAsync(request, cancellationToken);
             return result == null ? null : result.FirstOrDefault().Values.First();
         }
 
@@ -349,7 +339,7 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var request = await _requestBuilder.CreateGetRequestAsync(commandText);
-            return await _requestRunner.GetEntryAsync(request, cancellationToken);
+            return await ExecuteGetEntryRequestAsync(request, cancellationToken);
         }
 
         public Task<IDictionary<string, object>> InsertEntryAsync(string collection, IDictionary<string, object> entryData)
@@ -443,7 +433,7 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var request = await _requestBuilder.CreateDeleteRequestAsync(commandText, collection);
-            await _requestRunner.DeleteEntryAsync(request, cancellationToken);
+            await ExecuteDeleteEntryRequestAsync(request, cancellationToken);
         }
 
         public Task<int> DeleteEntriesAsync(string collection, string commandText)
@@ -483,7 +473,13 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var request = await _requestBuilder.CreateLinkRequestAsync(collection, linkName, entryPath, linkPath);
-            await _requestRunner.UpdateEntryAsync(request, cancellationToken);
+
+            if (!_requestBuilder.IsBatch)
+            {
+                using (await _requestRunner.ExecuteRequestAsync(request, cancellationToken))
+                {
+                }
+            }
         }
 
         public Task UnlinkEntryAsync(string collection, IDictionary<string, object> entryKey, string linkName)
@@ -501,7 +497,13 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var request = await _requestBuilder.CreateUnlinkRequestAsync(commandText, collection, linkName);
-            await _requestRunner.UpdateEntryAsync(request, cancellationToken);
+
+            if (!_requestBuilder.IsBatch)
+            {
+                using (await _requestRunner.ExecuteRequestAsync(request, cancellationToken))
+                {
+                }
+            }
         }
 
         public Task<IEnumerable<IDictionary<string, object>>> ExecuteFunctionAsync(string functionName, IDictionary<string, object> parameters)
@@ -521,7 +523,7 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var request = new ODataRequest(RestVerbs.GET, this.Session, commandText);
-            return await _requestRunner.ExecuteFunctionAsync(request, cancellationToken);
+            return await ExecuteFunctionRequestAsync(request, cancellationToken);
         }
 
         public Task<T> ExecuteFunctionAsScalarAsync<T>(string functionName, IDictionary<string, object> parameters)

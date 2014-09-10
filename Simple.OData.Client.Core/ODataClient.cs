@@ -33,7 +33,7 @@ namespace Simple.OData.Client
             _session = Session.FromUrl(_settings.UrlBase, _settings.Credentials);
 
             _requestBuilder = new RequestBuilder(_session);
-            _requestRunner = new RequestRunner(_session, _settings);
+            _requestRunner = new RequestRunner(_session);
             _requestRunner.BeforeRequest = _settings.BeforeRequest;
             _requestRunner.AfterResponse = _settings.AfterResponse;
         }
