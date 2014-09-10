@@ -20,7 +20,7 @@ namespace Simple.OData.Client
 
         public async Task StartBatchAsync()
         {
-            _requestMessage = new ODataV3RequestMessage();
+            _requestMessage = new ODataV3RequestMessage() {Url = new Uri(_session.UrlBase)};
             _messageWriter = new ODataMessageWriter(_requestMessage);
 #if SILVERLIGHT
             _batchWriter = _messageWriter.CreateODataBatchWriter();
@@ -45,7 +45,7 @@ namespace Simple.OData.Client
             _requestMessage.GetStream().Position = 0;
             var httpRequest = new HttpRequestMessage()
             {
-                RequestUri = new Uri("http://vagif-notebook/Temporary_Listen_Addresses/SimpleODataTestService2/" + FluentCommand.BatchLiteral), 
+                RequestUri = new Uri(_requestMessage.Url + FluentCommand.BatchLiteral), 
                 Method = HttpMethod.Post,
                 Content = new StreamContent(_requestMessage.GetStream()),
             };
