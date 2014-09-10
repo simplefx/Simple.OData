@@ -268,10 +268,5 @@ namespace Simple.OData.Client
         //    }
         //    return entryProperties;
         //}
-
-        //private string GetQualifiedResourceName(string namespaceName, string collectionName)
-        //{
-        //    return string.Join(".", namespaceName, collectionName);
-        //}
     }
 }

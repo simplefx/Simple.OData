@@ -249,7 +249,9 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var request = await _requestBuilder.CreateGetRequestAsync(commandText, scalarResult);
-            return await ExecuteFindEntriesRequestAsync(request, cancellationToken);
+            return await ExecuteRequestWithResultAsync(request, cancellationToken,
+                x => x.Entries ?? new[] { x.Entry },
+                () => new[] { (IDictionary<string, object>)null });
         }
 
         public Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> FindEntriesWithCountAsync(string commandText)
@@ -273,7 +275,9 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var request = await _requestBuilder.CreateGetRequestAsync(commandText, scalarResult);
-            return await ExecuteFindEntriesWithCountRequestAsync(request, cancellationToken);
+            return await ExecuteRequestWithResultAsync(request, cancellationToken,
+                x => Tuple.Create(x.Entries, (int)x.TotalCount.GetValueOrDefault()),
+                () => new Tuple<IEnumerable<IDictionary<string, object>>, int>(new[] { (IDictionary<string, object>)null }, 0));
         }
 
         public Task<IDictionary<string, object>> FindEntryAsync(string commandText)
@@ -287,7 +291,9 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var request = await _requestBuilder.CreateGetRequestAsync(commandText);
-            var result = await ExecuteFindEntriesRequestAsync(request, cancellationToken);
+            var result = await ExecuteRequestWithResultAsync(request, cancellationToken,
+                x => x.Entries ?? new[] { x.Entry },
+                () => new[] { (IDictionary<string, object>)null });
             return result == null ? null : result.FirstOrDefault();
         }
 
@@ -302,7 +308,9 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var request = await _requestBuilder.CreateGetRequestAsync(commandText, true);
-            var result = await ExecuteFindEntriesRequestAsync(request, cancellationToken);
+            var result = await ExecuteRequestWithResultAsync(request, cancellationToken,
+                x => x.Entries ?? new[] { x.Entry },
+                () => new[] { (IDictionary<string, object>)null });
             return result == null ? null : result.FirstOrDefault().Values.First();
         }
 
@@ -339,7 +347,9 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var request = await _requestBuilder.CreateGetRequestAsync(commandText);
-            return await ExecuteGetEntryRequestAsync(request, cancellationToken);
+            return await ExecuteRequestWithResultAsync(request, cancellationToken,
+                x => x.Entry,
+                () => null);
         }
 
         public Task<IDictionary<string, object>> InsertEntryAsync(string collection, IDictionary<string, object> entryData)
@@ -362,7 +372,30 @@ namespace Simple.OData.Client
             await _session.ResolveProviderAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            return await InsertEntryAndLinksAsync(collection, entryData, resultRequired, cancellationToken);
+            RemoveSystemProperties(entryData);
+
+            var request = await _requestBuilder.CreateInsertRequestAsync(collection, entryData, resultRequired);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+            return await ExecuteRequestWithResultAsync(request, cancellationToken,
+                            x => x.Entry,
+                            () => null,
+                            () => request.EntryData);
+
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+            //var entryMembers = CommandWriter.ParseEntryMembers(entitySet, entryData);
+            //foreach (var associatedData in entryMembers.AssociationsByContentId)
+            //{
+            //    request = await _requestBuilder.CreateLinkRequestAsync(collection, associatedData.Key, associatedData.Value, resultRequired);
+
+            //    var linkCommand = await commandWriter.CreateLinkCommandAsync(collection, associatedData.Key, command.ContentId, associatedData.Value);
+            //    request = _requestBuilder.CreateRequest(linkCommand, resultRequired);
+            //    await _requestRunner.InsertEntryAsync(request, cancellationToken);
+            //    if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+            //}
+
+            //return result;
         }
 
         public Task<IDictionary<string, object>> UpdateEntryAsync(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
@@ -385,7 +418,41 @@ namespace Simple.OData.Client
             await _session.ResolveProviderAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            return await UpdateEntryAndLinksAsync(collection, entryKey, entryData, resultRequired, cancellationToken);
+            RemoveSystemProperties(entryKey);
+            RemoveSystemProperties(entryData);
+
+            var commandText = await FormatEntryKeyAsync(collection, entryKey, cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+            var request = await _requestBuilder.CreateUpdateRequestAsync(commandText, collection, entryKey, entryData, resultRequired);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+            var result = await ExecuteRequestWithResultAsync(request, cancellationToken, x => x.Entry);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+            //foreach (var associatedData in entryMembers.AssociationsByContentId)
+            //{
+            //    var linkCommand = await commandWriter.CreateLinkCommandAsync(collection, associatedData.Key, command.ContentId, associatedData.Value);
+            //    request = _requestBuilder.CreateRequest(linkCommand);
+            //    await _requestRunner.UpdateEntryAsync(request, cancellationToken);
+            //    if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+            //}
+
+            var entitySet = this.Session.MetadataCache.FindConcreteEntitySet(collection);
+            var entitySetName = this.Session.Provider.GetMetadata().GetEntitySetExactName(collection);
+            var entryMembers = RequestBuilder.ParseEntryMembers(entitySet, entryData);
+            var unlinkAssociationNames = entryMembers.AssociationsByValue
+                .Where(x => x.Value == null)
+                .Select(x => _session.Provider.GetMetadata().GetNavigationPropertyExactName(entitySetName, x.Key))
+                .ToList();
+
+            foreach (var associationName in unlinkAssociationNames)
+            {
+                await UnlinkEntryAsync(collection, entryKey, associationName, cancellationToken);
+                if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+            }
+
+            return result;
         }
 
         public Task<IEnumerable<IDictionary<string, object>>> UpdateEntriesAsync(string collection, string commandText, IDictionary<string, object> entryData)
@@ -433,7 +500,12 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var request = await _requestBuilder.CreateDeleteRequestAsync(commandText, collection);
-            await ExecuteDeleteEntryRequestAsync(request, cancellationToken);
+            if (!_requestBuilder.IsBatch)
+            {
+                using (await _requestRunner.ExecuteRequestAsync(request, cancellationToken))
+                {
+                }
+            }
         }
 
         public Task<int> DeleteEntriesAsync(string collection, string commandText)
@@ -523,7 +595,9 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var request = new ODataRequest(RestVerbs.GET, this.Session, commandText);
-            return await ExecuteFunctionRequestAsync(request, cancellationToken);
+            return await ExecuteRequestWithResultAsync(request, cancellationToken,
+                x => x.Entries ?? new[] { x.Entry },
+                () => new[] { (IDictionary<string, object>)null });
         }
 
         public Task<T> ExecuteFunctionAsScalarAsync<T>(string functionName, IDictionary<string, object> parameters)
