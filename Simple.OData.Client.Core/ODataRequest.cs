@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Net.Http;
 using System.Text;
@@ -15,8 +16,8 @@ namespace Simple.OData.Client
         public string Method { get; private set; }
         public string CommandText { get; private set; }
         public IDictionary<string, object> EntryData { get; private set; }
-        public string FormattedContent { get; private set; }
-        public bool HasContent { get { return this.FormattedContent != null; }}
+        public Stream ContentStream { get; private set; }
+        public bool HasContent { get { return this.ContentStream != null; }}
         public int ContentId { get; private set; }
 
         public HttpRequestMessage RequestMessage
@@ -49,8 +50,8 @@ namespace Simple.OData.Client
 
         public HttpContent GetContent()
         {
-            return this.FormattedContent != null
-                ? new StringContent(this.FormattedContent, Encoding.UTF8, this.ContentType)
+            return this.ContentStream != null
+                ? new StringContent(Utils.StreamToString(this.ContentStream), Encoding.UTF8, this.ContentType)
                 : null;
         }
 
@@ -75,11 +76,11 @@ namespace Simple.OData.Client
             this.RequestMessage = requestMessage;
         }
 
-        internal ODataRequest(string method, Session session, string commandText, IDictionary<string, object> entryData, string formattedContent)
+        internal ODataRequest(string method, Session session, string commandText, IDictionary<string, object> entryData, Stream contentStream)
             : this(method, session, commandText)
         {
             EntryData = entryData;
-            FormattedContent = formattedContent;
+            ContentStream = contentStream;
         }
 
         private string CreateRequestUrl(Session session, string commandText)
@@ -96,11 +97,7 @@ namespace Simple.OData.Client
                 return _requestMessage;
 
             _requestMessage = new HttpRequestMessage(new HttpMethod(this.Method), this.Uri);
-
-            if (this.HasContent)
-            {
-                _requestMessage.Content = this.GetContent();
-            }
+            _requestMessage.Content = this.HasContent ? this.GetContent() : null;
             return _requestMessage;
         }
     }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Data.Edm;
@@ -21,7 +22,7 @@ namespace Simple.OData.Client
             _deferredBatchWriter = deferredBatchWriter;
         }
 
-        public async Task<string> CreateEntryAsync(string operation, string entityTypeNamespace, string entityTypeName,
+        public async Task<Stream> CreateEntryAsync(string operation, string entityTypeNamespace, string entityTypeName,
             IDictionary<string, object> properties,
             IEnumerable<KeyValuePair<string, object>> associationsByValue,
             IEnumerable<KeyValuePair<string, int>> associationsByContentId)
@@ -70,12 +71,12 @@ namespace Simple.OData.Client
                 }
                 else
                 {
-                    return Utils.StreamToString(message.GetStream());
+                    return Utils.CloneStream(message.GetStream());
                 }
             }
         }
 
-        public async Task<string> CreateLinkAsync(string linkPath)
+        public async Task<Stream> CreateLinkAsync(string linkPath)
         {
             var writerSettings = new ODataMessageWriterSettings() { BaseUri = new Uri(_session.UrlBase), Indent = true };
             var message = new ODataV3RequestMessage();
@@ -84,7 +85,7 @@ namespace Simple.OData.Client
                 var link = new ODataEntityReferenceLink { Url = new Uri(linkPath, UriKind.Relative) };
                 messageWriter.WriteEntityReferenceLink(link);
 
-                return Utils.StreamToString(message.GetStream());
+                return Utils.CloneStream(message.GetStream());
             }
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -90,13 +91,13 @@ namespace Simple.OData.Client
         public async Task<ODataRequest> CreateLinkRequestAsync(string collection, string linkName, string entryPath, string linkPath)
         {
             var associationName = _session.Provider.GetMetadata().GetNavigationPropertyExactName(collection, linkName);
-            var linkEntry = await _session.Provider.GetRequestWriter(_lazyBatchWriter).CreateLinkAsync(linkPath);
+            var linkContent = await _session.Provider.GetRequestWriter(_lazyBatchWriter).CreateLinkAsync(linkPath);
             var linkMethod = _session.Provider.GetMetadata().IsNavigationPropertyMultiple(collection, associationName) ?
                 RestVerbs.POST :
                 RestVerbs.PUT;
 
             var commandText = FormatLinkPath(entryPath, associationName);
-            var request = new ODataRequest(linkMethod, _session, commandText, null, linkEntry);
+            var request = new ODataRequest(linkMethod, _session, commandText, null, linkContent);
             request.IsLink = true;
             return request;
         }
@@ -149,19 +150,19 @@ namespace Simple.OData.Client
             return string.Format("{0}/$links/{1}", entryPath, linkName);
         }
 
-        public async Task<string> CreateEntryAsync(string method, string entityTypeNamespace, string entityTypeName,
+        public async Task<Stream> CreateEntryAsync(string method, string entityTypeNamespace, string entityTypeName,
             IDictionary<string, object> properties,
             IEnumerable<KeyValuePair<string, object>> associationsByValue,
             IEnumerable<KeyValuePair<string, int>> associationsByContentId)
         {
-            var entry = await _session.Provider.GetRequestWriter(_lazyBatchWriter).CreateEntryAsync(
+            var entryContent = await _session.Provider.GetRequestWriter(_lazyBatchWriter).CreateEntryAsync(
                 method,
                 entityTypeNamespace, entityTypeName,
                 properties,
                 associationsByValue,
                 associationsByContentId);
 
-            return entry;
+            return entryContent;
         }
 
         public static EntryMembers ParseEntryMembers(EntitySet entitySet, IDictionary<string, object> entryData)

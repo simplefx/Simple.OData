@@ -23,6 +23,14 @@ namespace Simple.OData.Client
             return new MemoryStream(Encoding.UTF8.GetBytes(str));
         }
 
+        public static Stream CloneStream(Stream stream)
+        {
+            stream.Position = 0;
+            var clonedStream = new MemoryStream();
+            stream.CopyTo(clonedStream);
+            return clonedStream;
+        }
+
         public static bool NamesAreEqual(string actualName, string requestedName, IPluralizer pluralizer)
         {
             return actualName.Homogenize() == requestedName.Homogenize()
