@@ -107,6 +107,7 @@ namespace Simple.OData.Client
         public EdmPropertyType Type { get; set; }
         public bool Nullable { get; set; }
         public string ConcurrencyMode { get; set; }
+        public IDictionary<string, string> Annotations { get; set; } 
     }
 
     public sealed class EdmNavigationProperty

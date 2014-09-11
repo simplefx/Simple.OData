@@ -117,14 +117,60 @@ namespace Simple.OData.Client
                         entryData.Add(property.Key, property.Value);
                 }
 
+                var resourceType = entry.Element(null, "category").Attribute("term").Value.Split('.').Last();
                 if (_includeResourceTypeInEntryProperties)
                 {
-                    var resourceType = entry.Element(null, "category").Attribute("term").Value.Split('.').Last();
                     entryData.Add(FluentCommand.ResourceTypeLiteral, resourceType);
+                }
+
+                var entityType = _schema.EntityTypes.Single(x => x.Name == resourceType);
+                foreach (var property in entityType.Properties)
+                {
+                    if (property.Annotations.ContainsKey("FC_TargetPath") && !entryData.ContainsKey(property.Name))
+                    {
+                        var propertyValue = GetSyndicationValue(entry, property);
+                        if (propertyValue != null)
+                        {
+                            entryData.Add(property.Name, propertyValue);
+                        }
+                    }
                 }
 
                 yield return entryData;
             }
+        }
+
+        private object GetSyndicationValue(XElement entry, EdmProperty property)
+        {
+            var map = new Dictionary<string, string>()
+                {
+                    {"SyndicationAuthorEmail", "author/email"},
+                    {"SyndicationAuthorName", "author/name"},
+                    {"SyndicationAuthorUri", "author/uri"},
+                    {"SyndicationContributorEmail", "contributor/email"},
+                    {"SyndicationContributorName", "contributor/name"},
+                    {"SyndicationContributorUri", "contributor/uri"},
+                    {"SyndicationPublished", "published"},
+                    {"SyndicationRights", "rights"},
+                    {"SyndicationSummary", "summary"},
+                    {"SyndicationTitle", "title"},
+                    {"SyndicationUpdated", "updated"},
+                };
+
+            string syndicationName;
+            if (!property.Annotations.TryGetValue("FC_TargetPath", out syndicationName))
+                return null;
+
+            string syndicationPath;
+            if (!map.TryGetValue(syndicationName, out syndicationPath))
+                return null;
+                
+            var element = entry;
+            foreach (var elementName in syndicationPath.Split('/'))
+            {
+                element = element.Element(null, elementName);
+            }
+            return element != null ? EdmTypeSerializer.Read(element).Value : null;
         }
 
         private int GetDataCount(XElement feed)
@@ -153,7 +199,7 @@ namespace Simple.OData.Client
             }
             else
             {
-                return new KeyValuePair<string, object>[] {};
+                return new KeyValuePair<string, object>[] { };
             }
         }
 

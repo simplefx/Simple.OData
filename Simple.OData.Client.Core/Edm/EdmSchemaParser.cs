@@ -210,6 +210,7 @@ namespace Simple.OData.Client
                 Type = EdmPropertyType.Parse(element.Attribute("Type").Value, this.EntityTypes, this.ComplexTypes, this.EnumTypes),
                 Nullable = ParseBooleanAttribute(element.Attribute("Nullable"), true),
                 ConcurrencyMode = ParseStringAttribute(element.Attribute("ConcurrencyMode")),
+                Annotations = ParseAnnotations(element),
             };
         }
 
@@ -265,6 +266,15 @@ namespace Simple.OData.Client
         private string ParseStringAttribute(XAttribute attribute, string @default = null)
         {
             return attribute == null ? @default : attribute.Value;
+        }
+
+        private IDictionary<string, string> ParseAnnotations(XElement element)
+        {
+            var annotationNames = new[] {"FC_SourcePath", "FC_TargetPath", "FC_ContentKind", "FC_NsPrefix", "FC_NsUri", "FC_KeepInContent"};
+            return annotationNames.ToDictionary(
+                    x => x,
+                    x => { var attr = element.Attribute("m", x); return attr != null ? attr.Value : null; })
+                .Where(x => x.Value != null).ToIDictionary();
         }
     }
 }

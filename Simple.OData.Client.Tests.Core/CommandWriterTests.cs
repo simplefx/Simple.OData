@@ -18,7 +18,7 @@ namespace Simple.OData.Client.Tests
             string xml = GetResourceAsString("SingleCustomerWithAddress.xml");
             var document = XDocument.Parse(xml).Root;
             var row = feedReader.GetData(xml).Single();
-            var entry = commandWriter.CreateEntry("Northwind.Model", "Customers", row).Entry;
+            var entry = commandWriter.CreateEntry("Northwind.Model", "Customer", row).Entry;
 
             AssertElementsCountEqual(document, entry, "m", "properties");
             AssertElementsContentEqual(document, entry, "d", "CustomerID");

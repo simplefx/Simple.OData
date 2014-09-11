@@ -79,20 +79,20 @@ namespace Simple.OData.Client.Tests
             Assert.NotNull(package["Id"]);
         }
 
-        //[Fact]
-        //public async Task FindEntryNuGetV2_FieldWithAnnotation()
-        //{
-        //    var client = new ODataClient("http://nuget.org/api/v2");
-        //    var package = await client.FindEntryAsync("Packages?$filter=Title eq 'EntityFramework'");
-        //    Assert.NotNull(package["Authors"]);
-        //}
+        [Fact]
+        public async Task FindEntryNuGetV2_FieldWithAnnotation()
+        {
+            var client = new ODataClient("http://nuget.org/api/v2");
+            var package = await client.FindEntryAsync("Packages?$filter=Title eq 'EntityFramework'");
+            Assert.NotNull(package["Authors"]);
+        }
 
         [Fact]
         public async Task FindEntryODataOrgV3ReadOnly()
         {
             var client = new ODataClient("http://services.odata.org/V3/OData/OData.svc/");
             var product = await client.FindEntryAsync("Products?$filter=Name eq 'Bread'");
-            Assert.NotNull(product);
+            Assert.NotNull(product["Name"]);
         }
 
         [Fact]
@@ -100,7 +100,7 @@ namespace Simple.OData.Client.Tests
         {
             var client = new ODataClient("http://services.odata.org/V3/%28S%28i5vquvxjs3pydqmktpiqte40%29%29/OData/OData.svc/");
             var product = await client.FindEntryAsync("Products?$filter=Name eq 'Bread'");
-            Assert.NotNull(product);
+            Assert.NotNull(product["Name"]);
         }
 
         [Fact]
