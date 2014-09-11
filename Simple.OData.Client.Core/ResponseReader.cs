@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -135,6 +136,9 @@ namespace Simple.OData.Client
         private IEnumerable<KeyValuePair<string, object>> GetKeys(XElement element)
         {
             var content = element.Element(null, "id").Value;
+            var endOfBaseUrl = content.LastIndexOf('/');
+            if (endOfBaseUrl >= 0)
+                content = content.Substring(endOfBaseUrl + 1);
             var startOfKey = content.IndexOf('(') + 1;
             var endOfKey = content.LastIndexOf(')');
             var prefix = content.Substring(0, startOfKey);

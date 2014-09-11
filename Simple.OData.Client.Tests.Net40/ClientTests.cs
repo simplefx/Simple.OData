@@ -88,6 +88,22 @@ namespace Simple.OData.Client.Tests
         //}
 
         [Fact]
+        public async Task FindEntryODataOrgV3ReadOnly()
+        {
+            var client = new ODataClient("http://services.odata.org/V3/OData/OData.svc/");
+            var product = await client.FindEntryAsync("Products?$filter=Name eq 'Bread'");
+            Assert.NotNull(product);
+        }
+
+        [Fact]
+        public async Task FindEntryODataOrgV3ReadWrite()
+        {
+            var client = new ODataClient("http://services.odata.org/V3/%28S%28i5vquvxjs3pydqmktpiqte40%29%29/OData/OData.svc/");
+            var product = await client.FindEntryAsync("Products?$filter=Name eq 'Bread'");
+            Assert.NotNull(product);
+        }
+
+        [Fact]
         public async Task GetEntryExisting()
         {
             var product = await _client.GetEntryAsync("Products", new Entry() { { "ProductID", 1 } });
