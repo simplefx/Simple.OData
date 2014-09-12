@@ -14,7 +14,7 @@ namespace Simple.OData.Client
         private ODataV3RequestMessage _requestMessage;
         private ODataMessageWriter _messageWriter;
         private int _lastContentId;
-        private Dictionary<IDictionary<string, object>, string> _contentIdMap; 
+        private readonly Dictionary<IDictionary<string, object>, string> _contentIdMap; 
 
         public BatchWriterV3(ISession session)
         {

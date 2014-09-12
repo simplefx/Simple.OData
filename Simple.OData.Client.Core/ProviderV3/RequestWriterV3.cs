@@ -25,6 +25,7 @@ namespace Simple.OData.Client
 
         public async Task<Stream> CreateEntryAsync(string method, string collection, IDictionary<string, object> entryData)
         {
+            var entitySet = (_session as Session).MetadataCache.FindConcreteEntitySet(collection);
             var writerSettings = new ODataMessageWriterSettings() { BaseUri = new Uri(_session.UrlBase), Indent = true };
             IODataRequestMessage message;
             if (_deferredBatchWriter != null)
@@ -32,7 +33,7 @@ namespace Simple.OData.Client
                 if (!_deferredBatchWriter.IsValueCreated)
                     await _deferredBatchWriter.Value.StartBatchAsync();
                 message = (await _deferredBatchWriter.Value.CreateOperationRequestMessageAsync(
-                    method, new Uri(_session.UrlBase + "Products"))) as IODataRequestMessage;
+                    method, new Uri(_session.UrlBase + entitySet.ActualName))) as IODataRequestMessage;
                 var contentId = _deferredBatchWriter.Value.NextContentId();
                 _deferredBatchWriter.Value.MapContentId(entryData, contentId);
                 message.SetHeader(HttpLiteral.HeaderContentId, contentId);
@@ -48,7 +49,6 @@ namespace Simple.OData.Client
                 resolveContentIdFunc = _deferredBatchWriter.Value.GetContentId;
             }
 
-            var entitySet = (_session as Session).MetadataCache.FindConcreteEntitySet(collection);
             var entryDetails = Utils.ParseEntryDetails(entitySet, entryData, resolveContentIdFunc);
             var entityTypeNamespace = _session.Provider.GetMetadata().GetEntitySetTypeNamespace(collection);
             var entityTypeName = _session.Provider.GetMetadata().GetEntitySetTypeName(collection);
@@ -123,10 +123,28 @@ namespace Simple.OData.Client
 
             var linkKey = linkType.DeclaredKey;
             var linkEntry = linkData.ToDictionary();
-            var formattedKey = "(" + string.Join(".", linkKey.Select(x => new ValueFormatter().FormatContentValue(linkEntry[x.Name]))) + ")";
-            var linkSet = _model.EntityContainers().SelectMany(x => x.EntitySets())
-                .Single(x => Utils.NamesAreEqual(x.ElementType.Name, linkType.Name, _session.Pluralizer));
-            var link = new ODataEntityReferenceLink { Url = new Uri(linkSet.Name + formattedKey, UriKind.Relative) };
+            string contentId = null;
+            if (_deferredBatchWriter != null)
+            {
+                contentId = _deferredBatchWriter.Value.GetContentId(linkEntry);
+            }
+            string linkUri;
+            if (contentId != null)
+            {
+                linkUri = "$" + contentId;
+            }
+            else
+            {
+                var formattedKey = "(" + string.Join(".", linkKey.Select(x => new ValueFormatter().FormatContentValue(linkEntry[x.Name]))) + ")";
+                var linkSet = _model.EntityContainers().SelectMany(x => x.EntitySets())
+                    .Single(x => Utils.NamesAreEqual(x.ElementType.Name, linkType.Name, _session.Pluralizer));
+                linkUri = linkSet.Name + formattedKey;
+            }
+            var link = new ODataEntityReferenceLink
+            {
+                Url = new Uri(linkUri, UriKind.Relative)
+            };
+
             entryWriter.WriteEntityReferenceLink(link);
 
             entryWriter.WriteEnd();
