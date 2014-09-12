@@ -41,15 +41,8 @@ namespace Simple.OData.Client
 
         public async Task<ODataRequest> CreateInsertRequestAsync(string collection, IDictionary<string, object> entryData, bool resultRequired)
         {
-            var entitySet = _session.MetadataCache.FindConcreteEntitySet(collection);
-
-            var entryDetails = ParseEntryDetails(entitySet, entryData);
-            var entryContent = await CreateEntryAsync(
-                RestVerbs.Post,
-                _session.Provider.GetMetadata().GetEntitySetTypeNamespace(collection),
-                _session.Provider.GetMetadata().GetEntitySetTypeName(collection),
-                entryDetails.Properties,
-                entryDetails.Links);
+            var entryContent = await _session.Provider.GetRequestWriter(_lazyBatchWriter).CreateEntryAsync(
+                RestVerbs.Post, collection, entryData);
 
             var request = new ODataRequest(RestVerbs.Post, _session, 
                 _session.MetadataCache.FindBaseEntitySet(collection).ActualName, entryData, entryContent);
@@ -60,17 +53,13 @@ namespace Simple.OData.Client
         public async Task<ODataRequest> CreateUpdateRequestAsync(string commandText, string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData, bool resultRequired)
         {
             var entitySet = _session.MetadataCache.FindConcreteEntitySet(collection);
-            var entryDetails = ParseEntryDetails(entitySet, entryData);
+            var entryDetails = Utils.ParseEntryDetails(entitySet, entryData);
 
             bool hasPropertiesToUpdate = entryDetails.Properties.Count > 0;
             bool merge = !hasPropertiesToUpdate || CheckMergeConditions(collection, entryKey, entryData);
 
-            var entryContent = await CreateEntryAsync(
-                merge ? RestVerbs.Patch : RestVerbs.Put,
-                _session.Provider.GetMetadata().GetEntitySetTypeNamespace(collection),
-                _session.Provider.GetMetadata().GetEntitySetTypeName(collection),
-                entryDetails.Properties,
-                entryDetails.Links);
+            var entryContent = await _session.Provider.GetRequestWriter(_lazyBatchWriter).CreateEntryAsync(
+                merge ? RestVerbs.Patch : RestVerbs.Put, collection, entryData);
 
             var updateMethod = merge ? RestVerbs.Patch : RestVerbs.Put;
             bool checkOptimisticConcurrency = _session.Provider.GetMetadata().EntitySetTypeRequiresOptimisticConcurrencyCheck(collection);
@@ -119,9 +108,9 @@ namespace Simple.OData.Client
             return _lazyBatchWriter.Value.EndBatchAsync();
         }
 
-        //public Task<ODataRequest> CreateLinkCommandAsync(string collection, string associationName, int contentId, int associationId)
+        //public Task<ODataRequest> CreateLinkCommandAsync(string collection, string linkName, int contentId, int associationId)
         //{
-        //    return CreateLinkCommandAsync(collection, associationName, FormatLinkPath(contentId), FormatLinkPath(associationId));
+        //    return CreateLinkCommandAsync(collection, linkName, FormatLinkPath(contentId), FormatLinkPath(associationId));
         //}
 
         //public async Task<ODataRequest> CreateLinkRequestAsync(string collection, string linkName, IDictionary<string, object> linkData, bool resultRequired)
@@ -149,81 +138,20 @@ namespace Simple.OData.Client
             return string.Format("{0}/$links/{1}", entryPath, linkName);
         }
 
-        public async Task<Stream> CreateEntryAsync(string method, string entityTypeNamespace, string entityTypeName,
-            IDictionary<string, object> properties,
-            IEnumerable<ReferenceLink> associations)
-        {
-            var entryContent = await _session.Provider.GetRequestWriter(_lazyBatchWriter).CreateEntryAsync(
-                method,
-                entityTypeNamespace, entityTypeName,
-                properties,
-                associations);
-
-            return entryContent;
-        }
-
-        public static EntryDetails ParseEntryDetails(EntitySet entitySet, IDictionary<string, object> entryData)
-        {
-            var entryDetails = new EntryDetails();
-
-            foreach (var item in entryData)
-            {
-                ParseEntryDetail(entitySet, item, entryDetails);
-            }
-
-            return entryDetails;
-        }
-
-        private static void ParseEntryDetail(EntitySet entitySet, KeyValuePair<string, object> item, EntryDetails entryDetails)
-        {
-            if (entitySet.Metadata.HasStructuralProperty(entitySet.ActualName, item.Key))
-            {
-                entryDetails.AddProperty(item.Key, item.Value);
-            }
-            else if (entitySet.Metadata.HasNavigationProperty(entitySet.ActualName, item.Key))
-            {
-                if (entitySet.Metadata.IsNavigationPropertyMultiple(entitySet.ActualName, item.Key))
-                {
-                    var collection = item.Value as IEnumerable<object>;
-                    if (collection != null)
-                    {
-                        foreach (var element in collection)
-                        {
-                            AddEntryLink(entryDetails, item.Key, element);
-                        }
-                    }
-                }
-                else
-                {
-                    AddEntryLink(entryDetails, item.Key, item.Value);
-                }
-            }
-            else
-            {
-                throw new UnresolvableObjectException(item.Key, string.Format("No property or association found for {0}.", item.Key));
-            }
-        }
-
-        private static void AddEntryLink(EntryDetails entryDetails, string associationName, object associatedData)
-        {
-            string contentId = null;
-            entryDetails.AddLink(associationName, associatedData, contentId);
-        }
-
-        //public void AddLink(CommandContent content, string collection, KeyValuePair<string, object> associatedData)
+        //public void AddLink(CommandContent content, string collection, KeyValuePair<string, object> linkData)
         //{
-        //    if (associatedData.Value == null)
+        //    if (linkData.Value == null)
         //        return;
 
         //    var associatedKeyValues = GetLinkedEntryKeyValues(
-        //        _session.ProviderMetadata.GetNavigationPropertyPartnerName(collection, associatedData.Key), 
-        //        associatedData);
+        //        _session.ProviderMetadata.GetNavigationPropertyPartnerName(collection, linkData.Key), 
+        //        linkData);
         //    if (associatedKeyValues != null)
         //    {
         //        throw new NotImplementedException();
         //        //AddDataLink(content.Entry,
-        //        //    _session.ProviderMetadata.GetNavigationPropertyExactName(collection, associatedData.Key),
-        //        //    _session.ProviderMetadata.GetNavigationPropertyPartnerName(collection, associatedData.Key), 
+        //        //    _session.ProviderMetadata.GetNavigationPropertyExactName(collection, linkData.Key),
+        //        //    _session.ProviderMetadata.GetNavigationPropertyPartnerName(collection, linkData.Key), 
         //        //    associatedKeyValues);
         //    }
         //}

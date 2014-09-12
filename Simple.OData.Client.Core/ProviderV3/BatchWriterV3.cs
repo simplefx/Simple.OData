@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -13,11 +14,13 @@ namespace Simple.OData.Client
         private ODataV3RequestMessage _requestMessage;
         private ODataMessageWriter _messageWriter;
         private int _lastContentId;
+        private Dictionary<IDictionary<string, object>, string> _contentIdMap; 
 
         public BatchWriterV3(ISession session)
         {
             _session = session;
             _lastContentId = 0;
+            _contentIdMap = new Dictionary<IDictionary<string, object>, string>();
         }
 
         public async Task StartBatchAsync()
@@ -67,6 +70,17 @@ namespace Simple.OData.Client
         public string NextContentId()
         {
             return (++_lastContentId).ToString();
+        }
+
+        public string GetContentId(IDictionary<string, object> entryData)
+        {
+            string contentId;
+            return _contentIdMap.TryGetValue(entryData, out contentId) ? contentId : null;
+        }
+
+        public void MapContentId(IDictionary<string, object> entryData, string contentId)
+        {
+            _contentIdMap.Add(entryData, contentId);
         }
     }
 }

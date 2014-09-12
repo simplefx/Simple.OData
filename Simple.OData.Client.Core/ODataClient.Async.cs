@@ -433,7 +433,7 @@ namespace Simple.OData.Client
 
             var entitySet = this.Session.MetadataCache.FindConcreteEntitySet(collection);
             var entitySetName = this.Session.Provider.GetMetadata().GetEntitySetExactName(collection);
-            var entryDetails = RequestBuilder.ParseEntryDetails(entitySet, entryData);
+            var entryDetails = Utils.ParseEntryDetails(entitySet, entryData);
 
             //foreach (var link in entryMembers.Links)
             //{

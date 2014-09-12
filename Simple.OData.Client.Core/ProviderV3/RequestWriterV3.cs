@@ -23,8 +23,7 @@ namespace Simple.OData.Client
             _deferredBatchWriter = deferredBatchWriter;
         }
 
-        public async Task<Stream> CreateEntryAsync(string method, string entityTypeNamespace, string entityTypeName,
-            IDictionary<string, object> properties, IEnumerable<ReferenceLink> links)
+        public async Task<Stream> CreateEntryAsync(string method, string collection, IDictionary<string, object> entryData)
         {
             var writerSettings = new ODataMessageWriterSettings() { BaseUri = new Uri(_session.UrlBase), Indent = true };
             IODataRequestMessage message;
@@ -32,13 +31,27 @@ namespace Simple.OData.Client
             {
                 if (!_deferredBatchWriter.IsValueCreated)
                     await _deferredBatchWriter.Value.StartBatchAsync();
-                message = (await _deferredBatchWriter.Value.CreateOperationRequestMessageAsync(method, new Uri(_session.UrlBase + "Products"))) as IODataRequestMessage;
-                message.SetHeader(HttpLiteral.HeaderContentId, _deferredBatchWriter.Value.NextContentId());
+                message = (await _deferredBatchWriter.Value.CreateOperationRequestMessageAsync(
+                    method, new Uri(_session.UrlBase + "Products"))) as IODataRequestMessage;
+                var contentId = _deferredBatchWriter.Value.NextContentId();
+                _deferredBatchWriter.Value.MapContentId(entryData, contentId);
+                message.SetHeader(HttpLiteral.HeaderContentId, contentId);
             }
             else
             {
                 message = new ODataV3RequestMessage();
             }
+
+            Func<IDictionary<string, object>, string> resolveContentIdFunc = null;
+            if (_deferredBatchWriter != null)
+            {
+                resolveContentIdFunc = _deferredBatchWriter.Value.GetContentId;
+            }
+
+            var entitySet = (_session as Session).MetadataCache.FindConcreteEntitySet(collection);
+            var entryDetails = Utils.ParseEntryDetails(entitySet, entryData, resolveContentIdFunc);
+            var entityTypeNamespace = _session.Provider.GetMetadata().GetEntitySetTypeNamespace(collection);
+            var entityTypeName = _session.Provider.GetMetadata().GetEntitySetTypeName(collection);
 
             using (var messageWriter = new ODataMessageWriter(message, writerSettings, _model))
             {
@@ -47,7 +60,7 @@ namespace Simple.OData.Client
                 entry.TypeName = string.Join(".", entityTypeNamespace, entityTypeName);
 
                 var typeProperties = (_model.FindDeclaredType(entry.TypeName) as IEdmEntityType).Properties();
-                entry.Properties = properties.Select(x => new ODataProperty()
+                entry.Properties = entryDetails.Properties.Select(x => new ODataProperty()
                 {
                     Name = typeProperties.Single(y => Utils.NamesAreEqual(y.Name, x.Key, _session.Pluralizer)).Name,
                     Value = GetPropertyValue(typeProperties, x.Key, x.Value)
@@ -55,9 +68,9 @@ namespace Simple.OData.Client
 
                 entryWriter.WriteStart(entry);
 
-                if (links != null)
+                if (entryDetails.Links != null)
                 {
-                    foreach (var link in links)
+                    foreach (var link in entryDetails.Links)
                     {
                         if (link.LinkData != null)
                             WriteLink(entryWriter, entry, link.LinkName, link.LinkData);

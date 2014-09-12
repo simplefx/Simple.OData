@@ -63,6 +63,45 @@ namespace Simple.OData.Client
             return property == null || property.IsNotMapped() ? null : property;
         }
 
+        public static EntryDetails ParseEntryDetails(EntitySet entitySet, IDictionary<string, object> entryData,
+            Func<IDictionary<string, object>, string> resolveContentIdFunc = null)
+        {
+            var contentId = resolveContentIdFunc != null ? resolveContentIdFunc(entryData) : null;
+            var entryDetails = new EntryDetails();
+
+            foreach (var item in entryData)
+            {
+                if (entitySet.Metadata.HasStructuralProperty(entitySet.ActualName, item.Key))
+                {
+                    entryDetails.AddProperty(item.Key, item.Value);
+                }
+                else if (entitySet.Metadata.HasNavigationProperty(entitySet.ActualName, item.Key))
+                {
+                    if (entitySet.Metadata.IsNavigationPropertyMultiple(entitySet.ActualName, item.Key))
+                    {
+                        var collection = item.Value as IEnumerable<object>;
+                        if (collection != null)
+                        {
+                            foreach (var element in collection)
+                            {
+                                entryDetails.AddLink(item.Key, element, contentId);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        entryDetails.AddLink(item.Key, item.Value, contentId);
+                    }
+                }
+                else
+                {
+                    throw new UnresolvableObjectException(item.Key, String.Format("No property or association found for {0}.", item.Key));
+                }
+            }
+
+            return entryDetails;
+        }
+
 #if NET40 || SILVERLIGHT || PORTABLE_LEGACY
         public static Task<T> GetTaskFromResult<T>(T result)
         {
