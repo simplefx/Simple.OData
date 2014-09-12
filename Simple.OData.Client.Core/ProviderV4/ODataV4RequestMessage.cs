@@ -40,7 +40,7 @@ namespace Simple.OData.Client
 
         public string GetHeader(string headerName)
         {
-            if (headerName == "Content-Type")
+            if (headerName == HttpLiteral.HeaderContentType)
             {
                 switch (_payloadKind)
                 {

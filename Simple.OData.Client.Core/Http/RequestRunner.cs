@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
+using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
@@ -51,7 +52,9 @@ namespace Simple.OData.Client
                     }
 
                     if (request.CheckOptimisticConcurrency &&
-                        (request.Method == RestVerbs.PUT || request.Method == RestVerbs.MERGE || request.Method == RestVerbs.DELETE))
+                        (request.Method == RestVerbs.Put ||
+                        request.Method == RestVerbs.Patch || 
+                        request.Method == RestVerbs.Delete))
                     {
                         httpClient.DefaultRequestHeaders.IfMatch.Add(EntityTagHeaderValue.Any);
                     }

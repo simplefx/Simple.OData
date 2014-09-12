@@ -9,6 +9,6 @@ namespace Simple.OData.Client
         Task StartBatchAsync();
         Task<HttpRequestMessage> EndBatchAsync();
         Task<object> CreateOperationRequestMessageAsync(string method, Uri uri);
-        string GetContentId();
+        string NextContentId();
     }
 }

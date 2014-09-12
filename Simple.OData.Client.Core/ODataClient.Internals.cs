@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Simple.OData.Client.Extensions;
@@ -20,7 +21,7 @@ namespace Simple.OData.Client
             {
                 using (var response = await _requestRunner.ExecuteRequestAsync(request, cancellationToken))
                 {
-                    if (response.IsSuccessStatusCode && (request.Method == RestVerbs.GET || request.ReturnContent))
+                    if (response.IsSuccessStatusCode && (request.Method == RestVerbs.Get || request.ReturnContent))
                     {
                         var responseReader = _session.Provider.GetResponseReader();
                         return createResult(await responseReader.GetResponseAsync(response, _settings.IncludeResourceTypeInEntryProperties));

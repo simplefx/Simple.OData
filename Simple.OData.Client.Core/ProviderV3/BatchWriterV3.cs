@@ -51,7 +51,7 @@ namespace Simple.OData.Client
                 Method = HttpMethod.Post,
                 Content = new StreamContent(_requestMessage.GetStream()),
             };
-            httpRequest.Content.Headers.Add("Content-Type", _requestMessage.GetHeader("Content-Type"));
+            httpRequest.Content.Headers.Add(HttpLiteral.HeaderContentType, _requestMessage.GetHeader(HttpLiteral.HeaderContentType));
             return httpRequest;
         }
 
@@ -64,7 +64,7 @@ namespace Simple.OData.Client
 #endif
         }
 
-        public string GetContentId()
+        public string NextContentId()
         {
             return (++_lastContentId).ToString();
         }

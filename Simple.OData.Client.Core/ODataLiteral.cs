@@ -13,6 +13,5 @@
         public static readonly string InlineCount = "$inlinecount";
         public static readonly string AllPages = "allpages";
         public static readonly string Batch = "$batch";
-        public static readonly string ContentId = "Content-ID";
     }
 }

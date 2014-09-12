@@ -224,6 +224,9 @@
     <Compile Include="..\Simple.OData.Client.Core\Fluent\IFluentClient.cs">
       <Link>Fluent\IFluentClient.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Http\HttpLiteral.cs">
+      <Link>Http\HttpLiteral.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Http\RequestBuilder.cs">
       <Link>Http\RequestBuilder.cs</Link>
     </Compile>

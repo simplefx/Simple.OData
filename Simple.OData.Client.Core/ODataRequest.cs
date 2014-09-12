@@ -41,7 +41,7 @@ namespace Simple.OData.Client
         {
             get
             {
-                if (this.Method == RestVerbs.GET && !this.ReturnsScalarResult || this.ReturnContent)
+                if (this.Method == RestVerbs.Get && !this.ReturnsScalarResult || this.ReturnContent)
                     return new[] {"application/text", "application/xml", "application/atom+xml"};
                 else
                     return null;

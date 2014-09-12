@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Data.Edm;
 using Microsoft.Data.OData;
@@ -22,7 +23,7 @@ namespace Simple.OData.Client
             _deferredBatchWriter = deferredBatchWriter;
         }
 
-        public async Task<Stream> CreateEntryAsync(string operation, string entityTypeNamespace, string entityTypeName,
+        public async Task<Stream> CreateEntryAsync(string method, string entityTypeNamespace, string entityTypeName,
             IDictionary<string, object> properties, IEnumerable<ReferenceLink> links)
         {
             var writerSettings = new ODataMessageWriterSettings() { BaseUri = new Uri(_session.UrlBase), Indent = true };
@@ -31,7 +32,8 @@ namespace Simple.OData.Client
             {
                 if (!_deferredBatchWriter.IsValueCreated)
                     await _deferredBatchWriter.Value.StartBatchAsync();
-                message = (await _deferredBatchWriter.Value.CreateOperationRequestMessageAsync(operation, new Uri(_session.UrlBase + "Products"))) as IODataRequestMessage;
+                message = (await _deferredBatchWriter.Value.CreateOperationRequestMessageAsync(method, new Uri(_session.UrlBase + "Products"))) as IODataRequestMessage;
+                message.SetHeader(HttpLiteral.HeaderContentId, _deferredBatchWriter.Value.NextContentId());
             }
             else
             {

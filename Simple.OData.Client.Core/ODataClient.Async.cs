@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -596,7 +597,7 @@ namespace Simple.OData.Client
                 .GetCommandTextAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var request = new ODataRequest(RestVerbs.GET, this.Session, commandText);
+            var request = new ODataRequest(RestVerbs.Get, this.Session, commandText);
             return await ExecuteRequestWithResultAsync(request, cancellationToken,
                 x => x.Entries ?? new[] { x.Entry },
                 () => new[] { (IDictionary<string, object>)null });

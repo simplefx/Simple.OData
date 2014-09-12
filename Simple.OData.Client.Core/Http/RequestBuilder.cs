@@ -34,7 +34,7 @@ namespace Simple.OData.Client
 
         public Task<ODataRequest> CreateGetRequestAsync(string commandText, bool scalarResult = false)
         {
-            var request = new ODataRequest(RestVerbs.GET, _session, commandText);
+            var request = new ODataRequest(RestVerbs.Get, _session, commandText);
             request.ReturnsScalarResult = scalarResult;
             return Utils.GetTaskFromResult(request);
         }
@@ -45,13 +45,14 @@ namespace Simple.OData.Client
 
             var entryDetails = ParseEntryDetails(entitySet, entryData);
             var entryContent = await CreateEntryAsync(
-                RestVerbs.POST,
+                RestVerbs.Post,
                 _session.Provider.GetMetadata().GetEntitySetTypeNamespace(collection),
                 _session.Provider.GetMetadata().GetEntitySetTypeName(collection),
                 entryDetails.Properties,
                 entryDetails.Links);
 
-            var request = new ODataRequest(RestVerbs.POST, _session, _session.MetadataCache.FindBaseEntitySet(collection).ActualName, entryData, entryContent);
+            var request = new ODataRequest(RestVerbs.Post, _session, 
+                _session.MetadataCache.FindBaseEntitySet(collection).ActualName, entryData, entryContent);
             request.ReturnContent = resultRequired;
             return request;
         }
@@ -65,13 +66,13 @@ namespace Simple.OData.Client
             bool merge = !hasPropertiesToUpdate || CheckMergeConditions(collection, entryKey, entryData);
 
             var entryContent = await CreateEntryAsync(
-                merge ? RestVerbs.MERGE : RestVerbs.PUT,
+                merge ? RestVerbs.Patch : RestVerbs.Put,
                 _session.Provider.GetMetadata().GetEntitySetTypeNamespace(collection),
                 _session.Provider.GetMetadata().GetEntitySetTypeName(collection),
                 entryDetails.Properties,
                 entryDetails.Links);
 
-            var updateMethod = merge ? RestVerbs.MERGE : RestVerbs.PUT;
+            var updateMethod = merge ? RestVerbs.Patch : RestVerbs.Put;
             bool checkOptimisticConcurrency = _session.Provider.GetMetadata().EntitySetTypeRequiresOptimisticConcurrencyCheck(collection);
             var request = new ODataRequest(updateMethod, _session, commandText, entryData, entryContent);
             request.ReturnContent = resultRequired;
@@ -81,7 +82,7 @@ namespace Simple.OData.Client
 
         public async Task<ODataRequest> CreateDeleteRequestAsync(string commandText, string collection)
         {
-            var request = new ODataRequest(RestVerbs.DELETE, _session, commandText);
+            var request = new ODataRequest(RestVerbs.Delete, _session, commandText);
             request.CheckOptimisticConcurrency = _session.Provider.GetMetadata().EntitySetTypeRequiresOptimisticConcurrencyCheck(collection);
             return request;
         }
@@ -91,8 +92,8 @@ namespace Simple.OData.Client
             var associationName = _session.Provider.GetMetadata().GetNavigationPropertyExactName(collection, linkName);
             var linkContent = await _session.Provider.GetRequestWriter(_lazyBatchWriter).CreateLinkAsync(linkPath);
             var linkMethod = _session.Provider.GetMetadata().IsNavigationPropertyMultiple(collection, associationName) ?
-                RestVerbs.POST :
-                RestVerbs.PUT;
+                RestVerbs.Post :
+                RestVerbs.Put;
 
             var commandText = FormatLinkPath(entryPath, associationName);
             var request = new ODataRequest(linkMethod, _session, commandText, null, linkContent);
@@ -103,13 +104,13 @@ namespace Simple.OData.Client
         public Task<ODataRequest> CreateUnlinkRequestAsync(string commandText, string collection, string linkName)
         {
             commandText = FormatLinkPath(commandText, _session.Provider.GetMetadata().GetNavigationPropertyExactName(collection, linkName));
-            var request = new ODataRequest(RestVerbs.DELETE, _session, commandText);
+            var request = new ODataRequest(RestVerbs.Delete, _session, commandText);
             return Utils.GetTaskFromResult(request);
         }
 
         public Task<ODataRequest> CreateBatchRequestAsync(HttpRequestMessage requestMessage)
         {
-            var request = new ODataRequest(RestVerbs.POST, _session, ODataLiteral.Batch, requestMessage);
+            var request = new ODataRequest(RestVerbs.Post, _session, ODataLiteral.Batch, requestMessage);
             return Utils.GetTaskFromResult(request);
         }
 
