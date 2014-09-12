@@ -116,8 +116,8 @@
     <Compile Include="..\Simple.OData.Client.Core\EntitySet.cs">
       <Link>EntitySet.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\EntryMembers.cs">
-      <Link>EntryMembers.cs</Link>
+    <Compile Include="..\Simple.OData.Client.Core\EntryDetails.cs">
+      <Link>EntryDetails.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Extensions\DateTimeExtensions.cs">
       <Link>Extensions\DateTimeExtensions.cs</Link>
@@ -241,6 +241,9 @@
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ODataEntry.cs">
       <Link>ODataEntry.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ODataLiteral.cs">
+      <Link>ODataLiteral.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ODataRequest.cs">
       <Link>ODataRequest.cs</Link>

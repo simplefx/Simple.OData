@@ -47,7 +47,7 @@
     <Compile Include="Extensions\MemberInfoExtensions.cs" />
     <Compile Include="Fluent\IFluentClient.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />
-    <Compile Include="EntryMembers.cs" />
+    <Compile Include="EntryDetails.cs" />
     <Compile Include="Extensions\DateTimeExtensions.cs" />
     <Compile Include="Extensions\DecimalExtensions.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
@@ -73,6 +73,7 @@
     <Compile Include="Expressions\ODataExpression.Operators.cs" />
     <Compile Include="Expressions\ODataExpression.Linq.cs" />
     <Compile Include="Expressions\FunctionMapping.cs" />
+    <Compile Include="ODataLiteral.cs" />
     <Compile Include="ODataRequest.cs" />
     <Compile Include="IODataClient.cs" />
     <Compile Include="IPluralizer.cs" />

@@ -384,7 +384,7 @@ namespace Simple.OData.Client
 
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            //var entryMembers = CommandWriter.ParseEntryMembers(entitySet, entryData);
+            //var entryMembers = CommandWriter.ParseEntryDetails(entitySet, entryData);
             //foreach (var associatedData in entryMembers.AssociationsByContentId)
             //{
             //    request = await _requestBuilder.CreateLinkRequestAsync(collection, associatedData.Key, associatedData.Value, resultRequired);
@@ -430,23 +430,25 @@ namespace Simple.OData.Client
             var result = await ExecuteRequestWithResultAsync(request, cancellationToken, x => x.Entry);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            //foreach (var associatedData in entryMembers.AssociationsByContentId)
+            var entitySet = this.Session.MetadataCache.FindConcreteEntitySet(collection);
+            var entitySetName = this.Session.Provider.GetMetadata().GetEntitySetExactName(collection);
+            var entryDetails = RequestBuilder.ParseEntryDetails(entitySet, entryData);
+
+            //foreach (var link in entryMembers.Links)
             //{
-            //    var linkCommand = await commandWriter.CreateLinkCommandAsync(collection, associatedData.Key, command.ContentId, associatedData.Value);
-            //    request = _requestBuilder.CreateRequest(linkCommand);
-            //    await _requestRunner.UpdateEntryAsync(request, cancellationToken);
+            //    request = await _requestBuilder.CreateLinkRequestAsync(collection, link.LinkName, link.LinkData, link.ContentId);
+            //    if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+            //    result = await ExecuteRequestWithResultAsync(request, cancellationToken, x => x.Entry);
             //    if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
             //}
 
-            var entitySet = this.Session.MetadataCache.FindConcreteEntitySet(collection);
-            var entitySetName = this.Session.Provider.GetMetadata().GetEntitySetExactName(collection);
-            var entryMembers = RequestBuilder.ParseEntryMembers(entitySet, entryData);
-            var unlinkAssociationNames = entryMembers.AssociationsByValue
-                .Where(x => x.Value == null)
-                .Select(x => _session.Provider.GetMetadata().GetNavigationPropertyExactName(entitySetName, x.Key))
+            var removedLinks = entryDetails.Links
+                .Where(x => x.LinkData == null)
+                .Select(x => _session.Provider.GetMetadata().GetNavigationPropertyExactName(entitySetName, x.LinkName))
                 .ToList();
 
-            foreach (var associationName in unlinkAssociationNames)
+            foreach (var associationName in removedLinks)
             {
                 await UnlinkEntryAsync(collection, entryKey, associationName, cancellationToken);
                 if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();

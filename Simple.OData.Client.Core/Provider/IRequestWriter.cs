@@ -7,9 +7,7 @@ namespace Simple.OData.Client
     interface IRequestWriter
     {
         Task<Stream> CreateEntryAsync(string operation, string entityTypeNamespace, string entityTypeName, 
-            IDictionary<string, object> properties,
-            IEnumerable<KeyValuePair<string, object>> associationsByValue,
-            IEnumerable<KeyValuePair<string, int>> associationsByContentId);
+            IDictionary<string, object> properties, IEnumerable<ReferenceLink> links);
 
         Task<Stream> CreateLinkAsync(string linkPath);
     }

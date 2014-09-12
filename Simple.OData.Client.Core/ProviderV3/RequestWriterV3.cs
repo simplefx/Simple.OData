@@ -23,9 +23,7 @@ namespace Simple.OData.Client
         }
 
         public async Task<Stream> CreateEntryAsync(string operation, string entityTypeNamespace, string entityTypeName,
-            IDictionary<string, object> properties,
-            IEnumerable<KeyValuePair<string, object>> associationsByValue,
-            IEnumerable<KeyValuePair<string, int>> associationsByContentId)
+            IDictionary<string, object> properties, IEnumerable<ReferenceLink> links)
         {
             var writerSettings = new ODataMessageWriterSettings() { BaseUri = new Uri(_session.UrlBase), Indent = true };
             IODataRequestMessage message;
@@ -55,12 +53,12 @@ namespace Simple.OData.Client
 
                 entryWriter.WriteStart(entry);
 
-                if (associationsByValue != null)
+                if (links != null)
                 {
-                    foreach (var association in associationsByValue)
+                    foreach (var link in links)
                     {
-                        if (association.Value != null)
-                            WriteLink(entryWriter, entry, association);
+                        if (link.LinkData != null)
+                            WriteLink(entryWriter, entry, link.LinkName, link.LinkData);
                     }
                 }
 
@@ -89,10 +87,10 @@ namespace Simple.OData.Client
             }
         }
 
-        private void WriteLink(ODataWriter entryWriter, Microsoft.Data.OData.ODataEntry entry, KeyValuePair<string, object> linkData)
+        private void WriteLink(ODataWriter entryWriter, Microsoft.Data.OData.ODataEntry entry, string linkName, object linkData)
         {
             var navigationProperty = (_model.FindDeclaredType(entry.TypeName) as IEdmEntityType).NavigationProperties()
-                .Single(x => Utils.NamesAreEqual(x.Name, linkData.Key, _session.Pluralizer));
+                .Single(x => Utils.NamesAreEqual(x.Name, linkName, _session.Pluralizer));
             bool isCollection = navigationProperty.Partner.Multiplicity() == EdmMultiplicity.Many;
 
             IEdmEntityType linkType;
@@ -103,13 +101,13 @@ namespace Simple.OData.Client
 
             entryWriter.WriteStart(new ODataNavigationLink()
             {
-                Name = linkData.Key,
+                Name = linkName,
                 IsCollection = isCollection,
                 Url = new Uri("http://schemas.microsoft.com/ado/2007/08/dataservices/related/" + linkType, UriKind.Absolute),
             });
 
             var linkKey = linkType.DeclaredKey;
-            var linkEntry = linkData.Value.ToDictionary();
+            var linkEntry = linkData.ToDictionary();
             var formattedKey = "(" + string.Join(".", linkKey.Select(x => new ValueFormatter().FormatContentValue(linkEntry[x.Name]))) + ")";
             var linkSet = _model.EntityContainers().SelectMany(x => x.EntitySets())
                 .Single(x => Utils.NamesAreEqual(x.ElementType.Name, linkType.Name, _session.Pluralizer));

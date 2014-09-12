@@ -41,17 +41,6 @@ namespace Simple.OData.Client
         private string _linkName;
         private ODataExpression _linkExpression;
 
-        internal static readonly string MetadataLiteral = "$metadata";
-        internal static readonly string FilterLiteral = "$filter";
-        internal static readonly string SkipLiteral = "$skip";
-        internal static readonly string TopLiteral = "$top";
-        internal static readonly string ExpandLiteral = "$expand";
-        internal static readonly string OrderByLiteral = "$orderby";
-        internal static readonly string SelectLiteral = "$select";
-        internal static readonly string CountLiteral = "$count";
-        internal static readonly string InlineCountLiteral = "$inlinecount";
-        internal static readonly string AllPagesLiteral = "allpages";
-        internal static readonly string BatchLiteral = "$batch";
         internal static readonly string ResultLiteral = "__result";
         internal static readonly string ResourceTypeLiteral = "__resourcetype";
 
@@ -490,28 +479,28 @@ namespace Simple.OData.Client
                 extraClauses.Add(new ValueFormatter().Format(_parameters, "&"));
 
             if (_filter != null)
-                extraClauses.Add(string.Format("{0}={1}", FilterLiteral, Uri.EscapeDataString(_filter)));
+                extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Filter, Uri.EscapeDataString(_filter)));
 
             if (_skipCount >= 0)
-                extraClauses.Add(string.Format("{0}={1}", SkipLiteral, _skipCount));
+                extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Skip, _skipCount));
 
             if (_topCount >= 0)
-                extraClauses.Add(string.Format("{0}={1}", TopLiteral, _topCount));
+                extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Top, _topCount));
 
             if (_expandAssociations.Any())
-                extraClauses.Add(string.Format("{0}={1}", ExpandLiteral, string.Join(",", _expandAssociations.Select(FormatExpandItem))));
+                extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Expand, string.Join(",", _expandAssociations.Select(FormatExpandItem))));
 
             if (_orderbyColumns.Any())
-                extraClauses.Add(string.Format("{0}={1}", OrderByLiteral, string.Join(",", _orderbyColumns.Select(FormatOrderByItem))));
+                extraClauses.Add(string.Format("{0}={1}", ODataLiteral.OrderBy, string.Join(",", _orderbyColumns.Select(FormatOrderByItem))));
 
             if (_selectColumns.Any())
-                extraClauses.Add(string.Format("{0}={1}", SelectLiteral, string.Join(",", _selectColumns.Select(FormatSelectItem))));
+                extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Select, string.Join(",", _selectColumns.Select(FormatSelectItem))));
 
             if (_inlineCount)
-                extraClauses.Add(string.Format("{0}={1}", InlineCountLiteral, AllPagesLiteral));
+                extraClauses.Add(string.Format("{0}={1}", ODataLiteral.InlineCount, ODataLiteral.AllPages));
 
             if (_computeCount)
-                aggregateClauses.Add(CountLiteral);
+                aggregateClauses.Add(ODataLiteral.Count);
 
             if (aggregateClauses.Any())
                 text += "/" + string.Join("/", aggregateClauses);

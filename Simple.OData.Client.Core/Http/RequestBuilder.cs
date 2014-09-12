@@ -43,14 +43,13 @@ namespace Simple.OData.Client
         {
             var entitySet = _session.MetadataCache.FindConcreteEntitySet(collection);
 
-            var entryMembers = ParseEntryMembers(entitySet, entryData);
+            var entryDetails = ParseEntryDetails(entitySet, entryData);
             var entryContent = await CreateEntryAsync(
                 RestVerbs.POST,
                 _session.Provider.GetMetadata().GetEntitySetTypeNamespace(collection),
                 _session.Provider.GetMetadata().GetEntitySetTypeName(collection),
-                entryMembers.Properties,
-                entryMembers.AssociationsByValue,
-                entryMembers.AssociationsByContentId);
+                entryDetails.Properties,
+                entryDetails.Links);
 
             var request = new ODataRequest(RestVerbs.POST, _session, _session.MetadataCache.FindBaseEntitySet(collection).ActualName, entryData, entryContent);
             request.ReturnContent = resultRequired;
@@ -60,18 +59,17 @@ namespace Simple.OData.Client
         public async Task<ODataRequest> CreateUpdateRequestAsync(string commandText, string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData, bool resultRequired)
         {
             var entitySet = _session.MetadataCache.FindConcreteEntitySet(collection);
-            var entryMembers = ParseEntryMembers(entitySet, entryData);
+            var entryDetails = ParseEntryDetails(entitySet, entryData);
 
-            bool hasPropertiesToUpdate = entryMembers.Properties.Count > 0;
+            bool hasPropertiesToUpdate = entryDetails.Properties.Count > 0;
             bool merge = !hasPropertiesToUpdate || CheckMergeConditions(collection, entryKey, entryData);
 
             var entryContent = await CreateEntryAsync(
                 merge ? RestVerbs.MERGE : RestVerbs.PUT,
                 _session.Provider.GetMetadata().GetEntitySetTypeNamespace(collection),
                 _session.Provider.GetMetadata().GetEntitySetTypeName(collection),
-                entryMembers.Properties,
-                entryMembers.AssociationsByValue,
-                entryMembers.AssociationsByContentId);
+                entryDetails.Properties,
+                entryDetails.Links);
 
             var updateMethod = merge ? RestVerbs.MERGE : RestVerbs.PUT;
             bool checkOptimisticConcurrency = _session.Provider.GetMetadata().EntitySetTypeRequiresOptimisticConcurrencyCheck(collection);
@@ -111,7 +109,7 @@ namespace Simple.OData.Client
 
         public Task<ODataRequest> CreateBatchRequestAsync(HttpRequestMessage requestMessage)
         {
-            var request = new ODataRequest(RestVerbs.POST, _session, FluentCommand.BatchLiteral, requestMessage);
+            var request = new ODataRequest(RestVerbs.POST, _session, ODataLiteral.Batch, requestMessage);
             return Utils.GetTaskFromResult(request);
         }
 
@@ -152,36 +150,34 @@ namespace Simple.OData.Client
 
         public async Task<Stream> CreateEntryAsync(string method, string entityTypeNamespace, string entityTypeName,
             IDictionary<string, object> properties,
-            IEnumerable<KeyValuePair<string, object>> associationsByValue,
-            IEnumerable<KeyValuePair<string, int>> associationsByContentId)
+            IEnumerable<ReferenceLink> associations)
         {
             var entryContent = await _session.Provider.GetRequestWriter(_lazyBatchWriter).CreateEntryAsync(
                 method,
                 entityTypeNamespace, entityTypeName,
                 properties,
-                associationsByValue,
-                associationsByContentId);
+                associations);
 
             return entryContent;
         }
 
-        public static EntryMembers ParseEntryMembers(EntitySet entitySet, IDictionary<string, object> entryData)
+        public static EntryDetails ParseEntryDetails(EntitySet entitySet, IDictionary<string, object> entryData)
         {
-            var entryMembers = new EntryMembers();
+            var entryDetails = new EntryDetails();
 
             foreach (var item in entryData)
             {
-                ParseEntryMember(entitySet, item, entryMembers);
+                ParseEntryDetail(entitySet, item, entryDetails);
             }
 
-            return entryMembers;
+            return entryDetails;
         }
 
-        private static void ParseEntryMember(EntitySet entitySet, KeyValuePair<string, object> item, EntryMembers entryMembers)
+        private static void ParseEntryDetail(EntitySet entitySet, KeyValuePair<string, object> item, EntryDetails entryDetails)
         {
             if (entitySet.Metadata.HasStructuralProperty(entitySet.ActualName, item.Key))
             {
-                entryMembers.AddProperty(item.Key, item.Value);
+                entryDetails.AddProperty(item.Key, item.Value);
             }
             else if (entitySet.Metadata.HasNavigationProperty(entitySet.ActualName, item.Key))
             {
@@ -192,13 +188,13 @@ namespace Simple.OData.Client
                     {
                         foreach (var element in collection)
                         {
-                            AddEntryAssociation(entryMembers, item.Key, element);
+                            AddEntryLink(entryDetails, item.Key, element);
                         }
                     }
                 }
                 else
                 {
-                    AddEntryAssociation(entryMembers, item.Key, item.Value);
+                    AddEntryLink(entryDetails, item.Key, item.Value);
                 }
             }
             else
@@ -207,17 +203,10 @@ namespace Simple.OData.Client
             }
         }
 
-        private static void AddEntryAssociation(EntryMembers entryMembers, string associationName, object associatedData)
+        private static void AddEntryLink(EntryDetails entryDetails, string associationName, object associatedData)
         {
-            int contentId = 0;
-            if (contentId == 0)
-            {
-                entryMembers.AddAssociationByValue(associationName, associatedData);
-            }
-            else
-            {
-                entryMembers.AddAssociationByContentId(associationName, contentId);
-            }
+            string contentId = null;
+            entryDetails.AddLink(associationName, associatedData, contentId);
         }
 
         //public void AddLink(CommandContent content, string collection, KeyValuePair<string, object> associatedData)

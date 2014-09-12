@@ -12,10 +12,12 @@ namespace Simple.OData.Client
         private ODataBatchWriter _batchWriter;
         private ODataV3RequestMessage _requestMessage;
         private ODataMessageWriter _messageWriter;
+        private int _lastContentId;
 
         public BatchWriterV3(ISession session)
         {
             _session = session;
+            _lastContentId = 0;
         }
 
         public async Task StartBatchAsync()
@@ -45,7 +47,7 @@ namespace Simple.OData.Client
             _requestMessage.GetStream().Position = 0;
             var httpRequest = new HttpRequestMessage()
             {
-                RequestUri = new Uri(_requestMessage.Url + FluentCommand.BatchLiteral), 
+                RequestUri = new Uri(_requestMessage.Url + ODataLiteral.Batch), 
                 Method = HttpMethod.Post,
                 Content = new StreamContent(_requestMessage.GetStream()),
             };
@@ -60,6 +62,11 @@ namespace Simple.OData.Client
 #else
             return await _batchWriter.CreateOperationRequestMessageAsync(method, uri);
 #endif
+        }
+
+        public string GetContentId()
+        {
+            return (++_lastContentId).ToString();
         }
     }
 }
