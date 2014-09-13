@@ -91,15 +91,8 @@ namespace Simple.OData.Client
                 }
 
                 entryWriter.WriteEnd();
-            }
 
-            if (_deferredBatchWriter != null)
-            {
-                return null;
-            }
-            else
-            {
-                return Utils.CloneStream(message.GetStream());
+                return _deferredBatchWriter != null ? null : Utils.CloneStream(message.GetStream());
             }
         }
 
