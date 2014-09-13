@@ -7,7 +7,7 @@ namespace Simple.OData.Client
 {
     interface IRequestWriter
     {
-        Task<Stream> CreateEntryAsync(string method, string collection, IDictionary<string, object> entryData);
-        Task<Stream> CreateLinkAsync(string linkPath);
+        Task<Stream> WriteEntryContentAsync(string method, string collection, IDictionary<string, object> entryData, string commandText);
+        Task<Stream> WriteLinkContentAsync(string linkPath);
     }
 }

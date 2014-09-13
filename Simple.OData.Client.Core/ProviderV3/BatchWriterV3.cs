@@ -54,7 +54,7 @@ namespace Simple.OData.Client
                 Method = HttpMethod.Post,
                 Content = new StreamContent(_requestMessage.GetStream()),
             };
-            httpRequest.Content.Headers.Add(HttpLiteral.HeaderContentType, _requestMessage.GetHeader(HttpLiteral.HeaderContentType));
+            httpRequest.Content.Headers.Add(HttpLiteral.ContentType, _requestMessage.GetHeader(HttpLiteral.ContentType));
             return httpRequest;
         }
 

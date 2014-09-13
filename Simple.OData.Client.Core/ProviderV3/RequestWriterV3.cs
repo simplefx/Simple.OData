@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.Data.Edm;
 using Microsoft.Data.OData;
@@ -23,9 +24,8 @@ namespace Simple.OData.Client
             _deferredBatchWriter = deferredBatchWriter;
         }
 
-        public async Task<Stream> CreateEntryAsync(string method, string collection, IDictionary<string, object> entryData)
+        public async Task<Stream> WriteEntryContentAsync(string method, string collection, IDictionary<string, object> entryData, string commandText)
         {
-            var entitySet = (_session as Session).MetadataCache.FindConcreteEntitySet(collection);
             var writerSettings = new ODataMessageWriterSettings() { BaseUri = new Uri(_session.UrlBase), Indent = true };
             IODataRequestMessage message;
             if (_deferredBatchWriter != null)
@@ -33,10 +33,19 @@ namespace Simple.OData.Client
                 if (!_deferredBatchWriter.IsValueCreated)
                     await _deferredBatchWriter.Value.StartBatchAsync();
                 message = (await _deferredBatchWriter.Value.CreateOperationRequestMessageAsync(
-                    method, new Uri(_session.UrlBase + entitySet.ActualName))) as IODataRequestMessage;
-                var contentId = _deferredBatchWriter.Value.NextContentId();
-                _deferredBatchWriter.Value.MapContentId(entryData, contentId);
-                message.SetHeader(HttpLiteral.HeaderContentId, contentId);
+                    method, new Uri(_session.UrlBase + commandText))) as IODataRequestMessage;
+                if (method != RestVerbs.Delete)
+                {
+                    var contentId = _deferredBatchWriter.Value.NextContentId();
+                    _deferredBatchWriter.Value.MapContentId(entryData, contentId);
+                    message.SetHeader(HttpLiteral.ContentId, contentId);
+                }
+
+                if (_session.Provider.GetMetadata().EntitySetTypeRequiresOptimisticConcurrencyCheck(collection) &&
+                    (method == RestVerbs.Put || method == RestVerbs.Patch || method == RestVerbs.Delete))
+                {
+                    message.SetHeader(HttpLiteral.IfMatch, EntityTagHeaderValue.Any.Tag);
+                }
             }
             else
             {
@@ -49,12 +58,16 @@ namespace Simple.OData.Client
                 resolveContentIdFunc = _deferredBatchWriter.Value.GetContentId;
             }
 
-            var entryDetails = Utils.ParseEntryDetails(entitySet, entryData, resolveContentIdFunc);
-            var entityTypeNamespace = _session.Provider.GetMetadata().GetEntitySetTypeNamespace(collection);
-            var entityTypeName = _session.Provider.GetMetadata().GetEntitySetTypeName(collection);
-
             using (var messageWriter = new ODataMessageWriter(message, writerSettings, _model))
             {
+                if (method == RestVerbs.Delete)
+                    return null;
+
+                var entitySet = (_session as Session).MetadataCache.FindConcreteEntitySet(collection);
+                var entryDetails = Utils.ParseEntryDetails(entitySet, entryData, resolveContentIdFunc);
+                var entityTypeNamespace = _session.Provider.GetMetadata().GetEntitySetTypeNamespace(collection);
+                var entityTypeName = _session.Provider.GetMetadata().GetEntitySetTypeName(collection);
+
                 var entryWriter = messageWriter.CreateODataEntryWriter();
                 var entry = new Microsoft.Data.OData.ODataEntry();
                 entry.TypeName = string.Join(".", entityTypeNamespace, entityTypeName);
@@ -78,18 +91,19 @@ namespace Simple.OData.Client
                 }
 
                 entryWriter.WriteEnd();
-                if (_deferredBatchWriter != null)
-                {
-                    return null;
-                }
-                else
-                {
-                    return Utils.CloneStream(message.GetStream());
-                }
+            }
+
+            if (_deferredBatchWriter != null)
+            {
+                return null;
+            }
+            else
+            {
+                return Utils.CloneStream(message.GetStream());
             }
         }
 
-        public async Task<Stream> CreateLinkAsync(string linkPath)
+        public async Task<Stream> WriteLinkContentAsync(string linkPath)
         {
             var writerSettings = new ODataMessageWriterSettings() { BaseUri = new Uri(_session.UrlBase), Indent = true };
             var message = new ODataV3RequestMessage();

@@ -65,7 +65,7 @@ namespace Simple.OData.Client.Tests
             }
 
             var product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'Test11'");
-            Assert.Equal(21m, product["UnitPrice"]);
+            Assert.Null(product);
         }
 
         [Fact]

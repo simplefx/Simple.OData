@@ -47,7 +47,7 @@ namespace Simple.OData.Client.Tests
     //        var responseReader = new ResponseReaderV3(_session, await client.GetMetadataAsync<IEdmModel>());
     //        var row = (await responseReader.GetResponseAsync(response)).Entry;
 
-    //        var entry = XElement.Parse(await commandWriter.CreateEntryAsync("POST", "QAS.Multiplatform.Demo.Models", "WorkTaskModel", row, null, null));
+    //        var entry = XElement.Parse(await commandWriter.WriteEntryContentAsync("POST", "QAS.Multiplatform.Demo.Models", "WorkTaskModel", row, null, null));
 
     //        AssertElementsCountEqual(document, entry, "m", "properties");
     //        AssertElementsContentEqual(document, entry, "d", "Id");
@@ -74,7 +74,7 @@ namespace Simple.OData.Client.Tests
     //        var responseReader = new ResponseReaderV3(_session, await client.GetMetadataAsync<IEdmModel>());
     //        var row = (await responseReader.GetResponseAsync(response)).Entry;
 
-    //        var entry = XElement.Parse(await commandWriter.CreateEntryAsync("POST", "QAS.Multiplatform.Demo.Models", "WorkTaskModel", row, null, null));
+    //        var entry = XElement.Parse(await commandWriter.WriteEntryContentAsync("POST", "QAS.Multiplatform.Demo.Models", "WorkTaskModel", row, null, null));
 
     //        AssertElementsCountDiffs(document, entry, "m", "properties", 1);
     //        AssertElementsContentEqual(document, entry, "d", "Id");

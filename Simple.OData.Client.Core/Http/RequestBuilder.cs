@@ -41,11 +41,12 @@ namespace Simple.OData.Client
 
         public async Task<ODataRequest> CreateInsertRequestAsync(string collection, IDictionary<string, object> entryData, bool resultRequired)
         {
-            var entryContent = await _session.Provider.GetRequestWriter(_lazyBatchWriter).CreateEntryAsync(
-                RestVerbs.Post, collection, entryData);
+            var entitySetName = _session.MetadataCache.FindBaseEntitySet(collection).ActualName;
+            var entryContent = await _session.Provider.GetRequestWriter(_lazyBatchWriter).WriteEntryContentAsync(
+                RestVerbs.Post, collection, entryData, entitySetName);
 
             var request = new ODataRequest(RestVerbs.Post, _session, 
-                _session.MetadataCache.FindBaseEntitySet(collection).ActualName, entryData, entryContent);
+                entitySetName, entryData, entryContent);
             request.ReturnContent = resultRequired;
             return request;
         }
@@ -58,8 +59,8 @@ namespace Simple.OData.Client
             bool hasPropertiesToUpdate = entryDetails.Properties.Count > 0;
             bool merge = !hasPropertiesToUpdate || CheckMergeConditions(collection, entryKey, entryData);
 
-            var entryContent = await _session.Provider.GetRequestWriter(_lazyBatchWriter).CreateEntryAsync(
-                merge ? RestVerbs.Patch : RestVerbs.Put, collection, entryData);
+            var entryContent = await _session.Provider.GetRequestWriter(_lazyBatchWriter).WriteEntryContentAsync(
+                merge ? RestVerbs.Patch : RestVerbs.Put, collection, entryData, commandText);
 
             var updateMethod = merge ? RestVerbs.Patch : RestVerbs.Put;
             bool checkOptimisticConcurrency = _session.Provider.GetMetadata().EntitySetTypeRequiresOptimisticConcurrencyCheck(collection);
@@ -71,6 +72,9 @@ namespace Simple.OData.Client
 
         public async Task<ODataRequest> CreateDeleteRequestAsync(string commandText, string collection)
         {
+            await _session.Provider.GetRequestWriter(_lazyBatchWriter).WriteEntryContentAsync(
+                RestVerbs.Delete, collection, null, commandText);
+
             var request = new ODataRequest(RestVerbs.Delete, _session, commandText);
             request.CheckOptimisticConcurrency = _session.Provider.GetMetadata().EntitySetTypeRequiresOptimisticConcurrencyCheck(collection);
             return request;
@@ -79,7 +83,7 @@ namespace Simple.OData.Client
         public async Task<ODataRequest> CreateLinkRequestAsync(string collection, string linkName, string entryPath, string linkPath)
         {
             var associationName = _session.Provider.GetMetadata().GetNavigationPropertyExactName(collection, linkName);
-            var linkContent = await _session.Provider.GetRequestWriter(_lazyBatchWriter).CreateLinkAsync(linkPath);
+            var linkContent = await _session.Provider.GetRequestWriter(_lazyBatchWriter).WriteLinkContentAsync(linkPath);
             var linkMethod = _session.Provider.GetMetadata().IsNavigationPropertyMultiple(collection, associationName) ?
                 RestVerbs.Post :
                 RestVerbs.Put;
@@ -90,11 +94,14 @@ namespace Simple.OData.Client
             return request;
         }
 
-        public Task<ODataRequest> CreateUnlinkRequestAsync(string commandText, string collection, string linkName)
+        public async Task<ODataRequest> CreateUnlinkRequestAsync(string commandText, string collection, string linkName)
         {
+            await _session.Provider.GetRequestWriter(_lazyBatchWriter).WriteEntryContentAsync(
+                RestVerbs.Delete, collection, null, commandText);
+
             commandText = FormatLinkPath(commandText, _session.Provider.GetMetadata().GetNavigationPropertyExactName(collection, linkName));
             var request = new ODataRequest(RestVerbs.Delete, _session, commandText);
-            return Utils.GetTaskFromResult(request);
+            return await Utils.GetTaskFromResult(request);
         }
 
         public Task<ODataRequest> CreateBatchRequestAsync(HttpRequestMessage requestMessage)

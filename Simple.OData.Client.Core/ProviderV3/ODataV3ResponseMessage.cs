@@ -23,7 +23,7 @@ namespace Simple.OData.Client
 
         public string GetHeader(string headerName)
         {
-            if (headerName == HttpLiteral.HeaderContentType && _response.Content.Headers.Contains(headerName))
+            if (headerName == HttpLiteral.ContentType && _response.Content.Headers.Contains(headerName))
                 return _response.Content.Headers.GetValues(headerName).FirstOrDefault();
             else if (_response.Headers.Contains(headerName))
                 return _response.Headers.GetValues(headerName).FirstOrDefault();

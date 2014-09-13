@@ -6,18 +6,12 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading;
 using System.Threading.Tasks;
-using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
     class RequestRunner
     {
         private readonly ISession _session;
-
-        private const string PreferHeaderName = "Prefer";
-        private const string PreferenceAppliedHeaderName = "Preference-Applied";
-        private const string ReturnContentHeaderValue = "return-content";
-        private const string ReturnNoContentHeaderValue = "return-no-content";
 
         public Action<HttpRequestMessage> BeforeRequest { get; set; }
         public Action<HttpResponseMessage> AfterResponse { get; set; }
@@ -63,8 +57,8 @@ namespace Simple.OData.Client
                         this.BeforeRequest(request.RequestMessage);
 
                     request.RequestMessage.Headers.Add(
-                        PreferHeaderName,
-                        request.ReturnContent ? ReturnContentHeaderValue : ReturnNoContentHeaderValue);
+                        HttpLiteral.Prefer,
+                        request.ReturnContent ? HttpLiteral.ReturnContent : HttpLiteral.ReturnNoContent);
 
                     var responseMessage = await httpClient.SendAsync(request.RequestMessage, cancellationToken);
 
