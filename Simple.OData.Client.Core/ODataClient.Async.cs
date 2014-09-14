@@ -433,8 +433,7 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var entityCollection = this.Session.Metadata.GetConcreteEntityCollection(collection);
-            var entitySetName = this.Session.Metadata.GetEntitySetExactName(collection);
-            var entryDetails = Utils.ParseEntryDetails(_session, entityCollection, entryData);
+            var entryDetails = Utils.ParseEntryDetails(_session, entityCollection.ActualName, entryData);
 
             //foreach (var link in entryMembers.Links)
             //{
@@ -447,7 +446,7 @@ namespace Simple.OData.Client
 
             var removedLinks = entryDetails.Links
                 .Where(x => x.LinkData == null)
-                .Select(x => _session.Metadata.GetNavigationPropertyExactName(entitySetName, x.LinkName))
+                .Select(x => _session.Metadata.GetNavigationPropertyExactName(entityCollection.ActualName, x.LinkName))
                 .ToList();
 
             foreach (var associationName in removedLinks)

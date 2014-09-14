@@ -63,7 +63,7 @@ namespace Simple.OData.Client
             return property == null || property.IsNotMapped() ? null : property;
         }
 
-        public static EntryDetails ParseEntryDetails(ISession session, EntityCollection entityCollection, 
+        public static EntryDetails ParseEntryDetails(ISession session, string collectionName, 
             IDictionary<string, object> entryData, Func<IDictionary<string, object>, string> resolveContentIdFunc = null)
         {
             var contentId = resolveContentIdFunc != null ? resolveContentIdFunc(entryData) : null;
@@ -71,13 +71,13 @@ namespace Simple.OData.Client
 
             foreach (var item in entryData)
             {
-                if (session.Metadata.HasStructuralProperty(entityCollection.ActualName, item.Key))
+                if (session.Metadata.HasStructuralProperty(collectionName, item.Key))
                 {
                     entryDetails.AddProperty(item.Key, item.Value);
                 }
-                else if (session.Metadata.HasNavigationProperty(entityCollection.ActualName, item.Key))
+                else if (session.Metadata.HasNavigationProperty(collectionName, item.Key))
                 {
-                    if (session.Metadata.IsNavigationPropertyMultiple(entityCollection.ActualName, item.Key))
+                    if (session.Metadata.IsNavigationPropertyMultiple(collectionName, item.Key))
                     {
                         var collection = item.Value as IEnumerable<object>;
                         if (collection != null)

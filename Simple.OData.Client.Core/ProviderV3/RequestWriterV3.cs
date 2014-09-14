@@ -64,7 +64,7 @@ namespace Simple.OData.Client
                     return null;
 
                 var entityCollection = _session.Metadata.GetConcreteEntityCollection(collection);
-                var entryDetails = Utils.ParseEntryDetails(_session, entityCollection, entryData, resolveContentIdFunc);
+                var entryDetails = Utils.ParseEntryDetails(_session, entityCollection.ActualName, entryData, resolveContentIdFunc);
                 var entityTypeNamespace = _session.Metadata.GetEntitySetTypeNamespace(collection);
                 var entityTypeName = _session.Metadata.GetEntitySetTypeName(collection);
 
