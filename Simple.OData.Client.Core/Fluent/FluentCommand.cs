@@ -123,7 +123,7 @@ namespace Simple.OData.Client
                     var entitySet = _session.MetadataCache.FindEntitySet(_collectionName);
                     return string.IsNullOrEmpty(_derivedCollectionName)
                                ? entitySet
-                               : entitySet.FindDerivedEntitySet(_derivedCollectionName);
+                               : _session.MetadataCache.FindDerivedEntitySet(entitySet, _derivedCollectionName);
                 }
                 else if (!string.IsNullOrEmpty(_linkName))
                 {
@@ -397,7 +397,7 @@ namespace Simple.OData.Client
                 if (!HasKey)
                     return null;
 
-                var keyNames = this.EntitySet.GetKeyNames();
+                var keyNames = _session.Provider.GetMetadata().GetDeclaredKeyPropertyNames(this.EntitySet.ActualName).ToList();
                 var namedKeyValues = new Dictionary<string, object>();
                 for (int index = 0; index < keyNames.Count; index++)
                 {
@@ -518,22 +518,24 @@ namespace Simple.OData.Client
             var entitySet = this.EntitySet;
             foreach (var associationName in items)
             {
-                names.Add(entitySet.Metadata.GetNavigationPropertyExactName(entitySet.ActualName, associationName));
-                entitySet = _session.MetadataCache.FindEntitySet(entitySet.Metadata.GetNavigationPropertyPartnerName(entitySet.ActualName, associationName));
+                names.Add(_session.Provider.GetMetadata().GetNavigationPropertyExactName(entitySet.ActualName, associationName));
+                entitySet = _session.MetadataCache.FindEntitySet(
+                    _session.Provider.GetMetadata().GetNavigationPropertyPartnerName(entitySet.ActualName, associationName));
             }
             return string.Join("/", names);
         }
 
         private string FormatSelectItem(string item)
         {
-            return this.EntitySet.Metadata.HasStructuralProperty(this.EntitySet.ActualName, item)
-                ? this.EntitySet.Metadata.GetStructuralPropertyExactName(this.EntitySet.ActualName, item)
-                : this.EntitySet.Metadata.GetNavigationPropertyExactName(this.EntitySet.ActualName, item);
+            return _session.Provider.GetMetadata().HasStructuralProperty(this.EntitySet.ActualName, item)
+                ? _session.Provider.GetMetadata().GetStructuralPropertyExactName(this.EntitySet.ActualName, item)
+                : _session.Provider.GetMetadata().GetNavigationPropertyExactName(this.EntitySet.ActualName, item);
         }
 
         private string FormatOrderByItem(KeyValuePair<string, bool> item)
         {
-            return this.EntitySet.Metadata.GetStructuralPropertyExactName(this.EntitySet.ActualName, item.Key) + (item.Value ? " desc" : string.Empty);
+            return _session.Provider.GetMetadata().GetStructuralPropertyExactName(
+                this.EntitySet.ActualName, item.Key) + (item.Value ? " desc" : string.Empty);
         }
 
         private string FormatKey()
@@ -554,9 +556,13 @@ namespace Simple.OData.Client
             {
                 ok = expression.ExtractEqualityComparisons(namedKeyValues);
             }
-            return ok &&
-                this.EntitySet.GetKeyNames().Count == namedKeyValues.Count() &&
-                this.EntitySet.GetKeyNames().All(namedKeyValues.ContainsKey) ? namedKeyValues : null;
+            if (!ok)
+                return null;
+
+            var keyNames = _session.Provider.GetMetadata().GetDeclaredKeyPropertyNames(this.EntitySet.ActualName).ToList();
+            return keyNames.Count == namedKeyValues.Count() && keyNames.All(namedKeyValues.ContainsKey) 
+                ? namedKeyValues 
+                : null;
         }
 
         private static bool IsAnonymousType(Type type)

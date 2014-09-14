@@ -34,21 +34,5 @@ namespace Simple.OData.Client
         {
             get { return _baseEntitySet; }
         }
-
-        public IMetadata Metadata
-        {
-            get { return _metadata; }
-        }
-
-        public EntitySet FindDerivedEntitySet(string entityTypeName)
-        {
-            var actualName = _metadata.GetDerivedEntityTypeExactName(this.ActualName, entityTypeName);
-            return new EntitySet(actualName, this, _metadata);
-        }
-
-        public IList<string> GetKeyNames()
-        {
-            return _metadata.GetDeclaredKeyPropertyNames(this.ActualName).ToList();
-        }
     }
 }

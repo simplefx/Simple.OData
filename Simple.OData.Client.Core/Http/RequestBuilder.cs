@@ -54,7 +54,7 @@ namespace Simple.OData.Client
         public async Task<ODataRequest> CreateUpdateRequestAsync(string commandText, string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData, bool resultRequired)
         {
             var entitySet = _session.MetadataCache.FindConcreteEntitySet(collection);
-            var entryDetails = Utils.ParseEntryDetails(entitySet, entryData);
+            var entryDetails = Utils.ParseEntryDetails(_session, entitySet, entryData);
 
             bool hasPropertiesToUpdate = entryDetails.Properties.Count > 0;
             bool merge = !hasPropertiesToUpdate || CheckMergeConditions(collection, entryKey, entryData);
@@ -131,7 +131,7 @@ namespace Simple.OData.Client
         private bool CheckMergeConditions(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
         {
             var entitySet = _session.MetadataCache.FindConcreteEntitySet(collection);
-            return entitySet.Metadata.GetStructuralPropertyNames(entitySet.ActualName)
+            return _session.Provider.GetMetadata().GetStructuralPropertyNames(entitySet.ActualName)
                 .Any(x => !entryData.ContainsKey(x));
         }
 

@@ -326,7 +326,8 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var entryKeyWithNames = new Dictionary<string, object>();
-            var keyNames = _session.MetadataCache.FindConcreteEntitySet(collection).GetKeyNames();
+            var entitySet = _session.MetadataCache.FindConcreteEntitySet(collection);
+            var keyNames = _session.Provider.GetMetadata().GetDeclaredKeyPropertyNames(entitySet.ActualName).ToList();
             for (int index = 0; index < keyNames.Count; index++)
             {
                 entryKeyWithNames.Add(keyNames[index], entryKey.ElementAt(index));
@@ -433,7 +434,7 @@ namespace Simple.OData.Client
 
             var entitySet = this.Session.MetadataCache.FindConcreteEntitySet(collection);
             var entitySetName = this.Session.Provider.GetMetadata().GetEntitySetExactName(collection);
-            var entryDetails = Utils.ParseEntryDetails(entitySet, entryData);
+            var entryDetails = Utils.ParseEntryDetails(_session, entitySet, entryData);
 
             //foreach (var link in entryMembers.Links)
             //{

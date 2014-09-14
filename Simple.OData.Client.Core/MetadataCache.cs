@@ -74,13 +74,19 @@ namespace Simple.OData.Client
                 var baseEntitySet = this.FindEntitySet(items[0]);
                 var entitySet = string.IsNullOrEmpty(items[1])
                     ? baseEntitySet
-                    : baseEntitySet.FindDerivedEntitySet(items[1]);
+                    : FindDerivedEntitySet(baseEntitySet, items[1]);
                 return entitySet;
             }
             else
             {
                 return this.FindEntitySet(entitySetPath);
             }
+        }
+
+        public EntitySet FindDerivedEntitySet(EntitySet baseEntitySet, string entityTypeName)
+        {
+            var actualName = Metadata.GetDerivedEntityTypeExactName(baseEntitySet.ActualName, entityTypeName);
+            return new EntitySet(actualName, baseEntitySet, Metadata);
         }
     }
 }
