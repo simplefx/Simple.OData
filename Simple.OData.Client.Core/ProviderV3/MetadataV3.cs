@@ -64,6 +64,39 @@ namespace Simple.OData.Client
             return entityType.Name;
         }
 
+        public EntityCollection GetEntityCollection(string entitySetName)
+        {
+            return new EntityCollection(GetEntitySetExactName(entitySetName));
+        }
+
+        public EntityCollection GetBaseEntityCollection(string entitySetPath)
+        {
+            return this.GetEntityCollection(entitySetPath.Split('/').First());
+        }
+
+        public EntityCollection GetConcreteEntityCollection(string entitySetPath)
+        {
+            var items = entitySetPath.Split('/');
+            if (items.Count() > 1)
+            {
+                var baseEntitySet = this.GetEntityCollection(items[0]);
+                var entitySet = string.IsNullOrEmpty(items[1])
+                    ? baseEntitySet
+                    : GetDerivedEntityCollection(baseEntitySet, items[1]);
+                return entitySet;
+            }
+            else
+            {
+                return this.GetEntityCollection(entitySetPath);
+            }
+        }
+
+        public EntityCollection GetDerivedEntityCollection(EntityCollection baseEntityCollection, string entityTypeName)
+        {
+            var actualName = GetDerivedEntityTypeExactName(baseEntityCollection.ActualName, entityTypeName);
+            return new EntityCollection(actualName, baseEntityCollection);
+        }
+
         public IEnumerable<string> GetStructuralPropertyNames(string entitySetName)
         {
             return GetEntityType(entitySetName).StructuralProperties().Select(x => x.Name);

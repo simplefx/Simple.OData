@@ -63,7 +63,7 @@ namespace Simple.OData.Client
                 if (method == RestVerbs.Delete)
                     return null;
 
-                var entitySet = (_session as Session).MetadataCache.FindConcreteEntitySet(collection);
+                var entitySet = _session.Provider.GetMetadata().GetConcreteEntityCollection(collection);
                 var entryDetails = Utils.ParseEntryDetails(_session, entitySet, entryData, resolveContentIdFunc);
                 var entityTypeNamespace = _session.Provider.GetMetadata().GetEntitySetTypeNamespace(collection);
                 var entityTypeName = _session.Provider.GetMetadata().GetEntitySetTypeName(collection);

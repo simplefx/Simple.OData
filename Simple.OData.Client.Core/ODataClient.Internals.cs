@@ -118,7 +118,7 @@ namespace Simple.OData.Client
         private Task<string> FormatEntryKeyAsync(string collection, IDictionary<string, object> entryKey, CancellationToken cancellationToken)
         {
             return GetFluentClient()
-                .For(_session.MetadataCache.FindBaseEntitySet(collection).ActualName)
+                .For(_session.Provider.GetMetadata().GetBaseEntityCollection(collection).ActualName)
                 .Key(entryKey)
                 .GetCommandTextAsync(cancellationToken);
         }

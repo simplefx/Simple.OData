@@ -1,23 +1,20 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Simple.OData.Client.Extensions;
 
 #pragma warning disable 1591
 
 namespace Simple.OData.Client
 {
-    public class EntitySet
+    public class EntityCollection
     {
         private readonly string _actualName;
-        private readonly EntitySet _baseEntitySet;
-        private readonly IMetadata _metadata;
+        private readonly EntityCollection _baseEntityCollection;
 
-        internal EntitySet(string name, EntitySet baseEntitySet, IMetadata metadata)
+        internal EntityCollection(string name, EntityCollection baseEntityCollection = null)
         {
             _actualName = name;
-            _baseEntitySet = baseEntitySet;
-            _metadata = metadata;
+            _baseEntityCollection = baseEntityCollection;
         }
 
         public override string ToString()
@@ -30,9 +27,9 @@ namespace Simple.OData.Client
             get { return _actualName; }
         }
 
-        public EntitySet BaseEntitySet
+        public EntityCollection BaseEntityCollection
         {
-            get { return _baseEntitySet; }
+            get { return _baseEntityCollection; }
         }
     }
 }

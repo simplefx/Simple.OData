@@ -128,6 +128,26 @@ namespace Simple.OData.Client
             return function.Name;
         }
 
+        public EntityCollection GetEntityCollection(string entitySetName)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public EntityCollection GetBaseEntityCollection(string entitySetPath)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public EntityCollection GetConcreteEntityCollection(string entitySetPath)
+        {
+            throw new System.NotImplementedException();
+        }
+
+        public EntityCollection GetDerivedEntityCollection(EntityCollection baseEntityCollection, string entityTypeName)
+        {
+            throw new System.NotImplementedException();
+        }
+
         private IEnumerable<IEdmEntitySet> GetEntitySets()
         {
             return _model.SchemaElements

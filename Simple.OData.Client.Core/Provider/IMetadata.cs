@@ -24,5 +24,10 @@ namespace Simple.OData.Client
         bool IsNavigationPropertyMultiple(string entitySetName, string propertyName);
 
         string GetFunctionExactName(string functionName);
+
+        EntityCollection GetEntityCollection(string entitySetName);
+        EntityCollection GetBaseEntityCollection(string entitySetPath);
+        EntityCollection GetConcreteEntityCollection(string entitySetPath);
+        EntityCollection GetDerivedEntityCollection(EntityCollection baseEntityCollection, string entityTypeName);
     }
 }

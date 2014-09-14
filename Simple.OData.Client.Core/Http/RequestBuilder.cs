@@ -41,7 +41,7 @@ namespace Simple.OData.Client
 
         public async Task<ODataRequest> CreateInsertRequestAsync(string collection, IDictionary<string, object> entryData, bool resultRequired)
         {
-            var entitySetName = _session.MetadataCache.FindBaseEntitySet(collection).ActualName;
+            var entitySetName = _session.Provider.GetMetadata().GetBaseEntityCollection(collection).ActualName;
             var entryContent = await _session.Provider.GetRequestWriter(_lazyBatchWriter).WriteEntryContentAsync(
                 RestVerbs.Post, collection, entryData, entitySetName);
 
@@ -53,7 +53,7 @@ namespace Simple.OData.Client
 
         public async Task<ODataRequest> CreateUpdateRequestAsync(string commandText, string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData, bool resultRequired)
         {
-            var entitySet = _session.MetadataCache.FindConcreteEntitySet(collection);
+            var entitySet = _session.Provider.GetMetadata().GetConcreteEntityCollection(collection);
             var entryDetails = Utils.ParseEntryDetails(_session, entitySet, entryData);
 
             bool hasPropertiesToUpdate = entryDetails.Properties.Count > 0;
@@ -130,7 +130,7 @@ namespace Simple.OData.Client
 
         private bool CheckMergeConditions(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
         {
-            var entitySet = _session.MetadataCache.FindConcreteEntitySet(collection);
+            var entitySet = _session.Provider.GetMetadata().GetConcreteEntityCollection(collection);
             return _session.Provider.GetMetadata().GetStructuralPropertyNames(entitySet.ActualName)
                 .Any(x => !entryData.ContainsKey(x));
         }
@@ -166,7 +166,7 @@ namespace Simple.OData.Client
         //private IEnumerable<object> GetLinkedEntryKeyValues(string collection, KeyValuePair<string, object> entryData)
         //{
         //    var entryProperties = GetLinkedEntryProperties(entryData.Value);
-        //    var associatedKeyNames = _session.MetadataCache.FindConcreteEntitySet(collection).GetKeyNames();
+        //    var associatedKeyNames = _session.MetadataCache.GetConcreteEntityCollection(collection).GetKeyNames();
         //    var associatedKeyValues = new object[associatedKeyNames.Count()];
         //    for (int index = 0; index < associatedKeyNames.Count(); index++)
         //    {

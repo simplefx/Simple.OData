@@ -96,7 +96,7 @@ namespace Simple.OData.Client
                 _namedKeyValues = TryInterpretFilterExpressionAsKey(_filterExpression);
                 if (_namedKeyValues == null)
                 {
-                    _filter = _filterExpression.Format(_session, this.EntitySet);
+                    _filter = _filterExpression.Format(_session, this.EntityCollection);
                 }
                 else
                 {
@@ -114,22 +114,22 @@ namespace Simple.OData.Client
             return this;
         }
 
-        private EntitySet EntitySet
+        private EntityCollection EntityCollection
         {
             get
             {
                 if (!string.IsNullOrEmpty(_collectionName))
                 {
-                    var entitySet = _session.MetadataCache.FindEntitySet(_collectionName);
+                    var entitySet = _session.Provider.GetMetadata().GetEntityCollection(_collectionName);
                     return string.IsNullOrEmpty(_derivedCollectionName)
                                ? entitySet
-                               : _session.MetadataCache.FindDerivedEntitySet(entitySet, _derivedCollectionName);
+                               : _session.Provider.GetMetadata().GetDerivedEntityCollection(entitySet, _derivedCollectionName);
                 }
                 else if (!string.IsNullOrEmpty(_linkName))
                 {
                     var parent = new FluentCommand(_parent).Resolve();
-                    return _session.MetadataCache.FindEntitySet(_session.Provider.GetMetadata()
-                        .GetNavigationPropertyPartnerName(parent.EntitySet.ActualName, _linkName));
+                    return _session.Provider.GetMetadata().GetEntityCollection(_session.Provider.GetMetadata()
+                        .GetNavigationPropertyPartnerName(parent.EntityCollection.ActualName, _linkName));
                 }
                 else
                 {
@@ -397,7 +397,7 @@ namespace Simple.OData.Client
                 if (!HasKey)
                     return null;
 
-                var keyNames = _session.Provider.GetMetadata().GetDeclaredKeyPropertyNames(this.EntitySet.ActualName).ToList();
+                var keyNames = _session.Provider.GetMetadata().GetDeclaredKeyPropertyNames(this.EntityCollection.ActualName).ToList();
                 var namedKeyValues = new Dictionary<string, object>();
                 for (int index = 0; index < keyNames.Count; index++)
                 {
@@ -451,7 +451,7 @@ namespace Simple.OData.Client
             {
                 var parent = new FluentCommand(_parent).Resolve();
                 commandText += parent.Format() + "/";
-                commandText += _session.Provider.GetMetadata().GetNavigationPropertyExactName(parent.EntitySet.ActualName, _linkName);
+                commandText += _session.Provider.GetMetadata().GetNavigationPropertyExactName(parent.EntityCollection.ActualName, _linkName);
             }
             else if (!string.IsNullOrEmpty(_functionName))
             {
@@ -515,11 +515,11 @@ namespace Simple.OData.Client
         {
             var names = new List<string>();
             var items = item.Split('/');
-            var entitySet = this.EntitySet;
+            var entitySet = this.EntityCollection;
             foreach (var associationName in items)
             {
                 names.Add(_session.Provider.GetMetadata().GetNavigationPropertyExactName(entitySet.ActualName, associationName));
-                entitySet = _session.MetadataCache.FindEntitySet(
+                entitySet = _session.Provider.GetMetadata().GetEntityCollection(
                     _session.Provider.GetMetadata().GetNavigationPropertyPartnerName(entitySet.ActualName, associationName));
             }
             return string.Join("/", names);
@@ -527,15 +527,15 @@ namespace Simple.OData.Client
 
         private string FormatSelectItem(string item)
         {
-            return _session.Provider.GetMetadata().HasStructuralProperty(this.EntitySet.ActualName, item)
-                ? _session.Provider.GetMetadata().GetStructuralPropertyExactName(this.EntitySet.ActualName, item)
-                : _session.Provider.GetMetadata().GetNavigationPropertyExactName(this.EntitySet.ActualName, item);
+            return _session.Provider.GetMetadata().HasStructuralProperty(this.EntityCollection.ActualName, item)
+                ? _session.Provider.GetMetadata().GetStructuralPropertyExactName(this.EntityCollection.ActualName, item)
+                : _session.Provider.GetMetadata().GetNavigationPropertyExactName(this.EntityCollection.ActualName, item);
         }
 
         private string FormatOrderByItem(KeyValuePair<string, bool> item)
         {
             return _session.Provider.GetMetadata().GetStructuralPropertyExactName(
-                this.EntitySet.ActualName, item.Key) + (item.Value ? " desc" : string.Empty);
+                this.EntityCollection.ActualName, item.Key) + (item.Value ? " desc" : string.Empty);
         }
 
         private string FormatKey()
@@ -559,7 +559,7 @@ namespace Simple.OData.Client
             if (!ok)
                 return null;
 
-            var keyNames = _session.Provider.GetMetadata().GetDeclaredKeyPropertyNames(this.EntitySet.ActualName).ToList();
+            var keyNames = _session.Provider.GetMetadata().GetDeclaredKeyPropertyNames(this.EntityCollection.ActualName).ToList();
             return keyNames.Count == namedKeyValues.Count() && keyNames.All(namedKeyValues.ContainsKey) 
                 ? namedKeyValues 
                 : null;

@@ -113,7 +113,7 @@
     <Compile Include="Provider\ODataProvider.cs" />
     <Compile Include="Session.cs" />
     <Compile Include="Provider\ProviderFactory.cs" />
-    <Compile Include="EntitySet.cs" />
+    <Compile Include="EntityCollection.cs" />
     <Compile Include="SimpleDictionary.cs" />
     <Compile Include="SimplePluralizer.cs" />
     <Compile Include="UnresolvableObjectException.cs" />
