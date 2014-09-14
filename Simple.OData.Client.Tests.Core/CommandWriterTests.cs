@@ -19,7 +19,7 @@ namespace Simple.OData.Client.Tests
     //    //    var commandWriter = new CommandWriter((_client as ODataClient).GetSessionAsync().Result);
     //    //    var document = XDocument.Parse(xml).Root;
     //    //    var response = SetUpResourceMock(resourceName);
-    //    //    var responseReader = new ResponseReaderV3(await _client.CreateProviderAsync<IEdmModel>());
+    //    //    var responseReader = new ResponseReaderV3(await _client.CreateAdapterAsync<IEdmModel>());
     //    //    var row = (await responseReader.GetResponseAsync(response)).Entry;
 
     //    //    var entry = XElement.Parse(commandWriter.CreateEntry("Northwind.Model", "Customers", row, null, null).Entry);

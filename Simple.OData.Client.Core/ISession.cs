@@ -6,7 +6,7 @@ namespace Simple.OData.Client
     {
         string UrlBase { get; }
         ICredentials Credentials { get; }
-        ODataProvider Provider { get; }
+        ODataAdapter Adapter { get; }
         IMetadata Metadata { get; }
         IPluralizer Pluralizer { get; }
     }

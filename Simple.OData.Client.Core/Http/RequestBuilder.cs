@@ -28,7 +28,7 @@ namespace Simple.OData.Client
             _session = session;
             if (isBatch)
             {
-                _lazyBatchWriter = new Lazy<IBatchWriter>(() => _session.Provider.GetBatchWriter());
+                _lazyBatchWriter = new Lazy<IBatchWriter>(() => _session.Adapter.GetBatchWriter());
             }
         }
 
@@ -42,7 +42,7 @@ namespace Simple.OData.Client
         public async Task<ODataRequest> CreateInsertRequestAsync(string collection, IDictionary<string, object> entryData, bool resultRequired)
         {
             var entityCollectionName = _session.Metadata.GetBaseEntityCollection(collection).ActualName;
-            var entryContent = await _session.Provider.GetRequestWriter(_lazyBatchWriter).WriteEntryContentAsync(
+            var entryContent = await _session.Adapter.GetRequestWriter(_lazyBatchWriter).WriteEntryContentAsync(
                 RestVerbs.Post, collection, entryData, entityCollectionName);
 
             var request = new ODataRequest(RestVerbs.Post, _session, 
@@ -59,7 +59,7 @@ namespace Simple.OData.Client
             bool hasPropertiesToUpdate = entryDetails.Properties.Count > 0;
             bool merge = !hasPropertiesToUpdate || CheckMergeConditions(collection, entryKey, entryData);
 
-            var entryContent = await _session.Provider.GetRequestWriter(_lazyBatchWriter).WriteEntryContentAsync(
+            var entryContent = await _session.Adapter.GetRequestWriter(_lazyBatchWriter).WriteEntryContentAsync(
                 merge ? RestVerbs.Patch : RestVerbs.Put, collection, entryData, commandText);
 
             var updateMethod = merge ? RestVerbs.Patch : RestVerbs.Put;
@@ -72,7 +72,7 @@ namespace Simple.OData.Client
 
         public async Task<ODataRequest> CreateDeleteRequestAsync(string commandText, string collection)
         {
-            await _session.Provider.GetRequestWriter(_lazyBatchWriter).WriteEntryContentAsync(
+            await _session.Adapter.GetRequestWriter(_lazyBatchWriter).WriteEntryContentAsync(
                 RestVerbs.Delete, collection, null, commandText);
 
             var request = new ODataRequest(RestVerbs.Delete, _session, commandText);
@@ -83,7 +83,7 @@ namespace Simple.OData.Client
         public async Task<ODataRequest> CreateLinkRequestAsync(string collection, string linkName, string entryPath, string linkPath)
         {
             var associationName = _session.Metadata.GetNavigationPropertyExactName(collection, linkName);
-            var linkContent = await _session.Provider.GetRequestWriter(_lazyBatchWriter).WriteLinkContentAsync(linkPath);
+            var linkContent = await _session.Adapter.GetRequestWriter(_lazyBatchWriter).WriteLinkContentAsync(linkPath);
             var linkMethod = _session.Metadata.IsNavigationPropertyMultiple(collection, associationName) ?
                 RestVerbs.Post :
                 RestVerbs.Put;
@@ -96,7 +96,7 @@ namespace Simple.OData.Client
 
         public async Task<ODataRequest> CreateUnlinkRequestAsync(string commandText, string collection, string linkName)
         {
-            await _session.Provider.GetRequestWriter(_lazyBatchWriter).WriteEntryContentAsync(
+            await _session.Adapter.GetRequestWriter(_lazyBatchWriter).WriteEntryContentAsync(
                 RestVerbs.Delete, collection, null, commandText);
 
             commandText = FormatLinkPath(commandText, _session.Metadata.GetNavigationPropertyExactName(collection, linkName));
@@ -151,14 +151,14 @@ namespace Simple.OData.Client
         //        return;
 
         //    var associatedKeyValues = GetLinkedEntryKeyValues(
-        //        _session.ProviderMetadata.GetNavigationPropertyPartnerName(collection, linkData.Key), 
+        //        _session.AdapterMetadata.GetNavigationPropertyPartnerName(collection, linkData.Key), 
         //        linkData);
         //    if (associatedKeyValues != null)
         //    {
         //        throw new NotImplementedException();
         //        //AddDataLink(content.Entry,
-        //        //    _session.ProviderMetadata.GetNavigationPropertyExactName(collection, linkData.Key),
-        //        //    _session.ProviderMetadata.GetNavigationPropertyPartnerName(collection, linkData.Key), 
+        //        //    _session.AdapterMetadata.GetNavigationPropertyExactName(collection, linkData.Key),
+        //        //    _session.AdapterMetadata.GetNavigationPropertyPartnerName(collection, linkData.Key), 
         //        //    associatedKeyValues);
         //    }
         //}

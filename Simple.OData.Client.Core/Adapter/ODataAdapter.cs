@@ -9,7 +9,7 @@ using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
-    abstract class ODataProvider
+    abstract class ODataAdapter
     {
         public string ProtocolVersion { get; set; }
         public object Model { get; set; }

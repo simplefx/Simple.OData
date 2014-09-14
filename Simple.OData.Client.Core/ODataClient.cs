@@ -67,7 +67,7 @@ namespace Simple.OData.Client
         public static T ParseMetadataString<T>(string metadataString)
         {
             var session = Session.FromMetadata("http://localhost/" + metadataString.GetHashCode() + "$metadata", metadataString);
-            return (T)session.Provider.Model;
+            return (T)session.Adapter.Model;
         }
 
         /// <summary>

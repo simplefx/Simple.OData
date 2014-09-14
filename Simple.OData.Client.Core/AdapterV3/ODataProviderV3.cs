@@ -10,7 +10,7 @@ using Microsoft.Data.OData;
 
 namespace Simple.OData.Client
 {
-    class ODataProviderV3 : ODataProvider
+    class ODataAdapterV3 : ODataAdapter
     {
         private readonly ISession _session;
 
@@ -20,7 +20,7 @@ namespace Simple.OData.Client
             set { base.Model = value; }
         }
 
-        public ODataProviderV3(ISession session, string protocolVersion, HttpResponseMessage response)
+        public ODataAdapterV3(ISession session, string protocolVersion, HttpResponseMessage response)
         {
             _session = session;
             ProtocolVersion = protocolVersion;
@@ -31,7 +31,7 @@ namespace Simple.OData.Client
             }
         }
 
-        public ODataProviderV3(ISession session, string protocolVersion, string metadataString)
+        public ODataAdapterV3(ISession session, string protocolVersion, string metadataString)
         {
             _session = session;
             ProtocolVersion = protocolVersion;

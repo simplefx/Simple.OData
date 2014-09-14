@@ -142,7 +142,7 @@ namespace Simple.OData.Client.Tests
         //public async Task GetSingleCustomerWithAddress()
         //{
         //    var response = SetUpResourceMock("SingleCustomerWithAddress.xml");
-        //    var responseReader = new ResponseReaderV3(_session, await client.CreateProviderAsync<IEdmModel>());
+        //    var responseReader = new ResponseReaderV3(_session, await client.CreateAdapterAsync<IEdmModel>());
         //    var result = (await responseReader.GetResponseAsync(response)).Entry;
         //    Assert.Equal(3, result.Count);
         //    Assert.Equal(5, (result["Address"] as IEnumerable<KeyValuePair<string, object>>).Count());

@@ -23,7 +23,7 @@ namespace Simple.OData.Client
                 {
                     if (response.IsSuccessStatusCode && (request.Method == RestVerbs.Get || request.ReturnContent))
                     {
-                        var responseReader = _session.Provider.GetResponseReader();
+                        var responseReader = _session.Adapter.GetResponseReader();
                         return createResult(await responseReader.GetResponseAsync(response, _settings.IncludeResourceTypeInEntryProperties));
                     }
                     else

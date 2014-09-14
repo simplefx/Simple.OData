@@ -8,9 +8,9 @@ namespace Simple.OData.Client
 {
     class Session : ISession
     {
-        private readonly ProviderFactory _providerFactory;
-        private Func<ODataProvider> _createProvider;
-        private ODataProvider _provider;
+        private readonly AdapterFactory _adapterFactory;
+        private Func<ODataAdapter> _createAdapter;
+        private ODataAdapter _adapter;
 
         public string UrlBase { get; private set; }
         public ICredentials Credentials { get; private set; }
@@ -19,8 +19,8 @@ namespace Simple.OData.Client
 
         private Session(string urlBase, string metadataString)
         {
-            _providerFactory = new ProviderFactory(this);
-            _createProvider = () => _providerFactory.ParseMetadata(metadataString);
+            _adapterFactory = new AdapterFactory(this);
+            _createAdapter = () => _adapterFactory.ParseMetadata(metadataString);
 
             this.UrlBase = urlBase;
             this.MetadataCache = MetadataCache.Instances.GetOrAdd(urlBase, new MetadataCache());
@@ -30,8 +30,8 @@ namespace Simple.OData.Client
 
         private Session(string urlBase, ICredentials credentials)
         {
-            _providerFactory = new ProviderFactory(this);
-            _createProvider = () => _providerFactory.ParseMetadata(this.MetadataCache.MetadataAsString);
+            _adapterFactory = new AdapterFactory(this);
+            _createAdapter = () => _adapterFactory.ParseMetadata(this.MetadataCache.MetadataAsString);
 
             this.UrlBase = urlBase;
             this.Credentials = credentials;
@@ -44,33 +44,33 @@ namespace Simple.OData.Client
             MetadataCache.Instances.Remove(MetadataCache.Instances.Single(x => x.Value == this.MetadataCache).Key);
         }
 
-        public async Task<ODataProvider> ResolveProviderAsync(CancellationToken cancellationToken)
+        public async Task<ODataAdapter> ResolveAdapterAsync(CancellationToken cancellationToken)
         {
             if (!this.MetadataCache.IsResolved())
             {
-                var response = await _providerFactory.SendMetadataRequestAsync(cancellationToken);
-                this.MetadataCache.SetMetadataString(await _providerFactory.GetMetadataAsStringAsync(response));
+                var response = await _adapterFactory.SendMetadataRequestAsync(cancellationToken);
+                this.MetadataCache.SetMetadataString(await _adapterFactory.GetMetadataAsStringAsync(response));
 
-                var provider = await _providerFactory.CreateProviderAsync(response);
-                _createProvider = () => provider;
+                var adapter = await _adapterFactory.CreateAdapterAsync(response);
+                _createAdapter = () => adapter;
             }
 
-            return this.Provider;
+            return this.Adapter;
         }
 
-        public ODataProvider Provider
+        public ODataAdapter Adapter
         {
             get
             {
-                if (_provider == null)
-                    _provider = _createProvider();
-                return _provider;
+                if (_adapter == null)
+                    _adapter = _createAdapter();
+                return _adapter;
             }
         }
 
         public IMetadata Metadata
         {
-            get { return this.Provider.GetMetadata(); }
+            get { return this.Adapter.GetMetadata(); }
         }
 
         public static Session FromUrl(string urlBase, ICredentials credentials = null)

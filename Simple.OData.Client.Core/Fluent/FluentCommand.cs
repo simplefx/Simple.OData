@@ -140,13 +140,13 @@ namespace Simple.OData.Client
 
         public async Task<string> GetCommandTextAsync()
         {
-            await _session.ResolveProviderAsync(CancellationToken.None);
+            await _session.ResolveAdapterAsync(CancellationToken.None);
             return new FluentCommand(this).Resolve().Format();
         }
 
         public async Task<string> GetCommandTextAsync(CancellationToken cancellationToken)
         {
-            await _session.ResolveProviderAsync(cancellationToken);
+            await _session.ResolveAdapterAsync(cancellationToken);
             return new FluentCommand(this).Resolve().Format();
         }
 
