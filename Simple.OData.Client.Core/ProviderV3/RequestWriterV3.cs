@@ -41,7 +41,7 @@ namespace Simple.OData.Client
                     message.SetHeader(HttpLiteral.ContentId, contentId);
                 }
 
-                if (_session.Provider.GetMetadata().EntitySetTypeRequiresOptimisticConcurrencyCheck(collection) &&
+                if (_session.Metadata.EntitySetTypeRequiresOptimisticConcurrencyCheck(collection) &&
                     (method == RestVerbs.Put || method == RestVerbs.Patch || method == RestVerbs.Delete))
                 {
                     message.SetHeader(HttpLiteral.IfMatch, EntityTagHeaderValue.Any.Tag);
@@ -63,10 +63,10 @@ namespace Simple.OData.Client
                 if (method == RestVerbs.Delete)
                     return null;
 
-                var entitySet = _session.Provider.GetMetadata().GetConcreteEntityCollection(collection);
-                var entryDetails = Utils.ParseEntryDetails(_session, entitySet, entryData, resolveContentIdFunc);
-                var entityTypeNamespace = _session.Provider.GetMetadata().GetEntitySetTypeNamespace(collection);
-                var entityTypeName = _session.Provider.GetMetadata().GetEntitySetTypeName(collection);
+                var entityCollection = _session.Metadata.GetConcreteEntityCollection(collection);
+                var entryDetails = Utils.ParseEntryDetails(_session, entityCollection, entryData, resolveContentIdFunc);
+                var entityTypeNamespace = _session.Metadata.GetEntitySetTypeNamespace(collection);
+                var entityTypeName = _session.Metadata.GetEntitySetTypeName(collection);
 
                 var entryWriter = messageWriter.CreateODataEntryWriter();
                 var entry = new Microsoft.Data.OData.ODataEntry();

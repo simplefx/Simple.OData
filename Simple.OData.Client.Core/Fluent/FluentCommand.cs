@@ -120,15 +120,15 @@ namespace Simple.OData.Client
             {
                 if (!string.IsNullOrEmpty(_collectionName))
                 {
-                    var entitySet = _session.Provider.GetMetadata().GetEntityCollection(_collectionName);
+                    var entityCollection = _session.Metadata.GetEntityCollection(_collectionName);
                     return string.IsNullOrEmpty(_derivedCollectionName)
-                               ? entitySet
-                               : _session.Provider.GetMetadata().GetDerivedEntityCollection(entitySet, _derivedCollectionName);
+                               ? entityCollection
+                               : _session.Metadata.GetDerivedEntityCollection(entityCollection, _derivedCollectionName);
                 }
                 else if (!string.IsNullOrEmpty(_linkName))
                 {
                     var parent = new FluentCommand(_parent).Resolve();
-                    return _session.Provider.GetMetadata().GetEntityCollection(_session.Provider.GetMetadata()
+                    return _session.Metadata.GetEntityCollection(_session.Metadata
                         .GetNavigationPropertyPartnerName(parent.EntityCollection.ActualName, _linkName));
                 }
                 else
@@ -397,7 +397,7 @@ namespace Simple.OData.Client
                 if (!HasKey)
                     return null;
 
-                var keyNames = _session.Provider.GetMetadata().GetDeclaredKeyPropertyNames(this.EntityCollection.ActualName).ToList();
+                var keyNames = _session.Metadata.GetDeclaredKeyPropertyNames(this.EntityCollection.ActualName).ToList();
                 var namedKeyValues = new Dictionary<string, object>();
                 for (int index = 0; index < keyNames.Count; index++)
                 {
@@ -439,23 +439,23 @@ namespace Simple.OData.Client
             string commandText = string.Empty;
             if (!string.IsNullOrEmpty(_collectionName))
             {
-                var entitySetName = _session.Provider.GetMetadata().GetEntitySetExactName(_collectionName);
-                var entityTypeNamespace = _session.Provider.GetMetadata().GetEntitySetTypeNamespace(_collectionName);
+                var entitySetName = _session.Metadata.GetEntitySetExactName(_collectionName);
+                var entityTypeNamespace = _session.Metadata.GetEntitySetTypeNamespace(_collectionName);
                 commandText += entitySetName;
                 if (!string.IsNullOrEmpty(_derivedCollectionName))
                     commandText += "/" + string.Join(".",
                         entityTypeNamespace,
-                        _session.Provider.GetMetadata().GetEntityTypeExactName(_derivedCollectionName));
+                        _session.Metadata.GetEntityTypeExactName(_derivedCollectionName));
             }
             else if (!string.IsNullOrEmpty(_linkName))
             {
                 var parent = new FluentCommand(_parent).Resolve();
                 commandText += parent.Format() + "/";
-                commandText += _session.Provider.GetMetadata().GetNavigationPropertyExactName(parent.EntityCollection.ActualName, _linkName);
+                commandText += _session.Metadata.GetNavigationPropertyExactName(parent.EntityCollection.ActualName, _linkName);
             }
             else if (!string.IsNullOrEmpty(_functionName))
             {
-                commandText += _session.Provider.GetMetadata().GetFunctionExactName(_functionName);
+                commandText += _session.Metadata.GetFunctionExactName(_functionName);
             }
 
             if (HasKey && HasFilter)
@@ -515,26 +515,26 @@ namespace Simple.OData.Client
         {
             var names = new List<string>();
             var items = item.Split('/');
-            var entitySet = this.EntityCollection;
+            var entityCollection = this.EntityCollection;
             foreach (var associationName in items)
             {
-                names.Add(_session.Provider.GetMetadata().GetNavigationPropertyExactName(entitySet.ActualName, associationName));
-                entitySet = _session.Provider.GetMetadata().GetEntityCollection(
-                    _session.Provider.GetMetadata().GetNavigationPropertyPartnerName(entitySet.ActualName, associationName));
+                names.Add(_session.Metadata.GetNavigationPropertyExactName(entityCollection.ActualName, associationName));
+                entityCollection = _session.Metadata.GetEntityCollection(
+                    _session.Metadata.GetNavigationPropertyPartnerName(entityCollection.ActualName, associationName));
             }
             return string.Join("/", names);
         }
 
         private string FormatSelectItem(string item)
         {
-            return _session.Provider.GetMetadata().HasStructuralProperty(this.EntityCollection.ActualName, item)
-                ? _session.Provider.GetMetadata().GetStructuralPropertyExactName(this.EntityCollection.ActualName, item)
-                : _session.Provider.GetMetadata().GetNavigationPropertyExactName(this.EntityCollection.ActualName, item);
+            return _session.Metadata.HasStructuralProperty(this.EntityCollection.ActualName, item)
+                ? _session.Metadata.GetStructuralPropertyExactName(this.EntityCollection.ActualName, item)
+                : _session.Metadata.GetNavigationPropertyExactName(this.EntityCollection.ActualName, item);
         }
 
         private string FormatOrderByItem(KeyValuePair<string, bool> item)
         {
-            return _session.Provider.GetMetadata().GetStructuralPropertyExactName(
+            return _session.Metadata.GetStructuralPropertyExactName(
                 this.EntityCollection.ActualName, item.Key) + (item.Value ? " desc" : string.Empty);
         }
 
@@ -559,7 +559,7 @@ namespace Simple.OData.Client
             if (!ok)
                 return null;
 
-            var keyNames = _session.Provider.GetMetadata().GetDeclaredKeyPropertyNames(this.EntityCollection.ActualName).ToList();
+            var keyNames = _session.Metadata.GetDeclaredKeyPropertyNames(this.EntityCollection.ActualName).ToList();
             return keyNames.Count == namedKeyValues.Count() && keyNames.All(namedKeyValues.ContainsKey) 
                 ? namedKeyValues 
                 : null;

@@ -62,7 +62,7 @@ namespace Simple.OData.Client
 
         public object Message { get; set; }
 
-        internal ODataRequest(string method, Session session, string commandText)
+        internal ODataRequest(string method, ISession session, string commandText)
         {
             this.Method = method;
             this.Uri = CreateRequestUrl(session, commandText);
@@ -70,20 +70,20 @@ namespace Simple.OData.Client
             this.Credentials = session.Credentials;
         }
 
-        internal ODataRequest(string method, Session session, string commandText, HttpRequestMessage requestMessage)
+        internal ODataRequest(string method, ISession session, string commandText, HttpRequestMessage requestMessage)
             : this(method, session, commandText)
         {
             this.RequestMessage = requestMessage;
         }
 
-        internal ODataRequest(string method, Session session, string commandText, IDictionary<string, object> entryData, Stream contentStream)
+        internal ODataRequest(string method, ISession session, string commandText, IDictionary<string, object> entryData, Stream contentStream)
             : this(method, session, commandText)
         {
             EntryData = entryData;
             ContentStream = contentStream;
         }
 
-        private string CreateRequestUrl(Session session, string commandText)
+        private string CreateRequestUrl(ISession session, string commandText)
         {
             string url = string.IsNullOrEmpty(session.UrlBase) ? "http://" : session.UrlBase;
             if (!url.EndsWith("/"))

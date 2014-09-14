@@ -326,8 +326,8 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var entryKeyWithNames = new Dictionary<string, object>();
-            var entitySet = _session.Provider.GetMetadata().GetConcreteEntityCollection(collection);
-            var keyNames = _session.Provider.GetMetadata().GetDeclaredKeyPropertyNames(entitySet.ActualName).ToList();
+            var entityCollection = _session.Metadata.GetConcreteEntityCollection(collection);
+            var keyNames = _session.Metadata.GetDeclaredKeyPropertyNames(entityCollection.ActualName).ToList();
             for (int index = 0; index < keyNames.Count; index++)
             {
                 entryKeyWithNames.Add(keyNames[index], entryKey.ElementAt(index));
@@ -432,9 +432,9 @@ namespace Simple.OData.Client
             var result = await ExecuteRequestWithResultAsync(request, cancellationToken, x => x.Entry);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var entitySet = this.Session.Provider.GetMetadata().GetConcreteEntityCollection(collection);
-            var entitySetName = this.Session.Provider.GetMetadata().GetEntitySetExactName(collection);
-            var entryDetails = Utils.ParseEntryDetails(_session, entitySet, entryData);
+            var entityCollection = this.Session.Metadata.GetConcreteEntityCollection(collection);
+            var entitySetName = this.Session.Metadata.GetEntitySetExactName(collection);
+            var entryDetails = Utils.ParseEntryDetails(_session, entityCollection, entryData);
 
             //foreach (var link in entryMembers.Links)
             //{
@@ -447,7 +447,7 @@ namespace Simple.OData.Client
 
             var removedLinks = entryDetails.Links
                 .Where(x => x.LinkData == null)
-                .Select(x => _session.Provider.GetMetadata().GetNavigationPropertyExactName(entitySetName, x.LinkName))
+                .Select(x => _session.Metadata.GetNavigationPropertyExactName(entitySetName, x.LinkName))
                 .ToList();
 
             foreach (var associationName in removedLinks)
@@ -544,7 +544,7 @@ namespace Simple.OData.Client
             var entryPath = await FormatEntryKeyAsync(collection, entryKey, cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var linkedCollection = _session.Provider.GetMetadata().GetNavigationPropertyPartnerName(collection, linkName);
+            var linkedCollection = _session.Metadata.GetNavigationPropertyPartnerName(collection, linkName);
             var linkPath = await FormatEntryKeyAsync(linkedCollection, linkedEntryKey, cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
@@ -706,7 +706,7 @@ namespace Simple.OData.Client
             await _session.ResolveProviderAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var collectionName = _session.Provider.GetMetadata().GetEntityCollection(command.CollectionName).ActualName;
+            var collectionName = _session.Metadata.GetEntityCollection(command.CollectionName).ActualName;
             return await InsertEntryAsync(collectionName, entryData, resultRequired, cancellationToken);
         }
 
@@ -715,7 +715,7 @@ namespace Simple.OData.Client
             await _session.ResolveProviderAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var collectionName = _session.Provider.GetMetadata().GetEntityCollection(command.CollectionName).ActualName;
+            var collectionName = _session.Metadata.GetEntityCollection(command.CollectionName).ActualName;
             return await UpdateEntryAsync(collectionName, entryKey, entryData, resultRequired, cancellationToken);
         }
 
@@ -724,7 +724,7 @@ namespace Simple.OData.Client
             await _session.ResolveProviderAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var collectionName = _session.Provider.GetMetadata().GetEntityCollection(command.CollectionName).ActualName;
+            var collectionName = _session.Metadata.GetEntityCollection(command.CollectionName).ActualName;
             return await UpdateEntryAsync(collectionName, command.KeyValues, command.EntryData, resultRequired, cancellationToken);
         }
 
@@ -733,7 +733,7 @@ namespace Simple.OData.Client
             await _session.ResolveProviderAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var collectionName = _session.Provider.GetMetadata().GetEntityCollection(command.CollectionName).ActualName;
+            var collectionName = _session.Metadata.GetEntityCollection(command.CollectionName).ActualName;
             var commandText = await command.GetCommandTextAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
@@ -745,7 +745,7 @@ namespace Simple.OData.Client
             await _session.ResolveProviderAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var collectionName = _session.Provider.GetMetadata().GetEntityCollection(command.CollectionName).ActualName;
+            var collectionName = _session.Metadata.GetEntityCollection(command.CollectionName).ActualName;
             await DeleteEntryAsync(collectionName, entryKey, cancellationToken);
         }
 
@@ -754,7 +754,7 @@ namespace Simple.OData.Client
             await _session.ResolveProviderAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var collectionName = _session.Provider.GetMetadata().GetEntityCollection(command.CollectionName).ActualName;
+            var collectionName = _session.Metadata.GetEntityCollection(command.CollectionName).ActualName;
             await DeleteEntryAsync(collectionName, command.KeyValues, cancellationToken);
         }
 
@@ -763,7 +763,7 @@ namespace Simple.OData.Client
             await _session.ResolveProviderAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var collectionName = _session.Provider.GetMetadata().GetEntityCollection(command.CollectionName).ActualName;
+            var collectionName = _session.Metadata.GetEntityCollection(command.CollectionName).ActualName;
             var commandText = await command.GetCommandTextAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
@@ -775,7 +775,7 @@ namespace Simple.OData.Client
             await _session.ResolveProviderAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var collectionName = _session.Provider.GetMetadata().GetEntityCollection(command.CollectionName).ActualName;
+            var collectionName = _session.Metadata.GetEntityCollection(command.CollectionName).ActualName;
             await LinkEntryAsync(collectionName, entryKey, linkName, linkedEntryKey, cancellationToken);
         }
 
@@ -784,7 +784,7 @@ namespace Simple.OData.Client
             await _session.ResolveProviderAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var collectionName = _session.Provider.GetMetadata().GetEntityCollection(command.CollectionName).ActualName;
+            var collectionName = _session.Metadata.GetEntityCollection(command.CollectionName).ActualName;
             await UnlinkEntryAsync(collectionName, entryKey, linkName, cancellationToken);
         }
 

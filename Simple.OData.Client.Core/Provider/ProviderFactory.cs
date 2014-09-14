@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,9 +11,9 @@ namespace Simple.OData.Client
 {
     class ProviderFactory
     {
-        private readonly Session _session;
+        private readonly ISession _session;
 
-        public ProviderFactory(Session session)
+        public ProviderFactory(ISession session)
         {
             _session = session;
         }

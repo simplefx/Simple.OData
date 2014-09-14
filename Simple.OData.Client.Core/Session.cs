@@ -68,6 +68,11 @@ namespace Simple.OData.Client
             }
         }
 
+        public IMetadata Metadata
+        {
+            get { return this.Provider.GetMetadata(); }
+        }
+
         public static Session FromUrl(string urlBase, ICredentials credentials = null)
         {
             return new Session(urlBase, credentials);

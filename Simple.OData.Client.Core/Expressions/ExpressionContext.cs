@@ -4,24 +4,25 @@
     {
         private EntityCollection _entityCollection;
 
-        public Session Session { get; set; }
-        public EntityCollection EntityCollection
-        {
-            get
-            {
-                if (!IsSet)
-                    return null;
-                if (_entityCollection != null)
-                    return _entityCollection;
+        public ISession Session { get; set; }
+        public EntityCollection EntityCollection { get; set; }
+        //public EntityCollection EntityCollection
+        //{
+        //    get
+        //    {
+        //        if (!IsSet)
+        //            return null;
+        //        if (_entityCollection != null)
+        //            return _entityCollection;
 
-                return this.Session.Provider.GetMetadata().GetConcreteEntityCollection(this.Collection);
-            }
+        //        return this.session.Metadata.GetConcreteEntityCollection(this.Collection);
+        //    }
 
-            set 
-            { 
-                _entityCollection = value; 
-            }
-        }
+        //    set 
+        //    { 
+        //        _entityCollection = value; 
+        //    }
+        //}
         public string Collection { get; set; }
 
         public bool IsSet

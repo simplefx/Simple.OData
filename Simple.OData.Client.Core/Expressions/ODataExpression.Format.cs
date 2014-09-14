@@ -6,7 +6,7 @@ namespace Simple.OData.Client
 {
     public partial class ODataExpression
     {
-        internal string Format(Session session, EntityCollection entityCollection)
+        internal string Format(ISession session, EntityCollection entityCollection)
         {
             return this.Format(new ExpressionContext()
                                    {
@@ -15,7 +15,7 @@ namespace Simple.OData.Client
                                    });
         }
 
-        internal string Format(Session session, string collection)
+        internal string Format(ISession session, string collection)
         {
             return this.Format(new ExpressionContext { Session = session, Collection = collection });
         }
@@ -67,7 +67,11 @@ namespace Simple.OData.Client
         private string FormatReference(ExpressionContext context)
         {
             var elementNames = new List<string>(this.Reference.Split('.'));
-            var pathNames = BuildReferencePath(new List<string>(), context.EntityCollection, elementNames, context);
+            var entityCollection = context.IsSet
+                ? context.EntityCollection ??
+                  context.Session.Metadata.GetConcreteEntityCollection(context.Collection)
+                : null;
+            var pathNames = BuildReferencePath(new List<string>(), entityCollection, elementNames, context);
             return string.Join("/", pathNames);
         }
 
@@ -140,16 +144,16 @@ namespace Simple.OData.Client
             var objectName = elementNames.First();
             if (entityCollection != null)
             {
-                if (context.Session.Provider.GetMetadata().HasStructuralProperty(entityCollection.ActualName, objectName))
+                if (context.Session.Metadata.HasStructuralProperty(entityCollection.ActualName, objectName))
                 {
-                    pathNames.Add(context.Session.Provider.GetMetadata().GetStructuralPropertyExactName(entityCollection.ActualName, objectName));
+                    pathNames.Add(context.Session.Metadata.GetStructuralPropertyExactName(entityCollection.ActualName, objectName));
                     return BuildReferencePath(pathNames, null, elementNames.Skip(1).ToList(), context);
                 }
-                else if (context.Session.Provider.GetMetadata().HasNavigationProperty(entityCollection.ActualName, objectName))
+                else if (context.Session.Metadata.HasNavigationProperty(entityCollection.ActualName, objectName))
                 {
-                    pathNames.Add(context.Session.Provider.GetMetadata().GetNavigationPropertyExactName(entityCollection.ActualName, objectName));
-                    return BuildReferencePath(pathNames, context.Session.Provider.GetMetadata().GetEntityCollection(
-                        context.Session.Provider.GetMetadata().GetNavigationPropertyPartnerName(entityCollection.ActualName, objectName)), 
+                    pathNames.Add(context.Session.Metadata.GetNavigationPropertyExactName(entityCollection.ActualName, objectName));
+                    return BuildReferencePath(pathNames, context.Session.Metadata.GetEntityCollection(
+                        context.Session.Metadata.GetNavigationPropertyPartnerName(entityCollection.ActualName, objectName)), 
                         elementNames.Skip(1).ToList(), context);
                 }
                 else
