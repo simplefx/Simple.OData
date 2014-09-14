@@ -30,7 +30,7 @@ namespace Simple.OData.Client
         public ODataClient(ODataClientSettings settings)
         {
             _settings = settings;
-            _session = Session.FromUrl(_settings.UrlBase, _settings.Credentials);
+            _session = Session.FromSettings(_settings);
 
             _requestBuilder = new RequestBuilder(_session);
             _requestRunner = new RequestRunner(_session);
@@ -45,7 +45,7 @@ namespace Simple.OData.Client
         public ODataClient(ODataBatch batch)
         {
             _settings = batch.Settings;
-            _session = Session.FromUrl(_settings.UrlBase, _settings.Credentials);
+            _session = Session.FromSettings(_settings);
 
             _requestBuilder = batch.RequestBuilder;
             _requestRunner = batch.RequestRunner;

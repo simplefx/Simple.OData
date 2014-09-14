@@ -14,6 +14,7 @@ namespace Simple.OData.Client
 
         public string UrlBase { get; private set; }
         public ICredentials Credentials { get; private set; }
+        public ODataPayloadFormat PayloadFormat { get; private set; }
         public MetadataCache MetadataCache { get; private set; }
         public IPluralizer Pluralizer { get; internal set; }
 
@@ -28,13 +29,14 @@ namespace Simple.OData.Client
             this.Pluralizer = new SimplePluralizer();
         }
 
-        private Session(string urlBase, ICredentials credentials)
+        private Session(string urlBase, ICredentials credentials, ODataPayloadFormat payloadFormat = ODataPayloadFormat.Unspecified)
         {
             _adapterFactory = new AdapterFactory(this);
             _createAdapter = () => _adapterFactory.ParseMetadata(this.MetadataCache.MetadataAsString);
 
             this.UrlBase = urlBase;
             this.Credentials = credentials;
+            this.PayloadFormat = payloadFormat;
             this.MetadataCache = MetadataCache.Instances.GetOrAdd(urlBase, new MetadataCache());
             this.Pluralizer = new SimplePluralizer();
         }
@@ -73,9 +75,9 @@ namespace Simple.OData.Client
             get { return this.Adapter.GetMetadata(); }
         }
 
-        public static Session FromUrl(string urlBase, ICredentials credentials = null)
+        public static Session FromSettings(ODataClientSettings settings)
         {
-            return new Session(urlBase, credentials);
+            return new Session(settings.UrlBase, settings.Credentials, settings.PayloadFormat);
         }
 
         public static Session FromMetadata(string urlBase, string metadataString)

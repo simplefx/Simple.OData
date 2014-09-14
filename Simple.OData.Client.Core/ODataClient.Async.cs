@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -55,7 +54,7 @@ namespace Simple.OData.Client
         /// <returns>The service metadata.</returns>
         public static async Task<object> GetMetadataAsync(string urlBase, ICredentials credentials, CancellationToken cancellationToken)
         {
-            var session = Session.FromUrl(urlBase, credentials);
+            var session = Session.FromSettings(new ODataClientSettings(urlBase, credentials));
             await session.ResolveAdapterAsync(cancellationToken);
             return session.Adapter.Model;
         }
@@ -107,7 +106,7 @@ namespace Simple.OData.Client
         /// </returns>
         public static async Task<T> GetMetadataAsync<T>(string urlBase, ICredentials credentials, CancellationToken cancellationToken)
         {
-            var session = Session.FromUrl(urlBase, credentials);
+            var session = Session.FromSettings(new ODataClientSettings(urlBase, credentials));
             await session.ResolveAdapterAsync(cancellationToken);
             return (T)session.Adapter.Model;
         }
@@ -153,7 +152,7 @@ namespace Simple.OData.Client
         /// <returns>The service metadata.</returns>
         public static async Task<string> GetMetadataAsStringAsync(string urlBase, ICredentials credentials, CancellationToken cancellationToken)
         {
-            var session = Session.FromUrl(urlBase, credentials);
+            var session = Session.FromSettings(new ODataClientSettings(urlBase, credentials));
             await session.ResolveAdapterAsync(cancellationToken);
             return session.MetadataCache.MetadataAsString;
         }

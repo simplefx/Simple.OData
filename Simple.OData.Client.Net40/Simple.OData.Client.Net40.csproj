@@ -122,8 +122,8 @@
     <Compile Include="..\Simple.OData.Client.Core\AdapterV3\MetadataV3.cs">
       <Link>AdapterV3\MetadataV3.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\AdapterV3\ODataProviderV3.cs">
-      <Link>AdapterV3\ODataProviderV3.cs</Link>
+    <Compile Include="..\Simple.OData.Client.Core\AdapterV3\ODataAdapterV3.cs">
+      <Link>AdapterV3\ODataAdapterV3.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\AdapterV3\ODataV3RequestMessage.cs">
       <Link>AdapterV3\ODataV3RequestMessage.cs</Link>
@@ -140,8 +140,8 @@
     <Compile Include="..\Simple.OData.Client.Core\AdapterV4\MetadataV4.cs">
       <Link>AdapterV4\MetadataV4.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\AdapterV4\ODataProviderV4.cs">
-      <Link>AdapterV4\ODataProviderV4.cs</Link>
+    <Compile Include="..\Simple.OData.Client.Core\AdapterV4\ODataAdapterV4.cs">
+      <Link>AdapterV4\ODataAdapterV4.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\AdapterV4\ODataV4RequestMessage.cs">
       <Link>AdapterV4\ODataV4RequestMessage.cs</Link>
@@ -163,6 +163,9 @@
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Adapter\IResponseReader.cs">
       <Link>Adapter\IResponseReader.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Adapter\MetadataBase.cs">
+      <Link>Adapter\MetadataBase.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Adapter\ODataAdapter.cs">
       <Link>Adapter\ODataAdapter.cs</Link>
@@ -301,6 +304,9 @@
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ODataLiteral.cs">
       <Link>ODataLiteral.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ODataPayloadFormat.cs">
+      <Link>ODataPayloadFormat.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ODataRequest.cs">
       <Link>ODataRequest.cs</Link>

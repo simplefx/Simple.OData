@@ -16,17 +16,19 @@ namespace Simple.OData.Client.Tests
         protected const string NorthwindV3ReadOnlyUri = "http://services.odata.org/V3/Northwind/Northwind.svc/";
 
         protected readonly string _serviceUri;
+        protected readonly ODataPayloadFormat _payloadFormat;
         protected IODataClient _client;
 
-        protected TestBase(string serviceUri)
+        protected TestBase(string serviceUri, ODataPayloadFormat payloadFormat)
         {
             _serviceUri = serviceUri;
+            _payloadFormat = payloadFormat;
             _client = CreateClientWithDefaultSettings();
         }
 
         protected IODataClient CreateClientWithDefaultSettings()
         {
-            return new ODataClient(_serviceUri);
+            return new ODataClient(new ODataClientSettings(_serviceUri) {PayloadFormat = _payloadFormat});
         }
 
         public void Dispose()

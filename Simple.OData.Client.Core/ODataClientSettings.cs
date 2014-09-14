@@ -26,6 +26,14 @@ namespace Simple.OData.Client
         public ICredentials Credentials { get; set; }
 
         /// <summary>
+        /// Gets or sets the OData payload format.
+        /// </summary>
+        /// <value>
+        /// The payload format (Json or Atom).
+        /// </value>
+        public ODataPayloadFormat PayloadFormat { get; set; }
+
+        /// <summary>
         /// Gets or sets a value indicating whether entry properties should be extended with the resource type.
         /// </summary>
         /// <value>

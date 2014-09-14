@@ -5,7 +5,7 @@ using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
-    class MetadataV3 : IMetadata
+    class MetadataV3 : MetadataBase
     {
         private readonly ISession _session;
         private readonly IEdmModel _model;
@@ -16,33 +16,33 @@ namespace Simple.OData.Client
             _model = model;
         }
 
-        public IEnumerable<string> GetEntitySetNames()
+        public override IEnumerable<string> GetEntitySetNames()
         {
             return GetEntitySets().Select(x => x.Name);
         }
 
-        public string GetEntitySetExactName(string entitySetName)
+        public override string GetEntitySetExactName(string entitySetName)
         {
             return GetEntitySet(entitySetName).Name;
         }
 
-        public string GetEntitySetTypeName(string entitySetName)
+        public override string GetEntitySetTypeName(string entitySetName)
         {
             return GetEntityType(entitySetName).Name;
         }
 
-        public string GetEntitySetTypeNamespace(string entitySetName)
+        public override string GetEntitySetTypeNamespace(string entitySetName)
         {
             return GetEntityType(entitySetName).Namespace;
         }
 
-        public bool EntitySetTypeRequiresOptimisticConcurrencyCheck(string entitySetName)
+        public override bool EntitySetTypeRequiresOptimisticConcurrencyCheck(string entitySetName)
         {
             return GetEntityType(entitySetName).StructuralProperties()
                 .Any(x => x.ConcurrencyMode == EdmConcurrencyMode.Fixed);
         }
 
-        public string GetDerivedEntityTypeExactName(string entitySetName, string entityTypeName)
+        public override string GetDerivedEntityTypeExactName(string entitySetName, string entityTypeName)
         {
             var entitySet = GetEntitySet(entitySetName);
             var entityType = (_model.FindDirectlyDerivedTypes(entitySet.ElementType)
@@ -54,7 +54,7 @@ namespace Simple.OData.Client
             return entityType.Name;
         }
 
-        public string GetEntityTypeExactName(string entityTypeName)
+        public override string GetEntityTypeExactName(string entityTypeName)
         {
             var entityType = GetEntityTypes().SingleOrDefault(x => Utils.NamesAreEqual(x.Name, entityTypeName, _session.Pluralizer));
 
@@ -64,75 +64,42 @@ namespace Simple.OData.Client
             return entityType.Name;
         }
 
-        public EntityCollection GetEntityCollection(string entitySetName)
-        {
-            return new EntityCollection(GetEntitySetExactName(entitySetName));
-        }
-
-        public EntityCollection GetBaseEntityCollection(string entitySetPath)
-        {
-            return this.GetEntityCollection(entitySetPath.Split('/').First());
-        }
-
-        public EntityCollection GetConcreteEntityCollection(string entitySetPath)
-        {
-            var items = entitySetPath.Split('/');
-            if (items.Count() > 1)
-            {
-                var baseEntitySet = this.GetEntityCollection(items[0]);
-                var entitySet = string.IsNullOrEmpty(items[1])
-                    ? baseEntitySet
-                    : GetDerivedEntityCollection(baseEntitySet, items[1]);
-                return entitySet;
-            }
-            else
-            {
-                return this.GetEntityCollection(entitySetPath);
-            }
-        }
-
-        public EntityCollection GetDerivedEntityCollection(EntityCollection baseEntityCollection, string entityTypeName)
-        {
-            var actualName = GetDerivedEntityTypeExactName(baseEntityCollection.ActualName, entityTypeName);
-            return new EntityCollection(actualName, baseEntityCollection);
-        }
-
-        public IEnumerable<string> GetStructuralPropertyNames(string entitySetName)
+        public override IEnumerable<string> GetStructuralPropertyNames(string entitySetName)
         {
             return GetEntityType(entitySetName).StructuralProperties().Select(x => x.Name);
         }
 
-        public bool HasStructuralProperty(string entitySetName, string propertyName)
+        public override bool HasStructuralProperty(string entitySetName, string propertyName)
         {
             return GetEntityType(entitySetName).StructuralProperties().Any(x => Utils.NamesAreEqual(x.Name, propertyName, _session.Pluralizer));
         }
 
-        public string GetStructuralPropertyExactName(string entitySetName, string propertyName)
+        public override string GetStructuralPropertyExactName(string entitySetName, string propertyName)
         {
             return GetStructuralProperty(entitySetName, propertyName).Name;
         }
 
-        public bool HasNavigationProperty(string entitySetName, string propertyName)
+        public override bool HasNavigationProperty(string entitySetName, string propertyName)
         {
             return GetEntityType(entitySetName).NavigationProperties().Any(x => Utils.NamesAreEqual(x.Name, propertyName, _session.Pluralizer));
         }
 
-        public string GetNavigationPropertyExactName(string entitySetName, string propertyName)
+        public override string GetNavigationPropertyExactName(string entitySetName, string propertyName)
         {
             return GetNavigationProperty(entitySetName, propertyName).Name;
         }
 
-        public string GetNavigationPropertyPartnerName(string entitySetName, string propertyName)
+        public override string GetNavigationPropertyPartnerName(string entitySetName, string propertyName)
         {
             return (GetNavigationProperty(entitySetName, propertyName).Partner.DeclaringType as IEdmEntityType).Name;
         }
 
-        public bool IsNavigationPropertyMultiple(string entitySetName, string propertyName)
+        public override bool IsNavigationPropertyMultiple(string entitySetName, string propertyName)
         {
             return GetNavigationProperty(entitySetName, propertyName).Partner.Multiplicity() == EdmMultiplicity.Many;
         }
 
-        public IEnumerable<string> GetDeclaredKeyPropertyNames(string entitySetName)
+        public override IEnumerable<string> GetDeclaredKeyPropertyNames(string entitySetName)
         {
             var entityType = GetEntityType(entitySetName);
             while (entityType.DeclaredKey == null && entityType.BaseEntityType() != null)
@@ -146,7 +113,7 @@ namespace Simple.OData.Client
             return entityType.DeclaredKey.Select(x => x.Name);
         }
 
-        public string GetFunctionExactName(string functionName)
+        public override string GetFunctionExactName(string functionName)
         {
             var function = _model.SchemaElements
                 .Where(x => x.SchemaElementKind == EdmSchemaElementKind.EntityContainer)

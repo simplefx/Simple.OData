@@ -32,7 +32,7 @@ namespace Simple.OData.Client
         /// <param name="settings">The settings.</param>
         public ODataBatch(ODataClientSettings settings)
         {
-            var session = Session.FromUrl(settings.UrlBase, settings.Credentials);
+            var session = Session.FromSettings(settings);
             this.Settings = settings;
             this.RequestBuilder = new RequestBuilder(session, true);
             this.RequestRunner = new RequestRunner(session);

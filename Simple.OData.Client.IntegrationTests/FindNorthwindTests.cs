@@ -8,19 +8,29 @@ using Entry = System.Collections.Generic.Dictionary<string, object>;
 
 namespace Simple.OData.Client.Tests
 {
-    public class FindTestsNorthwindV2 : FindTests
+    public class FindTestsNorthwindV2Atom : FindTests
     {
-        public FindTestsNorthwindV2() : base(NorthwindV2ReadOnlyUri) {}
+        public FindTestsNorthwindV2Atom() : base(NorthwindV2ReadOnlyUri, ODataPayloadFormat.Atom) {}
     }
 
-    public class FindTestsNorthwindV3 : FindTests
+    public class FindTestsNorthwindV2Json : FindTests
     {
-        public FindTestsNorthwindV3() : base(NorthwindV3ReadOnlyUri) { }
+        public FindTestsNorthwindV2Json() : base(NorthwindV2ReadOnlyUri, ODataPayloadFormat.Json) { }
+    }
+
+    public class FindTestsNorthwindV3Atom : FindTests
+    {
+        public FindTestsNorthwindV3Atom() : base(NorthwindV3ReadOnlyUri, ODataPayloadFormat.Atom) { }
+    }
+
+    public class FindTestsNorthwindV3Json : FindTests
+    {
+        public FindTestsNorthwindV3Json() : base(NorthwindV3ReadOnlyUri, ODataPayloadFormat.Json) { }
     }
 
     public abstract class FindTests : TestBase
     {
-        protected FindTests(string serviceUri) : base(serviceUri) {}
+        protected FindTests(string serviceUri, ODataPayloadFormat payloadFormat) : base(serviceUri, payloadFormat) {}
 
         protected override async Task DeleteTestData()
         {
@@ -90,7 +100,7 @@ namespace Simple.OData.Client.Tests
                 .For("Products")
                 .Skip(1)
                 .FindEntriesAsync();
-            Assert.Equal(76, products.Count());
+            Assert.Equal(20, products.Count());
         }
 
         [Fact]
@@ -175,7 +185,7 @@ namespace Simple.OData.Client.Tests
                 .OrderBy("ProductID")
                 .Expand("Category")
                 .FindEntriesAsync()).Last();
-            Assert.Equal("Condiments", (product["Category"] as IDictionary<string, object>)["CategoryName"]);
+            Assert.Equal("Confections", (product["Category"] as IDictionary<string, object>)["CategoryName"]);
         }
 
         [Fact]
@@ -197,19 +207,7 @@ namespace Simple.OData.Client.Tests
                 .OrderBy("ProductID")
                 .Expand("Category/Products")
                 .FindEntriesAsync()).Last();
-            Assert.Equal(12, ((product["Category"] as IDictionary<string, object>)["Products"] as IEnumerable<object>).Count());
-        }
-
-        [Fact]
-        public async Task ExpandODataOrg()
-        {
-            var client = new ODataClient("http://services.odata.org/V3/OData/OData.svc/");
-            IEnumerable<object> productDetails = await client
-                .For("Product")
-                .Expand("ProductDetails")
-                .Filter("ID eq 0")
-                .FindEntriesAsync();
-            Assert.NotEqual(0, productDetails.Count());
+            Assert.Equal(13, ((product["Category"] as IDictionary<string, object>)["Products"] as IEnumerable<object>).Count());
         }
 
         [Fact]
@@ -239,8 +237,8 @@ namespace Simple.OData.Client.Tests
             var productsWithCount = await _client
                 .For("Products")
                 .FindEntriesWithCountAsync(true);
-            Assert.Equal(77, productsWithCount.Item2);
-            Assert.Equal(77, productsWithCount.Item1.Count());
+            Assert.Equal(20, productsWithCount.Item2);
+            Assert.Equal(20, productsWithCount.Item1.Count());
         }
 
         [Fact]
