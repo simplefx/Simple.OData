@@ -432,7 +432,7 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var entityCollection = this.Session.Metadata.GetConcreteEntityCollection(collection);
-            var entryDetails = Utils.ParseEntryDetails(_session, entityCollection.ActualName, entryData);
+            var entryDetails = _session.Metadata.ParseEntryDetails(entityCollection.ActualName, entryData);
 
             //foreach (var link in entryMembers.Links)
             //{

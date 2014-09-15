@@ -59,7 +59,7 @@ namespace Simple.OData.Client
 
                 var contentId = _deferredBatchWriter != null ? _deferredBatchWriter.Value.GetContentId(entryData) : null;
                 var entityCollection = _session.Metadata.GetConcreteEntityCollection(collection);
-                var entryDetails = Utils.ParseEntryDetails(_session, entityCollection.ActualName, entryData, contentId);
+                var entryDetails = _session.Metadata.ParseEntryDetails(entityCollection.ActualName, entryData, contentId);
                 var entityTypeNamespace = _session.Metadata.GetEntitySetTypeNamespace(collection);
                 var entityTypeName = _session.Metadata.GetEntitySetTypeName(collection);
 

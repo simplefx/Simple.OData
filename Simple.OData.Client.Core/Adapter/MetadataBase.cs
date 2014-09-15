@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Simple.OData.Client
@@ -53,6 +54,43 @@ namespace Simple.OData.Client
         {
             var actualName = GetDerivedEntityTypeExactName(baseEntityCollection.ActualName, entityTypeName);
             return new EntityCollection(actualName, baseEntityCollection);
+        }
+
+        public EntryDetails ParseEntryDetails(string collectionName, IDictionary<string, object> entryData, string contentId = null)
+        {
+            var entryDetails = new EntryDetails();
+
+            foreach (var item in entryData)
+            {
+                if (this.HasStructuralProperty(collectionName, item.Key))
+                {
+                    entryDetails.AddProperty(item.Key, item.Value);
+                }
+                else if (this.HasNavigationProperty(collectionName, item.Key))
+                {
+                    if (this.IsNavigationPropertyMultiple(collectionName, item.Key))
+                    {
+                        var collection = item.Value as IEnumerable<object>;
+                        if (collection != null)
+                        {
+                            foreach (var element in collection)
+                            {
+                                entryDetails.AddLink(item.Key, element, contentId);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        entryDetails.AddLink(item.Key, item.Value, contentId);
+                    }
+                }
+                else
+                {
+                    throw new UnresolvableObjectException(item.Key, String.Format("No property or association found for {0}.", item.Key));
+                }
+            }
+
+            return entryDetails;
         }
     }
 }

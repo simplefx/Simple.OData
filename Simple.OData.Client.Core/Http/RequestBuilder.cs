@@ -54,7 +54,7 @@ namespace Simple.OData.Client
         public async Task<ODataRequest> CreateUpdateRequestAsync(string commandText, string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData, bool resultRequired)
         {
             var entityCollection = _session.Metadata.GetConcreteEntityCollection(collection);
-            var entryDetails = Utils.ParseEntryDetails(_session, entityCollection.ActualName, entryData);
+            var entryDetails = _session.Metadata.ParseEntryDetails(entityCollection.ActualName, entryData);
 
             bool hasPropertiesToUpdate = entryDetails.Properties.Count > 0;
             bool merge = !hasPropertiesToUpdate || CheckMergeConditions(collection, entryKey, entryData);

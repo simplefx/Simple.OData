@@ -2,7 +2,7 @@
 
 namespace Simple.OData.Client
 {
-    public interface IMetadata
+    interface IMetadata
     {
         IEnumerable<string> GetEntitySetNames();
         string GetEntitySetExactName(string entitySetName);
@@ -29,5 +29,7 @@ namespace Simple.OData.Client
         EntityCollection GetBaseEntityCollection(string entitySetPath);
         EntityCollection GetConcreteEntityCollection(string entitySetPath);
         EntityCollection GetDerivedEntityCollection(EntityCollection baseEntityCollection, string entityTypeName);
+
+        EntryDetails ParseEntryDetails(string collectionName, IDictionary<string, object> entryData, string contentId = null);
     }
 }
