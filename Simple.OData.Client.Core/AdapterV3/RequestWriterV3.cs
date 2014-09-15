@@ -52,19 +52,14 @@ namespace Simple.OData.Client
                 message = new ODataV3RequestMessage();
             }
 
-            Func<IDictionary<string, object>, string> resolveContentIdFunc = null;
-            if (_deferredBatchWriter != null)
-            {
-                resolveContentIdFunc = _deferredBatchWriter.Value.GetContentId;
-            }
-
             using (var messageWriter = new ODataMessageWriter(message, writerSettings, _model))
             {
                 if (method == RestVerbs.Delete)
                     return null;
 
+                var contentId = _deferredBatchWriter != null ? _deferredBatchWriter.Value.GetContentId(entryData) : null;
                 var entityCollection = _session.Metadata.GetConcreteEntityCollection(collection);
-                var entryDetails = Utils.ParseEntryDetails(_session, entityCollection.ActualName, entryData, resolveContentIdFunc);
+                var entryDetails = Utils.ParseEntryDetails(_session, entityCollection.ActualName, entryData, contentId);
                 var entityTypeNamespace = _session.Metadata.GetEntitySetTypeNamespace(collection);
                 var entityTypeName = _session.Metadata.GetEntitySetTypeName(collection);
 

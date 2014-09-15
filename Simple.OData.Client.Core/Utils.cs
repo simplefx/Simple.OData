@@ -64,9 +64,8 @@ namespace Simple.OData.Client
         }
 
         public static EntryDetails ParseEntryDetails(ISession session, string collectionName, 
-            IDictionary<string, object> entryData, Func<IDictionary<string, object>, string> resolveContentIdFunc = null)
+            IDictionary<string, object> entryData, string contentId = null)
         {
-            var contentId = resolveContentIdFunc != null ? resolveContentIdFunc(entryData) : null;
             var entryDetails = new EntryDetails();
 
             foreach (var item in entryData)
