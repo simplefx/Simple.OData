@@ -60,4 +60,27 @@ namespace Simple.OData.Client.Tests
             }
         }
     }
+
+    public abstract class ODataTests : TestBase
+    {
+        protected ODataTests(string serviceUri, ODataPayloadFormat payloadFormat) : base(serviceUri, payloadFormat)
+        {
+        }
+
+        protected override async Task DeleteTestData()
+        {
+            var products = await _client.FindEntriesAsync("Products");
+            foreach (var product in products)
+            {
+                if (product["Name"].ToString().StartsWith("Test"))
+                    await _client.DeleteEntryAsync("Products", product);
+            }
+            var categories = await _client.FindEntriesAsync("Categories");
+            foreach (var category in categories)
+            {
+                if (category["Name"].ToString().StartsWith("Test"))
+                    await _client.DeleteEntryAsync("Categories", category);
+            }
+        }
+    }
 }

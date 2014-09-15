@@ -1,72 +1,47 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
-using Entry = System.Collections.Generic.Dictionary<string, object>;
-
 namespace Simple.OData.Client.Tests
 {
-    public class FindNorthwindTestsV2Atom : FindNorthwindTests
+    public class FindODataTestsV2Atom : FindODataTests
     {
-        public FindNorthwindTestsV2Atom() : base(NorthwindV2ReadOnlyUri, ODataPayloadFormat.Atom) {}
+        public FindODataTestsV2Atom() : base(ODataV2ReadWriteUri, ODataPayloadFormat.Atom) { }
     }
 
-    public class FindNorthwindTestsV2Json : FindNorthwindTests
+    public class FindODataTestsV2Json : FindODataTests
     {
-        public FindNorthwindTestsV2Json() : base(NorthwindV2ReadOnlyUri, ODataPayloadFormat.Json) { }
+        public FindODataTestsV2Json() : base(ODataV2ReadWriteUri, ODataPayloadFormat.Json) { }
     }
 
-    public class FindNorthwindTestsV3Atom : FindNorthwindTests
+    public class FindODataTestsV3Atom : FindODataTests
     {
-        public FindNorthwindTestsV3Atom() : base(NorthwindV3ReadOnlyUri, ODataPayloadFormat.Atom) { }
+        public FindODataTestsV3Atom() : base(ODataV3ReadOnlyUri, ODataPayloadFormat.Atom) { }
     }
 
-    public class FindNorthwindTestsV3Json : FindNorthwindTests
+    public class FindODataTestsV3Json : FindODataTests
     {
-        public FindNorthwindTestsV3Json() : base(NorthwindV3ReadOnlyUri, ODataPayloadFormat.Json) { }
+        public FindODataTestsV3Json() : base(ODataV3ReadOnlyUri, ODataPayloadFormat.Json) { }
     }
 
-    public class FindNorthwindTestsV4Json : FindNorthwindTests
+    public class FindODataTestsV4Json : FindODataTests
     {
-        public FindNorthwindTestsV4Json() : base(NorthwindV4ReadOnlyUri, ODataPayloadFormat.Json) { }
+        public FindODataTestsV4Json() : base(ODataV4ReadOnlyUri, ODataPayloadFormat.Json) { }
     }
 
-    public abstract class FindNorthwindTests : TestBase
+    public abstract class FindODataTests : ODataTests
     {
-        protected FindNorthwindTests(string serviceUri, ODataPayloadFormat payloadFormat) : base(serviceUri, payloadFormat) {}
-
-        protected override async Task DeleteTestData()
-        {
-            var products = await _client.FindEntriesAsync("Products");
-            foreach (var product in products)
-            {
-                if (product["ProductName"].ToString().StartsWith("Test"))
-                    await _client.DeleteEntryAsync("Products", product);
-            }
-            var categories = await _client.FindEntriesAsync("Categories");
-            foreach (var category in categories)
-            {
-                if (category["CategoryName"].ToString().StartsWith("Test"))
-                    await _client.DeleteEntryAsync("Categories", category);
-            }
-            var employees = await _client.FindEntriesAsync("Employees");
-            foreach (var employee in employees)
-            {
-                if (employee["LastName"].ToString().StartsWith("Test"))
-                    await _client.DeleteEntryAsync("Employees", employee);
-            }
-        }
+        protected FindODataTests(string serviceUri, ODataPayloadFormat payloadFormat) : base(serviceUri, payloadFormat) { }
 
         [Fact]
         public async Task Filter()
         {
             var products = await _client
                 .For("Products")
-                .Filter("ProductName eq 'Chai'")
+                .Filter("Name eq 'Chai'")
                 .FindEntriesAsync();
-            Assert.Equal("Chai", products.Single()["ProductName"]);
+            Assert.Equal("Chai", products.Single()["Name"]);
         }
 
         [Fact]
@@ -74,9 +49,9 @@ namespace Simple.OData.Client.Tests
         {
             var products = await _client
                 .For("Products")
-                .Filter("substringof('ai',ProductName)")
+                .Filter("substringof('ai',Name)")
                 .FindEntriesAsync();
-            Assert.Equal("Chai", products.Single()["ProductName"]);
+            Assert.Equal("Chai", products.Single()["Name"]);
         }
 
         [Fact]
@@ -86,7 +61,7 @@ namespace Simple.OData.Client.Tests
                 .For("Categories")
                 .Key(1)
                 .FindEntryAsync();
-            Assert.Equal(1, category["CategoryID"]);
+            Assert.Equal(1, category["ID"]);
         }
 
         [Fact]
@@ -134,9 +109,9 @@ namespace Simple.OData.Client.Tests
         {
             var product = (await _client
                 .For("Products")
-                .OrderBy("ProductName")
+                .OrderBy("Name")
                 .FindEntriesAsync()).First();
-            Assert.Equal("Alice Mutton", product["ProductName"]);
+            Assert.Equal("Alice Mutton", product["Name"]);
         }
 
         [Fact]
@@ -144,9 +119,9 @@ namespace Simple.OData.Client.Tests
         {
             var product = (await _client
                 .For("Products")
-                .OrderByDescending("ProductName")
+                .OrderByDescending("Name")
                 .FindEntriesAsync()).First();
-            Assert.Equal("Zaanse koeken", product["ProductName"]);
+            Assert.Equal("Zaanse koeken", product["Name"]);
         }
 
         [Fact]
@@ -154,10 +129,10 @@ namespace Simple.OData.Client.Tests
         {
             var product = await _client
                 .For("Products")
-                .Select("ProductName")
+                .Select("Name")
                 .FindEntryAsync();
-            Assert.Contains("ProductName", product.Keys);
-            Assert.DoesNotContain("ProductID", product.Keys);
+            Assert.Contains("Name", product.Keys);
+            Assert.DoesNotContain("ID", product.Keys);
         }
 
         [Fact]
@@ -167,8 +142,8 @@ namespace Simple.OData.Client.Tests
                 .For("Products")
                 .Select("Product_Name")
                 .FindEntryAsync();
-            Assert.Contains("ProductName", product.Keys);
-            Assert.DoesNotContain("ProductID", product.Keys);
+            Assert.Contains("Name", product.Keys);
+            Assert.DoesNotContain("ID", product.Keys);
         }
 
         [Fact]
@@ -176,10 +151,10 @@ namespace Simple.OData.Client.Tests
         {
             var product = await _client
                 .For("Products")
-                .Select("ProductID", "ProductName")
+                .Select("ID", "Name")
                 .FindEntryAsync();
-            Assert.Contains("ProductName", product.Keys);
-            Assert.Contains("ProductID", product.Keys);
+            Assert.Contains("Name", product.Keys);
+            Assert.Contains("ID", product.Keys);
         }
 
         [Fact]
@@ -187,10 +162,10 @@ namespace Simple.OData.Client.Tests
         {
             var product = (await _client
                 .For("Products")
-                .OrderBy("ProductID")
+                .OrderBy("ID")
                 .Expand("Category")
                 .FindEntriesAsync()).Last();
-            Assert.Equal("Confections", (product["Category"] as IDictionary<string, object>)["CategoryName"]);
+            Assert.Equal("Confections", (product["Category"] as IDictionary<string, object>)["Name"]);
         }
 
         [Fact]
@@ -199,7 +174,7 @@ namespace Simple.OData.Client.Tests
             var category = await _client
                 .For("Categories")
                 .Expand("Products")
-                .Filter("CategoryName eq 'Beverages'")
+                .Filter("Name eq 'Beverages'")
                 .FindEntryAsync();
             Assert.Equal(12, (category["Products"] as IEnumerable<object>).Count());
         }
@@ -209,7 +184,7 @@ namespace Simple.OData.Client.Tests
         {
             var product = (await _client
                 .For("Products")
-                .OrderBy("ProductID")
+                .OrderBy("ID")
                 .Expand("Category/Products")
                 .FindEntriesAsync()).Last();
             Assert.Equal(13, ((product["Category"] as IDictionary<string, object>)["Products"] as IEnumerable<object>).Count());
@@ -230,7 +205,7 @@ namespace Simple.OData.Client.Tests
         {
             var count = await _client
                 .For("Products")
-                .Filter("ProductName eq 'Chai'")
+                .Filter("Name eq 'Chai'")
                 .Count()
                 .FindScalarAsync();
             Assert.Equal(1, int.Parse(count.ToString()));
@@ -251,13 +226,13 @@ namespace Simple.OData.Client.Tests
         {
             var product = (await _client
                 .For("Products")
-                .OrderBy("ProductName")
+                .OrderBy("Name")
                 .Skip(2)
                 .Top(1)
                 .Expand("Category")
                 .Select("Category")
                 .FindEntriesAsync()).Single();
-            Assert.Equal("Seafood", (product["Category"] as IDictionary<string, object>)["CategoryName"]);
+            Assert.Equal("Seafood", (product["Category"] as IDictionary<string, object>)["Name"]);
         }
 
         [Fact]
@@ -269,9 +244,9 @@ namespace Simple.OData.Client.Tests
                 .Expand("Category")
                 .Top(1)
                 .Skip(2)
-                .OrderBy("ProductName")
+                .OrderBy("Name")
                 .FindEntriesAsync()).Single();
-            Assert.Equal("Seafood", (product["Category"] as IDictionary<string, object>)["CategoryName"]);
+            Assert.Equal("Seafood", (product["Category"] as IDictionary<string, object>)["Name"]);
         }
 
         [Fact]
@@ -279,10 +254,10 @@ namespace Simple.OData.Client.Tests
         {
             var category = await _client
                 .For("Products")
-                .Key(new Entry() { { "ProductID", 2 } })
+                .Key(new Dictionary<string, object>() { { "ID", 2 } })
                 .NavigateTo("Category")
                 .FindEntryAsync();
-            Assert.Equal("Beverages", category["CategoryName"]);
+            Assert.Equal("Beverages", category["Name"]);
         }
 
         [Fact]
@@ -294,32 +269,6 @@ namespace Simple.OData.Client.Tests
                 .NavigateTo("Products")
                 .FindEntriesAsync();
             Assert.Equal(12, products.Count());
-        }
-
-        [Fact]
-        public async Task NavigateToRecursive()
-        {
-            var employee = await _client
-                .For("Employees")
-                .Key(6)
-                .NavigateTo("Employee1")
-                .NavigateTo("Employee1")
-                .NavigateTo("Employees1")
-                .Key(5)
-                .FindEntryAsync();
-            Assert.Equal("Steven", employee["FirstName"]);
-        }
-
-        [Fact]
-        public async Task NavigateToRecursiveSingleClause()
-        {
-            var employee = await _client
-                .For("Employees")
-                .Key(6)
-                .NavigateTo("Employee1/Employee1/Employees1")
-                .Key(5)
-                .FindEntryAsync();
-            Assert.Equal("Steven", employee["FirstName"]);
         }
     }
 }
