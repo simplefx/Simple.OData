@@ -2,134 +2,54 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.OData.Core;
 
 namespace Simple.OData.Client
 {
 #if SILVERLIGH
-    class ODataV4RequestMessage : IODataRequestMessage, IDisposable
+    class ODataV4RequestMessage : IODataRequestMessage
 #else
-    class ODataV4RequestMessage : IODataRequestMessageAsync, IDisposable
+    class ODataV4RequestMessage : IODataRequestMessageAsync
 #endif
     {
-        private bool _disposed = false;
-        private MemoryStream _requestStream;
-        private readonly ICredentials _credentials;
-        private readonly HttpRequestMessage _request;
-        private readonly ODataPayloadKind _payloadKind;
+        private MemoryStream _stream;
+        private readonly Dictionary<string, string> _headers = new Dictionary<string, string>();
 
-        public ODataV4RequestMessage(ODataPayloadKind payloadKind, Uri url, ICredentials credentials)
+        public ODataV4RequestMessage()
         {
-            _request = new HttpRequestMessage() { RequestUri = url };
-            _credentials = credentials;
-            _payloadKind = payloadKind;
-        }
-
-        public Task<Stream> GetStreamAsync()
-        {
-            if (_requestStream == null)
-                _requestStream = new MemoryStream();
-
-            var completionSource = new TaskCompletionSource<Stream>();
-            completionSource.SetResult(_requestStream);
-            return completionSource.Task;
         }
 
         public string GetHeader(string headerName)
         {
-            if (headerName == HttpLiteral.ContentType)
-            {
-                switch (_payloadKind)
-                {
-                    case ODataPayloadKind.EntityReferenceLink:
-                        return "application/xml";
-                    default:
-                        return "application/atom+xml";
-                }
-            }
-            return _request.Headers.GetValues(headerName).FirstOrDefault();
-        }
-
-        public Stream GetStream()
-        {
-            if (_requestStream == null)
-                _requestStream = new MemoryStream();
-
-            return _requestStream;
-        }
-
-        public IEnumerable<KeyValuePair<string, string>> Headers
-        {
-            get { return _request.Headers.Select(h => new KeyValuePair<string, string>(h.Key, h.Value.FirstOrDefault())); }
-        }
-
-        public string Method
-        {
-            get { return _request.Method.Method; }
-
-            set { _request.Method = new HttpMethod(value); }
+            string value;
+            return _headers.TryGetValue(headerName, out value) ? value : null;
         }
 
         public void SetHeader(string headerName, string headerValue)
         {
-            if (_request.Headers.Contains(headerName))
-                _request.Headers.Remove(headerName);
-
-            _request.Headers.Add(headerName, headerValue);
+            _headers.Add(headerName, headerValue);
         }
 
-        public Uri Url
+        public Stream GetStream()
         {
-            get { return _request.RequestUri; }
-
-            set { throw new ArgumentException("Request Uri cannot be changed."); }
+            return _stream ?? (_stream = new MemoryStream());
         }
 
-        public async Task<ODataV4ResponseMessage> GetResponseAsync()
+        public Task<Stream> GetStreamAsync()
         {
-            using (var clientHandler = new HttpClientHandler() { Credentials = _credentials })
-            {
-                using (var requestClient = new HttpClient(clientHandler))
-                {
-                    //if (_requestStream != null)
-                    //    _request.Content = new PushStreamContent(stream => _requestStream.WriteTo(stream));
-
-                    var completionOption = (_request.Method == HttpMethod.Get || _request.Method == HttpMethod.Trace) ? HttpCompletionOption.ResponseContentRead : HttpCompletionOption.ResponseHeadersRead;
-                    var response = await requestClient.SendAsync(_request, completionOption);
-
-                    return new ODataV4ResponseMessage(response);
-                }
-            }
+            var completionSource = new TaskCompletionSource<Stream>();
+            completionSource.SetResult(this.GetStream());
+            return completionSource.Task;
         }
 
-        public void Dispose()
+        public IEnumerable<KeyValuePair<string, string>> Headers
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            get { return _headers; }
         }
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!_disposed)
-            {
-                if (disposing)
-                {
-                    if (_requestStream != null)
-                    {
-                        _requestStream.Dispose();
-                        _requestStream = null;
-                    }
-                }
-                _disposed = true;
-            }
-        }
+        public Uri Url { get; set; }
 
-        ~ODataV4RequestMessage()
-        {
-            Dispose(false);
-        }
+        public string Method { get; set; }
     }
 }
