@@ -149,6 +149,9 @@
     <Compile Include="..\Simple.OData.Client.Core\AdapterV4\ODataV4ResponseMessage.cs">
       <Link>AdapterV4\ODataV4ResponseMessage.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\AdapterV4\ResponseReaderV4.cs">
+      <Link>AdapterV4\ResponseReaderV4.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Adapter\AdapterFactory.cs">
       <Link>Adapter\AdapterFactory.cs</Link>
     </Compile>
@@ -169,6 +172,9 @@
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Adapter\ODataAdapter.cs">
       <Link>Adapter\ODataAdapter.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Adapter\ResponseNode.cs">
+      <Link>Adapter\ResponseNode.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\EntityCollection.cs">
       <Link>EntityCollection.cs</Link>

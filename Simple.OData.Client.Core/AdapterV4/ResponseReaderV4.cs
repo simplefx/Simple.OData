@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.Data.OData;
-using Microsoft.Data.Edm;
+using Microsoft.OData.Core;
+using Microsoft.OData.Edm;
 
 namespace Simple.OData.Client
 {
-    internal class ResponseReaderV3 : IResponseReader
+    internal class ResponseReaderV4 : IResponseReader
     {
         private readonly ISession _session;
         private readonly IEdmModel _model;
 
-        public ResponseReaderV3(ISession session, IEdmModel model)
+        public ResponseReaderV4(ISession session, IEdmModel model)
         {
             _session = session;
             _model = model;
@@ -21,14 +21,14 @@ namespace Simple.OData.Client
 
         public Task<ODataResponse> GetResponseAsync(HttpResponseMessage responseMessage, bool includeResourceTypeInEntryProperties = false)
         {
-            return GetResponseAsync(new ODataV3ResponseMessage(responseMessage), includeResourceTypeInEntryProperties);
+            return GetResponseAsync(new ODataV4ResponseMessage(responseMessage), includeResourceTypeInEntryProperties);
         }
 
 #if SILVERLIGHT
         public async Task<ODataResponse> GetResponseAsync(IODataResponseMessage responseMessage, bool includeResourceTypeInEntryProperties = false)
 #else
         public async Task<ODataResponse> GetResponseAsync(IODataResponseMessageAsync responseMessage, bool includeResourceTypeInEntryProperties = false)
-#endif 
+#endif
         {
             var readerSettings = new ODataMessageReaderSettings();
             readerSettings.MessageQuotas.MaxReceivedMessageSize = Int32.MaxValue;
@@ -134,7 +134,7 @@ namespace Simple.OData.Client
                         break;
 
                     case ODataReaderState.EntryEnd:
-                        var entry = (odataReader.Item as Microsoft.Data.OData.ODataEntry);
+                        var entry = (odataReader.Item as Microsoft.OData.Core.ODataEntry);
                         var entryNode = nodeStack.Pop();
                         if (entry != null)
                         {

@@ -28,6 +28,16 @@ namespace Simple.OData.Client.Tests
         public FindTestsNorthwindV3Json() : base(NorthwindV3ReadOnlyUri, ODataPayloadFormat.Json) { }
     }
 
+    public class FindTestsNorthwindV4Atom : FindTests
+    {
+        public FindTestsNorthwindV4Atom() : base(NorthwindV4ReadOnlyUri, ODataPayloadFormat.Atom) { }
+    }
+
+    public class FindTestsNorthwindV4Json : FindTests
+    {
+        public FindTestsNorthwindV4Json() : base(NorthwindV4ReadOnlyUri, ODataPayloadFormat.Json) { }
+    }
+
     public abstract class FindTests : TestBase
     {
         protected FindTests(string serviceUri, ODataPayloadFormat payloadFormat) : base(serviceUri, payloadFormat) {}

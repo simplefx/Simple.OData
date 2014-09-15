@@ -11,9 +11,12 @@ namespace Simple.OData.Client.Tests
         protected const string ODataV2ReadWriteUri = "http://services.odata.org/V2/%28S%28vudzeuasumowublegj2gmjsw%29%29/OData/OData.svc/";
         protected const string ODataV3ReadOnlyUri = "http://services.odata.org/V3/OData/OData.svc/";
         protected const string ODataV3ReadWriteUri = "http://services.odata.org/V3/%28S%28syfftau5khfkto4clyuy5mab%29%29/OData/OData.svc/";
+        protected const string ODataV4ReadOnlyUri = "http://services.odata.org/V4/OData/OData.svc/";
+        protected const string ODataV4ReadWriteUri = "http://services.odata.org/V4/OData/%28S%28kupktsrj4v01rxzddeyf1bwh%29%29/OData.svc/";
 
         protected const string NorthwindV2ReadOnlyUri = "http://services.odata.org/V2/Northwind/Northwind.svc/";
         protected const string NorthwindV3ReadOnlyUri = "http://services.odata.org/V3/Northwind/Northwind.svc/";
+        protected const string NorthwindV4ReadOnlyUri = "http://services.odata.org/V4/Northwind/Northwind.svc/";
 
         protected readonly string _serviceUri;
         protected readonly ODataPayloadFormat _payloadFormat;
