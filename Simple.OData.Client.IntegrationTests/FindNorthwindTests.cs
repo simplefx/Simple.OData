@@ -237,7 +237,7 @@ namespace Simple.OData.Client.Tests
             var productsWithCount = await _client
                 .For("Products")
                 .FindEntriesWithCountAsync(true);
-            Assert.Equal(20, productsWithCount.Item2);
+            Assert.Equal(77, productsWithCount.Item2);
             Assert.Equal(20, productsWithCount.Item1.Count());
         }
 
@@ -296,13 +296,13 @@ namespace Simple.OData.Client.Tests
         {
             var employee = await _client
                 .For("Employees")
-                .Key(14)
-                .NavigateTo("Superior")
-                .NavigateTo("Superior")
-                .NavigateTo("Subordinates")
-                .Key(3)
+                .Key(6)
+                .NavigateTo("Employee1")
+                .NavigateTo("Employee1")
+                .NavigateTo("Employees1")
+                .Key(5)
                 .FindEntryAsync();
-            Assert.Equal("Janet", employee["FirstName"]);
+            Assert.Equal("Steven", employee["FirstName"]);
         }
 
         [Fact]
@@ -310,11 +310,11 @@ namespace Simple.OData.Client.Tests
         {
             var employee = await _client
                 .For("Employees")
-                .Key(14)
-                .NavigateTo("Superior/Superior/Subordinates")
-                .Key(3)
+                .Key(6)
+                .NavigateTo("Employee1/Employee1/Employees1")
+                .Key(5)
                 .FindEntryAsync();
-            Assert.Equal("Janet", employee["FirstName"]);
+            Assert.Equal("Steven", employee["FirstName"]);
         }
     }
 }
