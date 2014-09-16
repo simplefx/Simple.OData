@@ -42,7 +42,7 @@ namespace Simple.OData.Client.Tests
         {
             var category = await _client
                 .For("Categories")
-                .Set(new { CategoryName = "Test4" })
+                .Set(new { Name = "Test4" })
                 .InsertEntryAsync();
             var product = await _client
                 .For("Products")
@@ -59,7 +59,7 @@ namespace Simple.OData.Client.Tests
                 .Filter("Name eq 'Test5'")
                 .FindEntryAsync();
             Assert.NotNull(product["CategoryID"]);
-            Assert.Equal(category["CategoryID"], product["CategoryID"]);
+            Assert.Equal(category["ID"], product["CategoryID"]);
         }
 
         [Fact]
@@ -67,7 +67,7 @@ namespace Simple.OData.Client.Tests
         {
             var category = await _client
                 .For("Categories")
-                .Set(new { CategoryName = "Test4" })
+                .Set(new { Name = "Test4" })
                 .InsertEntryAsync();
             var product = await _client
                 .For("Products")

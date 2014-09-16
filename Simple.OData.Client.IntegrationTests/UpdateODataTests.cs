@@ -196,7 +196,7 @@ namespace Simple.OData.Client.Tests
         {
             var category = await _client
                 .For("Categories")
-                .Set(new { CategoryName = "Test1" })
+                .Set(new { Name = "Test1" })
                 .InsertEntryAsync();
             var product = await _client
                 .For("Products")
@@ -227,7 +227,7 @@ namespace Simple.OData.Client.Tests
         {
             var category = await _client
                 .For("Categories")
-                .Set(new { CategoryName = "Test1" })
+                .Set(new { Name = "Test1" })
                 .InsertEntryAsync();
             var product = await _client
                 .For("Products")
@@ -258,7 +258,7 @@ namespace Simple.OData.Client.Tests
         {
             var category = await _client
                 .For("Categories")
-                .Set(new { CategoryName = "Test6" })
+                .Set(new { Name = "Test6" })
                 .InsertEntryAsync();
             var product = await _client
                 .For("Products")
@@ -283,7 +283,7 @@ namespace Simple.OData.Client.Tests
         {
             var category = await _client
                 .For("Categories")
-                .Set(new { CategoryName = "Test3" })
+                .Set(new { Name = "Test3" })
                 .InsertEntryAsync();
             var product1 = await _client
                 .For("Products")

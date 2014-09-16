@@ -48,6 +48,7 @@ namespace Simple.OData.Client
         public static Dictionary<ExpressionFunction.FunctionCall, FunctionMapping> SupportedFunctions = new Dictionary<ExpressionFunction.FunctionCall, FunctionMapping>()
             {
                 {new ExpressionFunction.FunctionCall("Contains", 1), new FunctionMapping("substringof", FunctionWithArgumentsAndTarget)},
+                //{new ExpressionFunction.FunctionCall("Contains", 1), new FunctionMapping("contains", FunctionWithTargetAndArguments)},
                 {new ExpressionFunction.FunctionCall("StartsWith", 1), new FunctionMapping("startswith", FunctionWithTargetAndArguments)},
                 {new ExpressionFunction.FunctionCall("EndsWith", 1), new FunctionMapping("endswith", FunctionWithTargetAndArguments)},
                 {new ExpressionFunction.FunctionCall("Length", 0), new FunctionMapping("length")},
@@ -65,6 +66,14 @@ namespace Simple.OData.Client
                 {new ExpressionFunction.FunctionCall("Hour", 0), new FunctionMapping("hour")},
                 {new ExpressionFunction.FunctionCall("Minute", 0), new FunctionMapping("minute")},
                 {new ExpressionFunction.FunctionCall("Second", 0), new FunctionMapping("second")},
+                //{new ExpressionFunction.FunctionCall("Milliseconds", 0), new FunctionMapping("fractionalseconds")},
+                //{new ExpressionFunction.FunctionCall("Date", 0), new FunctionMapping("date")},
+                //{new ExpressionFunction.FunctionCall("Time", 0), new FunctionMapping("time")},
+                //{new ExpressionFunction.FunctionCall("Totaloffsetminutes", 0), new FunctionMapping("totaloffsetminutes")},
+                //{new ExpressionFunction.FunctionCall("Now", 0), new FunctionMapping("now")},
+                //{new ExpressionFunction.FunctionCall("Maxdatetime", 0), new FunctionMapping("maxdatetime")},
+                //{new ExpressionFunction.FunctionCall("Mindatetime", 0), new FunctionMapping("mindatetime")},
+                //{new ExpressionFunction.FunctionCall("Totalseconds", 0), new FunctionMapping("totalseconds")},
                 {new ExpressionFunction.FunctionCall("Round", 0), new FunctionMapping("round")},
                 {new ExpressionFunction.FunctionCall("Floor", 0), new FunctionMapping("floor")},
                 {new ExpressionFunction.FunctionCall("Ceiling", 0), new FunctionMapping("ceiling")},

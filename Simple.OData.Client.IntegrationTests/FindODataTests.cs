@@ -80,7 +80,7 @@ namespace Simple.OData.Client.Tests
                 .For("Products")
                 .Skip(1)
                 .FindEntriesAsync();
-            Assert.Equal(20, products.Count());
+            Assert.Equal(8, products.Count());
         }
 
         [Fact]
@@ -111,7 +111,7 @@ namespace Simple.OData.Client.Tests
                 .For("Products")
                 .OrderBy("Name")
                 .FindEntriesAsync()).First();
-            Assert.Equal("Alice Mutton", product["Name"]);
+            Assert.Equal("Bread", product["Name"]);
         }
 
         [Fact]
@@ -121,7 +121,7 @@ namespace Simple.OData.Client.Tests
                 .For("Products")
                 .OrderByDescending("Name")
                 .FindEntriesAsync()).First();
-            Assert.Equal("Zaanse koeken", product["Name"]);
+            Assert.Equal("Vint soda", product["Name"]);
         }
 
         [Fact]
@@ -130,17 +130,6 @@ namespace Simple.OData.Client.Tests
             var product = await _client
                 .For("Products")
                 .Select("Name")
-                .FindEntryAsync();
-            Assert.Contains("Name", product.Keys);
-            Assert.DoesNotContain("ID", product.Keys);
-        }
-
-        [Fact]
-        public async Task SelectSingleHomogenize()
-        {
-            var product = await _client
-                .For("Products")
-                .Select("Product_Name")
                 .FindEntryAsync();
             Assert.Contains("Name", product.Keys);
             Assert.DoesNotContain("ID", product.Keys);
@@ -165,7 +154,7 @@ namespace Simple.OData.Client.Tests
                 .OrderBy("ID")
                 .Expand("Category")
                 .FindEntriesAsync()).Last();
-            Assert.Equal("Confections", (product["Category"] as IDictionary<string, object>)["Name"]);
+            Assert.Equal("Electronics", (product["Category"] as IDictionary<string, object>)["Name"]);
         }
 
         [Fact]
@@ -176,7 +165,7 @@ namespace Simple.OData.Client.Tests
                 .Expand("Products")
                 .Filter("Name eq 'Beverages'")
                 .FindEntryAsync();
-            Assert.Equal(12, (category["Products"] as IEnumerable<object>).Count());
+            Assert.Equal(6, (category["Products"] as IEnumerable<object>).Count());
         }
 
         [Fact]
@@ -187,7 +176,7 @@ namespace Simple.OData.Client.Tests
                 .OrderBy("ID")
                 .Expand("Category/Products")
                 .FindEntriesAsync()).Last();
-            Assert.Equal(13, ((product["Category"] as IDictionary<string, object>)["Products"] as IEnumerable<object>).Count());
+            Assert.Equal(2, ((product["Category"] as IDictionary<string, object>)["Products"] as IEnumerable<object>).Count());
         }
 
         [Fact]
@@ -197,7 +186,7 @@ namespace Simple.OData.Client.Tests
                 .For("Products")
                 .Count()
                 .FindScalarAsync();
-            Assert.Equal(77, int.Parse(count.ToString()));
+            Assert.Equal(9, int.Parse(count.ToString()));
         }
 
         [Fact]
@@ -217,8 +206,8 @@ namespace Simple.OData.Client.Tests
             var productsWithCount = await _client
                 .For("Products")
                 .FindEntriesWithCountAsync(true);
-            Assert.Equal(77, productsWithCount.Item2);
-            Assert.Equal(20, productsWithCount.Item1.Count());
+            Assert.Equal(9, productsWithCount.Item2);
+            Assert.Equal(9, productsWithCount.Item1.Count());
         }
 
         [Fact]
@@ -232,7 +221,7 @@ namespace Simple.OData.Client.Tests
                 .Expand("Category")
                 .Select("Category")
                 .FindEntriesAsync()).Single();
-            Assert.Equal("Seafood", (product["Category"] as IDictionary<string, object>)["Name"]);
+            Assert.Equal("Electronics", (product["Category"] as IDictionary<string, object>)["Name"]);
         }
 
         [Fact]
@@ -246,7 +235,7 @@ namespace Simple.OData.Client.Tests
                 .Skip(2)
                 .OrderBy("Name")
                 .FindEntriesAsync()).Single();
-            Assert.Equal("Seafood", (product["Category"] as IDictionary<string, object>)["Name"]);
+            Assert.Equal("Electronics", (product["Category"] as IDictionary<string, object>)["Name"]);
         }
 
         [Fact]
@@ -268,7 +257,7 @@ namespace Simple.OData.Client.Tests
                 .Key(2)
                 .NavigateTo("Products")
                 .FindEntriesAsync();
-            Assert.Equal(12, products.Count());
+            Assert.Equal(2, products.Count());
         }
     }
 }
