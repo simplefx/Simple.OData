@@ -242,12 +242,12 @@ namespace Simple.OData.Client
 
         public void Expand(IEnumerable<string> associations)
         {
-            _expandAssociations = associations.ToList();
+            _expandAssociations = SplitItems(associations).ToList();
         }
 
         public void Expand(params string[] associations)
         {
-            _expandAssociations = associations.ToList();
+            _expandAssociations = SplitItems(associations).ToList();
         }
 
         public void Expand(params ODataExpression[] columns)
@@ -257,12 +257,12 @@ namespace Simple.OData.Client
 
         public void Select(IEnumerable<string> columns)
         {
-            _selectColumns = columns.ToList();
+            _selectColumns = SplitItems(columns).ToList();
         }
 
         public void Select(params string[] columns)
         {
-            _selectColumns = columns.ToList();
+            _selectColumns = SplitItems(columns).ToList();
         }
 
         public void Select(params ODataExpression[] columns)
@@ -273,12 +273,12 @@ namespace Simple.OData.Client
         public void OrderBy(IEnumerable<KeyValuePair<string, bool>> columns)
         {
             _orderbyColumns.Clear();
-            _orderbyColumns.AddRange(columns);
+            _orderbyColumns.AddRange(SplitItems(columns));
         }
 
         public void OrderBy(params string[] columns)
         {
-            OrderBy(columns.Select(x => new KeyValuePair<string, bool>(x, false)));
+            OrderBy(SplitItems(columns).Select(x => new KeyValuePair<string, bool>(x, false)));
         }
 
         public void OrderBy(params ODataExpression[] columns)
@@ -288,7 +288,7 @@ namespace Simple.OData.Client
 
         public void ThenBy(params string[] columns)
         {
-            _orderbyColumns.AddRange(columns.Select(x => new KeyValuePair<string, bool>(x, false)));
+            _orderbyColumns.AddRange(SplitItems(columns).Select(x => new KeyValuePair<string, bool>(x, false)));
         }
 
         public void ThenBy(params ODataExpression[] columns)
@@ -298,7 +298,7 @@ namespace Simple.OData.Client
 
         public void OrderByDescending(params string[] columns)
         {
-            OrderBy(columns.Select(x => new KeyValuePair<string, bool>(x, true)));
+            OrderBy(SplitItems(columns).Select(x => new KeyValuePair<string, bool>(x, true)));
         }
 
         public void OrderByDescending(params ODataExpression[] columns)
@@ -308,7 +308,7 @@ namespace Simple.OData.Client
 
         public void ThenByDescending(params string[] columns)
         {
-            _orderbyColumns.AddRange(columns.Select(x => new KeyValuePair<string, bool>(x, true)));
+            _orderbyColumns.AddRange(SplitItems(columns).Select(x => new KeyValuePair<string, bool>(x, true)));
         }
 
         public void ThenByDescending(params ODataExpression[] columns)
@@ -488,13 +488,16 @@ namespace Simple.OData.Client
                 extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Top, _topCount));
 
             if (_expandAssociations.Any())
-                extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Expand, string.Join(",", _expandAssociations.Select(FormatExpandItem))));
+                extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Expand, 
+                    string.Join(",", _expandAssociations.Select(FormatExpandItem))));
 
             if (_orderbyColumns.Any())
-                extraClauses.Add(string.Format("{0}={1}", ODataLiteral.OrderBy, string.Join(",", _orderbyColumns.Select(FormatOrderByItem))));
+                extraClauses.Add(string.Format("{0}={1}", ODataLiteral.OrderBy, 
+                    string.Join(",", _orderbyColumns.Select(FormatOrderByItem))));
 
             if (_selectColumns.Any())
-                extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Select, string.Join(",", _selectColumns.Select(FormatSelectItem))));
+                extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Select, 
+                    string.Join(",", _selectColumns.Select(FormatSelectItem))));
 
             if (_inlineCount)
                 extraClauses.Add(string.Format("{0}={1}", ODataLiteral.InlineCount, ODataLiteral.AllPages));
@@ -509,6 +512,16 @@ namespace Simple.OData.Client
                 text += "?" + string.Join("&", extraClauses);
 
             return text;
+        }
+
+        private IEnumerable<string> SplitItems(IEnumerable<string> columns)
+        {
+            return columns.SelectMany(x => x.Split(',').Select(y => y.Trim()));
+        }
+
+        private IEnumerable<KeyValuePair<string, bool>> SplitItems(IEnumerable<KeyValuePair<string, bool>> columns)
+        {
+            return columns.SelectMany(x => x.Key.Split(',').Select(y => new KeyValuePair<string, bool>(y.Trim(), x.Value)));
         }
 
         private string FormatExpandItem(string item)
