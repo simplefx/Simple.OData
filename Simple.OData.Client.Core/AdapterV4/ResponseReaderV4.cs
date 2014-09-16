@@ -51,7 +51,11 @@ namespace Simple.OData.Client
                         return ODataResponse.FromFeed(new[] { new Dictionary<string, object>() { { FluentCommand.ResultLiteral, text } } });
                     }
                 }
-                if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Collection))
+                if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Feed))
+                {
+                    return ReadResponse(messageReader.CreateODataFeedReader(), includeResourceTypeInEntryProperties);
+                }
+                else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Collection))
                 {
                     return ReadResponse(messageReader.CreateODataCollectionReader(), includeResourceTypeInEntryProperties);
                 }
@@ -59,10 +63,6 @@ namespace Simple.OData.Client
                 {
                     var property = messageReader.ReadProperty();
                     return ODataResponse.FromFeed(new[] { new Dictionary<string, object>() { { property.Name, GetPropertyValue(property.Value) } } });
-                }
-                else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Feed))
-                {
-                    return ReadResponse(messageReader.CreateODataFeedReader(), includeResourceTypeInEntryProperties);
                 }
                 else
                 {
