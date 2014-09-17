@@ -13,5 +13,7 @@
         public const string InlineCount = "$inlinecount";
         public const string AllPages = "allpages";
         public const string Batch = "$batch";
+        public const string True = "true";
+        public const string False = "false";
     }
 }

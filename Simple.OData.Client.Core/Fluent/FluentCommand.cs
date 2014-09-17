@@ -37,7 +37,7 @@ namespace Simple.OData.Client
         private List<string> _selectColumns = new List<string>();
         private readonly List<KeyValuePair<string, bool>> _orderbyColumns = new List<KeyValuePair<string, bool>>();
         private bool _computeCount;
-        private bool _inlineCount;
+        private bool _includeCount;
         private string _linkName;
         private ODataExpression _linkExpression;
 
@@ -72,7 +72,7 @@ namespace Simple.OData.Client
             _selectColumns = ancestor._selectColumns;
             _orderbyColumns = ancestor._orderbyColumns;
             _computeCount = ancestor._computeCount;
-            _inlineCount = ancestor._inlineCount;
+            _includeCount = ancestor._includeCount;
             _linkName = ancestor._linkName;
             _linkExpression = ancestor._linkExpression;
         }
@@ -364,9 +364,9 @@ namespace Simple.OData.Client
             }
         }
 
-        public FluentCommand WithInlineCount()
+        public FluentCommand WithCount()
         {
-            _inlineCount = true;
+            _includeCount = true;
             return this;
         }
 
@@ -488,8 +488,13 @@ namespace Simple.OData.Client
                 extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Top, _topCount));
 
             if (_expandAssociations.Any())
-                extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Expand, 
-                    string.Join(",", _expandAssociations.Select(FormatExpandItem))));
+            {
+                if (_session.Adapter.AdapterVersion == AdapterVersion.V3)
+                    extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Expand, 
+                        string.Join(",", _expandAssociations.Select(x => FormatExpandItem(x, this.EntityCollection)))));
+                else
+                    extraClauses.Add(string.Join(",", _expandAssociations.Select(x => FormatExpandItem(x, this.EntityCollection))));
+            }
 
             if (_orderbyColumns.Any())
                 extraClauses.Add(string.Format("{0}={1}", ODataLiteral.OrderBy, 
@@ -499,8 +504,13 @@ namespace Simple.OData.Client
                 extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Select, 
                     string.Join(",", _selectColumns.Select(FormatSelectItem))));
 
-            if (_inlineCount)
-                extraClauses.Add(string.Format("{0}={1}", ODataLiteral.InlineCount, ODataLiteral.AllPages));
+            if (_includeCount)
+            {
+                if (_session.Adapter.AdapterVersion == AdapterVersion.V3)
+                    extraClauses.Add(string.Format("{0}={1}", ODataLiteral.InlineCount, ODataLiteral.AllPages));
+                else
+                    extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Count, ODataLiteral.True));
+            }
 
             if (_computeCount)
                 aggregateClauses.Add(ODataLiteral.Count);
@@ -524,18 +534,29 @@ namespace Simple.OData.Client
             return columns.SelectMany(x => x.Key.Split(',').Select(y => new KeyValuePair<string, bool>(y.Trim(), x.Value)));
         }
 
-        private string FormatExpandItem(string item)
+        private string FormatExpandItem(string item, EntityCollection entityCollection)
         {
-            var names = new List<string>();
             var items = item.Split('/');
-            var entityCollection = this.EntityCollection;
-            foreach (var associationName in items)
+            var associationName = _session.Metadata.GetNavigationPropertyExactName(entityCollection.ActualName, items.First());
+            string text;
+            if (_session.Adapter.AdapterVersion == AdapterVersion.V3)
+                text = associationName;
+            else
+                text = string.Format("{0}={1}", ODataLiteral.Expand, associationName);
+            if (items.Count() == 1)
             {
-                names.Add(_session.Metadata.GetNavigationPropertyExactName(entityCollection.ActualName, associationName));
+                return text;
+            }
+            else
+            {
+                item = item.Substring(items.First().Length + 1);
                 entityCollection = _session.Metadata.GetEntityCollection(
                     _session.Metadata.GetNavigationPropertyPartnerName(entityCollection.ActualName, associationName));
+                if (_session.Adapter.AdapterVersion == AdapterVersion.V3)
+                    return string.Format("{0}/{1}", text, FormatExpandItem(item, entityCollection));
+                else
+                    return string.Format("{0}({1})", text, FormatExpandItem(item, entityCollection));
             }
-            return string.Join("/", names);
         }
 
         private string FormatSelectItem(string item)
