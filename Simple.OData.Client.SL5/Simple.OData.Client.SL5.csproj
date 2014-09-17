@@ -383,9 +383,6 @@
     <Compile Include="..\Simple.OData.Client.Dynamic\ODataDynamic.cs">
       <Link>ODataDynamic.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Dynamic\ODataFilter.cs">
-      <Link>ODataFilter.cs</Link>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

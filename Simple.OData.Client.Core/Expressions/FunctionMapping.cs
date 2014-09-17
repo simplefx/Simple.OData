@@ -94,13 +94,6 @@ namespace Simple.OData.Client
             return DefinedFunctions.Any(x => x.FunctionCall.Equals(new ExpressionFunction.FunctionCall(functionName, argumentCount)));
         }
 
-        public static FunctionDefinition GetFunction(string functionName, int argumentCount, AdapterVersion adapterVersion)
-        {
-            return DefinedFunctions.Single(x => 
-                x.FunctionCall.Equals(new ExpressionFunction.FunctionCall(functionName, argumentCount)) &&
-                (x.AdapterVersion & adapterVersion) == adapterVersion);
-        }
-
         public static bool TryGetFunctionMapping(string functionName, int argumentCount, AdapterVersion adapterVersion, out FunctionMapping functionMapping)
         {
             functionMapping = null;

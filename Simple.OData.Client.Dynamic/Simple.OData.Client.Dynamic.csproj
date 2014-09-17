@@ -45,7 +45,6 @@
     <Compile Include="DynamicODataEntry.cs" />
     <Compile Include="DynamicODataExpression.cs" />
     <Compile Include="ODataDynamic.cs" />
-    <Compile Include="ODataFilter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

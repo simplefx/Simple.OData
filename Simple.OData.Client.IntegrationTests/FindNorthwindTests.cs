@@ -72,11 +72,12 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task FilterStringExpression()
         {
+            var x = ODataDynamic.Expression;
             var products = await _client
-                .For("Products")
-                .Filter("substringof('ai',ProductName)")
+                .For(x.Products)
+                .Filter(x.ProductName.Contains("ai"))
                 .FindEntriesAsync();
-            Assert.Equal("Chai", products.Single()["ProductName"]);
+            Assert.Equal("Chai", (products as IEnumerable<dynamic>).Single().ProductName);
         }
 
         [Fact]

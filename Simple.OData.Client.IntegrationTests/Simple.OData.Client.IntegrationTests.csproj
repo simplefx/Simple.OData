@@ -95,6 +95,10 @@
       <Project>{361868b8-a63e-4c74-aa87-b70e1ab22313}</Project>
       <Name>Simple.OData.Client.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Simple.OData.Client.Dynamic\Simple.OData.Client.Dynamic.csproj">
+      <Project>{c025fb0f-452b-4795-b9a4-64c9e6abbeee}</Project>
+      <Name>Simple.OData.Client.Dynamic</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\Solutions\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\Solutions\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />
