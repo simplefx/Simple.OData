@@ -78,7 +78,8 @@ namespace Simple.OData.Client
         private string FormatFunction(ExpressionContext context)
         {
             FunctionMapping mapping;
-            if (FunctionMapping.SupportedFunctions.TryGetValue(new ExpressionFunction.FunctionCall(this.Function.FunctionName, this.Function.Arguments.Count()), out mapping))
+            var adapterVersion = context.Session == null ? AdapterVersion.Default : context.Session.Adapter.AdapterVersion;
+            if (FunctionMapping.TryGetFunctionMapping(this.Function.FunctionName, this.Function.Arguments.Count(), adapterVersion, out mapping))
             {
                 var mappedFunction = mapping.FunctionMapper(this.Function.FunctionName, _functionCaller.Format(context), this.Function.Arguments).Function;
                 return string.Format("{0}({1})", mappedFunction.FunctionName,
@@ -170,7 +171,7 @@ namespace Simple.OData.Client
                     }
                 }
             }
-            else if (FunctionMapping.SupportedFunctions.ContainsKey(new ExpressionFunction.FunctionCall(elementNames.First(), 0)))
+            else if (FunctionMapping.ContainsFunction(elementNames.First(), 0))
             {
                 var formattedFunction = FormatAsFunction(objectName, context);
                 pathNames.Add(formattedFunction);
@@ -186,7 +187,8 @@ namespace Simple.OData.Client
         private string FormatAsFunction(string objectName, ExpressionContext context)
         {
             FunctionMapping mapping;
-            if (FunctionMapping.SupportedFunctions.TryGetValue(new ExpressionFunction.FunctionCall(objectName, 0), out mapping))
+            var adapterVersion = context.Session == null ? AdapterVersion.Default : context.Session.Adapter.AdapterVersion;
+            if (FunctionMapping.TryGetFunctionMapping(objectName, 0, adapterVersion, out mapping))
             {
                 string targetName = _functionCaller.Format(context);
                 var mappedFunction = mapping.FunctionMapper(objectName, targetName, null).Function;

@@ -8,6 +8,7 @@ namespace Simple.OData.Client
         V3 = 0x01,
         V4 = 0x10,
 
+        Default = V4,
         Any = V3 | V4,
     }
 }

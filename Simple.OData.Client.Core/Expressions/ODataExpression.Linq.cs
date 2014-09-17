@@ -75,9 +75,7 @@ namespace Simple.OData.Client
                     case ExpressionType.Constant:
                         return ParseConstantExpression(memberExpression.Expression, memberNames);
                     case ExpressionType.MemberAccess:
-                        FunctionMapping mapping;
-                        if (FunctionMapping.SupportedFunctions.TryGetValue(
-                            new ExpressionFunction.FunctionCall(memberName, 0), out mapping))
+                        if (FunctionMapping.ContainsFunction(memberName, 0))
                         {
                             var contextExpression = memberExpression.Expression as MemberExpression;
                             return FromFunction(memberName, contextExpression.Member.Name, new List<object>());
