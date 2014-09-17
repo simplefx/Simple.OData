@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
@@ -8,50 +9,114 @@ namespace Simple.OData.Client.Tests
     public class FindODataTestsV2Atom : FindODataTests
     {
         public FindODataTestsV2Atom() : base(ODataV2ReadWriteUri, ODataPayloadFormat.Atom) { }
+
+        protected override string ProductCategoryName { get { return "Category"; } }
+        protected override Func<IDictionary<string, object>, IDictionary<string, object>> ProductCategoryFunc 
+        {
+            get { return x => x[ProductCategoryName] as IDictionary<string, object>; }
+        }
+        protected override string ExpectedCategory { get { return "Electronics"; } }
+        protected override int ExpectedCount { get { return 9; } }
+        protected override int ExpectedExpandMany { get { return 6; } }
+        protected override int ExpectedSkipOne { get { return 8; } }
+        protected override int ExpectedTotalCount { get { return 9; } }
     }
 
     public class FindODataTestsV2Json : FindODataTests
     {
         public FindODataTestsV2Json() : base(ODataV2ReadWriteUri, ODataPayloadFormat.Json) { }
+
+        protected override string ProductCategoryName { get { return "Category"; } }
+        protected override Func<IDictionary<string, object>, IDictionary<string, object>> ProductCategoryFunc
+        {
+            get { return x => x[ProductCategoryName] as IDictionary<string, object>; }
+        }
+        protected override string ExpectedCategory { get { return "Electronics"; } }
+        protected override int ExpectedCount { get { return 9; } }
+        protected override int ExpectedExpandMany { get { return 6; } }
+        protected override int ExpectedSkipOne { get { return 8; } }
+        protected override int ExpectedTotalCount { get { return 9; } }
     }
 
     public class FindODataTestsV3Atom : FindODataTests
     {
         public FindODataTestsV3Atom() : base(ODataV3ReadOnlyUri, ODataPayloadFormat.Atom) { }
+
+        protected override string ProductCategoryName { get { return "Categories"; } }
+        protected override Func<IDictionary<string, object>, IDictionary<string, object>> ProductCategoryFunc
+        {
+            get { return x => (x[ProductCategoryName] as IEnumerable<object>).First() as IDictionary<string, object>; }
+        }
+        protected override string ExpectedCategory { get { return "Beverages"; } }
+        protected override int ExpectedCount { get { return 11; } }
+        protected override int ExpectedExpandMany { get { return 8; } }
+        protected override int ExpectedSkipOne { get { return 10; } }
+        protected override int ExpectedTotalCount { get { return 11; } }
     }
 
     public class FindODataTestsV3Json : FindODataTests
     {
         public FindODataTestsV3Json() : base(ODataV3ReadOnlyUri, ODataPayloadFormat.Json) { }
+
+        protected override string ProductCategoryName { get { return "Categories"; } }
+        protected override Func<IDictionary<string, object>, IDictionary<string, object>> ProductCategoryFunc
+        {
+            get { return x => (x[ProductCategoryName] as IEnumerable<object>).First() as IDictionary<string, object>; }
+        }
+        protected override string ExpectedCategory { get { return "Beverages"; } }
+        protected override int ExpectedCount { get { return 11; } }
+        protected override int ExpectedExpandMany { get { return 8; } }
+        protected override int ExpectedSkipOne { get { return 10; } }
+        protected override int ExpectedTotalCount { get { return 11; } }
     }
 
     public class FindODataTestsV4Json : FindODataTests
     {
         public FindODataTestsV4Json() : base(ODataV4ReadOnlyUri, ODataPayloadFormat.Json) { }
+
+        protected override string ProductCategoryName { get { return "Categories"; } }
+        protected override Func<IDictionary<string, object>, IDictionary<string, object>> ProductCategoryFunc
+        {
+            get { return x => (x[ProductCategoryName] as IEnumerable<object>).First() as IDictionary<string, object>; }
+        }
+        protected override string ExpectedCategory { get { return "Beverages"; } }
+        protected override int ExpectedCount { get { return 11; } }
+        protected override int ExpectedExpandMany { get { return 8; } }
+        protected override int ExpectedSkipOne { get { return 10; } }
+        protected override int ExpectedTotalCount { get { return 11; } }
     }
 
     public abstract class FindODataTests : ODataTests
     {
         protected FindODataTests(string serviceUri, ODataPayloadFormat payloadFormat) : base(serviceUri, payloadFormat) { }
 
+        protected abstract string ProductCategoryName { get; }
+        protected abstract Func<IDictionary<string, object>, IDictionary<string, object>> ProductCategoryFunc { get; }
+        protected abstract string ExpectedCategory { get; }
+        protected abstract int ExpectedCount { get; }
+        protected abstract int ExpectedExpandMany { get; }
+        protected abstract int ExpectedSkipOne { get; }
+        protected abstract int ExpectedTotalCount { get; }
+
         [Fact]
         public async Task Filter()
         {
             var products = await _client
                 .For("Products")
-                .Filter("Name eq 'Chai'")
+                .Filter("Name eq 'Milk'")
                 .FindEntriesAsync();
-            Assert.Equal("Chai", products.Single()["Name"]);
+            Assert.Equal("Milk", products.Single()["Name"]);
         }
 
         [Fact]
         public async Task FilterStringExpression()
         {
+            var x = ODataDynamic.Expression;
             var products = await _client
-                .For("Products")
-                .Filter("substringof('ai',Name)")
+                .For(x.Products)
+                .Filter(x.Name.Contains("lk"))
                 .FindEntriesAsync();
-            Assert.Equal("Chai", products.Single()["Name"]);
+            Assert.Equal("Milk", (products as IEnumerable<dynamic>).Single()["Name"]);
         }
 
         [Fact]
@@ -80,7 +145,7 @@ namespace Simple.OData.Client.Tests
                 .For("Products")
                 .Skip(1)
                 .FindEntriesAsync();
-            Assert.Equal(8, products.Count());
+            Assert.Equal(ExpectedSkipOne, products.Count());
         }
 
         [Fact]
@@ -152,9 +217,9 @@ namespace Simple.OData.Client.Tests
             var product = (await _client
                 .For("Products")
                 .OrderBy("ID")
-                .Expand("Category")
+                .Expand(ProductCategoryName)
                 .FindEntriesAsync()).Last();
-            Assert.Equal("Electronics", (product["Category"] as IDictionary<string, object>)["Name"]);
+            Assert.Equal(ExpectedCategory, ProductCategoryFunc(product)["Name"]);
         }
 
         [Fact]
@@ -165,7 +230,7 @@ namespace Simple.OData.Client.Tests
                 .Expand("Products")
                 .Filter("Name eq 'Beverages'")
                 .FindEntryAsync();
-            Assert.Equal(6, (category["Products"] as IEnumerable<object>).Count());
+            Assert.Equal(ExpectedExpandMany, (category["Products"] as IEnumerable<object>).Count());
         }
 
         [Fact]
@@ -174,9 +239,9 @@ namespace Simple.OData.Client.Tests
             var product = (await _client
                 .For("Products")
                 .OrderBy("ID")
-                .Expand("Category/Products")
+                .Expand(ProductCategoryName + "/Products")
                 .FindEntriesAsync()).Last();
-            Assert.Equal(2, ((product["Category"] as IDictionary<string, object>)["Products"] as IEnumerable<object>).Count());
+            Assert.Equal(8, (ProductCategoryFunc(product)["Products"] as IEnumerable<object>).Count());
         }
 
         [Fact]
@@ -186,7 +251,7 @@ namespace Simple.OData.Client.Tests
                 .For("Products")
                 .Count()
                 .FindScalarAsync();
-            Assert.Equal(9, int.Parse(count.ToString()));
+            Assert.Equal(ExpectedCount, int.Parse(count.ToString()));
         }
 
         [Fact]
@@ -194,7 +259,7 @@ namespace Simple.OData.Client.Tests
         {
             var count = await _client
                 .For("Products")
-                .Filter("Name eq 'Chai'")
+                .Filter("Name eq 'Milk'")
                 .Count()
                 .FindScalarAsync();
             Assert.Equal(1, int.Parse(count.ToString()));
@@ -206,8 +271,8 @@ namespace Simple.OData.Client.Tests
             var productsWithCount = await _client
                 .For("Products")
                 .FindEntriesWithCountAsync(true);
-            Assert.Equal(9, productsWithCount.Item2);
-            Assert.Equal(9, productsWithCount.Item1.Count());
+            Assert.Equal(ExpectedTotalCount, productsWithCount.Item2);
+            Assert.Equal(ExpectedTotalCount, productsWithCount.Item1.Count());
         }
 
         [Fact]
@@ -218,10 +283,10 @@ namespace Simple.OData.Client.Tests
                 .OrderBy("Name")
                 .Skip(2)
                 .Top(1)
-                .Expand("Category")
-                .Select("Category")
+                .Expand(ProductCategoryName)
+                .Select(ProductCategoryName)
                 .FindEntriesAsync()).Single();
-            Assert.Equal("Electronics", (product["Category"] as IDictionary<string, object>)["Name"]);
+            Assert.Equal(ExpectedCategory, ProductCategoryFunc(product)["Name"]);
         }
 
         [Fact]
@@ -229,13 +294,13 @@ namespace Simple.OData.Client.Tests
         {
             var product = (await _client
                 .For("Products")
-                .Select("Category")
-                .Expand("Category")
+                .Select(ProductCategoryName)
+                .Expand(ProductCategoryName)
                 .Top(1)
                 .Skip(2)
                 .OrderBy("Name")
                 .FindEntriesAsync()).Single();
-            Assert.Equal("Electronics", (product["Category"] as IDictionary<string, object>)["Name"]);
+            Assert.Equal(ExpectedCategory, ProductCategoryFunc(product)["Name"]);
         }
 
         [Fact]
@@ -244,7 +309,7 @@ namespace Simple.OData.Client.Tests
             var category = await _client
                 .For("Products")
                 .Key(new Dictionary<string, object>() { { "ID", 2 } })
-                .NavigateTo("Category")
+                .NavigateTo(ProductCategoryName)
                 .FindEntryAsync();
             Assert.Equal("Beverages", category["Name"]);
         }

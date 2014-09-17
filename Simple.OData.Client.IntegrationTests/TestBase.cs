@@ -8,7 +8,7 @@ namespace Simple.OData.Client.Tests
 {
     public abstract class TestBase : IDisposable
     {
-        protected const string ODataV2ReadWriteUri = "http://services.odata.org/V2/%28S%28vudzeuasumowublegj2gmjsw%29%29/OData/OData.svc/";
+        protected const string ODataV2ReadWriteUri = "http://services.odata.org/V2/%28S%28rebxcobmotxvstbs3fhdv2a4%29%29/OData/OData.svc/";
         protected const string ODataV3ReadOnlyUri = "http://services.odata.org/V3/OData/OData.svc/";
         protected const string ODataV3ReadWriteUri = "http://services.odata.org/V3/%28S%28syfftau5khfkto4clyuy5mab%29%29/OData/OData.svc/";
         protected const string ODataV4ReadOnlyUri = "http://services.odata.org/V4/OData/OData.svc/";
