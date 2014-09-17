@@ -14,6 +14,8 @@ namespace Simple.OData.Client
     {
         private readonly ISession _session;
 
+        public override AdapterVersion AdapterVersion { get { return AdapterVersion.V4; } }
+
         public new IEdmModel Model
         {
             get { return base.Model as IEdmModel; }

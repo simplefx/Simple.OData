@@ -164,6 +164,9 @@
     <Compile Include="..\Simple.OData.Client.Core\Adapter\AdapterFactory.cs">
       <Link>Adapter\AdapterFactory.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Adapter\AdapterVersion.cs">
+      <Link>Adapter\AdapterVersion.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Adapter\IBatchWriter.cs">
       <Link>Adapter\IBatchWriter.cs</Link>
     </Compile>
@@ -343,6 +346,9 @@
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ODataResponse.cs">
       <Link>ODataResponse.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ODataVersion.cs">
+      <Link>ODataVersion.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Pluralizer.cs">
       <Link>Pluralizer.cs</Link>

@@ -22,9 +22,9 @@ namespace Simple.OData.Client
         {
             var protocolVersions = GetSupportedProtocolVersions(response).ToArray();
 
-            if (protocolVersions.Any(x => x == "4.0"))
+            if (protocolVersions.Any(x => x == ODataVersion.V4))
                 return new ODataAdapterV4(_session, protocolVersions.First(), response);
-            else if (protocolVersions.Any(x => x == "1.0" || x == "2.0" || x == "3.0"))
+            else if (protocolVersions.Any(x => x == ODataVersion.V1 || x == ODataVersion.V2 || x == ODataVersion.V3))
                 return new ODataAdapterV3(_session, protocolVersions.First(), response);
 
             throw new NotSupportedException(string.Format("OData protocol {0} is not supported", protocolVersions));
@@ -41,9 +41,9 @@ namespace Simple.OData.Client
             reader.MoveToContent();
             var protocolVersion = reader.GetAttribute("Version");
 
-            if (protocolVersion == "4.0")
+            if (protocolVersion == ODataVersion.V4)
                 return new ODataAdapterV4(_session, protocolVersion, metadataString);
-            else if (protocolVersion == "1.0" || protocolVersion == "2.0" || protocolVersion == "3.0")
+            else if (protocolVersion == ODataVersion.V1 || protocolVersion == ODataVersion.V2 || protocolVersion == ODataVersion.V3)
                 return new ODataAdapterV3(_session, protocolVersion, metadataString);
 
             throw new NotSupportedException(string.Format("OData protocol {0} is not supported", protocolVersion));

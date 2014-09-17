@@ -2,16 +2,16 @@
 {
     class ODataLiteral
     {
-        public static readonly string Metadata = "$metadata";
-        public static readonly string Filter = "$filter";
-        public static readonly string Skip = "$skip";
-        public static readonly string Top = "$top";
-        public static readonly string Expand = "$expand";
-        public static readonly string OrderBy = "$orderby";
-        public static readonly string Select = "$select";
-        public static readonly string Count = "$count";
-        public static readonly string InlineCount = "$inlinecount";
-        public static readonly string AllPages = "allpages";
-        public static readonly string Batch = "$batch";
+        public const string Metadata = "$metadata";
+        public const string Filter = "$filter";
+        public const string Skip = "$skip";
+        public const string Top = "$top";
+        public const string Expand = "$expand";
+        public const string OrderBy = "$orderby";
+        public const string Select = "$select";
+        public const string Count = "$count";
+        public const string InlineCount = "$inlinecount";
+        public const string AllPages = "allpages";
+        public const string Batch = "$batch";
     }
 }

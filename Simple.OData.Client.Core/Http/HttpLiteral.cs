@@ -2,12 +2,12 @@
 {
     class HttpLiteral
     {
-        public static readonly string ContentType = "Content-Type";
-        public static readonly string ContentId = "Content-ID";
-        public static readonly string IfMatch = "If-Match";
-        public static readonly string Prefer = "Prefer";
-        public static readonly string PreferenceApplied = "Preference-Applied";
-        public static readonly string ReturnContent = "return-content";
-        public static readonly string ReturnNoContent = "return-no-content";
+        public const string ContentType = "Content-Type";
+        public const string ContentId = "Content-ID";
+        public const string IfMatch = "If-Match";
+        public const string Prefer = "Prefer";
+        public const string PreferenceApplied = "Preference-Applied";
+        public const string ReturnContent = "return-content";
+        public const string ReturnNoContent = "return-no-content";
     }
 }
