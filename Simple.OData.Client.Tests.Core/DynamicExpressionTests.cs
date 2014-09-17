@@ -234,7 +234,7 @@ namespace Simple.OData.Client.Tests
         {
             var x = ODataDynamic.Expression;
             var filter = x.ProductName.Contains("ai") == true;
-            Assert.Equal("substringof('ai',ProductName) eq true", filter.ToString());
+            Assert.Equal("contains(ProductName,'ai') eq true", filter.ToString());
         }
 
         [Fact]
@@ -242,7 +242,7 @@ namespace Simple.OData.Client.Tests
         {
             var x = ODataDynamic.Expression;
             var filter = x.ProductName.Contains("ai") == false;
-            Assert.Equal("substringof('ai',ProductName) eq false", filter.ToString());
+            Assert.Equal("contains(ProductName,'ai') eq false", filter.ToString());
         }
 
         [Fact]
@@ -250,7 +250,7 @@ namespace Simple.OData.Client.Tests
         {
             var x = ODataDynamic.Expression;
             var filter = x.ProductName.Contains("ai");
-            Assert.Equal("substringof('ai',ProductName)", filter.ToString());
+            Assert.Equal("contains(ProductName,'ai')", filter.ToString());
         }
 
         [Fact]
@@ -258,7 +258,7 @@ namespace Simple.OData.Client.Tests
         {
             var x = ODataDynamic.Expression;
             var filter = !x.ProductName.Contains("ai");
-            Assert.Equal("not substringof('ai',ProductName)", filter.ToString());
+            Assert.Equal("not contains(ProductName,'ai')", filter.ToString());
         }
 
         [Fact]

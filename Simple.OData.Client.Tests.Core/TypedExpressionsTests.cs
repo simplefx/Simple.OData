@@ -217,28 +217,28 @@ namespace Simple.OData.Client.Tests
         public void StringContainsEqualTrue()
         {
             Expression<Func<TestEntity, bool>> filter = x => x.ProductName.Contains("ai") == true;
-            Assert.Equal("substringof('ai',ProductName) eq true", ODataExpression.FromLinqExpression(filter).ToString());
+            Assert.Equal("contains(ProductName,'ai') eq true", ODataExpression.FromLinqExpression(filter).ToString());
         }
 
         [Fact]
         public void StringContainsEqualFalse()
         {
             Expression<Func<TestEntity, bool>> filter = x => x.ProductName.Contains("ai") == false;
-            Assert.Equal("substringof('ai',ProductName) eq false", ODataExpression.FromLinqExpression(filter).ToString());
+            Assert.Equal("contains(ProductName,'ai') eq false", ODataExpression.FromLinqExpression(filter).ToString());
         }
 
         [Fact]
         public void StringContains()
         {
             Expression<Func<TestEntity, bool>> filter = x => x.ProductName.Contains("ai");
-            Assert.Equal("substringof('ai',ProductName)", ODataExpression.FromLinqExpression(filter).ToString());
+            Assert.Equal("contains(ProductName,'ai')", ODataExpression.FromLinqExpression(filter).ToString());
         }
 
         [Fact]
         public void StringNotContains()
         {
             Expression<Func<TestEntity, bool>> filter = x => !x.ProductName.Contains("ai");
-            Assert.Equal("not substringof('ai',ProductName)", ODataExpression.FromLinqExpression(filter).ToString());
+            Assert.Equal("not contains(ProductName,'ai')", ODataExpression.FromLinqExpression(filter).ToString());
         }
 
         [Fact]
