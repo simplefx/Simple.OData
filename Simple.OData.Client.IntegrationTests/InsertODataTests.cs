@@ -43,7 +43,7 @@ namespace Simple.OData.Client.Tests
         {
             var product = await _client
                 .For("Products")
-                .Set(new Entry() { { "Name", "Test1" }, { "Price", 18m } })
+                .Set(new Entry() { { "ID", 999 }, { "Name", "Test1" }, { "Price", 18d }, { "Description", "a" } })
                 .InsertEntryAsync();
 
             Assert.Equal("Test1", product["Name"]);

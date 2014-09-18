@@ -55,14 +55,12 @@ namespace Simple.OData.Client
 
         public override IRequestWriter GetRequestWriter(Lazy<IBatchWriter> deferredBatchWriter)
         {
-            throw new NotImplementedException();
-            //return new RequestWriterV4(_session, Model, deferredBatchWriter);
+            return new RequestWriterV4(_session, Model, deferredBatchWriter);
         }
 
         public override IBatchWriter GetBatchWriter()
         {
-            throw new NotImplementedException();
-            //return new BatchWriterV4(_session);
+            return new BatchWriterV4(_session);
         }
     }
 }

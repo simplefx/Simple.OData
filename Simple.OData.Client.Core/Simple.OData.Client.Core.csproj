@@ -44,6 +44,8 @@
     <Compile Include="..\CommonAssemblyVersion.cs">
       <Link>Properties\CommonAssemblyVersion.cs</Link>
     </Compile>
+    <Compile Include="AdapterV4\BatchWriterV4.cs" />
+    <Compile Include="AdapterV4\RequestWriterV4.cs" />
     <Compile Include="AdapterV4\ResponseReaderV4.cs" />
     <Compile Include="Adapter\AdapterVersion.cs" />
     <Compile Include="Adapter\MetadataBase.cs" />

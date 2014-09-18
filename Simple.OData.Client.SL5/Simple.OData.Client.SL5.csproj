@@ -146,6 +146,9 @@
     <Compile Include="..\Simple.OData.Client.Core\AdapterV3\ResponseReaderV3.cs">
       <Link>AdapterV3\ResponseReaderV3.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\AdapterV4\BatchWriterV4.cs">
+      <Link>AdapterV4\BatchWriterV4.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\AdapterV4\MetadataV4.cs">
       <Link>AdapterV4\MetadataV4.cs</Link>
     </Compile>
@@ -157,6 +160,9 @@
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\AdapterV4\ODataV4ResponseMessage.cs">
       <Link>AdapterV4\ODataV4ResponseMessage.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\AdapterV4\RequestWriterV4.cs">
+      <Link>AdapterV4\RequestWriterV4.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\AdapterV4\ResponseReaderV4.cs">
       <Link>AdapterV4\ResponseReaderV4.cs</Link>
