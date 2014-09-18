@@ -18,6 +18,7 @@ namespace Simple.OData.Client.Tests
         protected override string ExpectedCategory { get { return "Electronics"; } }
         protected override int ExpectedCount { get { return 9; } }
         protected override int ExpectedExpandMany { get { return 6; } }
+        protected override int ExpectedExpandSecondLevel { get { return 2; } }
         protected override int ExpectedSkipOne { get { return 8; } }
         protected override int ExpectedTotalCount { get { return 9; } }
     }
@@ -34,6 +35,7 @@ namespace Simple.OData.Client.Tests
         protected override string ExpectedCategory { get { return "Electronics"; } }
         protected override int ExpectedCount { get { return 9; } }
         protected override int ExpectedExpandMany { get { return 6; } }
+        protected override int ExpectedExpandSecondLevel { get { return 2; } }
         protected override int ExpectedSkipOne { get { return 8; } }
         protected override int ExpectedTotalCount { get { return 9; } }
     }
@@ -50,6 +52,7 @@ namespace Simple.OData.Client.Tests
         protected override string ExpectedCategory { get { return "Beverages"; } }
         protected override int ExpectedCount { get { return 11; } }
         protected override int ExpectedExpandMany { get { return 8; } }
+        protected override int ExpectedExpandSecondLevel { get { return 8; } }
         protected override int ExpectedSkipOne { get { return 10; } }
         protected override int ExpectedTotalCount { get { return 11; } }
     }
@@ -66,6 +69,7 @@ namespace Simple.OData.Client.Tests
         protected override string ExpectedCategory { get { return "Beverages"; } }
         protected override int ExpectedCount { get { return 11; } }
         protected override int ExpectedExpandMany { get { return 8; } }
+        protected override int ExpectedExpandSecondLevel { get { return 8; } }
         protected override int ExpectedSkipOne { get { return 10; } }
         protected override int ExpectedTotalCount { get { return 11; } }
     }
@@ -82,6 +86,7 @@ namespace Simple.OData.Client.Tests
         protected override string ExpectedCategory { get { return "Beverages"; } }
         protected override int ExpectedCount { get { return 11; } }
         protected override int ExpectedExpandMany { get { return 8; } }
+        protected override int ExpectedExpandSecondLevel { get { return 8; } }
         protected override int ExpectedSkipOne { get { return 10; } }
         protected override int ExpectedTotalCount { get { return 11; } }
     }
@@ -95,6 +100,7 @@ namespace Simple.OData.Client.Tests
         protected abstract string ExpectedCategory { get; }
         protected abstract int ExpectedCount { get; }
         protected abstract int ExpectedExpandMany { get; }
+        protected abstract int ExpectedExpandSecondLevel { get; }
         protected abstract int ExpectedSkipOne { get; }
         protected abstract int ExpectedTotalCount { get; }
 
@@ -241,7 +247,7 @@ namespace Simple.OData.Client.Tests
                 .OrderBy("ID")
                 .Expand(ProductCategoryName + "/Products")
                 .FindEntriesAsync()).Last();
-            Assert.Equal(8, (ProductCategoryFunc(product)["Products"] as IEnumerable<object>).Count());
+            Assert.Equal(ExpectedExpandSecondLevel, (ProductCategoryFunc(product)["Products"] as IEnumerable<object>).Count());
         }
 
         [Fact]
