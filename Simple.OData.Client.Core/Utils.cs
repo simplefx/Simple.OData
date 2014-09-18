@@ -63,6 +63,20 @@ namespace Simple.OData.Client
             return property == null || property.IsNotMapped() ? null : property;
         }
 
+        public static bool TryConvert(object value, Type targetType, out object result)
+        {
+            try
+            {
+                result = Convert.ChangeType(value, targetType, null);
+                return true;
+            }
+            catch (Exception)
+            {
+                result = null;
+                return false;
+            }
+        }
+
 #if NET40 || SILVERLIGHT || PORTABLE_LEGACY
         public static Task<T> GetTaskFromResult<T>(T result)
         {

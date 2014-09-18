@@ -44,17 +44,14 @@ namespace Simple.OData.Client.Extensions
                 }
             }
 
-            Func<Type, bool> IsCompoundType = fieldOrPropertyType =>
-            {
-                return !fieldOrPropertyType.IsValue() && !fieldOrPropertyType.IsArray && fieldOrPropertyType != typeof(string);
-            };
+            Func<Type, bool> IsCompoundType = fieldOrPropertyType => 
+                !fieldOrPropertyType.IsValue() && !fieldOrPropertyType.IsArray && fieldOrPropertyType != typeof(string);
 
-            Func<Type, object, bool> IsCollectionType = (fieldOrPropertyType, itemValue) =>
-            {
-                return (fieldOrPropertyType.IsArray ||
-                    fieldOrPropertyType.IsGeneric() && typeof(System.Collections.IEnumerable).IsTypeAssignableFrom(fieldOrPropertyType)) && 
-                    (itemValue as System.Collections.IEnumerable) != null;
-            };
+            Func<Type, object, bool> IsCollectionType = (fieldOrPropertyType, itemValue) => 
+                (fieldOrPropertyType.IsArray ||
+                fieldOrPropertyType.IsGeneric() && 
+                typeof(System.Collections.IEnumerable).IsTypeAssignableFrom(fieldOrPropertyType)) && 
+                (itemValue as System.Collections.IEnumerable) != null;
 
             Func<Type, object, object> ConvertEnum = (fieldOrPropertyType, itemValue) =>
             {
@@ -72,14 +69,12 @@ namespace Simple.OData.Client.Extensions
                 }
             };
 
-            Func<Type, object, object> ConvertSingle = (fieldOrPropertyType, itemValue) =>
-            {
-                return IsCompoundType(fieldOrPropertyType)
-                    ? (itemValue as IDictionary<string, object>).ToObject(fieldOrPropertyType)
-                    : fieldOrPropertyType.IsEnumType()
+            Func<Type, object, object> ConvertSingle = (fieldOrPropertyType, itemValue) => 
+                IsCompoundType(fieldOrPropertyType)
+                ? (itemValue as IDictionary<string, object>).ToObject(fieldOrPropertyType)
+                : fieldOrPropertyType.IsEnumType()
                     ? ConvertEnum(fieldOrPropertyType, itemValue)
                     : itemValue;
-            };
 
             Func<Type, object, object> ConvertCollection = (fieldOrPropertyType, itemValue) =>
             {
@@ -91,8 +86,7 @@ namespace Simple.OData.Client.Extensions
                 if (elementType == null)
                     return null;
 
-                var count = 0;
-                foreach (var v in (itemValue as System.Collections.IEnumerable)) count++;
+                var count = (itemValue as System.Collections.IEnumerable).Cast<object>().Count();
                 var arrayValue = Array.CreateInstance(elementType, count);
 
                 count = 0;
@@ -117,23 +111,18 @@ namespace Simple.OData.Client.Extensions
                 }
             };
 
-            Func<Type, object, object> ConvertValue = (fieldOrPropertyType, itemValue) =>
-            {
-                return IsCollectionType(fieldOrPropertyType, itemValue)
-                            ? ConvertCollection(fieldOrPropertyType, itemValue)
-                            : ConvertSingle(fieldOrPropertyType, itemValue);
-            };
+            Func<Type, object, object> ConvertValue = (fieldOrPropertyType, itemValue) => 
+                IsCollectionType(fieldOrPropertyType, itemValue)
+                ? ConvertCollection(fieldOrPropertyType, itemValue)
+                : ConvertSingle(fieldOrPropertyType, itemValue);
 
             foreach (var item in source)
             {
                 if (item.Value != null)
                 {
-                    var property = type.GetAnyProperty(item.Key);
-                    if (property == null)
-                    {
-                        property = type.GetAllProperties()
-                            .FirstOrDefault(x => x.GetMappedName() == item.Key);
-                    }
+                    var property = type.GetAnyProperty(item.Key) ?? 
+                        type.GetAllProperties().FirstOrDefault(x => x.GetMappedName() == item.Key);
+                    
                     if (property != null && !property.IsNotMapped())
                     {
                         property.SetValue(value, ConvertValue(property.PropertyType, item.Value), null);

@@ -69,17 +69,23 @@ namespace Simple.OData.Client.Tests
 
         protected override async Task DeleteTestData()
         {
-            var products = await _client.FindEntriesAsync("Products");
-            foreach (var product in products)
+            try
             {
-                if (product["Name"].ToString().StartsWith("Test"))
-                    await _client.DeleteEntryAsync("Products", product);
+                var products = await _client.For("Products").Select("ID", "Name").FindEntriesAsync();
+                foreach (var product in products)
+                {
+                    if (product["Name"].ToString().StartsWith("Test"))
+                        await _client.DeleteEntryAsync("Products", product);
+                }
+                var categories = await _client.For("Categories").Select("ID", "Name").FindEntriesAsync();
+                foreach (var category in categories)
+                {
+                    if (category["Name"].ToString().StartsWith("Test"))
+                        await _client.DeleteEntryAsync("Categories", category);
+                }
             }
-            var categories = await _client.FindEntriesAsync("Categories");
-            foreach (var category in categories)
+            catch (Exception)
             {
-                if (category["Name"].ToString().StartsWith("Test"))
-                    await _client.DeleteEntryAsync("Categories", category);
             }
         }
     }
