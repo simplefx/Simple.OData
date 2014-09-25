@@ -83,11 +83,11 @@ namespace Simple.OData.Client
         public async Task<ODataRequest> CreateLinkRequestAsync(string collection, string linkName, string entryPath, string linkPath)
         {
             var associationName = _session.Metadata.GetNavigationPropertyExactName(collection, linkName);
-            var linkContent = await _session.Adapter.GetRequestWriter(_lazyBatchWriter).WriteLinkContentAsync(linkPath);
             var linkMethod = _session.Metadata.IsNavigationPropertyMultiple(collection, associationName) ?
                 RestVerbs.Post :
                 RestVerbs.Put;
 
+            var linkContent = await _session.Adapter.GetRequestWriter(_lazyBatchWriter).WriteLinkContentAsync(linkPath);
             var commandText = FormatLinkPath(entryPath, associationName);
             var request = new ODataRequest(linkMethod, _session, commandText, null, linkContent);
             request.IsLink = true;
@@ -133,11 +133,6 @@ namespace Simple.OData.Client
             var entityCollection = _session.Metadata.GetConcreteEntityCollection(collection);
             return _session.Metadata.GetStructuralPropertyNames(entityCollection.ActualName)
                 .Any(x => !entryData.ContainsKey(x));
-        }
-
-        private string FormatLinkPath(int contentId)
-        {
-            return "$" + contentId;
         }
 
         private string FormatLinkPath(string entryPath, string linkName)

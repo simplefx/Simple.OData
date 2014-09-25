@@ -4,11 +4,9 @@ namespace Simple.OData.Client
 {
     interface IMetadata
     {
-        IEnumerable<string> GetEntitySetNames();
         string GetEntitySetExactName(string entitySetName);
         string GetEntitySetTypeName(string entitySetName);
         string GetEntitySetTypeNamespace(string entitySetName);
-        string GetDerivedEntityTypeExactName(string entitySetName, string entityTypeName);
         bool EntitySetTypeRequiresOptimisticConcurrencyCheck(string entitySetName);
 
         string GetEntityTypeExactName(string entityTypeName);
