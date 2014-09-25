@@ -67,7 +67,29 @@ namespace Simple.OData.Client
         {
             try
             {
-                result = Convert.ChangeType(value, targetType, null);
+                if (value == null)
+                {
+                    if (targetType.IsValue())
+                        result = Activator.CreateInstance(targetType);
+                    else
+                        result = null;
+                }
+                else if (targetType.IsEnumType() && value.GetType() == typeof(string))
+                {
+                    result = Enum.Parse(targetType, value.ToString(), true);
+                }
+                else if (targetType == typeof(DateTime) && value.GetType() == typeof(DateTimeOffset))
+                {
+                    result = ((DateTimeOffset) value).DateTime;
+                }
+                else if (targetType == typeof(DateTimeOffset) && value.GetType() == typeof(DateTime))
+                {
+                    result = (DateTime)value;
+                }
+                else
+                {
+                    result = Convert.ChangeType(value, targetType, null);
+                }
                 return true;
             }
             catch (Exception)

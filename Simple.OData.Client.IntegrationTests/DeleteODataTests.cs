@@ -42,31 +42,9 @@ namespace Simple.OData.Client.Tests
         {
             var product = await _client
                 .For("Products")
-                .Set(new { Name = "Test1", Price = 18m })
+                .Set(CreateProduct(3001, "Test1"))
                 .InsertEntryAsync();
 
-            await _client
-                .For("Products")
-                .Key(product["ID"])
-                .DeleteEntryAsync();
-
-            product = await _client
-                .For("Products")
-                .Filter("Name eq 'Test1'")
-                .FindEntryAsync();
-
-            Assert.Null(product);
-        }
-
-        [Fact]
-        public async Task DeleteByKeyResetMetadataCache()
-        {
-            var product = await _client
-                .For("Products")
-                .Set(new { Name = "Test1", Price = 18m })
-                .InsertEntryAsync();
-
-            (_client as ODataClient).Session.ResetMetadataCache();
             await _client
                 .For("Products")
                 .Key(product["ID"])
@@ -85,7 +63,7 @@ namespace Simple.OData.Client.Tests
         {
             var product = await _client
                 .For("Products")
-                .Set(new { Name = "Test1", Price = 18m })
+                .Set(CreateProduct(3002, "Test1"))
                 .InsertEntryAsync();
 
             await _client
@@ -106,7 +84,7 @@ namespace Simple.OData.Client.Tests
         {
             var product = await _client
                 .For("Products")
-                .Set(new { Name = "Test1", Price = 18m })
+                .Set(CreateProduct(3003, "Test1"))
                 .InsertEntryAsync();
 
             await _client
@@ -120,6 +98,19 @@ namespace Simple.OData.Client.Tests
                 .FindEntryAsync();
 
             Assert.Null(product);
+        }
+
+        private Entry CreateProduct(int productId, string productName)
+        {
+            return new Entry()
+            {
+                {"ID", productId},
+                {"Name", productName},
+                {"Description", "Test1"},
+                {"Price", 18},
+                {"Rating", 1},
+                {"ReleaseDate", DateTimeOffset.Now},
+            };
         }
     }
 }

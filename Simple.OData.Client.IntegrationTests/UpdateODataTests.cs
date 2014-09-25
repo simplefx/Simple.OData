@@ -42,7 +42,7 @@ namespace Simple.OData.Client.Tests
         {
             var product = await _client
                 .For("Products")
-                .Set(new { Name = "Test1", Price = 18m })
+                .Set(CreateProduct(2001, "Test1"))
                 .InsertEntryAsync();
 
             await _client
@@ -60,34 +60,11 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task UpdateByKeyResetSchemaCache()
-        {
-            var product = await _client
-                .For("Products")
-                .Set(new { Name = "Test1", Price = 18m })
-                .InsertEntryAsync();
-
-            (_client as ODataClient).Session.ResetMetadataCache();
-            await _client
-                .For("Products")
-                .Key(product["ID"])
-                .Set(new { Price = 123m })
-                .UpdateEntryAsync();
-
-            product = await _client
-                .For("Products")
-                .Filter("Name eq 'Test1'")
-                .FindEntryAsync();
-
-            Assert.Equal(123m, product["Price"]);
-        }
-
-        [Fact]
         public async Task UpdateByFilter()
         {
             var product = await _client
                 .For("Products")
-                .Set(new { Name = "Test1", Price = 18m })
+                .Set(CreateProduct(2002, "Test1"))
                 .InsertEntryAsync();
 
             await _client
@@ -109,7 +86,7 @@ namespace Simple.OData.Client.Tests
         {
             var product = await _client
                 .For("Products")
-                .Set(new { Name = "Test1", Price = 18m })
+                .Set(CreateProduct(2003, "Test1"))
                 .InsertEntryAsync();
 
             product = (await _client
@@ -122,34 +99,11 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task UpdateMultipleNoResult()
-        {
-            var product = await _client
-                .For("Products")
-                .Set(new { Name = "Test1", Price = 18m })
-                .InsertEntryAsync();
-
-            product = (await _client
-                .For("Products")
-                .Filter("Name eq 'Test1'")
-                .Set(new { Price = 123m })
-                .UpdateEntriesAsync(false)).Single();
-            Assert.Null(product);
-
-            product = await _client
-                .For("Products")
-                .Filter("Name eq 'Test1'")
-                .FindEntryAsync();
-
-            Assert.Equal(123m, product["Price"]);
-        }
-
-        [Fact]
         public async Task UpdateByObjectAsKey()
         {
             var product = await _client
                 .For("Products")
-                .Set(new { Name = "Test1", Price = 18m })
+                .Set(CreateProduct(2004, "Test1"))
                 .InsertEntryAsync();
 
             await _client
@@ -306,6 +260,28 @@ namespace Simple.OData.Client.Tests
                 .Expand("Products")
                 .FindEntryAsync();
             Assert.Equal(2, (category["Products"] as IEnumerable<object>).Count());
+        }
+
+        private Entry CreateProduct(int productId, string productName)
+        {
+            return new Entry()
+            {
+                {"ID", productId},
+                {"Name", productName},
+                {"Description", "Test1"},
+                {"Price", 18},
+                {"Rating", 1},
+                {"ReleaseDate", DateTimeOffset.Now},
+            };
+        }
+
+        private Entry CreateCategory(int categoryId, string categoryName)
+        {
+            return new Entry()
+            {
+                {"ID", categoryId},
+                {"Name", categoryName},
+            };
         }
     }
 }
