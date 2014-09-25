@@ -136,35 +136,6 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task GetNonExisting()
-        {
-            await AssertThrowsAsync<WebRequestException>(async () => await _client
-                .For("Categories")
-                .Key(-1)
-                .FindEntryAsync());
-        }
-
-        [Fact]
-        public async Task SkipOne()
-        {
-            var products = await _client
-                .For("Products")
-                .Skip(1)
-                .FindEntriesAsync();
-            Assert.Equal(ExpectedSkipOne, products.Count());
-        }
-
-        [Fact]
-        public async Task TopOne()
-        {
-            var products = await _client
-                .For("Products")
-                .Top(1)
-                .FindEntriesAsync();
-            Assert.Equal(1, products.Count());
-        }
-
-        [Fact]
         public async Task SkipOneTopOne()
         {
             var products = await _client
@@ -183,27 +154,6 @@ namespace Simple.OData.Client.Tests
                 .OrderBy("Name")
                 .FindEntriesAsync()).First();
             Assert.Equal("Bread", product["Name"]);
-        }
-
-        [Fact]
-        public async Task OrderByDescending()
-        {
-            var product = (await _client
-                .For("Products")
-                .OrderByDescending("Name")
-                .FindEntriesAsync()).First();
-            Assert.Equal("Vint soda", product["Name"]);
-        }
-
-        [Fact]
-        public async Task SelectSingle()
-        {
-            var product = await _client
-                .For("Products")
-                .Select("Name")
-                .FindEntryAsync();
-            Assert.Contains("Name", product.Keys);
-            Assert.DoesNotContain("ID", product.Keys);
         }
 
         [Fact]
@@ -261,17 +211,6 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task FilterCount()
-        {
-            var count = await _client
-                .For("Products")
-                .Filter("Name eq 'Milk'")
-                .Count()
-                .FindScalarAsync();
-            Assert.Equal(1, int.Parse(count.ToString()));
-        }
-
-        [Fact]
         public async Task TotalCount()
         {
             var productsWithCount = await _client
@@ -291,20 +230,6 @@ namespace Simple.OData.Client.Tests
                 .Top(1)
                 .Expand(ProductCategoryName)
                 .Select(ProductCategoryName)
-                .FindEntriesAsync()).Single();
-            Assert.Equal(ExpectedCategory, ProductCategoryFunc(product)["Name"]);
-        }
-
-        [Fact]
-        public async Task CombineAllReverse()
-        {
-            var product = (await _client
-                .For("Products")
-                .Select(ProductCategoryName)
-                .Expand(ProductCategoryName)
-                .Top(1)
-                .Skip(2)
-                .OrderBy("Name")
                 .FindEntriesAsync()).Single();
             Assert.Equal(ExpectedCategory, ProductCategoryFunc(product)["Name"]);
         }
