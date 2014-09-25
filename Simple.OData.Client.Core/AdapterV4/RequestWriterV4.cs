@@ -139,7 +139,7 @@ namespace Simple.OData.Client
             }
             else
             {
-                var formattedKey = "(" + string.Join(".", linkKey.Select(x => new ValueFormatter().FormatContentValue(linkEntry[x.Name]))) + ")";
+                var formattedKey = "(" + string.Join(".", linkKey.Select(x => new ValueFormatter().FormatValue(linkEntry[x.Name]))) + ")";
                 var linkSet = _model.SchemaElements
                     .Where(x => x.SchemaElementKind == EdmSchemaElementKind.EntityContainer)
                     .SelectMany(x => (x as IEdmEntityContainer).EntitySets())

@@ -93,7 +93,7 @@ namespace Simple.OData.Client
 
         private string FormatValue(ExpressionContext context)
         {
-            return (new ValueFormatter()).FormatExpressionValue(Value, context);
+            return (new ValueFormatter()).FormatValue(Value, context);
         }
 
         private string FormatOperator(ExpressionContext context)

@@ -139,7 +139,7 @@ namespace Simple.OData.Client
             }
             else
             {
-                var formattedKey = "(" + string.Join(".", linkKey.Select(x => new ValueFormatter().FormatContentValue(linkEntry[x.Name]))) + ")";
+                var formattedKey = "(" + string.Join(".", linkKey.Select(x => new ValueFormatter().FormatValue(linkEntry[x.Name]))) + ")";
                 var linkSet = _model.EntityContainers().SelectMany(x => x.EntitySets())
                     .Single(x => Utils.NamesAreEqual(x.ElementType.Name, linkType.Name, _session.Pluralizer));
                 linkUri = linkSet.Name + formattedKey;
