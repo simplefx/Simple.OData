@@ -32,6 +32,17 @@ namespace Simple.OData.Client.Tests
             }
         }
 
+        protected Func<IDictionary<string, object>, object> ProductCategoryLinkFunc
+        {
+            get
+            {
+                if (_version == 2)
+                    return x => x;
+                else
+                    return x => new List<IDictionary<string, object>>() {x};
+            }
+        }
+
         protected string ExpectedCategory
         {
             get { return _version == 2 ? "Electronics" : "Beverages"; }
@@ -76,7 +87,7 @@ namespace Simple.OData.Client.Tests
 
             if (category != null)
             {
-                entry.Add(ProductCategoryName, category);
+                entry.Add(ProductCategoryName, ProductCategoryLinkFunc(category));
             }
             return entry;
         }

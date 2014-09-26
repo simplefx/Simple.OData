@@ -39,7 +39,11 @@ namespace Simple.OData.Client.Tests
         {
             var client = new HttpClient();
             var response = await client.GetAsync(serviceUri);
-            return response.RequestMessage.RequestUri.AbsoluteUri;
+            var uri = response.RequestMessage.RequestUri.AbsoluteUri;
+            var i1 = uri.IndexOf(".org/V");
+            var i2 = uri.IndexOf("/OData/");
+            uri = uri.Substring(0, i1 + 5) + uri.Substring(i1 + 8, i2 - i1 - 7) + uri.Substring(i1 + 5, 2) + uri.Substring(i2);
+            return uri;
         }
 
         protected IODataClient CreateClientWithDefaultSettings()

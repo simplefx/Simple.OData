@@ -126,26 +126,25 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task UpdateDate()
         {
-            var today = DateTime.Now.Date;
-            var tomorrow = today.AddDays(1);
+            var tomorrow = DateTime.Now.AddDays(1);
 
-            var employee = await _client
-                .For("Employees")
-                .Set(new { FirstName="Test1", LastName="Test1", HireDate = today })
+            var product = await _client
+                .For("Products")
+                .Set(CreateProduct(2008, "Test1"))
                 .InsertEntryAsync();
 
             await _client
-                .For("Employees")
-                .Key(employee["EmployeeID"])
-                .Set(new { HireDate = tomorrow })
+                .For("Products")
+                .Key(product["ID"])
+                .Set(new { ReleaseDate = tomorrow })
                 .UpdateEntryAsync();
 
-            employee = await _client
-                .For("Employees")
-                .Key(employee["EmployeeID"])
+            product = await _client
+                .For("Products")
+                .Key(product["ID"])
                 .FindEntryAsync();
 
-            Assert.Equal(tomorrow, employee["HireDate"]);
+            Assert.Equal(tomorrow, product["ReleaseDate"]);
         }
 
         [Fact]

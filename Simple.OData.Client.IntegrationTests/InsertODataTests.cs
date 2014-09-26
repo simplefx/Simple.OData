@@ -96,11 +96,10 @@ namespace Simple.OData.Client.Tests
                 .InsertEntryAsync();
 
             Assert.Equal("Test6", product["Name"]);
-            Assert.Equal(category["ID"], (product[ProductCategoryName] as IDictionary<string, object>)["ID"]);
             category = await _client
                 .For("Categories")
                 .Expand("Products")
-                .Filter("CategoryName eq 'Test5'")
+                .Filter("Name eq 'Test5'")
                 .FindEntryAsync();
             Assert.True((category["Products"] as IEnumerable<object>).Count() == 1);
         }
