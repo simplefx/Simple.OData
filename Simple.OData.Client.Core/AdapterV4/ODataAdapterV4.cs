@@ -43,6 +43,16 @@ namespace Simple.OData.Client
             Model = EdmxReader.Parse(reader);
         }
 
+        public override string GetODataVersionString()
+        {
+            switch (this.ProtocolVersion)
+            {
+                case ODataProtocolVersion.V4:
+                    return "V4";
+            }
+            throw new InvalidOperationException(string.Format("Unsupported OData protocol version: \"{0}\"", this.ProtocolVersion));
+        }
+
         public override IMetadata GetMetadata()
         {
             return new MetadataV4(_session, Model);

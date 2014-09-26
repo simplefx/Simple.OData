@@ -9,6 +9,7 @@ namespace Simple.OData.Client
         public string ProtocolVersion { get; set; }
         public object Model { get; set; }
 
+        public abstract string GetODataVersionString();
         public abstract IMetadata GetMetadata();
         public abstract IResponseReader GetResponseReader();
         public abstract IRequestWriter GetRequestWriter(Lazy<IBatchWriter> deferredBatchWriter);

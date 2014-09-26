@@ -27,7 +27,6 @@ namespace Simple.OData.Client
 
         public async Task<Stream> WriteEntryContentAsync(string method, string collection, IDictionary<string, object> entryData, string commandText)
         {
-            var writerSettings = new ODataMessageWriterSettings() { ODataUri = new ODataUri() { RequestUri = new Uri(_session.UrlBase) }, Indent = true };
             IODataRequestMessage message;
             if (_deferredBatchWriter != null)
             {
@@ -53,7 +52,7 @@ namespace Simple.OData.Client
                 message = new ODataV4RequestMessage();
             }
 
-            using (var messageWriter = new ODataMessageWriter(message, writerSettings, _model))
+            using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), _model))
             {
                 if (method == RestVerbs.Delete)
                     return null;
@@ -95,9 +94,8 @@ namespace Simple.OData.Client
 
         public async Task<Stream> WriteLinkContentAsync(string linkPath)
         {
-            var writerSettings = new ODataMessageWriterSettings() { ODataUri = new ODataUri() { RequestUri = new Uri(_session.UrlBase) }, Indent = true };
             var message = new ODataV4RequestMessage();
-            using (var messageWriter = new ODataMessageWriter(message, writerSettings, _model))
+            using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), _model))
             {
                 var link = new ODataEntityReferenceLink { Url = new Uri(linkPath, UriKind.Relative) };
                 messageWriter.WriteEntityReferenceLink(link);
@@ -154,6 +152,29 @@ namespace Simple.OData.Client
             entryWriter.WriteEntityReferenceLink(link);
 
             entryWriter.WriteEnd();
+        }
+
+        private ODataMessageWriterSettings GetWriterSettings()
+        {
+            var settings = new ODataMessageWriterSettings()
+            {
+                ODataUri = new ODataUri()
+                {
+                    RequestUri = new Uri(_session.UrlBase),
+                }, 
+                Indent = true,
+            };
+            switch (_session.PayloadFormat)
+            {
+                case ODataPayloadFormat.Atom:
+                    settings.SetContentType(ODataFormat.Atom);
+                    break;
+                case ODataPayloadFormat.Json:
+                default:
+                    settings.SetContentType(ODataFormat.Json);
+                    break;
+            }
+            return settings;
         }
 
         private object GetPropertyValue(IEnumerable<IEdmProperty> properties, string key, object value)

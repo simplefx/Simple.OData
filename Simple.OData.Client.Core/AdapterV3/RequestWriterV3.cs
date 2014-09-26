@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -28,7 +27,6 @@ namespace Simple.OData.Client
 
         public async Task<Stream> WriteEntryContentAsync(string method, string collection, IDictionary<string, object> entryData, string commandText)
         {
-            var writerSettings = new ODataMessageWriterSettings() { BaseUri = new Uri(_session.UrlBase), Indent = true };
             IODataRequestMessage message;
             if (_deferredBatchWriter != null)
             {
@@ -54,7 +52,7 @@ namespace Simple.OData.Client
                 message = new ODataV3RequestMessage();
             }
 
-            using (var messageWriter = new ODataMessageWriter(message, writerSettings, _model))
+            using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), _model))
             {
                 if (method == RestVerbs.Delete)
                     return null;
@@ -95,15 +93,34 @@ namespace Simple.OData.Client
 
         public async Task<Stream> WriteLinkContentAsync(string linkPath)
         {
-            var writerSettings = new ODataMessageWriterSettings() { BaseUri = new Uri(_session.UrlBase), Indent = true };
             var message = new ODataV3RequestMessage();
-            using (var messageWriter = new ODataMessageWriter(message, writerSettings, _model))
+            using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), _model))
             {
                 var link = new ODataEntityReferenceLink { Url = new Uri(linkPath, UriKind.Relative) };
                 messageWriter.WriteEntityReferenceLink(link);
 
                 return Utils.CloneStream(message.GetStream());
             }
+        }
+
+        private ODataMessageWriterSettings GetWriterSettings()
+        {
+            var settings = new ODataMessageWriterSettings()
+            {
+                BaseUri = new Uri(_session.UrlBase),
+                Indent = true,
+            };
+            switch (_session.PayloadFormat)
+            {
+                case ODataPayloadFormat.Atom:
+                default:
+                    settings.SetContentType(ODataFormat.Atom);
+                    break;
+                case ODataPayloadFormat.Json:
+                    settings.SetContentType(ODataFormat.Json);
+                    break;
+            }
+            return settings;
         }
 
         private void WriteLink(ODataWriter entryWriter, Microsoft.Data.OData.ODataEntry entry, string linkName, object linkData)

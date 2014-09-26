@@ -323,14 +323,14 @@
     <Compile Include="..\Simple.OData.Client.Core\ODataPayloadFormat.cs">
       <Link>ODataPayloadFormat.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ODataProtocolVersion.cs">
+      <Link>ODataProtocolVersion.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ODataRequest.cs">
       <Link>ODataRequest.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ODataResponse.cs">
       <Link>ODataResponse.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\ODataVersion.cs">
-      <Link>ODataVersion.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Pluralizer.cs">
       <Link>Pluralizer.cs</Link>
