@@ -11,32 +11,35 @@ namespace Simple.OData.Client.Tests
 {
     public class InsertODataTestsV2Atom : InsertODataTests
     {
-        public InsertODataTestsV2Atom() : base(ODataV2ReadWriteUri, ODataPayloadFormat.Atom) { }
+        public InsertODataTestsV2Atom() : base(ODataV2ReadWriteUri, ODataPayloadFormat.Atom, 2) { }
     }
 
     public class InsertODataTestsV2Json : InsertODataTests
     {
-        public InsertODataTestsV2Json() : base(ODataV2ReadWriteUri, ODataPayloadFormat.Json) { }
+        public InsertODataTestsV2Json() : base(ODataV2ReadWriteUri, ODataPayloadFormat.Json, 2) { }
     }
 
     public class InsertODataTestsV3Atom : InsertODataTests
     {
-        public InsertODataTestsV3Atom() : base(ODataV3ReadWriteUri, ODataPayloadFormat.Atom) { }
+        public InsertODataTestsV3Atom() : base(ODataV3ReadWriteUri, ODataPayloadFormat.Atom, 3) { }
     }
 
     public class InsertODataTestsV3Json : InsertODataTests
     {
-        public InsertODataTestsV3Json() : base(ODataV3ReadWriteUri, ODataPayloadFormat.Json) { }
+        public InsertODataTestsV3Json() : base(ODataV3ReadWriteUri, ODataPayloadFormat.Json, 3) { }
     }
 
     public class InsertODataTestsV4Json : InsertODataTests
     {
-        public InsertODataTestsV4Json() : base(ODataV4ReadWriteUri, ODataPayloadFormat.Json) { }
+        public InsertODataTestsV4Json() : base(ODataV4ReadWriteUri, ODataPayloadFormat.Json, 4) { }
     }
 
-    public abstract class InsertODataTests : ODataTests
+    public abstract class InsertODataTests : ODataTestBase
     {
-        protected InsertODataTests(string serviceUri, ODataPayloadFormat payloadFormat) : base(serviceUri, payloadFormat) { }
+        protected InsertODataTests(string serviceUri, ODataPayloadFormat payloadFormat, int version)
+            : base(serviceUri, payloadFormat, version)
+        {
+        }
 
         [Fact]
         public async Task Insert()
@@ -81,29 +84,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task InsertProductWithCategoryByID()
-        {
-            var category = await _client
-                .For("Categories")
-                .Set(CreateCategory(1004, "Test4"))
-                .InsertEntryAsync();
-            var product = await _client
-                .For("Products")
-                .Set(new { Name = "Test4", Price = 18m, CategoryID = category["CategoryID"] })
-                .InsertEntryAsync();
-
-            Assert.Equal("Test4", product["Name"]);
-            Assert.Equal(category["CategoryID"], product["CategoryID"]);
-            category = await _client
-                .For("Categories")
-                .Expand("Products")
-                .Filter("CategoryName eq 'Test4'")
-                .FindEntryAsync();
-            Assert.True((category["Products"] as IEnumerable<object>).Count() == 1);
-        }
-
-        [Fact]
-        public async Task InsertProductWithCategoryByAssociation()
+        public async Task InsertProductWithCategory()
         {
             var category = await _client
                 .For("Categories")
@@ -111,39 +92,17 @@ namespace Simple.OData.Client.Tests
                 .InsertEntryAsync();
             var product = await _client
                 .For("Products")
-                .Set(new { Name = "Test6", Price = 18m, Category = category })
+                .Set(CreateProduct(1007, "Test6", category))
                 .InsertEntryAsync();
 
             Assert.Equal("Test6", product["Name"]);
-            Assert.Equal(category["CategoryID"], product["CategoryID"]);
+            Assert.Equal(category["ID"], (product[ProductCategoryName] as IDictionary<string, object>)["ID"]);
             category = await _client
                 .For("Categories")
                 .Expand("Products")
                 .Filter("CategoryName eq 'Test5'")
                 .FindEntryAsync();
             Assert.True((category["Products"] as IEnumerable<object>).Count() == 1);
-        }
-
-        private Entry CreateProduct(int productId, string productName)
-        {
-            return new Entry()
-            {
-                {"ID", productId},
-                {"Name", productName},
-                {"Description", "Test1"},
-                {"Price", 18},
-                {"Rating", 1},
-                {"ReleaseDate", DateTimeOffset.Now},
-            };
-        }
-
-        private Entry CreateCategory(int categoryId, string categoryName)
-        {
-            return new Entry()
-            {
-                {"ID", categoryId},
-                {"Name", categoryName},
-            };
         }
     }
 }

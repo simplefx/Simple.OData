@@ -10,32 +10,35 @@ namespace Simple.OData.Client.Tests
 {
     public class UpdateODataTestsV2Atom : UpdateODataTests
     {
-        public UpdateODataTestsV2Atom() : base(ODataV2ReadWriteUri, ODataPayloadFormat.Atom) { }
+        public UpdateODataTestsV2Atom() : base(ODataV2ReadWriteUri, ODataPayloadFormat.Atom, 2) { }
     }
 
     public class UpdateODataTestsV2Json : UpdateODataTests
     {
-        public UpdateODataTestsV2Json() : base(ODataV2ReadWriteUri, ODataPayloadFormat.Json) { }
+        public UpdateODataTestsV2Json() : base(ODataV2ReadWriteUri, ODataPayloadFormat.Json, 2) { }
     }
 
     public class UpdateODataTestsV3Atom : UpdateODataTests
     {
-        public UpdateODataTestsV3Atom() : base(ODataV3ReadWriteUri, ODataPayloadFormat.Atom) { }
+        public UpdateODataTestsV3Atom() : base(ODataV3ReadWriteUri, ODataPayloadFormat.Atom, 3) { }
     }
 
     public class UpdateODataTestsV3Json : UpdateODataTests
     {
-        public UpdateODataTestsV3Json() : base(ODataV3ReadWriteUri, ODataPayloadFormat.Json) { }
+        public UpdateODataTestsV3Json() : base(ODataV3ReadWriteUri, ODataPayloadFormat.Json, 3) { }
     }
 
     public class UpdateODataTestsV4Json : UpdateODataTests
     {
-        public UpdateODataTestsV4Json() : base(ODataV4ReadWriteUri, ODataPayloadFormat.Json) { }
+        public UpdateODataTestsV4Json() : base(ODataV4ReadWriteUri, ODataPayloadFormat.Json, 4) { }
     }
 
-    public abstract class UpdateODataTests : ODataTests
+    public abstract class UpdateODataTests : ODataTestBase
     {
-        protected UpdateODataTests(string serviceUri, ODataPayloadFormat payloadFormat) : base(serviceUri, payloadFormat) { }
+        protected UpdateODataTests(string serviceUri, ODataPayloadFormat payloadFormat, int version)
+            : base(serviceUri, payloadFormat, version)
+        {
+        }
 
         [Fact]
         public async Task UpdateByKey()

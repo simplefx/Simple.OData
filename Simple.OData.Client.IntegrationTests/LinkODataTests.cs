@@ -10,32 +10,35 @@ namespace Simple.OData.Client.Tests
 {
     public class LinkODataTestsV2Atom : LinkODataTests
     {
-        public LinkODataTestsV2Atom() : base(ODataV2ReadWriteUri, ODataPayloadFormat.Atom) { }
+        public LinkODataTestsV2Atom() : base(ODataV2ReadWriteUri, ODataPayloadFormat.Atom, 2) { }
     }
 
     public class LinkODataTestsV2Json : LinkODataTests
     {
-        public LinkODataTestsV2Json() : base(ODataV2ReadWriteUri, ODataPayloadFormat.Json) { }
+        public LinkODataTestsV2Json() : base(ODataV2ReadWriteUri, ODataPayloadFormat.Json, 2) { }
     }
 
     public class LinkODataTestsV3Atom : LinkODataTests
     {
-        public LinkODataTestsV3Atom() : base(ODataV3ReadWriteUri, ODataPayloadFormat.Atom) { }
+        public LinkODataTestsV3Atom() : base(ODataV3ReadWriteUri, ODataPayloadFormat.Atom, 3) { }
     }
 
     public class LinkODataTestsV3Json : LinkODataTests
     {
-        public LinkODataTestsV3Json() : base(ODataV3ReadWriteUri, ODataPayloadFormat.Json) { }
+        public LinkODataTestsV3Json() : base(ODataV3ReadWriteUri, ODataPayloadFormat.Json, 3) { }
     }
 
     public class LinkODataTestsV4Json : LinkODataTests
     {
-        public LinkODataTestsV4Json() : base(ODataV4ReadWriteUri, ODataPayloadFormat.Json) { }
+        public LinkODataTestsV4Json() : base(ODataV4ReadWriteUri, ODataPayloadFormat.Json, 4) { }
     }
 
-    public abstract class LinkODataTests : ODataTests
+    public abstract class LinkODataTests : ODataTestBase
     {
-        protected LinkODataTests(string serviceUri, ODataPayloadFormat payloadFormat) : base(serviceUri, payloadFormat) { }
+        protected LinkODataTests(string serviceUri, ODataPayloadFormat payloadFormat, int version)
+            : base(serviceUri, payloadFormat, version)
+        {
+        }
 
         [Fact]
         public async Task LinkEntry()

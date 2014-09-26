@@ -117,7 +117,9 @@ namespace Simple.OData.Client
                     settings.SetContentType(ODataFormat.Atom);
                     break;
                 case ODataPayloadFormat.Json:
-                    settings.SetContentType(ODataFormat.Json);
+                    settings.SetContentType(_session.Adapter.ProtocolVersion == ODataProtocolVersion.V1 
+                        ? ODataFormat.VerboseJson 
+                        : ODataFormat.Json);
                     break;
             }
             return settings;

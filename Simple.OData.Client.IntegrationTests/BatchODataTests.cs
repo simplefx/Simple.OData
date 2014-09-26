@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
@@ -9,32 +10,35 @@ namespace Simple.OData.Client.Tests
 
     public class BatchODataTestsV2Atom : BatchODataTests
     {
-        public BatchODataTestsV2Atom() : base(ODataV2ReadWriteUri, ODataPayloadFormat.Atom) { }
+        public BatchODataTestsV2Atom() : base(ODataV2ReadWriteUri, ODataPayloadFormat.Atom, 2) { }
     }
 
     public class BatchODataTestsV2Json : BatchODataTests
     {
-        public BatchODataTestsV2Json() : base(ODataV2ReadWriteUri, ODataPayloadFormat.Json) { }
+        public BatchODataTestsV2Json() : base(ODataV2ReadWriteUri, ODataPayloadFormat.Json, 2) { }
     }
 
     public class BatchODataTestsV3Atom : BatchODataTests
     {
-        public BatchODataTestsV3Atom() : base(ODataV3ReadWriteUri, ODataPayloadFormat.Atom) { }
+        public BatchODataTestsV3Atom() : base(ODataV3ReadWriteUri, ODataPayloadFormat.Atom, 3) { }
     }
 
     public class BatchODataTestsV3Json : BatchODataTests
     {
-        public BatchODataTestsV3Json() : base(ODataV3ReadWriteUri, ODataPayloadFormat.Json) { }
+        public BatchODataTestsV3Json() : base(ODataV3ReadWriteUri, ODataPayloadFormat.Json, 3) { }
     }
 
     public class BatchODataTestsV4Json : BatchODataTests
     {
-        public BatchODataTestsV4Json() : base(ODataV4ReadWriteUri, ODataPayloadFormat.Json) { }
+        public BatchODataTestsV4Json() : base(ODataV4ReadWriteUri, ODataPayloadFormat.Json, 4) { }
     }
 
-    public abstract class BatchODataTests : ODataTests
+    public abstract class BatchODataTests : ODataTestBase
     {
-        protected BatchODataTests(string serviceUri, ODataPayloadFormat payloadFormat) : base(serviceUri, payloadFormat) { }
+        protected BatchODataTests(string serviceUri, ODataPayloadFormat payloadFormat, int version)
+            : base(serviceUri, payloadFormat, version)
+        {
+        }
 
         [Fact]
         public async Task Success()
@@ -42,8 +46,8 @@ namespace Simple.OData.Client.Tests
             using (var batch = new ODataBatch(_serviceUri))
             {
                 var client = new ODataClient(batch);
-                await client.InsertEntryAsync("Products", new Entry() { { "Name", "Test1" }, { "Price", 10m } }, false);
-                await client.InsertEntryAsync("Products", new Entry() { { "Name", "Test2" }, { "Price", 20m } }, false);
+                await client.InsertEntryAsync("Products", CreateProduct(5001, "Test1"), false);
+                await client.InsertEntryAsync("Products", CreateProduct(5002, "Test2"), false);
                 await batch.CompleteAsync();
             }
 
@@ -71,8 +75,8 @@ namespace Simple.OData.Client.Tests
             using (var batch = new ODataBatch(_serviceUri))
             {
                 var client = new ODataClient(batch);
-                await client.InsertEntryAsync("Products", new Entry() { { "Price", 10m } }, false);
-                await client.InsertEntryAsync("Products", new Entry() { { "Price", 20m } }, false);
+                await client.InsertEntryAsync("Products", CreateProduct(0, null), false);
+                await client.InsertEntryAsync("Products", CreateProduct(0, null), false);
                 await AssertThrowsAsync<WebRequestException>(async () => await batch.CompleteAsync());
             }
         }
@@ -85,7 +89,7 @@ namespace Simple.OData.Client.Tests
             using (var batch = new ODataBatch(_serviceUri))
             {
                 var client = new ODataClient(batch);
-                await client.InsertEntryAsync("Products", new Entry() { { "Name", "Test11" }, { "Price", 21m } }, false);
+                await client.InsertEntryAsync("Products", CreateProduct(5011, "Test11"), false);
                 await client.UpdateEntriesAsync("Products", "Products?$filter=Name eq 'Test11'", new Entry() { { "Price", 22m } });
                 await client.DeleteEntriesAsync("Products", "Products?$filter=Name eq 'Test11'");
                 await batch.CompleteAsync();
@@ -101,7 +105,7 @@ namespace Simple.OData.Client.Tests
             using (var batch = new ODataBatch(_serviceUri))
             {
                 var client = new ODataClient(batch);
-                await client.InsertEntryAsync("Products", new Entry() { { "Name", "Test12" }, { "Price", 21m } }, false);
+                await client.InsertEntryAsync("Products", CreateProduct(5012, "Test12"), false);
                 await batch.CompleteAsync();
             }
             var product = await _client.FindEntryAsync("Products?$filter=Name eq 'Test12'");
@@ -154,8 +158,8 @@ namespace Simple.OData.Client.Tests
             using (var batch = new ODataBatch(_serviceUri))
             {
                 var client = new ODataClient(batch);
-                var product1 = await client.InsertEntryAsync("Products", new Entry() { { "Name", "Test15" }, { "Price", 21m } });
-                var product2 = await client.InsertEntryAsync("Products", new Entry() { { "Name", "Test16" }, { "Price", 22m } });
+                var product1 = await client.InsertEntryAsync("Products", CreateProduct(5015, "Test15"));
+                var product2 = await client.InsertEntryAsync("Products", CreateProduct(5016, "Test16"));
                 await client.InsertEntryAsync("Categories", new Entry() { { "CategoryName", "Test17" }, { "Products", new[] { product1, product2 } } }, false);
                 await batch.CompleteAsync();
             }

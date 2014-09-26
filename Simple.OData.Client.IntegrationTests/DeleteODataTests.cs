@@ -10,32 +10,35 @@ namespace Simple.OData.Client.Tests
 {
     public class DeleteODataTestsV2Atom : DeleteODataTests
     {
-        public DeleteODataTestsV2Atom() : base(ODataV2ReadWriteUri, ODataPayloadFormat.Atom) { }
+        public DeleteODataTestsV2Atom() : base(ODataV2ReadWriteUri, ODataPayloadFormat.Atom, 2) { }
     }
 
     public class DeleteODataTestsV2Json : DeleteODataTests
     {
-        public DeleteODataTestsV2Json() : base(ODataV2ReadWriteUri, ODataPayloadFormat.Json) { }
+        public DeleteODataTestsV2Json() : base(ODataV2ReadWriteUri, ODataPayloadFormat.Json, 2) { }
     }
 
     public class DeleteODataTestsV3Atom : DeleteODataTests
     {
-        public DeleteODataTestsV3Atom() : base(ODataV3ReadWriteUri, ODataPayloadFormat.Atom) { }
+        public DeleteODataTestsV3Atom() : base(ODataV3ReadWriteUri, ODataPayloadFormat.Atom, 3) { }
     }
 
     public class DeleteODataTestsV3Json : DeleteODataTests
     {
-        public DeleteODataTestsV3Json() : base(ODataV3ReadWriteUri, ODataPayloadFormat.Json) { }
+        public DeleteODataTestsV3Json() : base(ODataV3ReadWriteUri, ODataPayloadFormat.Json, 3) { }
     }
 
     public class DeleteODataTestsV4Json : DeleteODataTests
     {
-        public DeleteODataTestsV4Json() : base(ODataV4ReadWriteUri, ODataPayloadFormat.Json) { }
+        public DeleteODataTestsV4Json() : base(ODataV4ReadWriteUri, ODataPayloadFormat.Json, 4) { }
     }
 
-    public abstract class DeleteODataTests : ODataTests
+    public abstract class DeleteODataTests : ODataTestBase
     {
-        protected DeleteODataTests(string serviceUri, ODataPayloadFormat payloadFormat) : base(serviceUri, payloadFormat) { }
+        protected DeleteODataTests(string serviceUri, ODataPayloadFormat payloadFormat, int version)
+            : base(serviceUri, payloadFormat, version)
+        {
+        }
 
         [Fact]
         public async Task DeleteByKey()

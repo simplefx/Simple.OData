@@ -8,101 +8,35 @@ namespace Simple.OData.Client.Tests
 {
     public class FindODataTestsV2Atom : FindODataTests
     {
-        public FindODataTestsV2Atom() : base(ODataV2ReadWriteUri, ODataPayloadFormat.Atom) { }
-
-        protected override string ProductCategoryName { get { return "Category"; } }
-        protected override Func<IDictionary<string, object>, IDictionary<string, object>> ProductCategoryFunc 
-        {
-            get { return x => x[ProductCategoryName] as IDictionary<string, object>; }
-        }
-        protected override string ExpectedCategory { get { return "Electronics"; } }
-        protected override int ExpectedCount { get { return 9; } }
-        protected override int ExpectedExpandMany { get { return 6; } }
-        protected override int ExpectedExpandSecondLevel { get { return 2; } }
-        protected override int ExpectedSkipOne { get { return 8; } }
-        protected override int ExpectedTotalCount { get { return 9; } }
+        public FindODataTestsV2Atom() : base(ODataV2ReadWriteUri, ODataPayloadFormat.Atom, 2) { }
     }
 
     public class FindODataTestsV2Json : FindODataTests
     {
-        public FindODataTestsV2Json() : base(ODataV2ReadWriteUri, ODataPayloadFormat.Json) { }
-
-        protected override string ProductCategoryName { get { return "Category"; } }
-        protected override Func<IDictionary<string, object>, IDictionary<string, object>> ProductCategoryFunc
-        {
-            get { return x => x[ProductCategoryName] as IDictionary<string, object>; }
-        }
-        protected override string ExpectedCategory { get { return "Electronics"; } }
-        protected override int ExpectedCount { get { return 9; } }
-        protected override int ExpectedExpandMany { get { return 6; } }
-        protected override int ExpectedExpandSecondLevel { get { return 2; } }
-        protected override int ExpectedSkipOne { get { return 8; } }
-        protected override int ExpectedTotalCount { get { return 9; } }
+        public FindODataTestsV2Json() : base(ODataV2ReadWriteUri, ODataPayloadFormat.Json, 2) { }
     }
 
     public class FindODataTestsV3Atom : FindODataTests
     {
-        public FindODataTestsV3Atom() : base(ODataV3ReadOnlyUri, ODataPayloadFormat.Atom) { }
-
-        protected override string ProductCategoryName { get { return "Categories"; } }
-        protected override Func<IDictionary<string, object>, IDictionary<string, object>> ProductCategoryFunc
-        {
-            get { return x => (x[ProductCategoryName] as IEnumerable<object>).First() as IDictionary<string, object>; }
-        }
-        protected override string ExpectedCategory { get { return "Beverages"; } }
-        protected override int ExpectedCount { get { return 11; } }
-        protected override int ExpectedExpandMany { get { return 8; } }
-        protected override int ExpectedExpandSecondLevel { get { return 8; } }
-        protected override int ExpectedSkipOne { get { return 10; } }
-        protected override int ExpectedTotalCount { get { return 11; } }
+        public FindODataTestsV3Atom() : base(ODataV3ReadOnlyUri, ODataPayloadFormat.Atom, 3) { }
     }
 
     public class FindODataTestsV3Json : FindODataTests
     {
-        public FindODataTestsV3Json() : base(ODataV3ReadOnlyUri, ODataPayloadFormat.Json) { }
-
-        protected override string ProductCategoryName { get { return "Categories"; } }
-        protected override Func<IDictionary<string, object>, IDictionary<string, object>> ProductCategoryFunc
-        {
-            get { return x => (x[ProductCategoryName] as IEnumerable<object>).First() as IDictionary<string, object>; }
-        }
-        protected override string ExpectedCategory { get { return "Beverages"; } }
-        protected override int ExpectedCount { get { return 11; } }
-        protected override int ExpectedExpandMany { get { return 8; } }
-        protected override int ExpectedExpandSecondLevel { get { return 8; } }
-        protected override int ExpectedSkipOne { get { return 10; } }
-        protected override int ExpectedTotalCount { get { return 11; } }
+        public FindODataTestsV3Json() : base(ODataV3ReadOnlyUri, ODataPayloadFormat.Json, 3) { }
     }
 
     public class FindODataTestsV4Json : FindODataTests
     {
-        public FindODataTestsV4Json() : base(ODataV4ReadOnlyUri, ODataPayloadFormat.Json) { }
-
-        protected override string ProductCategoryName { get { return "Categories"; } }
-        protected override Func<IDictionary<string, object>, IDictionary<string, object>> ProductCategoryFunc
-        {
-            get { return x => (x[ProductCategoryName] as IEnumerable<object>).First() as IDictionary<string, object>; }
-        }
-        protected override string ExpectedCategory { get { return "Beverages"; } }
-        protected override int ExpectedCount { get { return 11; } }
-        protected override int ExpectedExpandMany { get { return 8; } }
-        protected override int ExpectedExpandSecondLevel { get { return 8; } }
-        protected override int ExpectedSkipOne { get { return 10; } }
-        protected override int ExpectedTotalCount { get { return 11; } }
+        public FindODataTestsV4Json() : base(ODataV4ReadOnlyUri, ODataPayloadFormat.Json, 4) { }
     }
 
-    public abstract class FindODataTests : ODataTests
+    public abstract class FindODataTests : ODataTestBase
     {
-        protected FindODataTests(string serviceUri, ODataPayloadFormat payloadFormat) : base(serviceUri, payloadFormat) { }
-
-        protected abstract string ProductCategoryName { get; }
-        protected abstract Func<IDictionary<string, object>, IDictionary<string, object>> ProductCategoryFunc { get; }
-        protected abstract string ExpectedCategory { get; }
-        protected abstract int ExpectedCount { get; }
-        protected abstract int ExpectedExpandMany { get; }
-        protected abstract int ExpectedExpandSecondLevel { get; }
-        protected abstract int ExpectedSkipOne { get; }
-        protected abstract int ExpectedTotalCount { get; }
+        protected FindODataTests(string serviceUri, ODataPayloadFormat payloadFormat, int version)
+            : base(serviceUri, payloadFormat, version)
+        {
+        }
 
         [Fact]
         public async Task Filter()
