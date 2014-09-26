@@ -84,7 +84,7 @@ namespace Simple.OData.Client
                 }
                 else if (targetType == typeof(DateTimeOffset) && value.GetType() == typeof(DateTime))
                 {
-                    result = (DateTime)value;
+                    result = new DateTimeOffset((DateTime)value);
                 }
                 else
                 {

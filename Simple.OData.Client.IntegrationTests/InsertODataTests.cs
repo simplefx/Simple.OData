@@ -69,6 +69,7 @@ namespace Simple.OData.Client.Tests
             expando.Name = "Test9";
             expando.Description = "Test9";
             expando.Price = 18m;
+            expando.Rating = 1;
             expando.ReleaseDate = DateTime.Now;
 
             var product = await (Task<IDictionary<string, object>>)_client
