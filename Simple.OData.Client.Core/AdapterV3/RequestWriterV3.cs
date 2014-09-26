@@ -110,18 +110,27 @@ namespace Simple.OData.Client
                 BaseUri = new Uri(_session.UrlBase),
                 Indent = true,
             };
+            ODataFormat contentType;
             switch (_session.PayloadFormat)
             {
                 case ODataPayloadFormat.Atom:
                 default:
-                    settings.SetContentType(ODataFormat.Atom);
+                    contentType = ODataFormat.Atom;
                     break;
                 case ODataPayloadFormat.Json:
-                    settings.SetContentType(_session.Adapter.ProtocolVersion == ODataProtocolVersion.V1 
-                        ? ODataFormat.VerboseJson 
-                        : ODataFormat.Json);
+                    switch (_session.Adapter.ProtocolVersion)
+                    {
+                        case ODataProtocolVersion.V1:
+                        case ODataProtocolVersion.V2:
+                            contentType = ODataFormat.VerboseJson;
+                            break;
+                        default:
+                            contentType = ODataFormat.Json;
+                            break;
+                    }
                     break;
             }
+            settings.SetContentType(contentType);
             return settings;
         }
 
