@@ -19,13 +19,15 @@ namespace Simple.OData.Client.Tests
         protected const string NorthwindV3ReadOnlyUri = "http://services.odata.org/V3/Northwind/Northwind.svc/";
         protected const string NorthwindV4ReadOnlyUri = "http://services.odata.org/V4/Northwind/Northwind.svc/";
 
+        protected const string TripPinV4ReadWriteUri = "http://services.odata.org/V4/TripPinServiceRW/";
+
         protected readonly string _serviceUri;
         protected readonly ODataPayloadFormat _payloadFormat;
         protected readonly IODataClient _client;
 
         protected TestBase(string serviceUri, ODataPayloadFormat payloadFormat)
         {
-            if (serviceUri.Contains("%28readwrite%29"))
+            if (serviceUri.Contains("%28readwrite%29") || serviceUri == TripPinV4ReadWriteUri)
             {
                 serviceUri = GetReadWriteUri(serviceUri).Result;
             }
@@ -40,9 +42,12 @@ namespace Simple.OData.Client.Tests
             var client = new HttpClient();
             var response = await client.GetAsync(serviceUri);
             var uri = response.RequestMessage.RequestUri.AbsoluteUri;
-            var i1 = uri.IndexOf(".org/V");
-            var i2 = uri.IndexOf("/OData/");
-            uri = uri.Substring(0, i1 + 5) + uri.Substring(i1 + 8, i2 - i1 - 7) + uri.Substring(i1 + 5, 2) + uri.Substring(i2);
+            if (serviceUri != TripPinV4ReadWriteUri)
+            {
+                var i1 = uri.IndexOf(".org/V");
+                var i2 = uri.IndexOf("/OData/");
+                uri = uri.Substring(0, i1 + 5) + uri.Substring(i1 + 8, i2 - i1 - 7) + uri.Substring(i1 + 5, 2) + uri.Substring(i2);
+            }
             return uri;
         }
 

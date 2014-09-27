@@ -90,11 +90,13 @@
     <Compile Include="DeleteODataTests.cs" />
     <Compile Include="FindNorthwindTests.cs" />
     <Compile Include="FindODataTests.cs" />
+    <Compile Include="FindTripPinTests.cs" />
     <Compile Include="InsertODataTests.cs" />
     <Compile Include="LinkODataTests.cs" />
     <Compile Include="ODataTestBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestBase.cs" />
+    <Compile Include="TripPinTestBase.cs" />
     <Compile Include="UpdateODataTests.cs" />
   </ItemGroup>
   <ItemGroup>
