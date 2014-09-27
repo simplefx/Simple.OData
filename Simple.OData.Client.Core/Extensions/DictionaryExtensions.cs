@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using SpatialV3 = System.Spatial;
+using SpatialV4 = Microsoft.Spatial;
 
 namespace Simple.OData.Client.Extensions
 {
@@ -21,6 +23,15 @@ namespace Simple.OData.Client.Extensions
             if (typeof(T) == typeof(ODataEntry))
                 return CreateODataEntry(source, dynamicObject) as T;
 
+            if (typeof(T) == typeof(SpatialV3.GeographyPoint))
+                return CreateGeographyPointV3(source) as T;
+            if (typeof(T) == typeof(SpatialV4.GeographyPoint))
+                return CreateGeographyPointV3(source) as T;
+            if (typeof(T) == typeof(SpatialV3.GeometryPoint))
+                return CreateGeometryPointV4(source) as T;
+            if (typeof(T) == typeof(SpatialV4.GeometryPoint))
+                return CreateGeometryPointV4(source) as T;
+
             var value = CreateInstance<T>();
             var type = value.GetType();
             return (T)ToObject(source, type, value, dynamicObject);
@@ -34,6 +45,15 @@ namespace Simple.OData.Client.Extensions
                 return source;
             if (type == typeof(ODataEntry))
                 return CreateODataEntry(source, dynamicObject);
+
+            if (type == typeof(SpatialV3.GeographyPoint))
+                return CreateGeographyPointV3(source);
+            if (type == typeof(SpatialV4.GeographyPoint))
+                return CreateGeographyPointV4(source);
+            if (type == typeof(SpatialV3.GeometryPoint))
+                return CreateGeometryPointV3(source);
+            if (type == typeof(SpatialV4.GeometryPoint))
+                return CreateGeometryPointV4(source);
 
             if (value == null)
             {
@@ -71,7 +91,7 @@ namespace Simple.OData.Client.Extensions
 
             Func<Type, object, object> ConvertSingle = (fieldOrPropertyType, itemValue) => 
                 IsCompoundType(fieldOrPropertyType)
-                ? (itemValue as IDictionary<string, object>).ToObject(fieldOrPropertyType)
+                ? itemValue.ToDictionary().ToObject(fieldOrPropertyType)
                 : fieldOrPropertyType.IsEnumType()
                     ? ConvertEnum(fieldOrPropertyType, itemValue)
                     : itemValue;
@@ -122,8 +142,8 @@ namespace Simple.OData.Client.Extensions
                 {
                     var property = type.GetAnyProperty(item.Key) ?? 
                         type.GetAllProperties().FirstOrDefault(x => x.GetMappedName() == item.Key);
-                    
-                    if (property != null && !property.IsNotMapped())
+
+                    if (property != null && property.CanWrite && !property.IsNotMapped())
                     {
                         property.SetValue(value, ConvertValue(property.PropertyType, item.Value), null);
                     }
@@ -142,7 +162,8 @@ namespace Simple.OData.Client.Extensions
             if (source is ODataEntry)
                 return (Dictionary<string, object>)(source as ODataEntry);
 
-            return source.GetType().GetAllProperties().ToDictionary
+            var properties = source.GetType().GetAllProperties();
+            return properties.ToDictionary
             (
                 x => x.GetMappedName(),
                 x => x.GetValue(source, null)
@@ -188,6 +209,67 @@ namespace Simple.OData.Client.Extensions
             return dynamicObject && CreateDynamicODataEntry != null ?
                 CreateDynamicODataEntry(source) :
                 new ODataEntry(source);
+        }
+
+        private static T GetValueOrDefault<T>(this IDictionary<string, object> source, string key)
+        {
+            object value;
+            if (source.TryGetValue(key, out value))
+            {
+                return (T)value;
+            }
+            else
+            {
+                return default(T);
+            }
+        }
+
+        private static SpatialV3.GeographyPoint CreateGeographyPointV3(IDictionary<string, object> source)
+        {
+            return SpatialV3.GeographyPoint.Create(
+                SpatialV3.CoordinateSystem.Geography(source.ContainsKey("CoordinateSystem")
+                    ? source.GetValueOrDefault<SpatialV3.CoordinateSystem>("CoordinateSystem").EpsgId
+                    : null), 
+                source.GetValueOrDefault<double>("Latitude"),
+                source.GetValueOrDefault<double>("Longitude"),
+                source.GetValueOrDefault<double?>("Z"),
+                source.GetValueOrDefault<double?>("M"));
+        }
+
+        private static SpatialV4.GeographyPoint CreateGeographyPointV4(IDictionary<string, object> source)
+        {
+            return SpatialV4.GeographyPoint.Create(
+                SpatialV4.CoordinateSystem.Geography(source.ContainsKey("CoordinateSystem")
+                    ? source.GetValueOrDefault<SpatialV4.CoordinateSystem>("CoordinateSystem").EpsgId
+                    : null),
+                source.GetValueOrDefault<double>("Latitude"),
+                source.GetValueOrDefault<double>("Longitude"),
+                source.GetValueOrDefault<double?>("Z"),
+                source.GetValueOrDefault<double?>("M"));
+        }
+
+        private static SpatialV3.GeometryPoint CreateGeometryPointV3(IDictionary<string, object> source)
+        {
+            return SpatialV3.GeometryPoint.Create(
+                SpatialV3.CoordinateSystem.Geometry(source.ContainsKey("CoordinateSystem")
+                    ? source.GetValueOrDefault<SpatialV3.CoordinateSystem>("CoordinateSystem").EpsgId
+                    : null),
+                source.GetValueOrDefault<double>("Latitude"),
+                source.GetValueOrDefault<double>("Longitude"),
+                source.GetValueOrDefault<double?>("Z"),
+                source.GetValueOrDefault<double?>("M"));
+        }
+
+        private static SpatialV4.GeometryPoint CreateGeometryPointV4(IDictionary<string, object> source)
+        {
+            return SpatialV4.GeometryPoint.Create(
+                SpatialV4.CoordinateSystem.Geometry(source.ContainsKey("CoordinateSystem")
+                    ? source.GetValueOrDefault<SpatialV4.CoordinateSystem>("CoordinateSystem").EpsgId
+                    : null),
+                source.GetValueOrDefault<double>("Latitude"),
+                source.GetValueOrDefault<double>("Longitude"),
+                source.GetValueOrDefault<double?>("Z"),
+                source.GetValueOrDefault<double?>("M"));
         }
     }
 }

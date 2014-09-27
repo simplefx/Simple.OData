@@ -108,7 +108,7 @@ namespace Simple.OData.Client.Extensions
 
             var baseType = type.GetTypeInfo().BaseType;
             if (baseType != null && baseType != typeof(object))
-                properties.AddRange(baseType.GetAllProperties());
+                properties.AddRange(baseType.GetAllProperties().Where(x => properties.All(y => y.Name != x.Name)));
 
             return properties.ToArray();
         }
@@ -143,7 +143,7 @@ namespace Simple.OData.Client.Extensions
 
             var baseType = type.GetTypeInfo().BaseType;
             if (baseType != null && baseType != typeof(object))
-                fields.AddRange(baseType.GetAllFields());
+                fields.AddRange(baseType.GetAllFields().Where(x => fields.All(y => y.Name != x.Name)));
 
             return fields.ToArray();
         }
