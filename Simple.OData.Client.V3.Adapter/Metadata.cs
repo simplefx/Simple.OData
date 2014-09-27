@@ -3,14 +3,14 @@ using System.Linq;
 using Microsoft.Data.Edm;
 using Simple.OData.Client.Extensions;
 
-namespace Simple.OData.Client
+namespace Simple.OData.Client.V3.Adapter
 {
-    class MetadataV3 : MetadataBase
+    public class Metadata : MetadataBase
     {
         private readonly ISession _session;
         private readonly IEdmModel _model;
 
-        public MetadataV3(ISession session, IEdmModel model)
+        public Metadata(ISession session, IEdmModel model)
         {
             _session = session;
             _model = model;

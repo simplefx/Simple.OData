@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 using Microsoft.OData.Core;
 using Microsoft.OData.Edm;
 
-namespace Simple.OData.Client
+namespace Simple.OData.Client.V4.Adapter
 {
-    internal class ResponseReaderV4 : IResponseReader
+    public class ResponseReader : IResponseReader
     {
         private readonly ISession _session;
         private readonly IEdmModel _model;
 
-        public ResponseReaderV4(ISession session, IEdmModel model)
+        public ResponseReader(ISession session, IEdmModel model)
         {
             _session = session;
             _model = model;
@@ -21,7 +21,7 @@ namespace Simple.OData.Client
 
         public Task<ODataResponse> GetResponseAsync(HttpResponseMessage responseMessage, bool includeResourceTypeInEntryProperties = false)
         {
-            return GetResponseAsync(new ODataV4ResponseMessage(responseMessage), includeResourceTypeInEntryProperties);
+            return GetResponseAsync(new ODataResponseMessage(responseMessage), includeResourceTypeInEntryProperties);
         }
 
 #if SILVERLIGHT

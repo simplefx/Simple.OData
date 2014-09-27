@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Simple.OData.Client
 {
-    class ODataResponse
+    public class ODataResponse
     {
         public IEnumerable<IDictionary<string, object>> Entries { get; private set; }
         public IDictionary<string, object> Entry { get; private set; }

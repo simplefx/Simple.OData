@@ -285,6 +285,14 @@
       <Project>{27429d8f-fa57-43ca-a13a-b3de6987eb76}</Project>
       <Name>Simple.OData.Client.TestPcl</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Simple.OData.Client.V3.Adapter\Simple.OData.Client.V3.Adapter.csproj">
+      <Project>{a08b2d3d-91a6-4ecd-b7af-5977e840e383}</Project>
+      <Name>Simple.OData.Client.V3.Adapter</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Simple.OData.Client.V4.Adapter\Simple.OData.Client.V4.Adapter.csproj">
+      <Project>{31d1cc1d-316e-4516-a2bd-f07423b394f6}</Project>
+      <Name>Simple.OData.Client.V4.Adapter</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Microsoft.Data.Edm, Version=5.6.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">

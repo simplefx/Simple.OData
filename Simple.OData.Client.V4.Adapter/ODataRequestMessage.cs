@@ -1,22 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.OData.Core;
 
-namespace Simple.OData.Client
+namespace Simple.OData.Client.V4.Adapter
 {
 #if SILVERLIGH
-    class ODataV4RequestMessage : IODataRequestMessage
+    class ODataRequestMessage : IODataRequestMessage
 #else
-    class ODataV4RequestMessage : IODataRequestMessageAsync
+    class ODataRequestMessage : IODataRequestMessageAsync
 #endif
     {
         private MemoryStream _stream;
         private readonly Dictionary<string, string> _headers = new Dictionary<string, string>();
 
-        public ODataV4RequestMessage()
+        public ODataRequestMessage()
         {
         }
 

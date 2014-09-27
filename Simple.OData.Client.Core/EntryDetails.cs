@@ -2,14 +2,14 @@
 
 namespace Simple.OData.Client
 {
-    class ReferenceLink
+    public class ReferenceLink
     {
         public string LinkName { get; set; }
         public object LinkData { get; set; }
         public string ContentId { get; set; }
     }
 
-    class EntryDetails
+    public class EntryDetails
     {
         private readonly IDictionary<string, object> _properties = new Dictionary<string, object>();
         private readonly List<ReferenceLink> _links = new List<ReferenceLink>();

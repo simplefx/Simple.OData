@@ -10,15 +10,15 @@ using Microsoft.OData.Edm;
 using Microsoft.Spatial;
 using Simple.OData.Client.Extensions;
 
-namespace Simple.OData.Client
+namespace Simple.OData.Client.V4.Adapter
 {
-    class RequestWriterV4 : IRequestWriter
+    public class RequestWriter : IRequestWriter
     {
         private readonly ISession _session;
         private readonly IEdmModel _model;
         private readonly Lazy<IBatchWriter> _deferredBatchWriter;
 
-        public RequestWriterV4(ISession session, IEdmModel model, Lazy<IBatchWriter> deferredBatchWriter)
+        public RequestWriter(ISession session, IEdmModel model, Lazy<IBatchWriter> deferredBatchWriter)
         {
             _session = session;
             _model = model;
@@ -49,7 +49,7 @@ namespace Simple.OData.Client
             }
             else
             {
-                message = new ODataV4RequestMessage();
+                message = new ODataRequestMessage();
             }
 
             using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), _model))
@@ -94,7 +94,7 @@ namespace Simple.OData.Client
 
         public async Task<Stream> WriteLinkContentAsync(string linkPath)
         {
-            var message = new ODataV4RequestMessage();
+            var message = new ODataRequestMessage();
             using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), _model))
             {
                 var link = new ODataEntityReferenceLink { Url = new Uri(linkPath, UriKind.Relative) };

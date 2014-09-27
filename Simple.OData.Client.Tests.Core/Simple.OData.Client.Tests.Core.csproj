@@ -166,6 +166,14 @@
       <Project>{072f8be4-81c1-4276-a9a5-1aec87a84265}</Project>
       <Name>Simple.OData.Client.TestUtils.Net40</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Simple.OData.Client.V3.Adapter\Simple.OData.Client.V3.Adapter.csproj">
+      <Project>{a08b2d3d-91a6-4ecd-b7af-5977e840e383}</Project>
+      <Name>Simple.OData.Client.V3.Adapter</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Simple.OData.Client.V4.Adapter\Simple.OData.Client.V4.Adapter.csproj">
+      <Project>{31d1cc1d-316e-4516-a2bd-f07423b394f6}</Project>
+      <Name>Simple.OData.Client.V4.Adapter</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\MultipleCategoriesWithProducts.xml" />

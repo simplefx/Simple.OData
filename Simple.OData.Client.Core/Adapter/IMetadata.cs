@@ -2,7 +2,7 @@
 
 namespace Simple.OData.Client
 {
-    interface IMetadata
+    public interface IMetadata
     {
         string GetEntitySetExactName(string entitySetName);
         string GetEntitySetTypeName(string entitySetName);

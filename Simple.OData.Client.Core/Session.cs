@@ -9,8 +9,8 @@ namespace Simple.OData.Client
     class Session : ISession
     {
         private readonly AdapterFactory _adapterFactory;
-        private Func<ODataAdapter> _createAdapter;
-        private ODataAdapter _adapter;
+        private Func<IODataAdapter> _createAdapter;
+        private IODataAdapter _adapter;
 
         public string UrlBase { get; private set; }
         public ICredentials Credentials { get; private set; }
@@ -46,7 +46,7 @@ namespace Simple.OData.Client
             MetadataCache.Instances.Remove(MetadataCache.Instances.Single(x => x.Value == this.MetadataCache).Key);
         }
 
-        public async Task<ODataAdapter> ResolveAdapterAsync(CancellationToken cancellationToken)
+        public async Task<IODataAdapter> ResolveAdapterAsync(CancellationToken cancellationToken)
         {
             if (!this.MetadataCache.IsResolved())
             {
@@ -60,7 +60,7 @@ namespace Simple.OData.Client
             return this.Adapter;
         }
 
-        public ODataAdapter Adapter
+        public IODataAdapter Adapter
         {
             get
             {

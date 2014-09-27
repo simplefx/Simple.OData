@@ -7,7 +7,7 @@ using System.Text;
 
 namespace Simple.OData.Client
 {
-    class ODataRequest
+    public class ODataRequest
     {
         private HttpRequestMessage _requestMessage;
 

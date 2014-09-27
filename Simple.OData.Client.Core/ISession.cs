@@ -2,12 +2,12 @@
 
 namespace Simple.OData.Client
 {
-    internal interface ISession
+    public interface ISession
     {
         string UrlBase { get; }
         ICredentials Credentials { get; }
         ODataPayloadFormat PayloadFormat { get; }
-        ODataAdapter Adapter { get; }
+        IODataAdapter Adapter { get; }
         IMetadata Metadata { get; }
         IPluralizer Pluralizer { get; }
     }

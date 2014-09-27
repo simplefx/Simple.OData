@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Simple.OData.Client
 {
-    abstract class MetadataBase : IMetadata
+    public abstract class MetadataBase : IMetadata
     {
         public abstract IEnumerable<string> GetEntitySetNames();
         public abstract string GetEntitySetExactName(string entitySetName);

@@ -3,22 +3,22 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http.Headers;
+using System.Spatial;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Microsoft.Data.Edm;
 using Microsoft.Data.OData;
-using Microsoft.Spatial;
 using Simple.OData.Client.Extensions;
 
-namespace Simple.OData.Client
+namespace Simple.OData.Client.V3.Adapter
 {
-    class RequestWriterV3 : IRequestWriter
+    public class RequestWriter : IRequestWriter
     {
         private readonly ISession _session;
         private readonly IEdmModel _model;
         private readonly Lazy<IBatchWriter> _deferredBatchWriter;
 
-        public RequestWriterV3(ISession session, IEdmModel model, Lazy<IBatchWriter> deferredBatchWriter)
+        public RequestWriter(ISession session, IEdmModel model, Lazy<IBatchWriter> deferredBatchWriter)
         {
             _session = session;
             _model = model;
@@ -49,7 +49,7 @@ namespace Simple.OData.Client
             }
             else
             {
-                message = new ODataV3RequestMessage();
+                message = new ODataRequestMessage();
             }
 
             using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), _model))
@@ -70,7 +70,7 @@ namespace Simple.OData.Client
                 var typeProperties = (_model.FindDeclaredType(entry.TypeName) as IEdmEntityType).Properties();
                 entry.Properties = entryDetails.Properties.Select(x => new ODataProperty()
                 {
-                    Name = typeProperties.Single(y => Utils.NamesAreEqual(y.Name, x.Key, _session.Pluralizer)).Name,
+                    Name = typeProperties.Single(y => Client.Utils.NamesAreEqual(y.Name, x.Key, _session.Pluralizer)).Name,
                     Value = GetPropertyValue(typeProperties, x.Key, x.Value)
                 }).ToList();
 
@@ -87,19 +87,19 @@ namespace Simple.OData.Client
 
                 entryWriter.WriteEnd();
 
-                return _deferredBatchWriter != null ? null : Utils.CloneStream(message.GetStream());
+                return _deferredBatchWriter != null ? null : Client.Utils.CloneStream(message.GetStream());
             }
         }
 
         public async Task<Stream> WriteLinkContentAsync(string linkPath)
         {
-            var message = new ODataV3RequestMessage();
+            var message = new ODataRequestMessage();
             using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), _model))
             {
                 var link = new ODataEntityReferenceLink { Url = new Uri(linkPath, UriKind.Relative) };
                 messageWriter.WriteEntityReferenceLink(link);
 
-                return Utils.CloneStream(message.GetStream());
+                return Client.Utils.CloneStream(message.GetStream());
             }
         }
 
@@ -137,7 +137,7 @@ namespace Simple.OData.Client
         private void WriteLink(ODataWriter entryWriter, Microsoft.Data.OData.ODataEntry entry, string linkName, object linkData)
         {
             var navigationProperty = (_model.FindDeclaredType(entry.TypeName) as IEdmEntityType).NavigationProperties()
-                .Single(x => Utils.NamesAreEqual(x.Name, linkName, _session.Pluralizer));
+                .Single(x => Client.Utils.NamesAreEqual(x.Name, linkName, _session.Pluralizer));
             bool isCollection = navigationProperty.Partner.Multiplicity() == EdmMultiplicity.Many;
 
             IEdmEntityType linkType;
@@ -169,7 +169,7 @@ namespace Simple.OData.Client
             {
                 var formattedKey = "(" + string.Join(".", linkKey.Select(x => new ValueFormatter().FormatValue(linkEntry[x.Name]))) + ")";
                 var linkSet = _model.EntityContainers().SelectMany(x => x.EntitySets())
-                    .Single(x => Utils.NamesAreEqual(x.ElementType.Name, linkType.Name, _session.Pluralizer));
+                    .Single(x => Client.Utils.NamesAreEqual(x.ElementType.Name, linkType.Name, _session.Pluralizer));
                 linkUri = linkSet.Name + formattedKey;
             }
             var link = new ODataEntityReferenceLink
@@ -187,7 +187,7 @@ namespace Simple.OData.Client
             if (value == null)
                 return value;
 
-            var property = properties.Single(x => Utils.NamesAreEqual(x.Name, key, _session.Pluralizer));
+            var property = properties.Single(x => Client.Utils.NamesAreEqual(x.Name, key, _session.Pluralizer));
             switch (property.Type.TypeKind())
             {
                 case EdmTypeKind.Complex:
@@ -218,7 +218,7 @@ namespace Simple.OData.Client
                         foreach (var mappedType in mappedTypes)
                         {
                             object result;
-                            if (Utils.TryConvert(value, mappedType.Key, out result))
+                            if (Client.Utils.TryConvert(value, mappedType.Key, out result))
                                 return result;
                         }
                         throw new FormatException(string.Format("Unable to convert value of type {0} to OData type {1}", value.GetType(), property.Type));

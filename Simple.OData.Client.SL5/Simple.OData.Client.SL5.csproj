@@ -125,48 +125,6 @@
     <Compile Include="..\CommonAssemblyVersion.cs">
       <Link>Properties\CommonAssemblyVersion.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\AdapterV3\BatchWriterV3.cs">
-      <Link>AdapterV3\BatchWriterV3.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\AdapterV3\MetadataV3.cs">
-      <Link>AdapterV3\MetadataV3.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\AdapterV3\ODataAdapterV3.cs">
-      <Link>AdapterV3\ODataAdapterV3.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\AdapterV3\ODataV3RequestMessage.cs">
-      <Link>AdapterV3\ODataV3RequestMessage.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\AdapterV3\ODataV3ResponseMessage.cs">
-      <Link>AdapterV3\ODataV3ResponseMessage.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\AdapterV3\RequestWriterV3.cs">
-      <Link>AdapterV3\RequestWriterV3.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\AdapterV3\ResponseReaderV3.cs">
-      <Link>AdapterV3\ResponseReaderV3.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\AdapterV4\BatchWriterV4.cs">
-      <Link>AdapterV4\BatchWriterV4.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\AdapterV4\MetadataV4.cs">
-      <Link>AdapterV4\MetadataV4.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\AdapterV4\ODataAdapterV4.cs">
-      <Link>AdapterV4\ODataAdapterV4.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\AdapterV4\ODataV4RequestMessage.cs">
-      <Link>AdapterV4\ODataV4RequestMessage.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\AdapterV4\ODataV4ResponseMessage.cs">
-      <Link>AdapterV4\ODataV4ResponseMessage.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\AdapterV4\RequestWriterV4.cs">
-      <Link>AdapterV4\RequestWriterV4.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\AdapterV4\ResponseReaderV4.cs">
-      <Link>AdapterV4\ResponseReaderV4.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Adapter\AdapterFactory.cs">
       <Link>Adapter\AdapterFactory.cs</Link>
     </Compile>
@@ -179,6 +137,9 @@
     <Compile Include="..\Simple.OData.Client.Core\Adapter\IMetadata.cs">
       <Link>Adapter\IMetadata.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Adapter\IODataAdapter.cs">
+      <Link>Adapter\IODataAdapter.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Adapter\IRequestWriter.cs">
       <Link>Adapter\IRequestWriter.cs</Link>
     </Compile>
@@ -188,8 +149,8 @@
     <Compile Include="..\Simple.OData.Client.Core\Adapter\MetadataBase.cs">
       <Link>Adapter\MetadataBase.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Adapter\ODataAdapter.cs">
-      <Link>Adapter\ODataAdapter.cs</Link>
+    <Compile Include="..\Simple.OData.Client.Core\Adapter\ODataAdapterBase.cs">
+      <Link>Adapter\ODataAdapterBase.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Adapter\ResponseNode.cs">
       <Link>Adapter\ResponseNode.cs</Link>
@@ -388,6 +349,48 @@
     </Compile>
     <Compile Include="..\Simple.OData.Client.Dynamic\ODataDynamic.cs">
       <Link>ODataDynamic.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.V3.Adapter\BatchWriter.cs">
+      <Link>AdapterV3\BatchWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.V3.Adapter\Metadata.cs">
+      <Link>AdapterV3\Metadata.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.V3.Adapter\ODataAdapter.cs">
+      <Link>AdapterV3\ODataAdapter.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.V3.Adapter\ODataRequestMessage.cs">
+      <Link>AdapterV3\ODataRequestMessage.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.V3.Adapter\ODataResponseMessage.cs">
+      <Link>AdapterV3\ODataResponseMessage.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.V3.Adapter\RequestWriter.cs">
+      <Link>AdapterV3\RequestWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.V3.Adapter\ResponseReader.cs">
+      <Link>AdapterV3\ResponseReader.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.V4.Adapter\BatchWriter.cs">
+      <Link>AdapterV4\BatchWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.V4.Adapter\Metadata.cs">
+      <Link>AdapterV4\Metadata.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.V4.Adapter\ODataAdapter.cs">
+      <Link>AdapterV4\ODataAdapter.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.V4.Adapter\ODataRequestMessage.cs">
+      <Link>AdapterV4\ODataRequestMessage.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.V4.Adapter\ODataResponseMessage.cs">
+      <Link>AdapterV4\ODataResponseMessage.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.V4.Adapter\RequestWriter.cs">
+      <Link>AdapterV4\RequestWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.V4.Adapter\ResponseReader.cs">
+      <Link>AdapterV4\ResponseReader.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>

@@ -139,6 +139,14 @@
       <Project>{361868B8-A63E-4C74-AA87-B70E1AB22313}</Project>
       <Name>Simple.OData.Client.Core</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Simple.OData.Client.V3.Adapter\Simple.OData.Client.V3.Adapter.csproj">
+      <Project>{a08b2d3d-91a6-4ecd-b7af-5977e840e383}</Project>
+      <Name>Simple.OData.Client.V3.Adapter</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Simple.OData.Client.V4.Adapter\Simple.OData.Client.V4.Adapter.csproj">
+      <Project>{31d1cc1d-316e-4516-a2bd-f07423b394f6}</Project>
+      <Name>Simple.OData.Client.V4.Adapter</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Net.Http, Version=1.5.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">

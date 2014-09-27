@@ -3,14 +3,21 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
+using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
     class AdapterFactory
     {
+        private const string AdapterV3AssemblyName = "Simple.OData.Client.V3.Adapter";
+        private const string AdapterV4AssemblyName = "Simple.OData.Client.V4.Adapter";
+        private const string AdapterV3TypeName = "Simple.OData.Client.V3.Adapter.ODataAdapter";
+        private const string AdapterV4TypeName = "Simple.OData.Client.V4.Adapter.ODataAdapter";
+
         private readonly ISession _session;
 
         public AdapterFactory(ISession session)
@@ -18,14 +25,14 @@ namespace Simple.OData.Client
             _session = session;
         }
 
-        public async Task<ODataAdapter> CreateAdapterAsync(HttpResponseMessage response)
+        public async Task<IODataAdapter> CreateAdapterAsync(HttpResponseMessage response)
         {
             var protocolVersions = GetSupportedProtocolVersions(response).ToArray();
 
-            if (protocolVersions.Any(x => x == ODataProtocolVersion.V4))
-                return new ODataAdapterV4(_session, protocolVersions.First(), response);
-            else if (protocolVersions.Any(x => x == ODataProtocolVersion.V1 || x == ODataProtocolVersion.V2 || x == ODataProtocolVersion.V3))
-                return new ODataAdapterV3(_session, protocolVersions.First(), response);
+            if (protocolVersions.Any(x => x == ODataProtocolVersion.V1 || x == ODataProtocolVersion.V2 || x == ODataProtocolVersion.V3))
+                return LoadAdapter(AdapterV3AssemblyName, AdapterV3TypeName, _session, protocolVersions.First(), response);
+            else if (protocolVersions.Any(x => x == ODataProtocolVersion.V4))
+                return LoadAdapter(AdapterV4AssemblyName, AdapterV4TypeName, _session, protocolVersions.First(), response);
 
             throw new NotSupportedException(string.Format("OData protocol {0} is not supported", protocolVersions));
         }
@@ -35,16 +42,16 @@ namespace Simple.OData.Client
             return await response.Content.ReadAsStringAsync();
         }
 
-        public ODataAdapter ParseMetadata(string metadataString)
+        public IODataAdapter ParseMetadata(string metadataString)
         {
             var reader = XmlReader.Create(new StringReader(metadataString));
             reader.MoveToContent();
             var protocolVersion = reader.GetAttribute("Version");
 
-            if (protocolVersion == ODataProtocolVersion.V4)
-                return new ODataAdapterV4(_session, protocolVersion, metadataString);
-            else if (protocolVersion == ODataProtocolVersion.V1 || protocolVersion == ODataProtocolVersion.V2 || protocolVersion == ODataProtocolVersion.V3)
-                return new ODataAdapterV3(_session, protocolVersion, metadataString);
+            if (protocolVersion == ODataProtocolVersion.V1 || protocolVersion == ODataProtocolVersion.V2 || protocolVersion == ODataProtocolVersion.V3)
+                return LoadAdapter(AdapterV3AssemblyName, AdapterV3TypeName, _session, protocolVersion, metadataString);
+            else if (protocolVersion == ODataProtocolVersion.V4)
+                return LoadAdapter(AdapterV4AssemblyName, AdapterV4TypeName, _session, protocolVersion, metadataString);
 
             throw new NotSupportedException(string.Format("OData protocol {0} is not supported", protocolVersion));
         }
@@ -65,6 +72,28 @@ namespace Simple.OData.Client
                 return headerValues.SelectMany(x => x.Split(';')).Where(x => x.Length > 0);
 
             throw new InvalidOperationException("Unable to identify OData protocol version");
+        }
+
+        private IODataAdapter LoadAdapter(string adapterAssemblyName, string adapterTypeName, params object[] ctorParams)
+        {
+            try
+            {
+#if PORTABLE
+                var assemblyName = new AssemblyName(adapterAssemblyName);
+                var assembly = Assembly.Load(assemblyName);
+                var constructors = assembly.GetType(adapterTypeName).GetDeclaredConstructors();
+#else
+                var constructors = this.GetType().Assembly.GetType(adapterTypeName).GetDeclaredConstructors();
+#endif
+                var ctor = constructors.Single(x => 
+                    x.GetParameters().Count() == ctorParams.Count() &&
+                    x.GetParameters().Last().ParameterType == ctorParams.Last().GetType());
+                return ctor.Invoke(ctorParams) as IODataAdapter;
+            }
+            catch (Exception exception)
+            {
+                throw new InvalidOperationException(string.Format("Unable to load OData adapter from assembly {0}", adapterAssemblyName), exception);
+            }
         }
     }
 }

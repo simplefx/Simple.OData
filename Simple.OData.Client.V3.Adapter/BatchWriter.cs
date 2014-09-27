@@ -5,18 +5,18 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Data.OData;
 
-namespace Simple.OData.Client
+namespace Simple.OData.Client.V3.Adapter
 {
-    class BatchWriterV3 : IBatchWriter
+    public class BatchWriter : IBatchWriter
     {
         private readonly ISession _session;
         private ODataBatchWriter _batchWriter;
-        private ODataV3RequestMessage _requestMessage;
+        private ODataRequestMessage _requestMessage;
         private ODataMessageWriter _messageWriter;
         private int _lastContentId;
         private readonly Dictionary<IDictionary<string, object>, string> _contentIdMap; 
 
-        public BatchWriterV3(ISession session)
+        public BatchWriter(ISession session)
         {
             _session = session;
             _lastContentId = 0;
@@ -25,7 +25,7 @@ namespace Simple.OData.Client
 
         public async Task StartBatchAsync()
         {
-            _requestMessage = new ODataV3RequestMessage() {Url = new Uri(_session.UrlBase)};
+            _requestMessage = new ODataRequestMessage() {Url = new Uri(_session.UrlBase)};
             _messageWriter = new ODataMessageWriter(_requestMessage);
 #if SILVERLIGHT
             _batchWriter = _messageWriter.CreateODataBatchWriter();

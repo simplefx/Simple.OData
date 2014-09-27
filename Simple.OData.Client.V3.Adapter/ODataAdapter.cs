@@ -1,20 +1,18 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Xml;
-using Microsoft.OData.Core;
-using Microsoft.OData.Edm;
-using Microsoft.OData.Edm.Csdl;
+using Microsoft.Data.Edm;
+using Microsoft.Data.Edm.Csdl;
+using Microsoft.Data.OData;
 
-namespace Simple.OData.Client
+namespace Simple.OData.Client.V3.Adapter
 {
-    class ODataAdapterV4 : ODataAdapter
+    public class ODataAdapter : ODataAdapterBase
     {
         private readonly ISession _session;
 
-        public override AdapterVersion AdapterVersion { get { return AdapterVersion.V4; } }
+        public override AdapterVersion AdapterVersion { get { return AdapterVersion.V3; } }
 
         public new IEdmModel Model
         {
@@ -22,18 +20,18 @@ namespace Simple.OData.Client
             set { base.Model = value; }
         }
 
-        public ODataAdapterV4(ISession session, string protocolVersion, HttpResponseMessage response)
+        public ODataAdapter(ISession session, string protocolVersion, HttpResponseMessage response)
         {
             _session = session;
             ProtocolVersion = protocolVersion;
 
-            using (var messageReader = new ODataMessageReader(new ODataV4ResponseMessage(response)))
+            using (var messageReader = new ODataMessageReader(new ODataResponseMessage(response)))
             {
                 Model = messageReader.ReadMetadataDocument();
             }
         }
 
-        public ODataAdapterV4(ISession session, string protocolVersion, string metadataString)
+        public ODataAdapter(ISession session, string protocolVersion, string metadataString)
         {
             _session = session;
             ProtocolVersion = protocolVersion;
@@ -47,30 +45,34 @@ namespace Simple.OData.Client
         {
             switch (this.ProtocolVersion)
             {
-                case ODataProtocolVersion.V4:
-                    return "V4";
+                case ODataProtocolVersion.V1:
+                    return "V1";
+                case ODataProtocolVersion.V2:
+                    return "V2";
+                case ODataProtocolVersion.V3:
+                    return "V3";
             }
             throw new InvalidOperationException(string.Format("Unsupported OData protocol version: \"{0}\"", this.ProtocolVersion));
         }
 
         public override IMetadata GetMetadata()
         {
-            return new MetadataV4(_session, Model);
+            return new Metadata(_session, Model);
         }
 
         public override IResponseReader GetResponseReader()
         {
-            return new ResponseReaderV4(_session, Model);
+            return new ResponseReader(_session, Model);
         }
 
         public override IRequestWriter GetRequestWriter(Lazy<IBatchWriter> deferredBatchWriter)
         {
-            return new RequestWriterV4(_session, Model, deferredBatchWriter);
+            return new RequestWriter(_session, Model, deferredBatchWriter);
         }
 
         public override IBatchWriter GetBatchWriter()
         {
-            return new BatchWriterV4(_session);
+            return new BatchWriter(_session);
         }
     }
 }

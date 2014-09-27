@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Simple.OData.Client
 {
-    abstract class ODataAdapter
+    public abstract class ODataAdapterBase : IODataAdapter
     {
         public abstract AdapterVersion AdapterVersion { get; }
         public string ProtocolVersion { get; set; }

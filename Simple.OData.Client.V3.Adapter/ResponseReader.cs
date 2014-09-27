@@ -3,17 +3,17 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.Data.OData;
 using Microsoft.Data.Edm;
+using Microsoft.Data.OData;
 
-namespace Simple.OData.Client
+namespace Simple.OData.Client.V3.Adapter
 {
-    internal class ResponseReaderV3 : IResponseReader
+    public class ResponseReader : IResponseReader
     {
         private readonly ISession _session;
         private readonly IEdmModel _model;
 
-        public ResponseReaderV3(ISession session, IEdmModel model)
+        public ResponseReader(ISession session, IEdmModel model)
         {
             _session = session;
             _model = model;
@@ -21,7 +21,7 @@ namespace Simple.OData.Client
 
         public Task<ODataResponse> GetResponseAsync(HttpResponseMessage responseMessage, bool includeResourceTypeInEntryProperties = false)
         {
-            return GetResponseAsync(new ODataV3ResponseMessage(responseMessage), includeResourceTypeInEntryProperties);
+            return GetResponseAsync(new ODataResponseMessage(responseMessage), includeResourceTypeInEntryProperties);
         }
 
 #if SILVERLIGHT
@@ -46,7 +46,7 @@ namespace Simple.OData.Client
 #if SILVERLIGHT
                         var text = Utils.StreamToString(responseMessage.GetStream());
 #else
-                        var text = Utils.StreamToString(await responseMessage.GetStreamAsync());
+                        var text = Client.Utils.StreamToString(await responseMessage.GetStreamAsync());
 #endif
                         return ODataResponse.FromFeed(new[] { new Dictionary<string, object>() { { FluentCommand.ResultLiteral, text } } });
                     }

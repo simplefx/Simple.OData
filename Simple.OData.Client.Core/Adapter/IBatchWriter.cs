@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Simple.OData.Client
 {
-    interface IBatchWriter
+    public interface IBatchWriter
     {
         Task StartBatchAsync();
         Task<HttpRequestMessage> EndBatchAsync();

@@ -6,17 +6,17 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.OData.Core;
 
-namespace Simple.OData.Client
+namespace Simple.OData.Client.V4.Adapter
 {
 #if SILVERLIGH
-    class ODataV4ResponseMessage : IODataResponseMessage
+    class ODataResponseMessage : IODataResponseMessage
 #else
-    class ODataV4ResponseMessage : IODataResponseMessageAsync
+    class ODataResponseMessage : IODataResponseMessageAsync
 #endif
     {
         private readonly HttpResponseMessage _response;
 
-        public ODataV4ResponseMessage(HttpResponseMessage response)
+        public ODataResponseMessage(HttpResponseMessage response)
         {
             _response = response;
         }
