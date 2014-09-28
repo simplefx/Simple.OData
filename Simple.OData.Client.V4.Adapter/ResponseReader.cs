@@ -173,7 +173,10 @@ namespace Simple.OData.Client.V4.Adapter
                         var linkNode = nodeStack.Pop();
                         if (linkNode.Value != null)
                         {
-                            nodeStack.Peek().Entry.Add(linkNode.LinkName, linkNode.Value);
+                            var linkValue = linkNode.Value;
+                            if (linkNode.Value is IDictionary<string, object> && !(linkNode.Value as IDictionary<string,object>).Any())
+                                linkValue = null;
+                            nodeStack.Peek().Entry.Add(linkNode.LinkName, linkValue);
                         }
                         break;
                 }

@@ -45,11 +45,11 @@ namespace Simple.OData.Client.Tests
         {
             var category = await _client
                 .For("Categories")
-                .Set(new { Name = "Test4" })
+                .Set(CreateCategory(4001, "Test4"))
                 .InsertEntryAsync();
             var product = await _client
                 .For("Products")
-                .Set(new { Name = "Test5" })
+                .Set(CreateProduct(4002, "Test5"))
                 .InsertEntryAsync();
 
             await _client
@@ -60,9 +60,10 @@ namespace Simple.OData.Client.Tests
             product = await _client
                 .For("Products")
                 .Filter("Name eq 'Test5'")
+                .Expand(ProductCategoryName)
                 .FindEntryAsync();
-            Assert.NotNull(product["CategoryID"]);
-            Assert.Equal(category["ID"], product["CategoryID"]);
+            Assert.NotNull(product[ProductCategoryName]);
+            Assert.Equal(category["ID"], ProductCategoryFunc(product)["ID"]);
         }
 
         [Fact]
@@ -70,23 +71,24 @@ namespace Simple.OData.Client.Tests
         {
             var category = await _client
                 .For("Categories")
-                .Set(new { Name = "Test4" })
+                .Set(CreateCategory(4003, "Test4"))
                 .InsertEntryAsync();
             var product = await _client
                 .For("Products")
-                .Set(new { Name = "Test5", CategoryID = category["CategoryID"] })
+                .Set(CreateProduct(4002, "Test5", category))
                 .InsertEntryAsync();
 
             await _client
                 .For("Products")
                 .Key(product)
-                .UnlinkEntryAsync("Category");
+                .UnlinkEntryAsync(ProductCategoryName);
 
             product = await _client
                 .For("Products")
                 .Filter("Name eq 'Test5'")
+                .Expand(ProductCategoryName)
                 .FindEntryAsync();
-            Assert.Null(product["CategoryID"]);
+            Assert.Null(product[ProductCategoryName]);
         }
     }
 }

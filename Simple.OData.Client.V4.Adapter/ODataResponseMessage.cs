@@ -38,12 +38,20 @@ namespace Simple.OData.Client.V4.Adapter
 
         public string GetHeader(string headerName)
         {
-            if (headerName == HttpLiteral.ContentType && _response.Content.Headers.Contains(headerName))
-                return _response.Content.Headers.GetValues(headerName).FirstOrDefault();
-            else if (_response.Headers.Contains(headerName))
-                return _response.Headers.GetValues(headerName).FirstOrDefault();
+            if (headerName == HttpLiteral.ContentType || headerName == HttpLiteral.ContentLength)
+            {
+                if (_response.Content.Headers.Contains(headerName))
+                    return _response.Content.Headers.GetValues(headerName).FirstOrDefault();
+                else
+                    return null;
+            }
             else
-                return null;
+            {
+                if (_response.Headers.Contains(headerName))
+                    return _response.Headers.GetValues(headerName).FirstOrDefault();
+                else
+                    return null;
+            }
         }
 
         public Stream GetStream()
