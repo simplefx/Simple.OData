@@ -55,6 +55,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RequestWriter.cs" />
     <Compile Include="ResponseReader.cs" />
+    <Compile Include="TypeConverters.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -73,7 +73,9 @@ namespace Simple.OData.Client.Tests
                 .FindEntryAsync();
             Assert.Equal("SFO", airport.IataCode);
             Assert.Equal("San Francisco", airport.Location.City.Name);
-            Assert.Equal(-122.374722222222, airport.Location.Loc.Latitude);
+            Assert.Equal(4326, airport.Location.Loc.CoordinateSystem.EpsgId);
+            Assert.Equal(37.6188888888889, airport.Location.Loc.Latitude);
+            Assert.Equal(-122.374722222222, airport.Location.Loc.Longitude);
         }
     }
 }

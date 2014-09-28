@@ -5,6 +5,7 @@ using System.Xml;
 using Microsoft.OData.Core;
 using Microsoft.OData.Edm;
 using Microsoft.OData.Edm.Csdl;
+using Microsoft.Spatial;
 
 namespace Simple.OData.Client.V4.Adapter
 {
@@ -20,11 +21,18 @@ namespace Simple.OData.Client.V4.Adapter
             set { base.Model = value; }
         }
 
-        public ODataAdapter(ISession session, string protocolVersion, HttpResponseMessage response)
+        private ODataAdapter(ISession session, string protocolVersion)
         {
             _session = session;
             ProtocolVersion = protocolVersion;
 
+            CustomConverters.RegisterTypeConverter(typeof(GeographyPoint), TypeConverters.CreateGeographyPoint);
+            CustomConverters.RegisterTypeConverter(typeof(GeometryPoint), TypeConverters.CreateGeometryPoint);
+        }
+
+        public ODataAdapter(ISession session, string protocolVersion, HttpResponseMessage response)
+            : this(session, protocolVersion)
+        {
             using (var messageReader = new ODataMessageReader(new ODataResponseMessage(response)))
             {
                 Model = messageReader.ReadMetadataDocument();
@@ -32,10 +40,8 @@ namespace Simple.OData.Client.V4.Adapter
         }
 
         public ODataAdapter(ISession session, string protocolVersion, string metadataString)
+            : this(session, protocolVersion)
         {
-            _session = session;
-            ProtocolVersion = protocolVersion;
-
             var reader = XmlReader.Create(new StringReader(metadataString));
             reader.MoveToContent();
             Model = EdmxReader.Parse(reader);

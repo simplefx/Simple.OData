@@ -283,6 +283,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void ToObjectSpatialV3()
         {
+            CustomConverters.RegisterTypeConverter(typeof(SpatialV3.GeographyPoint), V3.Adapter.TypeConverters.CreateGeographyPoint);
             var dict = new Dictionary<string, object>()
             {
                 { "PointV3", SpatialV3.GeographyPoint.Create(SpatialV3.CoordinateSystem.Geography(100), 1, 2, null, null) },
@@ -297,6 +298,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void ToObjectSpatialV4()
         {
+            CustomConverters.RegisterTypeConverter(typeof(SpatialV4.GeographyPoint), V4.Adapter.TypeConverters.CreateGeographyPoint);
             var dict = new Dictionary<string, object>()
             {
                 { "PointV4", SpatialV4.GeographyPoint.Create(SpatialV4.CoordinateSystem.Geography(100), 1, 2, null, null) },
@@ -306,6 +308,22 @@ namespace Simple.OData.Client.Tests
             Assert.Equal(100, value.PointV4.CoordinateSystem.EpsgId);
             Assert.Equal(1d, value.PointV4.Latitude);
             Assert.Equal(2d, value.PointV4.Longitude);
+        }
+
+        class ClassNoDefaultConstructor
+        {
+            public ClassNoDefaultConstructor(string arg) {}
+        }
+
+        [Fact]
+        public void ToObjectClassWithoutDefaultCtor()
+        {
+            var dict = new Dictionary<string, object>()
+            {
+                { "Data", new ClassNoDefaultConstructor("test") },
+            };
+
+            Assert.Throws<InvalidOperationException>(() => dict.ToObject<ClassNoDefaultConstructor>());
         }
     }
 }
