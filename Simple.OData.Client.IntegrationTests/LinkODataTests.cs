@@ -55,7 +55,7 @@ namespace Simple.OData.Client.Tests
             await _client
                 .For("Products")
                 .Key(product)
-                .LinkEntryAsync("Category", category);
+                .LinkEntryAsync(ProductCategoryName, category);
 
             product = await _client
                 .For("Products")
