@@ -8,20 +8,9 @@ namespace Simple.OData.Client
 {
     internal class ValueFormatter
     {
-        public string Format(IDictionary<string, object> keyValues, string separator = ",")
-        {
-            return string.Join(separator, keyValues.Select(x => string.Format("{0}={1}", x.Key, FormatValue(x.Value))));
-        }
-
-        public string Format(IEnumerable<object> keyValues, string separator = ",")
-        {
-            return string.Join(separator, keyValues.Select(x => FormatValue(x, null)));
-        }
-
-        public string FormatValue(object value, ExpressionContext context = null)
+        public string FormatValue(object value)
         {
             return value == null ? "null"
-                : value is ODataExpression ? (value as ODataExpression).Format(context)
                 : value is string ? string.Format("'{0}'", value)
                 : value is DateTime ? ((DateTime)value).ToODataString()
                 : value is DateTimeOffset ? ((DateTimeOffset)value).ToODataString()

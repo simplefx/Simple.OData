@@ -137,11 +137,12 @@ namespace Simple.OData.Client.V4.Adapter
             }
             else
             {
-                var formattedKey = "(" + new ValueFormatter().Format(linkKey.Select(x => linkEntry[x.Name])) + ")";
                 var linkSet = _model.SchemaElements
                     .Where(x => x.SchemaElementKind == EdmSchemaElementKind.EntityContainer)
                     .SelectMany(x => (x as IEdmEntityContainer).EntitySets())
                     .Single(x => Utils.NamesAreEqual(x.EntityType().Name, linkType.Name, _session.Pluralizer));
+                var formattedKey = _session.Adapter.ConvertKeyToUriLiteral(
+                    linkKey.ToDictionary(x => x.Name, x => linkEntry[x.Name]));
                 linkUri = linkSet.Name + formattedKey;
             }
             var link = new ODataEntityReferenceLink

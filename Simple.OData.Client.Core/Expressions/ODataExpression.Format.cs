@@ -93,7 +93,14 @@ namespace Simple.OData.Client
 
         private string FormatValue(ExpressionContext context)
         {
-            return (new ValueFormatter()).FormatValue(Value, context);
+            if (Value is ODataExpression)
+            {
+                return (Value as ODataExpression).Format(context);
+            }
+            else
+            {
+                return (new ValueFormatter()).FormatValue(Value);
+            }
         }
 
         private string FormatOperator(ExpressionContext context)

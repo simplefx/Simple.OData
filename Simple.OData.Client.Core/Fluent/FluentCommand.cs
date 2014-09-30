@@ -100,6 +100,7 @@ namespace Simple.OData.Client
                 }
                 else
                 {
+                    _keyValues = null;
                     _topCount = -1;
                 }
                 _filterExpression = null;
@@ -206,11 +207,13 @@ namespace Simple.OData.Client
         public void Key(IEnumerable<object> key)
         {
             _keyValues = key.ToList();
+            _namedKeyValues = null;
         }
 
         public void Key(IDictionary<string, object> key)
         {
             _namedKeyValues = key;
+            _keyValues = null;
         }
 
         public void Filter(string filter)
@@ -462,7 +465,7 @@ namespace Simple.OData.Client
                 throw new InvalidOperationException("Filter may not be set when key is assigned");
 
             if (HasKey)
-                commandText += FormatKey();
+                commandText += _session.Adapter.ConvertKeyToUriLiteral(this.KeyValues);
 
             commandText += FormatClauses();
 
@@ -476,7 +479,8 @@ namespace Simple.OData.Client
             var aggregateClauses = new List<string>();
 
             if (_parameters.Any())
-                extraClauses.Add(new ValueFormatter().Format(_parameters, "&"));
+                extraClauses.Add(string.Join("&", _parameters.Select(x => string.Format("{0}={1}",
+                    x.Key, _session.Adapter.ConvertValueToUriLiteral(x.Value)))));
 
             if (_filter != null)
                 extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Filter, Uri.EscapeDataString(_filter)));
@@ -570,16 +574,6 @@ namespace Simple.OData.Client
         {
             return _session.Metadata.GetStructuralPropertyExactName(
                 this.EntityCollection.ActualName, item.Key) + (item.Value ? " desc" : string.Empty);
-        }
-
-        private string FormatKey()
-        {
-            var namedKeyValues = this.KeyValues;
-            var valueFormatter = new ValueFormatter();
-            var formattedKeyValues = namedKeyValues.Count == 1 ?
-                valueFormatter.Format(namedKeyValues.Values) :
-                valueFormatter.Format(namedKeyValues);
-            return "(" + formattedKeyValues + ")";
         }
 
         private IDictionary<string, object> TryInterpretFilterExpressionAsKey(ODataExpression expression)

@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Xml;
 using Microsoft.OData.Core;
@@ -58,9 +60,11 @@ namespace Simple.OData.Client.V4.Adapter
             throw new InvalidOperationException(string.Format("Unsupported OData protocol version: \"{0}\"", this.ProtocolVersion));
         }
 
-        public override string ConvertToUriLiteral(object value)
+        public override string ConvertValueToUriLiteral(object value)
         {
-            return ODataUriUtils.ConvertToUriLiteral(value, (ODataVersion)Enum.Parse(typeof(ODataVersion), this.GetODataVersionString(), false));
+            return value is ODataExpression
+                ? (value as ODataExpression).AsString(_session)
+                : ODataUriUtils.ConvertToUriLiteral(value, (ODataVersion)Enum.Parse(typeof(ODataVersion), this.GetODataVersionString(), false));
         }
 
         public override IMetadata GetMetadata()

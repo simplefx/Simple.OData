@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Simple.OData.Client
 {
@@ -9,7 +10,8 @@ namespace Simple.OData.Client
         object Model { get; set; }
 
         string GetODataVersionString();
-        string ConvertToUriLiteral(object value);
+        string ConvertValueToUriLiteral(object value);
+        string ConvertKeyToUriLiteral(IDictionary<string, object> key);
 
         IMetadata GetMetadata();
         IResponseReader GetResponseReader();
