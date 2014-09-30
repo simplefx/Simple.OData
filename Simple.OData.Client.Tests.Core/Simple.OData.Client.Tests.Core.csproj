@@ -102,11 +102,8 @@
     <Compile Include="Entities\Ship.cs" />
     <Compile Include="Entities\Transport.cs" />
     <Compile Include="Extensions\DictionaryExtensionsTests.cs" />
-    <Compile Include="Extensions\EnumerableExtensionTests.cs" />
     <Compile Include="Extensions\StringExtensionTests.cs" />
     <Compile Include="Extensions\TypeExtensionTests.cs" />
-    <Compile Include="Extensions\XmlAttributesAsDictionaryTests.cs" />
-    <Compile Include="Extensions\XmlElementAsDictionaryWriteTests.cs" />
     <Compile Include="ResponseReaderTests.cs" />
     <Compile Include="PluralizerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

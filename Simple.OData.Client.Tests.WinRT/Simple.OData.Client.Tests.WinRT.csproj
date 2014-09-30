@@ -212,9 +212,6 @@
     <Compile Include="..\Simple.OData.Client.Tests.Net40\Extensions\XElementExtensionsTests.cs">
       <Link>Extensions\XElementExtensionsTests.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\Extensions\XmlElementAsDictionaryReadTests.cs">
-      <Link>Extensions\XmlElementAsDictionaryReadTests.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\InsertTests.cs">
       <Link>InsertTests.cs</Link>
     </Compile>

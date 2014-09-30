@@ -191,9 +191,6 @@
     <Compile Include="..\Simple.OData.Client.Core\Extensions\DictionaryExtensions.cs">
       <Link>Extensions\DictionaryExtensions.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Extensions\EnumerableExtensions.cs">
-      <Link>Extensions\EnumerableExtensions.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Extensions\EnumerableOfKeyValuePairExtensions.cs">
       <Link>Extensions\EnumerableOfKeyValuePairExtensions.cs</Link>
     </Compile>
@@ -206,32 +203,14 @@
     <Compile Include="..\Simple.OData.Client.Core\Extensions\StringExtensions.cs">
       <Link>Extensions\StringExtensions.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Extensions\TupleEnumerableExtensions.cs">
-      <Link>Extensions\TupleEnumerableExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Extensions\TupleExtensions.cs">
-      <Link>Extensions\TupleExtensions.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Extensions\TypeExtensions.cs">
       <Link>Extensions\TypeExtensions.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Extensions\WebRequestExtensions.cs">
       <Link>Extensions\WebRequestExtensions.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Extensions\XAttributeExtensions.cs">
-      <Link>Extensions\XAttributeExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Extensions\XElementAsDictionaryExtension.cs">
-      <Link>Extensions\XElementAsDictionaryExtension.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Extensions\XElementExtensions.cs">
       <Link>Extensions\XElementExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Extensions\XmlAttributesAsDictionary.cs">
-      <Link>Extensions\XmlAttributesAsDictionary.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Extensions\XmlElementAsDictionary.cs">
-      <Link>Extensions\XmlElementAsDictionary.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Fluent\FluentClient.Async.cs">
       <Link>Fluent\FluentClient.Async.cs</Link>
