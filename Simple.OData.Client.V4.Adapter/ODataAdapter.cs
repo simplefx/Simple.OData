@@ -64,7 +64,8 @@ namespace Simple.OData.Client.V4.Adapter
         {
             return value is ODataExpression
                 ? (value as ODataExpression).AsString(_session)
-                : ODataUriUtils.ConvertToUriLiteral(value, (ODataVersion)Enum.Parse(typeof(ODataVersion), this.GetODataVersionString(), false));
+                : ODataUriUtils.ConvertToUriLiteral(value,
+                    (ODataVersion)Enum.Parse(typeof(ODataVersion), this.GetODataVersionString(), false), this.Model);
         }
 
         public override IMetadata GetMetadata()

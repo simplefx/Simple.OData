@@ -94,11 +94,6 @@ namespace Simple.OData.Client
             return ParseLinqExpression(expression);
         }
 
-        public override string ToString()
-        {
-            return Format(new ExpressionContext());
-        }
-
         public string AsString(ISession session)
         {
             return Format(new ExpressionContext() {Session = session});
@@ -116,7 +111,7 @@ namespace Simple.OData.Client
                 case ExpressionOperator.EQ:
                     if (!string.IsNullOrEmpty(_left.Reference))
                     {
-                        var key = _left.ToString().Split('.').Last();
+                        var key = _left.Reference.Split('.').Last();
                         if (!columnEqualityComparisons.ContainsKey(key))
                             columnEqualityComparisons.Add(key, _right);
                     }
