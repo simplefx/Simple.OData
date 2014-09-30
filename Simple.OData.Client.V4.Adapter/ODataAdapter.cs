@@ -3,6 +3,7 @@ using System.IO;
 using System.Net.Http;
 using System.Xml;
 using Microsoft.OData.Core;
+using Microsoft.OData.Core.UriParser;
 using Microsoft.OData.Edm;
 using Microsoft.OData.Edm.Csdl;
 using Microsoft.Spatial;
@@ -55,6 +56,11 @@ namespace Simple.OData.Client.V4.Adapter
                     return "V4";
             }
             throw new InvalidOperationException(string.Format("Unsupported OData protocol version: \"{0}\"", this.ProtocolVersion));
+        }
+
+        public override string ConvertToUriLiteral(object value)
+        {
+            return ODataUriUtils.ConvertToUriLiteral(value, (ODataVersion)Enum.Parse(typeof(ODataVersion), this.GetODataVersionString(), false));
         }
 
         public override IMetadata GetMetadata()

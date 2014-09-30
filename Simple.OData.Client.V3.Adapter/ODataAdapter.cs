@@ -6,6 +6,7 @@ using System.Xml;
 using Microsoft.Data.Edm;
 using Microsoft.Data.Edm.Csdl;
 using Microsoft.Data.OData;
+using Microsoft.Data.OData.Query;
 
 namespace Simple.OData.Client.V3.Adapter
 {
@@ -59,6 +60,11 @@ namespace Simple.OData.Client.V3.Adapter
                     return "V3";
             }
             throw new InvalidOperationException(string.Format("Unsupported OData protocol version: \"{0}\"", this.ProtocolVersion));
+        }
+
+        public override string ConvertToUriLiteral(object value)
+        {
+            return ODataUriUtils.ConvertToUriLiteral(value, (ODataVersion)Enum.Parse(typeof(ODataVersion), this.GetODataVersionString(), false));
         }
 
         public override IMetadata GetMetadata()

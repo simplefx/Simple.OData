@@ -10,6 +10,7 @@ namespace Simple.OData.Client
         public object Model { get; set; }
 
         public abstract string GetODataVersionString();
+        public abstract string ConvertToUriLiteral(object value);
         public abstract IMetadata GetMetadata();
         public abstract IResponseReader GetResponseReader();
         public abstract IRequestWriter GetRequestWriter(Lazy<IBatchWriter> deferredBatchWriter);

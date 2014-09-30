@@ -81,13 +81,13 @@ namespace Simple.OData.Client
         {
             if (!ReferenceEquals(_collectionExpression, null))
             {
-                For(_collectionExpression.AsString());
+                For(_collectionExpression.AsString(_session));
                 _collectionExpression = null;
             }
 
             if (!ReferenceEquals(_derivedCollectionExpression, null))
             {
-                As(_derivedCollectionExpression.AsString());
+                As(_derivedCollectionExpression.AsString(_session));
                 _derivedCollectionExpression = null;
             }
 
@@ -107,7 +107,7 @@ namespace Simple.OData.Client
 
             if (!ReferenceEquals(_linkExpression, null))
             {
-                Link(_linkExpression.AsString());
+                Link(_linkExpression.AsString(_session));
                 _linkExpression = null;
             }
 
