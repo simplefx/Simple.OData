@@ -52,18 +52,13 @@
     <Compile Include="Fluent\IFluentClient.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />
     <Compile Include="EntryDetails.cs" />
-    <Compile Include="Extensions\DateTimeExtensions.cs" />
-    <Compile Include="Extensions\DecimalExtensions.cs" />
     <Compile Include="Extensions\EnumerableExtensions.cs" />
     <Compile Include="Extensions\EnumerableOfKeyValuePairExtensions.cs" />
-    <Compile Include="Extensions\GuidExtensions.cs" />
     <Compile Include="Extensions\HomogenizeEx.cs" />
-    <Compile Include="Extensions\LongExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="Extensions\TupleEnumerableExtensions.cs" />
     <Compile Include="Extensions\TupleExtensions.cs" />
     <Compile Include="Extensions\TypeExtensions.cs" />
-    <Compile Include="Extensions\ULongExtensions.cs" />
     <Compile Include="Extensions\XAttributeExtensions.cs" />
     <Compile Include="Extensions\XElementAsDictionaryExtension.cs" />
     <Compile Include="Extensions\XElementExtensions.cs" />
@@ -114,7 +109,6 @@
     <Compile Include="CustomConverters.cs" />
     <Compile Include="UnresolvableObjectException.cs" />
     <Compile Include="Utils.cs" />
-    <Compile Include="ValueFormatter.cs" />
     <Compile Include="Http\WebRequestException.cs" />
   </ItemGroup>
   <ItemGroup>

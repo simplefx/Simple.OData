@@ -77,7 +77,7 @@ namespace Simple.OData.Client.Tests
         public void GreaterOrEqualNumeric()
         {
             Expression<Func<TestEntity, bool>> filter = x => x.ProductID >= 1.5;
-            Assert.Equal("ProductID ge 1.5", ODataExpression.FromLinqExpression(filter).AsString(_session));
+            Assert.Equal("ProductID ge 1.5D", ODataExpression.FromLinqExpression(filter).AsString(_session));
         }
 
         [Fact]
@@ -140,7 +140,7 @@ namespace Simple.OData.Client.Tests
         public void EqualDecimal()
         {
             Expression<Func<TestEntity, bool>> filter = x => x.Price == 1M;
-            Assert.Equal("Price eq 1.00M", ODataExpression.FromLinqExpression(filter).AsString(_session));
+            Assert.Equal("Price eq 1M", ODataExpression.FromLinqExpression(filter).AsString(_session));
         }
 
         [Fact]
@@ -161,21 +161,21 @@ namespace Simple.OData.Client.Tests
         public void EqualDateTime()
         {
             Expression<Func<TestEntity, bool>> filter = x => x.CreationTime == new DateTime(2013, 1, 1);
-            Assert.Equal("CreationTime eq datetime'2013-01-01T00:00:00.0000000Z'", ODataExpression.FromLinqExpression(filter).AsString(_session));
+            Assert.Equal("CreationTime eq datetime'2013-01-01T00:00:00'", ODataExpression.FromLinqExpression(filter).AsString(_session));
         }
 
         [Fact]
         public void EqualDateTimeOffset()
         {
             Expression<Func<TestEntity, bool>> filter = x => x.Updated == new DateTimeOffset(new DateTime(2013, 1, 1, 0, 0, 0, DateTimeKind.Utc));
-            Assert.Equal("Updated eq datetimeoffset'2013-01-01T00:00:00.0000000+00:00'", ODataExpression.FromLinqExpression(filter).AsString(_session));
+            Assert.Equal("Updated eq datetimeoffset'2013-01-01T00:00:00Z'", ODataExpression.FromLinqExpression(filter).AsString(_session));
         }
 
         [Fact]
         public void EqualTimeSpan()
         {
             Expression<Func<TestEntity, bool>> filter = x => x.Period == new TimeSpan(1, 2, 3);
-            Assert.Equal("Period eq time'01:02:03'", ODataExpression.FromLinqExpression(filter).AsString(_session));
+            Assert.Equal("Period eq time'PT1H2M3S'", ODataExpression.FromLinqExpression(filter).AsString(_session));
         }
 
         [Fact]
@@ -330,7 +330,7 @@ namespace Simple.OData.Client.Tests
         public void RoundEqual()
         {
             Expression<Func<TestEntity, bool>> filter = x => decimal.Round(x.Price) == 1;
-            Assert.Equal("round(Price) eq 1.00M", ODataExpression.FromLinqExpression(filter).AsString(_session));
+            Assert.Equal("round(Price) eq 1M", ODataExpression.FromLinqExpression(filter).AsString(_session));
         }
 #endif
 
@@ -338,14 +338,14 @@ namespace Simple.OData.Client.Tests
         public void FloorEqual()
         {
             Expression<Func<TestEntity, bool>> filter = x => decimal.Floor(x.Price) == 1;
-            Assert.Equal("floor(Price) eq 1.00M", ODataExpression.FromLinqExpression(filter).AsString(_session));
+            Assert.Equal("floor(Price) eq 1M", ODataExpression.FromLinqExpression(filter).AsString(_session));
         }
 
         [Fact]
         public void CeilingEqual()
         {
             Expression<Func<TestEntity, bool>> filter = x => decimal.Ceiling(x.Price) == 2;
-            Assert.Equal("ceiling(Price) eq 2.00M", ODataExpression.FromLinqExpression(filter).AsString(_session));
+            Assert.Equal("ceiling(Price) eq 2M", ODataExpression.FromLinqExpression(filter).AsString(_session));
         }
     }
 }

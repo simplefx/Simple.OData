@@ -101,7 +101,6 @@
     <Compile Include="Entities\Product.cs" />
     <Compile Include="Entities\Ship.cs" />
     <Compile Include="Entities\Transport.cs" />
-    <Compile Include="Extensions\DateTimeExtensionsTests.cs" />
     <Compile Include="Extensions\DictionaryExtensionsTests.cs" />
     <Compile Include="Extensions\EnumerableExtensionTests.cs" />
     <Compile Include="Extensions\StringExtensionTests.cs" />

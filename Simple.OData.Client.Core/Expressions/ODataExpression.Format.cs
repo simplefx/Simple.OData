@@ -99,7 +99,7 @@ namespace Simple.OData.Client
             }
             else
             {
-                return (new ValueFormatter()).FormatValue(Value);
+                return context.Session.Adapter.ConvertValueToUriLiteral(Value);
             }
         }
 
