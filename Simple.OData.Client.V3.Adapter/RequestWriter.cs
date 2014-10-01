@@ -27,30 +27,9 @@ namespace Simple.OData.Client.V3.Adapter
 
         public async Task<Stream> WriteEntryContentAsync(string method, string collection, IDictionary<string, object> entryData, string commandText)
         {
-            IODataRequestMessage message;
-            if (_deferredBatchWriter != null)
-            {
-                if (!_deferredBatchWriter.IsValueCreated)
-                    await _deferredBatchWriter.Value.StartBatchAsync();
-                message = (await _deferredBatchWriter.Value.CreateOperationRequestMessageAsync(
-                    method, new Uri(_session.UrlBase + commandText))) as IODataRequestMessage;
-                if (method != RestVerbs.Delete)
-                {
-                    var contentId = _deferredBatchWriter.Value.NextContentId();
-                    _deferredBatchWriter.Value.MapContentId(entryData, contentId);
-                    message.SetHeader(HttpLiteral.ContentId, contentId);
-                }
-
-                if (_session.Metadata.EntitySetTypeRequiresOptimisticConcurrencyCheck(collection) &&
-                    (method == RestVerbs.Put || method == RestVerbs.Patch || method == RestVerbs.Delete))
-                {
-                    message.SetHeader(HttpLiteral.IfMatch, EntityTagHeaderValue.Any.Tag);
-                }
-            }
-            else
-            {
-                message = new ODataRequestMessage();
-            }
+            IODataRequestMessage message = _deferredBatchWriter != null
+                ? await CreateOperationRequestMessageAsync(method, collection, entryData, commandText)
+                : new ODataRequestMessage();
 
             using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), _model))
             {
@@ -132,6 +111,29 @@ namespace Simple.OData.Client.V3.Adapter
             }
             settings.SetContentType(contentType);
             return settings;
+        }
+
+        private async Task<IODataRequestMessage> CreateOperationRequestMessageAsync(string method, string collection, IDictionary<string, object> entryData, string commandText)
+        {
+            if (!_deferredBatchWriter.IsValueCreated)
+                await _deferredBatchWriter.Value.StartBatchAsync();
+
+            var message = (await _deferredBatchWriter.Value.CreateOperationRequestMessageAsync(
+                method, new Uri(_session.UrlBase + commandText))) as IODataRequestMessage;
+            if (method != RestVerbs.Delete)
+            {
+                var contentId = _deferredBatchWriter.Value.NextContentId();
+                _deferredBatchWriter.Value.MapContentId(entryData, contentId);
+                message.SetHeader(HttpLiteral.ContentId, contentId);
+            }
+
+            if (_session.Metadata.EntitySetTypeRequiresOptimisticConcurrencyCheck(collection) &&
+                (method == RestVerbs.Put || method == RestVerbs.Patch || method == RestVerbs.Delete))
+            {
+                message.SetHeader(HttpLiteral.IfMatch, EntityTagHeaderValue.Any.Tag);
+            }
+
+            return message;
         }
 
         private void WriteLink(ODataWriter entryWriter, Microsoft.Data.OData.ODataEntry entry, string linkName, object linkData)
