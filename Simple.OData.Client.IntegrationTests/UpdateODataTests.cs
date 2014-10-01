@@ -73,7 +73,7 @@ namespace Simple.OData.Client.Tests
             await _client
                 .For("Products")
                 .Filter("Name eq 'Test1'")
-                .Set(new { Price = 123m })
+                .Set(new { Price = 123 })
                 .UpdateEntryAsync();
 
             product = await _client
@@ -81,7 +81,7 @@ namespace Simple.OData.Client.Tests
                 .Filter("Name eq 'Test1'")
                 .FindEntryAsync();
 
-            Assert.Equal(123m, product["Price"]);
+            Assert.Equal(123d, product["Price"]);
         }
 
         [Fact]
@@ -95,10 +95,10 @@ namespace Simple.OData.Client.Tests
             product = (await _client
                 .For("Products")
                 .Filter("Name eq 'Test1'")
-                .Set(new { Price = 123m })
+                .Set(new { Price = 123 })
                 .UpdateEntriesAsync()).Single();
 
-            Assert.Equal(123m, product["Price"]);
+            Assert.Equal(123d, product["Price"]);
         }
 
         [Fact]
@@ -112,7 +112,7 @@ namespace Simple.OData.Client.Tests
             await _client
                 .For("Products")
                 .Key(product)
-                .Set(new { Price = 456m })
+                .Set(new { Price = 456 })
                 .UpdateEntryAsync();
 
             product = await _client
@@ -120,7 +120,7 @@ namespace Simple.OData.Client.Tests
                 .Filter("Name eq 'Test1'")
                 .FindEntryAsync();
 
-            Assert.Equal(456m, product["Price"]);
+            Assert.Equal(456d, product["Price"]);
         }
 
         [Fact]
@@ -156,7 +156,7 @@ namespace Simple.OData.Client.Tests
                 .InsertEntryAsync();
             var product = await _client
                 .For("Products")
-                .Set(new { Name = "Test2", Price = 18m })
+                .Set(new { Name = "Test2", Price = 18 })
                 .InsertEntryAsync();
 
             await _client
@@ -187,7 +187,7 @@ namespace Simple.OData.Client.Tests
                 .InsertEntryAsync();
             var product = await _client
                 .For("Products")
-                .Set(new { Name = "Test2", Price = 18m, CategoryID = 1 })
+                .Set(new { Name = "Test2", Price = 18, CategoryID = 1 })
                 .InsertEntryAsync();
 
             await _client
