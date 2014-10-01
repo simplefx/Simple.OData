@@ -260,6 +260,23 @@ namespace Simple.OData.Client.V3.Adapter
                     if (propertyNames.Contains(property.Name))
                         _entityType.AddStructuralProperty(property.Name, property.Type, property.DefaultValueString, property.ConcurrencyMode);
                 }
+
+                foreach (var property in entityType.NavigationProperties())
+                {
+                    if (propertyNames.Contains(property.Name))
+                    {
+                        var navInfo = new EdmNavigationPropertyInfo()
+                        {
+                            ContainsTarget = property.ContainsTarget,
+                            DependentProperties = property.DependentProperties,
+                            Name = property.Name,
+                            OnDelete = property.OnDelete,
+                            Target = property.Partner.DeclaringEntityType(),
+                            TargetMultiplicity = property.Partner.Multiplicity()
+                        };
+                        _entityType.AddUnidirectionalNavigation(navInfo);
+                    }
+                }
             }
 
             public IEdmSchemaType FindDeclaredType(string qualifiedName)

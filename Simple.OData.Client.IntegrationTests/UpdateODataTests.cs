@@ -8,15 +8,17 @@ using Entry = System.Collections.Generic.Dictionary<string, object>;
 
 namespace Simple.OData.Client.Tests
 {
-    public class UpdateODataTestsV2Atom : UpdateODataTests
-    {
-        public UpdateODataTestsV2Atom() : base(ODataV2ReadWriteUri, ODataPayloadFormat.Atom, 2) { }
-    }
+    // Not implemented by OData.org service
+    //public class UpdateODataTestsV2Atom : UpdateODataTests
+    //{
+    //    public UpdateODataTestsV2Atom() : base(ODataV2ReadWriteUri, ODataPayloadFormat.Atom, 2) { }
+    //}
 
-    public class UpdateODataTestsV2Json : UpdateODataTests
-    {
-        public UpdateODataTestsV2Json() : base(ODataV2ReadWriteUri, ODataPayloadFormat.Json, 2) { }
-    }
+    // Not implemented by OData.org service
+    //public class UpdateODataTestsV2Json : UpdateODataTests
+    //{
+    //    public UpdateODataTestsV2Json() : base(ODataV2ReadWriteUri, ODataPayloadFormat.Json, 2) { }
+    //}
 
     public class UpdateODataTestsV3Atom : UpdateODataTests
     {
@@ -148,7 +150,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task AddSingleAssociation()
+        public virtual async Task AddSingleAssociation()
         {
             var category = await _client
                 .For("Categories")
@@ -162,7 +164,7 @@ namespace Simple.OData.Client.Tests
             await _client
                 .For("Products")
                 .Key(product["ID"])
-                .Set(new Entry { { ProductCategoryName, category } })
+                .Set(new Entry { { ProductCategoryName, ProductCategoryLinkFunc(category) } })
                 .UpdateEntryAsync();
 
             product = await _client
@@ -192,7 +194,7 @@ namespace Simple.OData.Client.Tests
             await _client
                 .For("Products")
                 .Key(product["ID"])
-                .Set(new Entry { { ProductCategoryName, category2 } })
+                .Set(new Entry { { ProductCategoryName, ProductCategoryLinkFunc(category2) } })
                 .UpdateEntryAsync();
 
             product = await _client
@@ -204,7 +206,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task RemoveSingleAssociation()
+        public virtual async Task RemoveSingleAssociation()
         {
             var category = await _client
                 .For("Categories")
