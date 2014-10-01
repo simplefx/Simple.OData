@@ -88,6 +88,11 @@ namespace Simple.OData.Client.V4.Adapter
             }
         }
 
+        public string FormatLinkPath(string entryPath, string linkName)
+        {
+            return string.Format("{0}/{1}/$ref", entryPath, linkName);
+        }
+
         private async Task<IODataRequestMessage> CreateOperationRequestMessageAsync(string method, string collection, IDictionary<string, object> entryData, string commandText)
         {
             if (!_deferredBatchWriter.IsValueCreated)

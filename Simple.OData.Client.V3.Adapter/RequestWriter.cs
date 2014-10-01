@@ -85,6 +85,11 @@ namespace Simple.OData.Client.V3.Adapter
             }
         }
 
+        public string FormatLinkPath(string entryPath, string linkName)
+        {
+            return string.Format("{0}/$links/{1}", entryPath, linkName);
+        }
+
         private ODataMessageWriterSettings GetWriterSettings()
         {
             var settings = new ODataMessageWriterSettings()

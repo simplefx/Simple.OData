@@ -8,5 +8,6 @@ namespace Simple.OData.Client
     {
         Task<Stream> WriteEntryContentAsync(string method, string collection, IDictionary<string, object> entryData, string commandText);
         Task<Stream> WriteLinkContentAsync(string linkPath);
+        string FormatLinkPath(string entryPath, string linkName);
     }
 }

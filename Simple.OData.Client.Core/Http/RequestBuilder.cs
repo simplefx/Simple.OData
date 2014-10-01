@@ -87,8 +87,9 @@ namespace Simple.OData.Client
                 RestVerbs.Post :
                 RestVerbs.Put;
 
-            var linkContent = await _session.Adapter.GetRequestWriter(_lazyBatchWriter).WriteLinkContentAsync(linkPath);
-            var commandText = FormatLinkPath(entryPath, associationName);
+            var requestWriter = _session.Adapter.GetRequestWriter(_lazyBatchWriter);
+            var linkContent = await requestWriter.WriteLinkContentAsync(linkPath);
+            var commandText = requestWriter.FormatLinkPath(entryPath, associationName);
             var request = new ODataRequest(linkMethod, _session, commandText, null, linkContent);
             request.IsLink = true;
             return request;
@@ -96,10 +97,10 @@ namespace Simple.OData.Client
 
         public async Task<ODataRequest> CreateUnlinkRequestAsync(string commandText, string collection, string linkName)
         {
-            await _session.Adapter.GetRequestWriter(_lazyBatchWriter).WriteEntryContentAsync(
-                RestVerbs.Delete, collection, null, commandText);
+            var requestWriter = _session.Adapter.GetRequestWriter(_lazyBatchWriter);
+            await requestWriter.WriteEntryContentAsync(RestVerbs.Delete, collection, null, commandText);
 
-            commandText = FormatLinkPath(commandText, _session.Metadata.GetNavigationPropertyExactName(collection, linkName));
+            commandText = requestWriter.FormatLinkPath(commandText, _session.Metadata.GetNavigationPropertyExactName(collection, linkName));
             var request = new ODataRequest(RestVerbs.Delete, _session, commandText);
             return await Utils.GetTaskFromResult(request);
         }
@@ -115,79 +116,11 @@ namespace Simple.OData.Client
             return _lazyBatchWriter.Value.EndBatchAsync();
         }
 
-        //public Task<ODataRequest> CreateLinkCommandAsync(string collection, string linkName, int contentId, int associationId)
-        //{
-        //    return CreateLinkCommandAsync(collection, linkName, FormatLinkPath(contentId), FormatLinkPath(associationId));
-        //}
-
-        //public async Task<ODataRequest> CreateLinkRequestAsync(string collection, string linkName, IDictionary<string, object> linkData, bool resultRequired)
-        //{
-        //    var commandWriter = new CommandWriter(_session, this);
-
-        //    var command = await commandWriter.CreateLinkCommandAsync(collection, linkName, 0, linkData);
-        //    request = _requestBuilder.CreateRequest(linkCommand, resultRequired);
-        //}
-
         private bool CheckMergeConditions(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
         {
             var entityCollection = _session.Metadata.GetConcreteEntityCollection(collection);
             return _session.Metadata.GetStructuralPropertyNames(entityCollection.ActualName)
                 .Any(x => !entryData.ContainsKey(x));
         }
-
-        private string FormatLinkPath(string entryPath, string linkName)
-        {
-            return string.Format("{0}/$links/{1}", entryPath, linkName);
-        }
-
-        //public void AddLink(CommandContent content, string collection, KeyValuePair<string, object> linkData)
-        //{
-        //    if (linkData.Value == null)
-        //        return;
-
-        //    var associatedKeyValues = GetLinkedEntryKeyValues(
-        //        _session.AdapterMetadata.GetNavigationPropertyPartnerName(collection, linkData.Key), 
-        //        linkData);
-        //    if (associatedKeyValues != null)
-        //    {
-        //        throw new NotImplementedException();
-        //        //AddDataLink(content.Entry,
-        //        //    _session.AdapterMetadata.GetNavigationPropertyExactName(collection, linkData.Key),
-        //        //    _session.AdapterMetadata.GetNavigationPropertyPartnerName(collection, linkData.Key), 
-        //        //    associatedKeyValues);
-        //    }
-        //}
-
-        //private IEnumerable<object> GetLinkedEntryKeyValues(string collection, KeyValuePair<string, object> entryData)
-        //{
-        //    var entryProperties = GetLinkedEntryProperties(entryData.Value);
-        //    var associatedKeyNames = _session.MetadataCache.GetConcreteEntityCollection(collection).GetKeyNames();
-        //    var associatedKeyValues = new object[associatedKeyNames.Count()];
-        //    for (int index = 0; index < associatedKeyNames.Count(); index++)
-        //    {
-        //        bool ok = entryProperties.TryGetValue(associatedKeyNames[index], out associatedKeyValues[index]);
-        //        if (!ok)
-        //            return null;
-        //    }
-        //    return associatedKeyValues;
-        //}
-
-        //private IDictionary<string, object> GetLinkedEntryProperties(object entryData)
-        //{
-        //    if (entryData is ODataEntry)
-        //        return (Dictionary<string, object>)(entryData as ODataEntry);
-
-        //    var entryProperties = entryData as IDictionary<string, object>;
-        //    if (entryProperties == null)
-        //    {
-        //        var entryType = entryData.GetType();
-        //        entryProperties = Utils.GetMappedProperties(entryType).ToDictionary
-        //        (
-        //            x => x.GetMappedName(),
-        //            x => Utils.GetMappedProperty(entryType, x.Name).GetValue(entryData, null)
-        //        );
-        //    }
-        //    return entryProperties;
-        //}
     }
 }
