@@ -177,7 +177,6 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="SchemaTests.cs" />
     <Compile Include="TestBase.cs" />
     <Compile Include="UpdateDynamicTests.cs" />
     <Compile Include="UpdateTests.cs" />

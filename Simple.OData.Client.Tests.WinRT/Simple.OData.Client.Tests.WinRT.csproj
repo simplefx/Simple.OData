@@ -224,9 +224,6 @@
     <Compile Include="..\Simple.OData.Client.Tests.Net40\Properties\AssemblyInfo.cs">
       <Link>Properties\AssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\SchemaTests.cs">
-      <Link>SchemaTests.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\TestBase.cs">
       <Link>TestBase.cs</Link>
     </Compile>

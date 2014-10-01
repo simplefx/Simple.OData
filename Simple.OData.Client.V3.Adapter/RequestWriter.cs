@@ -7,6 +7,8 @@ using System.Spatial;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Microsoft.Data.Edm;
+using Microsoft.Data.Edm.Annotations;
+using Microsoft.Data.Edm.Library;
 using Microsoft.Data.OData;
 using Simple.OData.Client.Extensions;
 
@@ -31,7 +33,10 @@ namespace Simple.OData.Client.V3.Adapter
                 ? await CreateOperationRequestMessageAsync(method, collection, entryData, commandText)
                 : new ODataRequestMessage();
 
-            using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), _model))
+            var entityType = FindEntityType(collection);
+
+            using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), 
+                method == RestVerbs.Patch ? new EdmDeltaModel(_model, entityType, entryData.Keys) : _model))
             {
                 if (method == RestVerbs.Delete)
                     return null;
@@ -39,12 +44,10 @@ namespace Simple.OData.Client.V3.Adapter
                 var contentId = _deferredBatchWriter != null ? _deferredBatchWriter.Value.GetContentId(entryData) : null;
                 var entityCollection = _session.Metadata.GetConcreteEntityCollection(collection);
                 var entryDetails = _session.Metadata.ParseEntryDetails(entityCollection.ActualName, entryData, contentId);
-                var entityTypeNamespace = _session.Metadata.GetEntitySetTypeNamespace(collection);
-                var entityTypeName = _session.Metadata.GetEntitySetTypeName(collection);
 
                 var entryWriter = messageWriter.CreateODataEntryWriter();
                 var entry = new Microsoft.Data.OData.ODataEntry();
-                entry.TypeName = string.Join(".", entityTypeNamespace, entityTypeName);
+                entry.TypeName = entityType.FullName();
 
                 var typeProperties = (_model.FindDeclaredType(entry.TypeName) as IEdmEntityType).Properties();
                 entry.Properties = entryDetails.Properties.Select(x => new ODataProperty()
@@ -134,6 +137,13 @@ namespace Simple.OData.Client.V3.Adapter
             }
 
             return message;
+        }
+
+        private IEdmEntityType FindEntityType(string collection)
+        {
+            var entityTypeNamespace = _session.Metadata.GetEntitySetTypeNamespace(collection);
+            var entityTypeName = _session.Metadata.GetEntitySetTypeName(collection);
+            return _model.FindDeclaredType(string.Join(".", entityTypeNamespace, entityTypeName)) as IEdmEntityType;
         }
 
         private void WriteLink(ODataWriter entryWriter, Microsoft.Data.OData.ODataEntry entry, string linkName, object linkData)
@@ -233,6 +243,42 @@ namespace Simple.OData.Client.V3.Adapter
                     return value;
             }
             return value;
+        }
+
+        class EdmDeltaModel : IEdmModel
+        {
+            private readonly IEdmModel _source;
+            private readonly EdmEntityType _entityType;
+
+            public EdmDeltaModel(IEdmModel source, IEdmEntityType entityType, IEnumerable<string> propertyNames)
+            {
+                _source = source;
+                _entityType = new EdmEntityType(entityType.Namespace, entityType.Name);
+
+                foreach (var property in entityType.StructuralProperties())
+                {
+                    if (propertyNames.Contains(property.Name))
+                        _entityType.AddStructuralProperty(property.Name, property.Type, property.DefaultValueString, property.ConcurrencyMode);
+                }
+            }
+
+            public IEdmSchemaType FindDeclaredType(string qualifiedName)
+            {
+                if (qualifiedName == _entityType.FullName())
+                    return _entityType;
+                else
+                    return _source.FindDeclaredType(qualifiedName);
+            }
+
+            public IEdmEntityContainer FindDeclaredEntityContainer(string name) { return _source.FindDeclaredEntityContainer(name); }
+            public IEnumerable<IEdmFunction> FindDeclaredFunctions(string qualifiedName) { return _source.FindDeclaredFunctions(qualifiedName); }
+            public IEdmValueTerm FindDeclaredValueTerm(string qualifiedName) { return _source.FindDeclaredValueTerm(qualifiedName); }
+            public IEnumerable<IEdmVocabularyAnnotation> FindDeclaredVocabularyAnnotations(IEdmVocabularyAnnotatable element) { return _source.FindDeclaredVocabularyAnnotations(element); }
+            public IEnumerable<IEdmStructuredType> FindDirectlyDerivedTypes(IEdmStructuredType baseType) { return _source.FindDirectlyDerivedTypes(baseType); }
+            public IEnumerable<IEdmSchemaElement> SchemaElements { get { return _source.SchemaElements; } }
+            public IEnumerable<IEdmVocabularyAnnotation> VocabularyAnnotations { get { return _source.VocabularyAnnotations; } }
+            public IEnumerable<IEdmModel> ReferencedModels { get { return _source.ReferencedModels; } }
+            public IEdmDirectValueAnnotationsManager DirectValueAnnotationsManager { get { return _source.DirectValueAnnotationsManager; } }
         }
 
         private static readonly Dictionary<Type, EdmPrimitiveTypeKind> _typeMap = new []
