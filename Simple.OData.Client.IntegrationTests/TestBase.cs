@@ -42,7 +42,7 @@ namespace Simple.OData.Client.Tests
             var client = new HttpClient();
             var response = await client.GetAsync(serviceUri);
             var uri = response.RequestMessage.RequestUri.AbsoluteUri;
-            if (serviceUri != TripPinV4ReadWriteUri)
+            if (serviceUri == ODataV2ReadWriteUri)
             {
                 var i1 = uri.IndexOf(".org/V");
                 var i2 = uri.IndexOf("/OData/");

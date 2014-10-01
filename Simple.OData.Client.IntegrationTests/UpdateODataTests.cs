@@ -150,7 +150,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public virtual async Task AddSingleAssociation()
+        public async Task AddSingleAssociation()
         {
             var category = await _client
                 .For("Categories")
@@ -206,7 +206,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public virtual async Task RemoveSingleAssociation()
+        public async Task RemoveSingleAssociation()
         {
             var category = await _client
                 .For("Categories")

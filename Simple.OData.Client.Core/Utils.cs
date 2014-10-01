@@ -63,6 +63,14 @@ namespace Simple.OData.Client
             return property == null || property.IsNotMapped() ? null : property;
         }
 
+        public static Uri CreateAbsoluteUri(string urlBase, string relativePath)
+        {
+            string url = string.IsNullOrEmpty(urlBase) ? "http://" : urlBase;
+            if (!url.EndsWith("/"))
+                url += "/";
+            return new Uri(url + relativePath);
+        }
+
         public static bool TryConvert(object value, Type targetType, out object result)
         {
             try

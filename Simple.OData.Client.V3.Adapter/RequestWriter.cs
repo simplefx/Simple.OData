@@ -78,7 +78,7 @@ namespace Simple.OData.Client.V3.Adapter
             var message = new ODataRequestMessage();
             using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), _model))
             {
-                var link = new ODataEntityReferenceLink { Url = new Uri(linkPath, UriKind.Relative) };
+                var link = new ODataEntityReferenceLink { Url = Utils.CreateAbsoluteUri(_session.UrlBase, linkPath) };
                 messageWriter.WriteEntityReferenceLink(link);
 
                 return Client.Utils.CloneStream(message.GetStream());
@@ -188,7 +188,7 @@ namespace Simple.OData.Client.V3.Adapter
             }
             var link = new ODataEntityReferenceLink
             {
-                Url = new Uri(linkUri, UriKind.Relative)
+                Url = Utils.CreateAbsoluteUri(_session.UrlBase, linkUri)
             };
 
             entryWriter.WriteEntityReferenceLink(link);

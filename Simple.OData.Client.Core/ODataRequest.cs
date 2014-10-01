@@ -82,7 +82,7 @@ namespace Simple.OData.Client
         internal ODataRequest(string method, ISession session, string commandText)
         {
             this.Method = method;
-            this.Uri = CreateRequestUrl(session, commandText);
+            this.Uri = Utils.CreateAbsoluteUri(session.UrlBase, commandText).AbsoluteUri;
             this.Credentials = session.Credentials;
             this.PayloadFormat = session.PayloadFormat;
             this.CommandText = commandText;
@@ -99,14 +99,6 @@ namespace Simple.OData.Client
         {
             EntryData = entryData;
             ContentStream = contentStream;
-        }
-
-        private string CreateRequestUrl(ISession session, string commandText)
-        {
-            string url = string.IsNullOrEmpty(session.UrlBase) ? "http://" : session.UrlBase;
-            if (!url.EndsWith("/"))
-                url += "/";
-            return url + commandText;
         }
 
         private HttpRequestMessage GetOrCreateRequestMessage()
