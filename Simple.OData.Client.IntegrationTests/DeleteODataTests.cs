@@ -102,18 +102,5 @@ namespace Simple.OData.Client.Tests
 
             Assert.Null(product);
         }
-
-        private Entry CreateProduct(int productId, string productName)
-        {
-            return new Entry()
-            {
-                {"ID", productId},
-                {"Name", productName},
-                {"Description", "Test1"},
-                {"Price", 18},
-                {"Rating", 1},
-                {"ReleaseDate", DateTimeOffset.Now},
-            };
-        }
     }
 }
