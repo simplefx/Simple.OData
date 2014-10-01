@@ -6,23 +6,18 @@ using Microsoft.OData.Core;
 
 namespace Simple.OData.Client.V4.Adapter
 {
-    public class BatchWriter : IBatchWriter
+    public class BatchWriter : BatchWriterBase
     {
-        private readonly ISession _session;
         private ODataBatchWriter _batchWriter;
         private ODataRequestMessage _requestMessage;
         private ODataMessageWriter _messageWriter;
-        private int _lastContentId;
-        private readonly Dictionary<IDictionary<string, object>, string> _contentIdMap;
 
         public BatchWriter(ISession session)
+            : base(session)
         {
-            _session = session;
-            _lastContentId = 0;
-            _contentIdMap = new Dictionary<IDictionary<string, object>, string>();
         }
 
-        public async Task StartBatchAsync()
+        public override async Task StartBatchAsync()
         {
             _requestMessage = new ODataRequestMessage() { Url = new Uri(_session.UrlBase) };
             _messageWriter = new ODataMessageWriter(_requestMessage);
@@ -37,7 +32,7 @@ namespace Simple.OData.Client.V4.Adapter
 #endif
         }
 
-        public async Task<HttpRequestMessage> EndBatchAsync()
+        public override async Task<HttpRequestMessage> EndBatchAsync()
         {
 #if SILVERLIGHT
             _batchWriter.WriteEndChangeset();
@@ -57,29 +52,13 @@ namespace Simple.OData.Client.V4.Adapter
             return httpRequest;
         }
 
-        public async Task<object> CreateOperationRequestMessageAsync(string method, Uri uri)
+        public override async Task<object> CreateOperationRequestMessageAsync(string method, Uri uri)
         {
 #if SILVERLIGHT
             return _batchWriter.CreateOperationRequestMessage(method, uri, null);
 #else
             return await _batchWriter.CreateOperationRequestMessageAsync(method, uri, null);
 #endif
-        }
-
-        public string NextContentId()
-        {
-            return (++_lastContentId).ToString();
-        }
-
-        public string GetContentId(IDictionary<string, object> entryData)
-        {
-            string contentId;
-            return _contentIdMap.TryGetValue(entryData, out contentId) ? contentId : null;
-        }
-
-        public void MapContentId(IDictionary<string, object> entryData, string contentId)
-        {
-            _contentIdMap.Add(entryData, contentId);
         }
     }
 }

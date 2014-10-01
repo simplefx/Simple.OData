@@ -45,6 +45,7 @@
       <Link>Properties\CommonAssemblyVersion.cs</Link>
     </Compile>
     <Compile Include="Adapter\AdapterVersion.cs" />
+    <Compile Include="Adapter\BatchWriterBase.cs" />
     <Compile Include="Adapter\IODataAdapter.cs" />
     <Compile Include="Adapter\MetadataBase.cs" />
     <Compile Include="Adapter\ResponseNode.cs" />
