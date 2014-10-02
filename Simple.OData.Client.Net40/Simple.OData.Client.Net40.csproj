@@ -146,6 +146,9 @@
     <Compile Include="..\Simple.OData.Client.Core\Adapter\ODataAdapterBase.cs">
       <Link>Adapter\ODataAdapterBase.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Adapter\RequestWriterBase.cs">
+      <Link>Adapter\RequestWriterBase.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Adapter\ResponseNode.cs">
       <Link>Adapter\ResponseNode.cs</Link>
     </Compile>
@@ -308,6 +311,9 @@
     <Compile Include="..\Simple.OData.Client.V3.Adapter\BatchWriter.cs">
       <Link>AdapterV3\BatchWriter.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.V3.Adapter\EdmDeltaModel.cs">
+      <Link>AdapterV3\EdmDeltaModel.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.V3.Adapter\Metadata.cs">
       <Link>AdapterV3\Metadata.cs</Link>
     </Compile>
@@ -331,6 +337,9 @@
     </Compile>
     <Compile Include="..\Simple.OData.Client.V4.Adapter\BatchWriter.cs">
       <Link>AdapterV4\BatchWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.V4.Adapter\EdmDeltaModel.cs">
+      <Link>AdapterV4\EdmDeltaModel.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.V4.Adapter\Metadata.cs">
       <Link>AdapterV4\Metadata.cs</Link>

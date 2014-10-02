@@ -48,6 +48,7 @@
     <Compile Include="Adapter\BatchWriterBase.cs" />
     <Compile Include="Adapter\IODataAdapter.cs" />
     <Compile Include="Adapter\MetadataBase.cs" />
+    <Compile Include="Adapter\RequestWriterBase.cs" />
     <Compile Include="Adapter\ResponseNode.cs" />
     <Compile Include="Extensions\MemberInfoExtensions.cs" />
     <Compile Include="Fluent\IFluentClient.cs" />

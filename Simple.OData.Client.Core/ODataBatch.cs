@@ -61,10 +61,8 @@ namespace Simple.OData.Client
         /// <returns></returns>
         public async Task CompleteAsync(CancellationToken cancellationToken)
         {
-            var requestMessage = await this.RequestBuilder.CompleteBatchAsync();
-
             using (var response = await this.RequestRunner.ExecuteRequestAsync(
-                await this.RequestBuilder.CreateBatchRequestAsync(requestMessage), cancellationToken))
+                await this.RequestBuilder.CreateBatchRequestAsync(), cancellationToken))
             {
                 await ParseResponseAsync(response);
             }

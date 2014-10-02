@@ -48,6 +48,7 @@
       <Link>Properties\CommonAssemblyVersion.cs</Link>
     </Compile>
     <Compile Include="BatchWriter.cs" />
+    <Compile Include="EdmDeltaModel.cs" />
     <Compile Include="Metadata.cs" />
     <Compile Include="ODataAdapter.cs" />
     <Compile Include="ODataRequestMessage.cs" />

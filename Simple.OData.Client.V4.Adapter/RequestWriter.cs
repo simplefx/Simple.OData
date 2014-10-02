@@ -14,22 +14,19 @@ using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client.V4.Adapter
 {
-    public class RequestWriter : IRequestWriter
+    public class RequestWriter : RequestWriterBase
     {
-        private readonly ISession _session;
         private readonly IEdmModel _model;
-        private readonly Lazy<IBatchWriter> _deferredBatchWriter;
 
         public RequestWriter(ISession session, IEdmModel model, Lazy<IBatchWriter> deferredBatchWriter)
+            : base(session, deferredBatchWriter)
         {
-            _session = session;
             _model = model;
-            _deferredBatchWriter = deferredBatchWriter;
         }
 
-        public async Task<Stream> WriteEntryContentAsync(string method, string collection, IDictionary<string, object> entryData, string commandText)
+        protected override async Task<Stream> WriteEntryContentAsync(string method, string collection, IDictionary<string, object> entryData, string commandText)
         {
-            IODataRequestMessage message = _deferredBatchWriter != null
+            IODataRequestMessage message = IsBatch
                 ? await CreateOperationRequestMessageAsync(method, collection, entryData, commandText)
                 : new ODataRequestMessage();
 
@@ -72,25 +69,25 @@ namespace Simple.OData.Client.V4.Adapter
 
                 entryWriter.WriteEnd();
 
-                return _deferredBatchWriter != null ? null : Utils.CloneStream(message.GetStream());
+                return IsBatch ? null : message.GetStream();
             }
         }
 
-        public async Task<Stream> WriteLinkContentAsync(string linkPath)
+        protected override async Task<Stream> WriteLinkContentAsync(string linkKey)
         {
             var message = new ODataRequestMessage();
             using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), _model))
             {
-                var link = new ODataEntityReferenceLink { Url = Utils.CreateAbsoluteUri(_session.UrlBase, linkPath) };
+                var link = new ODataEntityReferenceLink { Url = Utils.CreateAbsoluteUri(_session.UrlBase, linkKey) };
                 messageWriter.WriteEntityReferenceLink(link);
 
-                return Utils.CloneStream(message.GetStream());
+                return message.GetStream();
             }
         }
 
-        public string FormatLinkPath(string entryPath, string linkName)
+        protected override string FormatLinkPath(string entryKey, string navigationPropertyName)
         {
-            return string.Format("{0}/{1}/$ref", entryPath, linkName);
+            return string.Format("{0}/{1}/$ref", entryKey, navigationPropertyName);
         }
 
         private async Task<IODataRequestMessage> CreateOperationRequestMessageAsync(string method, string collection, IDictionary<string, object> entryData, string commandText)
@@ -183,6 +180,7 @@ namespace Simple.OData.Client.V4.Adapter
                     RequestUri = new Uri(_session.UrlBase),
                 }, 
                 Indent = true,
+                DisableMessageStreamDisposal = IsBatch,
             };
             switch (_session.PayloadFormat)
             {
@@ -244,62 +242,6 @@ namespace Simple.OData.Client.V4.Adapter
                     return value;
             }
             return value;
-        }
-
-        class EdmDeltaModel : IEdmModel
-        {
-            private readonly IEdmModel _source;
-            private readonly EdmEntityType _entityType;
-
-            public EdmDeltaModel(IEdmModel source, IEdmEntityType entityType, IEnumerable<string> propertyNames)
-            {
-                _source = source;
-                _entityType = new EdmEntityType(entityType.Namespace, entityType.Name);
-
-                foreach (var property in entityType.StructuralProperties())
-                {
-                    if (propertyNames.Contains(property.Name))
-                        _entityType.AddStructuralProperty(property.Name, property.Type, property.DefaultValueString, property.ConcurrencyMode);
-                }
-
-                foreach (var property in entityType.NavigationProperties())
-                {
-                    if (propertyNames.Contains(property.Name))
-                    {
-                        var navInfo = new EdmNavigationPropertyInfo()
-                        {
-                            ContainsTarget = property.ContainsTarget,
-                            DependentProperties = property.DependentProperties(),
-                            Name = property.Name,
-                            OnDelete = property.OnDelete,
-                            Target = property.Partner.DeclaringEntityType(),
-                            TargetMultiplicity = property.TargetMultiplicity()
-                        };
-                        _entityType.AddUnidirectionalNavigation(navInfo);
-                    }
-                }
-            }
-
-            public IEdmSchemaType FindDeclaredType(string qualifiedName)
-            {
-                if (qualifiedName == _entityType.FullName())
-                    return _entityType;
-                else
-                    return _source.FindDeclaredType(qualifiedName);
-            }
-
-            public IEnumerable<IEdmOperation> FindDeclaredBoundOperations(IEdmType bindingType) { return _source.FindDeclaredBoundOperations(bindingType); }
-            public IEnumerable<IEdmOperation> FindDeclaredBoundOperations(string qualifiedName, IEdmType bindingType) { return _source.FindDeclaredBoundOperations(qualifiedName, bindingType); }
-            public IEnumerable<IEdmOperation> FindDeclaredOperations(string qualifiedName) { return _source.FindDeclaredOperations(qualifiedName); }
-            public IEdmValueTerm FindDeclaredValueTerm(string qualifiedName) { return _source.FindDeclaredValueTerm(qualifiedName); }
-            public IEnumerable<IEdmVocabularyAnnotation> FindDeclaredVocabularyAnnotations(IEdmVocabularyAnnotatable element) { return _source.FindDeclaredVocabularyAnnotations(element); }
-            public IEnumerable<IEdmStructuredType> FindDirectlyDerivedTypes(IEdmStructuredType baseType) { return _source.FindDirectlyDerivedTypes(baseType); }
-            public IEnumerable<IEdmSchemaElement> SchemaElements { get { return _source.SchemaElements; } }
-            public IEnumerable<IEdmVocabularyAnnotation> VocabularyAnnotations { get { return _source.VocabularyAnnotations; } }
-            public IEnumerable<IEdmModel> ReferencedModels { get { return _source.ReferencedModels; } }
-            public IEnumerable<string> DeclaredNamespaces { get; private set; }
-            public IEdmDirectValueAnnotationsManager DirectValueAnnotationsManager { get { return _source.DirectValueAnnotationsManager; } }
-            public IEdmEntityContainer EntityContainer { get; private set; }
         }
 
         private static readonly Dictionary<Type, EdmPrimitiveTypeKind> _typeMap = new[]
