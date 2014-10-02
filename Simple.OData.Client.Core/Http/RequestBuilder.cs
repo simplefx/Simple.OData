@@ -11,15 +11,6 @@ namespace Simple.OData.Client
         private readonly Lazy<IBatchWriter> _lazyBatchWriter;
 
         public bool IsBatch { get { return _lazyBatchWriter != null; } }
-        public string Host
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(_session.UrlBase)) return null;
-                var substr = _session.UrlBase.Substring(_session.UrlBase.IndexOf("//") + 2);
-                return substr.Substring(0, substr.IndexOf("/"));
-            }
-        }
 
         public RequestBuilder(ISession session, bool isBatch = false)
         {

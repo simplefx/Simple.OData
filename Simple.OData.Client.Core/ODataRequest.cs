@@ -9,17 +9,10 @@ namespace Simple.OData.Client
 {
     public class ODataRequest
     {
+        private readonly string _uri;
         private HttpRequestMessage _requestMessage;
-
-        public string Uri { get; private set; }
-        public ICredentials Credentials { get; private set; }
-        public ODataPayloadFormat PayloadFormat { get; private set; }
-        public string Method { get; private set; }
-        public string CommandText { get; private set; }
-        public IDictionary<string, object> EntryData { get; private set; }
-        public Stream ContentStream { get; private set; }
-        public bool HasContent { get { return this.ContentStream != null; }}
-        public int ContentId { get; private set; }
+        private readonly ODataPayloadFormat _payloadFormat;
+        private readonly Stream _contentStream;
 
         public HttpRequestMessage RequestMessage
         {
@@ -27,27 +20,11 @@ namespace Simple.OData.Client
             private set { _requestMessage = value; }
         }
 
-        public string ContentType
-        {
-            get
-            {
-                switch (this.PayloadFormat)
-                {
-                    default:
-                    case ODataPayloadFormat.Atom:
-                        return this.IsLink ? "application/xml" : "application/atom+xml";
-
-                    case ODataPayloadFormat.Json:
-                        return "application/json";
-                }
-            }
-        }
-
         public string[] Accept
         {
             get
             {
-                switch (this.PayloadFormat)
+                switch (this._payloadFormat)
                 {
                     default:
                     case ODataPayloadFormat.Atom:
@@ -65,27 +42,21 @@ namespace Simple.OData.Client
             }
         }
 
-        public HttpContent GetContent()
-        {
-            return this.ContentStream != null
-                ? new StringContent(Utils.StreamToString(this.ContentStream), Encoding.UTF8, this.ContentType)
-                : null;
-        }
-
+        public string Method { get; private set; }
+        public ICredentials Credentials { get; private set; }
+        public IDictionary<string, object> EntryData { get; private set; }
         public bool IsLink { get; set; }
         public bool ReturnsScalarResult { get; set; }
         public bool ReturnContent { get; set; }
         public bool CheckOptimisticConcurrency { get; set; }
 
-        public object Message { get; set; }
-
         internal ODataRequest(string method, ISession session, string commandText)
         {
             this.Method = method;
-            this.Uri = Utils.CreateAbsoluteUri(session.UrlBase, commandText).AbsoluteUri;
             this.Credentials = session.Credentials;
-            this.PayloadFormat = session.PayloadFormat;
-            this.CommandText = commandText;
+
+            _uri = Utils.CreateAbsoluteUri(session.UrlBase, commandText).AbsoluteUri;
+            _payloadFormat = session.PayloadFormat;
         }
 
         internal ODataRequest(string method, ISession session, string commandText, HttpRequestMessage requestMessage)
@@ -98,7 +69,27 @@ namespace Simple.OData.Client
             : this(method, session, commandText)
         {
             EntryData = entryData;
-            ContentStream = contentStream;
+            _contentStream = contentStream;
+        }
+
+        private HttpContent GetContent()
+        {
+            return this._contentStream != null
+                ? new StringContent(Utils.StreamToString(this._contentStream), Encoding.UTF8, this.GetContentType())
+                : null;
+        }
+
+        private string GetContentType()
+        {
+            switch (this._payloadFormat)
+            {
+                default:
+                case ODataPayloadFormat.Atom:
+                    return this.IsLink ? "application/xml" : "application/atom+xml";
+
+                case ODataPayloadFormat.Json:
+                    return "application/json";
+            }
         }
 
         private HttpRequestMessage GetOrCreateRequestMessage()
@@ -106,8 +97,10 @@ namespace Simple.OData.Client
             if (_requestMessage != null)
                 return _requestMessage;
 
-            _requestMessage = new HttpRequestMessage(new HttpMethod(this.Method), this.Uri);
-            _requestMessage.Content = this.HasContent ? this.GetContent() : null;
+            _requestMessage = new HttpRequestMessage(new HttpMethod(this.Method), this._uri)
+            {
+                Content = this._contentStream != null ? this.GetContent() : null
+            };
             return _requestMessage;
         }
     }
