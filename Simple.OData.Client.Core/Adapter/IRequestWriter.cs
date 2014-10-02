@@ -7,9 +7,9 @@ namespace Simple.OData.Client
     public interface IRequestWriter
     {
         Task<ODataRequest> CreateInsertRequestAsync(string collection, IDictionary<string, object> entryData, bool resultRequired);
-        Task<ODataRequest> CreateUpdateRequestAsync(string commandText, string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData, bool resultRequired);
-        Task<ODataRequest> CreateDeleteRequestAsync(string commandText, string collection);
-        Task<ODataRequest> CreateLinkRequestAsync(string collection, string linkName, string entryKey, string linkKey);
-        Task<ODataRequest> CreateUnlinkRequestAsync(string collection, string linkName, string entryKey);
+        Task<ODataRequest> CreateUpdateRequestAsync(string collection, string entryIdent, IDictionary<string, object> entryKey, IDictionary<string, object> entryData, bool resultRequired);
+        Task<ODataRequest> CreateDeleteRequestAsync(string collection, string entryIdent);
+        Task<ODataRequest> CreateLinkRequestAsync(string collection, string linkName, string entryIdent, string linkIdent);
+        Task<ODataRequest> CreateUnlinkRequestAsync(string collection, string linkName, string entryIdent);
     }
 }

@@ -344,10 +344,10 @@ namespace Simple.OData.Client
             await _session.ResolveAdapterAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var formattedEntryKey = await FormatEntryKeyAsync(collection, entryKey, cancellationToken);
+            var entryIdent = await FormatEntryKeyAsync(collection, entryKey, cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var request = await _requestBuilder.CreateGetRequestAsync(formattedEntryKey);
+            var request = await _requestBuilder.CreateGetRequestAsync(entryIdent);
             return await ExecuteRequestWithResultAsync(request, cancellationToken,
                 x => x.Entry,
                 () => null);
@@ -409,10 +409,10 @@ namespace Simple.OData.Client
             RemoveSystemProperties(entryKey);
             RemoveSystemProperties(entryData);
 
-            var formattedEntryKey = await FormatEntryKeyAsync(collection, entryKey, cancellationToken);
+            var entryIdent = await FormatEntryKeyAsync(collection, entryKey, cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var request = await _requestBuilder.CreateUpdateRequestAsync(formattedEntryKey, collection, entryKey, entryData, resultRequired);
+            var request = await _requestBuilder.CreateUpdateRequestAsync(collection, entryIdent, entryKey, entryData, resultRequired);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var result = await ExecuteRequestWithResultAsync(request, cancellationToken, x => x.Entry);
@@ -473,13 +473,13 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             RemoveSystemProperties(entryKey);
-            var commandText = await GetFluentClient()
+            var entryIdent = await GetFluentClient()
                 .For(collection)
                 .Key(entryKey)
                 .GetCommandTextAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var request = await _requestBuilder.CreateDeleteRequestAsync(commandText, collection);
+            var request = await _requestBuilder.CreateDeleteRequestAsync(collection, entryIdent);
             if (!_requestBuilder.IsBatch)
             {
                 using (await _requestRunner.ExecuteRequestAsync(request, cancellationToken))
@@ -517,14 +517,14 @@ namespace Simple.OData.Client
             RemoveSystemProperties(entryKey);
             RemoveSystemProperties(linkedEntryKey);
 
-            var formattedEntryKey = await FormatEntryKeyAsync(collection, entryKey, cancellationToken);
+            var entryIdent = await FormatEntryKeyAsync(collection, entryKey, cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var linkedCollection = _session.Metadata.GetNavigationPropertyPartnerName(collection, linkName);
             var formattedLinkKey = await FormatEntryKeyAsync(linkedCollection, linkedEntryKey, cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var request = await _requestBuilder.CreateLinkRequestAsync(collection, linkName, formattedEntryKey, formattedLinkKey);
+            var request = await _requestBuilder.CreateLinkRequestAsync(collection, linkName, entryIdent, formattedLinkKey);
 
             if (!_requestBuilder.IsBatch)
             {
@@ -545,10 +545,10 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             RemoveSystemProperties(entryKey);
-            var formattedEntryKey = await FormatEntryKeyAsync(collection, entryKey, cancellationToken);
+            var entryIdent = await FormatEntryKeyAsync(collection, entryKey, cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var request = await _requestBuilder.CreateUnlinkRequestAsync(collection, linkName, formattedEntryKey);
+            var request = await _requestBuilder.CreateUnlinkRequestAsync(collection, linkName, entryIdent);
 
             if (!_requestBuilder.IsBatch)
             {
