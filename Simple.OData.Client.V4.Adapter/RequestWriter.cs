@@ -73,21 +73,23 @@ namespace Simple.OData.Client.V4.Adapter
             }
         }
 
-        protected override async Task<Stream> WriteLinkContentAsync(string linkKey)
+        protected override async Task<Stream> WriteLinkContentAsync(string linkIdent)
         {
             var message = new ODataRequestMessage();
             using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), _model))
             {
-                var link = new ODataEntityReferenceLink { Url = Utils.CreateAbsoluteUri(_session.UrlBase, linkKey) };
+                var link = new ODataEntityReferenceLink { Url = Utils.CreateAbsoluteUri(_session.UrlBase, linkIdent) };
                 messageWriter.WriteEntityReferenceLink(link);
 
                 return message.GetStream();
             }
         }
 
-        protected override string FormatLinkPath(string entryKey, string navigationPropertyName)
+        protected override string FormatLinkPath(string entryIdent, string navigationPropertyName, string linkIdent = null)
         {
-            return string.Format("{0}/{1}/$ref", entryKey, navigationPropertyName);
+            return linkIdent == null
+                ? string.Format("{0}/{1}/$ref", entryIdent, navigationPropertyName)
+                : string.Format("{0}/{1}/$ref?$id={2}", entryIdent, navigationPropertyName, linkIdent);
         }
 
         private async Task<IODataRequestMessage> CreateOperationRequestMessageAsync(string method, string collection, IDictionary<string, object> entryData, string commandText)
@@ -180,7 +182,7 @@ namespace Simple.OData.Client.V4.Adapter
                     RequestUri = new Uri(_session.UrlBase),
                 }, 
                 Indent = true,
-                DisableMessageStreamDisposal = IsBatch,
+                DisableMessageStreamDisposal = !IsBatch,
             };
             switch (_session.PayloadFormat)
             {

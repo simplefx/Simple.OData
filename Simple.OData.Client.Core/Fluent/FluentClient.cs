@@ -53,13 +53,13 @@ namespace Simple.OData.Client
         }
 
         #pragma warning disable 1591
-        
-        internal Session Session
+
+        private Session Session
         {
             get { return _session; }
         }
 
-        public FluentClient<U> Link<U>(FluentCommand command, string linkName = null)
+        private FluentClient<U> Link<U>(FluentCommand command, string linkName = null)
         where U : class
         {
             linkName = linkName ?? typeof (U).Name;
@@ -75,7 +75,7 @@ namespace Simple.OData.Client
             return linkedClient;
         }
 
-        public FluentClient<U> Link<U>(FluentCommand command, ODataExpression expression)
+        private FluentClient<U> Link<U>(FluentCommand command, ODataExpression expression)
         where U : class
         {
             return Link<U>(command, expression.Reference);

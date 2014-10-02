@@ -48,16 +48,16 @@ namespace Simple.OData.Client
                 .CreateDeleteRequestAsync(collection, entryIdent);
         }
 
-        public Task<ODataRequest> CreateLinkRequestAsync(string collection, string linkName, string entryIdent, string formattedLinkKey)
+        public Task<ODataRequest> CreateLinkRequestAsync(string collection, string linkName, string entryIdent, string linkIdent)
         {
             return _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-                .CreateLinkRequestAsync(collection, linkName, entryIdent, formattedLinkKey);
+                .CreateLinkRequestAsync(collection, linkName, entryIdent, linkIdent);
         }
 
-        public Task<ODataRequest> CreateUnlinkRequestAsync(string collection, string linkName, string entryIdent)
+        public Task<ODataRequest> CreateUnlinkRequestAsync(string collection, string linkName, string entryIdent, string linkIdent)
         {
             return _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-                .CreateUnlinkRequestAsync(collection, linkName, entryIdent);
+                .CreateUnlinkRequestAsync(collection, linkName, entryIdent, linkIdent);
         }
 
         public async Task<ODataRequest> CreateBatchRequestAsync()

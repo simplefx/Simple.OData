@@ -85,12 +85,13 @@ namespace Simple.OData.Client
             return request;
         }
 
-        public async Task<ODataRequest> CreateUnlinkRequestAsync(string collection, string linkName, string entryIdent)
+        public async Task<ODataRequest> CreateUnlinkRequestAsync(string collection, string linkName, string entryIdent, string linkIdent)
         {
+            var associationName = _session.Metadata.GetNavigationPropertyExactName(collection, linkName);
             await WriteEntryContentAsync(RestVerbs.Delete, collection, null, entryIdent);
 
-            entryIdent = FormatLinkPath(entryIdent, _session.Metadata.GetNavigationPropertyExactName(collection, linkName));
-            var request = new ODataRequest(RestVerbs.Delete, _session, entryIdent)
+            var commandText = FormatLinkPath(entryIdent, associationName, linkIdent);
+            var request = new ODataRequest(RestVerbs.Delete, _session, commandText)
             {
                 IsLink = true,
             };
@@ -98,8 +99,8 @@ namespace Simple.OData.Client
         }
 
         protected abstract Task<Stream> WriteEntryContentAsync(string method, string collection, IDictionary<string, object> entryData, string commandText);
-        protected abstract Task<Stream> WriteLinkContentAsync(string linkKey);
-        protected abstract string FormatLinkPath(string entryKey, string navigationPropertyName);
+        protected abstract Task<Stream> WriteLinkContentAsync(string linkIdent);
+        protected abstract string FormatLinkPath(string entryIdent, string navigationPropertyName, string linkIdent = null);
 
         private bool CheckMergeConditions(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
         {

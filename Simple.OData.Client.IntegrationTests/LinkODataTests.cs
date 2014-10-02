@@ -81,14 +81,17 @@ namespace Simple.OData.Client.Tests
             await _client
                 .For("Products")
                 .Key(product)
-                .UnlinkEntryAsync(ProductCategoryName);
+                .UnlinkEntryAsync(ProductCategoryName, ProductCategoryName == "Categories" ? category : null);
 
             product = await _client
                 .For("Products")
                 .Filter("Name eq 'Test5'")
                 .Expand(ProductCategoryName)
                 .FindEntryAsync();
-            Assert.Null(product[ProductCategoryName]);
+            if (ProductCategoryName == "Categories")
+                Assert.DoesNotContain(ProductCategoryName, product.Keys);
+            else
+                Assert.Null(product[ProductCategoryName]);
         }
     }
 }

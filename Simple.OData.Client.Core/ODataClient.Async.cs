@@ -521,10 +521,10 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var linkedCollection = _session.Metadata.GetNavigationPropertyPartnerName(collection, linkName);
-            var formattedLinkKey = await FormatEntryKeyAsync(linkedCollection, linkedEntryKey, cancellationToken);
+            var linkIdent = await FormatEntryKeyAsync(linkedCollection, linkedEntryKey, cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var request = await _requestBuilder.CreateLinkRequestAsync(collection, linkName, entryIdent, formattedLinkKey);
+            var request = await _requestBuilder.CreateLinkRequestAsync(collection, linkName, entryIdent, linkIdent);
 
             if (!_requestBuilder.IsBatch)
             {
@@ -536,10 +536,20 @@ namespace Simple.OData.Client
 
         public Task UnlinkEntryAsync(string collection, IDictionary<string, object> entryKey, string linkName)
         {
-            return UnlinkEntryAsync(collection, entryKey, linkName, CancellationToken.None);
+            return UnlinkEntryAsync(collection, entryKey, linkName, null, CancellationToken.None);
         }
 
-        public async Task UnlinkEntryAsync(string collection, IDictionary<string, object> entryKey, string linkName, CancellationToken cancellationToken)
+        public Task UnlinkEntryAsync(string collection, IDictionary<string, object> entryKey, string linkName, CancellationToken cancellationToken)
+        {
+            return UnlinkEntryAsync(collection, entryKey, linkName, null, cancellationToken);
+        }
+
+        public Task UnlinkEntryAsync(string collection, IDictionary<string, object> entryKey, string linkName, IDictionary<string, object> linkedEntryKey)
+        {
+            return UnlinkEntryAsync(collection, entryKey, linkName, linkedEntryKey, CancellationToken.None);
+        }
+
+        public async Task UnlinkEntryAsync(string collection, IDictionary<string, object> entryKey, string linkName, IDictionary<string, object> linkedEntryKey, CancellationToken cancellationToken)
         {
             await _session.ResolveAdapterAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
@@ -548,7 +558,15 @@ namespace Simple.OData.Client
             var entryIdent = await FormatEntryKeyAsync(collection, entryKey, cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var request = await _requestBuilder.CreateUnlinkRequestAsync(collection, linkName, entryIdent);
+            string linkIdent = null;
+            if (linkedEntryKey != null)
+            {
+                var linkedCollection = _session.Metadata.GetNavigationPropertyPartnerName(collection, linkName);
+                linkIdent = await FormatEntryKeyAsync(linkedCollection, linkedEntryKey, cancellationToken);
+                if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+            }
+
+            var request = await _requestBuilder.CreateUnlinkRequestAsync(collection, linkName, entryIdent, linkIdent);
 
             if (!_requestBuilder.IsBatch)
             {
@@ -755,13 +773,13 @@ namespace Simple.OData.Client
             await LinkEntryAsync(collectionName, entryKey, linkName, linkedEntryKey, cancellationToken);
         }
 
-        internal async Task UnlinkEntryAsync(FluentCommand command, IDictionary<string, object> entryKey, string linkName, CancellationToken cancellationToken)
+        internal async Task UnlinkEntryAsync(FluentCommand command, IDictionary<string, object> entryKey, string linkName, IDictionary<string, object> linkedEntryKey, CancellationToken cancellationToken)
         {
             await _session.ResolveAdapterAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var collectionName = _session.Metadata.GetEntityCollection(command.CollectionName).ActualName;
-            await UnlinkEntryAsync(collectionName, entryKey, linkName, cancellationToken);
+            await UnlinkEntryAsync(collectionName, entryKey, linkName, linkedEntryKey, cancellationToken);
         }
 
         internal async Task<IEnumerable<IDictionary<string, object>>> ExecuteFunctionAsync(FluentCommand command, IDictionary<string, object> parameters, CancellationToken cancellationToken)

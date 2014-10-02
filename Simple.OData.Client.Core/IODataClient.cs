@@ -396,6 +396,25 @@ namespace Simple.OData.Client
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task instance.</returns>
         Task UnlinkEntryAsync(string collection, IDictionary<string, object> entryKey, string linkName, CancellationToken cancellationToken);
+        /// <summary>
+        /// Deletes a link between entries.
+        /// </summary>
+        /// <param name="collection">The name of the collection.</param>
+        /// <param name="entryKey">The entry key.</param>
+        /// <param name="linkName">Name of the link to be deleted.</param>
+        /// <param name="linkedEntryKey">The linked entry key.</param>
+        /// <returns>Task instance.</returns>
+        Task UnlinkEntryAsync(string collection, IDictionary<string, object> entryKey, string linkName, IDictionary<string, object> linkedEntryKey);
+        /// <summary>
+        /// Deletes a link between entries.
+        /// </summary>
+        /// <param name="collection">The name of the collection.</param>
+        /// <param name="entryKey">The entry key.</param>
+        /// <param name="linkName">Name of the link to be deleted.</param>
+        /// <param name="linkedEntryKey">The linked entry key.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task instance.</returns>
+        Task UnlinkEntryAsync(string collection, IDictionary<string, object> entryKey, string linkName, IDictionary<string, object> linkedEntryKey, CancellationToken cancellationToken);
 
         /// <summary>
         /// Executes the OData function.

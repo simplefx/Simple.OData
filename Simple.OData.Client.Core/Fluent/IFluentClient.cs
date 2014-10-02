@@ -322,6 +322,70 @@ namespace Simple.OData.Client
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task instance.</returns>
         Task UnlinkEntryAsync(ODataExpression expression, CancellationToken cancellationToken);
+        /// <summary>
+        /// Deletes a link between entries.
+        /// </summary>
+        /// <typeparam name="U">The linked entry type.</typeparam>
+        /// <param name="linkedEntryKey">The linked entry key.</param>
+        /// <returns>Task instance.</returns>
+        Task UnlinkEntryAsync<U>(U linkedEntryKey);
+        /// <summary>
+        /// Deletes a link between entries.
+        /// </summary>
+        /// <typeparam name="U">The linked entry type.</typeparam>
+        /// <param name="linkedEntryKey">The linked entry key.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task instance.</returns>
+        Task UnlinkEntryAsync<U>(U linkedEntryKey, CancellationToken cancellationToken);
+        /// <summary>
+        /// Deletes a link between entries.
+        /// </summary>
+        /// <typeparam name="U">The linked entry type.</typeparam>
+        /// <param name="linkedEntryKey">The linked entry key.</param>
+        /// <param name="linkName">Name of the link.</param>
+        /// <returns>Task instance.</returns>
+        Task UnlinkEntryAsync<U>(U linkedEntryKey, string linkName);
+        /// <summary>
+        /// Deletes a link between entries.
+        /// </summary>
+        /// <typeparam name="U">The linked entry type.</typeparam>
+        /// <param name="linkedEntryKey">The linked entry key.</param>
+        /// <param name="linkName">Name of the link.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task instance.</returns>
+        Task UnlinkEntryAsync<U>(U linkedEntryKey, string linkName, CancellationToken cancellationToken);
+        /// <summary>
+        /// Deletes a link between entries.
+        /// </summary>
+        /// <typeparam name="U">The linked entry type.</typeparam>
+        /// <param name="expression">The link expression.</param>
+        /// <param name="linkedEntryKey">The linked entry key.</param>
+        /// <returns>Task instance.</returns>
+        Task UnlinkEntryAsync<U>(Expression<Func<T, U>> expression, U linkedEntryKey);
+        /// <summary>
+        /// Deletes a link between entries.
+        /// </summary>
+        /// <typeparam name="U">The linked entry type.</typeparam>
+        /// <param name="expression">The link expression.</param>
+        /// <param name="linkedEntryKey">The linked entry key.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task instance.</returns>
+        Task UnlinkEntryAsync<U>(Expression<Func<T, U>> expression, U linkedEntryKey, CancellationToken cancellationToken);
+        /// <summary>
+        /// Deletes a link between entries.
+        /// </summary>
+        /// <param name="expression">The link expression.</param>
+        /// <param name="linkedEntryKey">The linked entry key.</param>
+        /// <returns>Task instance.</returns>
+        Task UnlinkEntryAsync(ODataExpression expression, IDictionary<string, object> linkedEntryKey);
+        /// <summary>
+        /// Deletes a link between entries.
+        /// </summary>
+        /// <param name="expression">The link expression.</param>
+        /// <param name="linkedEntryKey">The linked entry key.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task instance.</returns>
+        Task UnlinkEntryAsync(ODataExpression expression, IDictionary<string, object> linkedEntryKey, CancellationToken cancellationToken);
 
         /// <summary>
         /// Executes the OData function.
