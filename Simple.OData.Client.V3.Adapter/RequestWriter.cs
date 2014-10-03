@@ -89,6 +89,18 @@ namespace Simple.OData.Client.V3.Adapter
                 : string.Format("{0}/$links/{1}", entryIdent, linkIdent);
         }
 
+        protected override void AssignHeaders(ODataRequest request)
+        {
+            if (request.ResultRequired)
+            {
+                request.Headers.GetOrAdd(HttpLiteral.Prefer, HttpLiteral.ReturnContent);
+            }
+            else
+            {
+                request.Headers.GetOrAdd(HttpLiteral.Prefer, HttpLiteral.ReturnNoContent);
+            }
+        }
+
         private ODataMessageWriterSettings GetWriterSettings()
         {
             var settings = new ODataMessageWriterSettings()

@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace Simple.OData.Client
 {
-    internal class SimpleDictionary<TKey, TValue> :
+    public class SimpleDictionary<TKey, TValue> :
 #if NET40
         ConcurrentDictionary<TKey, TValue>
 #else

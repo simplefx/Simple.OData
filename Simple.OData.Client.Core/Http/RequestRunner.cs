@@ -47,7 +47,7 @@ namespace Simple.OData.Client
 
                     if (request.CheckOptimisticConcurrency &&
                         (request.Method == RestVerbs.Put ||
-                        request.Method == RestVerbs.Patch || 
+                        request.Method == RestVerbs.Patch ||
                         request.Method == RestVerbs.Delete))
                     {
                         httpClient.DefaultRequestHeaders.IfMatch.Add(EntityTagHeaderValue.Any);
@@ -56,9 +56,10 @@ namespace Simple.OData.Client
                     if (this.BeforeRequest != null)
                         this.BeforeRequest(request.RequestMessage);
 
-                    request.RequestMessage.Headers.Add(
-                        HttpLiteral.Prefer,
-                        request.ReturnContent ? HttpLiteral.ReturnContent : HttpLiteral.ReturnNoContent);
+                    foreach (var header in request.Headers)
+                    {
+                        request.RequestMessage.Headers.TryAddWithoutValidation(header.Key, header.Value);
+                    }
 
                     var responseMessage = await httpClient.SendAsync(request.RequestMessage, cancellationToken);
 

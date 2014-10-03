@@ -30,8 +30,9 @@ namespace Simple.OData.Client
 
             var request = new ODataRequest(RestVerbs.Post, _session, entityCollectionName, entryData, entryContent)
             {
-                ReturnContent = resultRequired,
+                ResultRequired = resultRequired,
             };
+            AssignHeaders(request);
             return request;
         }
 
@@ -50,9 +51,10 @@ namespace Simple.OData.Client
             var checkOptimisticConcurrency = _session.Metadata.EntitySetTypeRequiresOptimisticConcurrencyCheck(collection);
             var request = new ODataRequest(updateMethod, _session, entryIdent, entryData, entryContent)
             {
-                ReturnContent = resultRequired,
+                ResultRequired = resultRequired,
                 CheckOptimisticConcurrency = checkOptimisticConcurrency
             };
+            AssignHeaders(request);
             return request;
         }
 
@@ -63,9 +65,9 @@ namespace Simple.OData.Client
 
             var request = new ODataRequest(RestVerbs.Delete, _session, entryIdent)
             {
-                CheckOptimisticConcurrency =
-                    _session.Metadata.EntitySetTypeRequiresOptimisticConcurrencyCheck(collection)
+                CheckOptimisticConcurrency = _session.Metadata.EntitySetTypeRequiresOptimisticConcurrencyCheck(collection)
             };
+            AssignHeaders(request);
             return request;
         }
 
@@ -82,6 +84,7 @@ namespace Simple.OData.Client
             {
                 IsLink = true,
             };
+            AssignHeaders(request);
             return request;
         }
 
@@ -95,12 +98,14 @@ namespace Simple.OData.Client
             {
                 IsLink = true,
             };
+            AssignHeaders(request);
             return request;
         }
 
         protected abstract Task<Stream> WriteEntryContentAsync(string method, string collection, IDictionary<string, object> entryData, string commandText);
         protected abstract Task<Stream> WriteLinkContentAsync(string linkIdent);
         protected abstract string FormatLinkPath(string entryIdent, string navigationPropertyName, string linkIdent = null);
+        protected abstract void AssignHeaders(ODataRequest request);
 
         private bool CheckMergeConditions(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
         {

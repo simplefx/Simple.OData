@@ -92,6 +92,18 @@ namespace Simple.OData.Client.V4.Adapter
                 : string.Format("{0}/{1}/$ref?$id={2}", entryIdent, navigationPropertyName, linkIdent);
         }
 
+        protected override void AssignHeaders(ODataRequest request)
+        {
+            if (request.ResultRequired)
+            {
+                request.Headers.GetOrAdd(HttpLiteral.Prefer, HttpLiteral.ReturnRepresentation);
+            }
+            else
+            {
+                request.Headers.GetOrAdd(HttpLiteral.Prefer, HttpLiteral.ReturnMinimal);
+            }
+        }
+
         private async Task<IODataRequestMessage> CreateOperationRequestMessageAsync(string method, string collection, IDictionary<string, object> entryData, string commandText)
         {
             if (!_deferredBatchWriter.IsValueCreated)

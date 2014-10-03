@@ -67,8 +67,8 @@ namespace Simple.OData.Client
         private IEnumerable<string> GetSupportedProtocolVersions(HttpResponseMessage response)
         {
             IEnumerable<string> headerValues;
-            if (response.Headers.TryGetValues("DataServiceVersion", out headerValues) ||
-                response.Headers.TryGetValues("OData-Version", out headerValues))
+            if (response.Headers.TryGetValues(HttpLiteral.DataServiceVersion, out headerValues) ||
+                response.Headers.TryGetValues(HttpLiteral.ODataVersion, out headerValues))
                 return headerValues.SelectMany(x => x.Split(';')).Where(x => x.Length > 0);
 
             throw new InvalidOperationException("Unable to identify OData protocol version");
