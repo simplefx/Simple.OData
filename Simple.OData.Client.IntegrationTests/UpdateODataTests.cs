@@ -146,7 +146,7 @@ namespace Simple.OData.Client.Tests
                 .Key(product["ID"])
                 .FindEntryAsync();
 
-            Assert.Equal(tomorrow, product["ReleaseDate"]);
+            Assert.Equal(tomorrow.Date, DateTime.Parse(product["ReleaseDate"].ToString()).Date);
         }
 
         [Fact]

@@ -21,7 +21,8 @@ namespace Simple.OData.Client
             {
                 using (var response = await _requestRunner.ExecuteRequestAsync(request, cancellationToken))
                 {
-                    if (response.IsSuccessStatusCode && (request.Method == RestVerbs.Get || request.ReturnContent))
+                    if (response.IsSuccessStatusCode && response.StatusCode != HttpStatusCode.NoContent && 
+                        (request.Method == RestVerbs.Get || request.ReturnContent))
                     {
                         var responseReader = _session.Adapter.GetResponseReader();
                         return createResult(await responseReader.GetResponseAsync(response, _settings.IncludeResourceTypeInEntryProperties));
