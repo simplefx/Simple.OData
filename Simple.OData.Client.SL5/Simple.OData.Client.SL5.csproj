@@ -160,6 +160,9 @@
     <Compile Include="..\Simple.OData.Client.Core\Adapter\ResponseNode.cs">
       <Link>Adapter\ResponseNode.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Adapter\ResponseReaderBase.cs">
+      <Link>Adapter\ResponseReaderBase.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\CustomConverters.cs">
       <Link>CustomConverters.cs</Link>
     </Compile>

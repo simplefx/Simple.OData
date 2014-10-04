@@ -50,6 +50,7 @@
     <Compile Include="Adapter\MetadataBase.cs" />
     <Compile Include="Adapter\RequestWriterBase.cs" />
     <Compile Include="Adapter\ResponseNode.cs" />
+    <Compile Include="Adapter\ResponseReaderBase.cs" />
     <Compile Include="Extensions\MemberInfoExtensions.cs" />
     <Compile Include="Fluent\IFluentClient.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />

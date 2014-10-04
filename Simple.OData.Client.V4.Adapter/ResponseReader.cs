@@ -8,20 +8,36 @@ using Microsoft.OData.Edm;
 
 namespace Simple.OData.Client.V4.Adapter
 {
-    public class ResponseReader : IResponseReader
+    public class ResponseReader : ResponseReaderBase
     {
-        private readonly ISession _session;
         private readonly IEdmModel _model;
 
         public ResponseReader(ISession session, IEdmModel model)
+            : base(session)
         {
-            _session = session;
             _model = model;
         }
 
-        public Task<ODataResponse> GetResponseAsync(HttpResponseMessage responseMessage, bool includeResourceTypeInEntryProperties = false)
+        public override Task<ODataResponse> GetResponseAsync(HttpResponseMessage responseMessage, bool includeResourceTypeInEntryProperties = false)
         {
             return GetResponseAsync(new ODataResponseMessage(responseMessage), includeResourceTypeInEntryProperties);
+        }
+
+        protected override void ConvertEntry(ResponseNode entryNode, object entry, bool includeResourceTypeInEntryProperties)
+        {
+            if (entry != null)
+            {
+                var odataEntry = entry as Microsoft.OData.Core.ODataEntry;
+                foreach (var property in odataEntry.Properties)
+                {
+                    entryNode.Entry.Add(property.Name, GetPropertyValue(property.Value));
+                }
+                if (includeResourceTypeInEntryProperties)
+                {
+                    var resourceType = odataEntry.TypeName;
+                    entryNode.Entry.Add(FluentCommand.ResourceTypeLiteral, resourceType.Split('.').Last());
+                }
+            }
         }
 
 #if SILVERLIGHT
@@ -110,74 +126,27 @@ namespace Simple.OData.Client.V4.Adapter
                 switch (odataReader.State)
                 {
                     case ODataReaderState.FeedStart:
-                        nodeStack.Push(new ResponseNode
-                        {
-                            Feed = new List<IDictionary<string, object>>(),
-                            TotalCount = (odataReader.Item as ODataFeed).Count
-                        });
+                        StartFeed(nodeStack, (odataReader.Item as ODataFeed).Count);
                         break;
 
                     case ODataReaderState.FeedEnd:
-                        var feedNode = nodeStack.Pop();
-                        var entries = feedNode.Feed;
-                        if (nodeStack.Any())
-                            nodeStack.Peek().Feed = entries;
-                        else
-                            rootNode = feedNode;
+                        EndFeed(nodeStack, ref rootNode);
                         break;
 
                     case ODataReaderState.EntryStart:
-                        nodeStack.Push(new ResponseNode
-                        {
-                            Entry = new Dictionary<string, object>()
-                        });
+                        StartEntry(nodeStack);
                         break;
 
                     case ODataReaderState.EntryEnd:
-                        var entry = (odataReader.Item as Microsoft.OData.Core.ODataEntry);
-                        var entryNode = nodeStack.Pop();
-                        if (entry != null)
-                        {
-                            foreach (var property in entry.Properties)
-                            {
-                                entryNode.Entry.Add(property.Name, GetPropertyValue(property.Value));
-                            }
-                            if (includeResourceTypeInEntryProperties)
-                            {
-                                var resourceType = entry.TypeName;
-                                entryNode.Entry.Add(FluentCommand.ResourceTypeLiteral, resourceType.Split('.').Last());
-                            }
-                        }
-                        if (nodeStack.Any())
-                        {
-                            if (nodeStack.Peek().Feed != null)
-                                nodeStack.Peek().Feed.Add(entryNode.Entry);
-                            else
-                                nodeStack.Peek().Entry = entryNode.Entry;
-                        }
-                        else
-                        {
-                            rootNode = entryNode;
-                        }
+                        EndEntry(nodeStack, ref rootNode, odataReader.Item, includeResourceTypeInEntryProperties);
                         break;
 
                     case ODataReaderState.NavigationLinkStart:
-                        var link = odataReader.Item as ODataNavigationLink;
-                        nodeStack.Push(new ResponseNode
-                        {
-                            LinkName = link.Name,
-                        });
+                        StartNavigationLink(nodeStack, (odataReader.Item as ODataNavigationLink).Name);
                         break;
 
                     case ODataReaderState.NavigationLinkEnd:
-                        var linkNode = nodeStack.Pop();
-                        if (linkNode.Value != null)
-                        {
-                            var linkValue = linkNode.Value;
-                            if (linkNode.Value is IDictionary<string, object> && !(linkNode.Value as IDictionary<string,object>).Any())
-                                linkValue = null;
-                            nodeStack.Peek().Entry.Add(linkNode.LinkName, linkValue);
-                        }
+                        EndNavigationLink(nodeStack);
                         break;
                 }
             }

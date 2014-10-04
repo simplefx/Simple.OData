@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace Simple.OData.Client
 {
-    class ResponseNode
+    public class ResponseNode
     {
         public IList<IDictionary<string, object>> Feed { get; set; }
         public IDictionary<string, object> Entry { get; set; }
