@@ -14,19 +14,28 @@ namespace Simple.OData.Client
     {
         public static string StreamToString(Stream stream)
         {
-            string result;
-
-            using (var reader = new StreamReader(stream))
-            {
-                result = reader.ReadToEnd();
-            }
-
-            return result;
+            stream.Seek(0, SeekOrigin.Begin);
+            return new StreamReader(stream).ReadToEnd();
         }
 
         public static Stream StringToStream(string str)
         {
             return new MemoryStream(Encoding.UTF8.GetBytes(str));
+        }
+
+        public static Stream CloneStream(Stream stream)
+        {
+            stream.Position = 0;
+            var clonedStream = new MemoryStream();
+            stream.CopyTo(clonedStream);
+            return clonedStream;
+        }
+
+        public static bool NamesMatch(string actualName, string requestedName, IPluralizer pluralizer)
+        {
+            return actualName.Homogenize() == requestedName.Homogenize()
+                   || pluralizer != null && actualName.Homogenize() == pluralizer.Singularize(requestedName).Homogenize()
+                   || pluralizer != null && actualName.Homogenize() == pluralizer.Pluralize(requestedName).Homogenize();
         }
 
         public static T CastExpressionWithTypeCheck<T>(Expression expression) where T : Expression
@@ -52,6 +61,50 @@ namespace Simple.OData.Client
         {
             var property = type.GetAnyProperty(propertyName);
             return property == null || property.IsNotMapped() ? null : property;
+        }
+
+        public static Uri CreateAbsoluteUri(string urlBase, string relativePath)
+        {
+            string url = string.IsNullOrEmpty(urlBase) ? "http://" : urlBase;
+            if (!url.EndsWith("/"))
+                url += "/";
+            return new Uri(url + relativePath);
+        }
+
+        public static bool TryConvert(object value, Type targetType, out object result)
+        {
+            try
+            {
+                if (value == null)
+                {
+                    if (targetType.IsValue())
+                        result = Activator.CreateInstance(targetType);
+                    else
+                        result = null;
+                }
+                else if (targetType.IsEnumType() && value.GetType() == typeof(string))
+                {
+                    result = Enum.Parse(targetType, value.ToString(), true);
+                }
+                else if (targetType == typeof(DateTime) && value.GetType() == typeof(DateTimeOffset))
+                {
+                    result = ((DateTimeOffset) value).DateTime;
+                }
+                else if (targetType == typeof(DateTimeOffset) && value.GetType() == typeof(DateTime))
+                {
+                    result = new DateTimeOffset((DateTime)value);
+                }
+                else
+                {
+                    result = Convert.ChangeType(value, targetType, null);
+                }
+                return true;
+            }
+            catch (Exception)
+            {
+                result = null;
+                return false;
+            }
         }
 
 #if NET40 || SILVERLIGHT || PORTABLE_LEGACY

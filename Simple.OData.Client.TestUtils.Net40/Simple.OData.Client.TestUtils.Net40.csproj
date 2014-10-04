@@ -53,14 +53,7 @@
     <Compile Include="..\CommonAssemblyVersion.cs">
       <Link>Properties\CommonAssemblyVersion.cs</Link>
     </Compile>
-    <Compile Include="ContainTest.cs" />
-    <Compile Include="EqualTest.cs" />
-    <Compile Include="GenericBinaryTest.cs" />
-    <Compile Include="IBinaryTest.cs" />
-    <Compile Include="IEnumerableTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ShouldExtensions.cs" />
-    <Compile Include="TestBase.cs" />
     <Compile Include="TestService.cs" />
   </ItemGroup>
   <ItemGroup>

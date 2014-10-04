@@ -21,12 +21,22 @@ namespace Simple.OData.Client.Extensions
             if (typeof(T) == typeof(ODataEntry))
                 return CreateODataEntry(source, dynamicObject) as T;
 
-            var value = CreateInstance<T>();
-            var type = value.GetType();
-            return (T)ToObject(source, type, value, dynamicObject);
+            return (T)ToObject(source, typeof(T), CreateInstance<T>, dynamicObject);
         }
 
-        public static object ToObject(this IDictionary<string, object> source, Type type, object value = null, bool dynamicObject = false)
+        public static object ToObject(this IDictionary<string, object> source, Type type)
+        {
+            var ctor = type.GetDefaultConstructor();
+            if (ctor == null && !CustomConverters.HasConverter(type))
+            {
+                throw new InvalidOperationException(
+                    string.Format("Unable to create an instance of type {0} that does not have a default constructor.", type.Name));
+            }
+
+            return ToObject(source, type, () => ctor.Invoke(new object[] { }), false);
+        }
+
+        private static object ToObject(this IDictionary<string, object> source, Type type, Func<object> instanceFactory, bool dynamicObject)
         {
             if (source == null)
                 return null;
@@ -35,26 +45,21 @@ namespace Simple.OData.Client.Extensions
             if (type == typeof(ODataEntry))
                 return CreateODataEntry(source, dynamicObject);
 
-            if (value == null)
+            if (CustomConverters.HasConverter(type))
             {
-                var defaultConstructor = type.GetDefaultConstructor();
-                if (defaultConstructor != null)
-                {
-                    value = defaultConstructor.Invoke(new object[] { });
-                }
+                return CustomConverters.Convert(source, type);
             }
 
-            Func<Type, bool> IsCompoundType = fieldOrPropertyType =>
-            {
-                return !fieldOrPropertyType.IsValue() && !fieldOrPropertyType.IsArray && fieldOrPropertyType != typeof(string);
-            };
+            var instance = instanceFactory();
 
-            Func<Type, object, bool> IsCollectionType = (fieldOrPropertyType, itemValue) =>
-            {
-                return (fieldOrPropertyType.IsArray ||
-                    fieldOrPropertyType.IsGeneric() && typeof(System.Collections.IEnumerable).IsTypeAssignableFrom(fieldOrPropertyType)) && 
-                    (itemValue as System.Collections.IEnumerable) != null;
-            };
+            Func<Type, bool> IsCompoundType = fieldOrPropertyType => 
+                !fieldOrPropertyType.IsValue() && !fieldOrPropertyType.IsArray && fieldOrPropertyType != typeof(string);
+
+            Func<Type, object, bool> IsCollectionType = (fieldOrPropertyType, itemValue) => 
+                (fieldOrPropertyType.IsArray ||
+                fieldOrPropertyType.IsGeneric() && 
+                typeof(System.Collections.IEnumerable).IsTypeAssignableFrom(fieldOrPropertyType)) && 
+                (itemValue as System.Collections.IEnumerable) != null;
 
             Func<Type, object, object> ConvertEnum = (fieldOrPropertyType, itemValue) =>
             {
@@ -72,14 +77,12 @@ namespace Simple.OData.Client.Extensions
                 }
             };
 
-            Func<Type, object, object> ConvertSingle = (fieldOrPropertyType, itemValue) =>
-            {
-                return IsCompoundType(fieldOrPropertyType)
-                    ? (itemValue as IDictionary<string, object>).ToObject(fieldOrPropertyType)
-                    : fieldOrPropertyType.IsEnumType()
+            Func<Type, object, object> ConvertSingle = (fieldOrPropertyType, itemValue) => 
+                IsCompoundType(fieldOrPropertyType)
+                ? itemValue.ToDictionary().ToObject(fieldOrPropertyType)
+                : fieldOrPropertyType.IsEnumType()
                     ? ConvertEnum(fieldOrPropertyType, itemValue)
                     : itemValue;
-            };
 
             Func<Type, object, object> ConvertCollection = (fieldOrPropertyType, itemValue) =>
             {
@@ -91,8 +94,7 @@ namespace Simple.OData.Client.Extensions
                 if (elementType == null)
                     return null;
 
-                var count = 0;
-                foreach (var v in (itemValue as System.Collections.IEnumerable)) count++;
+                var count = (itemValue as System.Collections.IEnumerable).Cast<object>().Count();
                 var arrayValue = Array.CreateInstance(elementType, count);
 
                 count = 0;
@@ -117,31 +119,26 @@ namespace Simple.OData.Client.Extensions
                 }
             };
 
-            Func<Type, object, object> ConvertValue = (fieldOrPropertyType, itemValue) =>
-            {
-                return IsCollectionType(fieldOrPropertyType, itemValue)
-                            ? ConvertCollection(fieldOrPropertyType, itemValue)
-                            : ConvertSingle(fieldOrPropertyType, itemValue);
-            };
+            Func<Type, object, object> ConvertValue = (fieldOrPropertyType, itemValue) => 
+                IsCollectionType(fieldOrPropertyType, itemValue)
+                ? ConvertCollection(fieldOrPropertyType, itemValue)
+                : ConvertSingle(fieldOrPropertyType, itemValue);
 
             foreach (var item in source)
             {
                 if (item.Value != null)
                 {
-                    var property = type.GetAnyProperty(item.Key);
-                    if (property == null)
+                    var property = type.GetAnyProperty(item.Key) ?? 
+                        type.GetAllProperties().FirstOrDefault(x => x.GetMappedName() == item.Key);
+
+                    if (property != null && property.CanWrite && !property.IsNotMapped())
                     {
-                        property = type.GetAllProperties()
-                            .FirstOrDefault(x => x.GetMappedName() == item.Key);
-                    }
-                    if (property != null && !property.IsNotMapped())
-                    {
-                        property.SetValue(value, ConvertValue(property.PropertyType, item.Value), null);
+                        property.SetValue(instance, ConvertValue(property.PropertyType, item.Value), null);
                     }
                 }
             }
 
-            return value;
+            return instance;
         }
 
         public static IDictionary<string, object> ToDictionary(this object source)
@@ -153,7 +150,8 @@ namespace Simple.OData.Client.Extensions
             if (source is ODataEntry)
                 return (Dictionary<string, object>)(source as ODataEntry);
 
-            return source.GetType().GetAllProperties().ToDictionary
+            var properties = source.GetType().GetAllProperties();
+            return properties.ToDictionary
             (
                 x => x.GetMappedName(),
                 x => x.GetValue(source, null)

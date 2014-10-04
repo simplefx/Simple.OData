@@ -88,22 +88,6 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task FindEntryODataOrgV3ReadOnly()
-        {
-            var client = new ODataClient("http://services.odata.org/V3/OData/OData.svc/");
-            var product = await client.FindEntryAsync("Products?$filter=Name eq 'Bread'");
-            Assert.NotNull(product["Name"]);
-        }
-
-        [Fact]
-        public async Task FindEntryODataOrgV3ReadWrite()
-        {
-            var client = new ODataClient("http://services.odata.org/V3/%28S%28i5vquvxjs3pydqmktpiqte40%29%29/OData/OData.svc/");
-            var product = await client.FindEntryAsync("Products?$filter=Name eq 'Bread'");
-            Assert.NotNull(product["Name"]);
-        }
-
-        [Fact]
         public async Task GetEntryExisting()
         {
             var product = await _client.GetEntryAsync("Products", new Entry() { { "ProductID", 1 } });
@@ -299,9 +283,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task ExecuteScalarFunctionWithDateTimeParameter()
         {
-            var dateTime = new DateTime(2013, 1, 1, 12, 13, 14);
+            var dateTime = new DateTime(2013, 1, 1, 12, 13, 14, 789, DateTimeKind.Utc);
             var result = await _client.ExecuteFunctionAsScalarAsync<DateTime>("PassThroughDateTime", new Entry() { { "dateTime", dateTime } });
-            Assert.Equal(dateTime.ToLocalTime(), result);
+            Assert.Equal(dateTime.ToUniversalTime(), result);
         }
 
         [Fact]

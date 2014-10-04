@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace Simple.OData.Client
 {
-    internal class SimpleDictionary<TKey, TValue> :
+    public class SimpleDictionary<TKey, TValue> :
 #if NET40
         ConcurrentDictionary<TKey, TValue>
 #else
@@ -24,7 +24,13 @@ namespace Simple.OData.Client
         {
         }
 
-#if !NET40
+#if NET40
+        public void Remove(TKey key)
+        {
+            TValue value;
+            base.TryRemove(key, out value);
+        }
+#else
         public TValue GetOrAdd(TKey key, TValue value)
         {
             return GetOrAdd(key, x => value);

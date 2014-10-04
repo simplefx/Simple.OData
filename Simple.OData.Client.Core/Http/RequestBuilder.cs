@@ -1,44 +1,70 @@
-﻿using System.Net;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Simple.OData.Client
 {
-    abstract class RequestBuilder
+    class RequestBuilder
     {
-        public string UrlBase { get; private set; }
-        public ICredentials Credentials { get; private set; }
-        public string Host
+        private readonly ISession _session;
+        private readonly Lazy<IBatchWriter> _lazyBatchWriter;
+
+        public bool IsBatch { get { return _lazyBatchWriter != null; } }
+
+        public RequestBuilder(ISession session, bool isBatch = false)
         {
-            get
+            _session = session;
+            if (isBatch)
             {
-                if (string.IsNullOrEmpty(UrlBase)) return null;
-                var substr = UrlBase.Substring(UrlBase.IndexOf("//") + 2);
-                return substr.Substring(0, substr.IndexOf("/"));
+                _lazyBatchWriter = new Lazy<IBatchWriter>(() => _session.Adapter.GetBatchWriter());
             }
         }
 
-        public RequestBuilder(string urlBase, ICredentials credentials)
+        public Task<ODataRequest> CreateGetRequestAsync(string commandText, bool scalarResult = false)
         {
-            this.UrlBase = urlBase;
-            this.Credentials = credentials;
+            var request = new ODataRequest(RestVerbs.Get, _session, commandText)
+            {
+                ReturnsScalarResult = scalarResult,
+            };
+            return Utils.GetTaskFromResult(request);
         }
 
-        protected internal string CreateRequestUrl(string command)
+        public Task<ODataRequest> CreateInsertRequestAsync(string collection, IDictionary<string, object> entryData, bool resultRequired)
         {
-            string url = string.IsNullOrEmpty(UrlBase) ? "http://" : UrlBase;
-            if (!url.EndsWith("/"))
-                url += "/";
-            return url + command;
+            return _session.Adapter.GetRequestWriter(_lazyBatchWriter)
+                .CreateInsertRequestAsync(collection, entryData, resultRequired);
         }
 
-        protected HttpRequest CreateRequest(string uri)
+        public Task<ODataRequest> CreateUpdateRequestAsync(string collection, string entryIdent, IDictionary<string, object> entryKey, IDictionary<string, object> entryData, bool resultRequired)
         {
-            var request = new HttpRequest();
-            request.Uri = uri;
-            request.Credentials = this.Credentials;
+            return _session.Adapter.GetRequestWriter(_lazyBatchWriter)
+                .CreateUpdateRequestAsync(collection, entryIdent, entryKey, entryData, resultRequired);
+        }
+
+        public Task<ODataRequest> CreateDeleteRequestAsync(string collection, string entryIdent)
+        {
+            return _session.Adapter.GetRequestWriter(_lazyBatchWriter)
+                .CreateDeleteRequestAsync(collection, entryIdent);
+        }
+
+        public Task<ODataRequest> CreateLinkRequestAsync(string collection, string linkName, string entryIdent, string linkIdent)
+        {
+            return _session.Adapter.GetRequestWriter(_lazyBatchWriter)
+                .CreateLinkRequestAsync(collection, linkName, entryIdent, linkIdent);
+        }
+
+        public Task<ODataRequest> CreateUnlinkRequestAsync(string collection, string linkName, string entryIdent, string linkIdent)
+        {
+            return _session.Adapter.GetRequestWriter(_lazyBatchWriter)
+                .CreateUnlinkRequestAsync(collection, linkName, entryIdent, linkIdent);
+        }
+
+        public async Task<ODataRequest> CreateBatchRequestAsync()
+        {
+            var requestMessage = await _lazyBatchWriter.Value.EndBatchAsync();
+            var request = new ODataRequest(RestVerbs.Post, _session, ODataLiteral.Batch, requestMessage);
             return request;
         }
-
-        public abstract HttpRequest CreateRequest(HttpCommand command, bool returnContent = false, bool checkOptimisticConcurrency = false);
-        public abstract int GetContentId(object content);
     }
 }

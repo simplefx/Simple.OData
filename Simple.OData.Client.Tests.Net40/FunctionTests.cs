@@ -50,7 +50,7 @@ namespace Simple.OData.Client.Tests
             var dateTime = new DateTime(2013, 1, 1, 12, 13, 14);
             var result = await _client.ExecuteFunctionAsScalarAsync<DateTime>("PassThroughDateTime", new Entry() { { "dateTime", dateTime } });
             
-            Assert.Equal(dateTime.ToLocalTime(), result);
+            Assert.Equal(dateTime, result);
         }
 
         [Fact]

@@ -6,18 +6,18 @@ namespace Simple.OData.Client
 {
     public partial class ODataExpression
     {
-        internal string Format(ISchema schema, Table table)
+        internal string Format(ISession session, EntityCollection entityCollection)
         {
             return this.Format(new ExpressionContext()
                                    {
-                                       Schema = schema, 
-                                       Table = table
+                                       Session = session, 
+                                       EntityCollection = entityCollection
                                    });
         }
 
-        internal string Format(ISchema schema, string collection)
+        internal string Format(ISession session, string collection)
         {
-            return this.Format(new ExpressionContext { Schema = schema, Collection = collection });
+            return this.Format(new ExpressionContext { Session = session, Collection = collection });
         }
 
         internal string Format(ExpressionContext context)
@@ -67,14 +67,19 @@ namespace Simple.OData.Client
         private string FormatReference(ExpressionContext context)
         {
             var elementNames = new List<string>(this.Reference.Split('.'));
-            var pathNames = BuildReferencePath(new List<string>(), context.Table, elementNames, context);
+            var entityCollection = context.IsSet
+                ? context.EntityCollection ??
+                  context.Session.Metadata.GetConcreteEntityCollection(context.Collection)
+                : null;
+            var pathNames = BuildReferencePath(new List<string>(), entityCollection, elementNames, context);
             return string.Join("/", pathNames);
         }
 
         private string FormatFunction(ExpressionContext context)
         {
             FunctionMapping mapping;
-            if (FunctionMapping.SupportedFunctions.TryGetValue(new ExpressionFunction.FunctionCall(this.Function.FunctionName, this.Function.Arguments.Count()), out mapping))
+            var adapterVersion = context.Session == null ? AdapterVersion.Default : context.Session.Adapter.AdapterVersion;
+            if (FunctionMapping.TryGetFunctionMapping(this.Function.FunctionName, this.Function.Arguments.Count(), adapterVersion, out mapping))
             {
                 var mappedFunction = mapping.FunctionMapper(this.Function.FunctionName, _functionCaller.Format(context), this.Function.Arguments).Function;
                 return string.Format("{0}({1})", mappedFunction.FunctionName,
@@ -88,7 +93,14 @@ namespace Simple.OData.Client
 
         private string FormatValue(ExpressionContext context)
         {
-            return (new ValueFormatter()).FormatExpressionValue(Value, context);
+            if (Value is ODataExpression)
+            {
+                return (Value as ODataExpression).Format(context);
+            }
+            else
+            {
+                return context.Session.Adapter.ConvertValueToUriLiteral(Value);
+            }
         }
 
         private string FormatOperator(ExpressionContext context)
@@ -130,7 +142,7 @@ namespace Simple.OData.Client
             }
         }
 
-        private IEnumerable<string> BuildReferencePath(List<string> pathNames, Table table, List<string> elementNames, ExpressionContext context)
+        private IEnumerable<string> BuildReferencePath(List<string> pathNames, EntityCollection entityCollection, List<string> elementNames, ExpressionContext context)
         {
             if (!elementNames.Any())
             {
@@ -138,18 +150,19 @@ namespace Simple.OData.Client
             }
 
             var objectName = elementNames.First();
-            if (table != null)
+            if (entityCollection != null)
             {
-                if (table.HasColumn(objectName))
+                if (context.Session.Metadata.HasStructuralProperty(entityCollection.ActualName, objectName))
                 {
-                    pathNames.Add(table.FindColumn(objectName).ActualName);
+                    pathNames.Add(context.Session.Metadata.GetStructuralPropertyExactName(entityCollection.ActualName, objectName));
                     return BuildReferencePath(pathNames, null, elementNames.Skip(1).ToList(), context);
                 }
-                else if (table.HasAssociation(objectName))
+                else if (context.Session.Metadata.HasNavigationProperty(entityCollection.ActualName, objectName))
                 {
-                    var association = table.FindAssociation(objectName);
-                    pathNames.Add(association.ActualName);
-                    return BuildReferencePath(pathNames, context.Schema.FindTable(association.ReferenceTableName), elementNames.Skip(1).ToList(), context);
+                    pathNames.Add(context.Session.Metadata.GetNavigationPropertyExactName(entityCollection.ActualName, objectName));
+                    return BuildReferencePath(pathNames, context.Session.Metadata.GetEntityCollection(
+                        context.Session.Metadata.GetNavigationPropertyPartnerName(entityCollection.ActualName, objectName)), 
+                        elementNames.Skip(1).ToList(), context);
                 }
                 else
                 {
@@ -165,7 +178,7 @@ namespace Simple.OData.Client
                     }
                 }
             }
-            else if (FunctionMapping.SupportedFunctions.ContainsKey(new ExpressionFunction.FunctionCall(elementNames.First(), 0)))
+            else if (FunctionMapping.ContainsFunction(elementNames.First(), 0))
             {
                 var formattedFunction = FormatAsFunction(objectName, context);
                 pathNames.Add(formattedFunction);
@@ -181,7 +194,8 @@ namespace Simple.OData.Client
         private string FormatAsFunction(string objectName, ExpressionContext context)
         {
             FunctionMapping mapping;
-            if (FunctionMapping.SupportedFunctions.TryGetValue(new ExpressionFunction.FunctionCall(objectName, 0), out mapping))
+            var adapterVersion = context.Session == null ? AdapterVersion.Default : context.Session.Adapter.AdapterVersion;
+            if (FunctionMapping.TryGetFunctionMapping(objectName, 0, adapterVersion, out mapping))
             {
                 string targetName = _functionCaller.Format(context);
                 var mappedFunction = mapping.FunctionMapper(objectName, targetName, null).Function;

@@ -4,11 +4,11 @@ namespace Simple.OData.Client
     internal static class RestVerbs
     {
         // ReSharper disable InconsistentNaming
-        public const string GET = "GET";
-        public const string POST = "POST";
-        public const string PUT = "PUT";
-        public const string MERGE = "MERGE";
-        public const string DELETE = "DELETE";
+        public const string Get = "GET";
+        public const string Post = "POST";
+        public const string Put = "PUT";
+        public const string Patch = "PATCH";
+        public const string Delete = "DELETE";
         // ReSharper restore InconsistentNaming
     }
 }

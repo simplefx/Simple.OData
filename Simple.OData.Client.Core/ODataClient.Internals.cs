@@ -1,29 +1,45 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
     public partial class ODataClient
     {
-        private async Task<IEnumerable<IDictionary<string, object>>> RetrieveEntriesAsync(
-            string commandText, bool scalarResult, CancellationToken cancellationToken)
+        private async Task<T> ExecuteRequestWithResultAsync<T>(ODataRequest request, CancellationToken cancellationToken,
+            Func<ODataResponse, T> createResult, Func<T> createEmptyResult = null, Func<T> createBatchResult = null)
         {
-            var command = new CommandWriter(_schema).CreateGetCommand(commandText, scalarResult);
-            var request = _requestBuilder.CreateRequest(command);
-            return await _requestRunner.FindEntriesAsync(request, scalarResult, cancellationToken);
-        }
+            if (_requestBuilder.IsBatch)
+                return createBatchResult != null ? createBatchResult() : default (T);
 
-        private async Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> RetrieveEntriesWithCountAsync(
-            string commandText, bool scalarResult, CancellationToken cancellationToken)
-        {
-            var command = new CommandWriter(_schema).CreateGetCommand(commandText, scalarResult);
-            var request = _requestBuilder.CreateRequest(command);
-            var result = await _requestRunner.FindEntriesWithCountAsync(request, scalarResult, cancellationToken);
-            return Tuple.Create(result.Item1, result.Item2);
+            try
+            {
+                using (var response = await _requestRunner.ExecuteRequestAsync(request, cancellationToken))
+                {
+                    if (response.IsSuccessStatusCode && response.StatusCode != HttpStatusCode.NoContent && 
+                        (request.Method == RestVerbs.Get || request.ResultRequired))
+                    {
+                        var responseReader = _session.Adapter.GetResponseReader();
+                        return createResult(await responseReader.GetResponseAsync(response, _settings.IncludeResourceTypeInEntryProperties));
+                    }
+                    else
+                    {
+                        return default (T);
+                    }
+                }
+            }
+            catch (WebRequestException ex)
+            {
+                if (_settings.IgnoreResourceNotFoundException && ex.Code == HttpStatusCode.NotFound)
+                    return createEmptyResult != null ? createEmptyResult() : default (T);
+                else
+                    throw;
+            }
         }
 
         private async Task<IEnumerable<IDictionary<string, object>>> IterateEntriesAsync(
@@ -35,7 +51,7 @@ namespace Simple.OData.Client
             var entryKey = ExtractKeyFromCommandText(collection, commandText);
             if (entryKey != null)
             {
-                result = new [] { await funcAsync(collection, entryKey, entryData, resultRequired) };
+                result = new[] { await funcAsync(collection, entryKey, entryData, resultRequired) };
             }
             else
             {
@@ -86,123 +102,6 @@ namespace Simple.OData.Client
             return result;
         }
 
-        private async Task<IDictionary<string, object>> UpdateEntryPropertiesAndAssociationsAsync(
-            string collection,
-            IDictionary<string, object> entryKey,
-            IDictionary<string, object> entryData,
-            EntryMembers entryMembers,
-            bool resultRequired, 
-            CancellationToken cancellationToken)
-        {
-            bool hasPropertiesToUpdate = entryMembers.Properties.Count > 0;
-            bool merge = !hasPropertiesToUpdate || CheckMergeConditions(collection, entryKey, entryData);
-            var commandText = await GetFluentClient()
-                .For(_schema.FindBaseTable(collection).ActualName)
-                .Key(entryKey)
-                .GetCommandTextAsync(cancellationToken);
-            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-
-            var commandWriter = new CommandWriter(_schema);
-            var table = _schema.FindConcreteTable(collection);
-            var entryContent = commandWriter.CreateEntry(table.EntityType.Namespace, table.EntityType.Name, entryMembers.Properties);
-            var unlinkAssociationNames = new List<string>();
-            foreach (var associatedData in entryMembers.AssociationsByValue)
-            {
-                var association = table.FindAssociation(associatedData.Key);
-                if (associatedData.Value != null)
-                {
-                    commandWriter.AddLink(entryContent, collection, associatedData);
-                }
-                else
-                {
-                    unlinkAssociationNames.Add(association.ActualName);
-                }
-            }
-
-            var command = commandWriter.CreateUpdateCommand(commandText, entryData, entryContent, merge);
-            var request = _requestBuilder.CreateRequest(command, resultRequired, table.EntityType.CheckOptimisticConcurrency);
-            var result = await _requestRunner.UpdateEntryAsync(request, cancellationToken);
-            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-
-            foreach (var associatedData in entryMembers.AssociationsByContentId)
-            {
-                var linkCommand = commandWriter.CreateLinkCommand(collection, associatedData.Key, command.ContentId, associatedData.Value);
-                request = _requestBuilder.CreateRequest(linkCommand);
-                await _requestRunner.UpdateEntryAsync(request, cancellationToken);
-                if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-            }
-
-            foreach (var associationName in unlinkAssociationNames)
-            {
-                await UnlinkEntryAsync(collection, entryKey, associationName, cancellationToken);
-                if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-            }
-
-            return result;
-        }
-
-        private EntryMembers ParseEntryMembers(Table table, IDictionary<string, object> entryData)
-        {
-            var entryMembers = new EntryMembers();
-
-            foreach (var item in entryData)
-            {
-                ParseEntryMember(table, item, entryMembers);
-            }
-
-            return entryMembers;
-        }
-
-        private void ParseEntryMember(Table table, KeyValuePair<string, object> item, EntryMembers entryMembers)
-        {
-            if (table.HasColumn(item.Key))
-            {
-                entryMembers.AddProperty(item.Key, item.Value);
-            }
-            else if (table.HasAssociation(item.Key))
-            {
-                var association = table.FindAssociation(item.Key);
-                if (association.IsMultiple)
-                {
-                    var collection = item.Value as IEnumerable<object>;
-                    if (collection != null)
-                    {
-                        foreach (var element in collection)
-                        {
-                            AddEntryAssociation(entryMembers, item.Key, element);
-                        }
-                    }
-                }
-                else
-                {
-                    AddEntryAssociation(entryMembers, item.Key, item.Value);
-                }
-            }
-            else
-            {
-                throw new UnresolvableObjectException(item.Key, string.Format("No property or association found for {0}.", item.Key));
-            }
-        }
-
-        private void AddEntryAssociation(EntryMembers entryMembers, string associationName, object associatedData)
-        {
-            int contentId = _requestBuilder.GetContentId(associatedData);
-            if (contentId == 0)
-            {
-                entryMembers.AddAssociationByValue(associationName, associatedData);
-            }
-            else
-            {
-                entryMembers.AddAssociationByContentId(associationName, contentId);
-            }
-        }
-
-        private bool CheckMergeConditions(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
-        {
-            var table = _schema.FindConcreteTable(collection);
-            return table.Columns.Any(x => !entryData.ContainsKey(x.ActualName));
-        }
-
         private void RemoveSystemProperties(IDictionary<string, object> entryData)
         {
             if (_settings.IncludeResourceTypeInEntryProperties && entryData.ContainsKey(FluentCommand.ResourceTypeLiteral))
@@ -215,6 +114,14 @@ namespace Simple.OData.Client
         {
             // TODO
             return null;
+        }
+
+        private Task<string> FormatEntryKeyAsync(string collection, IDictionary<string, object> entryKey, CancellationToken cancellationToken)
+        {
+            return GetFluentClient()
+                .For(_session.Metadata.GetBaseEntityCollection(collection).ActualName)
+                .Key(entryKey)
+                .GetCommandTextAsync(cancellationToken);
         }
     }
 }

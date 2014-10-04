@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
+using Microsoft.Data.OData;
+using Moq;
 
 #pragma warning disable 3008
 
@@ -10,7 +13,8 @@ namespace Simple.OData.Client.Tests
 {
     public class TestBase : IDisposable
     {
-        protected IODataClient _client;
+        protected readonly IODataClient _client;
+        internal ISession _session;
 
         public TestBase() 
             : this("Northwind.edmx")
@@ -28,8 +32,8 @@ namespace Simple.OData.Client.Tests
         public IODataClient CreateClient(string metadataFile)
         {
             var urlBase = "http://localhost/" + metadataFile;
-            var schemaString = GetResourceAsString(@"Resources." + metadataFile);
-            Schema.Add(urlBase, ODataClient.ParseSchemaString(schemaString));
+            var metadataString = GetResourceAsString(@"Resources." + metadataFile);
+            _session = Session.FromMetadata(urlBase, metadataString);
             return new ODataClient(urlBase);
         }
 
@@ -47,6 +51,16 @@ namespace Simple.OData.Client.Tests
                 TextReader reader = new StreamReader(resourceStream);
                 return reader.ReadToEnd();
             }
+        }
+
+        public IODataResponseMessageAsync SetUpResourceMock(string resourceName)
+        {
+            var document = GetResourceAsString(resourceName);
+            var mock = new Mock<IODataResponseMessageAsync>();
+            mock.Setup(x => x.GetStreamAsync()).ReturnsAsync(new MemoryStream(Encoding.UTF8.GetBytes(document)));
+            mock.Setup(x => x.GetStream()).Returns(new MemoryStream(Encoding.UTF8.GetBytes(document)));
+            mock.Setup(x => x.GetHeader("Content-Type")).Returns(() => "application/atom+xml; type=feed; charset=utf-8");
+            return mock.Object;
         }
     }
 }

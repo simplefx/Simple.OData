@@ -18,7 +18,7 @@ namespace Simple.OData.Client
 
     public class FluentCommand
     {
-        private readonly ISchema _schema;
+        private readonly Session _session;
         private readonly FluentCommand _parent;
         private string _collectionName;
         private ODataExpression _collectionExpression;
@@ -37,33 +37,22 @@ namespace Simple.OData.Client
         private List<string> _selectColumns = new List<string>();
         private readonly List<KeyValuePair<string, bool>> _orderbyColumns = new List<KeyValuePair<string, bool>>();
         private bool _computeCount;
-        private bool _inlineCount;
+        private bool _includeCount;
         private string _linkName;
         private ODataExpression _linkExpression;
 
-        internal static readonly string MetadataLiteral = "$metadata";
-        internal static readonly string FilterLiteral = "$filter";
-        internal static readonly string SkipLiteral = "$skip";
-        internal static readonly string TopLiteral = "$top";
-        internal static readonly string ExpandLiteral = "$expand";
-        internal static readonly string OrderByLiteral = "$orderby";
-        internal static readonly string SelectLiteral = "$select";
-        internal static readonly string CountLiteral = "$count";
-        internal static readonly string InlineCountLiteral = "$inlinecount";
-        internal static readonly string AllPagesLiteral = "allpages";
-        internal static readonly string BatchLiteral = "$batch";
         internal static readonly string ResultLiteral = "__result";
         internal static readonly string ResourceTypeLiteral = "__resourcetype";
 
-        public FluentCommand(ISchema schema, FluentCommand parent)
+        internal FluentCommand(Session session, FluentCommand parent)
         {
-            _schema = schema;
+            _session = session;
             _parent = parent;
         }
 
         internal FluentCommand(FluentCommand ancestor)
         {
-            _schema = ancestor._schema;
+            _session = ancestor._session;
             _parent = ancestor._parent;
             _collectionName = ancestor._collectionName;
             _collectionExpression = ancestor._collectionExpression;
@@ -83,7 +72,7 @@ namespace Simple.OData.Client
             _selectColumns = ancestor._selectColumns;
             _orderbyColumns = ancestor._orderbyColumns;
             _computeCount = ancestor._computeCount;
-            _inlineCount = ancestor._inlineCount;
+            _includeCount = ancestor._includeCount;
             _linkName = ancestor._linkName;
             _linkExpression = ancestor._linkExpression;
         }
@@ -92,13 +81,13 @@ namespace Simple.OData.Client
         {
             if (!ReferenceEquals(_collectionExpression, null))
             {
-                For(_collectionExpression.AsString());
+                For(_collectionExpression.AsString(_session));
                 _collectionExpression = null;
             }
 
             if (!ReferenceEquals(_derivedCollectionExpression, null))
             {
-                As(_derivedCollectionExpression.AsString());
+                As(_derivedCollectionExpression.AsString(_session));
                 _derivedCollectionExpression = null;
             }
 
@@ -107,10 +96,11 @@ namespace Simple.OData.Client
                 _namedKeyValues = TryInterpretFilterExpressionAsKey(_filterExpression);
                 if (_namedKeyValues == null)
                 {
-                    _filter = _filterExpression.Format(_schema, this.Table);
+                    _filter = _filterExpression.Format(_session, this.EntityCollection);
                 }
                 else
                 {
+                    _keyValues = null;
                     _topCount = -1;
                 }
                 _filterExpression = null;
@@ -118,28 +108,29 @@ namespace Simple.OData.Client
 
             if (!ReferenceEquals(_linkExpression, null))
             {
-                Link(_linkExpression.AsString());
+                Link(_linkExpression.AsString(_session));
                 _linkExpression = null;
             }
 
             return this;
         }
 
-        private Table Table
+        private EntityCollection EntityCollection
         {
             get
             {
                 if (!string.IsNullOrEmpty(_collectionName))
                 {
-                    var table = _schema.FindTable(_collectionName);
+                    var entityCollection = _session.Metadata.GetEntityCollection(_collectionName);
                     return string.IsNullOrEmpty(_derivedCollectionName)
-                               ? table
-                               : table.FindDerivedTable(_derivedCollectionName);
+                               ? entityCollection
+                               : _session.Metadata.GetDerivedEntityCollection(entityCollection, _derivedCollectionName);
                 }
                 else if (!string.IsNullOrEmpty(_linkName))
                 {
                     var parent = new FluentCommand(_parent).Resolve();
-                    return _schema.FindTable(parent.Table.FindAssociation(_linkName).ReferenceTableName);
+                    return _session.Metadata.GetEntityCollection(_session.Metadata
+                        .GetNavigationPropertyPartnerName(parent.EntityCollection.ActualName, _linkName));
                 }
                 else
                 {
@@ -150,13 +141,13 @@ namespace Simple.OData.Client
 
         public async Task<string> GetCommandTextAsync()
         {
-            await _schema.ResolveAsync(CancellationToken.None);
+            await _session.ResolveAdapterAsync(CancellationToken.None);
             return new FluentCommand(this).Resolve().Format();
         }
 
         public async Task<string> GetCommandTextAsync(CancellationToken cancellationToken)
         {
-            await _schema.ResolveAsync(cancellationToken);
+            await _session.ResolveAdapterAsync(cancellationToken);
             return new FluentCommand(this).Resolve().Format();
         }
 
@@ -216,11 +207,13 @@ namespace Simple.OData.Client
         public void Key(IEnumerable<object> key)
         {
             _keyValues = key.ToList();
+            _namedKeyValues = null;
         }
 
         public void Key(IDictionary<string, object> key)
         {
             _namedKeyValues = key;
+            _keyValues = null;
         }
 
         public void Filter(string filter)
@@ -252,12 +245,12 @@ namespace Simple.OData.Client
 
         public void Expand(IEnumerable<string> associations)
         {
-            _expandAssociations = associations.ToList();
+            _expandAssociations = SplitItems(associations).ToList();
         }
 
         public void Expand(params string[] associations)
         {
-            _expandAssociations = associations.ToList();
+            _expandAssociations = SplitItems(associations).ToList();
         }
 
         public void Expand(params ODataExpression[] columns)
@@ -267,12 +260,12 @@ namespace Simple.OData.Client
 
         public void Select(IEnumerable<string> columns)
         {
-            _selectColumns = columns.ToList();
+            _selectColumns = SplitItems(columns).ToList();
         }
 
         public void Select(params string[] columns)
         {
-            _selectColumns = columns.ToList();
+            _selectColumns = SplitItems(columns).ToList();
         }
 
         public void Select(params ODataExpression[] columns)
@@ -283,12 +276,12 @@ namespace Simple.OData.Client
         public void OrderBy(IEnumerable<KeyValuePair<string, bool>> columns)
         {
             _orderbyColumns.Clear();
-            _orderbyColumns.AddRange(columns);
+            _orderbyColumns.AddRange(SplitItems(columns));
         }
 
         public void OrderBy(params string[] columns)
         {
-            OrderBy(columns.Select(x => new KeyValuePair<string, bool>(x, false)));
+            OrderBy(SplitItems(columns).Select(x => new KeyValuePair<string, bool>(x, false)));
         }
 
         public void OrderBy(params ODataExpression[] columns)
@@ -298,7 +291,7 @@ namespace Simple.OData.Client
 
         public void ThenBy(params string[] columns)
         {
-            _orderbyColumns.AddRange(columns.Select(x => new KeyValuePair<string, bool>(x, false)));
+            _orderbyColumns.AddRange(SplitItems(columns).Select(x => new KeyValuePair<string, bool>(x, false)));
         }
 
         public void ThenBy(params ODataExpression[] columns)
@@ -308,7 +301,7 @@ namespace Simple.OData.Client
 
         public void OrderByDescending(params string[] columns)
         {
-            OrderBy(columns.Select(x => new KeyValuePair<string, bool>(x, true)));
+            OrderBy(SplitItems(columns).Select(x => new KeyValuePair<string, bool>(x, true)));
         }
 
         public void OrderByDescending(params ODataExpression[] columns)
@@ -318,7 +311,7 @@ namespace Simple.OData.Client
 
         public void ThenByDescending(params string[] columns)
         {
-            _orderbyColumns.AddRange(columns.Select(x => new KeyValuePair<string, bool>(x, true)));
+            _orderbyColumns.AddRange(SplitItems(columns).Select(x => new KeyValuePair<string, bool>(x, true)));
         }
 
         public void ThenByDescending(params ODataExpression[] columns)
@@ -374,9 +367,9 @@ namespace Simple.OData.Client
             }
         }
 
-        public FluentCommand WithInlineCount()
+        public FluentCommand WithCount()
         {
-            _inlineCount = true;
+            _includeCount = true;
             return this;
         }
 
@@ -407,7 +400,7 @@ namespace Simple.OData.Client
                 if (!HasKey)
                     return null;
 
-                var keyNames = this.Table.GetKeyNames();
+                var keyNames = _session.Metadata.GetDeclaredKeyPropertyNames(this.EntityCollection.ActualName).ToList();
                 var namedKeyValues = new Dictionary<string, object>();
                 for (int index = 0; index < keyNames.Count; index++)
                 {
@@ -449,29 +442,30 @@ namespace Simple.OData.Client
             string commandText = string.Empty;
             if (!string.IsNullOrEmpty(_collectionName))
             {
-                var table = _schema.FindTable(_collectionName);
-                commandText += table.ActualName;
+                var entitySetName = _session.Metadata.GetEntitySetExactName(_collectionName);
+                var entityTypeNamespace = _session.Metadata.GetEntitySetTypeNamespace(_collectionName);
+                commandText += entitySetName;
                 if (!string.IsNullOrEmpty(_derivedCollectionName))
                     commandText += "/" + string.Join(".",
-                        table.EntityType.Namespace,
-                        _schema.FindEntityType(_derivedCollectionName).Name);
+                        entityTypeNamespace,
+                        _session.Metadata.GetEntityTypeExactName(_derivedCollectionName));
             }
             else if (!string.IsNullOrEmpty(_linkName))
             {
                 var parent = new FluentCommand(_parent).Resolve();
                 commandText += parent.Format() + "/";
-                commandText += parent.Table.FindAssociation(_linkName).ActualName;
+                commandText += _session.Metadata.GetNavigationPropertyExactName(parent.EntityCollection.ActualName, _linkName);
             }
             else if (!string.IsNullOrEmpty(_functionName))
             {
-                commandText += _schema.FindFunction(_functionName).ActualName;
+                commandText += _session.Metadata.GetFunctionExactName(_functionName);
             }
 
             if (HasKey && HasFilter)
                 throw new InvalidOperationException("Filter may not be set when key is assigned");
 
             if (HasKey)
-                commandText += FormatKey();
+                commandText += _session.Adapter.ConvertKeyToUriLiteral(this.KeyValues);
 
             commandText += FormatClauses();
 
@@ -485,31 +479,45 @@ namespace Simple.OData.Client
             var aggregateClauses = new List<string>();
 
             if (_parameters.Any())
-                extraClauses.Add(new ValueFormatter().Format(_parameters, "&"));
+                extraClauses.Add(string.Join("&", _parameters.Select(x => string.Format("{0}={1}",
+                    x.Key, _session.Adapter.ConvertValueToUriLiteral(x.Value)))));
 
             if (_filter != null)
-                extraClauses.Add(string.Format("{0}={1}", FilterLiteral, Uri.EscapeDataString(_filter)));
+                extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Filter, Uri.EscapeDataString(_filter)));
 
             if (_skipCount >= 0)
-                extraClauses.Add(string.Format("{0}={1}", SkipLiteral, _skipCount));
+                extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Skip, _skipCount));
 
             if (_topCount >= 0)
-                extraClauses.Add(string.Format("{0}={1}", TopLiteral, _topCount));
+                extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Top, _topCount));
 
             if (_expandAssociations.Any())
-                extraClauses.Add(string.Format("{0}={1}", ExpandLiteral, string.Join(",", _expandAssociations.Select(FormatExpandItem))));
+            {
+                if (_session.Adapter.AdapterVersion == AdapterVersion.V3)
+                    extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Expand, 
+                        string.Join(",", _expandAssociations.Select(x => FormatExpandItem(x, this.EntityCollection)))));
+                else
+                    extraClauses.Add(string.Join(",", _expandAssociations.Select(x => FormatExpandItem(x, this.EntityCollection))));
+            }
 
             if (_orderbyColumns.Any())
-                extraClauses.Add(string.Format("{0}={1}", OrderByLiteral, string.Join(",", _orderbyColumns.Select(FormatOrderByItem))));
+                extraClauses.Add(string.Format("{0}={1}", ODataLiteral.OrderBy, 
+                    string.Join(",", _orderbyColumns.Select(FormatOrderByItem))));
 
             if (_selectColumns.Any())
-                extraClauses.Add(string.Format("{0}={1}", SelectLiteral, string.Join(",", _selectColumns.Select(FormatSelectItem))));
+                extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Select, 
+                    string.Join(",", _selectColumns.Select(FormatSelectItem))));
 
-            if (_inlineCount)
-                extraClauses.Add(string.Format("{0}={1}", InlineCountLiteral, AllPagesLiteral));
+            if (_includeCount)
+            {
+                if (_session.Adapter.AdapterVersion == AdapterVersion.V3)
+                    extraClauses.Add(string.Format("{0}={1}", ODataLiteral.InlineCount, ODataLiteral.AllPages));
+                else
+                    extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Count, ODataLiteral.True));
+            }
 
             if (_computeCount)
-                aggregateClauses.Add(CountLiteral);
+                aggregateClauses.Add(ODataLiteral.Count);
 
             if (aggregateClauses.Any())
                 text += "/" + string.Join("/", aggregateClauses);
@@ -520,40 +528,52 @@ namespace Simple.OData.Client
             return text;
         }
 
-        private string FormatExpandItem(string item)
+        private IEnumerable<string> SplitItems(IEnumerable<string> columns)
         {
-            var names = new List<string>();
+            return columns.SelectMany(x => x.Split(',').Select(y => y.Trim()));
+        }
+
+        private IEnumerable<KeyValuePair<string, bool>> SplitItems(IEnumerable<KeyValuePair<string, bool>> columns)
+        {
+            return columns.SelectMany(x => x.Key.Split(',').Select(y => new KeyValuePair<string, bool>(y.Trim(), x.Value)));
+        }
+
+        private string FormatExpandItem(string item, EntityCollection entityCollection)
+        {
             var items = item.Split('/');
-            var table = this.Table;
-            foreach (var associationName in items)
+            var associationName = _session.Metadata.GetNavigationPropertyExactName(entityCollection.ActualName, items.First());
+            string text;
+            if (_session.Adapter.AdapterVersion == AdapterVersion.V3)
+                text = associationName;
+            else
+                text = string.Format("{0}={1}", ODataLiteral.Expand, associationName);
+            if (items.Count() == 1)
             {
-                var association = table.FindAssociation(associationName);
-                names.Add(association.ActualName);
-                table = _schema.FindTable(association.ReferenceTableName);
+                return text;
             }
-            return string.Join("/", names);
+            else
+            {
+                item = item.Substring(items.First().Length + 1);
+                entityCollection = _session.Metadata.GetEntityCollection(
+                    _session.Metadata.GetNavigationPropertyPartnerName(entityCollection.ActualName, associationName));
+                if (_session.Adapter.AdapterVersion == AdapterVersion.V3)
+                    return string.Format("{0}/{1}", text, FormatExpandItem(item, entityCollection));
+                else
+                    return string.Format("{0}({1})", text, FormatExpandItem(item, entityCollection));
+            }
         }
 
         private string FormatSelectItem(string item)
         {
-            return this.Table.HasColumn(item)
-                ? this.Table.FindColumn(item).ActualName
-                : this.Table.FindAssociation(item).ActualName;
+            return _session.Metadata.HasStructuralProperty(this.EntityCollection.ActualName, item)
+                ? _session.Metadata.GetStructuralPropertyExactName(this.EntityCollection.ActualName, item)
+                : _session.Metadata.GetNavigationPropertyExactName(this.EntityCollection.ActualName, item);
         }
 
         private string FormatOrderByItem(KeyValuePair<string, bool> item)
         {
-            return this.Table.FindColumn(item.Key) + (item.Value ? " desc" : string.Empty);
-        }
-
-        private string FormatKey()
-        {
-            var namedKeyValues = this.KeyValues;
-            var valueFormatter = new ValueFormatter();
-            var formattedKeyValues = namedKeyValues.Count == 1 ?
-                valueFormatter.Format(namedKeyValues.Values) :
-                valueFormatter.Format(namedKeyValues);
-            return "(" + formattedKeyValues + ")";
+            return _session.Metadata.GetStructuralPropertyExactName(
+                this.EntityCollection.ActualName, item.Key) + (item.Value ? " desc" : string.Empty);
         }
 
         private IDictionary<string, object> TryInterpretFilterExpressionAsKey(ODataExpression expression)
@@ -564,9 +584,13 @@ namespace Simple.OData.Client
             {
                 ok = expression.ExtractEqualityComparisons(namedKeyValues);
             }
-            return ok &&
-                this.Table.GetKeyNames().Count == namedKeyValues.Count() &&
-                this.Table.GetKeyNames().All(namedKeyValues.ContainsKey) ? namedKeyValues : null;
+            if (!ok)
+                return null;
+
+            var keyNames = _session.Metadata.GetDeclaredKeyPropertyNames(this.EntityCollection.ActualName).ToList();
+            return keyNames.Count == namedKeyValues.Count() && keyNames.All(namedKeyValues.ContainsKey) 
+                ? namedKeyValues 
+                : null;
         }
 
         private static bool IsAnonymousType(Type type)

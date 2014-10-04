@@ -7,7 +7,7 @@
     <name />
   </author>
   <link rel="edit" title="Customer" href="Customers('CONTO')" />
-  <category term="NorthwindModel.Customer" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <category term="NorthwindModel.Customers" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
   <content type="application/xml">
     <m:properties>
       <d:CustomerID>CONTO</d:CustomerID>

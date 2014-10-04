@@ -2,31 +2,32 @@
 {
     internal class ExpressionContext
     {
-        private Table _table;
+        private EntityCollection _entityCollection;
 
-        public ISchema Schema { get; set; }
-        public Table Table
-        {
-            get
-            {
-                if (!IsSet)
-                    return null;
-                if (_table != null)
-                    return _table;
+        public ISession Session { get; set; }
+        public EntityCollection EntityCollection { get; set; }
+        //public EntityCollection EntityCollection
+        //{
+        //    get
+        //    {
+        //        if (!IsSet)
+        //            return null;
+        //        if (_entityCollection != null)
+        //            return _entityCollection;
 
-                return this.Schema.FindConcreteTable(this.Collection);
-            }
+        //        return this.session.Metadata.GetConcreteEntityCollection(this.Collection);
+        //    }
 
-            set 
-            { 
-                _table = value; 
-            }
-        }
+        //    set 
+        //    { 
+        //        _entityCollection = value; 
+        //    }
+        //}
         public string Collection { get; set; }
 
         public bool IsSet
         {
-            get { return this.Schema != null && (this._table != null || !string.IsNullOrEmpty(this.Collection)); }
+            get { return this.Session != null && (this._entityCollection != null || !string.IsNullOrEmpty(this.Collection)); }
         }
     }
 }

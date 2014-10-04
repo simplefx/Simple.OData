@@ -34,24 +34,41 @@ namespace Simple.OData.Client
         /// Gets the OData service metadata.
         /// </summary>
         /// <returns>The service metadata.</returns>
-        Task<ISchema> GetSchemaAsync();
+        Task<object> GetMetadataAsync();
         /// <summary>
         /// Gets the OData service metadata.
         /// </summary>
         /// <returns>The service metadata.</returns>
-        Task<ISchema> GetSchemaAsync(CancellationToken cancellationToken);
+        Task<object> GetMetadataAsync(CancellationToken cancellationToken);
+        /// <summary>
+        /// Gets the OData service metadata.
+        /// </summary>
+        /// <typeparam name="T">OData protocol specific metadata interface</typeparam>
+        /// <returns>
+        /// The service metadata.
+        /// </returns>
+        Task<T> GetMetadataAsync<T>();
+        /// <summary>
+        /// Gets the OData service metadata.
+        /// </summary>
+        /// <typeparam name="T">OData protocol specific metadata interface</typeparam>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>
+        /// The service metadata.
+        /// </returns>
+        Task<T> GetMetadataAsync<T>(CancellationToken cancellationToken);
 
         /// <summary>
         /// Gets the OData service metadata as string.
         /// </summary>
         /// <returns>The service metadata string.</returns>
-        Task<string> GetSchemaAsStringAsync();
+        Task<string> GetMetadataAsStringAsync();
         /// <summary>
         /// Gets the OData service metadata as string.
         /// </summary>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The service metadata string.</returns>
-        Task<string> GetSchemaAsStringAsync(CancellationToken cancellationToken);
+        Task<string> GetMetadataAsStringAsync(CancellationToken cancellationToken);
 
         /// <summary>
         /// Gets the OData command text.
@@ -379,6 +396,25 @@ namespace Simple.OData.Client
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task instance.</returns>
         Task UnlinkEntryAsync(string collection, IDictionary<string, object> entryKey, string linkName, CancellationToken cancellationToken);
+        /// <summary>
+        /// Deletes a link between entries.
+        /// </summary>
+        /// <param name="collection">The name of the collection.</param>
+        /// <param name="entryKey">The entry key.</param>
+        /// <param name="linkName">Name of the link to be deleted.</param>
+        /// <param name="linkedEntryKey">The linked entry key.</param>
+        /// <returns>Task instance.</returns>
+        Task UnlinkEntryAsync(string collection, IDictionary<string, object> entryKey, string linkName, IDictionary<string, object> linkedEntryKey);
+        /// <summary>
+        /// Deletes a link between entries.
+        /// </summary>
+        /// <param name="collection">The name of the collection.</param>
+        /// <param name="entryKey">The entry key.</param>
+        /// <param name="linkName">Name of the link to be deleted.</param>
+        /// <param name="linkedEntryKey">The linked entry key.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task instance.</returns>
+        Task UnlinkEntryAsync(string collection, IDictionary<string, object> entryKey, string linkName, IDictionary<string, object> linkedEntryKey, CancellationToken cancellationToken);
 
         /// <summary>
         /// Executes the OData function.
@@ -431,5 +467,11 @@ namespace Simple.OData.Client
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Function execution result.</returns>
         Task<T[]> ExecuteFunctionAsArrayAsync<T>(string functionName, IDictionary<string, object> parameters, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Sets the word pluralizer used when resolving metadata objects.
+        /// </summary>
+        /// <param name="pluralizer">The pluralizer.</param>
+        void SetPluralizer(IPluralizer pluralizer);
     }
 }

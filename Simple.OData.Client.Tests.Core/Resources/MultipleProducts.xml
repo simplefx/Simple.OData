@@ -11,7 +11,7 @@
     <author>
       <name />
     </author>
-    <link rel="edit" title="Product" href="Products(1)" />
+    <link rel="edit" title="Products" href="Products(1)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(1)/Category" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(1)/Order_Details" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(1)/Supplier" />
@@ -38,7 +38,7 @@
     <author>
       <name />
     </author>
-    <link rel="edit" title="Product" href="Products(2)" />
+    <link rel="edit" title="Products" href="Products(2)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(2)/Category" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(2)/Order_Details" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(2)/Supplier" />
@@ -65,7 +65,7 @@
     <author>
       <name />
     </author>
-    <link rel="edit" title="Product" href="Products(3)" />
+    <link rel="edit" title="Products" href="Products(3)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(3)/Category" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(3)/Order_Details" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(3)/Supplier" />
@@ -92,7 +92,7 @@
     <author>
       <name />
     </author>
-    <link rel="edit" title="Product" href="Products(4)" />
+    <link rel="edit" title="Products" href="Products(4)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(4)/Category" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(4)/Order_Details" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(4)/Supplier" />
@@ -119,7 +119,7 @@
     <author>
       <name />
     </author>
-    <link rel="edit" title="Product" href="Products(5)" />
+    <link rel="edit" title="Products" href="Products(5)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(5)/Category" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(5)/Order_Details" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(5)/Supplier" />
@@ -146,7 +146,7 @@
     <author>
       <name />
     </author>
-    <link rel="edit" title="Product" href="Products(6)" />
+    <link rel="edit" title="Products" href="Products(6)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(6)/Category" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(6)/Order_Details" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(6)/Supplier" />
@@ -173,7 +173,7 @@
     <author>
       <name />
     </author>
-    <link rel="edit" title="Product" href="Products(7)" />
+    <link rel="edit" title="Products" href="Products(7)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(7)/Category" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(7)/Order_Details" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(7)/Supplier" />
@@ -200,7 +200,7 @@
     <author>
       <name />
     </author>
-    <link rel="edit" title="Product" href="Products(8)" />
+    <link rel="edit" title="Products" href="Products(8)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(8)/Category" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(8)/Order_Details" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(8)/Supplier" />
@@ -227,7 +227,7 @@
     <author>
       <name />
     </author>
-    <link rel="edit" title="Product" href="Products(9)" />
+    <link rel="edit" title="Products" href="Products(9)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(9)/Category" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(9)/Order_Details" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(9)/Supplier" />
@@ -254,7 +254,7 @@
     <author>
       <name />
     </author>
-    <link rel="edit" title="Product" href="Products(10)" />
+    <link rel="edit" title="Products" href="Products(10)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(10)/Category" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(10)/Order_Details" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(10)/Supplier" />
@@ -281,7 +281,7 @@
     <author>
       <name />
     </author>
-    <link rel="edit" title="Product" href="Products(11)" />
+    <link rel="edit" title="Products" href="Products(11)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(11)/Category" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(11)/Order_Details" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(11)/Supplier" />
@@ -308,7 +308,7 @@
     <author>
       <name />
     </author>
-    <link rel="edit" title="Product" href="Products(12)" />
+    <link rel="edit" title="Products" href="Products(12)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(12)/Category" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(12)/Order_Details" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(12)/Supplier" />
@@ -335,7 +335,7 @@
     <author>
       <name />
     </author>
-    <link rel="edit" title="Product" href="Products(13)" />
+    <link rel="edit" title="Products" href="Products(13)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(13)/Category" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(13)/Order_Details" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(13)/Supplier" />
@@ -362,7 +362,7 @@
     <author>
       <name />
     </author>
-    <link rel="edit" title="Product" href="Products(14)" />
+    <link rel="edit" title="Products" href="Products(14)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(14)/Category" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(14)/Order_Details" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(14)/Supplier" />
@@ -389,7 +389,7 @@
     <author>
       <name />
     </author>
-    <link rel="edit" title="Product" href="Products(15)" />
+    <link rel="edit" title="Products" href="Products(15)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(15)/Category" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(15)/Order_Details" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(15)/Supplier" />
@@ -416,7 +416,7 @@
     <author>
       <name />
     </author>
-    <link rel="edit" title="Product" href="Products(16)" />
+    <link rel="edit" title="Products" href="Products(16)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(16)/Category" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(16)/Order_Details" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(16)/Supplier" />
@@ -443,7 +443,7 @@
     <author>
       <name />
     </author>
-    <link rel="edit" title="Product" href="Products(17)" />
+    <link rel="edit" title="Products" href="Products(17)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(17)/Category" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(17)/Order_Details" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(17)/Supplier" />
@@ -470,7 +470,7 @@
     <author>
       <name />
     </author>
-    <link rel="edit" title="Product" href="Products(18)" />
+    <link rel="edit" title="Products" href="Products(18)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(18)/Category" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(18)/Order_Details" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(18)/Supplier" />
@@ -497,7 +497,7 @@
     <author>
       <name />
     </author>
-    <link rel="edit" title="Product" href="Products(19)" />
+    <link rel="edit" title="Products" href="Products(19)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(19)/Category" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(19)/Order_Details" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(19)/Supplier" />
@@ -524,7 +524,7 @@
     <author>
       <name />
     </author>
-    <link rel="edit" title="Product" href="Products(20)" />
+    <link rel="edit" title="Products" href="Products(20)" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(20)/Category" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Order_Details" type="application/atom+xml;type=feed" title="Order_Details" href="Products(20)/Order_Details" />
     <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(20)/Supplier" />

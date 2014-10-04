@@ -69,8 +69,7 @@ namespace Simple.OData.Client
             {
                 ConstructorInfo ctor;
                 Expression[] ctorArguments;
-                FunctionMapping mapping;
-                if (FunctionMapping.SupportedFunctions.TryGetValue(new ExpressionFunction.FunctionCall(binder.Name, 0), out mapping))
+                if (FunctionMapping.ContainsFunction(binder.Name, 0))
                 {
                     ctor = CtorWithExpressionAndString;
                     ctorArguments = new[] { Expression.Constant(this.Value), Expression.Constant(binder.Name) };
@@ -107,8 +106,7 @@ namespace Simple.OData.Client
             public override DynamicMetaObject BindInvokeMember(
                 InvokeMemberBinder binder, DynamicMetaObject[] args)
             {
-                FunctionMapping mapping;
-                if (FunctionMapping.SupportedFunctions.TryGetValue(new ExpressionFunction.FunctionCall(binder.Name, args.Count()), out mapping))
+                if (FunctionMapping.ContainsFunction(binder.Name, args.Count()))
                 {
                     var expression = Expression.New(CtorWithExpressionAndExpressionFunction,
                         new[]

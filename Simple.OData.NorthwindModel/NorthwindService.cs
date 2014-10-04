@@ -66,7 +66,7 @@ namespace Simple.OData.NorthwindModel
         [WebGet]
         public IQueryable<Address> ReturnAddressCollection(int count)
         {
-            var address = new Address {City = "Oslo", Country = "Norway"};
+            var address = new Address {City = "Oslo", Country = "Norway", Region = "Oslo", PostalCode = "1234"};
             var addresses = new List<Address>();
             for (var index = 1; index <= count; index++)
             {

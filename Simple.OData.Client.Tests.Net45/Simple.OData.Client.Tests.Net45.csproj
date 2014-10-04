@@ -36,17 +36,32 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.Data.Edm, Version=5.6.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\Solutions\packages\Microsoft.Data.Edm.5.6.0\lib\net40\Microsoft.Data.Edm.dll</HintPath>
+    <Reference Include="Microsoft.Data.Edm, Version=5.6.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solutions\packages\Microsoft.Data.Edm.5.6.2\lib\net40\Microsoft.Data.Edm.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Data.OData, Version=5.6.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\Solutions\packages\Microsoft.Data.OData.5.6.0\lib\net40\Microsoft.Data.OData.dll</HintPath>
+    <Reference Include="Microsoft.Data.OData, Version=5.6.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solutions\packages\Microsoft.Data.OData.5.6.2\lib\net40\Microsoft.Data.OData.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Data.Services, Version=5.6.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\Solutions\packages\Microsoft.Data.Services.5.6.0\lib\net40\Microsoft.Data.Services.dll</HintPath>
+    <Reference Include="Microsoft.Data.Services, Version=5.6.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solutions\packages\Microsoft.Data.Services.5.6.2\lib\net40\Microsoft.Data.Services.dll</HintPath>
     </Reference>
-    <Reference Include="Microsoft.Data.Services.Client, Version=5.6.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\Solutions\packages\Microsoft.Data.Services.Client.5.6.0\lib\net40\Microsoft.Data.Services.Client.dll</HintPath>
+    <Reference Include="Microsoft.Data.Services.Client, Version=5.6.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solutions\packages\Microsoft.Data.Services.Client.5.6.2\lib\net40\Microsoft.Data.Services.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.OData.Core, Version=6.8.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solutions\packages\Microsoft.OData.Core.6.7.0\lib\portable-net40+sl5+wp8+win8+wpa\Microsoft.OData.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.OData.Edm">
+      <HintPath>..\Solutions\packages\Microsoft.OData.Edm.6.7.0\lib\portable-net40+sl5+wp8+win8+wpa\Microsoft.OData.Edm.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Spatial, Version=6.7.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solutions\packages\Microsoft.Spatial.6.7.0\lib\portable-net40+sl5+wp8+win8+wpa\Microsoft.Spatial.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -59,8 +74,9 @@
       <HintPath>..\Solutions\packages\Microsoft.Net.Http.2.2.22\lib\net45\System.Net.Http.Primitives.dll</HintPath>
     </Reference>
     <Reference Include="System.Net.Http.WebRequest" />
-    <Reference Include="System.Spatial, Version=5.6.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>..\Solutions\packages\System.Spatial.5.6.0\lib\net40\System.Spatial.dll</HintPath>
+    <Reference Include="System.Spatial, Version=5.6.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solutions\packages\System.Spatial.5.6.2\lib\net40\System.Spatial.dll</HintPath>
     </Reference>
     <Reference Include="System.Xml.Linq" />
     <Reference Include="Microsoft.CSharp" />
@@ -129,9 +145,6 @@
     <Compile Include="..\Simple.OData.Client.Tests.Net40\Extensions\XElementExtensionsTests.cs">
       <Link>Extensions\XElementExtensionsTests.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\Extensions\XmlElementAsDictionaryReadTests.cs">
-      <Link>Extensions\XmlElementAsDictionaryReadTests.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\FindDynamicTests.cs">
       <Link>FindDynamicFilterTests.cs</Link>
     </Compile>
@@ -162,9 +175,6 @@
     <Compile Include="..\Simple.OData.Client.Tests.Net40\LinkTypedTests.cs">
       <Link>LinkTypedTests.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\NorthwindSchemaTests.cs">
-      <Link>NorthwindSchemaTests.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\ODataSchemaTests.cs">
       <Link>ODataSchemaTests.cs</Link>
     </Compile>
@@ -177,9 +187,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>XmlSamples.resx</DependentUpon>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\SchemaTests.cs">
-      <Link>SchemaTests.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\TestBase.cs">
       <Link>TestBase.cs</Link>
     </Compile>
@@ -191,9 +198,6 @@
     </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\UpdateTypedTests.cs">
       <Link>UpdateTypedTests.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\WebApiTests.cs">
-      <Link>WebApiTests.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -225,6 +229,14 @@
     <ProjectReference Include="..\Simple.OData.Client.TestUtils.Net40\Simple.OData.Client.TestUtils.Net40.csproj">
       <Project>{072f8be4-81c1-4276-a9a5-1aec87a84265}</Project>
       <Name>Simple.OData.Client.TestUtils.Net40</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Simple.OData.Client.V3.Adapter\Simple.OData.Client.V3.Adapter.csproj">
+      <Project>{a08b2d3d-91a6-4ecd-b7af-5977e840e383}</Project>
+      <Name>Simple.OData.Client.V3.Adapter</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Simple.OData.Client.V4.Adapter\Simple.OData.Client.V4.Adapter.csproj">
+      <Project>{31d1cc1d-316e-4516-a2bd-f07423b394f6}</Project>
+      <Name>Simple.OData.Client.V4.Adapter</Name>
     </ProjectReference>
     <ProjectReference Include="..\Simple.OData.NorthwindModel\Simple.OData.NorthwindModel.csproj">
       <Project>{2a909e4d-6493-4d36-9fde-786b89f9a387}</Project>

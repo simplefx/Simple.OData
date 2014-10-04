@@ -39,6 +39,26 @@
     <DocumentationFile>bin\Release\Simple.OData.Client.Net40.xml</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.Data.Edm, Version=5.6.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solutions\packages\Microsoft.Data.Edm.5.6.2\lib\net40\Microsoft.Data.Edm.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Data.OData, Version=5.6.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solutions\packages\Microsoft.Data.OData.5.6.2\lib\net40\Microsoft.Data.OData.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.OData.Core, Version=6.8.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solutions\packages\Microsoft.OData.Core.6.7.0\lib\portable-net40+sl5+wp8+win8+wpa\Microsoft.OData.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.OData.Edm, Version=6.8.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solutions\packages\Microsoft.OData.Edm.6.7.0\lib\portable-net40+sl5+wp8+win8+wpa\Microsoft.OData.Edm.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Spatial, Version=6.7.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solutions\packages\Microsoft.Spatial.6.7.0\lib\portable-net40+sl5+wp8+win8+wpa\Microsoft.Spatial.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Threading.Tasks, Version=1.0.12.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Solutions\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.dll</HintPath>
@@ -76,6 +96,10 @@
     <Reference Include="System.Runtime">
       <HintPath>..\Solutions\packages\Microsoft.Bcl.1.1.9\lib\net40\System.Runtime.dll</HintPath>
     </Reference>
+    <Reference Include="System.Spatial, Version=5.6.2.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Solutions\packages\System.Spatial.5.6.2\lib\net40\System.Spatial.dll</HintPath>
+    </Reference>
     <Reference Include="System.Threading.Tasks">
       <HintPath>..\Solutions\packages\Microsoft.Bcl.1.1.9\lib\net40\System.Threading.Tasks.dll</HintPath>
     </Reference>
@@ -92,65 +116,68 @@
     <Compile Include="..\CommonAssemblyVersion.cs">
       <Link>Properties\CommonAssemblyVersion.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\CommandContent.cs">
-      <Link>CommandContent.cs</Link>
+    <Compile Include="..\Simple.OData.Client.Core\Adapter\AdapterFactory.cs">
+      <Link>Adapter\AdapterFactory.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Edm\EdmSchemaParser.cs">
-      <Link>Edm\EdmSchemaParser.cs</Link>
+    <Compile Include="..\Simple.OData.Client.Core\Adapter\AdapterVersion.cs">
+      <Link>Adapter\AdapterVersion.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\EntryMembers.cs">
-      <Link>EntryMembers.cs</Link>
+    <Compile Include="..\Simple.OData.Client.Core\Adapter\BatchWriterBase.cs">
+      <Link>Adapter\BatchWriterBase.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Extensions\DateTimeExtensions.cs">
-      <Link>Extensions\DateTimeExtensions.cs</Link>
+    <Compile Include="..\Simple.OData.Client.Core\Adapter\IBatchWriter.cs">
+      <Link>Adapter\IBatchWriter.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Extensions\DecimalExtensions.cs">
-      <Link>Extensions\DecimalExtensions.cs</Link>
+    <Compile Include="..\Simple.OData.Client.Core\Adapter\IMetadata.cs">
+      <Link>Adapter\IMetadata.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Adapter\IODataAdapter.cs">
+      <Link>Adapter\IODataAdapter.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Adapter\IRequestWriter.cs">
+      <Link>Adapter\IRequestWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Adapter\IResponseReader.cs">
+      <Link>Adapter\IResponseReader.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Adapter\MetadataBase.cs">
+      <Link>Adapter\MetadataBase.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Adapter\ODataAdapterBase.cs">
+      <Link>Adapter\ODataAdapterBase.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Adapter\RequestWriterBase.cs">
+      <Link>Adapter\RequestWriterBase.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Adapter\ResponseNode.cs">
+      <Link>Adapter\ResponseNode.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Adapter\ResponseReaderBase.cs">
+      <Link>Adapter\ResponseReaderBase.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\CustomConverters.cs">
+      <Link>CustomConverters.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\EntityCollection.cs">
+      <Link>EntityCollection.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\EntryDetails.cs">
+      <Link>EntryDetails.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Extensions\DictionaryExtensions.cs">
       <Link>Extensions\DictionaryExtensions.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Extensions\EnumerableExtensions.cs">
-      <Link>Extensions\EnumerableExtensions.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Extensions\EnumerableOfKeyValuePairExtensions.cs">
       <Link>Extensions\EnumerableOfKeyValuePairExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Extensions\GuidExtensions.cs">
-      <Link>Extensions\GuidExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Extensions\LongExtensions.cs">
-      <Link>Extensions\LongExtensions.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Extensions\MemberInfoExtensions.cs">
       <Link>Extensions\MemberInfoExtensions.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Extensions\TupleEnumerableExtensions.cs">
-      <Link>Extensions\TupleEnumerableExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Extensions\TupleExtensions.cs">
-      <Link>Extensions\TupleExtensions.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Extensions\TypeExtensions.cs">
       <Link>Extensions\TypeExtensions.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Extensions\ULongExtensions.cs">
-      <Link>Extensions\ULongExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Extensions\XAttributeExtensions.cs">
-      <Link>Extensions\XAttributeExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Extensions\XElementAsDictionaryExtension.cs">
-      <Link>Extensions\XElementAsDictionaryExtension.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Extensions\XElementExtensions.cs">
       <Link>Extensions\XElementExtensions.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Extensions\XmlAttributesAsDictionary.cs">
-      <Link>Extensions\XmlAttributesAsDictionary.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Extensions\XmlElementAsDictionary.cs">
-      <Link>Extensions\XmlElementAsDictionary.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Expressions\ExpressionContext.cs">
       <Link>Expressions\ExpressionContext.cs</Link>
@@ -185,23 +212,8 @@
     <Compile Include="..\Simple.OData.Client.Core\Fluent\IFluentClient.cs">
       <Link>Fluent\IFluentClient.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Http\BatchRequestBuilder.cs">
-      <Link>Http\BatchRequestBuilder.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Http\BatchRequestRunner.cs">
-      <Link>Http\BatchRequestRunner.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Http\CommandRequestBuilder.cs">
-      <Link>Http\CommandRequestBuilder.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Http\CommandRequestRunner.cs">
-      <Link>Http\CommandRequestRunner.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Http\HttpCommand.cs">
-      <Link>Http\HttpCommand.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Http\HttpRequest.cs">
-      <Link>Http\HttpRequest.cs</Link>
+    <Compile Include="..\Simple.OData.Client.Core\Http\HttpLiteral.cs">
+      <Link>Http\HttpLiteral.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Http\RequestBuilder.cs">
       <Link>Http\RequestBuilder.cs</Link>
@@ -209,20 +221,20 @@
     <Compile Include="..\Simple.OData.Client.Core\Http\RequestRunner.cs">
       <Link>Http\RequestRunner.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Http\RequestRunnerBase.cs">
-      <Link>Http\RequestRunnerBase.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Http\RestVerbs.cs">
       <Link>Http\RestVerbs.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Http\SchemaRequestRunner.cs">
-      <Link>Http\SchemaRequestRunner.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Http\WebRequestException.cs">
       <Link>Http\WebRequestException.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\IODataClient.cs">
       <Link>IODataClient.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ISession.cs">
+      <Link>ISession.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\MetadataCache.cs">
+      <Link>MetadataCache.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ODataClient.Async.cs">
       <Link>ODataClient.Async.cs</Link>
@@ -233,18 +245,6 @@
     <Compile Include="..\Simple.OData.Client.Core\ODataClientSettings.cs">
       <Link>ODataClientSettings.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Edm\EdmTypeSerializer.cs">
-      <Link>Edm\EdmTypeSerializer.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Edm\EdmPropertyType.cs">
-      <Link>Edm\EdmPropertyType.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Edm\EdmSchema.cs">
-      <Link>Edm\EdmSchema.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Edm\EdmType.cs">
-      <Link>Edm\EdmType.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ODataBatch.cs">
       <Link>ODataBatch.cs</Link>
     </Compile>
@@ -254,17 +254,26 @@
     <Compile Include="..\Simple.OData.Client.Core\ODataEntry.cs">
       <Link>ODataEntry.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\CommandWriter.cs">
-      <Link>ODataFeedWriter.cs</Link>
+    <Compile Include="..\Simple.OData.Client.Core\ODataLiteral.cs">
+      <Link>ODataLiteral.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ODataPayloadFormat.cs">
+      <Link>ODataPayloadFormat.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ODataProtocolVersion.cs">
+      <Link>ODataProtocolVersion.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ODataRequest.cs">
+      <Link>ODataRequest.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ODataResponse.cs">
+      <Link>ODataResponse.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Pluralizer.cs">
       <Link>Pluralizer.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Resources\Resources.cs">
-      <Link>Resources\Resources.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Schema\ISchema.cs">
-      <Link>Schema\ISchema.cs</Link>
+    <Compile Include="..\Simple.OData.Client.Core\Session.cs">
+      <Link>Session.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\SimpleDictionary.cs">
       <Link>SimpleDictionary.cs</Link>
@@ -275,9 +284,6 @@
     <Compile Include="..\Simple.OData.Client.Core\Utils.cs">
       <Link>Utils.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\ValueFormatter.cs">
-      <Link>ValueFormatter.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Extensions\HomogenizeEx.cs">
       <Link>Extensions\HomogenizeEx.cs</Link>
     </Compile>
@@ -287,53 +293,14 @@
     <Compile Include="..\Simple.OData.Client.Core\Extensions\StringExtensions.cs">
       <Link>Extensions\StringExtensions.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\ResponseReader.cs">
-      <Link>ODataFeedReader.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Properties\AssemblyInfo.cs">
       <Link>Properties\AssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ODataClient.cs">
       <Link>ODataClient.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Schema\Association.cs">
-      <Link>Schema\Association.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Schema\AssociationCollection.cs">
-      <Link>Schema\AssociationCollection.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Schema\Column.cs">
-      <Link>Schema\Column.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Schema\ColumnCollection.cs">
-      <Link>Schema\ColumnCollection.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Schema\Schema.cs">
-      <Link>Schema\Schema.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Schema\Function.cs">
-      <Link>Schema\Function.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Schema\FunctionCollection.cs">
-      <Link>Schema\FunctionCollection.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Schema\Key.cs">
-      <Link>Schema\Key.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Schema\SchemaProvider.cs">
-      <Link>Schema\SchemaProvider.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Schema\Table.cs">
-      <Link>Schema\Table.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Schema\TableCollection.cs">
-      <Link>Schema\TableCollection.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\UnresolvableObjectException.cs">
       <Link>UnresolvableObjectException.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\ValueParser.cs">
-      <Link>ValueParser.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Dynamic\DynamicODataEntry.cs">
       <Link>DynamicODataEntry.cs</Link>
@@ -344,8 +311,59 @@
     <Compile Include="..\Simple.OData.Client.Dynamic\ODataDynamic.cs">
       <Link>Expressions\ODataDynamic.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Dynamic\ODataFilter.cs">
-      <Link>ODataFilter.cs</Link>
+    <Compile Include="..\Simple.OData.Client.V3.Adapter\BatchWriter.cs">
+      <Link>AdapterV3\BatchWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.V3.Adapter\EdmDeltaModel.cs">
+      <Link>AdapterV3\EdmDeltaModel.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.V3.Adapter\Metadata.cs">
+      <Link>AdapterV3\Metadata.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.V3.Adapter\ODataAdapter.cs">
+      <Link>AdapterV3\ODataAdapter.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.V3.Adapter\ODataRequestMessage.cs">
+      <Link>AdapterV3\ODataRequestMessage.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.V3.Adapter\ODataResponseMessage.cs">
+      <Link>AdapterV3\ODataResponseMessage.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.V3.Adapter\RequestWriter.cs">
+      <Link>AdapterV3\RequestWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.V3.Adapter\ResponseReader.cs">
+      <Link>AdapterV3\ResponseReader.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.V3.Adapter\TypeConverters.cs">
+      <Link>AdapterV3\TypeConverters.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.V4.Adapter\BatchWriter.cs">
+      <Link>AdapterV4\BatchWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.V4.Adapter\EdmDeltaModel.cs">
+      <Link>AdapterV4\EdmDeltaModel.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.V4.Adapter\Metadata.cs">
+      <Link>AdapterV4\Metadata.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.V4.Adapter\ODataAdapter.cs">
+      <Link>AdapterV4\ODataAdapter.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.V4.Adapter\ODataRequestMessage.cs">
+      <Link>AdapterV4\ODataRequestMessage.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.V4.Adapter\ODataResponseMessage.cs">
+      <Link>AdapterV4\ODataResponseMessage.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.V4.Adapter\RequestWriter.cs">
+      <Link>AdapterV4\RequestWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.V4.Adapter\ResponseReader.cs">
+      <Link>AdapterV4\ResponseReader.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.V4.Adapter\TypeConverters.cs">
+      <Link>AdapterV4\TypeConverters.cs</Link>
     </Compile>
   </ItemGroup>
   <ItemGroup>

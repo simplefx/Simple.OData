@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Simple.OData.Client.Extensions;
-using Simple.OData.Client.TestUtils;
 using Xunit;
 
 #if NETFX_CORE
@@ -23,9 +22,9 @@ namespace Simple.OData.Client.Tests
             var content = Properties.XmlSamples.XmlWithDefaultNamespace;
             var element = XElement.Parse(content);
             var list = element.Elements(null, "child").ToList();
-            list.Count.ShouldEqual(2);
-            list[0].Element(null, "sub").Value.ShouldEqual("Foo");
-            list[1].Element(null, "sub").Value.ShouldEqual("Bar");
+            Assert.Equal(2, list.Count);
+            Assert.Equal("Foo", list[0].Element(null, "sub").Value);
+            Assert.Equal("Bar", list[1].Element(null, "sub").Value);
         }
 
         [Fact]
@@ -34,9 +33,9 @@ namespace Simple.OData.Client.Tests
             var content = Properties.XmlSamples.XmlWithNoNamespace;
             var element = XElement.Parse(content);
             var list = element.Elements(null, "child").ToList();
-            list.Count.ShouldEqual(2);
-            list[0].Element(null, "sub").Value.ShouldEqual("Foo");
-            list[1].Element(null, "sub").Value.ShouldEqual("Bar");
+            Assert.Equal(2, list.Count);
+            Assert.Equal("Foo", list[0].Element(null, "sub").Value);
+            Assert.Equal("Bar", list[1].Element(null, "sub").Value);
         }
 
         [Fact]
@@ -45,9 +44,9 @@ namespace Simple.OData.Client.Tests
             var content = Properties.XmlSamples.XmlWithPrefixedNamespace;
             var element = XElement.Parse(content);
             var list = element.Elements("c", "child").ToList();
-            list.Count.ShouldEqual(2);
-            list[0].Element("c", "sub").Value.ShouldEqual("Foo");
-            list[1].Element("c", "sub").Value.ShouldEqual("Bar");
+            Assert.Equal(2, list.Count);
+            Assert.Equal("Foo", list[0].Element("c", "sub").Value);
+            Assert.Equal("Bar", list[1].Element("c", "sub").Value);
         }
     }
 }

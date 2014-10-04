@@ -39,7 +39,7 @@ namespace Simple.OData.Client
 
         public async Task<Tuple<IEnumerable<T>, int>> FindEntriesWithCountAsync(CancellationToken cancellationToken)
         {
-            var commandText = await _command.WithInlineCount().GetCommandTextAsync(cancellationToken);
+            var commandText = await _command.WithCount().GetCommandTextAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested)
                 cancellationToken.ThrowIfCancellationRequested();
 
@@ -54,7 +54,7 @@ namespace Simple.OData.Client
 
         public async Task<Tuple<IEnumerable<T>, int>> FindEntriesWithCountAsync(bool scalarResult, CancellationToken cancellationToken)
         {
-            var commandText = await _command.WithInlineCount().GetCommandTextAsync(cancellationToken);
+            var commandText = await _command.WithCount().GetCommandTextAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested)
                 cancellationToken.ThrowIfCancellationRequested();
 
@@ -234,62 +234,122 @@ namespace Simple.OData.Client
 
         public Task LinkEntryAsync(ODataExpression expression, IDictionary<string, object> linkedEntryKey)
         {
-            return _client.LinkEntryAsync(_command, _command.KeyValues, expression.AsString(), linkedEntryKey.ToDictionary(), CancellationToken.None);
+            return _client.LinkEntryAsync(_command, _command.KeyValues, expression.AsString(_session), linkedEntryKey.ToDictionary(), CancellationToken.None);
         }
 
         public Task LinkEntryAsync(ODataExpression expression, IDictionary<string, object> linkedEntryKey, CancellationToken cancellationToken)
         {
-            return _client.LinkEntryAsync(_command, _command.KeyValues, expression.AsString(), linkedEntryKey.ToDictionary(), cancellationToken);
+            return _client.LinkEntryAsync(_command, _command.KeyValues, expression.AsString(_session), linkedEntryKey.ToDictionary(), cancellationToken);
         }
 
         public Task LinkEntryAsync(ODataExpression expression, ODataEntry linkedEntryKey)
         {
-            return _client.LinkEntryAsync(_command, _command.KeyValues, expression.AsString(), linkedEntryKey.ToDictionary(), CancellationToken.None);
+            return _client.LinkEntryAsync(_command, _command.KeyValues, expression.AsString(_session), linkedEntryKey.ToDictionary(), CancellationToken.None);
         }
 
         public Task LinkEntryAsync(ODataExpression expression, ODataEntry linkedEntryKey, CancellationToken cancellationToken)
         {
-            return _client.LinkEntryAsync(_command, _command.KeyValues, expression.AsString(), linkedEntryKey.ToDictionary(), cancellationToken);
+            return _client.LinkEntryAsync(_command, _command.KeyValues, expression.AsString(_session), linkedEntryKey.ToDictionary(), cancellationToken);
         }
 
         public Task UnlinkEntryAsync<U>()
         {
-            return _client.UnlinkEntryAsync(_command, _command.KeyValues, typeof(U).Name, CancellationToken.None);
+            return _client.UnlinkEntryAsync(_command, _command.KeyValues, typeof(U).Name, null, CancellationToken.None);
         }
 
         public Task UnlinkEntryAsync<U>(CancellationToken cancellationToken)
         {
-            return _client.UnlinkEntryAsync(_command, _command.KeyValues, typeof(U).Name, cancellationToken);
+            return _client.UnlinkEntryAsync(_command, _command.KeyValues, typeof(U).Name, null, cancellationToken);
         }
 
-        public Task UnlinkEntryAsync<U>(string linkName)
+        public Task UnlinkEntryAsync(string linkName)
         {
-            return _client.UnlinkEntryAsync(_command, _command.KeyValues, linkName ?? typeof(U).Name, CancellationToken.None);
+            return _client.UnlinkEntryAsync(_command, _command.KeyValues, linkName, null, CancellationToken.None);
         }
 
-        public Task UnlinkEntryAsync<U>(string linkName, CancellationToken cancellationToken)
+        public Task UnlinkEntryAsync(string linkName, CancellationToken cancellationToken)
         {
-            return _client.UnlinkEntryAsync(_command, _command.KeyValues, linkName ?? typeof(U).Name, cancellationToken);
+            return _client.UnlinkEntryAsync(_command, _command.KeyValues, linkName, null, cancellationToken);
         }
 
         public Task UnlinkEntryAsync<U>(Expression<Func<T, U>> expression)
         {
-            return _client.UnlinkEntryAsync(_command, _command.KeyValues, ExtractColumnName(expression), CancellationToken.None);
+            return _client.UnlinkEntryAsync(_command, _command.KeyValues, ExtractColumnName(expression), null, CancellationToken.None);
         }
 
         public Task UnlinkEntryAsync<U>(Expression<Func<T, U>> expression, CancellationToken cancellationToken)
         {
-            return _client.UnlinkEntryAsync(_command, _command.KeyValues, ExtractColumnName(expression), cancellationToken);
+            return _client.UnlinkEntryAsync(_command, _command.KeyValues, ExtractColumnName(expression), null, cancellationToken);
         }
 
         public Task UnlinkEntryAsync(ODataExpression expression)
         {
-            return _client.UnlinkEntryAsync(_command, _command.KeyValues, expression.AsString(), CancellationToken.None);
+            return _client.UnlinkEntryAsync(_command, _command.KeyValues, expression.AsString(_session), null, CancellationToken.None);
         }
 
         public Task UnlinkEntryAsync(ODataExpression expression, CancellationToken cancellationToken)
         {
-            return _client.UnlinkEntryAsync(_command, _command.KeyValues, expression.AsString(), cancellationToken);
+            return _client.UnlinkEntryAsync(_command, _command.KeyValues, expression.AsString(_session), null, cancellationToken);
+        }
+
+        public Task UnlinkEntryAsync<U>(U linkedEntryKey)
+        {
+            if (linkedEntryKey.GetType() == typeof(string))
+                return UnlinkEntryAsync(linkedEntryKey.ToString(), CancellationToken.None);
+            else if (linkedEntryKey is ODataExpression && (linkedEntryKey as ODataExpression).Reference != null)
+                return UnlinkEntryAsync((linkedEntryKey as ODataExpression).Reference, CancellationToken.None);
+            else
+                return UnlinkEntryAsync(linkedEntryKey, null, CancellationToken.None);
+        }
+
+        public Task UnlinkEntryAsync<U>(U linkedEntryKey, CancellationToken cancellationToken)
+        {
+            if (linkedEntryKey.GetType() == typeof(string))
+                return UnlinkEntryAsync(linkedEntryKey.ToString(), cancellationToken);
+            else if (linkedEntryKey is ODataExpression && (linkedEntryKey as ODataExpression).Reference != null)
+                return UnlinkEntryAsync((linkedEntryKey as ODataExpression).Reference, cancellationToken);
+            else
+                return UnlinkEntryAsync(linkedEntryKey, null, cancellationToken);
+        }
+
+        public Task UnlinkEntryAsync<U>(U linkedEntryKey, string linkName)
+        {
+            return UnlinkEntryAsync(linkedEntryKey, linkName, CancellationToken.None);
+        }
+
+        public Task UnlinkEntryAsync<U>(U linkedEntryKey, string linkName, CancellationToken cancellationToken)
+        {
+            return _client.UnlinkEntryAsync(_command, _command.KeyValues, linkName, linkedEntryKey != null ? linkedEntryKey.ToDictionary() : null, cancellationToken);
+        }
+
+        public Task UnlinkEntryAsync<U>(Expression<Func<T, U>> expression, U linkedEntryKey)
+        {
+            return UnlinkEntryAsync(expression, linkedEntryKey, CancellationToken.None);
+        }
+
+        public Task UnlinkEntryAsync<U>(Expression<Func<T, U>> expression, U linkedEntryKey, CancellationToken cancellationToken)
+        {
+            return _client.UnlinkEntryAsync(_command, _command.KeyValues, ExtractColumnName(expression), linkedEntryKey != null ? linkedEntryKey.ToDictionary() : null, cancellationToken);
+        }
+
+        public Task UnlinkEntryAsync(ODataExpression expression, IDictionary<string, object> linkedEntryKey)
+        {
+            return _client.UnlinkEntryAsync(_command, _command.KeyValues, expression.AsString(_session), linkedEntryKey != null ? linkedEntryKey.ToDictionary() : null, CancellationToken.None);
+        }
+
+        public Task UnlinkEntryAsync(ODataExpression expression, IDictionary<string, object> linkedEntryKey, CancellationToken cancellationToken)
+        {
+            return _client.UnlinkEntryAsync(_command, _command.KeyValues, expression.AsString(_session), linkedEntryKey != null ? linkedEntryKey.ToDictionary() : null, cancellationToken);
+        }
+
+        public Task UnlinkEntryAsync(ODataExpression expression, ODataEntry linkedEntryKey)
+        {
+            return _client.UnlinkEntryAsync(_command, _command.KeyValues, expression.AsString(_session), linkedEntryKey != null ? linkedEntryKey.ToDictionary() : null, CancellationToken.None);
+        }
+
+        public Task UnlinkEntryAsync(ODataExpression expression, ODataEntry linkedEntryKey, CancellationToken cancellationToken)
+        {
+            return _client.UnlinkEntryAsync(_command, _command.KeyValues, expression.AsString(_session), linkedEntryKey != null ? linkedEntryKey.ToDictionary() : null, cancellationToken);
         }
 
         public Task<IEnumerable<T>> ExecuteFunctionAsync(string functionName, IDictionary<string, object> parameters)

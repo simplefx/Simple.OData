@@ -16,7 +16,7 @@ namespace Simple.OData.Client.Tests
         {
             var actual = "bar".EnsureStartsWith("foo");
 
-            actual.ShouldEqual("foobar");
+            Assert.Equal("foobar", actual);
         }
 
         [Fact]
@@ -24,7 +24,7 @@ namespace Simple.OData.Client.Tests
         {
             var actual = "foobar".EnsureStartsWith("foo");
 
-            actual.ShouldEqual("foobar");
+            Assert.Equal("foobar", actual);
         }
     }
 }

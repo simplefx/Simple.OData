@@ -30,7 +30,10 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("OData client library for .NET 4.x, Windows Store, Silverlight 5, Windows Phone 8, Mond for Android and MonoTouch platforms")]
 
 [assembly: InternalsVisibleTo("Simple.OData.Client.Dynamic")]
+[assembly: InternalsVisibleTo("Simple.OData.Client.V3.Adapter")]
+[assembly: InternalsVisibleTo("Simple.OData.Client.V4.Adapter")]
 [assembly: InternalsVisibleTo("Simple.OData.Client.Tests")]
+[assembly: InternalsVisibleTo("Simple.OData.Client.IntegrationTests")]
 [assembly: InternalsVisibleTo("Simple.OData.Client.Tests.Core")]
 [assembly: InternalsVisibleTo("Simple.OData.Client.Tests.Net40")]
 [assembly: InternalsVisibleTo("Simple.OData.Client.Tests.Net45")]

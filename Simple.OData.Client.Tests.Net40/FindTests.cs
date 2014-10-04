@@ -134,6 +134,17 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task SelectMultipleSingleString()
+        {
+            var product = await _client
+                .For("Products")
+                .Select("ProductID, ProductName")
+                .FindEntryAsync();
+            Assert.Contains("ProductName", product.Keys);
+            Assert.Contains("ProductID", product.Keys);
+        }
+
+        [Fact]
         public async Task ExpandOne()
         {
             var product = (await _client
