@@ -6,7 +6,11 @@
     <version>0.0.0.0</version>
     <owners>Vagif Abilov</owners>
     <description>Simple.OData.Client is a multiplatform OData client library supporting .NET 4.x, Windows Store, Windows Phone 8, Silverlight 5, iOS and Android. The adapter provides a great alternative to WCF Data Services client. It does not require generation of context or entity classes and fits RESTful nature of OData services.</description>
-    <summary>Simple.OData.Client is a multiplatform OData client library supporting .NET 4.x, Windows Store, Windows Phone 8, Silverlight 5, iOS and Android. The adapter provides a great alternative to WCF Data Services client. It does not require generation of context or entity classes and fits RESTful nature of OData services.</summary>
+    <summary>
+      Simple.OData.Client is a multiplatform OData client library supporting .NET 4.x, Windows Store, Windows Phone 8, Silverlight 5, iOS and Android. The adapter provides a great alternative to WCF Data Services client. It does not require generation of context or entity classes and fits RESTful nature of OData services.
+      The package Simple.OData.Client contains libraries that can work with OData feeds that implement both V1-3 and V4 OData protocol.
+      Packages Simple.OData.V3.Client and Simple.OData.V4.Client have smaller footprints and target V1-3 and V4 respectively.
+    </summary>
     <projectUrl>https://github.com/object/Simple.OData.Client</projectUrl>
     <licenseUrl>http://www.opensource.org/licenses/mit-license.php</licenseUrl>
     <iconUrl>http://www.odata.org/images/odata128.png</iconUrl>
@@ -15,27 +19,12 @@
     <tags>odata data rest client portable pcl net40 net45 silverlight windows8 winrt win8 wp80 wpa81 mono adnroid ios touch</tags>
     <dependencies>
       <group>
-        <dependency id="Microsoft.Net.Http" version="2.2" />
+        <dependency id="Microsoft.Bcl.Build" version="1.0.14" />
+        <dependency id="Microsoft.Bcl" version="1.1.9" />
+        <dependency id="Microsoft.Bcl.Async" version="1.0.168" />
+        <dependency id="Microsoft.Net.Http" version="2.2.22" />
         <dependency id="Microsoft.Data.OData" version="5.6.2" />
-        <dependency id="Microsoft.OData.Core" version="6.7.0" />
-      </group>
-      <group targetFramework="net40">
-        <dependency id="Microsoft.Bcl.Build" version="1.0.14" />
-        <dependency id="Microsoft.Bcl" version="1.1.9" />
-        <dependency id="Microsoft.Bcl.Async" version="1.0.168" />
-        <dependency id="Microsoft.Net.Http" version="2.2.22" />
-      </group>
-      <group targetFramework="net45">
-        <dependency id="Microsoft.Bcl.Build" version="1.0.14" />
-        <dependency id="Microsoft.Bcl" version="1.1.9" />
-        <dependency id="Microsoft.Bcl.Async" version="1.0.168" />
-        <dependency id="Microsoft.Net.Http" version="2.2.22" />
-      </group>
-      <group targetFramework="sl5">
-        <dependency id="Microsoft.Bcl.Build" version="1.0.14" />
-        <dependency id="Microsoft.Bcl" version="1.1.9" />
-        <dependency id="Microsoft.Bcl.Async" version="1.0.168" />
-        <dependency id="Microsoft.Net.Http" version="2.2.22" />
+        <dependency id="Microsoft.OData.Core" version="[6.7.0]" />
       </group>
     </dependencies>
     <frameworkAssemblies>
