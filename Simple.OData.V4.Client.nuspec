@@ -16,7 +16,6 @@
     <dependencies>
       <group>
         <dependency id="Microsoft.Net.Http" version="2.2" />
-        <dependency id="Microsoft.Data.OData" version="5.6.2" />
         <dependency id="Microsoft.OData.Core" version="6.7.0" />
       </group>
       <group targetFramework="net40">
