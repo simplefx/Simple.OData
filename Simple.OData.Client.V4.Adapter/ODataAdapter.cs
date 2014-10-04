@@ -18,6 +18,11 @@ namespace Simple.OData.Client.V4.Adapter
 
         public override AdapterVersion AdapterVersion { get { return AdapterVersion.V4; } }
 
+        public override ODataPayloadFormat DefaultPayloadFormat
+        {
+            get { return ODataPayloadFormat.Json; }
+        }
+
         public new IEdmModel Model
         {
             get { return base.Model as IEdmModel; }

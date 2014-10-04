@@ -7,6 +7,7 @@ namespace Simple.OData.Client
     public abstract class ODataAdapterBase : IODataAdapter
     {
         public abstract AdapterVersion AdapterVersion { get; }
+        public abstract ODataPayloadFormat DefaultPayloadFormat { get; }
         public string ProtocolVersion { get; set; }
         public object Model { get; set; }
 

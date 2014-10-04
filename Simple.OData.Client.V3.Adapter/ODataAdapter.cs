@@ -16,6 +16,11 @@ namespace Simple.OData.Client.V3.Adapter
 
         public override AdapterVersion AdapterVersion { get { return AdapterVersion.V3; } }
 
+        public override ODataPayloadFormat DefaultPayloadFormat
+        {
+            get { return ODataPayloadFormat.Atom; }
+        }
+
         public new IEdmModel Model
         {
             get { return base.Model as IEdmModel; }

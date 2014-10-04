@@ -29,7 +29,7 @@ namespace Simple.OData.Client
             this.Pluralizer = new SimplePluralizer();
         }
 
-        private Session(string urlBase, ICredentials credentials, ODataPayloadFormat payloadFormat = ODataPayloadFormat.Unspecified)
+        private Session(string urlBase, ICredentials credentials, ODataPayloadFormat payloadFormat)
         {
             _adapterFactory = new AdapterFactory(this);
             _createAdapter = () => _adapterFactory.ParseMetadata(this.MetadataCache.MetadataAsString);
@@ -56,6 +56,9 @@ namespace Simple.OData.Client
                 var adapter = await _adapterFactory.CreateAdapterAsync(response);
                 _createAdapter = () => adapter;
             }
+
+            if (this.PayloadFormat == ODataPayloadFormat.Unspecified)
+                this.PayloadFormat = this.Adapter.DefaultPayloadFormat;
 
             return this.Adapter;
         }

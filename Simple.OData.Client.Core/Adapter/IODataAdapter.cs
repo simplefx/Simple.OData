@@ -6,6 +6,7 @@ namespace Simple.OData.Client
     public interface IODataAdapter
     {
         AdapterVersion AdapterVersion { get; }
+        ODataPayloadFormat DefaultPayloadFormat { get; }
         string ProtocolVersion { get; set; }
         object Model { get; set; }
 
