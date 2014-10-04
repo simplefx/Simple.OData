@@ -31,7 +31,7 @@ namespace Simple.OData.Client
             return clonedStream;
         }
 
-        public static bool NamesAreEqual(string actualName, string requestedName, IPluralizer pluralizer)
+        public static bool NamesMatch(string actualName, string requestedName, IPluralizer pluralizer)
         {
             return actualName.Homogenize() == requestedName.Homogenize()
                    || pluralizer != null && actualName.Homogenize() == pluralizer.Singularize(requestedName).Homogenize()

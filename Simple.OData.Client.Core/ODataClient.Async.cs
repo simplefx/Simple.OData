@@ -428,8 +428,14 @@ namespace Simple.OData.Client
 
             foreach (var associationName in removedLinks)
             {
-                await UnlinkEntryAsync(collection, entryKey, associationName, cancellationToken);
-                if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+                try
+                {
+                    await UnlinkEntryAsync(collection, entryKey, associationName, cancellationToken);
+                    if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+                }
+                catch (Exception)
+                {
+                }
             }
 
             return result;

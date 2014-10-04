@@ -46,7 +46,7 @@ namespace Simple.OData.Client.V3.Adapter
         {
             var entitySet = GetEntitySet(entitySetName);
             var entityType = (_model.FindDirectlyDerivedTypes(entitySet.ElementType)
-                .SingleOrDefault(x => Utils.NamesAreEqual((x as IEdmEntityType).Name, entityTypeName, _session.Pluralizer)) as IEdmEntityType);
+                .SingleOrDefault(x => Utils.NamesMatch((x as IEdmEntityType).Name, entityTypeName, _session.Pluralizer)) as IEdmEntityType);
 
             if (entityType == null)
                 throw new UnresolvableObjectException(entityTypeName, string.Format("Entity type {0} not found", entityTypeName));
@@ -56,7 +56,7 @@ namespace Simple.OData.Client.V3.Adapter
 
         public override string GetEntityTypeExactName(string entityTypeName)
         {
-            var entityType = GetEntityTypes().SingleOrDefault(x => Utils.NamesAreEqual(x.Name, entityTypeName, _session.Pluralizer));
+            var entityType = GetEntityTypes().SingleOrDefault(x => Utils.NamesMatch(x.Name, entityTypeName, _session.Pluralizer));
 
             if (entityType == null)
                 throw new UnresolvableObjectException(entityTypeName, string.Format("Entity type {0} not found", entityTypeName));
@@ -71,7 +71,7 @@ namespace Simple.OData.Client.V3.Adapter
 
         public override bool HasStructuralProperty(string entitySetName, string propertyName)
         {
-            return GetEntityType(entitySetName).StructuralProperties().Any(x => Utils.NamesAreEqual(x.Name, propertyName, _session.Pluralizer));
+            return GetEntityType(entitySetName).StructuralProperties().Any(x => Utils.NamesMatch(x.Name, propertyName, _session.Pluralizer));
         }
 
         public override string GetStructuralPropertyExactName(string entitySetName, string propertyName)
@@ -81,7 +81,7 @@ namespace Simple.OData.Client.V3.Adapter
 
         public override bool HasNavigationProperty(string entitySetName, string propertyName)
         {
-            return GetEntityType(entitySetName).NavigationProperties().Any(x => Utils.NamesAreEqual(x.Name, propertyName, _session.Pluralizer));
+            return GetEntityType(entitySetName).NavigationProperties().Any(x => Utils.NamesMatch(x.Name, propertyName, _session.Pluralizer));
         }
 
         public override string GetNavigationPropertyExactName(string entitySetName, string propertyName)
@@ -142,7 +142,7 @@ namespace Simple.OData.Client.V3.Adapter
             var entitySet = _model.SchemaElements
                 .Where(x => x.SchemaElementKind == EdmSchemaElementKind.EntityContainer)
                 .SelectMany(x => (x as IEdmEntityContainer).EntitySets())
-                .SingleOrDefault(x => Utils.NamesAreEqual(x.Name, entitySetName, _session.Pluralizer));
+                .SingleOrDefault(x => Utils.NamesMatch(x.Name, entitySetName, _session.Pluralizer));
 
             if (entitySet == null)
                 throw new UnresolvableObjectException(entitySetName, string.Format("Entity set {0} not found", entitySetName));
@@ -166,11 +166,11 @@ namespace Simple.OData.Client.V3.Adapter
                 var derivedTypeName = items.Last();
 
                 var entitySet = GetEntitySets()
-                    .SingleOrDefault(x => Utils.NamesAreEqual(x.Name, entitySetName, _session.Pluralizer));
+                    .SingleOrDefault(x => Utils.NamesMatch(x.Name, entitySetName, _session.Pluralizer));
 
                 if (entitySet != null)
                 {
-                    var derivedType = GetEntityTypes().SingleOrDefault(x => Utils.NamesAreEqual(x.Name, derivedTypeName, _session.Pluralizer));
+                    var derivedType = GetEntityTypes().SingleOrDefault(x => Utils.NamesMatch(x.Name, derivedTypeName, _session.Pluralizer));
                     if (derivedType != null)
                     {
                         if (_model.FindDirectlyDerivedTypes(entitySet.ElementType).Contains(derivedType))
@@ -183,11 +183,11 @@ namespace Simple.OData.Client.V3.Adapter
             else
             {
                 var entitySet = GetEntitySets()
-                    .SingleOrDefault(x => Utils.NamesAreEqual(x.Name, entitySetName, _session.Pluralizer));
+                    .SingleOrDefault(x => Utils.NamesMatch(x.Name, entitySetName, _session.Pluralizer));
 
                 if (entitySet == null)
                 {
-                    var derivedType = GetEntityTypes().SingleOrDefault(x => Utils.NamesAreEqual(x.Name, entitySetName, _session.Pluralizer));
+                    var derivedType = GetEntityTypes().SingleOrDefault(x => Utils.NamesMatch(x.Name, entitySetName, _session.Pluralizer));
                     if (derivedType != null)
                     {
                         var baseType = GetEntityTypes()
@@ -207,7 +207,7 @@ namespace Simple.OData.Client.V3.Adapter
         private IEdmStructuralProperty GetStructuralProperty(string entitySetName, string propertyName)
         {
             var property = GetEntityType(entitySetName).StructuralProperties().SingleOrDefault(
-                x => Utils.NamesAreEqual(x.Name, propertyName, _session.Pluralizer));
+                x => Utils.NamesMatch(x.Name, propertyName, _session.Pluralizer));
 
             if (property == null)
                 throw new UnresolvableObjectException(propertyName, string.Format("Structural property {0} not found", propertyName));
@@ -218,7 +218,7 @@ namespace Simple.OData.Client.V3.Adapter
         private IEdmNavigationProperty GetNavigationProperty(string entitySetName, string propertyName)
         {
             var property = GetEntityType(entitySetName).NavigationProperties().SingleOrDefault(
-                x => Utils.NamesAreEqual(x.Name, propertyName, _session.Pluralizer));
+                x => Utils.NamesMatch(x.Name, propertyName, _session.Pluralizer));
 
             if (property == null)
                 throw new UnresolvableObjectException(propertyName, string.Format("Navigation property {0} not found", propertyName));

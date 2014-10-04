@@ -49,7 +49,7 @@ namespace Simple.OData.Client.V3.Adapter
                 var typeProperties = (_model.FindDeclaredType(entry.TypeName) as IEdmEntityType).Properties();
                 entry.Properties = entryDetails.Properties.Select(x => new ODataProperty()
                 {
-                    Name = typeProperties.Single(y => Client.Utils.NamesAreEqual(y.Name, x.Key, _session.Pluralizer)).Name,
+                    Name = typeProperties.Single(y => Client.Utils.NamesMatch(y.Name, x.Key, _session.Pluralizer)).Name,
                     Value = GetPropertyValue(typeProperties, x.Key, x.Value)
                 }).ToList();
 
@@ -162,7 +162,7 @@ namespace Simple.OData.Client.V3.Adapter
         private void WriteLink(ODataWriter entryWriter, Microsoft.Data.OData.ODataEntry entry, string linkName, IEnumerable<ReferenceLink> links)
         {
             var navigationProperty = (_model.FindDeclaredType(entry.TypeName) as IEdmEntityType).NavigationProperties()
-                .Single(x => Client.Utils.NamesAreEqual(x.Name, linkName, _session.Pluralizer));
+                .Single(x => Client.Utils.NamesMatch(x.Name, linkName, _session.Pluralizer));
             bool isCollection = navigationProperty.Partner.Multiplicity() == EdmMultiplicity.Many;
 
             IEdmEntityType linkType;
@@ -196,7 +196,7 @@ namespace Simple.OData.Client.V3.Adapter
                 {
                     var linkSet = _model.EntityContainers()
                         .SelectMany(x => x.EntitySets())
-                        .Single(x => Client.Utils.NamesAreEqual(x.ElementType.Name, linkType.Name, _session.Pluralizer));
+                        .Single(x => Client.Utils.NamesMatch(x.ElementType.Name, linkType.Name, _session.Pluralizer));
                     var formattedKey = _session.Adapter.ConvertKeyToUriLiteral(
                         linkKey.ToDictionary(x => x.Name, x => linkEntry[x.Name]));
                     linkUri = linkSet.Name + formattedKey;
@@ -217,7 +217,7 @@ namespace Simple.OData.Client.V3.Adapter
             if (value == null)
                 return value;
 
-            var property = properties.Single(x => Client.Utils.NamesAreEqual(x.Name, key, _session.Pluralizer));
+            var property = properties.Single(x => Client.Utils.NamesMatch(x.Name, key, _session.Pluralizer));
             switch (property.Type.TypeKind())
             {
                 case EdmTypeKind.Complex:
