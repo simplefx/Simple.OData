@@ -52,13 +52,25 @@ namespace Simple.OData.Client.V4.Adapter
             return httpRequest;
         }
 
-        public override async Task<object> CreateOperationRequestMessageAsync(string method, Uri uri)
+        public override async Task<object> CreateOperationRequestMessageAsync(string method, IDictionary<string, object> entryData, Uri uri)
         {
+            string contentId = null;
+            if (method != RestVerbs.Delete)
+            {
+                contentId = NextContentId();
+                MapContentId(entryData, contentId);
+            }
+
 #if SILVERLIGHT
-            return _batchWriter.CreateOperationRequestMessage(method, uri, null);
+            var message = _batchWriter.CreateOperationRequestMessage(method, uri, contentId);
 #else
-            return await _batchWriter.CreateOperationRequestMessageAsync(method, uri, null);
+            var message = await _batchWriter.CreateOperationRequestMessageAsync(method, uri, contentId);
 #endif
+
+            if (method != RestVerbs.Delete)
+                message.SetHeader(HttpLiteral.ContentId, contentId);
+
+            return message;
         }
     }
 }

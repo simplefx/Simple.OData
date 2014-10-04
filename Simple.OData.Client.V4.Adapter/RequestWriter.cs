@@ -112,13 +112,7 @@ namespace Simple.OData.Client.V4.Adapter
                 await _deferredBatchWriter.Value.StartBatchAsync();
 
             var message = (await _deferredBatchWriter.Value.CreateOperationRequestMessageAsync(
-                method, new Uri(_session.UrlBase + commandText))) as IODataRequestMessage;
-            if (method != RestVerbs.Delete)
-            {
-                var contentId = _deferredBatchWriter.Value.NextContentId();
-                _deferredBatchWriter.Value.MapContentId(entryData, contentId);
-                message.SetHeader(HttpLiteral.ContentId, contentId);
-            }
+                method, entryData, new Uri(_session.UrlBase + commandText))) as IODataRequestMessage;
 
             if (_session.Metadata.EntitySetTypeRequiresOptimisticConcurrencyCheck(collection) &&
                 (method == RestVerbs.Put || method == RestVerbs.Patch || method == RestVerbs.Delete))
