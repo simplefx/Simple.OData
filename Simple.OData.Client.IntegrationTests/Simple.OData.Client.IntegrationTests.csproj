@@ -100,6 +100,7 @@
     <Compile Include="TestBase.cs" />
     <Compile Include="TripPinTestBase.cs" />
     <Compile Include="UpdateODataTests.cs" />
+    <Compile Include="WebApiTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

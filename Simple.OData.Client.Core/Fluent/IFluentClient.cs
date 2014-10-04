@@ -282,18 +282,16 @@ namespace Simple.OData.Client
         /// <summary>
         /// Deletes a link between entries.
         /// </summary>
-        /// <typeparam name="U">The linked entry type.</typeparam>
         /// <param name="linkName">Name of the link.</param>
         /// <returns>Task instance.</returns>
-        Task UnlinkEntryAsync<U>(string linkName);
+        Task UnlinkEntryAsync(string linkName);
         /// <summary>
         /// Deletes a link between entries.
         /// </summary>
-        /// <typeparam name="U">The linked entry type.</typeparam>
         /// <param name="linkName">Name of the link.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task instance.</returns>
-        Task UnlinkEntryAsync<U>(string linkName, CancellationToken cancellationToken);
+        Task UnlinkEntryAsync(string linkName, CancellationToken cancellationToken);
         /// <summary>
         /// Deletes a link between entries.
         /// </summary>

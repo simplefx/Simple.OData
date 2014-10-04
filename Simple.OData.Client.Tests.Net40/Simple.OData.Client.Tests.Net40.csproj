@@ -181,7 +181,6 @@
     <Compile Include="UpdateDynamicTests.cs" />
     <Compile Include="UpdateTests.cs" />
     <Compile Include="UpdateTypedTests.cs" />
-    <Compile Include="WebApiTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
