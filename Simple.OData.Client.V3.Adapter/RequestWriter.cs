@@ -59,8 +59,10 @@ namespace Simple.OData.Client.V3.Adapter
                 {
                     foreach (var link in entryDetails.Links)
                     {
-                        if (link.LinkData != null)
-                            WriteLink(entryWriter, entry, link.LinkName, link.LinkData);
+                        if (link.Value.Any(x => x.LinkData != null))
+                        {
+                            WriteLink(entryWriter, entry, link.Key, link.Value);
+                        }
                     }
                 }
 
@@ -93,11 +95,11 @@ namespace Simple.OData.Client.V3.Adapter
         {
             if (request.ResultRequired)
             {
-                request.Headers.GetOrAdd(HttpLiteral.Prefer, HttpLiteral.ReturnContent);
+                request.Headers.Add(HttpLiteral.Prefer, HttpLiteral.ReturnContent);
             }
             else
             {
-                request.Headers.GetOrAdd(HttpLiteral.Prefer, HttpLiteral.ReturnNoContent);
+                request.Headers.Add(HttpLiteral.Prefer, HttpLiteral.ReturnNoContent);
             }
         }
 
@@ -163,7 +165,7 @@ namespace Simple.OData.Client.V3.Adapter
             return _model.FindDeclaredType(string.Join(".", entityTypeNamespace, entityTypeName)) as IEdmEntityType;
         }
 
-        private void WriteLink(ODataWriter entryWriter, Microsoft.Data.OData.ODataEntry entry, string linkName, object linkData)
+        private void WriteLink(ODataWriter entryWriter, Microsoft.Data.OData.ODataEntry entry, string linkName, IEnumerable<ReferenceLink> links)
         {
             var navigationProperty = (_model.FindDeclaredType(entry.TypeName) as IEdmEntityType).NavigationProperties()
                 .Single(x => Client.Utils.NamesAreEqual(x.Name, linkName, _session.Pluralizer));
@@ -182,33 +184,36 @@ namespace Simple.OData.Client.V3.Adapter
                 Url = new Uri("http://schemas.microsoft.com/ado/2007/08/dataservices/related/" + linkType, UriKind.Absolute),
             });
 
-            var linkKey = linkType.DeclaredKey;
-            var linkEntry = linkData.ToDictionary();
-            string contentId = null;
-            if (_deferredBatchWriter != null)
+            foreach (var referenceLink in links)
             {
-                contentId = _deferredBatchWriter.Value.GetContentId(linkEntry);
-            }
-            string linkUri;
-            if (contentId != null)
-            {
-                linkUri = "$" + contentId;
-            }
-            else
-            {
-                var linkSet = _model.EntityContainers()
-                    .SelectMany(x => x.EntitySets())
-                    .Single(x => Client.Utils.NamesAreEqual(x.ElementType.Name, linkType.Name, _session.Pluralizer));
-                var formattedKey = _session.Adapter.ConvertKeyToUriLiteral(
-                    linkKey.ToDictionary(x => x.Name, x => linkEntry[x.Name]));
-                linkUri = linkSet.Name + formattedKey;
-            }
-            var link = new ODataEntityReferenceLink
-            {
-                Url = Utils.CreateAbsoluteUri(_session.UrlBase, linkUri)
-            };
+                var linkKey = linkType.DeclaredKey;
+                var linkEntry = referenceLink.LinkData.ToDictionary();
+                string contentId = null;
+                if (_deferredBatchWriter != null)
+                {
+                    contentId = _deferredBatchWriter.Value.GetContentId(linkEntry);
+                }
+                string linkUri;
+                if (contentId != null)
+                {
+                    linkUri = "$" + contentId;
+                }
+                else
+                {
+                    var linkSet = _model.EntityContainers()
+                        .SelectMany(x => x.EntitySets())
+                        .Single(x => Client.Utils.NamesAreEqual(x.ElementType.Name, linkType.Name, _session.Pluralizer));
+                    var formattedKey = _session.Adapter.ConvertKeyToUriLiteral(
+                        linkKey.ToDictionary(x => x.Name, x => linkEntry[x.Name]));
+                    linkUri = linkSet.Name + formattedKey;
+                }
+                var link = new ODataEntityReferenceLink
+                {
+                    Url = Utils.CreateAbsoluteUri(_session.UrlBase, linkUri)
+                };
 
-            entryWriter.WriteEntityReferenceLink(link);
+                entryWriter.WriteEntityReferenceLink(link);
+            }
 
             entryWriter.WriteEnd();
         }

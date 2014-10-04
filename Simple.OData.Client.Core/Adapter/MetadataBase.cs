@@ -70,12 +70,19 @@ namespace Simple.OData.Client
                 {
                     if (this.IsNavigationPropertyMultiple(collectionName, item.Key))
                     {
-                        var collection = item.Value as IEnumerable<object>;
-                        if (collection != null)
+                        if (item.Value == null)
                         {
-                            foreach (var element in collection)
+                            entryDetails.AddLink(item.Key, null, contentId);
+                        }
+                        else
+                        {
+                            var collection = item.Value as IEnumerable<object>;
+                            if (collection != null)
                             {
-                                entryDetails.AddLink(item.Key, element, contentId);
+                                foreach (var element in collection)
+                                {
+                                    entryDetails.AddLink(item.Key, element, contentId);
+                                }
                             }
                         }
                     }

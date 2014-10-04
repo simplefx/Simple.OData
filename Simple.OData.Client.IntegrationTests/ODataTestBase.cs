@@ -9,7 +9,7 @@ namespace Simple.OData.Client.Tests
 {
     public abstract class ODataTestBase : TestBase
     {
-        protected int _version;
+        protected readonly int _version;
 
         protected ODataTestBase(string serviceUri, ODataPayloadFormat payloadFormat, int version)
             : base(serviceUri, payloadFormat)
@@ -28,7 +28,7 @@ namespace Simple.OData.Client.Tests
             {
                 return x => _version == 2 
                 ? x[ProductCategoryName] as IDictionary<string, object>
-                : (x[ProductCategoryName] as IEnumerable<object>).First() as IDictionary<string, object>;
+                : (x[ProductCategoryName] as IEnumerable<object>).Last() as IDictionary<string, object>;
             }
         }
 
@@ -92,13 +92,19 @@ namespace Simple.OData.Client.Tests
             return entry;
         }
 
-        protected Entry CreateCategory(int categoryId, string categoryName)
+        protected Entry CreateCategory(int categoryId, string categoryName, IEnumerable<IDictionary<string, object>> products = null)
         {
-            return new Entry()
+            var entry = new Entry()
             {
                 {"ID", categoryId},
                 {"Name", categoryName},
             };
+
+            if (products != null)
+            {
+                entry.Add("Products", products);
+            }
+            return entry;
         }
 
         protected override async Task DeleteTestData()

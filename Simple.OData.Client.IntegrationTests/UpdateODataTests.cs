@@ -205,31 +205,32 @@ namespace Simple.OData.Client.Tests
             Assert.Equal(category2["ID"], ProductCategoryFunc(product)["ID"]);
         }
 
-        [Fact]
-        public async Task RemoveSingleAssociation()
-        {
-            var category = await _client
-                .For("Categories")
-                .Set(CreateCategory(2016, "Test5"))
-                .InsertEntryAsync();
-            var product = await _client
-                .For("Products")
-                .Set(CreateProduct(2017, "Test6", category))
-                .InsertEntryAsync();
+        // Not supported for one-to-many relationships
+        //[Fact]
+        //public async Task RemoveSingleAssociation()
+        //{
+        //    var category = await _client
+        //        .For("Categories")
+        //        .Set(CreateCategory(2016, "Test5"))
+        //        .InsertEntryAsync();
+        //    var product = await _client
+        //        .For("Products")
+        //        .Set(CreateProduct(2017, "Test6", category))
+        //        .InsertEntryAsync();
 
-            await _client
-                .For("Products")
-                .Key(product["ID"])
-                .Set(new Entry { { ProductCategoryName, null } })
-                .UpdateEntryAsync();
+        //    await _client
+        //        .For("Products")
+        //        .Key(product["ID"])
+        //        .Set(new Entry { { ProductCategoryName, null } })
+        //        .UpdateEntryAsync();
 
-            product = await _client
-                .For("Products")
-                .Key(product["ID"])
-                .Expand(ProductCategoryName)
-                .FindEntryAsync();
-            Assert.Null(product[ProductCategoryName]);
-        }
+        //    product = await _client
+        //        .For("Products")
+        //        .Key(product["ID"])
+        //        .Expand(ProductCategoryName)
+        //        .FindEntryAsync();
+        //    Assert.Null(product[ProductCategoryName]);
+        //}
 
         [Fact]
         public async Task UpdateMultipleAssociations()
@@ -253,18 +254,12 @@ namespace Simple.OData.Client.Tests
                 .Set(new { Products = new[] { product1, product2 } })
                 .UpdateEntryAsync();
 
-            product1 = await _client
-                .For("Products")
-                .Key(product1["ID"])
-                .Expand(ProductCategoryName)
+            category = await _client
+                .For("Categories")
+                .Key(category["ID"])
+                .Expand("Products")
                 .FindEntryAsync();
-            Assert.Equal(category["ID"], ProductCategoryFunc(product1)["ID"]);
-            product2 = await _client
-                .For("Products")
-                .Key(product2["ID"])
-                .Expand(ProductCategoryName)
-                .FindEntryAsync();
-            Assert.Equal(category["ID"], ProductCategoryFunc(product2)["ID"]);
+            Assert.Equal(2, (category["Products"] as IEnumerable<object>).Count());
         }
     }
 }

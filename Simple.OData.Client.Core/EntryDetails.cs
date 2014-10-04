@@ -12,10 +12,10 @@ namespace Simple.OData.Client
     public class EntryDetails
     {
         private readonly IDictionary<string, object> _properties = new Dictionary<string, object>();
-        private readonly List<ReferenceLink> _links = new List<ReferenceLink>();
+        private readonly IDictionary<string, List<ReferenceLink>> _links = new Dictionary<string, List<ReferenceLink>>();
 
         public IDictionary<string, object> Properties { get { return _properties; } }
-        public IEnumerable<ReferenceLink> Links { get { return _links; } }
+        public IDictionary<string, List<ReferenceLink>> Links { get { return _links; } }
 
         public void AddProperty(string propertyName, object propertyValue)
         {
@@ -24,7 +24,13 @@ namespace Simple.OData.Client
 
         public void AddLink(string linkName, object linkData, string contentId = null)
         {
-            _links.Add(new ReferenceLink() {LinkName = linkName, LinkData = linkData, ContentId = contentId});
+            List<ReferenceLink> links;
+            if (!_links.TryGetValue(linkName, out links))
+            {
+                links = new List<ReferenceLink>();
+                _links.Add(linkName, links);
+            }
+            links.Add(new ReferenceLink() { LinkName = linkName, LinkData = linkData, ContentId = contentId });
         }
     }
 }

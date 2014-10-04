@@ -49,7 +49,7 @@ namespace Simple.OData.Client
         public bool ReturnsScalarResult { get; set; }
         public bool ResultRequired { get; set; }
         public bool CheckOptimisticConcurrency { get; set; }
-        public readonly SimpleDictionary<string, string> Headers = new SimpleDictionary<string, string>();
+        public readonly IDictionary<string, string> Headers = new Dictionary<string, string>();
 
         internal ODataRequest(string method, ISession session, string commandText)
         {

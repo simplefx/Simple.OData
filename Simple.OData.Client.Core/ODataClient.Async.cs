@@ -422,7 +422,7 @@ namespace Simple.OData.Client
             var entryDetails = _session.Metadata.ParseEntryDetails(entityCollection.ActualName, entryData);
 
             var removedLinks = entryDetails.Links
-                .Where(x => x.LinkData == null)
+                .SelectMany(x => x.Value.Where(y => y.LinkData == null))
                 .Select(x => _session.Metadata.GetNavigationPropertyExactName(entityCollection.ActualName, x.LinkName))
                 .ToList();
 
