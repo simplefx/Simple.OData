@@ -8,6 +8,7 @@ using Entry = System.Collections.Generic.Dictionary<string, object>;
 
 namespace Simple.OData.Client.Tests
 {
+#if ODATA_V3
     public class FindNorthwindTestsV2Atom : FindNorthwindTests
     {
         public FindNorthwindTestsV2Atom() : base(NorthwindV2ReadOnlyUri, ODataPayloadFormat.Atom) {}
@@ -27,11 +28,14 @@ namespace Simple.OData.Client.Tests
     {
         public FindNorthwindTestsV3Json() : base(NorthwindV3ReadOnlyUri, ODataPayloadFormat.Json) { }
     }
+#endif
 
+#if ODATA_V3
     public class FindNorthwindTestsV4Json : FindNorthwindTests
     {
         public FindNorthwindTestsV4Json() : base(NorthwindV4ReadOnlyUri, ODataPayloadFormat.Json) { }
     }
+#endif
 
     public abstract class FindNorthwindTests : TestBase
     {

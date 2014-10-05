@@ -5,7 +5,11 @@
     <authors>Vagif Abilov</authors>
     <version>0.0.0.0</version>
     <owners>Vagif Abilov</owners>
-    <description>Simple.OData.Client is a multiplatform OData client library supporting .NET 4.x, Windows Store, Windows Phone 8, Silverlight 5, iOS and Android. The adapter provides a great alternative to WCF Data Services client. It does not require generation of context or entity classes and fits RESTful nature of OData services.</description>
+    <description>
+      Simple.OData.V4.Client is a multiplatform OData client library supporting .NET 4.x, Windows Store, Windows Phone 8, Silverlight 5, iOS and Android. The adapter provides a great alternative to WCF Data Services client. It does not require generation of context or entity classes and fits RESTful nature of OData services.
+      The package Simple.OData.V4.Client contains libraries that can work with OData feeds that implement V4 OData protocol.
+      To access V3 OData feeds use Simple.OData.V4.Client or Simple.OData.Client that can consume OData feeds of any version.
+    </description>
     <summary>
       Simple.OData.V4.Client is a multiplatform OData client library supporting .NET 4.x, Windows Store, Windows Phone 8, Silverlight 5, iOS and Android. The adapter provides a great alternative to WCF Data Services client. It does not require generation of context or entity classes and fits RESTful nature of OData services.
       The package Simple.OData.V4.Client contains libraries that can work with OData feeds that implement V4 OData protocol.
@@ -35,5 +39,6 @@
     <file src="Simple.OData.Client.Core\bin\Release\Simple.OData.Client.Core.xml" target="lib\portable-net45+wp80+wpa81+win+MonoAndroid10+MonoTouch10\Simple.OData.Client.Core.xml" />
     <file src="Simple.OData.Client.Dynamic\bin\Release\Simple.OData.Client.Dynamic.dll" target="lib\portable-net45+wp80+wpa81+win+MonoAndroid10+MonoTouch10\Simple.OData.Client.Dynamic.dll" />
     <file src="Simple.OData.Client.Dynamic\bin\Release\Simple.OData.Client.Dynamic.xml" target="lib\portable-net45+wp80+wpa81+win+MonoAndroid10+MonoTouch10\Simple.OData.Client.Dynamic.xml" />
+    <file src="Simple.OData.Client.V4.Adapter\bin\Release\Simple.OData.Client.V4.Adapter.dll" target="lib\portable-net45+wp80+wpa81+win+MonoAndroid10+MonoTouch10\Simple.OData.Client.V4.Adapter.dll" />
   </files>
 </package>

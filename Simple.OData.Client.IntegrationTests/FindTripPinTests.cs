@@ -5,10 +5,12 @@ using Xunit;
 
 namespace Simple.OData.Client.Tests
 {
+#if ODATA_V4
     public class FindTripPinTestsV4Json : FindTripPinTests
     {
         public FindTripPinTestsV4Json() : base(TripPinV4ReadWriteUri, ODataPayloadFormat.Json) { }
     }
+#endif
 
     class Airline
     {
