@@ -41,8 +41,8 @@ namespace Simple.OData.Client.V4.Adapter
                 var contentId = _deferredBatchWriter != null ? _deferredBatchWriter.Value.GetContentId(entryData) : null;
                 var entityCollection = _session.Metadata.GetConcreteEntityCollection(collection);
                 var entryDetails = _session.Metadata.ParseEntryDetails(entityCollection.ActualName, entryData, contentId);
-                var entityTypeNamespace = _session.Metadata.GetEntitySetTypeNamespace(collection);
-                var entityTypeName = _session.Metadata.GetEntitySetTypeName(collection);
+                var entityTypeNamespace = _session.Metadata.GetEntityCollectionTypeNamespace(collection);
+                var entityTypeName = _session.Metadata.GetEntityCollectionTypeName(collection);
 
                 var entryWriter = messageWriter.CreateODataEntryWriter();
                 var entry = new Microsoft.OData.Core.ODataEntry();
@@ -114,7 +114,7 @@ namespace Simple.OData.Client.V4.Adapter
             var message = (await _deferredBatchWriter.Value.CreateOperationRequestMessageAsync(
                 method, entryData, new Uri(_session.UrlBase + commandText))) as IODataRequestMessage;
 
-            if (_session.Metadata.EntitySetTypeRequiresOptimisticConcurrencyCheck(collection) &&
+            if (_session.Metadata.EntityCollectionTypeRequiresOptimisticConcurrencyCheck(collection) &&
                 (method == RestVerbs.Put || method == RestVerbs.Patch || method == RestVerbs.Delete))
             {
                 message.SetHeader(HttpLiteral.IfMatch, EntityTagHeaderValue.Any.Tag);
@@ -125,8 +125,8 @@ namespace Simple.OData.Client.V4.Adapter
 
         private IEdmEntityType FindEntityType(string collection)
         {
-            var entityTypeNamespace = _session.Metadata.GetEntitySetTypeNamespace(collection);
-            var entityTypeName = _session.Metadata.GetEntitySetTypeName(collection);
+            var entityTypeNamespace = _session.Metadata.GetEntityCollectionTypeNamespace(collection);
+            var entityTypeName = _session.Metadata.GetEntityCollectionTypeName(collection);
             return _model.FindDeclaredType(string.Join(".", entityTypeNamespace, entityTypeName)) as IEdmEntityType;
         }
 

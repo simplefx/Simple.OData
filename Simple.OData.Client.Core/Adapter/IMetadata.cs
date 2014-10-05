@@ -4,10 +4,15 @@ namespace Simple.OData.Client
 {
     public interface IMetadata
     {
-        string GetEntitySetExactName(string entitySetName);
-        string GetEntitySetTypeName(string entitySetName);
-        string GetEntitySetTypeNamespace(string entitySetName);
-        bool EntitySetTypeRequiresOptimisticConcurrencyCheck(string entitySetName);
+        EntityCollection GetEntityCollection(string collectionName);
+        EntityCollection GetBaseEntityCollection(string collectionPath);
+        EntityCollection GetConcreteEntityCollection(string collectionPath);
+        EntityCollection GetDerivedEntityCollection(EntityCollection baseCollection, string entityTypeName);
+
+        string GetEntityCollectionExactName(string collectionName);
+        string GetEntityCollectionTypeName(string collectionName);
+        string GetEntityCollectionTypeNamespace(string collectionName);
+        bool EntityCollectionTypeRequiresOptimisticConcurrencyCheck(string collectionName);
 
         string GetEntityTypeExactName(string entityTypeName);
 
@@ -22,11 +27,6 @@ namespace Simple.OData.Client
         bool IsNavigationPropertyMultiple(string entitySetName, string propertyName);
 
         string GetFunctionExactName(string functionName);
-
-        EntityCollection GetEntityCollection(string entitySetName);
-        EntityCollection GetBaseEntityCollection(string entitySetPath);
-        EntityCollection GetConcreteEntityCollection(string entitySetPath);
-        EntityCollection GetDerivedEntityCollection(EntityCollection baseEntityCollection, string entityTypeName);
 
         EntryDetails ParseEntryDetails(string collectionName, IDictionary<string, object> entryData, string contentId = null);
     }

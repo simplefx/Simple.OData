@@ -168,6 +168,10 @@ namespace Simple.OData.Client.V4.Adapter
                 return (value as ODataCollectionValue).Items.Cast<object>()
                     .Select(GetPropertyValue).ToList();
             }
+            else if (value is ODataEnumValue)
+            {
+                return (value as ODataEnumValue).Value;
+            }
             else
             {
                 return value;

@@ -16,52 +16,51 @@ namespace Simple.OData.Client.V3.Adapter
             _model = model;
         }
 
-        public override IEnumerable<string> GetEntitySetNames()
+        public override IEnumerable<string> GetEntityCollectionNames()
         {
             return GetEntitySets().Select(x => x.Name);
         }
 
-        public override string GetEntitySetExactName(string entitySetName)
+        public override string GetEntityCollectionExactName(string collectionName)
         {
-            return GetEntitySet(entitySetName).Name;
+            return GetEntitySet(collectionName).Name;
         }
 
-        public override string GetEntitySetTypeName(string entitySetName)
+        public override string GetEntityCollectionTypeName(string collectionName)
         {
-            return GetEntityType(entitySetName).Name;
+            return GetEntityType(collectionName).Name;
         }
 
-        public override string GetEntitySetTypeNamespace(string entitySetName)
+        public override string GetEntityCollectionTypeNamespace(string collectionName)
         {
-            return GetEntityType(entitySetName).Namespace;
+            return GetEntityType(collectionName).Namespace;
         }
 
-        public override bool EntitySetTypeRequiresOptimisticConcurrencyCheck(string entitySetName)
+        public override bool EntityCollectionTypeRequiresOptimisticConcurrencyCheck(string collectionName)
         {
-            return GetEntityType(entitySetName).StructuralProperties()
+            return GetEntityType(collectionName).StructuralProperties()
                 .Any(x => x.ConcurrencyMode == EdmConcurrencyMode.Fixed);
         }
 
-        public override string GetDerivedEntityTypeExactName(string entitySetName, string entityTypeName)
+        public override string GetDerivedEntityTypeExactName(string collectionName, string entityTypeName)
         {
-            var entitySet = GetEntitySet(entitySetName);
+            var entitySet = GetEntitySet(collectionName);
             var entityType = (_model.FindDirectlyDerivedTypes(entitySet.ElementType)
                 .SingleOrDefault(x => Utils.NamesMatch((x as IEdmEntityType).Name, entityTypeName, _session.Pluralizer)) as IEdmEntityType);
 
-            if (entityType == null)
-                throw new UnresolvableObjectException(entityTypeName, string.Format("Entity type {0} not found", entityTypeName));
+            if (entityType != null)
+                return entityType.Name;
 
-            return entityType.Name;
+            throw new UnresolvableObjectException(entityTypeName, string.Format("Entity type {0} not found", entityTypeName));
         }
 
         public override string GetEntityTypeExactName(string entityTypeName)
         {
             var entityType = GetEntityTypes().SingleOrDefault(x => Utils.NamesMatch(x.Name, entityTypeName, _session.Pluralizer));
+            if (entityType != null)
+                return entityType.Name;
 
-            if (entityType == null)
-                throw new UnresolvableObjectException(entityTypeName, string.Format("Entity type {0} not found", entityTypeName));
-
-            return entityType.Name;
+            throw new UnresolvableObjectException(entityTypeName, string.Format("Entity type {0} not found", entityTypeName));
         }
 
         public override IEnumerable<string> GetStructuralPropertyNames(string entitySetName)
@@ -167,7 +166,6 @@ namespace Simple.OData.Client.V3.Adapter
 
                 var entitySet = GetEntitySets()
                     .SingleOrDefault(x => Utils.NamesMatch(x.Name, entitySetName, _session.Pluralizer));
-
                 if (entitySet != null)
                 {
                     var derivedType = GetEntityTypes().SingleOrDefault(x => Utils.NamesMatch(x.Name, derivedTypeName, _session.Pluralizer));
@@ -177,31 +175,25 @@ namespace Simple.OData.Client.V3.Adapter
                             return derivedType;
                     }
                 }
-
-                throw new UnresolvableObjectException(entitySetName, string.Format("Entity set {0} not found", entitySetName));
             }
             else
             {
                 var entitySet = GetEntitySets()
                     .SingleOrDefault(x => Utils.NamesMatch(x.Name, entitySetName, _session.Pluralizer));
+                if (entitySet != null)
+                    return entitySet.ElementType;
 
-                if (entitySet == null)
+                var derivedType = GetEntityTypes().SingleOrDefault(x => Utils.NamesMatch(x.Name, entitySetName, _session.Pluralizer));
+                if (derivedType != null)
                 {
-                    var derivedType = GetEntityTypes().SingleOrDefault(x => Utils.NamesMatch(x.Name, entitySetName, _session.Pluralizer));
-                    if (derivedType != null)
-                    {
-                        var baseType = GetEntityTypes()
-                            .SingleOrDefault(x => _model.FindDirectlyDerivedTypes(x).Contains(derivedType));
-                        if (baseType != null && GetEntitySets().SingleOrDefault(x => x.ElementType == baseType) != null)
-                            return derivedType;
-                    }
+                    var baseType = GetEntityTypes()
+                        .SingleOrDefault(x => _model.FindDirectlyDerivedTypes(x).Contains(derivedType));
+                    if (baseType != null && GetEntitySets().SingleOrDefault(x => x.ElementType == baseType) != null)
+                        return derivedType;
                 }
-
-                if (entitySet == null)
-                    throw new UnresolvableObjectException(entitySetName, string.Format("Entity set {0} not found", entitySetName));
-
-                return entitySet.ElementType;
             }
+
+            throw new UnresolvableObjectException(entitySetName, string.Format("Entity set {0} not found", entitySetName));
         }
 
         private IEdmStructuralProperty GetStructuralProperty(string entitySetName, string propertyName)

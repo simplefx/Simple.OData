@@ -442,8 +442,8 @@ namespace Simple.OData.Client
             string commandText = string.Empty;
             if (!string.IsNullOrEmpty(_collectionName))
             {
-                var entitySetName = _session.Metadata.GetEntitySetExactName(_collectionName);
-                var entityTypeNamespace = _session.Metadata.GetEntitySetTypeNamespace(_collectionName);
+                var entitySetName = _session.Metadata.GetEntityCollectionExactName(_collectionName);
+                var entityTypeNamespace = _session.Metadata.GetEntityCollectionTypeNamespace(_collectionName);
                 commandText += entitySetName;
                 if (!string.IsNullOrEmpty(_derivedCollectionName))
                     commandText += "/" + string.Join(".",

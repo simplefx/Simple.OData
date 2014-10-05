@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Spatial;
 using Xunit;
@@ -11,6 +12,28 @@ namespace Simple.OData.Client.Tests
         public FindTripPinTestsV4Json() : base(TripPinV4ReadWriteUri, ODataPayloadFormat.Json) { }
     }
 #endif
+
+    enum PersonGender
+    {
+        Male,
+        Female,
+        Unknown,
+    }
+
+    class Person
+    {
+        public string UserName { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string[] Emails { get; set; }
+        public List<Location> AddressInfo { get; set; }
+        public PersonGender Gender { get; set; }
+        public long Concurrency { get; set; }
+
+        public IEnumerable<Person> Friends { get; set; }
+        // TODO trips
+        // TODO photo
+    }
 
     class Airline
     {
@@ -47,6 +70,27 @@ namespace Simple.OData.Client.Tests
     public abstract class FindTripPinTests : TripPinTestBase
     {
         protected FindTripPinTests(string serviceUri, ODataPayloadFormat payloadFormat) : base(serviceUri, payloadFormat) {}
+
+        [Fact]
+        public async Task AllPeople()
+        {
+            var people = await _client
+                .For<Person>("People")
+                .FindEntriesAsync();
+            Assert.Equal(8, people.Count());
+        }
+
+        [Fact]
+        public async Task Me()
+        {
+            var person = await _client
+                .For<Person>("Me")
+                .FindEntryAsync();
+            Assert.Equal("aprilcline", person.UserName);
+            Assert.Equal(2, person.Emails.Count());
+            Assert.Equal("Lander", person.AddressInfo.Single().City.Name);
+            Assert.Equal(PersonGender.Female, person.Gender);
+        }
 
         [Fact]
         public async Task AllAirlines()

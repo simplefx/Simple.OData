@@ -30,7 +30,7 @@ namespace Simple.OData.Client.Tests
     }
 #endif
 
-#if ODATA_V3
+#if ODATA_V4
     public class FindNorthwindTestsV4Json : FindNorthwindTests
     {
         public FindNorthwindTestsV4Json() : base(NorthwindV4ReadOnlyUri, ODataPayloadFormat.Json) { }

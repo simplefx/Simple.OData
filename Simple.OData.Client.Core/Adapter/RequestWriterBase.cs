@@ -48,7 +48,7 @@ namespace Simple.OData.Client
                 merge ? RestVerbs.Patch : RestVerbs.Put, collection, entryData, entryIdent);
 
             var updateMethod = merge ? RestVerbs.Patch : RestVerbs.Put;
-            var checkOptimisticConcurrency = _session.Metadata.EntitySetTypeRequiresOptimisticConcurrencyCheck(collection);
+            var checkOptimisticConcurrency = _session.Metadata.EntityCollectionTypeRequiresOptimisticConcurrencyCheck(collection);
             var request = new ODataRequest(updateMethod, _session, entryIdent, entryData, entryContent)
             {
                 ResultRequired = resultRequired,
@@ -65,7 +65,7 @@ namespace Simple.OData.Client
 
             var request = new ODataRequest(RestVerbs.Delete, _session, entryIdent)
             {
-                CheckOptimisticConcurrency = _session.Metadata.EntitySetTypeRequiresOptimisticConcurrencyCheck(collection)
+                CheckOptimisticConcurrency = _session.Metadata.EntityCollectionTypeRequiresOptimisticConcurrencyCheck(collection)
             };
             AssignHeaders(request);
             return request;
