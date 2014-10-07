@@ -217,7 +217,7 @@ namespace Simple.OData.Client.V4.Adapter
             switch (property.Type.TypeKind())
             {
                 case EdmTypeKind.Complex:
-                    value = new ODataComplexValue()
+                    return new ODataComplexValue()
                     {
                         TypeName = property.Type.FullName(),
                         Properties = (value as IDictionary<string, object>).Select(x => new ODataProperty()
@@ -229,7 +229,7 @@ namespace Simple.OData.Client.V4.Adapter
                     break;
 
                 case EdmTypeKind.Collection:
-                    value = new ODataCollectionValue()
+                    return new ODataCollectionValue()
                     {
                         TypeName = property.Type.FullName(),
                         Items = (value as IEnumerable<object>).Select(x => GetPropertyValue(
@@ -249,12 +249,14 @@ namespace Simple.OData.Client.V4.Adapter
                         }
                         throw new FormatException(string.Format("Unable to convert value of type {0} to OData type {1}", value.GetType(), property.Type));
                     }
-                    break;
+                    return value;
+
+                case EdmTypeKind.Enum:
+                    return new ODataEnumValue(value.ToString());
 
                 default:
                     return value;
             }
-            return value;
         }
 
         private static readonly Dictionary<Type, EdmPrimitiveTypeKind> _typeMap = new[]
