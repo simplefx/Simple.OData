@@ -50,8 +50,22 @@ namespace Simple.OData.Client.V4.Adapter
 
         public override bool EntityCollectionTypeRequiresOptimisticConcurrencyCheck(string collectionName)
         {
-            return GetEntityType(collectionName).StructuralProperties()
-                .Any(x => x.ConcurrencyMode == EdmConcurrencyMode.Fixed);
+            IEdmEntitySet entitySet;
+            IEdmSingleton singleton;
+            IEdmVocabularyAnnotatable annotatable = null;
+            if (TryGetEntitySet(collectionName, out entitySet))
+            {
+                annotatable = entitySet;
+            }
+            else if (TryGetSingleton(collectionName, out singleton))
+            {
+                annotatable = singleton;
+            }
+            else
+            {
+                return false;
+            }
+            return annotatable.VocabularyAnnotations(_model).Any(x => x.Term.Name == "OptimisticConcurrency");
         }
 
         public override string GetDerivedEntityTypeExactName(string collectionName, string entityTypeName)
@@ -113,7 +127,11 @@ namespace Simple.OData.Client.V4.Adapter
 
         public override string GetNavigationPropertyPartnerName(string entitySetName, string propertyName)
         {
-            return (GetNavigationProperty(entitySetName, propertyName).Partner.DeclaringType as IEdmEntityType).Name;
+            var navigationProperty = GetNavigationProperty(entitySetName, propertyName);
+            var entityType = navigationProperty.Type.Definition.TypeKind == EdmTypeKind.Collection
+                ? (navigationProperty.Type.Definition as IEdmCollectionType).ElementType.Definition as IEdmEntityType
+                : navigationProperty.Type.Definition as IEdmEntityType;
+            return entityType.Name;
         }
 
         public override bool IsNavigationPropertyMultiple(string entitySetName, string propertyName)

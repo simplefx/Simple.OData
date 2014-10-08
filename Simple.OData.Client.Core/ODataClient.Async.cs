@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
+using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
@@ -348,9 +349,7 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var request = await _requestBuilder.CreateGetRequestAsync(entryIdent);
-            return await ExecuteRequestWithResultAsync(request, cancellationToken,
-                x => x.Entry,
-                () => null);
+            return await ExecuteRequestWithResultAsync(request, cancellationToken, x => x.Entry, () => null);
         }
 
         public Task<IDictionary<string, object>> InsertEntryAsync(string collection, IDictionary<string, object> entryData)
@@ -378,12 +377,18 @@ namespace Simple.OData.Client
             var request = await _requestBuilder.CreateInsertRequestAsync(collection, entryData, resultRequired);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            return await ExecuteRequestWithResultAsync(request, cancellationToken,
-                            x => x.Entry,
-                            () => null,
-                            () => request.EntryData);
-
+            var result = await ExecuteRequestWithResultAsync(request, cancellationToken, 
+                x => x.Entry, () => null, () => request.EntryData);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+            if (result == null && resultRequired && 
+                _session.Metadata.GetDeclaredKeyPropertyNames(collection).All(entryData.ContainsKey))
+            {
+                result = await this.GetEntryAsync(collection, entryData, cancellationToken);
+                if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+            }
+
+            return result;
         }
 
         public Task<IDictionary<string, object>> UpdateEntryAsync(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
@@ -417,6 +422,23 @@ namespace Simple.OData.Client
 
             var result = await ExecuteRequestWithResultAsync(request, cancellationToken, x => x.Entry);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+            if (result == null && resultRequired)
+            {
+                try
+                {
+                    var updatedKey = entryKey.Where(x => !entryData.ContainsKey(x.Key)).ToIDictionary();
+                    foreach (var item in entryData.Where(x => entryKey.ContainsKey(x.Key)))
+                    {
+                        updatedKey.Add(item);
+                    }
+                    result = await this.GetEntryAsync(collection, updatedKey, cancellationToken);
+                    if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+                }
+                catch (Exception)
+                {
+                }
+            }
 
             var entityCollection = this.Session.Metadata.GetConcreteEntityCollection(collection);
             var entryDetails = _session.Metadata.ParseEntryDetails(entityCollection.ActualName, entryData);

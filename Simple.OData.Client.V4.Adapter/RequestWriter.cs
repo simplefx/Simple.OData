@@ -136,11 +136,7 @@ namespace Simple.OData.Client.V4.Adapter
                 .Single(x => Utils.NamesMatch(x.Name, linkName, _session.Pluralizer));
             bool isCollection = navigationProperty.Partner.TargetMultiplicity() == EdmMultiplicity.Many;
 
-            IEdmEntityType linkType;
-            if (navigationProperty.Type.Definition.TypeKind == EdmTypeKind.Collection)
-                linkType = (navigationProperty.Type.Definition as IEdmCollectionType).ElementType.Definition as IEdmEntityType;
-            else
-                linkType = navigationProperty.Type.Definition as IEdmEntityType;
+            var linkType = GetNavigationPropertyEntityType(navigationProperty);
 
             entryWriter.WriteStart(new ODataNavigationLink()
             {
@@ -182,6 +178,14 @@ namespace Simple.OData.Client.V4.Adapter
             }
 
             entryWriter.WriteEnd();
+        }
+
+        private static IEdmEntityType GetNavigationPropertyEntityType(IEdmNavigationProperty navigationProperty)
+        {
+            if (navigationProperty.Type.Definition.TypeKind == EdmTypeKind.Collection)
+                return (navigationProperty.Type.Definition as IEdmCollectionType).ElementType.Definition as IEdmEntityType;
+            else
+                return navigationProperty.Type.Definition as IEdmEntityType;
         }
 
         private ODataMessageWriterSettings GetWriterSettings()

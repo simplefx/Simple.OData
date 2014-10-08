@@ -90,7 +90,11 @@ namespace Simple.OData.Client.V3.Adapter
 
         public override string GetNavigationPropertyPartnerName(string entitySetName, string propertyName)
         {
-            return (GetNavigationProperty(entitySetName, propertyName).Partner.DeclaringType as IEdmEntityType).Name;
+            var navigationProperty = GetNavigationProperty(entitySetName, propertyName);
+            var entityType = navigationProperty.Type.Definition.TypeKind == EdmTypeKind.Collection
+                ? (navigationProperty.Type.Definition as IEdmCollectionType).ElementType.Definition as IEdmEntityType
+                : navigationProperty.Type.Definition as IEdmEntityType;
+            return entityType.Name;
         }
 
         public override bool IsNavigationPropertyMultiple(string entitySetName, string propertyName)
