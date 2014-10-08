@@ -6,7 +6,6 @@ namespace Simple.OData.Client
 {
     public abstract class MetadataBase : IMetadata
     {
-        public abstract IEnumerable<string> GetEntityCollectionNames();
         public abstract string GetEntityCollectionExactName(string collectionName);
         public abstract string GetEntityCollectionTypeName(string collectionName);
         public abstract string GetEntityCollectionTypeNamespace(string collectionName);

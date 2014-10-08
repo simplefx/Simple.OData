@@ -16,13 +16,20 @@ namespace Simple.OData.Client.V3.Adapter
             _model = model;
         }
 
-        public override IEnumerable<string> GetEntityCollectionNames()
-        {
-            return GetEntitySets().Select(x => x.Name);
-        }
-
         public override string GetEntityCollectionExactName(string collectionName)
         {
+            IEdmEntitySet entitySet;
+            IEdmEntityType entityType;
+            if (TryGetEntitySet(collectionName, out entitySet))
+            {
+                return entitySet.Name;
+            }
+            else if (TryGetEntityType(collectionName, out entityType))
+            {
+                return entityType.Name;
+            }
+
+            throw new UnresolvableObjectException(collectionName, string.Format("Entity collection {0} not found", collectionName));
             return GetEntitySet(collectionName).Name;
         }
 
@@ -139,18 +146,24 @@ namespace Simple.OData.Client.V3.Adapter
 
         private IEdmEntitySet GetEntitySet(string entitySetName)
         {
+            IEdmEntitySet entitySet;
+            if (TryGetEntitySet(entitySetName, out entitySet))
+                return entitySet;
+
+            throw new UnresolvableObjectException(entitySetName, string.Format("Entity set {0} not found", entitySetName));
+        }
+
+        private bool TryGetEntitySet(string entitySetName, out IEdmEntitySet entitySet)
+        {
             if (entitySetName.Contains("/"))
                 entitySetName = entitySetName.Split('/').First();
 
-            var entitySet = _model.SchemaElements
+            entitySet = _model.SchemaElements
                 .Where(x => x.SchemaElementKind == EdmSchemaElementKind.EntityContainer)
                 .SelectMany(x => (x as IEdmEntityContainer).EntitySets())
                 .SingleOrDefault(x => Utils.NamesMatch(x.Name, entitySetName, _session.Pluralizer));
 
-            if (entitySet == null)
-                throw new UnresolvableObjectException(entitySetName, string.Format("Entity set {0} not found", entitySetName));
-
-            return entitySet;
+            return entitySet != null;
         }
 
         private IEnumerable<IEdmEntityType> GetEntityTypes()
@@ -160,44 +173,66 @@ namespace Simple.OData.Client.V3.Adapter
                 .Select(x => x as IEdmEntityType);
         }
 
-        private IEdmEntityType GetEntityType(string entitySetName)
+        private IEdmEntityType GetEntityType(string collectionName)
         {
-            if (entitySetName.Contains("/"))
+            IEdmEntityType entityType;
+            if (TryGetEntityType(collectionName, out entityType))
+                return entityType;
+
+            throw new UnresolvableObjectException(collectionName, string.Format("Entity type {0} not found", collectionName));
+        }
+
+        private bool TryGetEntityType(string collectionName, out IEdmEntityType entityType)
+        {
+            entityType = null;
+            if (collectionName.Contains("/"))
             {
-                var items = entitySetName.Split('/');
-                entitySetName = items.First();
+                var items = collectionName.Split('/');
+                collectionName = items.First();
                 var derivedTypeName = items.Last();
 
                 var entitySet = GetEntitySets()
-                    .SingleOrDefault(x => Utils.NamesMatch(x.Name, entitySetName, _session.Pluralizer));
+                    .SingleOrDefault(x => Utils.NamesMatch(x.Name, collectionName, _session.Pluralizer));
                 if (entitySet != null)
                 {
                     var derivedType = GetEntityTypes().SingleOrDefault(x => Utils.NamesMatch(x.Name, derivedTypeName, _session.Pluralizer));
                     if (derivedType != null)
                     {
                         if (_model.FindDirectlyDerivedTypes(entitySet.ElementType).Contains(derivedType))
-                            return derivedType;
+                        {
+                            entityType = derivedType;
+                            return true;
+                        }
                     }
                 }
             }
             else
             {
                 var entitySet = GetEntitySets()
-                    .SingleOrDefault(x => Utils.NamesMatch(x.Name, entitySetName, _session.Pluralizer));
+                    .SingleOrDefault(x => Utils.NamesMatch(x.Name, collectionName, _session.Pluralizer));
                 if (entitySet != null)
-                    return entitySet.ElementType;
+                {
+                    entityType = entitySet.ElementType;
+                    return true;
+                }
 
-                var derivedType = GetEntityTypes().SingleOrDefault(x => Utils.NamesMatch(x.Name, entitySetName, _session.Pluralizer));
+                var derivedType = GetEntityTypes().SingleOrDefault(x => Utils.NamesMatch(x.Name, collectionName, _session.Pluralizer));
                 if (derivedType != null)
                 {
                     var baseType = GetEntityTypes()
                         .SingleOrDefault(x => _model.FindDirectlyDerivedTypes(x).Contains(derivedType));
                     if (baseType != null && GetEntitySets().SingleOrDefault(x => x.ElementType == baseType) != null)
-                        return derivedType;
+                    {
+                        entityType = derivedType;
+                        return true;
+                    }
+                    // Check if we can return it anyway
+                    entityType = derivedType;
+                    return true;
                 }
             }
 
-            throw new UnresolvableObjectException(entitySetName, string.Format("Entity set {0} not found", entitySetName));
+            return false;
         }
 
         private IEdmStructuralProperty GetStructuralProperty(string entitySetName, string propertyName)
