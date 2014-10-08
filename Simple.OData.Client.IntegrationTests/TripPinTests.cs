@@ -141,6 +141,37 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task FindPerson_Flights()
+        {
+            var flights = await _client
+                .For<Person>("People")
+                .Key("russellwhyte")
+                .NavigateTo(x => x.Trips)
+                .Key(1003)
+                .NavigateTo(x => x.PlanItems)
+                .As<Flight>()
+                .FindEntriesAsync();
+            Assert.Equal(3, flights.Count());
+            Assert.True(flights.Any(x => x.FlightNumber == "FM1930"));
+        }
+
+        [Fact]
+        public async Task FindPerson_FlightsWithFilter()
+        {
+            var flights = await _client
+                .For<Person>("People")
+                .Key("russellwhyte")
+                .NavigateTo(x => x.Trips)
+                .Key(1003)
+                .NavigateTo(x => x.PlanItems)
+                .As<Flight>()
+                .Filter(x => x.FlightNumber == "VA1930")
+                .FindEntriesAsync();
+            Assert.Equal(2, flights.Count());
+            Assert.True(flights.All(x => x.FlightNumber == "VA1930"));
+        }
+
+        [Fact]
         public async Task UpdatePerson_LastName()
         {
             var person = await _client
