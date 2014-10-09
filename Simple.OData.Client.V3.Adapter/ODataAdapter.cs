@@ -39,6 +39,8 @@ namespace Simple.OData.Client.V3.Adapter
         public ODataAdapter(ISession session, string protocolVersion, HttpResponseMessage response)
             : this(session, protocolVersion)
         {
+            var readerSettings = new ODataMessageReaderSettings();
+            readerSettings.MessageQuotas.MaxReceivedMessageSize = Int32.MaxValue;
             using (var messageReader = new ODataMessageReader(new ODataResponseMessage(response)))
             {
                 Model = messageReader.ReadMetadataDocument();
