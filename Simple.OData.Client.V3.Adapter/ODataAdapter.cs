@@ -41,7 +41,7 @@ namespace Simple.OData.Client.V3.Adapter
         {
             var readerSettings = new ODataMessageReaderSettings();
             readerSettings.MessageQuotas.MaxReceivedMessageSize = Int32.MaxValue;
-            using (var messageReader = new ODataMessageReader(new ODataResponseMessage(response)))
+            using (var messageReader = new ODataMessageReader(new ODataResponseMessage(response), readerSettings))
             {
                 Model = messageReader.ReadMetadataDocument();
             }
