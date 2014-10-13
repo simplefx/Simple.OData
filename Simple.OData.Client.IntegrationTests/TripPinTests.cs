@@ -126,6 +126,19 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task FindPerson_PlanItems()
+        {
+            var flights = await _client
+                .For<Person>("People")
+                .Key("russellwhyte")
+                .NavigateTo(x => x.Trips)
+                .Key(1003)
+                .NavigateTo(x => x.PlanItems)
+                .FindEntriesAsync();
+            Assert.Equal(3, flights.Count());
+        }
+
+        [Fact]
         public async Task FindPerson_Flight()
         {
             var flight = await _client
@@ -151,7 +164,7 @@ namespace Simple.OData.Client.Tests
                 .NavigateTo(x => x.PlanItems)
                 .As<Flight>()
                 .FindEntriesAsync();
-            Assert.Equal(3, flights.Count());
+            Assert.Equal(2, flights.Count());
             Assert.True(flights.Any(x => x.FlightNumber == "FM1930"));
         }
 
@@ -165,10 +178,10 @@ namespace Simple.OData.Client.Tests
                 .Key(1003)
                 .NavigateTo(x => x.PlanItems)
                 .As<Flight>()
-                .Filter(x => x.FlightNumber == "VA1930")
+                .Filter(x => x.FlightNumber == "FM1930")
                 .FindEntriesAsync();
-            Assert.Equal(2, flights.Count());
-            Assert.True(flights.All(x => x.FlightNumber == "VA1930"));
+            Assert.Equal(1, flights.Count());
+            Assert.True(flights.All(x => x.FlightNumber == "FM1930"));
         }
 
         [Fact]

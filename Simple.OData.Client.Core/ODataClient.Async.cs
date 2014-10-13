@@ -209,7 +209,7 @@ namespace Simple.OData.Client
 
             return await GetFluentClient()
                 .For(collection)
-                .Filter(expression.Format(_session, collection))
+                .Filter(expression)
                 .GetCommandTextAsync(cancellationToken);
         }
 
@@ -225,7 +225,7 @@ namespace Simple.OData.Client
 
             return await GetFluentClient()
                 .For(collection)
-                .Filter(ODataExpression.FromLinqExpression(expression.Body).Format(_session, collection))
+                .Filter(ODataExpression.FromLinqExpression(expression.Body))
                 .GetCommandTextAsync(cancellationToken);
         }
 

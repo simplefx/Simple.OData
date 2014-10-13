@@ -160,7 +160,7 @@ namespace Simple.OData.Client.Tests
                 .As<Ship>()
                 .Filter(x => x.TransportID == 1);
             string commandText = command.GetCommandTextAsync().Result;
-            Assert.Equal("Transport/NorthwindModel.Ships(1)", commandText);
+            Assert.Equal("Transport(1)/NorthwindModel.Ships", commandText);
         }
     }
 }

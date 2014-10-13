@@ -6,20 +6,6 @@ namespace Simple.OData.Client
 {
     public partial class ODataExpression
     {
-        internal string Format(ISession session, EntityCollection entityCollection)
-        {
-            return this.Format(new ExpressionContext()
-                                   {
-                                       Session = session, 
-                                       EntityCollection = entityCollection
-                                   });
-        }
-
-        internal string Format(ISession session, string collection)
-        {
-            return this.Format(new ExpressionContext { Session = session, Collection = collection });
-        }
-
         internal string Format(ExpressionContext context)
         {
             if (_operator == ExpressionOperator.None)
@@ -67,12 +53,9 @@ namespace Simple.OData.Client
         private string FormatReference(ExpressionContext context)
         {
             var elementNames = new List<string>(this.Reference.Split('.'));
-            var entityCollection = context.IsSet
-                ? context.EntityCollection ??
-                  context.Session.Metadata.GetConcreteEntityCollection(context.Collection)
-                : null;
-            var pathNames = BuildReferencePath(new List<string>(), entityCollection, elementNames, context);
-            return string.Join("/", pathNames);
+            var entityCollection = context.EntityCollection;
+            var segmentNames = BuildReferencePath(new List<string>(), entityCollection, elementNames, context);
+            return string.Join("/", segmentNames);
         }
 
         private string FormatFunction(ExpressionContext context)
@@ -142,11 +125,11 @@ namespace Simple.OData.Client
             }
         }
 
-        private IEnumerable<string> BuildReferencePath(List<string> pathNames, EntityCollection entityCollection, List<string> elementNames, ExpressionContext context)
+        private IEnumerable<string> BuildReferencePath(List<string> segmentNames, EntityCollection entityCollection, List<string> elementNames, ExpressionContext context)
         {
             if (!elementNames.Any())
             {
-                return pathNames;
+                return segmentNames;
             }
 
             var objectName = elementNames.First();
@@ -154,23 +137,28 @@ namespace Simple.OData.Client
             {
                 if (context.Session.Metadata.HasStructuralProperty(entityCollection.ActualName, objectName))
                 {
-                    pathNames.Add(context.Session.Metadata.GetStructuralPropertyExactName(entityCollection.ActualName, objectName));
-                    return BuildReferencePath(pathNames, null, elementNames.Skip(1).ToList(), context);
+                    var propertyName = context.Session.Metadata.GetStructuralPropertyExactName(
+                        entityCollection.ActualName, objectName);
+                    segmentNames.Add(propertyName);
+                    return BuildReferencePath(segmentNames, null, elementNames.Skip(1).ToList(), context);
                 }
                 else if (context.Session.Metadata.HasNavigationProperty(entityCollection.ActualName, objectName))
                 {
-                    pathNames.Add(context.Session.Metadata.GetNavigationPropertyExactName(entityCollection.ActualName, objectName));
-                    return BuildReferencePath(pathNames, context.Session.Metadata.GetEntityCollection(
-                        context.Session.Metadata.GetNavigationPropertyPartnerName(entityCollection.ActualName, objectName)), 
-                        elementNames.Skip(1).ToList(), context);
+                    var propertyName = context.Session.Metadata.GetNavigationPropertyExactName(
+                        entityCollection.ActualName, objectName);
+                    var linkName = context.Session.Metadata.GetNavigationPropertyPartnerName(
+                        entityCollection.ActualName, objectName);
+                    var linkedEntityCollection = context.Session.Metadata.GetEntityCollection(linkName);
+                    segmentNames.Add(propertyName);
+                    return BuildReferencePath(segmentNames, linkedEntityCollection, elementNames.Skip(1).ToList(), context);
                 }
                 else
                 {
                     var formattedFunction = FormatAsFunction(objectName, context);
                     if (!string.IsNullOrEmpty(formattedFunction))
                     {
-                        pathNames.Add(formattedFunction);
-                        return BuildReferencePath(pathNames, null, elementNames.Skip(1).ToList(), context);
+                        segmentNames.Add(formattedFunction);
+                        return BuildReferencePath(segmentNames, null, elementNames.Skip(1).ToList(), context);
                     }
                     else
                     {
@@ -181,13 +169,13 @@ namespace Simple.OData.Client
             else if (FunctionMapping.ContainsFunction(elementNames.First(), 0))
             {
                 var formattedFunction = FormatAsFunction(objectName, context);
-                pathNames.Add(formattedFunction);
-                return BuildReferencePath(pathNames, null, elementNames.Skip(1).ToList(), context);
+                segmentNames.Add(formattedFunction);
+                return BuildReferencePath(segmentNames, null, elementNames.Skip(1).ToList(), context);
             }
             else
             {
-                pathNames.AddRange(elementNames);
-                return BuildReferencePath(pathNames, null, new List<string>(), context);
+                segmentNames.AddRange(elementNames);
+                return BuildReferencePath(segmentNames, null, new List<string>(), context);
             }
         }
 

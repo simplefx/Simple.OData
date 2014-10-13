@@ -51,6 +51,7 @@ namespace Simple.OData.Client.V4.Adapter
         {
             IEdmEntitySet entitySet;
             IEdmSingleton singleton;
+            IEdmEntityType entityType;
             IEdmVocabularyAnnotatable annotatable = null;
             if (TryGetEntitySet(collectionName, out entitySet))
             {
@@ -59,6 +60,10 @@ namespace Simple.OData.Client.V4.Adapter
             else if (TryGetSingleton(collectionName, out singleton))
             {
                 annotatable = singleton;
+            }
+            else if (TryGetEntityType(collectionName, out entityType))
+            {
+                annotatable = entityType;
             }
             else
             {
@@ -85,6 +90,10 @@ namespace Simple.OData.Client.V4.Adapter
                     .SingleOrDefault(x => Utils.NamesMatch((x as IEdmEntityType).Name, entityTypeName, _session.Pluralizer)) as IEdmEntityType);
                 if (entityType != null)
                     return entityType.Name;
+            }
+            else if (TryGetEntityType(entityTypeName, out entityType))
+            {
+                return entityType.Name;
             }
 
             throw new UnresolvableObjectException(entityTypeName, string.Format("Entity type {0} not found", entityTypeName));

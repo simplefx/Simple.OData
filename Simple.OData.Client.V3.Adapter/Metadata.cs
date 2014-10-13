@@ -51,12 +51,19 @@ namespace Simple.OData.Client.V3.Adapter
 
         public override string GetDerivedEntityTypeExactName(string collectionName, string entityTypeName)
         {
-            var entitySet = GetEntitySet(collectionName);
-            var entityType = (_model.FindDirectlyDerivedTypes(entitySet.ElementType)
-                .SingleOrDefault(x => Utils.NamesMatch((x as IEdmEntityType).Name, entityTypeName, _session.Pluralizer)) as IEdmEntityType);
-
-            if (entityType != null)
+            IEdmEntitySet entitySet;
+            IEdmEntityType entityType;
+            if (TryGetEntitySet(collectionName, out entitySet))
+            {
+                entityType = (_model.FindDirectlyDerivedTypes(entitySet.ElementType)
+                    .SingleOrDefault(x => Utils.NamesMatch((x as IEdmEntityType).Name, entityTypeName, _session.Pluralizer)) as IEdmEntityType);
+                if (entityType != null)
+                    return entityType.Name;
+            }
+            else if (TryGetEntityType(entityTypeName, out entityType))
+            {
                 return entityType.Name;
+            }
 
             throw new UnresolvableObjectException(entityTypeName, string.Format("Entity type {0} not found", entityTypeName));
         }

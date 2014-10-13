@@ -96,7 +96,7 @@ namespace Simple.OData.Client
                 _namedKeyValues = TryInterpretFilterExpressionAsKey(_filterExpression);
                 if (_namedKeyValues == null)
                 {
-                    _filter = _filterExpression.Format(_session, this.EntityCollection);
+                    _filter = _filterExpression.Format(new ExpressionContext(_session, this.EntityCollection));
                 }
                 else
                 {
@@ -119,23 +119,25 @@ namespace Simple.OData.Client
         {
             get
             {
-                if (!string.IsNullOrEmpty(_collectionName))
-                {
-                    var entityCollection = _session.Metadata.GetEntityCollection(_collectionName);
-                    return string.IsNullOrEmpty(_derivedCollectionName)
-                               ? entityCollection
-                               : _session.Metadata.GetDerivedEntityCollection(entityCollection, _derivedCollectionName);
-                }
-                else if (!string.IsNullOrEmpty(_linkName))
+                if (string.IsNullOrEmpty(_collectionName) && string.IsNullOrEmpty(_linkName))
+                    return null;
+
+                EntityCollection entityCollection;
+                if (!string.IsNullOrEmpty(_linkName))
                 {
                     var parent = new FluentCommand(_parent).Resolve();
-                    return _session.Metadata.GetEntityCollection(_session.Metadata
-                        .GetNavigationPropertyPartnerName(parent.EntityCollection.ActualName, _linkName));
+                    var collectionName = _session.Metadata.GetNavigationPropertyPartnerName(
+                        parent.EntityCollection.ActualName, _linkName);
+                    entityCollection = _session.Metadata.GetEntityCollection(collectionName);
                 }
                 else
                 {
-                    return null;
+                    entityCollection = _session.Metadata.GetEntityCollection(_collectionName);
                 }
+
+                return string.IsNullOrEmpty(_derivedCollectionName) 
+                    ? entityCollection
+                    : _session.Metadata.GetDerivedEntityCollection(entityCollection, _derivedCollectionName);
             }
         }
 
@@ -442,19 +444,14 @@ namespace Simple.OData.Client
             string commandText = string.Empty;
             if (!string.IsNullOrEmpty(_collectionName))
             {
-                var entitySetName = _session.Metadata.GetEntityCollectionExactName(_collectionName);
-                var entityTypeNamespace = _session.Metadata.GetEntityCollectionTypeNamespace(_collectionName);
-                commandText += entitySetName;
-                if (!string.IsNullOrEmpty(_derivedCollectionName))
-                    commandText += "/" + string.Join(".",
-                        entityTypeNamespace,
-                        _session.Metadata.GetEntityTypeExactName(_derivedCollectionName));
+                commandText += _session.Metadata.GetEntityCollectionExactName(_collectionName);
             }
             else if (!string.IsNullOrEmpty(_linkName))
             {
                 var parent = new FluentCommand(_parent).Resolve();
-                commandText += parent.Format() + "/";
-                commandText += _session.Metadata.GetNavigationPropertyExactName(parent.EntityCollection.ActualName, _linkName);
+                commandText += string.Format("{0}/{1}", 
+                    parent.Format(), 
+                    _session.Metadata.GetNavigationPropertyExactName(parent.EntityCollection.ActualName, _linkName));
             }
             else if (!string.IsNullOrEmpty(_functionName))
             {
@@ -466,6 +463,13 @@ namespace Simple.OData.Client
 
             if (HasKey)
                 commandText += _session.Adapter.ConvertKeyToUriLiteral(this.KeyValues);
+
+            if (!string.IsNullOrEmpty(_derivedCollectionName))
+            {
+                var entityTypeNamespace = _session.Metadata.GetEntityCollectionTypeNamespace(_derivedCollectionName);
+                var entityTypeName = _session.Metadata.GetEntityTypeExactName(_derivedCollectionName);
+                commandText += string.Format("/{0}.{1}", entityTypeNamespace, entityTypeName);
+            }
 
             commandText += FormatClauses();
 

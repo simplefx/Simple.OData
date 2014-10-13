@@ -96,7 +96,7 @@ namespace Simple.OData.Client
 
         public string AsString(ISession session)
         {
-            return Format(new ExpressionContext() {Session = session});
+            return Format(new ExpressionContext(session));
         }
 
         internal bool ExtractEqualityComparisons(IDictionary<string, object> columnEqualityComparisons)
