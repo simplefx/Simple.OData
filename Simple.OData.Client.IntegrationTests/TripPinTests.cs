@@ -137,7 +137,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task FindPerson_PlanItems()
+        public async Task FindPersonPlanItems()
         {
             var flights = await _client
                 .For<Person>("People")
@@ -150,7 +150,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task FindPerson_Flight()
+        public async Task FindPersonFlight()
         {
             var flight = await _client
                 .For<Person>("People")
@@ -165,7 +165,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task FindPerson_Flights()
+        public async Task FindPersonFlights()
         {
             var flights = await _client
                 .For<Person>("People")
@@ -180,7 +180,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task FindPerson_FlightsWithFilter()
+        public async Task FindPersonFlightsWithFilter()
         {
             var flights = await _client
                 .For<Person>("People")
@@ -196,7 +196,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task UpdatePerson_LastName()
+        public async Task UpdatePersonFilterLastName()
         {
             var person = await _client
                 .For<Person>("People")
@@ -219,7 +219,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task FindMe_SelectAddressInfo()
+        public async Task FindMeSelectAddressInfo()
         {
             var person = await _client
                 .For<Person>("Me")
@@ -231,7 +231,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task UpdateMe_Gender_PreconditionRequired()
+        public async Task UpdateMeGender_PreconditionRequired()
         {
             AssertThrowsAsync<AggregateException>(async () =>
             {
@@ -323,6 +323,32 @@ namespace Simple.OData.Client.Tests
                 .FindEntryAsync();
 
             Assert.NotNull(tripEvent);
+        }
+
+        [Fact]
+        public async Task FindPersonTrips()
+        {
+            var trips = await _client
+                .For<Person>("People")
+                .Key("russellwhyte")
+                .NavigateTo<Trip>()
+                .FindEntriesAsync();
+
+            Assert.Equal(3, trips.Count());
+        }
+
+        [Fact]
+        public async Task FindPersonTripsFilterDescription()
+        {
+            var trips = await _client
+                .For<Person>("People")
+                .Key("russellwhyte")
+                .NavigateTo<Trip>()
+                .Filter(x => x.Description.Contains("New York"))
+                .FindEntriesAsync();
+
+            Assert.Equal(1, trips.Count());
+            Assert.Contains("New York", trips.Single().Description);
         }
     }
 }
