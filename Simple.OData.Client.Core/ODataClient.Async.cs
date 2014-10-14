@@ -728,7 +728,7 @@ namespace Simple.OData.Client
             await _session.ResolveAdapterAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var collectionName = _session.Metadata.GetEntityCollection(command.CollectionName).ActualName;
+            var collectionName = command.QualifiedEntityCollectionName;
             return await InsertEntryAsync(collectionName, entryData, resultRequired, cancellationToken);
         }
 
@@ -737,7 +737,7 @@ namespace Simple.OData.Client
             await _session.ResolveAdapterAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var collectionName = _session.Metadata.GetEntityCollection(command.CollectionName).ActualName;
+            var collectionName = command.QualifiedEntityCollectionName;
             return await UpdateEntryAsync(collectionName, entryKey, entryData, resultRequired, cancellationToken);
         }
 
@@ -746,7 +746,7 @@ namespace Simple.OData.Client
             await _session.ResolveAdapterAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var collectionName = _session.Metadata.GetEntityCollection(command.CollectionName).ActualName;
+            var collectionName = command.QualifiedEntityCollectionName;
             return await UpdateEntryAsync(collectionName, command.KeyValues, command.EntryData, resultRequired, cancellationToken);
         }
 
@@ -755,7 +755,7 @@ namespace Simple.OData.Client
             await _session.ResolveAdapterAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var collectionName = _session.Metadata.GetEntityCollection(command.CollectionName).ActualName;
+            var collectionName = command.QualifiedEntityCollectionName;
             var commandText = await command.GetCommandTextAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
@@ -767,7 +767,7 @@ namespace Simple.OData.Client
             await _session.ResolveAdapterAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var collectionName = _session.Metadata.GetEntityCollection(command.CollectionName).ActualName;
+            var collectionName = command.QualifiedEntityCollectionName;
             await DeleteEntryAsync(collectionName, entryKey, cancellationToken);
         }
 
@@ -776,7 +776,7 @@ namespace Simple.OData.Client
             await _session.ResolveAdapterAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var collectionName = _session.Metadata.GetEntityCollection(command.CollectionName).ActualName;
+            var collectionName = command.QualifiedEntityCollectionName;
             await DeleteEntryAsync(collectionName, command.KeyValues, cancellationToken);
         }
 
@@ -785,7 +785,7 @@ namespace Simple.OData.Client
             await _session.ResolveAdapterAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var collectionName = _session.Metadata.GetEntityCollection(command.CollectionName).ActualName;
+            var collectionName = command.QualifiedEntityCollectionName;
             var commandText = await command.GetCommandTextAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
@@ -797,7 +797,7 @@ namespace Simple.OData.Client
             await _session.ResolveAdapterAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var collectionName = _session.Metadata.GetEntityCollection(command.CollectionName).ActualName;
+            var collectionName = command.QualifiedEntityCollectionName;
             await LinkEntryAsync(collectionName, entryKey, linkName, linkedEntryKey, cancellationToken);
         }
 
@@ -806,7 +806,7 @@ namespace Simple.OData.Client
             await _session.ResolveAdapterAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var collectionName = _session.Metadata.GetEntityCollection(command.CollectionName).ActualName;
+            var collectionName = command.QualifiedEntityCollectionName;
             await UnlinkEntryAsync(collectionName, entryKey, linkName, linkedEntryKey, cancellationToken);
         }
 

@@ -224,7 +224,7 @@ namespace Simple.OData.Client.V4.Adapter
                     return new ODataComplexValue()
                     {
                         TypeName = property.Type.FullName(),
-                        Properties = (value as IDictionary<string, object>).Select(x => new ODataProperty()
+                        Properties = value.ToDictionary().Select(x => new ODataProperty()
                         {
                             Name = x.Key,
                             Value = GetPropertyValue(property.Type.AsComplex().StructuralProperties(), x.Key, x.Value),

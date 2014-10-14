@@ -198,17 +198,29 @@ namespace Simple.OData.Client.V3.Adapter
                 collectionName = items.First();
                 var derivedTypeName = items.Last();
 
-                var entitySet = GetEntitySets()
-                    .SingleOrDefault(x => Utils.NamesMatch(x.Name, collectionName, _session.Pluralizer));
-                if (entitySet != null)
+                if (derivedTypeName.Contains("."))
                 {
-                    var derivedType = GetEntityTypes().SingleOrDefault(x => Utils.NamesMatch(x.Name, derivedTypeName, _session.Pluralizer));
+                    var derivedType = GetEntityTypes().SingleOrDefault(x => x.FullName() == derivedTypeName);
                     if (derivedType != null)
                     {
-                        if (_model.FindDirectlyDerivedTypes(entitySet.ElementType).Contains(derivedType))
+                        entityType = derivedType;
+                        return true;
+                    }
+                }
+                else
+                {
+                    var entitySet = GetEntitySets()
+                        .SingleOrDefault(x => Utils.NamesMatch(x.Name, collectionName, _session.Pluralizer));
+                    if (entitySet != null)
+                    {
+                        var derivedType = GetEntityTypes().SingleOrDefault(x => Utils.NamesMatch(x.Name, derivedTypeName, _session.Pluralizer));
+                        if (derivedType != null)
                         {
-                            entityType = derivedType;
-                            return true;
+                            if (_model.FindDirectlyDerivedTypes(entitySet.ElementType).Contains(derivedType))
+                            {
+                                entityType = derivedType;
+                                return true;
+                            }
                         }
                     }
                 }

@@ -74,6 +74,31 @@ namespace Simple.OData.Client.Tests
 
             Assert.Null(product);
         }
+
+        [Fact]
+        public async Task DeleteDerived()
+        {
+            var x = ODataDynamic.Expression;
+            var ship = await _client
+                .For(x.Transport)
+                .As(x.Ship)
+                .Set(x.ShipName = "Test1")
+                .InsertEntryAsync();
+
+            await _client
+                .For(x.Transport)
+                .As(x.Ship)
+                .Key(ship.TransportID)
+                .DeleteEntryAsync();
+
+            ship = await _client
+                .For(x.Transport)
+                .As(x.Ship)
+                .Filter(x.ShipName == "Test1")
+                .FindEntryAsync();
+
+            Assert.Null(ship);
+        }
     }
 #endif
 }

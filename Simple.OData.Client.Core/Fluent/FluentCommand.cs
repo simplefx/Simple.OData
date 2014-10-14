@@ -141,6 +141,20 @@ namespace Simple.OData.Client
             }
         }
 
+        public string QualifiedEntityCollectionName
+        {
+            get
+            {
+                var entityCollection = new FluentCommand(this).Resolve().EntityCollection;
+                return entityCollection.BaseEntityCollection == null
+                    ? entityCollection.ActualName
+                    : string.Format("{0}/{1}.{2}",
+                        entityCollection.BaseEntityCollection.ActualName,
+                        _session.Metadata.GetEntityCollectionTypeNamespace(entityCollection.ActualName),
+                        _session.Metadata.GetEntityCollectionTypeName(entityCollection.ActualName));
+            }
+        }
+
         public async Task<string> GetCommandTextAsync()
         {
             await _session.ResolveAdapterAsync(CancellationToken.None);
@@ -378,11 +392,6 @@ namespace Simple.OData.Client
         public override string ToString()
         {
             return Format();
-        }
-
-        internal string CollectionName
-        {
-            get { return new FluentCommand(this).Resolve()._collectionName; }
         }
 
         internal bool HasKey

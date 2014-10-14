@@ -80,6 +80,12 @@ namespace Simple.OData.Client.Tests
         public Airline Airline { get; set; }
     }
 
+    class Event : PlanItem
+    {
+        public string Description { get; set; }
+        public EventLocation OccursAt { get; set; }
+    }
+
     class Airline
     {
         public string AirlineCode { get; set; }
@@ -110,6 +116,11 @@ namespace Simple.OData.Client.Tests
     class AirportLocation : Location
     {
         public GeographyPoint Loc { get; set; }
+    }
+
+    class EventLocation : Location
+    {
+        public string BuildingInfo { get; set; }
     }
 
     public abstract class TripPinTests : TripPinTestBase
@@ -271,6 +282,47 @@ namespace Simple.OData.Client.Tests
             Assert.Equal(4326, airport.Location.Loc.CoordinateSystem.EpsgId);
             Assert.Equal(37.6188888888889, airport.Location.Loc.Latitude);
             Assert.Equal(-122.374722222222, airport.Location.Loc.Longitude);
+        }
+
+        [Fact]
+        public async Task InsertEvent()
+        {
+            var tripEvent = await _client
+                .For<Person>("People")
+                .Key("russellwhyte")
+                .NavigateTo<Trip>()
+                .As<Event>()
+                .Set(new Event
+                {
+                    ConfirmationCode = "4372899DD",
+                    Description = "Client Meeting",
+                    Duration = TimeSpan.FromHours(3),
+                    EndsAt = DateTimeOffset.Parse("2014-06-01T23:11:17.5479185-07:00"),
+                    OccursAt = new EventLocation()
+                    {
+                        Address = "100 Church Street, 8th Floor, Manhattan, 10007",
+                        BuildingInfo = "Regus Business Center",
+                        City = new Location.LocationCity()
+                        {
+                            CountryRegion = "United States",
+                            Name = "New York City",
+                            Region = "New York",
+                        }
+                    },
+                    PlanItemId = 33,
+                    StartsAt = DateTimeOffset.Parse("2014-05-25T23:11:17.5459178-07:00"),
+                })
+                .InsertEntryAsync();
+
+            tripEvent = await _client
+                .For<Person>("People")
+                .Key("russellwhyte")
+                .NavigateTo<Trip>()
+                .As<Event>()
+                .Key(tripEvent.PlanItemId)
+                .FindEntryAsync();
+
+            Assert.NotNull(tripEvent);
         }
     }
 }

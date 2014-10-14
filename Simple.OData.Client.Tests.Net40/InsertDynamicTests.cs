@@ -79,6 +79,19 @@ namespace Simple.OData.Client.Tests
                 .FindEntryAsync();
             Assert.True((category.Products as IEnumerable<dynamic>).Count() == 1);
         }
+
+        [Fact]
+        public async Task InsertShip()
+        {
+            var x = ODataDynamic.Expression;
+            var ship = await _client
+                .For(x.Transport)
+                .As(x.Ship)
+                .Set(x.ShipName = "Test1")
+                .InsertEntryAsync();
+
+            Assert.Equal("Test1", ship.ShipName);
+        }
     }
 #endif
 }

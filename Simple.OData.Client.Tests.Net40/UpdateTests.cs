@@ -280,5 +280,24 @@ namespace Simple.OData.Client.Tests
                 .FindEntryAsync();
             Assert.Equal(2, (category["Products"] as IEnumerable<object>).Count());
         }
+
+        [Fact]
+        public async Task UpdateDerived()
+        {
+            var ship = await _client
+                .For("Transport")
+                .As("Ship")
+                .Set(new { ShipName = "Test1" })
+                .InsertEntryAsync();
+
+            ship = await _client
+                .For("Transport")
+                .As("Ship")
+                .Key(ship["TransportID"])
+                .Set(new { ShipName = "Test2" })
+                .UpdateEntryAsync();
+
+            Assert.Equal("Test2", ship["ShipName"]);
+        }
     }
 }

@@ -33,6 +33,9 @@ namespace Simple.OData.Client
 
         public static bool NamesMatch(string actualName, string requestedName, IPluralizer pluralizer)
         {
+            actualName = actualName.Split('.').Last();
+            requestedName = requestedName.Split('.').Last();
+
             return actualName.Homogenize() == requestedName.Homogenize()
                    || pluralizer != null && actualName.Homogenize() == pluralizer.Singularize(requestedName).Homogenize()
                    || pluralizer != null && actualName.Homogenize() == pluralizer.Pluralize(requestedName).Homogenize();
