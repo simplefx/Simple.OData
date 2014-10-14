@@ -40,8 +40,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.OData.Client.Tests.S
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.OData.Client.SL5", "..\Simple.OData.Client.SL5\Simple.OData.Client.SL5.csproj", "{440E6AE0-F3DE-4BFD-913D-0BC76C538DE0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.OData.Client.IntegrationTests", "..\Simple.OData.Client.IntegrationTests\Simple.OData.Client.IntegrationTests.csproj", "{812D678E-B428-41A1-BC05-8160695AD186}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.OData.Client.V3.Adapter", "..\Simple.OData.Client.V3.Adapter\Simple.OData.Client.V3.Adapter.csproj", "{A08B2D3D-91A6-4ECD-B7AF-5977E840E383}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.OData.Client.V4.Adapter", "..\Simple.OData.Client.V4.Adapter\Simple.OData.Client.V4.Adapter.csproj", "{31D1CC1D-316E-4516-A2BD-F07423B394F6}"
@@ -510,42 +508,6 @@ Global
 		{440E6AE0-F3DE-4BFD-913D-0BC76C538DE0}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{440E6AE0-F3DE-4BFD-913D-0BC76C538DE0}.Release|x64.ActiveCfg = Release|Any CPU
 		{440E6AE0-F3DE-4BFD-913D-0BC76C538DE0}.Release|x86.ActiveCfg = Release|Any CPU
-		{812D678E-B428-41A1-BC05-8160695AD186}.Ad-Hoc|Any CPU.ActiveCfg = Release|Any CPU
-		{812D678E-B428-41A1-BC05-8160695AD186}.Ad-Hoc|Any CPU.Build.0 = Release|Any CPU
-		{812D678E-B428-41A1-BC05-8160695AD186}.Ad-Hoc|ARM.ActiveCfg = Release|Any CPU
-		{812D678E-B428-41A1-BC05-8160695AD186}.Ad-Hoc|iPhone.ActiveCfg = Release|Any CPU
-		{812D678E-B428-41A1-BC05-8160695AD186}.Ad-Hoc|iPhoneSimulator.ActiveCfg = Release|Any CPU
-		{812D678E-B428-41A1-BC05-8160695AD186}.Ad-Hoc|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{812D678E-B428-41A1-BC05-8160695AD186}.Ad-Hoc|Mixed Platforms.Build.0 = Release|Any CPU
-		{812D678E-B428-41A1-BC05-8160695AD186}.Ad-Hoc|x64.ActiveCfg = Release|Any CPU
-		{812D678E-B428-41A1-BC05-8160695AD186}.Ad-Hoc|x86.ActiveCfg = Release|Any CPU
-		{812D678E-B428-41A1-BC05-8160695AD186}.AppStore|Any CPU.ActiveCfg = Release|Any CPU
-		{812D678E-B428-41A1-BC05-8160695AD186}.AppStore|Any CPU.Build.0 = Release|Any CPU
-		{812D678E-B428-41A1-BC05-8160695AD186}.AppStore|ARM.ActiveCfg = Release|Any CPU
-		{812D678E-B428-41A1-BC05-8160695AD186}.AppStore|iPhone.ActiveCfg = Release|Any CPU
-		{812D678E-B428-41A1-BC05-8160695AD186}.AppStore|iPhoneSimulator.ActiveCfg = Release|Any CPU
-		{812D678E-B428-41A1-BC05-8160695AD186}.AppStore|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{812D678E-B428-41A1-BC05-8160695AD186}.AppStore|Mixed Platforms.Build.0 = Release|Any CPU
-		{812D678E-B428-41A1-BC05-8160695AD186}.AppStore|x64.ActiveCfg = Release|Any CPU
-		{812D678E-B428-41A1-BC05-8160695AD186}.AppStore|x86.ActiveCfg = Release|Any CPU
-		{812D678E-B428-41A1-BC05-8160695AD186}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{812D678E-B428-41A1-BC05-8160695AD186}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{812D678E-B428-41A1-BC05-8160695AD186}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{812D678E-B428-41A1-BC05-8160695AD186}.Debug|iPhone.ActiveCfg = Debug|Any CPU
-		{812D678E-B428-41A1-BC05-8160695AD186}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
-		{812D678E-B428-41A1-BC05-8160695AD186}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{812D678E-B428-41A1-BC05-8160695AD186}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{812D678E-B428-41A1-BC05-8160695AD186}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{812D678E-B428-41A1-BC05-8160695AD186}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{812D678E-B428-41A1-BC05-8160695AD186}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{812D678E-B428-41A1-BC05-8160695AD186}.Release|Any CPU.Build.0 = Release|Any CPU
-		{812D678E-B428-41A1-BC05-8160695AD186}.Release|ARM.ActiveCfg = Release|Any CPU
-		{812D678E-B428-41A1-BC05-8160695AD186}.Release|iPhone.ActiveCfg = Release|Any CPU
-		{812D678E-B428-41A1-BC05-8160695AD186}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
-		{812D678E-B428-41A1-BC05-8160695AD186}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{812D678E-B428-41A1-BC05-8160695AD186}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{812D678E-B428-41A1-BC05-8160695AD186}.Release|x64.ActiveCfg = Release|Any CPU
-		{812D678E-B428-41A1-BC05-8160695AD186}.Release|x86.ActiveCfg = Release|Any CPU
 		{A08B2D3D-91A6-4ECD-B7AF-5977E840E383}.Ad-Hoc|Any CPU.ActiveCfg = Release|Any CPU
 		{A08B2D3D-91A6-4ECD-B7AF-5977E840E383}.Ad-Hoc|Any CPU.Build.0 = Release|Any CPU
 		{A08B2D3D-91A6-4ECD-B7AF-5977E840E383}.Ad-Hoc|ARM.ActiveCfg = Release|Any CPU
@@ -631,6 +593,5 @@ Global
 		{0D9F3744-9DB0-421D-8AC8-388EF7764643} = {78D04AF9-B9B4-4025-93C6-B3DB01EDAAE9}
 		{27429D8F-FA57-43CA-A13A-B3DE6987EB76} = {78D04AF9-B9B4-4025-93C6-B3DB01EDAAE9}
 		{0C120AB3-796F-40FE-8B0F-A03BBFF442B8} = {78D04AF9-B9B4-4025-93C6-B3DB01EDAAE9}
-		{812D678E-B428-41A1-BC05-8160695AD186} = {78D04AF9-B9B4-4025-93C6-B3DB01EDAAE9}
 	EndGlobalSection
 EndGlobal

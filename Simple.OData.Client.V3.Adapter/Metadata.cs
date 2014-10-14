@@ -30,7 +30,6 @@ namespace Simple.OData.Client.V3.Adapter
             }
 
             throw new UnresolvableObjectException(collectionName, string.Format("Entity collection {0} not found", collectionName));
-            return GetEntitySet(collectionName).Name;
         }
 
         public override string GetEntityCollectionTypeName(string collectionName)
