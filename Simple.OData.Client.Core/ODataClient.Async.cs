@@ -438,7 +438,7 @@ namespace Simple.OData.Client
 
             var command = GetFluentClient()
                 .For(collection)
-                .Filter(commandText)
+                .Filter(ExtractFilterFromCommandText(collection, commandText))
                 .Set(entryData)
                 .AsFluentClient().Command;
 
@@ -477,7 +477,7 @@ namespace Simple.OData.Client
 
             var command = GetFluentClient()
                 .For(collection)
-                .Filter(commandText)
+                .Filter(ExtractFilterFromCommandText(collection, commandText))
                 .AsFluentClient().Command;
 
             return await ExecuteDeleteEntriesAsync(command, cancellationToken);
@@ -730,6 +730,22 @@ namespace Simple.OData.Client
                 .SelectMany(x => x.Values)
                 .Select(y => (T)y)
                 .ToArray();
+        }
+
+        private string ExtractFilterFromCommandText(string collection, string commandText)
+        {
+            const string filterPrefix = "?$filter=";
+
+            if (commandText.Length > filterPrefix.Length &&
+                commandText.Substring(0, collection.Length + filterPrefix.Length).Equals(
+                    collection + filterPrefix, StringComparison.CurrentCultureIgnoreCase))
+            {
+                return commandText.Substring(collection.Length + filterPrefix.Length);
+            }
+            else
+            {
+                return commandText;
+            }
         }
     }
 }
