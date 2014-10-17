@@ -33,7 +33,7 @@ namespace Simple.OData.Client
             _dynamicResults = dynamicResults;
         }
 
-        private FluentCommand Command
+        internal FluentCommand Command
         {
             get
             {

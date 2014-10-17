@@ -16,7 +16,7 @@ namespace Simple.OData.Client
     // For the same reason FluentClient is also declared as public
     // More: http://bloggingabout.net/blogs/vagif/archive/2013/08/05/we-need-better-interoperability-between-dynamic-and-statically-compiled-c.aspx
 
-    public class FluentCommand
+    public partial class FluentCommand
     {
         private readonly Session _session;
         private readonly FluentCommand _parent;
@@ -167,7 +167,7 @@ namespace Simple.OData.Client
             return new FluentCommand(this).Resolve().Format();
         }
 
-        public void For(string collectionName)
+        public FluentCommand For(string collectionName)
         {
             var items = collectionName.Split('/');
             if (items.Count() > 1)
@@ -179,34 +179,40 @@ namespace Simple.OData.Client
             {
                 _collectionName = collectionName;
             }
+            return this;
         }
 
-        public void For(ODataExpression expression)
+        public FluentCommand For(ODataExpression expression)
         {
             _collectionExpression = expression;
+            return this;
         }
 
-        public void As(string derivedCollectionName)
+        public FluentCommand As(string derivedCollectionName)
         {
             _derivedCollectionName = derivedCollectionName;
+            return this;
         }
 
-        public void As(ODataExpression expression)
+        public FluentCommand As(ODataExpression expression)
         {
             _derivedCollectionExpression = expression;
+            return this;
         }
 
-        public void Link(string linkName)
+        public FluentCommand Link(string linkName)
         {
             _linkName = linkName;
+            return this;
         }
 
-        public void Link(ODataExpression expression)
+        public FluentCommand Link(ODataExpression expression)
         {
             _linkExpression = expression;
+            return this;
         }
 
-        public void Key(params object[] key)
+        public FluentCommand Key(params object[] key)
         {
             if (key != null && key.Length == 1 && IsAnonymousType(key.First().GetType()))
             {
@@ -218,36 +224,42 @@ namespace Simple.OData.Client
             {
                 _keyValues = key.ToList();
             }
+            return this;
         }
 
-        public void Key(IEnumerable<object> key)
+        public FluentCommand Key(IEnumerable<object> key)
         {
             _keyValues = key.ToList();
             _namedKeyValues = null;
+            return this;
         }
 
-        public void Key(IDictionary<string, object> key)
+        public FluentCommand Key(IDictionary<string, object> key)
         {
             _namedKeyValues = key;
             _keyValues = null;
+            return this;
         }
 
-        public void Filter(string filter)
+        public FluentCommand Filter(string filter)
         {
             _filter = filter;
+            return this;
         }
 
-        public void Filter(ODataExpression expression)
+        public FluentCommand Filter(ODataExpression expression)
         {
             _filterExpression = expression;
+            return this;
         }
 
-        public void Skip(int count)
+        public FluentCommand Skip(int count)
         {
             _skipCount = count;
+            return this;
         }
 
-        public void Top(int count)
+        public FluentCommand Top(int count)
         {
             if (!HasKey)
             {
@@ -257,114 +269,128 @@ namespace Simple.OData.Client
             {
                 throw new InvalidOperationException("Top count may only be assigned to 1 when key is assigned");
             }
+            return this;
         }
 
-        public void Expand(IEnumerable<string> associations)
+        public FluentCommand Expand(IEnumerable<string> associations)
         {
             _expandAssociations = SplitItems(associations).ToList();
+            return this;
         }
 
-        public void Expand(params string[] associations)
+        public FluentCommand Expand(params string[] associations)
         {
             _expandAssociations = SplitItems(associations).ToList();
+            return this;
         }
 
-        public void Expand(params ODataExpression[] columns)
+        public FluentCommand Expand(params ODataExpression[] columns)
         {
-            Expand(columns.Select(x => x.Reference));
+            return Expand(columns.Select(x => x.Reference));
         }
 
-        public void Select(IEnumerable<string> columns)
-        {
-            _selectColumns = SplitItems(columns).ToList();
-        }
-
-        public void Select(params string[] columns)
+        public FluentCommand Select(IEnumerable<string> columns)
         {
             _selectColumns = SplitItems(columns).ToList();
+            return this;
         }
 
-        public void Select(params ODataExpression[] columns)
+        public FluentCommand Select(params string[] columns)
         {
-            Select(columns.Select(x => x.Reference));
+            _selectColumns = SplitItems(columns).ToList();
+            return this;
         }
 
-        public void OrderBy(IEnumerable<KeyValuePair<string, bool>> columns)
+        public FluentCommand Select(params ODataExpression[] columns)
+        {
+            return Select(columns.Select(x => x.Reference));
+        }
+
+        public FluentCommand OrderBy(IEnumerable<KeyValuePair<string, bool>> columns)
         {
             _orderbyColumns.Clear();
             _orderbyColumns.AddRange(SplitItems(columns));
+            return this;
         }
 
-        public void OrderBy(params string[] columns)
+        public FluentCommand OrderBy(params string[] columns)
         {
-            OrderBy(SplitItems(columns).Select(x => new KeyValuePair<string, bool>(x, false)));
+            return OrderBy(SplitItems(columns).Select(x => new KeyValuePair<string, bool>(x, false)));
         }
 
-        public void OrderBy(params ODataExpression[] columns)
+        public FluentCommand OrderBy(params ODataExpression[] columns)
         {
-            OrderBy(columns.Select(x => new KeyValuePair<string, bool>(x.Reference, false)));
+            return OrderBy(columns.Select(x => new KeyValuePair<string, bool>(x.Reference, false)));
         }
 
-        public void ThenBy(params string[] columns)
+        public FluentCommand ThenBy(params string[] columns)
         {
             _orderbyColumns.AddRange(SplitItems(columns).Select(x => new KeyValuePair<string, bool>(x, false)));
+            return this;
         }
 
-        public void ThenBy(params ODataExpression[] columns)
+        public FluentCommand ThenBy(params ODataExpression[] columns)
         {
-            ThenBy(columns.Select(x => x.Reference).ToArray());
+            return ThenBy(columns.Select(x => x.Reference).ToArray());
         }
 
-        public void OrderByDescending(params string[] columns)
+        public FluentCommand OrderByDescending(params string[] columns)
         {
-            OrderBy(SplitItems(columns).Select(x => new KeyValuePair<string, bool>(x, true)));
+            return OrderBy(SplitItems(columns).Select(x => new KeyValuePair<string, bool>(x, true)));
         }
 
-        public void OrderByDescending(params ODataExpression[] columns)
+        public FluentCommand OrderByDescending(params ODataExpression[] columns)
         {
-            OrderBy(columns.Select(x => new KeyValuePair<string, bool>(x.Reference, true)));
+            return OrderBy(columns.Select(x => new KeyValuePair<string, bool>(x.Reference, true)));
         }
 
-        public void ThenByDescending(params string[] columns)
+        public FluentCommand ThenByDescending(params string[] columns)
         {
             _orderbyColumns.AddRange(SplitItems(columns).Select(x => new KeyValuePair<string, bool>(x, true)));
+            return this;
         }
 
-        public void ThenByDescending(params ODataExpression[] columns)
+        public FluentCommand ThenByDescending(params ODataExpression[] columns)
         {
-            ThenByDescending(columns.Select(x => x.Reference).ToArray());
+            return ThenByDescending(columns.Select(x => x.Reference).ToArray());
         }
 
-        public void Count()
+        public FluentCommand Count()
         {
             _computeCount = true;
+            return this;
         }
 
-        public void Set(object value)
+        public FluentCommand Set(object value)
         {
             _entryData = Utils.GetMappedProperties(value.GetType())
                 .Select(x => new KeyValuePair<string, object>(x.GetMappedName(), x.GetValue(value, null)))
                 .ToDictionary();
+            return this;
         }
 
-        public void Set(IDictionary<string, object> value)
+        public FluentCommand Set(IDictionary<string, object> value)
         {
             _entryData = value;
+            return this;
         }
 
-        public void Set(params ODataExpression[] value)
+        public FluentCommand Set(params ODataExpression[] value)
         {
             _entryData = value.Select(x => new KeyValuePair<string, object>(x.Reference, x.Value)).ToIDictionary();
+            return this;
         }
 
-        public void Function(string functionName)
+        public FluentCommand Function(string functionName)
         {
             _functionName = functionName;
+            return this;
         }
 
-        public void Parameters(IDictionary<string, object> parameters)
+        public FluentCommand Parameters(IDictionary<string, object> parameters)
         {
             _parameters = parameters.ToDictionary();
+            return this;
         }
 
         public bool FilterIsKey

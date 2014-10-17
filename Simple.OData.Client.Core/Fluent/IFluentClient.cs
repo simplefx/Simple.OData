@@ -6,6 +6,14 @@ using System.Threading.Tasks;
 
 namespace Simple.OData.Client
 {
+    internal static class IFluentClientExtensions
+    {
+        public static FluentClient<T> AsFluentClient<T>(this IFluentClient<T> client) where T : class
+        {
+            return client as FluentClient<T>;
+        }
+    }
+
     /// <summary>
     /// Provides access to OData operations in a fluent style.
     /// </summary>
