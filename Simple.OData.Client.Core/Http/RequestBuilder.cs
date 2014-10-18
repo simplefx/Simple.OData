@@ -30,34 +30,34 @@ namespace Simple.OData.Client
             return Utils.GetTaskFromResult(request);
         }
 
-        public Task<ODataRequest> CreateInsertRequestAsync(string collection, IDictionary<string, object> entryData, bool resultRequired)
+        public Task<ODataRequest> CreateInsertRequestAsync(string commandText, IDictionary<string, object> entryData, bool resultRequired)
         {
             return _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-                .CreateInsertRequestAsync(collection, entryData, resultRequired);
+                .CreateInsertRequestAsync(commandText, entryData, resultRequired);
         }
 
-        public Task<ODataRequest> CreateUpdateRequestAsync(string collection, string entryIdent, IDictionary<string, object> entryKey, IDictionary<string, object> entryData, bool resultRequired)
+        public Task<ODataRequest> CreateUpdateRequestAsync(string commandText, string entryIdent, IDictionary<string, object> entryKey, IDictionary<string, object> entryData, bool resultRequired)
         {
             return _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-                .CreateUpdateRequestAsync(collection, entryIdent, entryKey, entryData, resultRequired);
+                .CreateUpdateRequestAsync(commandText, entryIdent, entryKey, entryData, resultRequired);
         }
 
-        public Task<ODataRequest> CreateDeleteRequestAsync(string collection, string entryIdent)
+        public Task<ODataRequest> CreateDeleteRequestAsync(string commandText, string entryIdent)
         {
             return _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-                .CreateDeleteRequestAsync(collection, entryIdent);
+                .CreateDeleteRequestAsync(commandText, entryIdent);
         }
 
-        public Task<ODataRequest> CreateLinkRequestAsync(string collection, string linkName, string entryIdent, string linkIdent)
+        public Task<ODataRequest> CreateLinkRequestAsync(string commandText, string linkName, string entryIdent, string linkIdent)
         {
             return _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-                .CreateLinkRequestAsync(collection, linkName, entryIdent, linkIdent);
+                .CreateLinkRequestAsync(commandText, linkName, entryIdent, linkIdent);
         }
 
-        public Task<ODataRequest> CreateUnlinkRequestAsync(string collection, string linkName, string entryIdent, string linkIdent)
+        public Task<ODataRequest> CreateUnlinkRequestAsync(string commandText, string linkName, string entryIdent, string linkIdent)
         {
             return _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-                .CreateUnlinkRequestAsync(collection, linkName, entryIdent, linkIdent);
+                .CreateUnlinkRequestAsync(commandText, linkName, entryIdent, linkIdent);
         }
 
         public async Task<ODataRequest> CreateBatchRequestAsync()

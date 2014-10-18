@@ -13,6 +13,7 @@ namespace Simple.OData.Client
     {
         private readonly ISession _session;
 
+        public Action<HttpClientHandler> OnApplyClientHandler { get; set; }
         public Action<HttpRequestMessage> BeforeRequest { get; set; }
         public Action<HttpResponseMessage> AfterResponse { get; set; }
 
@@ -35,6 +36,11 @@ namespace Simple.OData.Client
                         clientHandler.PreAuthenticate = true;
                 }
 
+                if (this.OnApplyClientHandler != null)
+                {
+                    this.OnApplyClientHandler(clientHandler);
+                }
+
                 using (var httpClient = new HttpClient(clientHandler))
                 {
                     if (request.Accept != null)
@@ -53,13 +59,13 @@ namespace Simple.OData.Client
                         httpClient.DefaultRequestHeaders.IfMatch.Add(EntityTagHeaderValue.Any);
                     }
 
-                    if (this.BeforeRequest != null)
-                        this.BeforeRequest(request.RequestMessage);
-
                     foreach (var header in request.Headers)
                     {
                         request.RequestMessage.Headers.TryAddWithoutValidation(header.Key, header.Value);
                     }
+
+                    if (this.BeforeRequest != null)
+                        this.BeforeRequest(request.RequestMessage);
 
                     var responseMessage = await httpClient.SendAsync(request.RequestMessage, cancellationToken);
 

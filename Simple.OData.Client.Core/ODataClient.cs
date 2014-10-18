@@ -34,6 +34,7 @@ namespace Simple.OData.Client
 
             _requestBuilder = new RequestBuilder(_session);
             _requestRunner = new RequestRunner(_session);
+            _requestRunner.OnApplyClientHandler = _settings.OnApplyClientHandler;
             _requestRunner.BeforeRequest = _settings.BeforeRequest;
             _requestRunner.AfterResponse = _settings.AfterResponse;
         }

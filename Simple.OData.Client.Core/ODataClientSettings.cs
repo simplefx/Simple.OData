@@ -50,6 +50,14 @@ namespace Simple.OData.Client
         public bool IgnoreResourceNotFoundException { get; set; }
 
         /// <summary>
+        /// Gets or sets the action on HttpClientHandler.
+        /// </summary>
+        /// <value>
+        /// The action on <see cref="HttpClientHandler"/>.
+        /// </value>
+        public Action<HttpClientHandler> OnApplyClientHandler { get; set; }
+
+        /// <summary>
         /// Gets or sets the action executed before the OData request.
         /// </summary>
         /// <value>
