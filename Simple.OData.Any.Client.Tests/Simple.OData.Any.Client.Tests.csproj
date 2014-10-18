@@ -111,9 +111,6 @@
     <Compile Include="..\Simple.OData.Client.IntegrationTests\FindODataTests.cs">
       <Link>FindODataTests.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.IntegrationTests\FindTripPinTests.cs">
-      <Link>FindTripPinTests.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.IntegrationTests\InsertODataTests.cs">
       <Link>InsertODataTests.cs</Link>
     </Compile>
@@ -128,6 +125,9 @@
     </Compile>
     <Compile Include="..\Simple.OData.Client.IntegrationTests\TripPinTestBase.cs">
       <Link>TripPinTestBase.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.IntegrationTests\TripPinTests.cs">
+      <Link>TripPinTests.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.IntegrationTests\UpdateODataTests.cs">
       <Link>UpdateODataTests.cs</Link>
