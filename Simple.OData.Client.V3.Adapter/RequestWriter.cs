@@ -24,7 +24,7 @@ namespace Simple.OData.Client.V3.Adapter
             _model = model;
         }
 
-        protected override async Task<Stream> WriteEntryContentAsync(string method, string collection, IDictionary<string, object> entryData, string commandText)
+        protected override async Task<Stream> WriteEntryContentAsync(string method, string collection, string commandText, IDictionary<string, object> entryData)
         {
             IODataRequestMessage message = IsBatch
                 ? await CreateOperationRequestMessageAsync(method, collection, entryData, commandText)

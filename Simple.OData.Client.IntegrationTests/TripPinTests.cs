@@ -291,6 +291,8 @@ namespace Simple.OData.Client.Tests
                 .For<Person>("People")
                 .Key("russellwhyte")
                 .NavigateTo<Trip>()
+                .Key(1003)
+                .NavigateTo(x => x.PlanItems)
                 .As<Event>()
                 .Set(new Event
                 {
@@ -318,6 +320,8 @@ namespace Simple.OData.Client.Tests
                 .For<Person>("People")
                 .Key("russellwhyte")
                 .NavigateTo<Trip>()
+                .Key(1003)
+                .NavigateTo(x => x.PlanItems)
                 .As<Event>()
                 .Key(tripEvent.PlanItemId)
                 .FindEntryAsync();
@@ -332,6 +336,8 @@ namespace Simple.OData.Client.Tests
                 .For<Person>("People")
                 .Key("russellwhyte")
                 .NavigateTo<Trip>()
+                .Key(1003)
+                .NavigateTo(x => x.PlanItems)
                 .As<Event>()
                 .Set(new Event
                 {
@@ -359,6 +365,8 @@ namespace Simple.OData.Client.Tests
                 .For<Person>("People")
                 .Key("russellwhyte")
                 .NavigateTo<Trip>()
+                .Key(1003)
+                .NavigateTo(x => x.PlanItems)
                 .As<Event>()
                 .Key(tripEvent.PlanItemId)
                 .Set(new { Description = "This is a new description" })
@@ -401,6 +409,8 @@ namespace Simple.OData.Client.Tests
                 .For<Person>("People")
                 .Key("russellwhyte")
                 .NavigateTo<Trip>()
+                .Key(1003)
+                .NavigateTo(x => x.PlanItems)
                 .As<Event>()
                 .Key(tripEvent.PlanItemId)
                 .DeleteEntryAsync();
@@ -409,6 +419,8 @@ namespace Simple.OData.Client.Tests
                 .For<Person>("People")
                 .Key("russellwhyte")
                 .NavigateTo<Trip>()
+                .Key(1003)
+                .NavigateTo(x => x.PlanItems)
                 .As<Event>()
                 .Key(tripEvent.PlanItemId)
                 .FindEntryAsync();

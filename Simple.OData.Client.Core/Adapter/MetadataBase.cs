@@ -29,23 +29,27 @@ namespace Simple.OData.Client
 
         public EntityCollection GetBaseEntityCollection(string collectionPath)
         {
-            return this.GetEntityCollection(collectionPath.Split('/').First());
+            return this.GetEntityCollection(ExtractCollectionName(collectionPath.Split('/').First()));
         }
 
         public EntityCollection GetConcreteEntityCollection(string collectionPath)
         {
-            var items = collectionPath.Split('/');
-            if (items.Count() > 1)
+            var segments = collectionPath.Split('/');
+            if (segments.Count() > 1)
             {
-                var baseEntitySet = this.GetEntityCollection(items[0]);
-                var entitySet = string.IsNullOrEmpty(items[1])
-                    ? baseEntitySet
-                    : GetDerivedEntityCollection(baseEntitySet, items[1]);
-                return entitySet;
+                if (segments.Last().Contains("."))
+                {
+                    var baseEntitySet = this.GetEntityCollection(ExtractCollectionName(segments[segments.Length-2]));
+                    return GetDerivedEntityCollection(baseEntitySet, ExtractCollectionName(segments.Last()));
+                }
+                else
+                {
+                    return this.GetEntityCollection(ExtractCollectionName(segments.Last()));
+                }
             }
             else
             {
-                return this.GetEntityCollection(collectionPath);
+                return this.GetEntityCollection(ExtractCollectionName(collectionPath));
             }
         }
 
@@ -97,6 +101,14 @@ namespace Simple.OData.Client
             }
 
             return entryDetails;
+        }
+
+        private string ExtractCollectionName(string text)
+        {
+            if (text.Contains("("))
+                return text.Substring(0, text.IndexOf('('));
+            else
+                return text;
         }
     }
 }
