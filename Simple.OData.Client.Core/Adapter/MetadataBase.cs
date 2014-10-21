@@ -29,7 +29,22 @@ namespace Simple.OData.Client
 
         public EntityCollection GetBaseEntityCollection(string collectionPath)
         {
-            return this.GetEntityCollection(ExtractCollectionName(collectionPath.Split('/').First()));
+            var segments = collectionPath.Split('/');
+            if (segments.Count() > 1)
+            {
+                if (segments.Last().Contains("."))
+                {
+                    return this.GetEntityCollection(ExtractCollectionName(segments[segments.Length - 2]));
+                }
+                else
+                {
+                    return this.GetEntityCollection(ExtractCollectionName(segments.Last()));
+                }
+            }
+            else
+            {
+                return this.GetEntityCollection(ExtractCollectionName(collectionPath));
+            }
         }
 
         public EntityCollection GetConcreteEntityCollection(string collectionPath)
