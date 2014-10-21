@@ -1,4 +1,6 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
+using System.Net.Http;
 
 namespace Simple.OData.Client
 {
@@ -10,5 +12,9 @@ namespace Simple.OData.Client
         IODataAdapter Adapter { get; }
         IMetadata Metadata { get; }
         IPluralizer Pluralizer { get; }
+
+        Action<HttpClientHandler> OnApplyClientHandler { get; set; }
+        Action<HttpRequestMessage> BeforeRequest { get; set; }
+        Action<HttpResponseMessage> AfterResponse { get; set; }
     }
 }

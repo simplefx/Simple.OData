@@ -13,10 +13,6 @@ namespace Simple.OData.Client
     {
         private readonly ISession _session;
 
-        public Action<HttpClientHandler> OnApplyClientHandler { get; set; }
-        public Action<HttpRequestMessage> BeforeRequest { get; set; }
-        public Action<HttpResponseMessage> AfterResponse { get; set; }
-
         public RequestRunner(ISession session)
         {
             _session = session;
@@ -68,9 +64,9 @@ namespace Simple.OData.Client
                     clientHandler.PreAuthenticate = true;
             }
 
-            if (this.OnApplyClientHandler != null)
+            if (_session.OnApplyClientHandler != null)
             {
-                this.OnApplyClientHandler(clientHandler);
+                _session.OnApplyClientHandler(clientHandler);
             }
             return clientHandler;
         }
@@ -98,14 +94,14 @@ namespace Simple.OData.Client
                 request.RequestMessage.Headers.TryAddWithoutValidation(header.Key, header.Value);
             }
 
-            if (this.BeforeRequest != null)
-                this.BeforeRequest(request.RequestMessage);
+            if (_session.BeforeRequest != null)
+                _session.BeforeRequest(request.RequestMessage);
         }
 
         private void PostExecute(HttpResponseMessage responseMessage)
         {
-            if (this.AfterResponse != null)
-                this.AfterResponse(responseMessage);
+            if (_session.AfterResponse != null)
+                _session.AfterResponse(responseMessage);
 
             if (!responseMessage.IsSuccessStatusCode)
             {

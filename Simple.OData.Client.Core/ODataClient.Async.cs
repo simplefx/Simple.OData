@@ -55,9 +55,7 @@ namespace Simple.OData.Client
         /// <returns>The service metadata.</returns>
         public static async Task<object> GetMetadataAsync(string urlBase, ICredentials credentials, CancellationToken cancellationToken)
         {
-            var session = Session.FromSettings(new ODataClientSettings(urlBase, credentials));
-            await session.ResolveAdapterAsync(cancellationToken);
-            return session.Adapter.Model;
+            return GetMetadataAsync<object>(urlBase, credentials, cancellationToken);
         }
 
         /// <summary>

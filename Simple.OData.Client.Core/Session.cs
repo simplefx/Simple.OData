@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -17,6 +18,10 @@ namespace Simple.OData.Client
         public ODataPayloadFormat PayloadFormat { get; private set; }
         public MetadataCache MetadataCache { get; private set; }
         public IPluralizer Pluralizer { get; internal set; }
+
+        public Action<HttpClientHandler> OnApplyClientHandler { get; set; }
+        public Action<HttpRequestMessage> BeforeRequest { get; set; }
+        public Action<HttpResponseMessage> AfterResponse { get; set; }
 
         private Session(string urlBase, string metadataString)
         {
@@ -80,7 +85,12 @@ namespace Simple.OData.Client
 
         public static Session FromSettings(ODataClientSettings settings)
         {
-            return new Session(settings.UrlBase, settings.Credentials, settings.PayloadFormat);
+            return new Session(settings.UrlBase, settings.Credentials, settings.PayloadFormat)
+            {
+                OnApplyClientHandler = settings.OnApplyClientHandler,
+                BeforeRequest = settings.BeforeRequest,
+                AfterResponse = settings.AfterResponse,
+            };
         }
 
         public static Session FromMetadata(string urlBase, string metadataString)
