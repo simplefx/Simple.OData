@@ -48,10 +48,30 @@ namespace Simple.OData.Client
             reader.MoveToContent();
             var protocolVersion = reader.GetAttribute("Version");
 
-            if (protocolVersion == ODataProtocolVersion.V1 || protocolVersion == ODataProtocolVersion.V2 || protocolVersion == ODataProtocolVersion.V3)
+            if (protocolVersion == ODataProtocolVersion.V1 ||
+                protocolVersion == ODataProtocolVersion.V2 ||
+                protocolVersion == ODataProtocolVersion.V3)
+            {
+                while (reader.Read())
+                {
+                    if (reader.NodeType == XmlNodeType.Element)
+                    {
+                        var version = reader.GetAttribute("m:" + HttpLiteral.MaxDataServiceVersion);
+                        if (string.IsNullOrEmpty(version))
+                            version = reader.GetAttribute("m:" + HttpLiteral.DataServiceVersion);
+                        if (!string.IsNullOrEmpty(version) && string.Compare(version, protocolVersion, StringComparison.Ordinal) > 0)
+                            protocolVersion = version;
+
+                        break;
+                    }
+                }
+
                 return LoadAdapter(AdapterV3AssemblyName, AdapterV3TypeName, _session, protocolVersion, metadataString);
+            }
             else if (protocolVersion == ODataProtocolVersion.V4)
+            {
                 return LoadAdapter(AdapterV4AssemblyName, AdapterV4TypeName, _session, protocolVersion, metadataString);
+            }
 
             throw new NotSupportedException(string.Format("OData protocol {0} is not supported", protocolVersion));
         }

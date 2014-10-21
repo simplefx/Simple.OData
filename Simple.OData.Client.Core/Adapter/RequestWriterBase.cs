@@ -17,7 +17,7 @@ namespace Simple.OData.Client
             _deferredBatchWriter = deferredBatchWriter;
         }
 
-        protected bool IsBatch 
+        protected bool IsBatch
         {
             get { return _deferredBatchWriter != null; }
         }
@@ -48,7 +48,7 @@ namespace Simple.OData.Client
             var entryDetails = _session.Metadata.ParseEntryDetails(entityCollection.ActualName, entryData);
 
             var hasPropertiesToUpdate = entryDetails.Properties.Count > 0;
-            var merge = !hasPropertiesToUpdate || CheckMergeConditions(collection, entryKey, entryData);
+            var merge = !hasPropertiesToUpdate || CanUseMerge(collection, entryKey, entryData);
 
             var entryContent = await WriteEntryContentAsync(
                 merge ? RestVerbs.Patch : RestVerbs.Put, collection, entryIdent, entryData);
@@ -113,11 +113,18 @@ namespace Simple.OData.Client
         protected abstract string FormatLinkPath(string entryIdent, string navigationPropertyName, string linkIdent = null);
         protected abstract void AssignHeaders(ODataRequest request);
 
-        private bool CheckMergeConditions(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
+        private bool CanUseMerge(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
         {
             var entityCollection = _session.Metadata.GetConcreteEntityCollection(collection);
-            return _session.Metadata.GetStructuralPropertyNames(entityCollection.ActualName)
-                .Any(x => !entryData.ContainsKey(x));
+            foreach (var propertyName in _session.Metadata.GetStructuralPropertyNames(entityCollection.ActualName))
+            {
+                if (entryKey.ContainsKey(propertyName) && entryData.ContainsKey(propertyName) &&
+                    !entryKey[propertyName].Equals(entryData[propertyName]))
+                {
+                    return false;
+                }
+            }
+            return true;
         }
     }
 }
