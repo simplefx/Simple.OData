@@ -28,7 +28,7 @@ namespace Simple.OData.Client.Tests
     }
 #endif
 
-#if ODATA_V3
+#if ODATA_V4
     public class FindODataTestsV4Json : FindODataTests
     {
         public FindODataTestsV4Json() : base(ODataV4ReadOnlyUri, ODataPayloadFormat.Json, 4) { }
