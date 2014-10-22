@@ -71,7 +71,7 @@ namespace Simple.OData.Client
                 switch (memberExpression.Expression.NodeType)
                 {
                     case ExpressionType.Parameter:
-                        return new ODataExpression(memberName);
+                        return new ODataExpression(memberNames);
                     case ExpressionType.Constant:
                         return ParseConstantExpression(memberExpression.Expression, memberNames);
                     case ExpressionType.MemberAccess:

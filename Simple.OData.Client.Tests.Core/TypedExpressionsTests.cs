@@ -15,6 +15,7 @@ namespace Simple.OData.Client.Tests
             public DateTime CreationTime { get; set; }
             public DateTimeOffset Updated { get; set; }
             public TimeSpan Period { get; set; }
+            public TestEntity Nested { get; set; }
         }
 
         [Fact]
@@ -346,6 +347,13 @@ namespace Simple.OData.Client.Tests
         {
             Expression<Func<TestEntity, bool>> filter = x => decimal.Ceiling(x.Price) == 2;
             Assert.Equal("ceiling(Price) eq 2M", ODataExpression.FromLinqExpression(filter).AsString(_session));
+        }
+
+        [Fact]
+        public void EqualNestedProperty()
+        {
+            Expression<Func<TestEntity, bool>> filter = x => x.Nested.ProductID == 1;
+            Assert.Equal("Nested/ProductID eq 1", ODataExpression.FromLinqExpression(filter).AsString(_session));
         }
     }
 }
