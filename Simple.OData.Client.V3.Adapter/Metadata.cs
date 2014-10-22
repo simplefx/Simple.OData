@@ -143,6 +143,11 @@ namespace Simple.OData.Client.V3.Adapter
             return function.Name;
         }
 
+        public override string GetActionExactName(string actionName)
+        {
+            throw new UnresolvableObjectException(actionName, string.Format("Action {0} not found", actionName));
+        }
+
         private IEnumerable<IEdmEntitySet> GetEntitySets()
         {
             return _model.SchemaElements

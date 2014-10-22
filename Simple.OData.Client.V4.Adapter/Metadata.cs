@@ -176,6 +176,21 @@ namespace Simple.OData.Client.V4.Adapter
             return function.Name;
         }
 
+        public override string GetActionExactName(string actionName)
+        {
+            var action = _model.SchemaElements
+                .Where(x => x.SchemaElementKind == EdmSchemaElementKind.EntityContainer)
+                .SelectMany(x => (x as IEdmEntityContainer).OperationImports()
+                    .Where(y => y.IsActionImport() && y.Name.Homogenize() == actionName.Homogenize()))
+                .SingleOrDefault();
+
+            if (action == null)
+                throw new UnresolvableObjectException(actionName,
+                    string.Format("Action {0} not found", actionName));
+
+            return action.Name;
+        }
+
         private IEnumerable<IEdmEntitySet> GetEntitySets()
         {
             return _model.SchemaElements

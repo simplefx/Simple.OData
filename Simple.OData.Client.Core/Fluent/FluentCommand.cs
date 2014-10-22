@@ -502,8 +502,7 @@ namespace Simple.OData.Client
             }
             else if (!string.IsNullOrEmpty(_actionName))
             {
-                // TODO
-                commandText += _actionName;
+                commandText += _session.Metadata.GetActionExactName(_actionName);
             }
 
             if (HasKey && HasFilter)

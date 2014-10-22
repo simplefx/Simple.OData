@@ -21,6 +21,7 @@ namespace Simple.OData.Client
         public abstract string GetNavigationPropertyPartnerName(string entitySetName, string propertyName);
         public abstract bool IsNavigationPropertyMultiple(string entitySetName, string propertyName);
         public abstract string GetFunctionExactName(string functionName);
+        public abstract string GetActionExactName(string actionName);
 
         public EntityCollection GetEntityCollection(string collectionName)
         {

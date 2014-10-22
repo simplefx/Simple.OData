@@ -27,6 +27,7 @@ namespace Simple.OData.Client
         bool IsNavigationPropertyMultiple(string entitySetName, string propertyName);
 
         string GetFunctionExactName(string functionName);
+        string GetActionExactName(string actionName);
 
         EntryDetails ParseEntryDetails(string collectionName, IDictionary<string, object> entryData, string contentId = null);
     }
