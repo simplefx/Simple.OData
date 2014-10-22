@@ -85,14 +85,13 @@ namespace Simple.OData.Client
         {
             var entryKey = command.HasKey ? command.KeyValues : command.FilterAsKey;
             var entryData = command.EntryData;
-            var entryIdent = await FormatEntryKeyAsync(command, cancellationToken);
 
             var updatedKey = entryKey.Where(x => !entryData.ContainsKey(x.Key)).ToIDictionary();
             foreach (var item in entryData.Where(x => entryKey.ContainsKey(x.Key)))
             {
                 updatedKey.Add(item);
             }
-            return await GetEntryAsync(entryIdent, updatedKey, cancellationToken);
+            return await GetEntryAsync(command.QualifiedEntityCollectionName, updatedKey, cancellationToken);
         }
 
         private async Task<IEnumerable<IDictionary<string, object>>> ExecuteUpdateEntriesAsync(FluentCommand command, bool resultRequired, CancellationToken cancellationToken)
