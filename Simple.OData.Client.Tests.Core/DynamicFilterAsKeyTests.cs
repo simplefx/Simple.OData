@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Simple.OData.Client.Tests
@@ -6,7 +7,7 @@ namespace Simple.OData.Client.Tests
     public class DynamicFilterAsKeyTests : TestBase
     {
         [Fact]
-        public async void FindAllByFilterAsKeyEqual()
+        public async Task FindAllByFilterAsKeyEqual()
         {
             var x = ODataDynamic.Expression;
             var command = _client
@@ -17,7 +18,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async void FindAllByFilterAsKeyNotEqual()
+        public async Task FindAllByFilterAsKeyNotEqual()
         {
             var x = ODataDynamic.Expression;
             var command = _client
@@ -28,7 +29,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async void FindAllByFilterAsNotKeyEqual()
+        public async Task FindAllByFilterAsNotKeyEqual()
         {
             var x = ODataDynamic.Expression;
             var command = _client
@@ -40,7 +41,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async void FindAllByFilterAsKeyEqualLong()
+        public async Task FindAllByFilterAsKeyEqualLong()
         {
             var x = ODataDynamic.Expression;
             var command = _client
@@ -51,7 +52,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async void FindAllByFilterAsKeyEqualAndExtraClause()
+        public async Task FindAllByFilterAsKeyEqualAndExtraClause()
         {
             var x = ODataDynamic.Expression;
             var command = _client
@@ -63,7 +64,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async void FindAllByFilterAsKeyEqualDuplicateClause()
+        public async Task FindAllByFilterAsKeyEqualDuplicateClause()
         {
             var x = ODataDynamic.Expression;
             var command = _client
@@ -74,7 +75,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async void FindAllByFilterAsCompleteCompoundKey()
+        public async Task FindAllByFilterAsCompleteCompoundKey()
         {
             var x = ODataDynamic.Expression;
             var command = _client
@@ -85,7 +86,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async void FindAllByFilterAsInCompleteCompoundKey()
+        public async Task FindAllByFilterAsInCompleteCompoundKey()
         {
             var x = ODataDynamic.Expression;
             var command = _client
@@ -96,7 +97,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async void FindAllEmployeeSuperiors()
+        public async Task FindAllEmployeeSuperiors()
         {
             var x = ODataDynamic.Expression;
             var command = _client
@@ -108,7 +109,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async void FindAllCustomerOrders()
+        public async Task FindAllCustomerOrders()
         {
             var x = ODataDynamic.Expression;
             var command = _client
@@ -120,7 +121,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async void FindAllEmployeeSubordinates()
+        public async Task FindAllEmployeeSubordinates()
         {
             var x = ODataDynamic.Expression;
             var command = _client
@@ -132,7 +133,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async void FindAllOrderOrderDetails()
+        public async Task FindAllOrderOrderDetails()
         {
             var x = ODataDynamic.Expression;
             var command = _client
@@ -144,7 +145,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async void FindEmployeeSuperior()
+        public async Task FindEmployeeSuperior()
         {
             var x = ODataDynamic.Expression;
             var command = _client
@@ -156,7 +157,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async void FindAllFromBaseTableByFilterAsKeyEqual()
+        public async Task FindAllFromBaseTableByFilterAsKeyEqual()
         {
             var x = ODataDynamic.Expression;
             var command = _client
@@ -167,7 +168,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async void FindAllFromDerivedTableByFilterAsKeyEqual()
+        public async Task FindAllFromDerivedTableByFilterAsKeyEqual()
         {
             var x = ODataDynamic.Expression;
             var command = _client
@@ -175,7 +176,7 @@ namespace Simple.OData.Client.Tests
                 .As(x.Ship)
                 .Filter(x.TransportID == 1);
             string commandText = await command.GetCommandTextAsync();
-            Assert.Equal("Transport/NorthwindModel.Ships(1)", commandText);
+            Assert.Equal("Transport(1)/NorthwindModel.Ships", commandText);
         }
     }
 }

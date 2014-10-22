@@ -19,7 +19,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [TestMethod]
-        public async void FindEntries()
+        public async Task FindEntries()
         {
             var products = await _client.FindEntriesAsync("Products");
             Assert.IsTrue(products.Count() > 0);
