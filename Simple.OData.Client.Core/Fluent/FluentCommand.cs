@@ -25,6 +25,7 @@ namespace Simple.OData.Client
         private string _derivedCollectionName;
         private ODataExpression _derivedCollectionExpression;
         private string _functionName;
+        private string _actionName;
         private IList<object> _keyValues;
         private IDictionary<string, object> _namedKeyValues;
         private IDictionary<string, object> _entryData;
@@ -59,6 +60,7 @@ namespace Simple.OData.Client
             _derivedCollectionName = ancestor._derivedCollectionName;
             _derivedCollectionExpression = ancestor._derivedCollectionExpression;
             _functionName = ancestor._functionName;
+            _actionName = ancestor._actionName;
             _keyValues = ancestor._keyValues;
             _namedKeyValues = ancestor._namedKeyValues;
             _entryData = ancestor._entryData;
@@ -387,9 +389,15 @@ namespace Simple.OData.Client
             return this;
         }
 
+        public FluentCommand Action(string actionName)
+        {
+            _actionName = actionName;
+            return this;
+        }
+
         public FluentCommand Parameters(IDictionary<string, object> parameters)
         {
-            _parameters = parameters.ToDictionary();
+            _parameters = parameters != null ? parameters.ToDictionary() : new Dictionary<string, object>();
             return this;
         }
 
@@ -491,6 +499,11 @@ namespace Simple.OData.Client
             else if (!string.IsNullOrEmpty(_functionName))
             {
                 commandText += _session.Metadata.GetFunctionExactName(_functionName);
+            }
+            else if (!string.IsNullOrEmpty(_actionName))
+            {
+                // TODO
+                commandText += _actionName;
             }
 
             if (HasKey && HasFilter)

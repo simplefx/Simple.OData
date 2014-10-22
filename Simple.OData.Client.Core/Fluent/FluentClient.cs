@@ -353,6 +353,12 @@ namespace Simple.OData.Client
             return this;
         }
 
+        public IFluentClient<T> Action(string actionName)
+        {
+            this.Command.Action(actionName);
+            return this;
+        }
+
         public IFluentClient<T> Parameters(IDictionary<string, object> parameters)
         {
             this.Command.Parameters(parameters);

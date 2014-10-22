@@ -469,6 +469,24 @@ namespace Simple.OData.Client
         Task<T[]> ExecuteFunctionAsArrayAsync<T>(string functionName, IDictionary<string, object> parameters, CancellationToken cancellationToken);
 
         /// <summary>
+        /// Executes the OData action and returns result.
+        /// </summary>
+        /// <typeparam name="T">The result type.</typeparam>
+        /// <param name="actionName">Name of the function.</param>
+        /// <param name="parameters">The parameters.</param>
+        /// <returns>Function execution result.</returns>
+        Task<T> ExecuteActionAsync<T>(string actionName, IDictionary<string, object> parameters);
+        /// <summary>
+        /// Executes the OData action and returns result.
+        /// </summary>
+        /// <typeparam name="T">The result type.</typeparam>
+        /// <param name="actionName">Name of the function.</param>
+        /// <param name="parameters">The function parameters.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Function execution result.</returns>
+        Task<T> ExecuteActionAsync<T>(string actionName, IDictionary<string, object> parameters, CancellationToken cancellationToken);
+
+        /// <summary>
         /// Sets the word pluralizer used when resolving metadata objects.
         /// </summary>
         /// <param name="pluralizer">The pluralizer.</param>

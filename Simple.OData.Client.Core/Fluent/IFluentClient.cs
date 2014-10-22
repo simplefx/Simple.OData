@@ -721,9 +721,15 @@ namespace Simple.OData.Client
         /// <returns>Self.</returns>
         IFluentClient<T> Function(string functionName);
         /// <summary>
-        /// Assigns parameters to the OData function.
+        /// Sets the OData action name.
         /// </summary>
-        /// <param name="parameters">The function parameters.</param>
+        /// <param name="actionName">Name of the action.</param>
+        /// <returns>Self.</returns>
+        IFluentClient<T> Action(string actionName);
+        /// <summary>
+        /// Assigns parameters to the OData function or action.
+        /// </summary>
+        /// <param name="parameters">The function or action parameters.</param>
         /// <returns></returns>
         IFluentClient<T> Parameters(IDictionary<string, object> parameters);
 

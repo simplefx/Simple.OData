@@ -123,6 +123,25 @@ namespace Simple.OData.Client.Tests
         public string BuildingInfo { get; set; }
     }
 
+    static class IODataClientExtensions
+    {
+        public static Task<Airport> GetNearestAirportAsync(this IODataClient client, 
+            double latitude, double longitude)
+        {
+            return client.ExecuteFunctionAsScalarAsync<Airport>("GetNearestAirport",
+                    new Dictionary<string, object>()
+                    {
+                        {"lat", latitude}, 
+                        {"lon", longitude},
+                    });
+        }
+
+        public static async Task ResetDataSource(this IODataClient client)
+        {
+            await client.ExecuteActionAsync<object>("ResetDataSource", null);
+        }
+    }
+
     public abstract class TripPinTests : TripPinTestBase
     {
         protected TripPinTests(string serviceUri, ODataPayloadFormat payloadFormat) : base(serviceUri, payloadFormat) { }
@@ -287,13 +306,15 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task InsertEvent()
         {
-            var tripEvent = await _client
+            var command = _client
                 .For<Person>("People")
                 .Key("russellwhyte")
                 .NavigateTo<Trip>()
                 .Key(1003)
                 .NavigateTo(x => x.PlanItems)
-                .As<Event>()
+                .As<Event>();
+
+            var tripEvent = await command
                 .Set(new Event
                 {
                     ConfirmationCode = "4372899DD",
@@ -316,13 +337,7 @@ namespace Simple.OData.Client.Tests
                 })
                 .InsertEntryAsync();
 
-            tripEvent = await _client
-                .For<Person>("People")
-                .Key("russellwhyte")
-                .NavigateTo<Trip>()
-                .Key(1003)
-                .NavigateTo(x => x.PlanItems)
-                .As<Event>()
+            tripEvent = await command
                 .Key(tripEvent.PlanItemId)
                 .FindEntryAsync();
 
@@ -332,13 +347,15 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task UpdateEvent()
         {
-            var tripEvent = await _client
+            var command = _client
                 .For<Person>("People")
                 .Key("russellwhyte")
                 .NavigateTo<Trip>()
                 .Key(1003)
                 .NavigateTo(x => x.PlanItems)
-                .As<Event>()
+                .As<Event>();
+
+            var tripEvent = await command
                 .Set(new Event
                 {
                     ConfirmationCode = "4372899DD",
@@ -361,13 +378,7 @@ namespace Simple.OData.Client.Tests
                 })
                 .InsertEntryAsync();
 
-            tripEvent = await _client
-                .For<Person>("People")
-                .Key("russellwhyte")
-                .NavigateTo<Trip>()
-                .Key(1003)
-                .NavigateTo(x => x.PlanItems)
-                .As<Event>()
+            tripEvent = await command
                 .Key(tripEvent.PlanItemId)
                 .Set(new { Description = "This is a new description" })
                 .UpdateEntryAsync();
@@ -378,11 +389,15 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task DeleteEvent()
         {
-            var tripEvent = await _client
+            var command = _client
                 .For<Person>("People")
                 .Key("russellwhyte")
                 .NavigateTo<Trip>()
-                .As<Event>()
+                .Key(1003)
+                .NavigateTo(x => x.PlanItems)
+                .As<Event>();
+
+            var tripEvent = await command
                 .Set(new Event
                 {
                     ConfirmationCode = "4372899DD",
@@ -405,23 +420,11 @@ namespace Simple.OData.Client.Tests
                 })
                 .InsertEntryAsync();
 
-            await _client
-                .For<Person>("People")
-                .Key("russellwhyte")
-                .NavigateTo<Trip>()
-                .Key(1003)
-                .NavigateTo(x => x.PlanItems)
-                .As<Event>()
+            await command
                 .Key(tripEvent.PlanItemId)
                 .DeleteEntryAsync();
 
-            tripEvent = await _client
-                .For<Person>("People")
-                .Key("russellwhyte")
-                .NavigateTo<Trip>()
-                .Key(1003)
-                .NavigateTo(x => x.PlanItems)
-                .As<Event>()
+            tripEvent = await command
                 .Key(tripEvent.PlanItemId)
                 .FindEntryAsync();
 
@@ -452,6 +455,57 @@ namespace Simple.OData.Client.Tests
 
             Assert.Equal(1, trips.Count());
             Assert.Contains("New York", trips.Single().Description);
+        }
+
+        [Fact]
+        public async Task GetNearestAirport()
+        {
+            var airport = (await _client.GetNearestAirportAsync(100d, 100d));
+
+            Assert.Equal("KSEA", airport.IcaoCode);
+        }
+
+        [Fact]
+        public async Task ResetDataSource()
+        {
+            var command = _client
+                .For<Person>("People")
+                .Key("russellwhyte")
+                .NavigateTo<Trip>()
+                .Key(1003)
+                .NavigateTo(x => x.PlanItems)
+                .As<Event>();
+
+            var tripEvent = await command
+                .Set(new Event
+                {
+                    ConfirmationCode = "4372899DD",
+                    Description = "Client Meeting",
+                    Duration = TimeSpan.FromHours(3),
+                    EndsAt = DateTimeOffset.Parse("2014-06-01T23:11:17.5479185-07:00"),
+                    OccursAt = new EventLocation()
+                    {
+                        Address = "100 Church Street, 8th Floor, Manhattan, 10007",
+                        BuildingInfo = "Regus Business Center",
+                        City = new Location.LocationCity()
+                        {
+                            CountryRegion = "United States",
+                            Name = "New York City",
+                            Region = "New York",
+                        }
+                    },
+                    PlanItemId = 33,
+                    StartsAt = DateTimeOffset.Parse("2014-05-25T23:11:17.5459178-07:00"),
+                })
+                .InsertEntryAsync();
+
+            await _client.ResetDataSource();
+
+            tripEvent = await command
+                .Filter(x => x.PlanItemId == tripEvent.PlanItemId)
+                .FindEntryAsync();
+
+            Assert.Null(tripEvent);
         }
     }
 }

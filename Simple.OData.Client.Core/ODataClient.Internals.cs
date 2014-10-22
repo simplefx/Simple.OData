@@ -183,6 +183,17 @@ namespace Simple.OData.Client
                 () => new[] { (IDictionary<string, object>)null });
         }
 
+        private async Task<IDictionary<string, object>> ExecuteActionAsync(FluentCommand command, CancellationToken cancellationToken)
+        {
+            var commandText = await command.GetCommandTextAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+            var request = new ODataRequest(RestVerbs.Post, this.Session, commandText);
+            return await ExecuteRequestWithResultAsync(request, cancellationToken,
+                x => x.Entry,
+                () => (IDictionary<string, object>)null);
+        }
+
         private async Task<T> ExecuteRequestWithResultAsync<T>(ODataRequest request, CancellationToken cancellationToken,
             Func<ODataResponse, T> createResult, Func<T> createEmptyResult = null, Func<T> createBatchResult = null)
         {

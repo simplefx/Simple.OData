@@ -579,6 +579,24 @@ namespace Simple.OData.Client
                 .ToArray();
         }
 
+        public Task<T> ExecuteActionAsync<T>(string actionName, IDictionary<string, object> parameters)
+        {
+            return ExecuteActionAsync<T>(actionName, parameters, CancellationToken.None);
+        }
+
+        public async Task<T> ExecuteActionAsync<T>(string actionName, IDictionary<string, object> parameters, CancellationToken cancellationToken)
+        {
+            await _session.ResolveAdapterAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+            var command = GetFluentClient()
+                .Action(actionName)
+                .Parameters(parameters)
+                .AsFluentClient().Command;
+
+            return (T)(await ExecuteActionAsync(command, cancellationToken));
+        }
+
         #pragma warning restore 1591
 
         internal async Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(FluentCommand command, CancellationToken cancellationToken)
