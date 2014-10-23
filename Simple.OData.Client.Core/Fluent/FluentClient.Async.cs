@@ -352,34 +352,34 @@ namespace Simple.OData.Client
             return _client.UnlinkEntryAsync(_command, _command.KeyValues, expression.AsString(_session), linkedEntryKey != null ? linkedEntryKey.ToDictionary() : null, cancellationToken);
         }
 
-        public Task<IEnumerable<T>> ExecuteFunctionAsync(string functionName, IDictionary<string, object> parameters)
+        public Task<IEnumerable<T>> ExecuteAsync()
         {
-            return RectifyColumnSelectionAsync(_client.ExecuteFunctionAsync(_command, parameters, CancellationToken.None), _command.SelectedColumns);
+            return RectifyColumnSelectionAsync(_client.ExecuteAsync(_command, CancellationToken.None), _command.SelectedColumns);
         }
 
-        public Task<IEnumerable<T>> ExecuteFunctionAsync(string functionName, IDictionary<string, object> parameters, CancellationToken cancellationToken)
+        public Task<IEnumerable<T>> ExecuteAsync(CancellationToken cancellationToken)
         {
-            return RectifyColumnSelectionAsync(_client.ExecuteFunctionAsync(_command, parameters, cancellationToken), _command.SelectedColumns);
+            return RectifyColumnSelectionAsync(_client.ExecuteAsync(_command, cancellationToken), _command.SelectedColumns);
         }
 
-        public Task<T> ExecuteFunctionAsScalarAsync(string functionName, IDictionary<string, object> parameters)
+        public Task<T> ExecuteAsScalarAsync()
         {
-            return _client.ExecuteFunctionAsScalarAsync<T>(_command, parameters, CancellationToken.None);
+            return _client.ExecuteAsScalarAsync<T>(_command, CancellationToken.None);
         }
 
-        public Task<T> ExecuteFunctionAsScalarAsync(string functionName, IDictionary<string, object> parameters, CancellationToken cancellationToken)
+        public Task<T> ExecuteAsScalarAsync(CancellationToken cancellationToken)
         {
-            return _client.ExecuteFunctionAsScalarAsync<T>(_command, parameters, cancellationToken);
+            return _client.ExecuteAsScalarAsync<T>(_command, cancellationToken);
         }
 
-        public Task<T[]> ExecuteFunctionAsArrayAsync(string functionName, IDictionary<string, object> parameters)
+        public Task<T[]> ExecuteAsArrayAsync()
         {
-            return ExecuteFunctionAsArrayAsync(functionName, parameters, CancellationToken.None);
+            return ExecuteAsArrayAsync(CancellationToken.None);
         }
 
-        public Task<T[]> ExecuteFunctionAsArrayAsync(string functionName, IDictionary<string, object> parameters, CancellationToken cancellationToken)
+        public Task<T[]> ExecuteAsArrayAsync(CancellationToken cancellationToken)
         {
-            return _client.ExecuteFunctionAsArrayAsync<T>(_command, parameters, cancellationToken);
+            return _client.ExecuteAsArrayAsync<T>(_command, cancellationToken);
         }
 
         public Task<string> GetCommandTextAsync()

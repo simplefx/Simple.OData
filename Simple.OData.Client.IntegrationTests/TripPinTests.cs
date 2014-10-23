@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using Microsoft.Spatial;
 using Xunit;
@@ -125,21 +124,34 @@ namespace Simple.OData.Client.Tests
 
     static class IODataClientExtensions
     {
-        public static async Task<Airport> GetNearestAirportAsync(this IODataClient client, 
+        public static Task<Airport> GetNearestAirportAsync(this IODataClient client, 
             double latitude, double longitude)
         {
-            var result = await client.For<Airport>().ExecuteFunctionAsync("GetNearestAirport",
+            return client
+                .ExecuteFunctionAsEntryAsync<Airport>("GetNearestAirport",
                     new Dictionary<string, object>()
                     {
                         {"lat", latitude}, 
                         {"lon", longitude},
                     });
-            return result.First();
+        }
+
+        public static Task ShareTrip(this IFluentClient<Person> client,
+            string userName, int tripId)
+        {
+            return client
+                .Action("ShareTrip")
+                .Parameters(new Dictionary<string, object>()
+                {
+                    {"userName", userName},
+                    {"tripId", tripId},
+                })
+                .ExecuteAsync();
         }
 
         public static async Task ResetDataSource(this IODataClient client)
         {
-            await client.ExecuteActionAsync<object>("ResetDataSource", null);
+            await client.ExecuteActionAsync("ResetDataSource", null);
         }
     }
 
@@ -463,7 +475,7 @@ namespace Simple.OData.Client.Tests
         {
             var airport = (await _client.GetNearestAirportAsync(100d, 100d));
 
-            Assert.Equal("KSFO", airport.IcaoCode);
+            Assert.Equal("KSEA", airport.IcaoCode);
         }
 
         [Fact]
@@ -507,6 +519,15 @@ namespace Simple.OData.Client.Tests
                 .FindEntryAsync();
 
             Assert.Null(tripEvent);
+        }
+
+        [Fact]
+        public async Task ShareTrip()
+        {
+            await _client
+                .For<Person>()
+                .Key("russellwhyte")
+                .ShareTrip("John", 1);
         }
     }
 }

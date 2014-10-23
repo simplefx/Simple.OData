@@ -437,6 +437,22 @@ namespace Simple.OData.Client
             get { return !string.IsNullOrEmpty(_filter) || !ReferenceEquals(_filterExpression, null); }
         }
 
+        public bool HasFunction
+        {
+            get
+            {
+                return !string.IsNullOrEmpty(_functionName);
+            }
+        }
+
+        public bool HasAction
+        {
+            get
+            {
+                return !string.IsNullOrEmpty(_actionName);
+            }
+        }
+
         internal IDictionary<string, object> KeyValues
         {
             get
@@ -483,13 +499,11 @@ namespace Simple.OData.Client
 
         private string Format()
         {
-            int count = 0;
-            if (HasKey) ++count;
-            if (HasFilter) ++count;
-            if (!string.IsNullOrEmpty(_functionName)) ++count;
-            if (!string.IsNullOrEmpty(_actionName)) ++count;
-            if (count > 1)
-                throw new InvalidOperationException("OData filter, key, function and action can only be used exclusively and may not be combined.");
+            if (HasKey && HasFilter)
+                throw new InvalidOperationException("OData filter and key may not be combined.");
+
+            if (HasFunction && HasAction)
+                throw new InvalidOperationException("OData function and action may not be combined.");
 
             var commandText = string.Empty;
             if (!string.IsNullOrEmpty(_collectionName))

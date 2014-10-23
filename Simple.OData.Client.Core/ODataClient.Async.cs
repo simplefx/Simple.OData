@@ -550,6 +550,46 @@ namespace Simple.OData.Client
             return await ExecuteFunctionAsync(command, cancellationToken);
         }
 
+        public Task<IEnumerable<T>> ExecuteFunctionAsEntriesAsync<T>(string functionName, IDictionary<string, object> parameters)
+            where T : class
+        {
+            return ExecuteFunctionAsEntriesAsync<T>(functionName, parameters, CancellationToken.None);
+        }
+
+        public async Task<IEnumerable<T>> ExecuteFunctionAsEntriesAsync<T>(string functionName, IDictionary<string, object> parameters, CancellationToken cancellationToken)
+            where T : class
+        {
+            await _session.ResolveAdapterAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+            var command = GetFluentClient()
+                .Function(functionName)
+                .Parameters(parameters)
+                .AsFluentClient().Command;
+
+            return (await ExecuteAsEntriesAsync<T>(command, cancellationToken));
+        }
+
+        public Task<T> ExecuteFunctionAsEntryAsync<T>(string functionName, IDictionary<string, object> parameters)
+            where T : class
+        {
+            return ExecuteFunctionAsEntryAsync<T>(functionName, parameters, CancellationToken.None);
+        }
+
+        public async Task<T> ExecuteFunctionAsEntryAsync<T>(string functionName, IDictionary<string, object> parameters, CancellationToken cancellationToken)
+            where T : class
+        {
+            await _session.ResolveAdapterAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+            var command = GetFluentClient()
+                .Function(functionName)
+                .Parameters(parameters)
+                .AsFluentClient().Command;
+
+            return (await ExecuteAsEntryAsync<T>(command, cancellationToken));
+        }
+
         public Task<T> ExecuteFunctionAsScalarAsync<T>(string functionName, IDictionary<string, object> parameters)
         {
             return ExecuteFunctionAsScalarAsync<T>(functionName, parameters, CancellationToken.None);
@@ -579,12 +619,12 @@ namespace Simple.OData.Client
                 .ToArray();
         }
 
-        public Task<T> ExecuteActionAsync<T>(string actionName, IDictionary<string, object> parameters)
+        public Task<IEnumerable<IDictionary<string, object>>> ExecuteActionAsync(string actionName, IDictionary<string, object> parameters)
         {
-            return ExecuteActionAsync<T>(actionName, parameters, CancellationToken.None);
+            return ExecuteActionAsync(actionName, parameters, CancellationToken.None);
         }
 
-        public async Task<T> ExecuteActionAsync<T>(string actionName, IDictionary<string, object> parameters, CancellationToken cancellationToken)
+        public async Task<IEnumerable<IDictionary<string, object>>> ExecuteActionAsync(string actionName, IDictionary<string, object> parameters, CancellationToken cancellationToken)
         {
             await _session.ResolveAdapterAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
@@ -594,7 +634,76 @@ namespace Simple.OData.Client
                 .Parameters(parameters)
                 .AsFluentClient().Command;
 
-            return (T)(await ExecuteActionAsync(command, cancellationToken));
+            return await ExecuteActionAsync(command, cancellationToken);
+        }
+
+        public Task<IEnumerable<T>> ExecuteActionAsEntriesAsync<T>(string actionName, IDictionary<string, object> parameters)
+            where T : class
+        {
+            return ExecuteActionAsEntriesAsync<T>(actionName, parameters, CancellationToken.None);
+        }
+
+        public async Task<IEnumerable<T>> ExecuteActionAsEntriesAsync<T>(string actionName, IDictionary<string, object> parameters, CancellationToken cancellationToken)
+            where T : class
+        {
+            await _session.ResolveAdapterAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+            var command = GetFluentClient()
+                .Action(actionName)
+                .Parameters(parameters)
+                .AsFluentClient().Command;
+
+            return (await ExecuteAsEntriesAsync<T>(command, cancellationToken));
+        }
+
+        public Task<T> ExecuteActionAsEntryAsync<T>(string actionName, IDictionary<string, object> parameters)
+            where T : class
+        {
+            return ExecuteActionAsEntryAsync<T>(actionName, parameters, CancellationToken.None);
+        }
+
+        public async Task<T> ExecuteActionAsEntryAsync<T>(string actionName, IDictionary<string, object> parameters, CancellationToken cancellationToken)
+            where T : class
+        {
+            await _session.ResolveAdapterAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+            var command = GetFluentClient()
+                .Action(actionName)
+                .Parameters(parameters)
+                .AsFluentClient().Command;
+
+            return (await ExecuteAsEntryAsync<T>(command, cancellationToken));
+        }
+
+        public Task<T> ExecuteActionAsScalarAsync<T>(string actionName, IDictionary<string, object> parameters)
+        {
+            return ExecuteActionAsScalarAsync<T>(actionName, parameters, CancellationToken.None);
+        }
+
+        public async Task<T> ExecuteActionAsScalarAsync<T>(string actionName, IDictionary<string, object> parameters, CancellationToken cancellationToken)
+        {
+            await _session.ResolveAdapterAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+            return (T)(await ExecuteActionAsync(actionName, parameters, cancellationToken)).First().First().Value;
+        }
+
+        public Task<T[]> ExecuteActionAsArrayAsync<T>(string actionName, IDictionary<string, object> parameters)
+        {
+            return ExecuteActionAsArrayAsync<T>(actionName, parameters, CancellationToken.None);
+        }
+
+        public async Task<T[]> ExecuteActionAsArrayAsync<T>(string actionName, IDictionary<string, object> parameters, CancellationToken cancellationToken)
+        {
+            await _session.ResolveAdapterAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+            return (await ExecuteActionAsync(actionName, parameters, cancellationToken))
+                .SelectMany(x => x.Values)
+                .Select(y => (T)y)
+                .ToArray();
         }
 
         #pragma warning restore 1591
@@ -721,28 +830,59 @@ namespace Simple.OData.Client
             await ExecuteUnlinkEntryAsync(new FluentCommand(command).Key(entryKey), linkName, linkedEntryKey, cancellationToken);
         }
 
-        internal async Task<IEnumerable<IDictionary<string, object>>> ExecuteFunctionAsync(FluentCommand command, IDictionary<string, object> parameters, CancellationToken cancellationToken)
+        internal async Task<IEnumerable<IDictionary<string, object>>> ExecuteAsync(FluentCommand command, CancellationToken cancellationToken)
         {
             await _session.ResolveAdapterAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            return await ExecuteFunctionAsync(new FluentCommand(command).Parameters(parameters), cancellationToken);
+            if (command.HasFunction)
+                return await ExecuteFunctionAsync(command, cancellationToken);
+            else if (command.HasAction)
+                return await ExecuteActionAsync(command, cancellationToken);
+            else
+                throw new InvalidOperationException("Command is expected to be a function or an action.");
         }
 
-        internal async Task<T> ExecuteFunctionAsScalarAsync<T>(FluentCommand command, IDictionary<string, object> parameters, CancellationToken cancellationToken)
+        internal async Task<IEnumerable<T>> ExecuteAsEntriesAsync<T>(FluentCommand command, CancellationToken cancellationToken) 
+            where T : class
         {
             await _session.ResolveAdapterAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            return (T)(await ExecuteFunctionAsync(new FluentCommand(command).Parameters(parameters), cancellationToken)).First().First().Value;
+            IEnumerable<IDictionary<string, object>> result;
+            if (command.HasFunction)
+                result = await ExecuteFunctionAsync(command, cancellationToken);
+            else if (command.HasAction)
+                result = await ExecuteActionAsync(command, cancellationToken);
+            else
+                throw new InvalidOperationException("Command is expected to be a function or an action.");
+
+            return result.Select(x => x.ToObject<T>());
         }
 
-        internal async Task<T[]> ExecuteFunctionAsArrayAsync<T>(FluentCommand command, IDictionary<string, object> parameters, CancellationToken cancellationToken)
+        internal async Task<T> ExecuteAsEntryAsync<T>(FluentCommand command, CancellationToken cancellationToken)
+            where T : class
         {
             await _session.ResolveAdapterAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            return (await ExecuteFunctionAsync(new FluentCommand(command).Parameters(parameters), cancellationToken))
+            return (await ExecuteAsEntriesAsync<T>(command, cancellationToken)).FirstOrDefault();
+        }
+
+        internal async Task<T> ExecuteAsScalarAsync<T>(FluentCommand command, CancellationToken cancellationToken)
+        {
+            await _session.ResolveAdapterAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+            return (T)(await ExecuteAsync(command, cancellationToken)).First().First().Value;
+        }
+
+        internal async Task<T[]> ExecuteAsArrayAsync<T>(FluentCommand command, CancellationToken cancellationToken)
+        {
+            await _session.ResolveAdapterAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+            return (await ExecuteAsync(command, cancellationToken))
                 .SelectMany(x => x.Values)
                 .Select(y => (T)y)
                 .ToArray();

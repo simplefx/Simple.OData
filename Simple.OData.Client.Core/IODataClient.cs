@@ -433,6 +433,42 @@ namespace Simple.OData.Client
         Task<IEnumerable<IDictionary<string, object>>> ExecuteFunctionAsync(string functionName, IDictionary<string, object> parameters, CancellationToken cancellationToken);
 
         /// <summary>
+        /// Executes the OData function.
+        /// </summary>
+        /// <typeparam name="T">The type of the entry collection.</typeparam>
+        /// <param name="functionName">Name of the function.</param>
+        /// <param name="parameters">The function parameters.</param>
+        /// <returns>Function execution result.</returns>
+        Task<IEnumerable<T>> ExecuteFunctionAsEntriesAsync<T>(string functionName, IDictionary<string, object> parameters) where T : class;
+        /// <summary>
+        /// Executes the OData function.
+        /// </summary>
+        /// <typeparam name="T">The type of the entry collection.</typeparam>
+        /// <param name="functionName">Name of the function.</param>
+        /// <param name="parameters">The function parameters.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Function execution result.</returns>
+        Task<IEnumerable<T>> ExecuteFunctionAsEntriesAsync<T>(string functionName, IDictionary<string, object> parameters, CancellationToken cancellationToken) where T : class;
+
+        /// <summary>
+        /// Executes the OData function.
+        /// </summary>
+        /// <typeparam name="T">The type of the entry.</typeparam>
+        /// <param name="functionName">Name of the function.</param>
+        /// <param name="parameters">The function parameters.</param>
+        /// <returns>Function execution result.</returns>
+        Task<T> ExecuteFunctionAsEntryAsync<T>(string functionName, IDictionary<string, object> parameters) where T : class;
+        /// <summary>
+        /// Executes the OData function.
+        /// </summary>
+        /// <typeparam name="T">The type of the entry.</typeparam>
+        /// <param name="functionName">Name of the function.</param>
+        /// <param name="parameters">The function parameters.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Function execution result.</returns>
+        Task<T> ExecuteFunctionAsEntryAsync<T>(string functionName, IDictionary<string, object> parameters, CancellationToken cancellationToken) where T : class;
+
+        /// <summary>
         /// Executes the OData function and returns scalar result.
         /// </summary>
         /// <typeparam name="T">The result type.</typeparam>
@@ -469,22 +505,92 @@ namespace Simple.OData.Client
         Task<T[]> ExecuteFunctionAsArrayAsync<T>(string functionName, IDictionary<string, object> parameters, CancellationToken cancellationToken);
 
         /// <summary>
-        /// Executes the OData action and returns result.
+        /// Executes the OData action.
         /// </summary>
-        /// <typeparam name="T">The result type.</typeparam>
-        /// <param name="actionName">Name of the function.</param>
-        /// <param name="parameters">The parameters.</param>
-        /// <returns>Function execution result.</returns>
-        Task<T> ExecuteActionAsync<T>(string actionName, IDictionary<string, object> parameters);
+        /// <param name="actionName">Name of the action.</param>
+        /// <param name="parameters">The action parameters.</param>
+        /// <returns>Action execution result.</returns>
+        Task<IEnumerable<IDictionary<string, object>>> ExecuteActionAsync(string actionName, IDictionary<string, object> parameters);
         /// <summary>
-        /// Executes the OData action and returns result.
+        /// Executes the OData action.
+        /// </summary>
+        /// <param name="actionName">Name of the action.</param>
+        /// <param name="parameters">The action parameters.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Action execution result.</returns>
+        Task<IEnumerable<IDictionary<string, object>>> ExecuteActionAsync(string actionName, IDictionary<string, object> parameters, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Executes the OData action.
+        /// </summary>
+        /// <typeparam name="T">The type of the entry collection.</typeparam>
+        /// <param name="actionName">Name of the action.</param>
+        /// <param name="parameters">The action parameters.</param>
+        /// <returns>Action execution result.</returns>
+        Task<IEnumerable<T>> ExecuteActionAsEntriesAsync<T>(string actionName, IDictionary<string, object> parameters) where T : class;
+        /// <summary>
+        /// Executes the OData action.
+        /// </summary>
+        /// <typeparam name="T">The type of the entry collection.</typeparam>
+        /// <param name="actionName">Name of the action.</param>
+        /// <param name="parameters">The action parameters.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Action execution result.</returns>
+        Task<IEnumerable<T>> ExecuteActionAsEntriesAsync<T>(string actionName, IDictionary<string, object> parameters, CancellationToken cancellationToken) where T : class;
+
+        /// <summary>
+        /// Executes the OData action.
+        /// </summary>
+        /// <typeparam name="T">The type of the entry.</typeparam>
+        /// <param name="actionName">Name of the action.</param>
+        /// <param name="parameters">The action parameters.</param>
+        /// <returns>Action execution result.</returns>
+        Task<T> ExecuteActionAsEntryAsync<T>(string actionName, IDictionary<string, object> parameters) where T : class;
+        /// <summary>
+        /// Executes the OData action.
+        /// </summary>
+        /// <typeparam name="T">The type of the entry.</typeparam>
+        /// <param name="actionName">Name of the action.</param>
+        /// <param name="parameters">The action parameters.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Action execution result.</returns>
+        Task<T> ExecuteActionAsEntryAsync<T>(string actionName, IDictionary<string, object> parameters, CancellationToken cancellationToken) where T : class;
+
+        /// <summary>
+        /// Executes the OData action and returns scalar result.
         /// </summary>
         /// <typeparam name="T">The result type.</typeparam>
-        /// <param name="actionName">Name of the function.</param>
-        /// <param name="parameters">The function parameters.</param>
+        /// <param name="actionName">Name of the action.</param>
+        /// <param name="parameters">The parameters.</param>
+        /// <returns>action execution result.</returns>
+        Task<T> ExecuteActionAsScalarAsync<T>(string actionName, IDictionary<string, object> parameters);
+        /// <summary>
+        /// Executes the OData action and returns scalar result.
+        /// </summary>
+        /// <typeparam name="T">The result type.</typeparam>
+        /// <param name="actionName">Name of the action.</param>
+        /// <param name="parameters">The action parameters.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>Function execution result.</returns>
-        Task<T> ExecuteActionAsync<T>(string actionName, IDictionary<string, object> parameters, CancellationToken cancellationToken);
+        /// <returns>Action execution result.</returns>
+        Task<T> ExecuteActionAsScalarAsync<T>(string actionName, IDictionary<string, object> parameters, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Executes the OData action and returns an array.
+        /// </summary>
+        /// <typeparam name="T">The array element type.</typeparam>
+        /// <param name="actionName">Name of the action.</param>
+        /// <param name="parameters">The action parameters.</param>
+        /// <returns>Action execution result.</returns>
+        Task<T[]> ExecuteActionAsArrayAsync<T>(string actionName, IDictionary<string, object> parameters);
+        /// <summary>
+        /// Executes the OData action and returns an array.
+        /// </summary>
+        /// <typeparam name="T">The array element type.</typeparam>
+        /// <param name="actionName">Name of the action.</param>
+        /// <param name="parameters">The action parameters.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Action execution result.</returns>
+        Task<T[]> ExecuteActionAsArrayAsync<T>(string actionName, IDictionary<string, object> parameters, CancellationToken cancellationToken);
 
         /// <summary>
         /// Sets the word pluralizer used when resolving metadata objects.

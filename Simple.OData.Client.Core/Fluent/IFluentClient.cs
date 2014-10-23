@@ -394,52 +394,40 @@ namespace Simple.OData.Client
         Task UnlinkEntryAsync(ODataExpression expression, IDictionary<string, object> linkedEntryKey, CancellationToken cancellationToken);
 
         /// <summary>
-        /// Executes the OData function.
+        /// Executes the OData function or action.
         /// </summary>
-        /// <param name="functionName">Name of the function.</param>
-        /// <param name="parameters">The function parameters.</param>
-        /// <returns>Function execution result.</returns>
-        Task<IEnumerable<T>> ExecuteFunctionAsync(string functionName, IDictionary<string, object> parameters);
+        /// <returns>Action execution result.</returns>
+        Task<IEnumerable<T>> ExecuteAsync();
         /// <summary>
-        /// Executes the OData function.
+        /// Executes the OData function or action.
         /// </summary>
-        /// <param name="functionName">Name of the function.</param>
-        /// <param name="parameters">The function parameters.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>Function execution result.</returns>
-        Task<IEnumerable<T>> ExecuteFunctionAsync(string functionName, IDictionary<string, object> parameters, CancellationToken cancellationToken);
+        /// <returns>Execution result.</returns>
+        Task<IEnumerable<T>> ExecuteAsync(CancellationToken cancellationToken);
 
         /// <summary>
-        /// Executes the OData function and returns scalar result.
+        /// Executes the OData function or action and returns scalar result.
         /// </summary>
-        /// <param name="functionName">Name of the function.</param>
-        /// <param name="parameters">The function parameters.</param>
-        /// <returns>Function execution result.</returns>
-        Task<T> ExecuteFunctionAsScalarAsync(string functionName, IDictionary<string, object> parameters);
+        /// <returns>Execution result.</returns>
+        Task<T> ExecuteAsScalarAsync();
         /// <summary>
-        /// Executes the OData function and returns scalar result.
+        /// Executes the OData function or action and returns scalar result.
         /// </summary>
-        /// <param name="functionName">Name of the function.</param>
-        /// <param name="parameters">The function parameters.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>Function execution result.</returns>
-        Task<T> ExecuteFunctionAsScalarAsync(string functionName, IDictionary<string, object> parameters, CancellationToken cancellationToken);
+        /// <returns>Action execution result.</returns>
+        Task<T> ExecuteAsScalarAsync(CancellationToken cancellationToken);
 
         /// <summary>
-        /// Executes the OData function and returns an array.
+        /// Executes the OData function or action and returns an array.
         /// </summary>
-        /// <param name="functionName">Name of the function.</param>
-        /// <param name="parameters">The function parameters.</param>
-        /// <returns>Function execution result.</returns>
-        Task<T[]> ExecuteFunctionAsArrayAsync(string functionName, IDictionary<string, object> parameters);
+        /// <returns>Execution result.</returns>
+        Task<T[]> ExecuteAsArrayAsync();
         /// <summary>
-        /// Executes the OData function and returns an array.
+        /// Executes the OData function or action and returns an array.
         /// </summary>
-        /// <param name="functionName">Name of the function.</param>
-        /// <param name="parameters">The function parameters.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>Function execution result.</returns>
-        Task<T[]> ExecuteFunctionAsArrayAsync(string functionName, IDictionary<string, object> parameters, CancellationToken cancellationToken);
+        /// <returns>Action execution result.</returns>
+        Task<T[]> ExecuteAsArrayAsync(CancellationToken cancellationToken);
 
         /// <summary>
         /// Gets the OData command text.
