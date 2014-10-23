@@ -12,7 +12,8 @@ namespace Simple.OData.Client
 
         string GetODataVersionString();
         string ConvertValueToUriLiteral(object value);
-        string ConvertKeyToUriLiteral(IDictionary<string, object> key);
+        string ConvertKeyValuesToUriLiteral(IDictionary<string, object> key, bool skipKeyNameForSingleValue);
+        FunctionFormat FunctionFormat { get; }
 
         IMetadata GetMetadata();
         IResponseReader GetResponseReader();

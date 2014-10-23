@@ -137,7 +137,7 @@ namespace Simple.OData.Client
                     entityCollection = _session.Metadata.GetEntityCollection(_collectionName);
                 }
 
-                return string.IsNullOrEmpty(_derivedCollectionName) 
+                return string.IsNullOrEmpty(_derivedCollectionName)
                     ? entityCollection
                     : _session.Metadata.GetDerivedEntityCollection(entityCollection, _derivedCollectionName);
             }
@@ -157,10 +157,9 @@ namespace Simple.OData.Client
             }
         }
 
-        public async Task<string> GetCommandTextAsync()
+        public Task<string> GetCommandTextAsync()
         {
-            await _session.ResolveAdapterAsync(CancellationToken.None);
-            return new FluentCommand(this).Resolve().Format();
+            return GetCommandTextAsync(CancellationToken.None);
         }
 
         public async Task<string> GetCommandTextAsync(CancellationToken cancellationToken)
@@ -484,7 +483,15 @@ namespace Simple.OData.Client
 
         private string Format()
         {
-            string commandText = string.Empty;
+            int count = 0;
+            if (HasKey) ++count;
+            if (HasFilter) ++count;
+            if (!string.IsNullOrEmpty(_functionName)) ++count;
+            if (!string.IsNullOrEmpty(_actionName)) ++count;
+            if (count > 1)
+                throw new InvalidOperationException("OData filter, key, function and action can only be used exclusively and may not be combined.");
+
+            var commandText = string.Empty;
             if (!string.IsNullOrEmpty(_collectionName))
             {
                 commandText += _session.Metadata.GetEntityCollectionExactName(_collectionName);
@@ -492,8 +499,8 @@ namespace Simple.OData.Client
             else if (!string.IsNullOrEmpty(_linkName))
             {
                 var parent = new FluentCommand(_parent).Resolve();
-                commandText += string.Format("{0}/{1}", 
-                    parent.Format(), 
+                commandText += string.Format("{0}/{1}",
+                    parent.Format(),
                     _session.Metadata.GetNavigationPropertyExactName(parent.EntityCollection.ActualName, _linkName));
             }
             else if (!string.IsNullOrEmpty(_functionName))
@@ -505,11 +512,10 @@ namespace Simple.OData.Client
                 commandText += _session.Metadata.GetActionExactName(_actionName);
             }
 
-            if (HasKey && HasFilter)
-                throw new InvalidOperationException("Filter may not be set when key is assigned");
-
             if (HasKey)
-                commandText += _session.Adapter.ConvertKeyToUriLiteral(this.KeyValues);
+                commandText += _session.Adapter.ConvertKeyValuesToUriLiteral(this.KeyValues, true);
+            else if (!string.IsNullOrEmpty(_functionName) && _session.Adapter.FunctionFormat == FunctionFormat.Key)
+                commandText += _session.Adapter.ConvertKeyValuesToUriLiteral(_parameters, false);
 
             if (!string.IsNullOrEmpty(_derivedCollectionName))
             {
@@ -529,7 +535,8 @@ namespace Simple.OData.Client
             var extraClauses = new List<string>();
             var aggregateClauses = new List<string>();
 
-            if (_parameters.Any())
+            if (_parameters.Any() && !string.IsNullOrEmpty(_actionName) ||
+                !string.IsNullOrEmpty(_functionName) && _session.Adapter.FunctionFormat == FunctionFormat.Query)
                 extraClauses.Add(string.Join("&", _parameters.Select(x => string.Format("{0}={1}",
                     x.Key, _session.Adapter.ConvertValueToUriLiteral(x.Value)))));
 
@@ -545,18 +552,18 @@ namespace Simple.OData.Client
             if (_expandAssociations.Any())
             {
                 if (_session.Adapter.AdapterVersion == AdapterVersion.V3)
-                    extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Expand, 
+                    extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Expand,
                         string.Join(",", _expandAssociations.Select(x => FormatExpandItem(x, this.EntityCollection)))));
                 else
                     extraClauses.Add(string.Join(",", _expandAssociations.Select(x => FormatExpandItem(x, this.EntityCollection))));
             }
 
             if (_orderbyColumns.Any())
-                extraClauses.Add(string.Format("{0}={1}", ODataLiteral.OrderBy, 
+                extraClauses.Add(string.Format("{0}={1}", ODataLiteral.OrderBy,
                     string.Join(",", _orderbyColumns.Select(FormatOrderByItem))));
 
             if (_selectColumns.Any())
-                extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Select, 
+                extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Select,
                     string.Join(",", _selectColumns.Select(FormatSelectItem))));
 
             if (_includeCount)
@@ -639,8 +646,8 @@ namespace Simple.OData.Client
                 return null;
 
             var keyNames = _session.Metadata.GetDeclaredKeyPropertyNames(this.EntityCollection.ActualName).ToList();
-            return keyNames.Count == namedKeyValues.Count() && keyNames.All(namedKeyValues.ContainsKey) 
-                ? namedKeyValues 
+            return keyNames.Count == namedKeyValues.Count() && keyNames.All(namedKeyValues.ContainsKey)
+                ? namedKeyValues
                 : null;
         }
 

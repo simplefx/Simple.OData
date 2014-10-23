@@ -193,8 +193,8 @@ namespace Simple.OData.Client.V3.Adapter
                     var linkSet = _model.EntityContainers()
                         .SelectMany(x => x.EntitySets())
                         .Single(x => Client.Utils.NamesMatch(x.ElementType.Name, linkType.Name, _session.Pluralizer));
-                    var formattedKey = _session.Adapter.ConvertKeyToUriLiteral(
-                        linkKey.ToDictionary(x => x.Name, x => linkEntry[x.Name]));
+                    var formattedKey = _session.Adapter.ConvertKeyValuesToUriLiteral(
+                        linkKey.ToDictionary(x => x.Name, x => linkEntry[x.Name]), true);
                     linkUri = linkSet.Name + formattedKey;
                 }
                 var link = new ODataEntityReferenceLink

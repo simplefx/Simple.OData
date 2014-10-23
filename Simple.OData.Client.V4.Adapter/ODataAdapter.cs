@@ -77,6 +77,11 @@ namespace Simple.OData.Client.V4.Adapter
                     (ODataVersion)Enum.Parse(typeof(ODataVersion), this.GetODataVersionString(), false), this.Model);
         }
 
+        public override FunctionFormat FunctionFormat
+        {
+            get { return FunctionFormat.Key; }
+        }
+
         public override IMetadata GetMetadata()
         {
             return new Metadata(_session, Model);

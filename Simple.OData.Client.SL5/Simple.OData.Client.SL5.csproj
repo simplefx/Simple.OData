@@ -133,6 +133,9 @@
     <Compile Include="..\Simple.OData.Client.Core\Adapter\BatchWriterBase.cs">
       <Link>Adapter\BatchWriterBase.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Adapter\FunctionFormat.cs">
+      <Link>Adapter\FunctionFormat.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Adapter\IBatchWriter.cs">
       <Link>Adapter\IBatchWriter.cs</Link>
     </Compile>

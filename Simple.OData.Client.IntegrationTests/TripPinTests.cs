@@ -125,15 +125,16 @@ namespace Simple.OData.Client.Tests
 
     static class IODataClientExtensions
     {
-        public static Task<Airport> GetNearestAirportAsync(this IODataClient client, 
+        public static async Task<Airport> GetNearestAirportAsync(this IODataClient client, 
             double latitude, double longitude)
         {
-            return client.ExecuteFunctionAsScalarAsync<Airport>("GetNearestAirport",
+            var result = await client.For<Airport>().ExecuteFunctionAsync("GetNearestAirport",
                     new Dictionary<string, object>()
                     {
                         {"lat", latitude}, 
                         {"lon", longitude},
                     });
+            return result.First();
         }
 
         public static async Task ResetDataSource(this IODataClient client)
@@ -462,7 +463,7 @@ namespace Simple.OData.Client.Tests
         {
             var airport = (await _client.GetNearestAirportAsync(100d, 100d));
 
-            Assert.Equal("KSEA", airport.IcaoCode);
+            Assert.Equal("KSFO", airport.IcaoCode);
         }
 
         [Fact]
