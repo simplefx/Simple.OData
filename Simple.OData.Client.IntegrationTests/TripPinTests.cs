@@ -136,7 +136,7 @@ namespace Simple.OData.Client.Tests
                     });
         }
 
-        public static Task ShareTrip(this IFluentClient<Person> client,
+        public static Task ShareTripAsync(this IFluentClient<Person> client,
             string userName, int tripId)
         {
             return client
@@ -527,7 +527,7 @@ namespace Simple.OData.Client.Tests
             await _client
                 .For<Person>()
                 .Key("russellwhyte")
-                .ShareTrip("John", 1);
+                .ShareTripAsync("John", 1);
         }
     }
 }

@@ -60,6 +60,16 @@ namespace Simple.OData.Client
                 .CreateUnlinkRequestAsync(commandText, linkName, entryIdent, linkIdent);
         }
 
+        public Task<ODataRequest> CreateFunctionRequestAsync(string commandText)
+        {
+            return Utils.GetTaskFromResult(new ODataRequest(RestVerbs.Get, _session, commandText));
+        }
+
+        public Task<ODataRequest> CreateActionRequestAsync(string commandText)
+        {
+            return Utils.GetTaskFromResult(new ODataRequest(RestVerbs.Post, _session, commandText)); ;
+        }
+
         public async Task<ODataRequest> CreateBatchRequestAsync()
         {
             var requestMessage = await _lazyBatchWriter.Value.EndBatchAsync();

@@ -516,13 +516,18 @@ namespace Simple.OData.Client
                 commandText += string.Format("{0}/{1}",
                     parent.Format(),
                     _session.Metadata.GetNavigationPropertyExactName(parent.EntityCollection.ActualName, _linkName));
-            }
-            else if (!string.IsNullOrEmpty(_functionName))
+            }  
+          
+            if (!string.IsNullOrEmpty(_functionName))
             {
+                if (!string.IsNullOrEmpty(_collectionName))
+                    commandText += "/";
                 commandText += _session.Metadata.GetFunctionExactName(_functionName);
             }
             else if (!string.IsNullOrEmpty(_actionName))
             {
+                if (!string.IsNullOrEmpty(_collectionName))
+                    commandText += "/";
                 commandText += _session.Metadata.GetActionExactName(_actionName);
             }
 
@@ -549,8 +554,11 @@ namespace Simple.OData.Client
             var extraClauses = new List<string>();
             var aggregateClauses = new List<string>();
 
-            if (_parameters.Any() && !string.IsNullOrEmpty(_actionName) ||
-                !string.IsNullOrEmpty(_functionName) && _session.Adapter.FunctionFormat == FunctionFormat.Query)
+            if (HasAction)
+                return string.Empty;
+
+            if (_parameters.Any() && !string.IsNullOrEmpty(_functionName) && 
+                _session.Adapter.FunctionFormat == FunctionFormat.Query)
                 extraClauses.Add(string.Join("&", _parameters.Select(x => string.Format("{0}={1}",
                     x.Key, _session.Adapter.ConvertValueToUriLiteral(x.Value)))));
 

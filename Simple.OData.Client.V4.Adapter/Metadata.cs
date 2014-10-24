@@ -164,14 +164,11 @@ namespace Simple.OData.Client.V4.Adapter
         public override string GetFunctionExactName(string functionName)
         {
             var function = _model.SchemaElements
-                .Where(x => x.SchemaElementKind == EdmSchemaElementKind.EntityContainer)
-                .SelectMany(x => (x as IEdmEntityContainer).OperationImports()
-                    .Where(y => y.IsFunctionImport() && y.Name.Homogenize() == functionName.Homogenize()))
-                .SingleOrDefault();
+                .SingleOrDefault(x => x.SchemaElementKind == EdmSchemaElementKind.Function && 
+                    x.Name.Homogenize() == functionName.Homogenize());
 
             if (function == null)
-                throw new UnresolvableObjectException(functionName,
-                    string.Format("Function {0} not found", functionName));
+                throw new UnresolvableObjectException(functionName, string.Format("Function {0} not found", functionName));
 
             return function.Name;
         }
@@ -179,15 +176,12 @@ namespace Simple.OData.Client.V4.Adapter
         public override string GetActionExactName(string actionName)
         {
             var action = _model.SchemaElements
-                .Where(x => x.SchemaElementKind == EdmSchemaElementKind.EntityContainer)
-                .SelectMany(x => (x as IEdmEntityContainer).OperationImports()
-                    .Where(y => y.IsActionImport() && y.Name.Homogenize() == actionName.Homogenize()))
-                .SingleOrDefault();
+                .SingleOrDefault(x => x.SchemaElementKind == EdmSchemaElementKind.Action &&
+                    x.Name.Homogenize() == actionName.Homogenize());
 
             if (action == null)
-                throw new UnresolvableObjectException(actionName,
-                    string.Format("Action {0} not found", actionName));
-
+                throw new UnresolvableObjectException(actionName, string.Format("Action {0} not found", actionName));
+    
             return action.Name;
         }
 
