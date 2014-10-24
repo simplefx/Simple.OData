@@ -29,7 +29,6 @@ namespace Simple.OData.Client
         private IList<object> _keyValues;
         private IDictionary<string, object> _namedKeyValues;
         private IDictionary<string, object> _entryData;
-        private Dictionary<string, object> _parameters = new Dictionary<string, object>();
         private string _filter;
         private ODataExpression _filterExpression;
         private int _skipCount = -1;
@@ -64,7 +63,6 @@ namespace Simple.OData.Client
             _keyValues = ancestor._keyValues;
             _namedKeyValues = ancestor._namedKeyValues;
             _entryData = ancestor._entryData;
-            _parameters = ancestor._parameters;
             _filter = ancestor._filter;
             _filterExpression = ancestor._filterExpression;
             _filterExpression = ancestor._filterExpression;
@@ -394,12 +392,6 @@ namespace Simple.OData.Client
             return this;
         }
 
-        public FluentCommand Parameters(IDictionary<string, object> parameters)
-        {
-            _parameters = parameters != null ? parameters.ToDictionary() : new Dictionary<string, object>();
-            return this;
-        }
-
         public bool FilterIsKey
         {
             get
@@ -487,9 +479,9 @@ namespace Simple.OData.Client
             }
         }
 
-        internal IDictionary<string, object> EntryData
+        internal IDictionary<string, object> CommandData
         {
-            get { return _parameters.Any() ? _parameters : _entryData; }
+            get { return _entryData ?? new Dictionary<string, object>(); }
         }
 
         internal IList<string> SelectedColumns
@@ -544,7 +536,7 @@ namespace Simple.OData.Client
             if (HasKey)
                 commandText += _session.Adapter.ConvertKeyValuesToUriLiteral(this.KeyValues, true);
             else if (!string.IsNullOrEmpty(_functionName) && _session.Adapter.FunctionFormat == FunctionFormat.Key)
-                commandText += _session.Adapter.ConvertKeyValuesToUriLiteral(_parameters, false);
+                commandText += _session.Adapter.ConvertKeyValuesToUriLiteral(this.CommandData, false);
 
             if (!string.IsNullOrEmpty(_derivedCollectionName))
             {
@@ -567,9 +559,9 @@ namespace Simple.OData.Client
             if (HasAction)
                 return string.Empty;
 
-            if (_parameters.Any() && !string.IsNullOrEmpty(_functionName) && 
+            if (this.CommandData.Any() && !string.IsNullOrEmpty(_functionName) && 
                 _session.Adapter.FunctionFormat == FunctionFormat.Query)
-                extraClauses.Add(string.Join("&", _parameters.Select(x => string.Format("{0}={1}",
+                extraClauses.Add(string.Join("&", this.CommandData.Select(x => string.Format("{0}={1}",
                     x.Key, _session.Adapter.ConvertValueToUriLiteral(x.Value)))));
 
             if (_filter != null)

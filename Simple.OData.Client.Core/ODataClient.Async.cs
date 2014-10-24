@@ -544,7 +544,7 @@ namespace Simple.OData.Client
 
             var command = GetFluentClient()
                 .Function(functionName)
-                .Parameters(parameters)
+                .Set(parameters)
                 .AsFluentClient().Command;
 
             return await ExecuteFunctionAsync(command, cancellationToken);
@@ -564,7 +564,7 @@ namespace Simple.OData.Client
 
             var command = GetFluentClient()
                 .Function(functionName)
-                .Parameters(parameters)
+                .Set(parameters)
                 .AsFluentClient().Command;
 
             return (await ExecuteAsEntriesAsync<T>(command, cancellationToken));
@@ -584,7 +584,7 @@ namespace Simple.OData.Client
 
             var command = GetFluentClient()
                 .Function(functionName)
-                .Parameters(parameters)
+                .Set(parameters)
                 .AsFluentClient().Command;
 
             return (await ExecuteAsEntryAsync<T>(command, cancellationToken));
@@ -631,7 +631,7 @@ namespace Simple.OData.Client
 
             var command = GetFluentClient()
                 .Action(actionName)
-                .Parameters(parameters)
+                .Set(parameters)
                 .AsFluentClient().Command;
 
             return await ExecuteActionAsync(command, cancellationToken);
@@ -651,7 +651,7 @@ namespace Simple.OData.Client
 
             var command = GetFluentClient()
                 .Action(actionName)
-                .Parameters(parameters)
+                .Set(parameters)
                 .AsFluentClient().Command;
 
             return (await ExecuteAsEntriesAsync<T>(command, cancellationToken));
@@ -671,7 +671,7 @@ namespace Simple.OData.Client
 
             var command = GetFluentClient()
                 .Action(actionName)
-                .Parameters(parameters)
+                .Set(parameters)
                 .AsFluentClient().Command;
 
             return (await ExecuteAsEntryAsync<T>(command, cancellationToken));

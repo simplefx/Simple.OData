@@ -141,7 +141,7 @@ namespace Simple.OData.Client.Tests
         {
             return client
                 .Action("ShareTrip")
-                .Parameters(new Dictionary<string, object>()
+                .Set(new Dictionary<string, object>()
                 {
                     {"userName", userName},
                     {"tripId", tripId},

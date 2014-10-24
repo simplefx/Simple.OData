@@ -714,12 +714,6 @@ namespace Simple.OData.Client
         /// <param name="actionName">Name of the action.</param>
         /// <returns>Self.</returns>
         IFluentClient<T> Action(string actionName);
-        /// <summary>
-        /// Assigns parameters to the OData function or action.
-        /// </summary>
-        /// <param name="parameters">The function or action parameters.</param>
-        /// <returns></returns>
-        IFluentClient<T> Parameters(IDictionary<string, object> parameters);
 
         /// <summary>
         /// Gets a value indicating whether the OData command filter represent the entry key.

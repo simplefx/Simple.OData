@@ -12,7 +12,7 @@ namespace Simple.OData.Client
     {
         private async Task<IDictionary<string, object>> ExecuteInsertEntryAsync(FluentCommand command, bool resultRequired, CancellationToken cancellationToken)
         {
-            var entryData = command.EntryData;
+            var entryData = command.CommandData;
             var commandText = await command.GetCommandTextAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
@@ -37,7 +37,7 @@ namespace Simple.OData.Client
         {
             var collectionName = command.QualifiedEntityCollectionName;
             var entryKey = command.HasKey ? command.KeyValues : command.FilterAsKey;
-            var entryData = command.EntryData;
+            var entryData = command.CommandData;
             var entryIdent = await FormatEntryKeyAsync(command, cancellationToken);
 
             var request = await _requestBuilder.CreateUpdateRequestAsync(collectionName, entryIdent, entryKey, entryData, resultRequired);
@@ -84,7 +84,7 @@ namespace Simple.OData.Client
         private async Task<IDictionary<string, object>> GetUpdatedResult(FluentCommand command, CancellationToken cancellationToken)
         {
             var entryKey = command.HasKey ? command.KeyValues : command.FilterAsKey;
-            var entryData = command.EntryData;
+            var entryData = command.CommandData;
 
             var updatedKey = entryKey.Where(x => !entryData.ContainsKey(x.Key)).ToIDictionary();
             foreach (var item in entryData.Where(x => entryKey.ContainsKey(x.Key)))
@@ -189,7 +189,7 @@ namespace Simple.OData.Client
             var commandText = await command.GetCommandTextAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var request = await _requestBuilder.CreateActionRequestAsync(commandText, command.ActionName, command.EntryData);
+            var request = await _requestBuilder.CreateActionRequestAsync(commandText, command.ActionName, command.CommandData);
 
             return await ExecuteRequestWithResultAsync(request, cancellationToken,
                 x => x.Entries ?? new[] { x.Entry },
@@ -232,7 +232,7 @@ namespace Simple.OData.Client
             Func<string, IDictionary<string, object>, IDictionary<string, object>, bool, Task<IDictionary<string, object>>> funcAsync, CancellationToken cancellationToken)
         {
             var collectionName = command.QualifiedEntityCollectionName;
-            var entryData = command.EntryData;
+            var entryData = command.CommandData;
             var commandText = await command.GetCommandTextAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 

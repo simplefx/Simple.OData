@@ -359,12 +359,6 @@ namespace Simple.OData.Client
             return this;
         }
 
-        public IFluentClient<T> Parameters(IDictionary<string, object> parameters)
-        {
-            this.Command.Parameters(parameters);
-            return this;
-        }
-
         public bool FilterIsKey
         {
             get { return this.Command.FilterIsKey; }

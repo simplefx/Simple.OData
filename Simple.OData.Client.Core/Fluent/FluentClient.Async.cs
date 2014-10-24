@@ -99,7 +99,7 @@ namespace Simple.OData.Client
 
         public Task<T> InsertEntryAsync(bool resultRequired, CancellationToken cancellationToken)
         {
-            return _client.InsertEntryAsync(_command, _command.EntryData, resultRequired, cancellationToken).ContinueWith(x =>
+            return _client.InsertEntryAsync(_command, _command.CommandData, resultRequired, cancellationToken).ContinueWith(x =>
             {
                 var result = x.Result;
                 return result.ToObject<T>(_dynamicResults);
@@ -172,7 +172,7 @@ namespace Simple.OData.Client
 
         public Task<IEnumerable<T>> UpdateEntriesAsync(bool resultRequired, CancellationToken cancellationToken)
         {
-            return _client.UpdateEntriesAsync(_command, _command.EntryData, resultRequired, cancellationToken).ContinueWith(x =>
+            return _client.UpdateEntriesAsync(_command, _command.CommandData, resultRequired, cancellationToken).ContinueWith(x =>
             {
                 var result = x.Result;
                 return result.Select(y => y.ToObject<T>(_dynamicResults));
