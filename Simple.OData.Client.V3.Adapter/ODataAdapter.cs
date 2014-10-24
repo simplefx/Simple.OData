@@ -8,6 +8,14 @@ using Microsoft.Data.Edm.Csdl;
 using Microsoft.Data.OData;
 using Microsoft.Data.OData.Query;
 
+namespace Simple.OData.Client
+{
+    public static class V3Adapter
+    {
+        public static void Reference() { }
+    }
+}
+
 namespace Simple.OData.Client.V3.Adapter
 {
     public class ODataAdapter : ODataAdapterBase
@@ -27,17 +35,13 @@ namespace Simple.OData.Client.V3.Adapter
             set { base.Model = value; }
         }
 
-		public ODataAdapter()
-		{
-			CustomConverters.RegisterTypeConverter(typeof(GeographyPoint), TypeConverters.CreateGeographyPoint);
-			CustomConverters.RegisterTypeConverter(typeof(GeometryPoint), TypeConverters.CreateGeometryPoint);
-		}
-
         private ODataAdapter(ISession session, string protocolVersion)
-            : this()
         {
             _session = session;
             ProtocolVersion = protocolVersion;
+
+            CustomConverters.RegisterTypeConverter(typeof(GeographyPoint), TypeConverters.CreateGeographyPoint);
+            CustomConverters.RegisterTypeConverter(typeof(GeometryPoint), TypeConverters.CreateGeometryPoint);
         }
 
         public ODataAdapter(ISession session, string protocolVersion, HttpResponseMessage response)

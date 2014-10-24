@@ -12,8 +12,8 @@ namespace Simple.OData.Client.Tests
 		[TestFixtureSetUp]
 		public void TestFixtureSetUp()
 		{
-			ODataClient.RegisterAdapter(new Simple.OData.Client.V3.Adapter.ODataAdapter());
-			ODataClient.RegisterAdapter(new Simple.OData.Client.V4.Adapter.ODataAdapter());
+			V3Adapter.Reference();
+			V4Adapter.Reference();
 		}
 
 		[Test]
