@@ -53,7 +53,7 @@ namespace Simple.OData.Client
         /// <param name="credentials">The OData service access credentials.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The service metadata.</returns>
-        public static async Task<object> GetMetadataAsync(string urlBase, ICredentials credentials, CancellationToken cancellationToken)
+        public static Task<object> GetMetadataAsync(string urlBase, ICredentials credentials, CancellationToken cancellationToken)
         {
             return GetMetadataAsync<object>(urlBase, credentials, cancellationToken);
         }
