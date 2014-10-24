@@ -1,4 +1,5 @@
 using System.Linq;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Nito.AsyncEx;
 using NUnit.Framework;
@@ -8,6 +9,13 @@ namespace Simple.OData.Client.Tests
 	[TestFixture]
     public class ClientTests
     {
+		[TestFixtureSetUp]
+		public void TestFixtureSetUp()
+		{
+			ODataClient.RegisterAdapter(new Simple.OData.Client.V3.Adapter.ODataAdapter());
+			ODataClient.RegisterAdapter(new Simple.OData.Client.V4.Adapter.ODataAdapter());
+		}
+
 		[Test]
 		public void AllEntriesFromODataOrg()
         {

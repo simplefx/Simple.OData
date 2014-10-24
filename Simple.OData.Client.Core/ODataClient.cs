@@ -9,6 +9,7 @@ namespace Simple.OData.Client
     /// </summary>
     public partial class ODataClient : IODataClient
     {
+		private static IODataAdapter _adapterOnlyToPreserveReference;
         private readonly ODataClientSettings _settings;
         private readonly Session _session;
         private readonly RequestBuilder _requestBuilder;
@@ -48,6 +49,11 @@ namespace Simple.OData.Client
             _requestBuilder = batch.RequestBuilder;
             _requestRunner = batch.RequestRunner;
         }
+
+		public static void RegisterAdapter(IODataAdapter adapter)
+		{
+			_adapterOnlyToPreserveReference = adapter;
+		}
 
         internal Session Session
         {
