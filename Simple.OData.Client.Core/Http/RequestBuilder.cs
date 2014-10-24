@@ -23,11 +23,8 @@ namespace Simple.OData.Client
 
         public Task<ODataRequest> CreateGetRequestAsync(string commandText, bool scalarResult = false)
         {
-            var request = new ODataRequest(RestVerbs.Get, _session, commandText)
-            {
-                ReturnsScalarResult = scalarResult,
-            };
-            return Utils.GetTaskFromResult(request);
+            return _session.Adapter.GetRequestWriter(_lazyBatchWriter)
+                .CreateGetRequestAsync(commandText, scalarResult);
         }
 
         public Task<ODataRequest> CreateInsertRequestAsync(string commandText, IDictionary<string, object> entryData, bool resultRequired)
@@ -60,14 +57,16 @@ namespace Simple.OData.Client
                 .CreateUnlinkRequestAsync(commandText, linkName, entryIdent, linkIdent);
         }
 
-        public Task<ODataRequest> CreateFunctionRequestAsync(string commandText)
+        public Task<ODataRequest> CreateFunctionRequestAsync(string commandText, string functionName)
         {
-            return Utils.GetTaskFromResult(new ODataRequest(RestVerbs.Get, _session, commandText));
+            return _session.Adapter.GetRequestWriter(_lazyBatchWriter)
+                .CreateFunctionRequestAsync(commandText, functionName);
         }
 
-        public Task<ODataRequest> CreateActionRequestAsync(string commandText)
+        public Task<ODataRequest> CreateActionRequestAsync(string commandText, string actionName, IDictionary<string, object> parameters)
         {
-            return Utils.GetTaskFromResult(new ODataRequest(RestVerbs.Post, _session, commandText)); ;
+            return _session.Adapter.GetRequestWriter(_lazyBatchWriter)
+                .CreateActionRequestAsync(commandText, actionName, parameters);
         }
 
         public async Task<ODataRequest> CreateBatchRequestAsync()

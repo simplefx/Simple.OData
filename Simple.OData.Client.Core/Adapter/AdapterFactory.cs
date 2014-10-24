@@ -78,7 +78,7 @@ namespace Simple.OData.Client
 
         internal async Task<HttpResponseMessage> SendMetadataRequestAsync(CancellationToken cancellationToken)
         {
-            var request = await new RequestBuilder(_session).CreateGetRequestAsync(ODataLiteral.Metadata);
+            var request = new ODataRequest(RestVerbs.Get, _session, ODataLiteral.Metadata);
             var requestRunner = new RequestRunner(_session);
 
             return await requestRunner.ExecuteRequestAsync(request, cancellationToken);

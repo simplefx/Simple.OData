@@ -489,12 +489,22 @@ namespace Simple.OData.Client
 
         internal IDictionary<string, object> EntryData
         {
-            get { return _entryData; }
+            get { return _parameters.Any() ? _parameters : _entryData; }
         }
 
         internal IList<string> SelectedColumns
         {
             get { return _selectColumns; }
+        }
+
+        internal string FunctionName
+        {
+            get { return _functionName; }
+        }
+
+        internal string ActionName
+        {
+            get { return _actionName; }
         }
 
         private string Format()
@@ -521,13 +531,13 @@ namespace Simple.OData.Client
             if (!string.IsNullOrEmpty(_functionName))
             {
                 if (!string.IsNullOrEmpty(_collectionName))
-                    commandText += "/";
+                    commandText += "?";
                 commandText += _session.Metadata.GetFunctionExactName(_functionName);
             }
             else if (!string.IsNullOrEmpty(_actionName))
             {
                 if (!string.IsNullOrEmpty(_collectionName))
-                    commandText += "/";
+                    commandText += "?";
                 commandText += _session.Metadata.GetActionExactName(_actionName);
             }
 

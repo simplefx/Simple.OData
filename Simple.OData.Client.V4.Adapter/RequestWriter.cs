@@ -7,8 +7,6 @@ using System.Threading.Tasks;
 using System.Xml.Linq;
 using Microsoft.OData.Core;
 using Microsoft.OData.Edm;
-using Microsoft.OData.Edm.Annotations;
-using Microsoft.OData.Edm.Library;
 using Microsoft.Spatial;
 using Simple.OData.Client.Extensions;
 
@@ -44,7 +42,7 @@ namespace Simple.OData.Client.V4.Adapter
                 var entityTypeNamespace = _session.Metadata.GetEntityCollectionTypeNamespace(collection);
                 var entityTypeName = _session.Metadata.GetEntityCollectionTypeName(collection);
 
-                var entryWriter = messageWriter.CreateODataEntryWriter();
+                var entryWriter = await messageWriter.CreateODataEntryWriterAsync();
                 var entry = new Microsoft.OData.Core.ODataEntry();
                 entry.TypeName = string.Join(".", entityTypeNamespace, entityTypeName);
 
@@ -56,7 +54,7 @@ namespace Simple.OData.Client.V4.Adapter
                     Value = GetPropertyValue(typeProperties, x.Key, x.Value)
                 }).ToList();
 
-                entryWriter.WriteStart(entry);
+                await entryWriter.WriteStartAsync(entry);
 
                 if (entryDetails.Links != null)
                 {
@@ -64,12 +62,12 @@ namespace Simple.OData.Client.V4.Adapter
                     {
                         if (link.Value.Any(x => x.LinkData != null))
                         {
-                            WriteLink(entryWriter, entry, link.Key, link.Value);
+                            await WriteLinkAsync(entryWriter, entry, link.Key, link.Value);
                         }
                     }
                 }
 
-                entryWriter.WriteEnd();
+                await entryWriter.WriteEndAsync();
 
                 return IsBatch ? null : message.GetStream();
             }
@@ -81,7 +79,30 @@ namespace Simple.OData.Client.V4.Adapter
             using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), _model))
             {
                 var link = new ODataEntityReferenceLink { Url = Utils.CreateAbsoluteUri(_session.UrlBase, linkIdent) };
-                messageWriter.WriteEntityReferenceLink(link);
+                await messageWriter.WriteEntityReferenceLinkAsync(link);
+
+                return message.GetStream();
+            }
+        }
+
+        protected override async Task<Stream> WriteActionContentAsync(string actionName, IDictionary<string, object> parameters)
+        {
+            var message = new ODataRequestMessage();
+            using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), _model))
+            {
+                var action = _model.SchemaElements.Single(
+                    x => x.SchemaElementKind == EdmSchemaElementKind.Action &&
+                    Utils.NamesMatch(x.Name, actionName, _session.Pluralizer));
+                var parameterWriter = await messageWriter.CreateODataParameterWriterAsync(action as IEdmAction);
+
+                await parameterWriter.WriteStartAsync();
+
+                foreach (var parameter in parameters)
+                {
+                    await parameterWriter.WriteValueAsync(parameter.Key, parameter.Value);
+                }
+
+                await parameterWriter.WriteEndAsync();
 
                 return message.GetStream();
             }
@@ -130,7 +151,7 @@ namespace Simple.OData.Client.V4.Adapter
             return _model.FindDeclaredType(string.Join(".", entityTypeNamespace, entityTypeName)) as IEdmEntityType;
         }
 
-        private void WriteLink(ODataWriter entryWriter, Microsoft.OData.Core.ODataEntry entry, string linkName, IEnumerable<ReferenceLink> links)
+        private async Task WriteLinkAsync(ODataWriter entryWriter, Microsoft.OData.Core.ODataEntry entry, string linkName, IEnumerable<ReferenceLink> links)
         {
             var navigationProperty = (_model.FindDeclaredType(entry.TypeName) as IEdmEntityType).NavigationProperties()
                 .Single(x => Utils.NamesMatch(x.Name, linkName, _session.Pluralizer));
@@ -138,7 +159,7 @@ namespace Simple.OData.Client.V4.Adapter
 
             var linkType = GetNavigationPropertyEntityType(navigationProperty);
 
-            entryWriter.WriteStart(new ODataNavigationLink()
+            await entryWriter.WriteStartAsync(new ODataNavigationLink()
             {
                 Name = linkName,
                 IsCollection = isCollection,
@@ -174,10 +195,10 @@ namespace Simple.OData.Client.V4.Adapter
                     Url = Utils.CreateAbsoluteUri(_session.UrlBase, linkUri)
                 };
 
-                entryWriter.WriteEntityReferenceLink(link);
+                await entryWriter.WriteEntityReferenceLinkAsync(link);
             }
 
-            entryWriter.WriteEnd();
+            await entryWriter.WriteEndAsync();
         }
 
         private static IEdmEntityType GetNavigationPropertyEntityType(IEdmNavigationProperty navigationProperty)

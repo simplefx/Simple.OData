@@ -177,7 +177,7 @@ namespace Simple.OData.Client
             var commandText = await command.GetCommandTextAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var request = await _requestBuilder.CreateFunctionRequestAsync(commandText);
+            var request = await _requestBuilder.CreateFunctionRequestAsync(commandText, command.FunctionName);
 
             return await ExecuteRequestWithResultAsync(request, cancellationToken,
                 x => x.Entries ?? new[] { x.Entry },
@@ -189,7 +189,7 @@ namespace Simple.OData.Client
             var commandText = await command.GetCommandTextAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var request = await _requestBuilder.CreateActionRequestAsync(commandText);
+            var request = await _requestBuilder.CreateActionRequestAsync(commandText, command.ActionName, command.EntryData);
 
             return await ExecuteRequestWithResultAsync(request, cancellationToken,
                 x => x.Entries ?? new[] { x.Entry },

@@ -525,7 +525,7 @@ namespace Simple.OData.Client.Tests
         public async Task ShareTrip()
         {
             await _client
-                .For<Person>()
+                .For<Person>("People")
                 .Key("russellwhyte")
                 .ShareTripAsync("John", 1);
         }

@@ -22,6 +22,15 @@ namespace Simple.OData.Client
             get { return _deferredBatchWriter != null; }
         }
 
+        public Task<ODataRequest> CreateGetRequestAsync(string commandText, bool scalarResult)
+        {
+            var request = new ODataRequest(RestVerbs.Get, _session, commandText)
+            {
+                ReturnsScalarResult = scalarResult,
+            };
+            return Utils.GetTaskFromResult(request);
+        }
+
         public async Task<ODataRequest> CreateInsertRequestAsync(string collection, IDictionary<string, object> entryData, bool resultRequired)
         {
             var commandText = collection;
@@ -108,8 +117,30 @@ namespace Simple.OData.Client
             return request;
         }
 
+        public Task<ODataRequest> CreateFunctionRequestAsync(string collection, string functionName)
+        {
+            return Utils.GetTaskFromResult(new ODataRequest(RestVerbs.Get, _session, collection));
+        }
+
+        public async Task<ODataRequest> CreateActionRequestAsync(string collection, string actionName, IDictionary<string, object> parameters)
+        {
+            var commandText = collection;
+
+            if (parameters != null && parameters.Any())
+            {
+                var entryContent = await WriteActionContentAsync(actionName, parameters);
+
+                return new ODataRequest(RestVerbs.Post, _session, commandText, parameters, entryContent);
+            }
+            else
+            {
+                return new ODataRequest(RestVerbs.Post, _session, commandText);
+            }
+        }
+
         protected abstract Task<Stream> WriteEntryContentAsync(string method, string collection, string commandText, IDictionary<string, object> entryData);
         protected abstract Task<Stream> WriteLinkContentAsync(string linkIdent);
+        protected abstract Task<Stream> WriteActionContentAsync(string actionName, IDictionary<string, object> parameters);
         protected abstract string FormatLinkPath(string entryIdent, string navigationPropertyName, string linkIdent = null);
         protected abstract void AssignHeaders(ODataRequest request);
 

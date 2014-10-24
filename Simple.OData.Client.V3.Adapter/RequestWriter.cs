@@ -7,8 +7,6 @@ using System.Spatial;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Microsoft.Data.Edm;
-using Microsoft.Data.Edm.Annotations;
-using Microsoft.Data.Edm.Library;
 using Microsoft.Data.OData;
 using Simple.OData.Client.Extensions;
 
@@ -82,6 +80,11 @@ namespace Simple.OData.Client.V3.Adapter
 
                 return message.GetStream();
             }
+        }
+
+        protected override async Task<Stream> WriteActionContentAsync(string actionName, IDictionary<string, object> parameters)
+        {
+            throw new NotSupportedException();
         }
 
         protected override string FormatLinkPath(string entryIdent, string navigationPropertyName, string linkIdent = null)
