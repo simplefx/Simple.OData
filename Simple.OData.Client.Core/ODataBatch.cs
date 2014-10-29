@@ -14,6 +14,7 @@ namespace Simple.OData.Client
     public class ODataBatch : IDisposable
     {
         internal ODataClientSettings Settings { get; set; }
+        internal Session Session { get; set; }
         internal RequestBuilder RequestBuilder { get; set; }
         internal RequestRunner RequestRunner { get; set; }
 
@@ -32,10 +33,10 @@ namespace Simple.OData.Client
         /// <param name="settings">The settings.</param>
         public ODataBatch(ODataClientSettings settings)
         {
-            var session = Session.FromSettings(settings);
+            this.Session = Session.FromSettings(settings);
             this.Settings = settings;
-            this.RequestBuilder = new RequestBuilder(session, true);
-            this.RequestRunner = new RequestRunner(session);
+            this.RequestBuilder = new RequestBuilder(this.Session, true);
+            this.RequestRunner = new RequestRunner(this.Session);
         }
 
         /// <summary>
@@ -61,10 +62,16 @@ namespace Simple.OData.Client
         /// <returns></returns>
         public async Task CompleteAsync(CancellationToken cancellationToken)
         {
-            using (var response = await this.RequestRunner.ExecuteRequestAsync(
-                await this.RequestBuilder.CreateBatchRequestAsync(), cancellationToken))
+            await this.Session.ResolveAdapterAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+            if (this.RequestBuilder.IsBatchWithActions)
             {
-                await ParseResponseAsync(response);
+                using (var response = await this.RequestRunner.ExecuteRequestAsync(
+                    await this.RequestBuilder.CreateBatchRequestAsync(), cancellationToken))
+                {
+                    await ParseResponseAsync(response);
+                }
             }
         }
 

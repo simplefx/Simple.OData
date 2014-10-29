@@ -592,6 +592,11 @@ namespace Simple.OData.Client
         /// <returns>Action execution result.</returns>
         Task<T[]> ExecuteActionAsArrayAsync<T>(string actionName, IDictionary<string, object> parameters, CancellationToken cancellationToken);
 
+        Task ExecuteBatchAsync(IEnumerable<Action<IODataClient>> actions);
+        Task ExecuteBatchAsync(IEnumerable<Action<IODataClient>> actions, CancellationToken cancellationToken);
+        Task ExecuteBatchAsync(params Action<IODataClient>[] actions);
+        Task ExecuteBatchAsync(CancellationToken cancellationToken, params Action<IODataClient>[] actions);
+
         /// <summary>
         /// Sets the word pluralizer used when resolving metadata objects.
         /// </summary>

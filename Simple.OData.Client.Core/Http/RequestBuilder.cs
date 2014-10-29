@@ -11,6 +11,7 @@ namespace Simple.OData.Client
         private readonly Lazy<IBatchWriter> _lazyBatchWriter;
 
         public bool IsBatch { get { return _lazyBatchWriter != null; } }
+        public bool IsBatchWithActions { get { return _lazyBatchWriter != null && _lazyBatchWriter.IsValueCreated; } }
 
         public RequestBuilder(ISession session, bool isBatch = false)
         {

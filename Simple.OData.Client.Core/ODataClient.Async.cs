@@ -706,6 +706,38 @@ namespace Simple.OData.Client
                 .ToArray();
         }
 
+        public Task ExecuteBatchAsync(IEnumerable<Action<IODataClient>> actions)
+        {
+            return ExecuteBatchAsync(actions, CancellationToken.None);
+        }
+
+        public async Task ExecuteBatchAsync(IEnumerable<Action<IODataClient>> actions, CancellationToken cancellationToken)
+        {
+            await _session.ResolveAdapterAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+            using (var batch = new ODataBatch(_settings))
+            {
+                var client = new ODataClient(batch);
+                foreach (var action in actions)
+                {
+                    action(client);
+                    if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+                }
+                await batch.CompleteAsync(cancellationToken);
+            }
+        }
+
+        public Task ExecuteBatchAsync(params Action<IODataClient>[] actions)
+        {
+            return ExecuteBatchAsync(CancellationToken.None, actions);
+        }
+
+        public Task ExecuteBatchAsync(CancellationToken cancellationToken, params Action<IODataClient>[] actions)
+        {
+            return ExecuteBatchAsync(actions, cancellationToken);
+        }
+
         #pragma warning restore 1591
 
         internal async Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(FluentCommand command, CancellationToken cancellationToken)

@@ -27,6 +27,37 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task EmptyBatch()
+        {
+            using (var batch = new ODataBatch(_serviceUri))
+            {
+                await batch.CompleteAsync();
+            }
+        }
+
+        [Fact]
+        public async Task SuccessWithActions()
+        {
+            IDictionary<string, object> entry1 = null;
+            IDictionary<string, object> entry2 = null;
+
+            await _client.ExecuteBatchAsync(
+                async x => { entry1 = await x.InsertEntryAsync("Products", new Entry() {{"ProductName", "Test1"}, {"UnitPrice", 10m}}); },
+                async x => { entry2 = await x.InsertEntryAsync("Products", new Entry() {{"ProductName", "Test2"}, {"UnitPrice", 20m}}); }
+            );
+
+            Assert.NotNull(entry1);
+            Assert.NotNull(entry2);
+            //Assert.NotNull(entry1["ProductID"]);
+            //Assert.NotNull(entry2["ProductID"]);
+
+            var product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'Test1'");
+            Assert.NotNull(product);
+            product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'Test2'");
+            Assert.NotNull(product);
+        }
+
+        [Fact]
         public async Task PartialFailures()
         {
             using (var batch = new ODataBatch(_serviceUri))
