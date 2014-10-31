@@ -76,5 +76,19 @@ namespace Simple.OData.Client
             var request = new ODataRequest(RestVerbs.Post, _session, ODataLiteral.Batch, requestMessage);
             return request;
         }
+
+        public async Task<ODataRequest> CreateBatchRequestAsync(IEnumerable<Action<IODataClient>> actions)
+        {
+            var batch = new ODataBatch(_session as Session);
+            var client = new ODataClient(batch);
+            foreach (var action in actions)
+            {
+                action(client);
+            }
+
+            var requestMessage = await batch.RequestBuilder._lazyBatchWriter.Value.EndBatchAsync();
+            var request = new ODataRequest(RestVerbs.Post, _session, ODataLiteral.Batch, requestMessage);
+            return request;
+        }
     }
 }

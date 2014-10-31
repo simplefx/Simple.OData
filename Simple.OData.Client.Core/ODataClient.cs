@@ -13,6 +13,7 @@ namespace Simple.OData.Client
         private readonly Session _session;
         private readonly RequestBuilder _requestBuilder;
         private readonly RequestRunner _requestRunner;
+        private readonly ODataResponse _batchResponse;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ODataClient"/> class.
@@ -36,17 +37,18 @@ namespace Simple.OData.Client
             _requestRunner = new RequestRunner(_session);
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ODataClient"/> class.
-        /// </summary>
-        /// <param name="batch">The OData batch instance.</param>
-        public ODataClient(ODataBatch batch)
+        internal ODataClient(ODataBatch batch)
         {
-            _settings = batch.Settings;
+            _settings = new ODataClientSettings(batch.Session);
             _session = Session.FromSettings(_settings);
 
             _requestBuilder = batch.RequestBuilder;
             _requestRunner = batch.RequestRunner;
+        }
+
+        internal ODataClient(ODataResponse batchResponse)
+        {
+            _batchResponse = batchResponse;
         }
 
         internal Session Session

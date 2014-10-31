@@ -47,13 +47,10 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task Success()
         {
-            using (var batch = new ODataBatch(_serviceUri))
-            {
-                var client = new ODataClient(batch);
-                await client.InsertEntryAsync("Products", CreateProduct(5001, "Test1"), false);
-                await client.InsertEntryAsync("Products", CreateProduct(5002, "Test2"), false);
-                await batch.CompleteAsync();
-            }
+            var batch = new ODataBatch(_serviceUri);
+            batch += x => x.InsertEntryAsync("Products", CreateProduct(5001, "Test1"), false);
+            batch += x => x.InsertEntryAsync("Products", CreateProduct(5002, "Test2"), false);
+            await batch.ExecuteAsync();
 
             var product = await _client.FindEntryAsync("Products?$filter=Name eq 'Test1'");
             Assert.NotNull(product);
@@ -92,14 +89,11 @@ namespace Simple.OData.Client.Tests
         {
             var key = new Entry() { { "Name", "Test11" } };
 
-            using (var batch = new ODataBatch(_serviceUri))
-            {
-                var client = new ODataClient(batch);
-                await client.InsertEntryAsync("Products", CreateProduct(5011, "Test11"), false);
-                await client.UpdateEntriesAsync("Products", "Products?$filter=Name eq 'Test11'", new Entry() { { "Price", 22m } });
-                await client.DeleteEntriesAsync("Products", "Products?$filter=Name eq 'Test11'");
-                await batch.CompleteAsync();
-            }
+            var batch = new ODataBatch(_serviceUri);
+            batch += x => x.InsertEntryAsync("Products", CreateProduct(5011, "Test11"), false);
+            batch += x => x.UpdateEntriesAsync("Products", "Products?$filter=Name eq 'Test11'", new Entry() { { "Price", 22m } });
+            batch += x => x.DeleteEntriesAsync("Products", "Products?$filter=Name eq 'Test11'");
+            await batch.ExecuteAsync();
 
             var product = await _client.FindEntryAsync("Products?$filter=Name eq 'Test11'");
             Assert.Equal(18d, Convert.ToDouble(product["Price"]));
@@ -141,14 +135,11 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task InsertSingleEntityWithSingleAssociationSingleBatch()
         {
-            IDictionary<string, object> category;
-            using (var batch = new ODataBatch(_serviceUri))
-            {
-                var client = new ODataClient(batch);
-                category = await client.InsertEntryAsync("Categories", CreateCategory(5013, "Test13"));
-                await client.InsertEntryAsync("Products", CreateProduct(5014, "Test14", category), false);
-                await batch.CompleteAsync();
-            }
+            IDictionary<string, object> category = null;
+            var batch = new ODataBatch(_serviceUri);
+            batch += async x => category = await x.InsertEntryAsync("Categories", CreateCategory(5013, "Test13"));
+            batch += x => x.InsertEntryAsync("Products", CreateProduct(5014, "Test14", category), false);
+            await batch.ExecuteAsync();
 
             var product = await _client
                 .For("Products")
@@ -161,17 +152,16 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task InsertSingleEntityWithMultipleAssociationsSingleBatch()
         {
-            IDictionary<string, object> category;
-            using (var batch = new ODataBatch(_serviceUri))
-            {
-                var client = new ODataClient(batch);
-                var product1 = await client.InsertEntryAsync("Products", CreateProduct(5015, "Test15"));
-                var product2 = await client.InsertEntryAsync("Products", CreateProduct(5016, "Test16"));
-                await client.InsertEntryAsync("Categories", CreateCategory(5017, "Test17", new[] { product1, product2 } ), false);
-                await batch.CompleteAsync();
-            }
+            IDictionary<string, object> product1 = null;
+            IDictionary<string, object> product2 = null;
 
-            category = await _client
+            var batch = new ODataBatch(_serviceUri);
+            batch += async x => product1 = await x.InsertEntryAsync("Products", CreateProduct(5015, "Test15"));
+            batch += async x => product2 = await x.InsertEntryAsync("Products", CreateProduct(5016, "Test16"));
+            batch += async x => await x.InsertEntryAsync("Categories", CreateCategory(5017, "Test17", new[] { product1, product2 }), false);
+            await batch.ExecuteAsync();
+
+            var category = await _client
                 .For("Categories")
                 .Key(5017)
                 .Expand("Products")

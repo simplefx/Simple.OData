@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Data.Edm;
@@ -51,7 +53,11 @@ namespace Simple.OData.Client.V3.Adapter
             using (var messageReader = new ODataMessageReader(responseMessage, readerSettings, _model))
             {
                 var payloadKind = messageReader.DetectPayloadKind();
-                if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Value))
+                if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Error))
+                {
+                    return ODataResponse.FromStatusCode(responseMessage.StatusCode);
+                }
+                else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Value))
                 {
                     if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Collection))
                     {
@@ -67,7 +73,11 @@ namespace Simple.OData.Client.V3.Adapter
                         return ODataResponse.FromFeed(new[] { new Dictionary<string, object>() { { FluentCommand.ResultLiteral, text } } });
                     }
                 }
-                if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Feed))
+                else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Batch))
+                {
+                    return await ReadResponse(messageReader.CreateODataBatchReader(), includeResourceTypeInEntryProperties);
+                }
+                else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Feed))
                 {
                     return ReadResponse(messageReader.CreateODataFeedReader(), includeResourceTypeInEntryProperties);
                 }
@@ -85,6 +95,31 @@ namespace Simple.OData.Client.V3.Adapter
                     return ReadResponse(messageReader.CreateODataEntryReader(), includeResourceTypeInEntryProperties);
                 }
             }
+        }
+
+        private async Task<ODataResponse> ReadResponse(ODataBatchReader odataReader, bool includeResourceTypeInEntryProperties)
+        {
+            var batch = new List<ODataResponse>();
+
+            while (odataReader.Read())
+            {
+                switch (odataReader.State)
+                {
+                    case ODataBatchReaderState.ChangesetStart:
+                        break;
+                    case ODataBatchReaderState.Operation:
+                        var operationMessage = odataReader.CreateOperationResponseMessage();
+                        if (operationMessage.StatusCode == (int)HttpStatusCode.NoContent)
+                            batch.Add(ODataResponse.FromStatusCode(operationMessage.StatusCode));
+                        else
+                            batch.Add(await GetResponseAsync(operationMessage));
+                        break;
+                    case ODataBatchReaderState.ChangesetEnd:
+                        break;
+                }
+            }
+
+            return ODataResponse.FromBatch(batch);
         }
 
         private ODataResponse ReadResponse(ODataCollectionReader odataReader, bool includeResourceTypeInEntryProperties)

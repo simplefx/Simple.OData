@@ -90,5 +90,17 @@ namespace Simple.OData.Client
             this.UrlBase = urlBase;
             this.Credentials = credentials;
         }
+
+        internal ODataClientSettings(ISession session)
+        {
+            this.UrlBase = session.Settings.UrlBase;
+            this.Credentials = session.Settings.Credentials;
+            this.PayloadFormat = session.Settings.PayloadFormat;
+            this.IncludeResourceTypeInEntryProperties = session.Settings.IncludeResourceTypeInEntryProperties;
+            this.IgnoreResourceNotFoundException = session.Settings.IgnoreResourceNotFoundException;
+            this.BeforeRequest = session.Settings.BeforeRequest;
+            this.AfterResponse = session.Settings.AfterResponse;
+            this.OnApplyClientHandler = session.Settings.OnApplyClientHandler;
+        }
     }
 }

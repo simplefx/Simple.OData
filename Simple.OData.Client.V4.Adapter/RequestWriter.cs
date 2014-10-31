@@ -78,7 +78,7 @@ namespace Simple.OData.Client.V4.Adapter
             var message = new ODataRequestMessage();
             using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), _model))
             {
-                var link = new ODataEntityReferenceLink { Url = Utils.CreateAbsoluteUri(_session.UrlBase, linkIdent) };
+                var link = new ODataEntityReferenceLink { Url = Utils.CreateAbsoluteUri(_session.Settings.UrlBase, linkIdent) };
                 await messageWriter.WriteEntityReferenceLinkAsync(link);
 
                 return message.GetStream();
@@ -133,7 +133,7 @@ namespace Simple.OData.Client.V4.Adapter
                 await _deferredBatchWriter.Value.StartBatchAsync();
 
             var message = (await _deferredBatchWriter.Value.CreateOperationRequestMessageAsync(
-                method, entryData, new Uri(_session.UrlBase + commandText))) as IODataRequestMessage;
+                method, entryData, new Uri(_session.Settings.UrlBase + commandText))) as IODataRequestMessage;
 
             if (_session.Metadata.EntityCollectionTypeRequiresOptimisticConcurrencyCheck(collection) &&
                 (method == RestVerbs.Put || method == RestVerbs.Patch || method == RestVerbs.Delete))
@@ -192,7 +192,7 @@ namespace Simple.OData.Client.V4.Adapter
                 }
                 var link = new ODataEntityReferenceLink
                 {
-                    Url = Utils.CreateAbsoluteUri(_session.UrlBase, linkUri)
+                    Url = Utils.CreateAbsoluteUri(_session.Settings.UrlBase, linkUri)
                 };
 
                 await entryWriter.WriteEntityReferenceLinkAsync(link);
@@ -215,12 +215,12 @@ namespace Simple.OData.Client.V4.Adapter
             {
                 ODataUri = new ODataUri()
                 {
-                    RequestUri = new Uri(_session.UrlBase),
+                    RequestUri = new Uri(_session.Settings.UrlBase),
                 }, 
                 Indent = true,
                 DisableMessageStreamDisposal = !IsBatch,
             };
-            switch (_session.PayloadFormat)
+            switch (_session.Settings.PayloadFormat)
             {
                 case ODataPayloadFormat.Atom:
                     settings.SetContentType(ODataFormat.Atom);

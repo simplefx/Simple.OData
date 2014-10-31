@@ -54,10 +54,10 @@ namespace Simple.OData.Client
         internal ODataRequest(string method, ISession session, string commandText)
         {
             this.Method = method;
-            this.Credentials = session.Credentials;
+            this.Credentials = session.Settings.Credentials;
 
-            _uri = Utils.CreateAbsoluteUri(session.UrlBase, commandText).AbsoluteUri;
-            _payloadFormat = session.PayloadFormat;
+            _uri = Utils.CreateAbsoluteUri(session.Settings.UrlBase, commandText).AbsoluteUri;
+            _payloadFormat = session.Settings.PayloadFormat;
         }
 
         internal ODataRequest(string method, ISession session, string commandText, HttpRequestMessage requestMessage)

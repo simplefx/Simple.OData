@@ -64,9 +64,9 @@ namespace Simple.OData.Client
                     clientHandler.PreAuthenticate = true;
             }
 
-            if (_session.OnApplyClientHandler != null)
+            if (_session.Settings.OnApplyClientHandler != null)
             {
-                _session.OnApplyClientHandler(clientHandler);
+                _session.Settings.OnApplyClientHandler(clientHandler);
             }
             return clientHandler;
         }
@@ -94,14 +94,14 @@ namespace Simple.OData.Client
                 request.RequestMessage.Headers.TryAddWithoutValidation(header.Key, header.Value);
             }
 
-            if (_session.BeforeRequest != null)
-                _session.BeforeRequest(request.RequestMessage);
+            if (_session.Settings.BeforeRequest != null)
+                _session.Settings.BeforeRequest(request.RequestMessage);
         }
 
         private void PostExecute(HttpResponseMessage responseMessage)
         {
-            if (_session.AfterResponse != null)
-                _session.AfterResponse(responseMessage);
+            if (_session.Settings.AfterResponse != null)
+                _session.Settings.AfterResponse(responseMessage);
 
             if (!responseMessage.IsSuccessStatusCode)
             {

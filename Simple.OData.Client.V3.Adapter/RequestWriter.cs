@@ -75,7 +75,7 @@ namespace Simple.OData.Client.V3.Adapter
             var message = new ODataRequestMessage();
             using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), _model))
             {
-                var link = new ODataEntityReferenceLink { Url = Utils.CreateAbsoluteUri(_session.UrlBase, linkIdent) };
+                var link = new ODataEntityReferenceLink { Url = Utils.CreateAbsoluteUri(_session.Settings.UrlBase, linkIdent) };
                 messageWriter.WriteEntityReferenceLink(link);
 
                 return message.GetStream();
@@ -110,12 +110,12 @@ namespace Simple.OData.Client.V3.Adapter
         {
             var settings = new ODataMessageWriterSettings()
             {
-                BaseUri = new Uri(_session.UrlBase),
+                BaseUri = new Uri(_session.Settings.UrlBase),
                 Indent = true,
                 DisableMessageStreamDisposal = !IsBatch,
             };
             ODataFormat contentType;
-            switch (_session.PayloadFormat)
+            switch (_session.Settings.PayloadFormat)
             {
                 case ODataPayloadFormat.Atom:
                 default:
@@ -144,7 +144,7 @@ namespace Simple.OData.Client.V3.Adapter
                 await _deferredBatchWriter.Value.StartBatchAsync();
 
             var message = (await _deferredBatchWriter.Value.CreateOperationRequestMessageAsync(
-                method, entryData, new Uri(_session.UrlBase + commandText))) as IODataRequestMessage;
+                method, entryData, new Uri(_session.Settings.UrlBase + commandText))) as IODataRequestMessage;
 
             if (_session.Metadata.EntityCollectionTypeRequiresOptimisticConcurrencyCheck(collection) &&
                 (method == RestVerbs.Put || method == RestVerbs.Patch || method == RestVerbs.Delete))
@@ -202,7 +202,7 @@ namespace Simple.OData.Client.V3.Adapter
                 }
                 var link = new ODataEntityReferenceLink
                 {
-                    Url = Utils.CreateAbsoluteUri(_session.UrlBase, linkUri)
+                    Url = Utils.CreateAbsoluteUri(_session.Settings.UrlBase, linkUri)
                 };
 
                 entryWriter.WriteEntityReferenceLink(link);

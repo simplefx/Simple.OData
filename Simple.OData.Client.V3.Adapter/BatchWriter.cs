@@ -19,7 +19,7 @@ namespace Simple.OData.Client.V3.Adapter
 
         public override async Task StartBatchAsync()
         {
-            _requestMessage = new ODataRequestMessage() {Url = new Uri(_session.UrlBase)};
+            _requestMessage = new ODataRequestMessage() {Url = new Uri(_session.Settings.UrlBase)};
             _messageWriter = new ODataMessageWriter(_requestMessage);
 #if SILVERLIGHT
             _batchWriter = _messageWriter.CreateODataBatchWriter();
