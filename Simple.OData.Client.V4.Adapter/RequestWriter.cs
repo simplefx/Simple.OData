@@ -29,11 +29,11 @@ namespace Simple.OData.Client.V4.Adapter
                 : new ODataRequestMessage();
 
             var entityType = FindEntityType(collection);
+            var model = method == RestVerbs.Patch ? new EdmDeltaModel(_model, entityType, entryData.Keys) : _model;
 
-            using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(),
-                method == RestVerbs.Patch ? new EdmDeltaModel(_model, entityType, entryData.Keys) : _model))
+            using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), model))
             {
-                if (method == RestVerbs.Delete)
+                if (method == RestVerbs.Get || method == RestVerbs.Delete)
                     return null;
 
                 var contentId = _deferredBatchWriter != null ? _deferredBatchWriter.Value.GetContentId(entryData) : null;
@@ -44,7 +44,7 @@ namespace Simple.OData.Client.V4.Adapter
 
                 var entryWriter = await messageWriter.CreateODataEntryWriterAsync();
                 var entry = new Microsoft.OData.Core.ODataEntry();
-                entry.TypeName = string.Join(".", entityTypeNamespace, entityTypeName);
+                entry.TypeName = entityType.FullName();
 
                 var typeProperties = (_model.FindDeclaredType(entry.TypeName) as IEdmEntityType).Properties();
 
@@ -166,11 +166,15 @@ namespace Simple.OData.Client.V4.Adapter
             foreach (var referenceLink in links)
             {
                 var linkKey = linkType.DeclaredKey;
+                IDictionary<string, object> mappedEntry;
+                (_session as Session).EntryMap.TryGetValue(referenceLink.LinkData, out mappedEntry);
                 var linkEntry = referenceLink.LinkData.ToDictionary();
                 string contentId = null;
                 if (_deferredBatchWriter != null)
                 {
                     contentId = _deferredBatchWriter.Value.GetContentId(linkEntry);
+                    if (contentId == null && mappedEntry != null)
+                        contentId = _deferredBatchWriter.Value.GetContentId(mappedEntry);
                 }
                 string linkUri;
                 if (contentId != null)

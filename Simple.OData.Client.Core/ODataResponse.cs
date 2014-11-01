@@ -15,6 +15,26 @@ namespace Simple.OData.Client
         {
         }
 
+        public IEnumerable<IDictionary<string, object>> AsEntries()
+        {
+            return this.Entries 
+                ?? (this.Entry != null 
+                ? new[] { this.Entry } 
+                : new IDictionary<string, object>[] {});
+        }
+
+        public IDictionary<string, object> AsEntry()
+        {
+            var result = this.Entries
+                ?? (this.Entry != null
+                ? new[] { this.Entry }
+                : new IDictionary<string, object>[] { });
+
+            return result != null
+                ? result.FirstOrDefault()
+                : null;
+        }
+
         public static ODataResponse FromFeed(IEnumerable<IDictionary<string, object>> entries, long? totalCount = null)
         {
             return new ODataResponse

@@ -22,13 +22,18 @@ namespace Simple.OData.Client
             get { return _deferredBatchWriter != null; }
         }
 
-        public Task<ODataRequest> CreateGetRequestAsync(string commandText, bool scalarResult)
+        public async Task<ODataRequest> CreateGetRequestAsync(string commandText, bool scalarResult)
         {
+            var collection = commandText.Split('?', '(', '/').First();
+            await WriteEntryContentAsync(
+                RestVerbs.Get, collection, commandText, null);
+
             var request = new ODataRequest(RestVerbs.Get, _session, commandText)
             {
                 ReturnsScalarResult = scalarResult,
             };
-            return Utils.GetTaskFromResult(request);
+            AssignHeaders(request);
+            return request;
         }
 
         public async Task<ODataRequest> CreateInsertRequestAsync(string collection, IDictionary<string, object> entryData, bool resultRequired)

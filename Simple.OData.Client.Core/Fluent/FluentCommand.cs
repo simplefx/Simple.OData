@@ -77,6 +77,8 @@ namespace Simple.OData.Client
             _linkExpression = ancestor._linkExpression;
         }
 
+        private bool IsBatchResponse { get { return _session == null; } }
+
         private FluentCommand Resolve()
         {
             if (!ReferenceEquals(_collectionExpression, null))
@@ -168,6 +170,8 @@ namespace Simple.OData.Client
 
         public FluentCommand For(string collectionName)
         {
+            if (IsBatchResponse) return this;
+
             var items = collectionName.Split('/');
             if (items.Count() > 1)
             {
@@ -183,36 +187,48 @@ namespace Simple.OData.Client
 
         public FluentCommand For(ODataExpression expression)
         {
+            if (IsBatchResponse) return this;
+
             _collectionExpression = expression;
             return this;
         }
 
         public FluentCommand As(string derivedCollectionName)
         {
+            if (IsBatchResponse) return this;
+
             _derivedCollectionName = derivedCollectionName;
             return this;
         }
 
         public FluentCommand As(ODataExpression expression)
         {
+            if (IsBatchResponse) return this;
+
             _derivedCollectionExpression = expression;
             return this;
         }
 
         public FluentCommand Link(string linkName)
         {
+            if (IsBatchResponse) return this;
+
             _linkName = linkName;
             return this;
         }
 
         public FluentCommand Link(ODataExpression expression)
         {
+            if (IsBatchResponse) return this;
+
             _linkExpression = expression;
             return this;
         }
 
         public FluentCommand Key(params object[] key)
         {
+            if (IsBatchResponse) return this;
+
             if (key != null && key.Length == 1 && IsAnonymousType(key.First().GetType()))
             {
                 var namedKeyValues = key.First();
@@ -228,6 +244,8 @@ namespace Simple.OData.Client
 
         public FluentCommand Key(IEnumerable<object> key)
         {
+            if (IsBatchResponse) return this;
+
             _keyValues = key.ToList();
             _namedKeyValues = null;
             return this;
@@ -235,6 +253,8 @@ namespace Simple.OData.Client
 
         public FluentCommand Key(IDictionary<string, object> key)
         {
+            if (IsBatchResponse) return this;
+
             _namedKeyValues = key;
             _keyValues = null;
             return this;
@@ -242,24 +262,32 @@ namespace Simple.OData.Client
 
         public FluentCommand Filter(string filter)
         {
+            if (IsBatchResponse) return this;
+
             _filter = filter;
             return this;
         }
 
         public FluentCommand Filter(ODataExpression expression)
         {
+            if (IsBatchResponse) return this;
+
             _filterExpression = expression;
             return this;
         }
 
         public FluentCommand Skip(int count)
         {
+            if (IsBatchResponse) return this;
+
             _skipCount = count;
             return this;
         }
 
         public FluentCommand Top(int count)
         {
+            if (IsBatchResponse) return this;
+
             if (!HasKey)
             {
                 _topCount = count;
@@ -273,12 +301,16 @@ namespace Simple.OData.Client
 
         public FluentCommand Expand(IEnumerable<string> associations)
         {
+            if (IsBatchResponse) return this;
+
             _expandAssociations = SplitItems(associations).ToList();
             return this;
         }
 
         public FluentCommand Expand(params string[] associations)
         {
+            if (IsBatchResponse) return this;
+
             _expandAssociations = SplitItems(associations).ToList();
             return this;
         }
@@ -290,12 +322,16 @@ namespace Simple.OData.Client
 
         public FluentCommand Select(IEnumerable<string> columns)
         {
+            if (IsBatchResponse) return this;
+
             _selectColumns = SplitItems(columns).ToList();
             return this;
         }
 
         public FluentCommand Select(params string[] columns)
         {
+            if (IsBatchResponse) return this;
+
             _selectColumns = SplitItems(columns).ToList();
             return this;
         }
@@ -307,6 +343,8 @@ namespace Simple.OData.Client
 
         public FluentCommand OrderBy(IEnumerable<KeyValuePair<string, bool>> columns)
         {
+            if (IsBatchResponse) return this;
+
             _orderbyColumns.Clear();
             _orderbyColumns.AddRange(SplitItems(columns));
             return this;
@@ -324,6 +362,8 @@ namespace Simple.OData.Client
 
         public FluentCommand ThenBy(params string[] columns)
         {
+            if (IsBatchResponse) return this;
+
             _orderbyColumns.AddRange(SplitItems(columns).Select(x => new KeyValuePair<string, bool>(x, false)));
             return this;
         }
@@ -345,6 +385,8 @@ namespace Simple.OData.Client
 
         public FluentCommand ThenByDescending(params string[] columns)
         {
+            if (IsBatchResponse) return this;
+
             _orderbyColumns.AddRange(SplitItems(columns).Select(x => new KeyValuePair<string, bool>(x, true)));
             return this;
         }
@@ -356,38 +398,53 @@ namespace Simple.OData.Client
 
         public FluentCommand Count()
         {
+            if (IsBatchResponse) return this;
+
             _computeCount = true;
             return this;
         }
 
         public FluentCommand Set(object value)
         {
+            if (IsBatchResponse) return this;
+
             _entryData = Utils.GetMappedProperties(value.GetType())
                 .Select(x => new KeyValuePair<string, object>(x.GetMappedName(), x.GetValue(value, null)))
                 .ToDictionary();
+            _session.EntryMap.GetOrAdd(value, _entryData);
             return this;
         }
 
         public FluentCommand Set(IDictionary<string, object> value)
         {
+            if (IsBatchResponse) return this;
+
             _entryData = value;
+            _session.EntryMap.GetOrAdd(value, _entryData);
             return this;
         }
 
         public FluentCommand Set(params ODataExpression[] value)
         {
+            if (IsBatchResponse) return this;
+
             _entryData = value.Select(x => new KeyValuePair<string, object>(x.Reference, x.Value)).ToIDictionary();
+            _session.EntryMap.GetOrAdd(value, _entryData);
             return this;
         }
 
         public FluentCommand Function(string functionName)
         {
+            if (IsBatchResponse) return this;
+
             _functionName = functionName;
             return this;
         }
 
         public FluentCommand Action(string actionName)
         {
+            if (IsBatchResponse) return this;
+
             _actionName = actionName;
             return this;
         }
@@ -410,6 +467,8 @@ namespace Simple.OData.Client
 
         public FluentCommand WithCount()
         {
+            if (IsBatchResponse) return this;
+
             _includeCount = true;
             return this;
         }

@@ -34,11 +34,11 @@ namespace Simple.OData.Client.V3.Adapter
                 : new ODataRequestMessage();
 
             var entityType = FindEntityType(collection);
+            var model = method == RestVerbs.Patch ? new EdmDeltaModel(_model, entityType, entryData.Keys) : _model;
 
-            using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), 
-                method == RestVerbs.Patch ? new EdmDeltaModel(_model, entityType, entryData.Keys) : _model))
+            using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), model))
             {
-                if (method == RestVerbs.Delete)
+                if (method == RestVerbs.Get || method == RestVerbs.Delete)
                     return null;
 
                 var contentId = _deferredBatchWriter != null ? _deferredBatchWriter.Value.GetContentId(entryData) : null;
@@ -205,11 +205,15 @@ namespace Simple.OData.Client.V3.Adapter
             foreach (var referenceLink in links)
             {
                 var linkKey = linkType.DeclaredKey;
+                IDictionary<string, object> mappedEntry;
+                (_session as Session).EntryMap.TryGetValue(referenceLink.LinkData, out mappedEntry);
                 var linkEntry = referenceLink.LinkData.ToDictionary();
                 string contentId = null;
                 if (_deferredBatchWriter != null)
                 {
                     contentId = _deferredBatchWriter.Value.GetContentId(linkEntry);
+                    if (contentId == null && mappedEntry != null)
+                        contentId = _deferredBatchWriter.Value.GetContentId(mappedEntry);
                 }
                 string linkUri;
                 if (contentId != null)

@@ -25,11 +25,9 @@ namespace Simple.OData.Client.V3.Adapter
 #if SILVERLIGHT
             _batchWriter = _messageWriter.CreateODataBatchWriter();
             _batchWriter.WriteStartBatch();
-            _batchWriter.WriteStartChangeset();
 #else
             _batchWriter = await _messageWriter.CreateODataBatchWriterAsync();
             await _batchWriter.WriteStartBatchAsync();
-            await _batchWriter.WriteStartChangesetAsync();
 #endif
         }
 
@@ -37,15 +35,19 @@ namespace Simple.OData.Client.V3.Adapter
         {
             Stream stream;
 #if SILVERLIGHT
-            _batchWriter.WriteEndChangeset();
+            if (_pendingChangeSet)
+                _batchWriter.WriteEndChangeset();
             _batchWriter.WriteEndBatch();
             stream = _requestMessage.GetStream();
 #else
-            await _batchWriter.WriteEndChangesetAsync();
+            if (_pendingChangeSet)
+                await _batchWriter.WriteEndChangesetAsync();
             await _batchWriter.WriteEndBatchAsync();
             stream = await _requestMessage.GetStreamAsync();
 #endif
+            _pendingChangeSet = false;
             stream.Position = 0;
+
             var httpRequest = new HttpRequestMessage()
             {
                 RequestUri = new Uri(_requestMessage.Url + ODataLiteral.Batch),
@@ -58,10 +60,28 @@ namespace Simple.OData.Client.V3.Adapter
 
         public override async Task<object> CreateOperationRequestMessageAsync(string method, IDictionary<string, object> entryData, Uri uri)
         {
-            string contentId = null;
-            if (method != RestVerbs.Delete)
+            if (method != RestVerbs.Get && !_pendingChangeSet)
             {
-                contentId = NextContentId();
+#if SILVERLIGHT
+                _batchWriter.WriteStartChangeset();
+#else
+                await _batchWriter.WriteStartChangesetAsync();
+#endif
+                _pendingChangeSet = true;
+            }
+            else if (method == RestVerbs.Get && _pendingChangeSet)
+            {
+#if SILVERLIGHT
+                _batchWriter.WriteEndChangeset();
+#else
+                await _batchWriter.WriteEndChangesetAsync();
+#endif
+                _pendingChangeSet = false;
+            }
+
+            var contentId = NextContentId();
+            if (method != RestVerbs.Get && method != RestVerbs.Delete)
+            {
                 MapContentId(entryData, contentId);
             }
 
@@ -70,7 +90,7 @@ namespace Simple.OData.Client.V3.Adapter
 #else
             var message = await _batchWriter.CreateOperationRequestMessageAsync(method, uri);
 #endif
-            if (method != RestVerbs.Delete)
+            if (method != RestVerbs.Get && method != RestVerbs.Delete)
                 message.SetHeader(HttpLiteral.ContentId, contentId);
 
             return message;

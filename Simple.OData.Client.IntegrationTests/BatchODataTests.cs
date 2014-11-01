@@ -62,26 +62,20 @@ namespace Simple.OData.Client.Tests
         //[Fact]
         //public async Task PartialFailures()
         //{
-        //    using (var batch = new ODataBatch(_serviceUri))
-        //    {
-        //        var client = new ODataClient(batch);
-        //        await client.InsertEntryAsync("Products", CreateProduct(5003, "Test3"), false);
-        //        await client.InsertEntryAsync("Products", CreateProduct(0, "Test4"), false);
-        //        await AssertThrowsAsync<WebRequestException>(async () => await batch.CompleteAsync());
-        //    }
+        //    var batch = new ODataBatch(_serviceUri);
+        //    batch += x => x.InsertEntryAsync("Products", CreateProduct(5003, "Test3"), false);
+        //    batch += x => x.InsertEntryAsync("Products", CreateProduct(0, "Test4"), false);
+        //    await AssertThrowsAsync<WebRequestException>(async () => await batch.ExecuteAsync());
         //}
 
         // OData.org sample service doesn't fail on this request
         //[Fact]
         //public async Task AllFailures()
         //{
-        //    using (var batch = new ODataBatch(_serviceUri))
-        //    {
-        //        var client = new ODataClient(batch);
-        //        await client.InsertEntryAsync("Products", CreateProduct(0, "Test5"), false);
-        //        await client.InsertEntryAsync("Products", CreateProduct(0, "Test6"), false);
-        //        await AssertThrowsAsync<WebRequestException>(async () => await batch.CompleteAsync());
-        //    }
+        //    var batch = new ODataBatch(_serviceUri);
+        //    batch += x => x.InsertEntryAsync("Products", CreateProduct(0, "Test5"), false);
+        //    batch += x => x.InsertEntryAsync("Products", CreateProduct(0, "Test6"), false);
+        //    await AssertThrowsAsync<WebRequestException>(async () => await batch.ExecuteAsync());
         //}
 
         [Fact]
@@ -103,31 +97,23 @@ namespace Simple.OData.Client.Tests
         //[Fact]
         //public async Task InsertUpdateDeleteSeparateBatches()
         //{
-        //    using (var batch = new ODataBatch(_serviceUri))
-        //    {
-        //        var client = new ODataClient(batch);
-        //        await client.InsertEntryAsync("Products", CreateProduct(5012, "Test12"), false);
-        //        await batch.CompleteAsync();
-        //    }
+        //    var batch = new ODataBatch(_serviceUri);
+        //    batch += x => x.InsertEntryAsync("Products", CreateProduct(5012, "Test12"), false);
+        //    await batch.ExecuteAsync();
+
         //    var product = await _client.FindEntryAsync("Products?$filter=Name eq 'Test12'");
         //    Assert.Equal(18d, Convert.ToDouble(product["Price"]));
         //    var key = new Entry() { { "ID", product["ID"] } };
 
-        //    using (var batch = new ODataBatch(_serviceUri))
-        //    {
-        //        var client = new ODataClient(batch);
-        //        await client.UpdateEntryAsync("Products", key, new Entry() { { "Price", 22m } });
-        //        await batch.CompleteAsync();
-        //    }
+        //    batch = new ODataBatch(_serviceUri);
+        //    batch += x => x.UpdateEntryAsync("Products", key, new Entry() { { "Price", 22m } });
+        //    await batch.ExecuteAsync();
         //    product = await _client.FindEntryAsync("Products?$filter=Name eq 'Test12'");
         //    Assert.Equal(22d, Convert.ToDouble(product["Price"]));
 
-        //    using (var batch = new ODataBatch(_serviceUri))
-        //    {
-        //        var client = new ODataClient(batch);
-        //        await client.DeleteEntryAsync("Products", key);
-        //        await batch.CompleteAsync();
-        //    }
+        //    batch = new ODataBatch(_serviceUri);
+        //    batch += x => x.DeleteEntryAsync("Products", key);
+        //    await batch.ExecuteAsync();
         //    product = await _client.FindEntryAsync("Products?$filter=Name eq 'Test12'");
         //    Assert.Null(product);
         //}

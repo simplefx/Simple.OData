@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,7 +21,7 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var result = await ExecuteRequestWithResultAsync(request, cancellationToken,
-                x => x.Entry, () => null, () => request.EntryData);
+                x => x.AsEntry(), () => null, () => request.EntryData);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             if (result == null && resultRequired &&
@@ -45,7 +44,7 @@ namespace Simple.OData.Client
             var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter).CreateUpdateRequestAsync(collectionName, entryIdent, entryKey, entryData, resultRequired);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var result = await ExecuteRequestWithResultAsync(request, cancellationToken, x => x.Entry);
+            var result = await ExecuteRequestWithResultAsync(request, cancellationToken, x => x.AsEntry());
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             if (result == null && resultRequired)
@@ -111,7 +110,7 @@ namespace Simple.OData.Client
 
             var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
                 .CreateDeleteRequestAsync(collectionName, entryIdent);
-            if (!IsBatch)
+            if (!IsBatchRequest)
             {
                 using (await _requestRunner.ExecuteRequestAsync(request, cancellationToken))
                 {
@@ -142,7 +141,7 @@ namespace Simple.OData.Client
             var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
                 .CreateLinkRequestAsync(collectionName, linkName, entryIdent, linkIdent);
 
-            if (!IsBatch)
+            if (!IsBatchRequest)
             {
                 using (await _requestRunner.ExecuteRequestAsync(request, cancellationToken))
                 {
@@ -169,7 +168,7 @@ namespace Simple.OData.Client
             var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
                 .CreateUnlinkRequestAsync(collectionName, linkName, entryIdent, linkIdent);
 
-            if (!IsBatch)
+            if (!IsBatchRequest)
             {
                 using (await _requestRunner.ExecuteRequestAsync(request, cancellationToken))
                 {
@@ -186,7 +185,7 @@ namespace Simple.OData.Client
                 .CreateFunctionRequestAsync(commandText, command.FunctionName);
 
             return await ExecuteRequestWithResultAsync(request, cancellationToken,
-                x => x.Entries ?? new[] { x.Entry },
+                x => x.AsEntries(),
                 () => new[] { (IDictionary<string, object>)null });
         }
 
@@ -199,7 +198,7 @@ namespace Simple.OData.Client
                 .CreateActionRequestAsync(commandText, command.ActionName, command.CommandData);
 
             return await ExecuteRequestWithResultAsync(request, cancellationToken,
-                x => x.Entries ?? new[] { x.Entry },
+                x => x.AsEntries(),
                 () => new[] { (IDictionary<string, object>)null });
         }
 
@@ -208,10 +207,13 @@ namespace Simple.OData.Client
             if (!actions.Any())
                 return;
 
+            var responseIndexes = new List<int>();
+
             // Write batch operations into a batch content
             foreach (var action in actions)
             {
                 await action(this);
+                responseIndexes.Add(_lazyBatchWriter.Value.LastOperationId - 1);
             }
 
             // Create batch request message
@@ -227,11 +229,9 @@ namespace Simple.OData.Client
             }
 
             // Replay batch operations to assign results
-            for (int actionIndex = 0;
-                actionIndex < actions.Count && actionIndex < batchResponse.Batch.Count;
-                actionIndex++)
+            for (int actionIndex = 0; actionIndex < actions.Count; actionIndex++)
             {
-                var actionResponse = batchResponse.Batch[actionIndex];
+                var actionResponse = batchResponse.Batch[responseIndexes[actionIndex]];
                 if (actionResponse.StatusCode >= 400)
                 {
                     var statusCode = (HttpStatusCode)actionResponse.StatusCode;
@@ -246,7 +246,7 @@ namespace Simple.OData.Client
         private async Task<T> ExecuteRequestWithResultAsync<T>(ODataRequest request, CancellationToken cancellationToken,
             Func<ODataResponse, T> createResult, Func<T> createEmptyResult = null, Func<T> createBatchResult = null)
         {
-            if (IsBatch)
+            if (IsBatchRequest)
                 return createBatchResult != null ? createBatchResult() : default(T);
 
             try

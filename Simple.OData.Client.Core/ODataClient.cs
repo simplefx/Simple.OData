@@ -49,7 +49,9 @@ namespace Simple.OData.Client
         }
 
         internal Session Session { get { return _session; } }
-        internal bool IsBatch { get { return _lazyBatchWriter != null; } }
+        internal ODataResponse BatchResponse { get { return _batchResponse; } }
+        internal bool IsBatchRequest { get { return _lazyBatchWriter != null; } }
+        internal bool IsBatchResponse { get { return _batchResponse != null; } }
 
         /// <summary>
         /// Parses the OData service metadata string.
