@@ -95,7 +95,6 @@
     <Compile Include="ODataProtocolVersion.cs" />
     <Compile Include="Pluralizer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Http\RequestBuilder.cs" />
     <Compile Include="Http\RequestRunner.cs" />
     <Compile Include="Adapter\ODataAdapterBase.cs" />
     <Compile Include="Session.cs" />

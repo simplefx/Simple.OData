@@ -235,9 +235,6 @@
     <Compile Include="..\Simple.OData.Client.Core\Http\HttpLiteral.cs">
       <Link>Http\HttpLiteral.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Http\RequestBuilder.cs">
-      <Link>Http\RequestBuilder.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Http\RequestRunner.cs">
       <Link>Http\RequestRunner.cs</Link>
     </Compile>

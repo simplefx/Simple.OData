@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
@@ -11,8 +10,8 @@ namespace Simple.OData.Client
     {
         private readonly ODataClientSettings _settings;
         private readonly Session _session;
-        private readonly RequestBuilder _requestBuilder;
         private readonly RequestRunner _requestRunner;
+        private readonly Lazy<IBatchWriter> _lazyBatchWriter;
         private readonly ODataResponse _batchResponse;
 
         /// <summary>
@@ -32,18 +31,16 @@ namespace Simple.OData.Client
         {
             _settings = settings;
             _session = Session.FromSettings(_settings);
-
-            _requestBuilder = new RequestBuilder(_session);
             _requestRunner = new RequestRunner(_session);
         }
 
-        internal ODataClient(ODataBatch batch)
+        internal ODataClient(ODataClientSettings settings, bool isBatch)
+            : this(settings)
         {
-            _settings = new ODataClientSettings(batch.Session);
-            _session = Session.FromSettings(_settings);
-
-            _requestBuilder = batch.RequestBuilder;
-            _requestRunner = batch.RequestRunner;
+            if (isBatch)
+            {
+                _lazyBatchWriter = new Lazy<IBatchWriter>(() => _session.Adapter.GetBatchWriter());
+            }
         }
 
         internal ODataClient(ODataResponse batchResponse)
@@ -51,10 +48,8 @@ namespace Simple.OData.Client
             _batchResponse = batchResponse;
         }
 
-        internal Session Session
-        {
-            get { return _session; }
-        }
+        internal Session Session { get { return _session; } }
+        internal bool IsBatch { get { return _lazyBatchWriter != null; } }
 
         /// <summary>
         /// Parses the OData service metadata string.

@@ -250,7 +250,9 @@ namespace Simple.OData.Client
             await _session.ResolveAdapterAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var request = await _requestBuilder.CreateGetRequestAsync(commandText, scalarResult);
+            var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
+                .CreateGetRequestAsync(commandText, scalarResult);
+
             return await ExecuteRequestWithResultAsync(request, cancellationToken,
                 x => x.Entries ?? new[] { x.Entry },
                 () => new[] { (IDictionary<string, object>)null });
@@ -281,7 +283,9 @@ namespace Simple.OData.Client
             await _session.ResolveAdapterAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var request = await _requestBuilder.CreateGetRequestAsync(commandText, scalarResult);
+            var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
+                .CreateGetRequestAsync(commandText, scalarResult);
+
             return await ExecuteRequestWithResultAsync(request, cancellationToken,
                 x => Tuple.Create(x.Entries, (int)x.TotalCount.GetValueOrDefault()),
                 () => new Tuple<IEnumerable<IDictionary<string, object>>, int>(new[] { (IDictionary<string, object>)null }, 0));
@@ -300,7 +304,9 @@ namespace Simple.OData.Client
             await _session.ResolveAdapterAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var request = await _requestBuilder.CreateGetRequestAsync(commandText);
+            var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
+                .CreateGetRequestAsync(commandText, false);
+
             var result = await ExecuteRequestWithResultAsync(request, cancellationToken,
                 x => x.Entries ?? new[] { x.Entry },
                 () => new[] { (IDictionary<string, object>)null });
@@ -322,7 +328,9 @@ namespace Simple.OData.Client
             await _session.ResolveAdapterAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var request = await _requestBuilder.CreateGetRequestAsync(commandText, true);
+            var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
+                .CreateGetRequestAsync(commandText, true);
+
             var result = await ExecuteRequestWithResultAsync(request, cancellationToken,
                 x => x.Entries ?? new[] { x.Entry },
                 () => new[] { (IDictionary<string, object>)null });
@@ -368,7 +376,9 @@ namespace Simple.OData.Client
             var entryIdent = await FormatEntryKeyAsync(collection, entryKey, cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var request = await _requestBuilder.CreateGetRequestAsync(entryIdent);
+            var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
+                .CreateGetRequestAsync(entryIdent, false);
+
             return await ExecuteRequestWithResultAsync(request, cancellationToken, x => x.Entry, () => null);
         }
 
@@ -968,6 +978,14 @@ namespace Simple.OData.Client
                 .SelectMany(x => x.Values)
                 .Select(y => (T)y)
                 .ToArray();
+        }
+
+        internal async Task ExecuteBatchAsync(IList<Action<IODataClient>> actions, CancellationToken cancellationToken)
+        {
+            await _session.ResolveAdapterAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+            await ExecuteBatchActionsAsync(actions, cancellationToken);
         }
 
         private string ExtractFilterFromCommandText(string collection, string commandText)

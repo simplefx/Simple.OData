@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,10 +11,7 @@ namespace Simple.OData.Client
     /// </summary>
     public class ODataBatch
     {
-        internal Session Session { get; private set; }
-        internal RequestBuilder RequestBuilder { get; private set; }
-        internal RequestRunner RequestRunner { get; private set; }
-
+        private readonly ODataClient _client;
         private readonly List<Action<IODataClient>> _actions = new List<Action<IODataClient>>();
 
         /// <summary>
@@ -33,20 +29,7 @@ namespace Simple.OData.Client
         /// <param name="settings">The settings.</param>
         public ODataBatch(ODataClientSettings settings)
         {
-            this.Session = Session.FromSettings(settings);
-            this.RequestBuilder = new RequestBuilder(this.Session, true);
-            this.RequestRunner = new RequestRunner(this.Session);
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ODataBatch"/> class.
-        /// </summary>
-        /// <param name="session">The OData client session.</param>
-        internal ODataBatch(Session session)
-        {
-            this.Session = session;
-            this.RequestBuilder = new RequestBuilder(this.Session, true);
-            this.RequestRunner = new RequestRunner(this.Session);
+            _client = new ODataClient(settings, true);
         }
 
         public static ODataBatch operator +(ODataBatch batch, Action<IODataClient> action)
@@ -69,40 +52,9 @@ namespace Simple.OData.Client
         /// </summary>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns></returns>
-        public async Task ExecuteAsync(CancellationToken cancellationToken)
+        public Task ExecuteAsync(CancellationToken cancellationToken)
         {
-            await this.Session.ResolveAdapterAsync(cancellationToken);
-            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-
-            if (_actions.Any())
-            {
-                var client = new ODataClient(this);
-                foreach (var action in _actions)
-                {
-                    action(client);
-                }
-
-                ODataResponse batchResponse;
-                using (var response = await this.RequestRunner.ExecuteRequestAsync(
-                    await this.RequestBuilder.CreateBatchRequestAsync(), cancellationToken))
-                {
-                    var responseReader = this.Session.Adapter.GetResponseReader();
-                    batchResponse = await responseReader.GetResponseAsync(response, this.Session.Settings.IncludeResourceTypeInEntryProperties);
-                }
-
-                for (int actionIndex = 0; actionIndex < _actions.Count && actionIndex < batchResponse.Batch.Count; actionIndex++)
-                {
-                    var actionResponse = batchResponse.Batch[actionIndex];
-                    if (actionResponse.StatusCode >= 400)
-                    {
-                        var statusCode = (HttpStatusCode) actionResponse.StatusCode;
-                        throw new WebRequestException(statusCode.ToString(), statusCode);
-                    }
-
-                    client = new ODataClient(actionResponse);
-                    _actions[actionIndex](client);
-                }
-            }
+            return _client.ExecuteBatchAsync(_actions, cancellationToken);
         }
     }
 }
