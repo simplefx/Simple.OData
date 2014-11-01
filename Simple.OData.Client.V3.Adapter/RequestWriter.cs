@@ -24,7 +24,12 @@ namespace Simple.OData.Client.V3.Adapter
 
         protected override async Task<Stream> WriteEntryContentAsync(string method, string collection, string commandText, IDictionary<string, object> entryData)
         {
-            IODataRequestMessage message = IsBatch
+#if SILVERLIGHT
+            IODataRequestMessage
+#else
+            IODataRequestMessageAsync
+#endif
+                message = IsBatch
                 ? await CreateOperationRequestMessageAsync(method, collection, entryData, commandText)
                 : new ODataRequestMessage();
 
@@ -66,7 +71,14 @@ namespace Simple.OData.Client.V3.Adapter
 
                 entryWriter.WriteEnd();
 
-                return IsBatch ? null : message.GetStream();
+                if (IsBatch)
+                    return null;
+
+#if SILVERLIGHT
+                return message.GetStream();
+#else
+                return await message.GetStreamAsync();
+#endif
             }
         }
 
@@ -78,7 +90,11 @@ namespace Simple.OData.Client.V3.Adapter
                 var link = new ODataEntityReferenceLink { Url = Utils.CreateAbsoluteUri(_session.Settings.UrlBase, linkIdent) };
                 messageWriter.WriteEntityReferenceLink(link);
 
+#if SILVERLIGHT
                 return message.GetStream();
+#else
+                return await message.GetStreamAsync();
+#endif
             }
         }
 
@@ -138,13 +154,22 @@ namespace Simple.OData.Client.V3.Adapter
             return settings;
         }
 
+#if SILVERLIGHT
         private async Task<IODataRequestMessage> CreateOperationRequestMessageAsync(string method, string collection, IDictionary<string, object> entryData, string commandText)
+#else
+        private async Task<IODataRequestMessageAsync> CreateOperationRequestMessageAsync(string method, string collection, IDictionary<string, object> entryData, string commandText)
+#endif
         {
             if (!_deferredBatchWriter.IsValueCreated)
                 await _deferredBatchWriter.Value.StartBatchAsync();
 
             var message = (await _deferredBatchWriter.Value.CreateOperationRequestMessageAsync(
-                method, entryData, new Uri(_session.Settings.UrlBase + commandText))) as IODataRequestMessage;
+                method, entryData, new Uri(_session.Settings.UrlBase + commandText))) 
+#if SILVERLIGHT
+                as IODataRequestMessage;
+#else
+                as IODataRequestMessageAsync;
+#endif
 
             if (_session.Metadata.EntityCollectionTypeRequiresOptimisticConcurrencyCheck(collection) &&
                 (method == RestVerbs.Put || method == RestVerbs.Patch || method == RestVerbs.Delete))

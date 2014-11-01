@@ -41,11 +41,7 @@ namespace Simple.OData.Client.V4.Adapter
             }
         }
 
-#if SILVERLIGHT
-        public async Task<ODataResponse> GetResponseAsync(IODataResponseMessage responseMessage, bool includeResourceTypeInEntryProperties = false)
-#else
         public async Task<ODataResponse> GetResponseAsync(IODataResponseMessageAsync responseMessage, bool includeResourceTypeInEntryProperties = false)
-#endif
         {
             var readerSettings = new ODataMessageReaderSettings();
             readerSettings.MessageQuotas.MaxReceivedMessageSize = Int32.MaxValue;
@@ -64,11 +60,7 @@ namespace Simple.OData.Client.V4.Adapter
                     }
                     else
                     {
-#if SILVERLIGHT
-                        var text = Utils.StreamToString(responseMessage.GetStream());
-#else
                         var text = Utils.StreamToString(await responseMessage.GetStreamAsync());
-#endif
                         return ODataResponse.FromFeed(new[] { new Dictionary<string, object>() { { FluentCommand.ResultLiteral, text } } });
                     }
                 }

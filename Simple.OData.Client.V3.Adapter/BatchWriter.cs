@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Data.OData;
@@ -34,19 +35,22 @@ namespace Simple.OData.Client.V3.Adapter
 
         public override async Task<HttpRequestMessage> EndBatchAsync()
         {
+            Stream stream;
 #if SILVERLIGHT
             _batchWriter.WriteEndChangeset();
             _batchWriter.WriteEndBatch();
+            stream = _requestMessage.GetStream();
 #else
             await _batchWriter.WriteEndChangesetAsync();
             await _batchWriter.WriteEndBatchAsync();
+            stream = await _requestMessage.GetStreamAsync();
 #endif
-            _requestMessage.GetStream().Position = 0;
+            stream.Position = 0;
             var httpRequest = new HttpRequestMessage()
             {
-                RequestUri = new Uri(_requestMessage.Url + ODataLiteral.Batch), 
+                RequestUri = new Uri(_requestMessage.Url + ODataLiteral.Batch),
                 Method = HttpMethod.Post,
-                Content = new StreamContent(_requestMessage.GetStream()),
+                Content = new StreamContent(stream),
             };
             httpRequest.Content.Headers.Add(HttpLiteral.ContentType, _requestMessage.GetHeader(HttpLiteral.ContentType));
             return httpRequest;

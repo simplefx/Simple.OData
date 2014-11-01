@@ -24,7 +24,7 @@ namespace Simple.OData.Client.V4.Adapter
 
         protected override async Task<Stream> WriteEntryContentAsync(string method, string collection, string commandText, IDictionary<string, object> entryData)
         {
-            IODataRequestMessage message = IsBatch
+            IODataRequestMessageAsync message = IsBatch
                 ? await CreateOperationRequestMessageAsync(method, collection, entryData, commandText)
                 : new ODataRequestMessage();
 
@@ -69,7 +69,7 @@ namespace Simple.OData.Client.V4.Adapter
 
                 await entryWriter.WriteEndAsync();
 
-                return IsBatch ? null : message.GetStream();
+                return IsBatch ? null : await message.GetStreamAsync();
             }
         }
 
@@ -81,7 +81,7 @@ namespace Simple.OData.Client.V4.Adapter
                 var link = new ODataEntityReferenceLink { Url = Utils.CreateAbsoluteUri(_session.Settings.UrlBase, linkIdent) };
                 await messageWriter.WriteEntityReferenceLinkAsync(link);
 
-                return message.GetStream();
+                return await message.GetStreamAsync();
             }
         }
 
@@ -104,7 +104,7 @@ namespace Simple.OData.Client.V4.Adapter
 
                 await parameterWriter.WriteEndAsync();
 
-                return message.GetStream();
+                return await message.GetStreamAsync();
             }
         }
 
@@ -127,13 +127,13 @@ namespace Simple.OData.Client.V4.Adapter
             }
         }
 
-        private async Task<IODataRequestMessage> CreateOperationRequestMessageAsync(string method, string collection, IDictionary<string, object> entryData, string commandText)
+        private async Task<IODataRequestMessageAsync> CreateOperationRequestMessageAsync(string method, string collection, IDictionary<string, object> entryData, string commandText)
         {
             if (!_deferredBatchWriter.IsValueCreated)
                 await _deferredBatchWriter.Value.StartBatchAsync();
 
             var message = (await _deferredBatchWriter.Value.CreateOperationRequestMessageAsync(
-                method, entryData, new Uri(_session.Settings.UrlBase + commandText))) as IODataRequestMessage;
+                method, entryData, new Uri(_session.Settings.UrlBase + commandText))) as IODataRequestMessageAsync;
 
             if (_session.Metadata.EntityCollectionTypeRequiresOptimisticConcurrencyCheck(collection) &&
                 (method == RestVerbs.Put || method == RestVerbs.Patch || method == RestVerbs.Delete))
