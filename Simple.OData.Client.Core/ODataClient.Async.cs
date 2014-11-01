@@ -980,7 +980,7 @@ namespace Simple.OData.Client
                 .ToArray();
         }
 
-        internal async Task ExecuteBatchAsync(IList<Action<IODataClient>> actions, CancellationToken cancellationToken)
+        internal async Task ExecuteBatchAsync(IList<Func<IODataClient, Task>> actions, CancellationToken cancellationToken)
         {
             await _session.ResolveAdapterAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();

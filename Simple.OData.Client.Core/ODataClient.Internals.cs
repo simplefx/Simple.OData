@@ -203,7 +203,7 @@ namespace Simple.OData.Client
                 () => new[] { (IDictionary<string, object>)null });
         }
 
-        private async Task ExecuteBatchActionsAsync(IList<Action<IODataClient>> actions, CancellationToken cancellationToken)
+        private async Task ExecuteBatchActionsAsync(IList<Func<IODataClient, Task>> actions, CancellationToken cancellationToken)
         {
             if (!actions.Any())
                 return;
@@ -211,7 +211,7 @@ namespace Simple.OData.Client
             // Write batch operations into a batch content
             foreach (var action in actions)
             {
-                action(this);
+                await action(this);
             }
 
             // Create batch request message
@@ -239,7 +239,7 @@ namespace Simple.OData.Client
                 }
 
                 var client = new ODataClient(actionResponse);
-                actions[actionIndex](client);
+                await actions[actionIndex](client);
             }
         }
 

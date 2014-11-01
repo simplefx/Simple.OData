@@ -68,7 +68,6 @@ namespace Simple.OData.Client.V4.Adapter
                 }
 
                 await entryWriter.WriteEndAsync();
-
                 return IsBatch ? null : await message.GetStreamAsync();
             }
         }
@@ -80,7 +79,6 @@ namespace Simple.OData.Client.V4.Adapter
             {
                 var link = new ODataEntityReferenceLink { Url = Utils.CreateAbsoluteUri(_session.Settings.UrlBase, linkIdent) };
                 await messageWriter.WriteEntityReferenceLinkAsync(link);
-
                 return await message.GetStreamAsync();
             }
         }
@@ -103,7 +101,6 @@ namespace Simple.OData.Client.V4.Adapter
                 }
 
                 await parameterWriter.WriteEndAsync();
-
                 return await message.GetStreamAsync();
             }
         }

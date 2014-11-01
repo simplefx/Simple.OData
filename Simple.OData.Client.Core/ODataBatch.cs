@@ -12,7 +12,7 @@ namespace Simple.OData.Client
     public class ODataBatch
     {
         private readonly ODataClient _client;
-        private readonly List<Action<IODataClient>> _actions = new List<Action<IODataClient>>();
+        private readonly List<Func<IODataClient, Task>> _actions = new List<Func<IODataClient, Task>>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ODataBatch"/> class.
@@ -32,7 +32,7 @@ namespace Simple.OData.Client
             _client = new ODataClient(settings, true);
         }
 
-        public static ODataBatch operator +(ODataBatch batch, Action<IODataClient> action)
+        public static ODataBatch operator +(ODataBatch batch, Func<IODataClient, Task> action)
         {
             batch._actions.Add(action);
             return batch;
