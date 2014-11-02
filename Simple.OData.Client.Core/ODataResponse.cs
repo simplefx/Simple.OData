@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
@@ -23,6 +24,11 @@ namespace Simple.OData.Client
                 : new IDictionary<string, object>[] {});
         }
 
+        public IEnumerable<T> AsEntries<T>() where T : class
+        {
+            return this.AsEntries().Select(x => x.ToObject<T>());
+        }
+
         public IDictionary<string, object> AsEntry()
         {
             var result = this.Entries
@@ -33,6 +39,24 @@ namespace Simple.OData.Client
             return result != null
                 ? result.FirstOrDefault()
                 : null;
+        }
+
+        public T AsEntry<T>() where T : class
+        {
+            return this.AsEntry().ToObject<T>();
+        }
+
+        public T AsScalar<T>()
+        {
+            return (T) this.AsEntries().First().First().Value;
+        }
+
+        public T[] AsArray<T>()
+        {
+            return this.AsEntries()
+                .SelectMany(x => x.Values)
+                .Select(y => (T)y)
+                .ToArray();
         }
 
         public static ODataResponse FromFeed(IEnumerable<IDictionary<string, object>> entries, long? totalCount = null)
