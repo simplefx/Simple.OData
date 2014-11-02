@@ -44,7 +44,8 @@ namespace Simple.OData.Client
             var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter).CreateUpdateRequestAsync(collectionName, entryIdent, entryKey, entryData, resultRequired);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var result = await ExecuteRequestWithResultAsync(request, cancellationToken, x => x.AsEntry());
+            var result = await ExecuteRequestWithResultAsync(request, cancellationToken,
+                x => x.AsEntry(), () => null, () => request.EntryData);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             if (result == null && resultRequired)
@@ -244,10 +245,14 @@ namespace Simple.OData.Client
         }
 
         private async Task<T> ExecuteRequestWithResultAsync<T>(ODataRequest request, CancellationToken cancellationToken,
-            Func<ODataResponse, T> createResult, Func<T> createEmptyResult = null, Func<T> createBatchResult = null)
+            Func<ODataResponse, T> createResult, Func<T> createEmptyResult, Func<T> createBatchResult = null)
         {
             if (IsBatchRequest)
-                return createBatchResult != null ? createBatchResult() : default(T);
+                return createBatchResult != null 
+                    ? createBatchResult() 
+                    : createEmptyResult != null
+                    ? createEmptyResult() 
+                    : default(T);
 
             try
             {

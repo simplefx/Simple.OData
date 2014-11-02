@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
@@ -148,6 +149,23 @@ namespace Simple.OData.Client
         protected abstract Task<Stream> WriteActionContentAsync(string actionName, IDictionary<string, object> parameters);
         protected abstract string FormatLinkPath(string entryIdent, string navigationPropertyName, string linkIdent = null);
         protected abstract void AssignHeaders(ODataRequest request);
+
+        protected string GetContentId(ReferenceLink referenceLink)
+        {
+            string contentId = null;
+            var linkEntry = referenceLink.LinkData.ToDictionary();
+            if (_deferredBatchWriter != null)
+            {
+                contentId = _deferredBatchWriter.Value.GetContentId(linkEntry);
+                if (contentId == null)
+                {
+                    IDictionary<string, object> mappedEntry;
+                    if ((_session as Session).EntryMap.TryGetValue(referenceLink.LinkData, out mappedEntry))
+                        contentId = _deferredBatchWriter.Value.GetContentId(mappedEntry);
+                }
+            }
+            return contentId;
+        }
 
         private bool CanUseMerge(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
         {

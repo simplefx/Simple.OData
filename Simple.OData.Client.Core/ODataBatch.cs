@@ -32,6 +32,15 @@ namespace Simple.OData.Client
             _client = new ODataClient(settings, true);
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ODataBatch"/> class.
+        /// </summary>
+        /// <param name="client">The OData client which settings will be used to create a batch.</param>
+        public ODataBatch(IODataClient client)
+        {
+            _client = new ODataClient((client as ODataClient).Session.Settings, true);
+        }
+
         public static ODataBatch operator +(ODataBatch batch, Func<IODataClient, Task> action)
         {
             batch._actions.Add(action);

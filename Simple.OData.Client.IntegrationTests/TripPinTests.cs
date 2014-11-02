@@ -529,5 +529,28 @@ namespace Simple.OData.Client.Tests
                 .Key("russellwhyte")
                 .ShareTripAsync("John", 1);
         }
+
+        [Fact]
+        public async Task Batch()
+        {
+            IEnumerable<Airline> airlines1 = null;
+            IEnumerable<Airline> airlines2 = null;
+
+            var batch = new ODataBatch(_client);
+            batch += async c => airlines1 = await c
+               .For<Airline>()
+               .FindEntriesAsync();
+            batch += c => c
+               .For<Airline>()
+               .Set(new Airline() { AirlineCode = "TT", Name = "Test Airline"})
+               .InsertEntryAsync(false);
+            batch += async c => airlines2 = await c
+               .For<Airline>()
+               .FindEntriesAsync();
+            await batch.ExecuteAsync();
+
+            Assert.Equal(8, airlines1.Count());
+            Assert.Equal(8, airlines2.Count());
+        }
     }
 }

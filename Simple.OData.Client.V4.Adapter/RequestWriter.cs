@@ -166,16 +166,8 @@ namespace Simple.OData.Client.V4.Adapter
             foreach (var referenceLink in links)
             {
                 var linkKey = linkType.DeclaredKey;
-                IDictionary<string, object> mappedEntry;
-                (_session as Session).EntryMap.TryGetValue(referenceLink.LinkData, out mappedEntry);
                 var linkEntry = referenceLink.LinkData.ToDictionary();
-                string contentId = null;
-                if (_deferredBatchWriter != null)
-                {
-                    contentId = _deferredBatchWriter.Value.GetContentId(linkEntry);
-                    if (contentId == null && mappedEntry != null)
-                        contentId = _deferredBatchWriter.Value.GetContentId(mappedEntry);
-                }
+                var contentId = GetContentId(referenceLink);
                 string linkUri;
                 if (contentId != null)
                 {

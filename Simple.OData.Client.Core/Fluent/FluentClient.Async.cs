@@ -392,20 +392,20 @@ namespace Simple.OData.Client
             return this.Command.GetCommandTextAsync(cancellationToken);
         }
 
-        internal Task<IEnumerable<T>> RectifyColumnSelectionAsync(Task<IEnumerable<IDictionary<string, object>>> entries, IList<string> selectedColumns)
+        private Task<IEnumerable<T>> RectifyColumnSelectionAsync(Task<IEnumerable<IDictionary<string, object>>> entries, IList<string> selectedColumns)
         {
             return entries.ContinueWith(
                 x => RectifyColumnSelection(x.Result, selectedColumns)).ContinueWith(
                 y => y.Result.Select(z => z.ToObject<T>(_dynamicResults)));
         }
 
-        internal Task<T> RectifyColumnSelectionAsync(Task<IDictionary<string, object>> entry, IList<string> selectedColumns)
+        private Task<T> RectifyColumnSelectionAsync(Task<IDictionary<string, object>> entry, IList<string> selectedColumns)
         {
             return entry.ContinueWith(
                 x => RectifyColumnSelection(x.Result, selectedColumns).ToObject<T>(_dynamicResults));
         }
 
-        internal Task<Tuple<IEnumerable<T>, int>> RectifyColumnSelectionAsync(Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> entries, IList<string> selectedColumns)
+        private Task<Tuple<IEnumerable<T>, int>> RectifyColumnSelectionAsync(Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> entries, IList<string> selectedColumns)
         {
             return entries.ContinueWith(x =>
             {
@@ -416,12 +416,12 @@ namespace Simple.OData.Client
             });
         }
 
-        internal static IEnumerable<IDictionary<string, object>> RectifyColumnSelection(IEnumerable<IDictionary<string, object>> entries, IList<string> selectedColumns)
+        private static IEnumerable<IDictionary<string, object>> RectifyColumnSelection(IEnumerable<IDictionary<string, object>> entries, IList<string> selectedColumns)
         {
             return entries.Select(x => RectifyColumnSelection(x, selectedColumns));
         }
 
-        internal static IDictionary<string, object> RectifyColumnSelection(IDictionary<string, object> entry, IList<string> selectedColumns)
+        private static IDictionary<string, object> RectifyColumnSelection(IDictionary<string, object> entry, IList<string> selectedColumns)
         {
             if (selectedColumns == null || !selectedColumns.Any())
             {

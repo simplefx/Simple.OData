@@ -420,7 +420,6 @@ namespace Simple.OData.Client
             if (IsBatchResponse) return this;
 
             _entryData = value;
-            _session.EntryMap.GetOrAdd(value, _entryData);
             return this;
         }
 

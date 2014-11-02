@@ -124,6 +124,12 @@
     <Compile Include="..\Simple.OData.Client.Tests.Core\Entities\Transport.cs">
       <Link>Entities\Transport.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\BatchDynamicTests.cs">
+      <Link>BatchDynamicTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\BatchTypedTests.cs">
+      <Link>BatchTypedTests.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\ClientAdapterTests.cs">
       <Link>ClientAdapterTests.cs</Link>
     </Compile>
