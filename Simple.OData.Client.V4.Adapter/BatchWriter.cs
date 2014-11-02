@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.OData.Core;
 
@@ -32,42 +33,37 @@ namespace Simple.OData.Client.V4.Adapter
                 await _batchWriter.WriteEndChangesetAsync();
             await _batchWriter.WriteEndBatchAsync();
             var stream = await _requestMessage.GetStreamAsync();
-            _pendingChangeSet = false;
-            stream.Position = 0;
-
-            var httpRequest = new HttpRequestMessage()
-            {
-                RequestUri = new Uri(_requestMessage.Url + ODataLiteral.Batch),
-                Method = HttpMethod.Post,
-                Content = new StreamContent(stream),
-            };
-            httpRequest.Content.Headers.Add(HttpLiteral.ContentType, _requestMessage.GetHeader(HttpLiteral.ContentType));
-            return httpRequest;
+            return CreateMessageFromStream(stream, _requestMessage.Url, _requestMessage.GetHeader);
         }
 
-        public override async Task<object> CreateOperationRequestMessageAsync(string method, IDictionary<string, object> entryData, Uri uri)
+        protected override Task StartChangesetAsync()
         {
-            if (method != RestVerbs.Get && !_pendingChangeSet)
-            {
-                await _batchWriter.WriteStartChangesetAsync();
-                _pendingChangeSet = true;
-            }
-            else if (method == RestVerbs.Get && _pendingChangeSet)
-            {
-                await _batchWriter.WriteEndChangesetAsync();
-                _pendingChangeSet = false;
-            }
+            return _batchWriter.WriteStartChangesetAsync();
+        }
 
-            var contentId = NextContentId();
-            if (method != RestVerbs.Get && method != RestVerbs.Delete)
-            {
-                MapContentId(entryData, contentId);
-            }
+        protected override Task EndChangesetAsync()
+        {
+            return _batchWriter.WriteEndChangesetAsync();
+        }
 
+        protected override async Task<object> CreateOperationRequestMessageAsync(string method, string collection, Uri uri, string contentId)
+        {
+            return await CreateBatchOperationRequestMessageAsync(method, collection, uri, contentId);
+        }
+
+        private async Task<ODataBatchOperationRequestMessage> CreateBatchOperationRequestMessageAsync(
+            string method, string collection, Uri uri, string contentId)
+        {
             var message = await _batchWriter.CreateOperationRequestMessageAsync(method, uri, contentId);
 
-            if (method != RestVerbs.Get && method != RestVerbs.Delete)
+            if (method == RestVerbs.Post || method == RestVerbs.Put || method == RestVerbs.Patch)
                 message.SetHeader(HttpLiteral.ContentId, contentId);
+
+            if (_session.Metadata.EntityCollectionTypeRequiresOptimisticConcurrencyCheck(collection) &&
+                (method == RestVerbs.Put || method == RestVerbs.Patch || method == RestVerbs.Delete))
+            {
+                message.SetHeader(HttpLiteral.IfMatch, EntityTagHeaderValue.Any.Tag);
+            }
 
             return message;
         }

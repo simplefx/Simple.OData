@@ -130,13 +130,7 @@ namespace Simple.OData.Client.V4.Adapter
                 await _deferredBatchWriter.Value.StartBatchAsync();
 
             var message = (await _deferredBatchWriter.Value.CreateOperationRequestMessageAsync(
-                method, entryData, new Uri(_session.Settings.UrlBase + commandText))) as IODataRequestMessageAsync;
-
-            if (_session.Metadata.EntityCollectionTypeRequiresOptimisticConcurrencyCheck(collection) &&
-                (method == RestVerbs.Put || method == RestVerbs.Patch || method == RestVerbs.Delete))
-            {
-                message.SetHeader(HttpLiteral.IfMatch, EntityTagHeaderValue.Any.Tag);
-            }
+                method, collection, entryData, new Uri(_session.Settings.UrlBase + commandText))) as IODataRequestMessageAsync;
 
             return message;
         }

@@ -164,18 +164,12 @@ namespace Simple.OData.Client.V3.Adapter
                 await _deferredBatchWriter.Value.StartBatchAsync();
 
             var message = (await _deferredBatchWriter.Value.CreateOperationRequestMessageAsync(
-                method, entryData, new Uri(_session.Settings.UrlBase + commandText))) 
+                method, collection, entryData, new Uri(_session.Settings.UrlBase + commandText))) 
 #if SILVERLIGHT
                 as IODataRequestMessage;
 #else
                 as IODataRequestMessageAsync;
 #endif
-
-            if (_session.Metadata.EntityCollectionTypeRequiresOptimisticConcurrencyCheck(collection) &&
-                (method == RestVerbs.Put || method == RestVerbs.Patch || method == RestVerbs.Delete))
-            {
-                message.SetHeader(HttpLiteral.IfMatch, EntityTagHeaderValue.Any.Tag);
-            }
 
             return message;
         }

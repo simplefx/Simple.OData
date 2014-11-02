@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.Data.OData;
 
@@ -33,65 +34,62 @@ namespace Simple.OData.Client.V3.Adapter
 
         public override async Task<HttpRequestMessage> EndBatchAsync()
         {
-            Stream stream;
 #if SILVERLIGHT
             if (_pendingChangeSet)
                 _batchWriter.WriteEndChangeset();
             _batchWriter.WriteEndBatch();
-            stream = _requestMessage.GetStream();
+            var stream = _requestMessage.GetStream();
 #else
             if (_pendingChangeSet)
                 await _batchWriter.WriteEndChangesetAsync();
             await _batchWriter.WriteEndBatchAsync();
-            stream = await _requestMessage.GetStreamAsync();
+            var stream = await _requestMessage.GetStreamAsync();
 #endif
-            _pendingChangeSet = false;
-            stream.Position = 0;
-
-            var httpRequest = new HttpRequestMessage()
-            {
-                RequestUri = new Uri(_requestMessage.Url + ODataLiteral.Batch),
-                Method = HttpMethod.Post,
-                Content = new StreamContent(stream),
-            };
-            httpRequest.Content.Headers.Add(HttpLiteral.ContentType, _requestMessage.GetHeader(HttpLiteral.ContentType));
-            return httpRequest;
+            return CreateMessageFromStream(stream, _requestMessage.Url, _requestMessage.GetHeader);
         }
 
-        public override async Task<object> CreateOperationRequestMessageAsync(string method, IDictionary<string, object> entryData, Uri uri)
+        protected override Task StartChangesetAsync()
         {
-            if (method != RestVerbs.Get && !_pendingChangeSet)
-            {
 #if SILVERLIGHT
-                _batchWriter.WriteStartChangeset();
+            _batchWriter.WriteStartChangeset();
+            return Utils.GetTaskFromResult(0);
 #else
-                await _batchWriter.WriteStartChangesetAsync();
+            return _batchWriter.WriteStartChangesetAsync();
 #endif
-                _pendingChangeSet = true;
-            }
-            else if (method == RestVerbs.Get && _pendingChangeSet)
-            {
+        }
+
+        protected override Task EndChangesetAsync()
+        {
 #if SILVERLIGHT
-                _batchWriter.WriteEndChangeset();
+            _batchWriter.WriteEndChangeset();
+            return Utils.GetTaskFromResult(0);
 #else
-                await _batchWriter.WriteEndChangesetAsync();
+            return _batchWriter.WriteEndChangesetAsync();
 #endif
-                _pendingChangeSet = false;
-            }
+        }
 
-            var contentId = NextContentId();
-            if (method != RestVerbs.Get && method != RestVerbs.Delete)
-            {
-                MapContentId(entryData, contentId);
-            }
+        protected override async Task<object> CreateOperationRequestMessageAsync(string method, string collection, Uri uri, string contentId)
+        {
+            return await CreateBatchOperationRequestMessageAsync(method, collection, uri, contentId);
+        }
 
+        private async Task<ODataBatchOperationRequestMessage> CreateBatchOperationRequestMessageAsync(
+            string method, string collection, Uri uri, string contentId)
+        {
 #if SILVERLIGHT
             var message = _batchWriter.CreateOperationRequestMessage(method, uri);
 #else
             var message = await _batchWriter.CreateOperationRequestMessageAsync(method, uri);
 #endif
+
             if (method != RestVerbs.Get && method != RestVerbs.Delete)
                 message.SetHeader(HttpLiteral.ContentId, contentId);
+
+            if (_session.Metadata.EntityCollectionTypeRequiresOptimisticConcurrencyCheck(collection) &&
+                (method == RestVerbs.Put || method == RestVerbs.Patch || method == RestVerbs.Delete))
+            {
+                message.SetHeader(HttpLiteral.IfMatch, EntityTagHeaderValue.Any.Tag);
+            }
 
             return message;
         }
