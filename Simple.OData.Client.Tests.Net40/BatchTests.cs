@@ -32,6 +32,30 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task NestedBatch()
+        {
+            var batch1 = new ODataBatch(_serviceUri);
+            batch1 += c => c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test1" }, { "UnitPrice", 10m } }, false);
+            batch1 += c => c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test2" }, { "UnitPrice", 20m } }, false);
+
+            var batch2 = new ODataBatch(_serviceUri);
+            batch2 += c => c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test3" }, { "UnitPrice", 30m } }, false);
+            batch2 += c => c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test4" }, { "UnitPrice", 40m } }, false);
+            await batch2.ExecuteAsync();
+            
+            await batch1.ExecuteAsync();
+
+            var product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'Test1'");
+            Assert.NotNull(product);
+            product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'Test2'");
+            Assert.NotNull(product);
+            product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'Test3'");
+            Assert.NotNull(product);
+            product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'Test4'");
+            Assert.NotNull(product);
+        }
+
+        [Fact]
         public async Task SuccessWithResults()
         {
             IDictionary<string, object> product1 = null;
