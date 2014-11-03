@@ -15,5 +15,7 @@
         public const string Batch = "$batch";
         public const string True = "true";
         public const string False = "false";
+        public const string Any = "any";
+        public const string All = "all";
     }
 }

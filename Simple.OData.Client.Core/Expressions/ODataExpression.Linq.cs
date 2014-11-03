@@ -100,7 +100,7 @@ namespace Simple.OData.Client
                 if (target != null)
                 {
                     return FromFunction(callExpression.Method.Name, ParseLinqExpression(target).Reference,
-                        callExpression.Arguments.Skip(1).Select(x => ParseConstantExpression(x)));
+                        callExpression.Arguments.Skip(1));
                 }
                 else
                 {

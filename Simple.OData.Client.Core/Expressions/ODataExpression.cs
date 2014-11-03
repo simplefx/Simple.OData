@@ -89,6 +89,13 @@ namespace Simple.OData.Client
                 new ExpressionFunction(functionName, arguments));
         }
 
+        internal static ODataExpression FromFunction(string functionName, string targetName, IEnumerable<Expression> arguments)
+        {
+            return new ODataExpression(
+                new ODataExpression(targetName),
+                new ExpressionFunction(functionName, arguments));
+        }
+
         internal static ODataExpression FromLinqExpression(Expression expression)
         {
             return ParseLinqExpression(expression);

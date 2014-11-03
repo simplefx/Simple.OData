@@ -370,5 +370,25 @@ namespace Simple.OData.Client.Tests
                 .FindEntryAsync();
             Assert.Equal("Titanic", transport["ShipName"]);
         }
+
+        [Fact]
+        public async Task FilterAny()
+        {
+            var products = await _client
+                .For("Orders")
+                .Filter("Order_Details/any(d:d/Quantity gt 50)")
+                .FindEntriesAsync();
+            Assert.Equal(160, products.Count());
+        }
+
+        [Fact]
+        public async Task FilterAll()
+        {
+            var products = await _client
+                .For("Orders")
+                .Filter("Order_Details/all(d:d/Quantity gt 50)")
+                .FindEntriesAsync();
+            Assert.Equal(11, products.Count());
+        }
     }
 }

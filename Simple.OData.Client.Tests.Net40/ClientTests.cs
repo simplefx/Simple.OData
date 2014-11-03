@@ -33,19 +33,25 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task FindEntriesWithSelect()
+        public async Task FindEntriesSelect()
         {
-            var products = await _client.For("Products").Select("ProductName").FindEntriesAsync();
+            var products = await _client.FindEntriesAsync("Products?$select=ProductName");
             Assert.Equal(1, products.First().Count);
             Assert.Equal("ProductName", products.First().First().Key);
         }
 
         [Fact]
-        public async Task FindEntriesWithSelectHomogenize()
+        public async Task FindEntriesFilterAny()
         {
-            var products = await _client.For("Products").Select("Product_Name").FindEntriesAsync();
-            Assert.Equal(1, products.First().Count);
-            Assert.Equal("ProductName", products.First().First().Key);
+            var orders = await _client.FindEntriesAsync("Orders?$filter=Order_Details/any(d:d/Quantity gt 50)");
+            Assert.Equal(160, orders.Count());
+        }
+
+        [Fact]
+        public async Task FindEntriesFilterAll()
+        {
+            var orders = await _client.FindEntriesAsync("Orders?$filter=Order_Details/all(d:d/Quantity gt 50)");
+            Assert.Equal(11, orders.Count());
         }
 
         [Fact]

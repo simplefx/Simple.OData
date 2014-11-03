@@ -489,6 +489,26 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task FilterAny()
+        {
+            var products = await _client
+                .For<Order>()
+                .Filter(x => x.OrderDetails.Any(y => y.Quantity > 50))
+                .FindEntriesAsync();
+            Assert.Equal(160, products.Count());
+        }
+
+        [Fact]
+        public async Task FilterAll()
+        {
+            var products = await _client
+                .For<Order>()
+                .Filter(x => x.OrderDetails.All(y => y.Quantity > 50))
+                .FindEntriesAsync();
+            Assert.Equal(11, products.Count());
+        }
+
+        [Fact]
         public async Task PluralizerSingleClient()
         {
             _client.SetPluralizer(null);

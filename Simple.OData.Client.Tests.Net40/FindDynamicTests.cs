@@ -417,6 +417,28 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task FilterAny()
+        {
+            var x = ODataDynamic.Expression;
+            var products = await _client
+                .For(x.Orders)
+                .Filter(x.OrderDetails.Any(x.Quantity > 50))
+                .FindEntriesAsync();
+            Assert.Equal(160, (products as IEnumerable<dynamic>).Count());
+        }
+
+        [Fact]
+        public async Task FilterAll()
+        {
+            var x = ODataDynamic.Expression;
+            var products = await _client
+                .For(x.Orders)
+                .Filter(x.OrderDetails.All(x.Quantity > 50))
+                .FindEntriesAsync();
+            Assert.Equal(11, (products as IEnumerable<dynamic>).Count());
+        }
+
+        [Fact]
         public async Task CombinedConditionsFromODataOrg()
         {
             var client = new ODataClient("http://services.odata.org/V2/OData/OData.svc/");

@@ -182,6 +182,53 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task FindPersonWithAnyTrips()
+        {
+            var flights = await _client
+                .For<Person>("People")
+                .Filter(x => x.Trips.Any(y => y.Budget > 10000d))
+                .Expand(x => x.Trips)
+                .FindEntriesAsync();
+            Assert.True(flights.All(x => x.Trips.Any(y => y.Budget > 10000d)));
+            Assert.Equal(2, flights.SelectMany(x => x.Trips).Count());
+        }
+
+        [Fact]
+        public async Task FindPersonWithAllTrips()
+        {
+            var flights = await _client
+                .For<Person>("People")
+                .Filter(x => x.Trips.All(y => y.Budget > 10000d))
+                .Expand(x => x.Trips)
+                .FindEntriesAsync();
+            Assert.True(flights.All(x => x.Trips == null || x.Trips.All(y => y.Budget > 10000d)));
+        }
+
+        [Fact]
+        public async Task FindPersonPlanItemsWithAnyDuration()
+        {
+            var flights = await _client
+                .For<Person>("People")
+                .Key("russellwhyte")
+                .NavigateTo(x => x.Trips)
+                .Filter(x => x.PlanItems.Any(y => y.Duration.Days > 10))
+                .FindEntriesAsync();
+            Assert.Equal(0, flights.Count());
+        }
+
+        [Fact]
+        public async Task FindPersonPlanItemsWithAllDuration()
+        {
+            var flights = await _client
+                .For<Person>("People")
+                .Key("russellwhyte")
+                .NavigateTo(x => x.Trips)
+                .Filter(x => x.PlanItems.All(y => y.Duration.Days > 10))
+                .FindEntriesAsync();
+            Assert.Equal(0, flights.Count());
+        }
+
+        [Fact]
         public async Task FindPersonFlight()
         {
             var flight = await _client

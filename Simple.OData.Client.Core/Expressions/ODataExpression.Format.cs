@@ -6,6 +6,8 @@ namespace Simple.OData.Client
 {
     public partial class ODataExpression
     {
+        internal static int ArgumentCounter = 0;
+
         internal string Format(ExpressionContext context)
         {
             if (_operator == ExpressionOperator.None)
@@ -65,8 +67,21 @@ namespace Simple.OData.Client
             if (FunctionMapping.TryGetFunctionMapping(this.Function.FunctionName, this.Function.Arguments.Count(), adapterVersion, out mapping))
             {
                 var mappedFunction = mapping.FunctionMapper(this.Function.FunctionName, _functionCaller.Format(context), this.Function.Arguments).Function;
-                return string.Format("{0}({1})", mappedFunction.FunctionName,
-                    string.Join(",", (IEnumerable<object>)mappedFunction.Arguments.Select(x => FormatExpression(x, context))));
+                var formattedArguments = string.Join(",", (IEnumerable<object>) mappedFunction.Arguments.Select(x => FormatExpression(x, context)));
+
+                return string.Format("{0}({1})", 
+                    mappedFunction.FunctionName, formattedArguments);
+            }
+            else if (string.Equals(this.Function.FunctionName, ODataLiteral.Any, StringComparison.OrdinalIgnoreCase) ||
+                     string.Equals(this.Function.FunctionName, ODataLiteral.All, StringComparison.OrdinalIgnoreCase))
+            {
+                var formattedArguments = string.Format("x{0}:x{0}/{1}", 
+                    ArgumentCounter >= 0 ? (1 + (ArgumentCounter++) % 9).ToString() : string.Empty, 
+                    FormatExpression(this.Function.Arguments.First(), new ExpressionContext(context.Session, 
+                        new EntityCollection(_functionCaller.Reference, context.EntityCollection))));
+
+                return string.Format("{0}/{1}({2})", 
+                    _functionCaller.Format(context), this.Function.FunctionName.ToLower(), formattedArguments);
             }
             else
             {

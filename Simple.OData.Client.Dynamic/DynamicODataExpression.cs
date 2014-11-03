@@ -119,6 +119,20 @@ namespace Simple.OData.Client
                         expression,
                         BindingRestrictions.GetTypeRestriction(Expression, LimitType));
                 }
+                else if (string.Equals(binder.Name, ODataLiteral.Any, StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(binder.Name, ODataLiteral.All, StringComparison.OrdinalIgnoreCase))
+                {
+                    var expression = Expression.New(CtorWithExpressionAndExpressionFunction,
+                        new[]
+                        {
+                            Expression.Constant(this.Value), 
+                            Expression.Constant(new ExpressionFunction(binder.Name, args.Select(x => x.Value)))
+                        });
+
+                    return new DynamicMetaObject(
+                        expression,
+                        BindingRestrictions.GetTypeRestriction(Expression, LimitType));
+                }
                 else
                 {
                     return base.BindInvokeMember(binder, args);

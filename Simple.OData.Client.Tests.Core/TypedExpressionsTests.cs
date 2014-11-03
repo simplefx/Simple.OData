@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Linq.Expressions;
 using Xunit;
 
@@ -16,6 +17,7 @@ namespace Simple.OData.Client.Tests
             public DateTimeOffset Updated { get; set; }
             public TimeSpan Period { get; set; }
             public TestEntity Nested { get; set; }
+            public TestEntity[] Collection { get; set; }
         }
 
         [Fact]

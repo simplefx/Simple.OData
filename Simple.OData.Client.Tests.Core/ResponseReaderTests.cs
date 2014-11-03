@@ -138,38 +138,6 @@ namespace Simple.OData.Client.Tests
             Assert.Equal(0, tags.Count);
         }
 
-        // TODO: enums
-        //[Fact]
-        //public async Task GetSingleCustomerWithAddress()
-        //{
-        //    var response = SetUpResourceMock("SingleCustomerWithAddress.xml");
-        //    var responseReader = new ResponseReaderV3(_session, await client.CreateAdapterAsync<IEdmModel>());
-        //    var result = (await responseReader.GetResponseAsync(response)).Entry;
-        //    Assert.Equal(3, result.Count);
-        //    Assert.Equal(5, (result["Address"] as IEnumerable<KeyValuePair<string, object>>).Count());
-        //    Assert.Equal("Private", ((result["Address"] as IEnumerable<KeyValuePair<string, object>>)).First().Value);
-        //}
-
-        //[Fact]
-        //public async Task GetNorthwindSchemaTableAssociations()
-        //{
-        //    var response = SetUpResourceMock("Northwind.edmx");
-        //    var Session = Session.FromMetadata(document);
-        //    var EntitySet = Session.FindEntitySet("Product");
-        //    //var association = EntitySet.FindAssociation("OrderDetails");
-        //    //Assert.NotNull(association);
-        //}
-
-        //[Fact]
-        //public async Task GetArtifactsSchemaTableAssociations()
-        //{
-        //    var response = SetUpResourceMock("Artifacts.edmx");
-        //    var Session = Session.FromMetadata(document);
-        //    var EntitySet = Session.FindEntitySet("Product");
-        //    //var association = EntitySet.FindAssociation("Artifacts");
-        //    Assert.NotNull(association);
-        //}
-
         [Fact]
         public async Task GetColorsSchema()
         {

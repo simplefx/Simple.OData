@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 
 #pragma warning disable 1591
 
@@ -49,6 +50,12 @@ namespace Simple.OData.Client
         {
             this.FunctionName = functionName;
             this.Arguments = arguments.Select(ODataExpression.FromValue).ToList();
+        }
+
+        public ExpressionFunction(string functionName, IEnumerable<Expression> arguments)
+        {
+            this.FunctionName = functionName;
+            this.Arguments = arguments.Select(ODataExpression.FromLinqExpression).ToList();
         }
     }
 }
