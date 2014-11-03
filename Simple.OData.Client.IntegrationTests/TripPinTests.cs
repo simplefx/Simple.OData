@@ -205,27 +205,27 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task FindPersonPlanItemsWithAnyDuration()
+        public async Task FindPersonPlanItemsWithAnyPlanItems()
         {
             var flights = await _client
                 .For<Person>("People")
                 .Key("russellwhyte")
                 .NavigateTo(x => x.Trips)
-                .Filter(x => x.PlanItems.Any(y => y.Duration.Days > 10))
+                .Filter(x => x.PlanItems.Any(y => y.PlanItemId > 1))
                 .FindEntriesAsync();
-            Assert.Equal(0, flights.Count());
+            Assert.Equal(2, flights.Count());
         }
 
         [Fact]
-        public async Task FindPersonPlanItemsWithAllDuration()
+        public async Task FindPersonPlanItemsWithAllPlanItems()
         {
             var flights = await _client
                 .For<Person>("People")
                 .Key("russellwhyte")
                 .NavigateTo(x => x.Trips)
-                .Filter(x => x.PlanItems.All(y => y.Duration.Days > 10))
+                .Filter(x => x.PlanItems.All(y => y.PlanItemId > 1))
                 .FindEntriesAsync();
-            Assert.Equal(0, flights.Count());
+            Assert.Equal(3, flights.Count());
         }
 
         [Fact]
