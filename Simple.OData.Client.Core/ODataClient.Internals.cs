@@ -93,7 +93,8 @@ namespace Simple.OData.Client
             {
                 updatedKey.Add(item);
             }
-            return await GetEntryAsync(command.QualifiedEntityCollectionName, updatedKey, cancellationToken);
+            var updatedCommand = new FluentCommand(command).Key(updatedKey);
+            return await FindEntryAsync(await updatedCommand.GetCommandTextAsync(cancellationToken), cancellationToken);
         }
 
         private async Task<IEnumerable<IDictionary<string, object>>> ExecuteUpdateEntriesAsync(FluentCommand command, bool resultRequired, CancellationToken cancellationToken)

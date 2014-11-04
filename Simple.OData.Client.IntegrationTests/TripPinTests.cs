@@ -475,11 +475,9 @@ namespace Simple.OData.Client.Tests
                 .Key(tripEvent.PlanItemId)
                 .DeleteEntryAsync();
 
-            tripEvent = await command
+            await AssertThrowsAsync<WebRequestException>(async () => await command
                 .Key(tripEvent.PlanItemId)
-                .FindEntryAsync();
-
-            Assert.Null(tripEvent);
+                .FindEntryAsync());
         }
 
         [Fact]
