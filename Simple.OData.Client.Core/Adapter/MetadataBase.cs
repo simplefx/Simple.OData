@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace Simple.OData.Client
@@ -9,70 +10,53 @@ namespace Simple.OData.Client
         public abstract string GetEntityCollectionExactName(string collectionName);
         public abstract string GetEntityCollectionTypeName(string collectionName);
         public abstract string GetEntityCollectionTypeNamespace(string collectionName);
+
         public abstract string GetDerivedEntityTypeExactName(string collectionName, string entityTypeName);
-        public abstract bool EntityCollectionTypeRequiresOptimisticConcurrencyCheck(string collectionName);
+        public abstract bool EntityCollectionRequiresOptimisticConcurrencyCheck(string collectionName);
         public abstract string GetEntityTypeExactName(string entityTypeName);
-        public abstract IEnumerable<string> GetStructuralPropertyNames(string entitySetName);
-        public abstract bool HasStructuralProperty(string entitySetName, string propertyName);
-        public abstract string GetStructuralPropertyExactName(string entitySetName, string propertyName);
-        public abstract IEnumerable<string> GetDeclaredKeyPropertyNames(string entitySetName);
-        public abstract bool HasNavigationProperty(string entitySetName, string propertyName);
-        public abstract string GetNavigationPropertyExactName(string entitySetName, string propertyName);
-        public abstract string GetNavigationPropertyPartnerName(string entitySetName, string propertyName);
-        public abstract bool IsNavigationPropertyMultiple(string entitySetName, string propertyName);
+        public abstract IEnumerable<string> GetStructuralPropertyNames(string collectionName);
+        public abstract bool HasStructuralProperty(string collectionName, string propertyName);
+        public abstract string GetStructuralPropertyExactName(string collectionName, string propertyName);
+        public abstract IEnumerable<string> GetDeclaredKeyPropertyNames(string collectionName);
+        public abstract bool HasNavigationProperty(string collectionName, string propertyName);
+        public abstract string GetNavigationPropertyExactName(string collectionName, string propertyName);
+        public abstract string GetNavigationPropertyPartnerName(string collectionName, string propertyName);
+        public abstract bool IsNavigationPropertyMultiple(string collectionName, string propertyName);
         public abstract string GetFunctionExactName(string functionName);
         public abstract string GetActionExactName(string actionName);
 
-        public EntityCollection GetEntityCollection(string collectionName)
-        {
-            return new EntityCollection(GetEntityCollectionExactName(collectionName));
-        }
-
-        public EntityCollection GetBaseEntityCollection(string collectionPath)
+        public EntityCollection GetEntityCollection(string collectionPath)
         {
             var segments = collectionPath.Split('/');
             if (segments.Count() > 1)
             {
                 if (segments.Last().Contains("."))
                 {
-                    return this.GetEntityCollection(ExtractCollectionName(segments[segments.Length - 2]));
+                    var baseEntitySet = this.GetEntityCollection(Utils.ExtractCollectionName(segments[segments.Length - 2]));
+                    return GetDerivedEntityCollection(baseEntitySet, Utils.ExtractCollectionName(segments.Last()));
                 }
                 else
                 {
-                    return this.GetEntityCollection(ExtractCollectionName(segments.Last()));
+                    return new EntityCollection(GetEntityCollectionExactName(Utils.ExtractCollectionName(segments.Last())));
                 }
             }
             else
             {
-                return this.GetEntityCollection(ExtractCollectionName(collectionPath));
-            }
-        }
-
-        public EntityCollection GetConcreteEntityCollection(string collectionPath)
-        {
-            var segments = collectionPath.Split('/');
-            if (segments.Count() > 1)
-            {
-                if (segments.Last().Contains("."))
-                {
-                    var baseEntitySet = this.GetEntityCollection(ExtractCollectionName(segments[segments.Length-2]));
-                    return GetDerivedEntityCollection(baseEntitySet, ExtractCollectionName(segments.Last()));
-                }
-                else
-                {
-                    return this.GetEntityCollection(ExtractCollectionName(segments.Last()));
-                }
-            }
-            else
-            {
-                return this.GetEntityCollection(ExtractCollectionName(collectionPath));
+                return new EntityCollection(GetEntityCollectionExactName(Utils.ExtractCollectionName(collectionPath)));
             }
         }
 
         public EntityCollection GetDerivedEntityCollection(EntityCollection baseCollection, string entityTypeName)
         {
-            var actualName = GetDerivedEntityTypeExactName(baseCollection.ActualName, entityTypeName);
+            var actualName = GetDerivedEntityTypeExactName(baseCollection.Name, entityTypeName);
             return new EntityCollection(actualName, baseCollection);
+        }
+
+        public string GetEntityCollectionQualifiedTypeName(string collectionName)
+        {
+            var entityTypeNamespace = GetEntityCollectionTypeNamespace(collectionName);
+            var entityTypeName = GetEntityCollectionTypeName(collectionName);
+            return string.Join(".", entityTypeNamespace, entityTypeName);
         }
 
         public EntryDetails ParseEntryDetails(string collectionName, IDictionary<string, object> entryData, string contentId = null)
@@ -119,12 +103,12 @@ namespace Simple.OData.Client
             return entryDetails;
         }
 
-        private string ExtractCollectionName(string text)
-        {
-            if (text.Contains("("))
-                return text.Substring(0, text.IndexOf('('));
-            else
-                return text;
-        }
+        //private string ExtractCollectionName(string text)
+        //{
+        //    if (text.Contains("("))
+        //        return text.Substring(0, text.IndexOf('('));
+        //    else
+        //        return text;
+        //}
     }
 }

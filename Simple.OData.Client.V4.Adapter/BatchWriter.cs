@@ -59,7 +59,7 @@ namespace Simple.OData.Client.V4.Adapter
             if (method == RestVerbs.Post || method == RestVerbs.Put || method == RestVerbs.Patch)
                 message.SetHeader(HttpLiteral.ContentId, contentId);
 
-            if (_session.Metadata.EntityCollectionTypeRequiresOptimisticConcurrencyCheck(collection) &&
+            if (_session.Metadata.EntityCollectionRequiresOptimisticConcurrencyCheck(collection) &&
                 (method == RestVerbs.Put || method == RestVerbs.Patch || method == RestVerbs.Delete))
             {
                 message.SetHeader(HttpLiteral.IfMatch, EntityTagHeaderValue.Any.Tag);

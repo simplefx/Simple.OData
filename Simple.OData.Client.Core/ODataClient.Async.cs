@@ -349,8 +349,8 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var entryKeyWithNames = new Dictionary<string, object>();
-            var entityCollection = _session.Metadata.GetConcreteEntityCollection(collection);
-            var keyNames = _session.Metadata.GetDeclaredKeyPropertyNames(entityCollection.ActualName).ToList();
+            var entityCollection = _session.Metadata.GetEntityCollection(collection);
+            var keyNames = _session.Metadata.GetDeclaredKeyPropertyNames(entityCollection.Name).ToList();
             for (int index = 0; index < keyNames.Count; index++)
             {
                 entryKeyWithNames.Add(keyNames[index], entryKey.ElementAt(index));

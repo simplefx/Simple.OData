@@ -25,9 +25,8 @@ namespace Simple.OData.Client
 
         public async Task<ODataRequest> CreateGetRequestAsync(string commandText, bool scalarResult)
         {
-            var collection = commandText.Split('?', '(', '/').First();
             await WriteEntryContentAsync(
-                RestVerbs.Get, collection, commandText, null);
+                RestVerbs.Get, Utils.ExtractCollectionName(commandText), commandText, null);
 
             var request = new ODataRequest(RestVerbs.Get, _session, commandText)
             {
@@ -59,8 +58,8 @@ namespace Simple.OData.Client
 
         public async Task<ODataRequest> CreateUpdateRequestAsync(string collection, string entryIdent, IDictionary<string, object> entryKey, IDictionary<string, object> entryData, bool resultRequired)
         {
-            var entityCollection = _session.Metadata.GetConcreteEntityCollection(collection);
-            var entryDetails = _session.Metadata.ParseEntryDetails(entityCollection.ActualName, entryData);
+            var entityCollection = _session.Metadata.GetEntityCollection(collection);
+            var entryDetails = _session.Metadata.ParseEntryDetails(entityCollection.Name, entryData);
 
             var hasPropertiesToUpdate = entryDetails.Properties.Count > 0;
             var merge = !hasPropertiesToUpdate || CanUseMerge(collection, entryKey, entryData);
@@ -69,7 +68,7 @@ namespace Simple.OData.Client
                 merge ? RestVerbs.Patch : RestVerbs.Put, collection, entryIdent, entryData);
 
             var updateMethod = merge ? RestVerbs.Patch : RestVerbs.Put;
-            var checkOptimisticConcurrency = _session.Metadata.EntityCollectionTypeRequiresOptimisticConcurrencyCheck(collection);
+            var checkOptimisticConcurrency = _session.Metadata.EntityCollectionRequiresOptimisticConcurrencyCheck(collection);
             var request = new ODataRequest(updateMethod, _session, entryIdent, entryData, entryContent)
             {
                 ResultRequired = resultRequired,
@@ -86,7 +85,7 @@ namespace Simple.OData.Client
 
             var request = new ODataRequest(RestVerbs.Delete, _session, entryIdent)
             {
-                CheckOptimisticConcurrency = _session.Metadata.EntityCollectionTypeRequiresOptimisticConcurrencyCheck(collection)
+                CheckOptimisticConcurrency = _session.Metadata.EntityCollectionRequiresOptimisticConcurrencyCheck(collection)
             };
             AssignHeaders(request);
             return request;
@@ -169,8 +168,8 @@ namespace Simple.OData.Client
 
         private bool CanUseMerge(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
         {
-            var entityCollection = _session.Metadata.GetConcreteEntityCollection(collection);
-            foreach (var propertyName in _session.Metadata.GetStructuralPropertyNames(entityCollection.ActualName))
+            var entityCollection = _session.Metadata.GetEntityCollection(collection);
+            foreach (var propertyName in _session.Metadata.GetStructuralPropertyNames(entityCollection.Name))
             {
                 if (entryKey.ContainsKey(propertyName) && entryData.ContainsKey(propertyName) &&
                     !entryKey[propertyName].Equals(entryData[propertyName]))

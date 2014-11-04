@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net.Http.Headers;
 using System.Spatial;
 using System.Threading.Tasks;
 using System.Xml.Linq;
@@ -33,7 +32,8 @@ namespace Simple.OData.Client.V3.Adapter
                 ? await CreateOperationRequestMessageAsync(method, collection, entryData, commandText)
                 : new ODataRequestMessage();
 
-            var entityType = FindEntityType(collection);
+            var entityType = _model.FindDeclaredType(
+                _session.Metadata.GetEntityCollectionQualifiedTypeName(collection)) as IEdmEntityType;
             var model = method == RestVerbs.Patch ? new EdmDeltaModel(_model, entityType, entryData.Keys) : _model;
 
             using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), model))
@@ -42,8 +42,8 @@ namespace Simple.OData.Client.V3.Adapter
                     return null;
 
                 var contentId = _deferredBatchWriter != null ? _deferredBatchWriter.Value.GetContentId(entryData) : null;
-                var entityCollection = _session.Metadata.GetConcreteEntityCollection(collection);
-                var entryDetails = _session.Metadata.ParseEntryDetails(entityCollection.ActualName, entryData, contentId);
+                var entityCollection = _session.Metadata.GetEntityCollection(collection);
+                var entryDetails = _session.Metadata.ParseEntryDetails(entityCollection.Name, entryData, contentId);
 
                 var entryWriter = messageWriter.CreateODataEntryWriter();
                 var entry = new Microsoft.Data.OData.ODataEntry();
@@ -172,13 +172,6 @@ namespace Simple.OData.Client.V3.Adapter
 #endif
 
             return message;
-        }
-
-        private IEdmEntityType FindEntityType(string collection)
-        {
-            var entityTypeNamespace = _session.Metadata.GetEntityCollectionTypeNamespace(collection);
-            var entityTypeName = _session.Metadata.GetEntityCollectionTypeName(collection);
-            return _model.FindDeclaredType(string.Join(".", entityTypeNamespace, entityTypeName)) as IEdmEntityType;
         }
 
         private void WriteLink(ODataWriter entryWriter, Microsoft.Data.OData.ODataEntry entry, string linkName, IEnumerable<ReferenceLink> links)

@@ -4,27 +4,26 @@ namespace Simple.OData.Client
 {
     public interface IMetadata
     {
-        EntityCollection GetEntityCollection(string collectionName);
-        EntityCollection GetBaseEntityCollection(string collectionPath);
-        EntityCollection GetConcreteEntityCollection(string collectionPath);
+        EntityCollection GetEntityCollection(string collectionPath);
         EntityCollection GetDerivedEntityCollection(EntityCollection baseCollection, string entityTypeName);
 
         string GetEntityCollectionExactName(string collectionName);
         string GetEntityCollectionTypeName(string collectionName);
         string GetEntityCollectionTypeNamespace(string collectionName);
-        bool EntityCollectionTypeRequiresOptimisticConcurrencyCheck(string collectionName);
+        string GetEntityCollectionQualifiedTypeName(string collectionName);
+        bool EntityCollectionRequiresOptimisticConcurrencyCheck(string collectionName);
 
         string GetEntityTypeExactName(string entityTypeName);
 
-        IEnumerable<string> GetStructuralPropertyNames(string entitySetName);
-        bool HasStructuralProperty(string entitySetName, string propertyName);
-        string GetStructuralPropertyExactName(string entitySetName, string propertyName);
-        IEnumerable<string> GetDeclaredKeyPropertyNames(string entitySetName);
+        IEnumerable<string> GetStructuralPropertyNames(string collectionName);
+        bool HasStructuralProperty(string collectionName, string propertyName);
+        string GetStructuralPropertyExactName(string collectionName, string propertyName);
+        IEnumerable<string> GetDeclaredKeyPropertyNames(string collectionName);
 
-        bool HasNavigationProperty(string entitySetName, string propertyName);
-        string GetNavigationPropertyExactName(string entitySetName, string propertyName);
-        string GetNavigationPropertyPartnerName(string entitySetName, string propertyName);
-        bool IsNavigationPropertyMultiple(string entitySetName, string propertyName);
+        bool HasNavigationProperty(string collectionName, string propertyName);
+        string GetNavigationPropertyExactName(string collectionName, string propertyName);
+        string GetNavigationPropertyPartnerName(string collectionName, string propertyName);
+        bool IsNavigationPropertyMultiple(string collectionName, string propertyName);
 
         string GetFunctionExactName(string functionName);
         string GetActionExactName(string actionName);

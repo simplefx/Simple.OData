@@ -150,19 +150,19 @@ namespace Simple.OData.Client
             var objectName = elementNames.First();
             if (entityCollection != null)
             {
-                if (context.Session.Metadata.HasStructuralProperty(entityCollection.ActualName, objectName))
+                if (context.Session.Metadata.HasStructuralProperty(entityCollection.Name, objectName))
                 {
                     var propertyName = context.Session.Metadata.GetStructuralPropertyExactName(
-                        entityCollection.ActualName, objectName);
+                        entityCollection.Name, objectName);
                     segmentNames.Add(propertyName);
                     return BuildReferencePath(segmentNames, null, elementNames.Skip(1).ToList(), context);
                 }
-                else if (context.Session.Metadata.HasNavigationProperty(entityCollection.ActualName, objectName))
+                else if (context.Session.Metadata.HasNavigationProperty(entityCollection.Name, objectName))
                 {
                     var propertyName = context.Session.Metadata.GetNavigationPropertyExactName(
-                        entityCollection.ActualName, objectName);
+                        entityCollection.Name, objectName);
                     var linkName = context.Session.Metadata.GetNavigationPropertyPartnerName(
-                        entityCollection.ActualName, objectName);
+                        entityCollection.Name, objectName);
                     var linkedEntityCollection = context.Session.Metadata.GetEntityCollection(linkName);
                     segmentNames.Add(propertyName);
                     return BuildReferencePath(segmentNames, linkedEntityCollection, elementNames.Skip(1).ToList(), context);

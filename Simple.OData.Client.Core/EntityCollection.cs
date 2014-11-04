@@ -8,23 +8,23 @@ namespace Simple.OData.Client
 {
     public class EntityCollection
     {
-        private readonly string _actualName;
+        private readonly string _name;
         private readonly EntityCollection _baseEntityCollection;
 
         internal EntityCollection(string name, EntityCollection baseEntityCollection = null)
         {
-            _actualName = name;
+            _name = name;
             _baseEntityCollection = baseEntityCollection;
         }
 
         public override string ToString()
         {
-            return _actualName;
+            return _name;
         }
 
-        public string ActualName
+        public string Name
         {
-            get { return _actualName; }
+            get { return _name; }
         }
 
         public EntityCollection BaseEntityCollection

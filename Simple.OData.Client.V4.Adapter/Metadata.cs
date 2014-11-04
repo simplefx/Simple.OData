@@ -47,7 +47,7 @@ namespace Simple.OData.Client.V4.Adapter
             return GetEntityType(collectionName).Namespace;
         }
 
-        public override bool EntityCollectionTypeRequiresOptimisticConcurrencyCheck(string collectionName)
+        public override bool EntityCollectionRequiresOptimisticConcurrencyCheck(string collectionName)
         {
             IEdmEntitySet entitySet;
             IEdmSingleton singleton;
@@ -108,48 +108,48 @@ namespace Simple.OData.Client.V4.Adapter
             throw new UnresolvableObjectException(entityTypeName, string.Format("Entity type {0} not found", entityTypeName));
         }
 
-        public override IEnumerable<string> GetStructuralPropertyNames(string entitySetName)
+        public override IEnumerable<string> GetStructuralPropertyNames(string collectionName)
         {
-            return GetEntityType(entitySetName).StructuralProperties().Select(x => x.Name);
+            return GetEntityType(collectionName).StructuralProperties().Select(x => x.Name);
         }
 
-        public override bool HasStructuralProperty(string entitySetName, string propertyName)
+        public override bool HasStructuralProperty(string collectionName, string propertyName)
         {
-            return GetEntityType(entitySetName).StructuralProperties().Any(x => Utils.NamesMatch(x.Name, propertyName, _session.Pluralizer));
+            return GetEntityType(collectionName).StructuralProperties().Any(x => Utils.NamesMatch(x.Name, propertyName, _session.Pluralizer));
         }
 
-        public override string GetStructuralPropertyExactName(string entitySetName, string propertyName)
+        public override string GetStructuralPropertyExactName(string collectionName, string propertyName)
         {
-            return GetStructuralProperty(entitySetName, propertyName).Name;
+            return GetStructuralProperty(collectionName, propertyName).Name;
         }
 
-        public override bool HasNavigationProperty(string entitySetName, string propertyName)
+        public override bool HasNavigationProperty(string collectionName, string propertyName)
         {
-            return GetEntityType(entitySetName).NavigationProperties().Any(x => Utils.NamesMatch(x.Name, propertyName, _session.Pluralizer));
+            return GetEntityType(collectionName).NavigationProperties().Any(x => Utils.NamesMatch(x.Name, propertyName, _session.Pluralizer));
         }
 
-        public override string GetNavigationPropertyExactName(string entitySetName, string propertyName)
+        public override string GetNavigationPropertyExactName(string collectionName, string propertyName)
         {
-            return GetNavigationProperty(entitySetName, propertyName).Name;
+            return GetNavigationProperty(collectionName, propertyName).Name;
         }
 
-        public override string GetNavigationPropertyPartnerName(string entitySetName, string propertyName)
+        public override string GetNavigationPropertyPartnerName(string collectionName, string propertyName)
         {
-            var navigationProperty = GetNavigationProperty(entitySetName, propertyName);
+            var navigationProperty = GetNavigationProperty(collectionName, propertyName);
             var entityType = navigationProperty.Type.Definition.TypeKind == EdmTypeKind.Collection
                 ? (navigationProperty.Type.Definition as IEdmCollectionType).ElementType.Definition as IEdmEntityType
                 : navigationProperty.Type.Definition as IEdmEntityType;
             return entityType.Name;
         }
 
-        public override bool IsNavigationPropertyMultiple(string entitySetName, string propertyName)
+        public override bool IsNavigationPropertyMultiple(string collectionName, string propertyName)
         {
-            return GetNavigationProperty(entitySetName, propertyName).Partner.TargetMultiplicity() == EdmMultiplicity.Many;
+            return GetNavigationProperty(collectionName, propertyName).Partner.TargetMultiplicity() == EdmMultiplicity.Many;
         }
 
-        public override IEnumerable<string> GetDeclaredKeyPropertyNames(string entitySetName)
+        public override IEnumerable<string> GetDeclaredKeyPropertyNames(string collectionName)
         {
-            var entityType = GetEntityType(entitySetName);
+            var entityType = GetEntityType(collectionName);
             while (entityType.DeclaredKey == null && entityType.BaseEntityType() != null)
             {
                 entityType = entityType.BaseEntityType();

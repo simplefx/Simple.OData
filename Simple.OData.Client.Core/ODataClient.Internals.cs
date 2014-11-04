@@ -60,12 +60,12 @@ namespace Simple.OData.Client
                 }
             }
 
-            var entityCollection = _session.Metadata.GetConcreteEntityCollection(collectionName);
-            var entryDetails = _session.Metadata.ParseEntryDetails(entityCollection.ActualName, entryData);
+            var entityCollection = _session.Metadata.GetEntityCollection(collectionName);
+            var entryDetails = _session.Metadata.ParseEntryDetails(entityCollection.Name, entryData);
 
             var removedLinks = entryDetails.Links
                 .SelectMany(x => x.Value.Where(y => y.LinkData == null))
-                .Select(x => _session.Metadata.GetNavigationPropertyExactName(entityCollection.ActualName, x.LinkName))
+                .Select(x => _session.Metadata.GetNavigationPropertyExactName(entityCollection.Name, x.LinkName))
                 .ToList();
 
             foreach (var associationName in removedLinks)

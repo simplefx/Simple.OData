@@ -74,6 +74,11 @@ namespace Simple.OData.Client
             return new Uri(url + relativePath);
         }
 
+        public static string ExtractCollectionName(string commandText)
+        {
+            return commandText.Split('?', '(', '/').First();
+        }
+
         public static bool TryConvert(object value, Type targetType, out object result)
         {
             try
