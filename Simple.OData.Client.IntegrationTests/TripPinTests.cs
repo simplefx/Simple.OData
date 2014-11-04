@@ -186,7 +186,8 @@ namespace Simple.OData.Client.Tests
         {
             var flights = await _client
                 .For<Person>("People")
-                .Filter(x => x.Trips.Any(y => y.Budget > 10000d))
+                .Filter(x => x.Trips
+                    .Any(y => y.Budget > 10000d))
                 .Expand(x => x.Trips)
                 .FindEntriesAsync();
             Assert.True(flights.All(x => x.Trips.Any(y => y.Budget > 10000d)));
@@ -198,7 +199,8 @@ namespace Simple.OData.Client.Tests
         {
             var flights = await _client
                 .For<Person>("People")
-                .Filter(x => x.Trips.All(y => y.Budget > 10000d))
+                .Filter(x => x.Trips
+                    .All(y => y.Budget > 10000d))
                 .Expand(x => x.Trips)
                 .FindEntriesAsync();
             Assert.True(flights.All(x => x.Trips == null || x.Trips.All(y => y.Budget > 10000d)));
@@ -207,9 +209,12 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task FindPersonPlanItemsWithAllTripsAnyPlanItems()
         {
+            var duration = TimeSpan.FromHours(4);
             var flights = await _client
                 .For<Person>("People")
-                .Filter(x => x.Trips.All(y => y.PlanItems.Any(z => z.PlanItemId < 5)))
+                .Filter(x => x.Trips
+                    .All(y => y.PlanItems
+                        .Any(z => z.Duration < duration)))
                 .FindEntriesAsync();
             Assert.Equal(8, flights.Count());
         }
