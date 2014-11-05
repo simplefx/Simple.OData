@@ -61,7 +61,10 @@ namespace Simple.OData.Client.V4.Adapter
                     else
                     {
                         var text = Utils.StreamToString(await responseMessage.GetStreamAsync());
-                        return ODataResponse.FromFeed(new[] { new Dictionary<string, object>() { { FluentCommand.ResultLiteral, text } } });
+                        return ODataResponse.FromFeed(new[] { new Dictionary<string, object>()
+                        {
+                            { FluentCommand.ResultLiteral, text }
+                        } });
                     }
                 }
                 else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Batch))
@@ -79,7 +82,10 @@ namespace Simple.OData.Client.V4.Adapter
                 else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Property))
                 {
                     var property = messageReader.ReadProperty();
-                    return ODataResponse.FromFeed(new[] { new Dictionary<string, object>() { { property.Name, GetPropertyValue(property.Value) } } });
+                    return ODataResponse.FromFeed(new[] { new Dictionary<string, object>()
+                    {
+                        { property.Name ?? FluentCommand.ResultLiteral, GetPropertyValue(property.Value) }
+                    } });
                 }
                 else
                 {
