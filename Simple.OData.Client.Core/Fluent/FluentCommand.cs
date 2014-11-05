@@ -576,8 +576,8 @@ namespace Simple.OData.Client
                 commandText += string.Format("{0}/{1}",
                     parent.Format(),
                     _session.Metadata.GetNavigationPropertyExactName(parent.EntityCollection.Name, _linkName));
-            }  
-          
+            }
+
             if (!string.IsNullOrEmpty(_functionName))
             {
                 if (!string.IsNullOrEmpty(_collectionName))
@@ -617,7 +617,7 @@ namespace Simple.OData.Client
             if (HasAction)
                 return string.Empty;
 
-            if (this.CommandData.Any() && !string.IsNullOrEmpty(_functionName) && 
+            if (this.CommandData.Any() && !string.IsNullOrEmpty(_functionName) &&
                 _session.Adapter.FunctionFormat == FunctionFormat.Query)
                 extraClauses.Add(string.Join("&", this.CommandData.Select(x => string.Format("{0}={1}",
                     x.Key, _session.Adapter.ConvertValueToUriLiteral(x.Value)))));
@@ -633,11 +633,8 @@ namespace Simple.OData.Client
 
             if (_expandAssociations.Any())
             {
-                if (_session.Adapter.AdapterVersion == AdapterVersion.V3)
-                    extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Expand,
-                        string.Join(",", _expandAssociations.Select(x => FormatExpandItem(x, this.EntityCollection)))));
-                else
-                    extraClauses.Add(string.Join(",", _expandAssociations.Select(x => FormatExpandItem(x, this.EntityCollection))));
+                extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Expand,
+                    string.Join(",", _expandAssociations.Select(x => FormatExpandItem(x, this.EntityCollection)))));
             }
 
             if (_orderbyColumns.Any())
@@ -682,11 +679,7 @@ namespace Simple.OData.Client
         {
             var items = item.Split('/');
             var associationName = _session.Metadata.GetNavigationPropertyExactName(entityCollection.Name, items.First());
-            string text;
-            if (_session.Adapter.AdapterVersion == AdapterVersion.V3)
-                text = associationName;
-            else
-                text = string.Format("{0}={1}", ODataLiteral.Expand, associationName);
+            var text = associationName;
             if (items.Count() == 1)
             {
                 return text;
@@ -699,7 +692,7 @@ namespace Simple.OData.Client
                 if (_session.Adapter.AdapterVersion == AdapterVersion.V3)
                     return string.Format("{0}/{1}", text, FormatExpandItem(item, entityCollection));
                 else
-                    return string.Format("{0}({1})", text, FormatExpandItem(item, entityCollection));
+                    return string.Format("{0}({1}={2})", text, ODataLiteral.Expand, FormatExpandItem(item, entityCollection));
             }
         }
 
