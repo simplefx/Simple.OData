@@ -9,15 +9,6 @@ namespace Simple.OData.Client.Tests
 	[TestFixture]
     public class ClientTests
     {
-		IList<IODataAdapter> _adapters = new List<IODataAdapter>();
-
-		[TestFixtureSetUp]
-		public void TestFixtureSetUp()
-		{
-			_adapters.Add (new Simple.OData.Client.V3.Adapter());
-			_adapters.Add (new Simple.OData.Client.V4.Adapter());
-		}
-
 		[Test]
 		public void AllEntriesFromODataOrg()
         {
