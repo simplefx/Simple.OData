@@ -378,26 +378,7 @@ namespace Simple.OData.Client.Tests
                 .As<Event>();
 
             var tripEvent = await command
-                .Set(new Event
-                {
-                    ConfirmationCode = "4372899DD",
-                    Description = "Client Meeting",
-                    Duration = TimeSpan.FromHours(3),
-                    EndsAt = DateTimeOffset.Parse("2014-06-01T23:11:17.5479185-07:00"),
-                    OccursAt = new EventLocation()
-                    {
-                        Address = "100 Church Street, 8th Floor, Manhattan, 10007",
-                        BuildingInfo = "Regus Business Center",
-                        City = new Location.LocationCity()
-                        {
-                            CountryRegion = "United States",
-                            Name = "New York City",
-                            Region = "New York",
-                        }
-                    },
-                    PlanItemId = 33,
-                    StartsAt = DateTimeOffset.Parse("2014-05-25T23:11:17.5459178-07:00"),
-                })
+                .Set(CreateTestEvent())
                 .InsertEntryAsync();
 
             tripEvent = await command
@@ -419,26 +400,7 @@ namespace Simple.OData.Client.Tests
                 .As<Event>();
 
             var tripEvent = await command
-                .Set(new Event
-                {
-                    ConfirmationCode = "4372899DD",
-                    Description = "Client Meeting",
-                    Duration = TimeSpan.FromHours(3),
-                    EndsAt = DateTimeOffset.Parse("2014-06-01T23:11:17.5479185-07:00"),
-                    OccursAt = new EventLocation()
-                    {
-                        Address = "100 Church Street, 8th Floor, Manhattan, 10007",
-                        BuildingInfo = "Regus Business Center",
-                        City = new Location.LocationCity()
-                        {
-                            CountryRegion = "United States",
-                            Name = "New York City",
-                            Region = "New York",
-                        }
-                    },
-                    PlanItemId = 33,
-                    StartsAt = DateTimeOffset.Parse("2014-05-25T23:11:17.5459178-07:00"),
-                })
+                .Set(CreateTestEvent())
                 .InsertEntryAsync();
 
             tripEvent = await command
@@ -461,26 +423,7 @@ namespace Simple.OData.Client.Tests
                 .As<Event>();
 
             var tripEvent = await command
-                .Set(new Event
-                {
-                    ConfirmationCode = "4372899DD",
-                    Description = "Client Meeting",
-                    Duration = TimeSpan.FromHours(3),
-                    EndsAt = DateTimeOffset.Parse("2014-06-01T23:11:17.5479185-07:00"),
-                    OccursAt = new EventLocation()
-                    {
-                        Address = "100 Church Street, 8th Floor, Manhattan, 10007",
-                        BuildingInfo = "Regus Business Center",
-                        City = new Location.LocationCity()
-                        {
-                            CountryRegion = "United States",
-                            Name = "New York City",
-                            Region = "New York",
-                        }
-                    },
-                    PlanItemId = 33,
-                    StartsAt = DateTimeOffset.Parse("2014-05-25T23:11:17.5459178-07:00"),
-                })
+                .Set(CreateTestEvent())
                 .InsertEntryAsync();
 
             await command
@@ -538,26 +481,7 @@ namespace Simple.OData.Client.Tests
                 .As<Event>();
 
             var tripEvent = await command
-                .Set(new Event
-                {
-                    ConfirmationCode = "4372899DD",
-                    Description = "Client Meeting",
-                    Duration = TimeSpan.FromHours(3),
-                    EndsAt = DateTimeOffset.Parse("2014-06-01T23:11:17.5479185-07:00"),
-                    OccursAt = new EventLocation()
-                    {
-                        Address = "100 Church Street, 8th Floor, Manhattan, 10007",
-                        BuildingInfo = "Regus Business Center",
-                        City = new Location.LocationCity()
-                        {
-                            CountryRegion = "United States",
-                            Name = "New York City",
-                            Region = "New York",
-                        }
-                    },
-                    PlanItemId = 33,
-                    StartsAt = DateTimeOffset.Parse("2014-05-25T23:11:17.5459178-07:00"),
-                })
+                .Set(CreateTestEvent())
                 .InsertEntryAsync();
 
             await _client.ResetDataSource();
@@ -599,6 +523,30 @@ namespace Simple.OData.Client.Tests
 
             Assert.Equal(8, airlines1.Count());
             Assert.Equal(8, airlines2.Count());
+        }
+
+        private Event CreateTestEvent()
+        {
+            return new Event
+            {
+                ConfirmationCode = "4372899DD",
+                Description = "Client Meeting",
+                Duration = TimeSpan.FromHours(3),
+                EndsAt = DateTimeOffset.Parse("2014-06-01T23:11:17.5479185-07:00"),
+                OccursAt = new EventLocation()
+                {
+                    Address = "100 Church Street, 8th Floor, Manhattan, 10007",
+                    BuildingInfo = "Regus Business Center",
+                    City = new Location.LocationCity()
+                    {
+                        CountryRegion = "United States",
+                        Name = "New York City",
+                        Region = "New York",
+                    }
+                },
+                PlanItemId = 33,
+                StartsAt = DateTimeOffset.Parse("2014-05-25T23:11:17.5459178-07:00"),
+            };
         }
     }
 }
