@@ -178,7 +178,7 @@ namespace Simple.OData.Client.V3.Adapter
         {
             var navigationProperty = (_model.FindDeclaredType(entry.TypeName) as IEdmEntityType).NavigationProperties()
                 .Single(x => Client.Utils.NamesMatch(x.Name, linkName, _session.Pluralizer));
-            bool isCollection = navigationProperty.Partner.Multiplicity() == EdmMultiplicity.Many;
+            bool isCollection = navigationProperty.Type.Definition.TypeKind == EdmTypeKind.Collection;
 
             var linkType = GetNavigationPropertyEntityType(navigationProperty);
 

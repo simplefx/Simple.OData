@@ -144,7 +144,8 @@ namespace Simple.OData.Client.V4.Adapter
 
         public override bool IsNavigationPropertyMultiple(string collectionName, string propertyName)
         {
-            return GetNavigationProperty(collectionName, propertyName).Partner.TargetMultiplicity() == EdmMultiplicity.Many;
+            var property = GetNavigationProperty(collectionName, propertyName);
+            return property.Type.Definition.TypeKind == EdmTypeKind.Collection;
         }
 
         public override IEnumerable<string> GetDeclaredKeyPropertyNames(string collectionName)
