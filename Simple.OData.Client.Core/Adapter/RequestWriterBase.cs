@@ -94,7 +94,7 @@ namespace Simple.OData.Client
         public async Task<ODataRequest> CreateLinkRequestAsync(string collection, string linkName, string entryIdent, string linkIdent)
         {
             var associationName = _session.Metadata.GetNavigationPropertyExactName(collection, linkName);
-            var linkMethod = _session.Metadata.IsNavigationPropertyMultiple(collection, associationName) ?
+            var linkMethod = _session.Metadata.IsNavigationPropertyCollection(collection, associationName) ?
                 RestVerbs.Post :
                 RestVerbs.Put;
 

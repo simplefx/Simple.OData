@@ -128,7 +128,7 @@ namespace Simple.OData.Client.V4.Adapter
                 await _deferredBatchWriter.Value.StartBatchAsync();
 
             var message = (await _deferredBatchWriter.Value.CreateOperationRequestMessageAsync(
-                method, collection, entryData, new Uri(_session.Settings.UrlBase + commandText))) as IODataRequestMessageAsync;
+                method, collection, entryData, Utils.CreateAbsoluteUri(_session.Settings.UrlBase, commandText))) as IODataRequestMessageAsync;
 
             return message;
         }

@@ -110,7 +110,7 @@ namespace Simple.OData.Client.V3.Adapter
             return entityType.Name;
         }
 
-        public override bool IsNavigationPropertyMultiple(string collectionName, string propertyName)
+        public override bool IsNavigationPropertyCollection(string collectionName, string propertyName)
         {
             var property = GetNavigationProperty(collectionName, propertyName);
             return property.Type.Definition.TypeKind == EdmTypeKind.Collection;

@@ -21,7 +21,7 @@ namespace Simple.OData.Client
         public abstract bool HasNavigationProperty(string collectionName, string propertyName);
         public abstract string GetNavigationPropertyExactName(string collectionName, string propertyName);
         public abstract string GetNavigationPropertyPartnerName(string collectionName, string propertyName);
-        public abstract bool IsNavigationPropertyMultiple(string collectionName, string propertyName);
+        public abstract bool IsNavigationPropertyCollection(string collectionName, string propertyName);
         public abstract string GetFunctionExactName(string functionName);
         public abstract string GetActionExactName(string actionName);
 
@@ -71,7 +71,7 @@ namespace Simple.OData.Client
                 }
                 else if (this.HasNavigationProperty(collectionName, item.Key))
                 {
-                    if (this.IsNavigationPropertyMultiple(collectionName, item.Key))
+                    if (this.IsNavigationPropertyCollection(collectionName, item.Key))
                     {
                         if (item.Value == null)
                         {

@@ -23,7 +23,7 @@ namespace Simple.OData.Client
         bool HasNavigationProperty(string collectionName, string propertyName);
         string GetNavigationPropertyExactName(string collectionName, string propertyName);
         string GetNavigationPropertyPartnerName(string collectionName, string propertyName);
-        bool IsNavigationPropertyMultiple(string collectionName, string propertyName);
+        bool IsNavigationPropertyCollection(string collectionName, string propertyName);
 
         string GetFunctionExactName(string functionName);
         string GetActionExactName(string actionName);

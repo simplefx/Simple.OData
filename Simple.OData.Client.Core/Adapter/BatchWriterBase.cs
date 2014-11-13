@@ -74,7 +74,7 @@ namespace Simple.OData.Client
 
             var httpRequest = new HttpRequestMessage()
             {
-                RequestUri = new Uri(requestUrl + ODataLiteral.Batch),
+                RequestUri = Utils.CreateAbsoluteUri(requestUrl.AbsoluteUri, ODataLiteral.Batch),
                 Method = HttpMethod.Post,
                 Content = new StreamContent(stream),
             };

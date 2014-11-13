@@ -164,7 +164,7 @@ namespace Simple.OData.Client.V3.Adapter
                 await _deferredBatchWriter.Value.StartBatchAsync();
 
             var message = (await _deferredBatchWriter.Value.CreateOperationRequestMessageAsync(
-                method, collection, entryData, new Uri(_session.Settings.UrlBase + commandText))) 
+                method, collection, entryData, Utils.CreateAbsoluteUri(_session.Settings.UrlBase, commandText))) 
 #if SILVERLIGHT
                 as IODataRequestMessage;
 #else
