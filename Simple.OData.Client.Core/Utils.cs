@@ -10,7 +10,7 @@ using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
-    class Utils
+    static class Utils
     {
         public static string StreamToString(Stream stream)
         {
@@ -39,6 +39,23 @@ namespace Simple.OData.Client
             return actualName.Homogenize() == requestedName.Homogenize()
                    || pluralizer != null && actualName.Homogenize() == pluralizer.Singularize(requestedName).Homogenize()
                    || pluralizer != null && actualName.Homogenize() == pluralizer.Pluralize(requestedName).Homogenize();
+        }
+
+        public static T BestMatch<T>(this IEnumerable<T> collection, 
+            Func<T, string> fieldFunc, string value, IPluralizer pluralizer)
+            where T : class
+        {
+            return collection.SingleOrDefault(x => fieldFunc(x).Homogenize() == value.Homogenize())
+                ?? collection.SingleOrDefault(x => NamesMatch(fieldFunc(x), value, pluralizer));
+        }
+
+        public static T BestMatch<T>(this IEnumerable<T> collection, 
+            Func<T, bool> condition, Func<T, string> fieldFunc, string value, 
+            IPluralizer pluralizer)
+            where T : class
+        {
+            return collection.SingleOrDefault(x => fieldFunc(x).Homogenize() == value.Homogenize() && condition(x))
+                ?? collection.SingleOrDefault(x => NamesMatch(fieldFunc(x), value, pluralizer) && condition(x));
         }
 
         public static T CastExpressionWithTypeCheck<T>(Expression expression) where T : Expression
