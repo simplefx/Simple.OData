@@ -663,7 +663,8 @@ namespace Simple.OData.Client
             await _session.ResolveAdapterAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            return (T)(await ExecuteFunctionAsync(functionName, parameters, cancellationToken)).First().First().Value;
+            var result = await ExecuteFunctionAsync(functionName, parameters, cancellationToken);
+            return (T)result.First().First().Value;
         }
 
         public Task<T[]> ExecuteFunctionAsArrayAsync<T>(string functionName, IDictionary<string, object> parameters)
@@ -765,7 +766,8 @@ namespace Simple.OData.Client
             await _session.ResolveAdapterAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            return (T)(await ExecuteActionAsync(actionName, parameters, cancellationToken)).First().First().Value;
+            var result = await ExecuteActionAsync(actionName, parameters, cancellationToken);
+            return (T)result.First().First().Value;
         }
 
         public Task<T[]> ExecuteActionAsArrayAsync<T>(string actionName, IDictionary<string, object> parameters)
@@ -1008,7 +1010,8 @@ namespace Simple.OData.Client
             await _session.ResolveAdapterAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            return (T)(await ExecuteAsync(command, cancellationToken)).First().First().Value;
+            var result = await ExecuteAsync(command, cancellationToken);
+            return (T)result.First().First().Value;
         }
 
         internal async Task<T[]> ExecuteAsArrayAsync<T>(FluentCommand command, CancellationToken cancellationToken)
