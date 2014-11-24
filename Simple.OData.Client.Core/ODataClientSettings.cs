@@ -50,6 +50,15 @@ namespace Simple.OData.Client
         public bool IgnoreResourceNotFoundException { get; set; }
 
         /// <summary>
+        /// Gets or sets the HttpMessageHandler factory used by HttpClient.
+        /// If not set, ODataClient creates an instance of HttpClientHandler.
+        /// </summary>
+        /// <value>
+        /// The action on <see cref="HttpMessageHandler"/>.
+        /// </value>
+        public Func<HttpMessageHandler> OnCreateMessageHandler { get; set; }
+
+        /// <summary>
         /// Gets or sets the action on HttpClientHandler.
         /// </summary>
         /// <value>
@@ -100,6 +109,7 @@ namespace Simple.OData.Client
             this.IgnoreResourceNotFoundException = session.Settings.IgnoreResourceNotFoundException;
             this.BeforeRequest = session.Settings.BeforeRequest;
             this.AfterResponse = session.Settings.AfterResponse;
+            this.OnCreateMessageHandler = session.Settings.OnCreateMessageHandler;
             this.OnApplyClientHandler = session.Settings.OnApplyClientHandler;
         }
     }

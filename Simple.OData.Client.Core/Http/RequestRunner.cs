@@ -22,9 +22,9 @@ namespace Simple.OData.Client
         {
             try
             {
-                var clientHandler = CreateClientHandler(request);
+                var messageHandler = CreateMessageHandler(request);
 
-                using (var httpClient = new HttpClient(clientHandler))
+                using (var httpClient = new HttpClient(messageHandler))
                 {
                     PreExecute(httpClient, request);
 
@@ -52,23 +52,31 @@ namespace Simple.OData.Client
             }
         }
 
-        private HttpClientHandler CreateClientHandler(ODataRequest request)
+        private HttpMessageHandler CreateMessageHandler(ODataRequest request)
         {
-            var clientHandler = new HttpClientHandler();
-
-            // Perform this test to prevent failure to access Credentials/PreAuthenticate properties on SL5
-            if (request.Credentials != null)
+            if (_session.Settings.OnCreateMessageHandler != null)
             {
-                clientHandler.Credentials = request.Credentials;
-                if (clientHandler.SupportsPreAuthenticate())
-                    clientHandler.PreAuthenticate = true;
+                return _session.Settings.OnCreateMessageHandler();
             }
-
-            if (_session.Settings.OnApplyClientHandler != null)
+            else
             {
-                _session.Settings.OnApplyClientHandler(clientHandler);
+                var clientHandler = new HttpClientHandler();
+
+                // Perform this test to prevent failure to access Credentials/PreAuthenticate properties on SL5
+                if (request.Credentials != null)
+                {
+                    clientHandler.Credentials = request.Credentials;
+                    if (clientHandler.SupportsPreAuthenticate())
+                        clientHandler.PreAuthenticate = true;
+                }
+
+                if (_session.Settings.OnApplyClientHandler != null)
+                {
+                    _session.Settings.OnApplyClientHandler(clientHandler);
+                }
+
+                return clientHandler;
             }
-            return clientHandler;
         }
 
         private void PreExecute(HttpClient httpClient, ODataRequest request)
