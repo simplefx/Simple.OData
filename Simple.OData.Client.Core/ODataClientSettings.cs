@@ -83,6 +83,14 @@ namespace Simple.OData.Client
         public Action<HttpResponseMessage> AfterResponse { get; set; }
 
         /// <summary>
+        /// Gets or sets the method that will be executed to write trace messages.
+        /// </summary>
+        /// <value>
+        /// The trace action on <see cref="HttpResponseMessage"/>.
+        /// </value>
+        public Action<string, object[]> OnTrace { get; set; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="ODataClientSettings"/> class.
         /// </summary>
         public ODataClientSettings()

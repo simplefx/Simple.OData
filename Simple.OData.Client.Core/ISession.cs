@@ -10,5 +10,6 @@ namespace Simple.OData.Client
         IODataAdapter Adapter { get; }
         IMetadata Metadata { get; }
         IPluralizer Pluralizer { get; }
+        void Trace(string message, params object[] messageParams);
     }
 }

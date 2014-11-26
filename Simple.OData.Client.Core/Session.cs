@@ -53,6 +53,14 @@ namespace Simple.OData.Client
             this.Pluralizer = new SimplePluralizer();
         }
 
+        public void Trace(string message, params object[] messageParams)
+        {
+            if (this.Settings.OnTrace != null)
+            {
+                this.Settings.OnTrace(message, messageParams);
+            }
+        }
+
         public void ResetMetadataCache()
         {
             MetadataCache.Instances.Remove(MetadataCache.Instances.Single(x => x.Value == this.MetadataCache).Key);

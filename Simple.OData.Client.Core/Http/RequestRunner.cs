@@ -28,8 +28,12 @@ namespace Simple.OData.Client
                 {
                     PreExecute(httpClient, request);
 
+                    _session.Trace("{0} request: {1}", request.Method, request.RequestMessage.RequestUri.AbsoluteUri);
+
                     var response = await httpClient.SendAsync(request.RequestMessage, cancellationToken);
                     if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+                    _session.Trace("Request completed: {0}", response.StatusCode);
 
                     PostExecute(response);
                     return response;
