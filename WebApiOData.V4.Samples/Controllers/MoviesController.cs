@@ -6,7 +6,6 @@ using System.Web.OData;
 using System.Web.OData.Routing;
 using WebApiOData.V4.Samples.Models;
 
-#if MOVIES
 namespace WebApiOData.V4.Samples.Controllers
 {
     public class MoviesController : ODataController
@@ -117,4 +116,3 @@ namespace WebApiOData.V4.Samples.Controllers
         }
     }
 }
-#endif

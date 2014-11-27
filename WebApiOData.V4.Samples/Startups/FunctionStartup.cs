@@ -1,13 +1,31 @@
-﻿using System.Web.Http;
+﻿using System;
+using System.Web.Http;
 using System.Web.OData.Builder;
+using System.Web.OData.Extensions;
 using Microsoft.OData.Edm;
+using WebApiOData.V4.Samples.Controllers;
 using WebApiOData.V4.Samples.Models;
 
 namespace WebApiOData.V4.Samples.Startups
 {
-    public static class FunctionStartup
+    public class FunctionStartup : Startup
     {
-        public static IEdmModel GetEdmModel(HttpConfiguration config)
+        private readonly Type _controllerType;
+        public FunctionStartup() 
+            : base(typeof(ProductsController))
+        {
+            _controllerType = typeof(ProductsController);
+        }
+
+        protected override void ConfigureController(HttpConfiguration config)
+        {
+            config.MapODataServiceRoute(
+                routeName: "OData funcions",
+                routePrefix: "functions",
+                model: GetEdmModel(config));
+        }
+
+        private static IEdmModel GetEdmModel(HttpConfiguration config)
         {
             ODataModelBuilder builder = new ODataConventionModelBuilder(config);
 

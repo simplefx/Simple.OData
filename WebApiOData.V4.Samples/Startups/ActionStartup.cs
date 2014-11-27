@@ -1,15 +1,29 @@
-﻿using System.Web.Http;
+﻿using System;
+using System.Web.Http;
 using System.Web.OData.Builder;
 using System.Web.OData.Extensions;
 using Microsoft.OData.Edm;
-using Owin;
+using WebApiOData.V4.Samples.Controllers;
 using WebApiOData.V4.Samples.Models;
 
 namespace WebApiOData.V4.Samples.Startups
 {
-    public class ActionStartup
+    public class ActionStartup : Startup
     {
-        public static IEdmModel GetEdmModel(HttpConfiguration config)
+        public ActionStartup(Type controllerType)
+            : base(typeof(MoviesController))
+        {
+        }
+
+        protected override void ConfigureController(HttpConfiguration config)
+        {
+            config.MapODataServiceRoute(
+                routeName: "OData actions",
+                routePrefix: "actions",
+                model: GetEdmModel(config));
+        }
+
+        private static IEdmModel GetEdmModel(HttpConfiguration config)
         {
             var modelBuilder = new ODataConventionModelBuilder(config);
             var moviesEntitySet = modelBuilder.EntitySet<Movie>("Movies");

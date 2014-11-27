@@ -2,11 +2,11 @@
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Web.Http;
+using System.Web.Http.Results;
 using System.Web.OData;
 using System.Web.OData.Routing;
 using WebApiOData.V4.Samples.Models;
 
-#if PRODUCTS
 namespace WebApiOData.V4.Samples.Controllers
 {
     public class ProductsController : ODataController
@@ -31,6 +31,12 @@ namespace WebApiOData.V4.Samples.Controllers
 
         public ProductsController()
         {
+        }
+
+        [Route("*")]
+        public IHttpActionResult Default()
+        {
+            return Ok("OK!!!");
         }
 
         [EnableQuery]
@@ -145,4 +151,3 @@ namespace WebApiOData.V4.Samples.Controllers
         }
     }
 }
-#endif

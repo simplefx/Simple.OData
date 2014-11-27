@@ -15,7 +15,7 @@ namespace WebApiOData.V4.Samples.Tests
 
         public ActionTests()
         {
-            _server = TestServer.Create<Startup>();
+            _server = TestServer.Create<ActionStartup>();
             _client = new ODataClient(new ODataClientSettings()
             {
                 UrlBase = "http://localhost/actions",

@@ -18,7 +18,7 @@ namespace WebApiOData.V4.Samples.Tests
 
         public FunctionTests()
         {
-            _server = TestServer.Create<Startup>();
+            _server = TestServer.Create<FunctionStartup>();
             _client = new ODataClient(new ODataClientSettings()
             {
                 UrlBase = "http://localhost/functions",
