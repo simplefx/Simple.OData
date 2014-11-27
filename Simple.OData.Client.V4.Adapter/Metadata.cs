@@ -162,28 +162,28 @@ namespace Simple.OData.Client.V4.Adapter
             return entityType.DeclaredKey.Select(x => x.Name);
         }
 
-        public override string GetFunctionExactName(string functionName)
+        public override string GetFunctionFullName(string functionName)
         {
             var function = _model.SchemaElements
-                .SingleOrDefault(x => x.SchemaElementKind == EdmSchemaElementKind.Function && 
-                    x.Name.Homogenize() == functionName.Homogenize());
+                .BestMatch(x => x.SchemaElementKind == EdmSchemaElementKind.Function,
+                    x => x.Name, functionName, _session.Pluralizer) as IEdmFunction;
 
             if (function == null)
                 throw new UnresolvableObjectException(functionName, string.Format("Function {0} not found", functionName));
 
-            return function.Name;
+            return function.IsBound ? function.ShortQualifiedName() : function.Name;
         }
 
-        public override string GetActionExactName(string actionName)
+        public override string GetActionFullName(string actionName)
         {
             var action = _model.SchemaElements
-                .SingleOrDefault(x => x.SchemaElementKind == EdmSchemaElementKind.Action &&
-                    x.Name.Homogenize() == actionName.Homogenize());
+                .BestMatch(x => x.SchemaElementKind == EdmSchemaElementKind.Action,
+                    x => x.Name, actionName, _session.Pluralizer) as IEdmAction;
 
             if (action == null)
                 throw new UnresolvableObjectException(actionName, string.Format("Action {0} not found", actionName));
-    
-            return action.Name;
+
+            return action.IsBound ? action.ShortQualifiedName() : action.Name;
         }
 
         private IEnumerable<IEdmEntitySet> GetEntitySets()

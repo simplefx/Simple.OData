@@ -130,23 +130,24 @@ namespace Simple.OData.Client.V3.Adapter
             return entityType.DeclaredKey.Select(x => x.Name);
         }
 
-        public override string GetFunctionExactName(string functionName)
+        public override string GetFunctionFullName(string functionName)
         {
             var function = _model.SchemaElements
                 .Where(x => x.SchemaElementKind == EdmSchemaElementKind.EntityContainer)
-                .SelectMany(x => (x as IEdmEntityContainer).FunctionImports()
-                    .Where(y => y.Name.Homogenize() == functionName.Homogenize()))
-                .SingleOrDefault();
+                .SelectMany(x => (x as IEdmEntityContainer).FunctionImports())
+                .BestMatch(x => x.Name, functionName, _session.Pluralizer);
 
             if (function == null)
                 throw new UnresolvableObjectException(functionName, string.Format("Function {0} not found", functionName));
 
-            return function.Name;
+            return function.IsBindable
+                ? string.Format("{0}.{1}", function.Container.Namespace, function.Name)
+                : function.Name;
         }
 
-        public override string GetActionExactName(string actionName)
+        public override string GetActionFullName(string actionName)
         {
-            throw new UnresolvableObjectException(actionName, string.Format("Action {0} not found", actionName));
+            return GetFunctionFullName(actionName);
         }
 
         private IEnumerable<IEdmEntitySet> GetEntitySets()

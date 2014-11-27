@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Owin.Testing;
 using Simple.OData.Client;
@@ -30,47 +31,33 @@ namespace WebApiOData.V4.Samples.Tests
         }
 
         [Fact]
-        public async Task Test()
-        {
-            var result = await _client.For<Movie>().FindEntriesAsync();
-
-            Assert.NotNull(result);
-        }
-
-        [Fact]
         public async Task Check_out_a_movie_untyped()
         {
-            var result = await _client
+            await _client
                 .For("Movies")
                 .Key(1)
                 .Action("CheckOut")
                 .ExecuteAsync();
-
-            Assert.NotNull(result);
         }
 
         [Fact]
         public async Task Return_a_movie_untyped()
         {
-            var result = await _client
+            await _client
                 .For("Movies")
                 .Key(1)
                 .Action("Return")
                 .ExecuteAsync();
-
-            Assert.NotNull(result);
         }
 
         [Fact]
         public async Task Check_out_several_untyped()
         {
-            var result = await _client
+            await _client
                 .For("Movies")
                 .Action("CheckOutMany")
-                .Set(new [] {1, 2, 3})
+                .Set(new Dictionary<string, object>() { { "MovieIDs", new[] { 1, 2, 3 } } })
                 .ExecuteAsync();
-
-            Assert.NotNull(result);
         }
 
         [Fact]

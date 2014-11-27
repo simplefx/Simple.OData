@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Owin.Testing;
 using Simple.OData.Client;
@@ -66,7 +67,7 @@ namespace WebApiOData.V3.Samples.Tests
             var result = await _client
                 .For("Movies")
                 .Action("CheckOutMany")
-                .Set(new[] { 1, 2, 3 })
+                .Set(new Dictionary<string, object>() { { "MovieIDs", new[] { 1, 2, 3 } } })
                 .ExecuteAsync();
 
             Assert.NotNull(result);

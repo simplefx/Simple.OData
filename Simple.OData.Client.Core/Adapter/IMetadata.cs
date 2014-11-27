@@ -25,8 +25,8 @@ namespace Simple.OData.Client
         string GetNavigationPropertyPartnerName(string collectionName, string propertyName);
         bool IsNavigationPropertyCollection(string collectionName, string propertyName);
 
-        string GetFunctionExactName(string functionName);
-        string GetActionExactName(string actionName);
+        string GetFunctionFullName(string functionName);
+        string GetActionFullName(string actionName);
 
         EntryDetails ParseEntryDetails(string collectionName, IDictionary<string, object> entryData, string contentId = null);
     }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -100,7 +101,38 @@ namespace Simple.OData.Client.V3.Adapter
 
         protected override async Task<Stream> WriteActionContentAsync(string actionName, IDictionary<string, object> parameters)
         {
-            throw new NotSupportedException();
+            var message = new ODataRequestMessage();
+            using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), _model))
+            {
+                var action = _model.SchemaElements
+                    .Where(x => x.SchemaElementKind == EdmSchemaElementKind.EntityContainer)
+                    .SelectMany(x => (x as IEdmEntityContainer).FunctionImports())
+                    .BestMatch(x => x.Name, actionName, _session.Pluralizer);
+                var parameterWriter = messageWriter.CreateODataParameterWriter(action);
+
+                parameterWriter.WriteStart();
+
+                foreach (var parameter in parameters)
+                {
+                    if (!(parameter.Value is string) && parameter.Value is IEnumerable)
+                    {
+                        var collectionWriter = parameterWriter.CreateCollectionWriter(parameter.Key);
+                        collectionWriter.WriteStart(new ODataCollectionStart());
+                        foreach (var item in parameter.Value as IEnumerable)
+                        {
+                            collectionWriter.WriteItem(item);
+                        }
+                        collectionWriter.WriteEnd();
+                    }
+                    else
+                    {
+                        parameterWriter.WriteValue(parameter.Key, parameter.Value);
+                    }
+                }
+
+                parameterWriter.WriteEnd();
+                return await message.GetStreamAsync();
+            }
         }
 
         protected override string FormatLinkPath(string entryIdent, string navigationPropertyName, string linkIdent = null)

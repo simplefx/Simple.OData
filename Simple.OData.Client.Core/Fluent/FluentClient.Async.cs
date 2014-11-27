@@ -396,7 +396,7 @@ namespace Simple.OData.Client
         {
             return entries.ContinueWith(
                 x => RectifyColumnSelection(x.Result, selectedColumns)).ContinueWith(
-                y => y.Result.Select(z => z.ToObject<T>(_dynamicResults)));
+                y => y.Result == null ? null : y.Result.Select(z => z.ToObject<T>(_dynamicResults)));
         }
 
         private Task<T> RectifyColumnSelectionAsync(Task<IDictionary<string, object>> entry, IList<string> selectedColumns)
@@ -418,7 +418,7 @@ namespace Simple.OData.Client
 
         private static IEnumerable<IDictionary<string, object>> RectifyColumnSelection(IEnumerable<IDictionary<string, object>> entries, IList<string> selectedColumns)
         {
-            return entries.Select(x => RectifyColumnSelection(x, selectedColumns));
+            return entries == null ? null : entries.Select(x => RectifyColumnSelection(x, selectedColumns));
         }
 
         private static IDictionary<string, object> RectifyColumnSelection(IDictionary<string, object> entry, IList<string> selectedColumns)

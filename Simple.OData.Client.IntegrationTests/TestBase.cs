@@ -53,7 +53,11 @@ namespace Simple.OData.Client.Tests
 
         protected IODataClient CreateClientWithDefaultSettings()
         {
-            return new ODataClient(new ODataClientSettings(_serviceUri) {PayloadFormat = _payloadFormat});
+            return new ODataClient(new ODataClientSettings(_serviceUri)
+            {
+                PayloadFormat = _payloadFormat,
+                OnTrace = (x, y) => Console.WriteLine(string.Format(x, y)),
+            });
         }
 
         public void Dispose()

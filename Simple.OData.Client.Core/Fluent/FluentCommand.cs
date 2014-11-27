@@ -578,22 +578,23 @@ namespace Simple.OData.Client
                     _session.Metadata.GetNavigationPropertyExactName(parent.EntityCollection.Name, _linkName));
             }
 
+            if (HasKey)
+                commandText += _session.Adapter.ConvertKeyValuesToUriLiteral(this.KeyValues, true);
+
             if (!string.IsNullOrEmpty(_functionName))
             {
                 if (!string.IsNullOrEmpty(_collectionName))
-                    commandText += "?";
-                commandText += _session.Metadata.GetFunctionExactName(_functionName);
+                    commandText += "/";
+                commandText += _session.Metadata.GetFunctionFullName(_functionName);
             }
             else if (!string.IsNullOrEmpty(_actionName))
             {
                 if (!string.IsNullOrEmpty(_collectionName))
-                    commandText += "?";
-                commandText += _session.Metadata.GetActionExactName(_actionName);
+                    commandText += "/";
+                commandText += _session.Metadata.GetActionFullName(_actionName);
             }
 
-            if (HasKey)
-                commandText += _session.Adapter.ConvertKeyValuesToUriLiteral(this.KeyValues, true);
-            else if (!string.IsNullOrEmpty(_functionName) && _session.Adapter.FunctionFormat == FunctionFormat.Key)
+            if (!string.IsNullOrEmpty(_functionName) && _session.Adapter.FunctionFormat == FunctionFormat.Key)
                 commandText += _session.Adapter.ConvertKeyValuesToUriLiteral(this.CommandData, false);
 
             if (!string.IsNullOrEmpty(_derivedCollectionName))

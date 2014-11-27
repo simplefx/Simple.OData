@@ -31,7 +31,13 @@ namespace Simple.OData.Client.Tests
 
         protected IODataClient CreateClientWithDefaultSettings()
         {
-            return new ODataClient(_serviceUri);
+            return new ODataClient(new ODataClientSettings
+            {
+                UrlBase = _serviceUri,
+#if !NETFX_CORE
+                OnTrace = (x, y) => Console.WriteLine(string.Format(x, y)),
+#endif
+            });
         }
 
         public void Dispose()

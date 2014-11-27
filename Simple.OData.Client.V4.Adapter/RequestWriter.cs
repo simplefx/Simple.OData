@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Microsoft.OData.Core;
@@ -88,14 +88,28 @@ namespace Simple.OData.Client.V4.Adapter
             using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), _model))
             {
                 var action = _model.SchemaElements.BestMatch(
-                    x => x.SchemaElementKind == EdmSchemaElementKind.Action, x => x.Name, actionName, _session.Pluralizer);
+                    x => x.SchemaElementKind == EdmSchemaElementKind.Action, 
+                    x => x.Name, actionName, _session.Pluralizer);
                 var parameterWriter = await messageWriter.CreateODataParameterWriterAsync(action as IEdmAction);
 
                 await parameterWriter.WriteStartAsync();
 
                 foreach (var parameter in parameters)
                 {
-                    await parameterWriter.WriteValueAsync(parameter.Key, parameter.Value);
+                    if (!(parameter.Value is string) && parameter.Value is IEnumerable)
+                    {
+                        var collectionWriter = await parameterWriter.CreateCollectionWriterAsync(parameter.Key);
+                        await collectionWriter.WriteStartAsync(new ODataCollectionStart());
+                        foreach (var item in parameter.Value as IEnumerable)
+                        {
+                            await collectionWriter.WriteItemAsync(item);
+                        }
+                        await collectionWriter.WriteEndAsync();
+                    }
+                    else
+                    {
+                        await parameterWriter.WriteValueAsync(parameter.Key, parameter.Value);
+                    }
                 }
 
                 await parameterWriter.WriteEndAsync();
