@@ -8,9 +8,41 @@ namespace Simple.OData.Client
     /// Provides access to OData operations in a fluent style.
     /// </summary>
     /// <typeparam name="T">The entity type.</typeparam>
-    public interface IFluentClient<T>
+    public interface IUnboundClient<T> : IFluentClient<T> 
         where T : class
     {
+        /// <summary>
+        /// Sets the OData function name.
+        /// </summary>
+        /// <param name="functionName">Name of the function.</param>
+        /// <returns>Self.</returns>
+        IUnboundClient<T> Function(string functionName);
+        /// <summary>
+        /// Sets the OData action name.
+        /// </summary>
+        /// <param name="actionName">Name of the action.</param>
+        /// <returns>Self.</returns>
+        IUnboundClient<T> Action(string actionName);
+
+        /// <summary>
+        /// Sets the specified entry value for update.
+        /// </summary>
+        /// <param name="value">The value to update the entry with.</param>
+        /// <returns>Self.</returns>
+        IUnboundClient<T> Set(object value);
+        /// <summary>
+        /// Sets the specified entry value for update.
+        /// </summary>
+        /// <param name="value">The value to update the entry with.</param>
+        /// <returns></returns>
+        IUnboundClient<T> Set(IDictionary<string, object> value);
+        /// <summary>
+        /// Sets the specified entry value for update.
+        /// </summary>
+        /// <param name="value">The value to update the entry with.</param>
+        /// <returns></returns>
+        IUnboundClient<T> Set(params ODataExpression[] value);
+
         /// <summary>
         /// Executes the OData function or action.
         /// </summary>

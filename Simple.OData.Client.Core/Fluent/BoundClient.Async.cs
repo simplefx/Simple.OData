@@ -10,7 +10,7 @@ using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
-    partial class FluentClient<T>
+    partial class BoundClient<T>
     {
         public Task<IEnumerable<T>> FindEntriesAsync()
         {
@@ -350,87 +350,6 @@ namespace Simple.OData.Client
         public Task UnlinkEntryAsync(ODataExpression expression, ODataEntry linkedEntryKey, CancellationToken cancellationToken)
         {
             return _client.UnlinkEntryAsync(_command, _command.KeyValues, expression.AsString(_session), linkedEntryKey != null ? linkedEntryKey.ToDictionary() : null, cancellationToken);
-        }
-
-        public Task<IEnumerable<T>> ExecuteAsync()
-        {
-            return RectifyColumnSelectionAsync(_client.ExecuteAsync(_command, CancellationToken.None), _command.SelectedColumns);
-        }
-
-        public Task<IEnumerable<T>> ExecuteAsync(CancellationToken cancellationToken)
-        {
-            return RectifyColumnSelectionAsync(_client.ExecuteAsync(_command, cancellationToken), _command.SelectedColumns);
-        }
-
-        public Task<T> ExecuteAsScalarAsync()
-        {
-            return _client.ExecuteAsScalarAsync<T>(_command, CancellationToken.None);
-        }
-
-        public Task<T> ExecuteAsScalarAsync(CancellationToken cancellationToken)
-        {
-            return _client.ExecuteAsScalarAsync<T>(_command, cancellationToken);
-        }
-
-        public Task<T[]> ExecuteAsArrayAsync()
-        {
-            return ExecuteAsArrayAsync(CancellationToken.None);
-        }
-
-        public Task<T[]> ExecuteAsArrayAsync(CancellationToken cancellationToken)
-        {
-            return _client.ExecuteAsArrayAsync<T>(_command, cancellationToken);
-        }
-
-        public Task<string> GetCommandTextAsync()
-        {
-            return GetCommandTextAsync(CancellationToken.None);
-        }
-
-        public Task<string> GetCommandTextAsync(CancellationToken cancellationToken)
-        {
-            return this.Command.GetCommandTextAsync(cancellationToken);
-        }
-
-        private Task<IEnumerable<T>> RectifyColumnSelectionAsync(Task<IEnumerable<IDictionary<string, object>>> entries, IList<string> selectedColumns)
-        {
-            return entries.ContinueWith(
-                x => RectifyColumnSelection(x.Result, selectedColumns)).ContinueWith(
-                y => y.Result == null ? null : y.Result.Select(z => z.ToObject<T>(_dynamicResults)));
-        }
-
-        private Task<T> RectifyColumnSelectionAsync(Task<IDictionary<string, object>> entry, IList<string> selectedColumns)
-        {
-            return entry.ContinueWith(
-                x => RectifyColumnSelection(x.Result, selectedColumns).ToObject<T>(_dynamicResults));
-        }
-
-        private Task<Tuple<IEnumerable<T>, int>> RectifyColumnSelectionAsync(Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> entries, IList<string> selectedColumns)
-        {
-            return entries.ContinueWith(x =>
-            {
-                var result = x.Result;
-                return new Tuple<IEnumerable<T>, int>(
-                    RectifyColumnSelection(result.Item1, selectedColumns).Select(y => y.ToObject<T>(_dynamicResults)),
-                    result.Item2);
-            });
-        }
-
-        private static IEnumerable<IDictionary<string, object>> RectifyColumnSelection(IEnumerable<IDictionary<string, object>> entries, IList<string> selectedColumns)
-        {
-            return entries == null ? null : entries.Select(x => RectifyColumnSelection(x, selectedColumns));
-        }
-
-        private static IDictionary<string, object> RectifyColumnSelection(IDictionary<string, object> entry, IList<string> selectedColumns)
-        {
-            if (selectedColumns == null || !selectedColumns.Any())
-            {
-                return entry;
-            }
-            else
-            {
-                return entry.Where(x => selectedColumns.Any(y => x.Key.Homogenize() == y.Homogenize())).ToIDictionary();
-            }
         }
     }
 }

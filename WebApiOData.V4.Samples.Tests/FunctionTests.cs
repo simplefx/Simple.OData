@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Owin.Testing;
 using Simple.OData.Client;
@@ -44,10 +43,10 @@ namespace WebApiOData.V4.Samples.Tests
         [Fact]
         public async Task Get_the_most_expensive_product_typed()
         {
-            var result = (double)await _client
+            var result = await _client
                 .For<Product>()
                 .Function("MostExpensive")
-                .FindScalarAsync();
+                .ExecuteAsScalarAsync<double>();
 
             Assert.InRange(result, 500, 1000);
         }
@@ -57,10 +56,10 @@ namespace WebApiOData.V4.Samples.Tests
         {
             var x = ODataDynamic.Expression;
 
-            var result = (double)await _client
+            var result = await _client
                 .For(x.Products)
                 .Function("MostExpensive")
-                .FindScalarAsync();
+                .ExecuteAsScalarAsync<double>();
 
             Assert.InRange(result, 500, 1000);
         }
@@ -80,7 +79,7 @@ namespace WebApiOData.V4.Samples.Tests
             var result = await _client
                 .For<Product>()
                 .Function("Top10")
-                .FindEntriesAsync();
+                .ExecuteAsEnumerableAsync();
 
             Assert.Equal(10, result.Count());
         }
@@ -93,7 +92,7 @@ namespace WebApiOData.V4.Samples.Tests
             IEnumerable<dynamic> result = await _client
                 .For(x.Products)
                 .Function("Top10")
-                .FindEntriesAsync();
+                .ExecuteAsEnumerableAsync();
 
             Assert.Equal(10, result.Count());
         }
@@ -110,11 +109,11 @@ namespace WebApiOData.V4.Samples.Tests
         [Fact]
         public async Task Get_the_rank_of_the_product_price_typed()
         {
-            var result = (int)await _client
+            var result = await _client
                 .For<Product>()
                 .Key(33)
                 .Function("GetPriceRank")
-                .FindScalarAsync();
+                .ExecuteAsScalarAsync<int>();
 
             Assert.InRange(result, 0, 100);
         }
@@ -124,11 +123,11 @@ namespace WebApiOData.V4.Samples.Tests
         {
             var x = ODataDynamic.Expression;
 
-            var result = (int)await _client
+            var result = await _client
                 .For(x.Products)
                 .Key(33)
                 .Function("GetPriceRank")
-                .FindScalarAsync();
+                .ExecuteAsScalarAsync<int>();
 
             Assert.InRange(result, 0, 100);
         }
@@ -145,12 +144,12 @@ namespace WebApiOData.V4.Samples.Tests
         [Fact]
         public async Task Get_the_sales_tax_typed()
         {
-            var result = (double)await _client
+            var result = await _client
                 .For<Product>()
                 .Key(33)
                 .Function("CalculateGeneralSalesTax")
                 .Set(new { state = "WA" })
-                .FindScalarAsync();
+                .ExecuteAsScalarAsync<double>();
 
             Assert.InRange(result, 1, 200);
         }
@@ -160,12 +159,12 @@ namespace WebApiOData.V4.Samples.Tests
         {
             var x = ODataDynamic.Expression;
 
-            var result = (double)await _client
+            var result = await _client
                 .For(x.Products)
                 .Key(33)
                 .Function("CalculateGeneralSalesTax")
                 .Set(x.state = "WA")
-                .FindScalarAsync();
+                .ExecuteAsScalarAsync<double>();
 
             Assert.InRange(result, 1, 200);
         }
@@ -184,8 +183,10 @@ namespace WebApiOData.V4.Samples.Tests
         public async Task Get_the_sales_tax_rate_typed()
         {
             var result = await _client
-                .ExecuteFunctionAsScalarAsync<double>("GetSalesTaxRate",
-                new Dictionary<string, object>() { { "state", "CA" } });
+                .Unbound()
+                .Function("GetSalesTaxRate")
+                .Set(new { state = "CA" })
+                .ExecuteAsScalarAsync<double>();
 
             Assert.InRange(result, 5, 20);
         }
@@ -193,9 +194,13 @@ namespace WebApiOData.V4.Samples.Tests
         [Fact]
         public async Task Get_the_sales_tax_rate_dynamic()
         {
+            var x = ODataDynamic.Expression;
+
             var result = await _client
-                .ExecuteFunctionAsScalarAsync<double>("GetSalesTaxRate",
-                new Dictionary<string, object>() { { "state", "CA" } });
+                .Unbound()
+                .Function("GetSalesTaxRate")
+                .Set(x.state = "CA")
+                .ExecuteAsScalarAsync<double>();
 
             Assert.InRange(result, 5, 20);
         }

@@ -74,7 +74,7 @@ namespace Simple.OData.Client
         /// <returns>
         /// The fluent OData client instance.
         /// </returns>
-        public IFluentClient<IDictionary<string, object>> For(string collectionName)
+        public IBoundClient<IDictionary<string, object>> For(string collectionName)
         {
             return GetFluentClient().For(collectionName);
         }
@@ -86,9 +86,9 @@ namespace Simple.OData.Client
         /// <returns>
         /// The fluent OData client instance.
         /// </returns>
-        public IFluentClient<ODataEntry> For(ODataExpression expression)
+        public IBoundClient<ODataEntry> For(ODataExpression expression)
         {
-            return new FluentClient<ODataEntry>(this, _session).For(expression);
+            return new BoundClient<ODataEntry>(this, _session).For(expression);
         }
 
         /// <summary>
@@ -99,15 +99,40 @@ namespace Simple.OData.Client
         /// <returns>
         /// The fluent OData client instance.
         /// </returns>
-        public IFluentClient<T> For<T>(string collectionName = null)
+        public IBoundClient<T> For<T>(string collectionName = null)
             where T : class
         {
-            return new FluentClient<T>(this, _session).For(collectionName);
+            return new BoundClient<T>(this, _session).For(collectionName);
         }
 
-        private FluentClient<IDictionary<string, object>> GetFluentClient()
+        /// <summary>
+        /// Returns an instance of a fluent OData client for unbound operations (functions and actions).
+        /// </summary>
+        /// <returns>The fluent OData client instance.</returns>
+        public IUnboundClient<object> Unbound()
         {
-            return new FluentClient<IDictionary<string, object>>(this, _session);
+            return GetUnboundClient<object>();
+        }
+
+        /// <summary>
+        /// Returns an instance of a fluent OData client for unbound operations (functions and actions).
+        /// </summary>
+        /// <returns>The fluent OData client instance.</returns>
+        public IUnboundClient<T> Unbound<T>()
+            where T : class
+        {
+            return GetUnboundClient<T>();
+        }
+
+        private BoundClient<IDictionary<string, object>> GetFluentClient()
+        {
+            return new BoundClient<IDictionary<string, object>>(this, _session);
+        }
+
+        private UnboundClient<T> GetUnboundClient<T>()
+            where T : class
+        {
+            return new UnboundClient<T>(this, _session);
         }
 
         /// <summary>

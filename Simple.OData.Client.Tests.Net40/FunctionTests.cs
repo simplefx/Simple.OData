@@ -13,7 +13,11 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task FunctionWithString()
         {
-            var result = await _client.ExecuteFunctionAsScalarAsync<int>("ParseInt", new Entry() { { "number", "1" } });
+            var result = await _client
+                .Unbound()
+                .Function("ParseInt")
+                .Set(new Entry() { { "number", "1" } })
+                .ExecuteAsScalarAsync<int>();
             
             Assert.Equal(1, result);
         }
@@ -21,8 +25,11 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task FunctionWithIntCollectionSingleElement()
         {
-            var result = await _client.ExecuteFunctionAsArrayAsync<int>("ReturnIntCollection", 
-                new Entry() { { "count", 1 } });
+            var result = await _client
+                .Unbound()
+                .Function("ReturnIntCollection")
+                .Set(new Entry() { { "count", 1 } })
+                .ExecuteAsArrayAsync<int>();
             
             Assert.Equal(new[] { 1 }, result);
         }
@@ -30,8 +37,11 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task FunctionWithIntCollectionMultipleElements()
         {
-            var result = await _client.ExecuteFunctionAsArrayAsync<int>("ReturnIntCollection", 
-                new Entry() { { "count", 3 } });
+            var result = await _client
+                .Unbound()
+                .Function("ReturnIntCollection")
+                .Set(new Entry() { { "count", 3 } })
+                .ExecuteAsArrayAsync<int>();
             
             Assert.Equal(new[] { 1, 2, 3 }, result);
         }
@@ -39,7 +49,11 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task FunctionWithLong()
         {
-            var result = await _client.ExecuteFunctionAsScalarAsync<long>("PassThroughLong", new Entry() { { "number", 1L } });
+            var result = await _client
+                .Unbound()
+                .Function("PassThroughLong")
+                .Set(new Entry() { { "number", 1L } })
+                .ExecuteAsScalarAsync<long>();
             
             Assert.Equal(1L, result);
         }
@@ -48,7 +62,11 @@ namespace Simple.OData.Client.Tests
         public async Task FunctionWithDateTime()
         {
             var dateTime = new DateTime(2013, 1, 1, 12, 13, 14);
-            var result = await _client.ExecuteFunctionAsScalarAsync<DateTime>("PassThroughDateTime", new Entry() { { "dateTime", dateTime } });
+            var result = await _client
+                .Unbound()
+                .Function("PassThroughDateTime")
+                .Set(new Entry() { { "dateTime", dateTime } })
+                .ExecuteAsScalarAsync<DateTime>();
             
             Assert.Equal(dateTime, result);
         }
@@ -57,7 +75,11 @@ namespace Simple.OData.Client.Tests
         public async Task FunctionWithGuid()
         {
             var guid = Guid.NewGuid();
-            var result = await _client.ExecuteFunctionAsScalarAsync<Guid>("PassThroughGuid", new Entry() { { "guid", guid } });
+            var result = await _client
+                .Unbound()
+                .Function("PassThroughGuid")
+                .Set(new Entry() { { "guid", guid } })
+                .ExecuteAsScalarAsync<Guid>();
             
             Assert.Equal(guid, result);
         }
@@ -65,18 +87,24 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task FunctionWithComplexTypeCollectionSingleElement()
         {
-            var result = await _client.ExecuteFunctionAsArrayAsync<IDictionary<string, object>>("ReturnAddressCollection", 
-                new Entry() { { "count", 1 } });
+            var result = (await _client
+                .Unbound<IDictionary<string, object>>()
+                .Function("ReturnAddressCollection")
+                .Set(new Entry() { { "count", 1 } })
+                .ExecuteAsync());
 
-            Assert.Equal("Oslo", result[0]["City"]);
-            Assert.Equal("Norway", result[0]["Country"]);
+            Assert.Equal("Oslo", result["City"]);
+            Assert.Equal("Norway", result["Country"]);
         }
 
         [Fact]
         public async Task FunctionWithComplexTypeCollectionMultipleElements()
         {
-            var result = await _client.ExecuteFunctionAsArrayAsync<IDictionary<string, object>>("ReturnAddressCollection", 
-                new Entry() { { "count", 3 } });
+            var result = (await _client
+                .Unbound<IDictionary<string, object>>()
+                .Function("ReturnAddressCollection")
+                .Set(new Entry() { { "count", 3 } })
+                .ExecuteAsEnumerableAsync()).ToArray();
 
             Assert.Equal("Oslo", result[0]["City"]);
             Assert.Equal("Norway", result[0]["Country"]);

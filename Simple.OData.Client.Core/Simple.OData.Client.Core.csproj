@@ -53,7 +53,8 @@
     <Compile Include="Adapter\ResponseNode.cs" />
     <Compile Include="Adapter\ResponseReaderBase.cs" />
     <Compile Include="Extensions\MemberInfoExtensions.cs" />
-    <Compile Include="Fluent\IFluentClient.cs" />
+    <Compile Include="Fluent\FluentClientBase.cs" />
+    <Compile Include="Fluent\IBoundClient.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />
     <Compile Include="EntryDetails.cs" />
     <Compile Include="Extensions\EnumerableOfKeyValuePairExtensions.cs" />
@@ -69,6 +70,9 @@
     <Compile Include="Expressions\ODataExpression.Operators.cs" />
     <Compile Include="Expressions\ODataExpression.Linq.cs" />
     <Compile Include="Expressions\FunctionMapping.cs" />
+    <Compile Include="Fluent\IFluentClient.cs" />
+    <Compile Include="Fluent\IUnboundClient.cs" />
+    <Compile Include="Fluent\UnboundClient.cs" />
     <Compile Include="Http\HttpLiteral.cs" />
     <Compile Include="Http\RestVerbs.cs" />
     <Compile Include="ODataPayloadFormat.cs" />
@@ -87,8 +91,8 @@
     <Compile Include="ODataClient.cs" />
     <Compile Include="ODataClient.Internals.cs" />
     <Compile Include="ODataClientSettings.cs" />
-    <Compile Include="Fluent\FluentClient.Async.cs" />
-    <Compile Include="Fluent\FluentClient.cs" />
+    <Compile Include="Fluent\BoundClient.Async.cs" />
+    <Compile Include="Fluent\BoundClient.cs" />
     <Compile Include="Fluent\FluentCommand.cs" />
     <Compile Include="ODataEntry.cs" />
     <Compile Include="ODataResponse.cs" />

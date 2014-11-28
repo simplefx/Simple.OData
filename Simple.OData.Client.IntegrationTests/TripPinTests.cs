@@ -122,39 +122,6 @@ namespace Simple.OData.Client.Tests
         public string BuildingInfo { get; set; }
     }
 
-    static class IODataClientExtensions
-    {
-        public static Task<Airport> GetNearestAirportAsync(this IODataClient client, 
-            double latitude, double longitude)
-        {
-            return client
-                .ExecuteFunctionAsEntryAsync<Airport>("GetNearestAirport",
-                    new Dictionary<string, object>()
-                    {
-                        {"lat", latitude}, 
-                        {"lon", longitude},
-                    });
-        }
-
-        public static Task ShareTripAsync(this IFluentClient<Person> client,
-            string userName, int tripId)
-        {
-            return client
-                .Action("ShareTrip")
-                .Set(new Dictionary<string, object>()
-                {
-                    {"userName", userName},
-                    {"tripId", tripId},
-                })
-                .ExecuteAsync();
-        }
-
-        public static async Task ResetDataSource(this IODataClient client)
-        {
-            await client.ExecuteActionAsync("ResetDataSource", null);
-        }
-    }
-
     public abstract class TripPinTests : TripPinTestBase
     {
         protected TripPinTests(string serviceUri, ODataPayloadFormat payloadFormat) : base(serviceUri, payloadFormat) { }
@@ -464,7 +431,11 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task GetNearestAirport()
         {
-            var airport = (await _client.GetNearestAirportAsync(100d, 100d));
+            var airport = await _client
+                .Unbound<Airport>()
+                .Function("GetNearestAirport")
+                .Set(new { lat = 100d, lon = 100d })
+                .ExecuteAsync();
 
             Assert.Equal("KSEA", airport.IcaoCode);
         }
@@ -484,7 +455,10 @@ namespace Simple.OData.Client.Tests
                 .Set(CreateTestEvent())
                 .InsertEntryAsync();
 
-            await _client.ResetDataSource();
+            await _client
+                .Unbound()
+                .Action("ResetDataSource")
+                .ExecuteAsync();
 
             tripEvent = await command
                 .Filter(x => x.PlanItemId == tripEvent.PlanItemId)
@@ -499,7 +473,9 @@ namespace Simple.OData.Client.Tests
             await _client
                 .For<Person>("People")
                 .Key("russellwhyte")
-                .ShareTripAsync("John", 1);
+                .Action("ShareTrip")
+                .Set(new {userName = "John", tripId = 1})
+                .ExecuteAsync();
         }
 
         [Fact]

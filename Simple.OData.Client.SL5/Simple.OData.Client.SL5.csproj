@@ -221,17 +221,29 @@
     <Compile Include="..\Simple.OData.Client.Core\Extensions\XElementExtensions.cs">
       <Link>Extensions\XElementExtensions.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Fluent\FluentClient.Async.cs">
-      <Link>Fluent\FluentClient.Async.cs</Link>
+    <Compile Include="..\Simple.OData.Client.Core\Fluent\BoundClient.Async.cs">
+      <Link>Fluent\BoundClient.Async.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Fluent\FluentClient.cs">
-      <Link>Fluent\FluentClient.cs</Link>
+    <Compile Include="..\Simple.OData.Client.Core\Fluent\BoundClient.cs">
+      <Link>Fluent\BoundClient.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Fluent\FluentClientBase.cs">
+      <Link>Fluent\FluentClientBase.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Fluent\FluentCommand.cs">
       <Link>Fluent\FluentCommand.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Fluent\IBoundClient.cs">
+      <Link>Fluent\IBoundClient.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Fluent\IFluentClient.cs">
       <Link>Fluent\IFluentClient.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Fluent\IUnboundClient.cs">
+      <Link>Fluent\IUnboundClient.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Fluent\UnboundClient.cs">
+      <Link>Fluent\UnboundClient.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Http\HttpLiteral.cs">
       <Link>Http\HttpLiteral.cs</Link>

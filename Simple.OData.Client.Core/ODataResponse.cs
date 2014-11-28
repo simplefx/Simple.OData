@@ -18,10 +18,18 @@ namespace Simple.OData.Client
 
         public IEnumerable<IDictionary<string, object>> AsEntries()
         {
-            return this.Entries 
-                ?? (this.Entry != null 
-                ? new[] { this.Entry } 
-                : new IDictionary<string, object>[] {});
+            if (this.Entries != null)
+            {
+                return this.Entries.Any() && this.Entries.First().ContainsKey(FluentCommand.ResultLiteral)
+                    ? this.Entries.Select(ExtractDictionary)
+                    : this.Entries;
+            }
+            else
+            {
+                return (this.Entry != null
+                ? new[] { ExtractDictionary(this.Entry) }
+                : new IDictionary<string, object>[] { });
+            }
         }
 
         public IEnumerable<T> AsEntries<T>() where T : class
@@ -31,10 +39,7 @@ namespace Simple.OData.Client
 
         public IDictionary<string, object> AsEntry()
         {
-            var result = this.Entries
-                ?? (this.Entry != null
-                ? new[] { this.Entry }
-                : new IDictionary<string, object>[] { });
+            var result = AsEntries();
 
             return result != null
                 ? result.FirstOrDefault()
@@ -98,6 +103,20 @@ namespace Simple.OData.Client
             {
                 StatusCode = statusCode,
             };
+        }
+
+        private IDictionary<string, object> ExtractDictionary(IDictionary<string, object> value)
+        {
+            if (value != null && value.Keys.Count == 1 &&
+                value.ContainsKey(FluentCommand.ResultLiteral) && 
+                value.Values.First() is IDictionary<string, object>)
+            {
+                return value.Values.First() as IDictionary<string, object>;
+            }
+            else
+            {
+                return value;
+            }
         }
     }
 }

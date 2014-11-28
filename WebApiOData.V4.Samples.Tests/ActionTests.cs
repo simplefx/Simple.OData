@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.Owin.Testing;
 using Simple.OData.Client;
-using WebApiOData.V4.Samples.Models;
 using WebApiOData.V4.Samples.Startups;
 using Xunit;
 

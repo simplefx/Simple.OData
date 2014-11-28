@@ -15,345 +15,311 @@ namespace Simple.OData.Client
     /// Provides access to OData operations in a fluent style.
     /// </summary>
     /// <typeparam name="T">The entry type.</typeparam>
-    public partial class FluentClient<T> : IFluentClient<T>
+    public partial class BoundClient<T> : FluentClientBase<T>, IBoundClient<T>
         where T : class
     {
-        private readonly ODataClient _client;
-        private readonly Session _session;
-        private readonly FluentCommand _parentCommand;
-        private FluentCommand _command;
-        private readonly bool _dynamicResults;
-
-        internal FluentClient(ODataClient client, Session session, FluentCommand parentCommand = null, FluentCommand command = null, bool dynamicResults = false)
+        internal BoundClient(ODataClient client, Session session, FluentCommand parentCommand = null, FluentCommand command = null, bool dynamicResults = false)
+            : base(client, session, parentCommand, command, dynamicResults)
         {
-            _client = client;
-            _session = session;
-            _parentCommand = parentCommand;
-            _command = command;
-            _dynamicResults = dynamicResults;
-        }
-
-        internal FluentCommand Command
-        {
-            get
-            {
-                if (_command != null)
-                    return _command;
-
-                lock (this)
-                {
-                    return _command ?? (_command = CreateCommand());
-                }
-            }
-        }
-
-        private FluentCommand CreateCommand()
-        {
-            return new FluentCommand(this.Session, _parentCommand);
         }
 
         #pragma warning disable 1591
 
-        private Session Session
-        {
-            get { return _session; }
-        }
-
-        private FluentClient<U> Link<U>(FluentCommand command, string linkName = null)
+        private BoundClient<U> Link<U>(FluentCommand command, string linkName = null)
         where U : class
         {
             linkName = linkName ?? typeof (U).Name;
             var links = linkName.Split('/');
             var linkCommand = command;
-            FluentClient<U> linkedClient = null;
+            BoundClient<U> linkedClient = null;
             foreach (var link in links)
             {
-                linkedClient = new FluentClient<U>(_client, _session, linkCommand, null, _dynamicResults);
+                linkedClient = new BoundClient<U>(_client, _session, linkCommand, null, _dynamicResults);
                 linkedClient.Command.Link(link);
                 linkCommand = linkedClient.Command;
             }
             return linkedClient;
         }
 
-        private FluentClient<U> Link<U>(FluentCommand command, ODataExpression expression)
+        private BoundClient<U> Link<U>(FluentCommand command, ODataExpression expression)
         where U : class
         {
             return Link<U>(command, expression.Reference);
         }
 
-        public IFluentClient<T> For(string collectionName = null)
+        public IBoundClient<T> For(string collectionName = null)
         {
             this.Command.For(collectionName ?? typeof(T).Name);
             return this;
         }
 
-        public IFluentClient<ODataEntry> For(ODataExpression expression)
+        public IBoundClient<ODataEntry> For(ODataExpression expression)
         {
             this.Command.For(expression.Reference);
             return CreateClientForODataEntry();
         }
 
-        public IFluentClient<IDictionary<string, object>> As(string derivedCollectionName)
+        public IBoundClient<IDictionary<string, object>> As(string derivedCollectionName)
         {
             this.Command.As(derivedCollectionName);
-            return new FluentClient<IDictionary<string, object>>(_client, _session, _parentCommand, this.Command, _dynamicResults);
+            return new BoundClient<IDictionary<string, object>>(_client, _session, _parentCommand, this.Command, _dynamicResults);
         }
 
-        public IFluentClient<U> As<U>(string derivedCollectionName = null)
+        public IBoundClient<U> As<U>(string derivedCollectionName = null)
         where U : class
         {
             this.Command.As(derivedCollectionName ?? typeof(U).Name);
-            return new FluentClient<U>(_client, _session, _parentCommand, this.Command, _dynamicResults);
+            return new BoundClient<U>(_client, _session, _parentCommand, this.Command, _dynamicResults);
         }
 
-        public IFluentClient<ODataEntry> As(ODataExpression expression)
+        public IBoundClient<ODataEntry> As(ODataExpression expression)
         {
             this.Command.As(expression);
             return CreateClientForODataEntry();
         }
 
-        public IFluentClient<T> Key(params object[] entryKey)
+        public IBoundClient<T> Key(params object[] entryKey)
         {
             this.Command.Key(entryKey);
             return this;
         }
 
-        public IFluentClient<T> Key(IEnumerable<object> entryKey)
+        public IBoundClient<T> Key(IEnumerable<object> entryKey)
         {
             this.Command.Key(entryKey);
             return this;
         }
 
-        public IFluentClient<T> Key(IDictionary<string, object> entryKey)
+        public IBoundClient<T> Key(IDictionary<string, object> entryKey)
         {
             this.Command.Key(entryKey);
             return this;
         }
 
-        public IFluentClient<T> Key(T entryKey)
+        public IBoundClient<T> Key(T entryKey)
         {
             this.Command.Key(entryKey.ToDictionary());
             return this;
         }
 
-        public IFluentClient<T> Filter(string filter)
+        public IBoundClient<T> Filter(string filter)
         {
             this.Command.Filter(filter);
             return this;
         }
 
-        public IFluentClient<T> Filter(ODataExpression expression)
+        public IBoundClient<T> Filter(ODataExpression expression)
         {
             this.Command.Filter(expression);
             return this;
         }
 
-        public IFluentClient<T> Filter(Expression<Func<T, bool>> expression)
+        public IBoundClient<T> Filter(Expression<Func<T, bool>> expression)
         {
             this.Command.Filter(ODataExpression.FromLinqExpression(expression.Body));
             return this;
         }
 
-        public IFluentClient<T> Skip(int count)
+        public IBoundClient<T> Skip(int count)
         {
             this.Command.Skip(count);
             return this;
         }
 
-        public IFluentClient<T> Top(int count)
+        public IBoundClient<T> Top(int count)
         {
             this.Command.Top(count);
             return this;
         }
 
-        public IFluentClient<T> Expand(IEnumerable<string> columns)
+        public IBoundClient<T> Expand(IEnumerable<string> columns)
         {
             this.Command.Expand(columns);
             return this;
         }
 
-        public IFluentClient<T> Expand(params string[] columns)
+        public IBoundClient<T> Expand(params string[] columns)
         {
             this.Command.Expand(columns);
             return this;
         }
 
-        public IFluentClient<T> Expand(params ODataExpression[] associations)
+        public IBoundClient<T> Expand(params ODataExpression[] associations)
         {
             this.Command.Expand(associations);
             return this;
         }
 
-        public IFluentClient<T> Expand(Expression<Func<T, object>> expression)
+        public IBoundClient<T> Expand(Expression<Func<T, object>> expression)
         {
             this.Command.Expand(ExtractColumnNames(expression));
             return this;
         }
 
-        public IFluentClient<T> Select(IEnumerable<string> columns)
+        public IBoundClient<T> Select(IEnumerable<string> columns)
         {
             this.Command.Select(columns);
             return this;
         }
 
-        public IFluentClient<T> Select(params string[] columns)
+        public IBoundClient<T> Select(params string[] columns)
         {
             this.Command.Select(columns);
             return this;
         }
 
-        public IFluentClient<T> Select(params ODataExpression[] columns)
+        public IBoundClient<T> Select(params ODataExpression[] columns)
         {
             this.Command.Select(columns);
             return this;
         }
 
-        public IFluentClient<T> Select(Expression<Func<T, object>> expression)
+        public IBoundClient<T> Select(Expression<Func<T, object>> expression)
         {
             this.Command.Select(ExtractColumnNames(expression));
             return this;
         }
 
-        public IFluentClient<T> OrderBy(IEnumerable<KeyValuePair<string, bool>> columns)
+        public IBoundClient<T> OrderBy(IEnumerable<KeyValuePair<string, bool>> columns)
         {
             this.Command.OrderBy(columns);
             return this;
         }
 
-        public IFluentClient<T> OrderBy(params string[] columns)
+        public IBoundClient<T> OrderBy(params string[] columns)
         {
             this.Command.OrderBy(columns);
             return this;
         }
 
-        public IFluentClient<T> OrderBy(params ODataExpression[] columns)
+        public IBoundClient<T> OrderBy(params ODataExpression[] columns)
         {
             this.Command.OrderBy(columns);
             return this;
         }
 
-        public IFluentClient<T> OrderBy(Expression<Func<T, object>> expression)
+        public IBoundClient<T> OrderBy(Expression<Func<T, object>> expression)
         {
             this.Command.OrderBy(ExtractColumnNames(expression).Select(x => new KeyValuePair<string, bool>(x, false)));
             return this;
         }
 
-        public IFluentClient<T> ThenBy(params ODataExpression[] columns)
+        public IBoundClient<T> ThenBy(params ODataExpression[] columns)
         {
             this.Command.ThenBy(columns);
             return this;
         }
 
-        public IFluentClient<T> ThenBy(Expression<Func<T, object>> expression)
+        public IBoundClient<T> ThenBy(Expression<Func<T, object>> expression)
         {
             this.Command.ThenBy(ExtractColumnNames(expression).ToArray());
             return this;
         }
 
-        public IFluentClient<T> OrderByDescending(params string[] columns)
+        public IBoundClient<T> OrderByDescending(params string[] columns)
         {
             this.Command.OrderByDescending(columns);
             return this;
         }
 
-        public IFluentClient<T> OrderByDescending(params ODataExpression[] columns)
+        public IBoundClient<T> OrderByDescending(params ODataExpression[] columns)
         {
             this.Command.OrderByDescending(columns);
             return this;
         }
 
-        public IFluentClient<T> OrderByDescending(Expression<Func<T, object>> expression)
+        public IBoundClient<T> OrderByDescending(Expression<Func<T, object>> expression)
         {
             this.Command.OrderBy(ExtractColumnNames(expression).Select(x => new KeyValuePair<string, bool>(x, true)));
             return this;
         }
 
-        public IFluentClient<T> ThenByDescending(params ODataExpression[] columns)
+        public IBoundClient<T> ThenByDescending(params ODataExpression[] columns)
         {
             this.Command.ThenByDescending(columns);
             return this;
         }
 
-        public IFluentClient<T> ThenByDescending(Expression<Func<T, object>> expression)
+        public IBoundClient<T> ThenByDescending(Expression<Func<T, object>> expression)
         {
             this.Command.ThenByDescending(ExtractColumnNames(expression).ToArray());
             return this;
         }
 
-        public IFluentClient<T> Count()
+        public IBoundClient<T> Count()
         {
             this.Command.Count();
             return this;
         }
 
-        public IFluentClient<T> Set(object value)
+        public IBoundClient<T> Set(object value)
         {
             this.Command.Set(value);
             return this;
         }
 
-        public IFluentClient<T> Set(IDictionary<string, object> value)
+        public IBoundClient<T> Set(IDictionary<string, object> value)
         {
             this.Command.Set(value);
             return this;
         }
 
-        public IFluentClient<T> Set(params ODataExpression[] value)
+        public IBoundClient<T> Set(params ODataExpression[] value)
         {
             this.Command.Set(value);
             return this;
         }
 
-        public IFluentClient<T> Set(T entry)
+        public IBoundClient<T> Set(T entry)
         {
             this.Command.Set(entry);
             return this;
         }
 
-        public IFluentClient<U> NavigateTo<U>(string linkName = null)
+        public IBoundClient<U> NavigateTo<U>(string linkName = null)
             where U : class
         {
             return this.Link<U>(this.Command, linkName);
         }
 
-        public IFluentClient<U> NavigateTo<U>(Expression<Func<T, U>> expression)
+        public IBoundClient<U> NavigateTo<U>(Expression<Func<T, U>> expression)
             where U : class
         {
             return this.Link<U>(this.Command, ExtractColumnName(expression));
         }
 
-        public IFluentClient<U> NavigateTo<U>(Expression<Func<T, IEnumerable<U>>> expression) where U : class
+        public IBoundClient<U> NavigateTo<U>(Expression<Func<T, IEnumerable<U>>> expression) where U : class
         {
             return this.Link<U>(this.Command, ExtractColumnName(expression));
         }
 
-        public IFluentClient<U> NavigateTo<U>(Expression<Func<T, IList<U>>> expression) where U : class
+        public IBoundClient<U> NavigateTo<U>(Expression<Func<T, IList<U>>> expression) where U : class
         {
             return this.Link<U>(this.Command, ExtractColumnName(expression));
         }
 
-        public IFluentClient<U> NavigateTo<U>(Expression<Func<T, U[]>> expression) where U : class
+        public IBoundClient<U> NavigateTo<U>(Expression<Func<T, U[]>> expression) where U : class
         {
             return this.Link<U>(this.Command, ExtractColumnName(expression));
         }
 
-        public IFluentClient<IDictionary<string, object>> NavigateTo(string linkName)
+        public IBoundClient<IDictionary<string, object>> NavigateTo(string linkName)
         {
             return this.Link<IDictionary<string, object>>(this.Command, linkName);
         }
 
-        public IFluentClient<T> NavigateTo(ODataExpression expression)
+        public IBoundClient<T> NavigateTo(ODataExpression expression)
         {
             return this.Link<T>(this.Command, expression);
         }
 
-        public IFluentClient<T> Function(string functionName)
+        public IBoundClient<T> Function(string functionName)
         {
             this.Command.Function(functionName);
             return this;
         }
 
-        public IFluentClient<T> Action(string actionName)
+        public IBoundClient<T> Action(string actionName)
         {
             this.Command.Action(actionName);
             return this;
@@ -411,9 +377,9 @@ namespace Simple.OData.Client
             }
         }
 
-        private FluentClient<ODataEntry> CreateClientForODataEntry() 
+        private BoundClient<ODataEntry> CreateClientForODataEntry() 
         {
-            return new FluentClient<ODataEntry>(_client, _session, _parentCommand, this.Command, true); ;
+            return new BoundClient<ODataEntry>(_client, _session, _parentCommand, this.Command, true); ;
         }
     }
 }
