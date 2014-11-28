@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -42,6 +44,179 @@ namespace Simple.OData.Client
         /// <param name="value">The value to update the entry with.</param>
         /// <returns></returns>
         IUnboundClient<T> Set(params ODataExpression[] value);
+
+        /// <summary>
+        /// Skips the specified number of entries from the result.
+        /// </summary>
+        /// <param name="count">The count.</param>
+        /// <returns>Self.</returns>
+        IUnboundClient<T> Skip(int count);
+
+        /// <summary>
+        /// Limits the number of results with the specified value.
+        /// </summary>
+        /// <param name="count">The count.</param>
+        /// <returns>Self.</returns>
+        IUnboundClient<T> Top(int count);
+
+        /// <summary>
+        /// Expands the specified associations.
+        /// </summary>
+        /// <param name="associations">The associations to expand.</param>
+        /// <returns>Self.</returns>
+        IUnboundClient<T> Expand(IEnumerable<string> associations);
+        /// <summary>
+        /// Expands the specified associations.
+        /// </summary>
+        /// <param name="associations">The associations to expand.</param>
+        /// <returns>Self.</returns>
+        IUnboundClient<T> Expand(params string[] associations);
+        /// <summary>
+        /// Expands the specified associations.
+        /// </summary>
+        /// <param name="associations">The associations to expand.</param>
+        /// <returns>Self.</returns>
+        IUnboundClient<T> Expand(params ODataExpression[] associations);
+        /// <summary>
+        /// Expands the specified expression.
+        /// </summary>
+        /// <param name="expression">The expression for associations to expand.</param>
+        /// <returns>Self.</returns>
+        IUnboundClient<T> Expand(Expression<Func<T, object>> expression);
+
+        /// <summary>
+        /// Selects the specified result columns.
+        /// </summary>
+        /// <param name="columns">The selected columns.</param>
+        /// <returns>Self.</returns>
+        IUnboundClient<T> Select(IEnumerable<string> columns);
+        /// <summary>
+        /// Selects the specified result columns.
+        /// </summary>
+        /// <param name="columns">The selected columns.</param>
+        /// <returns>Self.</returns>
+        IUnboundClient<T> Select(params string[] columns);
+        /// <summary>
+        /// Selects the specified result columns.
+        /// </summary>
+        /// <param name="columns">The selected columns.</param>
+        /// <returns>Self.</returns>
+        IUnboundClient<T> Select(params ODataExpression[] columns);
+        /// <summary>
+        /// Selects the specified result columns.
+        /// </summary>
+        /// <param name="expression">The expression for the selected columns.</param>
+        /// <returns>Self.</returns>
+        IUnboundClient<T> Select(Expression<Func<T, object>> expression);
+
+        /// <summary>
+        /// Sorts the result by the specified columns in the specified order.
+        /// </summary>
+        /// <param name="columns">The sort columns.</param>
+        /// <returns>Self.</returns>
+        IUnboundClient<T> OrderBy(IEnumerable<KeyValuePair<string, bool>> columns);
+        /// <summary>
+        /// Sorts the result by the specified columns in ascending order.
+        /// </summary>
+        /// <param name="columns">The sort columns.</param>
+        /// <returns>Self.</returns>
+        IUnboundClient<T> OrderBy(params string[] columns);
+        /// <summary>
+        /// Sorts the result by the specified columns in ascending order.
+        /// </summary>
+        /// <param name="columns">The sort columns.</param>
+        /// <returns>Self.</returns>
+        IUnboundClient<T> OrderBy(params ODataExpression[] columns);
+        /// <summary>
+        /// Sorts the result by the specified columns in ascending order.
+        /// </summary>
+        /// <param name="expression">The expression for the sort columns.</param>
+        /// <returns>Self.</returns>
+        IUnboundClient<T> OrderBy(Expression<Func<T, object>> expression);
+        /// <summary>
+        /// Sorts the result by the specified columns in ascending order.
+        /// </summary>
+        /// <param name="expression">The expression for the sort columns.</param>
+        /// <returns>Self.</returns>
+        IUnboundClient<T> ThenBy(Expression<Func<T, object>> expression);
+        /// <summary>
+        /// Sorts the result by the specified columns in descending order.
+        /// </summary>
+        /// <param name="columns">The sort columns.</param>
+        /// <returns>Self.</returns>
+        IUnboundClient<T> OrderByDescending(params string[] columns);
+        /// <summary>
+        /// Sorts the result by the specified columns in descending order.
+        /// </summary>
+        /// <param name="columns">The sort columns.</param>
+        /// <returns>Self.</returns>
+        IUnboundClient<T> OrderByDescending(params ODataExpression[] columns);
+        /// <summary>
+        /// Sorts the result by the specified columns in descending order.
+        /// </summary>
+        /// <param name="expression">The expression for the sort columns.</param>
+        /// <returns>Self.</returns>
+        IUnboundClient<T> OrderByDescending(Expression<Func<T, object>> expression);
+        /// <summary>
+        /// Sorts the result by the specified columns in descending order.
+        /// </summary>
+        /// <param name="expression">The expression for the sort columns.</param>
+        /// <returns>Self.</returns>
+        IUnboundClient<T> ThenByDescending(Expression<Func<T, object>> expression);
+
+        /// <summary>
+        /// Requests the number of results.
+        /// </summary>
+        /// <returns>Self.</returns>
+        IUnboundClient<T> Count();
+
+        /// <summary>
+        /// Navigates to the linked entity.
+        /// </summary>
+        /// <typeparam name="U">The type of the linked entity.</typeparam>
+        /// <param name="linkName">Name of the link.</param>
+        /// <returns>Self.</returns>
+        IBoundClient<U> NavigateTo<U>(string linkName = null) where U : class;
+        /// <summary>
+        /// Navigates to the linked entity.
+        /// </summary>
+        /// <typeparam name="U">The type of the linked entity.</typeparam>
+        /// <param name="expression">The expression for the link.</param>
+        /// <returns>Self.</returns>
+        IBoundClient<U> NavigateTo<U>(Expression<Func<T, U>> expression) where U : class;
+        /// <summary>
+        /// Navigates to the linked entity.
+        /// </summary>
+        /// <typeparam name="U">The type of the linked entity.</typeparam>
+        /// <param name="expression">The expression for the link.</param>
+        /// <returns>Self.</returns>
+        IBoundClient<U> NavigateTo<U>(Expression<Func<T, IEnumerable<U>>> expression) where U : class;
+        /// <summary>
+        /// Navigates to the linked entity.
+        /// </summary>
+        /// <typeparam name="U">The type of the linked entity.</typeparam>
+        /// <param name="expression">The expression for the link.</param>
+        /// <returns>Self.</returns>
+        IBoundClient<U> NavigateTo<U>(Expression<Func<T, IList<U>>> expression) where U : class;
+        /// <summary>
+        /// Navigates to the linked entity.
+        /// </summary>
+        /// <typeparam name="U">The type of the linked entity.</typeparam>
+        /// <param name="expression">The expression for the link.</param>
+        /// <returns>Self.</returns>
+        IBoundClient<U> NavigateTo<U>(Expression<Func<T, U[]>> expression) where U : class;
+        /// <summary>
+        /// Navigates to the linked entity.
+        /// </summary>
+        /// <param name="linkName">Name of the link.</param>
+        /// <returns>Self.</returns>
+        IBoundClient<IDictionary<string, object>> NavigateTo(string linkName);
+        /// <summary>
+        /// Navigates to the linked entity.
+        /// </summary>
+        /// <param name="expression">The expression for the link.</param>
+        /// <returns>Self.</returns>
+        IBoundClient<T> NavigateTo(ODataExpression expression);
 
         /// <summary>
         /// Executes the OData function or action.

@@ -6,7 +6,7 @@ using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
-    // ALthough FluentFluentClient is never instantiated directly (only via IFluentClient interface)
+    // ALthough BoundClient is never instantiated directly (only via IBoundClient interface)
     // it's declared as public in order to resolve problem when it is used with dynamic C#
     // For the same reason FluentCommand is also declared as public
     // More: http://bloggingabout.net/blogs/vagif/archive/2013/08/05/we-need-better-interoperability-between-dynamic-and-statically-compiled-c.aspx
@@ -24,28 +24,6 @@ namespace Simple.OData.Client
         }
 
         #pragma warning disable 1591
-
-        private BoundClient<U> Link<U>(FluentCommand command, string linkName = null)
-        where U : class
-        {
-            linkName = linkName ?? typeof (U).Name;
-            var links = linkName.Split('/');
-            var linkCommand = command;
-            BoundClient<U> linkedClient = null;
-            foreach (var link in links)
-            {
-                linkedClient = new BoundClient<U>(_client, _session, linkCommand, null, _dynamicResults);
-                linkedClient.Command.Link(link);
-                linkCommand = linkedClient.Command;
-            }
-            return linkedClient;
-        }
-
-        private BoundClient<U> Link<U>(FluentCommand command, ODataExpression expression)
-        where U : class
-        {
-            return Link<U>(command, expression.Reference);
-        }
 
         public IBoundClient<T> For(string collectionName = null)
         {
@@ -117,6 +95,42 @@ namespace Simple.OData.Client
         public IBoundClient<T> Filter(Expression<Func<T, bool>> expression)
         {
             this.Command.Filter(ODataExpression.FromLinqExpression(expression.Body));
+            return this;
+        }
+
+        public IBoundClient<T> Function(string functionName)
+        {
+            this.Command.Function(functionName);
+            return this;
+        }
+
+        public IBoundClient<T> Action(string actionName)
+        {
+            this.Command.Action(actionName);
+            return this;
+        }
+
+        public IBoundClient<T> Set(object value)
+        {
+            this.Command.Set(value);
+            return this;
+        }
+
+        public IBoundClient<T> Set(IDictionary<string, object> value)
+        {
+            this.Command.Set(value);
+            return this;
+        }
+
+        public IBoundClient<T> Set(params ODataExpression[] value)
+        {
+            this.Command.Set(value);
+            return this;
+        }
+
+        public IBoundClient<T> Set(T entry)
+        {
+            this.Command.Set(entry);
             return this;
         }
 
@@ -252,30 +266,6 @@ namespace Simple.OData.Client
             return this;
         }
 
-        public IBoundClient<T> Set(object value)
-        {
-            this.Command.Set(value);
-            return this;
-        }
-
-        public IBoundClient<T> Set(IDictionary<string, object> value)
-        {
-            this.Command.Set(value);
-            return this;
-        }
-
-        public IBoundClient<T> Set(params ODataExpression[] value)
-        {
-            this.Command.Set(value);
-            return this;
-        }
-
-        public IBoundClient<T> Set(T entry)
-        {
-            this.Command.Set(entry);
-            return this;
-        }
-
         public IBoundClient<U> NavigateTo<U>(string linkName = null)
             where U : class
         {
@@ -313,18 +303,6 @@ namespace Simple.OData.Client
             return this.Link<T>(this.Command, expression);
         }
 
-        public IBoundClient<T> Function(string functionName)
-        {
-            this.Command.Function(functionName);
-            return this;
-        }
-
-        public IBoundClient<T> Action(string actionName)
-        {
-            this.Command.Action(actionName);
-            return this;
-        }
-
         public bool FilterIsKey
         {
             get { return this.Command.FilterIsKey; }
@@ -336,46 +314,6 @@ namespace Simple.OData.Client
         }
 
         #pragma warning restore 1591
-
-        internal static IEnumerable<string> ExtractColumnNames(Expression<Func<T, object>> expression)
-        {
-            var lambdaExpression = Utils.CastExpressionWithTypeCheck<LambdaExpression>(expression);
-            switch (lambdaExpression.Body.NodeType)
-            {
-                case ExpressionType.MemberAccess:
-                case ExpressionType.Convert:
-                    return new[] { ExtractColumnName(lambdaExpression.Body) };
-
-                case ExpressionType.New:
-                    var newExpression = lambdaExpression.Body as NewExpression;
-                    return newExpression.Arguments.Select(ExtractColumnName);
-
-                default:
-                    throw Utils.NotSupportedExpression(lambdaExpression.Body);
-            }
-        }
-
-        internal static string ExtractColumnName(Expression expression)
-        {
-            switch (expression.NodeType)
-            {
-                case ExpressionType.MemberAccess:
-                    var memberExpression = expression as MemberExpression;
-                    var memberName = memberExpression.Member.Name;
-                    return memberExpression.Expression is MemberExpression
-                        ? string.Join("/", ExtractColumnName(memberExpression.Expression), memberName)
-                        : memberName;
-
-                case ExpressionType.Convert:
-                    return ExtractColumnName((expression as UnaryExpression).Operand);
-
-                case ExpressionType.Lambda:
-                    return ExtractColumnName((expression as LambdaExpression).Body);
-
-                default:
-                    throw Utils.NotSupportedExpression(expression);
-            }
-        }
 
         private BoundClient<ODataEntry> CreateClientForODataEntry() 
         {

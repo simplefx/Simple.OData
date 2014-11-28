@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
-    public abstract partial class FluentClientBase<T> : IFluentClient<T> 
-        where T : class
+    public abstract partial class FluentClientBase<T> : IFluentClient<T> where T : class
     {
         protected readonly ODataClient _client;
         internal readonly Session _session;
@@ -47,6 +47,28 @@ namespace Simple.OData.Client
         internal Session Session
         {
             get { return _session; }
+        }
+
+        protected BoundClient<U> Link<U>(FluentCommand command, string linkName = null)
+        where U : class
+        {
+            linkName = linkName ?? typeof(U).Name;
+            var links = linkName.Split('/');
+            var linkCommand = command;
+            BoundClient<U> linkedClient = null;
+            foreach (var link in links)
+            {
+                linkedClient = new BoundClient<U>(_client, _session, linkCommand, null, _dynamicResults);
+                linkedClient.Command.Link(link);
+                linkCommand = linkedClient.Command;
+            }
+            return linkedClient;
+        }
+
+        protected BoundClient<U> Link<U>(FluentCommand command, ODataExpression expression)
+        where U : class
+        {
+            return Link<U>(command, expression.Reference);
         }
 
         public Task<T> ExecuteAsync()
@@ -137,6 +159,46 @@ namespace Simple.OData.Client
             else
             {
                 return entry.Where(x => selectedColumns.Any(y => x.Key.Homogenize() == y.Homogenize())).ToIDictionary();
+            }
+        }
+
+        internal static IEnumerable<string> ExtractColumnNames(Expression<Func<T, object>> expression)
+        {
+            var lambdaExpression = Utils.CastExpressionWithTypeCheck<LambdaExpression>(expression);
+            switch (lambdaExpression.Body.NodeType)
+            {
+                case ExpressionType.MemberAccess:
+                case ExpressionType.Convert:
+                    return new[] { ExtractColumnName(lambdaExpression.Body) };
+
+                case ExpressionType.New:
+                    var newExpression = lambdaExpression.Body as NewExpression;
+                    return newExpression.Arguments.Select(ExtractColumnName);
+
+                default:
+                    throw Utils.NotSupportedExpression(lambdaExpression.Body);
+            }
+        }
+
+        internal static string ExtractColumnName(Expression expression)
+        {
+            switch (expression.NodeType)
+            {
+                case ExpressionType.MemberAccess:
+                    var memberExpression = expression as MemberExpression;
+                    var memberName = memberExpression.Member.Name;
+                    return memberExpression.Expression is MemberExpression
+                        ? String.Join("/", ExtractColumnName(memberExpression.Expression), memberName)
+                        : memberName;
+
+                case ExpressionType.Convert:
+                    return ExtractColumnName((expression as UnaryExpression).Operand);
+
+                case ExpressionType.Lambda:
+                    return ExtractColumnName((expression as LambdaExpression).Body);
+
+                default:
+                    throw Utils.NotSupportedExpression(expression);
             }
         }
     }

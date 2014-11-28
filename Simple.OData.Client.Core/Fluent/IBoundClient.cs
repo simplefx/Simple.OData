@@ -457,6 +457,44 @@ namespace Simple.OData.Client
         IBoundClient<T> Filter(Expression<Func<T, bool>> expression);
 
         /// <summary>
+        /// Sets the OData function name.
+        /// </summary>
+        /// <param name="functionName">Name of the function.</param>
+        /// <returns>Self.</returns>
+        IBoundClient<T> Function(string functionName);
+        /// <summary>
+        /// Sets the OData action name.
+        /// </summary>
+        /// <param name="actionName">Name of the action.</param>
+        /// <returns>Self.</returns>
+        IBoundClient<T> Action(string actionName);
+
+        /// <summary>
+        /// Sets the specified entry value for update.
+        /// </summary>
+        /// <param name="value">The value to update the entry with.</param>
+        /// <returns>Self.</returns>
+        IBoundClient<T> Set(object value);
+        /// <summary>
+        /// Sets the specified entry value for update.
+        /// </summary>
+        /// <param name="value">The value to update the entry with.</param>
+        /// <returns></returns>
+        IBoundClient<T> Set(IDictionary<string, object> value);
+        /// <summary>
+        /// Sets the specified entry value for update.
+        /// </summary>
+        /// <param name="entry">The entry with the updated value.</param>
+        /// <returns></returns>
+        IBoundClient<T> Set(T entry);
+        /// <summary>
+        /// Sets the specified entry value for update.
+        /// </summary>
+        /// <param name="value">The value to update the entry with.</param>
+        /// <returns></returns>
+        IBoundClient<T> Set(params ODataExpression[] value);
+
+        /// <summary>
         /// Skips the specified number of entries from the result.
         /// </summary>
         /// <param name="count">The count.</param>
@@ -628,44 +666,6 @@ namespace Simple.OData.Client
         /// <param name="expression">The expression for the link.</param>
         /// <returns>Self.</returns>
         IBoundClient<T> NavigateTo(ODataExpression expression);
-
-        /// <summary>
-        /// Sets the specified entry value for update.
-        /// </summary>
-        /// <param name="value">The value to update the entry with.</param>
-        /// <returns>Self.</returns>
-        IBoundClient<T> Set(object value);
-        /// <summary>
-        /// Sets the specified entry value for update.
-        /// </summary>
-        /// <param name="value">The value to update the entry with.</param>
-        /// <returns></returns>
-        IBoundClient<T> Set(IDictionary<string, object> value);
-        /// <summary>
-        /// Sets the specified entry value for update.
-        /// </summary>
-        /// <param name="entry">The entry with the updated value.</param>
-        /// <returns></returns>
-        IBoundClient<T> Set(T entry);
-        /// <summary>
-        /// Sets the specified entry value for update.
-        /// </summary>
-        /// <param name="value">The value to update the entry with.</param>
-        /// <returns></returns>
-        IBoundClient<T> Set(params ODataExpression[] value);
-
-        /// <summary>
-        /// Sets the OData function name.
-        /// </summary>
-        /// <param name="functionName">Name of the function.</param>
-        /// <returns>Self.</returns>
-        IBoundClient<T> Function(string functionName);
-        /// <summary>
-        /// Sets the OData action name.
-        /// </summary>
-        /// <param name="actionName">Name of the action.</param>
-        /// <returns>Self.</returns>
-        IBoundClient<T> Action(string actionName);
 
         /// <summary>
         /// Gets a value indicating whether the OData command filter represent the entry key.
