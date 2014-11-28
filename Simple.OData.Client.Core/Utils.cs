@@ -45,8 +45,8 @@ namespace Simple.OData.Client
             Func<T, string> fieldFunc, string value, IPluralizer pluralizer)
             where T : class
         {
-            return collection.SingleOrDefault(x => fieldFunc(x).Homogenize() == value.Homogenize())
-                ?? collection.SingleOrDefault(x => NamesMatch(fieldFunc(x), value, pluralizer));
+            return collection.FirstOrDefault(x => fieldFunc(x).Homogenize() == value.Homogenize())
+                ?? collection.FirstOrDefault(x => NamesMatch(fieldFunc(x), value, pluralizer));
         }
 
         public static T BestMatch<T>(this IEnumerable<T> collection, 
@@ -54,8 +54,8 @@ namespace Simple.OData.Client
             IPluralizer pluralizer)
             where T : class
         {
-            return collection.SingleOrDefault(x => fieldFunc(x).Homogenize() == value.Homogenize() && condition(x))
-                ?? collection.SingleOrDefault(x => NamesMatch(fieldFunc(x), value, pluralizer) && condition(x));
+            return collection.FirstOrDefault(x => fieldFunc(x).Homogenize() == value.Homogenize() && condition(x))
+                ?? collection.FirstOrDefault(x => NamesMatch(fieldFunc(x), value, pluralizer) && condition(x));
         }
 
         public static T CastExpressionWithTypeCheck<T>(Expression expression) where T : Expression

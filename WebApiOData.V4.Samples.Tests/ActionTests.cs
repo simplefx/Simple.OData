@@ -19,6 +19,7 @@ namespace WebApiOData.V4.Samples.Tests
             _client = new ODataClient(new ODataClientSettings()
             {
                 UrlBase = "http://localhost/actions",
+                PayloadFormat = ODataPayloadFormat.Json,
                 OnCreateMessageHandler = () => _server.Handler,
                 OnTrace = (x,y) => Console.WriteLine(string.Format(x,y)),
             });
@@ -30,7 +31,7 @@ namespace WebApiOData.V4.Samples.Tests
         }
 
         [Fact]
-        public async Task Check_out_a_movie_untyped()
+        public async Task Check_out_a_movie()
         {
             await _client
                 .For("Movies")
@@ -40,7 +41,7 @@ namespace WebApiOData.V4.Samples.Tests
         }
 
         [Fact]
-        public async Task Return_a_movie_untyped()
+        public async Task Return_a_movie()
         {
             await _client
                 .For("Movies")
@@ -50,7 +51,7 @@ namespace WebApiOData.V4.Samples.Tests
         }
 
         [Fact]
-        public async Task Check_out_several_untyped()
+        public async Task Check_out_several()
         {
             await _client
                 .For("Movies")
@@ -62,10 +63,11 @@ namespace WebApiOData.V4.Samples.Tests
         [Fact]
         public async Task CreateMovie()
         {
-            var result = await _client
-                .ExecuteActionAsync("CreateMovie", null);
-
-            Assert.NotNull(result);
+            await _client
+                .Unbound()
+                .Action("CreateMovie")
+                .Set(new { Title = Guid.NewGuid().ToString() })
+                .ExecuteAsync();
         }
     }
 }

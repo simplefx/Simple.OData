@@ -140,9 +140,7 @@ namespace Simple.OData.Client.V3.Adapter
             if (function == null)
                 throw new UnresolvableObjectException(functionName, string.Format("Function {0} not found", functionName));
 
-            return function.IsBindable
-                ? string.Format("{0}.{1}", function.Container.Namespace, function.Name)
-                : function.Name;
+            return function.Name;
         }
 
         public override string GetActionFullName(string actionName)
