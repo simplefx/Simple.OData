@@ -14,6 +14,25 @@ namespace Simple.OData.Client
         where T : class
     {
         /// <summary>
+        /// Casts the collection of base entities as the collection of derived ones.
+        /// </summary>
+        /// <param name="derivedCollectionName">Name of the derived collection.</param>
+        /// <returns>Self.</returns>
+        IUnboundClient<IDictionary<string, object>> As(string derivedCollectionName);
+        /// <summary>
+        /// Casts the collection of base entities as the collection of derived ones.
+        /// </summary>
+        /// <param name="derivedCollectionName">Name of the derived collection.</param>
+        /// <returns>Self.</returns>
+        IUnboundClient<U> As<U>(string derivedCollectionName = null) where U : class;
+        /// <summary>
+        /// Casts the collection of base entities as the collection of derived ones.
+        /// </summary>
+        /// <param name="expression">The expression for the derived collection.</param>
+        /// <returns>Self.</returns>
+        IUnboundClient<ODataEntry> As(ODataExpression expression);
+
+        /// <summary>
         /// Sets the OData function name.
         /// </summary>
         /// <param name="functionName">Name of the function.</param>
@@ -169,117 +188,5 @@ namespace Simple.OData.Client
         /// </summary>
         /// <returns>Self.</returns>
         IUnboundClient<T> Count();
-
-        /// <summary>
-        /// Navigates to the linked entity.
-        /// </summary>
-        /// <typeparam name="U">The type of the linked entity.</typeparam>
-        /// <param name="linkName">Name of the link.</param>
-        /// <returns>Self.</returns>
-        IBoundClient<U> NavigateTo<U>(string linkName = null) where U : class;
-        /// <summary>
-        /// Navigates to the linked entity.
-        /// </summary>
-        /// <typeparam name="U">The type of the linked entity.</typeparam>
-        /// <param name="expression">The expression for the link.</param>
-        /// <returns>Self.</returns>
-        IBoundClient<U> NavigateTo<U>(Expression<Func<T, U>> expression) where U : class;
-        /// <summary>
-        /// Navigates to the linked entity.
-        /// </summary>
-        /// <typeparam name="U">The type of the linked entity.</typeparam>
-        /// <param name="expression">The expression for the link.</param>
-        /// <returns>Self.</returns>
-        IBoundClient<U> NavigateTo<U>(Expression<Func<T, IEnumerable<U>>> expression) where U : class;
-        /// <summary>
-        /// Navigates to the linked entity.
-        /// </summary>
-        /// <typeparam name="U">The type of the linked entity.</typeparam>
-        /// <param name="expression">The expression for the link.</param>
-        /// <returns>Self.</returns>
-        IBoundClient<U> NavigateTo<U>(Expression<Func<T, IList<U>>> expression) where U : class;
-        /// <summary>
-        /// Navigates to the linked entity.
-        /// </summary>
-        /// <typeparam name="U">The type of the linked entity.</typeparam>
-        /// <param name="expression">The expression for the link.</param>
-        /// <returns>Self.</returns>
-        IBoundClient<U> NavigateTo<U>(Expression<Func<T, U[]>> expression) where U : class;
-        /// <summary>
-        /// Navigates to the linked entity.
-        /// </summary>
-        /// <param name="linkName">Name of the link.</param>
-        /// <returns>Self.</returns>
-        IBoundClient<IDictionary<string, object>> NavigateTo(string linkName);
-        /// <summary>
-        /// Navigates to the linked entity.
-        /// </summary>
-        /// <param name="expression">The expression for the link.</param>
-        /// <returns>Self.</returns>
-        IBoundClient<T> NavigateTo(ODataExpression expression);
-
-        /// <summary>
-        /// Executes the OData function or action.
-        /// </summary>
-        /// <returns>Execution result.</returns>
-        Task<T> ExecuteAsync();
-        /// <summary>
-        /// Executes the OData function or action.
-        /// </summary>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>Action execution result.</returns>
-        Task<T> ExecuteAsync(CancellationToken cancellationToken);
-
-        /// <summary>
-        /// Executes the OData function or action and returns collection.
-        /// </summary>
-        /// <returns>Action execution result.</returns>
-        Task<IEnumerable<T>> ExecuteAsEnumerableAsync();
-        /// <summary>
-        /// Executes the OData function or action and returns collection.
-        /// </summary>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>Execution result.</returns>
-        Task<IEnumerable<T>> ExecuteAsEnumerableAsync(CancellationToken cancellationToken);
-
-        /// <summary>
-        /// Executes the OData function or action and returns scalar result.
-        /// </summary>
-        /// <typeparam name="U">The type of the result.</typeparam>
-        /// <returns>Execution result.</returns>
-        Task<U> ExecuteAsScalarAsync<U>();
-        /// <summary>
-        /// Executes the OData function or action and returns scalar result.
-        /// </summary>
-        /// <typeparam name="U">The type of the result.</typeparam>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>Action execution result.</returns>
-        Task<U> ExecuteAsScalarAsync<U>(CancellationToken cancellationToken);
-
-        /// <summary>
-        /// Executes the OData function or action and returns an array.
-        /// </summary>
-        /// <typeparam name="U">The type of the result array.</typeparam>
-        /// <returns>Execution result.</returns>
-        Task<U[]> ExecuteAsArrayAsync<U>();
-        /// <summary>
-        /// Executes the OData function or action and returns an array.
-        /// </summary>
-        /// <typeparam name="T">The type of the result array.</typeparam>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>Action execution result.</returns>
-        Task<U[]> ExecuteAsArrayAsync<U>(CancellationToken cancellationToken);
-
-        /// <summary>
-        /// Gets the OData command text.
-        /// </summary>
-        /// <returns>The command text.</returns>
-        Task<string> GetCommandTextAsync();
-        /// <summary>
-        /// Gets the OData command text.
-        /// </summary>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>The command text.</returns>
-        Task<string> GetCommandTextAsync(CancellationToken cancellationToken);
     }
 }

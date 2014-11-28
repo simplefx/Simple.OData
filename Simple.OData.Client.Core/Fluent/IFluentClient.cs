@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -11,6 +13,54 @@ namespace Simple.OData.Client
     public interface IFluentClient<T>
         where T : class
     {
+        /// <summary>
+        /// Navigates to the linked entity.
+        /// </summary>
+        /// <typeparam name="U">The type of the linked entity.</typeparam>
+        /// <param name="linkName">Name of the link.</param>
+        /// <returns>Self.</returns>
+        IBoundClient<U> NavigateTo<U>(string linkName = null) where U : class;
+        /// <summary>
+        /// Navigates to the linked entity.
+        /// </summary>
+        /// <typeparam name="U">The type of the linked entity.</typeparam>
+        /// <param name="expression">The expression for the link.</param>
+        /// <returns>Self.</returns>
+        IBoundClient<U> NavigateTo<U>(Expression<Func<T, U>> expression) where U : class;
+        /// <summary>
+        /// Navigates to the linked entity.
+        /// </summary>
+        /// <typeparam name="U">The type of the linked entity.</typeparam>
+        /// <param name="expression">The expression for the link.</param>
+        /// <returns>Self.</returns>
+        IBoundClient<U> NavigateTo<U>(Expression<Func<T, IEnumerable<U>>> expression) where U : class;
+        /// <summary>
+        /// Navigates to the linked entity.
+        /// </summary>
+        /// <typeparam name="U">The type of the linked entity.</typeparam>
+        /// <param name="expression">The expression for the link.</param>
+        /// <returns>Self.</returns>
+        IBoundClient<U> NavigateTo<U>(Expression<Func<T, IList<U>>> expression) where U : class;
+        /// <summary>
+        /// Navigates to the linked entity.
+        /// </summary>
+        /// <typeparam name="U">The type of the linked entity.</typeparam>
+        /// <param name="expression">The expression for the link.</param>
+        /// <returns>Self.</returns>
+        IBoundClient<U> NavigateTo<U>(Expression<Func<T, U[]>> expression) where U : class;
+        /// <summary>
+        /// Navigates to the linked entity.
+        /// </summary>
+        /// <param name="linkName">Name of the link.</param>
+        /// <returns>Self.</returns>
+        IBoundClient<IDictionary<string, object>> NavigateTo(string linkName);
+        /// <summary>
+        /// Navigates to the linked entity.
+        /// </summary>
+        /// <param name="expression">The expression for the link.</param>
+        /// <returns>Self.</returns>
+        IBoundClient<T> NavigateTo(ODataExpression expression);
+
         /// <summary>
         /// Executes the OData function or action.
         /// </summary>

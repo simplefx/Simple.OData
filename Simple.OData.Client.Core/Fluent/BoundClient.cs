@@ -266,43 +266,6 @@ namespace Simple.OData.Client
             return this;
         }
 
-        public IBoundClient<U> NavigateTo<U>(string linkName = null)
-            where U : class
-        {
-            return this.Link<U>(this.Command, linkName);
-        }
-
-        public IBoundClient<U> NavigateTo<U>(Expression<Func<T, U>> expression)
-            where U : class
-        {
-            return this.Link<U>(this.Command, ExtractColumnName(expression));
-        }
-
-        public IBoundClient<U> NavigateTo<U>(Expression<Func<T, IEnumerable<U>>> expression) where U : class
-        {
-            return this.Link<U>(this.Command, ExtractColumnName(expression));
-        }
-
-        public IBoundClient<U> NavigateTo<U>(Expression<Func<T, IList<U>>> expression) where U : class
-        {
-            return this.Link<U>(this.Command, ExtractColumnName(expression));
-        }
-
-        public IBoundClient<U> NavigateTo<U>(Expression<Func<T, U[]>> expression) where U : class
-        {
-            return this.Link<U>(this.Command, ExtractColumnName(expression));
-        }
-
-        public IBoundClient<IDictionary<string, object>> NavigateTo(string linkName)
-        {
-            return this.Link<IDictionary<string, object>>(this.Command, linkName);
-        }
-
-        public IBoundClient<T> NavigateTo(ODataExpression expression)
-        {
-            return this.Link<T>(this.Command, expression);
-        }
-
         public bool FilterIsKey
         {
             get { return this.Command.FilterIsKey; }

@@ -19,6 +19,27 @@ namespace Simple.OData.Client
         {
         }
 
+#pragma warning disable 1591
+
+        public IUnboundClient<IDictionary<string, object>> As(string derivedCollectionName)
+        {
+            this.Command.As(derivedCollectionName);
+            return new UnboundClient<IDictionary<string, object>>(_client, _session, this.Command, _dynamicResults);
+        }
+
+        public IUnboundClient<U> As<U>(string derivedCollectionName = null)
+        where U : class
+        {
+            this.Command.As(derivedCollectionName ?? typeof(U).Name);
+            return new UnboundClient<U>(_client, _session, this.Command, _dynamicResults);
+        }
+
+        public IUnboundClient<ODataEntry> As(ODataExpression expression)
+        {
+            this.Command.As(expression);
+            return CreateClientForODataEntry();
+        }
+
         public IUnboundClient<T> Function(string functionName)
         {
             this.Command.Function(functionName);
@@ -181,41 +202,11 @@ namespace Simple.OData.Client
             return this;
         }
 
-        public IBoundClient<U> NavigateTo<U>(string linkName = null)
-            where U : class
-        {
-            return this.Link<U>(this.Command, linkName);
-        }
+#pragma warning restore 1591
 
-        public IBoundClient<U> NavigateTo<U>(Expression<Func<T, U>> expression)
-            where U : class
+        private UnboundClient<ODataEntry> CreateClientForODataEntry()
         {
-            return this.Link<U>(this.Command, ExtractColumnName(expression));
-        }
-
-        public IBoundClient<U> NavigateTo<U>(Expression<Func<T, IEnumerable<U>>> expression) where U : class
-        {
-            return this.Link<U>(this.Command, ExtractColumnName(expression));
-        }
-
-        public IBoundClient<U> NavigateTo<U>(Expression<Func<T, IList<U>>> expression) where U : class
-        {
-            return this.Link<U>(this.Command, ExtractColumnName(expression));
-        }
-
-        public IBoundClient<U> NavigateTo<U>(Expression<Func<T, U[]>> expression) where U : class
-        {
-            return this.Link<U>(this.Command, ExtractColumnName(expression));
-        }
-
-        public IBoundClient<IDictionary<string, object>> NavigateTo(string linkName)
-        {
-            return this.Link<IDictionary<string, object>>(this.Command, linkName);
-        }
-
-        public IBoundClient<T> NavigateTo(ODataExpression expression)
-        {
-            return this.Link<T>(this.Command, expression);
+            return new UnboundClient<ODataEntry>(_client, _session, this.Command, true); ;
         }
     }
 }
