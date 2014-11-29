@@ -62,7 +62,7 @@ namespace Simple.OData.Client
         {
             return this.AsEntries()
                 .SelectMany(x => x.Values)
-                .Select(y => (T)y)
+                .Select(x => (T)Convert.ChangeType(x, typeof(T), CultureInfo.InvariantCulture))
                 .ToArray();
         }
 

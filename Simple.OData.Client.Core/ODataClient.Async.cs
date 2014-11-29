@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
@@ -601,7 +602,8 @@ namespace Simple.OData.Client
                 .Set(parameters)
                 .AsBoundClient().Command;
 
-            return await ExecuteFunctionAsync(command, cancellationToken);
+            var result = await ExecuteFunctionAsync(command, cancellationToken);
+            return result == null ? null : result.FirstOrDefault();
         }
 
         public Task<IEnumerable<IDictionary<string, object>>> ExecuteFunctionAsEnumerableAsync(string functionName, IDictionary<string, object> parameters)
@@ -622,7 +624,7 @@ namespace Simple.OData.Client
                 .Set(parameters)
                 .AsBoundClient().Command;
 
-            return await ExecuteFunctionAsEnumerableAsync(command, cancellationToken);
+            return await ExecuteFunctionAsync(command, cancellationToken);
         }
 
         public Task<T> ExecuteFunctionAsScalarAsync<T>(string functionName, IDictionary<string, object> parameters)
@@ -655,10 +657,12 @@ namespace Simple.OData.Client
             await _session.ResolveAdapterAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            return (await ExecuteFunctionAsEnumerableAsync(functionName, parameters, cancellationToken))
-                .SelectMany(x => x.Values)
-                .Select(x => (T)x)
-                .ToArray();
+            var result = await ExecuteFunctionAsEnumerableAsync(functionName, parameters, cancellationToken);
+            return result == null
+                ? null
+                : result.SelectMany(x => x.Values)
+                        .Select(x => (T)Convert.ChangeType(x, typeof(T), CultureInfo.InvariantCulture))
+                        .ToArray();
         }
 
         public Task<IDictionary<string, object>> ExecuteActionAsSingleAsync(string actionName, IDictionary<string, object> parameters)
@@ -679,7 +683,8 @@ namespace Simple.OData.Client
                 .Set(parameters)
                 .AsBoundClient().Command;
 
-            return await ExecuteActionAsync(command, cancellationToken);
+            var result = await ExecuteActionAsync(command, cancellationToken);
+            return result == null ? null : result.FirstOrDefault();
         }
 
         public Task<IEnumerable<IDictionary<string, object>>> ExecuteActionAsEnumerableAsync(string actionName, IDictionary<string, object> parameters)
@@ -700,7 +705,7 @@ namespace Simple.OData.Client
                 .Set(parameters)
                 .AsBoundClient().Command;
 
-            return await ExecuteActionAsEnumerableAsync(command, cancellationToken);
+            return await ExecuteActionAsync(command, cancellationToken);
         }
 
         public Task<T> ExecuteActionAsScalarAsync<T>(string actionName, IDictionary<string, object> parameters)
@@ -733,10 +738,12 @@ namespace Simple.OData.Client
             await _session.ResolveAdapterAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            return (await ExecuteActionAsEnumerableAsync(actionName, parameters, cancellationToken))
-                .SelectMany(x => x.Values)
-                .Select(x => (T)x)
-                .ToArray();
+            var result = await ExecuteActionAsEnumerableAsync(actionName, parameters, cancellationToken);
+            return result == null
+                ? null
+                : result.SelectMany(x => x.Values)
+                        .Select(x => (T)Convert.ChangeType(x, typeof(T), CultureInfo.InvariantCulture))
+                        .ToArray();
         }
 
         #pragma warning restore 1591
@@ -912,12 +919,8 @@ namespace Simple.OData.Client
             await _session.ResolveAdapterAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            if (command.HasFunction)
-                return await ExecuteFunctionAsync(command, cancellationToken);
-            else if (command.HasAction)
-                return await ExecuteActionAsync(command, cancellationToken);
-            else
-                throw new InvalidOperationException("Command is expected to be a function or an action.");
+            var result = await ExecuteAsEnumerableAsync(command, cancellationToken);
+            return result == null ? null : result.FirstOrDefault();
         }
 
         internal async Task<IEnumerable<IDictionary<string, object>>> ExecuteAsEnumerableAsync(FluentCommand command, CancellationToken cancellationToken)
@@ -929,9 +932,9 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             if (command.HasFunction)
-                return await ExecuteFunctionAsEnumerableAsync(command, cancellationToken);
+                return await ExecuteFunctionAsync(command, cancellationToken);
             else if (command.HasAction)
-                return await ExecuteActionAsEnumerableAsync(command, cancellationToken);
+                return await ExecuteActionAsync(command, cancellationToken);
             else
                 throw new InvalidOperationException("Command is expected to be a function or an action.");
         }
@@ -945,7 +948,9 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var result = await ExecuteAsSingleAsync(command, cancellationToken);
-            return (T)result.First().Value;
+            return result == null 
+                ? default(T) 
+                : (T)Convert.ChangeType(result.First().Value, typeof(T), CultureInfo.InvariantCulture);
         }
 
         internal async Task<T[]> ExecuteAsArrayAsync<T>(FluentCommand command, CancellationToken cancellationToken)
@@ -956,10 +961,12 @@ namespace Simple.OData.Client
             await _session.ResolveAdapterAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            return (await ExecuteAsEnumerableAsync(command, cancellationToken))
-                .SelectMany(x => x.Values)
-                .Select(x => (T)x)
-                .ToArray();
+            var result = await ExecuteAsEnumerableAsync(command, cancellationToken);
+            return result == null
+                ? null
+                : result.SelectMany(x => x.Values)
+                        .Select(x => (T)Convert.ChangeType(x, typeof(T), CultureInfo.InvariantCulture))
+                        .ToArray();
         }
 
         internal async Task ExecuteBatchAsync(IList<Func<IODataClient, Task>> actions, CancellationToken cancellationToken)

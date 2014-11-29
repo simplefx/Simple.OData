@@ -56,6 +56,7 @@ namespace Simple.OData.Client.Tests
             return new ODataClient(new ODataClientSettings(_serviceUri)
             {
                 PayloadFormat = _payloadFormat,
+                IgnoreResourceNotFoundException = true,
                 OnTrace = (x, y) => Console.WriteLine(string.Format(x, y)),
             });
         }

@@ -178,20 +178,7 @@ namespace Simple.OData.Client
             }
         }
 
-        private async Task<IDictionary<string, object>> ExecuteFunctionAsync(FluentCommand command, CancellationToken cancellationToken)
-        {
-            var commandText = await command.GetCommandTextAsync(cancellationToken);
-            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-
-            var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-                .CreateFunctionRequestAsync(commandText, command.FunctionName);
-
-            return await ExecuteRequestWithResultAsync(request, cancellationToken,
-                x => x.AsEntry(),
-                () => null);
-        }
-
-        private async Task<IEnumerable<IDictionary<string, object>>> ExecuteFunctionAsEnumerableAsync(FluentCommand command, CancellationToken cancellationToken)
+        private async Task<IEnumerable<IDictionary<string, object>>> ExecuteFunctionAsync(FluentCommand command, CancellationToken cancellationToken)
         {
             var commandText = await command.GetCommandTextAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
@@ -204,20 +191,7 @@ namespace Simple.OData.Client
                 () => new[] { (IDictionary<string, object>)null });
         }
 
-        private async Task<IDictionary<string, object>> ExecuteActionAsync(FluentCommand command, CancellationToken cancellationToken)
-        {
-            var commandText = await command.GetCommandTextAsync(cancellationToken);
-            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-
-            var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-                .CreateActionRequestAsync(commandText, command.ActionName, command.CommandData, true);
-
-            return await ExecuteRequestWithResultAsync(request, cancellationToken,
-                x => x.AsEntry(),
-                () => null);
-        }
-
-        private async Task<IEnumerable<IDictionary<string, object>>> ExecuteActionAsEnumerableAsync(FluentCommand command, CancellationToken cancellationToken)
+        private async Task<IEnumerable<IDictionary<string, object>>> ExecuteActionAsync(FluentCommand command, CancellationToken cancellationToken)
         {
             var commandText = await command.GetCommandTextAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
