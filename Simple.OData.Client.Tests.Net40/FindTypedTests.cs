@@ -210,8 +210,8 @@ namespace Simple.OData.Client.Tests
                 .For<Product>()
                 .Filter(x => x.ProductName == "Chai")
                 .Count()
-                .FindScalarAsync();
-            Assert.Equal(1, int.Parse(count.ToString()));
+                .FindScalarAsync<int>();
+            Assert.Equal(1, count);
         }
 
         [Fact]

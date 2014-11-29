@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
@@ -72,14 +73,15 @@ namespace Simple.OData.Client
             return RectifyColumnSelectionAsync(_client.FindEntryAsync(_command, cancellationToken), _command.SelectedColumns);
         }
 
-        public Task<object> FindScalarAsync()
+        public Task<U> FindScalarAsync<U>()
         {
-            return FindScalarAsync(CancellationToken.None);
+            return FindScalarAsync<U>(CancellationToken.None);
         }
 
-        public Task<object> FindScalarAsync(CancellationToken cancellationToken)
+        public Task<U> FindScalarAsync<U>(CancellationToken cancellationToken)
         {
-            return _client.FindScalarAsync(_command, cancellationToken);
+            return _client.FindScalarAsync(_command, cancellationToken)
+                .ContinueWith(x => (U)Convert.ChangeType(x.Result, typeof(U), CultureInfo.InvariantCulture), cancellationToken);
         }
 
         public Task<T> InsertEntryAsync()

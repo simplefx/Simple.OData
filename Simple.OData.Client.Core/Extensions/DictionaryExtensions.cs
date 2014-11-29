@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 
@@ -69,7 +70,7 @@ namespace Simple.OData.Client.Extensions
                 int intValue;
                 if (int.TryParse(stringValue, out intValue))
                 {
-                    return Convert.ChangeType(intValue, fieldOrPropertyType, null);
+                    return Convert.ChangeType(intValue, fieldOrPropertyType, CultureInfo.InvariantCulture);
                 }
                 else
                 {

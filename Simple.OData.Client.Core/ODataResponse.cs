@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Simple.OData.Client.Extensions;
 
@@ -53,7 +55,7 @@ namespace Simple.OData.Client
 
         public T AsScalar<T>()
         {
-            return (T) this.AsEntries().First().First().Value;
+            return (T)Convert.ChangeType(this.AsEntries().First().First().Value, typeof(T), CultureInfo.InvariantCulture);
         }
 
         public T[] AsArray<T>()

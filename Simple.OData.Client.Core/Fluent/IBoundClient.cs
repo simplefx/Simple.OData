@@ -87,13 +87,13 @@ namespace Simple.OData.Client
         /// Retrieves an entry as a scalar type by executing OData GET request.
         /// </summary>
         /// <returns>The result as a scalar type.</returns>
-        Task<object> FindScalarAsync();
+        Task<U> FindScalarAsync<U>();
         /// <summary>
         /// Retrieves an entry as a scalar type by executing OData GET request.
         /// </summary>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The result as a scalar type.</returns>
-        Task<object> FindScalarAsync(CancellationToken cancellationToken);
+        Task<U> FindScalarAsync<U>(CancellationToken cancellationToken);
 
         /// <summary>
         /// Insert a new entry by executing OData POST request.

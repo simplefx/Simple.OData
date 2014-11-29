@@ -165,8 +165,8 @@ namespace Simple.OData.Client.Tests
             var count = await _client
                 .For("Products")
                 .Count()
-                .FindScalarAsync();
-            Assert.Equal(77, int.Parse(count.ToString()));
+                .FindScalarAsync<int>();
+            Assert.Equal(77, count);
         }
 
         [Fact]
