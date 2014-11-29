@@ -65,13 +65,13 @@ namespace Simple.OData.Client
         /// Executes the OData function or action.
         /// </summary>
         /// <returns>Execution result.</returns>
-        Task<T> ExecuteAsync();
+        Task<T> ExecuteAsSingleAsync();
         /// <summary>
         /// Executes the OData function or action.
         /// </summary>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Action execution result.</returns>
-        Task<T> ExecuteAsync(CancellationToken cancellationToken);
+        Task<T> ExecuteAsSingleAsync(CancellationToken cancellationToken);
 
         /// <summary>
         /// Executes the OData function or action and returns collection.

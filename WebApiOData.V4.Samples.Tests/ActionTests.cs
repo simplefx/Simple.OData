@@ -39,7 +39,7 @@ namespace WebApiOData.V4.Samples.Tests
                 .For<Movie>()
                 .Key(1)
                 .Action("CheckOut")
-                .ExecuteAsync();
+                .ExecuteAsSingleAsync();
 
             Assert.Equal(1, result.ID);
         }
@@ -51,7 +51,7 @@ namespace WebApiOData.V4.Samples.Tests
                 .For<Movie>()
                 .Key(1)
                 .Action("Return")
-                .ExecuteAsync();
+                .ExecuteAsSingleAsync();
 
             Assert.Equal(1, result.ID);
         }
@@ -75,7 +75,7 @@ namespace WebApiOData.V4.Samples.Tests
                 .Unbound<Movie>()
                 .Action("CreateMovie")
                 .Set(new { Title = Guid.NewGuid().ToString() })
-                .ExecuteAsync();
+                .ExecuteAsSingleAsync();
 
             Assert.True(result.ID > 0);
         }

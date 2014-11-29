@@ -583,12 +583,12 @@ namespace Simple.OData.Client
             await ExecuteUnlinkEntryAsync(command, linkName, linkedEntryKey, cancellationToken);
         }
 
-        public Task<IDictionary<string, object>> ExecuteFunctionAsync(string functionName, IDictionary<string, object> parameters)
+        public Task<IDictionary<string, object>> ExecuteFunctionAsSingleAsync(string functionName, IDictionary<string, object> parameters)
         {
-            return ExecuteFunctionAsync(functionName, parameters, CancellationToken.None);
+            return ExecuteFunctionAsSingleAsync(functionName, parameters, CancellationToken.None);
         }
 
-        public async Task<IDictionary<string, object>> ExecuteFunctionAsync(string functionName, IDictionary<string, object> parameters, CancellationToken cancellationToken)
+        public async Task<IDictionary<string, object>> ExecuteFunctionAsSingleAsync(string functionName, IDictionary<string, object> parameters, CancellationToken cancellationToken)
         {
             if (IsBatchResponse)
                 return _batchResponse.AsEntry();
@@ -638,7 +638,7 @@ namespace Simple.OData.Client
             await _session.ResolveAdapterAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var result = await ExecuteFunctionAsync(functionName, parameters, cancellationToken);
+            var result = await ExecuteFunctionAsSingleAsync(functionName, parameters, cancellationToken);
             return (T)result.First().Value;
         }
 
@@ -661,12 +661,12 @@ namespace Simple.OData.Client
                 .ToArray();
         }
 
-        public Task<IDictionary<string, object>> ExecuteActionAsync(string actionName, IDictionary<string, object> parameters)
+        public Task<IDictionary<string, object>> ExecuteActionAsSingleAsync(string actionName, IDictionary<string, object> parameters)
         {
-            return ExecuteActionAsync(actionName, parameters, CancellationToken.None);
+            return ExecuteActionAsSingleAsync(actionName, parameters, CancellationToken.None);
         }
 
-        public async Task<IDictionary<string, object>> ExecuteActionAsync(string actionName, IDictionary<string, object> parameters, CancellationToken cancellationToken)
+        public async Task<IDictionary<string, object>> ExecuteActionAsSingleAsync(string actionName, IDictionary<string, object> parameters, CancellationToken cancellationToken)
         {
             if (IsBatchResponse)
                 return _batchResponse.AsEntry();
@@ -716,7 +716,7 @@ namespace Simple.OData.Client
             await _session.ResolveAdapterAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var result = await ExecuteActionAsync(actionName, parameters, cancellationToken);
+            var result = await ExecuteActionAsSingleAsync(actionName, parameters, cancellationToken);
             return (T)result.First().Value;
         }
 
@@ -904,7 +904,7 @@ namespace Simple.OData.Client
             await ExecuteUnlinkEntryAsync(new FluentCommand(command).Key(entryKey), linkName, linkedEntryKey, cancellationToken);
         }
 
-        internal async Task<IDictionary<string, object>> ExecuteAsync(FluentCommand command, CancellationToken cancellationToken)
+        internal async Task<IDictionary<string, object>> ExecuteAsSingleAsync(FluentCommand command, CancellationToken cancellationToken)
         {
             if (IsBatchResponse)
                 return _batchResponse.AsEntry();
@@ -944,7 +944,7 @@ namespace Simple.OData.Client
             await _session.ResolveAdapterAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var result = await ExecuteAsync(command, cancellationToken);
+            var result = await ExecuteAsSingleAsync(command, cancellationToken);
             return (T)result.First().Value;
         }
 

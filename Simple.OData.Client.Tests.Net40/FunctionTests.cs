@@ -91,7 +91,7 @@ namespace Simple.OData.Client.Tests
                 .Unbound<IDictionary<string, object>>()
                 .Function("ReturnAddressCollection")
                 .Set(new Entry() { { "count", 1 } })
-                .ExecuteAsync());
+                .ExecuteAsSingleAsync());
 
             Assert.Equal("Oslo", result["City"]);
             Assert.Equal("Norway", result["Country"]);

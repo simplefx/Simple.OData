@@ -108,14 +108,14 @@ namespace Simple.OData.Client
             return this.Link<T>(this.Command, expression);
         }
 
-        public Task<T> ExecuteAsync()
+        public Task<T> ExecuteAsSingleAsync()
         {
-            return RectifyColumnSelectionAsync(_client.ExecuteAsync(_command, CancellationToken.None), _command.SelectedColumns);
+            return RectifyColumnSelectionAsync(_client.ExecuteAsSingleAsync(_command, CancellationToken.None), _command.SelectedColumns);
         }
 
-        public Task<T> ExecuteAsync(CancellationToken cancellationToken)
+        public Task<T> ExecuteAsSingleAsync(CancellationToken cancellationToken)
         {
-            return RectifyColumnSelectionAsync(_client.ExecuteAsync(_command, cancellationToken), _command.SelectedColumns);
+            return RectifyColumnSelectionAsync(_client.ExecuteAsSingleAsync(_command, cancellationToken), _command.SelectedColumns);
         }
 
         public Task<IEnumerable<T>> ExecuteAsEnumerableAsync()

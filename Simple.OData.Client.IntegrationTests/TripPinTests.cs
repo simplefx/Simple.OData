@@ -435,7 +435,7 @@ namespace Simple.OData.Client.Tests
                 .Unbound<Airport>()
                 .Function("GetNearestAirport")
                 .Set(new { lat = 100d, lon = 100d })
-                .ExecuteAsync();
+                .ExecuteAsSingleAsync();
 
             Assert.Equal("KSEA", airport.IcaoCode);
         }
@@ -458,7 +458,7 @@ namespace Simple.OData.Client.Tests
             await _client
                 .Unbound()
                 .Action("ResetDataSource")
-                .ExecuteAsync();
+                .ExecuteAsSingleAsync();
 
             tripEvent = await command
                 .Filter(x => x.PlanItemId == tripEvent.PlanItemId)
@@ -475,7 +475,7 @@ namespace Simple.OData.Client.Tests
                 .Key("russellwhyte")
                 .Action("ShareTrip")
                 .Set(new {userName = "John", tripId = 1})
-                .ExecuteAsync();
+                .ExecuteAsSingleAsync();
         }
 
         [Fact]
