@@ -259,37 +259,31 @@ namespace Simple.OData.Client
                 () => new[] { (IDictionary<string, object>)null });
         }
 
-        public Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> FindEntriesWithCountAsync(string commandText)
+        public Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(string commandText, ODataFeedAnnotations annotations)
         {
-            return FindEntriesWithCountAsync(commandText, CancellationToken.None);
+            return FindEntriesAsync(commandText, annotations, CancellationToken.None);
         }
 
-        public Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> FindEntriesWithCountAsync(string commandText, CancellationToken cancellationToken)
-        {
-            return FindEntriesWithCountAsync(commandText, false, CancellationToken.None);
-        }
-
-        public Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> FindEntriesWithCountAsync(string commandText, bool scalarResult)
-        {
-            return FindEntriesWithCountAsync(commandText, scalarResult, CancellationToken.None);
-        }
-
-        public async Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> FindEntriesWithCountAsync(string commandText, bool scalarResult, CancellationToken cancellationToken)
+        public async Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(string commandText, ODataFeedAnnotations annotations, CancellationToken cancellationToken)
         {
             if (IsBatchResponse)
-                return new Tuple<IEnumerable<IDictionary<string, object>>, int>(
-                    _batchResponse.AsEntries(), 
-                    _batchResponse.TotalCount.HasValue ? (int)_batchResponse.TotalCount.Value : 0);
+            {
+                annotations.CopyFrom(_batchResponse.Annotations);
+                return _batchResponse.AsEntries();
+            }
 
             await _session.ResolveAdapterAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-                .CreateGetRequestAsync(commandText, scalarResult);
+                .CreateGetRequestAsync(commandText, false);
 
-            return await ExecuteRequestWithResultAsync(request, cancellationToken,
-                x => Tuple.Create(x.Entries, (int)x.TotalCount.GetValueOrDefault()),
-                () => new Tuple<IEnumerable<IDictionary<string, object>>, int>(new[] { (IDictionary<string, object>)null }, 0));
+            return await ExecuteRequestWithResultAsync(request, cancellationToken, x =>
+                {
+                    annotations.CopyFrom(x.Annotations);
+                    return x.Entries;
+                },
+                () => new[] { (IDictionary<string, object>)null });
         }
 
         public Task<IDictionary<string, object>> FindEntryAsync(string commandText)
@@ -776,11 +770,13 @@ namespace Simple.OData.Client
             return await FindEntriesAsync(commandText, scalarResult, cancellationToken);
         }
 
-        internal async Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> FindEntriesWithCountAsync(FluentCommand command, CancellationToken cancellationToken)
+        internal async Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(FluentCommand command, ODataFeedAnnotations annotations, CancellationToken cancellationToken)
         {
             if (IsBatchResponse)
-                return new Tuple<IEnumerable<IDictionary<string, object>>, int>(
-                    _batchResponse.AsEntries(), (int)_batchResponse.TotalCount.GetValueOrDefault());
+            {
+                annotations.CopyFrom(_batchResponse.Annotations);
+                return _batchResponse.AsEntries();
+            }
 
             await _session.ResolveAdapterAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
@@ -788,22 +784,7 @@ namespace Simple.OData.Client
             var commandText = await command.GetCommandTextAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            return await FindEntriesWithCountAsync(commandText, cancellationToken);
-        }
-
-        internal async Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> FindEntriesWithCountAsync(FluentCommand command, bool scalarResult, CancellationToken cancellationToken)
-        {
-            if (IsBatchResponse)
-                return new Tuple<IEnumerable<IDictionary<string, object>>, int>(
-                    _batchResponse.AsEntries(), (int)_batchResponse.TotalCount.GetValueOrDefault());
-
-            await _session.ResolveAdapterAsync(cancellationToken);
-            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-
-            var commandText = await command.GetCommandTextAsync(cancellationToken);
-            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-
-            return await FindEntriesWithCountAsync(commandText, scalarResult, cancellationToken);
+            return await FindEntriesAsync(commandText, annotations, cancellationToken);
         }
 
         internal async Task<IDictionary<string, object>> FindEntryAsync(FluentCommand command, CancellationToken cancellationToken)

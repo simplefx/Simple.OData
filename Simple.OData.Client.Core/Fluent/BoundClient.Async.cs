@@ -33,33 +33,33 @@ namespace Simple.OData.Client
             return RectifyColumnSelectionAsync(_client.FindEntriesAsync(_command, scalarResult, cancellationToken), _command.SelectedColumns);
         }
 
-        public Task<Tuple<IEnumerable<T>, int>> FindEntriesWithCountAsync()
+        public Task<IEnumerable<T>> FindEntriesAsync(ODataFeedAnnotations annotations)
         {
-            return FindEntriesWithCountAsync(CancellationToken.None);
+            return FindEntriesAsync(annotations, CancellationToken.None);
         }
 
-        public async Task<Tuple<IEnumerable<T>, int>> FindEntriesWithCountAsync(CancellationToken cancellationToken)
+        public async Task<IEnumerable<T>> FindEntriesAsync(ODataFeedAnnotations annotations, CancellationToken cancellationToken)
         {
             var commandText = await _command.WithCount().GetCommandTextAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested)
                 cancellationToken.ThrowIfCancellationRequested();
 
-            var result = _client.FindEntriesWithCountAsync(commandText, cancellationToken);
+            var result = _client.FindEntriesAsync(commandText, annotations, cancellationToken);
             return await RectifyColumnSelectionAsync(result, _command.SelectedColumns);
         }
 
-        public Task<Tuple<IEnumerable<T>, int>> FindEntriesWithCountAsync(bool scalarResult)
+        public Task<IEnumerable<T>> FindEntriesAsync(Uri annotatedUri, ODataFeedAnnotations annotations)
         {
-            return FindEntriesWithCountAsync(scalarResult, CancellationToken.None);
+            return FindEntriesAsync(annotatedUri, annotations, CancellationToken.None);
         }
 
-        public async Task<Tuple<IEnumerable<T>, int>> FindEntriesWithCountAsync(bool scalarResult, CancellationToken cancellationToken)
+        public async Task<IEnumerable<T>> FindEntriesAsync(Uri annotatedUri, ODataFeedAnnotations annotations, CancellationToken cancellationToken)
         {
-            var commandText = await _command.WithCount().GetCommandTextAsync(cancellationToken);
+            var commandText = annotatedUri.AbsoluteUri;
             if (cancellationToken.IsCancellationRequested)
                 cancellationToken.ThrowIfCancellationRequested();
 
-            var result = _client.FindEntriesWithCountAsync(commandText, scalarResult, cancellationToken);
+            var result = _client.FindEntriesAsync(commandText, annotations, cancellationToken);
             return await RectifyColumnSelectionAsync(result, _command.SelectedColumns);
         }
 

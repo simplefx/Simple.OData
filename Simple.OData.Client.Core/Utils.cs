@@ -94,7 +94,15 @@ namespace Simple.OData.Client
 
         public static string ExtractCollectionName(string commandText)
         {
-            return commandText.Split('?', '(', '/').First();
+            var uri = new Uri(commandText, UriKind.RelativeOrAbsolute);
+            if (uri.IsAbsoluteUri)
+            {
+                return uri.LocalPath.Split('/').Last();
+            }
+            else
+            {
+                return commandText.Split('?', '(', '/').First();
+            }
         }
 
         public static bool TryConvert(object value, Type targetType, out object result)

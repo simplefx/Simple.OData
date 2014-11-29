@@ -129,10 +129,23 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task FindAllPeople()
         {
+            var annotations = new ODataFeedAnnotations();
+
+            int count = 0;
             var people = await _client
                 .For<Person>("People")
-                .FindEntriesAsync();
-            Assert.Equal(8, people.Count());
+                .FindEntriesAsync(annotations);
+            count += people.Count();
+
+            while (annotations.NextPageLink != null)
+            {
+                people = await _client
+                    .For<Person>()
+                    .FindEntriesAsync(annotations.NextPageLink, annotations);
+                count += people.Count();
+            }
+
+            Assert.Equal(count, annotations.Count);
         }
 
         [Fact]
@@ -397,9 +410,11 @@ namespace Simple.OData.Client.Tests
                 .Key(tripEvent.PlanItemId)
                 .DeleteEntryAsync();
 
-            await AssertThrowsAsync<WebRequestException>(async () => await command
+            tripEvent = await command
                 .Key(tripEvent.PlanItemId)
-                .FindEntryAsync());
+                .FindEntryAsync();
+
+            Assert.Null(tripEvent);
         }
 
         [Fact]
@@ -474,7 +489,7 @@ namespace Simple.OData.Client.Tests
                 .For<Person>("People")
                 .Key("russellwhyte")
                 .Action("ShareTrip")
-                .Set(new {userName = "John", tripId = 1})
+                .Set(new { userName = "scottketchum", tripId = 1003 })
                 .ExecuteAsSingleAsync();
         }
 

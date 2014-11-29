@@ -18,12 +18,12 @@ namespace Simple.OData.Client
 
         protected abstract void ConvertEntry(ResponseNode entryNode, object entry, bool includeResourceTypeInEntryProperties);
 
-        protected void StartFeed(Stack<ResponseNode> nodeStack, long? feedItemCount)
+        protected void StartFeed(Stack<ResponseNode> nodeStack, ODataFeedAnnotations feedAnnotations)
         {
             nodeStack.Push(new ResponseNode
             {
                 Feed = new List<IDictionary<string, object>>(),
-                TotalCount = feedItemCount,
+                FeedAnnotations = feedAnnotations,
             });
         }
 

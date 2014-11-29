@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Simple.OData.Client
@@ -9,7 +10,7 @@ namespace Simple.OData.Client
         public IDictionary<string, object> Entry { get; set; }
         public IList<object> Collection { get; set; }
         public string LinkName { get; set; }
-        public long? TotalCount { get; set; }
+        public ODataFeedAnnotations FeedAnnotations { get; set; }
 
         public object Value
         {

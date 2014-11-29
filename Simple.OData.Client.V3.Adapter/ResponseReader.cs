@@ -167,7 +167,7 @@ namespace Simple.OData.Client.V3.Adapter
                 switch (odataReader.State)
                 {
                     case ODataReaderState.FeedStart:
-                        StartFeed(nodeStack, (odataReader.Item as ODataFeed).Count);
+                        StartFeed(nodeStack, CreateFeedDetails(odataReader.Item as ODataFeed));
                         break;
 
                     case ODataReaderState.FeedEnd:
@@ -193,8 +193,20 @@ namespace Simple.OData.Client.V3.Adapter
             }
 
             return rootNode.Feed != null
-                ? ODataResponse.FromFeed(rootNode.Feed, rootNode.TotalCount)
+                ? ODataResponse.FromFeed(rootNode.Feed, rootNode.FeedAnnotations)
                 : ODataResponse.FromEntry(rootNode.Entry);
+        }
+
+        private ODataFeedAnnotations CreateFeedDetails(ODataFeed feed)
+        {
+            return new ODataFeedAnnotations()
+            {
+                Id = feed.Id,
+                Count = feed.Count,
+                DeltaLink = feed.DeltaLink,
+                NextPageLink = feed.NextPageLink,
+                InstanceAnnotations = feed.InstanceAnnotations,
+            };
         }
 
         private object GetPropertyValue(object value)

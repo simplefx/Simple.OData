@@ -47,29 +47,33 @@ namespace Simple.OData.Client
         Task<IEnumerable<T>> FindEntriesAsync(bool scalarResult, CancellationToken cancellationToken);
 
         /// <summary>
-        /// Retrieves entries with result count by executing OData GET request.
+        /// Retrieves entries by executing OData GET request and assigns OData feed annotations.
         /// </summary>
+        /// <param name="annotations">The OData feed annotations.</param>
         /// <returns>Entries found with entry count.</returns>
-        Task<Tuple<IEnumerable<T>, int>> FindEntriesWithCountAsync();
+        Task<IEnumerable<T>> FindEntriesAsync(ODataFeedAnnotations annotations);
         /// <summary>
-        /// Retrieves entries with result count by executing OData GET request.
+        /// Retrieves entries by executing OData GET request and assigns OData feed annotations.
         /// </summary>
+        /// <param name="annotations">The OData feed annotations.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Entries found with entry count.</returns>
-        Task<Tuple<IEnumerable<T>, int>> FindEntriesWithCountAsync(CancellationToken cancellationToken);
+        Task<IEnumerable<T>> FindEntriesAsync(ODataFeedAnnotations annotations, CancellationToken cancellationToken);
         /// <summary>
-        /// Retrieves entries with result count by executing OData GET request.
+        /// Retrieves entries by executing OData GET request and assigns OData feed annotations.
         /// </summary>
-        /// <param name="scalarResult">if set to <c>true</c> the result is expected to be of a scalar type.</param>
+        /// <param name="annotatedUri">The URI previously returned in OData feed annotations.</param>
+        /// <param name="annotations">The OData feed annotations.</param>
         /// <returns>Entries found with entry count.</returns>
-        Task<Tuple<IEnumerable<T>, int>> FindEntriesWithCountAsync(bool scalarResult);
+        Task<IEnumerable<T>> FindEntriesAsync(Uri annotatedUri, ODataFeedAnnotations annotations);
         /// <summary>
-        /// Retrieves entries with result count by executing OData GET request.
+        /// Retrieves entries by executing OData GET request and assigns OData feed annotations.
         /// </summary>
-        /// <param name="scalarResult">if set to <c>true</c> the result is expected to be of a scalar type.</param>
+        /// <param name="annotatedUri">The URI previously returned in OData feed annotations.</param>
+        /// <param name="annotations">The OData feed annotations.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Entries found with entry count.</returns>
-        Task<Tuple<IEnumerable<T>, int>> FindEntriesWithCountAsync(bool scalarResult, CancellationToken cancellationToken);
+        Task<IEnumerable<T>> FindEntriesAsync(Uri annotatedUri, ODataFeedAnnotations annotations, CancellationToken cancellationToken);
 
         /// <summary>
         /// Retrieves an entry by executing OData GET request.

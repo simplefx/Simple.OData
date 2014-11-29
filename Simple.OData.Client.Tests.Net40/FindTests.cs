@@ -213,11 +213,12 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task TotalCount()
         {
-            var productsWithCount = await _client
+            var annotations = new ODataFeedAnnotations();
+            var products = await _client
                 .For("Products")
-                .FindEntriesWithCountAsync(true);
-            Assert.Equal(77, productsWithCount.Item2);
-            Assert.Equal(77, productsWithCount.Item1.Count());
+                .FindEntriesAsync(annotations);
+            Assert.Equal(77, annotations.Count);
+            Assert.Equal(77, products.Count());
         }
 
         [Fact]

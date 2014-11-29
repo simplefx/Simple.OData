@@ -11,7 +11,7 @@ namespace Simple.OData.Client
         public int StatusCode { get; private set; }
         public IEnumerable<IDictionary<string, object>> Entries { get; private set; }
         public IDictionary<string, object> Entry { get; private set; }
-        public long? TotalCount { get; private set; }
+        public ODataFeedAnnotations Annotations { get; private set; }
         public IList<ODataResponse> Batch { get; private set; }
 
         private ODataResponse()
@@ -66,12 +66,12 @@ namespace Simple.OData.Client
                 .ToArray();
         }
 
-        public static ODataResponse FromFeed(IEnumerable<IDictionary<string, object>> entries, long? totalCount = null)
+        public static ODataResponse FromFeed(IEnumerable<IDictionary<string, object>> entries, ODataFeedAnnotations annotations = null)
         {
             return new ODataResponse
             {
                 Entries = entries,
-                TotalCount = totalCount,
+                Annotations = annotations,
             };
         }
 
