@@ -210,7 +210,7 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-                .CreateActionRequestAsync(commandText, command.ActionName, command.CommandData);
+                .CreateActionRequestAsync(commandText, command.ActionName, command.CommandData, true);
 
             return await ExecuteRequestWithResultAsync(request, cancellationToken,
                 x => x.AsEntry(),
@@ -223,7 +223,7 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-                .CreateActionRequestAsync(commandText, command.ActionName, command.CommandData);
+                .CreateActionRequestAsync(commandText, command.ActionName, command.CommandData, true);
 
             return await ExecuteRequestWithResultAsync(request, cancellationToken,
                 x => x.AsEntries(),

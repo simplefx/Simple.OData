@@ -127,7 +127,7 @@ namespace Simple.OData.Client
             return Utils.GetTaskFromResult(new ODataRequest(RestVerbs.Get, _session, collection));
         }
 
-        public async Task<ODataRequest> CreateActionRequestAsync(string collection, string actionName, IDictionary<string, object> parameters)
+        public async Task<ODataRequest> CreateActionRequestAsync(string collection, string actionName, IDictionary<string, object> parameters, bool resultRequired)
         {
             var commandText = collection;
 
@@ -135,11 +135,17 @@ namespace Simple.OData.Client
             {
                 var entryContent = await WriteActionContentAsync(actionName, parameters);
 
-                return new ODataRequest(RestVerbs.Post, _session, commandText, parameters, entryContent);
+                return new ODataRequest(RestVerbs.Post, _session, commandText, parameters, entryContent)
+                {
+                    ResultRequired = resultRequired,
+                };
             }
             else
             {
-                return new ODataRequest(RestVerbs.Post, _session, commandText);
+                return new ODataRequest(RestVerbs.Post, _session, commandText)
+                {
+                    ResultRequired = resultRequired,
+                };
             }
         }
 

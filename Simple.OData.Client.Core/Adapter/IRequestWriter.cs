@@ -13,6 +13,6 @@ namespace Simple.OData.Client
         Task<ODataRequest> CreateLinkRequestAsync(string collection, string linkName, string entryIdent, string linkIdent);
         Task<ODataRequest> CreateUnlinkRequestAsync(string collection, string linkName, string entryIdent, string linkIdent);
         Task<ODataRequest> CreateFunctionRequestAsync(string collection, string functionName);
-        Task<ODataRequest> CreateActionRequestAsync(string collection, string actionName, IDictionary<string, object> parameters);
+        Task<ODataRequest> CreateActionRequestAsync(string collection, string actionName, IDictionary<string, object> parameters, bool resultRequired);
     }
 }

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Owin.Testing;
 using Simple.OData.Client;
+using WebApiOData.V4.Samples.Models;
 using WebApiOData.V4.Samples.Startups;
 using Xunit;
 
@@ -33,41 +35,49 @@ namespace WebApiOData.V4.Samples.Tests
         [Fact]
         public async Task Check_out_a_movie()
         {
-            await _client
-                .For("Movies")
+            var result = await _client
+                .For<Movie>()
                 .Key(1)
                 .Action("CheckOut")
                 .ExecuteAsync();
+
+            Assert.Equal(1, result.ID);
         }
 
         [Fact]
         public async Task Return_a_movie()
         {
-            await _client
-                .For("Movies")
+            var result = await _client
+                .For<Movie>()
                 .Key(1)
                 .Action("Return")
                 .ExecuteAsync();
+
+            Assert.Equal(1, result.ID);
         }
 
         [Fact]
         public async Task Check_out_several()
         {
-            await _client
-                .For("Movies")
+            var result = await _client
+                .For<Movie>()
                 .Action("CheckOutMany")
                 .Set(new Dictionary<string, object>() { { "MovieIDs", new[] { 1, 2, 3 } } })
-                .ExecuteAsync();
+                .ExecuteAsEnumerableAsync();
+
+            Assert.True(result.Count() > 1);
         }
 
         [Fact]
         public async Task CreateMovie()
         {
-            await _client
-                .Unbound()
+            var result = await _client
+                .Unbound<Movie>()
                 .Action("CreateMovie")
                 .Set(new { Title = Guid.NewGuid().ToString() })
                 .ExecuteAsync();
+
+            Assert.True(result.ID > 0);
         }
     }
 }
