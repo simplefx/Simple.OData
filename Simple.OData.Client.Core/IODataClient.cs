@@ -487,6 +487,22 @@ namespace Simple.OData.Client
         /// <param name="actionName">Name of the action.</param>
         /// <param name="parameters">The action parameters.</param>
         /// <returns>Action execution result.</returns>
+        Task ExecuteActionAsync(string actionName, IDictionary<string, object> parameters);
+        /// <summary>
+        /// Executes the OData action.
+        /// </summary>
+        /// <param name="actionName">Name of the action.</param>
+        /// <param name="parameters">The action parameters.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Action execution result.</returns>
+        Task ExecuteActionAsync(string actionName, IDictionary<string, object> parameters, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Executes the OData action.
+        /// </summary>
+        /// <param name="actionName">Name of the action.</param>
+        /// <param name="parameters">The action parameters.</param>
+        /// <returns>Action execution result.</returns>
         Task<IDictionary<string, object>> ExecuteActionAsSingleAsync(string actionName, IDictionary<string, object> parameters);
         /// <summary>
         /// Executes the OData action.

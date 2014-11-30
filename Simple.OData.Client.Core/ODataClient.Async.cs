@@ -659,6 +659,27 @@ namespace Simple.OData.Client
                         .ToArray();
         }
 
+        public Task ExecuteActionAsync(string actionName, IDictionary<string, object> parameters)
+        {
+            return ExecuteActionAsync(actionName, parameters, CancellationToken.None);
+        }
+
+        public async Task ExecuteActionAsync(string actionName, IDictionary<string, object> parameters, CancellationToken cancellationToken)
+        {
+            if (IsBatchResponse)
+                return;
+
+            await _session.ResolveAdapterAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+            var command = GetFluentClient()
+                .Action(actionName)
+                .Set(parameters)
+                .AsBoundClient().Command;
+
+            await ExecuteActionAsync(command, cancellationToken);
+        }
+
         public Task<IDictionary<string, object>> ExecuteActionAsSingleAsync(string actionName, IDictionary<string, object> parameters)
         {
             return ExecuteActionAsSingleAsync(actionName, parameters, CancellationToken.None);
@@ -892,13 +913,18 @@ namespace Simple.OData.Client
             await ExecuteUnlinkEntryAsync(new FluentCommand(command).Key(entryKey), linkName, linkedEntryKey, cancellationToken);
         }
 
+        internal async Task ExecuteAsync(FluentCommand command, CancellationToken cancellationToken)
+        {
+            if (IsBatchResponse)
+                return;
+
+            await ExecuteAsEnumerableAsync(command, cancellationToken);
+        }
+
         internal async Task<IDictionary<string, object>> ExecuteAsSingleAsync(FluentCommand command, CancellationToken cancellationToken)
         {
             if (IsBatchResponse)
                 return _batchResponse.AsEntry();
-
-            await _session.ResolveAdapterAsync(cancellationToken);
-            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var result = await ExecuteAsEnumerableAsync(command, cancellationToken);
             return result == null ? null : result.FirstOrDefault();
@@ -925,9 +951,6 @@ namespace Simple.OData.Client
             if (IsBatchResponse)
                 return _batchResponse.AsScalar<T>();
 
-            await _session.ResolveAdapterAsync(cancellationToken);
-            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-
             var result = await ExecuteAsSingleAsync(command, cancellationToken);
             return result == null 
                 ? default(T) 
@@ -938,9 +961,6 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse)
                 return _batchResponse.AsArray<T>();
-
-            await _session.ResolveAdapterAsync(cancellationToken);
-            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var result = await ExecuteAsEnumerableAsync(command, cancellationToken);
             return result == null

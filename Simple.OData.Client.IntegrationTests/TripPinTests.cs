@@ -473,7 +473,7 @@ namespace Simple.OData.Client.Tests
             await _client
                 .Unbound()
                 .Action("ResetDataSource")
-                .ExecuteAsSingleAsync();
+                .ExecuteAsync();
 
             tripEvent = await command
                 .Filter(x => x.PlanItemId == tripEvent.PlanItemId)
