@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 #endif
 
+#pragma warning disable 1591
+
 namespace Simple.OData.Client
 {
     public class SimpleDictionary<TKey, TValue> :

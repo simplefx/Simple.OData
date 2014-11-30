@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.OData.Core;
+
+#pragma warning disable 1591
 
 namespace Simple.OData.Client.V4.Adapter
 {

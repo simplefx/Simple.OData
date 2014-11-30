@@ -41,6 +41,12 @@ namespace Simple.OData.Client
             _client = new ODataClient((client as ODataClient).Session.Settings, true);
         }
 
+        /// <summary>
+        /// Adds an OData command to an OData batch.
+        /// </summary>
+        /// <param name="batch">The OData batch.</param>
+        /// <param name="action">The command to add to the batch.</param>
+        /// <returns></returns>
         public static ODataBatch operator +(ODataBatch batch, Func<IODataClient, Task> action)
         {
             batch._actions.Add(action);

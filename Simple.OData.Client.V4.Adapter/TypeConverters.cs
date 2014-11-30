@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Spatial;
 
+#pragma warning disable 1591
+
 namespace Simple.OData.Client.V4.Adapter
 {
     public static class TypeConverters

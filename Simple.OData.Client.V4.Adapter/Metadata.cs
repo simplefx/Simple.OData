@@ -3,6 +3,8 @@ using System.Linq;
 using Microsoft.OData.Edm;
 using Simple.OData.Client.Extensions;
 
+#pragma warning disable 1591
+
 namespace Simple.OData.Client.V4.Adapter
 {
     public class Metadata : MetadataBase

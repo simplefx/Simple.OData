@@ -10,6 +10,8 @@ using Microsoft.OData.Edm;
 using Microsoft.OData.Edm.Csdl;
 using Microsoft.Spatial;
 
+#pragma warning disable 1591
+
 namespace Simple.OData.Client
 {
     public static class V4Adapter

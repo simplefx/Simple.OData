@@ -10,6 +10,8 @@ using Microsoft.Data.Edm;
 using Microsoft.Data.OData;
 using Simple.OData.Client.Extensions;
 
+#pragma warning disable 1591
+
 namespace Simple.OData.Client.V3.Adapter
 {
     public class RequestWriter : RequestWriterBase

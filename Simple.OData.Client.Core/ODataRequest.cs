@@ -5,6 +5,8 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 
+#pragma warning disable 1591
+
 namespace Simple.OData.Client
 {
     public class ODataRequest

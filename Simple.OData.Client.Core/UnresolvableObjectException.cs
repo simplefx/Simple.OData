@@ -3,12 +3,12 @@ using System.Runtime.Serialization;
 
 namespace Simple.OData.Client
 {
-#if NET40
-    [Serializable]
-#endif
     /// <summary>
     /// The exception that is thrown when service metadata doesn't contain the requested metadata object
     /// </summary>
+#if NET40
+    [Serializable]
+#endif
     public sealed class UnresolvableObjectException : Exception
     {
         /// <summary>

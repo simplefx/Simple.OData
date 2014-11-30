@@ -15,7 +15,7 @@ namespace Simple.OData.Client
     }
 
     /// <summary>
-    /// Provides access to OData operations in a fluent style.
+    /// Provides access to colllection-bound OData operations in a fluent style.
     /// </summary>
     /// <typeparam name="T">The entity type.</typeparam>
     public interface IBoundClient<T> : IFluentClient<T> 

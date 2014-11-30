@@ -8,8 +8,14 @@ using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
+    /// <summary>
+    /// Provides access to OData operations in a fluent style.
+    /// </summary>
+    /// <typeparam name="T">The entity type.</typeparam>
     public abstract partial class FluentClientBase<T> : IFluentClient<T> where T : class
     {
+#pragma warning disable 1591
+
         protected readonly ODataClient _client;
         internal readonly Session _session;
         protected readonly FluentCommand _parentCommand;
@@ -71,102 +77,188 @@ namespace Simple.OData.Client
             return Link<U>(command, expression.Reference);
         }
 
+#pragma warning restore 1591
+
+        /// <summary>
+        /// Navigates to the linked entity.
+        /// </summary>
+        /// <typeparam name="U">The type of the linked entity.</typeparam>
+        /// <param name="linkName">Name of the link.</param>
+        /// <returns>Self.</returns>
         public IBoundClient<U> NavigateTo<U>(string linkName = null)
             where U : class
         {
             return this.Link<U>(this.Command, linkName);
         }
-
+        /// <summary>
+        /// Navigates to the linked entity.
+        /// </summary>
+        /// <typeparam name="U">The type of the linked entity.</typeparam>
+        /// <param name="expression">The expression for the link.</param>
+        /// <returns>Self.</returns>
         public IBoundClient<U> NavigateTo<U>(Expression<Func<T, U>> expression)
             where U : class
         {
             return this.Link<U>(this.Command, ExtractColumnName(expression));
         }
-
+        /// <summary>
+        /// Navigates to the linked entity.
+        /// </summary>
+        /// <typeparam name="U">The type of the linked entity.</typeparam>
+        /// <param name="expression">The expression for the link.</param>
+        /// <returns>Self.</returns>
         public IBoundClient<U> NavigateTo<U>(Expression<Func<T, IEnumerable<U>>> expression) where U : class
         {
             return this.Link<U>(this.Command, ExtractColumnName(expression));
         }
-
+        /// <summary>
+        /// Navigates to the linked entity.
+        /// </summary>
+        /// <typeparam name="U">The type of the linked entity.</typeparam>
+        /// <param name="expression">The expression for the link.</param>
+        /// <returns>Self.</returns>
         public IBoundClient<U> NavigateTo<U>(Expression<Func<T, IList<U>>> expression) where U : class
         {
             return this.Link<U>(this.Command, ExtractColumnName(expression));
         }
-
+        /// <summary>
+        /// Navigates to the linked entity.
+        /// </summary>
+        /// <typeparam name="U">The type of the linked entity.</typeparam>
+        /// <param name="expression">The expression for the link.</param>
+        /// <returns>Self.</returns>
         public IBoundClient<U> NavigateTo<U>(Expression<Func<T, U[]>> expression) where U : class
         {
             return this.Link<U>(this.Command, ExtractColumnName(expression));
         }
-
+        /// <summary>
+        /// Navigates to the linked entity.
+        /// </summary>
+        /// <param name="linkName">Name of the link.</param>
+        /// <returns>Self.</returns>        
         public IBoundClient<IDictionary<string, object>> NavigateTo(string linkName)
         {
             return this.Link<IDictionary<string, object>>(this.Command, linkName);
         }
-
+        /// <summary>
+        /// Navigates to the linked entity.
+        /// </summary>
+        /// <param name="expression">The expression for the link.</param>
+        /// <returns>Self.</returns>
         public IBoundClient<T> NavigateTo(ODataExpression expression)
         {
             return this.Link<T>(this.Command, expression);
         }
 
+        /// <summary>
+        /// Executes the OData function or action.
+        /// </summary>
+        /// <returns>Execution result task.</returns>
         public Task ExecuteAsync()
         {
             return _client.ExecuteAsync(_command, CancellationToken.None);
         }
-
+        /// <summary>
+        /// Executes the OData function or action.
+        /// </summary>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Execution result task.</returns>
         public Task ExecuteAsync(CancellationToken cancellationToken)
         {
             return _client.ExecuteAsync(_command, cancellationToken);
         }
 
+        /// <summary>
+        /// Executes the OData function or action and returns a single item.
+        /// </summary>
+        /// <returns>Execution result.</returns>
         public Task<T> ExecuteAsSingleAsync()
         {
             return RectifyColumnSelectionAsync(_client.ExecuteAsSingleAsync(_command, CancellationToken.None), _command.SelectedColumns);
         }
-
+        /// <summary>
+        /// Executes the OData function or action and returns a single item.
+        /// </summary>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Execution result.</returns>
         public Task<T> ExecuteAsSingleAsync(CancellationToken cancellationToken)
         {
             return RectifyColumnSelectionAsync(_client.ExecuteAsSingleAsync(_command, cancellationToken), _command.SelectedColumns);
         }
 
+        /// <summary>
+        /// Executes the OData function or action and returns enumerable result.
+        /// </summary>
+        /// <returns>Execution result.</returns>
         public Task<IEnumerable<T>> ExecuteAsEnumerableAsync()
         {
             return RectifyColumnSelectionAsync(_client.ExecuteAsEnumerableAsync(_command, CancellationToken.None), _command.SelectedColumns);
         }
-
+        /// <summary>
+        /// Executes the OData function or action and returns enumerable result.
+        /// </summary>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Execution result.</returns>
         public Task<IEnumerable<T>> ExecuteAsEnumerableAsync(CancellationToken cancellationToken)
         {
             return RectifyColumnSelectionAsync(_client.ExecuteAsEnumerableAsync(_command, cancellationToken), _command.SelectedColumns);
         }
 
+        /// <summary>
+        /// Executes the OData function or action and returns scalar result.
+        /// </summary>
+        /// <returns>Execution result.</returns>
         public Task<U> ExecuteAsScalarAsync<U>()
         {
             return _client.ExecuteAsScalarAsync<U>(_command, CancellationToken.None);
         }
-
+        /// <summary>
+        /// Executes the OData function or action and returns scalar result.
+        /// </summary>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Execution result.</returns>
         public Task<U> ExecuteAsScalarAsync<U>(CancellationToken cancellationToken)
         {
             return _client.ExecuteAsScalarAsync<U>(_command, cancellationToken);
         }
 
+        /// <summary>
+        /// Executes the OData function and returns an array.
+        /// </summary>
+        /// <returns>Execution result.</returns>
         public Task<U[]> ExecuteAsArrayAsync<U>()
         {
             return ExecuteAsArrayAsync<U>(CancellationToken.None);
         }
+        /// <summary>
+        /// Executes the OData function and returns an array.
+        /// </summary>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Execution result.</returns>
+        public Task<U[]> ExecuteAsArrayAsync<U>(CancellationToken cancellationToken)
+        {
+            return _client.ExecuteAsArrayAsync<U>(_command, cancellationToken);
+        }
 
+        /// <summary>
+        /// Gets the OData command text.
+        /// </summary>
+        /// <returns>The command text.</returns>
         public Task<string> GetCommandTextAsync()
         {
             return GetCommandTextAsync(CancellationToken.None);
         }
-
+        /// <summary>
+        /// Gets the OData command text.
+        /// </summary>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>The command text.</returns>
         public Task<string> GetCommandTextAsync(CancellationToken cancellationToken)
         {
             return this.Command.GetCommandTextAsync(cancellationToken);
         }
 
-        public Task<U[]> ExecuteAsArrayAsync<U>(CancellationToken cancellationToken)
-        {
-            return _client.ExecuteAsArrayAsync<U>(_command, cancellationToken);
-        }
+#pragma warning disable 1591
 
         protected Task<IEnumerable<T>> RectifyColumnSelectionAsync(Task<IEnumerable<IDictionary<string, object>>> entries, IList<string> selectedColumns)
         {
@@ -248,5 +340,8 @@ namespace Simple.OData.Client
                     throw Utils.NotSupportedExpression(expression);
             }
         }
+
+#pragma warning restore 1591
+
     }
 }

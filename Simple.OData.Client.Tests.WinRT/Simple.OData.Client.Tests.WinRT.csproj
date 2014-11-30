@@ -237,6 +237,7 @@
     <Content Include="..\Simple.OData.Client.Tests.Net40\Resources\XmlWithPrefixedNamespace.txt">
       <Link>Resources\XmlWithPrefixedNamespace.txt</Link>
     </Content>
+    <None Include="app.config" />
     <None Include="packages.config" />
     <None Include="Simple.OData.Client.Tests.WinRT_TemporaryKey.pfx" />
   </ItemGroup>

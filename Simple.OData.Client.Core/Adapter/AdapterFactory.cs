@@ -25,16 +25,19 @@ namespace Simple.OData.Client
             _session = session;
         }
 
-        public async Task<IODataAdapter> CreateAdapterAsync(HttpResponseMessage response)
+        public Task<IODataAdapter> CreateAdapterAsync(HttpResponseMessage response)
         {
             var protocolVersions = GetSupportedProtocolVersions(response).ToArray();
 
+            IODataAdapter adapter;
             if (protocolVersions.Any(x => x == ODataProtocolVersion.V1 || x == ODataProtocolVersion.V2 || x == ODataProtocolVersion.V3))
-                return LoadAdapter(AdapterV3AssemblyName, AdapterV3TypeName, _session, protocolVersions.First(), response);
+                adapter = LoadAdapter(AdapterV3AssemblyName, AdapterV3TypeName, _session, protocolVersions.First(), response);
             else if (protocolVersions.Any(x => x == ODataProtocolVersion.V4))
-                return LoadAdapter(AdapterV4AssemblyName, AdapterV4TypeName, _session, protocolVersions.First(), response);
+                adapter = LoadAdapter(AdapterV4AssemblyName, AdapterV4TypeName, _session, protocolVersions.First(), response);
+            else
+                throw new NotSupportedException(string.Format("OData protocol {0} is not supported", protocolVersions));
 
-            throw new NotSupportedException(string.Format("OData protocol {0} is not supported", protocolVersions));
+            return Utils.GetTaskFromResult(adapter);
         }
 
         public async Task<string> GetMetadataAsStringAsync(HttpResponseMessage response)

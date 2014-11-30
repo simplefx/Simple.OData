@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using Microsoft.OData.Core;
 using Microsoft.OData.Edm;
 
+#pragma warning disable 1591
+
 namespace Simple.OData.Client.V4.Adapter
 {
     public class ResponseReader : ResponseReaderBase

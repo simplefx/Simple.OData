@@ -120,7 +120,7 @@ namespace Simple.OData.Client
         /// <summary>
         /// Executes the OData function or action and returns an array.
         /// </summary>
-        /// <typeparam name="T">The type of the result array.</typeparam>
+        /// <typeparam name="U">The type of the result array.</typeparam>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Action execution result.</returns>
         Task<U[]> ExecuteAsArrayAsync<U>(CancellationToken cancellationToken);

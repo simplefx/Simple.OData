@@ -4,12 +4,12 @@ using System.Runtime.Serialization;
 
 namespace Simple.OData.Client
 {
-#if NET40
-    [Serializable]
-#endif
     /// <summary>
     /// The exception that is thrown when the service failed to process the Web request
     /// </summary>
+#if NET40
+    [Serializable]
+#endif
     public class WebRequestException : Exception
     {
         private readonly HttpStatusCode _code;
@@ -93,6 +93,11 @@ namespace Simple.OData.Client
         }
 
 #if NET40
+        /// <summary>
+        /// Initializes a new instance of the <see cref="WebRequestException"/> class.
+        /// </summary>
+        /// <param name="info">The exception serialization information.</param>
+        /// <param name="context">The exception serialization context.</param>
         protected WebRequestException(
             SerializationInfo info,
             StreamingContext context) : base(info, context)
