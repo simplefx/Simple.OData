@@ -36,6 +36,8 @@ namespace Simple.OData.Client
 
         private async Task<IDictionary<string, object>> ExecuteUpdateEntryAsync(FluentCommand command, bool resultRequired, CancellationToken cancellationToken)
         {
+            AssertHasKey(command);
+
             var collectionName = command.QualifiedEntityCollectionName;
             var entryKey = command.HasKey ? command.KeyValues : command.FilterAsKey;
             var entryData = command.CommandData;
@@ -130,6 +132,8 @@ namespace Simple.OData.Client
 
         private async Task ExecuteLinkEntryAsync(FluentCommand command, string linkName, IDictionary<string, object> linkedEntryKey, CancellationToken cancellationToken)
         {
+            AssertHasKey(command);
+
             var collectionName = command.QualifiedEntityCollectionName;
             var entryKey = command.HasKey ? command.KeyValues : command.FilterAsKey;
 
@@ -153,6 +157,8 @@ namespace Simple.OData.Client
 
         private async Task ExecuteUnlinkEntryAsync(FluentCommand command, string linkName, IDictionary<string, object> linkedEntryKey, CancellationToken cancellationToken)
         {
+            AssertHasKey(command);
+
             var collectionName = command.QualifiedEntityCollectionName;
             var entryKey = command.HasKey ? command.KeyValues : command.FilterAsKey;
 
@@ -336,6 +342,12 @@ namespace Simple.OData.Client
             {
                 entryData.Remove(FluentCommand.ResourceTypeLiteral);
             }
+        }
+
+        private void AssertHasKey(FluentCommand command)
+        {
+            if (!command.HasKey && command.FilterAsKey == null)
+                throw new InvalidOperationException("No entry key specified.");
         }
 
         private async Task<string> FormatEntryKeyAsync(string collection, IDictionary<string, object> entryKey, CancellationToken cancellationToken)
