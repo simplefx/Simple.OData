@@ -47,16 +47,14 @@
     <Reference Include="Microsoft.Threading.Tasks.Extensions.Desktop">
       <HintPath>..\Solutions\packages\Microsoft.Bcl.Async.1.0.168\lib\net40\Microsoft.Threading.Tasks.Extensions.Desktop.dll</HintPath>
     </Reference>
-    <Reference Include="Simple.OData.Client.Core, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Solutions\packages\Simple.OData.V3.Client.4.0.0-rc6\lib\portable-net45+wp80+wpa81+win+MonoAndroid10+MonoTouch10\Simple.OData.Client.Core.dll</HintPath>
+    <Reference Include="Simple.OData.Client.Core">
+      <HintPath>..\Solutions\packages\Simple.OData.V3.Client.4.0.0-rcC\lib\portable-net45+wp80+wpa81+win+MonoAndroid10+MonoTouch10\Simple.OData.Client.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Simple.OData.Client.Dynamic, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\Solutions\packages\Simple.OData.V3.Client.4.0.0-rc6\lib\portable-net45+wp80+wpa81+win+MonoAndroid10+MonoTouch10\Simple.OData.Client.Dynamic.dll</HintPath>
+    <Reference Include="Simple.OData.Client.Dynamic">
+      <HintPath>..\Solutions\packages\Simple.OData.V3.Client.4.0.0-rcC\lib\portable-net45+wp80+wpa81+win+MonoAndroid10+MonoTouch10\Simple.OData.Client.Dynamic.dll</HintPath>
     </Reference>
-    <Reference Include="Simple.OData.Client.V3.Adapter, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Solutions\packages\Simple.OData.V3.Client.4.0.0-rc6\lib\portable-net45+wp80+wpa81+win+MonoAndroid10+MonoTouch10\Simple.OData.Client.V3.Adapter.dll</HintPath>
+    <Reference Include="Simple.OData.Client.V3.Adapter">
+      <HintPath>..\Solutions\packages\Simple.OData.V3.Client.4.0.0-rcC\lib\portable-net45+wp80+wpa81+win+MonoAndroid10+MonoTouch10\Simple.OData.Client.V3.Adapter.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
