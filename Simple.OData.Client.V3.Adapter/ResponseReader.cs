@@ -173,7 +173,7 @@ namespace Simple.OData.Client.V3.Adapter
                         break;
 
                     case ODataReaderState.FeedEnd:
-                        EndFeed(nodeStack, ref rootNode);
+                        EndFeed(nodeStack, CreateFeedDetails(odataReader.Item as ODataFeed), ref rootNode);
                         break;
 
                     case ODataReaderState.EntryStart:

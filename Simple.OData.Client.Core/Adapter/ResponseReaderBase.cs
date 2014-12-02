@@ -29,7 +29,7 @@ namespace Simple.OData.Client
             });
         }
 
-        protected void EndFeed(Stack<ResponseNode> nodeStack, ref ResponseNode rootNode)
+        protected void EndFeed(Stack<ResponseNode> nodeStack, ODataFeedAnnotations feedAnnotations, ref ResponseNode rootNode)
         {
             var feedNode = nodeStack.Pop();
             var entries = feedNode.Feed;
@@ -37,6 +37,15 @@ namespace Simple.OData.Client
                 nodeStack.Peek().Feed = entries;
             else
                 rootNode = feedNode;
+
+            if (feedNode.FeedAnnotations == null)
+            {
+                feedNode.FeedAnnotations = feedAnnotations;
+            }
+            else
+            {
+                feedNode.FeedAnnotations.Merge(feedAnnotations);
+            }
         }
 
         protected void StartEntry(Stack<ResponseNode> nodeStack)

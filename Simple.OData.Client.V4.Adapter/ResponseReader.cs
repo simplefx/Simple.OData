@@ -164,7 +164,7 @@ namespace Simple.OData.Client.V4.Adapter
                         break;
 
                     case ODataReaderState.FeedEnd:
-                        EndFeed(nodeStack, ref rootNode);
+                        EndFeed(nodeStack, CreateFeedAnnotaions(odataReader.Item as ODataFeed), ref rootNode);
                         break;
 
                     case ODataReaderState.EntryStart:
