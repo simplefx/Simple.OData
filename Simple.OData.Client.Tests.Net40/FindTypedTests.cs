@@ -95,6 +95,7 @@ namespace Simple.OData.Client.Tests
             var product = await _client
                 .For<Product>()
                 .Filter(x => x.ProductName == "Test1")
+                .Select(x => new { x.ProductID, x.ProductName, x.MappedEnglishName})
                 .FindEntryAsync();
             Assert.Equal("EnglishTest", product.MappedEnglishName);
         }

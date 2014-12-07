@@ -325,7 +325,9 @@ namespace Simple.OData.Client
             {
                 case ExpressionType.MemberAccess:
                     var memberExpression = expression as MemberExpression;
-                    var memberName = memberExpression.Member.Name;
+                    var memberName = (expression as MemberExpression).Expression.Type
+                        .GetAnyProperty(memberExpression.Member.Name)
+                        .GetMappedName();
                     return memberExpression.Expression is MemberExpression
                         ? String.Join("/", ExtractColumnName(memberExpression.Expression), memberName)
                         : memberName;
