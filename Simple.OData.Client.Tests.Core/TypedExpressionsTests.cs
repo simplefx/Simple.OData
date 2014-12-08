@@ -7,6 +7,22 @@ namespace Simple.OData.Client.Tests
 {
     public class TypedExpressionTests : TestBase
     {
+        class DataAttribute : Attribute
+        {
+            public string Name { get; set; }
+            public string PropertyName { get; set; }
+        }
+        class DataMemberAttribute : Attribute
+        {
+            public string Name { get; set; }
+            public string PropertyName { get; set; }
+        }
+        class OtherAttribute : Attribute
+        {
+            public string Name { get; set; }
+            public string PropertyName { get; set; }
+        }
+
         class TestEntity
         {
             public int ProductID { get; set; }
@@ -18,6 +34,18 @@ namespace Simple.OData.Client.Tests
             public TimeSpan Period { get; set; }
             public TestEntity Nested { get; set; }
             public TestEntity[] Collection { get; set; }
+
+            [Column(Name = "Name")] 
+            public string MappedName1 { get; set; }
+            [Data(Name = "Name", PropertyName = "OtherName")]
+            public string MappedName2 { get; set; }
+            [DataMember(Name = "Name", PropertyName = "OtherName")]
+            public string MappedName3 { get; set; }
+            [Other(Name = "OtherName", PropertyName = "Name")]
+            public string MappedName4 { get; set; }
+            [DataMember(Name = "Name", PropertyName = "OtherName")]
+            [Other(Name = "OtherName", PropertyName = "OtherName")]
+            public string MappedName5 { get; set; }
         }
 
         [Fact]
@@ -356,6 +384,21 @@ namespace Simple.OData.Client.Tests
         {
             Expression<Func<TestEntity, bool>> filter = x => x.Nested.ProductID == 1;
             Assert.Equal("Nested/ProductID eq 1", ODataExpression.FromLinqExpression(filter).AsString(_session));
+        }
+
+        [Fact]
+        public void FilterWithMappedProperties()
+        {
+            Expression<Func<TestEntity, bool>> filter = x => x.MappedName1 == "Milk";
+            Assert.Equal("Name eq 'Milk'", ODataExpression.FromLinqExpression(filter).AsString(_session));
+            filter = x => x.MappedName2 == "Milk";
+            Assert.Equal("Name eq 'Milk'", ODataExpression.FromLinqExpression(filter).AsString(_session));
+            filter = x => x.MappedName3 == "Milk";
+            Assert.Equal("Name eq 'Milk'", ODataExpression.FromLinqExpression(filter).AsString(_session));
+            filter = x => x.MappedName4 == "Milk";
+            Assert.Equal("Name eq 'Milk'", ODataExpression.FromLinqExpression(filter).AsString(_session));
+            filter = x => x.MappedName5 == "Milk";
+            Assert.Equal("Name eq 'Milk'", ODataExpression.FromLinqExpression(filter).AsString(_session));
         }
     }
 }

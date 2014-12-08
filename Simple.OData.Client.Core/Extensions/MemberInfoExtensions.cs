@@ -22,7 +22,7 @@ namespace Simple.OData.Client.Extensions
             return member.GetCustomAttributes().Any(x => x.GetType().Name == "NotMappedAttribute");
         }
 
-        public static string GetMappedName(this PropertyInfo property)
+        public static string GetMappedName(this MemberInfo property)
         {
             var supportedAttributeNames = new[]
             {

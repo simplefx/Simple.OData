@@ -66,7 +66,7 @@ namespace Simple.OData.Client
             }
             else
             {
-                var memberName = memberExpression.Member.Name;
+                var memberName = memberExpression.Member.GetMappedName();
                 memberNames = memberNames == null ? memberName : string.Join(".", memberName, memberNames);
                 switch (memberExpression.Expression.NodeType)
                 {
