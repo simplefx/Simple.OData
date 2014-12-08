@@ -245,16 +245,13 @@ namespace Simple.OData.Client.V4.Adapter
                             Value = GetPropertyValue(property.Type.AsComplex().StructuralProperties(), x.Key, x.Value),
                         }),
                     };
-                    break;
 
                 case EdmTypeKind.Collection:
                     return new ODataCollectionValue()
                     {
                         TypeName = property.Type.FullName(),
-                        Items = (value as IEnumerable<object>).Select(x => GetPropertyValue(
-                            property.Type.AsCollection().AsStructured().StructuralProperties(), property.Name, x)),
+                        Items = GetCollectionItems(property, value as IEnumerable<object>),
                     };
-                    break;
 
                 case EdmTypeKind.Primitive:
                     var mappedTypes = _typeMap.Where(x => x.Value == (property.Type.Definition as IEdmPrimitiveType).PrimitiveKind);
@@ -276,6 +273,15 @@ namespace Simple.OData.Client.V4.Adapter
                 default:
                     return value;
             }
+        }
+
+        private IEnumerable<object> GetCollectionItems(IEdmProperty property, IEnumerable<object> values)
+        {
+            var collection = property.Type.AsCollection();
+            return collection.ElementType().TypeKind().IsStructured()
+                ? values.Select(x => 
+                    GetPropertyValue(collection.AsStructured().StructuralProperties(), property.Name, x))
+                : values;
         }
 
         private static readonly Dictionary<Type, EdmPrimitiveTypeKind> _typeMap = new[]

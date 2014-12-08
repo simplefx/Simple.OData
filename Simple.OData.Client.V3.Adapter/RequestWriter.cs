@@ -284,8 +284,7 @@ namespace Simple.OData.Client.V3.Adapter
                     return new ODataCollectionValue()
                     {
                         TypeName = property.Type.FullName(),
-                        Items = (value as IEnumerable<object>).Select(x => GetPropertyValue(
-                            property.Type.AsCollection().AsStructured().StructuralProperties(), property.Name, x)),
+                        Items = GetCollectionItems(property, value as IEnumerable<object>),
                     };
 
                 case EdmTypeKind.Primitive:
@@ -308,6 +307,15 @@ namespace Simple.OData.Client.V3.Adapter
                 default:
                     return value;
             }
+        }
+
+        private IEnumerable<object> GetCollectionItems(IEdmProperty property, IEnumerable<object> values)
+        {
+            var collection = property.Type.AsCollection();
+            return collection.ElementType().TypeKind().IsStructured()
+                ? values.Select(x =>
+                    GetPropertyValue(collection.AsStructured().StructuralProperties(), property.Name, x))
+                : values;
         }
 
         private static readonly Dictionary<Type, EdmPrimitiveTypeKind> _typeMap = new []
