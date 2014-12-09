@@ -172,6 +172,32 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task UpdatePersonAddress()
+        {
+            var person = await _client
+                .For<Person>("People")
+                .Filter(x => x.UserName == "russellwhyte")
+                .Set(new
+                {
+                    AddressInfo = new[]
+                    {
+                        new Location()
+                        {
+                            Address = "187 Suffolk Ln.",
+                            City = new Location.LocationCity()
+                            {
+                                CountryRegion = "United States", 
+                                Name = "Boise", 
+                                Region = "ID"
+                            }
+                        }
+                    },
+                })
+                .UpdateEntryAsync();
+            Assert.Equal("Boise", person.AddressInfo.First().City.Name);
+        }
+
+        [Fact]
         public async Task FindMe()
         {
             var person = await _client

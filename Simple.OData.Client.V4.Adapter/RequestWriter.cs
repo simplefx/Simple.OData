@@ -229,32 +229,38 @@ namespace Simple.OData.Client.V4.Adapter
 
         private object GetPropertyValue(IEnumerable<IEdmProperty> properties, string key, object value)
         {
+            var property = properties.BestMatch(x => x.Name, key, _session.Pluralizer);
+            return GetPropertyValue(property.Type, value);
+        }
+
+        private object GetPropertyValue(IEdmTypeReference propertyType, object value)
+        {
             if (value == null)
                 return value;
 
-            var property = properties.BestMatch(x => x.Name, key, _session.Pluralizer);
-            switch (property.Type.TypeKind())
+            switch (propertyType.TypeKind())
             {
                 case EdmTypeKind.Complex:
                     return new ODataComplexValue()
                     {
-                        TypeName = property.Type.FullName(),
+                        TypeName = propertyType.FullName(),
                         Properties = value.ToDictionary().Select(x => new ODataProperty()
                         {
                             Name = x.Key,
-                            Value = GetPropertyValue(property.Type.AsComplex().StructuralProperties(), x.Key, x.Value),
+                            Value = GetPropertyValue(propertyType.AsComplex().StructuralProperties(), x.Key, x.Value),
                         }),
                     };
 
                 case EdmTypeKind.Collection:
+                    var collection = propertyType.AsCollection();
                     return new ODataCollectionValue()
                     {
-                        TypeName = property.Type.FullName(),
-                        Items = GetCollectionItems(property, value as IEnumerable<object>),
+                        TypeName = propertyType.FullName(),
+                        Items = (value as IEnumerable<object>).Select(x => GetPropertyValue(collection.ElementType(), x)),
                     };
 
                 case EdmTypeKind.Primitive:
-                    var mappedTypes = _typeMap.Where(x => x.Value == (property.Type.Definition as IEdmPrimitiveType).PrimitiveKind);
+                    var mappedTypes = _typeMap.Where(x => x.Value == (propertyType.Definition as IEdmPrimitiveType).PrimitiveKind);
                     if (mappedTypes.Any())
                     {
                         foreach (var mappedType in mappedTypes)
@@ -263,7 +269,7 @@ namespace Simple.OData.Client.V4.Adapter
                             if (Utils.TryConvert(value, mappedType.Key, out result))
                                 return result;
                         }
-                        throw new FormatException(string.Format("Unable to convert value of type {0} to OData type {1}", value.GetType(), property.Type));
+                        throw new FormatException(string.Format("Unable to convert value of type {0} to OData type {1}", value.GetType(), propertyType));
                     }
                     return value;
 
@@ -273,15 +279,6 @@ namespace Simple.OData.Client.V4.Adapter
                 default:
                     return value;
             }
-        }
-
-        private IEnumerable<object> GetCollectionItems(IEdmProperty property, IEnumerable<object> values)
-        {
-            var collection = property.Type.AsCollection();
-            return collection.ElementType().TypeKind().IsStructured()
-                ? values.Select(x => 
-                    GetPropertyValue(collection.AsStructured().StructuralProperties(), property.Name, x))
-                : values;
         }
 
         private static readonly Dictionary<Type, EdmPrimitiveTypeKind> _typeMap = new[]
