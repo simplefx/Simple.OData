@@ -100,6 +100,7 @@ namespace Simple.OData.Client
             "octopus", "octopuses", "octopodes",
             "ovum", "ova", "",
             "ox", "ox", "oxen",
+            "person", "persons", "people",
             "photo", "photos", "",
             "pincers", "", "",
             "pliers", "", "",

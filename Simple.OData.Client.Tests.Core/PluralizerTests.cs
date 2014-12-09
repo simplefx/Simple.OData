@@ -22,6 +22,7 @@ namespace Simple.OData.Client.Tests
 
         [Theory]
         [InlineData("Persons", "Person")]
+        [InlineData("People", "Person")]
         [InlineData("Days", "Day")]
         [InlineData("Dummies", "Dummy")]
         [InlineData("Accesses", "Access")]

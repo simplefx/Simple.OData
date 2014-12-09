@@ -34,12 +34,14 @@ namespace Simple.OData.Client
 
         public static bool NamesMatch(string actualName, string requestedName, IPluralizer pluralizer)
         {
-            actualName = actualName.Split('.').Last();
-            requestedName = requestedName.Split('.').Last();
+            actualName = actualName.Split('.').Last().Homogenize();
+            requestedName = requestedName.Split('.').Last().Homogenize();
 
-            return actualName.Homogenize() == requestedName.Homogenize()
-                   || pluralizer != null && actualName.Homogenize() == pluralizer.Singularize(requestedName).Homogenize()
-                   || pluralizer != null && actualName.Homogenize() == pluralizer.Pluralize(requestedName).Homogenize();
+            return actualName == requestedName || pluralizer != null && 
+                (actualName == pluralizer.Singularize(requestedName) || 
+                actualName == pluralizer.Pluralize(requestedName) ||
+                pluralizer.Singularize(actualName) == requestedName ||
+                pluralizer.Pluralize(actualName) == requestedName);
         }
 
         public static T BestMatch<T>(this IEnumerable<T> collection, 
