@@ -25,7 +25,7 @@ namespace Simple.OData.Client.Tests
 
             int count = 0;
             var people = await _client
-                .For<Person>("People")
+                .For<Person>()
                 .FindEntriesAsync(annotations);
             count += people.Count();
 
@@ -44,7 +44,7 @@ namespace Simple.OData.Client.Tests
         public async Task FindPersonExpandTripsAndFriends()
         {
             var person = await _client
-                .For<Person>("People")
+                .For<Person>()
                 .Key("russellwhyte")
                 .Expand(x => new { x.Trips, x.Friends })
                 .FindEntryAsync();
@@ -56,7 +56,7 @@ namespace Simple.OData.Client.Tests
         public async Task FindPersonPlanItems()
         {
             var flights = await _client
-                .For<Person>("People")
+                .For<Person>()
                 .Key("russellwhyte")
                 .NavigateTo(x => x.Trips)
                 .Key(1003)
@@ -69,7 +69,7 @@ namespace Simple.OData.Client.Tests
         public async Task FindPersonWithAnyTrips()
         {
             var flights = await _client
-                .For<Person>("People")
+                .For<Person>()
                 .Filter(x => x.Trips
                     .Any(y => y.Budget > 10000d))
                 .Expand(x => x.Trips)
@@ -82,7 +82,7 @@ namespace Simple.OData.Client.Tests
         public async Task FindPersonWithAllTrips()
         {
             var flights = await _client
-                .For<Person>("People")
+                .For<Person>()
                 .Filter(x => x.Trips
                     .All(y => y.Budget > 10000d))
                 .Expand(x => x.Trips)
@@ -95,7 +95,7 @@ namespace Simple.OData.Client.Tests
         {
             var duration = TimeSpan.FromHours(4);
             var flights = await _client
-                .For<Person>("People")
+                .For<Person>()
                 .Filter(x => x.Trips
                     .All(y => y.PlanItems
                         .Any(z => z.Duration < duration)))
@@ -107,7 +107,7 @@ namespace Simple.OData.Client.Tests
         public async Task FindPersonFlight()
         {
             var flight = await _client
-                .For<Person>("People")
+                .For<Person>()
                 .Key("russellwhyte")
                 .NavigateTo(x => x.Trips)
                 .Key(1003)
@@ -122,7 +122,7 @@ namespace Simple.OData.Client.Tests
         public async Task FindPersonFlights()
         {
             var flights = await _client
-                .For<Person>("People")
+                .For<Person>()
                 .Key("russellwhyte")
                 .NavigateTo(x => x.Trips)
                 .Key(1003)
@@ -137,7 +137,7 @@ namespace Simple.OData.Client.Tests
         public async Task FindPersonFlightsWithFilter()
         {
             var flights = await _client
-                .For<Person>("People")
+                .For<Person>()
                 .Key("russellwhyte")
                 .NavigateTo(x => x.Trips)
                 .Key(1003)
@@ -153,7 +153,7 @@ namespace Simple.OData.Client.Tests
         public async Task UpdatePersonLastName()
         {
             var person = await _client
-                .For<Person>("People")
+                .For<Person>()
                 .Filter(x => x.UserName == "russellwhyte")
                 .Set(new { LastName = "White" })
                 .UpdateEntryAsync();
@@ -164,7 +164,7 @@ namespace Simple.OData.Client.Tests
         public async Task UpdatePersonEmail()
         {
             var person = await _client
-                .For<Person>("People")
+                .For<Person>()
                 .Filter(x => x.UserName == "russellwhyte")
                 .Set(new { Emails = new[] { "russell.whyte@gmail.com" } })
                 .UpdateEntryAsync();
@@ -175,7 +175,7 @@ namespace Simple.OData.Client.Tests
         public async Task UpdatePersonAddress()
         {
             var person = await _client
-                .For<Person>("People")
+                .For<Person>()
                 .Filter(x => x.UserName == "russellwhyte")
                 .Set(new
                 {
@@ -279,7 +279,7 @@ namespace Simple.OData.Client.Tests
         public async Task InsertEvent()
         {
             var command = _client
-                .For<Person>("People")
+                .For<Person>()
                 .Key("russellwhyte")
                 .NavigateTo<Trip>()
                 .Key(1003)
@@ -301,7 +301,7 @@ namespace Simple.OData.Client.Tests
         public async Task UpdateEvent()
         {
             var command = _client
-                .For<Person>("People")
+                .For<Person>()
                 .Key("russellwhyte")
                 .NavigateTo<Trip>()
                 .Key(1003)
@@ -324,7 +324,7 @@ namespace Simple.OData.Client.Tests
         public async Task DeleteEvent()
         {
             var command = _client
-                .For<Person>("People")
+                .For<Person>()
                 .Key("russellwhyte")
                 .NavigateTo<Trip>()
                 .Key(1003)
@@ -350,7 +350,7 @@ namespace Simple.OData.Client.Tests
         public async Task FindPersonTrips()
         {
             var trips = await _client
-                .For<Person>("People")
+                .For<Person>()
                 .Key("russellwhyte")
                 .NavigateTo<Trip>()
                 .FindEntriesAsync();
@@ -362,7 +362,7 @@ namespace Simple.OData.Client.Tests
         public async Task FindPersonTripsFilterDescription()
         {
             var trips = await _client
-                .For<Person>("People")
+                .For<Person>()
                 .Key("russellwhyte")
                 .NavigateTo<Trip>()
                 .Filter(x => x.Description.Contains("New York"))
@@ -388,7 +388,7 @@ namespace Simple.OData.Client.Tests
         public async Task ResetDataSource()
         {
             var command = _client
-                .For<Person>("People")
+                .For<Person>()
                 .Key("russellwhyte")
                 .NavigateTo<Trip>()
                 .Key(1003)
@@ -415,11 +415,24 @@ namespace Simple.OData.Client.Tests
         public async Task ShareTrip()
         {
             await _client
-                .For<Person>("People")
+                .For<Person>()
                 .Key("russellwhyte")
                 .Action("ShareTrip")
                 .Set(new { userName = "scottketchum", tripId = 1003 })
                 .ExecuteAsSingleAsync();
+        }
+
+        [Fact]
+        public async Task GetInvolvedPeople()
+        {
+            var people = await _client
+                .For<Person>()
+                .Key("scottketchum")
+                .NavigateTo<Trip>()
+                .Key(0)
+                .Function("GetInvolvedPeople")
+                .ExecuteAsEnumerableAsync();
+            Assert.Equal(2, people.Count());
         }
 
         [Fact]

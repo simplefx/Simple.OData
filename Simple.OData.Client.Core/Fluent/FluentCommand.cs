@@ -581,17 +581,14 @@ namespace Simple.OData.Client
             if (HasKey)
                 commandText += _session.Adapter.ConvertKeyValuesToUriLiteral(this.KeyValues, true);
 
-            if (!string.IsNullOrEmpty(_functionName))
+            if (!string.IsNullOrEmpty(_functionName) || !string.IsNullOrEmpty(_actionName))
             {
-                if (!string.IsNullOrEmpty(_collectionName))
+                if (!string.IsNullOrEmpty(_collectionName) || !string.IsNullOrEmpty(_linkName))
                     commandText += "/";
-                commandText += _session.Metadata.GetFunctionFullName(_functionName);
-            }
-            else if (!string.IsNullOrEmpty(_actionName))
-            {
-                if (!string.IsNullOrEmpty(_collectionName))
-                    commandText += "/";
-                commandText += _session.Metadata.GetActionFullName(_actionName);
+                if (!string.IsNullOrEmpty(_functionName))
+                    commandText += _session.Metadata.GetFunctionFullName(_functionName);
+                else
+                    commandText += _session.Metadata.GetActionFullName(_actionName);
             }
 
             if (!string.IsNullOrEmpty(_functionName) && _session.Adapter.FunctionFormat == FunctionFormat.Key)
