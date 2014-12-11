@@ -70,7 +70,9 @@ namespace Simple.OData.Client.Extensions
                 int intValue;
                 if (int.TryParse(stringValue, out intValue))
                 {
-                    return Convert.ChangeType(intValue, fieldOrPropertyType, CultureInfo.InvariantCulture);
+                    object result;
+                    Utils.TryConvert(intValue, fieldOrPropertyType, out result);
+                    return result;
                 }
                 else
                 {

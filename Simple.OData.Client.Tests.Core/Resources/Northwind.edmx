@@ -71,6 +71,7 @@
         <Property Name="OrderDate" Type="Edm.DateTime" Precision="3" />
         <Property Name="RequiredDate" Type="Edm.DateTime" Precision="3" />
         <Property Name="ShippedDate" Type="Edm.DateTime" Precision="3" />
+        <Property Name="ShippedDateTimeOffset" Type="Edm.DateTimeOffset" Precision="3" />
         <Property Name="Freight" Type="Edm.Decimal" Precision="19" Scale="4" />
         <NavigationProperty Name="Customer" Relationship="NorthwindModel.Orders_FK00" ToRole="Customer" FromRole="Orders" />
         <NavigationProperty Name="Employee" Relationship="NorthwindModel.Orders_FK02" ToRole="Employee" FromRole="Orders" />

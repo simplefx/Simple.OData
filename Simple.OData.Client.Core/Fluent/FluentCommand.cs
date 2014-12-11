@@ -713,7 +713,7 @@ namespace Simple.OData.Client
             IDictionary<string, object> namedKeyValues = new Dictionary<string, object>();
             if (!ReferenceEquals(expression, null))
             {
-                ok = expression.ExtractEqualityComparisons(namedKeyValues);
+                ok = expression.ExtractLookupColumns(namedKeyValues);
             }
             if (!ok)
                 return null;

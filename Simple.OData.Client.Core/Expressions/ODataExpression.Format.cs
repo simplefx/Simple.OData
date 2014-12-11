@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace Simple.OData.Client
@@ -10,12 +11,25 @@ namespace Simple.OData.Client
 
         internal string Format(ExpressionContext context)
         {
-            if (_operator == ExpressionOperator.None)
+            if (_operator == ExpressionOperator.None && _conversionType == null)
             {
                 return this.Reference != null ?
                     FormatReference(context) : this.Function != null ?
                     FormatFunction(context) :
                     FormatValue(context);
+            }
+            else if (_conversionType != null)
+            {
+                var expr = _left;
+                if (expr.Reference == null && expr.Function == null)
+                {
+                    object result;
+                    if (Utils.TryConvert(expr.Value, _conversionType, out result))
+                    {
+                        expr = new ODataExpression(result);
+                    }
+                }
+                return FormatExpression(expr, context);
             }
             else if (_operator == ExpressionOperator.NOT || _operator == ExpressionOperator.NEG)
             {
@@ -67,20 +81,20 @@ namespace Simple.OData.Client
             if (FunctionMapping.TryGetFunctionMapping(this.Function.FunctionName, this.Function.Arguments.Count(), adapterVersion, out mapping))
             {
                 var mappedFunction = mapping.FunctionMapper(this.Function.FunctionName, _functionCaller.Format(context), this.Function.Arguments).Function;
-                var formattedArguments = string.Join(",", (IEnumerable<object>) mappedFunction.Arguments.Select(x => FormatExpression(x, context)));
+                var formattedArguments = string.Join(",", (IEnumerable<object>)mappedFunction.Arguments.Select(x => FormatExpression(x, context)));
 
-                return string.Format("{0}({1})", 
+                return string.Format("{0}({1})",
                     mappedFunction.FunctionName, formattedArguments);
             }
             else if (string.Equals(this.Function.FunctionName, ODataLiteral.Any, StringComparison.OrdinalIgnoreCase) ||
                      string.Equals(this.Function.FunctionName, ODataLiteral.All, StringComparison.OrdinalIgnoreCase))
             {
-                var formattedArguments = string.Format("x{0}:x{0}/{1}", 
-                    ArgumentCounter >= 0 ? (1 + (ArgumentCounter++) % 9).ToString() : string.Empty, 
-                    FormatExpression(this.Function.Arguments.First(), new ExpressionContext(context.Session, 
+                var formattedArguments = string.Format("x{0}:x{0}/{1}",
+                    ArgumentCounter >= 0 ? (1 + (ArgumentCounter++) % 9).ToString() : string.Empty,
+                    FormatExpression(this.Function.Arguments.First(), new ExpressionContext(context.Session,
                         new EntityCollection(_functionCaller.Reference, context.EntityCollection))));
 
-                return string.Format("{0}/{1}({2})", 
+                return string.Format("{0}/{1}({2})",
                     _functionCaller.Format(context), this.Function.FunctionName.ToLower(), formattedArguments);
             }
             else

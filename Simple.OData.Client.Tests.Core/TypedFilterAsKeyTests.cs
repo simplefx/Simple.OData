@@ -88,6 +88,40 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void FindAllByFilterWithDateTimeOffset()
+        {
+            var created = new DateTimeOffset(2010, 12, 1, 12, 11, 10, TimeSpan.FromHours(0));
+            var command = _client
+                .For<Order>()
+                .Filter(x => x.ShippedDateTimeOffset > created);
+            string commandText = command.GetCommandTextAsync().Result;
+            Assert.Equal("Orders?$filter=ShippedDateTimeOffset%20gt%20datetimeoffset%272010-12-01T12%3A11%3A10Z%27", commandText);
+        }
+
+        [Fact]
+        public void FindAllByFilterWithDateTimeOffsetCastFromDateTime()
+        {
+            var created = new DateTime(2010, 12, 1, 12, 11, 10, DateTimeKind.Utc);
+            var ddd = (DateTimeOffset)created;
+            var command = _client
+                .For<Order>()
+                .Filter(x => x.ShippedDateTimeOffset > (DateTimeOffset)created);
+            string commandText = command.GetCommandTextAsync().Result;
+            Assert.Equal("Orders?$filter=ShippedDateTimeOffset%20gt%20datetimeoffset%272010-12-01T12%3A11%3A10Z%27", commandText);
+        }
+
+        [Fact]
+        public void FindAllByFilterWithDateTimeOffsetCastFromDateTimeOffset()
+        {
+            var created = new DateTimeOffset(2010, 12, 1, 12, 11, 10, TimeSpan.FromHours(0));
+            var command = _client
+                .For<Order>()
+                .Filter(x => x.ShippedDateTimeOffset > (DateTimeOffset)created);
+            string commandText = command.GetCommandTextAsync().Result;
+            Assert.Equal("Orders?$filter=ShippedDateTimeOffset%20gt%20datetimeoffset%272010-12-01T12%3A11%3A10Z%27", commandText);
+        }
+
+        [Fact]
         public void FindAllEmployeeSuperiors()
         {
             var command = _client

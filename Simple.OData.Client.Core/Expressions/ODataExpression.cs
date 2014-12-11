@@ -13,6 +13,7 @@ namespace Simple.OData.Client
         private readonly ODataExpression _left;
         private readonly ODataExpression _right;
         private readonly ExpressionOperator _operator;
+        private readonly Type _conversionType;
 
         public string Reference { get; private set; }
         public object Value { get; private set; }
@@ -62,6 +63,12 @@ namespace Simple.OData.Client
             this.Function = function;
         }
 
+        protected ODataExpression(ODataExpression expr, Type conversionType)
+        {
+            _left = expr;
+            _conversionType = conversionType;
+        }
+
         internal static ODataExpression FromReference(string reference)
         {
             return new ODataExpression(reference);
@@ -106,26 +113,39 @@ namespace Simple.OData.Client
             return Format(new ExpressionContext(session));
         }
 
-        internal bool ExtractEqualityComparisons(IDictionary<string, object> columnEqualityComparisons)
+        internal bool ExtractLookupColumns(IDictionary<string, object> lookupColumns)
         {
             switch (_operator)
             {
                 case ExpressionOperator.AND:
-                    _left.ExtractEqualityComparisons(columnEqualityComparisons);
-                    _right.ExtractEqualityComparisons(columnEqualityComparisons);
-                    return true;
+                    var ok = _left.ExtractLookupColumns(lookupColumns);
+                    if (ok)
+                        ok = _right.ExtractLookupColumns(lookupColumns);
+                    return ok;
 
                 case ExpressionOperator.EQ:
-                    if (!string.IsNullOrEmpty(_left.Reference))
+                    var expr = _left;
+                    while (expr._conversionType != null)
                     {
-                        var key = _left.Reference.Split('.').Last();
-                        if (!columnEqualityComparisons.ContainsKey(key))
-                            columnEqualityComparisons.Add(key, _right);
+                        expr = expr._left;
+                    }
+                    if (!string.IsNullOrEmpty(expr.Reference))
+                    {
+                        var key = expr.Reference.Split('.').Last();
+                        if (key != null && !lookupColumns.ContainsKey(key))
+                            lookupColumns.Add(key, _right);
                     }
                     return true;
 
                 default:
-                    return false;
+                    if (_conversionType != null)
+                    {
+                        return _left.ExtractLookupColumns(lookupColumns);
+                    }
+                    else
+                    {
+                        return false;
+                    }
             }
         }
     }
