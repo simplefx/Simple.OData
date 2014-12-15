@@ -119,6 +119,23 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task FindPersonFlightExpandAndSelect()
+        {
+            var flight = await _client
+                .For<Person>()
+                .Key("russellwhyte")
+                .NavigateTo(x => x.Trips)
+                .Key(1003)
+                .NavigateTo(x => x.PlanItems)
+                .Key(21)
+                .As<Flight>()
+                .Expand(x => x.Airline)
+                .Select(x => new { x.FlightNumber, x.Airline.AirlineCode})
+                .FindEntryAsync();
+            Assert.Equal("FM", flight.Airline.AirlineCode);
+        }
+
+        [Fact]
         public async Task FindPersonFlights()
         {
             var flights = await _client

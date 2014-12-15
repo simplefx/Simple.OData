@@ -323,6 +323,18 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task ExpandWithSelect()
+        {
+            var product = (await _client
+                .For<Product>()
+                .OrderBy(x => x.ProductID)
+                .Expand(x => x.Category)
+                .Select(x => new { x.ProductName, x.Category.CategoryName })
+                .FindEntriesAsync()).Last();
+            Assert.Equal("Condiments", product.Category.CategoryName);
+        }
+
+        [Fact]
         public async Task OrderBySingle()
         {
             var product = await _client

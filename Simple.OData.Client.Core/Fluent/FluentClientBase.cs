@@ -297,7 +297,24 @@ namespace Simple.OData.Client
             }
             else
             {
-                return entry.Where(x => selectedColumns.Any(y => x.Key.Homogenize() == y.Homogenize())).ToIDictionary();
+                return entry.Where(x => selectedColumns.Any(y => IsSelectedColumn(x, y))).ToIDictionary();
+            }
+        }
+
+        private static bool IsSelectedColumn(KeyValuePair<string, object> kv, string columnName)
+        {
+            var items = columnName.Split('/');
+            if (items.Count() == 1)
+            {
+                return kv.Key.Homogenize() == columnName.Homogenize();
+            }
+            else
+            {
+                var item = items.First();
+                return kv.Key.Homogenize() == item.Homogenize() &&
+                       kv.Value is IDictionary<string, object> &&
+                       (kv.Value as IDictionary<string, object>)
+                           .Any(x => IsSelectedColumn(x, string.Join("/", items.Skip(1))));
             }
         }
 
