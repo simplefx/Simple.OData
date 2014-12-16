@@ -53,6 +53,19 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task FindPersonExpandFriendsWithOrderBy()
+        {
+            var person = await _client
+                .For("People")
+                .Key("russellwhyte")
+                .Expand("Friends")
+                .OrderBy("Friends/LastName")
+                .FindEntryAsync();
+            //Assert.Equal(3, person.Trips.Count());
+            //Assert.Equal(4, person.Friends.Count());
+        }
+
+        [Fact]
         public async Task FindPersonPlanItems()
         {
             var flights = await _client

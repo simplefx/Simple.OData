@@ -357,6 +357,17 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task OrderByExpanded()
+        {
+            var product = (await _client
+                .For<Product>()
+                .Expand(x => x.Category)
+                .OrderBy(x => new { x.Category.CategoryName })
+                .FindEntriesAsync()).Last();
+            Assert.Equal("Seafood", product.Category.CategoryName);
+        }
+
+        [Fact]
         public async Task NavigateToSingle()
         {
             var category = await _client

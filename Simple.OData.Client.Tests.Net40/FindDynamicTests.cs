@@ -297,6 +297,18 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task OrderByExpanded()
+        {
+            var x = ODataDynamic.Expression;
+            var product = (await _client
+                .For(x.Products)
+                .Expand(x.Category)
+                .OrderBy(x.Category.CategoryName)
+                .FindEntriesAsync() as IEnumerable<dynamic>).Last();
+            Assert.Equal("Seafood", product.Category.CategoryName);
+        }
+
+        [Fact]
         public async Task NavigateToSingle()
         {
             var x = ODataDynamic.Expression;

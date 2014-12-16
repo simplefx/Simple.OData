@@ -629,25 +629,17 @@ namespace Simple.OData.Client
             if (_topCount >= 0)
                 extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Top, _topCount));
 
-            if (_expandAssociations.Any())
+            switch (_session.Adapter.AdapterVersion)
             {
-                extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Expand,
-                    string.Join(",", _expandAssociations.Select(x => FormatExpandItem(x, this.EntityCollection, _selectColumns)))));
-            }
+                case AdapterVersion.V3:
+                    FormatClause(extraClauses, _expandAssociations, ODataLiteral.Expand, FormatExpandItem);
+                    FormatClause(extraClauses, _selectColumns, ODataLiteral.Select, FormatSelectItem);
+                    FormatClause(extraClauses, _orderbyColumns, ODataLiteral.OrderBy, FormatOrderByItem);
+                    break;
 
-            var selectColumns = _selectColumns;
-            if (_session.Adapter.AdapterVersion == AdapterVersion.V4)
-                selectColumns = selectColumns.Where(x => !x.Contains("/")).ToList();
-            if (selectColumns.Any())
-            {
-                extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Select,
-                    string.Join(",", selectColumns.Select(x => FormatSelectItem(x, this.EntityCollection)))));
-            }
-
-            if (_orderbyColumns.Any())
-            {
-                extraClauses.Add(string.Format("{0}={1}", ODataLiteral.OrderBy,
-                    string.Join(",", _orderbyColumns.Select(FormatOrderByItem))));
+                case AdapterVersion.V4:
+                    FormatExpandSelectOrderBy(extraClauses, this.EntityCollection, _expandAssociations, _selectColumns, _orderbyColumns);
+                    break;
             }
 
             if (_includeCount)
@@ -680,84 +672,172 @@ namespace Simple.OData.Client
             return columns.SelectMany(x => x.Key.Split(',').Select(y => new KeyValuePair<string, bool>(y.Trim(), x.Value)));
         }
 
-        private string FormatExpandItem(string item, EntityCollection entityCollection, IEnumerable<string> selectColumns = null)
+        private void FormatClause<T>(IList<string> extraClauses, IList<T> items,
+            string clauseLiteral, Func<T, EntityCollection, string> formatItem)
         {
-            var items = item.Split('/');
+            if (items.Any())
+            {
+                extraClauses.Add(string.Format("{0}={1}", clauseLiteral,
+                    string.Join(",", items.Select(x => formatItem(x, this.EntityCollection)))));
+            }
+        }
+
+        private string FormatExpandItem(string path, EntityCollection entityCollection)
+        {
+            var items = path.Split('/');
             var associationName = _session.Metadata.GetNavigationPropertyExactName(entityCollection.Name, items.First());
-            selectColumns = selectColumns == null
-                ? null
-                : selectColumns
-                    .Where(x => x.Contains("/") && x.Split('/').First() == associationName)
-                    .Select(x => string.Join("/", x.Split('/').Skip(1)));
 
             var text = associationName;
             if (items.Count() == 1)
             {
-                if (_session.Adapter.AdapterVersion == AdapterVersion.V3 ||
-                    selectColumns == null || !selectColumns.Any())
-                {
-                    return text;
-                }
-                else
-                {
-                    var columns = string.Join(",", selectColumns.Where(x => !x.Contains("/")).ToList());
-                    return string.Format("{0}({1}={2})",
-                        text, ODataLiteral.Select, columns);
-                }
+                return text;
             }
             else
             {
-                item = item.Substring(items.First().Length + 1);
+                path = path.Substring(items.First().Length + 1);
 
                 entityCollection = _session.Metadata.GetEntityCollection(
                     _session.Metadata.GetNavigationPropertyPartnerName(entityCollection.Name, associationName));
-                if (_session.Adapter.AdapterVersion == AdapterVersion.V3)
-                {
-                    return string.Format("{0}/{1}", text,
-                        FormatExpandItem(item, entityCollection));
-                }
-                else
-                {
-                    if (selectColumns == null || !selectColumns.Any())
-                    {
-                        return string.Format("{0}({1}={2})",
-                            text, ODataLiteral.Expand, FormatExpandItem(item, entityCollection));
-                    }
-                    else
-                    {
-                        var columns = string.Join(",", selectColumns.Where(x => !x.Contains("/")).ToList());
-                        return string.Format("{0}({1}={2}({3}={4}))",
-                            text, ODataLiteral.Expand, FormatExpandItem(item, entityCollection, selectColumns),
-                            ODataLiteral.Select, columns);
-                    }
-                }
+
+                return string.Format("{0}/{1}", text, FormatExpandItem(path, entityCollection));
             }
         }
 
-        private string FormatSelectItem(string item, EntityCollection entityCollection)
+        private string FormatSelectItem(string path, EntityCollection entityCollection)
         {
-            var items = item.Split('/');
+            var items = path.Split('/');
             if (items.Count() == 1)
             {
-                return _session.Metadata.HasStructuralProperty(entityCollection.Name, item)
-                    ? _session.Metadata.GetStructuralPropertyExactName(entityCollection.Name, item)
-                    : _session.Metadata.GetNavigationPropertyExactName(entityCollection.Name, item);
+                return _session.Metadata.HasStructuralProperty(entityCollection.Name, path)
+                    ? _session.Metadata.GetStructuralPropertyExactName(entityCollection.Name, path)
+                    : _session.Metadata.GetNavigationPropertyExactName(entityCollection.Name, path);
             }
             else
             {
                 var associationName = _session.Metadata.GetNavigationPropertyExactName(entityCollection.Name, items.First());
                 var text = associationName;
-                item = item.Substring(items.First().Length + 1);
+                path = path.Substring(items.First().Length + 1);
                 entityCollection = _session.Metadata.GetEntityCollection(
                     _session.Metadata.GetNavigationPropertyPartnerName(entityCollection.Name, associationName));
-                return string.Format("{0}/{1}", text, FormatSelectItem(item, entityCollection));
+                return string.Format("{0}/{1}", text, FormatSelectItem(path, entityCollection));
             }
         }
 
-        private string FormatOrderByItem(KeyValuePair<string, bool> item)
+        private string FormatOrderByItem(KeyValuePair<string, bool> pathWithOrder, EntityCollection entityCollection)
         {
-            return _session.Metadata.GetStructuralPropertyExactName(
-                this.EntityCollection.Name, item.Key) + (item.Value ? " desc" : string.Empty);
+            var items = pathWithOrder.Key.Split('/');
+            if (items.Count() == 1)
+            {
+                var clause = _session.Metadata.HasStructuralProperty(entityCollection.Name, pathWithOrder.Key)
+                    ? _session.Metadata.GetStructuralPropertyExactName(entityCollection.Name, pathWithOrder.Key)
+                    : _session.Metadata.GetNavigationPropertyExactName(entityCollection.Name, pathWithOrder.Key);
+                if (pathWithOrder.Value)
+                    clause += " desc";
+                return clause;
+            }
+            else
+            {
+                var associationName = _session.Metadata.GetNavigationPropertyExactName(entityCollection.Name, items.First());
+                var text = associationName;
+                var item = pathWithOrder.Key.Substring(items.First().Length + 1);
+                entityCollection = _session.Metadata.GetEntityCollection(
+                    _session.Metadata.GetNavigationPropertyPartnerName(entityCollection.Name, associationName));
+                return string.Format("{0}/{1}", text,
+                    FormatOrderByItem(new KeyValuePair<string, bool>(item, pathWithOrder.Value), entityCollection));
+            }
+        }
+
+        private void FormatExpandSelectOrderBy(IList<string> extraClauses, EntityCollection entityCollection,
+            IList<string> expandAssociations, IList<string> selectColumns, IList<KeyValuePair<string, bool>> orderbyColumns)
+        {
+            if (expandAssociations.Any())
+            {
+                extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Expand,
+                    string.Join(",", expandAssociations.Select(x =>
+                        FormatExpandSelectOrderByItem(x, this.EntityCollection, selectColumns, orderbyColumns)))));
+            }
+
+            selectColumns = selectColumns.Where(x => !x.Contains("/")).ToList();
+            if (selectColumns.Any())
+            {
+                extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Select,
+                    string.Join(",", selectColumns.Select(x => FormatSelectItem(x, this.EntityCollection)))));
+            }
+
+            orderbyColumns = orderbyColumns.Where(x => !x.Key.Contains("/")).ToList();
+            if (orderbyColumns.Any())
+            {
+                extraClauses.Add(string.Format("{0}={1}", ODataLiteral.OrderBy,
+                    string.Join(",", orderbyColumns.Select(x => FormatOrderByItem(x, this.EntityCollection)))));
+            }
+        }
+
+        private string FormatExpandSelectOrderByItem(string path, EntityCollection entityCollection,
+            IList<string> selectColumns, IList<KeyValuePair<string, bool>> orderbyColumns)
+        {
+            var items = path.Split('/');
+            var associationName = _session.Metadata.GetNavigationPropertyExactName(entityCollection.Name, items.First());
+
+            var text = string.Empty;
+            if (items.Count() == 1)
+            {
+                selectColumns = selectColumns
+                        .Where(x => x.Contains("/") && x.Split('/').First() == associationName)
+                        .Select(x => string.Join("/", x.Split('/').Skip(1))).ToList();
+                orderbyColumns = orderbyColumns
+                        .Where(x => x.Key.Contains("/") && x.Key.Split('/').First() == associationName)
+                        .Select(x => new KeyValuePair<string, bool>(
+                            string.Join("/", x.Key.Split('/').Skip(1)), x.Value)).ToList();
+
+                if (selectColumns.Any())
+                {
+                    var columns = string.Join(",", selectColumns.Where(x => !x.Contains("/")).ToList());
+                    text += string.Format("{0}({1}={2})", associationName, ODataLiteral.Select, columns);
+                }
+                if (orderbyColumns.Any())
+                {
+                    var columns = string.Join(",", orderbyColumns.Where(x => !x.Key.Contains("/"))
+                        .Select(x => x.Key + (x.Value ? " desc" : string.Empty)).ToList());
+                    if (!string.IsNullOrEmpty(text)) text += ",";
+                    text += string.Format("{0}({1}={2})", associationName, ODataLiteral.OrderBy, columns);
+                }
+                return string.IsNullOrEmpty(text) ? associationName : text;
+            }
+            else
+            {
+                path = path.Substring(items.First().Length + 1);
+                entityCollection = _session.Metadata.GetEntityCollection(
+                    _session.Metadata.GetNavigationPropertyPartnerName(entityCollection.Name, associationName));
+
+                selectColumns = selectColumns
+                        .Where(x => x.Contains("/") && x.Split('/').First() == items.First())
+                        .Select(x => string.Join("/", x.Split('/').Skip(1))).ToList();
+                orderbyColumns = orderbyColumns
+                        .Where(x => x.Key.Contains("/") && x.Key.Split('/').First() == items.First())
+                        .Select(x => new KeyValuePair<string, bool>(
+                            string.Join("/", x.Key.Split('/').Skip(1)), x.Value)).ToList();
+
+                if (selectColumns.Any())
+                {
+                    selectColumns = selectColumns.Where(x => !x.Contains("/")).ToList();
+                    text += string.Format("{0}({1}={2})",
+                        associationName, ODataLiteral.Expand, 
+                        FormatExpandSelectOrderByItem(path, entityCollection, selectColumns, orderbyColumns));
+                }
+                if (orderbyColumns.Any())
+                {
+                    orderbyColumns = orderbyColumns.Where(x => !x.Key.Contains("/")).ToList();
+                    if (!string.IsNullOrEmpty(text)) text += ",";
+                    text += string.Format("{0}({1}={2})",
+                        associationName, ODataLiteral.Expand,
+                        FormatExpandSelectOrderByItem(path, entityCollection, selectColumns, orderbyColumns));
+                }
+
+                return string.IsNullOrEmpty(text)
+                    ? string.Format("{0}({1}={2})", associationName, ODataLiteral.Expand,
+                        FormatExpandItem(path, entityCollection))
+                    : text;
+            }
         }
 
         private IDictionary<string, object> TryInterpretFilterExpressionAsKey(ODataExpression expression)
