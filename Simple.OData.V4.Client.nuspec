@@ -17,7 +17,7 @@
     </summary>
     <projectUrl>https://github.com/object/Simple.OData.Client</projectUrl>
     <licenseUrl>http://www.opensource.org/licenses/mit-license.php</licenseUrl>
-    <iconUrl>http://www.odata.org/images/odata128.png</iconUrl>
+    <iconUrl>http://www.odata.org/wp-content/uploads/2014/05/ODataLogo-96.png</iconUrl>
     <copyright>Copyright 2012-2014 Vagif Abilov</copyright>
     <language>en-us</language>
     <tags>odata data rest client portable pcl net40 net45 silverlight windows8 winrt win8 wp80 wpa81 mono adnroid ios touch</tags>
@@ -35,10 +35,10 @@
     </frameworkAssemblies>  </metadata>
   <files>
     <!-- PCL -->
-    <file src="Simple.OData.Client.Core\bin\Release\Simple.OData.Client.Core.dll" target="lib\portable-net45+wp80+wpa81+win+MonoAndroid10+MonoTouch10\Simple.OData.Client.Core.dll" />
-    <file src="Simple.OData.Client.Core\bin\Release\Simple.OData.Client.Core.xml" target="lib\portable-net45+wp80+wpa81+win+MonoAndroid10+MonoTouch10\Simple.OData.Client.Core.xml" />
-    <file src="Simple.OData.Client.Dynamic\bin\Release\Simple.OData.Client.Dynamic.dll" target="lib\portable-net45+wp80+wpa81+win+MonoAndroid10+MonoTouch10\Simple.OData.Client.Dynamic.dll" />
-    <file src="Simple.OData.Client.Dynamic\bin\Release\Simple.OData.Client.Dynamic.xml" target="lib\portable-net45+wp80+wpa81+win+MonoAndroid10+MonoTouch10\Simple.OData.Client.Dynamic.xml" />
-    <file src="Simple.OData.Client.V4.Adapter\bin\Release\Simple.OData.Client.V4.Adapter.dll" target="lib\portable-net45+wp80+wpa81+win+MonoAndroid10+MonoTouch10\Simple.OData.Client.V4.Adapter.dll" />
+    <file src="Simple.OData.Client.Core\bin\Release\Simple.OData.Client.Core.dll" target="lib\portable-net45+win+win8+wp8+wpa81\Simple.OData.Client.Core.dll" />
+    <file src="Simple.OData.Client.Core\bin\Release\Simple.OData.Client.Core.xml" target="lib\portable-net45+win+win8+wp8+wpa81\Simple.OData.Client.Core.xml" />
+    <file src="Simple.OData.Client.Dynamic\bin\Release\Simple.OData.Client.Dynamic.dll" target="lib\portable-net45+win+win8+wp8+wpa81\Simple.OData.Client.Dynamic.dll" />
+    <file src="Simple.OData.Client.Dynamic\bin\Release\Simple.OData.Client.Dynamic.xml" target="lib\portable-net45+win+win8+wp8+wpa81\Simple.OData.Client.Dynamic.xml" />
+    <file src="Simple.OData.Client.V4.Adapter\bin\Release\Simple.OData.Client.V4.Adapter.dll" target="lib\portable-net45+win+win8+wp8+wpa81\Simple.OData.Client.V4.Adapter.dll" />
   </files>
 </package>
