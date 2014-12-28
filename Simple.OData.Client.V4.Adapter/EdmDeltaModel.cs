@@ -32,7 +32,11 @@ namespace Simple.OData.Client.V4.Adapter
                         DependentProperties = property.DependentProperties(),
                         Name = property.Name,
                         OnDelete = property.OnDelete,
-                        Target = property.Partner != null ? property.Partner.DeclaringEntityType() : null,
+                        Target = property.Partner != null 
+                            ? property.Partner.DeclaringEntityType()
+                            : property.Type.TypeKind() == EdmTypeKind.Collection
+                            ? (property.Type.Definition as IEdmCollectionType).ElementType.Definition as IEdmEntityType
+                            : null,
                         TargetMultiplicity = property.TargetMultiplicity(),
                     };
                     _entityType.AddUnidirectionalNavigation(navInfo);
