@@ -29,11 +29,25 @@ namespace Simple.OData.Client
                     PreExecute(httpClient, request);
 
                     _session.Trace("{0} request: {1}", request.Method, request.RequestMessage.RequestUri.AbsoluteUri);
+#if DEBUG
+                    if (request.RequestMessage.Content != null)
+                    {
+                        var content = await request.RequestMessage.Content.ReadAsStringAsync();
+                        _session.Trace("Request content:{0}{1}", Environment.NewLine, content);
+                    }
+#endif
 
                     var response = await httpClient.SendAsync(request.RequestMessage, cancellationToken);
                     if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
                     _session.Trace("Request completed: {0}", response.StatusCode);
+#if DEBUG
+                    if (response.Content != null)
+                    {
+                        var content = await response.Content.ReadAsStringAsync();
+                        _session.Trace("Response content:{0}{1}", Environment.NewLine, content);
+                    }
+#endif
 
                     PostExecute(response);
                     return response;

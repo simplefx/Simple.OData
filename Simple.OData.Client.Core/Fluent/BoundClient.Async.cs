@@ -296,12 +296,7 @@ namespace Simple.OData.Client
 
         public Task UnlinkEntryAsync<U>(U linkedEntryKey)
         {
-            if (linkedEntryKey.GetType() == typeof(string))
-                return UnlinkEntryAsync(linkedEntryKey.ToString(), CancellationToken.None);
-            else if (linkedEntryKey is ODataExpression && (linkedEntryKey as ODataExpression).Reference != null)
-                return UnlinkEntryAsync((linkedEntryKey as ODataExpression).Reference, CancellationToken.None);
-            else
-                return UnlinkEntryAsync(linkedEntryKey, null, CancellationToken.None);
+            return UnlinkEntryAsync(linkedEntryKey, CancellationToken.None);
         }
 
         public Task UnlinkEntryAsync<U>(U linkedEntryKey, CancellationToken cancellationToken)
@@ -321,7 +316,7 @@ namespace Simple.OData.Client
 
         public Task UnlinkEntryAsync<U>(U linkedEntryKey, string linkName, CancellationToken cancellationToken)
         {
-            return _client.UnlinkEntryAsync(_command, _command.KeyValues, linkName, linkedEntryKey != null ? linkedEntryKey.ToDictionary() : null, cancellationToken);
+            return _client.UnlinkEntryAsync(_command, _command.KeyValues, linkName ?? typeof(U).Name, linkedEntryKey != null ? linkedEntryKey.ToDictionary() : null, cancellationToken);
         }
 
         public Task UnlinkEntryAsync<U>(Expression<Func<T, U>> expression, U linkedEntryKey)
