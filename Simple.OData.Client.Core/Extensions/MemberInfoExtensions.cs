@@ -51,7 +51,9 @@ namespace Simple.OData.Client.Extensions
                 var nameProperty = mappingAttribute.GetType().GetAnyProperty(attributeProperty);
                 if (nameProperty != null)
                 {
-                    propertyName = nameProperty.GetValue(mappingAttribute, null).ToString();
+                    var propertyValue = nameProperty.GetValue(mappingAttribute, null);
+                    if (propertyValue != null)
+                        propertyName = propertyValue.ToString();
                 }
             }
 
