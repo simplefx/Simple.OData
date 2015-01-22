@@ -25,9 +25,9 @@ namespace Simple.OData.Client
             _session = session;
         }
 
-        public Task<IODataAdapter> CreateAdapterAsync(HttpResponseMessage response)
+        public async Task<IODataAdapter> CreateAdapterAsync(HttpResponseMessage response)
         {
-            var protocolVersions = GetSupportedProtocolVersions(response).ToArray();
+            var protocolVersions = (await GetSupportedProtocolVersionsAsync(response)).ToArray();
 
             IODataAdapter adapter;
             if (protocolVersions.Any(x => x == ODataProtocolVersion.V1 || x == ODataProtocolVersion.V2 || x == ODataProtocolVersion.V3))
@@ -37,7 +37,7 @@ namespace Simple.OData.Client
             else
                 throw new NotSupportedException(string.Format("OData protocol {0} is not supported", protocolVersions));
 
-            return Utils.GetTaskFromResult(adapter);
+            return adapter;
         }
 
         public async Task<string> GetMetadataAsStringAsync(HttpResponseMessage response)
@@ -87,14 +87,28 @@ namespace Simple.OData.Client
             return await requestRunner.ExecuteRequestAsync(request, cancellationToken);
         }
 
-        private IEnumerable<string> GetSupportedProtocolVersions(HttpResponseMessage response)
+        private async Task<IEnumerable<string>> GetSupportedProtocolVersionsAsync(HttpResponseMessage response)
         {
             IEnumerable<string> headerValues;
             if (response.Headers.TryGetValues(HttpLiteral.DataServiceVersion, out headerValues) ||
                 response.Headers.TryGetValues(HttpLiteral.ODataVersion, out headerValues))
-                return headerValues.SelectMany(x => x.Split(';')).Where(x => x.Length > 0);
-
-            throw new InvalidOperationException("Unable to identify OData protocol version");
+            {
+                return headerValues.SelectMany(x => x.Split(';')).Where(x => x.Length > 0);                
+            }
+            else
+            {
+                try
+                {
+                    var metadataString = await GetMetadataAsStringAsync(response);
+                    var reader = XmlReader.Create(new StringReader(metadataString));
+                    reader.MoveToContent();
+                    return new [] {reader.GetAttribute("Version")};
+                }
+                catch (Exception)
+                {
+                    throw new InvalidOperationException("Unable to identify OData protocol version");
+                }
+            }
         }
 
         private IODataAdapter LoadAdapter(string adapterAssemblyName, string adapterTypeName, params object[] ctorParams)
