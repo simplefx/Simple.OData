@@ -29,9 +29,17 @@ namespace Simple.OData.Client
         /// Gets or sets the OData payload format.
         /// </summary>
         /// <value>
-        /// The payload format (Json or Atom).
+        /// The payload format (JSON or Atom).
         /// </value>
         public ODataPayloadFormat PayloadFormat { get; set; }
+
+        /// <summary>
+        /// Gets or sets the time period to wait before the request times out.
+        /// </summary>
+        /// <value>
+        /// The timeout.
+        /// </value>
+        public TimeSpan RequestTimeout { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether entry properties should be extended with the resource type.
@@ -113,6 +121,7 @@ namespace Simple.OData.Client
             this.UrlBase = session.Settings.UrlBase;
             this.Credentials = session.Settings.Credentials;
             this.PayloadFormat = session.Settings.PayloadFormat;
+            this.RequestTimeout = session.Settings.RequestTimeout;
             this.IncludeResourceTypeInEntryProperties = session.Settings.IncludeResourceTypeInEntryProperties;
             this.IgnoreResourceNotFoundException = session.Settings.IgnoreResourceNotFoundException;
             this.BeforeRequest = session.Settings.BeforeRequest;

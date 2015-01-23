@@ -24,7 +24,7 @@ namespace Simple.OData.Client
             {
                 var messageHandler = CreateMessageHandler(request);
 
-                using (var httpClient = new HttpClient(messageHandler))
+                using (var httpClient = CreateHttpClient(messageHandler))
                 {
                     PreExecute(httpClient, request);
 
@@ -94,6 +94,21 @@ namespace Simple.OData.Client
                 }
 
                 return clientHandler;
+            }
+        }
+
+        private HttpClient CreateHttpClient(HttpMessageHandler messageHandler)
+        {
+            if (_session.Settings.RequestTimeout >= TimeSpan.FromMilliseconds(1))
+            {
+                return new HttpClient(messageHandler)
+                {
+                    Timeout = _session.Settings.RequestTimeout,
+                };
+            }
+            else
+            {
+                return new HttpClient(messageHandler);
             }
         }
 
