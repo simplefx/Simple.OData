@@ -1,6 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+#if ODATA_V4
 using Microsoft.Spatial;
+#else
+using System.Spatial;
+#endif
 
 namespace Simple.OData.Client.Tests
 {

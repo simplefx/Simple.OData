@@ -114,6 +114,9 @@
     <Compile Include="..\Simple.OData.Client.IntegrationTests\TestBase.cs">
       <Link>TestBase.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.IntegrationTests\TripPinEntities.cs">
+      <Link>TripPinEntities.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.IntegrationTests\UpdateODataTests.cs">
       <Link>UpdateODataTests.cs</Link>
     </Compile>

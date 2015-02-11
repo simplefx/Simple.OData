@@ -112,6 +112,9 @@
     <Compile Include="..\Simple.OData.Client.IntegrationTests\TestBase.cs">
       <Link>TestBase.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.IntegrationTests\TripPinEntities.cs">
+      <Link>TripPinEntities.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.IntegrationTests\TripPinTestBase.cs">
       <Link>TripPinTestBase.cs</Link>
     </Compile>
