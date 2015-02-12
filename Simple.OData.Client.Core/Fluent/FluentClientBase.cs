@@ -331,6 +331,17 @@ namespace Simple.OData.Client
                     var newExpression = lambdaExpression.Body as NewExpression;
                     return newExpression.Arguments.Select(ExtractColumnName);
 
+                case ExpressionType.Call:
+                    var callExpression = lambdaExpression.Body as MethodCallExpression;
+                    if (callExpression.Method.Name == "Select" && callExpression.Arguments.Count == 2)
+                    {
+                        return new[] { String.Join("/", ExtractColumnName(callExpression.Arguments[0]), ExtractColumnName(callExpression.Arguments[1])) };
+                    }
+                    else
+                    {
+                        throw Utils.NotSupportedExpression(lambdaExpression.Body);
+                    }
+
                 default:
                     throw Utils.NotSupportedExpression(lambdaExpression.Body);
             }

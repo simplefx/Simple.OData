@@ -260,6 +260,18 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task ExpandMultipleLevelsWithCollection()
+        {
+            var x = ODataDynamic.Expression;
+            var product = (await _client
+                .For(x.Product)
+                .OrderBy(x.ProductID)
+                .Expand(x.Category.Products.Category)
+                .FindEntriesAsync() as IEnumerable<dynamic>).Last();
+            Assert.Equal("Condiments", ((product.Category.Products as IEnumerable<dynamic>).First()["Category"] as IDictionary<string, object>)["CategoryName"]);
+        }
+
+        [Fact]
         public async Task ExpandWithSelect()
         {
             var x = ODataDynamic.Expression;

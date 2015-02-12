@@ -323,6 +323,17 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task ExpandMultipleLevelsWithCollection()
+        {
+            var product = (await _client
+                .For<Product>()
+                .OrderBy(x => x.ProductID)
+                .Expand(x => x.Category.Products.Select(y => y.Category))
+                .FindEntriesAsync()).Last();
+            Assert.Equal("Condiments", product.Category.Products.First().Category.CategoryName);
+        }
+
+        [Fact]
         public async Task ExpandWithSelect()
         {
             var product = (await _client

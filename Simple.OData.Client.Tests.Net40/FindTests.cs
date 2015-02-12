@@ -189,6 +189,18 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task ExpandMultipleLevelsWithCollection()
+        {
+            var product = (await _client
+                .For("Products")
+                .OrderBy("ProductID")
+                .Expand("Category/Products/Category")
+                .FindEntriesAsync()).Last();
+            Assert.Equal("Condiments", ((((product["Category"] as IDictionary<string, object>)["Products"] as IEnumerable<object>)
+                                        .First() as IDictionary<string, object>)["Category"] as IDictionary<string, object>)["CategoryName"]);
+        }
+
+        [Fact]
         public async Task ExpandWithSelect()
         {
             var product = (await _client

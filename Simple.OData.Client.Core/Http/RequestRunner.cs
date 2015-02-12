@@ -1,4 +1,9 @@
-﻿using System;
+﻿#if DEBUG
+#undef TRACE_REQUEST_CONTENT
+#undef TRACE_RESPONSE_CONTENT
+#endif
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -29,7 +34,7 @@ namespace Simple.OData.Client
                     PreExecute(httpClient, request);
 
                     _session.Trace("{0} request: {1}", request.Method, request.RequestMessage.RequestUri.AbsoluteUri);
-#if DEBUG
+#if TRACE_REQUEST_CONTENT
                     if (request.RequestMessage.Content != null)
                     {
                         var content = await request.RequestMessage.Content.ReadAsStringAsync();
@@ -41,7 +46,7 @@ namespace Simple.OData.Client
                     if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
                     _session.Trace("Request completed: {0}", response.StatusCode);
-#if DEBUG
+#if TRACE_RESPONSE_CONTENT
                     if (response.Content != null)
                     {
                         var content = await response.Content.ReadAsStringAsync();
