@@ -26,20 +26,28 @@ namespace Simple.OData.Client
         {
             get
             {
-                switch (this._payloadFormat)
+                if (this.Method == RestVerbs.Get && !this.ReturnsScalarResult || this.ResultRequired)
                 {
-                    default:
-                    case ODataPayloadFormat.Atom:
-                        if (this.Method == RestVerbs.Get && !this.ReturnsScalarResult || this.ResultRequired)
-                            return new[] { "application/text", "application/xml", "application/atom+xml" };
-                        else
-                            return null;
+                    if (this.RequestMessage.RequestUri.LocalPath.EndsWith(ODataLiteral.Metadata))
+                    {
+                        return new[] { "application/xml" };
+                    }
+                    else
+                    {
+                        switch (this._payloadFormat)
+                        {
+                            default:
+                            case ODataPayloadFormat.Atom:
+                                return new[] { "application/atom+xml", "application/xml", "application/text" };
 
-                    case ODataPayloadFormat.Json:
-                        if (this.Method == RestVerbs.Get && !this.ReturnsScalarResult || this.ResultRequired)
-                            return new[] { "application/text", "application/xml", "application/json" };
-                        else
-                            return null;
+                            case ODataPayloadFormat.Json:
+                                return new[] { "application/json", "application/xml", "application/text" };
+                        }
+                    }
+                }
+                else
+                {
+                    return null;
                 }
             }
         }
