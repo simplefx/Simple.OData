@@ -612,9 +612,6 @@ namespace Simple.OData.Client
             var extraClauses = new List<string>();
             var aggregateClauses = new List<string>();
 
-            if (HasAction)
-                return string.Empty;
-
             if (this.CommandData.Any() && !string.IsNullOrEmpty(_functionName) &&
                 _session.Adapter.FunctionFormat == FunctionFormat.Query)
                 extraClauses.Add(string.Join("&", this.CommandData.Select(x => string.Format("{0}={1}",
@@ -629,32 +626,35 @@ namespace Simple.OData.Client
             if (_topCount >= 0)
                 extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Top, _topCount));
 
-            switch (_session.Adapter.AdapterVersion)
+            if (!HasAction)
             {
-                case AdapterVersion.V3:
-                    FormatClause(extraClauses, _expandAssociations, ODataLiteral.Expand, FormatExpandItem);
-                    FormatClause(extraClauses, _selectColumns, ODataLiteral.Select, FormatSelectItem);
-                    FormatClause(extraClauses, _orderbyColumns, ODataLiteral.OrderBy, FormatOrderByItem);
-                    break;
+                switch (_session.Adapter.AdapterVersion)
+                {
+                    case AdapterVersion.V3:
+                        FormatClause(extraClauses, _expandAssociations, ODataLiteral.Expand, FormatExpandItem);
+                        FormatClause(extraClauses, _selectColumns, ODataLiteral.Select, FormatSelectItem);
+                        FormatClause(extraClauses, _orderbyColumns, ODataLiteral.OrderBy, FormatOrderByItem);
+                        break;
 
-                case AdapterVersion.V4:
-                    FormatExpandSelectOrderBy(extraClauses, this.EntityCollection, _expandAssociations, _selectColumns, _orderbyColumns);
-                    break;
+                    case AdapterVersion.V4:
+                        FormatExpandSelectOrderBy(extraClauses, this.EntityCollection, _expandAssociations, _selectColumns, _orderbyColumns);
+                        break;
+                }
+
+                if (_includeCount)
+                {
+                    if (_session.Adapter.AdapterVersion == AdapterVersion.V3)
+                        extraClauses.Add(string.Format("{0}={1}", ODataLiteral.InlineCount, ODataLiteral.AllPages));
+                    else
+                        extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Count, ODataLiteral.True));
+                }
+
+                if (_computeCount)
+                    aggregateClauses.Add(ODataLiteral.Count);
+
+                if (aggregateClauses.Any())
+                    text += "/" + string.Join("/", aggregateClauses);
             }
-
-            if (_includeCount)
-            {
-                if (_session.Adapter.AdapterVersion == AdapterVersion.V3)
-                    extraClauses.Add(string.Format("{0}={1}", ODataLiteral.InlineCount, ODataLiteral.AllPages));
-                else
-                    extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Count, ODataLiteral.True));
-            }
-
-            if (_computeCount)
-                aggregateClauses.Add(ODataLiteral.Count);
-
-            if (aggregateClauses.Any())
-                text += "/" + string.Join("/", aggregateClauses);
 
             if (extraClauses.Any())
                 text += "?" + string.Join("&", extraClauses);
