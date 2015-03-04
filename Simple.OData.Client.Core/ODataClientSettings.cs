@@ -58,6 +58,14 @@ namespace Simple.OData.Client
         public bool IgnoreResourceNotFoundException { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether unmapped structural or navigation properties should be ignored or cause <see cref="UnresolvableObjectException"/>.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> to ignore unmapped properties; otherwise, <c>false</c>.
+        /// </value>
+        public bool IgnoreUnmappedProperties { get; set; }
+
+        /// <summary>
         /// Gets or sets the HttpMessageHandler factory used by HttpClient.
         /// If not set, ODataClient creates an instance of HttpClientHandler.
         /// </summary>
@@ -124,6 +132,7 @@ namespace Simple.OData.Client
             this.RequestTimeout = session.Settings.RequestTimeout;
             this.IncludeResourceTypeInEntryProperties = session.Settings.IncludeResourceTypeInEntryProperties;
             this.IgnoreResourceNotFoundException = session.Settings.IgnoreResourceNotFoundException;
+            this.IgnoreUnmappedProperties = session.Settings.IgnoreUnmappedProperties;
             this.BeforeRequest = session.Settings.BeforeRequest;
             this.AfterResponse = session.Settings.AfterResponse;
             this.OnCreateMessageHandler = session.Settings.OnCreateMessageHandler;

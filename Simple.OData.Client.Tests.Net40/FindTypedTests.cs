@@ -101,6 +101,43 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task UnmappedColumn()
+        {
+            await AssertThrowsAsync<WebRequestException>(async () => await _client
+                .For<ProductWithUnmappedProperty>("Products")
+                .Set(new ProductWithUnmappedProperty { ProductName = "Test1" })
+                .InsertEntryAsync());
+        }
+
+        [Fact]
+        public async Task IgnoredUnmappedColumn()
+        {
+            var settings = new ODataClientSettings
+            {
+                UrlBase = _serviceUri,
+                IgnoreUnmappedProperties = true,
+            };
+            var client = new ODataClient(settings);
+
+            var product = await client
+                .For<ProductWithUnmappedProperty>("Products")
+                .Set(new ProductWithUnmappedProperty { ProductName = "Test1" })
+                .InsertEntryAsync();
+
+            await client
+                .For<ProductWithUnmappedProperty>("Products")
+                .Key(product.ProductID)
+                .Set(new ProductWithUnmappedProperty { ProductName = "Test2" })
+                .UpdateEntryAsync(false);
+
+            product = await client
+                .For<ProductWithUnmappedProperty>("Products")
+                .Key(product.ProductID)
+                .FindEntryAsync();
+            Assert.Equal("Test2", product.ProductName);
+        }
+
+        [Fact]
         public async Task Subclass()
         {
             var product = await _client

@@ -97,7 +97,7 @@ namespace Simple.OData.Client
                         entryDetails.AddLink(item.Key, item.Value, contentId);
                     }
                 }
-                else
+                else if (!this.Session.Settings.IgnoreUnmappedProperties)
                 {
                     throw new UnresolvableObjectException(item.Key, String.Format("No property or association found for {0}.", item.Key));
                 }

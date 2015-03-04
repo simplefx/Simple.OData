@@ -291,7 +291,7 @@ namespace Simple.OData.Client
 
         protected static IDictionary<string, object> RectifyColumnSelection(IDictionary<string, object> entry, IList<string> selectedColumns)
         {
-            if (selectedColumns == null || !selectedColumns.Any())
+            if (entry == null || selectedColumns == null || !selectedColumns.Any())
             {
                 return entry;
             }

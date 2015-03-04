@@ -23,4 +23,9 @@
     public class ExtendedProduct : Product
     {
     }
+
+    public class ProductWithUnmappedProperty : Product
+    {
+        public string UnmappedName { get; set; }
+    }
 }
