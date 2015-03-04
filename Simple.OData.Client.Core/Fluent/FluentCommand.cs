@@ -835,7 +835,7 @@ namespace Simple.OData.Client
 
                 return string.IsNullOrEmpty(text)
                     ? string.Format("{0}({1}={2})", associationName, ODataLiteral.Expand,
-                        FormatExpandItem(path, entityCollection))
+                        FormatExpandSelectOrderByItem(path, entityCollection, selectColumns, orderbyColumns))
                     : text;
             }
         }

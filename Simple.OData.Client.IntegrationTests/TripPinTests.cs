@@ -79,6 +79,31 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task FindPersonTwoLevelExpand()
+        {
+            var person = await _client
+                .For<Person>()
+                .Key("russellwhyte")
+                .Expand(x => x.Friends.Select(y => y.Friends))
+                .FindEntryAsync();
+            Assert.NotNull(person);
+            Assert.Equal(4, person.Friends.Count());
+        }
+
+        [Fact]
+        public async Task FindPersonThreeLevelExpand()
+        {
+            var person = await _client
+                .For<Person>()
+                .Key("russellwhyte")
+                .Expand(x => x.Friends.Select(y => y.Friends.Select(z => z.Friends)))
+                .FindEntryAsync();
+            Assert.NotNull(person);
+            Assert.Equal(4, person.Friends.Count());
+            Assert.Equal(8, person.Friends.SelectMany(x => x.Friends).Count());
+        }
+
+        [Fact]
         public async Task FindPersonWithAnyTrips()
         {
             var flights = await _client

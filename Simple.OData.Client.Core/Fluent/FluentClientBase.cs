@@ -335,7 +335,9 @@ namespace Simple.OData.Client
                     var callExpression = lambdaExpression.Body as MethodCallExpression;
                     if (callExpression.Method.Name == "Select" && callExpression.Arguments.Count == 2)
                     {
-                        return new[] { String.Join("/", ExtractColumnName(callExpression.Arguments[0]), ExtractColumnName(callExpression.Arguments[1])) };
+                        return new[] { String.Join("/", 
+                            ExtractColumnName(callExpression.Arguments[0]), 
+                            ExtractColumnName(callExpression.Arguments[1])) };
                     }
                     else
                     {
@@ -365,6 +367,19 @@ namespace Simple.OData.Client
 
                 case ExpressionType.Lambda:
                     return ExtractColumnName((expression as LambdaExpression).Body);
+
+                case ExpressionType.Call:
+                    var callExpression = expression as MethodCallExpression;
+                    if (callExpression.Method.Name == "Select" && callExpression.Arguments.Count == 2)
+                    {
+                        return String.Join("/", 
+                            ExtractColumnName(callExpression.Arguments[0]), 
+                            ExtractColumnName(callExpression.Arguments[1]));
+                    }
+                    else
+                    {
+                        throw Utils.NotSupportedExpression(callExpression);
+                    }
 
                 default:
                     throw Utils.NotSupportedExpression(expression);

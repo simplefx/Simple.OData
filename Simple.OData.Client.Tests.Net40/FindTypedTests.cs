@@ -103,7 +103,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task UnmappedColumn()
         {
-            await AssertThrowsAsync<WebRequestException>(async () => await _client
+            await AssertThrowsAsync<UnresolvableObjectException>(async () => await _client
                 .For<ProductWithUnmappedProperty>("Products")
                 .Set(new ProductWithUnmappedProperty { ProductName = "Test1" })
                 .InsertEntryAsync());
