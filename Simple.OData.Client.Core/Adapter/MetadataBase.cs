@@ -8,6 +8,8 @@ namespace Simple.OData.Client
 {
     public abstract class MetadataBase : IMetadata
     {
+        public abstract ISession Session { get; }
+
         public abstract string GetEntityCollectionExactName(string collectionName);
         public abstract string GetEntityCollectionTypeName(string collectionName);
         public abstract string GetEntityCollectionTypeNamespace(string collectionName);

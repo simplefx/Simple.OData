@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Data.Edm;
-using Simple.OData.Client.Extensions;
 
 #pragma warning disable 1591
 
@@ -17,6 +16,8 @@ namespace Simple.OData.Client.V3.Adapter
             _session = session;
             _model = model;
         }
+
+        public override ISession Session { get { return _session; } }
 
         public override string GetEntityCollectionExactName(string collectionName)
         {

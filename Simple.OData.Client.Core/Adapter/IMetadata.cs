@@ -6,6 +6,8 @@ namespace Simple.OData.Client
 {
     public interface IMetadata
     {
+        ISession Session { get; }
+
         EntityCollection GetEntityCollection(string collectionPath);
         EntityCollection GetDerivedEntityCollection(EntityCollection baseCollection, string entityTypeName);
 

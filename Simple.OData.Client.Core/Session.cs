@@ -61,7 +61,7 @@ namespace Simple.OData.Client
             }
         }
 
-        public void ResetMetadataCache()
+        public void ClearMetadataCache()
         {
             MetadataCache.Instances.Remove(MetadataCache.Instances.Single(x => x.Value == this.MetadataCache).Key);
         }

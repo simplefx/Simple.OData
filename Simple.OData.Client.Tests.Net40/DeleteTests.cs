@@ -32,14 +32,14 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task DeleteByKeyResetMetadataCache()
+        public async Task DeleteByKeyClearMetadataCache()
         {
             var product = await _client
                 .For("Products")
                 .Set(new { ProductName = "Test1", UnitPrice = 18m })
                 .InsertEntryAsync();
 
-            (_client as ODataClient).Session.ResetMetadataCache();
+            (_client as ODataClient).Session.ClearMetadataCache();
             await _client
                 .For("Products")
                 .Key(product["ProductID"])

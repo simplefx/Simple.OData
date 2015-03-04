@@ -68,6 +68,17 @@ namespace Simple.OData.Client
         }
 
         /// <summary>
+        /// Clears service metadata cache.
+        /// </summary>
+        public static void ClearMetadataCache()
+        {
+            lock (MetadataCache.Instances)
+            {
+                MetadataCache.Instances.Clear();
+            }
+        }
+
+        /// <summary>
         /// Returns an instance of a fluent OData client for the specified collection.
         /// </summary>
         /// <param name="collectionName">Name of the collection.</param>
