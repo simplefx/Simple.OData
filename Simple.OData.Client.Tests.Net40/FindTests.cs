@@ -151,6 +151,7 @@ namespace Simple.OData.Client.Tests
                 .For("Products")
                 .Select("ProductID, ProductName")
                 .FindEntryAsync();
+            Assert.Equal(2, product.Count);
             Assert.Contains("ProductName", product.Keys);
             Assert.Contains("ProductID", product.Keys);
         }
@@ -201,6 +202,25 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task ExpandMultipleLevelsWithCollectionAndSelect()
+        {
+            var product = (await _client
+                .For("Products")
+                .OrderBy("ProductID")
+                .Expand("Category/Products/Category")
+                .Select(new[] { "Category/Products/Category/CategoryName" })
+                .FindEntriesAsync()).Last();
+            Assert.Equal(1, product.Count);
+            Assert.Equal(1, (product["Category"] as IDictionary<string, object>).Count);
+            Assert.Equal(1, (((product["Category"] as IDictionary<string, object>)["Products"] as IEnumerable<object>)
+                                        .First()as IDictionary<string, object>).Count);
+            Assert.Equal(1, ((((product["Category"] as IDictionary<string, object>)["Products"] as IEnumerable<object>)
+                                        .First() as IDictionary<string, object>)["Category"] as IDictionary<string, object>).Count);
+            Assert.Equal("Condiments", ((((product["Category"] as IDictionary<string, object>)["Products"] as IEnumerable<object>)
+                                        .First() as IDictionary<string, object>)["Category"] as IDictionary<string, object>)["CategoryName"]);
+        }
+
+        [Fact]
         public async Task ExpandWithSelect()
         {
             var product = (await _client
@@ -209,6 +229,8 @@ namespace Simple.OData.Client.Tests
                 .Expand("Category/Products")
                 .Select(new[] {"ProductName", "Category/CategoryName" })
                 .FindEntriesAsync()).Last();
+            Assert.Equal(2, product.Count);
+            Assert.Equal(1, (product["Category"] as IDictionary<string, object>).Count);
             Assert.Equal("Condiments", (product["Category"] as IDictionary<string, object>)["CategoryName"]);
         }
 

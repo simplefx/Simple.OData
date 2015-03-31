@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Simple.OData.Client.Extensions;
@@ -312,9 +313,11 @@ namespace Simple.OData.Client
             {
                 var item = items.First();
                 return kv.Key.Homogenize() == item.Homogenize() &&
-                       kv.Value is IDictionary<string, object> &&
-                       (kv.Value as IDictionary<string, object>)
-                           .Any(x => IsSelectedColumn(x, string.Join("/", items.Skip(1))));
+                       (kv.Value is IDictionary<string, object> && (kv.Value as IDictionary<string, object>)
+                            .Any(x => IsSelectedColumn(x, string.Join("/", items.Skip(1)))) ||
+                        kv.Value is IEnumerable<object> && (kv.Value as IEnumerable<object>)
+                            .Any(x => x is IDictionary<string, object> && (x as IDictionary<string, object>)
+                                .Any(y => IsSelectedColumn(y, string.Join("/", items.Skip(1))))));
             }
         }
 

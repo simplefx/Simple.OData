@@ -170,6 +170,9 @@ namespace Simple.OData.Client.Tests
                 .Expand(x => x.Airline)
                 .Select(x => new { x.FlightNumber, x.Airline.AirlineCode})
                 .FindEntryAsync();
+            Assert.Null(flight.From);
+            Assert.Null(flight.To);
+            Assert.Null(flight.Airline.Name);
             Assert.Equal("FM", flight.Airline.AirlineCode);
         }
 
