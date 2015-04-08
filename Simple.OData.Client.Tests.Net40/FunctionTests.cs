@@ -111,5 +111,17 @@ namespace Simple.OData.Client.Tests
             Assert.Equal("Oslo", result[1]["City"]);
             Assert.Equal("Oslo", result[2]["City"]);
         }
+
+        [Fact]
+        public async Task FunctionWithComplexTypeCollectionEmpty()
+        {
+            var result = (await _client
+                .Unbound<IDictionary<string, object>>()
+                .Function("ReturnAddressCollection")
+                .Set(new Entry() { { "count", 0 } })
+                .ExecuteAsEnumerableAsync()).ToArray();
+
+            Assert.Equal(0, result.Length);
+        }
     }
 }

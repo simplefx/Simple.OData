@@ -15,6 +15,7 @@ namespace Simple.OData.Client.V3.Adapter
     public class ResponseReader : ResponseReaderBase
     {
         private readonly IEdmModel _model;
+        private bool _hasResponse = false;
 
         public ResponseReader(ISession session, IEdmModel model)
             : base(session)
@@ -55,6 +56,9 @@ namespace Simple.OData.Client.V3.Adapter
             using (var messageReader = new ODataMessageReader(responseMessage, readerSettings, _model))
             {
                 var payloadKind = messageReader.DetectPayloadKind();
+                if (payloadKind.Any(x => x.PayloadKind != ODataPayloadKind.Property))
+                    _hasResponse = true;
+
                 if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Error))
                 {
                     return ODataResponse.FromStatusCode(responseMessage.StatusCode);
@@ -93,10 +97,20 @@ namespace Simple.OData.Client.V3.Adapter
                 else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Property))
                 {
                     var property = messageReader.ReadProperty();
-                    return ODataResponse.FromFeed(new[] { new Dictionary<string, object>()
+                    if (property.Value != null && (property.Value.GetType() != typeof (string) || !string.IsNullOrEmpty(property.Value.ToString())))
+                        _hasResponse = true;
+
+                    if (_hasResponse)
                     {
-                        { property.Name ?? FluentCommand.ResultLiteral, GetPropertyValue(property.Value) }
-                    } });
+                        return ODataResponse.FromFeed(new[] { new Dictionary<string, object>()
+                        {
+                            { property.Name ?? FluentCommand.ResultLiteral, GetPropertyValue(property.Value) }
+                        } });
+                    }
+                    else
+                    {
+                        return ODataResponse.FromFeed(new Dictionary<string, object>[] {});
+                    }
                 }
                 else
                 {
