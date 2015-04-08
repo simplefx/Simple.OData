@@ -194,7 +194,7 @@ namespace Simple.OData.Client
 
             return await ExecuteRequestWithResultAsync(request, cancellationToken,
                 x => x.AsEntries(),
-                () => new[] { (IDictionary<string, object>)null });
+                () => new IDictionary<string, object>[] {});
         }
 
         private async Task<IEnumerable<IDictionary<string, object>>> ExecuteActionAsync(FluentCommand command, CancellationToken cancellationToken)
@@ -207,7 +207,7 @@ namespace Simple.OData.Client
 
             return await ExecuteRequestWithResultAsync(request, cancellationToken,
                 x => x.AsEntries(),
-                () => new[] { (IDictionary<string, object>)null });
+                () => new IDictionary<string, object>[] {});
         }
 
         private async Task ExecuteBatchActionsAsync(IList<Func<IODataClient, Task>> actions, CancellationToken cancellationToken)

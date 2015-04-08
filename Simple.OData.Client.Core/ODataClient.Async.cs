@@ -256,7 +256,7 @@ namespace Simple.OData.Client
 
             return await ExecuteRequestWithResultAsync(request, cancellationToken,
                 x => x.AsEntries(),
-                () => new[] { (IDictionary<string, object>)null });
+                () => new IDictionary<string, object>[] {});
         }
 
         public Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(string commandText, ODataFeedAnnotations annotations)
@@ -283,7 +283,7 @@ namespace Simple.OData.Client
                     annotations.CopyFrom(x.Annotations);
                     return x.Entries;
                 },
-                () => new[] { (IDictionary<string, object>)null });
+                () => new IDictionary<string, object>[] {});
         }
 
         public Task<IDictionary<string, object>> FindEntryAsync(string commandText)
@@ -304,7 +304,7 @@ namespace Simple.OData.Client
 
             var result = await ExecuteRequestWithResultAsync(request, cancellationToken,
                 x => x.AsEntries(),
-                () => new[] { (IDictionary<string, object>)null });
+                () => new IDictionary<string, object>[] {});
             return result == null ? null : result.FirstOrDefault();
         }
 
@@ -326,7 +326,7 @@ namespace Simple.OData.Client
 
             var result = await ExecuteRequestWithResultAsync(request, cancellationToken,
                 x => x.AsEntries(),
-                () => new[] { (IDictionary<string, object>)null });
+                () => new IDictionary<string, object>[] {});
             return result == null ? null : result.FirstOrDefault().Values.First();
         }
 

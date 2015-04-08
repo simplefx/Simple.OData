@@ -494,6 +494,19 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task GetInvolvedPeopleEmptyResult()
+        {
+            var people = await _client
+                .For<Person>()
+                .Key("russellwhyte")
+                .NavigateTo<Trip>()
+                .Key(1)
+                .Function("GetInvolvedPeople")
+                .ExecuteAsEnumerableAsync();
+            Assert.Equal(0, people.Count());
+        }
+
+        [Fact]
         public async Task Batch()
         {
             IEnumerable<Airline> airlines1 = null;
