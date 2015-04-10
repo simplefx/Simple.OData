@@ -148,5 +148,25 @@ namespace Simple.OData.Client
                     }
             }
         }
+
+        internal bool HasTypeConstraint(string typeName)
+        {
+            if (_operator == ExpressionOperator.AND)
+            {
+                return _left.HasTypeConstraint(typeName) || _right.HasTypeConstraint(typeName);
+            }
+            else if (this.Function != null && this.Function.FunctionName == ODataLiteral.IsOf)
+            {
+                return this.Function.Arguments.Last().HasTypeConstraint(typeName);
+            }
+            else if (this.Value != null)
+            {
+                return this.Value is Type && (this.Value as Type).Name == typeName;
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 }

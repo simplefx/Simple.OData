@@ -97,6 +97,20 @@ namespace Simple.OData.Client
                 return string.Format("{0}/{1}({2})",
                     _functionCaller.Format(context), this.Function.FunctionName.ToLower(), formattedArguments);
             }
+            else if (string.Equals(this.Function.FunctionName, ODataLiteral.IsOf, StringComparison.OrdinalIgnoreCase) ||
+                     string.Equals(this.Function.FunctionName, ODataLiteral.Cast, StringComparison.OrdinalIgnoreCase))
+            {
+                var formattedArguments = string.Empty;
+                if (!ReferenceEquals(this.Function.Arguments.First(), null))
+                {
+                    formattedArguments += FormatExpression(this.Function.Arguments.First(), new ExpressionContext(context.Session));
+                    formattedArguments += ",";
+                }
+                formattedArguments += FormatExpression(this.Function.Arguments.Last(), new ExpressionContext(context.Session));
+
+                return string.Format("{0}({1})",
+                    this.Function.FunctionName.ToLower(), formattedArguments);
+            }
             else
             {
                 throw new NotSupportedException(string.Format("The function {0} is not supported or called with wrong number of arguments", this.Function.FunctionName));
@@ -108,6 +122,11 @@ namespace Simple.OData.Client
             if (Value is ODataExpression)
             {
                 return (Value as ODataExpression).Format(context);
+            }
+            else if (Value is Type)
+            {
+                var typeName = context.Session.Adapter.GetMetadata().GetEntityCollectionQualifiedTypeName((Value as Type).Name);
+                return context.Session.Adapter.ConvertValueToUriLiteral(typeName);
             }
             else
             {

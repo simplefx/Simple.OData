@@ -430,6 +430,26 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task IsOfDerivedClassEntry()
+        {
+            var transport = await _client
+                .For("Transport")
+                .Filter("isof('NorthwindModel.Ships')")
+                .FindEntryAsync();
+            Assert.Equal("Titanic", transport["ShipName"]);
+        }
+
+        [Fact]
+        public async Task IsOfAssociation()
+        {
+            var employee = await _client
+                .For("Employees")
+                .Filter("isof(Superior, 'NorthwindModel.Employees')")
+                .FindEntryAsync();
+            Assert.NotNull(employee);
+        }
+
+        [Fact]
         public async Task FilterAny()
         {
             var products = await _client

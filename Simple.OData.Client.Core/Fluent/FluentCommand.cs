@@ -105,6 +105,10 @@ namespace Simple.OData.Client
                     _keyValues = null;
                     _topCount = -1;
                 }
+                if (_filterExpression.HasTypeConstraint(_derivedCollectionName))
+                {
+                    _derivedCollectionName = null;
+                }
                 _filterExpression = null;
             }
 

@@ -17,5 +17,7 @@
         public const string False = "false";
         public const string Any = "any";
         public const string All = "all";
+        public const string IsOf = "isof";
+        public const string Cast = "cast";
     }
 }
