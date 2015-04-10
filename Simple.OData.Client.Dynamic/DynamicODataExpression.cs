@@ -133,6 +133,22 @@ namespace Simple.OData.Client
                         expression,
                         BindingRestrictions.GetTypeRestriction(Expression, LimitType));
                 }
+                else if (string.Equals(binder.Name, ODataLiteral.IsOf, StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(binder.Name, ODataLiteral.Cast, StringComparison.OrdinalIgnoreCase))
+                {
+                    var expression = Expression.New(CtorWithExpressionAndExpressionFunction,
+                        new[]
+                        {
+                            Expression.Constant(this.Value), 
+                            Expression.Constant(new ExpressionFunction(
+                                binder.Name, 
+                                new [] { (this.Value as ODataExpression).IsNull ? null : this.Value, args.First().Value }))
+                        });
+
+                    return new DynamicMetaObject(
+                        expression,
+                        BindingRestrictions.GetTypeRestriction(Expression, LimitType));
+                }
                 else
                 {
                     return base.BindInvokeMember(binder, args);

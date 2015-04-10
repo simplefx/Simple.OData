@@ -108,6 +108,14 @@ namespace Simple.OData.Client
             return ParseLinqExpression(expression);
         }
 
+        public bool IsNull
+        {
+            get { return this.Value == null && 
+                this.Reference == null && 
+                this.Function == null && 
+                _operator == ExpressionOperator.None; }
+        }
+
         public string AsString(ISession session)
         {
             return Format(new ExpressionContext(session));

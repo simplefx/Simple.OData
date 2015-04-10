@@ -101,7 +101,7 @@ namespace Simple.OData.Client
                      string.Equals(this.Function.FunctionName, ODataLiteral.Cast, StringComparison.OrdinalIgnoreCase))
             {
                 var formattedArguments = string.Empty;
-                if (!ReferenceEquals(this.Function.Arguments.First(), null))
+                if (!ReferenceEquals(this.Function.Arguments.First(), null) && !this.Function.Arguments.First().IsNull)
                 {
                     formattedArguments += FormatExpression(this.Function.Arguments.First(), new ExpressionContext(context.Session));
                     formattedArguments += ",";
