@@ -66,6 +66,14 @@ namespace Simple.OData.Client
         public bool IgnoreUnmappedProperties { get; set; }
 
         /// <summary>
+        /// Gets or sets the OData service metadata document. If not set, service metadata is downloaded prior to the first call to the OData service and stored in an in-memory cache.
+        /// </summary>
+        /// <value>
+        /// The content of the service metadata document.
+        /// </value>
+        public string MetadataDocument { get; set; }
+
+        /// <summary>
         /// Gets or sets the HttpMessageHandler factory used by HttpClient.
         /// If not set, ODataClient creates an instance of HttpClientHandler.
         /// </summary>
@@ -133,6 +141,7 @@ namespace Simple.OData.Client
             this.IncludeResourceTypeInEntryProperties = session.Settings.IncludeResourceTypeInEntryProperties;
             this.IgnoreResourceNotFoundException = session.Settings.IgnoreResourceNotFoundException;
             this.IgnoreUnmappedProperties = session.Settings.IgnoreUnmappedProperties;
+            this.MetadataDocument = session.Settings.MetadataDocument;
             this.BeforeRequest = session.Settings.BeforeRequest;
             this.AfterResponse = session.Settings.AfterResponse;
             this.OnCreateMessageHandler = session.Settings.OnCreateMessageHandler;

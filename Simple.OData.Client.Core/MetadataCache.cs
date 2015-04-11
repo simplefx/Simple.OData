@@ -8,27 +8,27 @@ namespace Simple.OData.Client
     {
         public static readonly SimpleDictionary<string, MetadataCache> Instances = new SimpleDictionary<string, MetadataCache>();
 
-        private string _metadataString;
+        private string _metadataDocument;
 
         public bool IsResolved()
         {
-            return _metadataString != null;
+            return _metadataDocument != null;
         }
 
-        public string MetadataAsString
+        public string MetadataDocument
         {
             get
             {
-                if (_metadataString == null)
+                if (_metadataDocument == null)
                     throw new InvalidOperationException("Service metadata is not resolved");
 
-                return _metadataString;
+                return _metadataDocument;
             }
         }
 
-        public void SetMetadataString(string metadataString)
+        public void SetMetadataDocument(string metadataString)
         {
-            _metadataString = metadataString;
+            _metadataDocument = metadataString;
         }
     }
 }

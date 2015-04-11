@@ -154,7 +154,7 @@ namespace Simple.OData.Client
         {
             var session = Session.FromSettings(new ODataClientSettings(urlBase, credentials));
             await session.ResolveAdapterAsync(cancellationToken);
-            return session.MetadataCache.MetadataAsString;
+            return session.MetadataCache.MetadataDocument;
         }
 
         #pragma warning disable 1591
@@ -193,7 +193,7 @@ namespace Simple.OData.Client
         public async Task<string> GetMetadataAsStringAsync(CancellationToken cancellationToken)
         {
             await _session.ResolveAdapterAsync(cancellationToken);
-            return _session.MetadataCache.MetadataAsString;
+            return _session.MetadataCache.MetadataDocument;
         }
 
         public Task<string> GetCommandTextAsync(string collection, ODataExpression expression)

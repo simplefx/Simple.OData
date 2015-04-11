@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -26,14 +27,14 @@ namespace Simple.OData.Client
             this.Settings = new ODataClientSettings();
             this.Settings.UrlBase = urlBase;
             this.MetadataCache = MetadataCache.Instances.GetOrAdd(urlBase, new MetadataCache());
-            this.MetadataCache.SetMetadataString(metadataString);
+            this.MetadataCache.SetMetadataDocument(metadataString);
             this.Pluralizer = new SimplePluralizer();
         }
 
         private Session(string urlBase, ICredentials credentials, ODataPayloadFormat payloadFormat)
         {
             _adapterFactory = new AdapterFactory(this);
-            _createAdapter = () => _adapterFactory.ParseMetadata(this.MetadataCache.MetadataAsString);
+            _createAdapter = () => _adapterFactory.ParseMetadata(this.MetadataCache.MetadataDocument);
 
             this.Settings = new ODataClientSettings();
             this.Settings.UrlBase = urlBase;
@@ -46,7 +47,7 @@ namespace Simple.OData.Client
         private Session(ODataClientSettings settings)
         {
             _adapterFactory = new AdapterFactory(this);
-            _createAdapter = () => _adapterFactory.ParseMetadata(this.MetadataCache.MetadataAsString);
+            _createAdapter = () => _adapterFactory.ParseMetadata(this.MetadataCache.MetadataDocument);
 
             this.Settings = settings;
             this.MetadataCache = MetadataCache.Instances.GetOrAdd(this.Settings.UrlBase, new MetadataCache());
@@ -70,10 +71,18 @@ namespace Simple.OData.Client
         {
             if (!this.MetadataCache.IsResolved())
             {
-                var response = await _adapterFactory.SendMetadataRequestAsync(cancellationToken);
-                this.MetadataCache.SetMetadataString(await _adapterFactory.GetMetadataAsStringAsync(response));
-
-                var adapter = await _adapterFactory.CreateAdapterAsync(response);
+                IODataAdapter adapter;
+                if (string.IsNullOrEmpty(this.Settings.MetadataDocument))
+                {
+                    var response = await _adapterFactory.SendMetadataRequestAsync(cancellationToken);
+                    this.MetadataCache.SetMetadataDocument(await _adapterFactory.GetMetadataAsStringAsync(response));
+                    adapter = await _adapterFactory.CreateAdapterAsync(response);
+                }
+                else
+                {
+                    this.MetadataCache.SetMetadataDocument(this.Settings.MetadataDocument);
+                    adapter = _adapterFactory.CreateAdapter(this.Settings.MetadataDocument);
+                }
                 _createAdapter = () => adapter;
             }
 

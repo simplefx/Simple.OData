@@ -101,6 +101,7 @@
     <Compile Include="DeleteODataTests.cs" />
     <Compile Include="FindNorthwindTests.cs" />
     <Compile Include="FindODataTests.cs" />
+    <Compile Include="MetadataODataTests.cs" />
     <Compile Include="TripPinEntities.cs" />
     <Compile Include="TripPinTests.cs" />
     <Compile Include="InsertODataTests.cs" />
