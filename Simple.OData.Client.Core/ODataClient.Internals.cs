@@ -242,8 +242,7 @@ namespace Simple.OData.Client
                 var actionResponse = batchResponse.Batch[responseIndexes[actionIndex]];
                 if (actionResponse.StatusCode >= 400)
                 {
-                    var statusCode = (HttpStatusCode)actionResponse.StatusCode;
-                    throw new WebRequestException(statusCode.ToString(), statusCode);
+                    throw WebRequestException.CreateFromStatusCode((HttpStatusCode)actionResponse.StatusCode);
                 }
 
                 var client = new ODataClient(actionResponse);

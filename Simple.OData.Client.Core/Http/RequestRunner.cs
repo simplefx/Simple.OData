@@ -54,7 +54,7 @@ namespace Simple.OData.Client
                     }
 #endif
 
-                    PostExecute(response);
+                    await PostExecute(response);
                     return response;
                 }
             }
@@ -144,14 +144,14 @@ namespace Simple.OData.Client
                 _session.Settings.BeforeRequest(request.RequestMessage);
         }
 
-        private void PostExecute(HttpResponseMessage responseMessage)
+        private async Task PostExecute(HttpResponseMessage responseMessage)
         {
             if (_session.Settings.AfterResponse != null)
                 _session.Settings.AfterResponse(responseMessage);
 
             if (!responseMessage.IsSuccessStatusCode)
             {
-                throw new WebRequestException(responseMessage.ReasonPhrase, responseMessage.StatusCode);
+                throw await WebRequestException.CreateFromResponseMessageAsync(responseMessage);
             }
         }
     }
