@@ -16,6 +16,8 @@ namespace Simple.OData.Client
         string ConvertValueToUriLiteral(object value);
         string ConvertKeyValuesToUriLiteral(IDictionary<string, object> key, bool skipKeyNameForSingleValue);
         FunctionFormat FunctionFormat { get; }
+        void FormatCommandClauses(IList<string> commandClauses, EntityCollection entityCollection,
+            IList<string> expandAssociations, IList<string> selectColumns, IList<KeyValuePair<string, bool>> orderbyColumns, bool includeCount);
 
         IMetadata GetMetadata();
         IResponseReader GetResponseReader();

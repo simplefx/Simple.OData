@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Spatial;
 using System.Xml;
@@ -85,9 +87,9 @@ namespace Simple.OData.Client.V3.Adapter
 
         public override string ConvertValueToUriLiteral(object value)
         {
-            return value is ODataExpression 
+            return value is ODataExpression
                 ? (value as ODataExpression).AsString(_session)
-                : ODataUriUtils.ConvertToUriLiteral(value, 
+                : ODataUriUtils.ConvertToUriLiteral(value,
                     (ODataVersion)Enum.Parse(typeof(ODataVersion), this.GetODataVersionString(), false), this.Model);
         }
 
@@ -114,6 +116,34 @@ namespace Simple.OData.Client.V3.Adapter
         public override IBatchWriter GetBatchWriter()
         {
             return new BatchWriter(_session);
+        }
+
+        public override void FormatCommandClauses(
+            IList<string> commandClauses,
+            EntityCollection entityCollection,
+            IList<string> expandAssociations,
+            IList<string> selectColumns,
+            IList<KeyValuePair<string, bool>> orderbyColumns,
+            bool includeCount)
+        {
+            FormatClause(commandClauses, entityCollection, expandAssociations, ODataLiteral.Expand, FormatExpandItem);
+            FormatClause(commandClauses, entityCollection, selectColumns, ODataLiteral.Select, FormatSelectItem);
+            FormatClause(commandClauses, entityCollection, orderbyColumns, ODataLiteral.OrderBy, FormatOrderByItem);
+
+            if (includeCount)
+            {
+                commandClauses.Add(string.Format("{0}={1}", ODataLiteral.InlineCount, ODataLiteral.AllPages));
+            }
+        }
+
+        private void FormatClause<T>(IList<string> extraClauses, EntityCollection entityCollection,
+            IList<T> commandClauses, string clauseLiteral, Func<T, EntityCollection, string> formatItem)
+        {
+            if (commandClauses.Any())
+            {
+                extraClauses.Add(string.Format("{0}={1}", clauseLiteral,
+                    string.Join(",", commandClauses.Select(x => formatItem(x, entityCollection)))));
+            }
         }
     }
 }
