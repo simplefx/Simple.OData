@@ -134,14 +134,21 @@ namespace Simple.OData.Client
                         BindingRestrictions.GetTypeRestriction(Expression, LimitType));
                 }
                 else if (string.Equals(binder.Name, ODataLiteral.IsOf, StringComparison.OrdinalIgnoreCase) ||
-                         string.Equals(binder.Name, ODataLiteral.Cast, StringComparison.OrdinalIgnoreCase))
+                         string.Equals(binder.Name, ODataLiteral.Is, StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(binder.Name, ODataLiteral.Cast, StringComparison.OrdinalIgnoreCase) ||
+                         string.Equals(binder.Name, ODataLiteral.As, StringComparison.OrdinalIgnoreCase))
                 {
+                    var functionName = string.Equals(binder.Name, ODataLiteral.Is, StringComparison.OrdinalIgnoreCase)
+                        ? ODataLiteral.IsOf
+                        : string.Equals(binder.Name, ODataLiteral.As, StringComparison.OrdinalIgnoreCase)
+                            ? ODataLiteral.Cast
+                            : binder.Name;
                     var expression = Expression.New(CtorWithExpressionAndExpressionFunction,
                         new[]
                         {
                             Expression.Constant(this.Value), 
                             Expression.Constant(new ExpressionFunction(
-                                binder.Name, 
+                                functionName, 
                                 new [] { (this.Value as ODataExpression).IsNull ? null : this.Value, args.First().Value }))
                         });
 

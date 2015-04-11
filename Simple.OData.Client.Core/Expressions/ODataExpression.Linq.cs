@@ -52,6 +52,8 @@ namespace Simple.OData.Client
 
                 case ExpressionType.TypeIs:
                     return ParseTypeIsExpression(expression);
+                case ExpressionType.TypeAs:
+                    return ParseTypeAsExpression(expression);
                 case ExpressionType.Parameter:
                     return ParseTypedParameterExpression(expression);
 
@@ -242,12 +244,24 @@ namespace Simple.OData.Client
         private static ODataExpression ParseTypeIsExpression(Expression expression)
         {
             var typeIsExpression = expression as TypeBinaryExpression;
-            var leftExpression = ParseLinqExpression(typeIsExpression.Expression);
+            var targetExpression = ParseLinqExpression(typeIsExpression.Expression);
             return FromFunction(
                 new ExpressionFunction()
                 {
                     FunctionName = "isof",
-                    Arguments = new List<ODataExpression>() {leftExpression, FromValue(typeIsExpression.TypeOperand)},
+                    Arguments = new List<ODataExpression>() {targetExpression, FromValue(typeIsExpression.TypeOperand)},
+                });
+        }
+
+        private static ODataExpression ParseTypeAsExpression(Expression expression)
+        {
+            var typeAsExpression = expression as UnaryExpression;
+            var targetExpression = ParseLinqExpression(typeAsExpression.Operand);
+            return FromFunction(
+                new ExpressionFunction()
+                {
+                    FunctionName = "cast",
+                    Arguments = new List<ODataExpression>() { targetExpression, FromValue(typeAsExpression.Type) },
                 });
         }
 

@@ -582,6 +582,36 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task CastToPrimitiveType()
+        {
+            var product = await _client
+                .For<Product>()
+                .Filter(x => x.CategoryID == (int)1L)
+                .FindEntryAsync();
+            Assert.NotNull(product);
+        }
+
+        [Fact]
+        public async Task CastInstanceToEntityType()
+        {
+            var employee = await _client
+                .For<Employee>()
+                .Filter(x => x as Employee != null)
+                .FindEntryAsync();
+            Assert.NotNull(employee);
+        }
+
+        [Fact]
+        public async Task CastPropertyToEntityType()
+        {
+            var employee = await _client
+                .For<Employee>()
+                .Filter(x => x.Superior as Employee != null)
+                .FindEntryAsync();
+            Assert.NotNull(employee);
+        }
+
+        [Fact]
         public async Task FilterAny()
         {
             var products = await _client

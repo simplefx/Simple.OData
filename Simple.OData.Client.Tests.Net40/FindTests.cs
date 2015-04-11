@@ -450,6 +450,36 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task CastToPrimitiveType()
+        {
+            var product = await _client
+                .For("Products")
+                .Filter("ProductID eq cast(1L, 'Edm.Int32')")
+                .FindEntryAsync();
+            Assert.NotNull(product);
+        }
+
+        [Fact]
+        public async Task CastInstanceToEntityType()
+        {
+            var employee = await _client
+                .For("Employees")
+                .Filter("cast(Superior, 'NorthwindModel.Employees') ne null")
+                .FindEntryAsync();
+            Assert.NotNull(employee);
+        }
+
+        [Fact]
+        public async Task CastPropertyToEntityType()
+        {
+            var employee = await _client
+                .For("Employees")
+                .Filter("cast(Superior, 'NorthwindModel.Employees') ne null")
+                .FindEntryAsync();
+            Assert.NotNull(employee);
+        }
+
+        [Fact]
         public async Task FilterAny()
         {
             var products = await _client
