@@ -215,6 +215,11 @@ namespace Simple.OData.Client.V3.Adapter
             bool isCollection = navigationProperty.Type.Definition.TypeKind == EdmTypeKind.Collection;
 
             var linkType = GetNavigationPropertyEntityType(navigationProperty);
+            var linkTypeWithKey = linkType;
+            while (linkTypeWithKey.DeclaredKey == null && linkTypeWithKey.BaseEntityType() != null)
+            {
+                linkTypeWithKey = linkTypeWithKey.BaseEntityType();
+            }
 
             entryWriter.WriteStart(new ODataNavigationLink()
             {
@@ -225,7 +230,7 @@ namespace Simple.OData.Client.V3.Adapter
 
             foreach (var referenceLink in links)
             {
-                var linkKey = linkType.DeclaredKey;
+                var linkKey = linkTypeWithKey.DeclaredKey;
                 var linkEntry = referenceLink.LinkData.ToDictionary();
                 var contentId = GetContentId(referenceLink);
                 string linkUri;
@@ -237,7 +242,7 @@ namespace Simple.OData.Client.V3.Adapter
                 {
                     var linkSet = _model.EntityContainers()
                         .SelectMany(x => x.EntitySets())
-                        .BestMatch(x => x.ElementType.Name, linkType.Name, _session.Pluralizer);
+                        .BestMatch(x => x.ElementType.Name, linkTypeWithKey.Name, _session.Pluralizer);
                     var formattedKey = _session.Adapter.ConvertKeyValuesToUriLiteral(
                         linkKey.ToDictionary(x => x.Name, x => linkEntry[x.Name]), true);
                     linkUri = linkSet.Name + formattedKey;
