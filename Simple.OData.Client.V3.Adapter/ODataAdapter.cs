@@ -135,15 +135,5 @@ namespace Simple.OData.Client.V3.Adapter
                 commandClauses.Add(string.Format("{0}={1}", ODataLiteral.InlineCount, ODataLiteral.AllPages));
             }
         }
-
-        private void FormatClause<T>(IList<string> extraClauses, EntityCollection entityCollection,
-            IList<T> commandClauses, string clauseLiteral, Func<T, EntityCollection, string> formatItem)
-        {
-            if (commandClauses.Any())
-            {
-                extraClauses.Add(string.Format("{0}={1}", clauseLiteral,
-                    string.Join(",", commandClauses.Select(x => formatItem(x, entityCollection)))));
-            }
-        }
     }
 }

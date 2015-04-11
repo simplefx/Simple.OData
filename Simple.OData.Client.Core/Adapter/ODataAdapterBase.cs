@@ -96,5 +96,15 @@ namespace Simple.OData.Client
                     FormatOrderByItem(new KeyValuePair<string, bool>(item, pathWithOrder.Value), entityCollection));
             }
         }
+
+        protected void FormatClause<T>(IList<string> commandClauses, EntityCollection entityCollection,
+            IList<T> clauses, string clauseLiteral, Func<T, EntityCollection, string> formatItem)
+        {
+            if (clauses.Any())
+            {
+                commandClauses.Add(string.Format("{0}={1}", clauseLiteral,
+                    string.Join(",", clauses.Select(x => formatItem(x, entityCollection)))));
+            }
+        }
     }
 }
