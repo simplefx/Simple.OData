@@ -150,20 +150,20 @@ namespace Simple.OData.Client.V4.Adapter
             var text = string.Empty;
             if (items.Count() == 1)
             {
-                selectColumns = SelectExpansionSegmentColumns(selectColumns, associationName);
-                orderbyColumns = SelectExpansionSegmentColumns(orderbyColumns, associationName);
+                var nestedSelectColumns = SelectExpansionSegmentColumns(selectColumns, associationName);
+                var nestedOrderbyColumns = SelectExpansionSegmentColumns(orderbyColumns, associationName);
 
-                if (selectColumns.Any())
+                if (nestedSelectColumns.Any())
                 {
-                    var segmentColumns = string.Join(",", SelectExpansionSegmentColumns(selectColumns, null));
-                    text += string.Format("{0}({1}={2})", associationName, ODataLiteral.Select, segmentColumns);
+                    var columns = string.Join(",", SelectExpansionSegmentColumns(nestedSelectColumns, null));
+                    text += string.Format("{0}({1}={2})", associationName, ODataLiteral.Select, columns);
                 }
-                if (orderbyColumns.Any())
+                if (nestedOrderbyColumns.Any())
                 {
-                    var segmentColumns = string.Join(",", SelectExpansionSegmentColumns(orderbyColumns, null)
+                    var columns = string.Join(",", SelectExpansionSegmentColumns(nestedOrderbyColumns, null)
                         .Select(x => x.Key + (x.Value ? " desc" : string.Empty)).ToList());
                     if (!string.IsNullOrEmpty(text)) text += ",";
-                    text += string.Format("{0}({1}={2})", associationName, ODataLiteral.OrderBy, segmentColumns);
+                    text += string.Format("{0}({1}={2})", associationName, ODataLiteral.OrderBy, columns);
                 }
                 return string.IsNullOrEmpty(text) ? associationName : text;
             }
@@ -174,28 +174,28 @@ namespace Simple.OData.Client.V4.Adapter
                     _session.Metadata.GetNavigationPropertyPartnerName(entityCollection.Name, associationName));
 
                 var segmentAssociationName = items.First();
-                selectColumns = SelectExpansionSegmentColumns(selectColumns, segmentAssociationName);
-                orderbyColumns = SelectExpansionSegmentColumns(orderbyColumns, segmentAssociationName);
+                var nestedSelectColumns = SelectExpansionSegmentColumns(selectColumns, segmentAssociationName);
+                var nestedOrderbyColumns = SelectExpansionSegmentColumns(orderbyColumns, segmentAssociationName);
 
-                if (selectColumns.Any())
+                if (nestedSelectColumns.Any())
                 {
-                    var segmentColumns = SelectExpansionSegmentColumns(selectColumns, null);
+                    var columns = SelectExpansionSegmentColumns(nestedSelectColumns, null);
                     text += string.Format("{0}({1}={2})",
                         associationName, ODataLiteral.Expand,
-                        FormatExpansionSegment(path, entityCollection, segmentColumns, orderbyColumns));
+                        FormatExpansionSegment(path, entityCollection, columns, nestedOrderbyColumns));
                 }
-                if (orderbyColumns.Any())
+                if (nestedOrderbyColumns.Any())
                 {
-                    var segmentColumns = SelectExpansionSegmentColumns(orderbyColumns, null);
+                    var columns = SelectExpansionSegmentColumns(nestedOrderbyColumns, null);
                     if (!string.IsNullOrEmpty(text)) text += ",";
                     text += string.Format("{0}({1}={2})",
                         associationName, ODataLiteral.Expand,
-                        FormatExpansionSegment(path, entityCollection, selectColumns, segmentColumns));
+                        FormatExpansionSegment(path, entityCollection, nestedSelectColumns, columns));
                 }
 
                 return string.IsNullOrEmpty(text)
                     ? string.Format("{0}({1}={2})", associationName, ODataLiteral.Expand,
-                        FormatExpansionSegment(path, entityCollection, selectColumns, orderbyColumns))
+                        FormatExpansionSegment(path, entityCollection, nestedSelectColumns, nestedOrderbyColumns))
                     : text;
             }
         }
