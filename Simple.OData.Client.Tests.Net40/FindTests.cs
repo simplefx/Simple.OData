@@ -464,7 +464,7 @@ namespace Simple.OData.Client.Tests
         {
             var employee = await _client
                 .For("Employees")
-                .Filter("cast(Superior, 'NorthwindModel.Employees') ne null")
+                .Filter("cast('NorthwindModel.Employees') ne null")
                 .FindEntryAsync();
             Assert.NotNull(employee);
         }

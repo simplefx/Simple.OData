@@ -568,7 +568,7 @@ namespace Simple.OData.Client.Tests
                 .Filter(x => x is Ship)
                 .As<Ship>()
                 .FindEntryAsync();
-            Assert.Equal("Titanic", (transport as Ship).ShipName);
+            Assert.Equal("Titanic", transport.ShipName);
         }
 
         [Fact]
