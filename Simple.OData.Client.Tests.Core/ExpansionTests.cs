@@ -78,7 +78,7 @@ namespace Simple.OData.Client.Tests
                 .OrderBy(x => x.Subordinates.Select(y => y.LastName))
                 .OrderBy(x => x.Subordinates.Select(y => y.Subordinates.Select(z => z.LastName)));
             string commandText = await command.GetCommandTextAsync();
-            Assert.Equal("Employees?$expand=Employees1($expand=Employees1($select=LastName,Employees1;$orderby=LastName);$select=LastName,Employees1;$orderby=LastName)&$select=LastName,Employees1&orderby=LastName", commandText);
+            Assert.Equal("Employees?$expand=Subordinates($expand=Subordinates($select=LastName,Subordinates;$orderby=LastName);$select=LastName,Subordinates;$orderby=LastName)&$select=LastName,Subordinates&orderby=LastName", commandText);
         }
     }
 }

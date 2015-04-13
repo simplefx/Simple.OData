@@ -375,9 +375,9 @@ namespace Simple.OData.Client
                     var callExpression = expression as MethodCallExpression;
                     if (callExpression.Method.Name == "Select" && callExpression.Arguments.Count == 2)
                     {
-                        return new[] { String.Join("/", 
-                            ExtractColumnNames(callExpression.Arguments[0]), 
-                            ExtractColumnNames(callExpression.Arguments[1])) };
+                        return ExtractColumnNames(callExpression.Arguments[0])
+                            .SelectMany(x => ExtractColumnNames(callExpression.Arguments[1])
+                                .Select(y => String.Join("/", x, y)));
                     }
                     else
                     {
