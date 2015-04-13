@@ -176,6 +176,9 @@
     <Compile Include="..\Simple.OData.Client.Core\EntryDetails.cs">
       <Link>EntryDetails.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Expressions\ColumnExpression.cs">
+      <Link>Expressions\ColumnExpression.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Expressions\ExpressionContext.cs">
       <Link>Expressions\ExpressionContext.cs</Link>
     </Compile>

@@ -166,7 +166,7 @@ namespace Simple.OData.Client
 
         public IBoundClient<T> Expand(Expression<Func<T, object>> expression)
         {
-            this.Command.Expand(ExtractColumnNames(expression));
+            this.Command.Expand(ColumnExpression.ExtractColumnNames(expression));
             return this;
         }
 
@@ -190,7 +190,7 @@ namespace Simple.OData.Client
 
         public IBoundClient<T> Select(Expression<Func<T, object>> expression)
         {
-            this.Command.Select(ExtractColumnNames(expression));
+            this.Command.Select(ColumnExpression.ExtractColumnNames(expression));
             return this;
         }
 
@@ -214,7 +214,7 @@ namespace Simple.OData.Client
 
         public IBoundClient<T> OrderBy(Expression<Func<T, object>> expression)
         {
-            this.Command.OrderBy(ExtractColumnNames(expression).Select(x => new KeyValuePair<string, bool>(x, false)));
+            this.Command.OrderBy(ColumnExpression.ExtractColumnNames(expression).Select(x => new KeyValuePair<string, bool>(x, false)));
             return this;
         }
 
@@ -226,7 +226,7 @@ namespace Simple.OData.Client
 
         public IBoundClient<T> ThenBy(Expression<Func<T, object>> expression)
         {
-            this.Command.ThenBy(ExtractColumnNames(expression).ToArray());
+            this.Command.ThenBy(ColumnExpression.ExtractColumnNames(expression).ToArray());
             return this;
         }
 
@@ -244,7 +244,7 @@ namespace Simple.OData.Client
 
         public IBoundClient<T> OrderByDescending(Expression<Func<T, object>> expression)
         {
-            this.Command.OrderBy(ExtractColumnNames(expression).Select(x => new KeyValuePair<string, bool>(x, true)));
+            this.Command.OrderBy(ColumnExpression.ExtractColumnNames(expression).Select(x => new KeyValuePair<string, bool>(x, true)));
             return this;
         }
 
@@ -256,7 +256,7 @@ namespace Simple.OData.Client
 
         public IBoundClient<T> ThenByDescending(Expression<Func<T, object>> expression)
         {
-            this.Command.ThenByDescending(ExtractColumnNames(expression).ToArray());
+            this.Command.ThenByDescending(ColumnExpression.ExtractColumnNames(expression).ToArray());
             return this;
         }
 

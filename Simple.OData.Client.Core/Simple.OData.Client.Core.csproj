@@ -53,6 +53,7 @@
     <Compile Include="Adapter\RequestWriterBase.cs" />
     <Compile Include="Adapter\ResponseNode.cs" />
     <Compile Include="Adapter\ResponseReaderBase.cs" />
+    <Compile Include="Expressions\ColumnExpression.cs" />
     <Compile Include="Extensions\MemberInfoExtensions.cs" />
     <Compile Include="Fluent\FluentClientBase.cs" />
     <Compile Include="Fluent\IBoundClient.cs" />

@@ -168,6 +168,9 @@
     <Compile Include="..\Simple.OData.Client.Core\EntryDetails.cs">
       <Link>EntryDetails.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Expressions\ColumnExpression.cs">
+      <Link>Expressions\ColumnExpression.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Extensions\DictionaryExtensions.cs">
       <Link>Extensions\DictionaryExtensions.cs</Link>
     </Compile>

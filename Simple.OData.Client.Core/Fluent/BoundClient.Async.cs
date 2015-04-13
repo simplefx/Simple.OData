@@ -231,7 +231,7 @@ namespace Simple.OData.Client
 
         public Task LinkEntryAsync<U>(Expression<Func<T, U>> expression, U linkedEntryKey, CancellationToken cancellationToken)
         {
-            return _client.LinkEntryAsync(_command, _command.KeyValues, ExtractColumnName(expression), linkedEntryKey.ToDictionary(), cancellationToken);
+            return _client.LinkEntryAsync(_command, _command.KeyValues, ColumnExpression.ExtractColumnName(expression), linkedEntryKey.ToDictionary(), cancellationToken);
         }
 
         public Task LinkEntryAsync(ODataExpression expression, IDictionary<string, object> linkedEntryKey)
@@ -276,12 +276,12 @@ namespace Simple.OData.Client
 
         public Task UnlinkEntryAsync<U>(Expression<Func<T, U>> expression)
         {
-            return _client.UnlinkEntryAsync(_command, _command.KeyValues, ExtractColumnName(expression), null, CancellationToken.None);
+            return _client.UnlinkEntryAsync(_command, _command.KeyValues, ColumnExpression.ExtractColumnName(expression), null, CancellationToken.None);
         }
 
         public Task UnlinkEntryAsync<U>(Expression<Func<T, U>> expression, CancellationToken cancellationToken)
         {
-            return _client.UnlinkEntryAsync(_command, _command.KeyValues, ExtractColumnName(expression), null, cancellationToken);
+            return _client.UnlinkEntryAsync(_command, _command.KeyValues, ColumnExpression.ExtractColumnName(expression), null, cancellationToken);
         }
 
         public Task UnlinkEntryAsync(ODataExpression expression)
@@ -326,7 +326,7 @@ namespace Simple.OData.Client
 
         public Task UnlinkEntryAsync<U>(Expression<Func<T, U>> expression, U linkedEntryKey, CancellationToken cancellationToken)
         {
-            return _client.UnlinkEntryAsync(_command, _command.KeyValues, ExtractColumnName(expression), linkedEntryKey != null ? linkedEntryKey.ToDictionary() : null, cancellationToken);
+            return _client.UnlinkEntryAsync(_command, _command.KeyValues, ColumnExpression.ExtractColumnName(expression), linkedEntryKey != null ? linkedEntryKey.ToDictionary() : null, cancellationToken);
         }
 
         public Task UnlinkEntryAsync(ODataExpression expression, IDictionary<string, object> linkedEntryKey)

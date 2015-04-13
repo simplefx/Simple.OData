@@ -99,7 +99,7 @@ namespace Simple.OData.Client
         public IBoundClient<U> NavigateTo<U>(Expression<Func<T, U>> expression)
             where U : class
         {
-            return this.Link<U>(this.Command, ExtractColumnName(expression));
+            return this.Link<U>(this.Command, ColumnExpression.ExtractColumnName(expression));
         }
         /// <summary>
         /// Navigates to the linked entity.
@@ -109,7 +109,7 @@ namespace Simple.OData.Client
         /// <returns>Self.</returns>
         public IBoundClient<U> NavigateTo<U>(Expression<Func<T, IEnumerable<U>>> expression) where U : class
         {
-            return this.Link<U>(this.Command, ExtractColumnName(expression));
+            return this.Link<U>(this.Command, ColumnExpression.ExtractColumnName(expression));
         }
         /// <summary>
         /// Navigates to the linked entity.
@@ -119,7 +119,7 @@ namespace Simple.OData.Client
         /// <returns>Self.</returns>
         public IBoundClient<U> NavigateTo<U>(Expression<Func<T, IList<U>>> expression) where U : class
         {
-            return this.Link<U>(this.Command, ExtractColumnName(expression));
+            return this.Link<U>(this.Command, ColumnExpression.ExtractColumnName(expression));
         }
         /// <summary>
         /// Navigates to the linked entity.
@@ -129,7 +129,7 @@ namespace Simple.OData.Client
         /// <returns>Self.</returns>
         public IBoundClient<U> NavigateTo<U>(Expression<Func<T, U[]>> expression) where U : class
         {
-            return this.Link<U>(this.Command, ExtractColumnName(expression));
+            return this.Link<U>(this.Command, ColumnExpression.ExtractColumnName(expression));
         }
         /// <summary>
         /// Navigates to the linked entity.
@@ -318,84 +318,6 @@ namespace Simple.OData.Client
                             .Any(x => x is IDictionary<string, object> && (x as IDictionary<string, object>)
                                 .Any(y => IsSelectedColumn(y, string.Join("/", items.Skip(1))))));
             }
-        }
-
-        internal static IEnumerable<string> ExtractColumnNames(Expression<Func<T, object>> expression)
-        {
-            var lambdaExpression = Utils.CastExpressionWithTypeCheck<LambdaExpression>(expression);
-            switch (lambdaExpression.Body.NodeType)
-            {
-                case ExpressionType.MemberAccess:
-                case ExpressionType.Convert:
-                    return ExtractColumnNames(lambdaExpression.Body);
-
-                case ExpressionType.New:
-                    var newExpression = lambdaExpression.Body as NewExpression;
-                    return newExpression.Arguments.SelectMany(ExtractColumnNames);
-
-                case ExpressionType.Call:
-                    var callExpression = lambdaExpression.Body as MethodCallExpression;
-                    if (callExpression.Method.Name == "Select" && callExpression.Arguments.Count == 2)
-                    {
-                        return ExtractColumnNames(callExpression.Arguments[0])
-                            .SelectMany(x => ExtractColumnNames(callExpression.Arguments[1])
-                                .Select(y => String.Join("/", x, y)));
-                    }
-                    else
-                    {
-                        throw Utils.NotSupportedExpression(lambdaExpression.Body);
-                    }
-
-                default:
-                    throw Utils.NotSupportedExpression(lambdaExpression.Body);
-            }
-        }
-
-        internal static IEnumerable<string> ExtractColumnNames(Expression expression)
-        {
-            switch (expression.NodeType)
-            {
-                case ExpressionType.MemberAccess:
-                    var memberExpression = expression as MemberExpression;
-                    var memberName = (expression as MemberExpression).Expression.Type
-                        .GetAnyProperty(memberExpression.Member.Name)
-                        .GetMappedName();
-                    return memberExpression.Expression is MemberExpression
-                        ? ExtractColumnNames(memberExpression.Expression)
-                            .Select(x => String.Join("/", x, memberName))
-                        : new[] { memberName };
-
-                case ExpressionType.Convert:
-                    return ExtractColumnNames((expression as UnaryExpression).Operand);
-
-                case ExpressionType.Lambda:
-                    return ExtractColumnNames((expression as LambdaExpression).Body);
-
-                case ExpressionType.Call:
-                    var callExpression = expression as MethodCallExpression;
-                    if (callExpression.Method.Name == "Select" && callExpression.Arguments.Count == 2)
-                    {
-                        return ExtractColumnNames(callExpression.Arguments[0])
-                            .SelectMany(x => ExtractColumnNames(callExpression.Arguments[1])
-                                .Select(y => String.Join("/", x, y)));
-                    }
-                    else
-                    {
-                        throw Utils.NotSupportedExpression(callExpression);
-                    }
-
-                case ExpressionType.New:
-                    var newExpression = expression as NewExpression;
-                    return newExpression.Arguments.SelectMany(ExtractColumnNames);
-
-                default:
-                    throw Utils.NotSupportedExpression(expression);
-            }
-        }
-
-        internal static string ExtractColumnName(Expression expression)
-        {
-            return ExtractColumnNames(expression).Single();
         }
 
 #pragma warning restore 1591
