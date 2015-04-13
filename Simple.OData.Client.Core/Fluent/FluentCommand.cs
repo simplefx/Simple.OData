@@ -33,8 +33,8 @@ namespace Simple.OData.Client
         private ODataExpression _filterExpression;
         private int _skipCount = -1;
         private int _topCount = -1;
-        private List<string> _expandAssociations = new List<string>();
-        private List<string> _selectColumns = new List<string>();
+        private readonly List<string> _expandAssociations = new List<string>();
+        private readonly List<string> _selectColumns = new List<string>();
         private readonly List<KeyValuePair<string, bool>> _orderbyColumns = new List<KeyValuePair<string, bool>>();
         private bool _computeCount;
         private bool _includeCount;
@@ -268,7 +268,10 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _filter = filter;
+            if (string.IsNullOrEmpty(_filter))
+                _filter = filter;
+            else
+                _filter = string.Format("({0}) and ({1})", _filter, filter);
             return this;
         }
 
@@ -276,7 +279,10 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _filterExpression = expression;
+            if (ReferenceEquals(_filterExpression, null))
+                _filterExpression = expression;
+            else
+                _filterExpression = _filterExpression && expression;
             return this;
         }
 
@@ -307,7 +313,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _expandAssociations = SplitItems(associations).ToList();
+            _expandAssociations.AddRange(SplitItems(associations).ToList());
             return this;
         }
 
@@ -315,7 +321,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _expandAssociations = SplitItems(associations).ToList();
+            _expandAssociations.AddRange(SplitItems(associations).ToList());
             return this;
         }
 
@@ -328,7 +334,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _selectColumns = SplitItems(columns).ToList();
+            _selectColumns.AddRange(SplitItems(columns).ToList());
             return this;
         }
 
@@ -336,7 +342,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _selectColumns = SplitItems(columns).ToList();
+            _selectColumns.AddRange(SplitItems(columns).ToList());
             return this;
         }
 
@@ -349,7 +355,6 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _orderbyColumns.Clear();
             _orderbyColumns.AddRange(SplitItems(columns));
             return this;
         }
