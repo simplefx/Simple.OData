@@ -75,8 +75,23 @@ namespace Simple.OData.Client.Tests
         }
 
         [Theory]
+        [InlineData("Northwind.edmx", "Employees?$expand=Subordinates&$select=LastName,Subordinates&$orderby=LastName")]
+        [InlineData("Northwind4.edmx", "Employees?$expand=Subordinates&$select=LastName,Subordinates&$orderby=LastName")]
+        public async Task ExpandSubordinatesWithSelectAndOrderby(string metadataFile, string expectedCommand)
+        {
+            var client = CreateClient(metadataFile);
+            var command = client
+                .For<Employee>()
+                .Expand(x => x.Subordinates)
+                .Select(x => new {x.LastName, x.Subordinates})
+                .OrderBy(x => x.LastName);
+            string commandText = await command.GetCommandTextAsync();
+            Assert.Equal(expectedCommand, commandText);
+        }
+
+        [Theory]
         [InlineData("Northwind.edmx", "Employees?$expand=Subordinates/Subordinates&$select=LastName,Subordinates,Subordinates/LastName,Subordinates/Subordinates&$orderby=LastName,Subordinates/LastName")]
-        [InlineData("Northwind4.edmx", "Employees?$expand=Subordinates($expand=Subordinates;$select=LastName,Subordinates;$orderby=LastName)&$select=LastName,Subordinates&orderby=LastName")]
+        [InlineData("Northwind4.edmx", "Employees?$expand=Subordinates($expand=Subordinates;$select=LastName,Subordinates;$orderby=LastName)&$select=LastName,Subordinates&$orderby=LastName")]
         public async Task ExpandSubordinatesWithSelectAndOrderbyTwoTimes(string metadataFile, string expectedCommand)
         {
             var client = CreateClient(metadataFile);
@@ -93,7 +108,7 @@ namespace Simple.OData.Client.Tests
 
         [Theory]
         [InlineData("Northwind.edmx", "Employees?$expand=Subordinates/Subordinates/Subordinates&$select=LastName,Subordinates,Subordinates/LastName,Subordinates/Subordinates,Subordinates/Subordinates/LastName,Subordinates/Subordinates/Subordinates&$orderby=LastName,Subordinates/LastName,Subordinates/Subordinates/LastName")]
-        [InlineData("Northwind4.edmx", "Employees?$expand=Subordinates($expand=Subordinates($expand=Subordinates;$select=LastName,Subordinates;$orderby=LastName);$select=LastName,Subordinates;$orderby=LastName)&$select=LastName,Subordinates&orderby=LastName")]
+        [InlineData("Northwind4.edmx", "Employees?$expand=Subordinates($expand=Subordinates($expand=Subordinates;$select=LastName,Subordinates;$orderby=LastName);$select=LastName,Subordinates;$orderby=LastName)&$select=LastName,Subordinates&$orderby=LastName")]
         public async Task ExpandSubordinatesWithSelectAndOrderbyThreeTimes(string metadataFile, string expectedCommand)
         {
             var client = CreateClient(metadataFile);

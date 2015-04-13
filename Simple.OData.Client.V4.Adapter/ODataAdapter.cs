@@ -122,11 +122,11 @@ namespace Simple.OData.Client.V4.Adapter
         {
             if (expandAssociations.Any())
             {
-                var expansionSelectColumns = selectColumns;
-                var expansionOrderbyColumns = orderbyColumns;
                 commandClauses.Add(string.Format("{0}={1}", ODataLiteral.Expand,
                     string.Join(",", expandAssociations.Select(x =>
-                        FormatExpansionSegment(x, entityCollection, expansionSelectColumns, expansionOrderbyColumns)))));
+                        FormatExpansionSegment(x, entityCollection,
+                        SelectExpansionSegmentColumns(selectColumns, x),
+                        SelectExpansionSegmentColumns(orderbyColumns, x))))));
             }
 
             selectColumns = SelectExpansionSegmentColumns(selectColumns, null);
@@ -147,25 +147,32 @@ namespace Simple.OData.Client.V4.Adapter
             var items = path.Split('/');
             var associationName = _session.Metadata.GetNavigationPropertyExactName(entityCollection.Name, items.First());
 
-            var text = string.Empty;
+            var selectClause = string.Empty;
+            if (selectColumns.Any())
+            {
+                var columns = string.Join(",", SelectExpansionSegmentColumns(selectColumns, null));
+                if (!string.IsNullOrEmpty(columns))
+                    selectClause = string.Format("{0}={1}", ODataLiteral.Select, columns);
+            }
+            var orderbyClause = string.Empty;
+            if (orderbyColumns.Any())
+            {
+                var columns = string.Join(",", SelectExpansionSegmentColumns(orderbyColumns, null)
+                    .Select(x => x.Key + (x.Value ? " desc" : string.Empty)).ToList());
+                if (!string.IsNullOrEmpty(columns))
+                    orderbyClause = string.Format("{0}={1}", ODataLiteral.OrderBy, columns);
+            }
+
+            var text = associationName;
             if (items.Count() == 1)
             {
-                var nestedSelectColumns = SelectExpansionSegmentColumns(selectColumns, associationName);
-                var nestedOrderbyColumns = SelectExpansionSegmentColumns(orderbyColumns, associationName);
-
-                if (nestedSelectColumns.Any())
+                if (!string.IsNullOrEmpty(selectClause) || !string.IsNullOrEmpty(orderbyClause))
                 {
-                    var columns = string.Join(",", SelectExpansionSegmentColumns(nestedSelectColumns, null));
-                    text += string.Format("{0}({1}={2})", associationName, ODataLiteral.Select, columns);
+                    var separator = !string.IsNullOrEmpty(selectClause) && !string.IsNullOrEmpty(orderbyClause)
+                        ? ";"
+                        : string.Empty;
+                    text += string.Format("({0}{1}{2})", selectClause, separator, orderbyClause);
                 }
-                if (nestedOrderbyColumns.Any())
-                {
-                    var columns = string.Join(",", SelectExpansionSegmentColumns(nestedOrderbyColumns, null)
-                        .Select(x => x.Key + (x.Value ? " desc" : string.Empty)).ToList());
-                    if (!string.IsNullOrEmpty(text)) text += ",";
-                    text += string.Format("{0}({1}={2})", associationName, ODataLiteral.OrderBy, columns);
-                }
-                return string.IsNullOrEmpty(text) ? associationName : text;
             }
             else
             {
@@ -173,50 +180,39 @@ namespace Simple.OData.Client.V4.Adapter
                 entityCollection = _session.Metadata.GetEntityCollection(
                     _session.Metadata.GetNavigationPropertyPartnerName(entityCollection.Name, associationName));
 
-                var segmentAssociationName = items.First();
-                var nestedSelectColumns = SelectExpansionSegmentColumns(selectColumns, segmentAssociationName);
-                var nestedOrderbyColumns = SelectExpansionSegmentColumns(orderbyColumns, segmentAssociationName);
+                var nestedSelectColumns = SelectExpansionSegmentColumns(selectColumns, associationName);
+                var nestedOrderbyColumns = SelectExpansionSegmentColumns(orderbyColumns, associationName);
 
-                if (nestedSelectColumns.Any())
-                {
-                    var columns = SelectExpansionSegmentColumns(nestedSelectColumns, null);
-                    text += string.Format("{0}({1}={2})",
-                        associationName, ODataLiteral.Expand,
-                        FormatExpansionSegment(path, entityCollection, columns, nestedOrderbyColumns));
-                }
-                if (nestedOrderbyColumns.Any())
-                {
-                    var columns = SelectExpansionSegmentColumns(nestedOrderbyColumns, null);
-                    if (!string.IsNullOrEmpty(text)) text += ",";
-                    text += string.Format("{0}({1}={2})",
-                        associationName, ODataLiteral.Expand,
-                        FormatExpansionSegment(path, entityCollection, nestedSelectColumns, columns));
-                }
+                if (!string.IsNullOrEmpty(selectClause))
+                    selectClause = ";" + selectClause;
+                if (!string.IsNullOrEmpty(orderbyClause))
+                    orderbyClause = ";" + orderbyClause;
 
-                return string.IsNullOrEmpty(text)
-                    ? string.Format("{0}({1}={2})", associationName, ODataLiteral.Expand,
-                        FormatExpansionSegment(path, entityCollection, nestedSelectColumns, nestedOrderbyColumns))
-                    : text;
+                text += string.Format("({0}={1}{2}{3})", ODataLiteral.Expand,
+                    FormatExpansionSegment(path, entityCollection, nestedSelectColumns, nestedOrderbyColumns),
+                    selectClause, orderbyClause);
             }
+
+            return text;
         }
 
         private IList<string> SelectExpansionSegmentColumns(
-            IList<string> columns, string associationName)
+            IList<string> columns, string path)
         {
-            if (string.IsNullOrEmpty(associationName))
+            if (string.IsNullOrEmpty(path))
                 return columns.Where(x => !x.Contains("/")).ToList();
             else
-                return columns.Where(x => x.Contains("/") && x.Split('/').First() == associationName)
+                return columns.Where(x => x.Contains("/") && x.Split('/').First() == path.Split('/').First())
                     .Select(x => string.Join("/", x.Split('/').Skip(1))).ToList();
         }
 
         private IList<KeyValuePair<string, bool>> SelectExpansionSegmentColumns(
-            IList<KeyValuePair<string, bool>> columns, string associationName)
+            IList<KeyValuePair<string, bool>> columns, string path)
         {
-            if (string.IsNullOrEmpty(associationName))
+            if (string.IsNullOrEmpty(path))
                 return columns.Where(x => !x.Key.Contains("/")).ToList();
             else
-                return columns.Where(x => x.Key.Contains("/") && x.Key.Split('/').First() == associationName)
+                return columns.Where(x => x.Key.Contains("/") && x.Key.Split('/').First() == path.Split('/').First())
                     .Select(x => new KeyValuePair<string, bool>(
                         string.Join("/", x.Key.Split('/').Skip(1)), x.Value)).ToList();
         }
