@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Simple.OData.Client.Extensions;
@@ -328,19 +327,19 @@ namespace Simple.OData.Client
             {
                 case ExpressionType.MemberAccess:
                 case ExpressionType.Convert:
-                    return new[] { ExtractColumnName(lambdaExpression.Body) };
+                    return ExtractColumnNames(lambdaExpression.Body);
 
                 case ExpressionType.New:
                     var newExpression = lambdaExpression.Body as NewExpression;
-                    return newExpression.Arguments.Select(ExtractColumnName);
+                    return newExpression.Arguments.SelectMany(ExtractColumnNames);
 
                 case ExpressionType.Call:
                     var callExpression = lambdaExpression.Body as MethodCallExpression;
                     if (callExpression.Method.Name == "Select" && callExpression.Arguments.Count == 2)
                     {
-                        return new[] { String.Join("/", 
-                            ExtractColumnName(callExpression.Arguments[0]), 
-                            ExtractColumnName(callExpression.Arguments[1])) };
+                        return ExtractColumnNames(callExpression.Arguments[0])
+                            .SelectMany(x => ExtractColumnNames(callExpression.Arguments[1])
+                                .Select(y => String.Join("/", x, y)));
                     }
                     else
                     {
@@ -352,7 +351,7 @@ namespace Simple.OData.Client
             }
         }
 
-        internal static string ExtractColumnName(Expression expression)
+        internal static IEnumerable<string> ExtractColumnNames(Expression expression)
         {
             switch (expression.NodeType)
             {
@@ -362,31 +361,41 @@ namespace Simple.OData.Client
                         .GetAnyProperty(memberExpression.Member.Name)
                         .GetMappedName();
                     return memberExpression.Expression is MemberExpression
-                        ? String.Join("/", ExtractColumnName(memberExpression.Expression), memberName)
-                        : memberName;
+                        ? ExtractColumnNames(memberExpression.Expression)
+                            .Select(x => String.Join("/", x, memberName))
+                        : new[] { memberName };
 
                 case ExpressionType.Convert:
-                    return ExtractColumnName((expression as UnaryExpression).Operand);
+                    return ExtractColumnNames((expression as UnaryExpression).Operand);
 
                 case ExpressionType.Lambda:
-                    return ExtractColumnName((expression as LambdaExpression).Body);
+                    return ExtractColumnNames((expression as LambdaExpression).Body);
 
                 case ExpressionType.Call:
                     var callExpression = expression as MethodCallExpression;
                     if (callExpression.Method.Name == "Select" && callExpression.Arguments.Count == 2)
                     {
-                        return String.Join("/", 
-                            ExtractColumnName(callExpression.Arguments[0]), 
-                            ExtractColumnName(callExpression.Arguments[1]));
+                        return new[] { String.Join("/", 
+                            ExtractColumnNames(callExpression.Arguments[0]), 
+                            ExtractColumnNames(callExpression.Arguments[1])) };
                     }
                     else
                     {
                         throw Utils.NotSupportedExpression(callExpression);
                     }
 
+                case ExpressionType.New:
+                    var newExpression = expression as NewExpression;
+                    return newExpression.Arguments.SelectMany(ExtractColumnNames);
+
                 default:
                     throw Utils.NotSupportedExpression(expression);
             }
+        }
+
+        internal static string ExtractColumnName(Expression expression)
+        {
+            return ExtractColumnNames(expression).Single();
         }
 
 #pragma warning restore 1591

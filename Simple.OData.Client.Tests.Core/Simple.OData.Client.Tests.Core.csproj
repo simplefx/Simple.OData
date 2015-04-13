@@ -109,6 +109,7 @@
     <Compile Include="Entities\Product.cs" />
     <Compile Include="Entities\Ship.cs" />
     <Compile Include="Entities\Transport.cs" />
+    <Compile Include="ExpansionTests.cs" />
     <Compile Include="Extensions\DictionaryExtensionsTests.cs" />
     <Compile Include="Extensions\StringExtensionTests.cs" />
     <Compile Include="Extensions\TypeExtensionTests.cs" />
@@ -155,6 +156,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\QAS.Multiplatform.Demo.edmx" />
     <EmbeddedResource Include="Resources\Marathon.edmx" />
+    <EmbeddedResource Include="Resources\Northwind4.edmx" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Simple.OData.Client.Core\Simple.OData.Client.Core.csproj">
