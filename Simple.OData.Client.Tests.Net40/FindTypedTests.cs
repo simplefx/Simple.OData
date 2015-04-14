@@ -635,7 +635,7 @@ namespace Simple.OData.Client.Tests
         public async Task PluralizerSingleClient()
         {
             _client.SetPluralizer(null);
-            await AssertThrowsAsync<AggregateException>(async () =>
+            await AssertThrowsAsync<UnresolvableObjectException>(async () =>
                 await _client.For<Product>().FindEntriesAsync());
             _client.SetPluralizer(new SimplePluralizer());
             var products = await _client.For<Product>().FindEntriesAsync();
@@ -647,7 +647,7 @@ namespace Simple.OData.Client.Tests
         {
             var client = CreateClientWithDefaultSettings();
             client.SetPluralizer(null);
-            await AssertThrowsAsync<AggregateException>(async () =>
+            await AssertThrowsAsync<UnresolvableObjectException>(async () =>
                 await client.For<Product>().FindEntriesAsync());
             var products = await _client.For<Product>().FindEntriesAsync();
             Assert.NotEqual(0, products.Count());

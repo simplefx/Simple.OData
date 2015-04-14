@@ -78,10 +78,9 @@ namespace Simple.OData.Client
             return FindScalarAsync<U>(CancellationToken.None);
         }
 
-        public Task<U> FindScalarAsync<U>(CancellationToken cancellationToken)
+        public async Task<U> FindScalarAsync<U>(CancellationToken cancellationToken)
         {
-            return _client.FindScalarAsync(_command, cancellationToken)
-                .ContinueWith(x => (U)Convert.ChangeType(x.Result, typeof(U), CultureInfo.InvariantCulture), cancellationToken);
+            return (U)Convert.ChangeType(await _client.FindScalarAsync(_command, cancellationToken), typeof(U), CultureInfo.InvariantCulture);
         }
 
         public Task<T> InsertEntryAsync()
@@ -99,13 +98,10 @@ namespace Simple.OData.Client
             return InsertEntryAsync(resultRequired, CancellationToken.None);
         }
 
-        public Task<T> InsertEntryAsync(bool resultRequired, CancellationToken cancellationToken)
+        public async Task<T> InsertEntryAsync(bool resultRequired, CancellationToken cancellationToken)
         {
-            return _client.InsertEntryAsync(_command, _command.CommandData, resultRequired, cancellationToken).ContinueWith(x =>
-            {
-                var result = x.Result;
-                return result.ToObject<T>(_dynamicResults);
-            }, cancellationToken);
+            return (await _client.InsertEntryAsync(_command, _command.CommandData, resultRequired, cancellationToken))
+                .ToObject<T>(_dynamicResults);
         }
 
         public Task<T> UpdateEntryAsync()
@@ -127,33 +123,17 @@ namespace Simple.OData.Client
         {
             if (_command.HasFilter)
             {
-                return await UpdateEntriesAsync(resultRequired, cancellationToken).ContinueWith(x =>
-                {
-                    if (resultRequired)
-                    {
-                        var result = x.Result;
-                        return result == null ? null : result.First();
-                    }
-                    else
-                    {
-                        return null;
-                    }
-                }, cancellationToken);
+                var result = await UpdateEntriesAsync(resultRequired, cancellationToken);
+                return resultRequired 
+                    ? result == null ? null : result.First()
+                    : null;
             }
             else
             {
-                return await _client.UpdateEntryAsync(_command, resultRequired, cancellationToken).ContinueWith(x =>
-                {
-                    if (resultRequired)
-                    {
-                        var result = x.Result;
-                        return result == null ? null : result.ToObject<T>(_dynamicResults);
-                    }
-                    else
-                    {
-                        return null;
-                    }
-                }, cancellationToken);
+                var result = await _client.UpdateEntryAsync(_command, resultRequired, cancellationToken);
+                return resultRequired
+                    ? result == null ? null : result.ToObject<T>(_dynamicResults)
+                    : null;
             }
         }
 
@@ -172,13 +152,10 @@ namespace Simple.OData.Client
             return UpdateEntriesAsync(resultRequired, CancellationToken.None);
         }
 
-        public Task<IEnumerable<T>> UpdateEntriesAsync(bool resultRequired, CancellationToken cancellationToken)
+        public async Task<IEnumerable<T>> UpdateEntriesAsync(bool resultRequired, CancellationToken cancellationToken)
         {
-            return _client.UpdateEntriesAsync(_command, _command.CommandData, resultRequired, cancellationToken).ContinueWith(x =>
-            {
-                var result = x.Result;
-                return result.Select(y => y.ToObject<T>(_dynamicResults));
-            }, cancellationToken);
+            return (await _client.UpdateEntriesAsync(_command, _command.CommandData, resultRequired, cancellationToken))
+                .Select(y => y.ToObject<T>(_dynamicResults));
         }
 
         public Task DeleteEntryAsync()

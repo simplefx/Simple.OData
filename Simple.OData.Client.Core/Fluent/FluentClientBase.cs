@@ -260,28 +260,23 @@ namespace Simple.OData.Client
 
 #pragma warning disable 1591
 
-        protected Task<IEnumerable<T>> RectifyColumnSelectionAsync(Task<IEnumerable<IDictionary<string, object>>> entries, IList<string> selectedColumns)
+        protected async Task<IEnumerable<T>> RectifyColumnSelectionAsync(Task<IEnumerable<IDictionary<string, object>>> entries, IList<string> selectedColumns)
         {
-            return entries.ContinueWith(
-                x => RectifyColumnSelection(x.Result, selectedColumns)).ContinueWith(
-                y => y.Result == null ? null : y.Result.Select(z => z.ToObject<T>(_dynamicResults)));
+            var result = RectifyColumnSelection(await entries, selectedColumns);
+            return result == null ? null : result.Select(z => z.ToObject<T>(_dynamicResults));
         }
 
-        protected Task<T> RectifyColumnSelectionAsync(Task<IDictionary<string, object>> entry, IList<string> selectedColumns)
+        protected async Task<T> RectifyColumnSelectionAsync(Task<IDictionary<string, object>> entry, IList<string> selectedColumns)
         {
-            return entry.ContinueWith(
-                x => RectifyColumnSelection(x.Result, selectedColumns).ToObject<T>(_dynamicResults));
+            return RectifyColumnSelection(await entry, selectedColumns).ToObject<T>(_dynamicResults);
         }
 
-        protected Task<Tuple<IEnumerable<T>, int>> RectifyColumnSelectionAsync(Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> entries, IList<string> selectedColumns)
+        protected async Task<Tuple<IEnumerable<T>, int>> RectifyColumnSelectionAsync(Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> entries, IList<string> selectedColumns)
         {
-            return entries.ContinueWith(x =>
-            {
-                var result = x.Result;
-                return new Tuple<IEnumerable<T>, int>(
-                    RectifyColumnSelection(result.Item1, selectedColumns).Select(y => y.ToObject<T>(_dynamicResults)),
-                    result.Item2);
-            });
+            var result = await entries;
+            return new Tuple<IEnumerable<T>, int>(
+                RectifyColumnSelection(result.Item1, selectedColumns).Select(y => y.ToObject<T>(_dynamicResults)),
+                result.Item2);
         }
 
         protected static IEnumerable<IDictionary<string, object>> RectifyColumnSelection(IEnumerable<IDictionary<string, object>> entries, IList<string> selectedColumns)
