@@ -270,6 +270,9 @@
     <Compile Include="..\Simple.OData.Client.Core\ODataEntry.cs">
       <Link>ODataEntry.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ODataExpandOptions.cs">
+      <Link>ODataExpandOptions.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ODataFeedAnnotations.cs">
       <Link>ODataFeedAnnotations.cs</Link>
     </Compile>

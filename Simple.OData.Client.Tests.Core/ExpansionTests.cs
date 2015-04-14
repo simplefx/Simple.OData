@@ -83,7 +83,7 @@ namespace Simple.OData.Client.Tests
             var command = client
                 .For<Employee>()
                 .Expand(x => x.Subordinates)
-                .Select(x => new {x.LastName, x.Subordinates})
+                .Select(x => new { x.LastName, x.Subordinates })
                 .OrderBy(x => x.LastName);
             string commandText = await command.GetCommandTextAsync();
             Assert.Equal(expectedCommand, commandText);
@@ -98,8 +98,8 @@ namespace Simple.OData.Client.Tests
             var command = client
                 .For<Employee>()
                 .Expand(x => x.Subordinates.Select(y => y.Subordinates))
-                .Select(x => new {x.LastName, x.Subordinates})
-                .Select(x => x.Subordinates.Select(y => new {y.LastName, y.Subordinates}))
+                .Select(x => new { x.LastName, x.Subordinates })
+                .Select(x => x.Subordinates.Select(y => new { y.LastName, y.Subordinates }))
                 .OrderBy(x => x.LastName)
                 .OrderBy(x => x.Subordinates.Select(y => y.LastName));
             string commandText = await command.GetCommandTextAsync();
@@ -115,12 +115,25 @@ namespace Simple.OData.Client.Tests
             var command = client
                 .For<Employee>()
                 .Expand(x => x.Subordinates.Select(y => y.Subordinates.Select(z => z.Subordinates)))
-                .Select(x => new {x.LastName, x.Subordinates})
-                .Select(x => x.Subordinates.Select(y => new {y.LastName, y.Subordinates}))
-                .Select(x => x.Subordinates.Select(y => y.Subordinates.Select(z => new {z.LastName, z.Subordinates})))
+                .Select(x => new { x.LastName, x.Subordinates })
+                .Select(x => x.Subordinates.Select(y => new { y.LastName, y.Subordinates }))
+                .Select(x => x.Subordinates.Select(y => y.Subordinates.Select(z => new { z.LastName, z.Subordinates })))
                 .OrderBy(x => x.LastName)
                 .OrderBy(x => x.Subordinates.Select(y => y.LastName))
                 .OrderBy(x => x.Subordinates.Select(y => y.Subordinates.Select(z => z.LastName)));
+            string commandText = await command.GetCommandTextAsync();
+            Assert.Equal(expectedCommand, commandText);
+        }
+
+        [Theory]
+        [InlineData("Northwind4.edmx", "Employees?$expand=Subordinates($levels=2)")]
+        public async Task ExpandSubordinates2Levels(string metadataFile, string expectedCommand)
+        {
+            var client = CreateClient(metadataFile);
+            var command = client
+                .For<Employee>()
+                .Expand(ODataExpandOptions.ByValue(2), x => x.Subordinates);
+
             string commandText = await command.GetCommandTextAsync();
             Assert.Equal(expectedCommand, commandText);
         }

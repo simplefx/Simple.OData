@@ -309,10 +309,28 @@ namespace Simple.OData.Client
             return this;
         }
 
+        public FluentCommand Expand(ODataExpandOptions expandOptions)
+        {
+            if (IsBatchResponse) return this;
+
+            //TODO
+            //_expandAssociations.AddRange(SplitItems(associations).ToList());
+            return this;
+        }
+
         public FluentCommand Expand(IEnumerable<string> associations)
         {
             if (IsBatchResponse) return this;
 
+            _expandAssociations.AddRange(SplitItems(associations).ToList());
+            return this;
+        }
+
+        public FluentCommand Expand(ODataExpandOptions expandOptions, IEnumerable<string> associations)
+        {
+            if (IsBatchResponse) return this;
+
+            //TODO
             _expandAssociations.AddRange(SplitItems(associations).ToList());
             return this;
         }
@@ -325,8 +343,23 @@ namespace Simple.OData.Client
             return this;
         }
 
+        public FluentCommand Expand(ODataExpandOptions expandOptions, params string[] associations)
+        {
+            if (IsBatchResponse) return this;
+
+            //TODO
+            _expandAssociations.AddRange(SplitItems(associations).ToList());
+            return this;
+        }
+
         public FluentCommand Expand(params ODataExpression[] columns)
         {
+            return Expand(columns.Select(x => x.Reference));
+        }
+
+        public FluentCommand Expand(ODataExpandOptions expandOptions, params ODataExpression[] columns)
+        {
+            //TODO
             return Expand(columns.Select(x => x.Reference));
         }
 

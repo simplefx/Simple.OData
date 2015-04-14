@@ -77,6 +77,7 @@
     <Compile Include="Fluent\UnboundClient.cs" />
     <Compile Include="Http\HttpLiteral.cs" />
     <Compile Include="Http\RestVerbs.cs" />
+    <Compile Include="ODataExpandOptions.cs" />
     <Compile Include="ODataFeedAnnotations.cs" />
     <Compile Include="ODataPayloadFormat.cs" />
     <Compile Include="ODataLiteral.cs" />

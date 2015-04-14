@@ -146,15 +146,33 @@ namespace Simple.OData.Client
             return this;
         }
 
-        public IBoundClient<T> Expand(IEnumerable<string> columns)
+        public IBoundClient<T> Expand(ODataExpandOptions expandOptions)
         {
-            this.Command.Expand(columns);
+            this.Command.Expand(expandOptions);
             return this;
         }
 
-        public IBoundClient<T> Expand(params string[] columns)
+        public IBoundClient<T> Expand(IEnumerable<string> associations)
         {
-            this.Command.Expand(columns);
+            this.Command.Expand(associations);
+            return this;
+        }
+
+        public IBoundClient<T> Expand(ODataExpandOptions expandOptions, IEnumerable<string> associations)
+        {
+            this.Command.Expand(expandOptions, associations);
+            return this;
+        }
+
+        public IBoundClient<T> Expand(params string[] associations)
+        {
+            this.Command.Expand(associations);
+            return this;
+        }
+
+        public IBoundClient<T> Expand(ODataExpandOptions expandOptions, params string[] associations)
+        {
+            this.Command.Expand(expandOptions, associations);
             return this;
         }
 
@@ -164,9 +182,21 @@ namespace Simple.OData.Client
             return this;
         }
 
+        public IBoundClient<T> Expand(ODataExpandOptions expandOptions, params ODataExpression[] associations)
+        {
+            this.Command.Expand(expandOptions, associations);
+            return this;
+        }
+
         public IBoundClient<T> Expand(Expression<Func<T, object>> expression)
         {
             this.Command.Expand(ColumnExpression.ExtractColumnNames(expression));
+            return this;
+        }
+
+        public IBoundClient<T> Expand(ODataExpandOptions expandOptions, Expression<Func<T, object>> expression)
+        {
+            this.Command.Expand(expandOptions, ColumnExpression.ExtractColumnNames(expression));
             return this;
         }
 

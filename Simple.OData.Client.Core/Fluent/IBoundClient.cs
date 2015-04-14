@@ -513,29 +513,63 @@ namespace Simple.OData.Client
         IBoundClient<T> Top(int count);
 
         /// <summary>
-        /// Expands the specified associations.
+        /// Expands top level of all associations.
+        /// </summary>
+        /// <param name="expandOptions">The <see cref="ODataExpandOptions"/>.</param>
+        /// <returns>Self.</returns>
+        IBoundClient<T> Expand(ODataExpandOptions expandOptions);
+        /// <summary>
+        /// Expands the top level of the specified associations.
         /// </summary>
         /// <param name="associations">The associations to expand.</param>
         /// <returns>Self.</returns>
         IBoundClient<T> Expand(IEnumerable<string> associations);
         /// <summary>
-        /// Expands the specified associations.
+        /// Expands the number of levels of the specified associations.
+        /// </summary>
+        /// <param name="expandOptions">The <see cref="ODataExpandOptions"/>.</param>
+        /// <param name="associations">The associations to expand.</param>
+        /// <returns>Self.</returns>
+        IBoundClient<T> Expand(ODataExpandOptions expandOptions, IEnumerable<string> associations);
+        /// <summary>
+        /// Expands the top level of the specified associations.
         /// </summary>
         /// <param name="associations">The associations to expand.</param>
         /// <returns>Self.</returns>
         IBoundClient<T> Expand(params string[] associations);
         /// <summary>
-        /// Expands the specified associations.
+        /// Expands the number of levels of the specified associations.
+        /// </summary>
+        /// <param name="expandOptions">The <see cref="ODataExpandOptions"/>.</param>
+        /// <param name="associations">The associations to expand.</param>
+        /// <returns>Self.</returns>
+        IBoundClient<T> Expand(ODataExpandOptions expandOptions, params string[] associations);
+        /// <summary>
+        /// Expands the top level of the specified associations.
         /// </summary>
         /// <param name="associations">The associations to expand.</param>
         /// <returns>Self.</returns>
         IBoundClient<T> Expand(params ODataExpression[] associations);
         /// <summary>
-        /// Expands the specified expression.
+        /// Expands the number of levels of the specified associations.
+        /// </summary>
+        /// <param name="expandOptions">The <see cref="ODataExpandOptions"/>.</param>
+        /// <param name="associations">The associations to expand.</param>
+        /// <returns>Self.</returns>
+        IBoundClient<T> Expand(ODataExpandOptions expandOptions, params ODataExpression[] associations);
+        /// <summary>
+        /// Expands the top level of the specified expression.
         /// </summary>
         /// <param name="expression">The expression for associations to expand.</param>
         /// <returns>Self.</returns>
         IBoundClient<T> Expand(Expression<Func<T, object>> expression);
+        /// <summary>
+        /// Expands the number of levels of the specified associations.
+        /// </summary>
+        /// <param name="expandOptions">The <see cref="ODataExpandOptions"/>.</param>
+        /// <param name="expression">The expression for associations to expand.</param>
+        /// <returns>Self.</returns>
+        IBoundClient<T> Expand(ODataExpandOptions expandOptions, Expression<Func<T, object>> expression);
 
         /// <summary>
         /// Selects the specified result columns.
