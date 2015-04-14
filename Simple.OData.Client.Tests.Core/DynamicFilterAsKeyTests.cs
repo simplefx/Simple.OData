@@ -29,6 +29,30 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void FindAllByFilterTwoClauses()
+        {
+            var x = ODataDynamic.Expression;
+            var command = _client
+                .For(x.Product)
+                .Filter(x.ProductID != 1)
+                .Filter(x.ProductID != 2);
+            string commandText = command.GetCommandTextAsync().Result;
+            Assert.Equal("Products?$filter=ProductID%20ne%201%20and%20ProductID%20ne%202", commandText);
+        }
+
+        [Fact]
+        public void FindAllByFilterTwoClausesWithOr()
+        {
+            var x = ODataDynamic.Expression;
+            var command = _client
+                .For(x.Product)
+                .Filter(x.ProductID != 1 || x.ProductID != 2)
+                .Filter(x.ProductID != 3);
+            string commandText = command.GetCommandTextAsync().Result;
+            Assert.Equal("Products?$filter=%28ProductID%20ne%201%20or%20ProductID%20ne%202%29%20and%20ProductID%20ne%203", commandText);
+        }
+
+        [Fact]
         public async Task FindAllByFilterAsNotKeyEqual()
         {
             var x = ODataDynamic.Expression;
