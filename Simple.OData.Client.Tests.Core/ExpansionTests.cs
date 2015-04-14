@@ -125,17 +125,28 @@ namespace Simple.OData.Client.Tests
             Assert.Equal(expectedCommand, commandText);
         }
 
-        [Theory]
-        [InlineData("Northwind4.edmx", "Employees?$expand=Subordinates($levels=2)")]
-        public async Task ExpandSubordinates2Levels(string metadataFile, string expectedCommand)
+        [Fact]
+        public async Task ExpandSubordinates2LevelsByValue()
         {
-            var client = CreateClient(metadataFile);
+            var client = CreateClient("Northwind4.edmx");
             var command = client
                 .For<Employee>()
                 .Expand(ODataExpandOptions.ByValue(2), x => x.Subordinates);
 
             string commandText = await command.GetCommandTextAsync();
-            Assert.Equal(expectedCommand, commandText);
+            Assert.Equal("Employees?$expand=Subordinates($levels=2)", commandText);
+        }
+
+        [Fact]
+        public async Task ExpandSubordinates2LevelsByReference()
+        {
+            var client = CreateClient("Northwind4.edmx");
+            var command = client
+                .For<Employee>()
+                .Expand(ODataExpandOptions.ByReference(2), x => x.Subordinates);
+
+            string commandText = await command.GetCommandTextAsync();
+            Assert.Equal("Employees?$expand=Subordinates/$ref($levels=2)", commandText);
         }
     }
 }

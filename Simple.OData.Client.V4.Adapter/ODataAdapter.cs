@@ -115,7 +115,7 @@ namespace Simple.OData.Client.V4.Adapter
         public override void FormatCommandClauses(
             IList<string> commandClauses,
             EntityCollection entityCollection,
-            IList<string> expandAssociations,
+            IList<KeyValuePair<string, ODataExpandOptions>> expandAssociations,
             IList<string> selectColumns,
             IList<KeyValuePair<string, bool>> orderbyColumns,
             bool includeCount)
@@ -124,9 +124,10 @@ namespace Simple.OData.Client.V4.Adapter
             {
                 commandClauses.Add(string.Format("{0}={1}", ODataLiteral.Expand,
                     string.Join(",", expandAssociations.Select(x =>
-                        FormatExpansionSegment(x, entityCollection,
-                        SelectExpansionSegmentColumns(selectColumns, x),
-                        SelectExpansionSegmentColumns(orderbyColumns, x))))));
+                        FormatExpansionSegment(x.Key, entityCollection,
+                        x.Value,
+                        SelectExpansionSegmentColumns(selectColumns, x.Key),
+                        SelectExpansionSegmentColumns(orderbyColumns, x.Key))))));
             }
 
             selectColumns = SelectExpansionSegmentColumns(selectColumns, null);
@@ -141,14 +142,16 @@ namespace Simple.OData.Client.V4.Adapter
             }
         }
 
-        private string FormatExpansionSegment(string path, EntityCollection entityCollection,
-            IList<string> selectColumns, IList<KeyValuePair<string, bool>> orderbyColumns)
+        private string FormatExpansionSegment(string path, EntityCollection entityCollection, 
+            ODataExpandOptions expandOptions, IList<string> selectColumns, IList<KeyValuePair<string, bool>> orderbyColumns)
         {
             var items = path.Split('/');
             var associationName = _session.Metadata.GetNavigationPropertyExactName(entityCollection.Name, items.First());
 
             var clauses = new List<string>();
             var text = associationName;
+            if (expandOptions.ExpandMode == ODataExpandMode.ByReference)
+                text += "/" + ODataLiteral.Ref;
 
             if (items.Count() > 1)
             {
@@ -157,9 +160,18 @@ namespace Simple.OData.Client.V4.Adapter
                     _session.Metadata.GetNavigationPropertyPartnerName(entityCollection.Name, associationName));
 
                 clauses.Add(string.Format("{0}={1}", ODataLiteral.Expand,
-                    FormatExpansionSegment(path, entityCollection,
+                    FormatExpansionSegment(path, entityCollection, expandOptions,
                     SelectExpansionSegmentColumns(selectColumns, associationName),
                     SelectExpansionSegmentColumns(orderbyColumns, associationName))));
+            }
+
+            if (expandOptions.Levels > 1)
+            {
+                clauses.Add(string.Format("{0}={1}", ODataLiteral.Levels, expandOptions.Levels));
+            }
+            else if (expandOptions.Levels == 0)
+            {
+                clauses.Add(string.Format("{0}={1}", ODataLiteral.Levels, ODataLiteral.Max));
             }
 
             if (selectColumns.Any())

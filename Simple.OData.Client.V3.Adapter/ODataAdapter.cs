@@ -121,7 +121,7 @@ namespace Simple.OData.Client.V3.Adapter
         public override void FormatCommandClauses(
             IList<string> commandClauses,
             EntityCollection entityCollection,
-            IList<string> expandAssociations,
+            IList<KeyValuePair<string, ODataExpandOptions>> expandAssociations,
             IList<string> selectColumns,
             IList<KeyValuePair<string, bool>> orderbyColumns,
             bool includeCount)

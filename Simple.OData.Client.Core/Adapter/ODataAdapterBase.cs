@@ -17,7 +17,9 @@ namespace Simple.OData.Client
         public abstract string ConvertValueToUriLiteral(object value);
         public abstract FunctionFormat FunctionFormat { get; }
         public abstract void FormatCommandClauses(IList<string> commandClauses, EntityCollection entityCollection,
-            IList<string> expandAssociations, IList<string> selectColumns, IList<KeyValuePair<string, bool>> orderbyColumns, bool includeCount);
+            IList<KeyValuePair<string, ODataExpandOptions>> expandAssociations, 
+            IList<string> selectColumns, 
+            IList<KeyValuePair<string, bool>> orderbyColumns, bool includeCount);
 
         public abstract IMetadata GetMetadata();
         public abstract IResponseReader GetResponseReader();
@@ -30,6 +32,11 @@ namespace Simple.OData.Client
                 string.Join(",", key.Select(x => ConvertValueToUriLiteral(x.Value))) :
                 string.Join(",", key.Select(x => string.Format("{0}={1}", x.Key, ConvertValueToUriLiteral(x.Value))));
             return "(" + formattedKeyValues + ")";
+        }
+
+        protected string FormatExpandItem(KeyValuePair<string, ODataExpandOptions> pathWithOptions, EntityCollection entityCollection)
+        {
+            return FormatExpandItem(pathWithOptions.Key, entityCollection);
         }
 
         protected string FormatExpandItem(string path, EntityCollection entityCollection)

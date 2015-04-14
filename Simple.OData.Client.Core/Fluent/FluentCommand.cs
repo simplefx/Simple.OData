@@ -33,7 +33,7 @@ namespace Simple.OData.Client
         private ODataExpression _filterExpression;
         private int _skipCount = -1;
         private int _topCount = -1;
-        private readonly List<string> _expandAssociations = new List<string>();
+        private readonly List<KeyValuePair<string, ODataExpandOptions>> _expandAssociations = new List<KeyValuePair<string, ODataExpandOptions>>();
         private readonly List<string> _selectColumns = new List<string>();
         private readonly List<KeyValuePair<string, bool>> _orderbyColumns = new List<KeyValuePair<string, bool>>();
         private bool _computeCount;
@@ -313,8 +313,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            //TODO
-            //_expandAssociations.AddRange(SplitItems(associations).ToList());
+            _expandAssociations.AddRange(new[] { new KeyValuePair<string, ODataExpandOptions>("*", ODataExpandOptions.ByValue()) });
             return this;
         }
 
@@ -322,7 +321,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _expandAssociations.AddRange(SplitItems(associations).ToList());
+            _expandAssociations.AddRange(SplitItems(associations).Select(x => new KeyValuePair<string, ODataExpandOptions>(x, ODataExpandOptions.ByValue())));
             return this;
         }
 
@@ -330,8 +329,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            //TODO
-            _expandAssociations.AddRange(SplitItems(associations).ToList());
+            _expandAssociations.AddRange(SplitItems(associations).Select(x => new KeyValuePair<string, ODataExpandOptions>(x, expandOptions)));
             return this;
         }
 
@@ -339,7 +337,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _expandAssociations.AddRange(SplitItems(associations).ToList());
+            _expandAssociations.AddRange(SplitItems(associations).Select(x => new KeyValuePair<string, ODataExpandOptions>(x, ODataExpandOptions.ByValue())));
             return this;
         }
 
@@ -347,8 +345,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            //TODO
-            _expandAssociations.AddRange(SplitItems(associations).ToList());
+            _expandAssociations.AddRange(SplitItems(associations).Select(x => new KeyValuePair<string, ODataExpandOptions>(x, expandOptions)));
             return this;
         }
 
@@ -359,8 +356,7 @@ namespace Simple.OData.Client
 
         public FluentCommand Expand(ODataExpandOptions expandOptions, params ODataExpression[] columns)
         {
-            //TODO
-            return Expand(columns.Select(x => x.Reference));
+            return Expand(expandOptions, columns.Select(x => x.Reference));
         }
 
         public FluentCommand Select(IEnumerable<string> columns)
