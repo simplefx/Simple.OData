@@ -18,8 +18,21 @@ namespace Simple.OData.Client
         /// Initializes a new instance of the <see cref="ODataBatch"/> class.
         /// </summary>
         /// <param name="urlBase">The URL base.</param>
+        /// <remarks>
+        /// This constructor overload is obsolete. Use <see cref="ODataBatch(Uri)"/> constructor overload./>
+        /// </remarks>
+        [Obsolete("This constructor overload is obsolete. Use ODataBatch(Uri baseUri) constructor.")]
         public ODataBatch(string urlBase)
             : this(new ODataClientSettings { UrlBase = urlBase })
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ODataBatch"/> class.
+        /// </summary>
+        /// <param name="baseUri">The URL base.</param>
+        public ODataBatch(Uri baseUri)
+            : this(new ODataClientSettings { BaseUri = baseUri })
         {
         }
 

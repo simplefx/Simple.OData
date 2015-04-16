@@ -228,7 +228,7 @@ namespace Simple.OData.Client.Tests
     public class WebApiTests : WebApiTestsBase
     {
         public WebApiTests()
-            : base(new ODataClientSettings("http://va-odata-integration.azurewebsites.net/odata/open"))
+            : base(new ODataClientSettings(new Uri("http://va-odata-integration.azurewebsites.net/odata/open")))
         {
         }
 
@@ -243,7 +243,7 @@ namespace Simple.OData.Client.Tests
         public WebApiWithAuthenticationTests()
             : base(new ODataClientSettings()
             {
-                UrlBase = "http://va-odata-integration.azurewebsites.net/odata/secure",
+                BaseUri = new Uri("http://va-odata-integration.azurewebsites.net/odata/secure"),
                 Credentials = new NetworkCredential(_user, _password)
             })
         {

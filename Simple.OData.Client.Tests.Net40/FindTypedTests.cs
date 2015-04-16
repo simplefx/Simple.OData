@@ -114,7 +114,7 @@ namespace Simple.OData.Client.Tests
         {
             var settings = new ODataClientSettings
             {
-                UrlBase = _serviceUri,
+                BaseUri = _serviceUri,
                 IgnoreUnmappedProperties = true,
             };
             var client = new ODataClient(settings);
@@ -502,7 +502,7 @@ namespace Simple.OData.Client.Tests
         {
             var clientSettings = new ODataClientSettings
             {
-                UrlBase = _serviceUri,
+                BaseUri = _serviceUri,
                 IncludeResourceTypeInEntryProperties = true,
             };
             var client = new ODataClient(clientSettings);
@@ -527,7 +527,7 @@ namespace Simple.OData.Client.Tests
         {
             var clientSettings = new ODataClientSettings
             {
-                UrlBase = _serviceUri,
+                BaseUri = _serviceUri,
                 IncludeResourceTypeInEntryProperties = true,
             };
             var client = new ODataClient(clientSettings);

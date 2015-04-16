@@ -22,7 +22,7 @@ namespace Simple.OData.Client.V4.Adapter
 
         public override async Task StartBatchAsync()
         {
-            _requestMessage = new ODataRequestMessage() { Url = new Uri(_session.Settings.UrlBase) };
+            _requestMessage = new ODataRequestMessage() { Url = _session.Settings.BaseUri };
             _messageWriter = new ODataMessageWriter(_requestMessage);
             _batchWriter = await _messageWriter.CreateODataBatchWriterAsync();
             await _batchWriter.WriteStartBatchAsync();

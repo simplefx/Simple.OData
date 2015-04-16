@@ -12,7 +12,7 @@ namespace Simple.OData.Client.Tests
 {
     public class TestBase : IDisposable
     {
-        protected readonly string _serviceUri;
+        protected readonly Uri _serviceUri;
 # if !NETFX_CORE
         protected TestService _service;
 #endif
@@ -21,10 +21,10 @@ namespace Simple.OData.Client.Tests
         protected TestBase()
         {
 #if NETFX_CORE
-            _serviceUri = "http://NORTHWIND/Northwind.svc/";
+            _serviceUri = new Uri("http://NORTHWIND/Northwind.svc/");
 #else
             _service = new TestService(typeof(NorthwindService));
-            _serviceUri = _service.ServiceUri.AbsoluteUri;
+            _serviceUri = _service.ServiceUri;
 #endif
             _client = CreateClientWithDefaultSettings();
         }
@@ -33,7 +33,7 @@ namespace Simple.OData.Client.Tests
         {
             return new ODataClient(new ODataClientSettings
             {
-                UrlBase = _serviceUri,
+                BaseUri = _serviceUri,
 #if !NETFX_CORE
                 OnTrace = (x, y) => Console.WriteLine(string.Format(x, y)),
 #endif

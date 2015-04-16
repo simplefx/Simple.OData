@@ -15,7 +15,20 @@ namespace Simple.OData.Client
         /// <value>
         /// The URL address.
         /// </value>
-        public string UrlBase { get; set; }
+        [Obsolete("This property is obsolete. Use BaseUri instead.")]
+        public string UrlBase
+        {
+            get { return this.BaseUri.AbsoluteUri; }
+            set { this.BaseUri = new Uri(value); }
+        }
+
+        /// <summary>
+        /// Gets or sets the OData service URL.
+        /// </summary>
+        /// <value>
+        /// The URL address.
+        /// </value>
+        public Uri BaseUri { get; set; }
 
         /// <summary>
         /// Gets or sets the OData client credentials.
@@ -97,7 +110,7 @@ namespace Simple.OData.Client
         /// The action on <see cref="HttpRequestMessage"/>.
         /// </value>
         public Action<HttpRequestMessage> BeforeRequest { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the action executed after the OData request.
         /// </summary>
@@ -124,17 +137,28 @@ namespace Simple.OData.Client
         /// <summary>
         /// Initializes a new instance of the <see cref="ODataClientSettings"/> class.
         /// </summary>
-        /// <param name="urlBase">The URL address.</param>
+        /// <param name="baseUri">The URL address.</param>
         /// <param name="credentials">The client credentials.</param>
-        public ODataClientSettings(string urlBase, ICredentials credentials = null)
+        public ODataClientSettings(string baseUri, ICredentials credentials = null)
         {
-            this.UrlBase = urlBase;
+            this.BaseUri = new Uri(baseUri);
+            this.Credentials = credentials;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ODataClientSettings"/> class.
+        /// </summary>
+        /// <param name="baseUri">The URL address.</param>
+        /// <param name="credentials">The client credentials.</param>
+        public ODataClientSettings(Uri baseUri, ICredentials credentials = null)
+        {
+            this.BaseUri = baseUri;
             this.Credentials = credentials;
         }
 
         internal ODataClientSettings(ISession session)
         {
-            this.UrlBase = session.Settings.UrlBase;
+            this.BaseUri = session.Settings.BaseUri;
             this.Credentials = session.Settings.Credentials;
             this.PayloadFormat = session.Settings.PayloadFormat;
             this.RequestTimeout = session.Settings.RequestTimeout;

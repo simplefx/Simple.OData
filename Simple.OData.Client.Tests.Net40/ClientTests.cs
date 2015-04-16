@@ -118,7 +118,7 @@ namespace Simple.OData.Client.Tests
         {
             var settings = new ODataClientSettings
             {
-                UrlBase = _serviceUri,
+                BaseUri = _serviceUri,
                 IgnoreResourceNotFoundException = true,
             };
             var client = new ODataClient(settings);
@@ -187,7 +187,7 @@ namespace Simple.OData.Client.Tests
         {
             var clientSettings = new ODataClientSettings
             {
-                UrlBase = _serviceUri,
+                BaseUri = _serviceUri,
                 IncludeResourceTypeInEntryProperties = true,
             };
             var client = new ODataClient(clientSettings);
@@ -230,7 +230,7 @@ namespace Simple.OData.Client.Tests
         {
             var clientSettings = new ODataClientSettings
             {
-                UrlBase = _serviceUri,
+                BaseUri = _serviceUri,
                 IncludeResourceTypeInEntryProperties = true,
             };
             var client = new ODataClient(clientSettings);
@@ -307,7 +307,7 @@ namespace Simple.OData.Client.Tests
         {
             var settings = new ODataClientSettings
                                {
-                                   UrlBase = _serviceUri,
+                                   BaseUri = _serviceUri,
                                    BeforeRequest = x => x.Method = new HttpMethod("PUT"),
                                };
             var client = new ODataClient(settings);
@@ -319,7 +319,7 @@ namespace Simple.OData.Client.Tests
         {
             var settings = new ODataClientSettings
             {
-                UrlBase = _serviceUri,
+                BaseUri = _serviceUri,
                 AfterResponse = x => { throw new InvalidOperationException(); },
             };
             var client = new ODataClient(settings);

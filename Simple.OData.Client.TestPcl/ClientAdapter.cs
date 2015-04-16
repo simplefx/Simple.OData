@@ -8,9 +8,9 @@ namespace Simple.OData.Client.TestPcl
     {
         private readonly ODataClient _client;
 
-        public ClientAdapter(string urlBase)
+        public ClientAdapter(Uri baseUri)
         {
-            _client = new ODataClient(urlBase);
+            _client = new ODataClient(baseUri);
         }
 
         public Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(string commandText)

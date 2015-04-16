@@ -69,7 +69,7 @@ namespace Simple.OData.Client
             var uri = new Uri(commandText, UriKind.RelativeOrAbsolute);
             _uri = uri.IsAbsoluteUri 
                 ? uri.AbsoluteUri 
-                : Utils.CreateAbsoluteUri(session.Settings.UrlBase, commandText).AbsoluteUri;
+                : Utils.CreateAbsoluteUri(session.Settings.BaseUri.AbsoluteUri, commandText).AbsoluteUri;
             _payloadFormat = session.Settings.PayloadFormat;
         }
 

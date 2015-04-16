@@ -389,7 +389,7 @@ namespace Simple.OData.Client.Tests
             var x = ODataDynamic.Expression;
             var clientSettings = new ODataClientSettings
             {
-                UrlBase = _serviceUri,
+                BaseUri = _serviceUri,
                 IncludeResourceTypeInEntryProperties = true,
             };
             var client = new ODataClient(clientSettings);
@@ -417,7 +417,7 @@ namespace Simple.OData.Client.Tests
             var x = ODataDynamic.Expression;
             var clientSettings = new ODataClientSettings
             {
-                UrlBase = _serviceUri,
+                BaseUri = _serviceUri,
                 IncludeResourceTypeInEntryProperties = true,
             };
             var client = new ODataClient(clientSettings);

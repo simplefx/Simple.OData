@@ -78,7 +78,7 @@ namespace Simple.OData.Client.V4.Adapter
             var message = new ODataRequestMessage();
             using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), _model))
             {
-                var link = new ODataEntityReferenceLink { Url = Utils.CreateAbsoluteUri(_session.Settings.UrlBase, linkIdent) };
+                var link = new ODataEntityReferenceLink { Url = Utils.CreateAbsoluteUri(_session.Settings.BaseUri.AbsoluteUri, linkIdent) };
                 await messageWriter.WriteEntityReferenceLinkAsync(link);
                 return await message.GetStreamAsync();
             }
@@ -144,7 +144,7 @@ namespace Simple.OData.Client.V4.Adapter
                 await _deferredBatchWriter.Value.StartBatchAsync();
 
             var message = (await _deferredBatchWriter.Value.CreateOperationRequestMessageAsync(
-                method, collection, entryData, Utils.CreateAbsoluteUri(_session.Settings.UrlBase, commandText))) as IODataRequestMessageAsync;
+                method, collection, entryData, Utils.CreateAbsoluteUri(_session.Settings.BaseUri.AbsoluteUri, commandText))) as IODataRequestMessageAsync;
 
             return message;
         }
@@ -191,7 +191,7 @@ namespace Simple.OData.Client.V4.Adapter
                 }
                 var link = new ODataEntityReferenceLink
                 {
-                    Url = Utils.CreateAbsoluteUri(_session.Settings.UrlBase, linkUri)
+                    Url = Utils.CreateAbsoluteUri(_session.Settings.BaseUri.AbsoluteUri, linkUri)
                 };
 
                 await entryWriter.WriteEntityReferenceLinkAsync(link);
@@ -214,7 +214,7 @@ namespace Simple.OData.Client.V4.Adapter
             {
                 ODataUri = new ODataUri()
                 {
-                    RequestUri = new Uri(_session.Settings.UrlBase),
+                    RequestUri = _session.Settings.BaseUri,
                 }, 
                 Indent = true,
                 DisableMessageStreamDisposal = !IsBatch,

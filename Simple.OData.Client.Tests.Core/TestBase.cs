@@ -31,10 +31,10 @@ namespace Simple.OData.Client.Tests
 
         public IODataClient CreateClient(string metadataFile)
         {
-            var urlBase = "http://localhost/" + metadataFile;
+            var baseUri = new Uri("http://localhost/" + metadataFile);
             var metadataString = GetResourceAsString(@"Resources." + metadataFile);
-            _session = Session.FromMetadata(urlBase, metadataString);
-            return new ODataClient(urlBase);
+            _session = Session.FromMetadata(baseUri, metadataString);
+            return new ODataClient(baseUri);
         }
 
         public void Dispose()

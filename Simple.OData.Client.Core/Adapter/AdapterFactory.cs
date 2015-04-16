@@ -48,14 +48,14 @@ namespace Simple.OData.Client
             return loadAdapter();
         }
 
-        public async Task<string> GetMetadataAsStringAsync(HttpResponseMessage response)
+        public async Task<string> GetMetadataDocumentAsync(HttpResponseMessage response)
         {
             return await response.Content.ReadAsStringAsync();
         }
 
-        public IODataAdapter ParseMetadata(string metadataString)
+        public IODataAdapter ParseMetadata(string metadataDocument)
         {
-            var reader = XmlReader.Create(new StringReader(metadataString));
+            var reader = XmlReader.Create(new StringReader(metadataDocument));
             reader.MoveToContent();
             var protocolVersion = reader.GetAttribute("Version");
 
@@ -77,11 +77,11 @@ namespace Simple.OData.Client
                     }
                 }
 
-                return LoadAdapter(AdapterV3AssemblyName, AdapterV3TypeName, _session, protocolVersion, metadataString);
+                return LoadAdapter(AdapterV3AssemblyName, AdapterV3TypeName, _session, protocolVersion, metadataDocument);
             }
             else if (protocolVersion == ODataProtocolVersion.V4)
             {
-                return LoadAdapter(AdapterV4AssemblyName, AdapterV4TypeName, _session, protocolVersion, metadataString);
+                return LoadAdapter(AdapterV4AssemblyName, AdapterV4TypeName, _session, protocolVersion, metadataDocument);
             }
 
             throw new NotSupportedException(string.Format("OData protocol {0} is not supported", protocolVersion));
@@ -107,7 +107,7 @@ namespace Simple.OData.Client
             {
                 try
                 {
-                    var metadataString = await GetMetadataAsStringAsync(response);
+                    var metadataString = await GetMetadataDocumentAsync(response);
                     var protocolVersion = GetMetadataProtocolVersion(metadataString);
                     return new[] { protocolVersion };
                 }

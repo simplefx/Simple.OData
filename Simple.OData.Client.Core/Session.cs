@@ -19,28 +19,28 @@ namespace Simple.OData.Client
         public MetadataCache MetadataCache { get; private set; }
         public IPluralizer Pluralizer { get; internal set; }
 
-        private Session(string urlBase, string metadataString)
+        private Session(Uri baseUri, string metadataString)
         {
             _adapterFactory = new AdapterFactory(this);
             _createAdapter = () => _adapterFactory.ParseMetadata(metadataString);
 
             this.Settings = new ODataClientSettings();
-            this.Settings.UrlBase = urlBase;
-            this.MetadataCache = MetadataCache.Instances.GetOrAdd(urlBase, new MetadataCache());
+            this.Settings.BaseUri = baseUri;
+            this.MetadataCache = MetadataCache.Instances.GetOrAdd(baseUri.AbsoluteUri, new MetadataCache());
             this.MetadataCache.SetMetadataDocument(metadataString);
             this.Pluralizer = new SimplePluralizer();
         }
 
-        private Session(string urlBase, ICredentials credentials, ODataPayloadFormat payloadFormat)
+        private Session(Uri baseUri, ICredentials credentials, ODataPayloadFormat payloadFormat)
         {
             _adapterFactory = new AdapterFactory(this);
             _createAdapter = () => _adapterFactory.ParseMetadata(this.MetadataCache.MetadataDocument);
 
             this.Settings = new ODataClientSettings();
-            this.Settings.UrlBase = urlBase;
+            this.Settings.BaseUri = baseUri;
             this.Settings.Credentials = credentials;
             this.Settings.PayloadFormat = payloadFormat;
-            this.MetadataCache = MetadataCache.Instances.GetOrAdd(urlBase, new MetadataCache());
+            this.MetadataCache = MetadataCache.Instances.GetOrAdd(baseUri.AbsoluteUri, new MetadataCache());
             this.Pluralizer = new SimplePluralizer();
         }
 
@@ -50,7 +50,7 @@ namespace Simple.OData.Client
             _createAdapter = () => _adapterFactory.ParseMetadata(this.MetadataCache.MetadataDocument);
 
             this.Settings = settings;
-            this.MetadataCache = MetadataCache.Instances.GetOrAdd(this.Settings.UrlBase, new MetadataCache());
+            this.MetadataCache = MetadataCache.Instances.GetOrAdd(this.Settings.BaseUri.AbsoluteUri, new MetadataCache());
             this.Pluralizer = new SimplePluralizer();
         }
 
@@ -75,7 +75,7 @@ namespace Simple.OData.Client
                 if (string.IsNullOrEmpty(this.Settings.MetadataDocument))
                 {
                     var response = await _adapterFactory.SendMetadataRequestAsync(cancellationToken);
-                    this.MetadataCache.SetMetadataDocument(await _adapterFactory.GetMetadataAsStringAsync(response));
+                    this.MetadataCache.SetMetadataDocument(await _adapterFactory.GetMetadataDocumentAsync(response));
                     adapter = await _adapterFactory.CreateAdapterAsync(response);
                 }
                 else
@@ -114,9 +114,9 @@ namespace Simple.OData.Client
             return new Session(settings);
         }
 
-        internal static Session FromMetadata(string urlBase, string metadataString)
+        internal static Session FromMetadata(Uri baseUri, string metadataString)
         {
-            return new Session(urlBase, metadataString);
+            return new Session(baseUri, metadataString);
         }
     }
 }

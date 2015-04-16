@@ -20,6 +20,7 @@ namespace Simple.OData.Client
         /// </summary>
         /// <param name="urlBase">The URL base of the OData service.</param>
         /// <returns>The service metadata.</returns>
+        [Obsolete("This method is obsolete. Use GetMetadataAsync(Uri baseUri) overload.")]
         public static Task<object> GetMetadataAsync(string urlBase)
         {
             return GetMetadataAsync(urlBase, null, CancellationToken.None);
@@ -28,9 +29,20 @@ namespace Simple.OData.Client
         /// <summary>
         /// Retrieves the OData service metadata.
         /// </summary>
+        /// <param name="baseUri">The URL base of the OData service.</param>
+        /// <returns>The service metadata.</returns>
+        public static Task<object> GetMetadataAsync(Uri baseUri)
+        {
+            return GetMetadataAsync(baseUri, null, CancellationToken.None);
+        }
+
+        /// <summary>
+        /// Retrieves the OData service metadata.
+        /// </summary>
         /// <param name="urlBase">The URL base of the OData service.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The service metadata.</returns>
+        [Obsolete("This method is obsolete. Use GetMetadataAsync(Uri baseUri, CancellationToken cancellationToken) overload.")]
         public static Task<object> GetMetadataAsync(string urlBase, CancellationToken cancellationToken)
         {
             return GetMetadataAsync(urlBase, null, cancellationToken);
@@ -39,12 +51,35 @@ namespace Simple.OData.Client
         /// <summary>
         /// Retrieves the OData service metadata.
         /// </summary>
+        /// <param name="baseUri">The URL base of the OData service.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>The service metadata.</returns>
+        public static Task<object> GetMetadataAsync(Uri baseUri, CancellationToken cancellationToken)
+        {
+            return GetMetadataAsync(baseUri, null, cancellationToken);
+        }
+
+        /// <summary>
+        /// Retrieves the OData service metadata.
+        /// </summary>
         /// <param name="urlBase">The URL base of the OData service.</param>
         /// <param name="credentials">The OData service access credentials.</param>
         /// <returns>The service metadata.</returns>
+        [Obsolete("This method is obsolete. Use GetMetadataAsync(Uri baseUri, ICredentials credentials) overload.")]
         public static Task<object> GetMetadataAsync(string urlBase, ICredentials credentials)
         {
             return GetMetadataAsync(urlBase, credentials, CancellationToken.None);
+        }
+
+        /// <summary>
+        /// Retrieves the OData service metadata.
+        /// </summary>
+        /// <param name="baseUri">The URL base of the OData service.</param>
+        /// <param name="credentials">The OData service access credentials.</param>
+        /// <returns>The service metadata.</returns>
+        public static Task<object> GetMetadataAsync(Uri baseUri, ICredentials credentials)
+        {
+            return GetMetadataAsync(baseUri, credentials, CancellationToken.None);
         }
 
         /// <summary>
@@ -54,6 +89,7 @@ namespace Simple.OData.Client
         /// <param name="credentials">The OData service access credentials.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The service metadata.</returns>
+        [Obsolete("This method is obsolete. Use GetMetadataAsync(Uri baseUri, ICredentials credentials, CancellationToken cancellationToken) overload.")]
         public static Task<object> GetMetadataAsync(string urlBase, ICredentials credentials, CancellationToken cancellationToken)
         {
             return GetMetadataAsync<object>(urlBase, credentials, cancellationToken);
@@ -62,9 +98,22 @@ namespace Simple.OData.Client
         /// <summary>
         /// Retrieves the OData service metadata.
         /// </summary>
+        /// <param name="baseUri">The URL base of the OData service.</param>
+        /// <param name="credentials">The OData service access credentials.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>The service metadata.</returns>
+        public static Task<object> GetMetadataAsync(Uri baseUri, ICredentials credentials, CancellationToken cancellationToken)
+        {
+            return GetMetadataAsync<object>(baseUri, credentials, cancellationToken);
+        }
+
+        /// <summary>
+        /// Retrieves the OData service metadata.
+        /// </summary>
         /// <typeparam name="T">OData protocol specific metadata interface</typeparam>
         /// <param name="urlBase">The URL base of the OData service.</param>
         /// <returns>The service metadata.</returns>
+        [Obsolete("This method is obsolete. Use GetMetadataAsync(Uri baseUri) overload.")]
         public static Task<T> GetMetadataAsync<T>(string urlBase)
         {
             return GetMetadataAsync<T>(urlBase, null, CancellationToken.None);
@@ -74,9 +123,21 @@ namespace Simple.OData.Client
         /// Retrieves the OData service metadata.
         /// </summary>
         /// <typeparam name="T">OData protocol specific metadata interface</typeparam>
+        /// <param name="baseUri">The URL base of the OData service.</param>
+        /// <returns>The service metadata.</returns>
+        public static Task<T> GetMetadataAsync<T>(Uri baseUri)
+        {
+            return GetMetadataAsync<T>(baseUri, null, CancellationToken.None);
+        }
+
+        /// <summary>
+        /// Retrieves the OData service metadata.
+        /// </summary>
+        /// <typeparam name="T">OData protocol specific metadata interface</typeparam>
         /// <param name="urlBase">The URL base of the OData service.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The service metadata.</returns>
+        [Obsolete("This method is obsolete. Use GetMetadataAsync(Uri baseUri, CancellationToken cancellationToken) overload.")]
         public static Task<T> GetMetadataAsync<T>(string urlBase, CancellationToken cancellationToken)
         {
             return GetMetadataAsync<T>(urlBase, null, cancellationToken);
@@ -86,12 +147,37 @@ namespace Simple.OData.Client
         /// Retrieves the OData service metadata.
         /// </summary>
         /// <typeparam name="T">OData protocol specific metadata interface</typeparam>
+        /// <param name="baseUri">The URL base of the OData service.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>The service metadata.</returns>
+        public static Task<T> GetMetadataAsync<T>(Uri baseUri, CancellationToken cancellationToken)
+        {
+            return GetMetadataAsync<T>(baseUri, null, cancellationToken);
+        }
+
+        /// <summary>
+        /// Retrieves the OData service metadata.
+        /// </summary>
+        /// <typeparam name="T">OData protocol specific metadata interface</typeparam>
         /// <param name="urlBase">The URL base of the OData service.</param>
         /// <param name="credentials">The OData service access credentials.</param>
         /// <returns>The service metadata.</returns>
+        [Obsolete("This method is obsolete. Use GetMetadataAsync(Uri baseUri, ICredentials credentials) overload.")]
         public static Task<T> GetMetadataAsync<T>(string urlBase, ICredentials credentials)
         {
             return GetMetadataAsync<T>(urlBase, credentials, CancellationToken.None);
+        }
+
+        /// <summary>
+        /// Retrieves the OData service metadata.
+        /// </summary>
+        /// <typeparam name="T">OData protocol specific metadata interface</typeparam>
+        /// <param name="baseUri">The URL base of the OData service.</param>
+        /// <param name="credentials">The OData service access credentials.</param>
+        /// <returns>The service metadata.</returns>
+        public static Task<T> GetMetadataAsync<T>(Uri baseUri, ICredentials credentials)
+        {
+            return GetMetadataAsync<T>(baseUri, credentials, CancellationToken.None);
         }
 
         /// <summary>
@@ -104,9 +190,27 @@ namespace Simple.OData.Client
         /// <returns>
         /// The service metadata.
         /// </returns>
+        [Obsolete("This method is obsolete. Use GetMetadataAsync(Uri baseUri, ICredentials credentials, CancellationToken cancellationToken) overload.")]
         public static async Task<T> GetMetadataAsync<T>(string urlBase, ICredentials credentials, CancellationToken cancellationToken)
         {
             var session = Session.FromSettings(new ODataClientSettings(urlBase, credentials));
+            await session.ResolveAdapterAsync(cancellationToken);
+            return (T)session.Adapter.Model;
+        }
+
+        /// <summary>
+        /// Retrieves the OData service metadata.
+        /// </summary>
+        /// <typeparam name="T">OData protocol specific metadata interface</typeparam>
+        /// <param name="baseUri">The URL base of the OData service.</param>
+        /// <param name="credentials">The OData service access credentials.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>
+        /// The service metadata.
+        /// </returns>
+        public static async Task<T> GetMetadataAsync<T>(Uri baseUri, ICredentials credentials, CancellationToken cancellationToken)
+        {
+            var session = Session.FromSettings(new ODataClientSettings(baseUri, credentials));
             await session.ResolveAdapterAsync(cancellationToken);
             return (T)session.Adapter.Model;
         }
@@ -116,9 +220,20 @@ namespace Simple.OData.Client
         /// </summary>
         /// <param name="urlBase">The URL base of the OData service.</param>
         /// <returns>The service metadata.</returns>
+        [Obsolete("This method is obsolete. Use GetMetadataDocumentAsync(Uri baseUri) overload.")]
         public static Task<string> GetMetadataAsStringAsync(string urlBase)
         {
-            return GetMetadataAsStringAsync(urlBase, null, CancellationToken.None);
+            return GetMetadataDocumentAsync(new Uri(urlBase), null, CancellationToken.None);
+        }
+
+        /// <summary>
+        /// Retrieves the OData service metadata as string.
+        /// </summary>
+        /// <param name="baseUri">The URL base of the OData service.</param>
+        /// <returns>The service metadata.</returns>
+        public static Task<string> GetMetadataDocumentAsync(Uri baseUri)
+        {
+            return GetMetadataDocumentAsync(baseUri, null, CancellationToken.None);
         }
 
         /// <summary>
@@ -127,9 +242,21 @@ namespace Simple.OData.Client
         /// <param name="urlBase">The URL base of the OData service.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The service metadata.</returns>
+        [Obsolete("This method is obsolete. Use GetMetadataDocumentAsync(Uri baseUri, CancellationToken cancellationToken) overload.")]
         public static Task<string> GetMetadataAsStringAsync(string urlBase, CancellationToken cancellationToken)
         {
-            return GetMetadataAsStringAsync(urlBase, null, CancellationToken.None);
+            return GetMetadataDocumentAsync(new Uri(urlBase), null, CancellationToken.None);
+        }
+
+        /// <summary>
+        /// Gets The service metadata as string asynchronous.
+        /// </summary>
+        /// <param name="baseUri">The URL base of the OData service.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>The service metadata.</returns>
+        public static Task<string> GetMetadataDocumentAsync(Uri baseUri, CancellationToken cancellationToken)
+        {
+            return GetMetadataDocumentAsync(baseUri, null, CancellationToken.None);
         }
 
         /// <summary>
@@ -138,9 +265,21 @@ namespace Simple.OData.Client
         /// <param name="urlBase">The URL base of the OData service.</param>
         /// <param name="credentials">The OData service access credentials.</param>
         /// <returns>The service metadata.</returns>
+        [Obsolete("This method is obsolete. Use GetMetadataDocumentAsync(Uri baseUri, ICredentials credentials) overload.")]
         public static Task<string> GetMetadataAsStringAsync(string urlBase, ICredentials credentials)
         {
-            return GetMetadataAsStringAsync(urlBase, credentials, CancellationToken.None);
+            return GetMetadataDocumentAsync(new Uri(urlBase), credentials, CancellationToken.None);
+        }
+
+        /// <summary>
+        /// Gets The service metadata as string asynchronous.
+        /// </summary>
+        /// <param name="baseUri">The URL base of the OData service.</param>
+        /// <param name="credentials">The OData service access credentials.</param>
+        /// <returns>The service metadata.</returns>
+        public static Task<string> GetMetadataDocumentAsync(Uri baseUri, ICredentials credentials)
+        {
+            return GetMetadataDocumentAsync(baseUri, credentials, CancellationToken.None);
         }
 
         /// <summary>
@@ -150,9 +289,24 @@ namespace Simple.OData.Client
         /// <param name="credentials">The OData service access credentials.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The service metadata.</returns>
+        [Obsolete("This method is obsolete. Use GetMetadataDocumentAsync(Uri baseUri, ICredentials credentials, CancellationToken cancellationToken) overload.")]
         public static async Task<string> GetMetadataAsStringAsync(string urlBase, ICredentials credentials, CancellationToken cancellationToken)
         {
             var session = Session.FromSettings(new ODataClientSettings(urlBase, credentials));
+            await session.ResolveAdapterAsync(cancellationToken);
+            return session.MetadataCache.MetadataDocument;
+        }
+
+        /// <summary>
+        /// Gets The service metadata as string asynchronous.
+        /// </summary>
+        /// <param name="baseUri">The URL base.</param>
+        /// <param name="credentials">The OData service access credentials.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>The service metadata.</returns>
+        public static async Task<string> GetMetadataDocumentAsync(Uri baseUri, ICredentials credentials, CancellationToken cancellationToken)
+        {
+            var session = Session.FromSettings(new ODataClientSettings(baseUri, credentials));
             await session.ResolveAdapterAsync(cancellationToken);
             return session.MetadataCache.MetadataDocument;
         }
@@ -187,10 +341,21 @@ namespace Simple.OData.Client
 
         public Task<string> GetMetadataAsStringAsync()
         {
-            return GetMetadataAsStringAsync(CancellationToken.None);
+            return GetMetadataDocumentAsync(CancellationToken.None);
+        }
+
+        public Task<string> GetMetadataDocumentAsync()
+        {
+            return GetMetadataDocumentAsync(CancellationToken.None);
         }
 
         public async Task<string> GetMetadataAsStringAsync(CancellationToken cancellationToken)
+        {
+            await _session.ResolveAdapterAsync(cancellationToken);
+            return _session.MetadataCache.MetadataDocument;
+        }
+
+        public async Task<string> GetMetadataDocumentAsync(CancellationToken cancellationToken)
         {
             await _session.ResolveAdapterAsync(cancellationToken);
             return _session.MetadataCache.MetadataDocument;

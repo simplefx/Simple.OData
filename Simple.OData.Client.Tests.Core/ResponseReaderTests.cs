@@ -139,60 +139,60 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task GetColorsSchema()
+        public Task GetColorsSchema()
         {
-            ParseSchema("Colors");
+            return ParseSchema("Colors");
         }
 
         [Fact]
-        public async Task GetFacebookSchema()
+        public Task GetFacebookSchema()
         {
-            ParseSchema("Facebook");
+            return ParseSchema("Facebook");
         }
 
         [Fact]
-        public async Task GetFlickrSchema()
+        public Task GetFlickrSchema()
         {
-            ParseSchema("Flickr");
+            return ParseSchema("Flickr");
         }
 
         [Fact]
-        public async Task GetGoogleMapsSchema()
+        public Task GetGoogleMapsSchema()
         {
-            ParseSchema("GoogleMaps");
+            return ParseSchema("GoogleMaps");
         }
 
         [Fact]
-        public async Task GetiPhoneSchema()
+        public Task GetiPhoneSchema()
         {
-            ParseSchema("iPhone");
+            return ParseSchema("iPhone");
         }
 
         [Fact]
-        public async Task GetTwitterSchema()
+        public Task GetTwitterSchema()
         {
-            ParseSchema("Twitter");
+            return ParseSchema("Twitter");
         }
 
         [Fact]
-        public async Task GetYouTubeSchema()
+        public Task GetYouTubeSchema()
         {
-            ParseSchema("YouTube");
+            return ParseSchema("YouTube");
         }
 
         [Fact]
-        public async Task GetNestedSchema()
+        public Task GetNestedSchema()
         {
-            ParseSchema("Nested");
+            return ParseSchema("Nested");
         }
 
         [Fact]
-        public async Task GetArrayOfNestedSchema()
+        public Task GetArrayOfNestedSchema()
         {
-            ParseSchema("ArrayOfNested");
+            return ParseSchema("ArrayOfNested");
         }
 
-        private void ParseSchema(string schemaName)
+        private Task ParseSchema(string schemaName)
         {
             var document = GetResourceAsString(schemaName + ".edmx");
             var metadata = ODataClient.ParseMetadataString<IEdmModel>(document);
@@ -200,6 +200,7 @@ namespace Simple.OData.Client.Tests
                 .Single(x => x.SchemaElementKind == EdmSchemaElementKind.TypeDefinition && 
                     (x as IEdmType).TypeKind == EdmTypeKind.Entity);
             Assert.Equal(schemaName, entityType.Name);
+            return Task.FromResult(0);
         }
     }
 }

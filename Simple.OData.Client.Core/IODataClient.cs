@@ -73,13 +73,27 @@ namespace Simple.OData.Client
         /// Gets the OData service metadata as string.
         /// </summary>
         /// <returns>The service metadata string.</returns>
+        [Obsolete("This method is obsolete. Use GetMetadataDocumentAsync instead.")]
         Task<string> GetMetadataAsStringAsync();
         /// <summary>
         /// Gets the OData service metadata as string.
         /// </summary>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The service metadata string.</returns>
+        [Obsolete("This method is obsolete. Use GetMetadataDocumentAsync instead.")]
         Task<string> GetMetadataAsStringAsync(CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Gets the OData service metadata as string.
+        /// </summary>
+        /// <returns>The service metadata string.</returns>
+        Task<string> GetMetadataDocumentAsync();
+        /// <summary>
+        /// Gets the OData service metadata as string.
+        /// </summary>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>The service metadata string.</returns>
+        Task<string> GetMetadataDocumentAsync(CancellationToken cancellationToken);
 
         /// <summary>
         /// Gets the OData command text.

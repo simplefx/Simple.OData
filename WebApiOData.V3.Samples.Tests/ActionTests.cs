@@ -19,7 +19,7 @@ namespace WebApiOData.V3.Samples.Tests
             _server = TestServer.Create<Startup>();
             _client = new ODataClient(new ODataClientSettings()
             {
-                UrlBase = "http://localhost/actions",
+                BaseUri = new Uri("http://localhost/actions"),
                 PayloadFormat = ODataPayloadFormat.Json,
                 OnCreateMessageHandler = () => _server.Handler,
                 OnTrace = (x,y) => Console.WriteLine(string.Format(x,y)),

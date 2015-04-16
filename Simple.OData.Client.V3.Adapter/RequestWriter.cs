@@ -90,7 +90,7 @@ namespace Simple.OData.Client.V3.Adapter
             var message = new ODataRequestMessage();
             using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), _model))
             {
-                var link = new ODataEntityReferenceLink { Url = Utils.CreateAbsoluteUri(_session.Settings.UrlBase, linkIdent) };
+                var link = new ODataEntityReferenceLink { Url = Utils.CreateAbsoluteUri(_session.Settings.BaseUri.AbsoluteUri, linkIdent) };
                 messageWriter.WriteEntityReferenceLink(link);
 
 #if SILVERLIGHT
@@ -160,7 +160,7 @@ namespace Simple.OData.Client.V3.Adapter
         {
             var settings = new ODataMessageWriterSettings()
             {
-                BaseUri = new Uri(_session.Settings.UrlBase),
+                BaseUri = _session.Settings.BaseUri,
                 Indent = true,
                 DisableMessageStreamDisposal = !IsBatch,
             };
@@ -198,7 +198,7 @@ namespace Simple.OData.Client.V3.Adapter
                 await _deferredBatchWriter.Value.StartBatchAsync();
 
             var message = (await _deferredBatchWriter.Value.CreateOperationRequestMessageAsync(
-                method, collection, entryData, Utils.CreateAbsoluteUri(_session.Settings.UrlBase, commandText))) 
+                method, collection, entryData, Utils.CreateAbsoluteUri(_session.Settings.BaseUri.AbsoluteUri, commandText))) 
 #if SILVERLIGHT
                 as IODataRequestMessage;
 #else
@@ -249,7 +249,7 @@ namespace Simple.OData.Client.V3.Adapter
                 }
                 var link = new ODataEntityReferenceLink
                 {
-                    Url = Utils.CreateAbsoluteUri(_session.Settings.UrlBase, linkUri)
+                    Url = Utils.CreateAbsoluteUri(_session.Settings.BaseUri.AbsoluteUri, linkUri)
                 };
 
                 entryWriter.WriteEntityReferenceLink(link);

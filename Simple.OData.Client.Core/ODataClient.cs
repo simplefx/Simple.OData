@@ -17,9 +17,21 @@ namespace Simple.OData.Client
         /// <summary>
         /// Initializes a new instance of the <see cref="ODataClient"/> class.
         /// </summary>
-        /// <param name="urlBase">The OData service URL.</param>
-        public ODataClient(string urlBase)
-            : this(new ODataClientSettings {UrlBase = urlBase})
+        /// <param name="baseUri">The OData service URL.</param>
+        /// <remarks>
+        /// This constructor overload is obsolete. Use <see cref="ODataClient(Uri)"/> constructor overload./>
+        /// </remarks>
+        public ODataClient(string baseUri)
+            : this(new ODataClientSettings {BaseUri = new Uri(baseUri)})
+        {
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ODataClient"/> class.
+        /// </summary>
+        /// <param name="baseUri">The OData service URL.</param>
+        public ODataClient(Uri baseUri)
+            : this(new ODataClientSettings { BaseUri = baseUri })
         {
         }
 
@@ -63,7 +75,7 @@ namespace Simple.OData.Client
         /// </returns>
         public static T ParseMetadataString<T>(string metadataString)
         {
-            var session = Session.FromMetadata("http://localhost/" + metadataString.GetHashCode() + "$metadata", metadataString);
+            var session = Session.FromMetadata(new Uri("http://localhost/" + metadataString.GetHashCode() + "$metadata"), metadataString);
             return (T)session.Adapter.Model;
         }
 

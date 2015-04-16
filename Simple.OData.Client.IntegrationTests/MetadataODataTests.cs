@@ -47,11 +47,11 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task FilterWithMetadataDocument()
         {
-            var metadataDocument = await _client.GetMetadataAsStringAsync();
+            var metadataDocument = await _client.GetMetadataDocumentAsync();
             ODataClient.ClearMetadataCache();
             var settings = new ODataClientSettings()
             {
-                UrlBase = _serviceUri,
+                BaseUri = _serviceUri,
                 PayloadFormat = _payloadFormat,
                 MetadataDocument = metadataDocument,
             };
