@@ -10,6 +10,7 @@ namespace Simple.OData.Client.Tests
         {
         }
 
+#pragma warning disable 1998
         protected override async Task DeleteTestData()
         {
             try
@@ -19,5 +20,6 @@ namespace Simple.OData.Client.Tests
             {
             }
         }
+#pragma warning restore 1998
     }
 }

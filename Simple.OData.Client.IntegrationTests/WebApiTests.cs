@@ -18,7 +18,7 @@ namespace Simple.OData.Client.Tests
             _client = new ODataClient(settings);
         }
 
-        public async void Dispose()
+        public void Dispose()
         {
             if (_client != null)
             {

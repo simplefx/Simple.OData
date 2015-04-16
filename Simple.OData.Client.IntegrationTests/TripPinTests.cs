@@ -282,7 +282,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task UpdateMeGender_PreconditionRequired()
         {
-            AssertThrowsAsync<AggregateException>(async () =>
+            await AssertThrowsAsync<AggregateException>(async () =>
             {
                 await _client
                     .For<Person>("Me")

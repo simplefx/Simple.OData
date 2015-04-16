@@ -222,7 +222,9 @@ namespace Simple.OData.Client.V4.Adapter
             switch (_session.Settings.PayloadFormat)
             {
                 case ODataPayloadFormat.Atom:
+#pragma warning disable 0618
                     settings.SetContentType(ODataFormat.Atom);
+#pragma warning restore 0618
                     break;
                 case ODataPayloadFormat.Json:
                 default:

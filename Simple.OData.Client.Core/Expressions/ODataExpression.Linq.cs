@@ -189,7 +189,6 @@ namespace Simple.OData.Client
                     return !odataExpression;
                 case ExpressionType.Convert:
                     return new ODataExpression(odataExpression, expression.Type);
-                    return odataExpression;
                 case ExpressionType.Negate:
                     return -odataExpression;
             }

@@ -20,6 +20,7 @@ namespace Simple.OData.Client.V3.Adapter
         {
         }
 
+#pragma warning disable 1998
         public override async Task StartBatchAsync()
         {
             _requestMessage = new ODataRequestMessage() { Url = _session.Settings.BaseUri };
@@ -32,7 +33,9 @@ namespace Simple.OData.Client.V3.Adapter
             await _batchWriter.WriteStartBatchAsync();
 #endif
         }
+#pragma warning restore 1998
 
+#pragma warning disable 1998
         public override async Task<HttpRequestMessage> EndBatchAsync()
         {
 #if SILVERLIGHT
@@ -48,6 +51,7 @@ namespace Simple.OData.Client.V3.Adapter
 #endif
             return CreateMessageFromStream(stream, _requestMessage.Url, _requestMessage.GetHeader);
         }
+#pragma warning restore 1998
 
         protected override Task StartChangesetAsync()
         {
@@ -74,6 +78,7 @@ namespace Simple.OData.Client.V3.Adapter
             return await CreateBatchOperationRequestMessageAsync(method, collection, uri, contentId);
         }
 
+#pragma warning disable 1998
         private async Task<ODataBatchOperationRequestMessage> CreateBatchOperationRequestMessageAsync(
             string method, string collection, Uri uri, string contentId)
         {
@@ -94,5 +99,6 @@ namespace Simple.OData.Client.V3.Adapter
 
             return message;
         }
+#pragma warning restore 1998
     }
 }

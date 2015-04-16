@@ -85,6 +85,7 @@ namespace Simple.OData.Client.V3.Adapter
             }
         }
 
+#pragma warning disable 1998
         protected override async Task<Stream> WriteLinkContentAsync(string linkIdent)
         {
             var message = new ODataRequestMessage();
@@ -100,6 +101,7 @@ namespace Simple.OData.Client.V3.Adapter
 #endif
             }
         }
+#pragma warning restore 1998
 
         protected override async Task<Stream> WriteActionContentAsync(string actionName, IDictionary<string, object> parameters)
         {
