@@ -24,6 +24,7 @@ namespace Simple.OData.Client.Tests
         public List<Location> AddressInfo { get; set; }
         public PersonGender Gender { get; set; }
         public long Concurrency { get; set; }
+        public string OpenTypeField { get; set; }
 
         public IEnumerable<Person> Friends { get; set; }
         public IEnumerable<Trip> Trips { get; set; }

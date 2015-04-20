@@ -53,9 +53,14 @@ namespace Simple.OData.Client.V3.Adapter
                 entry.TypeName = entityType.FullName();
 
                 var typeProperties = (_model.FindDeclaredType(entry.TypeName) as IEdmEntityType).Properties();
+                Func<string, string> findMatchingPropertyName = name =>
+                {
+                    var property = typeProperties.BestMatch(y => y.Name, name, _session.Pluralizer);
+                    return property != null ? property.Name : name;
+                };
                 entry.Properties = entryDetails.Properties.Select(x => new ODataProperty()
                 {
-                    Name = typeProperties.BestMatch(y => y.Name, x.Key, _session.Pluralizer).Name,
+                    Name = findMatchingPropertyName(x.Key),
                     Value = GetPropertyValue(typeProperties, x.Key, x.Value)
                 }).ToList();
 
@@ -271,7 +276,7 @@ namespace Simple.OData.Client.V3.Adapter
         private object GetPropertyValue(IEnumerable<IEdmProperty> properties, string key, object value)
         {
             var property = properties.BestMatch(x => x.Name, key, _session.Pluralizer);
-            return GetPropertyValue(property.Type, value);
+            return property != null ? GetPropertyValue(property.Type, value) : value;
         }
 
         private object GetPropertyValue(IEdmTypeReference propertyType, object value)

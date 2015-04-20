@@ -70,13 +70,18 @@ namespace Simple.OData.Client.V3.Adapter
             throw new UnresolvableObjectException(entityTypeName, string.Format("Entity type {0} not found", entityTypeName));
         }
 
-        public override string GetEntityTypeExactName(string entityTypeName)
+        public override string GetEntityTypeExactName(string collectionName)
         {
-            var entityType = GetEntityTypes().BestMatch(x => x.Name, entityTypeName, _session.Pluralizer);
+            var entityType = GetEntityTypes().BestMatch(x => x.Name, collectionName, _session.Pluralizer);
             if (entityType != null)
                 return entityType.Name;
 
-            throw new UnresolvableObjectException(entityTypeName, string.Format("Entity type {0} not found", entityTypeName));
+            throw new UnresolvableObjectException(collectionName, string.Format("Entity type {0} not found", collectionName));
+        }
+
+        public override bool IsOpenType(string collectionName)
+        {
+            return GetEntityType(collectionName).IsOpen;
         }
 
         public override IEnumerable<string> GetStructuralPropertyNames(string collectionName)

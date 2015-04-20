@@ -200,18 +200,20 @@ namespace Simple.OData.Client
                     segmentNames.Add(propertyName);
                     return BuildReferencePath(segmentNames, linkedEntityCollection, elementNames.Skip(1).ToList(), context);
                 }
-                else
+                else if (IsFunction(objectName, context))
                 {
                     var formattedFunction = FormatAsFunction(objectName, context);
-                    if (!string.IsNullOrEmpty(formattedFunction))
-                    {
-                        segmentNames.Add(formattedFunction);
-                        return BuildReferencePath(segmentNames, null, elementNames.Skip(1).ToList(), context);
-                    }
-                    else
-                    {
-                        throw new UnresolvableObjectException(objectName, string.Format("Invalid referenced object {0}", objectName));
-                    }
+                    segmentNames.Add(formattedFunction);
+                    return BuildReferencePath(segmentNames, null, elementNames.Skip(1).ToList(), context);
+                }
+                else if (context.Session.Metadata.IsOpenType(entityCollection.Name))
+                {
+                    segmentNames.Add(objectName);
+                    return BuildReferencePath(segmentNames, null, elementNames.Skip(1).ToList(), context);
+                }
+                else
+                {
+                    throw new UnresolvableObjectException(objectName, string.Format("Invalid referenced object {0}", objectName));
                 }
             }
             else if (FunctionMapping.ContainsFunction(elementNames.First(), 0))
@@ -225,6 +227,13 @@ namespace Simple.OData.Client
                 segmentNames.AddRange(elementNames);
                 return BuildReferencePath(segmentNames, null, new List<string>(), context);
             }
+        }
+
+        private bool IsFunction(string objectName, ExpressionContext context)
+        {
+            FunctionMapping mapping;
+            var adapterVersion = context.Session == null ? AdapterVersion.Default : context.Session.Adapter.AdapterVersion;
+            return FunctionMapping.TryGetFunctionMapping(objectName, 0, adapterVersion, out mapping);
         }
 
         private string FormatAsFunction(string objectName, ExpressionContext context)

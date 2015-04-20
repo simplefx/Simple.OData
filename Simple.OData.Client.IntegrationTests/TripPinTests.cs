@@ -168,7 +168,7 @@ namespace Simple.OData.Client.Tests
                 .Key(21)
                 .As<Flight>()
                 .Expand(x => x.Airline)
-                .Select(x => new { x.FlightNumber, x.Airline.AirlineCode})
+                .Select(x => new { x.FlightNumber, x.Airline.AirlineCode })
                 .FindEntryAsync();
             Assert.Null(flight.From);
             Assert.Null(flight.To);
@@ -253,6 +253,70 @@ namespace Simple.OData.Client.Tests
                 })
                 .UpdateEntryAsync();
             Assert.Equal("Boise", person.AddressInfo.First().City.Name);
+        }
+
+        [Fact]
+        public async Task InsertPersonWithOpenTypeProperty()
+        {
+            var person = await _client
+                .For<Person>()
+                .Set(new
+                {
+                    UserName = "gregorsamsa",
+                    FirstName = "Gregor",
+                    LastName = "Samsa",
+                    OpenTypeField = "Description"
+                })
+                .InsertEntryAsync();
+
+            person = await _client
+                .For<Person>()
+                .Key("gregorsamsa")
+                .FindEntryAsync();
+            Assert.Equal("Description", person.OpenTypeField);
+        }
+
+        [Fact]
+        public async Task FilterPersonByOpenTypeProperty()
+        {
+            var person = await _client
+                .For<Person>()
+                .Set(new
+                {
+                    UserName = "gregorsamsa",
+                    FirstName = "Gregor",
+                    LastName = "Samsa",
+                    OpenTypeField = "Description"
+                })
+                .InsertEntryAsync();
+
+            person = await _client
+                .For<Person>()
+                .Filter(x => x.OpenTypeField == "Description")
+                .FindEntryAsync();
+            Assert.Equal("Description", person.OpenTypeField);
+        }
+
+        [Fact]
+        public async Task SelectOpenTypeProperty()
+        {
+            var person = await _client
+                .For<Person>()
+                .Set(new
+                {
+                    UserName = "gregorsamsa",
+                    FirstName = "Gregor",
+                    LastName = "Samsa",
+                    OpenTypeField = "Description"
+                })
+                .InsertEntryAsync();
+
+            person = await _client
+                .For<Person>()
+                .Key("gregorsamsa")
+                .Select(x => new { x.UserName, x.OpenTypeField })
+                .FindEntryAsync();
+            Assert.Equal("Description", person.OpenTypeField);
         }
 
         [Fact]
@@ -518,7 +582,7 @@ namespace Simple.OData.Client.Tests
                .FindEntriesAsync();
             batch += c => c
                .For<Airline>()
-               .Set(new Airline() { AirlineCode = "TT", Name = "Test Airline"})
+               .Set(new Airline() { AirlineCode = "TT", Name = "Test Airline" })
                .InsertEntryAsync(false);
             batch += async c => airlines2 = await c
                .For<Airline>()

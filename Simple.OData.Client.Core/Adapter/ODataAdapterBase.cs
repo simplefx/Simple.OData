@@ -67,7 +67,9 @@ namespace Simple.OData.Client
             {
                 return GetMetadata().HasStructuralProperty(entityCollection.Name, path)
                     ? GetMetadata().GetStructuralPropertyExactName(entityCollection.Name, path)
-                    : GetMetadata().GetNavigationPropertyExactName(entityCollection.Name, path);
+                    : GetMetadata().HasNavigationProperty(entityCollection.Name, path)
+                    ? GetMetadata().GetNavigationPropertyExactName(entityCollection.Name, path)
+                    : path;
             }
             else
             {
@@ -87,7 +89,9 @@ namespace Simple.OData.Client
             {
                 var clause = GetMetadata().HasStructuralProperty(entityCollection.Name, pathWithOrder.Key)
                     ? GetMetadata().GetStructuralPropertyExactName(entityCollection.Name, pathWithOrder.Key)
-                    : GetMetadata().GetNavigationPropertyExactName(entityCollection.Name, pathWithOrder.Key);
+                    : GetMetadata().HasNavigationProperty(entityCollection.Name, pathWithOrder.Key)
+                    ? GetMetadata().GetNavigationPropertyExactName(entityCollection.Name, pathWithOrder.Key)
+                    : pathWithOrder.Key;
                 if (pathWithOrder.Value)
                     clause += " desc";
                 return clause;

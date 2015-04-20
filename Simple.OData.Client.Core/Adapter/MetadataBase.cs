@@ -16,7 +16,8 @@ namespace Simple.OData.Client
 
         public abstract string GetDerivedEntityTypeExactName(string collectionName, string entityTypeName);
         public abstract bool EntityCollectionRequiresOptimisticConcurrencyCheck(string collectionName);
-        public abstract string GetEntityTypeExactName(string entityTypeName);
+        public abstract string GetEntityTypeExactName(string collectionName);
+        public abstract bool IsOpenType(string collectionName);
         public abstract IEnumerable<string> GetStructuralPropertyNames(string collectionName);
         public abstract bool HasStructuralProperty(string collectionName, string propertyName);
         public abstract string GetStructuralPropertyExactName(string collectionName, string propertyName);
@@ -96,6 +97,10 @@ namespace Simple.OData.Client
                     {
                         entryDetails.AddLink(item.Key, item.Value, contentId);
                     }
+                }
+                else if (this.IsOpenType(collectionName))
+                {
+                    entryDetails.AddProperty(item.Key, item.Value);
                 }
                 else if (!this.Session.Settings.IgnoreUnmappedProperties)
                 {
