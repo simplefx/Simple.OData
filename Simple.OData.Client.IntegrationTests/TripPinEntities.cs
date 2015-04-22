@@ -56,8 +56,8 @@ namespace Simple.OData.Client.Tests
     {
         public int PlanItemId { get; set; }
         public string ConfirmationCode { get; set; }
-        public DateTimeOffset StartsAt { get; set; }
-        public DateTimeOffset EndsAt { get; set; }
+        public DateTimeOffset? StartsAt { get; set; }
+        public DateTimeOffset? EndsAt { get; set; }
         public TimeSpan Duration { get; set; }
     }
 

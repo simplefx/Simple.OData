@@ -593,6 +593,38 @@ namespace Simple.OData.Client.Tests
             Assert.Equal(8, airlines2.Count());
         }
 
+        [Fact]
+        public async Task FindEventWithNonNullStartTime()
+        {
+            var tripEvent = await _client
+                .For<Person>()
+                .Key("russellwhyte")
+                .NavigateTo<Trip>()
+                .Key(1003)
+                .NavigateTo(x => x.PlanItems)
+                .As<Event>()
+                .Filter(x => x.StartsAt < DateTimeOffset.UtcNow)
+                .FindEntryAsync();
+
+            Assert.NotNull(tripEvent);
+        }
+
+        [Fact]
+        public async Task FindEventWithNullStartTime()
+        {
+            var tripEvent = await _client
+                .For<Person>()
+                .Key("russellwhyte")
+                .NavigateTo<Trip>()
+                .Key(1003)
+                .NavigateTo(x => x.PlanItems)
+                .As<Event>()
+                .Filter(x => x.StartsAt == null)
+                .FindEntryAsync();
+
+            Assert.Null(tripEvent);
+        }
+
         private Event CreateTestEvent()
         {
             return new Event
