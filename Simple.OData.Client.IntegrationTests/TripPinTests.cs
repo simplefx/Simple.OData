@@ -256,10 +256,10 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task InsertPersonWithOpenTypeProperty()
+        public async Task InsertPersonWithTypedDynamicProperty()
         {
             var person = await _client
-                .For<Person>()
+                .For<PersonWithOpenTypeField>("Person")
                 .Set(new
                 {
                     UserName = "gregorsamsa",
@@ -270,17 +270,40 @@ namespace Simple.OData.Client.Tests
                 .InsertEntryAsync();
 
             person = await _client
-                .For<Person>()
+                .For<PersonWithOpenTypeField>("Person")
                 .Key("gregorsamsa")
                 .FindEntryAsync();
             Assert.Equal("Description", person.OpenTypeField);
         }
 
         [Fact]
+        public async Task InsertPersonWithDynamicPropertyContainer()
+        {
+            var person = await _client
+                .For<PersonWithOpenTypeContainer>("Person")
+                .WithProperties(x => x.Properties)
+                .Set(new
+                {
+                    UserName = "gregorsamsa",
+                    FirstName = "Gregor",
+                    LastName = "Samsa",
+                    Properties = new Dictionary<string, object> { { "OpenTypeField", "Description" } },
+                })
+                .InsertEntryAsync();
+
+            person = await _client
+                .For<PersonWithOpenTypeContainer>("Person")
+                .WithProperties(x => x.Properties)
+                .Key("gregorsamsa")
+                .FindEntryAsync();
+            Assert.Equal("Description", person.Properties["OpenTypeField"]);
+        }
+
+        [Fact]
         public async Task FilterPersonByOpenTypeProperty()
         {
             var person = await _client
-                .For<Person>()
+                .For<PersonWithOpenTypeField>("Person")
                 .Set(new
                 {
                     UserName = "gregorsamsa",
@@ -291,7 +314,7 @@ namespace Simple.OData.Client.Tests
                 .InsertEntryAsync();
 
             person = await _client
-                .For<Person>()
+                .For<PersonWithOpenTypeField>("Person")
                 .Filter(x => x.OpenTypeField == "Description")
                 .FindEntryAsync();
             Assert.Equal("Description", person.OpenTypeField);
@@ -301,7 +324,7 @@ namespace Simple.OData.Client.Tests
         public async Task SelectOpenTypeProperty()
         {
             var person = await _client
-                .For<Person>()
+                .For<PersonWithOpenTypeField>("Person")
                 .Set(new
                 {
                     UserName = "gregorsamsa",
@@ -312,7 +335,7 @@ namespace Simple.OData.Client.Tests
                 .InsertEntryAsync();
 
             person = await _client
-                .For<Person>()
+                .For<PersonWithOpenTypeField>("Person")
                 .Key("gregorsamsa")
                 .Select(x => new { x.UserName, x.OpenTypeField })
                 .FindEntryAsync();

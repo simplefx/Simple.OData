@@ -24,6 +24,7 @@ namespace Simple.OData.Client
         private ODataExpression _collectionExpression;
         private string _derivedCollectionName;
         private ODataExpression _derivedCollectionExpression;
+        private string _dynamicPropertiesContainerName;
         private string _functionName;
         private string _actionName;
         private IList<object> _keyValues;
@@ -161,6 +162,11 @@ namespace Simple.OData.Client
             }
         }
 
+        public string DynamicPropertiesContainerName
+        {
+            get { return _dynamicPropertiesContainerName; }
+        }
+
         public Task<string> GetCommandTextAsync()
         {
             return GetCommandTextAsync(CancellationToken.None);
@@ -186,6 +192,14 @@ namespace Simple.OData.Client
             {
                 _collectionName = collectionName;
             }
+            return this;
+        }
+
+        public FluentCommand WithProperties(string propertyName)
+        {
+            if (IsBatchResponse) return this;
+
+            _dynamicPropertiesContainerName = propertyName;
             return this;
         }
 
@@ -577,7 +591,40 @@ namespace Simple.OData.Client
 
         internal IDictionary<string, object> CommandData
         {
-            get { return _entryData ?? new Dictionary<string, object>(); }
+            get
+            {
+                if (_entryData == null)
+                    return new Dictionary<string, object>();
+                if (string.IsNullOrEmpty(_dynamicPropertiesContainerName))
+                    return _entryData;
+
+                var entryData = new Dictionary<string, object>();
+                foreach (var key in _entryData.Keys.Where(x => 
+                    !string.Equals(x, _dynamicPropertiesContainerName, StringComparison.OrdinalIgnoreCase)))
+                {
+                    entryData.Add(key, _entryData[key]);
+                }
+                object dynamicProperties;
+                if (_entryData.TryGetValue(_dynamicPropertiesContainerName, out dynamicProperties) && dynamicProperties != null)
+                {
+                    if (dynamicProperties is IDictionary<string, object>)
+                    {
+                        var kv = dynamicProperties as IDictionary<string, object>;
+                        foreach (var key in kv.Keys)
+                        {
+                            entryData.Add(key, kv[key]);
+                        }
+                    }
+                    else
+                    {
+                        throw new InvalidOperationException(
+                            string.Format("Property {0} must implement IDictionary<string,object> interface", 
+                            _dynamicPropertiesContainerName));
+                    }
+                }
+
+                return entryData;
+            }
         }
 
         internal IList<string> SelectedColumns

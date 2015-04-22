@@ -398,6 +398,13 @@ namespace Simple.OData.Client
         Task UnlinkEntryAsync(ODataExpression expression, IDictionary<string, object> linkedEntryKey, CancellationToken cancellationToken);
 
         /// <summary>
+        /// Sets the container for data not covered by the entity properties. Typically used with OData open types.
+        /// </summary>
+        /// <param name="expression">The filter expression.</param>
+        /// <returns>Self.</returns>
+        IBoundClient<T> WithProperties(Expression<Func<T, IDictionary<string, object>>> expression);
+
+        /// <summary>
         /// Casts the collection of base entities as the collection of derived ones.
         /// </summary>
         /// <param name="derivedCollectionName">Name of the derived collection.</param>

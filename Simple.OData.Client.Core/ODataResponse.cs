@@ -15,6 +15,7 @@ namespace Simple.OData.Client
         public IDictionary<string, object> Entry { get; private set; }
         public ODataFeedAnnotations Annotations { get; private set; }
         public IList<ODataResponse> Batch { get; private set; }
+        public string DynamicPropertiesContainerName { get; private set; }
 
         private ODataResponse()
         {
@@ -36,9 +37,9 @@ namespace Simple.OData.Client
             }
         }
 
-        public IEnumerable<T> AsEntries<T>() where T : class
+        public IEnumerable<T> AsEntries<T>(string dynamicPropertiesContainerName) where T : class
         {
-            return this.AsEntries().Select(x => x.ToObject<T>());
+            return this.AsEntries().Select(x => x.ToObject<T>(dynamicPropertiesContainerName));
         }
 
         public IDictionary<string, object> AsEntry()
@@ -50,9 +51,9 @@ namespace Simple.OData.Client
                 : null;
         }
 
-        public T AsEntry<T>() where T : class
+        public T AsEntry<T>(string dynamicPropertiesContainerName) where T : class
         {
-            return this.AsEntry().ToObject<T>();
+            return this.AsEntry().ToObject<T>(dynamicPropertiesContainerName);
         }
 
         public T AsScalar<T>()

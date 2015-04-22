@@ -12,7 +12,8 @@ namespace Simple.OData.Client.Extensions
 
         internal static Func<IDictionary<string, object>, ODataEntry> CreateDynamicODataEntry { get; set; }
 
-        public static T ToObject<T>(this IDictionary<string, object> source, bool dynamicObject = false)
+        public static T ToObject<T>(this IDictionary<string, object> source,
+            string dynamicPropertiesContainerName = null, bool dynamicObject = false)
             where T : class
         {
             if (source == null)
@@ -22,10 +23,10 @@ namespace Simple.OData.Client.Extensions
             if (typeof(T) == typeof(ODataEntry))
                 return CreateODataEntry(source, dynamicObject) as T;
 
-            return (T)ToObject(source, typeof(T), CreateInstance<T>, dynamicObject);
+            return (T)ToObject(source, typeof(T), CreateInstance<T>, dynamicPropertiesContainerName, dynamicObject);
         }
 
-        public static object ToObject(this IDictionary<string, object> source, Type type)
+        public static object ToObject(this IDictionary<string, object> source, Type type, string dynamicPropertiesContainerName = null)
         {
             var ctor = type.GetDefaultConstructor();
             if (ctor == null && !CustomConverters.HasConverter(type))
@@ -34,10 +35,11 @@ namespace Simple.OData.Client.Extensions
                     string.Format("Unable to create an instance of type {0} that does not have a default constructor.", type.Name));
             }
 
-            return ToObject(source, type, () => ctor.Invoke(new object[] { }), false);
+            return ToObject(source, type, () => ctor.Invoke(new object[] { }), dynamicPropertiesContainerName, false);
         }
 
-        private static object ToObject(this IDictionary<string, object> source, Type type, Func<object> instanceFactory, bool dynamicObject)
+        private static object ToObject(this IDictionary<string, object> source, Type type, Func<object> instanceFactory,
+            string dynamicPropertiesContainerName, bool dynamicObject)
         {
             if (source == null)
                 return null;
@@ -53,13 +55,13 @@ namespace Simple.OData.Client.Extensions
 
             var instance = instanceFactory();
 
-            Func<Type, bool> IsCompoundType = fieldOrPropertyType => 
+            Func<Type, bool> IsCompoundType = fieldOrPropertyType =>
                 !fieldOrPropertyType.IsValue() && !fieldOrPropertyType.IsArray && fieldOrPropertyType != typeof(string);
 
-            Func<Type, object, bool> IsCollectionType = (fieldOrPropertyType, itemValue) => 
+            Func<Type, object, bool> IsCollectionType = (fieldOrPropertyType, itemValue) =>
                 (fieldOrPropertyType.IsArray ||
-                fieldOrPropertyType.IsGeneric() && 
-                typeof(System.Collections.IEnumerable).IsTypeAssignableFrom(fieldOrPropertyType)) && 
+                fieldOrPropertyType.IsGeneric() &&
+                typeof(System.Collections.IEnumerable).IsTypeAssignableFrom(fieldOrPropertyType)) &&
                 (itemValue as System.Collections.IEnumerable) != null;
 
             Func<Type, object, object> ConvertEnum = (fieldOrPropertyType, itemValue) =>
@@ -80,7 +82,7 @@ namespace Simple.OData.Client.Extensions
                 }
             };
 
-            Func<Type, object, object> ConvertSingle = (fieldOrPropertyType, itemValue) => 
+            Func<Type, object, object> ConvertSingle = (fieldOrPropertyType, itemValue) =>
                 IsCompoundType(fieldOrPropertyType)
                 ? itemValue.ToDictionary().ToObject(fieldOrPropertyType)
                 : fieldOrPropertyType.IsEnumType()
@@ -112,32 +114,52 @@ namespace Simple.OData.Client.Extensions
                 }
                 else
                 {
-                    var typedef = typeof (IEnumerable<>);
+                    var typedef = typeof(IEnumerable<>);
                     var enumerableType = typedef.MakeGenericType(elementType);
                     var ctor = fieldOrPropertyType.GetDeclaredConstructors().FirstOrDefault(
                         x => x.GetParameters().Length == 1 && x.GetParameters().First().ParameterType == enumerableType);
-                    return ctor != null 
-                        ? ctor.Invoke(new object[] { arrayValue}) 
+                    return ctor != null
+                        ? ctor.Invoke(new object[] { arrayValue })
                         : null;
                 }
             };
 
-            Func<Type, object, object> ConvertValue = (fieldOrPropertyType, itemValue) => 
+            Func<Type, object, object> ConvertValue = (fieldOrPropertyType, itemValue) =>
                 IsCollectionType(fieldOrPropertyType, itemValue)
                 ? ConvertCollection(fieldOrPropertyType, itemValue)
                 : ConvertSingle(fieldOrPropertyType, itemValue);
 
+            IDictionary<string, object> dynamicProperties = null;
+            if (!string.IsNullOrEmpty(dynamicPropertiesContainerName))
+            {
+                var property = type.GetAnyProperty(dynamicPropertiesContainerName);
+
+                if (property == null)
+                    throw new ArgumentException(string.Format("Type {0} does not have property {1} ",
+                        type, dynamicPropertiesContainerName));
+
+                if (!typeof(IDictionary<string, object>).IsTypeAssignableFrom(property.PropertyType))
+                    throw new InvalidOperationException(
+                        string.Format("Property {0} must implement IDictionary<string,object> interface",
+                        dynamicPropertiesContainerName));
+
+                dynamicProperties = new Dictionary<string, object>();
+                property.SetValue(instance, dynamicProperties, null);
+            }
+
             foreach (var item in source)
             {
-                if (item.Value != null)
-                {
-                    var property = type.GetAnyProperty(item.Key) ?? 
-                        type.GetAllProperties().FirstOrDefault(x => x.GetMappedName() == item.Key);
+                var property = type.GetAnyProperty(item.Key) ??
+                    type.GetAllProperties().FirstOrDefault(x => x.GetMappedName() == item.Key);
 
-                    if (property != null && property.CanWrite && !property.IsNotMapped())
-                    {
+                if (property != null && property.CanWrite && !property.IsNotMapped())
+                {
+                    if (item.Value != null)
                         property.SetValue(instance, ConvertValue(property.PropertyType, item.Value), null);
-                    }
+                }
+                else if (dynamicProperties != null)
+                {
+                    dynamicProperties.Add(item.Key, item.Value);
                 }
             }
 

@@ -174,7 +174,9 @@ namespace Simple.OData.Client
         /// <returns>Execution result.</returns>
         public Task<T> ExecuteAsSingleAsync()
         {
-            return RectifyColumnSelectionAsync(_client.ExecuteAsSingleAsync(_command, CancellationToken.None), _command.SelectedColumns);
+            return RectifyColumnSelectionAsync(
+                _client.ExecuteAsSingleAsync(_command, CancellationToken.None),
+                _command.SelectedColumns, _command.DynamicPropertiesContainerName);
         }
         /// <summary>
         /// Executes the OData function or action and returns a single item.
@@ -183,7 +185,9 @@ namespace Simple.OData.Client
         /// <returns>Execution result.</returns>
         public Task<T> ExecuteAsSingleAsync(CancellationToken cancellationToken)
         {
-            return RectifyColumnSelectionAsync(_client.ExecuteAsSingleAsync(_command, cancellationToken), _command.SelectedColumns);
+            return RectifyColumnSelectionAsync(
+                _client.ExecuteAsSingleAsync(_command, cancellationToken),
+                _command.SelectedColumns, _command.DynamicPropertiesContainerName);
         }
 
         /// <summary>
@@ -192,7 +196,9 @@ namespace Simple.OData.Client
         /// <returns>Execution result.</returns>
         public Task<IEnumerable<T>> ExecuteAsEnumerableAsync()
         {
-            return RectifyColumnSelectionAsync(_client.ExecuteAsEnumerableAsync(_command, CancellationToken.None), _command.SelectedColumns);
+            return RectifyColumnSelectionAsync(
+                _client.ExecuteAsEnumerableAsync(_command, CancellationToken.None),
+                _command.SelectedColumns, _command.DynamicPropertiesContainerName);
         }
         /// <summary>
         /// Executes the OData function or action and returns enumerable result.
@@ -201,7 +207,9 @@ namespace Simple.OData.Client
         /// <returns>Execution result.</returns>
         public Task<IEnumerable<T>> ExecuteAsEnumerableAsync(CancellationToken cancellationToken)
         {
-            return RectifyColumnSelectionAsync(_client.ExecuteAsEnumerableAsync(_command, cancellationToken), _command.SelectedColumns);
+            return RectifyColumnSelectionAsync(
+                _client.ExecuteAsEnumerableAsync(_command, cancellationToken),
+                _command.SelectedColumns, _command.DynamicPropertiesContainerName);
         }
 
         /// <summary>
@@ -260,22 +268,25 @@ namespace Simple.OData.Client
 
 #pragma warning disable 1591
 
-        protected async Task<IEnumerable<T>> RectifyColumnSelectionAsync(Task<IEnumerable<IDictionary<string, object>>> entries, IList<string> selectedColumns)
+        protected async Task<IEnumerable<T>> RectifyColumnSelectionAsync(
+            Task<IEnumerable<IDictionary<string, object>>> entries, IList<string> selectedColumns, string dynamicPropertiesContainerName)
         {
             var result = RectifyColumnSelection(await entries, selectedColumns);
-            return result == null ? null : result.Select(z => z.ToObject<T>(_dynamicResults));
+            return result == null ? null : result.Select(z => z.ToObject<T>(dynamicPropertiesContainerName, _dynamicResults));
         }
 
-        protected async Task<T> RectifyColumnSelectionAsync(Task<IDictionary<string, object>> entry, IList<string> selectedColumns)
+        protected async Task<T> RectifyColumnSelectionAsync(
+            Task<IDictionary<string, object>> entry, IList<string> selectedColumns, string dynamicPropertiesContainerName)
         {
-            return RectifyColumnSelection(await entry, selectedColumns).ToObject<T>(_dynamicResults);
+            return RectifyColumnSelection(await entry, selectedColumns).ToObject<T>(dynamicPropertiesContainerName, _dynamicResults);
         }
 
-        protected async Task<Tuple<IEnumerable<T>, int>> RectifyColumnSelectionAsync(Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> entries, IList<string> selectedColumns)
+        protected async Task<Tuple<IEnumerable<T>, int>> RectifyColumnSelectionAsync(
+            Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> entries, IList<string> selectedColumns, string dynamicPropertiesContainerName)
         {
             var result = await entries;
             return new Tuple<IEnumerable<T>, int>(
-                RectifyColumnSelection(result.Item1, selectedColumns).Select(y => y.ToObject<T>(_dynamicResults)),
+                RectifyColumnSelection(result.Item1, selectedColumns).Select(y => y.ToObject<T>(dynamicPropertiesContainerName, _dynamicResults)),
                 result.Item2);
         }
 

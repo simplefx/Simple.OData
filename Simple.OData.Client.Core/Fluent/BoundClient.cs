@@ -37,6 +37,12 @@ namespace Simple.OData.Client
             return CreateClientForODataEntry();
         }
 
+        public IBoundClient<T> WithProperties(Expression<Func<T, IDictionary<string, object>>> expression)
+        {
+            this.Command.WithProperties(ColumnExpression.ExtractColumnName(expression));
+            return this;
+        }
+
         public IBoundClient<IDictionary<string, object>> As(string derivedCollectionName)
         {
             this.Command.As(derivedCollectionName);

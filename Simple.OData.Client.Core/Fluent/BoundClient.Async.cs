@@ -20,7 +20,9 @@ namespace Simple.OData.Client
 
         public Task<IEnumerable<T>> FindEntriesAsync(CancellationToken cancellationToken)
         {
-            return RectifyColumnSelectionAsync(_client.FindEntriesAsync(_command, cancellationToken), _command.SelectedColumns);
+            return RectifyColumnSelectionAsync(
+                _client.FindEntriesAsync(_command, cancellationToken), 
+                _command.SelectedColumns, _command.DynamicPropertiesContainerName);
         }
 
         public Task<IEnumerable<T>> FindEntriesAsync(bool scalarResult)
@@ -30,7 +32,9 @@ namespace Simple.OData.Client
 
         public Task<IEnumerable<T>> FindEntriesAsync(bool scalarResult, CancellationToken cancellationToken)
         {
-            return RectifyColumnSelectionAsync(_client.FindEntriesAsync(_command, scalarResult, cancellationToken), _command.SelectedColumns);
+            return RectifyColumnSelectionAsync(
+                _client.FindEntriesAsync(_command, scalarResult, cancellationToken),
+                _command.SelectedColumns, _command.DynamicPropertiesContainerName);
         }
 
         public Task<IEnumerable<T>> FindEntriesAsync(ODataFeedAnnotations annotations)
@@ -45,7 +49,8 @@ namespace Simple.OData.Client
                 cancellationToken.ThrowIfCancellationRequested();
 
             var result = _client.FindEntriesAsync(commandText, annotations, cancellationToken);
-            return await RectifyColumnSelectionAsync(result, _command.SelectedColumns);
+            return await RectifyColumnSelectionAsync(
+                result, _command.SelectedColumns, _command.DynamicPropertiesContainerName);
         }
 
         public Task<IEnumerable<T>> FindEntriesAsync(Uri annotatedUri, ODataFeedAnnotations annotations)
@@ -60,7 +65,8 @@ namespace Simple.OData.Client
                 cancellationToken.ThrowIfCancellationRequested();
 
             var result = _client.FindEntriesAsync(commandText, annotations, cancellationToken);
-            return await RectifyColumnSelectionAsync(result, _command.SelectedColumns);
+            return await RectifyColumnSelectionAsync(
+                result, _command.SelectedColumns, _command.DynamicPropertiesContainerName);
         }
 
         public Task<T> FindEntryAsync()
@@ -70,7 +76,9 @@ namespace Simple.OData.Client
 
         public Task<T> FindEntryAsync(CancellationToken cancellationToken)
         {
-            return RectifyColumnSelectionAsync(_client.FindEntryAsync(_command, cancellationToken), _command.SelectedColumns);
+            return RectifyColumnSelectionAsync(
+                _client.FindEntryAsync(_command, cancellationToken),
+                _command.SelectedColumns, _command.DynamicPropertiesContainerName);
         }
 
         public Task<U> FindScalarAsync<U>()
@@ -101,7 +109,7 @@ namespace Simple.OData.Client
         public async Task<T> InsertEntryAsync(bool resultRequired, CancellationToken cancellationToken)
         {
             return (await _client.InsertEntryAsync(_command, _command.CommandData, resultRequired, cancellationToken))
-                .ToObject<T>(_dynamicResults);
+                .ToObject<T>(_command.DynamicPropertiesContainerName, _dynamicResults);
         }
 
         public Task<T> UpdateEntryAsync()
@@ -132,7 +140,7 @@ namespace Simple.OData.Client
             {
                 var result = await _client.UpdateEntryAsync(_command, resultRequired, cancellationToken);
                 return resultRequired
-                    ? result == null ? null : result.ToObject<T>(_dynamicResults)
+                    ? result == null ? null : result.ToObject<T>(_command.DynamicPropertiesContainerName, _dynamicResults)
                     : null;
             }
         }
@@ -155,7 +163,7 @@ namespace Simple.OData.Client
         public async Task<IEnumerable<T>> UpdateEntriesAsync(bool resultRequired, CancellationToken cancellationToken)
         {
             return (await _client.UpdateEntriesAsync(_command, _command.CommandData, resultRequired, cancellationToken))
-                .Select(y => y.ToObject<T>(_dynamicResults));
+                .Select(y => y.ToObject<T>(_command.DynamicPropertiesContainerName, _dynamicResults));
         }
 
         public Task DeleteEntryAsync()

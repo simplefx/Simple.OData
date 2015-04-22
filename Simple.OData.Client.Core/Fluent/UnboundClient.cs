@@ -21,6 +21,12 @@ namespace Simple.OData.Client
 
 #pragma warning disable 1591
 
+        public IUnboundClient<T> WithProperties(Expression<Func<T, IDictionary<string, object>>> expression)
+        {
+            this.Command.WithProperties(ColumnExpression.ExtractColumnName(expression));
+            return this;
+        }
+
         public IUnboundClient<IDictionary<string, object>> As(string derivedCollectionName)
         {
             this.Command.As(derivedCollectionName);
@@ -156,7 +162,7 @@ namespace Simple.OData.Client
 
         public IUnboundClient<T> Select(Expression<Func<T, object>> expression)
         {
-            this.Command.Select(ColumnExpression.ExtractColumnNames(expression));
+            this.Command.Select(ColumnExpression.ExtractColumnName(expression));
             return this;
         }
 
