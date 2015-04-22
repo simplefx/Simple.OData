@@ -31,14 +31,14 @@ namespace Simple.OData.Client
             var commandText = string.Empty;
             if (!string.IsNullOrEmpty(command.Details.CollectionName))
             {
-                commandText += command.Details.Session.Metadata.GetEntityCollectionExactName(command.Details.CollectionName);
+                commandText += _session.Metadata.GetEntityCollectionExactName(command.Details.CollectionName);
             }
             else if (!string.IsNullOrEmpty(command.Details.LinkName))
             {
                 var parent = new FluentCommand(command.Details.Parent).Resolve();
                 commandText += string.Format("{0}/{1}",
                     FormatCommand(parent),
-                    command.Details.Session.Metadata.GetNavigationPropertyExactName(parent.EntityCollection.Name, command.Details.LinkName));
+                    _session.Metadata.GetNavigationPropertyExactName(parent.EntityCollection.Name, command.Details.LinkName));
             }
 
             if (command.HasKey)
@@ -49,9 +49,9 @@ namespace Simple.OData.Client
                 if (!string.IsNullOrEmpty(command.Details.CollectionName) || !string.IsNullOrEmpty(command.Details.LinkName))
                     commandText += "/";
                 if (!string.IsNullOrEmpty(command.Details.FunctionName))
-                    commandText += command.Details.Session.Metadata.GetFunctionFullName(command.Details.FunctionName);
+                    commandText += _session.Metadata.GetFunctionFullName(command.Details.FunctionName);
                 else
-                    commandText += command.Details.Session.Metadata.GetActionFullName(command.Details.ActionName);
+                    commandText += _session.Metadata.GetActionFullName(command.Details.ActionName);
             }
 
             if (!string.IsNullOrEmpty(command.Details.FunctionName) && FunctionFormat == FunctionFormat.Key)
@@ -59,8 +59,8 @@ namespace Simple.OData.Client
 
             if (!string.IsNullOrEmpty(command.Details.DerivedCollectionName))
             {
-                var entityTypeNamespace = command.Details.Session.Metadata.GetEntityCollectionTypeNamespace(command.Details.DerivedCollectionName);
-                var entityTypeName = command.Details.Session.Metadata.GetEntityTypeExactName(command.Details.DerivedCollectionName);
+                var entityTypeNamespace = _session.Metadata.GetEntityCollectionTypeNamespace(command.Details.DerivedCollectionName);
+                var entityTypeName = _session.Metadata.GetEntityTypeExactName(command.Details.DerivedCollectionName);
                 commandText += string.Format("/{0}.{1}", entityTypeNamespace, entityTypeName);
             }
 
