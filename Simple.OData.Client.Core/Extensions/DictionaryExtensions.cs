@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Reflection;
 
@@ -132,19 +131,7 @@ namespace Simple.OData.Client.Extensions
             IDictionary<string, object> dynamicProperties = null;
             if (!string.IsNullOrEmpty(dynamicPropertiesContainerName))
             {
-                var property = type.GetAnyProperty(dynamicPropertiesContainerName);
-
-                if (property == null)
-                    throw new ArgumentException(string.Format("Type {0} does not have property {1} ",
-                        type, dynamicPropertiesContainerName));
-
-                if (!typeof(IDictionary<string, object>).IsTypeAssignableFrom(property.PropertyType))
-                    throw new InvalidOperationException(
-                        string.Format("Property {0} must implement IDictionary<string,object> interface",
-                        dynamicPropertiesContainerName));
-
-                dynamicProperties = new Dictionary<string, object>();
-                property.SetValue(instance, dynamicProperties, null);
+                dynamicProperties = CreateDynamicPropertiesContainer(type, instance, dynamicPropertiesContainerName);
             }
 
             foreach (var item in source)
@@ -222,6 +209,25 @@ namespace Simple.OData.Client.Extensions
             return dynamicObject && CreateDynamicODataEntry != null ?
                 CreateDynamicODataEntry(source) :
                 new ODataEntry(source);
+        }
+
+        private static IDictionary<string, object> CreateDynamicPropertiesContainer(
+            Type type, object instance, string dynamicPropertiesContainerName)
+        {
+            var property = type.GetAnyProperty(dynamicPropertiesContainerName);
+
+            if (property == null)
+                throw new ArgumentException(string.Format("Type {0} does not have property {1} ",
+                    type, dynamicPropertiesContainerName));
+
+            if (!typeof(IDictionary<string, object>).IsTypeAssignableFrom(property.PropertyType))
+                throw new InvalidOperationException(
+                    string.Format("Property {0} must implement IDictionary<string,object> interface",
+                    dynamicPropertiesContainerName));
+
+            var dynamicProperties = new Dictionary<string, object>();
+            property.SetValue(instance, dynamicProperties, null);
+            return dynamicProperties;
         }
     }
 }

@@ -93,14 +93,14 @@ namespace Simple.OData.Client.V3.Adapter
                     (ODataVersion)Enum.Parse(typeof(ODataVersion), this.GetODataVersionString(), false), this.Model);
         }
 
-        public override FunctionFormat FunctionFormat
-        {
-            get { return FunctionFormat.Query; }
-        }
-
         public override IMetadata GetMetadata()
         {
             return new Metadata(_session, Model);
+        }
+
+        public override ICommandFormatter GetCommandFormatter()
+        {
+            return new CommandFormatter(_session);
         }
 
         public override IResponseReader GetResponseReader()
@@ -116,24 +116,6 @@ namespace Simple.OData.Client.V3.Adapter
         public override IBatchWriter GetBatchWriter()
         {
             return new BatchWriter(_session);
-        }
-
-        public override void FormatCommandClauses(
-            IList<string> commandClauses,
-            EntityCollection entityCollection,
-            IList<KeyValuePair<string, ODataExpandOptions>> expandAssociations,
-            IList<string> selectColumns,
-            IList<KeyValuePair<string, bool>> orderbyColumns,
-            bool includeCount)
-        {
-            FormatClause(commandClauses, entityCollection, expandAssociations, ODataLiteral.Expand, FormatExpandItem);
-            FormatClause(commandClauses, entityCollection, selectColumns, ODataLiteral.Select, FormatSelectItem);
-            FormatClause(commandClauses, entityCollection, orderbyColumns, ODataLiteral.OrderBy, FormatOrderByItem);
-
-            if (includeCount)
-            {
-                commandClauses.Add(string.Format("{0}={1}", ODataLiteral.InlineCount, ODataLiteral.AllPages));
-            }
         }
     }
 }

@@ -47,7 +47,9 @@
     </Compile>
     <Compile Include="Adapter\AdapterVersion.cs" />
     <Compile Include="Adapter\BatchWriterBase.cs" />
+    <Compile Include="Adapter\CommandFormatterBase.cs" />
     <Compile Include="Adapter\FunctionFormat.cs" />
+    <Compile Include="Adapter\ICommandFormatter.cs" />
     <Compile Include="Adapter\IODataAdapter.cs" />
     <Compile Include="Adapter\MetadataBase.cs" />
     <Compile Include="Adapter\RequestWriterBase.cs" />
@@ -55,6 +57,7 @@
     <Compile Include="Adapter\ResponseReaderBase.cs" />
     <Compile Include="Expressions\ColumnExpression.cs" />
     <Compile Include="Extensions\MemberInfoExtensions.cs" />
+    <Compile Include="Fluent\CommandDetails.cs" />
     <Compile Include="Fluent\FluentClientBase.cs" />
     <Compile Include="Fluent\IBoundClient.cs" />
     <Compile Include="Extensions\DictionaryExtensions.cs" />

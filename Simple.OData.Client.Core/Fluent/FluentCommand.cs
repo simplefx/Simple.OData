@@ -18,133 +18,90 @@ namespace Simple.OData.Client
 
     public partial class FluentCommand
     {
-        private readonly Session _session;
-        private readonly FluentCommand _parent;
-        private string _collectionName;
-        private ODataExpression _collectionExpression;
-        private string _derivedCollectionName;
-        private ODataExpression _derivedCollectionExpression;
-        private string _dynamicPropertiesContainerName;
-        private string _functionName;
-        private string _actionName;
-        private IList<object> _keyValues;
-        private IDictionary<string, object> _namedKeyValues;
-        private IDictionary<string, object> _entryData;
-        private string _filter;
-        private ODataExpression _filterExpression;
-        private int _skipCount = -1;
-        private int _topCount = -1;
-        private readonly List<KeyValuePair<string, ODataExpandOptions>> _expandAssociations = new List<KeyValuePair<string, ODataExpandOptions>>();
-        private readonly List<string> _selectColumns = new List<string>();
-        private readonly List<KeyValuePair<string, bool>> _orderbyColumns = new List<KeyValuePair<string, bool>>();
-        private bool _computeCount;
-        private bool _includeCount;
-        private string _linkName;
-        private ODataExpression _linkExpression;
+        private readonly CommandDetails _details;
 
         internal static readonly string ResultLiteral = "__result";
         internal static readonly string ResourceTypeLiteral = "__resourcetype";
 
         internal FluentCommand(Session session, FluentCommand parent)
         {
-            _session = session;
-            _parent = parent;
+            _details = new CommandDetails(session, parent);
         }
 
         internal FluentCommand(FluentCommand ancestor)
         {
-            _session = ancestor._session;
-            _parent = ancestor._parent;
-            _collectionName = ancestor._collectionName;
-            _collectionExpression = ancestor._collectionExpression;
-            _derivedCollectionName = ancestor._derivedCollectionName;
-            _derivedCollectionExpression = ancestor._derivedCollectionExpression;
-            _functionName = ancestor._functionName;
-            _actionName = ancestor._actionName;
-            _keyValues = ancestor._keyValues;
-            _namedKeyValues = ancestor._namedKeyValues;
-            _entryData = ancestor._entryData;
-            _filter = ancestor._filter;
-            _filterExpression = ancestor._filterExpression;
-            _filterExpression = ancestor._filterExpression;
-            _skipCount = ancestor._skipCount;
-            _topCount = ancestor._topCount;
-            _expandAssociations = ancestor._expandAssociations;
-            _selectColumns = ancestor._selectColumns;
-            _orderbyColumns = ancestor._orderbyColumns;
-            _computeCount = ancestor._computeCount;
-            _includeCount = ancestor._includeCount;
-            _linkName = ancestor._linkName;
-            _linkExpression = ancestor._linkExpression;
+            _details = new CommandDetails(ancestor._details);
         }
 
-        private bool IsBatchResponse { get { return _session == null; } }
+        private bool IsBatchResponse { get { return _details.Session == null; } }
 
-        private FluentCommand Resolve()
+        internal CommandDetails Details { get { return _details; } }
+
+        internal FluentCommand Resolve()
         {
-            if (!ReferenceEquals(_collectionExpression, null))
+            if (!ReferenceEquals(_details.CollectionExpression, null))
             {
-                For(_collectionExpression.AsString(_session));
-                _collectionExpression = null;
+                For(_details.CollectionExpression.AsString(_details.Session));
+                _details.CollectionExpression = null;
             }
 
-            if (!ReferenceEquals(_derivedCollectionExpression, null))
+            if (!ReferenceEquals(_details.DerivedCollectionExpression, null))
             {
-                As(_derivedCollectionExpression.AsString(_session));
-                _derivedCollectionExpression = null;
+                As(_details.DerivedCollectionExpression.AsString(_details.Session));
+                _details.DerivedCollectionExpression = null;
             }
 
-            if (!ReferenceEquals(_filterExpression, null))
+            if (!ReferenceEquals(_details.FilterExpression, null))
             {
-                _namedKeyValues = TryInterpretFilterExpressionAsKey(_filterExpression);
-                if (_namedKeyValues == null)
+                _details.NamedKeyValues = TryInterpretFilterExpressionAsKey(_details.FilterExpression);
+                if (_details.NamedKeyValues == null)
                 {
-                    _filter = _filterExpression.Format(new ExpressionContext(_session, this.EntityCollection));
+                    _details.Filter = _details.FilterExpression.Format(new ExpressionContext(_details.Session, this.EntityCollection));
                 }
                 else
                 {
-                    _keyValues = null;
-                    _topCount = -1;
+                    _details.KeyValues = null;
+                    _details.TopCount = -1;
                 }
-                if (_filterExpression.HasTypeConstraint(_derivedCollectionName))
+                if (_details.FilterExpression.HasTypeConstraint(_details.DerivedCollectionName))
                 {
-                    _derivedCollectionName = null;
+                    _details.DerivedCollectionName = null;
                 }
-                _filterExpression = null;
+                _details.FilterExpression = null;
             }
 
-            if (!ReferenceEquals(_linkExpression, null))
+            if (!ReferenceEquals(_details.LinkExpression, null))
             {
-                Link(_linkExpression.AsString(_session));
-                _linkExpression = null;
+                Link(_details.LinkExpression.AsString(_details.Session));
+                _details.LinkExpression = null;
             }
 
             return this;
         }
 
-        private EntityCollection EntityCollection
+        internal EntityCollection EntityCollection
         {
             get
             {
-                if (string.IsNullOrEmpty(_collectionName) && string.IsNullOrEmpty(_linkName))
+                if (string.IsNullOrEmpty(_details.CollectionName) && string.IsNullOrEmpty(_details.LinkName))
                     return null;
 
                 EntityCollection entityCollection;
-                if (!string.IsNullOrEmpty(_linkName))
+                if (!string.IsNullOrEmpty(_details.LinkName))
                 {
-                    var parent = new FluentCommand(_parent).Resolve();
-                    var collectionName = _session.Metadata.GetNavigationPropertyPartnerName(
-                        parent.EntityCollection.Name, _linkName);
-                    entityCollection = _session.Metadata.GetEntityCollection(collectionName);
+                    var parent = new FluentCommand(_details.Parent).Resolve();
+                    var collectionName = _details.Session.Metadata.GetNavigationPropertyPartnerName(
+                        parent.EntityCollection.Name, _details.LinkName);
+                    entityCollection = _details.Session.Metadata.GetEntityCollection(collectionName);
                 }
                 else
                 {
-                    entityCollection = _session.Metadata.GetEntityCollection(_collectionName);
+                    entityCollection = _details.Session.Metadata.GetEntityCollection(_details.CollectionName);
                 }
 
-                return string.IsNullOrEmpty(_derivedCollectionName)
+                return string.IsNullOrEmpty(_details.DerivedCollectionName)
                     ? entityCollection
-                    : _session.Metadata.GetDerivedEntityCollection(entityCollection, _derivedCollectionName);
+                    : _details.Session.Metadata.GetDerivedEntityCollection(entityCollection, _details.DerivedCollectionName);
             }
         }
 
@@ -157,14 +114,14 @@ namespace Simple.OData.Client
                     ? entityCollection.Name
                     : string.Format("{0}/{1}.{2}",
                         entityCollection.BaseEntityCollection.Name,
-                        _session.Metadata.GetEntityCollectionTypeNamespace(entityCollection.Name),
-                        _session.Metadata.GetEntityCollectionTypeName(entityCollection.Name));
+                        _details.Session.Metadata.GetEntityCollectionTypeNamespace(entityCollection.Name),
+                        _details.Session.Metadata.GetEntityCollectionTypeName(entityCollection.Name));
             }
         }
 
         public string DynamicPropertiesContainerName
         {
-            get { return _dynamicPropertiesContainerName; }
+            get { return _details.DynamicPropertiesContainerName; }
         }
 
         public Task<string> GetCommandTextAsync()
@@ -174,7 +131,7 @@ namespace Simple.OData.Client
 
         public async Task<string> GetCommandTextAsync(CancellationToken cancellationToken)
         {
-            await _session.ResolveAdapterAsync(cancellationToken);
+            await _details.Session.ResolveAdapterAsync(cancellationToken);
             return new FluentCommand(this).Resolve().Format();
         }
 
@@ -185,12 +142,12 @@ namespace Simple.OData.Client
             var items = collectionName.Split('/');
             if (items.Count() > 1)
             {
-                _collectionName = items[0];
-                _derivedCollectionName = items[1];
+                _details.CollectionName = items[0];
+                _details.DerivedCollectionName = items[1];
             }
             else
             {
-                _collectionName = collectionName;
+                _details.CollectionName = collectionName;
             }
             return this;
         }
@@ -199,7 +156,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _dynamicPropertiesContainerName = propertyName;
+            _details.DynamicPropertiesContainerName = propertyName;
             return this;
         }
 
@@ -207,7 +164,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _collectionExpression = expression;
+            _details.CollectionExpression = expression;
             return this;
         }
 
@@ -215,7 +172,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _derivedCollectionName = derivedCollectionName;
+            _details.DerivedCollectionName = derivedCollectionName;
             return this;
         }
 
@@ -223,7 +180,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _derivedCollectionExpression = expression;
+            _details.DerivedCollectionExpression = expression;
             return this;
         }
 
@@ -231,7 +188,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _linkName = linkName;
+            _details.LinkName = linkName;
             return this;
         }
 
@@ -239,7 +196,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _linkExpression = expression;
+            _details.LinkExpression = expression;
             return this;
         }
 
@@ -250,12 +207,12 @@ namespace Simple.OData.Client
             if (key != null && key.Length == 1 && IsAnonymousType(key.First().GetType()))
             {
                 var namedKeyValues = key.First();
-                _namedKeyValues = Utils.GetMappedProperties(namedKeyValues.GetType())
+                _details.NamedKeyValues = Utils.GetMappedProperties(namedKeyValues.GetType())
                     .Select(x => new KeyValuePair<string, object>(x.Name, x.GetValue(namedKeyValues, null))).ToIDictionary();
             }
             else
             {
-                _keyValues = key.ToList();
+                _details.KeyValues = key.ToList();
             }
             return this;
         }
@@ -264,8 +221,8 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _keyValues = key.ToList();
-            _namedKeyValues = null;
+            _details.KeyValues = key.ToList();
+            _details.NamedKeyValues = null;
             return this;
         }
 
@@ -273,8 +230,8 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _namedKeyValues = key;
-            _keyValues = null;
+            _details.NamedKeyValues = key;
+            _details.KeyValues = null;
             return this;
         }
 
@@ -282,10 +239,10 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            if (string.IsNullOrEmpty(_filter))
-                _filter = filter;
+            if (string.IsNullOrEmpty(_details.Filter))
+                _details.Filter = filter;
             else
-                _filter = string.Format("({0}) and ({1})", _filter, filter);
+                _details.Filter = string.Format("({0}) and ({1})", _details.Filter, filter);
             return this;
         }
 
@@ -293,10 +250,10 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            if (ReferenceEquals(_filterExpression, null))
-                _filterExpression = expression;
+            if (ReferenceEquals(_details.FilterExpression, null))
+                _details.FilterExpression = expression;
             else
-                _filterExpression = _filterExpression && expression;
+                _details.FilterExpression = _details.FilterExpression && expression;
             return this;
         }
 
@@ -304,7 +261,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _skipCount = count;
+            _details.SkipCount = count;
             return this;
         }
 
@@ -314,7 +271,7 @@ namespace Simple.OData.Client
 
             if (!HasKey)
             {
-                _topCount = count;
+                _details.TopCount = count;
             }
             else if (count != 1)
             {
@@ -327,7 +284,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _expandAssociations.AddRange(new[] { new KeyValuePair<string, ODataExpandOptions>("*", ODataExpandOptions.ByValue()) });
+            _details.ExpandAssociations.AddRange(new[] { new KeyValuePair<string, ODataExpandOptions>("*", ODataExpandOptions.ByValue()) });
             return this;
         }
 
@@ -335,7 +292,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _expandAssociations.AddRange(SplitItems(associations).Select(x => new KeyValuePair<string, ODataExpandOptions>(x, ODataExpandOptions.ByValue())));
+            _details.ExpandAssociations.AddRange(SplitItems(associations).Select(x => new KeyValuePair<string, ODataExpandOptions>(x, ODataExpandOptions.ByValue())));
             return this;
         }
 
@@ -343,7 +300,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _expandAssociations.AddRange(SplitItems(associations).Select(x => new KeyValuePair<string, ODataExpandOptions>(x, expandOptions)));
+            _details.ExpandAssociations.AddRange(SplitItems(associations).Select(x => new KeyValuePair<string, ODataExpandOptions>(x, expandOptions)));
             return this;
         }
 
@@ -351,7 +308,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _expandAssociations.AddRange(SplitItems(associations).Select(x => new KeyValuePair<string, ODataExpandOptions>(x, ODataExpandOptions.ByValue())));
+            _details.ExpandAssociations.AddRange(SplitItems(associations).Select(x => new KeyValuePair<string, ODataExpandOptions>(x, ODataExpandOptions.ByValue())));
             return this;
         }
 
@@ -359,7 +316,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _expandAssociations.AddRange(SplitItems(associations).Select(x => new KeyValuePair<string, ODataExpandOptions>(x, expandOptions)));
+            _details.ExpandAssociations.AddRange(SplitItems(associations).Select(x => new KeyValuePair<string, ODataExpandOptions>(x, expandOptions)));
             return this;
         }
 
@@ -377,7 +334,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _selectColumns.AddRange(SplitItems(columns).ToList());
+            _details.SelectColumns.AddRange(SplitItems(columns).ToList());
             return this;
         }
 
@@ -385,7 +342,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _selectColumns.AddRange(SplitItems(columns).ToList());
+            _details.SelectColumns.AddRange(SplitItems(columns).ToList());
             return this;
         }
 
@@ -398,7 +355,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _orderbyColumns.AddRange(SplitItems(columns));
+            _details.OrderbyColumns.AddRange(SplitItems(columns));
             return this;
         }
 
@@ -416,7 +373,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _orderbyColumns.AddRange(SplitItems(columns).Select(x => new KeyValuePair<string, bool>(x, false)));
+            _details.OrderbyColumns.AddRange(SplitItems(columns).Select(x => new KeyValuePair<string, bool>(x, false)));
             return this;
         }
 
@@ -439,7 +396,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _orderbyColumns.AddRange(SplitItems(columns).Select(x => new KeyValuePair<string, bool>(x, true)));
+            _details.OrderbyColumns.AddRange(SplitItems(columns).Select(x => new KeyValuePair<string, bool>(x, true)));
             return this;
         }
 
@@ -452,7 +409,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _computeCount = true;
+            _details.ComputeCount = true;
             return this;
         }
 
@@ -460,10 +417,10 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _entryData = Utils.GetMappedProperties(value.GetType())
+            _details.EntryData = Utils.GetMappedProperties(value.GetType())
                 .Select(x => new KeyValuePair<string, object>(x.GetMappedName(), x.GetValue(value, null)))
                 .ToDictionary();
-            _session.EntryMap.GetOrAdd(value, _entryData);
+            _details.Session.EntryMap.GetOrAdd(value, _details.EntryData);
             return this;
         }
 
@@ -471,7 +428,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _entryData = value;
+            _details.EntryData = value;
             return this;
         }
 
@@ -479,8 +436,8 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _entryData = value.Select(x => new KeyValuePair<string, object>(x.Reference, x.Value)).ToIDictionary();
-            _session.EntryMap.GetOrAdd(value, _entryData);
+            _details.EntryData = value.Select(x => new KeyValuePair<string, object>(x.Reference, x.Value)).ToIDictionary();
+            _details.Session.EntryMap.GetOrAdd(value, _details.EntryData);
             return this;
         }
 
@@ -488,7 +445,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _functionName = functionName;
+            _details.FunctionName = functionName;
             return this;
         }
 
@@ -496,7 +453,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _actionName = actionName;
+            _details.ActionName = actionName;
             return this;
         }
 
@@ -504,7 +461,7 @@ namespace Simple.OData.Client
         {
             get
             {
-                return _namedKeyValues != null;
+                return _details.NamedKeyValues != null;
             }
         }
 
@@ -512,7 +469,7 @@ namespace Simple.OData.Client
         {
             get
             {
-                return _namedKeyValues;
+                return _details.NamedKeyValues;
             }
         }
 
@@ -520,7 +477,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _includeCount = true;
+            _details.IncludeCount = true;
             return this;
         }
 
@@ -529,21 +486,26 @@ namespace Simple.OData.Client
             return Format();
         }
 
+        private string Format()
+        {
+            return _details.Session.Adapter.GetCommandFormatter().FormatCommand(this);
+        }
+
         internal bool HasKey
         {
-            get { return _keyValues != null && _keyValues.Count > 0 || _namedKeyValues != null && _namedKeyValues.Count > 0; }
+            get { return _details.KeyValues != null && _details.KeyValues.Count > 0 || _details.NamedKeyValues != null && _details.NamedKeyValues.Count > 0; }
         }
 
         internal bool HasFilter
         {
-            get { return !string.IsNullOrEmpty(_filter) || !ReferenceEquals(_filterExpression, null); }
+            get { return !string.IsNullOrEmpty(_details.Filter) || !ReferenceEquals(_details.FilterExpression, null); }
         }
 
         public bool HasFunction
         {
             get
             {
-                return !string.IsNullOrEmpty(_functionName);
+                return !string.IsNullOrEmpty(_details.FunctionName);
             }
         }
 
@@ -551,7 +513,7 @@ namespace Simple.OData.Client
         {
             get
             {
-                return !string.IsNullOrEmpty(_actionName);
+                return !string.IsNullOrEmpty(_details.ActionName);
             }
         }
 
@@ -562,19 +524,19 @@ namespace Simple.OData.Client
                 if (!HasKey)
                     return null;
 
-                var keyNames = _session.Metadata.GetDeclaredKeyPropertyNames(this.EntityCollection.Name).ToList();
+                var keyNames = _details.Session.Metadata.GetDeclaredKeyPropertyNames(this.EntityCollection.Name).ToList();
                 var namedKeyValues = new Dictionary<string, object>();
                 for (int index = 0; index < keyNames.Count; index++)
                 {
                     bool found = false;
                     object keyValue = null;
-                    if (_namedKeyValues != null && _namedKeyValues.Count > 0)
+                    if (_details.NamedKeyValues != null && _details.NamedKeyValues.Count > 0)
                     {
-                        found = _namedKeyValues.TryGetValue(keyNames[index], out keyValue);
+                        found = _details.NamedKeyValues.TryGetValue(keyNames[index], out keyValue);
                     }
-                    else if (_keyValues != null && _keyValues.Count >= index)
+                    else if (_details.KeyValues != null && _details.KeyValues.Count >= index)
                     {
-                        keyValue = _keyValues[index];
+                        keyValue = _details.KeyValues[index];
                         found = true;
                     }
                     if (found)
@@ -593,19 +555,19 @@ namespace Simple.OData.Client
         {
             get
             {
-                if (_entryData == null)
+                if (_details.EntryData == null)
                     return new Dictionary<string, object>();
-                if (string.IsNullOrEmpty(_dynamicPropertiesContainerName))
-                    return _entryData;
+                if (string.IsNullOrEmpty(_details.DynamicPropertiesContainerName))
+                    return _details.EntryData;
 
                 var entryData = new Dictionary<string, object>();
-                foreach (var key in _entryData.Keys.Where(x => 
-                    !string.Equals(x, _dynamicPropertiesContainerName, StringComparison.OrdinalIgnoreCase)))
+                foreach (var key in _details.EntryData.Keys.Where(x => 
+                    !string.Equals(x, _details.DynamicPropertiesContainerName, StringComparison.OrdinalIgnoreCase)))
                 {
-                    entryData.Add(key, _entryData[key]);
+                    entryData.Add(key, _details.EntryData[key]);
                 }
                 object dynamicProperties;
-                if (_entryData.TryGetValue(_dynamicPropertiesContainerName, out dynamicProperties) && dynamicProperties != null)
+                if (_details.EntryData.TryGetValue(_details.DynamicPropertiesContainerName, out dynamicProperties) && dynamicProperties != null)
                 {
                     if (dynamicProperties is IDictionary<string, object>)
                     {
@@ -619,7 +581,7 @@ namespace Simple.OData.Client
                     {
                         throw new InvalidOperationException(
                             string.Format("Property {0} must implement IDictionary<string,object> interface", 
-                            _dynamicPropertiesContainerName));
+                            _details.DynamicPropertiesContainerName));
                     }
                 }
 
@@ -629,104 +591,17 @@ namespace Simple.OData.Client
 
         internal IList<string> SelectedColumns
         {
-            get { return _selectColumns; }
+            get { return _details.SelectColumns; }
         }
 
         internal string FunctionName
         {
-            get { return _functionName; }
+            get { return _details.FunctionName; }
         }
 
         internal string ActionName
         {
-            get { return _actionName; }
-        }
-
-        private string Format()
-        {
-            if (HasKey && HasFilter)
-                throw new InvalidOperationException("OData filter and key may not be combined.");
-
-            if (HasFunction && HasAction)
-                throw new InvalidOperationException("OData function and action may not be combined.");
-
-            var commandText = string.Empty;
-            if (!string.IsNullOrEmpty(_collectionName))
-            {
-                commandText += _session.Metadata.GetEntityCollectionExactName(_collectionName);
-            }
-            else if (!string.IsNullOrEmpty(_linkName))
-            {
-                var parent = new FluentCommand(_parent).Resolve();
-                commandText += string.Format("{0}/{1}",
-                    parent.Format(),
-                    _session.Metadata.GetNavigationPropertyExactName(parent.EntityCollection.Name, _linkName));
-            }
-
-            if (HasKey)
-                commandText += _session.Adapter.ConvertKeyValuesToUriLiteral(this.KeyValues, true);
-
-            if (!string.IsNullOrEmpty(_functionName) || !string.IsNullOrEmpty(_actionName))
-            {
-                if (!string.IsNullOrEmpty(_collectionName) || !string.IsNullOrEmpty(_linkName))
-                    commandText += "/";
-                if (!string.IsNullOrEmpty(_functionName))
-                    commandText += _session.Metadata.GetFunctionFullName(_functionName);
-                else
-                    commandText += _session.Metadata.GetActionFullName(_actionName);
-            }
-
-            if (!string.IsNullOrEmpty(_functionName) && _session.Adapter.FunctionFormat == FunctionFormat.Key)
-                commandText += _session.Adapter.ConvertKeyValuesToUriLiteral(this.CommandData, false);
-
-            if (!string.IsNullOrEmpty(_derivedCollectionName))
-            {
-                var entityTypeNamespace = _session.Metadata.GetEntityCollectionTypeNamespace(_derivedCollectionName);
-                var entityTypeName = _session.Metadata.GetEntityTypeExactName(_derivedCollectionName);
-                commandText += string.Format("/{0}.{1}", entityTypeNamespace, entityTypeName);
-            }
-
-            commandText += FormatClauses();
-
-            return commandText;
-        }
-
-        private string FormatClauses()
-        {
-            var text = string.Empty;
-            var extraClauses = new List<string>();
-            var aggregateClauses = new List<string>();
-
-            if (this.CommandData.Any() && !string.IsNullOrEmpty(_functionName) &&
-                _session.Adapter.FunctionFormat == FunctionFormat.Query)
-                extraClauses.Add(string.Join("&", this.CommandData.Select(x => string.Format("{0}={1}",
-                    x.Key, _session.Adapter.ConvertValueToUriLiteral(x.Value)))));
-
-            if (_filter != null)
-                extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Filter, Uri.EscapeDataString(_filter)));
-
-            if (_skipCount >= 0)
-                extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Skip, _skipCount));
-
-            if (_topCount >= 0)
-                extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Top, _topCount));
-
-            if (!HasAction)
-            {
-                _session.Adapter.FormatCommandClauses(
-                    extraClauses, this.EntityCollection, _expandAssociations, _selectColumns, _orderbyColumns, _includeCount);
-
-                if (_computeCount)
-                    aggregateClauses.Add(ODataLiteral.Count);
-
-                if (aggregateClauses.Any())
-                    text += "/" + string.Join("/", aggregateClauses);
-            }
-
-            if (extraClauses.Any())
-                text += "?" + string.Join("&", extraClauses);
-
-            return text;
+            get { return _details.ActionName; }
         }
 
         private IEnumerable<string> SplitItems(IEnumerable<string> columns)
@@ -750,7 +625,7 @@ namespace Simple.OData.Client
             if (!ok)
                 return null;
 
-            var keyNames = _session.Metadata.GetDeclaredKeyPropertyNames(this.EntityCollection.Name).ToList();
+            var keyNames = _details.Session.Metadata.GetDeclaredKeyPropertyNames(this.EntityCollection.Name).ToList();
             return keyNames.Count == namedKeyValues.Count() && keyNames.All(namedKeyValues.ContainsKey)
                 ? namedKeyValues
                 : null;

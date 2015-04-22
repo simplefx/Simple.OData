@@ -126,11 +126,17 @@
     <Compile Include="..\Simple.OData.Client.Core\Adapter\BatchWriterBase.cs">
       <Link>Adapter\BatchWriterBase.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Adapter\CommandFormatterBase.cs">
+      <Link>Adapter\CommandFormatterBase.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Adapter\FunctionFormat.cs">
       <Link>Adapter\FunctionFormat.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Adapter\IBatchWriter.cs">
       <Link>Adapter\IBatchWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Adapter\ICommandFormatter.cs">
+      <Link>Adapter\ICommandFormatter.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Adapter\IMetadata.cs">
       <Link>Adapter\IMetadata.cs</Link>
@@ -215,6 +221,9 @@
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Fluent\BoundClient.cs">
       <Link>Fluent\BoundClient.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Fluent\CommandDetails.cs">
+      <Link>Fluent\CommandDetails.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Fluent\FluentClientBase.cs">
       <Link>Fluent\FluentClientBase.cs</Link>
@@ -336,6 +345,9 @@
     <Compile Include="..\Simple.OData.Client.V3.Adapter\BatchWriter.cs">
       <Link>AdapterV3\BatchWriter.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.V3.Adapter\CommandFormatter.cs">
+      <Link>AdapterV3\CommandFormatter.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.V3.Adapter\EdmDeltaModel.cs">
       <Link>AdapterV3\EdmDeltaModel.cs</Link>
     </Compile>
@@ -362,6 +374,9 @@
     </Compile>
     <Compile Include="..\Simple.OData.Client.V4.Adapter\BatchWriter.cs">
       <Link>AdapterV4\BatchWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.V4.Adapter\CommandFormatter.cs">
+      <Link>AdapterV4\CommandFormatter.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.V4.Adapter\EdmDeltaModel.cs">
       <Link>AdapterV4\EdmDeltaModel.cs</Link>
