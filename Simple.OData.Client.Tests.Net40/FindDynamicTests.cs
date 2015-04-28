@@ -9,6 +9,11 @@ namespace Simple.OData.Client.Tests
 #if !NET40
     public class FindDynamicTests : TestBase
     {
+        public FindDynamicTests()
+            : base(true)
+        {
+        }
+
         [Fact]
         public async Task SingleCondition()
         {

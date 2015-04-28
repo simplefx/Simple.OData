@@ -18,8 +18,8 @@ namespace Simple.OData.Client
         [Obsolete("This property is obsolete. Use BaseUri instead.")]
         public string UrlBase
         {
-            get { return this.BaseUri.AbsoluteUri; }
-            set { this.BaseUri = new Uri(value); }
+            get { return this.BaseUri == null ? null : this.BaseUri.AbsoluteUri; }
+            set { this.BaseUri = value == null ? null : new Uri(value); }
         }
 
         /// <summary>

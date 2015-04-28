@@ -46,6 +46,9 @@ namespace Simple.OData.Client
 
         private Session(ODataClientSettings settings)
         {
+            if (settings.BaseUri == null || string.IsNullOrEmpty(settings.BaseUri.AbsoluteUri))
+                throw new InvalidOperationException("Unable to create client session with no URI specified");
+
             _adapterFactory = new AdapterFactory(this);
             _createAdapter = () => _adapterFactory.ParseMetadata(this.MetadataCache.MetadataDocument);
 

@@ -10,6 +10,11 @@ namespace Simple.OData.Client.Tests
 {
     public class FindTests : TestBase
     {
+        public FindTests()
+            : base(true)
+        {
+        }
+
         [Fact]
         public async Task Filter()
         {

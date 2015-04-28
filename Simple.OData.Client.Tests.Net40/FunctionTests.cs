@@ -10,6 +10,11 @@ namespace Simple.OData.Client.Tests
 
     public class FunctionTests : TestBase
     {
+        public FunctionTests()
+            : base(true)
+        {
+        }
+
         [Fact]
         public async Task FunctionWithString()
         {

@@ -17,8 +17,9 @@ namespace Simple.OData.Client.Tests
         protected TestService _service;
 #endif
         protected IODataClient _client;
+        protected readonly bool _readOnlyTests;
 
-        protected TestBase()
+        protected TestBase(bool readOnlyTests = false)
         {
 #if NETFX_CORE
             _serviceUri = new Uri("http://NORTHWIND/Northwind.svc/");
@@ -26,6 +27,7 @@ namespace Simple.OData.Client.Tests
             _service = new TestService(typeof(NorthwindService));
             _serviceUri = _service.ServiceUri;
 #endif
+            _readOnlyTests = readOnlyTests;
             _client = CreateClientWithDefaultSettings();
         }
 
@@ -42,7 +44,7 @@ namespace Simple.OData.Client.Tests
 
         public void Dispose()
         {
-            if (_client != null)
+            if (_client != null && !_readOnlyTests)
             {
                 DeleteTestData().Wait();
             }

@@ -126,9 +126,6 @@
     <Content Include="App_Data\ODataActionsSample.Models.MoviesContext.mdf">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="App_Data\ODataActionsSample.Models.MoviesContext_log.ldf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
