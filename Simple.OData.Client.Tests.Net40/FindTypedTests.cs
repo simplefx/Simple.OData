@@ -338,6 +338,17 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task ExpandManyAsHashSet()
+        {
+            var category = await _client
+                .For<CategoryWithHashSet>("Categories")
+                .Expand(x => x.Products)
+                .Filter(x => x.CategoryName == "Beverages")
+                .FindEntryAsync();
+            Assert.Equal(12, category.Products.Count());
+        }
+
+        [Fact]
         public async Task  ExpandManyAsICollection()
         {
             var category = await _client

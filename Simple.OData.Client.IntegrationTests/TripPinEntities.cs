@@ -40,6 +40,21 @@ namespace Simple.OData.Client.Tests
         public IDictionary<string, object> Properties { get; set; }
     }
 
+    class PersonWithSets
+    {
+        public string UserName { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string[] Emails { get; set; }
+        public List<Location> AddressInfo { get; set; }
+        public PersonGender Gender { get; set; }
+        public long Concurrency { get; set; }
+
+        public ISet<Person> Friends { get; set; }
+        public HashSet<Trip> Trips { get; set; }
+        public HashSet<Photo> Photos { get; set; }
+    }
+
     class Trip
     {
         public int TripId { get; set; }

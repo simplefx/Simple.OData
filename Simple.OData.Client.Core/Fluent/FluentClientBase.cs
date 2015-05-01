@@ -127,6 +127,26 @@ namespace Simple.OData.Client
         /// <typeparam name="U">The type of the linked entity.</typeparam>
         /// <param name="expression">The expression for the link.</param>
         /// <returns>Self.</returns>
+        public IBoundClient<U> NavigateTo<U>(Expression<Func<T, ISet<U>>> expression) where U : class
+        {
+            return this.Link<U>(this.Command, ColumnExpression.ExtractColumnName(expression));
+        }
+        /// <summary>
+        /// Navigates to the linked entity.
+        /// </summary>
+        /// <typeparam name="U">The type of the linked entity.</typeparam>
+        /// <param name="expression">The expression for the link.</param>
+        /// <returns>Self.</returns>
+        public IBoundClient<U> NavigateTo<U>(Expression<Func<T, HashSet<U>>> expression) where U : class
+        {
+            return this.Link<U>(this.Command, ColumnExpression.ExtractColumnName(expression));
+        }
+        /// <summary>
+        /// Navigates to the linked entity.
+        /// </summary>
+        /// <typeparam name="U">The type of the linked entity.</typeparam>
+        /// <param name="expression">The expression for the link.</param>
+        /// <returns>Self.</returns>
         public IBoundClient<U> NavigateTo<U>(Expression<Func<T, U[]>> expression) where U : class
         {
             return this.Link<U>(this.Command, ColumnExpression.ExtractColumnName(expression));

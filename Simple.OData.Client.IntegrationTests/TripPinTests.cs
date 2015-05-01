@@ -78,6 +78,19 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task FindPersonPlanItemsAsSets()
+        {
+            var flights = await _client
+                .For<PersonWithSets>("People")
+                .Key("russellwhyte")
+                .NavigateTo(x => x.Trips)
+                .Key(1003)
+                .NavigateTo(x => x.PlanItems)
+                .FindEntriesAsync();
+            Assert.Equal(3, flights.Count());
+        }
+
+        [Fact]
         public async Task FindPersonTwoLevelExpand()
         {
             var person = await _client

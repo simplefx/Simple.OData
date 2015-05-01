@@ -33,4 +33,12 @@ namespace Simple.OData.Client.Tests
 
         public ICollection<Product> Products { get; set; }
     }
+
+    public class CategoryWithHashSet
+    {
+        public int CategoryID { get; set; }
+        public string CategoryName { get; set; }
+
+        public HashSet<Product> Products { get; set; }
+    }
 }
