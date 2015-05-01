@@ -8,11 +8,6 @@ namespace Simple.OData.Client.Tests
 {
     public class FindTypedTests : TestBase
     {
-        public FindTypedTests()
-            : base(true)
-        {
-        }
-
         [Fact]
         public async Task SingleCondition()
         {

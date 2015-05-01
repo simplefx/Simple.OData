@@ -18,34 +18,28 @@ namespace Simple.OData.Client.V4.Adapter
             get { return FunctionFormat.Key; }
         }
 
-        public override void FormatCommandClauses(
-            IList<string> commandClauses,
-            EntityCollection entityCollection,
-            IList<KeyValuePair<string, ODataExpandOptions>> expandAssociations,
-            IList<string> selectColumns,
-            IList<KeyValuePair<string, bool>> orderbyColumns,
-            bool includeCount)
+        protected override void FormatExpandSelectOrderby(IList<string> commandClauses, EntityCollection resultCollection, FluentCommand command)
         {
-            if (expandAssociations.Any())
+            if (command.Details.ExpandAssociations.Any())
             {
                 commandClauses.Add(string.Format("{0}={1}", ODataLiteral.Expand,
-                    string.Join(",", expandAssociations.Select(x =>
-                        FormatExpansionSegment(x.Key, entityCollection,
+                    string.Join(",", command.Details.ExpandAssociations.Select(x =>
+                        FormatExpansionSegment(x.Key, resultCollection,
                         x.Value,
-                        SelectExpansionSegmentColumns(selectColumns, x.Key),
-                        SelectExpansionSegmentColumns(orderbyColumns, x.Key))))));
+                        SelectExpansionSegmentColumns(command.Details.SelectColumns, x.Key),
+                        SelectExpansionSegmentColumns(command.Details.OrderbyColumns, x.Key))))));
             }
 
-            selectColumns = SelectExpansionSegmentColumns(selectColumns, null);
-            FormatClause(commandClauses, entityCollection, selectColumns, ODataLiteral.Select, FormatSelectItem);
+            var selectColumns = SelectExpansionSegmentColumns(command.Details.SelectColumns, null);
+            FormatClause(commandClauses, resultCollection, selectColumns, ODataLiteral.Select, FormatSelectItem);
 
-            orderbyColumns = SelectExpansionSegmentColumns(orderbyColumns, null);
-            FormatClause(commandClauses, entityCollection, orderbyColumns, ODataLiteral.OrderBy, FormatOrderByItem);
+            var orderbyColumns = SelectExpansionSegmentColumns(command.Details.OrderbyColumns, null);
+            FormatClause(commandClauses, resultCollection, orderbyColumns, ODataLiteral.OrderBy, FormatOrderByItem);
+        }
 
-            if (includeCount)
-            {
-                commandClauses.Add(string.Format("{0}={1}", ODataLiteral.Count, ODataLiteral.True));
-            }
+        protected override void FormatInlineCount(IList<string> commandClauses)
+        {
+            commandClauses.Add(string.Format("{0}={1}", ODataLiteral.Count, ODataLiteral.True));
         }
 
         private string FormatExpansionSegment(string path, EntityCollection entityCollection,

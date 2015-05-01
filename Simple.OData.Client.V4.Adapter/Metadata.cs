@@ -144,9 +144,9 @@ namespace Simple.OData.Client.V4.Adapter
         public override string GetNavigationPropertyPartnerName(string collectionName, string propertyName)
         {
             var navigationProperty = GetNavigationProperty(collectionName, propertyName);
-            var entityType = navigationProperty.Type.Definition.TypeKind == EdmTypeKind.Collection
-                ? (navigationProperty.Type.Definition as IEdmCollectionType).ElementType.Definition as IEdmEntityType
-                : navigationProperty.Type.Definition as IEdmEntityType;
+            IEdmEntityType entityType;
+            if (!TryGetEntityType(navigationProperty.Type, out entityType))
+                throw new UnresolvableObjectException(propertyName, string.Format("No association found for {0}.", propertyName));
             return entityType.Name;
         }
 
@@ -172,26 +172,36 @@ namespace Simple.OData.Client.V4.Adapter
 
         public override string GetFunctionFullName(string functionName)
         {
-            var function = _model.SchemaElements
-                .BestMatch(x => x.SchemaElementKind == EdmSchemaElementKind.Function,
-                    x => x.Name, functionName, _session.Pluralizer) as IEdmFunction;
-
-            if (function == null)
-                throw new UnresolvableObjectException(functionName, string.Format("Function {0} not found", functionName));
-
+            var function = GetFunction(functionName);
             return function.IsBound ? function.ShortQualifiedName() : function.Name;
+        }
+
+        public override EntityCollection GetFunctionReturnCollection(string functionName)
+        {
+            var function = GetFunction(functionName);
+
+            if (function.ReturnType == null)
+                return null;
+
+            IEdmEntityType entityType;
+            return !TryGetEntityType(function.ReturnType, out entityType) ? null : new EntityCollection(entityType.Name);
         }
 
         public override string GetActionFullName(string actionName)
         {
-            var action = _model.SchemaElements
-                .BestMatch(x => x.SchemaElementKind == EdmSchemaElementKind.Action,
-                    x => x.Name, actionName, _session.Pluralizer) as IEdmAction;
-
-            if (action == null)
-                throw new UnresolvableObjectException(actionName, string.Format("Action {0} not found", actionName));
-
+            var action = GetAction(actionName);
             return action.IsBound ? action.ShortQualifiedName() : action.Name;
+        }
+
+        public override EntityCollection GetActionReturnCollection(string actionName)
+        {
+            var action = GetAction(actionName);
+
+            if (action.ReturnType == null)
+                return null;
+
+            IEdmEntityType entityType;
+            return !TryGetEntityType(action.ReturnType, out entityType) ? null : new EntityCollection(entityType.Name);
         }
 
         private IEnumerable<IEdmEntitySet> GetEntitySets()
@@ -356,6 +366,16 @@ namespace Simple.OData.Client.V4.Adapter
             return false;
         }
 
+        private bool TryGetEntityType(IEdmTypeReference typeReference, out IEdmEntityType entityType)
+        {
+            entityType = typeReference.Definition.TypeKind == EdmTypeKind.Collection
+                ? (typeReference.Definition as IEdmCollectionType).ElementType.Definition as IEdmEntityType
+                : typeReference.Definition.TypeKind == EdmTypeKind.Entity
+                ? typeReference.Definition as IEdmEntityType
+                : null;
+            return entityType != null;
+        }
+
         private IEdmStructuralProperty GetStructuralProperty(string collectionName, string propertyName)
         {
             var property = GetEntityType(collectionName).StructuralProperties().BestMatch(
@@ -376,6 +396,30 @@ namespace Simple.OData.Client.V4.Adapter
                 throw new UnresolvableObjectException(propertyName, string.Format("Association {0} not found", propertyName));
 
             return property;
+        }
+
+        private IEdmFunction GetFunction(string functionName)
+        {
+            var function = _model.SchemaElements
+                .BestMatch(x => x.SchemaElementKind == EdmSchemaElementKind.Function,
+                    x => x.Name, functionName, _session.Pluralizer) as IEdmFunction;
+
+            if (function == null)
+                throw new UnresolvableObjectException(functionName, string.Format("Function {0} not found", functionName));
+
+            return function;
+        }
+
+        private IEdmAction GetAction(string actionName)
+        {
+            var action = _model.SchemaElements
+                .BestMatch(x => x.SchemaElementKind == EdmSchemaElementKind.Action,
+                    x => x.Name, actionName, _session.Pluralizer) as IEdmAction;
+
+            if (action == null)
+                throw new UnresolvableObjectException(actionName, string.Format("Action {0} not found", actionName));
+
+            return action;
         }
     }
 }

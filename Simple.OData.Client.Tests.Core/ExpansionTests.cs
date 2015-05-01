@@ -148,5 +148,22 @@ namespace Simple.OData.Client.Tests
             string commandText = await command.GetCommandTextAsync();
             Assert.Equal("Employees?$expand=Subordinates/$ref($levels=2)", commandText);
         }
+
+        [Fact]
+        public async Task ExpandFunction()
+        {
+            var x = ODataDynamic.Expression;
+            var client = CreateClient("TripPin.edmx");
+            var command = client
+                .For(x.Person)
+                .Key("scottketchum")
+                .NavigateTo(x.Trip)
+                .Key(0)
+                .Function("GetInvolvedPeople")
+                .Expand(x.Photos);
+
+            string commandText = await command.GetCommandTextAsync();
+            Assert.Equal("People('scottketchum')/Trips(0)/Microsoft.OData.SampleService.Models.TripPin.GetInvolvedPeople()?$expand=Photo", commandText);
+        }
     }
 }

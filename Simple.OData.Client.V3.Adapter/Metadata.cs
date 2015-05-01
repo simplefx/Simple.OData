@@ -112,9 +112,9 @@ namespace Simple.OData.Client.V3.Adapter
         public override string GetNavigationPropertyPartnerName(string collectionName, string propertyName)
         {
             var navigationProperty = GetNavigationProperty(collectionName, propertyName);
-            var entityType = navigationProperty.Type.Definition.TypeKind == EdmTypeKind.Collection
-                ? (navigationProperty.Type.Definition as IEdmCollectionType).ElementType.Definition as IEdmEntityType
-                : navigationProperty.Type.Definition as IEdmEntityType;
+            IEdmEntityType entityType;
+            if (!TryGetEntityType(navigationProperty.Type, out entityType))
+                throw new UnresolvableObjectException(propertyName, string.Format("No association found for {0}.", propertyName));
             return entityType.Name;
         }
 
@@ -140,20 +140,29 @@ namespace Simple.OData.Client.V3.Adapter
 
         public override string GetFunctionFullName(string functionName)
         {
-            var function = _model.SchemaElements
-                .Where(x => x.SchemaElementKind == EdmSchemaElementKind.EntityContainer)
-                .SelectMany(x => (x as IEdmEntityContainer).FunctionImports())
-                .BestMatch(x => x.Name, functionName, _session.Pluralizer);
-
-            if (function == null)
-                throw new UnresolvableObjectException(functionName, string.Format("Function {0} not found", functionName));
-
+            var function = GetFunction(functionName);
             return function.Name;
+        }
+
+        public override EntityCollection GetFunctionReturnCollection(string functionName)
+        {
+            var function = GetFunction(functionName);
+
+            if (function.ReturnType == null)
+                return null;
+
+            IEdmEntityType entityType;
+            return !TryGetEntityType(function.ReturnType, out entityType) ? null : new EntityCollection(entityType.Name);
         }
 
         public override string GetActionFullName(string actionName)
         {
             return GetFunctionFullName(actionName);
+        }
+
+        public override EntityCollection GetActionReturnCollection(string actionName)
+        {
+            return GetFunctionReturnCollection(actionName);
         }
 
         private IEnumerable<IEdmEntitySet> GetEntitySets()
@@ -266,6 +275,16 @@ namespace Simple.OData.Client.V3.Adapter
             return false;
         }
 
+        private bool TryGetEntityType(IEdmTypeReference typeReference, out IEdmEntityType entityType)
+        {
+            entityType = typeReference.Definition.TypeKind == EdmTypeKind.Collection
+                ? (typeReference.Definition as IEdmCollectionType).ElementType.Definition as IEdmEntityType
+                : typeReference.Definition.TypeKind == EdmTypeKind.Entity
+                ? typeReference.Definition as IEdmEntityType
+                : null;
+            return entityType != null;
+        }
+
         private IEdmStructuralProperty GetStructuralProperty(string entitySetName, string propertyName)
         {
             var property = GetEntityType(entitySetName).StructuralProperties().BestMatch(
@@ -286,6 +305,19 @@ namespace Simple.OData.Client.V3.Adapter
                 throw new UnresolvableObjectException(propertyName, string.Format("Navigation property {0} not found", propertyName));
 
             return property;
+        }
+
+        private IEdmFunctionImport GetFunction(string functionName)
+        {
+            var function = _model.SchemaElements
+                .Where(x => x.SchemaElementKind == EdmSchemaElementKind.EntityContainer)
+                .SelectMany(x => (x as IEdmEntityContainer).FunctionImports())
+                .BestMatch(x => x.Name, functionName, _session.Pluralizer);
+
+            if (function == null)
+                throw new UnresolvableObjectException(functionName, string.Format("Function {0} not found", functionName));
+
+            return function;
         }
     }
 }

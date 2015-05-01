@@ -15,11 +15,6 @@ namespace Simple.OData.Client
 
         public abstract FunctionFormat FunctionFormat { get; }
 
-        public abstract void FormatCommandClauses(IList<string> commandClauses, EntityCollection entityCollection,
-            IList<KeyValuePair<string, ODataExpandOptions>> expandAssociations,
-            IList<string> selectColumns,
-            IList<KeyValuePair<string, bool>> orderbyColumns, bool includeCount);
-
         public string FormatCommand(FluentCommand command)
         {
             if (command.HasKey && command.HasFilter)
@@ -77,6 +72,9 @@ namespace Simple.OData.Client
             return "(" + formattedKeyValues + ")";
         }
 
+        protected abstract void FormatExpandSelectOrderby(IList<string> commandClauses, EntityCollection resultCollection, FluentCommand command);
+        protected abstract void FormatInlineCount(IList<string> commandClauses);
+
         private string FormatClauses(FluentCommand command)
         {
             var text = string.Empty;
@@ -97,18 +95,30 @@ namespace Simple.OData.Client
             if (command.Details.TopCount >= 0)
                 extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Top, command.Details.TopCount));
 
-            if (!command.HasAction)
+            EntityCollection resultCollection;
+            if (command.HasFunction)
             {
-                FormatCommandClauses(
-                    extraClauses, command.EntityCollection, command.Details.ExpandAssociations, 
-                    command.Details.SelectColumns, command.Details.OrderbyColumns, command.Details.IncludeCount);
-
-                if (command.Details.ComputeCount)
-                    aggregateClauses.Add(ODataLiteral.Count);
-
-                if (aggregateClauses.Any())
-                    text += "/" + string.Join("/", aggregateClauses);
+                resultCollection = _session.Adapter.GetMetadata().GetFunctionReturnCollection(command.Details.FunctionName);
             }
+            else if (command.HasAction)
+            {
+                resultCollection = _session.Adapter.GetMetadata().GetActionReturnCollection(command.Details.ActionName);
+            }
+            else
+            {
+                resultCollection = command.EntityCollection;
+            }
+            if (resultCollection != null)
+                FormatExpandSelectOrderby(extraClauses, resultCollection, command);
+
+            if (command.Details.IncludeCount)
+                FormatInlineCount(extraClauses);
+
+            if (command.Details.ComputeCount)
+                aggregateClauses.Add(ODataLiteral.Count);
+
+            if (aggregateClauses.Any())
+                text += "/" + string.Join("/", aggregateClauses);
 
             if (extraClauses.Any())
                 text += "?" + string.Join("&", extraClauses);
