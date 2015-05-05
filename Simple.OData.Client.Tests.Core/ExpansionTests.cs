@@ -165,5 +165,42 @@ namespace Simple.OData.Client.Tests
             string commandText = await command.GetCommandTextAsync();
             Assert.Equal("People('scottketchum')/Trips(0)/Microsoft.OData.SampleService.Models.TripPin.GetInvolvedPeople()?$expand=Photo", commandText);
         }
+
+        //[Fact]
+        public async Task ExpandFunctionMulitpleLevelsWithSelect()
+        {
+            var client = CreateClient("ClientProductSku.edmx");
+
+            string[] CreateUpdateExpandTables = {
+                "Product/ProductCategory/Category/CategorySalesArea"
+            };
+
+            string[] CreateUpdateSelectColumns = {
+                "Product/ProductCategory/IsPrimary",
+                "Product/ProductCategory/Category/Code"
+            };
+
+            var expectedResult =
+                @"ClientProductSkus/FunctionService.GetCreateUpdateSkuDelta(clientId=35,offsetInMinutes=2000)?" +
+                @"$expand=Product($expand=ProductCategory($expand=Category($expand=CategorySalesArea;$select=Code);$select=IsPrimary)";
+
+            var actualResult = 
+                @"ClientProductSkus/FunctionService.GetCreateUpdateSkuDelta(clientId=35,offsetInMinutes=2000)?" +
+                @"$expand=Product($expand=ProductCategory($expand=Category($expand=CategorySalesArea)))";
+
+            var clientId = 35;
+            var offsetInMinutes = 2000;
+
+            var command = client.For("ClientProductSku")
+                .Function("GetCreateUpdateSkuDelta")
+                .Set(new { clientId, offsetInMinutes })
+                    .Expand(CreateUpdateExpandTables)
+                    .Select(CreateUpdateSelectColumns);
+
+            string commandText = await command.GetCommandTextAsync();
+            Console.WriteLine(commandText);
+
+            Assert.Equal(expectedResult, commandText);
+        }
     }
 }
