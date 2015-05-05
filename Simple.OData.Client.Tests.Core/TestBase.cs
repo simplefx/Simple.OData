@@ -16,8 +16,8 @@ namespace Simple.OData.Client.Tests
         protected readonly IODataClient _client;
         internal ISession _session;
 
-        public TestBase() 
-            : this("Northwind.edmx")
+        public TestBase()
+            : this("Northwind.xml")
         {
         }
 

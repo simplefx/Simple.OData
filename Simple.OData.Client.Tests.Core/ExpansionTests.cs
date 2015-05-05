@@ -9,8 +9,8 @@ namespace Simple.OData.Client.Tests
     public class ExpansionTests : TestBase
     {
         [Theory]
-        [InlineData("Northwind.edmx", "Employees?$expand=Subordinates")]
-        [InlineData("Northwind4.edmx", "Employees?$expand=Subordinates")]
+        [InlineData("Northwind.xml", "Employees?$expand=Subordinates")]
+        [InlineData("Northwind4.xml", "Employees?$expand=Subordinates")]
         public async Task ExpandSubordinates(string metadataFile, string expectedCommand)
         {
             var client = CreateClient(metadataFile);
@@ -22,8 +22,8 @@ namespace Simple.OData.Client.Tests
         }
 
         [Theory]
-        [InlineData("Northwind.edmx", "Employees?$expand=Subordinates,Superior")]
-        [InlineData("Northwind4.edmx", "Employees?$expand=Subordinates,Superior")]
+        [InlineData("Northwind.xml", "Employees?$expand=Subordinates,Superior")]
+        [InlineData("Northwind4.xml", "Employees?$expand=Subordinates,Superior")]
         public async Task ExpandSubordinatesAndSuperior(string metadataFile, string expectedCommand)
         {
             var client = CreateClient(metadataFile);
@@ -35,8 +35,8 @@ namespace Simple.OData.Client.Tests
         }
 
         [Theory]
-        [InlineData("Northwind.edmx", "Employees?$expand=Subordinates,Superior")]
-        [InlineData("Northwind4.edmx", "Employees?$expand=Subordinates,Superior")]
+        [InlineData("Northwind.xml", "Employees?$expand=Subordinates,Superior")]
+        [InlineData("Northwind4.xml", "Employees?$expand=Subordinates,Superior")]
         public async Task ExpandSubordinatesAndSuperiorTwoClauses(string metadataFile, string expectedCommand)
         {
             var client = CreateClient(metadataFile);
@@ -49,8 +49,8 @@ namespace Simple.OData.Client.Tests
         }
 
         [Theory]
-        [InlineData("Northwind.edmx", "Employees?$expand=Subordinates/Subordinates")]
-        [InlineData("Northwind4.edmx", "Employees?$expand=Subordinates($expand=Subordinates)")]
+        [InlineData("Northwind.xml", "Employees?$expand=Subordinates/Subordinates")]
+        [InlineData("Northwind4.xml", "Employees?$expand=Subordinates($expand=Subordinates)")]
         public async Task ExpandSubordinatesTwoTimes(string metadataFile, string expectedCommand)
         {
             var client = CreateClient(metadataFile);
@@ -62,8 +62,8 @@ namespace Simple.OData.Client.Tests
         }
 
         [Theory]
-        [InlineData("Northwind.edmx", "Employees?$expand=Subordinates/Subordinates/Subordinates")]
-        [InlineData("Northwind4.edmx", "Employees?$expand=Subordinates($expand=Subordinates($expand=Subordinates))")]
+        [InlineData("Northwind.xml", "Employees?$expand=Subordinates/Subordinates/Subordinates")]
+        [InlineData("Northwind4.xml", "Employees?$expand=Subordinates($expand=Subordinates($expand=Subordinates))")]
         public async Task ExpandSubordinatesThreeTimes(string metadataFile, string expectedCommand)
         {
             var client = CreateClient(metadataFile);
@@ -75,8 +75,8 @@ namespace Simple.OData.Client.Tests
         }
 
         [Theory]
-        [InlineData("Northwind.edmx", "Employees?$expand=Subordinates&$select=LastName,Subordinates&$orderby=LastName")]
-        [InlineData("Northwind4.edmx", "Employees?$expand=Subordinates&$select=LastName,Subordinates&$orderby=LastName")]
+        [InlineData("Northwind.xml", "Employees?$expand=Subordinates&$select=LastName,Subordinates&$orderby=LastName")]
+        [InlineData("Northwind4.xml", "Employees?$expand=Subordinates&$select=LastName,Subordinates&$orderby=LastName")]
         public async Task ExpandSubordinatesWithSelectAndOrderby(string metadataFile, string expectedCommand)
         {
             var client = CreateClient(metadataFile);
@@ -90,8 +90,8 @@ namespace Simple.OData.Client.Tests
         }
 
         [Theory]
-        [InlineData("Northwind.edmx", "Employees?$expand=Subordinates/Subordinates&$select=LastName,Subordinates,Subordinates/LastName,Subordinates/Subordinates&$orderby=LastName,Subordinates/LastName")]
-        [InlineData("Northwind4.edmx", "Employees?$expand=Subordinates($expand=Subordinates;$select=LastName,Subordinates;$orderby=LastName)&$select=LastName,Subordinates&$orderby=LastName")]
+        [InlineData("Northwind.xml", "Employees?$expand=Subordinates/Subordinates&$select=LastName,Subordinates,Subordinates/LastName,Subordinates/Subordinates&$orderby=LastName,Subordinates/LastName")]
+        [InlineData("Northwind4.xml", "Employees?$expand=Subordinates($expand=Subordinates;$select=LastName,Subordinates;$orderby=LastName)&$select=LastName,Subordinates&$orderby=LastName")]
         public async Task ExpandSubordinatesWithSelectAndOrderbyTwoTimes(string metadataFile, string expectedCommand)
         {
             var client = CreateClient(metadataFile);
@@ -107,8 +107,8 @@ namespace Simple.OData.Client.Tests
         }
 
         [Theory]
-        [InlineData("Northwind.edmx", "Employees?$expand=Subordinates/Subordinates/Subordinates&$select=LastName,Subordinates,Subordinates/LastName,Subordinates/Subordinates,Subordinates/Subordinates/LastName,Subordinates/Subordinates/Subordinates&$orderby=LastName,Subordinates/LastName,Subordinates/Subordinates/LastName")]
-        [InlineData("Northwind4.edmx", "Employees?$expand=Subordinates($expand=Subordinates($expand=Subordinates;$select=LastName,Subordinates;$orderby=LastName);$select=LastName,Subordinates;$orderby=LastName)&$select=LastName,Subordinates&$orderby=LastName")]
+        [InlineData("Northwind.xml", "Employees?$expand=Subordinates/Subordinates/Subordinates&$select=LastName,Subordinates,Subordinates/LastName,Subordinates/Subordinates,Subordinates/Subordinates/LastName,Subordinates/Subordinates/Subordinates&$orderby=LastName,Subordinates/LastName,Subordinates/Subordinates/LastName")]
+        [InlineData("Northwind4.xml", "Employees?$expand=Subordinates($expand=Subordinates($expand=Subordinates;$select=LastName,Subordinates;$orderby=LastName);$select=LastName,Subordinates;$orderby=LastName)&$select=LastName,Subordinates&$orderby=LastName")]
         public async Task ExpandSubordinatesWithSelectAndOrderbyThreeTimes(string metadataFile, string expectedCommand)
         {
             var client = CreateClient(metadataFile);
@@ -128,7 +128,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task ExpandSubordinates2LevelsByValue()
         {
-            var client = CreateClient("Northwind4.edmx");
+            var client = CreateClient("Northwind4.xml");
             var command = client
                 .For<Employee>()
                 .Expand(ODataExpandOptions.ByValue(2), x => x.Subordinates);
@@ -140,7 +140,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task ExpandSubordinates2LevelsByReference()
         {
-            var client = CreateClient("Northwind4.edmx");
+            var client = CreateClient("Northwind4.xml");
             var command = client
                 .For<Employee>()
                 .Expand(ODataExpandOptions.ByReference(2), x => x.Subordinates);
@@ -153,7 +153,7 @@ namespace Simple.OData.Client.Tests
         public async Task ExpandFunction()
         {
             var x = ODataDynamic.Expression;
-            var client = CreateClient("TripPin.edmx");
+            var client = CreateClient("TripPin.xml");
             var command = client
                 .For(x.Person)
                 .Key("scottketchum")
@@ -167,9 +167,9 @@ namespace Simple.OData.Client.Tests
         }
 
         //[Fact]
-        public async Task ExpandFunctionMulitpleLevelsWithSelect()
+        public async Task ExpandFunctionMultipleLevelsWithSelect()
         {
-            var client = CreateClient("ClientProductSku.edmx");
+            var client = CreateClient("ClientProductSku.xml");
 
             string[] CreateUpdateExpandTables = {
                 "Product/ProductCategory/Category/CategorySalesArea"

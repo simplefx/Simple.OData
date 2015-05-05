@@ -148,7 +148,7 @@
     <EmbeddedResource Include="Resources\Nested.edmx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="Resources\Northwind.edmx" />
+    <EmbeddedResource Include="Resources\Northwind.xml" />
     <EmbeddedResource Include="Resources\Twitter.edmx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -157,7 +157,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\QAS.Multiplatform.Demo.edmx" />
     <EmbeddedResource Include="Resources\Marathon.edmx" />
-    <EmbeddedResource Include="Resources\Northwind4.edmx" />
+    <EmbeddedResource Include="Resources\Northwind4.xml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Simple.OData.Client.Core\Simple.OData.Client.Core.csproj">
@@ -232,10 +232,10 @@
     <EmbeddedResource Include="Resources\Insight.edmx" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\TripPin.edmx" />
+    <EmbeddedResource Include="Resources\TripPin.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\ClientProductSku.edmx" />
+    <EmbeddedResource Include="Resources\ClientProductSku.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\Solutions\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets" Condition="Exists('..\Solutions\packages\Microsoft.Bcl.Build.1.0.21\build\Microsoft.Bcl.Build.targets')" />
