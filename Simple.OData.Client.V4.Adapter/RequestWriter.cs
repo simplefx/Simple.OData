@@ -30,15 +30,15 @@ namespace Simple.OData.Client.V4.Adapter
                 ? await CreateOperationRequestMessageAsync(method, collection, entryData, commandText)
                 : new ODataRequestMessage();
 
+            if (method == RestVerbs.Get || method == RestVerbs.Delete)
+                return null;
+
             var entityType = _model.FindDeclaredType(
                 _session.Metadata.GetEntityCollectionQualifiedTypeName(collection)) as IEdmEntityType;
             var model = method == RestVerbs.Patch ? new EdmDeltaModel(_model, entityType, entryData.Keys) : _model;
 
             using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), model))
             {
-                if (method == RestVerbs.Get || method == RestVerbs.Delete)
-                    return null;
-
                 var contentId = _deferredBatchWriter != null ? _deferredBatchWriter.Value.GetContentId(entryData) : null;
                 var entityCollection = _session.Metadata.GetEntityCollection(collection);
                 var entryDetails = _session.Metadata.ParseEntryDetails(entityCollection.Name, entryData, contentId);
