@@ -166,27 +166,35 @@ namespace Simple.OData.Client.Tests
             Assert.Equal("People('scottketchum')/Trips(0)/Microsoft.OData.SampleService.Models.TripPin.GetInvolvedPeople()?$expand=Photo", commandText);
         }
 
-        //[Fact]
+        [Fact]
         public async Task ExpandFunctionMultipleLevelsWithSelect()
         {
             var client = CreateClient("ClientProductSku.xml");
 
             string[] CreateUpdateExpandTables = {
-                "Product/ProductCategory/Category/CategorySalesArea"
+                "Product/ProductCategory/Category/CategorySalesArea",            
+                "ClientProductSkuPriceList",
+                "ClientProductSkuSalesArea",
+                "Product/SupplierProductSkuClient/SupplierProductSku/SupplierProductSkuPriceList/SupplierPriceList",
+                "Product/SupplierProductSkuClient/SupplierProductSku/SupplierProductSkuOnHand/Warehouse"
             };
 
             string[] CreateUpdateSelectColumns = {
+                "PartNo", "ClientId", "ErpName", "EanCode", 
+                "Product/Id","Product/ManufacturerId",
                 "Product/ProductCategory/IsPrimary",
-                "Product/ProductCategory/Category/Code"
+                "Product/ProductCategory/Category/Code", 
+                "ClientProductSkuPriceList/CurrencyId"
             };
 
             var expectedResult =
                 @"ClientProductSkus/FunctionService.GetCreateUpdateSkuDelta(clientId=35,offsetInMinutes=2000)?" +
-                @"$expand=Product($expand=ProductCategory($expand=Category($expand=CategorySalesArea;$select=Code);$select=IsPrimary)";
-
-            var actualResult = 
-                @"ClientProductSkus/FunctionService.GetCreateUpdateSkuDelta(clientId=35,offsetInMinutes=2000)?" +
-                @"$expand=Product($expand=ProductCategory($expand=Category($expand=CategorySalesArea)))";
+                "$expand=Product($expand=ProductCategory($expand=Category($expand=CategorySalesArea;$select=Code);$select=IsPrimary);$select=Id,ManufacturerId)," +
+                "ClientProductSkuPriceList($select=CurrencyId)," +
+                "ClientProductSkuSalesArea," +
+                "Product($expand=SupplierProductSkuClient($expand=SupplierProductSku($expand=SupplierProductSkuPriceList($expand=SupplierPriceList)));$select=Id,ManufacturerId)," +
+                "Product($expand=SupplierProductSkuClient($expand=SupplierProductSku($expand=SupplierProductSkuOnHand($expand=Warehouse)));$select=Id,ManufacturerId)&" +
+                "$select=PartNo,ClientId,ErpName,EanCode";
 
             var clientId = 35;
             var offsetInMinutes = 2000;

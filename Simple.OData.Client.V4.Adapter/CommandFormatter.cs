@@ -30,11 +30,13 @@ namespace Simple.OData.Client.V4.Adapter
                         SelectExpansionSegmentColumns(command.Details.OrderbyColumns, x.Key))))));
             }
 
-            var selectColumns = SelectExpansionSegmentColumns(command.Details.SelectColumns, null);
-            FormatClause(commandClauses, resultCollection, selectColumns, ODataLiteral.Select, FormatSelectItem);
+            FormatClause(commandClauses, resultCollection, 
+                SelectExpansionSegmentColumns(command.Details.SelectColumns, null), 
+                ODataLiteral.Select, FormatSelectItem);
 
-            var orderbyColumns = SelectExpansionSegmentColumns(command.Details.OrderbyColumns, null);
-            FormatClause(commandClauses, resultCollection, orderbyColumns, ODataLiteral.OrderBy, FormatOrderByItem);
+            FormatClause(commandClauses, resultCollection, 
+                SelectExpansionSegmentColumns(command.Details.OrderbyColumns, null), 
+                ODataLiteral.OrderBy, FormatOrderByItem);
         }
 
         protected override void FormatInlineCount(IList<string> commandClauses)
@@ -59,10 +61,10 @@ namespace Simple.OData.Client.V4.Adapter
                 entityCollection = _session.Metadata.GetEntityCollection(
                     _session.Metadata.GetNavigationPropertyPartnerName(entityCollection.Name, associationName));
 
-                clauses.Add(string.Format("{0}={1}", ODataLiteral.Expand,
+                clauses.Add(string.Format("{0}={1}", ODataLiteral.Expand, 
                     FormatExpansionSegment(path, entityCollection, expandOptions,
-                    SelectExpansionSegmentColumns(selectColumns, associationName),
-                    SelectExpansionSegmentColumns(orderbyColumns, associationName))));
+                        SelectExpansionSegmentColumns(selectColumns, path),
+                        SelectExpansionSegmentColumns(orderbyColumns, path))));
             }
 
             if (expandOptions.Levels > 1)
