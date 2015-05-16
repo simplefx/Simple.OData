@@ -35,11 +35,35 @@ namespace WebApiOData.V4.Samples.Tests
         [Fact]
         public async Task Check_out_a_movie()
         {
-            var result = await _client
-                .For<Movie>()
-                .Key(1)
-                .Action("CheckOut")
-                .ExecuteAsSingleAsync();
+            var isCheckedOut = false;
+            Movie result = null;
+            try
+            {
+                result = await _client
+                    .For<Movie>()
+                    .Key(1)
+                    .Action("CheckOut")
+                    .ExecuteAsSingleAsync();
+            }
+            catch (WebRequestException)
+            {
+                isCheckedOut = true;
+            }
+
+            if (isCheckedOut)
+            {
+                await _client
+                    .For<Movie>()
+                    .Key(1)
+                    .Action("Return")
+                    .ExecuteAsSingleAsync();
+
+                result = await _client
+                    .For<Movie>()
+                    .Key(1)
+                    .Action("CheckOut")
+                    .ExecuteAsSingleAsync();
+            }
 
             Assert.Equal(1, result.ID);
         }
