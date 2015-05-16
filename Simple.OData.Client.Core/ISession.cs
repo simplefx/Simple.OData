@@ -7,7 +7,7 @@ namespace Simple.OData.Client
     /// <summary>
     /// Provide access to session-specific details.
     /// </summary>
-    public interface ISession
+    public interface ISession : IDisposable
     {
         /// <summary>
         /// Gets OData client configuration settings.
@@ -35,5 +35,7 @@ namespace Simple.OData.Client
         /// <param name="message">Trace message format string.</param>
         /// <param name="messageParams">Trace message parameters.</param>
         void Trace(string message, params object[] messageParams);
+
+        HttpClient GetHttpClient();
     }
 }

@@ -257,6 +257,9 @@
     <Compile Include="..\Simple.OData.Client.Core\Fluent\UnboundClient.cs">
       <Link>Fluent\UnboundClient.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\HttpClientLifetime.cs">
+      <Link>HttpClientLifetime.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Http\HttpLiteral.cs">
       <Link>Http\HttpLiteral.cs</Link>
     </Compile>

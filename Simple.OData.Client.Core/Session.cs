@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,6 +13,8 @@ namespace Simple.OData.Client
         private readonly AdapterFactory _adapterFactory;
         private Func<IODataAdapter> _createAdapter;
         private IODataAdapter _adapter;
+        private HttpMessageHandler _messageHandler;
+        private HttpClient _httpClient;
 
         public ODataClientSettings Settings { get; private set; }
         public MetadataCache MetadataCache { get; private set; }
@@ -53,6 +56,11 @@ namespace Simple.OData.Client
             this.Settings = settings;
             this.MetadataCache = MetadataCache.Instances.GetOrAdd(this.Settings.BaseUri.AbsoluteUri, new MetadataCache());
             this.Pluralizer = new SimplePluralizer();
+        }
+
+        public void Dispose()
+        {
+            DisposeHttpClient();
         }
 
         public void Trace(string message, params object[] messageParams)
@@ -98,7 +106,13 @@ namespace Simple.OData.Client
             get
             {
                 if (_adapter == null)
-                    _adapter = _createAdapter();
+                {
+                    lock (this)
+                    {
+                        if (_adapter == null)
+                            _adapter = _createAdapter();
+                    }
+                }
                 return _adapter;
             }
         }
@@ -106,6 +120,51 @@ namespace Simple.OData.Client
         public IMetadata Metadata
         {
             get { return this.Adapter.GetMetadata(); }
+        }
+
+        public HttpClient GetHttpClient()
+        {
+            if (_httpClient != null && this.Settings.HttpClientLifetime == HttpClientLifetime.PerCall)
+            {
+                DisposeHttpClient();
+            }
+
+            if (_httpClient == null)
+            {
+                CreateHttpClient();
+            }
+
+            return _httpClient;
+        }
+
+        private void CreateHttpClient()
+        {
+            lock (this)
+            {
+                if (_httpClient == null)
+                {
+                    _messageHandler = CreateMessageHandler(this.Settings);
+                    _httpClient = CreateHttpClient(this.Settings, _messageHandler);
+                }
+            }
+        }
+
+        private void DisposeHttpClient()
+        {
+            lock (this)
+            {
+                if (_messageHandler != null)
+                {
+                    _messageHandler.Dispose();
+                    _messageHandler = null;
+                }
+
+                if (_httpClient != null)
+                {
+                    _httpClient.Dispose();
+                    _httpClient = null;
+                }
+            }
         }
 
         internal static Session FromSettings(ODataClientSettings settings)
@@ -116,6 +175,48 @@ namespace Simple.OData.Client
         internal static Session FromMetadata(Uri baseUri, string metadataString)
         {
             return new Session(baseUri, metadataString);
+        }
+
+        private static HttpClient CreateHttpClient(ODataClientSettings settings, HttpMessageHandler messageHandler)
+        {
+            if (settings.RequestTimeout >= TimeSpan.FromMilliseconds(1))
+            {
+                return new HttpClient(messageHandler)
+                {
+                    Timeout = settings.RequestTimeout,
+                };
+            }
+            else
+            {
+                return new HttpClient(messageHandler);
+            }
+        }
+
+        private static HttpMessageHandler CreateMessageHandler(ODataClientSettings settings)
+        {
+            if (settings.OnCreateMessageHandler != null)
+            {
+                return settings.OnCreateMessageHandler();
+            }
+            else
+            {
+                var clientHandler = new HttpClientHandler();
+
+                // Perform this test to prevent failure to access Credentials/PreAuthenticate properties on SL5
+                if (settings.Credentials != null)
+                {
+                    clientHandler.Credentials = settings.Credentials;
+                    if (clientHandler.SupportsPreAuthenticate())
+                        clientHandler.PreAuthenticate = true;
+                }
+
+                if (settings.OnApplyClientHandler != null)
+                {
+                    settings.OnApplyClientHandler(clientHandler);
+                }
+
+                return clientHandler;
+            }
         }
     }
 }

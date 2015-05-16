@@ -27,13 +27,11 @@ namespace Simple.OData.Client
         {
             try
             {
-                var messageHandler = CreateMessageHandler();
+                var httpClient = _session.GetHttpClient();
 
-                using (var httpClient = CreateHttpClient(messageHandler))
-                {
-                    PreExecute(httpClient, request);
+                PreExecute(httpClient, request);
 
-                    _session.Trace("{0} request: {1}", request.Method, request.RequestMessage.RequestUri.AbsoluteUri);
+                _session.Trace("{0} request: {1}", request.Method, request.RequestMessage.RequestUri.AbsoluteUri);
 #if TRACE_REQUEST_CONTENT
                     if (request.RequestMessage.Content != null)
                     {
@@ -42,10 +40,10 @@ namespace Simple.OData.Client
                     }
 #endif
 
-                    var response = await httpClient.SendAsync(request.RequestMessage, cancellationToken);
-                    if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+                var response = await httpClient.SendAsync(request.RequestMessage, cancellationToken);
+                if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-                    _session.Trace("Request completed: {0}", response.StatusCode);
+                _session.Trace("Request completed: {0}", response.StatusCode);
 #if TRACE_RESPONSE_CONTENT
                     if (response.Content != null)
                     {
@@ -54,9 +52,8 @@ namespace Simple.OData.Client
                     }
 #endif
 
-                    await PostExecute(response);
-                    return response;
-                }
+                await PostExecute(response);
+                return response;
             }
             catch (WebException ex)
             {
@@ -72,48 +69,6 @@ namespace Simple.OData.Client
                 {
                     throw;
                 }
-            }
-        }
-
-        private HttpMessageHandler CreateMessageHandler()
-        {
-            if (_session.Settings.OnCreateMessageHandler != null)
-            {
-                return _session.Settings.OnCreateMessageHandler();
-            }
-            else
-            {
-                var clientHandler = new HttpClientHandler();
-
-                // Perform this test to prevent failure to access Credentials/PreAuthenticate properties on SL5
-                if (_session.Settings.Credentials != null)
-                {
-                    clientHandler.Credentials = _session.Settings.Credentials;
-                    if (clientHandler.SupportsPreAuthenticate())
-                        clientHandler.PreAuthenticate = true;
-                }
-
-                if (_session.Settings.OnApplyClientHandler != null)
-                {
-                    _session.Settings.OnApplyClientHandler(clientHandler);
-                }
-
-                return clientHandler;
-            }
-        }
-
-        private HttpClient CreateHttpClient(HttpMessageHandler messageHandler)
-        {
-            if (_session.Settings.RequestTimeout >= TimeSpan.FromMilliseconds(1))
-            {
-                return new HttpClient(messageHandler)
-                {
-                    Timeout = _session.Settings.RequestTimeout,
-                };
-            }
-            else
-            {
-                return new HttpClient(messageHandler);
             }
         }
 
