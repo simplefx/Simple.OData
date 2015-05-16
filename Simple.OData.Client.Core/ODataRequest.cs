@@ -53,7 +53,6 @@ namespace Simple.OData.Client
         }
 
         public string Method { get; private set; }
-        public ICredentials Credentials { get; private set; }
         public IDictionary<string, object> EntryData { get; private set; }
         public bool IsLink { get; set; }
         public bool ReturnsScalarResult { get; set; }
@@ -64,7 +63,6 @@ namespace Simple.OData.Client
         internal ODataRequest(string method, ISession session, string commandText)
         {
             this.Method = method;
-            this.Credentials = session.Settings.Credentials;
 
             var uri = new Uri(commandText, UriKind.RelativeOrAbsolute);
             _uri = uri.IsAbsoluteUri 

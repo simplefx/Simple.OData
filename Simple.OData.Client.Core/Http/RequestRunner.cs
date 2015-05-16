@@ -27,7 +27,7 @@ namespace Simple.OData.Client
         {
             try
             {
-                var messageHandler = CreateMessageHandler(request);
+                var messageHandler = CreateMessageHandler();
 
                 using (var httpClient = CreateHttpClient(messageHandler))
                 {
@@ -75,7 +75,7 @@ namespace Simple.OData.Client
             }
         }
 
-        private HttpMessageHandler CreateMessageHandler(ODataRequest request)
+        private HttpMessageHandler CreateMessageHandler()
         {
             if (_session.Settings.OnCreateMessageHandler != null)
             {
@@ -86,9 +86,9 @@ namespace Simple.OData.Client
                 var clientHandler = new HttpClientHandler();
 
                 // Perform this test to prevent failure to access Credentials/PreAuthenticate properties on SL5
-                if (request.Credentials != null)
+                if (_session.Settings.Credentials != null)
                 {
-                    clientHandler.Credentials = request.Credentials;
+                    clientHandler.Credentials = _session.Settings.Credentials;
                     if (clientHandler.SupportsPreAuthenticate())
                         clientHandler.PreAuthenticate = true;
                 }
