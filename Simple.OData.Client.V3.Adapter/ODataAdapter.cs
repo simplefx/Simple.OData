@@ -113,9 +113,9 @@ namespace Simple.OData.Client.V3.Adapter
             return new RequestWriter(_session, Model, deferredBatchWriter);
         }
 
-        public override IBatchWriter GetBatchWriter()
+        public override IBatchWriter GetBatchWriter(IDictionary<object, IDictionary<string, object>> batchEntries)
         {
-            return new BatchWriter(_session);
+            return new BatchWriter(_session, batchEntries);
         }
     }
 }

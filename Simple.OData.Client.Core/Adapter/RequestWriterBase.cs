@@ -163,13 +163,7 @@ namespace Simple.OData.Client
             var linkEntry = referenceLink.LinkData.ToDictionary();
             if (_deferredBatchWriter != null)
             {
-                contentId = _deferredBatchWriter.Value.GetContentId(linkEntry);
-                if (contentId == null)
-                {
-                    IDictionary<string, object> mappedEntry;
-                    if ((_session as Session).EntryMap.TryGetValue(referenceLink.LinkData, out mappedEntry))
-                        contentId = _deferredBatchWriter.Value.GetContentId(mappedEntry);
-                }
+                contentId = _deferredBatchWriter.Value.GetContentId(linkEntry, referenceLink.LinkData);
             }
             return contentId;
         }

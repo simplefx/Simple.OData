@@ -22,7 +22,8 @@ namespace Simple.OData.Client
         protected FluentCommand _command;
         protected readonly bool _dynamicResults;
 
-        internal FluentClientBase(ODataClient client, Session session, FluentCommand parentCommand = null, FluentCommand command = null, bool dynamicResults = false)
+        internal FluentClientBase(ODataClient client, Session session, 
+            FluentCommand parentCommand = null, FluentCommand command = null, bool dynamicResults = false)
         {
             _client = client;
             _session = session;
@@ -47,7 +48,7 @@ namespace Simple.OData.Client
 
         protected FluentCommand CreateCommand()
         {
-            return new FluentCommand(this.Session, _parentCommand);
+            return new FluentCommand(this.Session, _parentCommand, _client.BatchEntries);
         }
 
         internal Session Session

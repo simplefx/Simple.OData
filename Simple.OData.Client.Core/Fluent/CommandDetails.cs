@@ -27,8 +27,9 @@ namespace Simple.OData.Client
         public bool IncludeCount { get; set; }
         public string LinkName { get; set; }
         public ODataExpression LinkExpression { get; set; }
+        public SimpleDictionary<object, IDictionary<string, object>> BatchEntries { get; set; }
 
-        public CommandDetails(Session session, FluentCommand parent)
+        public CommandDetails(Session session, FluentCommand parent, SimpleDictionary<object, IDictionary<string, object>> batchEntries)
         {
             this.Session = session;
             this.Parent = parent;
@@ -37,6 +38,7 @@ namespace Simple.OData.Client
             this.ExpandAssociations = new List<KeyValuePair<string, ODataExpandOptions>>();
             this.SelectColumns = new List<string>();
             this.OrderbyColumns = new List<KeyValuePair<string, bool>>();
+            this.BatchEntries = batchEntries;
         }
 
         public CommandDetails(CommandDetails details)
@@ -65,6 +67,7 @@ namespace Simple.OData.Client
             this.IncludeCount = details.IncludeCount;
             this.LinkName = details.LinkName;
             this.LinkExpression = details.LinkExpression;
+            this.BatchEntries = details.BatchEntries;
         }
     }
 }

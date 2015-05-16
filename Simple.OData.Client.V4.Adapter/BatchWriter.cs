@@ -15,8 +15,8 @@ namespace Simple.OData.Client.V4.Adapter
         private ODataRequestMessage _requestMessage;
         private ODataMessageWriter _messageWriter;
 
-        public BatchWriter(ISession session)
-            : base(session)
+        public BatchWriter(ISession session, IDictionary<object, IDictionary<string, object>> batchEntries)
+            : base(session, batchEntries)
         {
         }
 

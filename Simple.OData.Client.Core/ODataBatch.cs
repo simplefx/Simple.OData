@@ -13,6 +13,7 @@ namespace Simple.OData.Client
     {
         private readonly ODataClient _client;
         private readonly List<Func<IODataClient, Task>> _actions = new List<Func<IODataClient, Task>>();
+        private readonly SimpleDictionary<object, IDictionary<string, object>> _entryMap = new SimpleDictionary<object, IDictionary<string, object>>(); 
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ODataBatch"/> class.
@@ -42,7 +43,7 @@ namespace Simple.OData.Client
         /// <param name="settings">The settings.</param>
         public ODataBatch(ODataClientSettings settings)
         {
-            _client = new ODataClient(settings, true);
+            _client = new ODataClient(settings, _entryMap);
         }
 
         /// <summary>
@@ -51,7 +52,7 @@ namespace Simple.OData.Client
         /// <param name="client">The OData client which settings will be used to create a batch.</param>
         public ODataBatch(IODataClient client)
         {
-            _client = new ODataClient((client as ODataClient).Session.Settings, true);
+            _client = new ODataClient((client as ODataClient).Session.Settings, _entryMap);
         }
 
         /// <summary>

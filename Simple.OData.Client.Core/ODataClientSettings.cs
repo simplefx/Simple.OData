@@ -86,6 +86,8 @@ namespace Simple.OData.Client
         /// </value>
         public string MetadataDocument { get; set; }
 
+        public HttpClientLifetime HttpClientLifetime { get; set; }
+
         /// <summary>
         /// Gets or sets the HttpMessageHandler factory used by HttpClient.
         /// If not set, ODataClient creates an instance of HttpClientHandler.
