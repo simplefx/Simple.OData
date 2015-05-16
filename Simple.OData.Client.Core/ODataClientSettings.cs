@@ -86,7 +86,13 @@ namespace Simple.OData.Client
         /// </value>
         public string MetadataDocument { get; set; }
 
-        public HttpClientLifetime HttpClientLifetime { get; set; }
+        /// <summary>
+        /// Gets or sets a value indicating whether <see cref="HttpClient"/> connection should be reused between OData requests or disposed and renewed.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> to reuse <see cref="HttpClient"/> between requests; <c>false</c> to create a new <see cref="HttpClient"/> instance for each request.
+        /// </value>
+        public bool ReuseHttpConnection { get; set; }
 
         /// <summary>
         /// Gets or sets the HttpMessageHandler factory used by HttpClient.

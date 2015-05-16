@@ -83,6 +83,29 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task InsertProductReuseHttpConnection()
+        {
+            var client = new ODataClient(new ODataClientSettings { BaseUri = _serviceUri, ReuseHttpConnection = true });
+            var category = await client
+                .For("Categories")
+                .Set(new { CategoryName = "Test3" })
+                .InsertEntryAsync();
+            var product = await client
+                .For("Products")
+                .Set(new { ProductName = "Test4", UnitPrice = 18m, CategoryID = category["CategoryID"] })
+                .InsertEntryAsync();
+
+            Assert.Equal("Test4", product["ProductName"]);
+            Assert.Equal(category["CategoryID"], product["CategoryID"]);
+            category = await client
+                .For("Categories")
+                .Expand("Products")
+                .Filter("CategoryName eq 'Test3'")
+                .FindEntryAsync();
+            Assert.True((category["Products"] as IEnumerable<object>).Count() == 1);
+        }
+
+        [Fact]
         public async Task InsertProductWithCategoryByAssociation()
         {
             var category = await _client

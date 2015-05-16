@@ -170,6 +170,33 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task InsertUpdateDeleteSeparateBatchesReuseHttpConnection()
+        {
+            var client = new ODataClient(new ODataClientSettings {BaseUri = _serviceUri, ReuseHttpConnection = true});
+            var batch = new ODataBatch(client);
+            batch += c => c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test12" }, { "UnitPrice", 21m } }, false);
+            await batch.ExecuteAsync();
+
+            var product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test12'");
+            Assert.Equal(21m, product["UnitPrice"]);
+            var key = new Entry() { { "ProductID", product["ProductID"] } };
+
+            batch = new ODataBatch(client);
+            batch += c => c.UpdateEntryAsync("Products", key, new Entry() { { "UnitPrice", 22m } });
+            await batch.ExecuteAsync();
+
+            product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test12'");
+            Assert.Equal(22m, product["UnitPrice"]);
+
+            batch = new ODataBatch(client);
+            batch += c => c.DeleteEntryAsync("Products", key);
+            await batch.ExecuteAsync();
+
+            product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test12'");
+            Assert.Null(product);
+        }
+
+        [Fact]
         public async Task InsertSingleEntityWithSingleAssociationSingleBatch()
         {
             IDictionary<string, object> category = null;

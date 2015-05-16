@@ -78,7 +78,6 @@
     <Compile Include="Fluent\IFluentClient.cs" />
     <Compile Include="Fluent\IUnboundClient.cs" />
     <Compile Include="Fluent\UnboundClient.cs" />
-    <Compile Include="HttpClientLifetime.cs" />
     <Compile Include="Http\HttpLiteral.cs" />
     <Compile Include="Http\RestVerbs.cs" />
     <Compile Include="ODataExpandOptions.cs" />

@@ -124,7 +124,7 @@ namespace Simple.OData.Client
 
         public HttpClient GetHttpClient()
         {
-            if (_httpClient != null && this.Settings.HttpClientLifetime == HttpClientLifetime.PerCall)
+            if (_httpClient != null && !this.Settings.ReuseHttpConnection)
             {
                 DisposeHttpClient();
             }

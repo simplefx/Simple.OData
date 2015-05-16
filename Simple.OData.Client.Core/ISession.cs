@@ -25,7 +25,7 @@ namespace Simple.OData.Client
         IMetadata Metadata { get; }
 
         /// <summary>
-        /// Gets word pluralizer.
+        /// Gets the word pluralizer.
         /// </summary>
         IPluralizer Pluralizer { get; }
 
@@ -36,6 +36,10 @@ namespace Simple.OData.Client
         /// <param name="messageParams">Trace message parameters.</param>
         void Trace(string message, params object[] messageParams);
 
+        /// <summary>
+        /// Obtains an instance of <see cref="HttpClient"/> that is used to issue HTTP requests to OData service.
+        /// </summary>
+        /// <returns>An <see cref="HttpClient"/> instance.</returns>
         HttpClient GetHttpClient();
     }
 }
