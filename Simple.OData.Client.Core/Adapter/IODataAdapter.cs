@@ -19,6 +19,6 @@ namespace Simple.OData.Client
         ICommandFormatter GetCommandFormatter();
         IResponseReader GetResponseReader();
         IRequestWriter GetRequestWriter(Lazy<IBatchWriter> deferredBatchWriter);
-        IBatchWriter GetBatchWriter();
+        IBatchWriter GetBatchWriter(IDictionary<object, IDictionary<string, object>> batchEntries);
     }
 }

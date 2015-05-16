@@ -23,9 +23,9 @@ namespace Simple.OData.Client
         internal static readonly string ResultLiteral = "__result";
         internal static readonly string ResourceTypeLiteral = "__resourcetype";
 
-        internal FluentCommand(Session session, FluentCommand parent)
+        internal FluentCommand(Session session, FluentCommand parent, SimpleDictionary<object, IDictionary<string, object>> batchEntries)
         {
-            _details = new CommandDetails(session, parent);
+            _details = new CommandDetails(session, parent, batchEntries);
         }
 
         internal FluentCommand(FluentCommand ancestor)
@@ -420,7 +420,8 @@ namespace Simple.OData.Client
             _details.EntryData = Utils.GetMappedProperties(value.GetType())
                 .Select(x => new KeyValuePair<string, object>(x.GetMappedName(), x.GetValue(value, null)))
                 .ToDictionary();
-            _details.Session.EntryMap.GetOrAdd(value, _details.EntryData);
+            if (_details.BatchEntries != null)
+                _details.BatchEntries.GetOrAdd(value, _details.EntryData);
             return this;
         }
 
@@ -437,7 +438,8 @@ namespace Simple.OData.Client
             if (IsBatchResponse) return this;
 
             _details.EntryData = value.Select(x => new KeyValuePair<string, object>(x.Reference, x.Value)).ToIDictionary();
-            _details.Session.EntryMap.GetOrAdd(value, _details.EntryData);
+            if (_details.BatchEntries != null)
+                _details.BatchEntries.GetOrAdd(value, _details.EntryData);
             return this;
         }
 

@@ -15,11 +15,12 @@ namespace Simple.OData.Client
         private readonly Dictionary<IDictionary<string, object>, string> _contentIdMap;
         protected bool _pendingChangeSet;
 
-        protected BatchWriterBase(ISession session)
+        protected BatchWriterBase(ISession session, IDictionary<object, IDictionary<string, object>> batchEntries)
         {
             _session = session;
             _lastOperationId = 0;
             _contentIdMap = new Dictionary<IDictionary<string, object>, string>();
+            this.BatchEntries = batchEntries;
         }
 
         public abstract Task StartBatchAsync();
@@ -36,16 +37,24 @@ namespace Simple.OData.Client
             return (++_lastOperationId).ToString();
         }
 
-        public string GetContentId(IDictionary<string, object> entryData)
+        public string GetContentId(IDictionary<string, object> entryData, object linkData)
         {
             string contentId;
-            return _contentIdMap.TryGetValue(entryData, out contentId) ? contentId : null;
+            if (!_contentIdMap.TryGetValue(entryData, out contentId) && linkData != null)
+            {
+                IDictionary<string, object> mappedEntry;
+                if (this.BatchEntries.TryGetValue(linkData, out mappedEntry))
+                    _contentIdMap.TryGetValue(mappedEntry, out contentId);
+            }
+            return contentId;
         }
 
         public void MapContentId(IDictionary<string, object> entryData, string contentId)
         {
             _contentIdMap.Add(entryData, contentId);
         }
+
+        public IDictionary<object, IDictionary<string, object>> BatchEntries { get; private set; }
 
         public async Task<object> CreateOperationRequestMessageAsync(string method, string collection, IDictionary<string, object> entryData, Uri uri)
         {

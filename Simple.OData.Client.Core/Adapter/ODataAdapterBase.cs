@@ -20,6 +20,6 @@ namespace Simple.OData.Client
         public abstract ICommandFormatter GetCommandFormatter();
         public abstract IResponseReader GetResponseReader();
         public abstract IRequestWriter GetRequestWriter(Lazy<IBatchWriter> deferredBatchWriter);
-        public abstract IBatchWriter GetBatchWriter();
+        public abstract IBatchWriter GetBatchWriter(IDictionary<object, IDictionary<string, object>> batchEntries);
     }
 }

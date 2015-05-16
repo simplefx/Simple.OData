@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -13,7 +12,6 @@ namespace Simple.OData.Client
         private readonly AdapterFactory _adapterFactory;
         private Func<IODataAdapter> _createAdapter;
         private IODataAdapter _adapter;
-        private readonly SimpleDictionary<object, IDictionary<string, object>> _entryMap = new SimpleDictionary<object, IDictionary<string, object>>(); 
 
         public ODataClientSettings Settings { get; private set; }
         public MetadataCache MetadataCache { get; private set; }
@@ -109,8 +107,6 @@ namespace Simple.OData.Client
         {
             get { return this.Adapter.GetMetadata(); }
         }
-
-        internal SimpleDictionary<object, IDictionary<string, object>> EntryMap { get { return _entryMap; } } 
 
         internal static Session FromSettings(ODataClientSettings settings)
         {
