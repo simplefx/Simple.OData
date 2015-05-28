@@ -144,6 +144,20 @@ namespace Simple.OData.Client.V3.Adapter
             }
         }
 
+        protected override async Task<Stream> WriteStreamContentAsync(Stream stream)
+        {
+            var message = new ODataRequestMessage();
+            using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(true), _model))
+            {
+#if SILVERLIGHT
+                messageWriter.WriteValue(Utils.StreamToString(stream));
+#else
+                await messageWriter.WriteValueAsync(Utils.StreamToString(stream));
+#endif
+                return await message.GetStreamAsync();
+            }
+        }
+
         protected override string FormatLinkPath(string entryIdent, string navigationPropertyName, string linkIdent = null)
         {
             return linkIdent == null
@@ -163,7 +177,7 @@ namespace Simple.OData.Client.V3.Adapter
             }
         }
 
-        private ODataMessageWriterSettings GetWriterSettings()
+        private ODataMessageWriterSettings GetWriterSettings(bool isRawValue = false)
         {
             var settings = new ODataMessageWriterSettings()
             {
@@ -172,24 +186,31 @@ namespace Simple.OData.Client.V3.Adapter
                 DisableMessageStreamDisposal = !IsBatch,
             };
             ODataFormat contentType;
-            switch (_session.Settings.PayloadFormat)
+            if (isRawValue)
             {
-                case ODataPayloadFormat.Atom:
-                default:
-                    contentType = ODataFormat.Atom;
-                    break;
-                case ODataPayloadFormat.Json:
-                    switch (_session.Adapter.ProtocolVersion)
-                    {
-                        case ODataProtocolVersion.V1:
-                        case ODataProtocolVersion.V2:
-                            contentType = ODataFormat.VerboseJson;
-                            break;
-                        default:
-                            contentType = ODataFormat.Json;
-                            break;
-                    }
-                    break;
+                contentType = ODataFormat.RawValue;
+            }
+            else
+            {
+                switch (_session.Settings.PayloadFormat)
+                {
+                    case ODataPayloadFormat.Atom:
+                    default:
+                        contentType = ODataFormat.Atom;
+                        break;
+                    case ODataPayloadFormat.Json:
+                        switch (_session.Adapter.ProtocolVersion)
+                        {
+                            case ODataProtocolVersion.V1:
+                            case ODataProtocolVersion.V2:
+                                contentType = ODataFormat.VerboseJson;
+                                break;
+                            default:
+                                contentType = ODataFormat.Json;
+                                break;
+                        }
+                        break;
+                }
             }
             settings.SetContentType(contentType);
             return settings;

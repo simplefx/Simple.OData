@@ -541,46 +541,6 @@ namespace Simple.OData.Client
             return await ExecuteRequestWithResultAsync(request, cancellationToken, x => x.AsEntry(), () => null);
         }
 
-        public Task<Stream> GetMediaStreamAsync(string commandText)
-        {
-            return GetMediaStreamAsync(commandText, CancellationToken.None);
-        }
-
-        public async Task<Stream> GetMediaStreamAsync(string commandText, CancellationToken cancellationToken)
-        {
-            if (IsBatchResponse)
-                throw new NotSupportedException("Media requests are not supported in batch mode");
-
-            await _session.ResolveAdapterAsync(cancellationToken);
-            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-
-            var commandTextWithValue = commandText.EndsWith("/" + ODataLiteral.Value) ? commandText : commandText + "/" + ODataLiteral.Value;
-            var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-                .CreateGetRequestAsync(commandTextWithValue, true);
-
-            return await ExecuteStreamRequestAsync(request, cancellationToken);
-        }
-
-        public Task<Stream> GetMediaStreamAsync(string commandText, string streamName)
-        {
-            return GetMediaStreamAsync(commandText, streamName, CancellationToken.None);
-        }
-
-        public async Task<Stream> GetMediaStreamAsync(string commandText, string streamName, CancellationToken cancellationToken)
-        {
-            if (IsBatchResponse)
-                throw new NotSupportedException("Media requests are not supported in batch mode");
-
-            await _session.ResolveAdapterAsync(cancellationToken);
-            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-
-            var commandTextWithStreamName = commandText + "/" + streamName;
-            var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-                .CreateGetRequestAsync(commandTextWithStreamName, true);
-
-            return await ExecuteStreamRequestAsync(request, cancellationToken);
-        }
-
         public Task<IDictionary<string, object>> InsertEntryAsync(string collection, IDictionary<string, object> entryData)
         {
             return InsertEntryAsync(collection, entryData, true, CancellationToken.None);
@@ -782,6 +742,82 @@ namespace Simple.OData.Client
                 .AsBoundClient().Command;
 
             await ExecuteUnlinkEntryAsync(command, linkName, linkedEntryKey, cancellationToken);
+        }
+
+        public Task<Stream> GetMediaStreamAsync(string commandText)
+        {
+            return GetMediaStreamAsync(commandText, CancellationToken.None);
+        }
+
+        public async Task<Stream> GetMediaStreamAsync(string commandText, CancellationToken cancellationToken)
+        {
+            if (IsBatchResponse)
+                throw new NotSupportedException("Media stream requests are not supported in batch mode");
+
+            await _session.ResolveAdapterAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+            var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
+                .CreateGetStreamRequestAsync(commandText, null);
+
+            return await ExecuteGetStreamRequestAsync(request, cancellationToken);
+        }
+
+        public Task<Stream> GetMediaStreamAsync(string commandText, string streamName)
+        {
+            return GetMediaStreamAsync(commandText, streamName, CancellationToken.None);
+        }
+
+        public async Task<Stream> GetMediaStreamAsync(string commandText, string streamName, CancellationToken cancellationToken)
+        {
+            if (IsBatchResponse)
+                throw new NotSupportedException("Media stream requests are not supported in batch mode");
+
+            await _session.ResolveAdapterAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+            var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
+                .CreateGetStreamRequestAsync(commandText, streamName);
+
+            return await ExecuteGetStreamRequestAsync(request, cancellationToken);
+        }
+
+        public Task SetMediaStreamAsync(string commandText, Stream stream)
+        {
+            return SetMediaStreamAsync(commandText, stream, CancellationToken.None);
+        }
+
+        public async Task SetMediaStreamAsync(string commandText, Stream stream, CancellationToken cancellationToken)
+        {
+            if (IsBatchResponse)
+                throw new NotSupportedException("Media stream requests are not supported in batch mode");
+
+            await _session.ResolveAdapterAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+            var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
+                .CreateSetStreamRequestAsync(commandText, null, stream);
+
+            await ExecuteSetStreamRequestAsync(request, stream, cancellationToken);
+        }
+
+        public Task SetMediaStreamAsync(string commandText, string streamName, Stream stream)
+        {
+            return SetMediaStreamAsync(commandText, streamName, stream, CancellationToken.None);
+        }
+
+        public async Task SetMediaStreamAsync(string commandText, string streamName, Stream stream, CancellationToken cancellationToken)
+        {
+            if (IsBatchResponse)
+                throw new NotSupportedException("Media stream requests are not supported in batch mode");
+
+            await _session.ResolveAdapterAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+            var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
+                .CreateSetStreamRequestAsync(commandText, streamName, stream);
+
+            await ExecuteSetStreamRequestAsync(request, stream, cancellationToken);
         }
 
         public Task<IDictionary<string, object>> ExecuteFunctionAsSingleAsync(string functionName, IDictionary<string, object> parameters)
@@ -1042,41 +1078,6 @@ namespace Simple.OData.Client
             return await FindScalarAsync(commandText, cancellationToken);
         }
 
-        internal async Task<Stream> GetMediaStreamAsync(FluentCommand command, string streamName, CancellationToken cancellationToken)
-        {
-            if (IsBatchResponse)
-                throw new NotSupportedException("Media requests are not supported in batch mode");
-
-            await _session.ResolveAdapterAsync(cancellationToken);
-            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-
-            var commandText = await command.GetCommandTextAsync(cancellationToken);
-            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-
-            return string.IsNullOrEmpty(streamName)
-                ? await GetMediaStreamAsync(commandText, cancellationToken)
-                : await GetMediaStreamAsync(commandText, streamName, cancellationToken);
-        }
-
-        internal async Task<byte[]> GetMediaAsBytesAsync(FluentCommand command, string streamName, CancellationToken cancellationToken)
-        {
-            using (var stream = await GetMediaStreamAsync(command, streamName, cancellationToken))
-            {
-                var bytes = new byte[stream.Length];
-                stream.Position = 0;
-                stream.Write(bytes, 0, bytes.Length);
-                return bytes;
-            }
-        }
-
-        internal async Task<string> GetMediaAsStringAsync(FluentCommand command, string streamName, CancellationToken cancellationToken)
-        {
-            using (var stream = await GetMediaStreamAsync(command, streamName, cancellationToken))
-            {
-                return Utils.StreamToString(stream);
-            }
-        }
-
         internal async Task<IDictionary<string, object>> InsertEntryAsync(FluentCommand command, IDictionary<string, object> entryData, bool resultRequired, CancellationToken cancellationToken)
         {
             if (IsBatchResponse)
@@ -1152,6 +1153,58 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             await ExecuteUnlinkEntryAsync(new FluentCommand(command).Key(entryKey), linkName, linkedEntryKey, cancellationToken);
+        }
+
+        internal async Task<Stream> GetMediaStreamAsync(FluentCommand command, string streamName, CancellationToken cancellationToken)
+        {
+            if (IsBatchResponse)
+                throw new NotSupportedException("Media stream requests are not supported in batch mode");
+
+            await _session.ResolveAdapterAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+            var commandText = await command.GetCommandTextAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+            return string.IsNullOrEmpty(streamName)
+                ? await GetMediaStreamAsync(commandText, cancellationToken)
+                : await GetMediaStreamAsync(commandText, streamName, cancellationToken);
+        }
+
+        internal async Task<byte[]> GetMediaAsBytesAsync(FluentCommand command, string streamName, CancellationToken cancellationToken)
+        {
+            using (var stream = await GetMediaStreamAsync(command, streamName, cancellationToken))
+            {
+                var bytes = new byte[stream.Length];
+                stream.Position = 0;
+                stream.Write(bytes, 0, bytes.Length);
+                return bytes;
+            }
+        }
+
+        internal async Task<string> GetMediaAsStringAsync(FluentCommand command, string streamName, CancellationToken cancellationToken)
+        {
+            using (var stream = await GetMediaStreamAsync(command, streamName, cancellationToken))
+            {
+                return Utils.StreamToString(stream);
+            }
+        }
+
+        internal async Task SetMediaStreamAsync(FluentCommand command, string streamName, Stream stream, CancellationToken cancellationToken)
+        {
+            if (IsBatchResponse)
+                throw new NotSupportedException("Media stream requests are not supported in batch mode");
+
+            await _session.ResolveAdapterAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+            var commandText = await command.GetCommandTextAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+            if (string.IsNullOrEmpty(streamName))
+                await SetMediaStreamAsync(commandText, stream, cancellationToken);
+            else
+                await SetMediaStreamAsync(commandText, streamName, stream, cancellationToken);
         }
 
         internal async Task ExecuteAsync(FluentCommand command, CancellationToken cancellationToken)

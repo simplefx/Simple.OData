@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 
 #pragma warning disable 1591
@@ -15,5 +16,7 @@ namespace Simple.OData.Client
         Task<ODataRequest> CreateUnlinkRequestAsync(string collection, string linkName, string entryIdent, string linkIdent);
         Task<ODataRequest> CreateFunctionRequestAsync(string collection, string functionName);
         Task<ODataRequest> CreateActionRequestAsync(string collection, string actionName, IDictionary<string, object> parameters, bool resultRequired);
+        Task<ODataRequest> CreateGetStreamRequestAsync(string commandText, string streamName);
+        Task<ODataRequest> CreateSetStreamRequestAsync(string commandText, string streamName, Stream stream);
     }
 }

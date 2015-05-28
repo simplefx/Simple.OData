@@ -123,6 +123,17 @@ namespace Simple.OData.Client.V4.Adapter
             }
         }
 
+        protected override async Task<Stream> WriteStreamContentAsync(Stream stream)
+        {
+            var message = new ODataRequestMessage();
+            using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(true), _model))
+            {
+                var v = Utils.StreamToString(stream);
+                await messageWriter.WriteValueAsync(v);
+                return await message.GetStreamAsync();
+            }
+        }
+
         protected override string FormatLinkPath(string entryIdent, string navigationPropertyName, string linkIdent = null)
         {
             return linkIdent == null
@@ -212,7 +223,7 @@ namespace Simple.OData.Client.V4.Adapter
                 return navigationProperty.Type.Definition as IEdmEntityType;
         }
 
-        private ODataMessageWriterSettings GetWriterSettings()
+        private ODataMessageWriterSettings GetWriterSettings(bool isRawValue = false)
         {
             var settings = new ODataMessageWriterSettings()
             {
@@ -223,18 +234,27 @@ namespace Simple.OData.Client.V4.Adapter
                 Indent = true,
                 DisableMessageStreamDisposal = !IsBatch,
             };
-            switch (_session.Settings.PayloadFormat)
+            ODataFormat contentType;
+            if (isRawValue)
             {
-                case ODataPayloadFormat.Atom:
-#pragma warning disable 0618
-                    settings.SetContentType(ODataFormat.Atom);
-#pragma warning restore 0618
-                    break;
-                case ODataPayloadFormat.Json:
-                default:
-                    settings.SetContentType(ODataFormat.Json);
-                    break;
+                contentType = ODataFormat.RawValue;
             }
+            else
+            {
+                switch (_session.Settings.PayloadFormat)
+                {
+                    case ODataPayloadFormat.Atom:
+#pragma warning disable 0618
+                        contentType = ODataFormat.Atom;
+#pragma warning restore 0618
+                        break;
+                    case ODataPayloadFormat.Json:
+                    default:
+                        contentType = ODataFormat.Json;
+                        break;
+                }
+            }
+            settings.SetContentType(contentType);
             return settings;
         }
 

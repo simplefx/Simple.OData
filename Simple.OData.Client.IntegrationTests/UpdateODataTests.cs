@@ -265,5 +265,49 @@ namespace Simple.OData.Client.Tests
                 .FindEntryAsync();
             Assert.Equal(2, (category["Products"] as IEnumerable<object>).Count());
         }
+
+        [Fact]
+        public async Task SetMediaEntityStream()
+        {
+            if (_version == 2) // No media support in OData V2
+                return;
+
+            var ad = await _client
+                .For("Advertisements")
+                .FindEntryAsync();
+            var id = ad["ID"];
+            var stream = Utils.StringToStream("Updated stream data");
+            await _client
+                .For("Advertisements")
+                .Key(id)
+                .SetMediaStreamAsync(stream);
+            stream = await _client
+                .For("Advertisements")
+                .Key(id)
+                .GetMediaStreamAsync();
+            var text = Utils.StreamToString(stream);
+            Assert.True(text.StartsWith("Updated stream data"));
+        }
+
+        //[Fact]
+        //public async Task SetMediaPropertyStream()
+        //{
+        //    if (_version == 2) // No media support in OData V2
+        //        return;
+
+        //    var stream = Utils.StringToStream("Updated stream data");
+        //    await _client
+        //        .For("Persons")
+        //        .Key(1)
+        //        .NavigateTo("PersonDetail")
+        //        .SetMediaStreamAsync("Photo", stream);
+        //    stream = await _client
+        //        .For("Persons")
+        //        .Key(1)
+        //        .NavigateTo("PersonDetail")
+        //        .GetMediaStreamAsync("Photo");
+        //    var text = Utils.StreamToString(stream);
+        //    Assert.True(text.StartsWith("Updated stream data"));
+        //}
     }
 }

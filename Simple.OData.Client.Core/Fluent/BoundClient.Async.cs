@@ -92,113 +92,6 @@ namespace Simple.OData.Client
             return (U)Convert.ChangeType(await _client.FindScalarAsync(_command, cancellationToken), typeof(U), CultureInfo.InvariantCulture);
         }
 
-        public Task<Stream> GetMediaStreamAsync()
-        {
-            return GetMediaStreamAsync(CancellationToken.None);
-        }
-
-        public Task<Stream> GetMediaStreamAsync(CancellationToken cancellationToken)
-        {
-            return _client.GetMediaStreamAsync(_command, null, cancellationToken);
-        }
-
-        public Task<byte[]> GetMediaAsBytesAsync()
-        {
-            return GetMediaAsBytesAsync(CancellationToken.None);
-        }
-
-        public Task<byte[]> GetMediaAsBytesAsync(CancellationToken cancellationToken)
-        {
-            return _client.GetMediaAsBytesAsync(_command, null, cancellationToken);
-        }
-
-        public Task<string> GetMediaAsStringAsync()
-        {
-            return GetMediaAsStringAsync(CancellationToken.None);
-        }
-
-        public Task<string> GetMediaAsStringAsync(CancellationToken cancellationToken)
-        {
-            return _client.GetMediaAsStringAsync(_command, null, cancellationToken);
-        }
-
-        public Task<Stream> GetMediaStreamAsync(string streamName)
-        {
-            return GetMediaStreamAsync(streamName, CancellationToken.None);
-        }
-
-        public Task<Stream> GetMediaStreamAsync(string streamName, CancellationToken cancellationToken)
-        {
-            return _client.GetMediaStreamAsync(_command, streamName, cancellationToken);
-        }
-
-        public Task<Stream> GetMediaStreamAsync(ODataExpression expression)
-        {
-            return GetMediaStreamAsync(expression, CancellationToken.None);
-        }
-
-        public Task<Stream> GetMediaStreamAsync(ODataExpression expression, CancellationToken cancellationToken)
-        {
-            var streamName = expression.Reference;
-            return _client.GetMediaStreamAsync(_command, streamName, cancellationToken);
-        }
-
-        public Task<Stream> GetMediaStreamAsync(Expression<Func<T, object>> expression)
-        {
-            return GetMediaStreamAsync(expression, CancellationToken.None);
-        }
-
-        public Task<Stream> GetMediaStreamAsync(Expression<Func<T, object>> expression, CancellationToken cancellationToken)
-        {
-            var streamName = ColumnExpression.ExtractColumnName(expression);
-            return _client.GetMediaStreamAsync(_command, streamName, cancellationToken);
-        }
-
-        public Task<byte[]> GetMediaAsBytesAsync(ODataExpression expression)
-        {
-            return GetMediaAsBytesAsync(expression, CancellationToken.None);
-        }
-
-        public Task<byte[]> GetMediaAsBytesAsync(ODataExpression expression, CancellationToken cancellationToken)
-        {
-            var streamName = expression.Reference;
-            return _client.GetMediaAsBytesAsync(_command, streamName, cancellationToken);
-        }
-
-        public Task<byte[]> GetMediaAsBytesAsync(Expression<Func<T, object>> expression)
-        {
-            var streamName = ColumnExpression.ExtractColumnName(expression);
-            return GetMediaAsBytesAsync(streamName, CancellationToken.None);
-        }
-
-        public Task<byte[]> GetMediaAsBytesAsync(Expression<Func<T, object>> expression, CancellationToken cancellationToken)
-        {
-            var streamName = ColumnExpression.ExtractColumnName(expression);
-            return _client.GetMediaAsBytesAsync(_command, streamName, cancellationToken);
-        }
-
-        public Task<string> GetMediaAsStringAsync(ODataExpression expression)
-        {
-            return GetMediaAsStringAsync(expression, CancellationToken.None);
-        }
-
-        public Task<string> GetMediaAsStringAsync(ODataExpression expression, CancellationToken cancellationToken)
-        {
-            var streamName = expression.Reference;
-            return _client.GetMediaAsStringAsync(_command, streamName, cancellationToken);
-        }
-
-        public Task<string> GetMediaAsStringAsync(Expression<Func<T, object>> expression)
-        {
-            return GetMediaAsStringAsync(expression, CancellationToken.None);
-        }
-
-        public Task<string> GetMediaAsStringAsync(Expression<Func<T, object>> expression, CancellationToken cancellationToken)
-        {
-            var streamName = ColumnExpression.ExtractColumnName(expression);
-            return _client.GetMediaAsStringAsync(_command, streamName, cancellationToken);
-        }
-
         public Task<T> InsertEntryAsync()
         {
             return InsertEntryAsync(true, CancellationToken.None);
@@ -440,6 +333,123 @@ namespace Simple.OData.Client
         public Task UnlinkEntryAsync(ODataExpression expression, ODataEntry linkedEntryKey, CancellationToken cancellationToken)
         {
             return _client.UnlinkEntryAsync(_command, _command.KeyValues, expression.AsString(_session), linkedEntryKey != null ? linkedEntryKey.ToDictionary() : null, cancellationToken);
+        }
+
+        public Task<Stream> GetMediaStreamAsync()
+        {
+            return GetMediaStreamAsync(CancellationToken.None);
+        }
+
+        public Task<Stream> GetMediaStreamAsync(CancellationToken cancellationToken)
+        {
+            return _client.GetMediaStreamAsync(_command, null, cancellationToken);
+        }
+
+        public Task<byte[]> GetMediaAsBytesAsync()
+        {
+            return GetMediaAsBytesAsync(CancellationToken.None);
+        }
+
+        public Task<byte[]> GetMediaAsBytesAsync(CancellationToken cancellationToken)
+        {
+            return _client.GetMediaAsBytesAsync(_command, null, cancellationToken);
+        }
+
+        public Task<string> GetMediaAsStringAsync()
+        {
+            return GetMediaAsStringAsync(CancellationToken.None);
+        }
+
+        public Task<string> GetMediaAsStringAsync(CancellationToken cancellationToken)
+        {
+            return _client.GetMediaAsStringAsync(_command, null, cancellationToken);
+        }
+
+        public Task<Stream> GetMediaStreamAsync(string streamName)
+        {
+            return GetMediaStreamAsync(streamName, CancellationToken.None);
+        }
+
+        public Task<Stream> GetMediaStreamAsync(string streamName, CancellationToken cancellationToken)
+        {
+            return _client.GetMediaStreamAsync(_command, streamName, cancellationToken);
+        }
+
+        public Task<Stream> GetMediaStreamAsync(ODataExpression expression)
+        {
+            return GetMediaStreamAsync(expression, CancellationToken.None);
+        }
+
+        public Task<Stream> GetMediaStreamAsync(ODataExpression expression, CancellationToken cancellationToken)
+        {
+            var streamName = expression.Reference;
+            return _client.GetMediaStreamAsync(_command, streamName, cancellationToken);
+        }
+
+        public Task<Stream> GetMediaStreamAsync(Expression<Func<T, object>> expression)
+        {
+            return GetMediaStreamAsync(expression, CancellationToken.None);
+        }
+
+        public Task<Stream> GetMediaStreamAsync(Expression<Func<T, object>> expression, CancellationToken cancellationToken)
+        {
+            var streamName = ColumnExpression.ExtractColumnName(expression);
+            return _client.GetMediaStreamAsync(_command, streamName, cancellationToken);
+        }
+
+        public Task<byte[]> GetMediaAsBytesAsync(ODataExpression expression)
+        {
+            return GetMediaAsBytesAsync(expression, CancellationToken.None);
+        }
+
+        public Task<byte[]> GetMediaAsBytesAsync(ODataExpression expression, CancellationToken cancellationToken)
+        {
+            var streamName = expression.Reference;
+            return _client.GetMediaAsBytesAsync(_command, streamName, cancellationToken);
+        }
+
+        public Task<byte[]> GetMediaAsBytesAsync(Expression<Func<T, object>> expression)
+        {
+            var streamName = ColumnExpression.ExtractColumnName(expression);
+            return GetMediaAsBytesAsync(streamName, CancellationToken.None);
+        }
+
+        public Task<byte[]> GetMediaAsBytesAsync(Expression<Func<T, object>> expression, CancellationToken cancellationToken)
+        {
+            var streamName = ColumnExpression.ExtractColumnName(expression);
+            return _client.GetMediaAsBytesAsync(_command, streamName, cancellationToken);
+        }
+
+        public Task<string> GetMediaAsStringAsync(ODataExpression expression)
+        {
+            return GetMediaAsStringAsync(expression, CancellationToken.None);
+        }
+
+        public Task<string> GetMediaAsStringAsync(ODataExpression expression, CancellationToken cancellationToken)
+        {
+            var streamName = expression.Reference;
+            return _client.GetMediaAsStringAsync(_command, streamName, cancellationToken);
+        }
+
+        public Task<string> GetMediaAsStringAsync(Expression<Func<T, object>> expression)
+        {
+            return GetMediaAsStringAsync(expression, CancellationToken.None);
+        }
+
+        public Task<string> GetMediaAsStringAsync(Expression<Func<T, object>> expression, CancellationToken cancellationToken)
+        {
+            var streamName = ColumnExpression.ExtractColumnName(expression);
+            return _client.GetMediaAsStringAsync(_command, streamName, cancellationToken);
+        }
+
+        public Task SetMediaStreamAsync(Stream stream)
+        {
+            return SetMediaStreamAsync(stream, CancellationToken.None);
+        }
+
+        public Task SetMediaStreamAsync(Stream stream, CancellationToken cancellationToken)
+        {
+            return _client.SetMediaStreamAsync(_command, null, stream, cancellationToken);
         }
     }
 }
