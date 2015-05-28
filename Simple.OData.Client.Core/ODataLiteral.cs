@@ -11,11 +11,12 @@
         public const string Select = "$select";
         public const string Count = "$count";
         public const string InlineCount = "$inlinecount";
-        public const string AllPages = "allpages";
         public const string Batch = "$batch";
         public const string Levels = "$levels";
-        public const string Max = "max";
+        public const string Value = "$value";
         public const string Ref = "$ref";
+        public const string AllPages = "allpages";
+        public const string Max = "max";
         public const string True = "true";
         public const string False = "false";
         public const string Any = "any";

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Threading;
@@ -280,6 +281,37 @@ namespace Simple.OData.Client
             {
                 if (_settings.IgnoreResourceNotFoundException && ex.Code == HttpStatusCode.NotFound)
                     return createEmptyResult != null ? createEmptyResult() : default(T);
+                else
+                    throw;
+            }
+        }
+
+        private async Task<Stream> ExecuteStreamRequestAsync(ODataRequest request, CancellationToken cancellationToken)
+        {
+            if (IsBatchRequest)
+                return Stream.Null;
+
+            try
+            {
+                using (var response = await _requestRunner.ExecuteRequestAsync(request, cancellationToken))
+                {
+                    if (response.IsSuccessStatusCode && response.StatusCode != HttpStatusCode.NoContent &&
+                        (request.Method == RestVerbs.Get || request.ResultRequired))
+                    {
+                        var stream = new MemoryStream();
+                        await response.Content.CopyToAsync(stream);
+                        return stream;
+                    }
+                    else
+                    {
+                        return Stream.Null;
+                    }
+                }
+            }
+            catch (WebRequestException ex)
+            {
+                if (_settings.IgnoreResourceNotFoundException && ex.Code == HttpStatusCode.NotFound)
+                    return Stream.Null;
                 else
                     throw;
             }

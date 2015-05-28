@@ -660,6 +660,21 @@ namespace Simple.OData.Client.Tests
             Assert.Null(tripEvent);
         }
 
+        [Fact]
+        public async Task GetPhotoMedia()
+        {
+            var photo = await _client
+                .For<Photo>()
+                .Key(1)
+                .FindEntryAsync();
+            photo.Media = await _client
+                .For<Photo>()
+                .Key(photo.Id)
+                .GetMediaAsBytesAsync();
+
+            Assert.Equal(12277, photo.Media.Length);
+        }
+
         private Event CreateTestEvent()
         {
             return new Event

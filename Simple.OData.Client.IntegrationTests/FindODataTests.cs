@@ -194,5 +194,57 @@ namespace Simple.OData.Client.Tests
                 .FindEntriesAsync();
             Assert.Equal(2, products.Count());
         }
+
+        [Fact]
+        public async Task GetMediaEntityStream()
+        {
+            if (_version == 2) // No media support in OData V2
+                return;
+
+            var ad = await _client
+                .For("Advertisements")
+                .FindEntryAsync();
+            var id = ad["ID"];
+            var stream = await _client
+                .For("Advertisements")
+                .Key(id)
+                .GetMediaStreamAsync();
+            var text = Utils.StreamToString(stream);
+            Assert.True(text.StartsWith("Test stream data"));
+        }
+
+        [Fact]
+        public async Task GetMediaPropertyStream()
+        {
+            if (_version == 2) // No media support in OData V2
+                return;
+
+            var stream = await _client
+                .For("Persons")
+                .Key(1)
+                .NavigateTo("PersonDetail")
+                .GetMediaStreamAsync("Photo");
+            var text = Utils.StreamToString(stream);
+            Assert.True(text.StartsWith("Test named stream data"));
+        }
+
+        class PersonDetail
+        {
+            public string Photo { get; set; }
+        }
+
+        [Fact]
+        public async Task GetMediaTypedPropertyStream()
+        {
+            if (_version == 2) // No media support in OData V2
+                return;
+
+            var text = await _client
+                .For("Persons")
+                .Key(1)
+                .NavigateTo<PersonDetail>()
+                .GetMediaAsStringAsync(x => x.Photo);
+            Assert.True(text.StartsWith("Test named stream data"));
+        }
     }
 }

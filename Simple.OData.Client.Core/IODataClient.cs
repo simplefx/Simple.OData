@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -230,6 +231,35 @@ namespace Simple.OData.Client
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The entry with the specified key</returns>
         Task<IDictionary<string, object>> GetEntryAsync(string collection, IDictionary<string, object> entryKey, CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Retrieves media entry stream by executing OData GET request.
+        /// </summary>
+        /// <param name="commandText">The OData command text.</param>
+        /// <returns>The media stream.</returns>
+        Task<Stream> GetMediaStreamAsync(string commandText);
+        /// <summary>
+        /// Retrieves media entry stream by executing OData GET request.
+        /// </summary>
+        /// <param name="commandText">The OData command text.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>The media stream.</returns>
+        Task<Stream> GetMediaStreamAsync(string commandText, CancellationToken cancellationToken);
+        /// <summary>
+        /// Retrieves the named stream by executing OData GET request.
+        /// </summary>
+        /// <param name="commandText">The OData command text.</param>
+        /// <param name="streamName">The name of the media stream.</param>
+        /// <returns>The media stream.</returns>
+        Task<Stream> GetMediaStreamAsync(string commandText, string streamName);
+        /// <summary>
+        /// Retrieves the named stream by executing OData GET request.
+        /// </summary>
+        /// <param name="commandText">The OData command text.</param>
+        /// <param name="streamName">The name of the media stream.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>The media stream.</returns>
+        Task<Stream> GetMediaStreamAsync(string commandText, string streamName, CancellationToken cancellationToken);
 
         /// <summary>
         /// Insert a new entry by executing OData POST request.

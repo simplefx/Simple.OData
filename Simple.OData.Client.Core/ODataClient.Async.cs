@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
@@ -540,6 +541,46 @@ namespace Simple.OData.Client
             return await ExecuteRequestWithResultAsync(request, cancellationToken, x => x.AsEntry(), () => null);
         }
 
+        public Task<Stream> GetMediaStreamAsync(string commandText)
+        {
+            return GetMediaStreamAsync(commandText, CancellationToken.None);
+        }
+
+        public async Task<Stream> GetMediaStreamAsync(string commandText, CancellationToken cancellationToken)
+        {
+            if (IsBatchResponse)
+                throw new NotSupportedException("Media requests are not supported in batch mode");
+
+            await _session.ResolveAdapterAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+            var commandTextWithValue = commandText.EndsWith("/" + ODataLiteral.Value) ? commandText : commandText + "/" + ODataLiteral.Value;
+            var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
+                .CreateGetRequestAsync(commandTextWithValue, true);
+
+            return await ExecuteStreamRequestAsync(request, cancellationToken);
+        }
+
+        public Task<Stream> GetMediaStreamAsync(string commandText, string streamName)
+        {
+            return GetMediaStreamAsync(commandText, streamName, CancellationToken.None);
+        }
+
+        public async Task<Stream> GetMediaStreamAsync(string commandText, string streamName, CancellationToken cancellationToken)
+        {
+            if (IsBatchResponse)
+                throw new NotSupportedException("Media requests are not supported in batch mode");
+
+            await _session.ResolveAdapterAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+            var commandTextWithStreamName = commandText + "/" + streamName;
+            var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
+                .CreateGetRequestAsync(commandTextWithStreamName, true);
+
+            return await ExecuteStreamRequestAsync(request, cancellationToken);
+        }
+
         public Task<IDictionary<string, object>> InsertEntryAsync(string collection, IDictionary<string, object> entryData)
         {
             return InsertEntryAsync(collection, entryData, true, CancellationToken.None);
@@ -999,6 +1040,41 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             return await FindScalarAsync(commandText, cancellationToken);
+        }
+
+        internal async Task<Stream> GetMediaStreamAsync(FluentCommand command, string streamName, CancellationToken cancellationToken)
+        {
+            if (IsBatchResponse)
+                throw new NotSupportedException("Media requests are not supported in batch mode");
+
+            await _session.ResolveAdapterAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+            var commandText = await command.GetCommandTextAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+            return string.IsNullOrEmpty(streamName)
+                ? await GetMediaStreamAsync(commandText, cancellationToken)
+                : await GetMediaStreamAsync(commandText, streamName, cancellationToken);
+        }
+
+        internal async Task<byte[]> GetMediaAsBytesAsync(FluentCommand command, string streamName, CancellationToken cancellationToken)
+        {
+            using (var stream = await GetMediaStreamAsync(command, streamName, cancellationToken))
+            {
+                var bytes = new byte[stream.Length];
+                stream.Position = 0;
+                stream.Write(bytes, 0, bytes.Length);
+                return bytes;
+            }
+        }
+
+        internal async Task<string> GetMediaAsStringAsync(FluentCommand command, string streamName, CancellationToken cancellationToken)
+        {
+            using (var stream = await GetMediaStreamAsync(command, streamName, cancellationToken))
+            {
+                return Utils.StreamToString(stream);
+            }
         }
 
         internal async Task<IDictionary<string, object>> InsertEntryAsync(FluentCommand command, IDictionary<string, object> entryData, bool resultRequired, CancellationToken cancellationToken)

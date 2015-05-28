@@ -74,6 +74,7 @@ namespace Simple.OData.Client.Tests
     {
         public long Id { get; set; }
         public string Name { get; set; }
+        public byte[] Media { get; set; }
     }
 
     class PlanItem
