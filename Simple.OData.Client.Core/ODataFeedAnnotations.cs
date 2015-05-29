@@ -47,20 +47,34 @@ namespace Simple.OData.Client
 
         internal void CopyFrom(ODataFeedAnnotations src)
         {
-            this.Id = src.Id;
-            this.Count = src.Count;
-            this.DeltaLink = src.DeltaLink;
-            this.NextPageLink = src.NextPageLink;
-            this.InstanceAnnotations = src.InstanceAnnotations;
+            if (src != null)
+            {
+                this.Id = src.Id;
+                this.Count = src.Count;
+                this.DeltaLink = src.DeltaLink;
+                this.NextPageLink = src.NextPageLink;
+                this.InstanceAnnotations = src.InstanceAnnotations;
+            }
+            else
+            {
+                this.Id = null;
+                this.Count = null;
+                this.DeltaLink = null;
+                this.NextPageLink = null;
+                this.InstanceAnnotations = null;
+            }
         }
 
         internal void Merge(ODataFeedAnnotations src)
         {
-            this.Id = this.Id ?? src.Id;
-            this.Count = this.Count ?? src.Count;
-            this.DeltaLink = this.DeltaLink ?? src.DeltaLink;
-            this.NextPageLink = this.NextPageLink ?? src.NextPageLink;
-            this.InstanceAnnotations = this.InstanceAnnotations ?? src.InstanceAnnotations;
+            if (src != null)
+            {
+                this.Id = this.Id ?? src.Id;
+                this.Count = this.Count ?? src.Count;
+                this.DeltaLink = this.DeltaLink ?? src.DeltaLink;
+                this.NextPageLink = this.NextPageLink ?? src.NextPageLink;
+                this.InstanceAnnotations = this.InstanceAnnotations ?? src.InstanceAnnotations;
+            }
         }
     }
 }

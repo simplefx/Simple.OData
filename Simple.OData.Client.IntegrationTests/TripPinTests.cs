@@ -40,6 +40,20 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task FindSinglePersonWithAnnotations()
+        {
+            var annotations = new ODataFeedAnnotations();
+
+            var people = await _client
+                .For<Person>()
+                .Filter(x => x.UserName == "russellwhyte")
+                .FindEntriesAsync(annotations);
+
+            Assert.Equal(1, people.Count());
+            Assert.Null(annotations.NextPageLink);
+        }
+
+        [Fact]
         public async Task FindPersonExpandTripsAndFriends()
         {
             var person = await _client
