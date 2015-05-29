@@ -225,6 +225,30 @@ namespace Simple.OData.Client
         IUnboundClient<T> ThenByDescending(Expression<Func<T, object>> expression);
 
         /// <summary>
+        /// Selects retrieval of an entity media stream.
+        /// </summary>
+        /// <returns>Self.</returns>
+        IMediaClient Media();
+        /// <summary>
+        /// Selects retrieval of a named media stream.
+        /// </summary>
+        /// <param name="streamName">The media stream name.</param>
+        /// <returns>Self.</returns>
+        IMediaClient Media(string streamName);
+        /// <summary>
+        /// Selects retrieval of a named media stream.
+        /// </summary>
+        /// <param name="expression">The media stream name expression.</param>
+        /// <returns>Self.</returns>
+        IMediaClient Media(ODataExpression expression);
+        /// <summary>
+        /// Selects retrieval of a named media stream.
+        /// </summary>
+        /// <param name="expression">The media stream name expression.</param>
+        /// <returns>Self.</returns>
+        IMediaClient Media(Expression<Func<T, object>> expression);
+
+        /// <summary>
         /// Requests the number of results.
         /// </summary>
         /// <returns>Self.</returns>

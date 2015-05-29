@@ -208,7 +208,8 @@ namespace Simple.OData.Client.Tests
             var stream = await _client
                 .For("Advertisements")
                 .Key(id)
-                .GetMediaStreamAsync();
+                .Media()
+                .GetStreamAsync();
             var text = Utils.StreamToString(stream);
             Assert.True(text.StartsWith("Test stream data"));
         }
@@ -223,7 +224,8 @@ namespace Simple.OData.Client.Tests
                 .For("Persons")
                 .Key(1)
                 .NavigateTo("PersonDetail")
-                .GetMediaStreamAsync("Photo");
+                .Media("Photo")
+                .GetStreamAsync();
             var text = Utils.StreamToString(stream);
             Assert.True(text.StartsWith("Test named stream data"));
         }
@@ -243,7 +245,8 @@ namespace Simple.OData.Client.Tests
                 .For("Persons")
                 .Key(1)
                 .NavigateTo<PersonDetail>()
-                .GetMediaAsStringAsync(x => x.Photo);
+                .Media(x => x.Photo)
+                .GetStreamAsStringAsync();
             Assert.True(text.StartsWith("Test named stream data"));
         }
     }

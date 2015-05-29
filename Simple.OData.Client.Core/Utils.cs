@@ -19,9 +19,22 @@ namespace Simple.OData.Client
             return new StreamReader(stream).ReadToEnd();
         }
 
-        public static Stream StringToStream(string str)
+        public static byte[] StreamToByteArray(Stream stream)
         {
-            return new MemoryStream(Encoding.UTF8.GetBytes(str));
+            var bytes = new byte[stream.Length];
+            stream.Position = 0;
+            stream.Write(bytes, 0, bytes.Length);
+            return bytes;
+        }
+
+        public static Stream StringToStream(string text)
+        {
+            return new MemoryStream(Encoding.UTF8.GetBytes(text));
+        }
+
+        public static Stream ByteArrayToStream(byte[] bytes)
+        {
+            return new MemoryStream(bytes);
         }
 
         public static Stream CloneStream(Stream stream)

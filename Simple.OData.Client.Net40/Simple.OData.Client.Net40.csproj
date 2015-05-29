@@ -234,8 +234,14 @@
     <Compile Include="..\Simple.OData.Client.Core\Fluent\IFluentClient.cs">
       <Link>Fluent\IFluentClient.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Fluent\IMediaClient.cs">
+      <Link>Fluent\IMediaClient.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Fluent\IUnboundClient.cs">
       <Link>Fluent\IUnboundClient.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Fluent\MediaClient.cs">
+      <Link>Fluent\MediaClient.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Fluent\UnboundClient.cs">
       <Link>Fluent\UnboundClient.cs</Link>

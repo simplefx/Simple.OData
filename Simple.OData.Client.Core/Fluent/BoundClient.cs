@@ -302,6 +302,30 @@ namespace Simple.OData.Client
             return this;
         }
 
+        public IMediaClient Media()
+        {
+            this.Command.Media();
+            return new MediaClient(_client, _session, this.Command, _dynamicResults);
+        }
+
+        public IMediaClient Media(string streamName)
+        {
+            this.Command.Media(streamName);
+            return new MediaClient(_client, _session, this.Command, _dynamicResults);
+        }
+
+        public IMediaClient Media(ODataExpression expression)
+        {
+            this.Command.Media(expression);
+            return new MediaClient(_client, _session, this.Command, _dynamicResults);
+        }
+
+        public IMediaClient Media(Expression<Func<T, object>> expression)
+        {
+            this.Command.Media(ColumnExpression.ExtractColumnName(expression));
+            return new MediaClient(_client, _session, this.Command, _dynamicResults);
+        }
+
         public IBoundClient<T> Count()
         {
             this.Command.Count();

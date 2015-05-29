@@ -670,7 +670,8 @@ namespace Simple.OData.Client.Tests
             photo.Media = await _client
                 .For<Photo>()
                 .Key(photo.Id)
-                .GetMediaAsBytesAsync();
+                .Media()
+                .GetStreamAsArrayAsync();
 
             Assert.Equal(12277, photo.Media.Length);
         }

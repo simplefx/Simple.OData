@@ -280,11 +280,13 @@ namespace Simple.OData.Client.Tests
             await _client
                 .For("Advertisements")
                 .Key(id)
-                .SetMediaStreamAsync(stream);
+                .Media()
+                .SetStreamAsync(stream);
             stream = await _client
                 .For("Advertisements")
                 .Key(id)
-                .GetMediaStreamAsync();
+                .Media()
+                .GetStreamAsync();
             var text = Utils.StreamToString(stream);
             Assert.Equal("Updated stream data", text);
         }
@@ -300,12 +302,14 @@ namespace Simple.OData.Client.Tests
                 .For("Persons")
                 .Key(1)
                 .NavigateTo("PersonDetail")
-                .SetMediaStreamAsync("Photo", stream);
+                .Media("Photo")
+                .SetStreamAsync(stream);
             stream = await _client
                 .For("Persons")
                 .Key(1)
                 .NavigateTo("PersonDetail")
-                .GetMediaStreamAsync("Photo");
+                .Media("Photo")
+                .GetStreamAsync();
             var text = Utils.StreamToString(stream);
             Assert.Equal("Updated named stream data", text);
         }

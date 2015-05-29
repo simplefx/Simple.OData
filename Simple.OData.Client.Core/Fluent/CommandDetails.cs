@@ -27,6 +27,7 @@ namespace Simple.OData.Client
         public bool IncludeCount { get; set; }
         public string LinkName { get; set; }
         public ODataExpression LinkExpression { get; set; }
+        public string MediaName { get; set; }
         public SimpleDictionary<object, IDictionary<string, object>> BatchEntries { get; set; }
 
         public CommandDetails(Session session, FluentCommand parent, SimpleDictionary<object, IDictionary<string, object>> batchEntries)

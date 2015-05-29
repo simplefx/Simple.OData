@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -22,6 +23,7 @@ namespace Simple.OData.Client
 
         internal static readonly string ResultLiteral = "__result";
         internal static readonly string ResourceTypeLiteral = "__resourcetype";
+        internal static readonly string MeditEntityLiteral = "__entity";
 
         internal FluentCommand(Session session, FluentCommand parent, SimpleDictionary<object, IDictionary<string, object>> batchEntries)
         {
@@ -411,6 +413,24 @@ namespace Simple.OData.Client
         public FluentCommand ThenByDescending(params ODataExpression[] columns)
         {
             return ThenByDescending(columns.Select(x => x.Reference).ToArray());
+        }
+
+        public FluentCommand Media()
+        {
+            return Media(FluentCommand.MeditEntityLiteral);
+        }
+
+        public FluentCommand Media(string streamName)
+        {
+            if (IsBatchResponse) return this;
+
+            _details.MediaName = streamName;
+            return this;
+        }
+
+        public FluentCommand Media(ODataExpression expression)
+        {
+            return Media(expression.Reference);
         }
 
         public FluentCommand Count()
