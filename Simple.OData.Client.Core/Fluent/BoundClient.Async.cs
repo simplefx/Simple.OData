@@ -451,5 +451,15 @@ namespace Simple.OData.Client
         {
             return _client.SetMediaStreamAsync(_command, null, stream, cancellationToken);
         }
+
+        public Task SetMediaStreamAsync(string streamName, Stream stream)
+        {
+            return SetMediaStreamAsync(streamName, stream, CancellationToken.None);
+        }
+
+        public Task SetMediaStreamAsync(string streamName, Stream stream, CancellationToken cancellationToken)
+        {
+            return _client.SetMediaStreamAsync(_command, streamName, stream, cancellationToken);
+        }
     }
 }

@@ -267,7 +267,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task SetMediaEntityStream()
+        public async Task SetMediaStream()
         {
             if (_version == 2) // No media support in OData V2
                 return;
@@ -286,7 +286,28 @@ namespace Simple.OData.Client.Tests
                 .Key(id)
                 .GetMediaStreamAsync();
             var text = Utils.StreamToString(stream);
-            Assert.True(text.StartsWith("Updated stream data"));
+            Assert.Equal("Updated stream data", text);
+        }
+
+        [Fact]
+        public async Task SetNamedMediaStream()
+        {
+            if (_version == 2) // No media support in OData V2
+                return;
+
+            var stream = Utils.StringToStream("Updated named stream data");
+            await _client
+                .For("Persons")
+                .Key(1)
+                .NavigateTo("PersonDetail")
+                .SetMediaStreamAsync("Photo", stream);
+            stream = await _client
+                .For("Persons")
+                .Key(1)
+                .NavigateTo("PersonDetail")
+                .GetMediaStreamAsync("Photo");
+            var text = Utils.StreamToString(stream);
+            Assert.Equal("Updated named stream data", text);
         }
 
         //[Fact]

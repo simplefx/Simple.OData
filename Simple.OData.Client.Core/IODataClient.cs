@@ -429,27 +429,27 @@ namespace Simple.OData.Client
         Task UnlinkEntryAsync(string collection, IDictionary<string, object> entryKey, string linkName, IDictionary<string, object> linkedEntryKey, CancellationToken cancellationToken);
 
         /// <summary>
-        /// Retrieves media entry stream by executing OData GET request.
+        /// Retrieves a media entry stream by executing OData GET request.
         /// </summary>
         /// <param name="commandText">The OData command text.</param>
         /// <returns>The media stream.</returns>
         Task<Stream> GetMediaStreamAsync(string commandText);
         /// <summary>
-        /// Retrieves media entry stream by executing OData GET request.
+        /// Retrieves a media entry stream by executing OData GET request.
         /// </summary>
         /// <param name="commandText">The OData command text.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The media stream.</returns>
         Task<Stream> GetMediaStreamAsync(string commandText, CancellationToken cancellationToken);
         /// <summary>
-        /// Retrieves the named stream by executing OData GET request.
+        /// Retrieves a named stream by executing OData GET request.
         /// </summary>
         /// <param name="commandText">The OData command text.</param>
         /// <param name="streamName">The name of the media stream.</param>
         /// <returns>The media stream.</returns>
         Task<Stream> GetMediaStreamAsync(string commandText, string streamName);
         /// <summary>
-        /// Retrieves the named stream by executing OData GET request.
+        /// Retrieves a named stream by executing OData GET request.
         /// </summary>
         /// <param name="commandText">The OData command text.</param>
         /// <param name="streamName">The name of the media stream.</param>
@@ -458,35 +458,36 @@ namespace Simple.OData.Client
         Task<Stream> GetMediaStreamAsync(string commandText, string streamName, CancellationToken cancellationToken);
 
         /// <summary>
-        /// Assigns the stream to a media entry by executing OData PUT request.
+        /// Assigns a stream to a media entry by executing OData PUT request.
         /// </summary>
         /// <param name="commandText">The OData command text.</param>
         /// <param name="stream">The media stream.</param>
+        /// <returns>Task instance.</returns>
         Task SetMediaStreamAsync(string commandText, Stream stream);
         /// <summary>
-        /// Assigns the stream to a media entry by executing OData PUT request.
+        /// Assigns a stream to a media entry by executing OData PUT request.
         /// </summary>
         /// <param name="commandText">The OData command text.</param>
         /// <param name="stream">The media stream.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>The media stream.</returns>
+        /// <returns>Task instance.</returns>
         Task SetMediaStreamAsync(string commandText, Stream stream, CancellationToken cancellationToken);
         /// <summary>
-        /// Assigns the entry named stream by executing OData PUT request.
+        /// Assigns a named stream to an entry by executing OData PUT request.
         /// </summary>
         /// <param name="commandText">The OData command text.</param>
         /// <param name="streamName">The name of the media stream.</param>
         /// <param name="stream">The media stream.</param>
-        /// <returns>The media stream.</returns>
+        /// <returns>Task instance.</returns>
         Task SetMediaStreamAsync(string commandText, string streamName, Stream stream);
         /// <summary>
-        /// Assigns the entry named stream by executing OData PUT request.
+        /// Assigns a named stream to an entry by executing OData PUT request.
         /// </summary>
         /// <param name="commandText">The OData command text.</param>
         /// <param name="streamName">The name of the media stream.</param>
         /// <param name="stream">The media stream.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>The media stream.</returns>
+        /// <returns>Task instance.</returns>
         Task SetMediaStreamAsync(string commandText, string streamName, Stream stream, CancellationToken cancellationToken);
 
         /// <summary>

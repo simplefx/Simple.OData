@@ -399,130 +399,157 @@ namespace Simple.OData.Client
         Task UnlinkEntryAsync(ODataExpression expression, IDictionary<string, object> linkedEntryKey, CancellationToken cancellationToken);
 
         /// <summary>
-        /// Retrieves media entry stream by executing OData GET request.
+        /// Retrieves a media entry stream by executing OData GET request.
         /// </summary>
         /// <returns>The media stream.</returns>
         Task<Stream> GetMediaStreamAsync();
         /// <summary>
-        /// Retrieves media entry stream by executing OData GET request.
+        /// Retrieves a media entry stream by executing OData GET request.
         /// </summary>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The media stream.</returns>
         Task<Stream> GetMediaStreamAsync(CancellationToken cancellationToken);
         /// <summary>
-        /// Retrieves media entry stream as byte array by executing OData GET request.
+        /// Retrieves a media entry stream as byte array by executing OData GET request.
         /// </summary>
         /// <returns>The media stream converted to byte array.</returns>
         Task<byte[]> GetMediaAsBytesAsync();
         /// <summary>
-        /// Retrieves media entry stream as byte array by executing OData GET request.
+        /// Retrieves a media entry stream as byte array by executing OData GET request.
         /// </summary>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The media stream converted to byte array.</returns>
         Task<byte[]> GetMediaAsBytesAsync(CancellationToken cancellationToken);
         /// <summary>
-        /// Retrieves media entry stream as string array by executing OData GET request.
+        /// Retrieves a media entry stream as string array by executing OData GET request.
         /// </summary>
         /// <returns>The media stream converted to string.</returns>
         Task<string> GetMediaAsStringAsync();
         /// <summary>
-        /// Retrieves media entry stream as string by executing OData GET request.
+        /// Retrieves a media entry stream as string by executing OData GET request.
         /// </summary>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The media stream converted to string.</returns>
         Task<string> GetMediaAsStringAsync(CancellationToken cancellationToken);
         /// <summary>
-        /// Retrieves the named stream by executing OData GET request.
+        /// Retrieves a named stream by executing OData GET request.
         /// </summary>
         /// <param name="streamName">The name of the media stream.</param>
         /// <returns>The media stream.</returns>
         Task<Stream> GetMediaStreamAsync(string streamName);
         /// <summary>
-        /// Retrieves the named stream by executing OData GET request.
+        /// Retrieves a named stream by executing OData GET request.
         /// </summary>
         /// <param name="streamName">The name of the media stream.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The media stream.</returns>
         Task<Stream> GetMediaStreamAsync(string streamName, CancellationToken cancellationToken);
         /// <summary>
-        /// Retrieves the named stream by executing OData GET request.
+        /// Retrieves a named stream by executing OData GET request.
         /// </summary>
         /// <returns>The media stream.</returns>
         Task<Stream> GetMediaStreamAsync(ODataExpression expression);
         /// <summary>
-        /// Retrieves the named stream by executing OData GET request.
+        /// Retrieves a named stream by executing OData GET request.
         /// </summary>
         /// <param name="expression">The media stream name expression.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The media stream.</returns>
         Task<Stream> GetMediaStreamAsync(ODataExpression expression, CancellationToken cancellationToken);
         /// <summary>
-        /// Retrieves the named stream by executing OData GET request.
+        /// Retrieves a named stream by executing OData GET request.
         /// </summary>
         /// <param name="expression">The media stream name expression.</param>
         /// <returns>The media stream.</returns>
         Task<Stream> GetMediaStreamAsync(Expression<Func<T, object>> expression);
         /// <summary>
-        /// Retrieves the named stream by executing OData GET request.
+        /// Retrieves a named stream by executing OData GET request.
         /// </summary>
         /// <param name="expression">The media stream name expression.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The media stream.</returns>
         Task<Stream> GetMediaStreamAsync(Expression<Func<T, object>> expression, CancellationToken cancellationToken);
         /// <summary>
-        /// Retrieves the named stream by executing OData GET request.
+        /// Retrieves a named stream by executing OData GET request.
         /// </summary>
         /// <param name="expression">The media stream name expression.</param>
         /// <returns>The media stream converted to byte array.</returns>
         Task<byte[]> GetMediaAsBytesAsync(ODataExpression expression);
         /// <summary>
-        /// Retrieves the named stream by executing OData GET request.
+        /// Retrieves a named stream by executing OData GET request.
         /// </summary>
         /// <param name="expression">The media stream name expression.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The media stream converted to byte array.</returns>
         Task<byte[]> GetMediaAsBytesAsync(ODataExpression expression, CancellationToken cancellationToken);
         /// <summary>
-        /// Retrieves the named stream by executing OData GET request.
+        /// Retrieves a named stream by executing OData GET request.
         /// </summary>
         /// <param name="expression">The media stream name expression.</param>
         /// <returns>The media stream converted to byte array.</returns>
         Task<byte[]> GetMediaAsBytesAsync(Expression<Func<T, object>> expression);
         /// <summary>
-        /// Retrieves the named stream by executing OData GET request.
+        /// Retrieves a named stream by executing OData GET request.
         /// </summary>
         /// <param name="expression">The media stream name expression.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The media stream converted to byte array.</returns>
         Task<byte[]> GetMediaAsBytesAsync(Expression<Func<T, object>> expression, CancellationToken cancellationToken);
         /// <summary>
-        /// Retrieves the named stream by executing OData GET request.
+        /// Retrieves a named stream by executing OData GET request.
         /// </summary>
         /// <param name="expression">The media stream name expression.</param>
         /// <returns>The media stream.</returns>
         Task<string> GetMediaAsStringAsync(ODataExpression expression);
         /// <summary>
-        /// Retrieves the named stream by executing OData GET request.
+        /// Retrieves a named stream by executing OData GET request.
         /// </summary>
         /// <param name="expression">The media stream name expression.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The media stream.</returns>
         Task<string> GetMediaAsStringAsync(ODataExpression expression, CancellationToken cancellationToken);
         /// <summary>
-        /// Retrieves the named stream by executing OData GET request.
+        /// Retrieves a named stream by executing OData GET request.
         /// </summary>
         /// <param name="expression">The media stream name expression.</param>
         /// <returns>The media stream.</returns>
         Task<string> GetMediaAsStringAsync(Expression<Func<T, object>> expression);
         /// <summary>
-        /// Retrieves the named stream by executing OData GET request.
+        /// Retrieves a named stream by executing OData GET request.
         /// </summary>
         /// <param name="expression">The media stream name expression.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The media stream.</returns>
         Task<string> GetMediaAsStringAsync(Expression<Func<T, object>> expression, CancellationToken cancellationToken);
 
+        /// <summary>
+        /// Assigns a stream to a media entry by executing OData PUT request.
+        /// </summary>
+        /// <param name="stream">The media stream.</param>
+        /// <returns>Task instance.</returns>
         Task SetMediaStreamAsync(Stream stream);
+        /// <summary>
+        /// Assigns a stream to a media entry by executing OData PUT request.
+        /// </summary>
+        /// <param name="stream">The media stream.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task instance.</returns>
+        Task SetMediaStreamAsync(Stream stream, CancellationToken cancellationToken);
+        /// <summary>
+        /// Assigns a named stream to an entry by executing OData PUT request.
+        /// </summary>
+        /// <param name="streamName">The name of the media stream.</param>
+        /// <param name="stream">The media stream.</param>
+        /// <returns>Task instance.</returns>
+        Task SetMediaStreamAsync(string streamName, Stream stream);
+        /// <summary>
+        /// Assigns a named stream to an entry by executing OData PUT request.
+        /// </summary>
+        /// <param name="streamName">The name of the media stream.</param>
+        /// <param name="stream">The media stream.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Task instance.</returns>
+        Task SetMediaStreamAsync(string streamName, Stream stream, CancellationToken cancellationToken);
 
         /// <summary>
         /// Sets the container for data not covered by the entity properties. Typically used with OData open types.

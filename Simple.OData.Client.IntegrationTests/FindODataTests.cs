@@ -196,7 +196,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task GetMediaEntityStream()
+        public async Task GetMediaStream()
         {
             if (_version == 2) // No media support in OData V2
                 return;
@@ -214,7 +214,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task GetMediaPropertyStream()
+        public async Task GetNamedMediaStream()
         {
             if (_version == 2) // No media support in OData V2
                 return;
@@ -234,7 +234,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task GetMediaTypedPropertyStream()
+        public async Task GetTypedNamedMediaStream()
         {
             if (_version == 2) // No media support in OData V2
                 return;
