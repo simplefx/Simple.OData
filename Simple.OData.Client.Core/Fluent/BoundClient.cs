@@ -43,6 +43,12 @@ namespace Simple.OData.Client
             return this;
         }
 
+        public IBoundClient<T> WithMedia(IDictionary<string, object> properties)
+        {
+            this.Command.WithMedia(properties);
+            return this;
+        }
+
         public IBoundClient<IDictionary<string, object>> As(string derivedCollectionName)
         {
             this.Command.As(derivedCollectionName);

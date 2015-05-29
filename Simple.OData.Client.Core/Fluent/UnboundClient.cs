@@ -27,6 +27,12 @@ namespace Simple.OData.Client
             return this;
         }
 
+        public IUnboundClient<T> WithMedia(IDictionary<string, object> properties)
+        {
+            this.Command.WithMedia(properties);
+            return this;
+        }
+
         public IUnboundClient<IDictionary<string, object>> As(string derivedCollectionName)
         {
             this.Command.As(derivedCollectionName);

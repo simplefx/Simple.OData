@@ -309,26 +309,5 @@ namespace Simple.OData.Client.Tests
             var text = Utils.StreamToString(stream);
             Assert.Equal("Updated named stream data", text);
         }
-
-        //[Fact]
-        //public async Task SetMediaPropertyStream()
-        //{
-        //    if (_version == 2) // No media support in OData V2
-        //        return;
-
-        //    var stream = Utils.StringToStream("Updated stream data");
-        //    await _client
-        //        .For("Persons")
-        //        .Key(1)
-        //        .NavigateTo("PersonDetail")
-        //        .SetMediaStreamAsync("Photo", stream);
-        //    stream = await _client
-        //        .For("Persons")
-        //        .Key(1)
-        //        .NavigateTo("PersonDetail")
-        //        .GetMediaStreamAsync("Photo");
-        //    var text = Utils.StreamToString(stream);
-        //    Assert.True(text.StartsWith("Updated stream data"));
-        //}
     }
 }

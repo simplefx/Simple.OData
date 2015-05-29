@@ -160,6 +160,14 @@ namespace Simple.OData.Client
             return this;
         }
 
+        public FluentCommand WithMedia(IDictionary<string, object> properties)
+        {
+            if (IsBatchResponse) return this;
+
+            // TODO
+            return this;
+        }
+
         public FluentCommand For(ODataExpression expression)
         {
             if (IsBatchResponse) return this;

@@ -558,6 +558,8 @@ namespace Simple.OData.Client
         /// <returns>Self.</returns>
         IBoundClient<T> WithProperties(Expression<Func<T, IDictionary<string, object>>> expression);
 
+        IBoundClient<T> WithMedia(IDictionary<string, object> properties);
+
         /// <summary>
         /// Casts the collection of base entities as the collection of derived ones.
         /// </summary>
