@@ -68,6 +68,7 @@ namespace Simple.OData.Client
             this.IncludeCount = details.IncludeCount;
             this.LinkName = details.LinkName;
             this.LinkExpression = details.LinkExpression;
+            this.MediaName = details.MediaName;
             this.BatchEntries = details.BatchEntries;
         }
     }

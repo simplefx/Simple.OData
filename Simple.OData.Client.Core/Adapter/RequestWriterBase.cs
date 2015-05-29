@@ -38,6 +38,15 @@ namespace Simple.OData.Client
             return request;
         }
 
+        public async Task<ODataRequest> CreatePutRequestAsync(string commandText, Stream stream)
+        {
+            var entryContent = await WriteStreamContentAsync(stream);
+
+            var request = new ODataRequest(RestVerbs.Put, _session, commandText, null, entryContent);
+            AssignHeaders(request);
+            return request;
+        }
+
         public async Task<ODataRequest> CreateInsertRequestAsync(string collection, IDictionary<string, object> entryData, bool resultRequired)
         {
             var commandText = collection;
@@ -149,32 +158,6 @@ namespace Simple.OData.Client
                     ResultRequired = resultRequired,
                 };
             }
-        }
-
-        public Task<ODataRequest> CreateGetStreamRequestAsync(string commandText, string streamName)
-        {
-            string streamRequestCommandText;
-            if (string.IsNullOrEmpty(streamName))
-                streamRequestCommandText = commandText.EndsWith("/" + ODataLiteral.Value) ? commandText : commandText + "/" + ODataLiteral.Value;
-            else
-                streamRequestCommandText = commandText + "/" + streamName;
-
-            return CreateGetRequestAsync(streamRequestCommandText, true);
-        }
-
-        public async Task<ODataRequest> CreateSetStreamRequestAsync(string commandText, string streamName, Stream stream)
-        {
-            string streamRequestCommandText;
-            if (string.IsNullOrEmpty(streamName))
-                streamRequestCommandText = commandText.EndsWith("/" + ODataLiteral.Value) ? commandText : commandText + "/" + ODataLiteral.Value;
-            else
-                streamRequestCommandText = commandText + "/" + streamName;
-
-            var entryContent = await WriteStreamContentAsync(stream);
-
-            var request = new ODataRequest(RestVerbs.Put, _session, streamRequestCommandText, null, entryContent);
-            AssignHeaders(request);
-            return request;
         }
 
         protected abstract Task<Stream> WriteEntryContentAsync(string method, string collection, string commandText, IDictionary<string, object> entryData);

@@ -758,7 +758,7 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-                .CreateGetStreamRequestAsync(commandText, null);
+                .CreateGetRequestAsync(commandText, true);
 
             return await ExecuteGetStreamRequestAsync(request, cancellationToken);
         }
@@ -777,7 +777,7 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-                .CreateGetStreamRequestAsync(commandText, streamName);
+                .CreateGetRequestAsync(commandText, true);
 
             return await ExecuteGetStreamRequestAsync(request, cancellationToken);
         }
@@ -796,9 +796,9 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-                .CreateSetStreamRequestAsync(commandText, null, stream);
+                .CreatePutRequestAsync(commandText, stream);
 
-            await ExecuteSetStreamRequestAsync(request, stream, cancellationToken);
+            await ExecuteRequestAsync(request, cancellationToken);
         }
 
         public Task SetMediaStreamAsync(string commandText, string streamName, Stream stream)
@@ -815,9 +815,9 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-                .CreateSetStreamRequestAsync(commandText, streamName, stream);
+                .CreatePutRequestAsync(commandText, stream);
 
-            await ExecuteSetStreamRequestAsync(request, stream, cancellationToken);
+            await ExecuteRequestAsync(request, cancellationToken);
         }
 
         public Task<IDictionary<string, object>> ExecuteFunctionAsSingleAsync(string functionName, IDictionary<string, object> parameters)

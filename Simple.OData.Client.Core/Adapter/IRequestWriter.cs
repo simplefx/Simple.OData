@@ -9,6 +9,7 @@ namespace Simple.OData.Client
     public interface IRequestWriter
     {
         Task<ODataRequest> CreateGetRequestAsync(string commandText, bool scalarResult);
+        Task<ODataRequest> CreatePutRequestAsync(string commandText, Stream stream);
         Task<ODataRequest> CreateInsertRequestAsync(string collection, IDictionary<string, object> entryData, bool resultRequired);
         Task<ODataRequest> CreateUpdateRequestAsync(string collection, string entryIdent, IDictionary<string, object> entryKey, IDictionary<string, object> entryData, bool resultRequired);
         Task<ODataRequest> CreateDeleteRequestAsync(string collection, string entryIdent);
@@ -16,7 +17,5 @@ namespace Simple.OData.Client
         Task<ODataRequest> CreateUnlinkRequestAsync(string collection, string linkName, string entryIdent, string linkIdent);
         Task<ODataRequest> CreateFunctionRequestAsync(string collection, string functionName);
         Task<ODataRequest> CreateActionRequestAsync(string collection, string actionName, IDictionary<string, object> parameters, bool resultRequired);
-        Task<ODataRequest> CreateGetStreamRequestAsync(string commandText, string streamName);
-        Task<ODataRequest> CreateSetStreamRequestAsync(string commandText, string streamName, Stream stream);
     }
 }

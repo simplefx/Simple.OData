@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
 using System.Linq;
 
 namespace Simple.OData.Client
@@ -39,27 +40,37 @@ namespace Simple.OData.Client
             if (command.HasKey)
                 commandText += ConvertKeyValuesToUriLiteral(command.KeyValues, true);
 
-            if (!string.IsNullOrEmpty(command.Details.FunctionName) || !string.IsNullOrEmpty(command.Details.ActionName))
+            if (!string.IsNullOrEmpty(command.Details.MediaName))
             {
-                if (!string.IsNullOrEmpty(command.Details.CollectionName) || !string.IsNullOrEmpty(command.Details.LinkName))
-                    commandText += "/";
-                if (!string.IsNullOrEmpty(command.Details.FunctionName))
-                    commandText += _session.Metadata.GetFunctionFullName(command.Details.FunctionName);
-                else
-                    commandText += _session.Metadata.GetActionFullName(command.Details.ActionName);
+                commandText += "/" + (command.Details.MediaName == FluentCommand.MeditEntityLiteral
+                    ? ODataLiteral.Value
+                    : command.Details.MediaName);
             }
-
-            if (!string.IsNullOrEmpty(command.Details.FunctionName) && FunctionFormat == FunctionFormat.Key)
-                commandText += ConvertKeyValuesToUriLiteral(command.CommandData, false);
-
-            if (!string.IsNullOrEmpty(command.Details.DerivedCollectionName))
+            else
             {
-                var entityTypeNamespace = _session.Metadata.GetEntityCollectionTypeNamespace(command.Details.DerivedCollectionName);
-                var entityTypeName = _session.Metadata.GetEntityTypeExactName(command.Details.DerivedCollectionName);
-                commandText += string.Format("/{0}.{1}", entityTypeNamespace, entityTypeName);
-            }
 
-            commandText += FormatClauses(command);
+                if (!string.IsNullOrEmpty(command.Details.FunctionName) || !string.IsNullOrEmpty(command.Details.ActionName))
+                {
+                    if (!string.IsNullOrEmpty(command.Details.CollectionName) || !string.IsNullOrEmpty(command.Details.LinkName))
+                        commandText += "/";
+                    if (!string.IsNullOrEmpty(command.Details.FunctionName))
+                        commandText += _session.Metadata.GetFunctionFullName(command.Details.FunctionName);
+                    else
+                        commandText += _session.Metadata.GetActionFullName(command.Details.ActionName);
+                }
+
+                if (!string.IsNullOrEmpty(command.Details.FunctionName) && FunctionFormat == FunctionFormat.Key)
+                    commandText += ConvertKeyValuesToUriLiteral(command.CommandData, false);
+
+                if (!string.IsNullOrEmpty(command.Details.DerivedCollectionName))
+                {
+                    var entityTypeNamespace = _session.Metadata.GetEntityCollectionTypeNamespace(command.Details.DerivedCollectionName);
+                    var entityTypeName = _session.Metadata.GetEntityTypeExactName(command.Details.DerivedCollectionName);
+                    commandText += string.Format("/{0}.{1}", entityTypeNamespace, entityTypeName);
+                }
+
+                commandText += FormatClauses(command);
+            }
 
             return commandText;
         }

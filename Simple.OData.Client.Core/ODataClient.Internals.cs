@@ -251,6 +251,26 @@ namespace Simple.OData.Client
             }
         }
 
+        private async Task ExecuteRequestAsync(ODataRequest request, CancellationToken cancellationToken)
+        {
+            if (IsBatchRequest)
+                return;
+
+            try
+            {
+                using (await _requestRunner.ExecuteRequestAsync(request, cancellationToken))
+                {
+                }
+            }
+            catch (WebRequestException ex)
+            {
+                if (_settings.IgnoreResourceNotFoundException && ex.Code == HttpStatusCode.NotFound)
+                    return;
+                else
+                    throw;
+            }
+        }
+
         private async Task<T> ExecuteRequestWithResultAsync<T>(ODataRequest request, CancellationToken cancellationToken,
             Func<ODataResponse, T> createResult, Func<T> createEmptyResult, Func<T> createBatchResult = null)
         {
@@ -312,26 +332,6 @@ namespace Simple.OData.Client
             {
                 if (_settings.IgnoreResourceNotFoundException && ex.Code == HttpStatusCode.NotFound)
                     return Stream.Null;
-                else
-                    throw;
-            }
-        }
-
-        private async Task ExecuteSetStreamRequestAsync(ODataRequest request, Stream stream, CancellationToken cancellationToken)
-        {
-            if (IsBatchRequest)
-                return;
-
-            try
-            {
-                using (var response = await _requestRunner.ExecuteRequestAsync(request, cancellationToken))
-                {
-                }
-            }
-            catch (WebRequestException ex)
-            {
-                if (_settings.IgnoreResourceNotFoundException && ex.Code == HttpStatusCode.NotFound)
-                    return;
                 else
                     throw;
             }

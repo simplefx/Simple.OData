@@ -676,6 +676,27 @@ namespace Simple.OData.Client.Tests
             Assert.Equal(12277, photo.Media.Length);
         }
 
+        //[Fact]
+        //public async Task SetPhotoMedia()
+        //{
+        //    var photo = await _client
+        //        .For<Photo>()
+        //        .Key(1)
+        //        .FindEntryAsync();
+        //    await _client
+        //        .For<Photo>()
+        //        .Key(photo.Id)
+        //        .Media()
+        //        .SetStreamAsync(new byte[] {1,2,3,4,5,6,7,8,9,10});
+        //    photo.Media = await _client
+        //        .For<Photo>()
+        //        .Key(photo.Id)
+        //        .Media()
+        //        .GetStreamAsArrayAsync();
+
+        //    Assert.Equal(10, photo.Media.Length);
+        //}
+
         private Event CreateTestEvent()
         {
             return new Event
