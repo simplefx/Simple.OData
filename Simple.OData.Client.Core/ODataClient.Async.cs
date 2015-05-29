@@ -396,60 +396,32 @@ namespace Simple.OData.Client
 
         public Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(string commandText)
         {
-            return FindEntriesAsync(commandText, CancellationToken.None);
+            return FindEntriesAsync(commandText, false, null, CancellationToken.None);
         }
 
         public Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(string commandText, CancellationToken cancellationToken)
         {
-            return FindEntriesAsync(commandText, false, cancellationToken);
+            return FindEntriesAsync(commandText, false, null, cancellationToken);
         }
 
         public Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(string commandText, bool scalarResult)
         {
-            return FindEntriesAsync(commandText, scalarResult, CancellationToken.None);
+            return FindEntriesAsync(commandText, scalarResult, null, CancellationToken.None);
         }
 
-        public async Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(string commandText, bool scalarResult, CancellationToken cancellationToken)
+        public Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(string commandText, bool scalarResult, CancellationToken cancellationToken)
         {
-            if (IsBatchResponse)
-                return _batchResponse.AsEntries();
-
-            await _session.ResolveAdapterAsync(cancellationToken);
-            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-
-            var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-                .CreateGetRequestAsync(commandText, scalarResult);
-
-            return await ExecuteRequestWithResultAsync(request, cancellationToken,
-                x => x.AsEntries(),
-                () => new IDictionary<string, object>[] {});
+            return FindEntriesAsync(commandText, scalarResult, null, cancellationToken);
         }
 
         public Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(string commandText, ODataFeedAnnotations annotations)
         {
-            return FindEntriesAsync(commandText, annotations, CancellationToken.None);
+            return FindEntriesAsync(commandText, false, annotations, CancellationToken.None);
         }
 
-        public async Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(string commandText, ODataFeedAnnotations annotations, CancellationToken cancellationToken)
+        public Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(string commandText, ODataFeedAnnotations annotations, CancellationToken cancellationToken)
         {
-            if (IsBatchResponse)
-            {
-                annotations.CopyFrom(_batchResponse.Annotations);
-                return _batchResponse.AsEntries();
-            }
-
-            await _session.ResolveAdapterAsync(cancellationToken);
-            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-
-            var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-                .CreateGetRequestAsync(commandText, false);
-
-            return await ExecuteRequestWithResultAsync(request, cancellationToken, x =>
-                {
-                    annotations.CopyFrom(x.Annotations);
-                    return x.Entries;
-                },
-                () => new IDictionary<string, object>[] {});
+            return FindEntriesAsync(commandText, false, annotations, cancellationToken);
         }
 
         public Task<IDictionary<string, object>> FindEntryAsync(string commandText)
@@ -1004,6 +976,30 @@ namespace Simple.OData.Client
         }
 
         #pragma warning restore 1591
+
+        private async Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(string commandText, bool scalarResult, ODataFeedAnnotations annotations, CancellationToken cancellationToken)
+        {
+            if (IsBatchResponse)
+            {
+                if (annotations != null)
+                    annotations.CopyFrom(_batchResponse.Annotations);
+                return _batchResponse.AsEntries();
+            }
+
+            await _session.ResolveAdapterAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+            var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
+                .CreateGetRequestAsync(commandText, scalarResult);
+
+            return await ExecuteRequestWithResultAsync(request, cancellationToken, x =>
+            {
+                if (annotations != null)
+                    annotations.CopyFrom(x.Annotations);
+                return x.AsEntries();
+            },
+            () => new IDictionary<string, object>[] { });
+        }
 
         internal async Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(FluentCommand command, CancellationToken cancellationToken)
         {
