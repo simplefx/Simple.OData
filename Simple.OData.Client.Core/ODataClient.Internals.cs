@@ -234,7 +234,7 @@ namespace Simple.OData.Client
             using (var response = await _requestRunner.ExecuteRequestAsync(request, cancellationToken))
             {
                 var responseReader = _session.Adapter.GetResponseReader();
-                batchResponse = await responseReader.GetResponseAsync(response, _session.Settings.IncludeResourceTypeInEntryProperties);
+                batchResponse = await responseReader.GetResponseAsync(response, _session.Settings.IncludeAnnotationsInResults);
             }
 
             // Replay batch operations to assign results
@@ -289,7 +289,7 @@ namespace Simple.OData.Client
                         (request.Method == RestVerbs.Get || request.ResultRequired))
                     {
                         var responseReader = _session.Adapter.GetResponseReader();
-                        return createResult(await responseReader.GetResponseAsync(response, _settings.IncludeResourceTypeInEntryProperties));
+                        return createResult(await responseReader.GetResponseAsync(response, _session.Settings.IncludeAnnotationsInResults));
                     }
                     else
                     {
@@ -389,9 +389,13 @@ namespace Simple.OData.Client
 
         private void RemoveSystemProperties(IDictionary<string, object> entryData)
         {
-            if (_settings.IncludeResourceTypeInEntryProperties && entryData.ContainsKey(FluentCommand.ResourceTypeLiteral))
+            if (_settings.IncludeAnnotationsInResults && entryData.ContainsKey(FluentCommand.ResourceTypeLiteral))
             {
                 entryData.Remove(FluentCommand.ResourceTypeLiteral);
+            }
+            if (_settings.IncludeAnnotationsInResults && entryData.ContainsKey(FluentCommand.AnnotationsLiteral))
+            {
+                entryData.Remove(FluentCommand.AnnotationsLiteral);
             }
         }
 

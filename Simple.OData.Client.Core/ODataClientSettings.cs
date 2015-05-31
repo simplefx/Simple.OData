@@ -60,7 +60,20 @@ namespace Simple.OData.Client
         /// <value>
         /// <c>true</c> to include resource type in entry properties; otherwise, <c>false</c>.
         /// </value>
-        public bool IncludeResourceTypeInEntryProperties { get; set; }
+        [Obsolete("This property is obsolete. Use IncludeAnnotationsInResults instead.")]
+        public bool IncludeResourceTypeInEntryProperties
+        {
+            get { return this.IncludeAnnotationsInResults; }
+            set { this.IncludeAnnotationsInResults = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether entry properties should be extended with the OData annotations.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> to include OData annotations in entry properties; otherwise, <c>false</c>.
+        /// </value>
+        public bool IncludeAnnotationsInResults { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether resource not found exception (404) should be ignored.
@@ -171,6 +184,7 @@ namespace Simple.OData.Client
             this.PayloadFormat = session.Settings.PayloadFormat;
             this.RequestTimeout = session.Settings.RequestTimeout;
             this.IncludeResourceTypeInEntryProperties = session.Settings.IncludeResourceTypeInEntryProperties;
+            this.IncludeAnnotationsInResults = session.Settings.IncludeAnnotationsInResults;
             this.IgnoreResourceNotFoundException = session.Settings.IgnoreResourceNotFoundException;
             this.IgnoreUnmappedProperties = session.Settings.IgnoreUnmappedProperties;
             this.MetadataDocument = session.Settings.MetadataDocument;

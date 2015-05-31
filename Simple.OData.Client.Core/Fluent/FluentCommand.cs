@@ -23,6 +23,7 @@ namespace Simple.OData.Client
 
         internal static readonly string ResultLiteral = "__result";
         internal static readonly string ResourceTypeLiteral = "__resourcetype";
+        internal static readonly string AnnotationsLiteral = "__annotations";
         internal static readonly string MeditEntityLiteral = "__entity";
 
         internal FluentCommand(Session session, FluentCommand parent, SimpleDictionary<object, IDictionary<string, object>> batchEntries)

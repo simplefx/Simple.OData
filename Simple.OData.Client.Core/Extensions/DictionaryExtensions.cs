@@ -54,80 +54,6 @@ namespace Simple.OData.Client.Extensions
 
             var instance = instanceFactory();
 
-            Func<Type, bool> IsCompoundType = fieldOrPropertyType =>
-                !fieldOrPropertyType.IsValue() && !fieldOrPropertyType.IsArray && fieldOrPropertyType != typeof(string);
-
-            Func<Type, object, bool> IsCollectionType = (fieldOrPropertyType, itemValue) =>
-                (fieldOrPropertyType.IsArray ||
-                fieldOrPropertyType.IsGeneric() &&
-                typeof(System.Collections.IEnumerable).IsTypeAssignableFrom(fieldOrPropertyType)) &&
-                (itemValue as System.Collections.IEnumerable) != null;
-
-            Func<Type, object, object> ConvertEnum = (fieldOrPropertyType, itemValue) =>
-            {
-                if (itemValue == null)
-                    return null;
-                var stringValue = itemValue.ToString();
-                int intValue;
-                if (int.TryParse(stringValue, out intValue))
-                {
-                    object result;
-                    Utils.TryConvert(intValue, fieldOrPropertyType, out result);
-                    return result;
-                }
-                else
-                {
-                    return Enum.Parse(fieldOrPropertyType, stringValue, false);
-                }
-            };
-
-            Func<Type, object, object> ConvertSingle = (fieldOrPropertyType, itemValue) =>
-                IsCompoundType(fieldOrPropertyType)
-                ? itemValue.ToDictionary().ToObject(fieldOrPropertyType)
-                : fieldOrPropertyType.IsEnumType()
-                    ? ConvertEnum(fieldOrPropertyType, itemValue)
-                    : itemValue;
-
-            Func<Type, object, object> ConvertCollection = (fieldOrPropertyType, itemValue) =>
-            {
-                var elementType = fieldOrPropertyType.IsArray
-                    ? fieldOrPropertyType.GetElementType()
-                    : fieldOrPropertyType.IsGeneric() && fieldOrPropertyType.GetGenericTypeArguments().Length == 1
-                        ? fieldOrPropertyType.GetGenericTypeArguments()[0]
-                        : null;
-                if (elementType == null)
-                    return null;
-
-                var count = (itemValue as System.Collections.IEnumerable).Cast<object>().Count();
-                var arrayValue = Array.CreateInstance(elementType, count);
-
-                count = 0;
-                foreach (var item in (itemValue as System.Collections.IEnumerable))
-                {
-                    (arrayValue as Array).SetValue(ConvertSingle(elementType, item), count++);
-                }
-
-                if (fieldOrPropertyType.IsArray || fieldOrPropertyType.IsTypeAssignableFrom(arrayValue.GetType()))
-                {
-                    return arrayValue;
-                }
-                else
-                {
-                    var typedef = typeof(IEnumerable<>);
-                    var enumerableType = typedef.MakeGenericType(elementType);
-                    var ctor = fieldOrPropertyType.GetDeclaredConstructors().FirstOrDefault(
-                        x => x.GetParameters().Length == 1 && x.GetParameters().First().ParameterType == enumerableType);
-                    return ctor != null
-                        ? ctor.Invoke(new object[] { arrayValue })
-                        : null;
-                }
-            };
-
-            Func<Type, object, object> ConvertValue = (fieldOrPropertyType, itemValue) =>
-                IsCollectionType(fieldOrPropertyType, itemValue)
-                ? ConvertCollection(fieldOrPropertyType, itemValue)
-                : ConvertSingle(fieldOrPropertyType, itemValue);
-
             IDictionary<string, object> dynamicProperties = null;
             if (!string.IsNullOrEmpty(dynamicPropertiesContainerName))
             {
@@ -136,8 +62,7 @@ namespace Simple.OData.Client.Extensions
 
             foreach (var item in source)
             {
-                var property = type.GetAnyProperty(item.Key) ??
-                    type.GetAllProperties().FirstOrDefault(x => x.GetMappedName() == item.Key);
+                var property = FindMatchingProperty(type, item);
 
                 if (property != null && property.CanWrite && !property.IsNotMapped())
                 {
@@ -151,6 +76,105 @@ namespace Simple.OData.Client.Extensions
             }
 
             return instance;
+        }
+
+        private static PropertyInfo FindMatchingProperty(Type type, KeyValuePair<string, object> item)
+        {
+            var property = type.GetAnyProperty(item.Key) ?? 
+                type.GetAllProperties().FirstOrDefault(x => x.GetMappedName() == item.Key);
+
+            if (property == null && item.Key == FluentCommand.AnnotationsLiteral)
+            {
+                property = type.GetAllProperties().FirstOrDefault(x => x.PropertyType == typeof(ODataEntryAnnotations));
+            }
+
+            return property;
+        }
+
+        private static object ConvertValue(Type type, object itemValue)
+        {
+            return IsCollectionType(type, itemValue)
+                ? ConvertCollection(type, itemValue)
+                : ConvertSingle(type, itemValue);
+        }
+
+        private static bool IsCollectionType(Type type, object itemValue)
+        {
+            return 
+                (type.IsArray || type.IsGeneric() &&
+                typeof(System.Collections.IEnumerable).IsTypeAssignableFrom(type)) &&
+                (itemValue as System.Collections.IEnumerable) != null;
+        }
+
+        private static bool IsCompoundType(Type type)
+        {
+            return !type.IsValue() && !type.IsArray && type != typeof(string);
+        }
+
+        private static object ConvertEnum(Type type, object itemValue)
+        {
+            if (itemValue == null)
+                return null;
+
+            var stringValue = itemValue.ToString();
+            int intValue;
+            if (int.TryParse(stringValue, out intValue))
+            {
+                object result;
+                Utils.TryConvert(intValue, type, out result);
+                return result;
+            }
+            else
+            {
+                return Enum.Parse(type, stringValue, false);
+            }
+        }
+
+        private static object ConvertSingle(Type type, object itemValue)
+        {
+            return type == typeof(ODataEntryAnnotations)
+                ? itemValue
+                : IsCompoundType(type)
+                    ? itemValue.ToDictionary().ToObject(type)
+                    : type.IsEnumType()
+                        ? ConvertEnum(type, itemValue)
+                        : itemValue;
+        }
+
+        private static object ConvertCollection(Type type, object itemValue)
+        {
+            var elementType = type.IsArray
+                ? type.GetElementType()
+                : type.IsGeneric() && type.GetGenericTypeArguments().Length == 1
+                    ? type.GetGenericTypeArguments()[0]
+                    : null;
+
+            if (elementType == null)
+                return null;
+
+            var count = (itemValue as System.Collections.IEnumerable).Cast<object>().Count();
+            var arrayValue = Array.CreateInstance(elementType, count);
+
+            count = 0;
+            foreach (var item in (itemValue as System.Collections.IEnumerable))
+            {
+                (arrayValue as Array).SetValue(ConvertSingle(elementType, item), count++);
+            }
+
+            if (type.IsArray || type.IsTypeAssignableFrom(arrayValue.GetType()))
+            {
+                return arrayValue;
+            }
+            else
+            {
+                var typedef = typeof(IEnumerable<>);
+                var enumerableType = typedef.MakeGenericType(elementType);
+                var ctor = type.GetDeclaredConstructors().FirstOrDefault(
+                    x => x.GetParameters().Length == 1 && x.GetParameters().First().ParameterType == enumerableType);
+                return ctor != null
+                    ? ctor.Invoke(new object[] { arrayValue })
+                    : null;
+            }
         }
 
         public static IDictionary<string, object> ToDictionary(this object source)

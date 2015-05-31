@@ -5,7 +5,7 @@ using System.Linq;
 namespace Simple.OData.Client
 {
     /// <summary>
-    /// Contains additional informations about OData feed
+    /// Contains additional information about OData feed
     /// </summary>
     public class ODataFeedAnnotations
     {
@@ -38,7 +38,7 @@ namespace Simple.OData.Client
         /// <summary>
         /// Custom feed annotations returned as an adapter-specific annotation type
         /// </summary>
-        /// <typeparam name="T"></typeparam>
+        /// <typeparam name="T">Custom type</typeparam>
         /// <returns></returns>
         public IEnumerable<T> GetInstanceAnnotations<T>()
         {

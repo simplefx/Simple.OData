@@ -16,9 +16,9 @@ namespace Simple.OData.Client
             _session = session;
         }
 
-        public abstract Task<ODataResponse> GetResponseAsync(HttpResponseMessage responseMessage, bool includeResourceTypeInEntryProperties = false);
+        public abstract Task<ODataResponse> GetResponseAsync(HttpResponseMessage responseMessage, bool includeAnnotationsInResults = false);
 
-        protected abstract void ConvertEntry(ResponseNode entryNode, object entry, bool includeResourceTypeInEntryProperties);
+        protected abstract void ConvertEntry(ResponseNode entryNode, object entry, bool includeAnnotationsInResults);
 
         protected void StartFeed(Stack<ResponseNode> nodeStack, ODataFeedAnnotations feedAnnotations)
         {
@@ -56,10 +56,10 @@ namespace Simple.OData.Client
             });
         }
 
-        protected void EndEntry(Stack<ResponseNode> nodeStack, ref ResponseNode rootNode, object entry, bool includeResourceTypeInEntryProperties)
+        protected void EndEntry(Stack<ResponseNode> nodeStack, ref ResponseNode rootNode, object entry, bool includeAnnotationsInResults)
         {
             var entryNode = nodeStack.Pop();
-            ConvertEntry(entryNode, entry, includeResourceTypeInEntryProperties);
+            ConvertEntry(entryNode, entry, includeAnnotationsInResults);
             if (nodeStack.Any())
             {
                 if (nodeStack.Peek().Feed != null)
