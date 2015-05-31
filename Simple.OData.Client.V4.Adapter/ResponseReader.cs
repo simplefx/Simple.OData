@@ -39,25 +39,32 @@ namespace Simple.OData.Client.V4.Adapter
                 {
                     var resourceType = odataEntry.TypeName;
                     entryNode.Entry.Add(FluentCommand.ResourceTypeLiteral, resourceType.Split('.').Last());
-                    var annotations = new ODataEntryAnnotations
-                    {
-                        Id = odataEntry.Id.AbsoluteUri,
-                        TypeName = odataEntry.TypeName,
-                        ReadLink = odataEntry.ReadLink,
-                        EditLink = odataEntry.EditLink,
-                        ETag = odataEntry.ETag,
-                        MediaResource = new ODataEntryAnnotations.MediaResourceAnnotations
-                        {
-                            ContentType = odataEntry.MediaResource.ContentType,
-                            ReadLink = odataEntry.MediaResource.ReadLink,
-                            EditLink = odataEntry.MediaResource.EditLink,
-                            ETag = odataEntry.MediaResource.ETag,
-                        },
-                        InstanceAnnotations = odataEntry.InstanceAnnotations,
-                    };
+                    var annotations = CreateAnnotations(odataEntry);
                     entryNode.Entry.Add(FluentCommand.AnnotationsLiteral, annotations);
                 }
             }
+        }
+
+        private ODataEntryAnnotations CreateAnnotations(Microsoft.OData.Core.ODataEntry odataEntry)
+        {
+            return new ODataEntryAnnotations
+            {
+                Id = odataEntry.Id.AbsoluteUri,
+                TypeName = odataEntry.TypeName,
+                ReadLink = odataEntry.ReadLink,
+                EditLink = odataEntry.EditLink,
+                ETag = odataEntry.ETag,
+                MediaResource = odataEntry.MediaResource == null
+                    ? null
+                    : new ODataEntryAnnotations.MediaResourceAnnotations
+                    {
+                        ContentType = odataEntry.MediaResource.ContentType,
+                        ReadLink = odataEntry.MediaResource.ReadLink,
+                        EditLink = odataEntry.MediaResource.EditLink,
+                        ETag = odataEntry.MediaResource.ETag,
+                    },
+                InstanceAnnotations = odataEntry.InstanceAnnotations,
+            };
         }
 
         public async Task<ODataResponse> GetResponseAsync(IODataResponseMessageAsync responseMessage, bool includeAnnotationsInResults = false)

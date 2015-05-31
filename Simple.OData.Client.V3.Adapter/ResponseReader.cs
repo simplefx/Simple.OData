@@ -42,24 +42,31 @@ namespace Simple.OData.Client.V3.Adapter
                 {
                     var resourceType = odataEntry.TypeName;
                     entryNode.Entry.Add(FluentCommand.ResourceTypeLiteral, resourceType.Split('.').Last());
-                    var annotations = new ODataEntryAnnotations
-                    {
-                        Id = odataEntry.Id,
-                        TypeName = odataEntry.TypeName,
-                        ReadLink = odataEntry.ReadLink,
-                        EditLink = odataEntry.EditLink,
-                        ETag = odataEntry.ETag,
-                        AssociationLinks = new List<ODataEntryAnnotations.AssociationLink>(
-                            odataEntry.AssociationLinks.Select(x => new ODataEntryAnnotations.AssociationLink
-                            {
-                                Name = x.Name,
-                                Uri = x.Url,
-                            })),
-                        InstanceAnnotations = odataEntry.InstanceAnnotations,
-                    };
+                    var annotations = CreateAnnotations(odataEntry);
                     entryNode.Entry.Add(FluentCommand.AnnotationsLiteral, annotations);
                 }
             }
+        }
+
+        private ODataEntryAnnotations CreateAnnotations(Microsoft.Data.OData.ODataEntry odataEntry)
+        {
+            return new ODataEntryAnnotations
+            {
+                Id = odataEntry.Id,
+                TypeName = odataEntry.TypeName,
+                ReadLink = odataEntry.ReadLink,
+                EditLink = odataEntry.EditLink,
+                ETag = odataEntry.ETag,
+                AssociationLinks = odataEntry.AssociationLinks == null
+                    ? null
+                    : new List<ODataEntryAnnotations.AssociationLink>(
+                    odataEntry.AssociationLinks.Select(x => new ODataEntryAnnotations.AssociationLink
+                    {
+                        Name = x.Name,
+                        Uri = x.Url,
+                    })),
+                InstanceAnnotations = odataEntry.InstanceAnnotations,
+            };
         }
 
 #if SILVERLIGHT

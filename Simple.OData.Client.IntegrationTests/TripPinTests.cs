@@ -40,7 +40,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task FindSinglePersonWithAnnotations()
+        public async Task FindSinglePersonWithFeedAnnotations()
         {
             var annotations = new ODataFeedAnnotations();
 
@@ -51,6 +51,22 @@ namespace Simple.OData.Client.Tests
 
             Assert.Equal(1, people.Count());
             Assert.Null(annotations.NextPageLink);
+        }
+
+        [Fact]
+        public async Task FindSinglePersonWithEntryAnnotations()
+        {
+            var client = new ODataClient(new ODataClientSettings
+            {
+                BaseUri = _serviceUri,
+                IncludeAnnotationsInResults = true
+            });
+            var person = await client
+                .For<PersonWithAnnotations>("Person")
+                .Filter(x => x.UserName == "russellwhyte")
+                .FindEntryAsync();
+
+            Assert.NotNull(person.Annotations.Id);
         }
 
         [Fact]

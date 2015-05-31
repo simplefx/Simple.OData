@@ -55,6 +55,11 @@ namespace Simple.OData.Client.Tests
         public HashSet<Photo> Photos { get; set; }
     }
 
+    class PersonWithAnnotations : Person
+    {
+        public ODataEntryAnnotations Annotations { get; set; }
+    }
+
     class Trip
     {
         public int TripId { get; set; }
