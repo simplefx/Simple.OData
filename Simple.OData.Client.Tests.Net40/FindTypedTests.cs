@@ -509,12 +509,12 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task BaseClassEntriesWithResourceTypes()
+        public async Task BaseClassEntriesWithAnnotations()
         {
             var clientSettings = new ODataClientSettings
             {
                 BaseUri = _serviceUri,
-                IncludeResourceTypeInEntryProperties = true,
+                IncludeAnnotationsInResults = true,
             };
             var client = new ODataClient(clientSettings);
             var transport = await client
@@ -534,12 +534,12 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task AllDerivedClassEntriesWithResourceTypes()
+        public async Task AllDerivedClassEntriesWithAnnotations()
         {
             var clientSettings = new ODataClientSettings
             {
                 BaseUri = _serviceUri,
-                IncludeResourceTypeInEntryProperties = true,
+                IncludeAnnotationsInResults = true,
             };
             var client = new ODataClient(clientSettings);
             var transport = await client

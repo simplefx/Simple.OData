@@ -389,13 +389,13 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task BaseClassEntriesWithResourceTypes()
+        public async Task BaseClassEntriesWithAnnotations()
         {
             var x = ODataDynamic.Expression;
             var clientSettings = new ODataClientSettings
             {
                 BaseUri = _serviceUri,
-                IncludeResourceTypeInEntryProperties = true,
+                IncludeAnnotationsInResults = true,
             };
             var client = new ODataClient(clientSettings);
             IEnumerable<dynamic> transport = await client
@@ -417,13 +417,13 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task AllDerivedClassEntriesWithResourceTypes()
+        public async Task AllDerivedClassEntriesWithAnnotations()
         {
             var x = ODataDynamic.Expression;
             var clientSettings = new ODataClientSettings
             {
                 BaseUri = _serviceUri,
-                IncludeResourceTypeInEntryProperties = true,
+                IncludeAnnotationsInResults = true,
             };
             var client = new ODataClient(clientSettings);
             var transport = await client

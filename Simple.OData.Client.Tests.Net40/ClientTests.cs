@@ -183,12 +183,12 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task UpdateEntrySubcollectionWithResourceType()
+        public async Task UpdateEntrySubcollectionWithAnnotations()
         {
             var clientSettings = new ODataClientSettings
             {
                 BaseUri = _serviceUri,
-                IncludeResourceTypeInEntryProperties = true,
+                IncludeAnnotationsInResults = true,
             };
             var client = new ODataClient(clientSettings);
             var ship = await client.InsertEntryAsync("Transport/Ships", new Entry() { { "ShipName", "Test1" } }, true);
@@ -226,12 +226,12 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task DeleteEntrySubCollectionWithResourceType()
+        public async Task DeleteEntrySubCollectionWithAnnotations()
         {
             var clientSettings = new ODataClientSettings
             {
                 BaseUri = _serviceUri,
-                IncludeResourceTypeInEntryProperties = true,
+                IncludeAnnotationsInResults = true,
             };
             var client = new ODataClient(clientSettings);
             var ship = await client.InsertEntryAsync("Transport/Ships", new Entry() { { "ShipName", "Test3" } }, true);

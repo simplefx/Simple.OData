@@ -82,6 +82,7 @@
     <Compile Include="Http\RestVerbs.cs" />
     <Compile Include="ODataExpandOptions.cs" />
     <Compile Include="ODataFeedAnnotations.cs" />
+    <Compile Include="ODataEntryAnnotations.cs" />
     <Compile Include="ODataPayloadFormat.cs" />
     <Compile Include="ODataLiteral.cs" />
     <Compile Include="ODataRequest.cs" />
