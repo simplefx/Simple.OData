@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Text;
 
 #pragma warning disable 1591
@@ -86,9 +87,14 @@ namespace Simple.OData.Client
 
         private HttpContent GetContent()
         {
-            return this._contentStream != null
-                ? new StringContent(Utils.StreamToString(this._contentStream), Encoding.UTF8, this.GetContentType())
-                : null;
+            if (_contentStream == null)
+                return null;
+
+            _contentStream.Seek(0, SeekOrigin.Begin);
+            var content = new StreamContent(_contentStream);
+            content.Headers.ContentType = new MediaTypeHeaderValue(this.GetContentType());
+            content.Headers.ContentLength = _contentStream.Length;
+            return content;
         }
 
         private string GetContentType()
