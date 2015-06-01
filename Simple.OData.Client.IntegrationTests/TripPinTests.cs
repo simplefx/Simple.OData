@@ -20,20 +20,32 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task FindAllPeople()
         {
+            var client = new ODataClient(new ODataClientSettings
+            {
+                BaseUri = _serviceUri,
+                IncludeAnnotationsInResults = true
+            });
             var annotations = new ODataFeedAnnotations();
 
             int count = 0;
-            var people = await _client
-                .For<Person>()
+            var people = await client
+                .For<PersonWithAnnotations>("Person")
                 .FindEntriesAsync(annotations);
             count += people.Count();
 
             while (annotations.NextPageLink != null)
             {
-                people = await _client
-                    .For<Person>()
+                people = await client
+                    .For<PersonWithAnnotations>()
                     .FindEntriesAsync(annotations.NextPageLink, annotations);
                 count += people.Count();
+
+                foreach (var person in people)
+                {
+                    Assert.NotNull(person.Annotations.Id);
+                    Assert.NotNull(person.Annotations.ReadLink);
+                    Assert.NotNull(person.Annotations.EditLink);
+                }
             }
 
             Assert.Equal(count, annotations.Count);
