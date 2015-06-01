@@ -21,10 +21,9 @@ namespace Simple.OData.Client
 
         public static byte[] StreamToByteArray(Stream stream)
         {
+            stream.Seek(0, SeekOrigin.Begin);
             var bytes = new byte[stream.Length];
-            stream.Position = 0;
-            stream.Write(bytes, 0, bytes.Length);
-            return bytes;
+            return new BinaryReader(stream).ReadBytes(bytes.Length);
         }
 
         public static Stream StringToStream(string text)

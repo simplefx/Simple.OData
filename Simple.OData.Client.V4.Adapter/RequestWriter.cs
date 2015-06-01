@@ -128,8 +128,7 @@ namespace Simple.OData.Client.V4.Adapter
             var message = new ODataRequestMessage();
             using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(true), _model))
             {
-                var v = Utils.StreamToString(stream);
-                await messageWriter.WriteValueAsync(v);
+                await messageWriter.WriteValueAsync(Utils.StreamToString(stream));
                 return await message.GetStreamAsync();
             }
         }
