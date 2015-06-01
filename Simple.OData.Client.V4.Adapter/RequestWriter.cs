@@ -123,12 +123,13 @@ namespace Simple.OData.Client.V4.Adapter
             }
         }
 
-        protected override async Task<Stream> WriteStreamContentAsync(Stream stream)
+        protected override async Task<Stream> WriteStreamContentAsync(Stream stream, bool writeAsText)
         {
             var message = new ODataRequestMessage();
             using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(true), _model))
             {
-                await messageWriter.WriteValueAsync(Utils.StreamToString(stream));
+                var value = writeAsText ? (object)Utils.StreamToString(stream) : Utils.StreamToByteArray(stream);
+                await messageWriter.WriteValueAsync(value);
                 return await message.GetStreamAsync();
             }
         }

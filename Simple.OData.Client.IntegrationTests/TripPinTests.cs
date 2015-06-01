@@ -718,19 +718,20 @@ namespace Simple.OData.Client.Tests
                 .Key(photo.Id)
                 .Media()
                 .GetStreamAsArrayAsync();
+            var byteCount = photo.Media.Length;
 
             await _client
                 .For<Photo>()
                 .Key(photo.Id)
                 .Media()
-                .SetStreamAsync(photo.Media);
+                .SetStreamAsync(photo.Media, "image/jpeg");
             photo.Media = await _client
                 .For<Photo>()
                 .Key(photo.Id)
                 .Media()
                 .GetStreamAsArrayAsync();
 
-            Assert.Equal(12277, photo.Media.Length);
+            Assert.Equal(byteCount, photo.Media.Length);
         }
 
         private Event CreateTestEvent()

@@ -38,11 +38,12 @@ namespace Simple.OData.Client
             return request;
         }
 
-        public async Task<ODataRequest> CreatePutRequestAsync(string commandText, Stream stream)
+        public async Task<ODataRequest> CreatePutRequestAsync(string commandText, Stream stream, string mediaType = null)
         {
-            var entryContent = await WriteStreamContentAsync(stream);
+            var entryContent = await WriteStreamContentAsync(stream, IsTextMediaType(mediaType));
 
-            var request = new ODataRequest(RestVerbs.Put, _session, commandText, null, entryContent);
+            var request = new ODataRequest(RestVerbs.Put, _session, commandText, null, entryContent, mediaType);
+            //request.CheckOptimisticConcurrency = true;
             AssignHeaders(request);
             return request;
         }
@@ -163,7 +164,7 @@ namespace Simple.OData.Client
         protected abstract Task<Stream> WriteEntryContentAsync(string method, string collection, string commandText, IDictionary<string, object> entryData);
         protected abstract Task<Stream> WriteLinkContentAsync(string linkIdent);
         protected abstract Task<Stream> WriteActionContentAsync(string actionName, IDictionary<string, object> parameters);
-        protected abstract Task<Stream> WriteStreamContentAsync(Stream stream);
+        protected abstract Task<Stream> WriteStreamContentAsync(Stream stream, bool writeAsText);
         protected abstract string FormatLinkPath(string entryIdent, string navigationPropertyName, string linkIdent = null);
         protected abstract void AssignHeaders(ODataRequest request);
 
@@ -190,6 +191,23 @@ namespace Simple.OData.Client
                 }
             }
             return true;
+        }
+
+        private bool IsTextMediaType(string mediaType)
+        {
+            if (mediaType == null)
+                return true;
+
+            var items = mediaType.Split('/');
+            var type = items[0];
+            var subtype = items.Length > 0 ? items[1] : string.Empty;
+
+            if (type == "text")
+                return true;
+            if (subtype == "text" || subtype == "xml" || subtype == "json")
+                return true;
+
+            return false;
         }
     }
 }

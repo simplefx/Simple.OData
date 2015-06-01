@@ -49,24 +49,24 @@ namespace Simple.OData.Client
             }
         }
 
-        public Task SetStreamAsync(Stream stream)
+        public Task SetStreamAsync(Stream stream, string contentType)
         {
-            return SetStreamAsync(stream, CancellationToken.None);
+            return SetStreamAsync(stream, contentType, CancellationToken.None);
         }
 
-        public Task SetStreamAsync(Stream stream, CancellationToken cancellationToken)
+        public Task SetStreamAsync(Stream stream, string contentType, CancellationToken cancellationToken)
         {
-            return _client.SetMediaStreamAsync(_command, stream, cancellationToken);
+            return _client.SetMediaStreamAsync(_command, stream, contentType, cancellationToken);
         }
 
-        public Task SetStreamAsync(byte[] streamContent)
+        public Task SetStreamAsync(byte[] streamContent, string contentType)
         {
-            return SetStreamAsync(streamContent, CancellationToken.None);
+            return SetStreamAsync(streamContent, contentType, CancellationToken.None);
         }
 
-        public Task SetStreamAsync(byte[] streamContent, CancellationToken cancellationToken)
+        public Task SetStreamAsync(byte[] streamContent, string contentType, CancellationToken cancellationToken)
         {
-            return _client.SetMediaStreamAsync(_command, Utils.ByteArrayToStream(streamContent), cancellationToken);
+            return _client.SetMediaStreamAsync(_command, Utils.ByteArrayToStream(streamContent), contentType, cancellationToken);
         }
 
         public Task SetStreamAsync(string streamContent)
@@ -76,7 +76,7 @@ namespace Simple.OData.Client
 
         public Task SetStreamAsync(string streamContent, CancellationToken cancellationToken)
         {
-            return _client.SetMediaStreamAsync(_command, Utils.StringToStream(streamContent), cancellationToken);
+            return _client.SetMediaStreamAsync(_command, Utils.StringToStream(streamContent), "text/plain", cancellationToken);
         }
     }
 }

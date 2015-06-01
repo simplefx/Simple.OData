@@ -51,27 +51,27 @@ namespace Simple.OData.Client
         /// </summary>
         /// <param name="stream">The media stream.</param>
         /// <returns>Task instance.</returns>
-        Task SetStreamAsync(Stream stream);
+        Task SetStreamAsync(Stream stream, string contentType);
         /// <summary>
         /// Assigns a media stream by executing OData PUT request.
         /// </summary>
         /// <param name="stream">The media stream.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task instance.</returns>
-        Task SetStreamAsync(Stream stream, CancellationToken cancellationToken);
+        Task SetStreamAsync(Stream stream, string contentType, CancellationToken cancellationToken);
         /// <summary>
         /// Assigns a media stream by executing OData PUT request.
         /// </summary>
         /// <param name="streamContent">The media stream content represented as byte array.</param>
         /// <returns>Task instance.</returns>
-        Task SetStreamAsync(byte[] streamContent);
+        Task SetStreamAsync(byte[] streamContent, string contentType);
         /// <summary>
         /// Assigns a media stream by executing OData PUT request.
         /// </summary>
         /// <param name="streamContent">The media stream content represented as byte array.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task instance.</returns>
-        Task SetStreamAsync(byte[] streamContent, CancellationToken cancellationToken);
+        Task SetStreamAsync(byte[] streamContent, string contentType, CancellationToken cancellationToken);
         /// <summary>
         /// Assigns a media stream by executing OData PUT request.
         /// </summary>

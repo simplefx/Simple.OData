@@ -144,15 +144,16 @@ namespace Simple.OData.Client.V3.Adapter
             }
         }
 
-        protected override async Task<Stream> WriteStreamContentAsync(Stream stream)
+        protected override async Task<Stream> WriteStreamContentAsync(Stream stream, bool writeAsText)
         {
             var message = new ODataRequestMessage();
             using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(true), _model))
             {
+                var value = writeAsText ? (object)Utils.StreamToString(stream) : Utils.StreamToByteArray(stream);
 #if SILVERLIGHT
-                messageWriter.WriteValue(Utils.StreamToString(stream));
+                messageWriter.WriteValue(value);
 #else
-                await messageWriter.WriteValueAsync(Utils.StreamToString(stream));
+                await messageWriter.WriteValueAsync(value);
 #endif
                 return await message.GetStreamAsync();
             }

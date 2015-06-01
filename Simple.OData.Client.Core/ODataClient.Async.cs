@@ -754,12 +754,12 @@ namespace Simple.OData.Client
             return await ExecuteGetStreamRequestAsync(request, cancellationToken);
         }
 
-        public Task SetMediaStreamAsync(string commandText, Stream stream)
+        public Task SetMediaStreamAsync(string commandText, Stream stream, string contentType)
         {
-            return SetMediaStreamAsync(commandText, stream, CancellationToken.None);
+            return SetMediaStreamAsync(commandText, stream, contentType, CancellationToken.None);
         }
 
-        public async Task SetMediaStreamAsync(string commandText, Stream stream, CancellationToken cancellationToken)
+        public async Task SetMediaStreamAsync(string commandText, Stream stream, string contentType, CancellationToken cancellationToken)
         {
             if (IsBatchResponse)
                 throw new NotSupportedException("Media stream requests are not supported in batch mode");
@@ -768,17 +768,17 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-                .CreatePutRequestAsync(commandText, stream);
+                .CreatePutRequestAsync(commandText, stream, contentType);
 
             await ExecuteRequestAsync(request, cancellationToken);
         }
 
-        public Task SetMediaStreamAsync(string commandText, string streamName, Stream stream)
+        public Task SetMediaStreamAsync(string commandText, string streamName, Stream stream, string contentType)
         {
-            return SetMediaStreamAsync(commandText, streamName, stream, CancellationToken.None);
+            return SetMediaStreamAsync(commandText, streamName, stream, contentType, CancellationToken.None);
         }
 
-        public async Task SetMediaStreamAsync(string commandText, string streamName, Stream stream, CancellationToken cancellationToken)
+        public async Task SetMediaStreamAsync(string commandText, string streamName, Stream stream, string contentType, CancellationToken cancellationToken)
         {
             if (IsBatchResponse)
                 throw new NotSupportedException("Media stream requests are not supported in batch mode");
@@ -787,7 +787,7 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-                .CreatePutRequestAsync(commandText, stream);
+                .CreatePutRequestAsync(commandText, stream, contentType);
 
             await ExecuteRequestAsync(request, cancellationToken);
         }
@@ -1167,7 +1167,7 @@ namespace Simple.OData.Client
                 : await GetMediaStreamAsync(commandText, command.Details.MediaName, cancellationToken);
         }
 
-        internal async Task SetMediaStreamAsync(FluentCommand command, Stream stream, CancellationToken cancellationToken)
+        internal async Task SetMediaStreamAsync(FluentCommand command, Stream stream, string contentType, CancellationToken cancellationToken)
         {
             if (IsBatchResponse)
                 throw new NotSupportedException("Media stream requests are not supported in batch mode");
@@ -1179,9 +1179,9 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             if (command.Details.MediaName == FluentCommand.MeditEntityLiteral)
-                await SetMediaStreamAsync(commandText, stream, cancellationToken);
+                await SetMediaStreamAsync(commandText, stream, contentType, cancellationToken);
             else
-                await SetMediaStreamAsync(commandText, command.Details.MediaName, stream, cancellationToken);
+                await SetMediaStreamAsync(commandText, command.Details.MediaName, stream, contentType, cancellationToken);
         }
 
         internal async Task ExecuteAsync(FluentCommand command, CancellationToken cancellationToken)

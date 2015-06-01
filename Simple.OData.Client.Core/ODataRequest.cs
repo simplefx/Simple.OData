@@ -16,6 +16,7 @@ namespace Simple.OData.Client
         private HttpRequestMessage _requestMessage;
         private readonly ODataPayloadFormat _payloadFormat;
         private readonly Stream _contentStream;
+        private readonly string _contentType;
 
         public HttpRequestMessage RequestMessage
         {
@@ -78,11 +79,12 @@ namespace Simple.OData.Client
             this.RequestMessage = requestMessage;
         }
 
-        internal ODataRequest(string method, ISession session, string commandText, IDictionary<string, object> entryData, Stream contentStream)
+        internal ODataRequest(string method, ISession session, string commandText, IDictionary<string, object> entryData, Stream contentStream, string mediaType = null)
             : this(method, session, commandText)
         {
             EntryData = entryData;
             _contentStream = contentStream;
+            _contentType = mediaType;
         }
 
         private HttpContent GetContent()
@@ -99,14 +101,21 @@ namespace Simple.OData.Client
 
         private string GetContentType()
         {
-            switch (this._payloadFormat)
+            if (!string.IsNullOrEmpty(_contentType))
             {
-                default:
-                case ODataPayloadFormat.Atom:
-                    return this.IsLink ? "application/xml" : "application/atom+xml";
+                return _contentType;
+            }
+            else
+            {
+                switch (this._payloadFormat)
+                {
+                    default:
+                    case ODataPayloadFormat.Atom:
+                        return this.IsLink ? "application/xml" : "application/atom+xml";
 
-                case ODataPayloadFormat.Json:
-                    return "application/json";
+                    case ODataPayloadFormat.Json:
+                        return "application/json";
+                }
             }
         }
 

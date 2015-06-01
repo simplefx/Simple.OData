@@ -281,7 +281,7 @@ namespace Simple.OData.Client.Tests
                 .For("Advertisements")
                 .Key(id)
                 .Media()
-                .SetStreamAsync(stream);
+                .SetStreamAsync(stream, "text/plain");
             stream = await _client
                 .For("Advertisements")
                 .Key(id)
@@ -303,7 +303,7 @@ namespace Simple.OData.Client.Tests
                 .Key(1)
                 .NavigateTo("PersonDetail")
                 .Media("Photo")
-                .SetStreamAsync(stream);
+                .SetStreamAsync(stream, "text/plain");
             stream = await _client
                 .For("Persons")
                 .Key(1)

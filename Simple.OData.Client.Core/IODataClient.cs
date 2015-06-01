@@ -462,33 +462,37 @@ namespace Simple.OData.Client
         /// </summary>
         /// <param name="commandText">The OData command text.</param>
         /// <param name="stream">The media stream.</param>
+        /// <param name="contentType">The media content type.</param>
         /// <returns>Task instance.</returns>
-        Task SetMediaStreamAsync(string commandText, Stream stream);
+        Task SetMediaStreamAsync(string commandText, Stream stream, string contentType);
         /// <summary>
         /// Assigns a stream to a media entry by executing OData PUT request.
         /// </summary>
         /// <param name="commandText">The OData command text.</param>
         /// <param name="stream">The media stream.</param>
+        /// <param name="contentType">The media content type.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task instance.</returns>
-        Task SetMediaStreamAsync(string commandText, Stream stream, CancellationToken cancellationToken);
+        Task SetMediaStreamAsync(string commandText, Stream stream, string contentType, CancellationToken cancellationToken);
         /// <summary>
         /// Assigns a named stream to an entry by executing OData PUT request.
         /// </summary>
         /// <param name="commandText">The OData command text.</param>
         /// <param name="streamName">The name of the media stream.</param>
         /// <param name="stream">The media stream.</param>
+        /// <param name="contentType">The media content type.</param>
         /// <returns>Task instance.</returns>
-        Task SetMediaStreamAsync(string commandText, string streamName, Stream stream);
+        Task SetMediaStreamAsync(string commandText, string streamName, Stream stream, string contentType);
         /// <summary>
         /// Assigns a named stream to an entry by executing OData PUT request.
         /// </summary>
         /// <param name="commandText">The OData command text.</param>
         /// <param name="streamName">The name of the media stream.</param>
         /// <param name="stream">The media stream.</param>
+        /// <param name="contentType">The media content type.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task instance.</returns>
-        Task SetMediaStreamAsync(string commandText, string streamName, Stream stream, CancellationToken cancellationToken);
+        Task SetMediaStreamAsync(string commandText, string streamName, Stream stream, string contentType, CancellationToken cancellationToken);
 
         /// <summary>
         /// Executes the OData function.
