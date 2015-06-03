@@ -111,6 +111,7 @@ namespace Simple.OData.Client
                 this.EditLink = src.EditLink;
                 this.ETag = src.ETag;
                 this.AssociationLinks = src.AssociationLinks;
+                this.MediaResource = src.MediaResource;
                 this.InstanceAnnotations = src.InstanceAnnotations;
             }
             else
@@ -121,6 +122,7 @@ namespace Simple.OData.Client
                 this.EditLink = null;
                 this.ETag = null;
                 this.AssociationLinks = null;
+                this.MediaResource = null;
                 this.InstanceAnnotations = null;
             }
         }
@@ -133,7 +135,9 @@ namespace Simple.OData.Client
                 this.TypeName = this.TypeName ?? src.TypeName;
                 this.ReadLink = this.ReadLink ?? src.ReadLink;
                 this.EditLink = this.EditLink ?? src.EditLink;
+                this.ETag = this.ETag ?? src.ETag;
                 this.AssociationLinks = this.AssociationLinks ?? src.AssociationLinks;
+                this.MediaResource = this.MediaResource ?? src.MediaResource;
                 this.InstanceAnnotations = this.InstanceAnnotations ?? src.InstanceAnnotations;
             }
         }
