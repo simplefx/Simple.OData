@@ -40,8 +40,6 @@ namespace Simple.OData.Client.V3.Adapter
                 }
                 if (includeAnnotationsInResults)
                 {
-                    var resourceType = odataEntry.TypeName;
-                    entryNode.Entry.Add(FluentCommand.ResourceTypeLiteral, resourceType.Split('.').Last());
                     var annotations = CreateAnnotations(odataEntry);
                     entryNode.Entry.Add(FluentCommand.AnnotationsLiteral, annotations);
                 }
@@ -65,16 +63,19 @@ namespace Simple.OData.Client.V3.Adapter
                         Name = x.Name,
                         Uri = x.Url,
                     })),
-                MediaResource = odataEntry.MediaResource == null
-                    ? null
-                    : new ODataEntryAnnotations.MediaResourceAnnotations
-                    {
-                        ContentType = odataEntry.MediaResource.ContentType,
-                        ReadLink = odataEntry.MediaResource.ReadLink,
-                        EditLink = odataEntry.MediaResource.EditLink,
-                        ETag = odataEntry.MediaResource.ETag,
-                    },
+                MediaResource = CreateAnnotations(odataEntry.MediaResource),
                 InstanceAnnotations = odataEntry.InstanceAnnotations,
+            };
+        }
+
+        private ODataMediaAnnotations CreateAnnotations(ODataStreamReferenceValue value)
+        {
+            return value == null ? null : new ODataMediaAnnotations
+            {
+                ContentType = value.ContentType,
+                ReadLink = value.ReadLink,
+                EditLink = value.EditLink,
+                ETag = value.ETag,
             };
         }
 
@@ -107,7 +108,7 @@ namespace Simple.OData.Client.V3.Adapter
 #if SILVERLIGHT
                         var text = Utils.StreamToString(responseMessage.GetStream());
 #else
-                        var text = Client.Utils.StreamToString(await responseMessage.GetStreamAsync());
+                        var text = Utils.StreamToString(await responseMessage.GetStreamAsync());
 #endif
                         return ODataResponse.FromFeed(new[] { new Dictionary<string, object>()
                         {
@@ -125,7 +126,7 @@ namespace Simple.OData.Client.V3.Adapter
                 }
                 else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Collection))
                 {
-                    return ReadResponse(messageReader.CreateODataCollectionReader(), includeAnnotationsInResults);
+                    return ReadResponse(messageReader.CreateODataCollectionReader());
                 }
                 else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Property))
                 {
@@ -167,7 +168,7 @@ namespace Simple.OData.Client.V3.Adapter
                         if (operationMessage.StatusCode == (int)HttpStatusCode.NoContent)
                             batch.Add(ODataResponse.FromStatusCode(operationMessage.StatusCode));
                         else
-                            batch.Add(await GetResponseAsync(operationMessage));
+                            batch.Add(await GetResponseAsync(operationMessage, includeAnnotationsInResults));
                         break;
                     case ODataBatchReaderState.ChangesetEnd:
                         break;
@@ -177,7 +178,7 @@ namespace Simple.OData.Client.V3.Adapter
             return ODataResponse.FromBatch(batch);
         }
 
-        private ODataResponse ReadResponse(ODataCollectionReader odataReader, bool includeAnnotationsInResults)
+        private ODataResponse ReadResponse(ODataCollectionReader odataReader)
         {
             var collection = new List<object>();
 
@@ -269,6 +270,10 @@ namespace Simple.OData.Client.V3.Adapter
             {
                 return (value as ODataCollectionValue).Items.Cast<object>()
                     .Select(GetPropertyValue).ToList();
+            }
+            else if (value is ODataStreamReferenceValue)
+            {
+                return CreateAnnotations(value as ODataStreamReferenceValue);
             }
             else
             {

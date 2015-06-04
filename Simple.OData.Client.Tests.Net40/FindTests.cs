@@ -218,7 +218,7 @@ namespace Simple.OData.Client.Tests
             Assert.Equal(1, product.Count);
             Assert.Equal(1, (product["Category"] as IDictionary<string, object>).Count);
             Assert.Equal(1, (((product["Category"] as IDictionary<string, object>)["Products"] as IEnumerable<object>)
-                                        .First()as IDictionary<string, object>).Count);
+                                        .First() as IDictionary<string, object>).Count);
             Assert.Equal(1, ((((product["Category"] as IDictionary<string, object>)["Products"] as IEnumerable<object>)
                                         .First() as IDictionary<string, object>)["Category"] as IDictionary<string, object>).Count);
             Assert.Equal("Condiments", ((((product["Category"] as IDictionary<string, object>)["Products"] as IEnumerable<object>)
@@ -354,7 +354,7 @@ namespace Simple.OData.Client.Tests
                 .For("Transport")
                 .FindEntriesAsync();
             Assert.Equal(2, transport.Count());
-            Assert.False(transport.Any(x => x.ContainsKey(FluentCommand.ResourceTypeLiteral)));
+            Assert.False(transport.Any(x => x.ContainsKey(FluentCommand.AnnotationsLiteral)));
         }
 
         [Fact]
@@ -370,7 +370,7 @@ namespace Simple.OData.Client.Tests
                 .For("Transport")
                 .FindEntriesAsync();
             Assert.Equal(2, transport.Count());
-            Assert.True(transport.All(x => x.ContainsKey(FluentCommand.ResourceTypeLiteral)));
+            Assert.True(transport.All(x => x.ContainsKey(FluentCommand.AnnotationsLiteral)));
         }
 
         [Fact]
@@ -397,7 +397,7 @@ namespace Simple.OData.Client.Tests
                 .As("Ships")
                 .FindEntriesAsync();
             Assert.Equal("Titanic", transport.Single()["ShipName"]);
-            Assert.Equal("Ships", transport.Single()[FluentCommand.ResourceTypeLiteral]);
+            Assert.Equal("NorthwindModel.Ships", (transport.Single()[FluentCommand.AnnotationsLiteral] as ODataEntryAnnotations).TypeName);
         }
 
         [Fact]

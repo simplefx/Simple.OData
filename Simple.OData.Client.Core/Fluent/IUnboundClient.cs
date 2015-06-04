@@ -18,7 +18,30 @@ namespace Simple.OData.Client
         /// <returns>Self.</returns>
         IUnboundClient<T> WithProperties(Expression<Func<T, IDictionary<string, object>>> expression);
 
-        IUnboundClient<T> WithMedia(IDictionary<string, object> properties);
+        /// <summary>
+        /// Sets the container for media stream content to be retrieved or updated together with standard entity properties.
+        /// </summary>
+        /// <param name="properties">The media content properties.</param>
+        /// <returns>Self.</returns>
+        IUnboundClient<T> WithMedia(IEnumerable<string> properties);
+        /// <summary>
+        /// Sets the container for media stream content to be retrieved or updated together with standard entity properties.
+        /// </summary>
+        /// <param name="properties">The media content properties.</param>
+        /// <returns>Self.</returns>
+        IUnboundClient<T> WithMedia(params string[] properties);
+        /// <summary>
+        /// Sets the container for media stream content to be retrieved or updated together with standard entity properties.
+        /// </summary>
+        /// <param name="properties">The media content properties.</param>
+        /// <returns>Self.</returns>
+        IUnboundClient<T> WithMedia(params ODataExpression[] properties);
+        /// <summary>
+        /// Sets the container for media stream content to be retrieved or updated together with standard entity properties.
+        /// </summary>
+        /// <param name="properties">The media content properties.</param>
+        /// <returns>Self.</returns>
+        IUnboundClient<T> WithMedia(Expression<Func<T, object>> properties);
 
         /// <summary>
         /// Casts the collection of base entities as the collection of derived ones.

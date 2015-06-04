@@ -43,9 +43,27 @@ namespace Simple.OData.Client
             return this;
         }
 
-        public IBoundClient<T> WithMedia(IDictionary<string, object> properties)
+        public IBoundClient<T> WithMedia(IEnumerable<string> properties)
         {
             this.Command.WithMedia(properties);
+            return this;
+        }
+
+        public IBoundClient<T> WithMedia(params string[] properties)
+        {
+            this.Command.WithMedia(properties);
+            return this;
+        }
+
+        public IBoundClient<T> WithMedia(params ODataExpression[] properties)
+        {
+            this.Command.WithMedia(properties);
+            return this;
+        }
+
+        public IBoundClient<T> WithMedia(Expression<Func<T, object>> expression)
+        {
+            this.Command.WithMedia(ColumnExpression.ExtractColumnNames(expression));
             return this;
         }
 

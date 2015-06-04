@@ -193,7 +193,7 @@ namespace Simple.OData.Client.Tests
             var client = new ODataClient(clientSettings);
             var ship = await client.InsertEntryAsync("Transport/Ships", new Entry() { { "ShipName", "Test1" } }, true);
             var key = new Entry() { { "TransportID", ship["TransportID"] } };
-            await client.UpdateEntryAsync("Transport/Ships", key, new Entry() { { "ShipName", "Test2" }, { FluentCommand.ResourceTypeLiteral, "Ships" } });
+            await client.UpdateEntryAsync("Transport/Ships", key, new Entry() { { "ShipName", "Test2" } });
 
             ship = await client.GetEntryAsync("Transport", key);
             Assert.Equal("Test2", ship["ShipName"]);

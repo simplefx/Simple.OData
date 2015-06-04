@@ -42,7 +42,7 @@ namespace Simple.OData.Client
 
             if (!string.IsNullOrEmpty(command.Details.MediaName))
             {
-                commandText += "/" + (command.Details.MediaName == FluentCommand.MeditEntityLiteral
+                commandText += "/" + (command.Details.MediaName == FluentCommand.MediaEntityLiteral
                     ? ODataLiteral.Value
                     : command.Details.MediaName);
             }

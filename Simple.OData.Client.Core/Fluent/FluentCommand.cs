@@ -22,9 +22,8 @@ namespace Simple.OData.Client
         private readonly CommandDetails _details;
 
         internal static readonly string ResultLiteral = "__result";
-        internal static readonly string ResourceTypeLiteral = "__resourcetype";
         internal static readonly string AnnotationsLiteral = "__annotations";
-        internal static readonly string MeditEntityLiteral = "__entity";
+        internal static readonly string MediaEntityLiteral = "__entity";
 
         internal FluentCommand(Session session, FluentCommand parent, SimpleDictionary<object, IDictionary<string, object>> batchEntries)
         {
@@ -163,12 +162,25 @@ namespace Simple.OData.Client
             return this;
         }
 
-        public FluentCommand WithMedia(IDictionary<string, object> properties)
+        public FluentCommand WithMedia(IEnumerable<string> properties)
         {
             if (IsBatchResponse) return this;
 
-            // TODO
+            _details.MediaProperties = properties;
             return this;
+        }
+
+        public FluentCommand WithMedia(params string[] properties)
+        {
+            if (IsBatchResponse) return this;
+
+            _details.MediaProperties = SplitItems(properties).ToList();
+            return this;
+        }
+
+        public FluentCommand WithMedia(params ODataExpression[] properties)
+        {
+            return WithMedia(properties.Select(x => x.Reference));
         }
 
         public FluentCommand For(ODataExpression expression)
@@ -418,7 +430,7 @@ namespace Simple.OData.Client
 
         public FluentCommand Media()
         {
-            return Media(FluentCommand.MeditEntityLiteral);
+            return Media(FluentCommand.MediaEntityLiteral);
         }
 
         public FluentCommand Media(string streamName)

@@ -195,7 +195,7 @@ namespace Simple.OData.Client
 
             return await ExecuteRequestWithResultAsync(request, cancellationToken,
                 x => x.AsEntries(),
-                () => new IDictionary<string, object>[] {});
+                () => new IDictionary<string, object>[] { });
         }
 
         private async Task<IEnumerable<IDictionary<string, object>>> ExecuteActionAsync(FluentCommand command, CancellationToken cancellationToken)
@@ -208,7 +208,7 @@ namespace Simple.OData.Client
 
             return await ExecuteRequestWithResultAsync(request, cancellationToken,
                 x => x.AsEntries(),
-                () => new IDictionary<string, object>[] {});
+                () => new IDictionary<string, object>[] { });
         }
 
         private async Task ExecuteBatchActionsAsync(IList<Func<IODataClient, Task>> actions, CancellationToken cancellationToken)
@@ -275,10 +275,10 @@ namespace Simple.OData.Client
             Func<ODataResponse, T> createResult, Func<T> createEmptyResult, Func<T> createBatchResult = null)
         {
             if (IsBatchRequest)
-                return createBatchResult != null 
-                    ? createBatchResult() 
+                return createBatchResult != null
+                    ? createBatchResult()
                     : createEmptyResult != null
-                    ? createEmptyResult() 
+                    ? createEmptyResult()
                     : default(T);
 
             try
@@ -387,15 +387,41 @@ namespace Simple.OData.Client
             return result;
         }
 
-        private void RemoveSystemProperties(IDictionary<string, object> entryData)
+        private void VisitAnnotationProperties(IDictionary<string, object> entryData, IList<Action> actions = null)
         {
-            if (_settings.IncludeAnnotationsInResults && entryData.ContainsKey(FluentCommand.ResourceTypeLiteral))
+            var runActionsOnExist = false;
+            if (actions == null)
             {
-                entryData.Remove(FluentCommand.ResourceTypeLiteral);
+                actions = new List<Action>();
+                runActionsOnExist = true;
             }
-            if (_settings.IncludeAnnotationsInResults && entryData.ContainsKey(FluentCommand.AnnotationsLiteral))
+
+            if (!_settings.IncludeAnnotationsInResults && entryData.ContainsKey(FluentCommand.AnnotationsLiteral))
             {
-                entryData.Remove(FluentCommand.AnnotationsLiteral);
+                actions.Add(() => entryData.Remove(FluentCommand.AnnotationsLiteral));
+
+                var nestedEntries = entryData.Where(x => x.Value is IDictionary<string, object>);
+                foreach (var nestedEntry in nestedEntries)
+                {
+                    VisitAnnotationProperties(nestedEntry.Value as IDictionary<string, object>, actions);
+                }
+
+                nestedEntries = entryData.Where(x => x.Value is IList<IDictionary<string, object>>);
+                foreach (var nestedEntry in nestedEntries)
+                {
+                    foreach (var element in nestedEntry.Value as IList<IDictionary<string, object>>)
+                    {
+                        VisitAnnotationProperties(element, actions);
+                    }
+                }
+            }
+
+            if (runActionsOnExist)
+            {
+                foreach (var action in actions)
+                {
+                    action();
+                }
             }
         }
 
@@ -432,6 +458,51 @@ namespace Simple.OData.Client
                 entryIdent = entryIdent.Substring(0, entryIdent.Length - segments.Last().Length - 1);
             }
             return entryIdent;
+        }
+
+        private async Task EnrichWithMediaPropertiesAsync(IDictionary<string, object> entry, IEnumerable<string> mediaProperties, CancellationToken cancellationToken)
+        {
+            if (entry != null && mediaProperties != null)
+            {
+                var entityMediaPropertyName = mediaProperties.FirstOrDefault(x => !entry.ContainsKey(x));
+                if (entityMediaPropertyName != null)
+                {
+                    object value;
+                    if (entry.TryGetValue(FluentCommand.AnnotationsLiteral, out value))
+                    {
+                        var annotations = value as ODataEntryAnnotations;
+                        if (annotations != null)
+                        {
+                            await GetMediaStreamValueAsync(entry, entityMediaPropertyName, annotations.MediaResource, cancellationToken);
+                        }
+                    }
+                }
+
+                foreach (var propertyName in mediaProperties)
+                {
+                    object value;
+                    if (entry.TryGetValue(propertyName, out value))
+                    {
+                        await GetMediaStreamValueAsync(entry, propertyName, value as ODataMediaAnnotations, cancellationToken);
+                    }
+                }
+            }
+        }
+
+        private async Task GetMediaStreamValueAsync(IDictionary<string, object> entry, string propertyName, ODataMediaAnnotations annotations, CancellationToken cancellationToken)
+        {
+            var mediaLink = annotations == null ? null : annotations.ReadLink ?? annotations.EditLink;
+            if (mediaLink != null)
+            {
+                var stream = await GetMediaStreamAsync(mediaLink.AbsoluteUri, cancellationToken);
+                if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+                object propertyValue;
+                if (entry.TryGetValue(propertyName, out propertyValue))
+                    entry[propertyName] = stream;
+                else
+                    entry.Add(propertyName, stream);
+            }
         }
     }
 }

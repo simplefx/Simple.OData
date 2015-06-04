@@ -28,6 +28,7 @@ namespace Simple.OData.Client
         public string LinkName { get; set; }
         public ODataExpression LinkExpression { get; set; }
         public string MediaName { get; set; }
+        public IEnumerable<string> MediaProperties { get; set; }
         public SimpleDictionary<object, IDictionary<string, object>> BatchEntries { get; set; }
 
         public CommandDetails(Session session, FluentCommand parent, SimpleDictionary<object, IDictionary<string, object>> batchEntries)
@@ -39,6 +40,7 @@ namespace Simple.OData.Client
             this.ExpandAssociations = new List<KeyValuePair<string, ODataExpandOptions>>();
             this.SelectColumns = new List<string>();
             this.OrderbyColumns = new List<KeyValuePair<string, bool>>();
+            this.MediaProperties = new List<string>();
             this.BatchEntries = batchEntries;
         }
 
@@ -69,6 +71,7 @@ namespace Simple.OData.Client
             this.LinkName = details.LinkName;
             this.LinkExpression = details.LinkExpression;
             this.MediaName = details.MediaName;
+            this.MediaProperties = details.MediaProperties;
             this.BatchEntries = details.BatchEntries;
         }
     }

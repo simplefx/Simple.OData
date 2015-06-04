@@ -317,6 +317,9 @@
     <Compile Include="..\Simple.OData.Client.Core\ODataLiteral.cs">
       <Link>ODataLiteral.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ODataMediaAnnotations.cs">
+      <Link>ODataMediaAnnotations.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ODataPayloadFormat.cs">
       <Link>ODataPayloadFormat.cs</Link>
     </Compile>
