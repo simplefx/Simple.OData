@@ -21,12 +21,12 @@ namespace Simple.OData.Client.V4.Adapter
             _model = model;
         }
 
-        public override Task<ODataResponse> GetResponseAsync(HttpResponseMessage responseMessage, bool includeAnnotationsInResults = false)
+        public override Task<ODataResponse> GetResponseAsync(HttpResponseMessage responseMessage)
         {
-            return GetResponseAsync(new ODataResponseMessage(responseMessage), includeAnnotationsInResults);
+            return GetResponseAsync(new ODataResponseMessage(responseMessage));
         }
 
-        protected override void ConvertEntry(ResponseNode entryNode, object entry, bool includeAnnotationsInResults)
+        protected override void ConvertEntry(ResponseNode entryNode, object entry)
         {
             if (entry != null)
             {
@@ -34,11 +34,7 @@ namespace Simple.OData.Client.V4.Adapter
                 foreach (var property in odataEntry.Properties)
                 {
                     entryNode.Entry.Add(property.Name, GetPropertyValue(property.Value));
-                }
-                if (includeAnnotationsInResults)
-                {
-                    var annotations = CreateAnnotations(odataEntry);
-                    entryNode.Entry.Add(FluentCommand.AnnotationsLiteral, annotations);
+                    entryNode.EntryAnnotations = CreateAnnotations(odataEntry);
                 }
             }
         }
@@ -68,7 +64,7 @@ namespace Simple.OData.Client.V4.Adapter
             };
         }
 
-        public async Task<ODataResponse> GetResponseAsync(IODataResponseMessageAsync responseMessage, bool includeAnnotationsInResults = false)
+        public async Task<ODataResponse> GetResponseAsync(IODataResponseMessageAsync responseMessage)
         {
             var readerSettings = new ODataMessageReaderSettings();
             readerSettings.MessageQuotas.MaxReceivedMessageSize = Int32.MaxValue;
@@ -96,11 +92,11 @@ namespace Simple.OData.Client.V4.Adapter
                 }
                 else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Batch))
                 {
-                    return await ReadResponse(messageReader.CreateODataBatchReader(), includeAnnotationsInResults);
+                    return await ReadResponse(messageReader.CreateODataBatchReader());
                 }
                 else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Feed))
                 {
-                    return ReadResponse(messageReader.CreateODataFeedReader(), includeAnnotationsInResults);
+                    return ReadResponse(messageReader.CreateODataFeedReader());
                 }
                 else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Collection))
                 {
@@ -116,12 +112,12 @@ namespace Simple.OData.Client.V4.Adapter
                 }
                 else
                 {
-                    return ReadResponse(messageReader.CreateODataEntryReader(), includeAnnotationsInResults);
+                    return ReadResponse(messageReader.CreateODataEntryReader());
                 }
             }
         }
 
-        private async Task<ODataResponse> ReadResponse(ODataBatchReader odataReader, bool includeAnnotationsInResults)
+        private async Task<ODataResponse> ReadResponse(ODataBatchReader odataReader)
         {
             var batch = new List<ODataResponse>();
 
@@ -136,7 +132,7 @@ namespace Simple.OData.Client.V4.Adapter
                         if (operationMessage.StatusCode == (int)HttpStatusCode.NoContent)
                             batch.Add(ODataResponse.FromStatusCode(operationMessage.StatusCode));
                         else
-                            batch.Add(await GetResponseAsync(operationMessage, includeAnnotationsInResults));
+                            batch.Add(await GetResponseAsync(operationMessage));
                         break;
                     case ODataBatchReaderState.ChangesetEnd:
                         break;
@@ -172,7 +168,7 @@ namespace Simple.OData.Client.V4.Adapter
             return ODataResponse.FromCollection(collection);
         }
 
-        private ODataResponse ReadResponse(ODataReader odataReader, bool includeAnnotationsInResults)
+        private ODataResponse ReadResponse(ODataReader odataReader)
         {
             ResponseNode rootNode = null;
             var nodeStack = new Stack<ResponseNode>();
@@ -197,7 +193,7 @@ namespace Simple.OData.Client.V4.Adapter
                         break;
 
                     case ODataReaderState.EntryEnd:
-                        EndEntry(nodeStack, ref rootNode, odataReader.Item, includeAnnotationsInResults);
+                        EndEntry(nodeStack, ref rootNode, odataReader.Item);
                         break;
 
                     case ODataReaderState.NavigationLinkStart:
@@ -211,8 +207,8 @@ namespace Simple.OData.Client.V4.Adapter
             }
 
             return rootNode.Feed != null
-                ? ODataResponse.FromFeed(rootNode.Feed, rootNode.FeedAnnotations)
-                : ODataResponse.FromEntry(rootNode.Entry);
+                ? ODataResponse.FromFeed(rootNode.Feed, rootNode.FeedAnnotations, rootNode.FeedEntryAnnotations)
+                : ODataResponse.FromEntry(rootNode.Entry, rootNode.EntryAnnotations);
         }
 
         private ODataFeedAnnotations CreateFeedAnnotaions(ODataFeed feed)

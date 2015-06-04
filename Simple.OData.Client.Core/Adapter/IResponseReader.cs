@@ -7,6 +7,6 @@ namespace Simple.OData.Client
 {
     public interface IResponseReader
     {
-        Task<ODataResponse> GetResponseAsync(HttpResponseMessage responseMessage, bool includeAnnotationsInResults = false);
+        Task<ODataResponse> GetResponseAsync(HttpResponseMessage responseMessage);
     }
 }

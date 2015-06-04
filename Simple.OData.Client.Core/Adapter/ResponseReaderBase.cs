@@ -16,9 +16,9 @@ namespace Simple.OData.Client
             _session = session;
         }
 
-        public abstract Task<ODataResponse> GetResponseAsync(HttpResponseMessage responseMessage, bool includeAnnotationsInResults = false);
+        public abstract Task<ODataResponse> GetResponseAsync(HttpResponseMessage responseMessage);
 
-        protected abstract void ConvertEntry(ResponseNode entryNode, object entry, bool includeAnnotationsInResults);
+        protected abstract void ConvertEntry(ResponseNode entryNode, object entry);
 
         protected void StartFeed(Stack<ResponseNode> nodeStack, ODataFeedAnnotations feedAnnotations)
         {
@@ -26,6 +26,7 @@ namespace Simple.OData.Client
             {
                 Feed = new List<IDictionary<string, object>>(),
                 FeedAnnotations = feedAnnotations,
+                FeedEntryAnnotations = new Dictionary<object, ODataEntryAnnotations>(),
             });
         }
 
@@ -56,16 +57,23 @@ namespace Simple.OData.Client
             });
         }
 
-        protected void EndEntry(Stack<ResponseNode> nodeStack, ref ResponseNode rootNode, object entry, bool includeAnnotationsInResults)
+        protected void EndEntry(Stack<ResponseNode> nodeStack, ref ResponseNode rootNode, object entry)
         {
             var entryNode = nodeStack.Pop();
-            ConvertEntry(entryNode, entry, includeAnnotationsInResults);
+            ConvertEntry(entryNode, entry);
             if (nodeStack.Any())
             {
-                if (nodeStack.Peek().Feed != null)
-                    nodeStack.Peek().Feed.Add(entryNode.Entry);
+                var node = nodeStack.Peek();
+                if (node.Feed != null)
+                {
+                    node.Feed.Add(entryNode.Entry);
+                    node.FeedEntryAnnotations.Add(entryNode.Entry, entryNode.EntryAnnotations);
+                }
                 else
-                    nodeStack.Peek().Entry = entryNode.Entry;
+                {
+                    node.Entry = entryNode.Entry;
+                    node.EntryAnnotations = entryNode.EntryAnnotations;
+                }
             }
             else
             {

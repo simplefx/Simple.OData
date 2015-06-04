@@ -982,7 +982,7 @@ namespace Simple.OData.Client
             if (IsBatchResponse)
             {
                 if (annotations != null)
-                    annotations.CopyFrom(_batchResponse.Annotations);
+                    annotations.CopyFrom(_batchResponse.FeedAnnotations);
                 return _batchResponse.AsEntries();
             }
 
@@ -995,8 +995,22 @@ namespace Simple.OData.Client
             return await ExecuteRequestWithResultAsync(request, cancellationToken, x =>
             {
                 if (annotations != null)
-                    annotations.CopyFrom(x.Annotations);
-                return x.AsEntries();
+                    annotations.CopyFrom(x.FeedAnnotations);
+                var entries = x.AsEntries();
+                if (_session.Settings.IncludeAnnotationsInResults)
+                {
+                    var actions = new List<Action>();
+                    foreach (var entry in entries)
+                    {
+                        var item = entry;
+                        actions.Add(() => item.Add(FluentCommand.AnnotationsLiteral, x.FeedEntryAnnotations[item]));
+                    }
+                    foreach (var action in actions)
+                    {
+                        action();
+                    }
+                }
+                return entries;
             },
             () => new IDictionary<string, object>[] { });
         }
@@ -1041,7 +1055,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse)
             {
-                annotations.CopyFrom(_batchResponse.Annotations);
+                annotations.CopyFrom(_batchResponse.FeedAnnotations);
                 return _batchResponse.AsEntries();
             }
 

@@ -234,7 +234,7 @@ namespace Simple.OData.Client
             using (var response = await _requestRunner.ExecuteRequestAsync(request, cancellationToken))
             {
                 var responseReader = _session.Adapter.GetResponseReader();
-                batchResponse = await responseReader.GetResponseAsync(response, _session.Settings.IncludeAnnotationsInResults);
+                batchResponse = await responseReader.GetResponseAsync(response);
             }
 
             // Replay batch operations to assign results
@@ -289,7 +289,7 @@ namespace Simple.OData.Client
                         (request.Method == RestVerbs.Get || request.ResultRequired))
                     {
                         var responseReader = _session.Adapter.GetResponseReader();
-                        return createResult(await responseReader.GetResponseAsync(response, _session.Settings.IncludeAnnotationsInResults));
+                        return createResult(await responseReader.GetResponseAsync(response));
                     }
                     else
                     {

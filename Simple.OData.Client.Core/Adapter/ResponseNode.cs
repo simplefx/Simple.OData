@@ -13,6 +13,8 @@ namespace Simple.OData.Client
         public IList<object> Collection { get; set; }
         public string LinkName { get; set; }
         public ODataFeedAnnotations FeedAnnotations { get; set; }
+        public IDictionary<object, ODataEntryAnnotations> FeedEntryAnnotations { get; set; }
+        public ODataEntryAnnotations EntryAnnotations { get; set; }
 
         public object Value
         {

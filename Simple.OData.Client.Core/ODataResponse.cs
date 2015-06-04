@@ -13,7 +13,9 @@ namespace Simple.OData.Client
         public int StatusCode { get; private set; }
         public IEnumerable<IDictionary<string, object>> Entries { get; private set; }
         public IDictionary<string, object> Entry { get; private set; }
-        public ODataFeedAnnotations Annotations { get; private set; }
+        public ODataFeedAnnotations FeedAnnotations { get; private set; }
+        public IDictionary<object, ODataEntryAnnotations> FeedEntryAnnotations { get; private set; }
+        public ODataEntryAnnotations EntryAnnotations { get; private set; }
         public IList<ODataResponse> Batch { get; private set; }
         public string DynamicPropertiesContainerName { get; private set; }
 
@@ -69,20 +71,23 @@ namespace Simple.OData.Client
                 .ToArray();
         }
 
-        public static ODataResponse FromFeed(IEnumerable<IDictionary<string, object>> entries, ODataFeedAnnotations annotations = null)
+        public static ODataResponse FromFeed(IEnumerable<IDictionary<string, object>> entries, 
+            ODataFeedAnnotations feedAnnotations = null, IDictionary<object, ODataEntryAnnotations> feedEntryAnnotations = null)
         {
             return new ODataResponse
             {
                 Entries = entries,
-                Annotations = annotations,
+                FeedAnnotations = feedAnnotations,
+                FeedEntryAnnotations = feedEntryAnnotations,
             };
         }
 
-        public static ODataResponse FromEntry(IDictionary<string, object> entry)
+        public static ODataResponse FromEntry(IDictionary<string, object> entry, ODataEntryAnnotations entryAnnotations = null)
         {
             return new ODataResponse
             {
                 Entry = entry,
+                EntryAnnotations = entryAnnotations,
             };
         }
 
