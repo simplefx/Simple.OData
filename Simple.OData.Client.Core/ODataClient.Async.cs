@@ -536,7 +536,7 @@ namespace Simple.OData.Client
             await _session.ResolveAdapterAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            VisitAnnotationProperties(entryData);
+            RemoveAnnotationProperties(entryData);
 
             var command = GetFluentClient()
                 .For(collection)
@@ -569,8 +569,8 @@ namespace Simple.OData.Client
             await _session.ResolveAdapterAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            VisitAnnotationProperties(entryKey);
-            VisitAnnotationProperties(entryData);
+            RemoveAnnotationProperties(entryKey);
+            RemoveAnnotationProperties(entryData);
 
             var command = GetFluentClient()
                 .For(collection)
@@ -604,7 +604,7 @@ namespace Simple.OData.Client
             await _session.ResolveAdapterAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            VisitAnnotationProperties(entryData);
+            RemoveAnnotationProperties(entryData);
 
             var command = GetFluentClient()
                 .For(collection)
@@ -628,7 +628,7 @@ namespace Simple.OData.Client
             await _session.ResolveAdapterAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            VisitAnnotationProperties(entryKey);
+            RemoveAnnotationProperties(entryKey);
 
             var command = GetFluentClient()
                 .For(collection)
@@ -672,8 +672,8 @@ namespace Simple.OData.Client
             await _session.ResolveAdapterAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            VisitAnnotationProperties(entryKey);
-            VisitAnnotationProperties(linkedEntryKey);
+            RemoveAnnotationProperties(entryKey);
+            RemoveAnnotationProperties(linkedEntryKey);
 
             var command = GetFluentClient()
                 .For(collection)
@@ -706,7 +706,7 @@ namespace Simple.OData.Client
             await _session.ResolveAdapterAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            VisitAnnotationProperties(entryKey);
+            RemoveAnnotationProperties(entryKey);
 
             var command = GetFluentClient()
                 .For(collection)
@@ -992,24 +992,13 @@ namespace Simple.OData.Client
             var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
                 .CreateGetRequestAsync(commandText, scalarResult);
 
-            var result = await ExecuteRequestWithResultAsync(request, cancellationToken, x =>
+            return await ExecuteRequestWithResultAsync(request, cancellationToken, x =>
             {
                 if (annotations != null)
                     annotations.CopyFrom(x.Annotations);
                 return x.AsEntries();
             },
             () => new IDictionary<string, object>[] { });
-            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-
-            if (result != null && !_session.Settings.IncludeAnnotationsInResults)
-            {
-                foreach (var entry in result)
-                {
-                    VisitAnnotationProperties(entry);
-                }
-            }
-
-            return result;
         }
 
         internal async Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(FluentCommand command, CancellationToken cancellationToken)
@@ -1026,7 +1015,7 @@ namespace Simple.OData.Client
             var result = await FindEntriesAsync(commandText, cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            await VisitResultPropertiesAsync(result, command, cancellationToken);
+            await EnrichWithMediaPropertiesAsync(result, command, cancellationToken);
             return result;
         }
 
@@ -1044,7 +1033,7 @@ namespace Simple.OData.Client
             var result = await FindEntriesAsync(commandText, scalarResult, cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            await VisitResultPropertiesAsync(result, command, cancellationToken);
+            await EnrichWithMediaPropertiesAsync(result, command, cancellationToken);
             return result;
         }
 
@@ -1065,7 +1054,7 @@ namespace Simple.OData.Client
             var result = await FindEntriesAsync(commandText, annotations, cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            await VisitResultPropertiesAsync(result, command, cancellationToken);
+            await EnrichWithMediaPropertiesAsync(result, command, cancellationToken);
             return result;
         }
 
@@ -1083,7 +1072,7 @@ namespace Simple.OData.Client
             var result = await FindEntryAsync(commandText, cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            await VisitResultPropertiesAsync(result, command, cancellationToken);
+            await EnrichWithMediaPropertiesAsync(result, command, cancellationToken);
             return result;
         }
 
@@ -1284,34 +1273,6 @@ namespace Simple.OData.Client
             else
             {
                 return commandText;
-            }
-        }
-
-        private async Task VisitResultPropertiesAsync(IEnumerable<IDictionary<string, object>> entries, FluentCommand command, CancellationToken cancellationToken)
-        {
-            if ((command.Details.MediaProperties == null || !command.Details.MediaProperties.Any()) && _session.Settings.IncludeAnnotationsInResults)
-                return;
-
-            if (entries != null)
-            {
-                foreach (var entry in entries)
-                {
-                    await VisitResultPropertiesAsync(entry, command, cancellationToken);
-                }
-            }
-        }
-
-        private async Task VisitResultPropertiesAsync(IDictionary<string, object> entry, FluentCommand command, CancellationToken cancellationToken)
-        {
-            if ((command.Details.MediaProperties == null || !command.Details.MediaProperties.Any()) && _session.Settings.IncludeAnnotationsInResults)
-                return;
-
-            if (entry != null)
-            {
-                await EnrichWithMediaPropertiesAsync(entry, command.Details.MediaProperties, cancellationToken);
-                if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-
-                VisitAnnotationProperties(entry);
             }
         }
     }

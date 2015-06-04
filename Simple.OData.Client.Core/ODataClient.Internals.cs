@@ -387,7 +387,7 @@ namespace Simple.OData.Client
             return result;
         }
 
-        private void VisitAnnotationProperties(IDictionary<string, object> entryData, IList<Action> actions = null)
+        private void RemoveAnnotationProperties(IDictionary<string, object> entryData, IList<Action> actions = null)
         {
             var runActionsOnExist = false;
             if (actions == null)
@@ -403,7 +403,7 @@ namespace Simple.OData.Client
                 var nestedEntries = entryData.Where(x => x.Value is IDictionary<string, object>);
                 foreach (var nestedEntry in nestedEntries)
                 {
-                    VisitAnnotationProperties(nestedEntry.Value as IDictionary<string, object>, actions);
+                    RemoveAnnotationProperties(nestedEntry.Value as IDictionary<string, object>, actions);
                 }
 
                 nestedEntries = entryData.Where(x => x.Value is IList<IDictionary<string, object>>);
@@ -411,7 +411,7 @@ namespace Simple.OData.Client
                 {
                     foreach (var element in nestedEntry.Value as IList<IDictionary<string, object>>)
                     {
-                        VisitAnnotationProperties(element, actions);
+                        RemoveAnnotationProperties(element, actions);
                     }
                 }
             }
@@ -458,6 +458,26 @@ namespace Simple.OData.Client
                 entryIdent = entryIdent.Substring(0, entryIdent.Length - segments.Last().Length - 1);
             }
             return entryIdent;
+        }
+
+        private async Task EnrichWithMediaPropertiesAsync(IEnumerable<IDictionary<string, object>> entries, FluentCommand command, CancellationToken cancellationToken)
+        {
+            if (entries != null)
+            {
+                foreach (var entry in entries)
+                {
+                    await EnrichWithMediaPropertiesAsync(entry, command, cancellationToken);
+                }
+            }
+        }
+
+        private async Task EnrichWithMediaPropertiesAsync(IDictionary<string, object> entry, FluentCommand command, CancellationToken cancellationToken)
+        {
+            if (entry != null && command.Details.MediaProperties != null)
+            {
+                await EnrichWithMediaPropertiesAsync(entry, command.Details.MediaProperties, cancellationToken);
+                if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+            }
         }
 
         private async Task EnrichWithMediaPropertiesAsync(IDictionary<string, object> entry, IEnumerable<string> mediaProperties, CancellationToken cancellationToken)
