@@ -65,6 +65,15 @@ namespace Simple.OData.Client.V3.Adapter
                         Name = x.Name,
                         Uri = x.Url,
                     })),
+                MediaResource = odataEntry.MediaResource == null
+                    ? null
+                    : new ODataEntryAnnotations.MediaResourceAnnotations
+                    {
+                        ContentType = odataEntry.MediaResource.ContentType,
+                        ReadLink = odataEntry.MediaResource.ReadLink,
+                        EditLink = odataEntry.MediaResource.EditLink,
+                        ETag = odataEntry.MediaResource.ETag,
+                    },
                 InstanceAnnotations = odataEntry.InstanceAnnotations,
             };
         }
