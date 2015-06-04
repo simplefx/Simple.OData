@@ -10,12 +10,25 @@ namespace Simple.OData.Client
 {
     public class ODataResponse
     {
+        public class AnnotatedFeed
+        {
+            public IList<AnnotatedEntry> Entries { get; set; }
+            public ODataFeedAnnotations Annotations { get; set; }
+
+            public AnnotatedFeed() { this.Entries = new List<AnnotatedEntry>(); }
+        }
+
+        public class AnnotatedEntry
+        {
+            public IDictionary<string, object> Data { get; set; }
+            public ODataEntryAnnotations Annotations { get; set; }
+
+            public AnnotatedEntry() { this.Data = new Dictionary<string, object>(); }
+        }
+
         public int StatusCode { get; private set; }
-        public IEnumerable<IDictionary<string, object>> Entries { get; private set; }
-        public IDictionary<string, object> Entry { get; private set; }
-        public ODataFeedAnnotations FeedAnnotations { get; private set; }
-        public IDictionary<IDictionary<string, object>, ODataEntryAnnotations> FeedEntryAnnotations { get; private set; }
-        public ODataEntryAnnotations EntryAnnotations { get; private set; }
+        public AnnotatedFeed Feed { get; private set; }
+        public AnnotatedEntry Entry { get; private set; }
         public IList<ODataResponse> Batch { get; private set; }
         public string DynamicPropertiesContainerName { get; private set; }
 
@@ -23,18 +36,19 @@ namespace Simple.OData.Client
         {
         }
 
-        public IEnumerable<IDictionary<string, object>> AsEntries()
+        public IEnumerable<IDictionary<string, object>> AsEntries(bool includeAnnotationsInResults = false)
         {
-            if (this.Entries != null)
+            if (this.Feed != null)
             {
-                return this.Entries.Any() && this.Entries.First().ContainsKey(FluentCommand.ResultLiteral)
-                    ? this.Entries.Select(ExtractDictionary)
-                    : this.Entries;
+                var data = this.Feed.Entries;
+                return data.Any() && data.First().Data.ContainsKey(FluentCommand.ResultLiteral)
+                    ? data.Select(x => ExtractDictionary(x, includeAnnotationsInResults))
+                    : data.Select(x => x.Data);
             }
             else
             {
                 return (this.Entry != null
-                ? new[] { ExtractDictionary(this.Entry) }
+                ? new[] { ExtractDictionary(this.Entry, includeAnnotationsInResults) }
                 : new IDictionary<string, object>[] { });
             }
         }
@@ -75,20 +89,11 @@ namespace Simple.OData.Client
         {
             if (node.Feed != null)
             {
-                return new ODataResponse
-                {
-                    Entries = node.Feed.Data.Select(x => x.Data),
-                    FeedAnnotations = node.Feed.Annotations,
-                    FeedEntryAnnotations = node.Feed.Data.ToDictionary(x => x.Data, x => x.Annotations),
-                };
+                return new ODataResponse { Feed = node.Feed };
             }
             else
             {
-                return new ODataResponse()
-                {
-                    Entry = node.Entry.Data,
-                    EntryAnnotations = node.Entry.Annotations,
-                };
+                return new ODataResponse { Entry = node.Entry };
             }
         }
 
@@ -96,8 +101,11 @@ namespace Simple.OData.Client
         {
             return new ODataResponse
             {
-                Entries = entries,
-                FeedAnnotations = feedAnnotations,
+                Feed = new AnnotatedFeed
+                {
+                    Entries = entries.Select(x => new AnnotatedEntry { Data = x }).ToList(),
+                    Annotations = feedAnnotations,
+                }
             };
         }
 
@@ -105,8 +113,11 @@ namespace Simple.OData.Client
         {
             return new ODataResponse
             {
-                Entry = entry,
-                EntryAnnotations = entryAnnotations,
+                Entry = new AnnotatedEntry
+                {
+                    Data = entry,
+                    Annotations = entryAnnotations,
+                }
             };
         }
 
@@ -114,7 +125,14 @@ namespace Simple.OData.Client
         {
             return new ODataResponse
             {
-                Entries = collection.Select(x => new Dictionary<string, object>() { { FluentCommand.ResultLiteral, x } }),
+                Feed = new AnnotatedFeed
+                {
+                    Entries = collection.Select(x => new AnnotatedEntry
+                    {
+                        Data = new Dictionary<string, object>() { { FluentCommand.ResultLiteral, x } }
+                    })
+                    .ToList()
+                }
             };
         }
 
@@ -134,17 +152,25 @@ namespace Simple.OData.Client
             };
         }
 
-        private IDictionary<string, object> ExtractDictionary(IDictionary<string, object> value)
+        private IDictionary<string, object> ExtractDictionary(AnnotatedEntry entry, bool includeAnnotationsInResults)
         {
-            if (value != null && value.Keys.Count == 1 &&
-                value.ContainsKey(FluentCommand.ResultLiteral) && 
-                value.Values.First() is IDictionary<string, object>)
+            if (entry == null || entry.Data == null)
+                return null;
+
+            var data = entry.Data;
+            if (data.Keys.Count == 1 && data.ContainsKey(FluentCommand.ResultLiteral) && 
+                data.Values.First() is IDictionary<string, object>)
             {
-                return value.Values.First() as IDictionary<string, object>;
+                return data.Values.First() as IDictionary<string, object>;
+            }
+            else if (includeAnnotationsInResults)
+            {
+                data.Add(FluentCommand.AnnotationsLiteral, entry.Annotations);
+                return data;
             }
             else
             {
-                return value;
+                return data;
             }
         }
     }

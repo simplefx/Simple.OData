@@ -24,7 +24,7 @@ namespace Simple.OData.Client
         {
             nodeStack.Push(new ResponseNode
             {
-                Feed = new ResponseNode.AnnotatedFeed(),
+                Feed = new ODataResponse.AnnotatedFeed(),
             });
         }
 
@@ -51,7 +51,7 @@ namespace Simple.OData.Client
         {
             nodeStack.Push(new ResponseNode
             {
-                Entry = new ResponseNode.AnnotatedEntry()
+                Entry = new ODataResponse.AnnotatedEntry()
             });
         }
 
@@ -64,7 +64,7 @@ namespace Simple.OData.Client
                 var node = nodeStack.Peek();
                 if (node.Feed != null)
                 {
-                    node.Feed.Data.Add(entryNode.Entry);
+                    node.Feed.Entries.Add(entryNode.Entry);
                 }
                 else
                 {
