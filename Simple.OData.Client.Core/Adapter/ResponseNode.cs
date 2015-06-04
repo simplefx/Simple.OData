@@ -8,23 +8,36 @@ namespace Simple.OData.Client
 {
     public class ResponseNode
     {
-        public IList<IDictionary<string, object>> Feed { get; set; }
-        public IDictionary<string, object> Entry { get; set; }
-        public IList<object> Collection { get; set; }
+        public class AnnotatedFeed
+        {
+            public IList<AnnotatedEntry> Data { get; set; }
+            public ODataFeedAnnotations Annotations { get; set; }
+
+            public AnnotatedFeed() { this.Data = new List<AnnotatedEntry>(); }
+        }
+
+        public class AnnotatedEntry
+        {
+            public IDictionary<string, object> Data { get; set; }
+            public ODataEntryAnnotations Annotations { get; set; }
+
+            public AnnotatedEntry() { this.Data = new Dictionary<string, object>(); }
+        }
+
+        public AnnotatedFeed Feed { get; set; }
+        public AnnotatedEntry Entry { get; set; }
         public string LinkName { get; set; }
-        public ODataFeedAnnotations FeedAnnotations { get; set; }
-        public IDictionary<object, ODataEntryAnnotations> FeedEntryAnnotations { get; set; }
-        public ODataEntryAnnotations EntryAnnotations { get; set; }
 
         public object Value
         {
             get
             {
-                if (this.Feed != null && this.Feed.Any())
-                    return this.Feed.AsEnumerable();
-                else
-                    return this.Entry;
-
+                return
+                    this.Feed != null && this.Feed.Data !=null && this.Feed.Data.Any()
+                    ? (object)this.Feed.Data.Select(x => x.Data)
+                    : this.Entry != null
+                    ? this.Entry.Data
+                    : null;
             }
         }
     }

@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Data.Edm;
 using Microsoft.Data.OData;
-using Simple.OData.Client.Extensions;
 
 #pragma warning disable 1591
 
@@ -36,8 +34,8 @@ namespace Simple.OData.Client.V3.Adapter
                 var odataEntry = entry as Microsoft.Data.OData.ODataEntry;
                 foreach (var property in odataEntry.Properties)
                 {
-                    entryNode.Entry.Add(property.Name, GetPropertyValue(property.Value));
-                    entryNode.EntryAnnotations = CreateAnnotations(odataEntry);
+                    entryNode.Entry.Data.Add(property.Name, GetPropertyValue(property.Value));
+                    entryNode.Entry.Annotations = CreateAnnotations(odataEntry);
                 }
             }
         }
@@ -238,9 +236,7 @@ namespace Simple.OData.Client.V3.Adapter
                 }
             }
 
-            return rootNode.Feed != null
-                ? ODataResponse.FromFeed(rootNode.Feed, rootNode.FeedAnnotations, rootNode.FeedEntryAnnotations)
-                : ODataResponse.FromEntry(rootNode.Entry, rootNode.EntryAnnotations);
+            return ODataResponse.FromNode(rootNode);
         }
 
         private ODataFeedAnnotations CreateFeedDetails(ODataFeed feed)

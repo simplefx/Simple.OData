@@ -33,8 +33,8 @@ namespace Simple.OData.Client.V4.Adapter
                 var odataEntry = entry as Microsoft.OData.Core.ODataEntry;
                 foreach (var property in odataEntry.Properties)
                 {
-                    entryNode.Entry.Add(property.Name, GetPropertyValue(property.Value));
-                    entryNode.EntryAnnotations = CreateAnnotations(odataEntry);
+                    entryNode.Entry.Data.Add(property.Name, GetPropertyValue(property.Value));
+                    entryNode.Entry.Annotations = CreateAnnotations(odataEntry);
                 }
             }
         }
@@ -206,9 +206,7 @@ namespace Simple.OData.Client.V4.Adapter
                 }
             }
 
-            return rootNode.Feed != null
-                ? ODataResponse.FromFeed(rootNode.Feed, rootNode.FeedAnnotations, rootNode.FeedEntryAnnotations)
-                : ODataResponse.FromEntry(rootNode.Entry, rootNode.EntryAnnotations);
+            return ODataResponse.FromNode(rootNode);
         }
 
         private ODataFeedAnnotations CreateFeedAnnotaions(ODataFeed feed)

@@ -14,7 +14,7 @@ namespace Simple.OData.Client
         public IEnumerable<IDictionary<string, object>> Entries { get; private set; }
         public IDictionary<string, object> Entry { get; private set; }
         public ODataFeedAnnotations FeedAnnotations { get; private set; }
-        public IDictionary<object, ODataEntryAnnotations> FeedEntryAnnotations { get; private set; }
+        public IDictionary<IDictionary<string, object>, ODataEntryAnnotations> FeedEntryAnnotations { get; private set; }
         public ODataEntryAnnotations EntryAnnotations { get; private set; }
         public IList<ODataResponse> Batch { get; private set; }
         public string DynamicPropertiesContainerName { get; private set; }
@@ -71,14 +71,33 @@ namespace Simple.OData.Client
                 .ToArray();
         }
 
-        public static ODataResponse FromFeed(IEnumerable<IDictionary<string, object>> entries, 
-            ODataFeedAnnotations feedAnnotations = null, IDictionary<object, ODataEntryAnnotations> feedEntryAnnotations = null)
+        public static ODataResponse FromNode(ResponseNode node)
+        {
+            if (node.Feed != null)
+            {
+                return new ODataResponse
+                {
+                    Entries = node.Feed.Data.Select(x => x.Data),
+                    FeedAnnotations = node.Feed.Annotations,
+                    FeedEntryAnnotations = node.Feed.Data.ToDictionary(x => x.Data, x => x.Annotations),
+                };
+            }
+            else
+            {
+                return new ODataResponse()
+                {
+                    Entry = node.Entry.Data,
+                    EntryAnnotations = node.Entry.Annotations,
+                };
+            }
+        }
+
+        public static ODataResponse FromFeed(IEnumerable<IDictionary<string, object>> entries, ODataFeedAnnotations feedAnnotations = null)
         {
             return new ODataResponse
             {
                 Entries = entries,
                 FeedAnnotations = feedAnnotations,
-                FeedEntryAnnotations = feedEntryAnnotations,
             };
         }
 

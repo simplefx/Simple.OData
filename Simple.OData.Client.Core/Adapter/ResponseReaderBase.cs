@@ -24,9 +24,7 @@ namespace Simple.OData.Client
         {
             nodeStack.Push(new ResponseNode
             {
-                Feed = new List<IDictionary<string, object>>(),
-                FeedAnnotations = feedAnnotations,
-                FeedEntryAnnotations = new Dictionary<object, ODataEntryAnnotations>(),
+                Feed = new ResponseNode.AnnotatedFeed(),
             });
         }
 
@@ -39,13 +37,13 @@ namespace Simple.OData.Client
             else
                 rootNode = feedNode;
 
-            if (feedNode.FeedAnnotations == null)
+            if (feedNode.Feed.Annotations == null)
             {
-                feedNode.FeedAnnotations = feedAnnotations;
+                feedNode.Feed.Annotations = feedAnnotations;
             }
             else
             {
-                feedNode.FeedAnnotations.Merge(feedAnnotations);
+                feedNode.Feed.Annotations.Merge(feedAnnotations);
             }
         }
 
@@ -53,7 +51,7 @@ namespace Simple.OData.Client
         {
             nodeStack.Push(new ResponseNode
             {
-                Entry = new Dictionary<string, object>()
+                Entry = new ResponseNode.AnnotatedEntry()
             });
         }
 
@@ -66,13 +64,11 @@ namespace Simple.OData.Client
                 var node = nodeStack.Peek();
                 if (node.Feed != null)
                 {
-                    node.Feed.Add(entryNode.Entry);
-                    node.FeedEntryAnnotations.Add(entryNode.Entry, entryNode.EntryAnnotations);
+                    node.Feed.Data.Add(entryNode.Entry);
                 }
                 else
                 {
                     node.Entry = entryNode.Entry;
-                    node.EntryAnnotations = entryNode.EntryAnnotations;
                 }
             }
             else
@@ -97,7 +93,7 @@ namespace Simple.OData.Client
                 var linkValue = linkNode.Value;
                 if (linkNode.Value is IDictionary<string, object> && !(linkNode.Value as IDictionary<string, object>).Any())
                     linkValue = null;
-                nodeStack.Peek().Entry.Add(linkNode.LinkName, linkValue);
+                nodeStack.Peek().Entry.Data.Add(linkNode.LinkName, linkValue);
             }
         }
     }
