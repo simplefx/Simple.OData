@@ -35,19 +35,36 @@ namespace Simple.OData.Client.V3.Adapter
                 foreach (var property in odataEntry.Properties)
                 {
                     entryNode.Entry.Data.Add(property.Name, GetPropertyValue(property.Value));
-                    entryNode.Entry.Annotations = CreateAnnotations(odataEntry);
                 }
+                entryNode.Entry.Annotations = CreateAnnotations(odataEntry);
             }
         }
 
         private ODataEntryAnnotations CreateAnnotations(Microsoft.Data.OData.ODataEntry odataEntry)
         {
+            string id = null;
+            Uri readLink = null;
+            Uri editLink = null;
+            if (!_typesWithPartialAnnotations.Contains(odataEntry.TypeName))
+            {
+                try
+                {
+                    id = odataEntry.Id;
+                    readLink = odataEntry.ReadLink;
+                    editLink = odataEntry.EditLink;
+                }
+                catch (Exception)
+                {
+                    _typesWithPartialAnnotations.Add(odataEntry.TypeName);
+                }
+            }
+
             return new ODataEntryAnnotations
             {
-                Id = odataEntry.Id,
+                Id = id,
                 TypeName = odataEntry.TypeName,
-                ReadLink = odataEntry.ReadLink,
-                EditLink = odataEntry.EditLink,
+                ReadLink = readLink,
+                EditLink = editLink,
                 ETag = odataEntry.ETag,
                 AssociationLinks = odataEntry.AssociationLinks == null
                     ? null
@@ -100,14 +117,11 @@ namespace Simple.OData.Client.V3.Adapter
                     else
                     {
 #if SILVERLIGHT
-                        var text = Utils.StreamToString(responseMessage.GetStream());
+                        var stream = responseMessage.GetStream();
 #else
-                        var text = Utils.StreamToString(await responseMessage.GetStreamAsync());
+                        var stream = await responseMessage.GetStreamAsync();
 #endif
-                        return ODataResponse.FromFeed(new[] { new Dictionary<string, object>()
-                        {
-                            { FluentCommand.ResultLiteral, text }
-                        } });
+                        return ODataResponse.FromValueStream(stream);
                     }
                 }
                 else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Batch))
@@ -130,14 +144,11 @@ namespace Simple.OData.Client.V3.Adapter
 
                     if (_hasResponse)
                     {
-                        return ODataResponse.FromFeed(new[] { new Dictionary<string, object>()
-                        {
-                            { property.Name ?? FluentCommand.ResultLiteral, GetPropertyValue(property.Value) }
-                        } });
+                        return ODataResponse.FromProperty(property.Name, GetPropertyValue(property.Value));
                     }
                     else
                     {
-                        return ODataResponse.FromFeed(new Dictionary<string, object>[] {});
+                        return ODataResponse.EmptyFeed;
                     }
                 }
                 else

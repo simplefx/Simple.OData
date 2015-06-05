@@ -22,7 +22,7 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var result = await ExecuteRequestWithResultAsync(request, cancellationToken,
-                x => x.AsEntry(), () => null, () => request.EntryData);
+                x => x.AsEntry(_session.Settings.IncludeAnnotationsInResults), () => null, () => request.EntryData);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             if (result == null && resultRequired &&
@@ -48,7 +48,7 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var result = await ExecuteRequestWithResultAsync(request, cancellationToken,
-                x => x.AsEntry(), () => null, () => request.EntryData);
+                x => x.AsEntry(_session.Settings.IncludeAnnotationsInResults), () => null, () => request.EntryData);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             if (result == null && resultRequired)
@@ -194,7 +194,7 @@ namespace Simple.OData.Client
                 .CreateFunctionRequestAsync(commandText, command.FunctionName);
 
             return await ExecuteRequestWithResultAsync(request, cancellationToken,
-                x => x.AsEntries(),
+                x => x.AsEntries(_session.Settings.IncludeAnnotationsInResults),
                 () => new IDictionary<string, object>[] { });
         }
 
@@ -207,7 +207,7 @@ namespace Simple.OData.Client
                 .CreateActionRequestAsync(commandText, command.ActionName, command.CommandData, true);
 
             return await ExecuteRequestWithResultAsync(request, cancellationToken,
-                x => x.AsEntries(),
+                x => x.AsEntries(_session.Settings.IncludeAnnotationsInResults),
                 () => new IDictionary<string, object>[] { });
         }
 
