@@ -46,6 +46,20 @@ namespace Simple.OData.Client
             else
                 this.Annotations.Merge(annotations);
         }
+
+        public IDictionary<string, object> GetData(bool includeAnnotations)
+        {
+            if (includeAnnotations && this.Annotations != null)
+            {
+                var dataWithAnnotations = new Dictionary<string, object>(this.Data);
+                dataWithAnnotations.Add(FluentCommand.AnnotationsLiteral, this.Annotations);
+                return dataWithAnnotations;
+            }
+            else
+            {
+                return this.Data;
+            }
+        }
     }
 
     public class ODataResponse

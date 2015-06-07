@@ -951,7 +951,7 @@ namespace Simple.OData.Client
             }
 
             var result = await FindAnnotatedEntriesAsync(commandText, scalarResult, annotations, cancellationToken);
-            return result == null ? null : result.Select(x => x.Data);
+            return result == null ? null : result.Select(x => x.GetData(_session.Settings.IncludeAnnotationsInResults));
         }
 
         private async Task<IEnumerable<AnnotatedEntry>> FindAnnotatedEntriesAsync(
@@ -993,7 +993,7 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             await EnrichWithMediaPropertiesAsync(result, command, cancellationToken);
-            return result == null ? null : result.Select(x => x.Data);
+            return result == null ? null : result.Select(x => x.GetData(_session.Settings.IncludeAnnotationsInResults));
         }
 
         internal async Task<IDictionary<string, object>> FindEntryAsync(FluentCommand command, CancellationToken cancellationToken)
@@ -1012,7 +1012,7 @@ namespace Simple.OData.Client
             var result = results == null ? null : results.FirstOrDefault();
 
             await EnrichWithMediaPropertiesAsync(result, command.Details.MediaProperties, cancellationToken);
-            return result == null ? null : result.Data;
+            return result == null ? null : result.GetData(_session.Settings.IncludeAnnotationsInResults);
         }
 
         internal async Task<object> FindScalarAsync(FluentCommand command, CancellationToken cancellationToken)
