@@ -9,29 +9,28 @@ using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
+    public class AnnotatedFeed
+    {
+        public IList<AnnotatedEntry> Entries { get; set; }
+        public ODataFeedAnnotations Annotations { get; set; }
+
+        public AnnotatedFeed() { this.Entries = new List<AnnotatedEntry>(); }
+    }
+
+    public class AnnotatedEntry
+    {
+        public IDictionary<string, object> Data { get; set; }
+        public ODataEntryAnnotations Annotations { get; set; }
+
+        public AnnotatedEntry() { this.Data = new Dictionary<string, object>(); }
+    }
+
     public class ODataResponse
     {
-        public class AnnotatedFeed
-        {
-            public IList<AnnotatedEntry> Entries { get; set; }
-            public ODataFeedAnnotations Annotations { get; set; }
-
-            public AnnotatedFeed() { this.Entries = new List<AnnotatedEntry>(); }
-        }
-
-        public class AnnotatedEntry
-        {
-            public IDictionary<string, object> Data { get; set; }
-            public ODataEntryAnnotations Annotations { get; set; }
-
-            public AnnotatedEntry() { this.Data = new Dictionary<string, object>(); }
-        }
-
         public int StatusCode { get; private set; }
         public AnnotatedFeed Feed { get; private set; }
         public AnnotatedEntry Entry { get; private set; }
         public IList<ODataResponse> Batch { get; private set; }
-        public string DynamicPropertiesContainerName { get; private set; }
 
         private ODataResponse()
         {
@@ -55,11 +54,6 @@ namespace Simple.OData.Client
             }
         }
 
-        public IEnumerable<T> AsEntries<T>(string dynamicPropertiesContainerName, bool includeAnnotations) where T : class
-        {
-            return this.AsEntries(includeAnnotations).Select(x => x.ToObject<T>(dynamicPropertiesContainerName));
-        }
-
         public IDictionary<string, object> AsEntry(bool includeAnnotations)
         {
             var result = AsEntries(includeAnnotations);
@@ -69,14 +63,12 @@ namespace Simple.OData.Client
                 : null;
         }
 
-        public T AsEntry<T>(string dynamicPropertiesContainerName, bool includeAnnotations) where T : class
-        {
-            return this.AsEntry(includeAnnotations).ToObject<T>(dynamicPropertiesContainerName);
-        }
-
         public T AsScalar<T>()
         {
-            return (T)Convert.ChangeType(this.AsEntries(false).First().First().Value, typeof(T), CultureInfo.InvariantCulture);
+            var entry = this.AsEntry(false);
+            return entry == null 
+                ? default(T)
+                : (T)Convert.ChangeType(entry.First().Value, typeof(T), CultureInfo.InvariantCulture);
         }
 
         public T[] AsArray<T>()

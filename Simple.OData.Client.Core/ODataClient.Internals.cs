@@ -460,27 +460,19 @@ namespace Simple.OData.Client
             return entryIdent;
         }
 
-        private async Task EnrichWithMediaPropertiesAsync(IEnumerable<ODataResponse.AnnotatedEntry> entries, FluentCommand command, CancellationToken cancellationToken)
+        private async Task EnrichWithMediaPropertiesAsync(IEnumerable<AnnotatedEntry> entries, FluentCommand command, CancellationToken cancellationToken)
         {
             if (entries != null)
             {
                 foreach (var entry in entries)
                 {
-                    await EnrichWithMediaPropertiesAsync(entry, command, cancellationToken);
+                    await EnrichWithMediaPropertiesAsync(entry, command.Details.MediaProperties, cancellationToken);
                     if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
                 }
             }
         }
 
-        private async Task EnrichWithMediaPropertiesAsync(ODataResponse.AnnotatedEntry entry, FluentCommand command, CancellationToken cancellationToken)
-        {
-            if (entry != null && command.Details.MediaProperties != null)
-            {
-                await EnrichWithMediaPropertiesAsync(entry, command.Details.MediaProperties, cancellationToken);
-            }
-        }
-
-        private async Task EnrichWithMediaPropertiesAsync(ODataResponse.AnnotatedEntry entry, IEnumerable<string> mediaProperties, CancellationToken cancellationToken)
+        private async Task EnrichWithMediaPropertiesAsync(AnnotatedEntry entry, IEnumerable<string> mediaProperties, CancellationToken cancellationToken)
         {
             if (entry != null && mediaProperties != null)
             {

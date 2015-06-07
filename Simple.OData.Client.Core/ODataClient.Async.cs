@@ -953,7 +953,7 @@ namespace Simple.OData.Client
             return result == null ? null : result.Select(x => x.Data);
         }
 
-        private async Task<IEnumerable<ODataResponse.AnnotatedEntry>> FindAnnotatedEntriesAsync(string commandText, bool scalarResult, ODataFeedAnnotations annotations, CancellationToken cancellationToken)
+        private async Task<IEnumerable<AnnotatedEntry>> FindAnnotatedEntriesAsync(string commandText, bool scalarResult, ODataFeedAnnotations annotations, CancellationToken cancellationToken)
         {
             await _session.ResolveAdapterAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
@@ -972,7 +972,7 @@ namespace Simple.OData.Client
                             ? new[] {x.Entry}
                             : null;
             },
-            () => new ODataResponse.AnnotatedEntry[] { });
+            () => new AnnotatedEntry[] { });
         }
 
         internal async Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(FluentCommand command, CancellationToken cancellationToken)
@@ -1048,7 +1048,7 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
             var result = results == null ? null : results.FirstOrDefault();
 
-            await EnrichWithMediaPropertiesAsync(result, command, cancellationToken);
+            await EnrichWithMediaPropertiesAsync(result, command.Details.MediaProperties, cancellationToken);
             return result == null ? null : result.Data;
         }
 

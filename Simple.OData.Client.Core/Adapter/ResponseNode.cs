@@ -8,8 +8,8 @@ namespace Simple.OData.Client
 {
     public class ResponseNode
     {
-        public ODataResponse.AnnotatedFeed Feed { get; set; }
-        public ODataResponse.AnnotatedEntry Entry { get; set; }
+        public AnnotatedFeed Feed { get; set; }
+        public AnnotatedEntry Entry { get; set; }
         public string LinkName { get; set; }
 
         public object Value
