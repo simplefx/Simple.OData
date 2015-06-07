@@ -29,7 +29,6 @@ namespace Simple.OData.Client
     {
         public int StatusCode { get; private set; }
         public AnnotatedFeed Feed { get; private set; }
-        public AnnotatedEntry Entry { get; private set; }
         public IList<ODataResponse> Batch { get; private set; }
 
         private ODataResponse()
@@ -38,20 +37,14 @@ namespace Simple.OData.Client
 
         public IEnumerable<IDictionary<string, object>> AsEntries(bool includeAnnotations)
         {
-            if (this.Feed != null)
-            {
-                var data = this.Feed.Entries;
-                return data.Select(x =>
-                    data.Any() && data.First().Data.ContainsKey(FluentCommand.ResultLiteral)
-                    ? ExtractDictionary(x, includeAnnotations)
-                    : ExtractData(x, includeAnnotations));
-            }
-            else
-            {
-                return (this.Entry != null
-                ? new[] { ExtractDictionary(this.Entry, includeAnnotations) }
-                : new IDictionary<string, object>[] { });
-            }
+            if (this.Feed == null)
+                return null;
+
+            var data = this.Feed.Entries;
+            return data.Select(x =>
+                data.Any() && data.First().Data.ContainsKey(FluentCommand.ResultLiteral)
+                ? ExtractDictionary(x, includeAnnotations)
+                : ExtractData(x, includeAnnotations));
         }
 
         public IDictionary<string, object> AsEntry(bool includeAnnotations)
@@ -81,14 +74,10 @@ namespace Simple.OData.Client
 
         public static ODataResponse FromNode(ResponseNode node)
         {
-            if (node.Feed != null)
+            return new ODataResponse
             {
-                return new ODataResponse { Feed = node.Feed };
-            }
-            else
-            {
-                return new ODataResponse { Entry = node.Entry };
-            }
+                Feed = node.Feed ?? new AnnotatedFeed() { Entries = node.Entry != null ? new[] { node.Entry } : null }
+            };
         }
 
         public static ODataResponse FromProperty(string propertyName, object propertyValue)

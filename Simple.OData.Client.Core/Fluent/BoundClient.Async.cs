@@ -22,7 +22,7 @@ namespace Simple.OData.Client
         public Task<IEnumerable<T>> FindEntriesAsync(CancellationToken cancellationToken)
         {
             return RectifyColumnSelectionAsync(
-                _client.FindEntriesAsync(_command, cancellationToken), 
+                _client.FindEntriesAsync(_command, false, null, cancellationToken), 
                 _command.SelectedColumns, _command.DynamicPropertiesContainerName);
         }
 
@@ -34,7 +34,7 @@ namespace Simple.OData.Client
         public Task<IEnumerable<T>> FindEntriesAsync(bool scalarResult, CancellationToken cancellationToken)
         {
             return RectifyColumnSelectionAsync(
-                _client.FindEntriesAsync(_command, scalarResult, cancellationToken),
+                _client.FindEntriesAsync(_command, scalarResult, null, cancellationToken),
                 _command.SelectedColumns, _command.DynamicPropertiesContainerName);
         }
 
