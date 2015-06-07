@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using Simple.OData.Client.Extensions;
 
 #pragma warning disable 1591
 
@@ -11,18 +10,42 @@ namespace Simple.OData.Client
 {
     public class AnnotatedFeed
     {
-        public IList<AnnotatedEntry> Entries { get; set; }
-        public ODataFeedAnnotations Annotations { get; set; }
+        public IList<AnnotatedEntry> Entries { get; private set; }
+        public ODataFeedAnnotations Annotations { get; private set; }
 
-        public AnnotatedFeed() { this.Entries = new List<AnnotatedEntry>(); }
+        public AnnotatedFeed(IEnumerable<AnnotatedEntry> entries, ODataFeedAnnotations annotations = null)
+        {
+            this.Entries = entries.ToList();
+            this.Annotations = annotations;
+        }
+
+        public void SetAnnotations(ODataFeedAnnotations annotations)
+        {
+            if (this.Annotations == null)
+                this.Annotations = annotations;
+            else
+                this.Annotations.Merge(annotations);
+        }
     }
 
     public class AnnotatedEntry
     {
-        public IDictionary<string, object> Data { get; set; }
-        public ODataEntryAnnotations Annotations { get; set; }
+        public IDictionary<string, object> Data { get; private set; }
+        public ODataEntryAnnotations Annotations { get; private set; }
 
-        public AnnotatedEntry() { this.Data = new Dictionary<string, object>(); }
+        public AnnotatedEntry(IDictionary<string, object> data, ODataEntryAnnotations annotations = null)
+        {
+            this.Data = data;
+            this.Annotations = annotations;
+        }
+
+        public void SetAnnotations(ODataEntryAnnotations annotations)
+        {
+            if (this.Annotations == null)
+                this.Annotations = annotations;
+            else
+                this.Annotations.Merge(annotations);
+        }
     }
 
     public class ODataResponse
@@ -76,7 +99,7 @@ namespace Simple.OData.Client
         {
             return new ODataResponse
             {
-                Feed = node.Feed ?? new AnnotatedFeed() { Entries = node.Entry != null ? new[] { node.Entry } : null }
+                Feed = node.Feed ?? new AnnotatedFeed(node.Entry != null ? new[] { node.Entry } : null)
             };
         }
 
@@ -100,14 +123,11 @@ namespace Simple.OData.Client
         {
             return new ODataResponse
             {
-                Feed = new AnnotatedFeed
-                {
-                    Entries = collection.Select(x => new AnnotatedEntry
-                    {
-                        Data = new Dictionary<string, object>() { { FluentCommand.ResultLiteral, x } }
-                    })
-                    .ToList()
-                }
+                Feed = new AnnotatedFeed(collection.Select(
+                        x => new AnnotatedEntry(new Dictionary<string, object>()
+                        {
+                            { FluentCommand.ResultLiteral, x }
+                        })))
             };
         }
 
@@ -136,11 +156,7 @@ namespace Simple.OData.Client
         {
             return new ODataResponse
             {
-                Feed = new AnnotatedFeed
-                {
-                    Entries = entries.Select(x => new AnnotatedEntry { Data = x }).ToList(),
-                    Annotations = feedAnnotations,
-                }
+                Feed = new AnnotatedFeed(entries.Select(x => new AnnotatedEntry(x)), feedAnnotations)
             };
         }
 

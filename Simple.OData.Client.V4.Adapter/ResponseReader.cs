@@ -35,7 +35,7 @@ namespace Simple.OData.Client.V4.Adapter
                 {
                     entryNode.Entry.Data.Add(property.Name, GetPropertyValue(property.Value));
                 }
-                entryNode.Entry.Annotations = CreateAnnotations(odataEntry);
+                entryNode.Entry.SetAnnotations(CreateAnnotations(odataEntry));
             }
         }
 

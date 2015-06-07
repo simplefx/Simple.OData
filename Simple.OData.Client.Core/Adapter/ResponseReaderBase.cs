@@ -25,34 +25,26 @@ namespace Simple.OData.Client
         {
             nodeStack.Push(new ResponseNode
             {
-                Feed = new AnnotatedFeed(),
+                Feed = new AnnotatedFeed(new List<AnnotatedEntry>()),
             });
         }
 
         protected void EndFeed(Stack<ResponseNode> nodeStack, ODataFeedAnnotations feedAnnotations, ref ResponseNode rootNode)
         {
             var feedNode = nodeStack.Pop();
-            var entries = feedNode.Feed;
             if (nodeStack.Any())
-                nodeStack.Peek().Feed = entries;
+                nodeStack.Peek().Feed = feedNode.Feed;
             else
                 rootNode = feedNode;
-
-            if (feedNode.Feed.Annotations == null)
-            {
-                feedNode.Feed.Annotations = feedAnnotations;
-            }
-            else
-            {
-                feedNode.Feed.Annotations.Merge(feedAnnotations);
-            }
+            
+            feedNode.Feed.SetAnnotations(feedAnnotations);
         }
 
         protected void StartEntry(Stack<ResponseNode> nodeStack)
         {
             nodeStack.Push(new ResponseNode
             {
-                Entry = new AnnotatedEntry()
+                Entry = new AnnotatedEntry(new Dictionary<string, object>())
             });
         }
 
