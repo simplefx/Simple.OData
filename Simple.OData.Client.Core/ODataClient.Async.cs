@@ -736,25 +736,6 @@ namespace Simple.OData.Client
             return await ExecuteGetStreamRequestAsync(request, cancellationToken);
         }
 
-        //public Task<Stream> GetMediaStreamAsync(string commandText, string streamName)
-        //{
-        //    return GetMediaStreamAsync(commandText, streamName, CancellationToken.None);
-        //}
-
-        //public async Task<Stream> GetMediaStreamAsync(string commandText, string streamName, CancellationToken cancellationToken)
-        //{
-        //    if (IsBatchResponse)
-        //        throw new NotSupportedException("Media stream requests are not supported in batch mode");
-
-        //    await _session.ResolveAdapterAsync(cancellationToken);
-        //    if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-
-        //    var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-        //        .CreateGetRequestAsync(commandText, true);
-
-        //    return await ExecuteGetStreamRequestAsync(request, cancellationToken);
-        //}
-
         public Task SetMediaStreamAsync(string commandText, Stream stream, string contentType)
         {
             return SetMediaStreamAsync(commandText, stream, contentType, CancellationToken.None);
@@ -773,25 +754,6 @@ namespace Simple.OData.Client
 
             await ExecuteRequestAsync(request, cancellationToken);
         }
-
-        //public Task SetMediaStreamAsync(string commandText, string streamName, Stream stream, string contentType)
-        //{
-        //    return SetMediaStreamAsync(commandText, streamName, stream, contentType, CancellationToken.None);
-        //}
-
-        //public async Task SetMediaStreamAsync(string commandText, string streamName, Stream stream, string contentType, CancellationToken cancellationToken)
-        //{
-        //    if (IsBatchResponse)
-        //        throw new NotSupportedException("Media stream requests are not supported in batch mode");
-
-        //    await _session.ResolveAdapterAsync(cancellationToken);
-        //    if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-
-        //    var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-        //        .CreatePutRequestAsync(commandText, stream, contentType);
-
-        //    await ExecuteRequestAsync(request, cancellationToken);
-        //}
 
         public Task<IDictionary<string, object>> ExecuteFunctionAsSingleAsync(string functionName, IDictionary<string, object> parameters)
         {
@@ -987,6 +949,12 @@ namespace Simple.OData.Client
                 return _batchResponse.AsEntries(false);
             }
 
+            var result = await FindAnnotatedEntriesAsync(commandText, scalarResult, annotations, cancellationToken);
+            return result == null ? null : result.Select(x => x.Data);
+        }
+
+        private async Task<IEnumerable<ODataResponse.AnnotatedEntry>> FindAnnotatedEntriesAsync(string commandText, bool scalarResult, ODataFeedAnnotations annotations, CancellationToken cancellationToken)
+        {
             await _session.ResolveAdapterAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
@@ -997,9 +965,14 @@ namespace Simple.OData.Client
             {
                 if (annotations != null && x.Feed != null)
                     annotations.CopyFrom(x.Feed.Annotations);
-                return x.AsEntries(_session.Settings.IncludeAnnotationsInResults);
+                return
+                    x.Feed != null
+                        ? x.Feed.Entries
+                        : x.Entry != null
+                            ? new[] {x.Entry}
+                            : null;
             },
-            () => new IDictionary<string, object>[] { });
+            () => new ODataResponse.AnnotatedEntry[] { });
         }
 
         internal async Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(FluentCommand command, CancellationToken cancellationToken)
@@ -1013,11 +986,11 @@ namespace Simple.OData.Client
             var commandText = await command.GetCommandTextAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var result = await FindEntriesAsync(commandText, cancellationToken);
+            var result = await FindAnnotatedEntriesAsync(commandText, false, null, cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             await EnrichWithMediaPropertiesAsync(result, command, cancellationToken);
-            return result;
+            return result == null ? null : result.Select(x => x.Data);
         }
 
         internal async Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(FluentCommand command, bool scalarResult, CancellationToken cancellationToken)
@@ -1031,11 +1004,11 @@ namespace Simple.OData.Client
             var commandText = await command.GetCommandTextAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var result = await FindEntriesAsync(commandText, scalarResult, cancellationToken);
+            var result = await FindAnnotatedEntriesAsync(commandText, scalarResult, null, cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             await EnrichWithMediaPropertiesAsync(result, command, cancellationToken);
-            return result;
+            return result == null ? null : result.Select(x => x.Data);
         }
 
         internal async Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(FluentCommand command, ODataFeedAnnotations annotations, CancellationToken cancellationToken)
@@ -1053,11 +1026,11 @@ namespace Simple.OData.Client
             var commandText = await command.GetCommandTextAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var result = await FindEntriesAsync(commandText, annotations, cancellationToken);
+            var result = await FindAnnotatedEntriesAsync(commandText, false, annotations, cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             await EnrichWithMediaPropertiesAsync(result, command, cancellationToken);
-            return result;
+            return result == null ? null : result.Select(x => x.Data);
         }
 
         internal async Task<IDictionary<string, object>> FindEntryAsync(FluentCommand command, CancellationToken cancellationToken)
@@ -1071,11 +1044,12 @@ namespace Simple.OData.Client
             var commandText = await command.GetCommandTextAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var result = await FindEntryAsync(commandText, cancellationToken);
+            var results = await FindAnnotatedEntriesAsync(commandText, false, null, cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+            var result = results == null ? null : results.FirstOrDefault();
 
             await EnrichWithMediaPropertiesAsync(result, command, cancellationToken);
-            return result;
+            return result == null ? null : result.Data;
         }
 
         internal async Task<object> FindScalarAsync(FluentCommand command, CancellationToken cancellationToken)

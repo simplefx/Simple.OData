@@ -21,19 +21,19 @@ namespace Simple.OData.Client.Tests
 
     public class MediaODataTestsV3Atom : MediaODataTests
     {
-        public MediaODataTestsV3Atom() : base(ODataV3ReadOnlyUri, ODataPayloadFormat.Atom, 3) { }
+        public MediaODataTestsV3Atom() : base(ODataV3ReadWriteUri, ODataPayloadFormat.Atom, 3) { }
     }
 
     public class MediaODataTestsV3Json : MediaODataTests
     {
-        public MediaODataTestsV3Json() : base(ODataV3ReadOnlyUri, ODataPayloadFormat.Json, 3) { }
+        public MediaODataTestsV3Json() : base(ODataV3ReadWriteUri, ODataPayloadFormat.Json, 3) { }
     }
 #endif
 
 #if ODATA_V4
     public class MediaODataTestsV4Json : MediaODataTests
     {
-        public MediaODataTestsV4Json() : base(ODataV4ReadOnlyUri, ODataPayloadFormat.Json, 4) { }
+        public MediaODataTestsV4Json() : base(ODataV4ReadWriteUri, ODataPayloadFormat.Json, 4) { }
     }
 #endif
 
@@ -62,7 +62,7 @@ namespace Simple.OData.Client.Tests
                 .Media()
                 .GetStreamAsync();
             var text = Utils.StreamToString(stream);
-            Assert.True(text.EndsWith("stream data"));
+            Assert.True(text.Contains("stream data"));
         }
 
         [Fact]
@@ -75,7 +75,7 @@ namespace Simple.OData.Client.Tests
                 .Media("Photo")
                 .GetStreamAsync();
             var text = Utils.StreamToString(stream);
-            Assert.True(text.EndsWith("named stream data"));
+            Assert.True(text.Contains("named stream data"));
         }
 
         [Fact]
@@ -87,7 +87,7 @@ namespace Simple.OData.Client.Tests
                 .NavigateTo<PersonDetail>()
                 .Media(x => x.Photo)
                 .GetStreamAsStringAsync();
-            Assert.True(text.EndsWith("named stream data"));
+            Assert.True(text.Contains("named stream data"));
         }
 
         [Fact]
@@ -105,7 +105,7 @@ namespace Simple.OData.Client.Tests
                 .FindEntryAsync();
             Assert.NotNull(ad["Media"]);
             var text = Utils.StreamToString(ad["Media"] as Stream);
-            Assert.True(text.EndsWith("stream data"));
+            Assert.True(text.Contains("stream data"));
         }
 
         [Fact]
@@ -119,7 +119,7 @@ namespace Simple.OData.Client.Tests
                 .FindEntryAsync();
             Assert.NotNull(person["Photo"]);
             var text = Utils.StreamToString(person["Photo"] as Stream);
-            Assert.True(text.EndsWith("named stream data"));
+            Assert.True(text.Contains("named stream data"));
         }
 
         [Fact]

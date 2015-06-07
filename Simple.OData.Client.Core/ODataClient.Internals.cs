@@ -460,50 +460,43 @@ namespace Simple.OData.Client
             return entryIdent;
         }
 
-        private async Task EnrichWithMediaPropertiesAsync(IEnumerable<IDictionary<string, object>> entries, FluentCommand command, CancellationToken cancellationToken)
+        private async Task EnrichWithMediaPropertiesAsync(IEnumerable<ODataResponse.AnnotatedEntry> entries, FluentCommand command, CancellationToken cancellationToken)
         {
             if (entries != null)
             {
                 foreach (var entry in entries)
                 {
                     await EnrichWithMediaPropertiesAsync(entry, command, cancellationToken);
+                    if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
                 }
             }
         }
 
-        private async Task EnrichWithMediaPropertiesAsync(IDictionary<string, object> entry, FluentCommand command, CancellationToken cancellationToken)
+        private async Task EnrichWithMediaPropertiesAsync(ODataResponse.AnnotatedEntry entry, FluentCommand command, CancellationToken cancellationToken)
         {
             if (entry != null && command.Details.MediaProperties != null)
             {
                 await EnrichWithMediaPropertiesAsync(entry, command.Details.MediaProperties, cancellationToken);
-                if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
             }
         }
 
-        private async Task EnrichWithMediaPropertiesAsync(IDictionary<string, object> entry, IEnumerable<string> mediaProperties, CancellationToken cancellationToken)
+        private async Task EnrichWithMediaPropertiesAsync(ODataResponse.AnnotatedEntry entry, IEnumerable<string> mediaProperties, CancellationToken cancellationToken)
         {
             if (entry != null && mediaProperties != null)
             {
-                var entityMediaPropertyName = mediaProperties.FirstOrDefault(x => !entry.ContainsKey(x));
-                if (entityMediaPropertyName != null)
+                var entityMediaPropertyName = mediaProperties.FirstOrDefault(x => !entry.Data.ContainsKey(x));
+                entityMediaPropertyName = entityMediaPropertyName ?? FluentCommand.AnnotationsLiteral;
+                if (entry.Annotations != null)
                 {
-                    object value;
-                    if (entry.TryGetValue(FluentCommand.AnnotationsLiteral, out value))
-                    {
-                        var annotations = value as ODataEntryAnnotations;
-                        if (annotations != null)
-                        {
-                            await GetMediaStreamValueAsync(entry, entityMediaPropertyName, annotations.MediaResource, cancellationToken);
-                        }
-                    }
+                    await GetMediaStreamValueAsync(entry.Data, entityMediaPropertyName, entry.Annotations.MediaResource, cancellationToken);
                 }
 
                 foreach (var propertyName in mediaProperties)
                 {
                     object value;
-                    if (entry.TryGetValue(propertyName, out value))
+                    if (entry.Data.TryGetValue(propertyName, out value))
                     {
-                        await GetMediaStreamValueAsync(entry, propertyName, value as ODataMediaAnnotations, cancellationToken);
+                        await GetMediaStreamValueAsync(entry.Data, propertyName, value as ODataMediaAnnotations, cancellationToken);
                     }
                 }
             }
