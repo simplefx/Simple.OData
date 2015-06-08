@@ -45,18 +45,11 @@ namespace Simple.OData.Client.V3.Adapter
             string id = null;
             Uri readLink = null;
             Uri editLink = null;
-            if (!_typesWithPartialAnnotations.Contains(odataEntry.TypeName))
+            if (_session.Adapter.GetMetadata().IsTypeWithId(odataEntry.TypeName))
             {
-                try
-                {
-                    id = odataEntry.Id;
-                    readLink = odataEntry.ReadLink;
-                    editLink = odataEntry.EditLink;
-                }
-                catch (Exception)
-                {
-                    _typesWithPartialAnnotations.Add(odataEntry.TypeName);
-                }
+                id = odataEntry.Id;
+                readLink = odataEntry.ReadLink;
+                editLink = odataEntry.EditLink;
             }
 
             return new ODataEntryAnnotations
@@ -139,7 +132,7 @@ namespace Simple.OData.Client.V3.Adapter
                 else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Property))
                 {
                     var property = messageReader.ReadProperty();
-                    if (property.Value != null && (property.Value.GetType() != typeof (string) || !string.IsNullOrEmpty(property.Value.ToString())))
+                    if (property.Value != null && (property.Value.GetType() != typeof(string) || !string.IsNullOrEmpty(property.Value.ToString())))
                         _hasResponse = true;
 
                     if (_hasResponse)

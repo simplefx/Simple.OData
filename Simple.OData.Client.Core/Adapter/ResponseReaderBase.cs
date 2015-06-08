@@ -10,7 +10,6 @@ namespace Simple.OData.Client
     public abstract class ResponseReaderBase : IResponseReader
     {
         protected readonly ISession _session;
-        protected static List<string> _typesWithPartialAnnotations = new List<string>(); 
 
         protected ResponseReaderBase(ISession session)
         {

@@ -44,18 +44,11 @@ namespace Simple.OData.Client.V4.Adapter
             string id = null;
             Uri readLink = null;
             Uri editLink = null;
-            if (!_typesWithPartialAnnotations.Contains(odataEntry.TypeName))
+            if (_session.Adapter.GetMetadata().IsTypeWithId(odataEntry.TypeName))
             {
-                try
-                {
-                    id = odataEntry.Id.AbsoluteUri;
-                    readLink = odataEntry.ReadLink;
-                    editLink = odataEntry.EditLink;
-                }
-                catch (Exception)
-                {
-                    _typesWithPartialAnnotations.Add(odataEntry.TypeName);
-                }
+                id = odataEntry.Id.AbsoluteUri;
+                readLink = odataEntry.ReadLink;
+                editLink = odataEntry.EditLink;
             }
 
             return new ODataEntryAnnotations

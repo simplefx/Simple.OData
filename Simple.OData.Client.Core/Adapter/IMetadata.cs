@@ -20,6 +20,7 @@ namespace Simple.OData.Client
         string GetEntityTypeExactName(string collectionName);
 
         bool IsOpenType(string collectionName);
+        bool IsTypeWithId(string typeName);
         IEnumerable<string> GetStructuralPropertyNames(string collectionName);
         bool HasStructuralProperty(string collectionName, string propertyName);
         string GetStructuralPropertyExactName(string collectionName, string propertyName);

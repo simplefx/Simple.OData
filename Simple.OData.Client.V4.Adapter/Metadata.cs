@@ -116,6 +116,11 @@ namespace Simple.OData.Client.V4.Adapter
             return GetEntityType(collectionName).IsOpen;
         }
 
+        public override bool IsTypeWithId(string collectionName)
+        {
+            return GetEntityType(collectionName).DeclaredKey != null;
+        }
+
         public override IEnumerable<string> GetStructuralPropertyNames(string collectionName)
         {
             return GetEntityType(collectionName).StructuralProperties().Select(x => x.Name);

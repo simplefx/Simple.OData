@@ -18,6 +18,7 @@ namespace Simple.OData.Client
         public abstract bool EntityCollectionRequiresOptimisticConcurrencyCheck(string collectionName);
         public abstract string GetEntityTypeExactName(string collectionName);
         public abstract bool IsOpenType(string collectionName);
+        public abstract bool IsTypeWithId(string collectionName);
         public abstract IEnumerable<string> GetStructuralPropertyNames(string collectionName);
         public abstract bool HasStructuralProperty(string collectionName, string propertyName);
         public abstract string GetStructuralPropertyExactName(string collectionName, string propertyName);
