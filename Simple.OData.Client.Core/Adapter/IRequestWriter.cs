@@ -9,7 +9,7 @@ namespace Simple.OData.Client
     public interface IRequestWriter
     {
         Task<ODataRequest> CreateGetRequestAsync(string commandText, bool scalarResult);
-        Task<ODataRequest> CreatePutRequestAsync(string commandText, Stream stream, string contentType);
+        Task<ODataRequest> CreatePutRequestAsync(string commandText, Stream stream, string contentType, bool optimisticConcurrency);
         Task<ODataRequest> CreateInsertRequestAsync(string collection, IDictionary<string, object> entryData, bool resultRequired);
         Task<ODataRequest> CreateUpdateRequestAsync(string collection, string entryIdent, IDictionary<string, object> entryKey, IDictionary<string, object> entryData, bool resultRequired);
         Task<ODataRequest> CreateDeleteRequestAsync(string collection, string entryIdent);

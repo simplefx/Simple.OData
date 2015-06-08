@@ -736,7 +736,7 @@ namespace Simple.OData.Client.Tests
                 .For<Photo>()
                 .Key(photo.Id)
                 .Media()
-                .SetStreamAsync(photo.Media, "image/jpeg");
+                .SetStreamAsync(photo.Media, "image/jpeg", true);
             photo.Media = await _client
                 .For<Photo>()
                 .Key(photo.Id)

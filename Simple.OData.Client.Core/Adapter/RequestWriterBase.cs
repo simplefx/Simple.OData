@@ -38,12 +38,12 @@ namespace Simple.OData.Client
             return request;
         }
 
-        public async Task<ODataRequest> CreatePutRequestAsync(string commandText, Stream stream, string mediaType = null)
+        public async Task<ODataRequest> CreatePutRequestAsync(string commandText, Stream stream, string mediaType = null, bool optimisticConcurrency = false)
         {
             var entryContent = await WriteStreamContentAsync(stream, IsTextMediaType(mediaType));
 
             var request = new ODataRequest(RestVerbs.Put, _session, commandText, null, entryContent, mediaType);
-            //request.CheckOptimisticConcurrency = true;
+            request.CheckOptimisticConcurrency = optimisticConcurrency;
             AssignHeaders(request);
             return request;
         }

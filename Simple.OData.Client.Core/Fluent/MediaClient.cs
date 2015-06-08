@@ -49,34 +49,34 @@ namespace Simple.OData.Client
             }
         }
 
-        public Task SetStreamAsync(Stream stream, string contentType)
+        public Task SetStreamAsync(Stream stream, string contentType, bool optimisticConcurrency)
         {
-            return SetStreamAsync(stream, contentType, CancellationToken.None);
+            return SetStreamAsync(stream, contentType, optimisticConcurrency, CancellationToken.None);
         }
 
-        public Task SetStreamAsync(Stream stream, string contentType, CancellationToken cancellationToken)
+        public Task SetStreamAsync(Stream stream, string contentType, bool optimisticConcurrency, CancellationToken cancellationToken)
         {
-            return _client.SetMediaStreamAsync(_command, stream, contentType, cancellationToken);
+            return _client.SetMediaStreamAsync(_command, stream, contentType, optimisticConcurrency, cancellationToken);
         }
 
-        public Task SetStreamAsync(byte[] streamContent, string contentType)
+        public Task SetStreamAsync(byte[] streamContent, string contentType, bool optimisticConcurrency)
         {
-            return SetStreamAsync(streamContent, contentType, CancellationToken.None);
+            return SetStreamAsync(streamContent, contentType, optimisticConcurrency, CancellationToken.None);
         }
 
-        public Task SetStreamAsync(byte[] streamContent, string contentType, CancellationToken cancellationToken)
+        public Task SetStreamAsync(byte[] streamContent, string contentType, bool optimisticConcurrency, CancellationToken cancellationToken)
         {
-            return _client.SetMediaStreamAsync(_command, Utils.ByteArrayToStream(streamContent), contentType, cancellationToken);
+            return _client.SetMediaStreamAsync(_command, Utils.ByteArrayToStream(streamContent), contentType, optimisticConcurrency, cancellationToken);
         }
 
-        public Task SetStreamAsync(string streamContent)
+        public Task SetStreamAsync(string streamContent, bool optimisticConcurrency)
         {
-            return SetStreamAsync(streamContent, CancellationToken.None);
+            return SetStreamAsync(streamContent, optimisticConcurrency, CancellationToken.None);
         }
 
-        public Task SetStreamAsync(string streamContent, CancellationToken cancellationToken)
+        public Task SetStreamAsync(string streamContent, bool optimisticConcurrency, CancellationToken cancellationToken)
         {
-            return _client.SetMediaStreamAsync(_command, Utils.StringToStream(streamContent), "text/plain", cancellationToken);
+            return _client.SetMediaStreamAsync(_command, Utils.StringToStream(streamContent), "text/plain", optimisticConcurrency, cancellationToken);
         }
     }
 }

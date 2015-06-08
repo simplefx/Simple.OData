@@ -736,12 +736,12 @@ namespace Simple.OData.Client
             return await ExecuteGetStreamRequestAsync(request, cancellationToken);
         }
 
-        public Task SetMediaStreamAsync(string commandText, Stream stream, string contentType)
+        public Task SetMediaStreamAsync(string commandText, Stream stream, string contentType, bool optimisticConcurrency)
         {
-            return SetMediaStreamAsync(commandText, stream, contentType, CancellationToken.None);
+            return SetMediaStreamAsync(commandText, stream, contentType, optimisticConcurrency, CancellationToken.None);
         }
 
-        public async Task SetMediaStreamAsync(string commandText, Stream stream, string contentType, CancellationToken cancellationToken)
+        public async Task SetMediaStreamAsync(string commandText, Stream stream, string contentType, bool optimisticConcurrency, CancellationToken cancellationToken)
         {
             if (IsBatchResponse)
                 throw new NotSupportedException("Media stream requests are not supported in batch mode");
@@ -750,7 +750,7 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-                .CreatePutRequestAsync(commandText, stream, contentType);
+                .CreatePutRequestAsync(commandText, stream, contentType, optimisticConcurrency);
 
             await ExecuteRequestAsync(request, cancellationToken);
         }
@@ -1120,7 +1120,7 @@ namespace Simple.OData.Client
             return await GetMediaStreamAsync(commandText, cancellationToken);
         }
 
-        internal async Task SetMediaStreamAsync(FluentCommand command, Stream stream, string contentType, CancellationToken cancellationToken)
+        internal async Task SetMediaStreamAsync(FluentCommand command, Stream stream, string contentType, bool optimisticConcurrency, CancellationToken cancellationToken)
         {
             if (IsBatchResponse)
                 throw new NotSupportedException("Media stream requests are not supported in batch mode");
@@ -1131,7 +1131,7 @@ namespace Simple.OData.Client
             var commandText = await command.GetCommandTextAsync(cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            await SetMediaStreamAsync(commandText, stream, contentType, cancellationToken);
+            await SetMediaStreamAsync(commandText, stream, contentType, optimisticConcurrency, cancellationToken);
         }
 
         internal async Task ExecuteAsync(FluentCommand command, CancellationToken cancellationToken)
