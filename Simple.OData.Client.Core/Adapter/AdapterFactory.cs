@@ -87,14 +87,6 @@ namespace Simple.OData.Client
             throw new NotSupportedException(string.Format("OData protocol {0} is not supported", protocolVersion));
         }
 
-        internal async Task<HttpResponseMessage> SendMetadataRequestAsync(CancellationToken cancellationToken)
-        {
-            var request = new ODataRequest(RestVerbs.Get, _session, ODataLiteral.Metadata);
-            var requestRunner = new RequestRunner(_session);
-
-            return await requestRunner.ExecuteRequestAsync(request, cancellationToken);
-        }
-
         private async Task<IEnumerable<string>> GetSupportedProtocolVersionsAsync(HttpResponseMessage response)
         {
             IEnumerable<string> headerValues;

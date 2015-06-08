@@ -83,7 +83,7 @@ namespace Simple.OData.Client
                 IODataAdapter adapter;
                 if (string.IsNullOrEmpty(this.Settings.MetadataDocument))
                 {
-                    var response = await _adapterFactory.SendMetadataRequestAsync(cancellationToken);
+                    var response = await SendMetadataRequestAsync(cancellationToken);
                     this.MetadataCache.SetMetadataDocument(await _adapterFactory.GetMetadataDocumentAsync(response));
                     adapter = await _adapterFactory.CreateAdapterAsync(response);
                 }
@@ -217,6 +217,12 @@ namespace Simple.OData.Client
 
                 return clientHandler;
             }
+        }
+
+        private async Task<HttpResponseMessage> SendMetadataRequestAsync(CancellationToken cancellationToken)
+        {
+            var request = new ODataRequest(RestVerbs.Get, this, ODataLiteral.Metadata);
+            return await new RequestRunner(this).ExecuteRequestAsync(request, cancellationToken);
         }
     }
 }
