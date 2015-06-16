@@ -49,20 +49,7 @@ namespace Simple.OData.Client.V3.Adapter
                 var entryDetails = _session.Metadata.ParseEntryDetails(entityCollection.Name, entryData, contentId);
 
                 var entryWriter = messageWriter.CreateODataEntryWriter();
-                var entry = new Microsoft.Data.OData.ODataEntry();
-                entry.TypeName = entityType.FullName();
-
-                var typeProperties = (_model.FindDeclaredType(entry.TypeName) as IEdmEntityType).Properties();
-                Func<string, string> findMatchingPropertyName = name =>
-                {
-                    var property = typeProperties.BestMatch(y => y.Name, name, _session.Pluralizer);
-                    return property != null ? property.Name : name;
-                };
-                entry.Properties = entryDetails.Properties.Select(x => new ODataProperty()
-                {
-                    Name = findMatchingPropertyName(x.Key),
-                    Value = GetPropertyValue(typeProperties, x.Key, x.Value)
-                }).ToList();
+                var entry = CreateODataEntry(entityType.FullName(), entryDetails.Properties);
 
                 entryWriter.WriteStart(entry);
 
@@ -216,6 +203,25 @@ namespace Simple.OData.Client.V3.Adapter
             }
             settings.SetContentType(contentType);
             return settings;
+        }
+
+        private Microsoft.Data.OData.ODataEntry CreateODataEntry(string typeName, IDictionary<string, object> properties)
+        {
+            var entry = new Microsoft.Data.OData.ODataEntry() { TypeName = typeName };
+
+            var typeProperties = (_model.FindDeclaredType(entry.TypeName) as IEdmEntityType).Properties();
+            Func<string, string> findMatchingPropertyName = name =>
+            {
+                var property = typeProperties.BestMatch(y => y.Name, name, _session.Pluralizer);
+                return property != null ? property.Name : name;
+            };
+            entry.Properties = properties.Select(x => new ODataProperty()
+            {
+                Name = findMatchingPropertyName(x.Key),
+                Value = GetPropertyValue(typeProperties, x.Key, x.Value)
+            }).ToList();
+
+            return entry;
         }
 
 #if SILVERLIGHT
