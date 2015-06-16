@@ -31,7 +31,7 @@ namespace Simple.OData.Client.V3.Adapter
 #else
             IODataRequestMessageAsync
 #endif
-                message = IsBatch
+ message = IsBatch
                 ? await CreateOperationRequestMessageAsync(method, collection, entryData, commandText)
                 : new ODataRequestMessage();
 
@@ -123,7 +123,8 @@ namespace Simple.OData.Client.V3.Adapter
 
                 foreach (var parameter in parameters)
                 {
-                    if (!(parameter.Value is string) && parameter.Value is IEnumerable)
+                    var actionParameter = action.Parameters.BestMatch(x => x.Name, parameter.Key, _session.Pluralizer);
+                    if (actionParameter.Type.Definition.TypeKind == EdmTypeKind.Collection)
                     {
                         var collectionWriter = parameterWriter.CreateCollectionWriter(parameter.Key);
                         collectionWriter.WriteStart(new ODataCollectionStart());
@@ -227,11 +228,11 @@ namespace Simple.OData.Client.V3.Adapter
                 await _deferredBatchWriter.Value.StartBatchAsync();
 
             var message = (await _deferredBatchWriter.Value.CreateOperationRequestMessageAsync(
-                method, collection, entryData, Utils.CreateAbsoluteUri(_session.Settings.BaseUri.AbsoluteUri, commandText))) 
+                method, collection, entryData, Utils.CreateAbsoluteUri(_session.Settings.BaseUri.AbsoluteUri, commandText)))
 #if SILVERLIGHT
                 as IODataRequestMessage;
 #else
-                as IODataRequestMessageAsync;
+ as IODataRequestMessageAsync;
 #endif
 
             return message;
@@ -349,7 +350,7 @@ namespace Simple.OData.Client.V3.Adapter
             }
         }
 
-        private static readonly Dictionary<Type, EdmPrimitiveTypeKind> _typeMap = new []
+        private static readonly Dictionary<Type, EdmPrimitiveTypeKind> _typeMap = new[]
             {
                 new KeyValuePair<Type, EdmPrimitiveTypeKind>(typeof(string), EdmPrimitiveTypeKind.String),
                 new KeyValuePair<Type, EdmPrimitiveTypeKind>(typeof(bool), EdmPrimitiveTypeKind.Boolean),

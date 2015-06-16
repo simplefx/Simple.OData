@@ -44,20 +44,7 @@ namespace Simple.OData.Client.V4.Adapter
                 var entryDetails = _session.Metadata.ParseEntryDetails(entityCollection.Name, entryData, contentId);
 
                 var entryWriter = await messageWriter.CreateODataEntryWriterAsync();
-                var entry = new Microsoft.OData.Core.ODataEntry();
-                entry.TypeName = entityType.FullName();
-
-                var typeProperties = (_model.FindDeclaredType(entry.TypeName) as IEdmEntityType).Properties();
-                Func<string, string> findMatchingPropertyName = name =>
-                {
-                    var property = typeProperties.BestMatch(y => y.Name, name, _session.Pluralizer);
-                    return property != null ? property.Name : name;
-                };
-                entry.Properties = entryDetails.Properties.Select(x => new ODataProperty()
-                {
-                    Name = findMatchingPropertyName(x.Key),
-                    Value = GetPropertyValue(typeProperties, x.Key, x.Value)
-                }).ToList();
+                var entry = CreateODataEntry(entityType.FullName(), entryDetails.Properties);
 
                 await entryWriter.WriteStartAsync(entry);
 
@@ -94,23 +81,43 @@ namespace Simple.OData.Client.V4.Adapter
             using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), _model))
             {
                 var action = _model.SchemaElements.BestMatch(
-                    x => x.SchemaElementKind == EdmSchemaElementKind.Action, 
-                    x => x.Name, actionName, _session.Pluralizer);
-                var parameterWriter = await messageWriter.CreateODataParameterWriterAsync(action as IEdmAction);
+                    x => x.SchemaElementKind == EdmSchemaElementKind.Action,
+                    x => x.Name, actionName, _session.Pluralizer) as IEdmAction;
+                var parameterWriter = await messageWriter.CreateODataParameterWriterAsync(action);
 
                 await parameterWriter.WriteStartAsync();
 
                 foreach (var parameter in parameters)
                 {
-                    if (!(parameter.Value is string) && parameter.Value is IEnumerable)
+                    var actionParameter = action.Parameters.BestMatch(x => x.Name, parameter.Key, _session.Pluralizer);
+                    if (actionParameter.Type.Definition.TypeKind == EdmTypeKind.Collection)
                     {
-                        var collectionWriter = await parameterWriter.CreateCollectionWriterAsync(parameter.Key);
-                        await collectionWriter.WriteStartAsync(new ODataCollectionStart());
-                        foreach (var item in parameter.Value as IEnumerable)
+                        var collectionType = actionParameter.Type.Definition as IEdmCollectionType;
+                        var elementType = collectionType.ElementType;
+                        if (elementType.Definition.TypeKind == EdmTypeKind.Entity)
                         {
-                            await collectionWriter.WriteItemAsync(item);
+                            var feedWriter = await parameterWriter.CreateFeedWriterAsync(parameter.Key);
+                            var feed = new ODataFeed();
+                            await feedWriter.WriteStartAsync(feed);
+                            foreach (var item in parameter.Value as IEnumerable)
+                            {
+                                var entry = CreateODataEntry(elementType.Definition.FullTypeName(), item.ToDictionary());
+
+                                await feedWriter.WriteStartAsync(entry);
+                                await feedWriter.WriteEndAsync();
+                            }
+                            await feedWriter.WriteEndAsync();
                         }
-                        await collectionWriter.WriteEndAsync();
+                        else
+                        {
+                            var collectionWriter = await parameterWriter.CreateCollectionWriterAsync(parameter.Key);
+                            await collectionWriter.WriteStartAsync(new ODataCollectionStart());
+                            foreach (var item in parameter.Value as IEnumerable)
+                            {
+                                await collectionWriter.WriteItemAsync(item);
+                            }
+                            await collectionWriter.WriteEndAsync();
+                        }
                     }
                     else
                     {
@@ -230,7 +237,7 @@ namespace Simple.OData.Client.V4.Adapter
                 ODataUri = new ODataUri()
                 {
                     RequestUri = _session.Settings.BaseUri,
-                }, 
+                },
                 Indent = true,
                 DisableMessageStreamDisposal = !IsBatch,
             };
@@ -256,6 +263,25 @@ namespace Simple.OData.Client.V4.Adapter
             }
             settings.SetContentType(contentType);
             return settings;
+        }
+
+        private Microsoft.OData.Core.ODataEntry CreateODataEntry(string typeName, IDictionary<string, object> properties)
+        {
+            var entry = new Microsoft.OData.Core.ODataEntry() {TypeName = typeName};
+
+            var typeProperties = (_model.FindDeclaredType(entry.TypeName) as IEdmEntityType).Properties();
+            Func<string, string> findMatchingPropertyName = name =>
+            {
+                var property = typeProperties.BestMatch(y => y.Name, name, _session.Pluralizer);
+                return property != null ? property.Name : name;
+            };
+            entry.Properties = properties.Select(x => new ODataProperty()
+            {
+                Name = findMatchingPropertyName(x.Key),
+                Value = GetPropertyValue(typeProperties, x.Key, x.Value)
+            }).ToList();
+
+            return entry;
         }
 
         private object GetPropertyValue(IEnumerable<IEdmProperty> properties, string key, object value)
