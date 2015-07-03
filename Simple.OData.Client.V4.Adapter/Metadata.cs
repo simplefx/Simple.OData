@@ -111,6 +111,25 @@ namespace Simple.OData.Client.V4.Adapter
             throw new UnresolvableObjectException(collectionName, string.Format("Entity type {0} not found", collectionName));
         }
 
+        public override string GetLinkedCollectionName(string typeName)
+        {
+            var linkSet = _model.SchemaElements
+                .Where(x => x.SchemaElementKind == EdmSchemaElementKind.EntityContainer)
+                .SelectMany(x => (x as IEdmEntityContainer).EntitySets())
+                .BestMatch(x => x.EntityType().Name, typeName, _session.Pluralizer);
+            if (linkSet != null)
+                return linkSet.Name;
+
+            var singleton = _model.SchemaElements
+                .Where(x => x.SchemaElementKind == EdmSchemaElementKind.EntityContainer)
+                .SelectMany(x => (x as IEdmEntityContainer).Singletons())
+                .BestMatch(x => x.EntityType().Name, typeName, _session.Pluralizer);
+            if (singleton != null)
+                return singleton.Name;
+
+            throw new UnresolvableObjectException(typeName, string.Format("Linked collection for type {0} not found", typeName));
+        }
+
         public override bool IsOpenType(string collectionName)
         {
             return GetEntityType(collectionName).IsOpen;

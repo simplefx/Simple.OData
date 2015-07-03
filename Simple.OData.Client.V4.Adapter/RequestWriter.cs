@@ -203,13 +203,9 @@ namespace Simple.OData.Client.V4.Adapter
                 }
                 else
                 {
-                    var linkSet = _model.SchemaElements
-                        .Where(x => x.SchemaElementKind == EdmSchemaElementKind.EntityContainer)
-                        .SelectMany(x => (x as IEdmEntityContainer).EntitySets())
-                        .BestMatch(x => x.EntityType().Name, linkTypeWithKey.Name, _session.Pluralizer);
                     var formattedKey = _session.Adapter.GetCommandFormatter().ConvertKeyValuesToUriLiteral(
                         linkKey.ToDictionary(x => x.Name, x => linkEntry[x.Name]), true);
-                    linkUri = linkSet.Name + formattedKey;
+                    linkUri = _session.Metadata.GetLinkedCollectionName(linkTypeWithKey.Name) + formattedKey;
                 }
                 var link = new ODataEntityReferenceLink
                 {
