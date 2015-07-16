@@ -111,6 +111,9 @@ namespace Simple.OData.Client.V3.Adapter
                 foreach (var parameter in parameters)
                 {
                     var actionParameter = action.Parameters.BestMatch(x => x.Name, parameter.Key, _session.Pluralizer);
+                    if (actionParameter == null)
+                        throw new UnresolvableObjectException(parameter.Key, string.Format("Parameter [{0}] not found for action [{1}]", parameter.Key, actionName));
+
                     if (actionParameter.Type.Definition.TypeKind == EdmTypeKind.Collection)
                     {
                         var collectionWriter = parameterWriter.CreateCollectionWriter(parameter.Key);

@@ -32,7 +32,7 @@ namespace Simple.OData.Client.V3.Adapter
                 return entityType.Name;
             }
 
-            throw new UnresolvableObjectException(collectionName, string.Format("Entity collection {0} not found", collectionName));
+            throw new UnresolvableObjectException(collectionName, string.Format("Entity collection [{0}] not found", collectionName));
         }
 
         public override string GetEntityCollectionTypeName(string collectionName)
@@ -67,7 +67,7 @@ namespace Simple.OData.Client.V3.Adapter
                 return entityType.Name;
             }
 
-            throw new UnresolvableObjectException(entityTypeName, string.Format("Entity type {0} not found", entityTypeName));
+            throw new UnresolvableObjectException(entityTypeName, string.Format("Entity type [{0}] not found", entityTypeName));
         }
 
         public override string GetEntityTypeExactName(string collectionName)
@@ -76,7 +76,7 @@ namespace Simple.OData.Client.V3.Adapter
             if (entityType != null)
                 return entityType.Name;
 
-            throw new UnresolvableObjectException(collectionName, string.Format("Entity type {0} not found", collectionName));
+            throw new UnresolvableObjectException(collectionName, string.Format("Entity type [{0}] not found", collectionName));
         }
 
         public override string GetLinkedCollectionName(string typeName)
@@ -87,7 +87,7 @@ namespace Simple.OData.Client.V3.Adapter
             if (linkSet != null)
                 return linkSet.Name;
 
-            throw new UnresolvableObjectException(typeName, string.Format("Linked collection for type {0} not found", typeName));
+            throw new UnresolvableObjectException(typeName, string.Format("Linked collection for type [{0}] not found", typeName));
         }
 
         public override bool IsOpenType(string collectionName)
@@ -130,7 +130,7 @@ namespace Simple.OData.Client.V3.Adapter
             var navigationProperty = GetNavigationProperty(collectionName, propertyName);
             IEdmEntityType entityType;
             if (!TryGetEntityType(navigationProperty.Type, out entityType))
-                throw new UnresolvableObjectException(propertyName, string.Format("No association found for {0}.", propertyName));
+                throw new UnresolvableObjectException(propertyName, string.Format("No association found for [{0}].", propertyName));
             return entityType.Name;
         }
 
@@ -194,7 +194,7 @@ namespace Simple.OData.Client.V3.Adapter
             if (TryGetEntitySet(entitySetName, out entitySet))
                 return entitySet;
 
-            throw new UnresolvableObjectException(entitySetName, string.Format("Entity set {0} not found", entitySetName));
+            throw new UnresolvableObjectException(entitySetName, string.Format("Entity set [{0}] not found", entitySetName));
         }
 
         private bool TryGetEntitySet(string entitySetName, out IEdmEntitySet entitySet)
@@ -223,7 +223,7 @@ namespace Simple.OData.Client.V3.Adapter
             if (TryGetEntityType(collectionName, out entityType))
                 return entityType;
 
-            throw new UnresolvableObjectException(collectionName, string.Format("Entity type {0} not found", collectionName));
+            throw new UnresolvableObjectException(collectionName, string.Format("Entity type [{0}] not found", collectionName));
         }
 
         private bool TryGetEntityType(string collectionName, out IEdmEntityType entityType)
@@ -307,7 +307,7 @@ namespace Simple.OData.Client.V3.Adapter
                 x => x.Name, propertyName, _session.Pluralizer);
 
             if (property == null)
-                throw new UnresolvableObjectException(propertyName, string.Format("Structural property {0} not found", propertyName));
+                throw new UnresolvableObjectException(propertyName, string.Format("Structural property [{0}] not found", propertyName));
 
             return property;
         }
@@ -318,7 +318,7 @@ namespace Simple.OData.Client.V3.Adapter
                 x => x.Name, propertyName, _session.Pluralizer);
 
             if (property == null)
-                throw new UnresolvableObjectException(propertyName, string.Format("Navigation property {0} not found", propertyName));
+                throw new UnresolvableObjectException(propertyName, string.Format("Navigation property [{0}] not found", propertyName));
 
             return property;
         }
@@ -331,7 +331,7 @@ namespace Simple.OData.Client.V3.Adapter
                 .BestMatch(x => x.Name, functionName, _session.Pluralizer);
 
             if (function == null)
-                throw new UnresolvableObjectException(functionName, string.Format("Function {0} not found", functionName));
+                throw new UnresolvableObjectException(functionName, string.Format("Function [{0}] not found", functionName));
 
             return function;
         }

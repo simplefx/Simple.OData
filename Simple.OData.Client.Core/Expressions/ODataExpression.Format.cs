@@ -213,7 +213,7 @@ namespace Simple.OData.Client
                 }
                 else
                 {
-                    throw new UnresolvableObjectException(objectName, string.Format("Invalid referenced object {0}", objectName));
+                    throw new UnresolvableObjectException(objectName, string.Format("Invalid referenced object [{0}]", objectName));
                 }
             }
             else if (FunctionMapping.ContainsFunction(elementNames.First(), 0))
