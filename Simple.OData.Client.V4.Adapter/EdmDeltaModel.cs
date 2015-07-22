@@ -30,12 +30,15 @@ namespace Simple.OData.Client.V4.Adapter
                     {
                         ContainsTarget = property.ContainsTarget,
                         DependentProperties = property.DependentProperties(),
+                        PrincipalProperties = property.PrincipalProperties(),
                         Name = property.Name,
                         OnDelete = property.OnDelete,
                         Target = property.Partner != null 
                             ? property.Partner.DeclaringEntityType()
                             : property.Type.TypeKind() == EdmTypeKind.Collection
                             ? (property.Type.Definition as IEdmCollectionType).ElementType.Definition as IEdmEntityType
+                            : property.Type.TypeKind() == EdmTypeKind.Entity
+                            ? property.Type.Definition as IEdmEntityType
                             : null,
                         TargetMultiplicity = property.TargetMultiplicity(),
                     };

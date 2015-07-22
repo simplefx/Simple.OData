@@ -36,11 +36,15 @@ namespace Simple.OData.Client.V3.Adapter
                             ? property.Partner.DeclaringEntityType()
                             : property.Type.TypeKind() == EdmTypeKind.Collection
                             ? (property.Type.Definition as IEdmCollectionType).ElementType.Definition as IEdmEntityType
+                            : property.Type.TypeKind() == EdmTypeKind.Entity
+                            ? property.Type.Definition as IEdmEntityType
                             : null,
                         TargetMultiplicity = property.Partner != null 
                             ? property.Partner.Multiplicity() 
                             : property.Type.TypeKind() == EdmTypeKind.Collection
                             ? EdmMultiplicity.Many
+                            : property.Type.TypeKind() == EdmTypeKind.Entity
+                            ? EdmMultiplicity.ZeroOrOne
                             : EdmMultiplicity.Unknown,
                     };
                     _entityType.AddUnidirectionalNavigation(navInfo);
