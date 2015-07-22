@@ -133,6 +133,21 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task FindPersonPlanItemsByDate()
+        {
+            var now = DateTimeOffset.Now;
+            var flights = await _client
+                .For<Person>()
+                .Key("russellwhyte")
+                .NavigateTo(x => x.Trips)
+                .Key(1003)
+                .NavigateTo(x => x.PlanItems)
+                .Filter(x => x.StartsAt == now)
+                .FindEntriesAsync();
+            Assert.Equal(0, flights.Count());
+        }
+
+        [Fact]
         public async Task FindPersonTwoLevelExpand()
         {
             var person = await _client

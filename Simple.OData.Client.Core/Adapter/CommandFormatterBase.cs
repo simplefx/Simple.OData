@@ -78,8 +78,8 @@ namespace Simple.OData.Client
         public string ConvertKeyValuesToUriLiteral(IDictionary<string, object> key, bool skipKeyNameForSingleValue)
         {
             var formattedKeyValues = key.Count == 1 && skipKeyNameForSingleValue ?
-                string.Join(",", key.Select(x => _session.Adapter.ConvertValueToUriLiteral(x.Value))) :
-                string.Join(",", key.Select(x => string.Format("{0}={1}", x.Key, _session.Adapter.ConvertValueToUriLiteral(x.Value))));
+                string.Join(",", key.Select(x => _session.Adapter.ConvertValueToUriLiteral(x.Value, true))) :
+                string.Join(",", key.Select(x => string.Format("{0}={1}", x.Key, _session.Adapter.ConvertValueToUriLiteral(x.Value, true))));
             return "(" + formattedKeyValues + ")";
         }
 
@@ -95,7 +95,7 @@ namespace Simple.OData.Client
             if (command.CommandData.Any() && !string.IsNullOrEmpty(command.Details.FunctionName) &&
                 FunctionFormat == FunctionFormat.Query)
                 extraClauses.Add(string.Join("&", command.CommandData.Select(x => string.Format("{0}={1}",
-                    x.Key, _session.Adapter.ConvertValueToUriLiteral(x.Value)))));
+                    x.Key, _session.Adapter.ConvertValueToUriLiteral(x.Value, true)))));
 
             if (command.Details.Filter != null)
                 extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Filter, Uri.EscapeDataString(command.Details.Filter)));

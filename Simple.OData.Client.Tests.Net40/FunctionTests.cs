@@ -77,6 +77,19 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task FunctionWithLocalDateTime()
+        {
+            var dateTime = DateTime.Now;
+            var result = await _client
+                .Unbound()
+                .Function("PassThroughDateTime")
+                .Set(new Entry() { { "dateTime", dateTime } })
+                .ExecuteAsScalarAsync<DateTime>();
+
+            Assert.Equal(dateTime, result);
+        }
+
+        [Fact]
         public async Task FunctionWithGuid()
         {
             var guid = Guid.NewGuid();

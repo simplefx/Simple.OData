@@ -126,11 +126,11 @@ namespace Simple.OData.Client
             else if (Value is Type)
             {
                 var typeName = context.Session.Adapter.GetMetadata().GetEntityCollectionQualifiedTypeName((Value as Type).Name);
-                return context.Session.Adapter.ConvertValueToUriLiteral(typeName);
+                return context.Session.Adapter.ConvertValueToUriLiteral(typeName, false);
             }
             else
             {
-                return context.Session.Adapter.ConvertValueToUriLiteral(Value);
+                return context.Session.Adapter.ConvertValueToUriLiteral(Value, false);
             }
         }
 

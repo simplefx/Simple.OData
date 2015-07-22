@@ -162,7 +162,7 @@ namespace Simple.OData.Client.Tests
                 .Filter(x => x.CustomerID == "ALFKI")
                 .NavigateTo<Order>();
             string commandText = command.GetCommandTextAsync().Result;
-            Assert.Equal("Customers('ALFKI')/Orders", commandText);
+            Assert.Equal("Customers(%27ALFKI%27)/Orders", commandText);
         }
 
         [Fact]

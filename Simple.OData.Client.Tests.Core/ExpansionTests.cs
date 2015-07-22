@@ -163,7 +163,7 @@ namespace Simple.OData.Client.Tests
                 .Expand(x.Photos);
 
             string commandText = await command.GetCommandTextAsync();
-            Assert.Equal("People('scottketchum')/Trips(0)/Microsoft.OData.SampleService.Models.TripPin.GetInvolvedPeople()?$expand=Photo", commandText);
+            Assert.Equal("People(%27scottketchum%27)/Trips(0)/Microsoft.OData.SampleService.Models.TripPin.GetInvolvedPeople()?$expand=Photo", commandText);
         }
 
         [Fact]

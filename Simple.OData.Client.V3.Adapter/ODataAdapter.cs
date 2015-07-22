@@ -85,12 +85,16 @@ namespace Simple.OData.Client.V3.Adapter
             throw new InvalidOperationException(string.Format("Unsupported OData protocol version: \"{0}\"", this.ProtocolVersion));
         }
 
-        public override string ConvertValueToUriLiteral(object value)
+        public override string ConvertValueToUriLiteral(object value, bool escapeDataString)
         {
+            Func<object, string> convertValue = x => ODataUriUtils.ConvertToUriLiteral(x,
+                (ODataVersion) Enum.Parse(typeof (ODataVersion), this.GetODataVersionString(), false), this.Model);
+
             return value is ODataExpression
                 ? (value as ODataExpression).AsString(_session)
-                : ODataUriUtils.ConvertToUriLiteral(value,
-                    (ODataVersion)Enum.Parse(typeof(ODataVersion), this.GetODataVersionString(), false), this.Model);
+                : escapeDataString
+                ? Uri.EscapeDataString(convertValue(value))
+                : convertValue(value);
         }
 
         public override IMetadata GetMetadata()
