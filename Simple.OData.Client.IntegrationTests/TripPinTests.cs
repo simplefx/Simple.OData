@@ -369,6 +369,59 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task InsertPersonWithLinkToPeople()
+        {
+            var friend = await _client
+                .For<Person>()
+                .Key("russellwhyte")
+                .FindEntryAsync();
+
+            var person = await _client
+                .For<Person>()
+                .Set(new
+                {
+                    UserName = "gregorsamsa",
+                    FirstName = "Gregor",
+                    LastName = "Samsa",
+                    Friends = new[] { friend },
+                })
+                .InsertEntryAsync();
+
+            person = await _client
+                .For<Person>()
+                .Key("gregorsamsa")
+                .FindEntryAsync();
+
+            Assert.NotNull(person);
+        }
+
+        [Fact]
+        public async Task InsertPersonWithLinkToMe()
+        {
+            var friend = await _client
+                .For<Me>()
+                .FindEntryAsync();
+
+            var person = await _client
+                .For<Person>()
+                .Set(new
+                {
+                    UserName = "gregorsamsa",
+                    FirstName = "Gregor",
+                    LastName = "Samsa",
+                    Friends = new[] { friend },
+                })
+                .InsertEntryAsync();
+
+            person = await _client
+                .For<Person>()
+                .Key("gregorsamsa")
+                .FindEntryAsync();
+
+            Assert.NotNull(person);
+        }
+
+        [Fact]
         public async Task FilterPersonByOpenTypeProperty()
         {
             var person = await _client

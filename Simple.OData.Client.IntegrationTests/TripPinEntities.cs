@@ -60,6 +60,10 @@ namespace Simple.OData.Client.Tests
         public ODataEntryAnnotations Annotations { get; set; }
     }
 
+    class Me : Person
+    {
+    }
+
     class Trip
     {
         public int TripId { get; set; }

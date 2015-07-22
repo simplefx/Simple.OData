@@ -111,23 +111,32 @@ namespace Simple.OData.Client.V4.Adapter
             throw new UnresolvableObjectException(collectionName, string.Format("Entity type [{0}] not found", collectionName));
         }
 
-        public override string GetLinkedCollectionName(string typeName)
+        public override string GetLinkedCollectionName(string instanceTypeName, string typeName, out bool isSingleton)
         {
-            var linkSet = _model.SchemaElements
-                .Where(x => x.SchemaElementKind == EdmSchemaElementKind.EntityContainer)
-                .SelectMany(x => (x as IEdmEntityContainer).EntitySets())
-                .BestMatch(x => x.EntityType().Name, typeName, _session.Pluralizer);
-            if (linkSet != null)
-                return linkSet.Name;
+            isSingleton = false;
+            IEdmEntitySet entitySet;
+            IEdmSingleton singleton;
 
-            var singleton = _model.SchemaElements
-                .Where(x => x.SchemaElementKind == EdmSchemaElementKind.EntityContainer)
-                .SelectMany(x => (x as IEdmEntityContainer).Singletons())
-                .BestMatch(x => x.EntityType().Name, typeName, _session.Pluralizer);
-            if (singleton != null)
+            if (TryGetEntitySet(instanceTypeName, out entitySet))
+            {
+                return entitySet.Name;
+            }
+            if (TryGetSingleton(instanceTypeName, out singleton))
+            {
+                isSingleton = true;
                 return singleton.Name;
+            }
+            if (TryGetEntitySet(typeName, out entitySet))
+            {
+                return entitySet.Name;
+            }
+            if (TryGetSingleton(typeName, out singleton))
+            {
+                isSingleton = true;
+                return singleton.Name;
+            }
 
-            throw new UnresolvableObjectException(typeName, string.Format("Linked collection for type [{0}] not found", typeName));
+            throw new UnresolvableObjectException(typeName, string.Format("Linked collection for type [{0}] not found", instanceTypeName));
         }
 
         public override bool IsOpenType(string collectionName)

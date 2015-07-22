@@ -79,13 +79,15 @@ namespace Simple.OData.Client.V3.Adapter
             throw new UnresolvableObjectException(collectionName, string.Format("Entity type [{0}] not found", collectionName));
         }
 
-        public override string GetLinkedCollectionName(string typeName)
+        public override string GetLinkedCollectionName(string instanceTypeName, string typeName, out bool isSingleton)
         {
-            var linkSet = _model.EntityContainers()
-                .SelectMany(x => x.EntitySets())
-                .BestMatch(x => x.ElementType.Name, typeName, _session.Pluralizer);
-            if (linkSet != null)
-                return linkSet.Name;
+            isSingleton = false;
+            IEdmEntitySet entitySet;
+
+            if (TryGetEntitySet(instanceTypeName, out entitySet))
+                return entitySet.Name;
+            if (TryGetEntitySet(typeName, out entitySet))
+                return entitySet.Name;
 
             throw new UnresolvableObjectException(typeName, string.Format("Linked collection for type [{0}] not found", typeName));
         }
