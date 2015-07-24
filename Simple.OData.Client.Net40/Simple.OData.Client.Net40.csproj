@@ -300,6 +300,9 @@
     <Compile Include="..\Simple.OData.Client.Core\ODataMediaAnnotations.cs">
       <Link>ODataMediaAnnotations.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ODataNamespace.cs">
+      <Link>ODataNamespace.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ODataPayloadFormat.cs">
       <Link>ODataPayloadFormat.cs</Link>
     </Compile>

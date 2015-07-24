@@ -136,7 +136,7 @@ namespace Simple.OData.Client
 
         public Task<ODataRequest> CreateFunctionRequestAsync(string collection, string functionName)
         {
-            return Utils.GetTaskFromResult(new ODataRequest(RestVerbs.Get, _session, collection));
+            return Utils.GetTaskFromResult(new ODataRequest(_session.Metadata.GetFunctionVerb(functionName), _session, collection));
         }
 
         public async Task<ODataRequest> CreateActionRequestAsync(string collection, string actionName, IDictionary<string, object> parameters, bool resultRequired)

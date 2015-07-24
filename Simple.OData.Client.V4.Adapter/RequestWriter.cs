@@ -191,7 +191,7 @@ namespace Simple.OData.Client.V4.Adapter
             {
                 Name = linkName,
                 IsCollection = isCollection,
-                Url = new Uri("http://schemas.microsoft.com/ado/2007/08/dataservices/related/" + linkType, UriKind.Absolute),
+                Url = new Uri(ODataNamespace.Related + linkType, UriKind.Absolute),
             });
 
             foreach (var referenceLink in links)

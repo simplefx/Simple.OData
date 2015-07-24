@@ -34,6 +34,7 @@ namespace Simple.OData.Client
 
         string GetFunctionFullName(string functionName);
         EntityCollection GetFunctionReturnCollection(string functionName);
+        string GetFunctionVerb(string functionName);
         string GetActionFullName(string actionName);
         EntityCollection GetActionReturnCollection(string functionName);
 

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Data.Edm;
+using Microsoft.Data.Edm.Library.Values;
 
 #pragma warning disable 1591
 
@@ -169,6 +170,13 @@ namespace Simple.OData.Client.V3.Adapter
 
             IEdmEntityType entityType;
             return !TryGetEntityType(function.ReturnType, out entityType) ? null : new EntityCollection(entityType.Name);
+        }
+
+        public override string GetFunctionVerb(string functionName)
+        {
+            var function = GetFunction(functionName);
+            var annotation = _model.GetAnnotationValue(function, ODataNamespace.Metadata, "HttpMethod");
+            return annotation is EdmStringConstant ? (annotation as EdmStringConstant).Value : RestVerbs.Get;
         }
 
         public override string GetActionFullName(string actionName)

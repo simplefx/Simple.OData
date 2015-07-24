@@ -211,6 +211,11 @@ namespace Simple.OData.Client.V4.Adapter
             return !TryGetEntityType(function.ReturnType, out entityType) ? null : new EntityCollection(entityType.Name);
         }
 
+        public override string GetFunctionVerb(string functionName)
+        {
+            return RestVerbs.Get;
+        }
+
         public override string GetActionFullName(string actionName)
         {
             var action = GetAction(actionName);
