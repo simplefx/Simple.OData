@@ -279,9 +279,12 @@ namespace Simple.OData.Client.V3.Adapter
                 }
                 else
                 {
+                    bool isSingleton;
                     var formattedKey = _session.Adapter.GetCommandFormatter().ConvertKeyValuesToUriLiteral(
                         linkKey.ToDictionary(x => x.Name, x => linkEntry[x.Name]), true);
-                    linkUri = _session.Metadata.GetLinkedCollectionName(linkTypeWithKey.Name) + formattedKey;
+                    var linkedCollectionName = _session.Metadata.GetLinkedCollectionName(
+                        referenceLink.LinkData.GetType().Name, linkTypeWithKey.Name, out isSingleton);
+                    linkUri = linkedCollectionName + (isSingleton ? string.Empty : formattedKey);
                 }
                 var link = new ODataEntityReferenceLink
                 {

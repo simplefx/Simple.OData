@@ -18,7 +18,7 @@ namespace Simple.OData.Client
         bool EntityCollectionRequiresOptimisticConcurrencyCheck(string collectionName);
 
         string GetEntityTypeExactName(string collectionName);
-        string GetLinkedCollectionName(string typeName);
+        string GetLinkedCollectionName(string instanceTypeName, string typeName, out bool isSingleton);
 
         bool IsOpenType(string collectionName);
         bool IsTypeWithId(string typeName);
