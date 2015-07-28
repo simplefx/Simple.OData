@@ -202,5 +202,17 @@ namespace Simple.OData.Client.Tests
             string commandText = await command.GetCommandTextAsync();
             Assert.Equal("Transport(1)/NorthwindModel.Ships", commandText);
         }
+
+        [Fact]
+        public void FindAllByTypedFilterAndQueryOptions()
+        {
+            var x = ODataDynamic.Expression;
+            var command = _client
+                .For(x.Product)
+                .Filter(x.ProductName == "abc")
+                .QueryOptions(x.IntOption == 42 && x.StringOption == "xyz");
+            string commandText = command.GetCommandTextAsync().Result;
+            Assert.Equal("Products?$filter=ProductName%20eq%20%27abc%27&IntOption=42&StringOption='xyz'", commandText);
+        }
     }
 }

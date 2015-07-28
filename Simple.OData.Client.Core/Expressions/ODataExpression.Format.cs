@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 
 namespace Simple.OData.Client
@@ -11,6 +10,12 @@ namespace Simple.OData.Client
 
         internal string Format(ExpressionContext context)
         {
+            if (context.IsQueryOption && _operator != ExpressionOperator.None && 
+                _operator != ExpressionOperator.AND && _operator != ExpressionOperator.EQ)
+            {
+                throw new InvalidOperationException("Invalid custom query option");
+            }
+
             if (_operator == ExpressionOperator.None && _conversionType == null)
             {
                 return this.Reference != null ?
@@ -45,12 +50,20 @@ namespace Simple.OData.Client
                 var left = FormatExpression(_left, context);
                 var right = FormatExpression(_right, context);
                 var op = FormatOperator(context);
-                if (NeedsGrouping(_left))
-                    return string.Format("({0}) {1} {2}", left, op, right);
-                else if (NeedsGrouping(_right))
-                    return string.Format("{0} {1} ({2})", left, op, right);
+
+                if (context.IsQueryOption)
+                {
+                    return string.Format("{0}{1}{2}", left, op, right);
+                }
                 else
-                    return string.Format("{0} {1} {2}", left, op, right);
+                {
+                    if (NeedsGrouping(_left))
+                        return string.Format("({0}) {1} {2}", left, op, right);
+                    else if (NeedsGrouping(_right))
+                        return string.Format("{0} {1} ({2})", left, op, right);
+                    else
+                        return string.Format("{0} {1} {2}", left, op, right);
+                }
             }
         }
 
@@ -139,13 +152,13 @@ namespace Simple.OData.Client
             switch (_operator)
             {
                 case ExpressionOperator.AND:
-                    return "and";
+                    return context.IsQueryOption ? "&" : "and";
                 case ExpressionOperator.OR:
                     return "or";
                 case ExpressionOperator.NOT:
                     return "not";
                 case ExpressionOperator.EQ:
-                    return "eq";
+                    return context.IsQueryOption ? "=" : "eq";
                 case ExpressionOperator.NE:
                     return "ne";
                 case ExpressionOperator.GT:

@@ -27,6 +27,9 @@ namespace Simple.OData.Client
         public bool IncludeCount { get; set; }
         public string LinkName { get; set; }
         public ODataExpression LinkExpression { get; set; }
+        public string QueryOptions { get; set; }
+        public ODataExpression QueryOptionsExpression { get; set; }
+        public IDictionary<string, object> QueryOptionsKeyValues { get; set; }
         public string MediaName { get; set; }
         public IEnumerable<string> MediaProperties { get; set; }
         public SimpleDictionary<object, IDictionary<string, object>> BatchEntries { get; set; }
@@ -60,7 +63,6 @@ namespace Simple.OData.Client
             this.EntryData = details.EntryData;
             this.Filter = details.Filter;
             this.FilterExpression = details.FilterExpression;
-            this.FilterExpression = details.FilterExpression;
             this.SkipCount = details.SkipCount;
             this.TopCount = details.TopCount;
             this.ExpandAssociations = details.ExpandAssociations;
@@ -72,6 +74,9 @@ namespace Simple.OData.Client
             this.LinkExpression = details.LinkExpression;
             this.MediaName = details.MediaName;
             this.MediaProperties = details.MediaProperties;
+            this.QueryOptions = details.QueryOptions;
+            this.QueryOptionsKeyValues = details.QueryOptionsKeyValues;
+            this.QueryOptionsExpression = details.QueryOptionsExpression;
             this.BatchEntries = details.BatchEntries;
         }
     }

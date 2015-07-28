@@ -320,6 +320,30 @@ namespace Simple.OData.Client
             return this;
         }
 
+        public IBoundClient<T> QueryOptions(string queryOptions)
+        {
+            this.Command.QueryOptions(queryOptions);
+            return this;
+        }
+
+        public IBoundClient<T> QueryOptions(IDictionary<string, object> queryOptions)
+        {
+            this.Command.QueryOptions(queryOptions);
+            return this;
+        }
+
+        public IBoundClient<T> QueryOptions(ODataExpression expression)
+        {
+            this.Command.QueryOptions(expression);
+            return this;
+        }
+
+        public IBoundClient<T> QueryOptions<U>(Expression<Func<U, bool>> expression)
+        {
+            this.Command.QueryOptions(ODataExpression.FromLinqExpression(expression.Body));
+            return this;
+        }
+
         public IMediaClient Media()
         {
             this.Command.Media();

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Xunit;
 
 namespace Simple.OData.Client.Tests
@@ -217,6 +218,28 @@ namespace Simple.OData.Client.Tests
                 .Filter(x => x.TransportID == 1);
             string commandText = command.GetCommandTextAsync().Result;
             Assert.Equal("Transport(1)/NorthwindModel.Ships", commandText);
+        }
+
+        [Fact]
+        public void FindAllByTypedFilterAndTypedQueryOptions()
+        {
+            var command = _client
+                .For<Product>()
+                .Filter(x => x.ProductName == "abc")
+                .QueryOptions<QueryOptions>(y => y.IntOption == 42 && y.StringOption == "xyz");
+            string commandText = command.GetCommandTextAsync().Result;
+            Assert.Equal("Products?$filter=ProductName%20eq%20%27abc%27&IntOption=42&StringOption='xyz'", commandText);
+        }
+
+        [Fact]
+        public void FindAllByTypedFilterAndUntypedQueryOptions()
+        {
+            var command = _client
+                .For<Product>()
+                .Filter(x => x.ProductName == "abc")
+                .QueryOptions(new Dictionary<string, object>() { { "IntOption", 42}, { "StringOption", "xyz"} });
+            string commandText = command.GetCommandTextAsync().Result;
+            Assert.Equal("Products?$filter=ProductName%20eq%20%27abc%27&IntOption=42&StringOption='xyz'", commandText);
         }
     }
 }

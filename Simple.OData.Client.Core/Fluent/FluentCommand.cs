@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading;
@@ -426,6 +425,36 @@ namespace Simple.OData.Client
         public FluentCommand ThenByDescending(params ODataExpression[] columns)
         {
             return ThenByDescending(columns.Select(x => x.Reference).ToArray());
+        }
+
+        public FluentCommand QueryOptions(string queryOptions)
+        {
+            if (IsBatchResponse) return this;
+
+            if (_details.QueryOptions == null)
+                _details.QueryOptions = queryOptions;
+            else
+                _details.QueryOptions = string.Format("{0}&{1}", _details.QueryOptions, queryOptions);
+            return this;
+        }
+
+        public FluentCommand QueryOptions(IDictionary<string, object> queryOptions)
+        {
+            if (IsBatchResponse) return this;
+
+            _details.QueryOptionsKeyValues = queryOptions;
+            return this;
+        }
+
+        public FluentCommand QueryOptions(ODataExpression expression)
+        {
+            if (IsBatchResponse) return this;
+
+            if (ReferenceEquals(_details.QueryOptionsExpression, null))
+                _details.QueryOptionsExpression = expression;
+            else
+                _details.QueryOptionsExpression = _details.QueryOptionsExpression && expression;
+            return this;
         }
 
         public FluentCommand Media()

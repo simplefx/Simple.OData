@@ -685,6 +685,31 @@ namespace Simple.OData.Client
         IBoundClient<T> ThenByDescending(Expression<Func<T, object>> expression);
 
         /// <summary>
+        /// Sets the custom query options.
+        /// </summary>
+        /// <param name="queryOptions">The custom query options string.</param>
+        /// <returns>Self.</returns>
+        IBoundClient<T> QueryOptions(string queryOptions);
+        /// <summary>
+        /// Sets the custom query options.
+        /// </summary>
+        /// <param name="queryOptions">The key/value collection of custom query options.</param>
+        /// <returns>Self.</returns>
+        IBoundClient<T> QueryOptions(IDictionary<string, object> queryOptions);
+        /// <summary>
+        /// Sets the custom query options.
+        /// </summary>
+        /// <param name="expression">The custom query options expression.</param>
+        /// <returns>Self.</returns>
+        IBoundClient<T> QueryOptions(ODataExpression expression);
+        /// <summary>
+        /// Sets the custom query options.
+        /// </summary>
+        /// <param name="expression">The custom query options expression.</param>
+        /// <returns>Self.</returns>
+        IBoundClient<T> QueryOptions<U>(Expression<Func<U, bool>> expression);
+
+        /// <summary>
         /// Selects retrieval of an entity media stream.
         /// </summary>
         /// <returns>Self.</returns>

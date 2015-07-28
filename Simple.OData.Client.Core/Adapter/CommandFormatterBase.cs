@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 
 namespace Simple.OData.Client
@@ -99,6 +98,22 @@ namespace Simple.OData.Client
 
             if (command.Details.Filter != null)
                 extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Filter, Uri.EscapeDataString(command.Details.Filter)));
+
+            if (command.Details.QueryOptions != null)
+                extraClauses.Add(command.Details.QueryOptions);
+
+            var details = command.Details;
+            if (!ReferenceEquals(details.QueryOptionsExpression, null))
+            {
+                extraClauses.Add(details.QueryOptionsExpression.Format(new ExpressionContext(details.Session, true)));
+            }
+            if (command.Details.QueryOptionsKeyValues != null)
+            {
+                foreach (var kv in command.Details.QueryOptionsKeyValues)
+                {
+                    extraClauses.Add(string.Format("{0}={1}", kv.Key, ODataExpression.FromValue(kv.Value).Format(new ExpressionContext(details.Session))));
+                }
+            }
 
             if (command.Details.SkipCount >= 0)
                 extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Skip, command.Details.SkipCount));
