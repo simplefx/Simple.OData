@@ -15,7 +15,7 @@ namespace Simple.OData.Client
         Task<ODataRequest> CreateDeleteRequestAsync(string collection, string entryIdent);
         Task<ODataRequest> CreateLinkRequestAsync(string collection, string linkName, string entryIdent, string linkIdent);
         Task<ODataRequest> CreateUnlinkRequestAsync(string collection, string linkName, string entryIdent, string linkIdent);
-        Task<ODataRequest> CreateFunctionRequestAsync(string collection, string functionName);
-        Task<ODataRequest> CreateActionRequestAsync(string collection, string actionName, IDictionary<string, object> parameters, bool resultRequired);
+        Task<ODataRequest> CreateFunctionRequestAsync(string commandText, string functionName);
+        Task<ODataRequest> CreateActionRequestAsync(string commandText, string actionName, IDictionary<string, object> parameters, bool resultRequired);
     }
 }

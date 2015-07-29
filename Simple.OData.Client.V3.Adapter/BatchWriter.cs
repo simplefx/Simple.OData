@@ -91,7 +91,7 @@ namespace Simple.OData.Client.V3.Adapter
             if (method != RestVerbs.Get && method != RestVerbs.Delete)
                 message.SetHeader(HttpLiteral.ContentId, contentId);
 
-            if (_session.Metadata.EntityCollectionRequiresOptimisticConcurrencyCheck(collection) &&
+            if (collection != null && _session.Metadata.EntityCollectionRequiresOptimisticConcurrencyCheck(collection) &&
                 (method == RestVerbs.Put || method == RestVerbs.Patch || method == RestVerbs.Delete))
             {
                 message.SetHeader(HttpLiteral.IfMatch, EntityTagHeaderValue.Any.Tag);

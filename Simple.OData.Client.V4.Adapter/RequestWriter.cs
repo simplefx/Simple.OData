@@ -75,6 +75,14 @@ namespace Simple.OData.Client.V4.Adapter
             }
         }
 
+        protected override async Task<Stream> WriteFunctionContentAsync(string method, string commandText)
+        {
+            if (IsBatch)
+                await CreateOperationRequestMessageAsync(method, null, null, commandText);
+
+            return null;
+        }
+
         protected override async Task<Stream> WriteActionContentAsync(string actionName, IDictionary<string, object> parameters)
         {
             var message = new ODataRequestMessage();
@@ -269,7 +277,7 @@ namespace Simple.OData.Client.V4.Adapter
 
         private Microsoft.OData.Core.ODataEntry CreateODataEntry(string typeName, IDictionary<string, object> properties)
         {
-            var entry = new Microsoft.OData.Core.ODataEntry() {TypeName = typeName};
+            var entry = new Microsoft.OData.Core.ODataEntry() { TypeName = typeName };
 
             var typeProperties = (_model.FindDeclaredType(entry.TypeName) as IEdmEntityType).Properties();
             Func<string, string> findMatchingPropertyName = name =>

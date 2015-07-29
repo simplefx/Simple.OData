@@ -32,6 +32,17 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task ReadOnlyBatch()
+        {
+            IDictionary<string, object> product = null;
+            var batch = new ODataBatch(_serviceUri);
+            batch += async c => product = await c.FindEntryAsync("Products");
+            await batch.ExecuteAsync();
+
+            Assert.NotNull(product);
+        }
+
+        [Fact]
         public async Task NestedBatch()
         {
             var batch1 = new ODataBatch(_serviceUri);
@@ -230,6 +241,17 @@ namespace Simple.OData.Client.Tests
                 .Filter("CategoryName eq 'Test17'")
                 .FindEntryAsync();
             Assert.Equal(2, (category["Products"] as IEnumerable<object>).Count());
+        }
+
+        [Fact]
+        public async Task FunctionBatch()
+        {
+            var batch = new ODataBatch(_serviceUri);
+            int result = 0;
+            batch += async c => result = await c.Unbound().Function("ParseInt").Set(new Entry() { { "number", "1" } }).ExecuteAsScalarAsync<int>();
+            await batch.ExecuteAsync();
+
+            Assert.Equal(1, result);
         }
     }
 }

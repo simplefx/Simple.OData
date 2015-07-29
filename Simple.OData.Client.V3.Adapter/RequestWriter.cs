@@ -31,7 +31,7 @@ namespace Simple.OData.Client.V3.Adapter
 #else
             IODataRequestMessageAsync
 #endif
- message = IsBatch
+            message = IsBatch
                 ? await CreateOperationRequestMessageAsync(method, collection, entryData, commandText)
                 : new ODataRequestMessage();
 
@@ -94,6 +94,14 @@ namespace Simple.OData.Client.V3.Adapter
             }
         }
 #pragma warning restore 1998
+
+        protected override async Task<Stream> WriteFunctionContentAsync(string method, string commandText)
+        {
+            if (IsBatch)
+                await CreateOperationRequestMessageAsync(method, null, null, commandText);
+
+            return null;
+        }
 
         protected override async Task<Stream> WriteActionContentAsync(string actionName, IDictionary<string, object> parameters)
         {

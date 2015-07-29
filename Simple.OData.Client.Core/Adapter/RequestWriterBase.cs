@@ -134,35 +134,42 @@ namespace Simple.OData.Client
             return request;
         }
 
-        public Task<ODataRequest> CreateFunctionRequestAsync(string collection, string functionName)
+        public async Task<ODataRequest> CreateFunctionRequestAsync(string commandText, string functionName)
         {
-            return Utils.GetTaskFromResult(new ODataRequest(_session.Metadata.GetFunctionVerb(functionName), _session, collection));
+            var verb = _session.Metadata.GetFunctionVerb(functionName);
+
+            await WriteFunctionContentAsync(verb, commandText);
+
+            var request = new ODataRequest(verb, _session, commandText);
+            AssignHeaders(request);
+            return request;
         }
 
-        public async Task<ODataRequest> CreateActionRequestAsync(string collection, string actionName, IDictionary<string, object> parameters, bool resultRequired)
+        public async Task<ODataRequest> CreateActionRequestAsync(string commandText, string actionName, IDictionary<string, object> parameters, bool resultRequired)
         {
-            var commandText = collection;
+            var verb = RestVerbs.Post;
+            Stream entryContent = null;
 
             if (parameters != null && parameters.Any())
             {
-                var entryContent = await WriteActionContentAsync(actionName, parameters);
-
-                return new ODataRequest(RestVerbs.Post, _session, commandText, parameters, entryContent)
-                {
-                    ResultRequired = resultRequired,
-                };
+                entryContent = await WriteActionContentAsync(actionName, parameters);
             }
             else
             {
-                return new ODataRequest(RestVerbs.Post, _session, commandText)
-                {
-                    ResultRequired = resultRequired,
-                };
+                await WriteFunctionContentAsync(verb, commandText);
             }
+
+            var request = new ODataRequest(verb, _session, commandText, parameters, entryContent)
+            {
+                ResultRequired = resultRequired,
+            };
+            AssignHeaders(request);
+            return request;
         }
 
         protected abstract Task<Stream> WriteEntryContentAsync(string method, string collection, string commandText, IDictionary<string, object> entryData);
         protected abstract Task<Stream> WriteLinkContentAsync(string linkIdent);
+        protected abstract Task<Stream> WriteFunctionContentAsync(string method, string commandText);
         protected abstract Task<Stream> WriteActionContentAsync(string actionName, IDictionary<string, object> parameters);
         protected abstract Task<Stream> WriteStreamContentAsync(Stream stream, bool writeAsText);
         protected abstract string FormatLinkPath(string entryIdent, string navigationPropertyName, string linkIdent = null);
