@@ -51,7 +51,10 @@ namespace Simple.OData.Client
 
         public void MapContentId(IDictionary<string, object> entryData, string contentId)
         {
-            _contentIdMap.Add(entryData, contentId);
+            if (entryData != null)
+            {
+                _contentIdMap.Add(entryData, contentId);
+            }
         }
 
         public IDictionary<object, IDictionary<string, object>> BatchEntries { get; private set; }
