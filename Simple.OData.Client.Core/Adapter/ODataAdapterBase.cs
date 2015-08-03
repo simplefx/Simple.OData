@@ -14,7 +14,6 @@ namespace Simple.OData.Client
         public object Model { get; set; }
 
         public abstract string GetODataVersionString();
-        public abstract string ConvertValueToUriLiteral(object value, bool escapeDataString);
 
         public abstract IMetadata GetMetadata();
         public abstract ICommandFormatter GetCommandFormatter();

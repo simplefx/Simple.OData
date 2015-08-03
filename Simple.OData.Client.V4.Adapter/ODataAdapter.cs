@@ -9,6 +9,7 @@ using Microsoft.OData.Core.UriParser;
 using Microsoft.OData.Edm;
 using Microsoft.OData.Edm.Csdl;
 using Microsoft.Spatial;
+using Simple.OData.Client.Extensions;
 
 #pragma warning disable 1591
 
@@ -77,18 +78,6 @@ namespace Simple.OData.Client.V4.Adapter
                     return "V4";
             }
             throw new InvalidOperationException(string.Format("Unsupported OData protocol version: \"{0}\"", this.ProtocolVersion));
-        }
-
-        public override string ConvertValueToUriLiteral(object value, bool escapeDataString)
-        {
-            Func<object, string> convertValue = x => ODataUriUtils.ConvertToUriLiteral(x,
-                (ODataVersion)Enum.Parse(typeof(ODataVersion), this.GetODataVersionString(), false), this.Model);
-
-            return value is ODataExpression
-                ? (value as ODataExpression).AsString(_session)
-                : escapeDataString
-                ? Uri.EscapeDataString(convertValue(value))
-                : convertValue(value);
         }
 
         public override IMetadata GetMetadata()

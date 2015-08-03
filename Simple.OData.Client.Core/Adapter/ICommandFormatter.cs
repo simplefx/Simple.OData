@@ -6,6 +6,7 @@ namespace Simple.OData.Client
     {
         string FormatCommand(FluentCommand command);
         string ConvertKeyValuesToUriLiteral(IDictionary<string, object> key, bool skipKeyNameForSingleValue);
+        string ConvertValueToUriLiteral(object value, bool escapeDataString);
         FunctionFormat FunctionFormat { get; }
     }
 }

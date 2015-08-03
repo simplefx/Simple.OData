@@ -12,13 +12,12 @@ namespace Simple.OData.Client
         EntityCollection GetDerivedEntityCollection(EntityCollection baseCollection, string entityTypeName);
 
         string GetEntityCollectionExactName(string collectionName);
-        string GetEntityCollectionTypeName(string collectionName);
-        string GetEntityCollectionTypeNamespace(string collectionName);
-        string GetEntityCollectionQualifiedTypeName(string collectionName);
         bool EntityCollectionRequiresOptimisticConcurrencyCheck(string collectionName);
 
         string GetEntityTypeExactName(string collectionName);
         string GetLinkedCollectionName(string instanceTypeName, string typeName, out bool isSingleton);
+
+        string GetQualifiedTypeName(string typeOrCollectionName);
 
         bool IsOpenType(string collectionName);
         bool IsTypeWithId(string typeName);

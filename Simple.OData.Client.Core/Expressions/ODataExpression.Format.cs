@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
@@ -138,12 +139,12 @@ namespace Simple.OData.Client
             }
             else if (Value is Type)
             {
-                var typeName = context.Session.Adapter.GetMetadata().GetEntityCollectionQualifiedTypeName((Value as Type).Name);
-                return context.Session.Adapter.ConvertValueToUriLiteral(typeName, false);
+                var typeName = context.Session.Adapter.GetMetadata().GetQualifiedTypeName((Value as Type).Name);
+                return context.Session.Adapter.GetCommandFormatter().ConvertValueToUriLiteral(typeName, false);
             }
             else
             {
-                return context.Session.Adapter.ConvertValueToUriLiteral(Value, false);
+                return context.Session.Adapter.GetCommandFormatter().ConvertValueToUriLiteral(Value, false);
             }
         }
 

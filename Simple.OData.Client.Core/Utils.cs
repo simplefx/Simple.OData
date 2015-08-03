@@ -142,6 +142,10 @@ namespace Simple.OData.Client
                 {
                     result = new DateTimeOffset((DateTime)value);
                 }
+                else if (targetType.IsEnumType())
+                {
+                    result = Enum.ToObject(targetType, value);
+                }
                 else
                 {
                     result = Convert.ChangeType(value, targetType, CultureInfo.InvariantCulture);
@@ -153,6 +157,13 @@ namespace Simple.OData.Client
                 result = null;
                 return false;
             }
+        }
+
+        public static bool IsSystemType(Type type)
+        {
+            return
+                type.FullName.StartsWith("System.") ||
+                type.FullName.StartsWith("Microsoft.");
         }
 
 #if NET40 || SILVERLIGHT || PORTABLE_LEGACY

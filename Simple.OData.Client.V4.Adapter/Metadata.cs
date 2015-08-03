@@ -40,16 +40,6 @@ namespace Simple.OData.Client.V4.Adapter
             throw new UnresolvableObjectException(collectionName, string.Format("Entity collection [{0}] not found", collectionName));
         }
 
-        public override string GetEntityCollectionTypeName(string collectionName)
-        {
-            return GetEntityType(collectionName).Name;
-        }
-
-        public override string GetEntityCollectionTypeNamespace(string collectionName)
-        {
-            return GetEntityType(collectionName).Namespace;
-        }
-
         public override bool EntityCollectionRequiresOptimisticConcurrencyCheck(string collectionName)
         {
             IEdmEntitySet entitySet;
@@ -137,6 +127,27 @@ namespace Simple.OData.Client.V4.Adapter
             }
 
             throw new UnresolvableObjectException(typeName, string.Format("Linked collection for type [{0}] not found", instanceTypeName));
+        }
+
+        public override string GetQualifiedTypeName(string typeName)
+        {
+            IEdmEntityType entityType;
+            if (TryGetEntityType(typeName, out entityType))
+            {
+                return string.Join(".", entityType.Namespace, entityType.Name);
+            }
+            IEdmComplexType complexType;
+            if (TryGetComplexType(typeName, out complexType))
+            {
+                return string.Join(".", complexType.Namespace, complexType.Name);
+            }
+            IEdmEnumType enumType;
+            if (TryGetEnumType(typeName, out enumType))
+            {
+                return string.Join(".", enumType.Namespace, enumType.Name);
+            }
+
+            throw new UnresolvableObjectException(typeName, string.Format("Type [{0}] not found", typeName));
         }
 
         public override bool IsOpenType(string collectionName)
@@ -412,6 +423,44 @@ namespace Simple.OData.Client.V4.Adapter
                 ? typeReference.Definition as IEdmEntityType
                 : null;
             return entityType != null;
+        }
+
+        private IEdmComplexType GetComplexType(string typeName)
+        {
+            IEdmComplexType complexType;
+            if (TryGetComplexType(typeName, out complexType))
+                return complexType;
+
+            throw new UnresolvableObjectException(typeName, string.Format("Enum [{0}] not found", typeName));
+        }
+
+        private bool TryGetComplexType(string typeName, out IEdmComplexType complexType)
+        {
+            complexType = _model.SchemaElements
+                .Where(x => x.SchemaElementKind == EdmSchemaElementKind.TypeDefinition && (x as IEdmType).TypeKind == EdmTypeKind.Complex)
+                .Select(x => x as IEdmComplexType)
+                .BestMatch(x => x.Name, typeName, _session.Pluralizer);
+
+            return complexType != null;
+        }
+
+        private IEdmEnumType GetEnumType(string typeName)
+        {
+            IEdmEnumType enumType;
+            if (TryGetEnumType(typeName, out enumType))
+                return enumType;
+
+            throw new UnresolvableObjectException(typeName, string.Format("Enum [{0}] not found", typeName));
+        }
+
+        private bool TryGetEnumType(string typeName, out IEdmEnumType enumType)
+        {
+            enumType = _model.SchemaElements
+                .Where(x => x.SchemaElementKind == EdmSchemaElementKind.TypeDefinition && (x as IEdmType).TypeKind == EdmTypeKind.Enum)
+                .Select(x => x as IEdmEnumType)
+                .BestMatch(x => x.Name, typeName, _session.Pluralizer);
+
+            return enumType != null;
         }
 
         private IEdmStructuralProperty GetStructuralProperty(string collectionName, string propertyName)

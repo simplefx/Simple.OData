@@ -13,7 +13,6 @@ namespace Simple.OData.Client
         object Model { get; set; }
 
         string GetODataVersionString();
-        string ConvertValueToUriLiteral(object value, bool escapeDataString);
 
         IMetadata GetMetadata();
         ICommandFormatter GetCommandFormatter();

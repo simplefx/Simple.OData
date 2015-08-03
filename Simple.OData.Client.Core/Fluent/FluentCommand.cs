@@ -113,10 +113,9 @@ namespace Simple.OData.Client
                 var entityCollection = new FluentCommand(this).Resolve().EntityCollection;
                 return entityCollection.BaseEntityCollection == null
                     ? entityCollection.Name
-                    : string.Format("{0}/{1}.{2}",
+                    : string.Format("{0}/{1}",
                         entityCollection.BaseEntityCollection.Name,
-                        _details.Session.Metadata.GetEntityCollectionTypeNamespace(entityCollection.Name),
-                        _details.Session.Metadata.GetEntityCollectionTypeName(entityCollection.Name));
+                        _details.Session.Metadata.GetQualifiedTypeName(entityCollection.Name));
             }
         }
 

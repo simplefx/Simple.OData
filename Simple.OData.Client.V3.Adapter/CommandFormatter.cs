@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.Data.OData;
 using Microsoft.Data.OData.Query;
+using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client.V3.Adapter
 {
@@ -15,6 +16,22 @@ namespace Simple.OData.Client.V3.Adapter
         public override FunctionFormat FunctionFormat
         {
             get { return FunctionFormat.Query; }
+        }
+
+        public override string ConvertValueToUriLiteral(object value, bool escapeDataString)
+        {
+            if (value != null && value.GetType().IsEnumType())
+                value = Convert.ToInt32(value);
+
+            var odataVersion = (ODataVersion) Enum.Parse(typeof (ODataVersion), _session.Adapter.GetODataVersionString(), false);
+
+            Func<object, string> convertValue = x => ODataUriUtils.ConvertToUriLiteral(x, odataVersion, (_session.Adapter as ODataAdapter).Model);
+
+            return value is ODataExpression
+                ? (value as ODataExpression).AsString(_session)
+                : escapeDataString
+                ? Uri.EscapeDataString(convertValue(value))
+                : convertValue(value);
         }
 
         protected override void FormatExpandSelectOrderby(IList<string> commandClauses, EntityCollection resultCollection, FluentCommand command)

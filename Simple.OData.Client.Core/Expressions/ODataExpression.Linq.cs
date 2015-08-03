@@ -199,10 +199,26 @@ namespace Simple.OData.Client
         private static ODataExpression ParseBinaryExpression(Expression expression)
         {
             var binaryExpression = expression as BinaryExpression;
+
             var leftExpression = ParseLinqExpression(binaryExpression.Left);
             var rightExpression = ParseLinqExpression(binaryExpression.Right);
 
-            switch (expression.NodeType)
+            Type enumType;
+            if (IsConvertFromCustomEnum(binaryExpression.Left, out enumType))
+            {
+                return ParseBinaryExpression(leftExpression, ParseLinqExpression(Expression.Convert(binaryExpression.Right, enumType)), expression);
+            }
+            else if (IsConvertFromCustomEnum(binaryExpression.Right, out enumType))
+            {
+                return ParseBinaryExpression(ParseLinqExpression(Expression.Convert(binaryExpression.Left, enumType)), rightExpression, expression);
+            }
+
+            return ParseBinaryExpression(leftExpression, rightExpression, expression);
+        }
+
+        private static ODataExpression ParseBinaryExpression(ODataExpression leftExpression, ODataExpression rightExpression, Expression operandExpression)
+        {
+            switch (operandExpression.NodeType)
             {
                 case ExpressionType.Equal:
                     return leftExpression == rightExpression;
@@ -237,7 +253,19 @@ namespace Simple.OData.Client
                     return leftExpression % rightExpression;
             }
 
-            throw Utils.NotSupportedExpression(expression);
+            throw Utils.NotSupportedExpression(operandExpression);
+        }
+
+        private static bool IsConvertFromCustomEnum(Expression expression, out Type enumType)
+        {
+            enumType = null;
+            if (expression.NodeType == ExpressionType.Convert)
+            {
+                var unaryExpression = (expression as UnaryExpression).Operand;
+                enumType = unaryExpression.Type;
+                return enumType.IsEnumType() && !Utils.IsSystemType(enumType);
+            }
+            return false;
         }
 
         private static ODataExpression ParseTypeIsExpression(Expression expression)

@@ -101,6 +101,11 @@ namespace Simple.OData.Client.Extensions
         {
             return type.IsEnum;
         }
+
+        public static Type GetBaseType(this Type type)
+        {
+            return type.BaseType;
+        }
 #else
         public static IEnumerable<PropertyInfo> GetAllProperties(this Type type)
         {
@@ -220,6 +225,11 @@ namespace Simple.OData.Client.Extensions
         public static bool IsEnumType(this Type type)
         {
             return type.GetTypeInfo().IsEnum;
+        }
+
+        public static Type GetBaseType(this Type type)
+        {
+            return type.GetTypeInfo().BaseType;
         }
 #endif
     }

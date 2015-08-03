@@ -11,13 +11,11 @@ namespace Simple.OData.Client
         public abstract ISession Session { get; }
 
         public abstract string GetEntityCollectionExactName(string collectionName);
-        public abstract string GetEntityCollectionTypeName(string collectionName);
-        public abstract string GetEntityCollectionTypeNamespace(string collectionName);
-
         public abstract string GetDerivedEntityTypeExactName(string collectionName, string entityTypeName);
         public abstract bool EntityCollectionRequiresOptimisticConcurrencyCheck(string collectionName);
         public abstract string GetEntityTypeExactName(string collectionName);
         public abstract string GetLinkedCollectionName(string instanceTypeName, string typeName, out bool isSingleton);
+        public abstract string GetQualifiedTypeName(string collectionName);
         public abstract bool IsOpenType(string collectionName);
         public abstract bool IsTypeWithId(string collectionName);
         public abstract IEnumerable<string> GetStructuralPropertyNames(string collectionName);
@@ -59,13 +57,6 @@ namespace Simple.OData.Client
         {
             var actualName = GetDerivedEntityTypeExactName(baseCollection.Name, entityTypeName);
             return new EntityCollection(actualName, baseCollection);
-        }
-
-        public string GetEntityCollectionQualifiedTypeName(string collectionName)
-        {
-            var entityTypeNamespace = GetEntityCollectionTypeNamespace(collectionName);
-            var entityTypeName = GetEntityCollectionTypeName(collectionName);
-            return string.Join(".", entityTypeNamespace, entityTypeName);
         }
 
         public EntryDetails ParseEntryDetails(string collectionName, IDictionary<string, object> entryData, string contentId = null)
