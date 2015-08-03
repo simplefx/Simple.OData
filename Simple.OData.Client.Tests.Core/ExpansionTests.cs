@@ -8,6 +8,8 @@ namespace Simple.OData.Client.Tests
 {
     public class ExpansionTests : TestBase
     {
+        public override string MetadataFile { get { return "Northwind.xml"; } }
+
         [Theory]
         [InlineData("Northwind.xml", "Employees?$expand=Subordinates")]
         [InlineData("Northwind4.xml", "Employees?$expand=Subordinates")]

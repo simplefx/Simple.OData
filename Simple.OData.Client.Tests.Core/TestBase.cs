@@ -11,22 +11,14 @@ using Moq;
 
 namespace Simple.OData.Client.Tests
 {
-    public class TestBase : IDisposable
+    public abstract class TestBase : IDisposable
     {
         protected readonly IODataClient _client;
         internal ISession _session;
 
-        public TestBase()
-            : this("Northwind.xml")
+        protected TestBase()
         {
-        }
-
-        public TestBase(string metadataFile)
-        {
-            if (!string.IsNullOrEmpty(metadataFile))
-            {
-                _client = CreateClient(metadataFile);
-            }
+            _client = CreateClient(this.MetadataFile);
         }
 
         public IODataClient CreateClient(string metadataFile)
@@ -36,6 +28,8 @@ namespace Simple.OData.Client.Tests
             _session = Session.FromMetadata(baseUri, metadataString);
             return new ODataClient(baseUri);
         }
+
+        public abstract string MetadataFile { get; }
 
         public void Dispose()
         {

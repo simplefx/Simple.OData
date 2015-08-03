@@ -4,7 +4,12 @@ using Xunit;
 
 namespace Simple.OData.Client.Tests
 {
-    public class DynamicFilterAsKeyTests : TestBase
+    public class DynamicFilterAsKeyV3Tests : DynamicFilterAsKeyTests
+    {
+        public override string MetadataFile { get { return "Northwind.xml"; } }
+    }
+
+    public abstract class DynamicFilterAsKeyTests : TestBase
     {
         [Fact]
         public async Task FindAllByFilterAsKeyEqual()

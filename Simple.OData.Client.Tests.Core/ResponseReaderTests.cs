@@ -1,23 +1,19 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Data.OData;
 using Microsoft.Data.Edm;
 using Xunit;
-using Moq;
-using EdmSchemaElementKind = Microsoft.Data.Edm.EdmSchemaElementKind;
-using IEdmModel = Microsoft.Data.Edm.IEdmModel;
 using Simple.OData.Client.V3.Adapter;
 
 namespace Simple.OData.Client.Tests
 {
-    public class ResponseReaderTests : TestBase
+    public class ResponseReaderV3Tests : TestBase
     {
         private const int productProperties = 10;
         private const int categoryProperties = 4;
+
+        public override string MetadataFile { get { return "Northwind.xml"; } }
 
         [Fact]
         public async Task GetSingleProduct()

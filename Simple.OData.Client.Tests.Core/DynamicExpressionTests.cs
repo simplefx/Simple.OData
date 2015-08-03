@@ -4,7 +4,12 @@ using Xunit;
 
 namespace Simple.OData.Client.Tests
 {
-    public class DynamicExpressionTests : TestBase
+    public class DynamicExpressionV3Tests : DynamicExpressionTests
+    {
+        public override string MetadataFile { get { return "Northwind.xml"; } }
+    }
+
+    public abstract class DynamicExpressionTests : TestBase
     {
         [Fact]
         public void And()
