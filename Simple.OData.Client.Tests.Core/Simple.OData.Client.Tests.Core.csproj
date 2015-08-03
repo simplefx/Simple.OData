@@ -101,6 +101,8 @@
     <Compile Include="ClientTests.cs" />
     <Compile Include="DynamicExpressionTests.cs" />
     <Compile Include="DynamicFilterAsKeyTests.cs" />
+    <Compile Include="Entities\Address.cs" />
+    <Compile Include="Entities\AddressType.cs" />
     <Compile Include="Entities\Category.cs" />
     <Compile Include="Entities\CustomAttributes.cs" />
     <Compile Include="Entities\Customer.cs" />

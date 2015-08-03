@@ -29,6 +29,7 @@ namespace Simple.OData.Client.Tests
             public string ProductName { get; set; }
             public Guid LinkID { get; set; }
             public decimal Price { get; set; }
+            public Address Address { get; set; }
             public DateTime CreationTime { get; set; }
             public DateTimeOffset Updated { get; set; }
             public TimeSpan Period { get; set; }
@@ -399,6 +400,13 @@ namespace Simple.OData.Client.Tests
             Assert.Equal("Name eq 'Milk'", ODataExpression.FromLinqExpression(filter).AsString(_session));
             filter = x => x.MappedName5 == "Milk";
             Assert.Equal("Name eq 'Milk'", ODataExpression.FromLinqExpression(filter).AsString(_session));
+        }
+
+        [Fact]
+        public void FilterWithEnum()
+        {
+            Expression<Func<TestEntity, bool>> filter = x => x.Address.Type == AddressType.Corporate;
+            Assert.Equal("Address/Type eq 2", ODataExpression.FromLinqExpression(filter).AsString(_session));
         }
     }
 }

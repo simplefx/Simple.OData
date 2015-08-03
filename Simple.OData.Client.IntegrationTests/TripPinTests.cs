@@ -66,6 +66,17 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task FindPeopleByGender()
+        {
+            var people = await _client
+                .For<Person>()
+                .Filter(x => (int)x.Gender == (int)PersonGender.Male)
+                .FindEntriesAsync();
+
+            Assert.True(people.All(x => x.Gender == PersonGender.Male));
+        }
+
+        [Fact]
         public async Task FindSinglePersonWithEntryAnnotations()
         {
             var client = new ODataClient(new ODataClientSettings
