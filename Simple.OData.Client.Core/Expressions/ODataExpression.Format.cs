@@ -82,7 +82,7 @@ namespace Simple.OData.Client
 
         private string FormatReference(ExpressionContext context)
         {
-            var elementNames = new List<string>(this.Reference.Split('.'));
+            var elementNames = new List<string>(this.Reference.Split('.', '/'));
             var entityCollection = context.EntityCollection;
             var segmentNames = BuildReferencePath(new List<string>(), entityCollection, elementNames, context);
             return string.Join("/", segmentNames);

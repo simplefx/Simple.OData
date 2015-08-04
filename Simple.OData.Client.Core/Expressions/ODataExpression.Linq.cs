@@ -122,7 +122,8 @@ namespace Simple.OData.Client
                         var memberExpression = callExpression.Object as MemberExpression;
                         var arguments = new List<object>();
                         arguments.AddRange(callExpression.Arguments.Select(ParseCallArgumentExpression));
-                        return FromFunction(callExpression.Method.Name, memberExpression.Member.Name, arguments);
+                        var function = new ExpressionFunction(callExpression.Method.Name, arguments);
+                        return new ODataExpression(ParseMemberExpression(memberExpression), function);
 
                     case ExpressionType.Call:
                         return ParseCallExpression(callExpression.Object);

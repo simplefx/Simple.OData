@@ -139,7 +139,7 @@ namespace Simple.OData.Client
                     }
                     if (!string.IsNullOrEmpty(expr.Reference))
                     {
-                        var key = expr.Reference.Split('.').Last();
+                        var key = expr.Reference.Split('.', '/').Last();
                         if (key != null && !lookupColumns.ContainsKey(key))
                             lookupColumns.Add(key, _right);
                     }

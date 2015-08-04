@@ -598,21 +598,21 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task FindAirportByLocationCityNameEquals()
+        public async Task FindAirportByLocationCityRegionEquals()
         {
             var airport = await _client
                 .For<Airport>()
-                .Filter(x => x.Location.City.Name == "San Francisco")
+                .Filter(x => x.Location.City.Region == "California")
                 .FindEntryAsync();
             Assert.Equal("SFO", airport.IataCode);
         }
 
         [Fact]
-        public async Task FindAirportByLocationCityNameContains()
+        public async Task FindAirportByLocationCityRegionContains()
         {
             var airport = await _client
                 .For<Airport>()
-                .Filter(x => x.Location.City.Name.Contains("Francisco"))
+                .Filter(x => x.Location.City.Region.Contains("California"))
                 .FindEntryAsync();
             Assert.Equal("SFO", airport.IataCode);
         }
