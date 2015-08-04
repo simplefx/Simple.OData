@@ -5,6 +5,8 @@ namespace Simple.OData.Client.Tests
 {
     public class StreamTests : TestBase
     {
+        public override string MetadataFile { get { return "TripPin.xml"; } }
+
         class Photo
         {
             public long Id { get; set; }
@@ -15,8 +17,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task GetMediaStream()
         {
-            var client = CreateClient("TripPin.xml");
-            var command = client
+            var command = _client
                 .For<Photo>()
                 .Key(1)
                 .Media();

@@ -116,11 +116,19 @@ namespace Simple.OData.Client
             }
             else
             {
-                var memberExpression = Utils.CastExpressionWithTypeCheck<MemberExpression>(callExpression.Object);
-                var arguments = new List<object>();
-                arguments.AddRange(callExpression.Arguments.Select(ParseCallArgumentExpression));
+                switch (callExpression.Object.NodeType)
+                {
+                    case ExpressionType.MemberAccess:
+                        var memberExpression = callExpression.Object as MemberExpression;
+                        var arguments = new List<object>();
+                        arguments.AddRange(callExpression.Arguments.Select(ParseCallArgumentExpression));
+                        return FromFunction(callExpression.Method.Name, memberExpression.Member.Name, arguments);
 
-                return FromFunction(callExpression.Method.Name, memberExpression.Member.Name, arguments);
+                    case ExpressionType.Call:
+                        return ParseCallExpression(callExpression.Object);
+                }
+
+                throw Utils.NotSupportedExpression(callExpression.Object);
             }
         }
 
@@ -276,7 +284,7 @@ namespace Simple.OData.Client
                 new ExpressionFunction()
                 {
                     FunctionName = "isof",
-                    Arguments = new List<ODataExpression>() {targetExpression, FromValue(typeIsExpression.TypeOperand)},
+                    Arguments = new List<ODataExpression>() { targetExpression, FromValue(typeIsExpression.TypeOperand) },
                 });
         }
 

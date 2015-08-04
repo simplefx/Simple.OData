@@ -106,7 +106,7 @@ namespace Simple.OData.Client
                 var formattedArguments = string.Format("x{0}:x{0}/{1}",
                     ArgumentCounter >= 0 ? (1 + (ArgumentCounter++) % 9).ToString() : string.Empty,
                     FormatExpression(this.Function.Arguments.First(), new ExpressionContext(context.Session,
-                        new EntityCollection(_functionCaller.Reference, context.EntityCollection))));
+                        new EntityCollection(_functionCaller.Reference, context.EntityCollection), context.DynamicPropertiesContainerName)));
 
                 return string.Format("{0}/{1}({2})",
                     _functionCaller.Format(context), this.Function.FunctionName.ToLower(), formattedArguments);
@@ -124,6 +124,19 @@ namespace Simple.OData.Client
 
                 return string.Format("{0}({1})",
                     this.Function.FunctionName.ToLower(), formattedArguments);
+            }
+            else if (string.Equals(this.Function.FunctionName, "ToString", StringComparison.Ordinal) &&
+                this.Function.Arguments.Count == 0)
+            {
+                return _functionCaller.Reference;
+            }
+            else if (string.Equals(this.Function.FunctionName, "get_Item", StringComparison.Ordinal) &&
+                this.Function.Arguments.Count == 1)
+            {
+                var propertyName = FormatExpression(this.Function.Arguments.First(), new ExpressionContext(context.Session)).Trim('\'');
+                return _functionCaller.Reference == context.DynamicPropertiesContainerName
+                    ? propertyName
+                    : string.Format("{0}.{1}", _functionCaller.Reference, propertyName);
             }
             else
             {

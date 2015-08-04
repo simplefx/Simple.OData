@@ -10,7 +10,10 @@ namespace Simple.OData.Client
     {
         public static IEnumerable<string> ExtractColumnNames<T>(Expression<Func<T, object>> expression)
         {
-            var lambdaExpression = Utils.CastExpressionWithTypeCheck<LambdaExpression>(expression);
+            var lambdaExpression = expression as LambdaExpression;
+            if (lambdaExpression == null)
+                throw Utils.NotSupportedExpression(expression);
+
             switch (lambdaExpression.Body.NodeType)
             {
                 case ExpressionType.MemberAccess:
