@@ -27,10 +27,14 @@ namespace Simple.OData.Client
             else if (_conversionType != null)
             {
                 var expr = _left;
-                if (expr.Reference == null && expr.Function == null)
+                if (expr.Reference == null && expr.Function == null && expr._conversionType == null)
                 {
                     object result;
-                    if (Utils.TryConvert(expr.Value, _conversionType, out result))
+                    if (expr.Value != null && expr.Value.GetType().IsEnumType())
+                    {
+                        expr = new ODataExpression(expr.Value);
+                    }
+                    else if (Utils.TryConvert(expr.Value, _conversionType, out result))
                     {
                         expr = new ODataExpression(result);
                     }
