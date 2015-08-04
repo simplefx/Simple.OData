@@ -8,6 +8,13 @@ namespace Simple.OData.Client.Tests
     public class TypedExpressionV3Tests : TypedExpressionTests
     {
         public override string MetadataFile { get { return "Northwind.xml"; } }
+        public override IFormatSettings FormatSettings { get { return new ODataV3Format(); } }
+    }
+
+    public class TypedExpressionV4Tests : TypedExpressionTests
+    {
+        public override string MetadataFile { get { return "Northwind4.xml"; } }
+        public override IFormatSettings FormatSettings { get { return new ODataV4Format(); } }
     }
 
     public abstract class TypedExpressionTests : TestBase
@@ -121,7 +128,7 @@ namespace Simple.OData.Client.Tests
         public void GreaterOrEqualNumeric()
         {
             Expression<Func<TestEntity, bool>> filter = x => x.ProductID >= 1.5;
-            Assert.Equal("ProductID ge 1.5D", ODataExpression.FromLinqExpression(filter).AsString(_session));
+            Assert.Equal(string.Format("ProductID ge 1.5{0}", FormatSettings.DoubleNumberSuffix), ODataExpression.FromLinqExpression(filter).AsString(_session));
         }
 
         [Fact]
@@ -177,49 +184,52 @@ namespace Simple.OData.Client.Tests
         public void EqualLong()
         {
             Expression<Func<TestEntity, bool>> filter = x => x.ProductID == 1L;
-            Assert.Equal("ProductID eq 1L", ODataExpression.FromLinqExpression(filter).AsString(_session));
+            Assert.Equal(string.Format("ProductID eq 1{0}", FormatSettings.LongNumberSuffix), ODataExpression.FromLinqExpression(filter).AsString(_session));
         }
 
         [Fact]
         public void EqualDecimal()
         {
             Expression<Func<TestEntity, bool>> filter = x => x.Price == 1M;
-            Assert.Equal("Price eq 1M", ODataExpression.FromLinqExpression(filter).AsString(_session));
+            Assert.Equal(string.Format("Price eq 1{0}", FormatSettings.DecimalNumberSuffix), ODataExpression.FromLinqExpression(filter).AsString(_session));
         }
 
         [Fact]
         public void EqualDecimalWithFractionalPart()
         {
             Expression<Func<TestEntity, bool>> filter = x => x.Price == 1.23M;
-            Assert.Equal("Price eq 1.23M", ODataExpression.FromLinqExpression(filter).AsString(_session));
+            Assert.Equal(string.Format("Price eq 1.23{0}", FormatSettings.DecimalNumberSuffix), ODataExpression.FromLinqExpression(filter).AsString(_session));
         }
 
         [Fact]
         public void EqualGuid()
         {
             Expression<Func<TestEntity, bool>> filter = x => x.LinkID == Guid.Empty;
-            Assert.Equal("LinkID eq guid'00000000-0000-0000-0000-000000000000'", ODataExpression.FromLinqExpression(filter).AsString(_session));
+            Assert.Equal(string.Format("LinkID eq {0}", FormatSettings.GetGuidFormat("00000000-0000-0000-0000-000000000000")), ODataExpression.FromLinqExpression(filter).AsString(_session));
         }
 
         [Fact]
         public void EqualDateTime()
         {
-            Expression<Func<TestEntity, bool>> filter = x => x.CreationTime == new DateTime(2013, 1, 1);
-            Assert.Equal("CreationTime eq datetime'2013-01-01T00:00:00'", ODataExpression.FromLinqExpression(filter).AsString(_session));
+            if (FormatSettings.ODataVersion < 4)
+            {
+                Expression<Func<TestEntity, bool>> filter = x => x.CreationTime == new DateTime(2013, 1, 1);
+                Assert.Equal("CreationTime eq datetime'2013-01-01T00:00:00'", ODataExpression.FromLinqExpression(filter).AsString(_session));
+            }
         }
 
         [Fact]
         public void EqualDateTimeOffset()
         {
             Expression<Func<TestEntity, bool>> filter = x => x.Updated == new DateTimeOffset(new DateTime(2013, 1, 1, 0, 0, 0, DateTimeKind.Utc));
-            Assert.Equal("Updated eq datetimeoffset'2013-01-01T00:00:00Z'", ODataExpression.FromLinqExpression(filter).AsString(_session));
+            Assert.Equal(string.Format("Updated eq {0}", FormatSettings.GetDateTimeOffsetFormat("2013-01-01T00:00:00Z")), ODataExpression.FromLinqExpression(filter).AsString(_session));
         }
 
         [Fact]
         public void EqualTimeSpan()
         {
             Expression<Func<TestEntity, bool>> filter = x => x.Period == new TimeSpan(1, 2, 3);
-            Assert.Equal("Period eq time'PT1H2M3S'", ODataExpression.FromLinqExpression(filter).AsString(_session));
+            Assert.Equal(string.Format("Period eq {0}'PT1H2M3S'", FormatSettings.TimeSpanPrefix), ODataExpression.FromLinqExpression(filter).AsString(_session));
         }
 
         [Fact]
@@ -261,28 +271,28 @@ namespace Simple.OData.Client.Tests
         public void StringContainsEqualTrue()
         {
             Expression<Func<TestEntity, bool>> filter = x => x.ProductName.Contains("ai") == true;
-            Assert.Equal("substringof('ai',ProductName) eq true", ODataExpression.FromLinqExpression(filter).AsString(_session));
+            Assert.Equal(string.Format("{0} eq true", FormatSettings.GetContainsFormat("ProductName", "ai")), ODataExpression.FromLinqExpression(filter).AsString(_session));
         }
 
         [Fact]
         public void StringContainsEqualFalse()
         {
             Expression<Func<TestEntity, bool>> filter = x => x.ProductName.Contains("ai") == false;
-            Assert.Equal("substringof('ai',ProductName) eq false", ODataExpression.FromLinqExpression(filter).AsString(_session));
+            Assert.Equal(string.Format("{0} eq false", FormatSettings.GetContainsFormat("ProductName", "ai")), ODataExpression.FromLinqExpression(filter).AsString(_session));
         }
 
         [Fact]
         public void StringContains()
         {
             Expression<Func<TestEntity, bool>> filter = x => x.ProductName.Contains("ai");
-            Assert.Equal("substringof('ai',ProductName)", ODataExpression.FromLinqExpression(filter).AsString(_session));
+            Assert.Equal(FormatSettings.GetContainsFormat("ProductName", "ai"), ODataExpression.FromLinqExpression(filter).AsString(_session));
         }
 
         [Fact]
         public void StringNotContains()
         {
             Expression<Func<TestEntity, bool>> filter = x => !x.ProductName.Contains("ai");
-            Assert.Equal("not substringof('ai',ProductName)", ODataExpression.FromLinqExpression(filter).AsString(_session));
+            Assert.Equal(string.Format("not {0}", FormatSettings.GetContainsFormat("ProductName", "ai")), ODataExpression.FromLinqExpression(filter).AsString(_session));
         }
 
         [Fact]
@@ -374,7 +384,7 @@ namespace Simple.OData.Client.Tests
         public void RoundEqual()
         {
             Expression<Func<TestEntity, bool>> filter = x => decimal.Round(x.Price) == 1;
-            Assert.Equal("round(Price) eq 1M", ODataExpression.FromLinqExpression(filter).AsString(_session));
+            Assert.Equal(string.Format("round(Price) eq 1{0}", FormatSettings.DecimalNumberSuffix), ODataExpression.FromLinqExpression(filter).AsString(_session));
         }
 #endif
 
@@ -382,14 +392,14 @@ namespace Simple.OData.Client.Tests
         public void FloorEqual()
         {
             Expression<Func<TestEntity, bool>> filter = x => decimal.Floor(x.Price) == 1;
-            Assert.Equal("floor(Price) eq 1M", ODataExpression.FromLinqExpression(filter).AsString(_session));
+            Assert.Equal(string.Format("floor(Price) eq 1{0}", FormatSettings.DecimalNumberSuffix), ODataExpression.FromLinqExpression(filter).AsString(_session));
         }
 
         [Fact]
         public void CeilingEqual()
         {
             Expression<Func<TestEntity, bool>> filter = x => decimal.Ceiling(x.Price) == 2;
-            Assert.Equal("ceiling(Price) eq 2M", ODataExpression.FromLinqExpression(filter).AsString(_session));
+            Assert.Equal(string.Format("ceiling(Price) eq 2{0}", FormatSettings.DecimalNumberSuffix), ODataExpression.FromLinqExpression(filter).AsString(_session));
         }
 
         [Fact]
@@ -418,7 +428,8 @@ namespace Simple.OData.Client.Tests
         public void FilterWithEnum()
         {
             Expression<Func<TestEntity, bool>> filter = x => x.Address.Type == AddressType.Corporate;
-            Assert.Equal("Address/Type eq 2", ODataExpression.FromLinqExpression(filter).AsString(_session));
+            Assert.Equal(string.Format("Address/Type eq {0}", FormatSettings.GetEnumFormat(AddressType.Corporate, typeof(AddressType), "NorthwindModel")), 
+                ODataExpression.FromLinqExpression(filter).AsString(_session));
         }
     }
 }

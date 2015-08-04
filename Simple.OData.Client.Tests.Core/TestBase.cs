@@ -30,6 +30,7 @@ namespace Simple.OData.Client.Tests
         }
 
         public abstract string MetadataFile { get; }
+        public abstract IFormatSettings FormatSettings { get; }
 
         public void Dispose()
         {

@@ -26,13 +26,6 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task FindEntriesNonExistingLong()
-        {
-            var products = await _client.FindEntriesAsync("Products?$filter=ProductID eq 999999999999L");
-            Assert.True(products.Count() == 0);
-        }
-
-        [Fact]
         public async Task FindEntriesSelect()
         {
             var products = await _client.FindEntriesAsync("Products?$select=ProductName");
@@ -55,17 +48,10 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task FindEntryExisting()
+        public async Task FindEntry()
         {
             var product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'Chai'");
             Assert.Equal("Chai", product["ProductName"]);
-        }
-
-        [Fact]
-        public async Task FindEntryNonExisting()
-        {
-            var product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'XYZ'");
-            Assert.Null(product);
         }
 
         [Fact]

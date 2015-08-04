@@ -7,6 +7,13 @@ namespace Simple.OData.Client.Tests
     public class DynamicFilterAsKeyV3Tests : DynamicFilterAsKeyTests
     {
         public override string MetadataFile { get { return "Northwind.xml"; } }
+        public override IFormatSettings FormatSettings { get { return new ODataV3Format(); } }
+    }
+
+    public class DynamicFilterAsKeyV4Tests : DynamicFilterAsKeyTests
+    {
+        public override string MetadataFile { get { return "Northwind4.xml"; } }
+        public override IFormatSettings FormatSettings { get { return new ODataV4Format(); } }
     }
 
     public abstract class DynamicFilterAsKeyTests : TestBase
@@ -77,7 +84,7 @@ namespace Simple.OData.Client.Tests
                 .For(x.Products)
                 .Filter(x.ProductID == 1L);
             string commandText = await command.GetCommandTextAsync();
-            Assert.Equal("Products(1L)", commandText);
+            Assert.Equal(string.Format("Products(1{0})", FormatSettings.LongNumberSuffix), commandText);
         }
 
         [Fact]

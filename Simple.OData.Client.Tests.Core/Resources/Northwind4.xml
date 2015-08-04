@@ -94,6 +94,7 @@
         <Property Name="OrderDate" Type="Edm.DateTimeOffset" />
         <Property Name="RequiredDate" Type="Edm.DateTimeOffset" />
         <Property Name="ShippedDate" Type="Edm.DateTimeOffset" />
+        <Property Name="ShippedDateTimeOffset" Type="Edm.DateTimeOffset" Precision="3" />
         <Property Name="ShipVia" Type="Edm.Int32" />
         <Property Name="Freight" Type="Edm.Decimal" Precision="19" Scale="4" />
         <Property Name="ShipName" Type="Edm.String" MaxLength="40" />
@@ -181,6 +182,18 @@
           <ReferentialConstraint Property="RegionID" ReferencedProperty="RegionID" />
         </NavigationProperty>
         <NavigationProperty Name="Employees" Type="Collection(NorthwindModel.Employee)" Partner="Territories" />
+      </EntityType>
+      <EntityType Name="Transport" Abstract="true">
+        <Key>
+          <PropertyRef Name="TransportID" />
+        </Key>
+        <Property Name="TransportID" Type="Edm.Int32" Nullable="false" p6:StoreGeneratedPattern="Identity" xmlns:p6="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
+      </EntityType>
+      <EntityType Name="Ships" BaseType="NorthwindModel.Transport">
+        <Property Name="ShipName" Type="Edm.String" MaxLength="100" />
+      </EntityType>
+      <EntityType Name="Trucks" BaseType="NorthwindModel.Transport">
+        <Property Name="TruckNumber" Type="Edm.String" MaxLength="100" />
       </EntityType>
       <EntityType Name="Alphabetical_list_of_product">
         <Key>
@@ -380,6 +393,19 @@
         <Property Name="OrderID" Type="Edm.Int32" Nullable="false" />
         <Property Name="Subtotal" Type="Edm.Decimal" Precision="19" Scale="4" />
       </EntityType>
+      <ComplexType Name="Address">
+        <Property Name="Type" Type="NorthwindModel.AddressType" />
+        <Property Name="City" Type="Edm.String" MaxLength="15" />
+        <Property Name="Region" Type="Edm.String" MaxLength="15" />
+        <Property Name="PostalCode" Type="Edm.String" MaxLength="10" />
+        <Property Name="Country" Type="Edm.String" MaxLength="15" />
+      </ComplexType>
+      <EnumType Name="AddressType">
+        <Member Name ="Unknown"/>
+        <Member Name ="Private"/>
+        <Member Name ="Corporate"/>
+        <Member Name ="Delivery" Value="10"/>
+      </EnumType>
     </Schema>
     <Schema Namespace="ODataWebExperimental.Northwind.Model" xmlns="http://docs.oasis-open.org/odata/ns/edm">
       <EntityContainer Name="NorthwindEntities" p4:LazyLoadingEnabled="true" xmlns:p4="http://schemas.microsoft.com/ado/2009/02/edm/annotation">

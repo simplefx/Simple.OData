@@ -14,6 +14,7 @@ namespace Simple.OData.Client.Tests
         private const int categoryProperties = 4;
 
         public override string MetadataFile { get { return "Northwind.xml"; } }
+        public override IFormatSettings FormatSettings { get { return new ODataV3Format(); } }
 
         [Fact]
         public async Task GetSingleProduct()

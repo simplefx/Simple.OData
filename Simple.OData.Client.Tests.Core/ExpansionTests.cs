@@ -9,6 +9,7 @@ namespace Simple.OData.Client.Tests
     public class ExpansionTests : TestBase
     {
         public override string MetadataFile { get { return "Northwind.xml"; } }
+        public override IFormatSettings FormatSettings { get { return new ODataV3Format(); } }
 
         [Theory]
         [InlineData("Northwind.xml", "Employees?$expand=Subordinates")]

@@ -7,6 +7,13 @@ namespace Simple.OData.Client.Tests
     public class DynamicExpressionV3Tests : DynamicExpressionTests
     {
         public override string MetadataFile { get { return "Northwind.xml"; } }
+        public override IFormatSettings FormatSettings { get { return new ODataV3Format(); } }
+    }
+
+    public class DynamicExpressionV4Tests : DynamicExpressionTests
+    {
+        public override string MetadataFile { get { return "Northwind4.xml"; } }
+        public override IFormatSettings FormatSettings { get { return new ODataV4Format(); } }
     }
 
     public abstract class DynamicExpressionTests : TestBase
@@ -80,7 +87,7 @@ namespace Simple.OData.Client.Tests
         {
             var x = ODataDynamic.Expression;
             var filter = x.CategoryID >= 1.5;
-            Assert.Equal("CategoryID ge 1.5D", filter.AsString(_session));
+            Assert.Equal(string.Format("CategoryID ge 1.5{0}", FormatSettings.DoubleNumberSuffix), filter.AsString(_session));
         }
 
         [Fact]
@@ -144,7 +151,7 @@ namespace Simple.OData.Client.Tests
         {
             var x = ODataDynamic.Expression;
             var filter = x.CategoryID == 1L;
-            Assert.Equal("CategoryID eq 1L", filter.AsString(_session));
+            Assert.Equal(string.Format("CategoryID eq 1{0}", FormatSettings.LongNumberSuffix), filter.AsString(_session));
         }
 
         [Fact]
@@ -152,7 +159,7 @@ namespace Simple.OData.Client.Tests
         {
             var x = ODataDynamic.Expression;
             var filter = x.Total == 1M;
-            Assert.Equal("Total eq 1M", filter.AsString(_session));
+            Assert.Equal(string.Format("Total eq 1{0}", FormatSettings.DecimalNumberSuffix), filter.AsString(_session));
         }
 
         [Fact]
@@ -160,23 +167,26 @@ namespace Simple.OData.Client.Tests
         {
             var x = ODataDynamic.Expression;
             var filter = x.Total == 1.23M;
-            Assert.Equal("Total eq 1.23M", filter.AsString(_session));
+            Assert.Equal(string.Format("Total eq 1.23{0}", FormatSettings.DecimalNumberSuffix), filter.AsString(_session));
         }
 
         [Fact]
         public void EqualGuid()
         {
             var x = ODataDynamic.Expression;
-            var filter = x.CategoryID == Guid.Empty;
-            Assert.Equal("CategoryID eq guid'00000000-0000-0000-0000-000000000000'", filter.AsString(_session));
+            var filter = x.LinkID == Guid.Empty;
+            Assert.Equal(string.Format("LinkID eq {0}", FormatSettings.GetGuidFormat("00000000-0000-0000-0000-000000000000")), filter.AsString(_session));
         }
 
         [Fact]
         public void EqualDateTime()
         {
-            var x = ODataDynamic.Expression;
-            var filter = x.Updated == new DateTime(2013, 1, 1, 0, 0, 0, 123, DateTimeKind.Utc);
-            Assert.Equal("Updated eq datetime'2013-01-01T00:00:00.123Z'", filter.AsString(_session));
+            if (FormatSettings.ODataVersion < 4)
+            {
+                var x = ODataDynamic.Expression;
+                var filter = x.Updated == new DateTime(2013, 1, 1, 0, 0, 0, 123, DateTimeKind.Utc);
+                Assert.Equal("Updated eq datetime'2013-01-01T00:00:00.123Z'", filter.AsString(_session));
+            }
         }
 
         [Fact]
@@ -184,15 +194,15 @@ namespace Simple.OData.Client.Tests
         {
             var x = ODataDynamic.Expression;
             var filter = x.Updated == new DateTimeOffset(new DateTime(2013, 1, 1, 0, 0, 0, DateTimeKind.Utc));
-            Assert.Equal("Updated eq datetimeoffset'2013-01-01T00:00:00Z'", filter.AsString(_session));
+            Assert.Equal(string.Format("Updated eq {0}", FormatSettings.GetDateTimeOffsetFormat("2013-01-01T00:00:00Z")), filter.AsString(_session));
         }
 
         [Fact]
         public void EqualTimeSpan()
         {
             var x = ODataDynamic.Expression;
-            var filter = x.Updated == new TimeSpan(1, 2, 3);
-            Assert.Equal("Updated eq time'PT1H2M3S'", filter.AsString(_session));
+            var filter = x.Period == new TimeSpan(1, 2, 3);
+            Assert.Equal(string.Format("Period eq {0}'PT1H2M3S'", FormatSettings.TimeSpanPrefix), filter.AsString(_session));
         }
 
         [Fact]
@@ -240,7 +250,7 @@ namespace Simple.OData.Client.Tests
         {
             var x = ODataDynamic.Expression;
             var filter = x.ProductName.Contains("ai") == true;
-            Assert.Equal("substringof('ai',ProductName) eq true", filter.AsString(_session));
+            Assert.Equal(string.Format("{0} eq true", FormatSettings.GetContainsFormat("ProductName", "ai")), filter.AsString(_session));
         }
 
         [Fact]
@@ -248,7 +258,7 @@ namespace Simple.OData.Client.Tests
         {
             var x = ODataDynamic.Expression;
             var filter = x.ProductName.Contains("ai") == false;
-            Assert.Equal("substringof('ai',ProductName) eq false", filter.AsString(_session));
+            Assert.Equal(string.Format("{0} eq false", FormatSettings.GetContainsFormat("ProductName", "ai")), filter.AsString(_session));
         }
 
         [Fact]
@@ -256,7 +266,7 @@ namespace Simple.OData.Client.Tests
         {
             var x = ODataDynamic.Expression;
             var filter = x.ProductName.Contains("ai");
-            Assert.Equal("substringof('ai',ProductName)", filter.AsString(_session));
+            Assert.Equal(FormatSettings.GetContainsFormat("ProductName", "ai"), filter.AsString(_session));
         }
 
         [Fact]
@@ -264,7 +274,7 @@ namespace Simple.OData.Client.Tests
         {
             var x = ODataDynamic.Expression;
             var filter = !x.ProductName.Contains("ai");
-            Assert.Equal("not substringof('ai',ProductName)", filter.AsString(_session));
+            Assert.Equal(string.Format("not {0}", FormatSettings.GetContainsFormat("ProductName", "ai")), filter.AsString(_session));
         }
 
         [Fact]

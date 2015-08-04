@@ -124,6 +124,7 @@
     <Compile Include="TestBase.cs" />
     <Compile Include="TypedExpressionsTests.cs" />
     <Compile Include="TypedFilterAsKeyTests.cs" />
+    <Compile Include="FormatSettings.cs" />
     <Compile Include="ValueConversionTests.cs" />
   </ItemGroup>
   <ItemGroup>
