@@ -98,54 +98,93 @@ namespace Simple.OData.Client
             var adapterVersion = context.Session == null ? AdapterVersion.Default : context.Session.Adapter.AdapterVersion;
             if (FunctionMapping.TryGetFunctionMapping(this.Function.FunctionName, this.Function.Arguments.Count(), adapterVersion, out mapping))
             {
-                var mappedFunction = mapping.FunctionMapper(this.Function.FunctionName, _functionCaller.Format(context), this.Function.Arguments).Function;
-                var formattedArguments = string.Join(",", (IEnumerable<object>)mappedFunction.Arguments.Select(x => FormatExpression(x, context)));
-
-                return string.Format("{0}({1})",
-                    mappedFunction.FunctionName, formattedArguments);
+                return FormatMappedFunction(context, mapping);
             }
             else if (string.Equals(this.Function.FunctionName, ODataLiteral.Any, StringComparison.OrdinalIgnoreCase) ||
                      string.Equals(this.Function.FunctionName, ODataLiteral.All, StringComparison.OrdinalIgnoreCase))
             {
-                var formattedArguments = string.Format("x{0}:x{0}/{1}",
-                    ArgumentCounter >= 0 ? (1 + (ArgumentCounter++) % 9).ToString() : string.Empty,
-                    FormatExpression(this.Function.Arguments.First(), new ExpressionContext(context.Session,
-                        new EntityCollection(_functionCaller.Reference, context.EntityCollection), context.DynamicPropertiesContainerName)));
-
-                return string.Format("{0}/{1}({2})",
-                    _functionCaller.Format(context), this.Function.FunctionName.ToLower(), formattedArguments);
+                return FormatAnyAllFunction(context);
             }
             else if (string.Equals(this.Function.FunctionName, ODataLiteral.IsOf, StringComparison.OrdinalIgnoreCase) ||
                      string.Equals(this.Function.FunctionName, ODataLiteral.Cast, StringComparison.OrdinalIgnoreCase))
             {
-                var formattedArguments = string.Empty;
-                if (!ReferenceEquals(this.Function.Arguments.First(), null) && !this.Function.Arguments.First().IsNull)
-                {
-                    formattedArguments += FormatExpression(this.Function.Arguments.First(), new ExpressionContext(context.Session));
-                    formattedArguments += ",";
-                }
-                formattedArguments += FormatExpression(this.Function.Arguments.Last(), new ExpressionContext(context.Session));
-
-                return string.Format("{0}({1})",
-                    this.Function.FunctionName.ToLower(), formattedArguments);
+                return FormatIsOfCastFunction(context);
+            }
+            else if (string.Equals(this.Function.FunctionName, "get_Item", StringComparison.Ordinal) &&
+                this.Function.Arguments.Count == 1)
+            {
+                return FormatArrayIndexFunction(context);
             }
             else if (string.Equals(this.Function.FunctionName, "ToString", StringComparison.Ordinal) &&
                 this.Function.Arguments.Count == 0)
             {
                 return _functionCaller.Reference;
             }
-            else if (string.Equals(this.Function.FunctionName, "get_Item", StringComparison.Ordinal) &&
-                this.Function.Arguments.Count == 1)
-            {
-                var propertyName = FormatExpression(this.Function.Arguments.First(), new ExpressionContext(context.Session)).Trim('\'');
-                return _functionCaller.Reference == context.DynamicPropertiesContainerName
-                    ? propertyName
-                    : string.Format("{0}.{1}", _functionCaller.Reference, propertyName);
-            }
             else
             {
                 throw new NotSupportedException(string.Format("The function {0} is not supported or called with wrong number of arguments", this.Function.FunctionName));
             }
+        }
+
+        private string FormatMappedFunction(ExpressionContext context, FunctionMapping mapping)
+        {
+            var mappedFunction = mapping.FunctionMapper(
+                this.Function.FunctionName, _functionCaller.Format(context), this.Function.Arguments).Function;
+            var formattedArguments = string.Join(",",
+                (IEnumerable<object>) mappedFunction.Arguments.Select(x => FormatExpression(x, context)));
+
+            return string.Format("{0}({1})", 
+                mappedFunction.FunctionName, 
+                formattedArguments);
+        }
+
+        private string FormatAnyAllFunction(ExpressionContext context)
+        {
+            EntityCollection entityCollection;
+            if (context.EntityCollection != null)
+            {
+                var associationName = context.Session.Metadata.GetNavigationPropertyExactName(
+                    context.EntityCollection.Name, _functionCaller.Reference);
+                entityCollection = context.Session.Metadata.GetEntityCollection(
+                    context.Session.Metadata.GetNavigationPropertyPartnerName(context.EntityCollection.Name, associationName));
+            }
+            else
+            {
+                entityCollection = new EntityCollection(_functionCaller.Reference);
+            }
+
+            var formattedArguments = string.Format("x{0}:x{0}/{1}",
+                ArgumentCounter >= 0 ? (1 + (ArgumentCounter++) % 9).ToString() : string.Empty,
+                FormatExpression(this.Function.Arguments.First(), new ExpressionContext(context.Session,
+                    entityCollection, context.DynamicPropertiesContainerName)));
+
+            return string.Format("{0}/{1}({2})", 
+                _functionCaller.Format(context), 
+                this.Function.FunctionName.ToLower(), 
+                formattedArguments);
+        }
+
+        private string FormatIsOfCastFunction(ExpressionContext context)
+        {
+            var formattedArguments = string.Empty;
+            if (!ReferenceEquals(this.Function.Arguments.First(), null) && !this.Function.Arguments.First().IsNull)
+            {
+                formattedArguments += FormatExpression(this.Function.Arguments.First(), new ExpressionContext(context.Session));
+                formattedArguments += ",";
+            }
+            formattedArguments += FormatExpression(this.Function.Arguments.Last(), new ExpressionContext(context.Session));
+
+            return string.Format("{0}({1})",
+                this.Function.FunctionName.ToLower(), formattedArguments);
+        }
+
+        private string FormatArrayIndexFunction(ExpressionContext context)
+        {
+            var propertyName =
+                FormatExpression(this.Function.Arguments.First(), new ExpressionContext(context.Session)).Trim('\'');
+            return _functionCaller.Reference == context.DynamicPropertiesContainerName
+                ? propertyName
+                : string.Format("{0}.{1}", _functionCaller.Reference, propertyName);
         }
 
         private string FormatValue(ExpressionContext context)
