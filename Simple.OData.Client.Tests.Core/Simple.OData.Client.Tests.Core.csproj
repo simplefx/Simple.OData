@@ -125,6 +125,7 @@
     <Compile Include="TypedExpressionsTests.cs" />
     <Compile Include="TypedFilterAsKeyTests.cs" />
     <Compile Include="FormatSettings.cs" />
+    <Compile Include="UtilsTests.cs" />
     <Compile Include="ValueConversionTests.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -172,10 +173,6 @@
     <ProjectReference Include="..\Simple.OData.Client.Dynamic\Simple.OData.Client.Dynamic.csproj">
       <Project>{c025fb0f-452b-4795-b9a4-64c9e6abbeee}</Project>
       <Name>Simple.OData.Client.Dynamic</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Simple.OData.Client.TestUtils.Net40\Simple.OData.Client.TestUtils.Net40.csproj">
-      <Project>{072f8be4-81c1-4276-a9a5-1aec87a84265}</Project>
-      <Name>Simple.OData.Client.TestUtils.Net40</Name>
     </ProjectReference>
     <ProjectReference Include="..\Simple.OData.Client.V3.Adapter\Simple.OData.Client.V3.Adapter.csproj">
       <Project>{a08b2d3d-91a6-4ecd-b7af-5977e840e383}</Project>

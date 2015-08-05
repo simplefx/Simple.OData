@@ -69,7 +69,10 @@ namespace Simple.OData.Client.V4.Adapter
             var message = new ODataRequestMessage();
             using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), _model))
             {
-                var link = new ODataEntityReferenceLink { Url = Utils.CreateAbsoluteUri(_session.Settings.BaseUri.AbsoluteUri, linkIdent) };
+                var link = new ODataEntityReferenceLink
+                {
+                    Url = Utils.CreateAbsoluteUri(_session.Settings.BaseUri.AbsoluteUri, linkIdent)
+                };
                 await messageWriter.WriteEntityReferenceLinkAsync(link);
                 return await message.GetStreamAsync();
             }

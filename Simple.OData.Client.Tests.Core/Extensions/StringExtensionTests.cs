@@ -3,12 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Simple.OData.Client.Extensions;
-using Simple.OData.Client.TestUtils;
 using Xunit;
 
 namespace Simple.OData.Client.Tests
 {
-    
     public class StringExtensionTests
     {
         [Fact]

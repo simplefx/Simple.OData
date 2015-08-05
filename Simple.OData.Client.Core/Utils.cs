@@ -90,12 +90,34 @@ namespace Simple.OData.Client
             return property == null || property.IsNotMapped() ? null : property;
         }
 
-        public static Uri CreateAbsoluteUri(string urlBase, string relativePath)
+        public static Uri CreateAbsoluteUri(string baseUri, string relativePath)
         {
-            string url = string.IsNullOrEmpty(urlBase) ? "http://" : urlBase;
-            if (!url.EndsWith("/"))
-                url += "/";
-            return new Uri(url + relativePath);
+            var basePath = string.IsNullOrEmpty(baseUri) ? "http://" : baseUri;
+            var uri = new Uri(basePath);
+            var baseQuery = uri.Query;
+            if (!string.IsNullOrEmpty(baseQuery))
+            {
+                basePath = basePath.Substring(0, basePath.Length - baseQuery.Length);
+                baseQuery = baseQuery.Substring(1);
+            }
+            if (!basePath.EndsWith("/"))
+                basePath += "/";
+
+            uri = new Uri(basePath + relativePath);
+            if (string.IsNullOrEmpty(baseQuery))
+            {
+                return uri;
+            }
+            else
+            {
+                var uriHost = uri.AbsoluteUri.Substring(
+                    0, uri.AbsoluteUri.Length - uri.AbsolutePath.Length - uri.Query.Length);
+                var query = string.IsNullOrEmpty(uri.Query)
+                    ? string.Format("?{0}", baseQuery)
+                    : string.Format("{0}&{1}", uri.Query, baseQuery);
+
+                return new Uri(uriHost + uri.AbsolutePath + query);
+            }
         }
 
         public static string ExtractCollectionName(string commandText)

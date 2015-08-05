@@ -83,7 +83,10 @@ namespace Simple.OData.Client.V3.Adapter
             var message = new ODataRequestMessage();
             using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), _model))
             {
-                var link = new ODataEntityReferenceLink { Url = Utils.CreateAbsoluteUri(_session.Settings.BaseUri.AbsoluteUri, linkIdent) };
+                var link = new ODataEntityReferenceLink
+                {
+                    Url = Utils.CreateAbsoluteUri(_session.Settings.BaseUri.AbsoluteUri, linkIdent)
+                };
                 messageWriter.WriteEntityReferenceLink(link);
 
 #if SILVERLIGHT
