@@ -74,11 +74,16 @@ namespace Simple.OData.Client.V3.Adapter
         {
             isSingleton = false;
             IEdmEntitySet entitySet;
+            IEdmEntityType entityType;
 
             if (TryGetEntitySet(instanceTypeName, out entitySet))
                 return entitySet.Name;
             if (TryGetEntitySet(typeName, out entitySet))
                 return entitySet.Name;
+            if (TryGetEntityType(instanceTypeName, out entityType))
+                return entityType.Name;
+            if (TryGetEntityType(typeName, out entityType))
+                return entityType.Name;
 
             throw new UnresolvableObjectException(typeName, string.Format("Linked collection for type [{0}] not found", typeName));
         }
