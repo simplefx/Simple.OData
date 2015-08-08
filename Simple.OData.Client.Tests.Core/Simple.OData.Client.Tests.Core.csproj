@@ -98,6 +98,7 @@
     <Compile Include="..\CommonAssemblyVersion.cs">
       <Link>Properties\CommonAssemblyVersion.cs</Link>
     </Compile>
+    <Compile Include="AggregationTests.cs" />
     <Compile Include="ClientTests.cs" />
     <Compile Include="DynamicExpressionTests.cs" />
     <Compile Include="DynamicFilterAsKeyTests.cs" />

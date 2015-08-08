@@ -72,6 +72,27 @@ namespace Simple.OData.Client
             return commandText;
         }
 
+        public string FormatNavigationPath(EntityCollection entityCollection, string path)
+        {
+            var items = path.Split('/');
+            var associationName = _session.Metadata.GetNavigationPropertyExactName(entityCollection.Name, items.First());
+
+            var text = associationName;
+            if (items.Count() == 1)
+            {
+                return text;
+            }
+            else
+            {
+                path = path.Substring(items.First().Length + 1);
+
+                entityCollection = _session.Metadata.GetEntityCollection(
+                    _session.Metadata.GetNavigationPropertyPartnerName(entityCollection.Name, associationName));
+
+                return string.Format("{0}/{1}", text, FormatNavigationPath(entityCollection, path));
+            }
+        }
+
         public string ConvertKeyValuesToUriLiteral(IDictionary<string, object> key, bool skipKeyNameForSingleValue)
         {
             var formattedKeyValues = key.Count == 1 && skipKeyNameForSingleValue ?
@@ -152,28 +173,7 @@ namespace Simple.OData.Client
 
         protected string FormatExpandItem(KeyValuePair<string, ODataExpandOptions> pathWithOptions, EntityCollection entityCollection)
         {
-            return FormatExpandItem(pathWithOptions.Key, entityCollection);
-        }
-
-        protected string FormatExpandItem(string path, EntityCollection entityCollection)
-        {
-            var items = path.Split('/');
-            var associationName = _session.Metadata.GetNavigationPropertyExactName(entityCollection.Name, items.First());
-
-            var text = associationName;
-            if (items.Count() == 1)
-            {
-                return text;
-            }
-            else
-            {
-                path = path.Substring(items.First().Length + 1);
-
-                entityCollection = _session.Metadata.GetEntityCollection(
-                    _session.Metadata.GetNavigationPropertyPartnerName(entityCollection.Name, associationName));
-
-                return string.Format("{0}/{1}", text, FormatExpandItem(path, entityCollection));
-            }
+            return FormatNavigationPath(entityCollection, pathWithOptions.Key);
         }
 
         protected string FormatSelectItem(string path, EntityCollection entityCollection)

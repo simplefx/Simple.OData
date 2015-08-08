@@ -131,37 +131,47 @@ namespace Simple.OData.Client
             var mappedFunction = mapping.FunctionMapper(
                 this.Function.FunctionName, _functionCaller.Format(context), this.Function.Arguments).Function;
             var formattedArguments = string.Join(",",
-                (IEnumerable<object>) mappedFunction.Arguments.Select(x => FormatExpression(x, context)));
+                (IEnumerable<object>)mappedFunction.Arguments.Select(x => FormatExpression(x, context)));
 
-            return string.Format("{0}({1})", 
-                mappedFunction.FunctionName, 
+            return string.Format("{0}({1})",
+                mappedFunction.FunctionName,
                 formattedArguments);
         }
 
         private string FormatAnyAllFunction(ExpressionContext context)
         {
-            EntityCollection entityCollection;
-            if (context.EntityCollection != null)
-            {
-                var associationName = context.Session.Metadata.GetNavigationPropertyExactName(
-                    context.EntityCollection.Name, _functionCaller.Reference);
-                entityCollection = context.Session.Metadata.GetEntityCollection(
-                    context.Session.Metadata.GetNavigationPropertyPartnerName(context.EntityCollection.Name, associationName));
-            }
-            else
-            {
-                entityCollection = new EntityCollection(_functionCaller.Reference);
-            }
+            var navigationPath = _functionCaller.Reference.Replace('.', '/');
+            var entityCollection = NavigateToCollection(context,
+                context.EntityCollection, navigationPath);
 
             var formattedArguments = string.Format("x{0}:x{0}/{1}",
                 ArgumentCounter >= 0 ? (1 + (ArgumentCounter++) % 9).ToString() : string.Empty,
                 FormatExpression(this.Function.Arguments.First(), new ExpressionContext(context.Session,
                     entityCollection, context.DynamicPropertiesContainerName)));
 
-            return string.Format("{0}/{1}({2})", 
-                _functionCaller.Format(context), 
-                this.Function.FunctionName.ToLower(), 
+            return string.Format("{0}/{1}({2})",
+                context.Session.Adapter.GetCommandFormatter().FormatNavigationPath(context.EntityCollection, navigationPath),
+                this.Function.FunctionName.ToLower(),
                 formattedArguments);
+        }
+
+        private EntityCollection NavigateToCollection(ExpressionContext context, EntityCollection rootCollection, string path)
+        {
+            var items = path.Split('/');
+            var associationName = context.Session.Metadata.GetNavigationPropertyExactName(rootCollection.Name, items.First());
+
+            var entityCollection = context.Session.Metadata.GetEntityCollection(
+                context.Session.Metadata.GetNavigationPropertyPartnerName(rootCollection.Name, associationName));
+
+            if (items.Count() == 1)
+            {
+                return entityCollection;
+            }
+            else
+            {
+                path = path.Substring(items.First().Length + 1);
+                return NavigateToCollection(context, entityCollection, path);
+            }
         }
 
         private string FormatIsOfCastFunction(ExpressionContext context)
