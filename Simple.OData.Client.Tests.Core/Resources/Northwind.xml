@@ -256,6 +256,9 @@
         <FunctionImport Name="ParseInt" ReturnType="Edm.Int32" m:HttpMethod="GET">
           <Parameter Name="number" Type="Edm.String" />
         </FunctionImport>
+        <FunctionImport Name="ReturnString" ReturnType="Edm.String" m:HttpMethod="GET">
+          <Parameter Name="text" Type="Edm.String" />
+        </FunctionImport>
         <FunctionImport Name="ReturnIntCollection" ReturnType="Collection(Edm.Int32)" m:HttpMethod="GET">
           <Parameter Name="count" Type="Edm.Int32" />
         </FunctionImport>

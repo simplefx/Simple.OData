@@ -21,6 +21,9 @@ namespace Simple.OData.Client.Extensions
                 return source as T;
             if (typeof(T) == typeof(ODataEntry))
                 return CreateODataEntry(source, dynamicObject) as T;
+            if (typeof(T) == typeof(string) || typeof(T).IsValue())
+                throw new InvalidOperationException(
+                    string.Format("Unable to convert structural data to {0}.", typeof(T).Name));
 
             return (T)ToObject(source, typeof(T), CreateInstance<T>, dynamicPropertiesContainerName, dynamicObject);
         }

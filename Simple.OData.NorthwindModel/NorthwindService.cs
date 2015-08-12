@@ -35,6 +35,12 @@ namespace Simple.OData.NorthwindModel
         }
 
         [WebGet]
+        public string ReturnString(string text)
+        {
+            return text;
+        }
+
+        [WebGet]
         public IQueryable<int> ReturnIntCollection(int count)
         {
             var numbers = new List<int>();

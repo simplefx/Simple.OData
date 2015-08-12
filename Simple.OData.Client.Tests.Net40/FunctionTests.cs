@@ -16,7 +16,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task FunctionWithString()
+        public async Task FunctionWithStringToInt()
         {
             var result = await _client
                 .Unbound()
@@ -25,6 +25,28 @@ namespace Simple.OData.Client.Tests
                 .ExecuteAsScalarAsync<int>();
             
             Assert.Equal(1, result);
+        }
+
+        [Fact]
+        public async Task FunctionWithString()
+        {
+            var result = await _client
+                .Unbound()
+                .Function("ReturnString")
+                .Set(new Entry() { { "text", "abc" } })
+                .ExecuteAsScalarAsync<string>();
+
+            Assert.Equal("abc", result);
+        }
+
+        [Fact]
+        public async Task FunctionWithStringAsCollection()
+        {
+            await AssertThrowsAsync<InvalidOperationException>(async () => await _client
+                .Unbound<string>()
+                .Function("ReturnString")
+                .Set(new Entry() { { "text", "abc" } })
+                .ExecuteAsSingleAsync());
         }
 
         [Fact]
