@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -788,6 +789,26 @@ namespace Simple.OData.Client.Tests
                 .Function("GetInvolvedPeople")
                 .ExecuteAsEnumerableAsync();
             Assert.Equal(0, people.Count());
+        }
+
+        [Fact]
+        public async Task GetInvolvedPeopleInBatch()
+        {
+            var batch = new ODataBatch(_client);
+
+            IEnumerable<object> people = null;
+            batch += async x =>
+            {
+                people = await x.For<Person>()
+                    .Key("scottketchum")
+                    .NavigateTo<Trip>()
+                    .Key(0)
+                    .Function("GetInvolvedPeople")
+                    .ExecuteAsEnumerableAsync();
+            };
+
+            await batch.ExecuteAsync();
+            Assert.Equal(2, people.Count());
         }
 
         [Fact]

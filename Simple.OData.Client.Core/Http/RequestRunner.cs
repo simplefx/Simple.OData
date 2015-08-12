@@ -76,9 +76,16 @@ namespace Simple.OData.Client
         {
             if (request.Accept != null)
             {
-                foreach (var accept in request.Accept)
+                lock (httpClient.DefaultRequestHeaders.Accept)
                 {
-                    httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(accept));
+                    foreach (var accept in request.Accept)
+                    {
+                        var item = new MediaTypeWithQualityHeaderValue(accept);
+                        if (!httpClient.DefaultRequestHeaders.Accept.Contains(item))
+                        {
+                            httpClient.DefaultRequestHeaders.Accept.Add(item);
+                        }
+                    }
                 }
             }
 
