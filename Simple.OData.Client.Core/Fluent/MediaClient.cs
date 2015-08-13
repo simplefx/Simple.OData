@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Simple.OData.Client
 {
-    public class MediaClient : FluentClientBase<IDictionary<string, object>>, IMediaClient
+    public class MediaClient : FluentClientBase<IDictionary<string, object>, MediaClient>, IMediaClient
     {
         internal MediaClient(ODataClient client, Session session, FluentCommand command = null, bool dynamicResults = false)
             : base(client, session, null, command, dynamicResults)

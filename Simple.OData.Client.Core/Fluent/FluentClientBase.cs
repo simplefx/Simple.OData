@@ -12,7 +12,9 @@ namespace Simple.OData.Client
     /// Provides access to OData operations in a fluent style.
     /// </summary>
     /// <typeparam name="T">The entity type.</typeparam>
-    public abstract partial class FluentClientBase<T> : IFluentClient<T> where T : class
+    public abstract partial class FluentClientBase<T, FT> : IFluentClient<T, FT> 
+        where T : class
+        where FT : class
     {
 #pragma warning disable 1591
 
@@ -54,6 +56,364 @@ namespace Simple.OData.Client
         internal Session Session
         {
             get { return _session; }
+        }
+
+        public FT WithProperties(Expression<Func<T, IDictionary<string, object>>> expression)
+        {
+            this.Command.WithProperties(ColumnExpression.ExtractColumnName(expression));
+            return this as FT;
+        }
+
+        public FT WithMedia(IEnumerable<string> properties)
+        {
+            this.Command.WithMedia(properties);
+            return this as FT;
+        }
+
+        public FT WithMedia(params string[] properties)
+        {
+            this.Command.WithMedia(properties);
+            return this as FT;
+        }
+
+        public FT WithMedia(params ODataExpression[] properties)
+        {
+            this.Command.WithMedia(properties);
+            return this as FT;
+        }
+
+        public FT WithMedia(Expression<Func<T, object>> expression)
+        {
+            this.Command.WithMedia(ColumnExpression.ExtractColumnNames(expression));
+            return this as FT;
+        }
+
+        public FT Key(params object[] entryKey)
+        {
+            this.Command.Key(entryKey);
+            return this as FT;
+        }
+
+        public FT Key(IEnumerable<object> entryKey)
+        {
+            this.Command.Key(entryKey);
+            return this as FT;
+        }
+
+        public FT Key(IDictionary<string, object> entryKey)
+        {
+            this.Command.Key(entryKey);
+            return this as FT;
+        }
+
+        public FT Key(T entryKey)
+        {
+            this.Command.Key(entryKey.ToDictionary());
+            return this as FT;
+        }
+
+        public FT Filter(string filter)
+        {
+            this.Command.Filter(filter);
+            return this as FT;
+        }
+
+        public FT Filter(ODataExpression expression)
+        {
+            this.Command.Filter(expression);
+            return this as FT;
+        }
+
+        public FT Filter(Expression<Func<T, bool>> expression)
+        {
+            this.Command.Filter(ODataExpression.FromLinqExpression(expression.Body));
+            return this as FT;
+        }
+
+        public FT Function(string functionName)
+        {
+            this.Command.Function(functionName);
+            return this as FT;
+        }
+
+        public FT Action(string actionName)
+        {
+            this.Command.Action(actionName);
+            return this as FT;
+        }
+
+        public FT Set(object value)
+        {
+            this.Command.Set(value);
+            return this as FT;
+        }
+
+        public FT Set(object value, IEnumerable<string> associationsToSetByValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public FT Set(object value, params string[] associationsToSetByValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public FT Set(object value, params ODataExpression[] associationsToSetByValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public FT Set(object value, Expression<Func<T, object>> associationsToSetByValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public FT Set(IDictionary<string, object> value)
+        {
+            this.Command.Set(value);
+            return this as FT;
+        }
+
+        public FT Set(IDictionary<string, object> value, IEnumerable<string> associationsToSetByValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public FT Set(IDictionary<string, object> value, params string[] associationsToSetByValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public FT Set(T entry, Expression<Func<T, object>> associationsToSetByValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public FT Set(params ODataExpression[] value)
+        {
+            this.Command.Set(value);
+            return this as FT;
+        }
+
+        public FT Set(T entry)
+        {
+            this.Command.Set(entry);
+            return this as FT;
+        }
+
+        public FT Set(T entry, params ODataExpression[] associationsToSetByValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public FT Skip(int count)
+        {
+            this.Command.Skip(count);
+            return this as FT;
+        }
+
+        public FT Top(int count)
+        {
+            this.Command.Top(count);
+            return this as FT;
+        }
+
+        public FT Expand(ODataExpandOptions expandOptions)
+        {
+            this.Command.Expand(expandOptions);
+            return this as FT;
+        }
+
+        public FT Expand(IEnumerable<string> associations)
+        {
+            this.Command.Expand(associations);
+            return this as FT;
+        }
+
+        public FT Expand(ODataExpandOptions expandOptions, IEnumerable<string> associations)
+        {
+            this.Command.Expand(expandOptions, associations);
+            return this as FT;
+        }
+
+        public FT Expand(params string[] associations)
+        {
+            this.Command.Expand(associations);
+            return this as FT;
+        }
+
+        public FT Expand(ODataExpandOptions expandOptions, params string[] associations)
+        {
+            this.Command.Expand(expandOptions, associations);
+            return this as FT;
+        }
+
+        public FT Expand(params ODataExpression[] associations)
+        {
+            this.Command.Expand(associations);
+            return this as FT;
+        }
+
+        public FT Expand(ODataExpandOptions expandOptions, params ODataExpression[] associations)
+        {
+            this.Command.Expand(expandOptions, associations);
+            return this as FT;
+        }
+
+        public FT Expand(Expression<Func<T, object>> expression)
+        {
+            this.Command.Expand(ColumnExpression.ExtractColumnNames(expression));
+            return this as FT;
+        }
+
+        public FT Expand(ODataExpandOptions expandOptions, Expression<Func<T, object>> expression)
+        {
+            this.Command.Expand(expandOptions, ColumnExpression.ExtractColumnNames(expression));
+            return this as FT;
+        }
+
+        public FT Select(IEnumerable<string> columns)
+        {
+            this.Command.Select(columns);
+            return this as FT;
+        }
+
+        public FT Select(params string[] columns)
+        {
+            this.Command.Select(columns);
+            return this as FT;
+        }
+
+        public FT Select(params ODataExpression[] columns)
+        {
+            this.Command.Select(columns);
+            return this as FT;
+        }
+
+        public FT Select(Expression<Func<T, object>> expression)
+        {
+            this.Command.Select(ColumnExpression.ExtractColumnNames(expression));
+            return this as FT;
+        }
+
+        public FT OrderBy(IEnumerable<KeyValuePair<string, bool>> columns)
+        {
+            this.Command.OrderBy(columns);
+            return this as FT;
+        }
+
+        public FT OrderBy(params string[] columns)
+        {
+            this.Command.OrderBy(columns);
+            return this as FT;
+        }
+
+        public FT OrderBy(params ODataExpression[] columns)
+        {
+            this.Command.OrderBy(columns);
+            return this as FT;
+        }
+
+        public FT OrderBy(Expression<Func<T, object>> expression)
+        {
+            this.Command.OrderBy(ColumnExpression.ExtractColumnNames(expression).Select(x => new KeyValuePair<string, bool>(x, false)));
+            return this as FT;
+        }
+
+        public FT ThenBy(params ODataExpression[] columns)
+        {
+            this.Command.ThenBy(columns);
+            return this as FT;
+        }
+
+        public FT ThenBy(Expression<Func<T, object>> expression)
+        {
+            this.Command.ThenBy(ColumnExpression.ExtractColumnNames(expression).ToArray());
+            return this as FT;
+        }
+
+        public FT OrderByDescending(params string[] columns)
+        {
+            this.Command.OrderByDescending(columns);
+            return this as FT;
+        }
+
+        public FT OrderByDescending(params ODataExpression[] columns)
+        {
+            this.Command.OrderByDescending(columns);
+            return this as FT;
+        }
+
+        public FT OrderByDescending(Expression<Func<T, object>> expression)
+        {
+            this.Command.OrderBy(ColumnExpression.ExtractColumnNames(expression).Select(x => new KeyValuePair<string, bool>(x, true)));
+            return this as FT;
+        }
+
+        public FT ThenByDescending(params ODataExpression[] columns)
+        {
+            this.Command.ThenByDescending(columns);
+            return this as FT;
+        }
+
+        public FT ThenByDescending(Expression<Func<T, object>> expression)
+        {
+            this.Command.ThenByDescending(ColumnExpression.ExtractColumnNames(expression).ToArray());
+            return this as FT;
+        }
+
+        public FT QueryOptions(string queryOptions)
+        {
+            this.Command.QueryOptions(queryOptions);
+            return this as FT;
+        }
+
+        public FT QueryOptions(IDictionary<string, object> queryOptions)
+        {
+            this.Command.QueryOptions(queryOptions);
+            return this as FT;
+        }
+
+        public FT QueryOptions(ODataExpression expression)
+        {
+            this.Command.QueryOptions(expression);
+            return this as FT;
+        }
+
+        public FT QueryOptions<U>(Expression<Func<U, bool>> expression)
+        {
+            this.Command.QueryOptions(ODataExpression.FromLinqExpression(expression.Body));
+            return this as FT;
+        }
+
+        public IMediaClient Media()
+        {
+            this.Command.Media();
+            return new MediaClient(_client, _session, this.Command, _dynamicResults);
+        }
+
+        public IMediaClient Media(string streamName)
+        {
+            this.Command.Media(streamName);
+            return new MediaClient(_client, _session, this.Command, _dynamicResults);
+        }
+
+        public IMediaClient Media(ODataExpression expression)
+        {
+            this.Command.Media(expression);
+            return new MediaClient(_client, _session, this.Command, _dynamicResults);
+        }
+
+        public IMediaClient Media(Expression<Func<T, object>> expression)
+        {
+            this.Command.Media(ColumnExpression.ExtractColumnName(expression));
+            return new MediaClient(_client, _session, this.Command, _dynamicResults);
+        }
+
+        public FT Count()
+        {
+            this.Command.Count();
+            return this as FT;
         }
 
         protected BoundClient<U> Link<U>(FluentCommand command, string linkName = null)
