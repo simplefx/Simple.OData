@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
@@ -323,6 +322,46 @@ namespace Simple.OData.Client
         public Task UnlinkEntryAsync(ODataExpression expression, IDictionary<string, object> linkedEntryKey, CancellationToken cancellationToken)
         {
             return _client.UnlinkEntryAsync(_command, expression.AsString(_session), linkedEntryKey != null ? linkedEntryKey.ToDictionary() : null, cancellationToken);
+        }
+
+        public IBoundClient<T> Set(object value, IEnumerable<string> associationsToSetByValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IBoundClient<T> Set(object value, params string[] associationsToSetByValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IBoundClient<T> Set(object value, params ODataExpression[] associationsToSetByValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IBoundClient<T> Set(object value, Expression<Func<T, object>> associationsToSetByValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IBoundClient<T> Set(IDictionary<string, object> value, IEnumerable<string> associationsToSetByValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IBoundClient<T> Set(IDictionary<string, object> value, params string[] associationsToSetByValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IBoundClient<T> Set(T entry, params ODataExpression[] associationsToSetByValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IBoundClient<T> Set(T entry, Expression<Func<T, object>> associationsToSetByValue)
+        {
+            throw new NotImplementedException();
         }
 
         public Task UnlinkEntryAsync(ODataExpression expression, ODataEntry linkedEntryKey)

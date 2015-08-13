@@ -6,6 +6,7 @@ namespace Simple.OData.Client.Tests
     public class StreamTests : TestBase
     {
         public override string MetadataFile { get { return "TripPin.xml"; } }
+        public override IFormatSettings FormatSettings { get { return new ODataV4Format(); } }
 
         class Photo
         {
