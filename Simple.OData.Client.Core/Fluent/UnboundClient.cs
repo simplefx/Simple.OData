@@ -21,6 +21,70 @@ namespace Simple.OData.Client
 
 #pragma warning disable 1591
 
+        public IUnboundClient<T> Set(object value)
+        {
+            this.Command.Set(value);
+            return this;
+        }
+
+        public IUnboundClient<T> Set(IDictionary<string, object> value)
+        {
+            this.Command.Set(value);
+            return this;
+        }
+
+        public IUnboundClient<T> Set(params ODataExpression[] value)
+        {
+            this.Command.Set(value);
+            return this;
+        }
+
+        public IUnboundClient<T> Set(T entry)
+        {
+            this.Command.Set(entry);
+            return this;
+        }
+
+        public IUnboundClient<T> Set(T entry, params ODataExpression[] associationsToSetByValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IUnboundClient<T> Set(object value, IEnumerable<string> associationsToSetByValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IUnboundClient<T> Set(object value, params string[] associationsToSetByValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IUnboundClient<T> Set(object value, params ODataExpression[] associationsToSetByValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IUnboundClient<T> Set(object value, Expression<Func<T, object>> associationsToSetByValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IUnboundClient<T> Set(IDictionary<string, object> value, IEnumerable<string> associationsToSetByValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IUnboundClient<T> Set(IDictionary<string, object> value, params string[] associationsToSetByValue)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IUnboundClient<T> Set(T entry, Expression<Func<T, object>> associationsToSetByValue)
+        {
+            throw new NotImplementedException();
+        }
+
         public IUnboundClient<IDictionary<string, object>> As(string derivedCollectionName)
         {
             this.Command.As(derivedCollectionName);

@@ -29,5 +29,86 @@ namespace Simple.OData.Client
         /// <param name="expression">The expression for the derived collection.</param>
         /// <returns>Self.</returns>
         IUnboundClient<ODataEntry> As(ODataExpression expression);
+
+        /// <summary>
+        /// Sets the specified entry value for update.
+        /// </summary>
+        /// <param name="value">The value to update the entry with.</param>
+        /// <returns>Self.</returns>
+        IUnboundClient<T> Set(object value);
+        /// <summary>
+        /// Sets the specified entry value for update.
+        /// </summary>
+        /// <param name="value">The value to update the entry with.</param>
+        /// <returns>Self.</returns>
+        IUnboundClient<T> Set(IDictionary<string, object> value);
+        /// <summary>
+        /// Sets the specified entry value for update.
+        /// </summary>
+        /// <param name="entry">The entry with the updated value.</param>
+        /// <returns>Self.</returns>
+        IUnboundClient<T> Set(T entry);
+        /// <summary>
+        /// Sets the specified entry value for update.
+        /// </summary>
+        /// <param name="value">The value to update the entry with.</param>
+        /// <returns>Self.</returns>
+        IUnboundClient<T> Set(params ODataExpression[] value);
+        /// <summary>
+        /// Sets the specified entry value for update.
+        /// </summary>
+        /// <param name="value">The value to update the entry with.</param>
+        /// <param name="associationsToSetByValue">The list of associations to be passed by value for deep insert/update.</param>
+        /// <returns>Self.</returns>
+        IUnboundClient<T> Set(object value, IEnumerable<string> associationsToSetByValue);
+        /// <summary>
+        /// Sets the specified entry value for update.
+        /// </summary>
+        /// <param name="value">The value to update the entry with.</param>
+        /// <param name="associationsToSetByValue">The list of associations to be passed by value for deep insert/update.</param>
+        /// <returns>Self.</returns>
+        IUnboundClient<T> Set(object value, params string[] associationsToSetByValue);
+        /// <summary>
+        /// Sets the specified entry value for update.
+        /// </summary>
+        /// <param name="value">The value to update the entry with.</param>
+        /// <param name="associationsToSetByValue">The list of associations to be passed by value for deep insert/update.</param>
+        /// <returns>Self.</returns>
+        IUnboundClient<T> Set(object value, params ODataExpression[] associationsToSetByValue);
+        /// <summary>
+        /// Sets the specified entry value for update.
+        /// </summary>
+        /// <param name="value">The value to update the entry with.</param>
+        /// <param name="associationsToSetByValue">The list of associations to be passed by value for deep insert/update.</param>
+        /// <returns>Self.</returns>
+        IUnboundClient<T> Set(object value, Expression<Func<T, object>> associationsToSetByValue);
+        /// <summary>
+        /// Sets the specified entry value for update.
+        /// </summary>
+        /// <param name="value">The value to update the entry with.</param>
+        /// <param name="associationsToSetByValue">The list of associations to be passed by value for deep insert/update.</param>
+        /// <returns>Self.</returns>
+        IUnboundClient<T> Set(IDictionary<string, object> value, IEnumerable<string> associationsToSetByValue);
+        /// <summary>
+        /// Sets the specified entry value for update.
+        /// </summary>
+        /// <param name="value">The value to update the entry with.</param>
+        /// <param name="associationsToSetByValue">The list of associations to be passed by value for deep insert/update.</param>
+        /// <returns>Self.</returns>
+        IUnboundClient<T> Set(IDictionary<string, object> value, params string[] associationsToSetByValue);
+        /// <summary>
+        /// Sets the specified entry value for update.
+        /// </summary>
+        /// <param name="entry">The entry with the updated value.</param>
+        /// <param name="associationsToSetByValue">The list of associations to be passed by value for deep insert/update.</param>
+        /// <returns>Self.</returns>
+        IUnboundClient<T> Set(T entry, params ODataExpression[] associationsToSetByValue);
+        /// <summary>
+        /// Sets the specified entry value for update.
+        /// </summary>
+        /// <param name="entry">The entry with the updated value.</param>
+        /// <param name="associationsToSetByValue">The list of associations to be passed by value for deep insert/update.</param>
+        /// <returns>Self.</returns>
+        IUnboundClient<T> Set(T entry, Expression<Func<T, object>> associationsToSetByValue);
     }
 }

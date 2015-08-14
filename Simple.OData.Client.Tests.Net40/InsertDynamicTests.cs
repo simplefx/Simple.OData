@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
@@ -32,6 +33,22 @@ namespace Simple.OData.Client.Tests
 
             Assert.True((int)product.ProductID > 0);
             Assert.Equal("Test1", product.ProductName);
+        }
+
+        [Fact]
+        public async Task InsertExpando()
+        {
+            var x = ODataDynamic.Expression;
+            dynamic expando = new ExpandoObject();
+            expando.ProductName = "Test9";
+            expando.UnitPrice = 18m;
+
+            var product = await _client
+                .For(x.Products)
+                .Set(expando)
+                .InsertEntryAsync();
+
+            Assert.True((int)product["ProductID"] > 0);
         }
 
         [Fact]
