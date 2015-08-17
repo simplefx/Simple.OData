@@ -491,28 +491,5 @@ namespace Simple.OData.Client.Tests
                 .FindEntriesAsync();
             Assert.Equal(11, products.Count());
         }
-
-        [Fact]
-        public async Task GetFromODataOrgWithUri()
-        {
-            var client = new ODataClient(new Uri("http://services.odata.org/V3/OData/OData.svc/"));
-            IEnumerable<object> productDetails = await client
-                .For("Product")
-                .Filter("ID eq 0")
-                .FindEntriesAsync();
-            Assert.NotNull(productDetails);
-        }
-
-        [Fact]
-        public async Task GetFromODataOrgExpand()
-        {
-            var client = new ODataClient("http://services.odata.org/V3/OData/OData.svc/");
-            IEnumerable<object> productDetails = await client
-                .For("Product")
-                .Expand("ProductDetails")
-                .Filter("ID eq 0")
-                .FindEntriesAsync();
-            Assert.NotEqual(0, productDetails.Count());
-        }
     }
 }

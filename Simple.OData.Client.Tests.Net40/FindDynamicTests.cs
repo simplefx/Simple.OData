@@ -536,18 +536,6 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task CombinedConditionsFromODataOrg()
-        {
-            var client = new ODataClient("http://services.odata.org/V2/OData/OData.svc/");
-            var x = ODataDynamic.Expression;
-            var product = await client
-                .For(x.Product)
-                .Filter(x.Name == "Bread" && x.Price < 1000)
-                .FindEntryAsync();
-            Assert.Equal(2.5m, product.Price);
-        }
-
-        [Fact]
         public async Task ImplicitCastToType()
         {
             var x = ODataDynamic.Expression;

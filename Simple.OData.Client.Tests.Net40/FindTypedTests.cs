@@ -669,16 +669,5 @@ namespace Simple.OData.Client.Tests
             public string Name { get; set; }
             public decimal Price { get; set; }
         }
-
-        [Fact]
-        public async Task TypedCombinedConditionsFromODataOrg()
-        {
-            var client = new ODataClient("http://services.odata.org/V2/OData/OData.svc/");
-            var product = await client
-                .For<ODataOrgProduct>("Product")
-                .Filter(x => x.Name == "Bread" && x.Price < 1000)
-                .FindEntryAsync();
-            Assert.Equal(2.5m, product.Price);
-        }
     }
 }

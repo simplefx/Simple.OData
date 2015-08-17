@@ -107,6 +107,7 @@
     <Compile Include="DeleteODataTests.cs" />
     <Compile Include="ErrorODataTests.cs" />
     <Compile Include="FindNorthwindTests.cs" />
+    <Compile Include="FindNuGetTests.cs" />
     <Compile Include="FindODataTests.cs" />
     <Compile Include="MediaODataTests.cs" />
     <Compile Include="MetadataODataTests.cs" />

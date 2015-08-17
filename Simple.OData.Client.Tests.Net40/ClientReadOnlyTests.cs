@@ -59,31 +59,6 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task FindEntryNuGetV1()
-        {
-            var client = new ODataClient("http://nuget.org/api/v1");
-            var package = await client.FindEntryAsync("Packages?$filter=Title eq 'EntityFramework'");
-            Assert.NotNull(package["Id"]);
-            Assert.NotNull(package["Authors"]);
-        }
-
-        [Fact]
-        public async Task FindEntryNuGetV2()
-        {
-            var client = new ODataClient("http://nuget.org/api/v2");
-            var package = await client.FindEntryAsync("Packages?$filter=Title eq 'EntityFramework'");
-            Assert.NotNull(package["Id"]);
-        }
-
-        [Fact]
-        public async Task FindEntryNuGetV2_FieldWithAnnotation()
-        {
-            var client = new ODataClient("http://nuget.org/api/v2");
-            var package = await client.FindEntryAsync("Packages?$filter=Title eq 'EntityFramework'");
-            Assert.NotNull(package["Authors"]);
-        }
-
-        [Fact]
         public async Task GetEntryExisting()
         {
             var product = await _client.GetEntryAsync("Products", new Entry() { { "ProductID", 1 } });
@@ -308,6 +283,33 @@ namespace Simple.OData.Client.Tests
             string filter = await _client.GetCommandTextAsync<Ship>("Transport/Ships", x => x.ShipName == "Titanic");
             var ship = await _client.FindEntryAsync(filter);
             Assert.Equal("Titanic", ship["ShipName"]);
+        }
+
+        [Fact]
+        public async Task FindEntryParallelThreads()
+        {
+            var products = (await _client.FindEntriesAsync("Products")).ToArray();
+
+            Parallel.ForEach(products, async x =>
+            {
+                var productName = x["ProductName"];
+                var product = await _client.FindEntryAsync(string.Format("Products?$filter=ProductName eq '{0}'", productName));
+                Assert.Equal(productName, product["ProductName"]);
+            });
+        }
+
+        [Fact]
+        public async Task FindEntryParallelThreadsReuseConnection()
+        {
+            var client = new ODataClient(new ODataClientSettings() { BaseUri = _serviceUri, ReuseHttpConnection = true });
+            var products = (await client.FindEntriesAsync("Products")).ToArray();
+
+            Parallel.ForEach(products, async x =>
+            {
+                var productName = x["ProductName"];
+                var product = await client.FindEntryAsync(string.Format("Products?$filter=ProductName eq '{0}'", productName));
+                Assert.Equal(productName, product["ProductName"]);
+            });
         }
     }
 }
