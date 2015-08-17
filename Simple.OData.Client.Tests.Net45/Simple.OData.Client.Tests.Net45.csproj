@@ -143,8 +143,11 @@
     <Compile Include="..\Simple.OData.Client.Tests.Net40\BatchTests.cs">
       <Link>BatchTests.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net40\ClientTests.cs">
-      <Link>ClientTests.cs</Link>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\ClientReadOnlyTests.cs">
+      <Link>ClientReadOnlyTests.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net40\ClientReadWriteTests.cs">
+      <Link>ClientReadWriteTests.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net40\DeleteDynamicTests.cs">
       <Link>DeleteDynamicTests.cs</Link>

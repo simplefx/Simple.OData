@@ -1,28 +1,32 @@
-using System;
+﻿using System;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Simple.OData.Client.Extensions;
 using Xunit;
 
 namespace Simple.OData.Client.Tests
 {
     using Entry = System.Collections.Generic.Dictionary<string, object>;
 
-    public class ClientTests : TestBase
+    public class ClientReadOnlyTests : TestBase
     {
+        public ClientReadOnlyTests()
+            : base(true)
+        {
+        }
+
         [Fact]
         public async Task FindEntries()
         {
             var products = await _client.FindEntriesAsync("Products");
-            Assert.True(products.Count() > 0);
+            Assert.True(products.Any());
         }
 
         [Fact]
         public async Task FindEntriesNonExisting()
         {
             var products = await _client.FindEntriesAsync("Products?$filter=ProductID eq -1");
-            Assert.True(products.Count() == 0);
+            Assert.True(!products.Any());
         }
 
         [Fact]
@@ -108,6 +112,7 @@ namespace Simple.OData.Client.Tests
                 IgnoreResourceNotFoundException = true,
             };
             var client = new ODataClient(settings);
+<<<<<<< HEAD:Simple.OData.Client.Tests.Net40/ClientTests.cs
             var product = await client.GetEntryAsync("Products", new Entry() {{"ProductID", -1}});
 
             Assert.Null(product);
@@ -193,69 +198,11 @@ namespace Simple.OData.Client.Tests
             Assert.NotNull(product);
 
             await _client.DeleteEntryAsync("Products", product);
+=======
+            var product = await client.GetEntryAsync("Products", new Entry() { { "ProductID", -1 } });
+>>>>>>> fc08eb2... Tests refactoring.:Simple.OData.Client.Tests.Net40/ClientReadOnlyTests.cs
 
-            product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'Test3'");
             Assert.Null(product);
-        }
-
-        [Fact]
-        public async Task DeleteEntrySubCollection()
-        {
-            var ship = await _client.InsertEntryAsync("Transport/Ships", new Entry() { { "ShipName", "Test3" } }, true);
-            ship = await _client.FindEntryAsync("Transport?$filter=TransportID eq " + ship["TransportID"]);
-            Assert.NotNull(ship);
-
-            await _client.DeleteEntryAsync("Transport", ship);
-
-            ship = await _client.FindEntryAsync("Transport?$filter=TransportID eq " + ship["TransportID"]);
-            Assert.Null(ship);
-        }
-
-        [Fact]
-        public async Task DeleteEntrySubCollectionWithAnnotations()
-        {
-            var clientSettings = new ODataClientSettings
-            {
-                BaseUri = _serviceUri,
-                IncludeAnnotationsInResults = true,
-            };
-            var client = new ODataClient(clientSettings);
-            var ship = await client.InsertEntryAsync("Transport/Ships", new Entry() { { "ShipName", "Test3" } }, true);
-            ship = await client.FindEntryAsync("Transport?$filter=TransportID eq " + ship["TransportID"]);
-            Assert.NotNull(ship);
-
-            await client.DeleteEntryAsync("Transport", ship);
-
-            ship = await client.FindEntryAsync("Transport?$filter=TransportID eq " + ship["TransportID"]);
-            Assert.Null(ship);
-        }
-
-        [Fact]
-        public async Task LinkEntry()
-        {
-            var category = await _client.InsertEntryAsync("Categories", new Entry() { { "CategoryName", "Test4" } }, true);
-            var product = await _client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test5" } }, true);
-
-            await _client.LinkEntryAsync("Products", product, "Category", category);
-
-            product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'Test5'");
-            Assert.NotNull(product["CategoryID"]);
-            Assert.Equal(category["CategoryID"], product["CategoryID"]);
-        }
-
-        [Fact]
-        public async Task UnlinkEntry()
-        {
-            var category = await _client.InsertEntryAsync("Categories", new Entry() { { "CategoryName", "Test6" } }, true);
-            var product = await _client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test7" }, { "CategoryID", category["CategoryID"] } }, true);
-            product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'Test7'");
-            Assert.NotNull(product["CategoryID"]);
-            Assert.Equal(category["CategoryID"], product["CategoryID"]);
-
-            await _client.UnlinkEntryAsync("Products", product, "Category");
-
-            product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'Test7'");
-            Assert.Null(product["CategoryID"]);
         }
 
         [Fact]
@@ -292,10 +239,10 @@ namespace Simple.OData.Client.Tests
         public async Task InterceptRequest()
         {
             var settings = new ODataClientSettings
-                               {
-                                   BaseUri = _serviceUri,
-                                   BeforeRequest = x => x.Method = new HttpMethod("PUT"),
-                               };
+            {
+                BaseUri = _serviceUri,
+                BeforeRequest = x => x.Method = new HttpMethod("PUT"),
+            };
             var client = new ODataClient(settings);
             await AssertThrowsAsync<WebRequestException>(async () => await client.FindEntriesAsync("Products"));
         }

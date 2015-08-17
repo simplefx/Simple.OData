@@ -155,6 +155,7 @@
     <Compile Include="BatchTypedTests.cs" />
     <Compile Include="ClientAdapterTests.cs" />
     <Compile Include="BatchTests.cs" />
+    <Compile Include="ClientReadOnlyTests.cs" />
     <Compile Include="DeleteDynamicTests.cs" />
     <Compile Include="DeleteTypedTests.cs" />
     <Compile Include="DeleteTests.cs" />
@@ -167,7 +168,7 @@
     <Compile Include="InsertTypedTests.cs" />
     <Compile Include="LinkDynamicTests.cs" />
     <Compile Include="LinkTests.cs" />
-    <Compile Include="ClientTests.cs" />
+    <Compile Include="ClientReadWriteTests.cs" />
     <Compile Include="FindTests.cs" />
     <Compile Include="LinkTypedTests.cs" />
     <Compile Include="ODataSchemaTests.cs" />

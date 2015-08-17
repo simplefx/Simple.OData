@@ -22,14 +22,14 @@ namespace Simple.OData.Client.Tests
         public async Task FindEntries()
         {
             var products = await _client.FindEntriesAsync("Products");
-            Assert.IsTrue(products.Count() > 0);
+            Assert.IsTrue(products.Any());
         }
 
         [TestMethod]
         public async Task FindEntriesNonExisting()
         {
             var products = await _client.FindEntriesAsync("Products?$filter=ID eq -1");
-            Assert.IsTrue(products.Count() == 0);
+            Assert.IsTrue(!products.Any());
         }
 
         private class Product
@@ -41,7 +41,7 @@ namespace Simple.OData.Client.Tests
         public async Task FindEntriesWithPluralizer()
         {
             var products = await _client.For<Product>().FindEntriesAsync();
-            Assert.IsTrue(products.Count() > 0);
+            Assert.IsTrue(products.Any());
         }
 
         [TestMethod]
@@ -62,7 +62,7 @@ namespace Simple.OData.Client.Tests
             try
             {
                 await testCode();
-                Assert.Fail(string.Format("Expected exception: {0}", typeof(T)));
+                Assert.Fail("Expected exception: {0}", typeof(T));
             }
             catch (T exception)
             {
