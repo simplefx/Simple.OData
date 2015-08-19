@@ -181,9 +181,9 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task InsertUpdateDeleteSeparateBatchesReuseHttpConnection()
+        public async Task InsertUpdateDeleteSeparateBatchesRenewHttpConnection()
         {
-            var client = new ODataClient(new ODataClientSettings {BaseUri = _serviceUri, ReuseHttpConnection = true});
+            var client = new ODataClient(new ODataClientSettings {BaseUri = _serviceUri, RenewHttpConnection = true});
             var batch = new ODataBatch(client);
             batch += c => c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test12" }, { "UnitPrice", 21m } }, false);
             await batch.ExecuteAsync();

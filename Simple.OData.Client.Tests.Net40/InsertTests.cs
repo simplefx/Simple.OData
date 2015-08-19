@@ -83,9 +83,9 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task InsertProductReuseHttpConnection()
+        public async Task InsertProductRenewHttpConnection()
         {
-            var client = new ODataClient(new ODataClientSettings { BaseUri = _serviceUri, ReuseHttpConnection = true });
+            var client = new ODataClient(new ODataClientSettings { BaseUri = _serviceUri, RenewHttpConnection = true });
             var category = await client
                 .For("Categories")
                 .Set(new { CategoryName = "Test3" })

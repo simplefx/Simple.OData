@@ -105,7 +105,20 @@ namespace Simple.OData.Client
         /// <value>
         /// <c>true</c> to reuse <see cref="HttpClient"/> between requests; <c>false</c> to create a new <see cref="HttpClient"/> instance for each request.
         /// </value>
-        public bool ReuseHttpConnection { get; set; }
+        [Obsolete("This property is obsolete. Use RenewHttpConnection instead.")]
+        public bool ReuseHttpConnection
+        {
+            get { return !this.RenewHttpConnection; }
+            set { this.RenewHttpConnection = !value; }
+        }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether <see cref="HttpClient"/> connection should be disposed and renewed between OData requests.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> to create a new <see cref="HttpClient"/> instance for each request; <c>false</c> to reuse <see cref="HttpClient"/> between requests.
+        /// </value>
+        public bool RenewHttpConnection { get; set; }
 
         /// <summary>
         /// Gets or sets the HttpMessageHandler factory used by HttpClient.

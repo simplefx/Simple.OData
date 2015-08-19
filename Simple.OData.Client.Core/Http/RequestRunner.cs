@@ -25,11 +25,14 @@ namespace Simple.OData.Client
 
         public async Task<HttpResponseMessage> ExecuteRequestAsync(ODataRequest request, CancellationToken cancellationToken)
         {
+            HttpConnection httpConnection = null;
             try
             {
-                var httpClient = _session.GetHttpClient();
+                httpConnection = _session.Settings.RenewHttpConnection
+                    ? new HttpConnection(_session.Settings)
+                    : _session.GetHttpConnection();
 
-                PreExecute(httpClient, request);
+                PreExecute(httpConnection.HttpClient, request);
 
                 _session.Trace("{0} request: {1}", request.Method, request.RequestMessage.RequestUri.AbsoluteUri);
 #if TRACE_REQUEST_CONTENT
@@ -40,7 +43,7 @@ namespace Simple.OData.Client
                     }
 #endif
 
-                var response = await httpClient.SendAsync(request.RequestMessage, cancellationToken);
+                var response = await httpConnection.HttpClient.SendAsync(request.RequestMessage, cancellationToken);
                 if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
                 _session.Trace("Request completed: {0}", response.StatusCode);
@@ -70,22 +73,22 @@ namespace Simple.OData.Client
                     throw;
                 }
             }
+            finally
+            {
+                if (httpConnection != null && _session.Settings.RenewHttpConnection)
+                {
+                    httpConnection.Dispose();
+                }
+            }
         }
 
         private void PreExecute(HttpClient httpClient, ODataRequest request)
         {
             if (request.Accept != null)
             {
-                lock (httpClient.DefaultRequestHeaders.Accept)
+                foreach (var accept in request.Accept)
                 {
-                    foreach (var accept in request.Accept)
-                    {
-                        var item = new MediaTypeWithQualityHeaderValue(accept);
-                        if (!httpClient.DefaultRequestHeaders.Accept.Contains(item))
-                        {
-                            httpClient.DefaultRequestHeaders.Accept.Add(item);
-                        }
-                    }
+                    request.RequestMessage.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(accept));
                 }
             }
 
@@ -94,7 +97,7 @@ namespace Simple.OData.Client
                  request.Method == RestVerbs.Patch ||
                  request.Method == RestVerbs.Delete))
             {
-                httpClient.DefaultRequestHeaders.IfMatch.Add(EntityTagHeaderValue.Any);
+                request.RequestMessage.Headers.IfMatch.Add(EntityTagHeaderValue.Any);
             }
 
             foreach (var header in request.Headers)

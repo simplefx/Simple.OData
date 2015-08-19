@@ -13,8 +13,7 @@ namespace Simple.OData.Client
         private readonly AdapterFactory _adapterFactory;
         private Func<IODataAdapter> _createAdapter;
         private IODataAdapter _adapter;
-        private HttpMessageHandler _messageHandler;
-        private HttpClient _httpClient;
+        private HttpConnection _httpConnection;
 
         public ODataClientSettings Settings { get; private set; }
         public MetadataCache MetadataCache { get; private set; }
@@ -60,7 +59,14 @@ namespace Simple.OData.Client
 
         public void Dispose()
         {
-            DisposeHttpClient();
+            lock (this)
+            {
+                if (_httpConnection != null)
+                {
+                    _httpConnection.Dispose();
+                    _httpConnection = null;
+                }
+            }
         }
 
         public void Trace(string message, params object[] messageParams)
@@ -122,49 +128,18 @@ namespace Simple.OData.Client
             get { return this.Adapter.GetMetadata(); }
         }
 
-        public HttpClient GetHttpClient()
+        public HttpConnection GetHttpConnection()
         {
-            if (_httpClient != null && !this.Settings.ReuseHttpConnection)
+            if (_httpConnection == null)
             {
-                DisposeHttpClient();
-            }
-
-            if (_httpClient == null)
-            {
-                CreateHttpClient();
-            }
-
-            return _httpClient;
-        }
-
-        private void CreateHttpClient()
-        {
-            lock (this)
-            {
-                if (_httpClient == null)
+                lock (this)
                 {
-                    _messageHandler = CreateMessageHandler(this.Settings);
-                    _httpClient = CreateHttpClient(this.Settings, _messageHandler);
+                    if (_httpConnection == null)
+                        _httpConnection = new HttpConnection(this.Settings);
                 }
             }
-        }
 
-        private void DisposeHttpClient()
-        {
-            lock (this)
-            {
-                if (_messageHandler != null)
-                {
-                    _messageHandler.Dispose();
-                    _messageHandler = null;
-                }
-
-                if (_httpClient != null)
-                {
-                    _httpClient.Dispose();
-                    _httpClient = null;
-                }
-            }
+            return _httpConnection;
         }
 
         internal static Session FromSettings(ODataClientSettings settings)
@@ -175,48 +150,6 @@ namespace Simple.OData.Client
         internal static Session FromMetadata(Uri baseUri, string metadataString)
         {
             return new Session(baseUri, metadataString);
-        }
-
-        private static HttpClient CreateHttpClient(ODataClientSettings settings, HttpMessageHandler messageHandler)
-        {
-            if (settings.RequestTimeout >= TimeSpan.FromMilliseconds(1))
-            {
-                return new HttpClient(messageHandler)
-                {
-                    Timeout = settings.RequestTimeout,
-                };
-            }
-            else
-            {
-                return new HttpClient(messageHandler);
-            }
-        }
-
-        private static HttpMessageHandler CreateMessageHandler(ODataClientSettings settings)
-        {
-            if (settings.OnCreateMessageHandler != null)
-            {
-                return settings.OnCreateMessageHandler();
-            }
-            else
-            {
-                var clientHandler = new HttpClientHandler();
-
-                // Perform this test to prevent failure to access Credentials/PreAuthenticate properties on SL5
-                if (settings.Credentials != null)
-                {
-                    clientHandler.Credentials = settings.Credentials;
-                    if (clientHandler.SupportsPreAuthenticate())
-                        clientHandler.PreAuthenticate = true;
-                }
-
-                if (settings.OnApplyClientHandler != null)
-                {
-                    settings.OnApplyClientHandler(clientHandler);
-                }
-
-                return clientHandler;
-            }
         }
 
         private async Task<HttpResponseMessage> SendMetadataRequestAsync(CancellationToken cancellationToken)

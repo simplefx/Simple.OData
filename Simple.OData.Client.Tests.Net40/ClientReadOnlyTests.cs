@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -290,26 +291,74 @@ namespace Simple.OData.Client.Tests
         {
             var products = (await _client.FindEntriesAsync("Products")).ToArray();
 
-            Parallel.ForEach(products, async x =>
+            var summary = new ExecutionSummary();
+            var tasks = new List<Task>();
+            foreach (var product in products)
             {
-                var productName = x["ProductName"];
-                var product = await _client.FindEntryAsync(string.Format("Products?$filter=ProductName eq '{0}'", productName));
-                Assert.Equal(productName, product["ProductName"]);
-            });
+                var task = RunClient(_client, Convert.ToInt32(product["ProductID"]), summary);
+                tasks.Add(task);
+            }
+            Task.WaitAll(tasks.ToArray());
+
+            Assert.Equal(products.Count(), summary.ExecutionCount);
+            Assert.Equal(0, summary.ExceptionCount);
+            Assert.Equal(0, summary.NonEqualCount);
         }
 
         [Fact]
-        public async Task FindEntryParallelThreadsReuseConnection()
+        public async Task FindEntryParallelThreadsRenewConnection()
         {
-            var client = new ODataClient(new ODataClientSettings() { BaseUri = _serviceUri, ReuseHttpConnection = true });
+            var client = new ODataClient(new ODataClientSettings() { BaseUri = _serviceUri, RenewHttpConnection = true });
             var products = (await client.FindEntriesAsync("Products")).ToArray();
 
-            Parallel.ForEach(products, async x =>
+            var summary = new ExecutionSummary();
+            var tasks = new List<Task>();
+            foreach (var product in products)
             {
-                var productName = x["ProductName"];
-                var product = await client.FindEntryAsync(string.Format("Products?$filter=ProductName eq '{0}'", productName));
-                Assert.Equal(productName, product["ProductName"]);
-            });
+                var task = RunClient(client, Convert.ToInt32(product["ProductID"]), summary);
+                tasks.Add(task);
+            }
+            Task.WaitAll(tasks.ToArray());
+
+            Assert.Equal(products.Count(), summary.ExecutionCount);
+            Assert.Equal(0, summary.ExceptionCount);
+            Assert.Equal(0, summary.NonEqualCount);
+        }
+
+        class ExecutionSummary
+        {
+            public int ExecutionCount { get; set; }
+            public int NonEqualCount { get; set; }
+            public int ExceptionCount { get; set; }
+        }
+
+        private async Task RunClient(IODataClient client, int productID, ExecutionSummary result)
+        {
+            try
+            {
+                var product = await client.FindEntryAsync(string.Format("Products({0})", productID));
+                if (productID != Convert.ToInt32(product["ProductID"]))
+                {
+                    lock (result)
+                    {
+                        result.NonEqualCount++;
+                    }
+                }
+            }
+            catch (Exception)
+            {
+                lock (result)
+                {
+                    result.ExceptionCount++;
+                }
+            }
+            finally
+            {
+                lock (result)
+                {
+                    result.ExecutionCount++;
+                }
+            }
         }
     }
 }

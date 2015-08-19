@@ -37,9 +37,9 @@ namespace Simple.OData.Client
         void Trace(string message, params object[] messageParams);
 
         /// <summary>
-        /// Obtains an instance of <see cref="HttpClient"/> that is used to issue HTTP requests to OData service.
+        /// Obtains an instance of <see cref="HttpConnection"/> that is used to issue HTTP requests to OData service.
         /// </summary>
         /// <returns>An <see cref="HttpClient"/> instance.</returns>
-        HttpClient GetHttpClient();
+        HttpConnection GetHttpConnection();
     }
 }
