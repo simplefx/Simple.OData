@@ -48,18 +48,21 @@ namespace Simple.OData.Client.V4.Adapter
             return _batchWriter.WriteEndChangesetAsync();
         }
 
-        protected override async Task<object> CreateOperationRequestMessageAsync(string method, string collection, Uri uri, string contentId)
+        protected override async Task<object> CreateOperationMessageAsync(Uri uri, string method, string collection, string contentId, bool resultRequired)
         {
-            return await CreateBatchOperationRequestMessageAsync(method, collection, uri, contentId);
+            return await CreateBatchOperationMessageAsync(uri, method, collection, contentId, resultRequired);
         }
 
-        private async Task<ODataBatchOperationRequestMessage> CreateBatchOperationRequestMessageAsync(
-            string method, string collection, Uri uri, string contentId)
+        private async Task<ODataBatchOperationRequestMessage> CreateBatchOperationMessageAsync(
+            Uri uri, string method, string collection, string contentId, bool resultRequired)
         {
             var message = await _batchWriter.CreateOperationRequestMessageAsync(method, uri, contentId);
 
             if (method == RestVerbs.Post || method == RestVerbs.Put || method == RestVerbs.Patch)
                 message.SetHeader(HttpLiteral.ContentId, contentId);
+
+            if (method == RestVerbs.Post || method == RestVerbs.Put || method == RestVerbs.Patch)
+                message.SetHeader(HttpLiteral.Prefer, resultRequired ? HttpLiteral.ReturnContent : HttpLiteral.ReturnNoContent);
 
             if (collection != null && _session.Metadata.EntityCollectionRequiresOptimisticConcurrencyCheck(collection) &&
                 (method == RestVerbs.Put || method == RestVerbs.Patch || method == RestVerbs.Delete))

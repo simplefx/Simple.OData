@@ -293,6 +293,25 @@ namespace Simple.OData.Client.Tests
             Assert.Equal("Chai", product.ProductName);
         }
 
+        [Fact(Skip = "NewExpression property names are not supported")]
+        public async Task SelectMultipleRename()
+        {
+            var settings = new ODataClientSettings
+            {
+                BaseUri = _serviceUri,
+                IgnoreUnmappedProperties = true,
+            };
+            var client = new ODataClient(settings);
+
+            var product = await client
+                .For<ProductWithUnmappedProperty>("Products")
+                .Filter(x => x.ProductName == "Chai")
+                .Select(x => new { x.ProductID, UnmappedName = x.ProductName })
+                .FindEntryAsync();
+            Assert.Equal("Chai", product.UnmappedName);
+            Assert.Null(product.ProductName);
+        }
+
         [Fact]
         public async Task ExpandOne()
         {

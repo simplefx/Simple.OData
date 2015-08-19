@@ -24,7 +24,7 @@ namespace Simple.OData.Client.V3.Adapter
             _model = model;
         }
 
-        protected override async Task<Stream> WriteEntryContentAsync(string method, string collection, string commandText, IDictionary<string, object> entryData)
+        protected override async Task<Stream> WriteEntryContentAsync(string method, string collection, string commandText, IDictionary<string, object> entryData, bool resultRequired)
         {
 #if SILVERLIGHT
             IODataRequestMessage
@@ -32,7 +32,7 @@ namespace Simple.OData.Client.V3.Adapter
             IODataRequestMessageAsync
 #endif
             message = IsBatch
-                ? await CreateOperationRequestMessageAsync(method, collection, entryData, commandText)
+                ? await CreateBatchOperationMessageAsync(method, collection, entryData, commandText, resultRequired)
                 : new ODataRequestMessage();
 
             if (method == RestVerbs.Get || method == RestVerbs.Delete)
@@ -101,7 +101,7 @@ namespace Simple.OData.Client.V3.Adapter
         protected override async Task<Stream> WriteFunctionContentAsync(string method, string commandText)
         {
             if (IsBatch)
-                await CreateOperationRequestMessageAsync(method, null, null, commandText);
+                await CreateBatchOperationMessageAsync(method, null, null, commandText, false);
 
             return null;
         }
@@ -170,14 +170,7 @@ namespace Simple.OData.Client.V3.Adapter
 
         protected override void AssignHeaders(ODataRequest request)
         {
-            if (request.ResultRequired)
-            {
-                request.Headers.Add(HttpLiteral.Prefer, HttpLiteral.ReturnContent);
-            }
-            else
-            {
-                request.Headers.Add(HttpLiteral.Prefer, HttpLiteral.ReturnNoContent);
-            }
+            request.Headers.Add(HttpLiteral.Prefer, request.ResultRequired ? HttpLiteral.ReturnContent : HttpLiteral.ReturnNoContent);
         }
 
         private ODataMessageWriterSettings GetWriterSettings(bool isRawValue = false)
@@ -239,20 +232,21 @@ namespace Simple.OData.Client.V3.Adapter
         }
 
 #if SILVERLIGHT
-        private async Task<IODataRequestMessage> CreateOperationRequestMessageAsync(string method, string collection, IDictionary<string, object> entryData, string commandText)
+        private async Task<IODataRequestMessage> CreateBatchOperationMessageAsync(string method, string collection, IDictionary<string, object> entryData, string commandText, bool resultRequired)
 #else
-        private async Task<IODataRequestMessageAsync> CreateOperationRequestMessageAsync(string method, string collection, IDictionary<string, object> entryData, string commandText)
+        private async Task<IODataRequestMessageAsync> CreateBatchOperationMessageAsync(string method, string collection, IDictionary<string, object> entryData, string commandText, bool resultRequired)
 #endif
         {
             if (!_deferredBatchWriter.IsValueCreated)
                 await _deferredBatchWriter.Value.StartBatchAsync();
 
-            var message = (await _deferredBatchWriter.Value.CreateOperationRequestMessageAsync(
-                method, collection, entryData, Utils.CreateAbsoluteUri(_session.Settings.BaseUri.AbsoluteUri, commandText)))
+            var message = (await _deferredBatchWriter.Value.CreateOperationMessageAsync(
+                Utils.CreateAbsoluteUri(_session.Settings.BaseUri.AbsoluteUri, commandText), 
+                method, collection, entryData, resultRequired))
 #if SILVERLIGHT
                 as IODataRequestMessage;
 #else
- as IODataRequestMessageAsync;
+                as IODataRequestMessageAsync;
 #endif
 
             return message;

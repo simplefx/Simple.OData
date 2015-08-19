@@ -24,10 +24,10 @@ namespace Simple.OData.Client.V4.Adapter
             _model = model;
         }
 
-        protected override async Task<Stream> WriteEntryContentAsync(string method, string collection, string commandText, IDictionary<string, object> entryData)
+        protected override async Task<Stream> WriteEntryContentAsync(string method, string collection, string commandText, IDictionary<string, object> entryData, bool resultRequired)
         {
             IODataRequestMessageAsync message = IsBatch
-                ? await CreateOperationRequestMessageAsync(method, collection, entryData, commandText)
+                ? await CreateBatchOperationMessageAsync(method, collection, entryData, commandText, resultRequired)
                 : new ODataRequestMessage();
 
             if (method == RestVerbs.Get || method == RestVerbs.Delete)
@@ -81,7 +81,7 @@ namespace Simple.OData.Client.V4.Adapter
         protected override async Task<Stream> WriteFunctionContentAsync(string method, string commandText)
         {
             if (IsBatch)
-                await CreateOperationRequestMessageAsync(method, null, null, commandText);
+                await CreateBatchOperationMessageAsync(method, null, null, commandText, false);
 
             return null;
         }
@@ -174,13 +174,14 @@ namespace Simple.OData.Client.V4.Adapter
             }
         }
 
-        private async Task<IODataRequestMessageAsync> CreateOperationRequestMessageAsync(string method, string collection, IDictionary<string, object> entryData, string commandText)
+        private async Task<IODataRequestMessageAsync> CreateBatchOperationMessageAsync(string method, string collection, IDictionary<string, object> entryData, string commandText, bool resultRequired)
         {
             if (!_deferredBatchWriter.IsValueCreated)
                 await _deferredBatchWriter.Value.StartBatchAsync();
 
-            var message = (await _deferredBatchWriter.Value.CreateOperationRequestMessageAsync(
-                method, collection, entryData, Utils.CreateAbsoluteUri(_session.Settings.BaseUri.AbsoluteUri, commandText))) as IODataRequestMessageAsync;
+            var message = (await _deferredBatchWriter.Value.CreateOperationMessageAsync(
+                Utils.CreateAbsoluteUri(_session.Settings.BaseUri.AbsoluteUri, commandText), 
+                method, collection, entryData, resultRequired)) as IODataRequestMessageAsync;
 
             return message;
         }

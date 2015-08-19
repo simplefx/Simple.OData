@@ -112,7 +112,7 @@ namespace Simple.OData.Client.Tests
             IDictionary<string, object> product2 = null;
 
             var batch = new ODataBatch(_serviceUri);
-            batch += async c => product = await c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test11" }, { "UnitPrice", 21m } }, false);
+            batch += async c => product = await c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test11" }, { "UnitPrice", 21m } });
             await batch.ExecuteAsync();
 
             batch = new ODataBatch(_serviceUri);
@@ -137,7 +137,7 @@ namespace Simple.OData.Client.Tests
             IDictionary<string, object> product2 = null;
 
             var batch = new ODataBatch(_serviceUri);
-            batch += async x => product = await x.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test11" }, { "UnitPrice", 21m } }, false);
+            batch += async x => product = await x.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test11" }, { "UnitPrice", 21m } });
             await batch.ExecuteAsync();
 
             batch = new ODataBatch(_serviceUri);
@@ -275,6 +275,23 @@ namespace Simple.OData.Client.Tests
             var batch = new ODataBatch(_serviceUri);
             batch += c => c.DeleteEntriesAsync("Products", "Products?$filter=ProductName eq 'Test99'");
             await batch.ExecuteAsync();
+        }
+
+        [Fact]
+        public async Task UpdateWithResultRequired()
+        {
+            IDictionary<string, object> product = null;
+            IDictionary<string, object> product1 = null;
+
+            var batch = new ODataBatch(_serviceUri);
+            batch += async x => product = await x.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test11" }, { "UnitPrice", 21m } }, true);
+            await batch.ExecuteAsync();
+
+            batch = new ODataBatch(_serviceUri);
+            batch += async c => product1 = await c.UpdateEntryAsync("Products", product, new Entry() { { "UnitPrice", 22m } }, true);
+            await batch.ExecuteAsync();
+
+            Assert.Equal(22m, product1["UnitPrice"]);
         }
 
         [Fact]

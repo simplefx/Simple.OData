@@ -113,7 +113,7 @@ namespace Simple.OData.Client.Tests
             batch += async c => product = await c
                 .For(x.Products)
                 .Set(x.ProductName = "Test11", x.UnitPrice = 21m)
-                .InsertEntryAsync(false);
+                .InsertEntryAsync();
             await batch.ExecuteAsync();
 
             batch = new ODataBatch(_serviceUri);
@@ -159,7 +159,7 @@ namespace Simple.OData.Client.Tests
             batch += async c => product = await c
                 .For(x.Products)
                 .Set(x.ProductName = "Test11", x.UnitPrice = 21m)
-                .InsertEntryAsync(false);
+                .InsertEntryAsync();
             await batch.ExecuteAsync();
 
             batch = new ODataBatch(_serviceUri);

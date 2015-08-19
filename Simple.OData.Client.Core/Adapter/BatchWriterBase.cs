@@ -28,7 +28,7 @@ namespace Simple.OData.Client
         
         protected abstract Task StartChangesetAsync();
         protected abstract Task EndChangesetAsync();
-        protected abstract Task<object> CreateOperationRequestMessageAsync(string method, string collection, Uri uri, string contentId);
+        protected abstract Task<object> CreateOperationMessageAsync(Uri uri, string method, string collection, string contentId, bool resultRequired);
 
         public int LastOperationId { get { return _lastOperationId; } }
 
@@ -59,7 +59,7 @@ namespace Simple.OData.Client
 
         public IDictionary<object, IDictionary<string, object>> BatchEntries { get; private set; }
 
-        public async Task<object> CreateOperationRequestMessageAsync(string method, string collection, IDictionary<string, object> entryData, Uri uri)
+        public async Task<object> CreateOperationMessageAsync(Uri uri, string method, string collection, IDictionary<string, object> entryData, bool resultRequired)
         {
             if (method != RestVerbs.Get && !_pendingChangeSet)
             {
@@ -78,7 +78,7 @@ namespace Simple.OData.Client
                 MapContentId(entryData, contentId);
             }
 
-            return await CreateOperationRequestMessageAsync(method, collection, uri, contentId);
+            return await CreateOperationMessageAsync(uri, method, collection, contentId, resultRequired);
         }
 
         public bool HasOperations { get; protected set; }

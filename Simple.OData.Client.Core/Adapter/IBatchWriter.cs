@@ -11,7 +11,7 @@ namespace Simple.OData.Client
     {
         Task StartBatchAsync();
         Task<HttpRequestMessage> EndBatchAsync();
-        Task<object> CreateOperationRequestMessageAsync(string method, string collection, IDictionary<string, object> entryData, Uri uri);
+        Task<object> CreateOperationMessageAsync(Uri uri, string method, string collection, IDictionary<string, object> entryData, bool resultRequired);
         bool HasOperations { get; }
         int LastOperationId { get; }
         string NextContentId();
