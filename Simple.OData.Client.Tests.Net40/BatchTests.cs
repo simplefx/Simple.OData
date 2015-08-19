@@ -244,6 +244,40 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task DeleteEntryNonExisting()
+        {
+            var batch = new ODataBatch(_serviceUri);
+            batch += c => c.DeleteEntryAsync("Products", new Entry { { "ProductID", 0xFFFF } });
+            await AssertThrowsAsync<WebRequestException>(async () => await batch.ExecuteAsync());
+        }
+
+        [Fact]
+        public async Task DeleteEntriesExisting()
+        {
+            var batch = new ODataBatch(_serviceUri);
+            batch += async c => await c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test19" }, { "UnitPrice", 21m } });
+            await batch.ExecuteAsync();
+
+            batch = new ODataBatch(_serviceUri);
+            batch += c => c.DeleteEntriesAsync("Products", "Products?$filter=ProductName eq 'Test19'");
+            await batch.ExecuteAsync();
+
+            var product = await _client
+                .For("Products")
+                .Filter("ProductName eq 'Test19'")
+                .FindEntryAsync();
+            Assert.Null(product);
+        }
+
+        [Fact]
+        public async Task DeleteEntriesNonExisting()
+        {
+            var batch = new ODataBatch(_serviceUri);
+            batch += c => c.DeleteEntriesAsync("Products", "Products?$filter=ProductName eq 'Test99'");
+            await batch.ExecuteAsync();
+        }
+
+        [Fact]
         public async Task FunctionBatch()
         {
             var batch = new ODataBatch(_serviceUri);

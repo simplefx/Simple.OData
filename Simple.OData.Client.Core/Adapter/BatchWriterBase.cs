@@ -81,6 +81,8 @@ namespace Simple.OData.Client
             return await CreateOperationRequestMessageAsync(method, collection, uri, contentId);
         }
 
+        public bool HasOperations { get; protected set; }
+
         protected HttpRequestMessage CreateMessageFromStream(Stream stream, Uri requestUrl, Func<string, string> getHeaderFunc)
         {
             _pendingChangeSet = false;

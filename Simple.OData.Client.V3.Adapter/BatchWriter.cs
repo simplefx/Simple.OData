@@ -32,6 +32,7 @@ namespace Simple.OData.Client.V3.Adapter
             _batchWriter = await _messageWriter.CreateODataBatchWriterAsync();
             await _batchWriter.WriteStartBatchAsync();
 #endif
+            this.HasOperations = true;
         }
 #pragma warning restore 1998
 

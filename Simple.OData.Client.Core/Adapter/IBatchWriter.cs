@@ -12,6 +12,7 @@ namespace Simple.OData.Client
         Task StartBatchAsync();
         Task<HttpRequestMessage> EndBatchAsync();
         Task<object> CreateOperationRequestMessageAsync(string method, string collection, IDictionary<string, object> entryData, Uri uri);
+        bool HasOperations { get; }
         int LastOperationId { get; }
         string NextContentId();
         string GetContentId(IDictionary<string, object> entryData, object linkData);
