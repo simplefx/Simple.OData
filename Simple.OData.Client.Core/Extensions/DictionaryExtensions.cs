@@ -189,7 +189,7 @@ namespace Simple.OData.Client.Extensions
             if (source is ODataEntry)
                 return (Dictionary<string, object>)(source as ODataEntry);
 
-            var properties = source.GetType().GetAllProperties();
+            var properties = Utils.GetMappedProperties(source.GetType());
             return properties.ToDictionary
             (
                 x => x.GetMappedName(),

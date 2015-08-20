@@ -212,30 +212,6 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task InterceptRequest()
-        {
-            var settings = new ODataClientSettings
-            {
-                BaseUri = _serviceUri,
-                BeforeRequest = x => x.Method = new HttpMethod("PUT"),
-            };
-            var client = new ODataClient(settings);
-            await AssertThrowsAsync<WebRequestException>(async () => await client.FindEntriesAsync("Products"));
-        }
-
-        [Fact]
-        public async Task InterceptResponse()
-        {
-            var settings = new ODataClientSettings
-            {
-                BaseUri = _serviceUri,
-                AfterResponse = x => { throw new InvalidOperationException(); },
-            };
-            var client = new ODataClient(settings);
-            await AssertThrowsAsync<InvalidOperationException>(async () => await client.FindEntriesAsync("Products"));
-        }
-
-        [Fact]
         public async Task FindEntryExistingDynamicFilter()
         {
             var x = ODataDynamic.Expression;
@@ -284,6 +260,30 @@ namespace Simple.OData.Client.Tests
             string filter = await _client.GetCommandTextAsync<Ship>("Transport/Ships", x => x.ShipName == "Titanic");
             var ship = await _client.FindEntryAsync(filter);
             Assert.Equal("Titanic", ship["ShipName"]);
+        }
+
+        [Fact]
+        public async Task InterceptRequest()
+        {
+            var settings = new ODataClientSettings
+            {
+                BaseUri = _serviceUri,
+                BeforeRequest = x => x.Method = new HttpMethod("PUT"),
+            };
+            var client = new ODataClient(settings);
+            await AssertThrowsAsync<WebRequestException>(async () => await client.FindEntriesAsync("Products"));
+        }
+
+        [Fact]
+        public async Task InterceptResponse()
+        {
+            var settings = new ODataClientSettings
+            {
+                BaseUri = _serviceUri,
+                AfterResponse = x => { throw new InvalidOperationException(); },
+            };
+            var client = new ODataClient(settings);
+            await AssertThrowsAsync<InvalidOperationException>(async () => await client.FindEntriesAsync("Products"));
         }
 
         [Fact]
