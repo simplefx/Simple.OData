@@ -16,6 +16,7 @@ namespace Simple.OData.Client
         private readonly Type _conversionType;
 
         public string Reference { get; private set; }
+        public string ReferenceScope { get; private set; }
         public object Value { get; private set; }
         public ExpressionFunction Function { get; private set; }
 
@@ -33,10 +34,23 @@ namespace Simple.OData.Client
             this.Reference = reference;
         }
 
+        protected ODataExpression(string reference, string referenceScope)
+        {
+            this.Reference = reference;
+            this.ReferenceScope = referenceScope;
+        }
+
         protected ODataExpression(string reference, object value)
         {
             this.Reference = reference;
             this.Value = value;
+        }
+
+        protected ODataExpression(string reference, string referenceScope, object value)
+        {
+            this.Reference = reference;
+            this.Value = value;
+            this.ReferenceScope = referenceScope;
         }
 
         protected ODataExpression(ExpressionFunction function)
@@ -69,9 +83,9 @@ namespace Simple.OData.Client
             _conversionType = conversionType;
         }
 
-        internal static ODataExpression FromReference(string reference)
+        internal static ODataExpression FromReference(string reference, string referenceScope = null)
         {
-            return new ODataExpression(reference);
+            return new ODataExpression(reference, referenceScope);
         }
 
         internal static ODataExpression FromValue(object value)
@@ -79,9 +93,9 @@ namespace Simple.OData.Client
             return new ODataExpression(value);
         }
 
-        internal static ODataExpression FromAssignment(string reference, object value)
+        internal static ODataExpression FromAssignment(string reference, object value, string referenceScope = null)
         {
-            return new ODataExpression(reference, value);
+            return new ODataExpression(reference, referenceScope, value);
         }
 
         internal static ODataExpression FromFunction(ExpressionFunction function)

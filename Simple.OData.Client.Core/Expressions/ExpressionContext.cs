@@ -4,13 +4,20 @@
     {
         public ISession Session { get; set; }
         public EntityCollection EntityCollection { get; set; }
+        public string ScopeQualifier { get; set; }
         public string DynamicPropertiesContainerName { get; set; }
         public bool IsQueryOption { get; set; }
 
-        public ExpressionContext(ISession session, EntityCollection entityCollection = null, string dynamicPropertiesContainerName = null)
+        public ExpressionContext(ISession session)
+        {
+            this.Session = session;
+        }
+
+        public ExpressionContext(ISession session, EntityCollection entityCollection, string scopeQualifier, string dynamicPropertiesContainerName)
         {
             this.Session = session;
             this.EntityCollection = entityCollection;
+            this.ScopeQualifier = scopeQualifier;
             this.DynamicPropertiesContainerName = dynamicPropertiesContainerName;
         }
 

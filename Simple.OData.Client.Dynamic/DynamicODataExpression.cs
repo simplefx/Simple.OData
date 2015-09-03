@@ -27,7 +27,7 @@ namespace Simple.OData.Client
         }
 
         protected DynamicODataExpression(string reference, object value)
-            : base(reference, value)
+            : base(reference, null, value)
         {
         }
 
@@ -183,8 +183,8 @@ namespace Simple.OData.Client
         {
             get
             {
-                return _ctorWithStringAndValue ??
-                    (_ctorWithStringAndValue = GetConstructorInfo().Single(x =>
+                return _ctorWithStringAndStringAndValue ??
+                    (_ctorWithStringAndStringAndValue = GetConstructorInfo().Single(x =>
                     x.GetParameters().Count() == 2 &&
                     x.GetParameters()[0].ParameterType == typeof(string) &&
                     x.GetParameters()[1].ParameterType == typeof(object)));
@@ -217,7 +217,7 @@ namespace Simple.OData.Client
 
         private static ConstructorInfo[] _ctors;
         private static ConstructorInfo _ctorWithString;
-        private static ConstructorInfo _ctorWithStringAndValue;
+        private static ConstructorInfo _ctorWithStringAndStringAndValue;
         private static ConstructorInfo _ctorWithExpressionAndString;
         private static ConstructorInfo _ctorWithExpressionAndFunction;
     }

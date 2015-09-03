@@ -58,7 +58,7 @@ namespace Simple.OData.Client
                 if (_details.NamedKeyValues == null)
                 {
                     _details.Filter = _details.FilterExpression.Format(
-                        new ExpressionContext(_details.Session, this.EntityCollection, this.DynamicPropertiesContainerName));
+                        new ExpressionContext(_details.Session, this.EntityCollection, null, this.DynamicPropertiesContainerName));
                 }
                 else
                 {

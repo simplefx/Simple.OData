@@ -21,38 +21,38 @@ namespace Simple.OData.Client
         }
 
         public string FunctionName { get; private set; }
-        public Func<string, string, IEnumerable<object>, ODataExpression> FunctionMapper { get; private set; }
+        public Func<string, ODataExpression, IEnumerable<object>, ODataExpression> FunctionMapper { get; private set; }
 
         private FunctionMapping(string functionName)
         {
             this.FunctionName = functionName;
         }
 
-        private static readonly Func<FunctionDefinition, Func<string, string, IEnumerable<object>, ODataExpression>> FunctionWithTarget =
+        private static readonly Func<FunctionDefinition, Func<string, ODataExpression, IEnumerable<object>, ODataExpression>> FunctionWithTarget =
             function =>
-                (functionName, targetName, arguments) => ODataExpression.FromFunction(
+                (functionName, target, arguments) => ODataExpression.FromFunction(
                 new ExpressionFunction()
                 {
                     FunctionName = function.FunctionMapping.FunctionName,
-                    Arguments = new List<ODataExpression>() { ODataExpression.FromReference(targetName) },
+                    Arguments = new List<ODataExpression>() { target },
                 });
 
-        private static readonly Func<FunctionDefinition, Func<string, string, IEnumerable<object>, ODataExpression>> FunctionWithTargetAndArguments =
+        private static readonly Func<FunctionDefinition, Func<string, ODataExpression, IEnumerable<object>, ODataExpression>> FunctionWithTargetAndArguments =
             function =>
-                (functionName, targetName, arguments) => ODataExpression.FromFunction(
+                (functionName, target, arguments) => ODataExpression.FromFunction(
                     new ExpressionFunction()
                     {
                         FunctionName = function.FunctionMapping.FunctionName,
-                        Arguments = MergeArguments(ODataExpression.FromReference(targetName), arguments),
+                        Arguments = MergeArguments(target, arguments),
                     });
 
-        private static readonly Func<FunctionDefinition, Func<string, string, IEnumerable<object>, ODataExpression>> FunctionWithArgumentsAndTarget =
+        private static readonly Func<FunctionDefinition, Func<string, ODataExpression, IEnumerable<object>, ODataExpression>> FunctionWithArgumentsAndTarget =
             function =>
-                (functionName, targetName, arguments) => ODataExpression.FromFunction(
+                (functionName, target, arguments) => ODataExpression.FromFunction(
                 new ExpressionFunction()
                 {
                     FunctionName = function.FunctionMapping.FunctionName,
-                    Arguments = MergeArguments(arguments, ODataExpression.FromReference(targetName)),
+                    Arguments = MergeArguments(arguments, target),
                 });
 
         public static readonly FunctionDefinition[] DefinedFunctions =
@@ -109,7 +109,7 @@ namespace Simple.OData.Client
         }
 
         private static FunctionDefinition CreateFunctionDefinition(string functionName, int argumentCount, string mappedFunctionName, 
-            Func<FunctionDefinition, Func<string, string, IEnumerable<object>, ODataExpression>> mapper, AdapterVersion adapterVersion = AdapterVersion.Any)
+            Func<FunctionDefinition, Func<string, ODataExpression, IEnumerable<object>, ODataExpression>> mapper, AdapterVersion adapterVersion = AdapterVersion.Any)
         {
             var functionCall = new ExpressionFunction.FunctionCall(functionName, argumentCount);
             var functionMapping = new FunctionMapping(mappedFunctionName);

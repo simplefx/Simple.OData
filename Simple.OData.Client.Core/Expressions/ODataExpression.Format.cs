@@ -89,7 +89,7 @@ namespace Simple.OData.Client
             var elementNames = new List<string>(this.Reference.Split('.', '/'));
             var entityCollection = context.EntityCollection;
             var segmentNames = BuildReferencePath(new List<string>(), entityCollection, elementNames, context);
-            return string.Join("/", segmentNames);
+            return FormatScope(string.Join("/", segmentNames), context);
         }
 
         private string FormatFunction(ExpressionContext context)
@@ -129,7 +129,7 @@ namespace Simple.OData.Client
         private string FormatMappedFunction(ExpressionContext context, FunctionMapping mapping)
         {
             var mappedFunction = mapping.FunctionMapper(
-                this.Function.FunctionName, _functionCaller.Format(context), this.Function.Arguments).Function;
+                this.Function.FunctionName, _functionCaller, this.Function.Arguments).Function;
             var formattedArguments = string.Join(",",
                 (IEnumerable<object>)mappedFunction.Arguments.Select(x => FormatExpression(x, context)));
 
@@ -144,15 +144,17 @@ namespace Simple.OData.Client
             var entityCollection = NavigateToCollection(context,
                 context.EntityCollection, navigationPath);
 
-            var formattedArguments = string.Format("x{0}:x{0}/{1}",
-                ArgumentCounter >= 0 ? (1 + (ArgumentCounter++) % 9).ToString() : string.Empty,
+            var targetQualifier = string.Format("x{0}", ArgumentCounter >= 0 ? (1 + (ArgumentCounter++) % 9).ToString() : string.Empty);
+            var formattedArguments = string.Format("{0}:{1}",
+                targetQualifier,
                 FormatExpression(this.Function.Arguments.First(), new ExpressionContext(context.Session,
-                    entityCollection, context.DynamicPropertiesContainerName)));
+                    entityCollection, targetQualifier, context.DynamicPropertiesContainerName)));
 
-            return string.Format("{0}/{1}({2})",
-                context.Session.Adapter.GetCommandFormatter().FormatNavigationPath(context.EntityCollection, navigationPath),
-                this.Function.FunctionName.ToLower(),
-                formattedArguments);
+            return FormatScope(
+                string.Format("{0}/{1}({2})",
+                    context.Session.Adapter.GetCommandFormatter().FormatNavigationPath(context.EntityCollection, navigationPath),
+                    this.Function.FunctionName.ToLower(),
+                formattedArguments), context);
         }
 
         private EntityCollection NavigateToCollection(ExpressionContext context, EntityCollection rootCollection, string path)
@@ -322,9 +324,8 @@ namespace Simple.OData.Client
             var adapterVersion = context.Session == null ? AdapterVersion.Default : context.Session.Adapter.AdapterVersion;
             if (FunctionMapping.TryGetFunctionMapping(objectName, 0, adapterVersion, out mapping))
             {
-                string targetName = _functionCaller.Format(context);
-                var mappedFunction = mapping.FunctionMapper(objectName, targetName, null).Function;
-                return string.Format("{0}({1})", mappedFunction.FunctionName, targetName);
+                var mappedFunction = mapping.FunctionMapper(objectName, _functionCaller, null).Function;
+                return string.Format("{0}({1})", mappedFunction.FunctionName, _functionCaller.Format(context));
             }
             else
             {
@@ -375,6 +376,13 @@ namespace Simple.OData.Client
             int outerPrecedence = GetPrecedence(_operator);
             int innerPrecedence = GetPrecedence(expr._operator);
             return outerPrecedence < innerPrecedence;
+        }
+
+        private string FormatScope(string text, ExpressionContext context)
+        {
+            return string.IsNullOrEmpty(context.ScopeQualifier)
+                ? text
+                : string.Format("{0}/{1}", context.ScopeQualifier, text);
         }
     }
 }
