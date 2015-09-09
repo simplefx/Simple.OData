@@ -38,9 +38,12 @@ namespace Simple.OData.Client.V4.Adapter
             return CreateMessageFromStream(stream, _requestMessage.Url, _requestMessage.GetHeader);
         }
 
-        protected override Task StartChangesetAsync()
+        protected override async Task StartChangesetAsync()
         {
-            return _batchWriter.WriteStartChangesetAsync();
+            if (_batchWriter == null)
+                await StartBatchAsync();
+
+            await _batchWriter.WriteStartChangesetAsync();
         }
 
         protected override Task EndChangesetAsync()
@@ -50,6 +53,9 @@ namespace Simple.OData.Client.V4.Adapter
 
         protected override async Task<object> CreateOperationMessageAsync(Uri uri, string method, string collection, string contentId, bool resultRequired)
         {
+            if (_batchWriter == null)
+                await StartBatchAsync();
+
             return await CreateBatchOperationMessageAsync(uri, method, collection, contentId, resultRequired);
         }
 

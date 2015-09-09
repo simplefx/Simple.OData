@@ -278,6 +278,17 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task DeleteEntriesNonExistingThenInsert()
+        {
+            IDictionary<string, object> product = null;
+            var batch = new ODataBatch(_serviceUri);
+            batch += c => c.DeleteEntriesAsync("Products", "Products?$filter=ProductName eq 'Test99'");
+            batch += async c => product = await c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test15" }, { "UnitPrice", 21m } });
+            batch += c => c.InsertEntryAsync("Categories", new Entry() { { "CategoryName", "Test17" }, { "Products", new[] { product } } }, false);
+            await batch.ExecuteAsync();
+        }
+
+        [Fact]
         public async Task UpdateWithResultRequired()
         {
             IDictionary<string, object> product = null;

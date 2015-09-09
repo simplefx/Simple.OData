@@ -54,13 +54,15 @@ namespace Simple.OData.Client.V3.Adapter
         }
 #pragma warning restore 1998
 
-        protected override Task StartChangesetAsync()
+        protected override async Task StartChangesetAsync()
         {
+            if (_batchWriter == null)
+                await StartBatchAsync();
+
 #if SILVERLIGHT
             _batchWriter.WriteStartChangeset();
-            return Utils.GetTaskFromResult(0);
 #else
-            return _batchWriter.WriteStartChangesetAsync();
+            await _batchWriter.WriteStartChangesetAsync();
 #endif
         }
 
@@ -76,6 +78,9 @@ namespace Simple.OData.Client.V3.Adapter
 
         protected override async Task<object> CreateOperationMessageAsync(Uri uri, string method, string collection, string contentId, bool resultRequired)
         {
+            if (_batchWriter == null)
+                await StartBatchAsync();
+
             return await CreateBatchOperationMessageAsync(uri, method, collection, contentId, resultRequired);
         }
 

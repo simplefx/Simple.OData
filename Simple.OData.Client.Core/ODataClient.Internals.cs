@@ -219,10 +219,17 @@ namespace Simple.OData.Client
             var responseIndexes = new List<int>();
 
             // Write batch operations into a batch content
+            var lastOperationId = 0;
             foreach (var action in actions)
             {
                 await action(this);
-                responseIndexes.Add(_lazyBatchWriter.Value.LastOperationId - 1);
+                var responseIndex = -1;
+                if (_lazyBatchWriter.Value.LastOperationId > lastOperationId)
+                {
+                    lastOperationId = _lazyBatchWriter.Value.LastOperationId;
+                    responseIndex = lastOperationId - 1;
+                }
+                responseIndexes.Add(responseIndex);
             }
 
             if (_lazyBatchWriter.Value.HasOperations)
@@ -242,14 +249,18 @@ namespace Simple.OData.Client
                 // Replay batch operations to assign results
                 for (int actionIndex = 0; actionIndex < actions.Count; actionIndex++)
                 {
-                    var actionResponse = batchResponse.Batch[responseIndexes[actionIndex]];
-                    if (actionResponse.StatusCode >= 400)
+                    var responseIndex = responseIndexes[actionIndex];
+                    if (responseIndex >= 0)
                     {
-                        throw WebRequestException.CreateFromStatusCode((HttpStatusCode)actionResponse.StatusCode);
-                    }
+                        var actionResponse = batchResponse.Batch[responseIndex];
+                        if (actionResponse.StatusCode >= 400)
+                        {
+                            throw WebRequestException.CreateFromStatusCode((HttpStatusCode)actionResponse.StatusCode);
+                        }
 
-                    var client = new ODataClient(actionResponse);
-                    await actions[actionIndex](client);
+                        var client = new ODataClient(actionResponse);
+                        await actions[actionIndex](client);
+                    }
                 }
             }
         }

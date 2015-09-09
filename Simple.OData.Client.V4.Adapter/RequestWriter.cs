@@ -176,9 +176,6 @@ namespace Simple.OData.Client.V4.Adapter
 
         private async Task<IODataRequestMessageAsync> CreateBatchOperationMessageAsync(string method, string collection, IDictionary<string, object> entryData, string commandText, bool resultRequired)
         {
-            if (!_deferredBatchWriter.IsValueCreated)
-                await _deferredBatchWriter.Value.StartBatchAsync();
-
             var message = (await _deferredBatchWriter.Value.CreateOperationMessageAsync(
                 Utils.CreateAbsoluteUri(_session.Settings.BaseUri.AbsoluteUri, commandText), 
                 method, collection, entryData, resultRequired)) as IODataRequestMessageAsync;
