@@ -35,10 +35,10 @@
     </frameworkAssemblies>  </metadata>
   <files>
     <!-- PCL -->
-    <file src="Simple.OData.Client.Core\bin\Release\Simple.OData.Client.Core.dll" target="lib\portable-net45+win+win8+wp8+wpa81\Simple.OData.Client.Core.dll" />
-    <file src="Simple.OData.Client.Core\bin\Release\Simple.OData.Client.Core.xml" target="lib\portable-net45+win+win8+wp8+wpa81\Simple.OData.Client.Core.xml" />
-    <file src="Simple.OData.Client.Dynamic\bin\Release\Simple.OData.Client.Dynamic.dll" target="lib\portable-net45+win+win8+wp8+wpa81\Simple.OData.Client.Dynamic.dll" />
-    <file src="Simple.OData.Client.Dynamic\bin\Release\Simple.OData.Client.Dynamic.xml" target="lib\portable-net45+win+win8+wp8+wpa81\Simple.OData.Client.Dynamic.xml" />
-    <file src="Simple.OData.Client.V4.Adapter\bin\Release\Simple.OData.Client.V4.Adapter.dll" target="lib\portable-net45+win+win8+wp8+wpa81\Simple.OData.Client.V4.Adapter.dll" />
+    <file src="Simple.OData.Client.Core\bin\Release\Simple.OData.Client.Core.dll" target="lib\portable-net45+win8+wp8+wpa81\Simple.OData.Client.Core.dll" />
+    <file src="Simple.OData.Client.Core\bin\Release\Simple.OData.Client.Core.xml" target="lib\portable-net45+win8+wp8+wpa81\Simple.OData.Client.Core.xml" />
+    <file src="Simple.OData.Client.Dynamic\bin\Release\Simple.OData.Client.Dynamic.dll" target="lib\portable-net45+win8+wp8+wpa81\Simple.OData.Client.Dynamic.dll" />
+    <file src="Simple.OData.Client.Dynamic\bin\Release\Simple.OData.Client.Dynamic.xml" target="lib\portable-net45+win8+wp8+wpa81\Simple.OData.Client.Dynamic.xml" />
+    <file src="Simple.OData.Client.V4.Adapter\bin\Release\Simple.OData.Client.V4.Adapter.dll" target="lib\portable-net45+win8+wp8+wpa81\Simple.OData.Client.V4.Adapter.dll" />
   </files>
 </package>
