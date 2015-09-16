@@ -23,11 +23,15 @@ namespace Simple.OData.Client
             return result;
         }
 
-        public static byte[] StreamToByteArray(Stream stream)
+        public static byte[] StreamToByteArray(Stream stream, bool disposeStream = false)
         {
-            stream.Seek(0, SeekOrigin.Begin);
+            if (!disposeStream)
+                stream.Seek(0, SeekOrigin.Begin);
             var bytes = new byte[stream.Length];
-            return new BinaryReader(stream).ReadBytes(bytes.Length);
+            var result = new BinaryReader(stream).ReadBytes(bytes.Length);
+            if (disposeStream)
+                stream.Dispose();
+            return result;
         }
 
         public static Stream StringToStream(string text)
