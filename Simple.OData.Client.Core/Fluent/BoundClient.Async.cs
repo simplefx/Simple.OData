@@ -88,7 +88,10 @@ namespace Simple.OData.Client
 
         public async Task<U> FindScalarAsync<U>(CancellationToken cancellationToken)
         {
-            return (U)Convert.ChangeType(await _client.FindScalarAsync(_command, cancellationToken), typeof(U), CultureInfo.InvariantCulture);
+            var result = await _client.FindScalarAsync(_command, cancellationToken);
+            return _client.IsBatchRequest 
+                ? default(U) 
+                : (U)Convert.ChangeType(result, typeof(U), CultureInfo.InvariantCulture);
         }
 
         public Task<T> InsertEntryAsync()

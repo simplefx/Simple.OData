@@ -114,7 +114,7 @@ namespace Simple.OData.Client.V3.Adapter
 #else
                         var stream = await responseMessage.GetStreamAsync();
 #endif
-                        return ODataResponse.FromValueStream(stream);
+                        return ODataResponse.FromValueStream(stream, responseMessage is ODataBatchOperationResponseMessage);
                     }
                 }
                 else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Batch))

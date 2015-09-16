@@ -95,10 +95,13 @@ namespace Simple.OData.Client
 
         public T AsScalar<T>()
         {
-            var entry = this.AsEntry(false);
-            return entry == null 
-                ? default(T)
-                : (T)Convert.ChangeType(entry.First().Value, typeof(T), CultureInfo.InvariantCulture);
+            Func<IDictionary<string, object>, object> extractScalar = x => (x == null) || !x.Any() ? null : x.Values.First();
+            var result = this.AsEntry(false);
+            var value = result == null ? null : extractScalar(result);
+
+            return value == null 
+                ? default(T) 
+                : (T)Convert.ChangeType(value, typeof(T), CultureInfo.InvariantCulture);
         }
 
         public T[] AsArray<T>()
@@ -125,11 +128,11 @@ namespace Simple.OData.Client
             });
         }
 
-        public static ODataResponse FromValueStream(Stream stream)
+        public static ODataResponse FromValueStream(Stream stream, bool disposeStream = false)
         {
             return FromFeed(new[]
             {
-                new Dictionary<string, object>() { {FluentCommand.ResultLiteral, Utils.StreamToString(stream)} } 
+                new Dictionary<string, object>() { {FluentCommand.ResultLiteral, Utils.StreamToString(stream, disposeStream)} } 
             });
         }
 

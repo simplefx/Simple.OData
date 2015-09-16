@@ -42,6 +42,18 @@ namespace WebApiOData.V4.Samples.Tests
         }
 
         [Fact]
+        public async Task Get_the_most_expensive_product_untyped_batch()
+        {
+            object result = 0;
+            var batch = new ODataBatch(_client);
+            batch += async c => result = await c
+                .FindScalarAsync("Products/Default.MostExpensive()");
+            await batch.ExecuteAsync();
+
+            Assert.InRange((double)result, 500, 1000);
+        }
+
+        [Fact]
         public async Task Get_the_most_expensive_product_typed()
         {
             var result = await _client

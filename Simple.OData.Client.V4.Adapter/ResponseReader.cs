@@ -93,7 +93,7 @@ namespace Simple.OData.Client.V4.Adapter
                     }
                     else
                     {
-                        return ODataResponse.FromValueStream(await responseMessage.GetStreamAsync());
+                        return ODataResponse.FromValueStream(await responseMessage.GetStreamAsync(), responseMessage is ODataBatchOperationResponseMessage);
                     }
                 }
                 else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Batch))

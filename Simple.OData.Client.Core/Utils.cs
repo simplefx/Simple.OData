@@ -13,10 +13,14 @@ namespace Simple.OData.Client
 {
     static class Utils
     {
-        public static string StreamToString(Stream stream)
+        public static string StreamToString(Stream stream, bool disposeStream = false)
         {
-            stream.Seek(0, SeekOrigin.Begin);
-            return new StreamReader(stream).ReadToEnd();
+            if (!disposeStream)
+                stream.Seek(0, SeekOrigin.Begin);
+            var result = new StreamReader(stream).ReadToEnd();
+            if (disposeStream)
+                stream.Dispose();
+            return result;
         }
 
         public static byte[] StreamToByteArray(Stream stream)

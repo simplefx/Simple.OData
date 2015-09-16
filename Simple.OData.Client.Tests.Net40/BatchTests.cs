@@ -315,5 +315,19 @@ namespace Simple.OData.Client.Tests
 
             Assert.Equal(1, result);
         }
+
+        [Fact]
+        public async Task CountBatch()
+        {
+            var batch = new ODataBatch(_serviceUri);
+            int count = 0;
+            batch += async c => count = await c
+                .For("Products")
+                .Count()
+                .FindScalarAsync<int>();
+            await batch.ExecuteAsync();
+
+            Assert.Equal(77, count);
+        }
     }
 }

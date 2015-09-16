@@ -102,5 +102,20 @@ namespace WebApiOData.V3.Samples.Tests
 
             Assert.True(result.ID > 0);
         }
+
+        [Fact]
+        public async Task CreateMovie_batch()
+        {
+            Movie result = null;
+            var batch = new ODataBatch(_client);
+            batch += async c => result = await c
+                .Unbound<Movie>()
+                .Action("CreateMovie")
+                .Set(new { Title = Guid.NewGuid().ToString() })
+                .ExecuteAsSingleAsync();
+            await batch.ExecuteAsync();
+
+            Assert.True(result.ID > 0);
+        }
     }
 }
