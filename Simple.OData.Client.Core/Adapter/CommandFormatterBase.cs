@@ -118,6 +118,9 @@ namespace Simple.OData.Client
             if (command.Details.Filter != null)
                 extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Filter, Uri.EscapeDataString(command.Details.Filter)));
 
+            if (command.Details.Search != null)
+                extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Search, Uri.EscapeDataString(command.Details.Search)));
+
             if (command.Details.QueryOptions != null)
                 extraClauses.Add(command.Details.QueryOptions);
 

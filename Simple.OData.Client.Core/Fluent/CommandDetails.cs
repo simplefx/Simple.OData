@@ -18,6 +18,7 @@ namespace Simple.OData.Client
         public IDictionary<string, object> EntryData { get; set; }
         public string Filter { get; set; }
         public ODataExpression FilterExpression { get; set; }
+        public string Search { get; set; }
         public int SkipCount { get; set; }
         public int TopCount { get; set; }
         public List<KeyValuePair<string, ODataExpandOptions>> ExpandAssociations { get; private set; }
@@ -63,6 +64,7 @@ namespace Simple.OData.Client
             this.EntryData = details.EntryData;
             this.Filter = details.Filter;
             this.FilterExpression = details.FilterExpression;
+            this.Search = details.Search;
             this.SkipCount = details.SkipCount;
             this.TopCount = details.TopCount;
             this.ExpandAssociations = details.ExpandAssociations;
