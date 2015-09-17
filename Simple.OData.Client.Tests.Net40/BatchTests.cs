@@ -306,7 +306,7 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task FunctionBatch()
+        public async Task Function()
         {
             var batch = new ODataBatch(_serviceUri);
             int result = 0;
@@ -317,7 +317,34 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public async Task CountBatch()
+        public async Task LinkEntry()
+        {
+            var category = await _client
+                .For("Categories")
+                .Set(new { CategoryName = "Test4" })
+                .InsertEntryAsync();
+            var product = await _client
+                .For("Products")
+                .Set(new { ProductName = "Test5" })
+                .InsertEntryAsync();
+
+            var batch = new ODataBatch(_serviceUri);
+            batch += async c => await c
+                .For("Products")
+                .Key(product)
+                .LinkEntryAsync("Category", category);
+            await batch.ExecuteAsync();
+
+            product = await _client
+                .For("Products")
+                .Filter("ProductName eq 'Test5'")
+                .FindEntryAsync();
+            Assert.NotNull(product["CategoryID"]);
+            Assert.Equal(category["CategoryID"], product["CategoryID"]);
+        }
+
+        [Fact]
+        public async Task Count()
         {
             var batch = new ODataBatch(_serviceUri);
             int count = 0;

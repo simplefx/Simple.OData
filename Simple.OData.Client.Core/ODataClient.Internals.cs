@@ -258,7 +258,7 @@ namespace Simple.OData.Client
                             throw WebRequestException.CreateFromStatusCode((HttpStatusCode)actionResponse.StatusCode);
                         }
 
-                        var client = new ODataClient(actionResponse);
+                        var client = new ODataClient(this, actionResponse);
                         await actions[actionIndex](client);
                     }
                 }

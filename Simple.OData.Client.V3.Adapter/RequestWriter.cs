@@ -78,9 +78,17 @@ namespace Simple.OData.Client.V3.Adapter
         }
 
 #pragma warning disable 1998
-        protected override async Task<Stream> WriteLinkContentAsync(string linkIdent)
+        protected override async Task<Stream> WriteLinkContentAsync(string method, string commandText, string linkIdent)
         {
-            var message = new ODataRequestMessage();
+#if SILVERLIGHT
+            IODataRequestMessage
+#else
+            IODataRequestMessageAsync
+#endif
+ message = IsBatch
+                ? await CreateBatchOperationMessageAsync(method, null, null, commandText, false)
+                : new ODataRequestMessage();
+
             using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), _model))
             {
                 var link = new ODataEntityReferenceLink
@@ -88,6 +96,9 @@ namespace Simple.OData.Client.V3.Adapter
                     Url = Utils.CreateAbsoluteUri(_session.Settings.BaseUri.AbsoluteUri, linkIdent)
                 };
                 messageWriter.WriteEntityReferenceLink(link);
+
+                if (IsBatch)
+                    return null;
 
 #if SILVERLIGHT
                 return message.GetStream();
@@ -106,9 +117,17 @@ namespace Simple.OData.Client.V3.Adapter
             return null;
         }
 
-        protected override async Task<Stream> WriteActionContentAsync(string actionName, IDictionary<string, object> parameters)
+        protected override async Task<Stream> WriteActionContentAsync(string method, string commandText, string actionName, IDictionary<string, object> parameters)
         {
-            var message = new ODataRequestMessage();
+#if SILVERLIGHT
+            IODataRequestMessage
+#else
+            IODataRequestMessageAsync
+#endif
+ message = IsBatch
+                ? await CreateBatchOperationMessageAsync(method, null, null, commandText, false)
+                : new ODataRequestMessage();
+
             using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), _model))
             {
                 var action = _model.SchemaElements
@@ -142,7 +161,15 @@ namespace Simple.OData.Client.V3.Adapter
                 }
 
                 parameterWriter.WriteEnd();
+
+                if (IsBatch)
+                    return null;
+
+#if SILVERLIGHT
+                return message.GetStream();
+#else
                 return await message.GetStreamAsync();
+#endif
             }
         }
 

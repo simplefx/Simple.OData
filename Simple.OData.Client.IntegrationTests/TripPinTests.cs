@@ -766,6 +766,21 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task ShareTripInBatch()
+        {
+            var batch = new ODataBatch(_client);
+
+            batch += async x => await x
+                .For<Person>()
+                .Key("russellwhyte")
+                .Action("ShareTrip")
+                .Set(new { userName = "scottketchum", tripId = 1003 })
+                .ExecuteAsSingleAsync();
+
+            await batch.ExecuteAsync();
+        }
+
+        [Fact]
         public async Task GetInvolvedPeople()
         {
             var people = await _client

@@ -64,9 +64,12 @@ namespace Simple.OData.Client.V4.Adapter
             }
         }
 
-        protected override async Task<Stream> WriteLinkContentAsync(string linkIdent)
+        protected override async Task<Stream> WriteLinkContentAsync(string method, string commandText, string linkIdent)
         {
-            var message = new ODataRequestMessage();
+            var message = IsBatch
+                ? await CreateBatchOperationMessageAsync(method, null, null, commandText, false)
+                : new ODataRequestMessage();
+
             using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), _model))
             {
                 var link = new ODataEntityReferenceLink
@@ -74,7 +77,7 @@ namespace Simple.OData.Client.V4.Adapter
                     Url = Utils.CreateAbsoluteUri(_session.Settings.BaseUri.AbsoluteUri, linkIdent)
                 };
                 await messageWriter.WriteEntityReferenceLinkAsync(link);
-                return await message.GetStreamAsync();
+                return IsBatch ? null : await message.GetStreamAsync();
             }
         }
 
@@ -86,9 +89,12 @@ namespace Simple.OData.Client.V4.Adapter
             return null;
         }
 
-        protected override async Task<Stream> WriteActionContentAsync(string actionName, IDictionary<string, object> parameters)
+        protected override async Task<Stream> WriteActionContentAsync(string method, string commandText, string actionName, IDictionary<string, object> parameters)
         {
-            var message = new ODataRequestMessage();
+            IODataRequestMessageAsync message = IsBatch
+                ? await CreateBatchOperationMessageAsync(method, null, null, commandText, false)
+                : new ODataRequestMessage();
+
             using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), _model))
             {
                 var action = _model.SchemaElements.BestMatch(
@@ -140,7 +146,7 @@ namespace Simple.OData.Client.V4.Adapter
                 }
 
                 await parameterWriter.WriteEndAsync();
-                return await message.GetStreamAsync();
+                return IsBatch ? null : await message.GetStreamAsync();
             }
         }
 
