@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Web.Http;
+using System.Web.Http.OData.Batch;
 using System.Web.Http.OData.Builder;
+using System.Web.Http.OData.Extensions;
 using System.Web.Http.OData.Routing;
 using System.Web.Http.OData.Routing.Conventions;
 using Microsoft.Data.Edm;
@@ -24,7 +26,13 @@ namespace WebApiOData.V3.Samples
             conventions.Insert(0, new NonBindableActionRoutingConvention("NonBindableActions"));
 
             // Map the OData route.
-            config.Routes.MapODataRoute("actions route", "actions", GetModel(), new DefaultODataPathHandler(), conventions);
+            config.Routes.MapODataServiceRoute(
+                routeName: "OData actions",
+                routePrefix: "actions",
+                model: GetModel(),
+                pathHandler: new DefaultODataPathHandler(), 
+                routingConventions: conventions,
+                batchHandler: new DefaultODataBatchHandler(new HttpServer(config)));
 
             builder.UseWebApi(config);
         }

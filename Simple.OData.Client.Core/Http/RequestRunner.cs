@@ -1,6 +1,6 @@
 ﻿#if DEBUG
-#undef TRACE_REQUEST_CONTENT
-#undef TRACE_RESPONSE_CONTENT
+#define TRACE_REQUEST_CONTENT
+#define TRACE_RESPONSE_CONTENT
 #endif
 
 using System;

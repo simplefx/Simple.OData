@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Web.Http;
+using System.Web.Http.Batch;
+using System.Web.OData.Batch;
 using System.Web.OData.Builder;
 using System.Web.OData.Extensions;
 using Microsoft.OData.Edm;
@@ -10,19 +12,18 @@ namespace WebApiOData.V4.Samples.Startups
 {
     public class FunctionStartup : Startup
     {
-        private readonly Type _controllerType;
-        public FunctionStartup() 
+        public FunctionStartup()
             : base(typeof(ProductsController))
         {
-            _controllerType = typeof(ProductsController);
         }
 
         protected override void ConfigureController(HttpConfiguration config)
         {
             config.MapODataServiceRoute(
-                routeName: "OData funcions",
+                routeName: "OData functions",
                 routePrefix: "functions",
-                model: GetEdmModel(config));
+                model: GetEdmModel(config),
+                batchHandler: new DefaultODataBatchHandler(new HttpServer(config)));
         }
 
         private static IEdmModel GetEdmModel(HttpConfiguration config)

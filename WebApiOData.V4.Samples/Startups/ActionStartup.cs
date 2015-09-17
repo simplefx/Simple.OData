@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Web.Http;
+using System.Web.OData.Batch;
 using System.Web.OData.Builder;
 using System.Web.OData.Extensions;
 using Microsoft.OData.Edm;
@@ -10,7 +11,7 @@ namespace WebApiOData.V4.Samples.Startups
 {
     public class ActionStartup : Startup
     {
-        public ActionStartup(Type controllerType)
+        public ActionStartup()
             : base(typeof(MoviesController))
         {
         }
@@ -20,7 +21,8 @@ namespace WebApiOData.V4.Samples.Startups
             config.MapODataServiceRoute(
                 routeName: "OData actions",
                 routePrefix: "actions",
-                model: GetEdmModel(config));
+                model: GetEdmModel(config),
+                batchHandler: new DefaultODataBatchHandler(new HttpServer(config)));
         }
 
         private static IEdmModel GetEdmModel(HttpConfiguration config)
