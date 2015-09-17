@@ -338,6 +338,9 @@
     <Compile Include="..\Simple.OData.Client.Core\ODataResponse.cs">
       <Link>ODataResponse.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ODataUpdateMethod.cs">
+      <Link>ODataUpdateMethod.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Pluralizer.cs">
       <Link>Pluralizer.cs</Link>
     </Compile>

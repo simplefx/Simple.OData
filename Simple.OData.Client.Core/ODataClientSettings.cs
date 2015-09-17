@@ -92,6 +92,15 @@ namespace Simple.OData.Client
         public bool IgnoreUnmappedProperties { get; set; }
 
         /// <summary>
+        /// Gets or sets a preferred update method for OData entries. The selected method will be used wherever it's compatible with the update scenario. 
+        /// If not specified, PATCH is preferred due to better performance.
+        /// </summary>
+        /// <value>
+        /// The update method (PUT or PATCH).
+        /// </value>
+        public ODataUpdateMethod PreferredUpdateMethod { get; set; }
+
+        /// <summary>
         /// Gets or sets the OData service metadata document. If not set, service metadata is downloaded prior to the first call to the OData service and stored in an in-memory cache.
         /// </summary>
         /// <value>

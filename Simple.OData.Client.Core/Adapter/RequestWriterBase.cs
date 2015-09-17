@@ -74,12 +74,12 @@ namespace Simple.OData.Client
             var entryDetails = _session.Metadata.ParseEntryDetails(entityCollection.Name, entryData);
 
             var hasPropertiesToUpdate = entryDetails.Properties.Count > 0;
-            var merge = !hasPropertiesToUpdate || CanUseMerge(collection, entryKey, entryData);
+            var usePatch = _session.Settings.PreferredUpdateMethod == ODataUpdateMethod.Patch || !hasPropertiesToUpdate || !HasUpdatedKeyProperties(collection, entryKey, entryData);
 
             var entryContent = await WriteEntryContentAsync(
-                merge ? RestVerbs.Patch : RestVerbs.Put, collection, entryIdent, entryData, resultRequired);
+                usePatch ? RestVerbs.Patch : RestVerbs.Put, collection, entryIdent, entryData, resultRequired);
 
-            var updateMethod = merge ? RestVerbs.Patch : RestVerbs.Put;
+            var updateMethod = usePatch ? RestVerbs.Patch : RestVerbs.Put;
             var checkOptimisticConcurrency = _session.Metadata.EntityCollectionRequiresOptimisticConcurrencyCheck(collection);
             var request = new ODataRequest(updateMethod, _session, entryIdent, entryData, entryContent)
             {
@@ -186,7 +186,7 @@ namespace Simple.OData.Client
             return contentId;
         }
 
-        private bool CanUseMerge(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
+        private bool HasUpdatedKeyProperties(string collection, IDictionary<string, object> entryKey, IDictionary<string, object> entryData)
         {
             var entityCollection = _session.Metadata.GetEntityCollection(collection);
             foreach (var propertyName in _session.Metadata.GetStructuralPropertyNames(entityCollection.Name))
@@ -194,10 +194,10 @@ namespace Simple.OData.Client
                 if (entryKey.ContainsKey(propertyName) && entryData.ContainsKey(propertyName) &&
                     !entryKey[propertyName].Equals(entryData[propertyName]))
                 {
-                    return false;
+                    return true;
                 }
             }
-            return true;
+            return false;
         }
 
         private bool IsTextMediaType(string mediaType)
