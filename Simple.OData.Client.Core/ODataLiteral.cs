@@ -4,6 +4,7 @@
     {
         public const string Metadata = "$metadata";
         public const string Filter = "$filter";
+        public const string Search = "$search";
         public const string Skip = "$skip";
         public const string Top = "$top";
         public const string Expand = "$expand";

@@ -130,6 +130,12 @@ namespace Simple.OData.Client
             return this as FT;
         }
 
+        public FT Search(string search)
+        {
+            this.Command.Search(search);
+            return this as FT;
+        }
+
         public FT Function(string functionName)
         {
             this.Command.Function(functionName);

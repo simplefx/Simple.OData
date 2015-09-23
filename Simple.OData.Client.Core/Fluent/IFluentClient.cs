@@ -90,6 +90,13 @@ namespace Simple.OData.Client
         FT Filter(Expression<Func<T, bool>> expression);
 
         /// <summary>
+        /// Sets the specified OData search.
+        /// </summary>
+        /// <param name="search">The search term.</param>
+        /// <returns>Self.</returns>
+        FT Search(string search);
+
+        /// <summary>
         /// Sets the OData function name.
         /// </summary>
         /// <param name="functionName">Name of the function.</param>
