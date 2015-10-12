@@ -320,12 +320,12 @@ namespace Simple.OData.Client.V4.Adapter
                     {
                         TypeName = propertyType.FullName(),
                         Properties = value.ToDictionary()
-                                                                  .Where(val => complexTypeProperties.Any(p => p.Name == val.Key))
-                                                                  .Select(x => new ODataProperty
-                                                                  {
-                                                                      Name = x.Key,
-                                                                      Value = GetPropertyValue(propertyType.AsComplex().StructuralProperties(), x.Key, x.Value),
-                                                                  })
+                            .Where(val => complexTypeProperties.Any(p => p.Name == val.Key))
+                            .Select(x => new ODataProperty
+                            {
+                                Name = x.Key,
+                                Value = GetPropertyValue(complexTypeProperties, x.Key, x.Value),
+                            })
                     };
 
                 case EdmTypeKind.Collection:
