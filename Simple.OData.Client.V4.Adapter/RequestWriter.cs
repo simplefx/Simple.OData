@@ -315,14 +315,17 @@ namespace Simple.OData.Client.V4.Adapter
             switch (propertyType.TypeKind())
             {
                 case EdmTypeKind.Complex:
-                    return new ODataComplexValue()
+                    var complexTypeProperties = propertyType.AsComplex().StructuralProperties();
+                    return new ODataComplexValue
                     {
                         TypeName = propertyType.FullName(),
-                        Properties = value.ToDictionary().Select(x => new ODataProperty()
-                        {
-                            Name = x.Key,
-                            Value = GetPropertyValue(propertyType.AsComplex().StructuralProperties(), x.Key, x.Value),
-                        }),
+                        Properties = value.ToDictionary()
+                                                                  .Where(val => complexTypeProperties.Any(p => p.Name == val.Key))
+                                                                  .Select(x => new ODataProperty
+                                                                  {
+                                                                      Name = x.Key,
+                                                                      Value = GetPropertyValue(propertyType.AsComplex().StructuralProperties(), x.Key, x.Value),
+                                                                  })
                     };
 
                 case EdmTypeKind.Collection:
