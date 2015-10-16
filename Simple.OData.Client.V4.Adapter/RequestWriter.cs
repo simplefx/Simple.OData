@@ -107,47 +107,66 @@ namespace Simple.OData.Client.V4.Adapter
 
                 foreach (var parameter in parameters)
                 {
-                    var actionParameter = action.Parameters.BestMatch(x => x.Name, parameter.Key, _session.Pluralizer);
-                    if (actionParameter == null)
+                    var operationParameter = action.Parameters.BestMatch(x => x.Name, parameter.Key, _session.Pluralizer);
+                    if (operationParameter == null)
                         throw new UnresolvableObjectException(parameter.Key, string.Format("Parameter [{0}] not found for action [{1}]", parameter.Key, actionName));
 
-                    if (actionParameter.Type.Definition.TypeKind == EdmTypeKind.Collection)
-                    {
-                        var collectionType = actionParameter.Type.Definition as IEdmCollectionType;
-                        var elementType = collectionType.ElementType;
-                        if (elementType.Definition.TypeKind == EdmTypeKind.Entity)
-                        {
-                            var feedWriter = await parameterWriter.CreateFeedWriterAsync(parameter.Key);
-                            var feed = new ODataFeed();
-                            await feedWriter.WriteStartAsync(feed);
-                            foreach (var item in parameter.Value as IEnumerable)
-                            {
-                                var entry = CreateODataEntry(elementType.Definition.FullTypeName(), item.ToDictionary());
-
-                                await feedWriter.WriteStartAsync(entry);
-                                await feedWriter.WriteEndAsync();
-                            }
-                            await feedWriter.WriteEndAsync();
-                        }
-                        else
-                        {
-                            var collectionWriter = await parameterWriter.CreateCollectionWriterAsync(parameter.Key);
-                            await collectionWriter.WriteStartAsync(new ODataCollectionStart());
-                            foreach (var item in parameter.Value as IEnumerable)
-                            {
-                                await collectionWriter.WriteItemAsync(item);
-                            }
-                            await collectionWriter.WriteEndAsync();
-                        }
-                    }
-                    else
-                    {
-                        await parameterWriter.WriteValueAsync(parameter.Key, parameter.Value);
-                    }
+                    await WriteOperationParameterAsync(parameterWriter, operationParameter, parameter.Key, parameter.Value);
                 }
 
                 await parameterWriter.WriteEndAsync();
                 return IsBatch ? null : await message.GetStreamAsync();
+            }
+        }
+
+        private async Task WriteOperationParameterAsync(ODataParameterWriter parameterWriter, IEdmOperationParameter operationParameter, string paramName, object paramValue)
+        {
+            switch (operationParameter.Type.Definition.TypeKind)
+            {
+                case EdmTypeKind.Primitive:
+                case EdmTypeKind.Enum:
+                case EdmTypeKind.Complex:
+                    await parameterWriter.WriteValueAsync(paramName, paramValue);
+                    break;
+
+                case EdmTypeKind.Entity:
+                    var entryWriter = await parameterWriter.CreateEntryWriterAsync(paramName);
+                    var entry = CreateODataEntry(operationParameter.Type.Definition.FullTypeName(), paramValue.ToDictionary());
+                    await entryWriter.WriteStartAsync(entry);
+                    await entryWriter.WriteEndAsync();
+                    break;
+
+                case EdmTypeKind.Collection:
+                    var collectionType = operationParameter.Type.Definition as IEdmCollectionType;
+                    var elementType = collectionType.ElementType;
+                    if (elementType.Definition.TypeKind == EdmTypeKind.Entity)
+                    {
+                        var feedWriter = await parameterWriter.CreateFeedWriterAsync(paramName);
+                        var feed = new ODataFeed();
+                        await feedWriter.WriteStartAsync(feed);
+                        foreach (var item in paramValue as IEnumerable)
+                        {
+                            var feedEntry = CreateODataEntry(elementType.Definition.FullTypeName(), item.ToDictionary());
+
+                            await feedWriter.WriteStartAsync(feedEntry);
+                            await feedWriter.WriteEndAsync();
+                        }
+                        await feedWriter.WriteEndAsync();
+                    }
+                    else
+                    {
+                        var collectionWriter = await parameterWriter.CreateCollectionWriterAsync(paramName);
+                        await collectionWriter.WriteStartAsync(new ODataCollectionStart());
+                        foreach (var item in paramValue as IEnumerable)
+                        {
+                            await collectionWriter.WriteItemAsync(item);
+                        }
+                        await collectionWriter.WriteEndAsync();
+                    }
+                    break;
+
+                default:
+                    throw new NotSupportedException(string.Format("Unable to write action parameter of a type {0}", operationParameter.Type.Definition.TypeKind));
             }
         }
 
@@ -184,7 +203,7 @@ namespace Simple.OData.Client.V4.Adapter
         private async Task<IODataRequestMessageAsync> CreateBatchOperationMessageAsync(string method, string collection, IDictionary<string, object> entryData, string commandText, bool resultRequired)
         {
             var message = (await _deferredBatchWriter.Value.CreateOperationMessageAsync(
-                Utils.CreateAbsoluteUri(_session.Settings.BaseUri.AbsoluteUri, commandText), 
+                Utils.CreateAbsoluteUri(_session.Settings.BaseUri.AbsoluteUri, commandText),
                 method, collection, entryData, resultRequired)) as IODataRequestMessageAsync;
 
             return message;

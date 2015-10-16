@@ -141,24 +141,11 @@ namespace Simple.OData.Client.V3.Adapter
 
                 foreach (var parameter in parameters)
                 {
-                    var actionParameter = action.Parameters.BestMatch(x => x.Name, parameter.Key, _session.Pluralizer);
-                    if (actionParameter == null)
+                    var operationParameter = action.Parameters.BestMatch(x => x.Name, parameter.Key, _session.Pluralizer);
+                    if (operationParameter == null)
                         throw new UnresolvableObjectException(parameter.Key, string.Format("Parameter [{0}] not found for action [{1}]", parameter.Key, actionName));
 
-                    if (actionParameter.Type.Definition.TypeKind == EdmTypeKind.Collection)
-                    {
-                        var collectionWriter = parameterWriter.CreateCollectionWriter(parameter.Key);
-                        collectionWriter.WriteStart(new ODataCollectionStart());
-                        foreach (var item in parameter.Value as IEnumerable)
-                        {
-                            collectionWriter.WriteItem(item);
-                        }
-                        collectionWriter.WriteEnd();
-                    }
-                    else
-                    {
-                        parameterWriter.WriteValue(parameter.Key, parameter.Value);
-                    }
+                    await WriteOperationParameterAsync(parameterWriter, operationParameter, parameter.Key, parameter.Value);
                 }
 
                 parameterWriter.WriteEnd();
@@ -171,6 +158,23 @@ namespace Simple.OData.Client.V3.Adapter
 #else
                 return await message.GetStreamAsync();
 #endif
+            }
+        }
+        private async Task WriteOperationParameterAsync(ODataParameterWriter parameterWriter, IEdmFunctionParameter operationParameter, string paramName, object paramValue)
+        {
+            if (operationParameter.Type.Definition.TypeKind == EdmTypeKind.Collection)
+            {
+                var collectionWriter = parameterWriter.CreateCollectionWriter(paramName);
+                collectionWriter.WriteStart(new ODataCollectionStart());
+                foreach (var item in paramValue as IEnumerable)
+                {
+                    collectionWriter.WriteItem(item);
+                }
+                collectionWriter.WriteEnd();
+            }
+            else
+            {
+                parameterWriter.WriteValue(paramName, paramValue);
             }
         }
 
