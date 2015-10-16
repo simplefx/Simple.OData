@@ -103,6 +103,7 @@
     <Compile Include="..\CommonAssemblyVersion.cs">
       <Link>Properties\CommonAssemblyVersion.cs</Link>
     </Compile>
+    <Compile Include="AdHocTests.cs" />
     <Compile Include="BatchODataTests.cs" />
     <Compile Include="DeleteODataTests.cs" />
     <Compile Include="ErrorODataTests.cs" />

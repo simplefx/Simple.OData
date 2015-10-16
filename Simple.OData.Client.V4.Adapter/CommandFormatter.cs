@@ -76,7 +76,7 @@ namespace Simple.OData.Client.V4.Adapter
             {
                 path = path.Substring(items.First().Length + 1);
                 entityCollection = _session.Metadata.GetEntityCollection(
-                    _session.Metadata.GetNavigationPropertyPartnerName(entityCollection.Name, associationName));
+                    _session.Metadata.GetNavigationPropertyPartnerTypeName(entityCollection.Name, associationName));
 
                 clauses.Add(string.Format("{0}={1}", ODataLiteral.Expand, 
                     FormatExpansionSegment(path, entityCollection, expandOptions,

@@ -10,6 +10,8 @@ namespace Simple.OData.Client
 
         EntityCollection GetEntityCollection(string collectionPath);
         EntityCollection GetDerivedEntityCollection(EntityCollection baseCollection, string entityTypeName);
+        EntityCollection NavigateToCollection(string path);
+        EntityCollection NavigateToCollection(EntityCollection rootCollection, string path);
 
         string GetEntityCollectionExactName(string collectionName);
         bool EntityCollectionRequiresOptimisticConcurrencyCheck(string collectionName);
@@ -28,7 +30,7 @@ namespace Simple.OData.Client
 
         bool HasNavigationProperty(string collectionName, string propertyName);
         string GetNavigationPropertyExactName(string collectionName, string propertyName);
-        string GetNavigationPropertyPartnerName(string collectionName, string propertyName);
+        string GetNavigationPropertyPartnerTypeName(string collectionName, string propertyName);
         bool IsNavigationPropertyCollection(string collectionName, string propertyName);
 
         string GetFunctionFullName(string functionName);

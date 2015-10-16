@@ -144,7 +144,7 @@ namespace Simple.OData.Client.V3.Adapter
             return GetNavigationProperty(collectionName, propertyName).Name;
         }
 
-        public override string GetNavigationPropertyPartnerName(string collectionName, string propertyName)
+        public override string GetNavigationPropertyPartnerTypeName(string collectionName, string propertyName)
         {
             var navigationProperty = GetNavigationProperty(collectionName, propertyName);
             IEdmEntityType entityType;
@@ -257,12 +257,11 @@ namespace Simple.OData.Client.V3.Adapter
             entityType = null;
             if (collectionName.Contains("/"))
             {
-                var items = collectionName.Split('/');
-                collectionName = items.First();
-                var derivedTypeName = items.Last();
+                var segments = GetCollectionPathSegments(collectionName);
 
-                if (derivedTypeName.Contains("."))
+                if (SegmentsIncludeTypeSpecification(segments))
                 {
+                    var derivedTypeName = segments.Last();
                     var derivedType = GetEntityTypes().SingleOrDefault(x => x.FullName() == derivedTypeName);
                     if (derivedType != null)
                     {
@@ -272,19 +271,11 @@ namespace Simple.OData.Client.V3.Adapter
                 }
                 else
                 {
-                    var entitySet = GetEntitySets()
-                        .BestMatch(x => x.Name, collectionName, _session.Pluralizer);
-                    if (entitySet != null)
+                    var collection = _session.Metadata.NavigateToCollection(collectionName);
+                    entityType = GetEntityTypes().SingleOrDefault(x => x.Name == collection.Name);
+                    if (entityType != null)
                     {
-                        var derivedType = GetEntityTypes().BestMatch(x => x.Name, derivedTypeName, _session.Pluralizer);
-                        if (derivedType != null)
-                        {
-                            if (_model.FindDirectlyDerivedTypes(entitySet.ElementType).Contains(derivedType))
-                            {
-                                entityType = derivedType;
-                                return true;
-                            }
-                        }
+                        return true;
                     }
                 }
             }

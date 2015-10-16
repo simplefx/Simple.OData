@@ -141,8 +141,7 @@ namespace Simple.OData.Client
         private string FormatAnyAllFunction(ExpressionContext context)
         {
             var navigationPath = _functionCaller.Reference.Replace('.', '/');
-            var entityCollection = NavigateToCollection(context,
-                context.EntityCollection, navigationPath);
+            var entityCollection = context.Session.Metadata.NavigateToCollection(context.EntityCollection, navigationPath);
 
             var targetQualifier = string.Format("x{0}", ArgumentCounter >= 0 ? (1 + (ArgumentCounter++) % 9).ToString() : string.Empty);
             var formattedArguments = string.Format("{0}:{1}",
@@ -155,25 +154,6 @@ namespace Simple.OData.Client
                     context.Session.Adapter.GetCommandFormatter().FormatNavigationPath(context.EntityCollection, navigationPath),
                     this.Function.FunctionName.ToLower(),
                 formattedArguments), context);
-        }
-
-        private EntityCollection NavigateToCollection(ExpressionContext context, EntityCollection rootCollection, string path)
-        {
-            var items = path.Split('/');
-            var associationName = context.Session.Metadata.GetNavigationPropertyExactName(rootCollection.Name, items.First());
-
-            var entityCollection = context.Session.Metadata.GetEntityCollection(
-                context.Session.Metadata.GetNavigationPropertyPartnerName(rootCollection.Name, associationName));
-
-            if (items.Count() == 1)
-            {
-                return entityCollection;
-            }
-            else
-            {
-                path = path.Substring(items.First().Length + 1);
-                return NavigateToCollection(context, entityCollection, path);
-            }
         }
 
         private string FormatIsOfCastFunction(ExpressionContext context)
@@ -276,7 +256,7 @@ namespace Simple.OData.Client
                 {
                     var propertyName = context.Session.Metadata.GetNavigationPropertyExactName(
                         entityCollection.Name, objectName);
-                    var linkName = context.Session.Metadata.GetNavigationPropertyPartnerName(
+                    var linkName = context.Session.Metadata.GetNavigationPropertyPartnerTypeName(
                         entityCollection.Name, objectName);
                     var linkedEntityCollection = context.Session.Metadata.GetEntityCollection(linkName);
                     segmentNames.Add(propertyName);

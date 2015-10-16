@@ -87,7 +87,7 @@ namespace Simple.OData.Client
                 path = path.Substring(items.First().Length + 1);
 
                 entityCollection = _session.Metadata.GetEntityCollection(
-                    _session.Metadata.GetNavigationPropertyPartnerName(entityCollection.Name, associationName));
+                    _session.Metadata.GetNavigationPropertyPartnerTypeName(entityCollection.Name, associationName));
 
                 return string.Format("{0}/{1}", text, FormatNavigationPath(entityCollection, path));
             }
@@ -196,7 +196,7 @@ namespace Simple.OData.Client
                 var text = associationName;
                 path = path.Substring(items.First().Length + 1);
                 entityCollection = _session.Metadata.GetEntityCollection(
-                    _session.Metadata.GetNavigationPropertyPartnerName(entityCollection.Name, associationName));
+                    _session.Metadata.GetNavigationPropertyPartnerTypeName(entityCollection.Name, associationName));
                 return string.Format("{0}/{1}", text, FormatSelectItem(path, entityCollection));
             }
         }
@@ -221,7 +221,7 @@ namespace Simple.OData.Client
                 var text = associationName;
                 var item = pathWithOrder.Key.Substring(items.First().Length + 1);
                 entityCollection = _session.Metadata.GetEntityCollection(
-                    _session.Metadata.GetNavigationPropertyPartnerName(entityCollection.Name, associationName));
+                    _session.Metadata.GetNavigationPropertyPartnerTypeName(entityCollection.Name, associationName));
                 return string.Format("{0}/{1}", text,
                     FormatOrderByItem(new KeyValuePair<string, bool>(item, pathWithOrder.Value), entityCollection));
             }

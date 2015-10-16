@@ -24,7 +24,7 @@ namespace Simple.OData.Client
         public abstract IEnumerable<string> GetDeclaredKeyPropertyNames(string collectionName);
         public abstract bool HasNavigationProperty(string collectionName, string propertyName);
         public abstract string GetNavigationPropertyExactName(string collectionName, string propertyName);
-        public abstract string GetNavigationPropertyPartnerName(string collectionName, string propertyName);
+        public abstract string GetNavigationPropertyPartnerTypeName(string collectionName, string propertyName);
         public abstract bool IsNavigationPropertyCollection(string collectionName, string propertyName);
         public abstract string GetFunctionFullName(string functionName);
         public abstract EntityCollection GetFunctionReturnCollection(string functionName);
@@ -37,7 +37,7 @@ namespace Simple.OData.Client
             var segments = collectionPath.Split('/');
             if (segments.Count() > 1)
             {
-                if (segments.Last().Contains("."))
+                if (SegmentsIncludeTypeSpecification(segments))
                 {
                     var baseEntitySet = this.GetEntityCollection(Utils.ExtractCollectionName(segments[segments.Length - 2]));
                     return GetDerivedEntityCollection(baseEntitySet, Utils.ExtractCollectionName(segments.Last()));
@@ -57,6 +57,45 @@ namespace Simple.OData.Client
         {
             var actualName = GetDerivedEntityTypeExactName(baseCollection.Name, entityTypeName);
             return new EntityCollection(actualName, baseCollection);
+        }
+
+        public EntityCollection NavigateToCollection(string path)
+        {
+            var segments = GetCollectionPathSegments(path);
+            return IsSingleSegmentWithTypeSpecification(segments)
+                ? GetEntityCollection(path)
+                : NavigateToCollection(GetEntityCollection(segments.First()), segments.Skip(1));
+        }
+
+        public EntityCollection NavigateToCollection(EntityCollection rootCollection, string path)
+        {
+            return NavigateToCollection(rootCollection, GetCollectionPathSegments(path));
+        }
+
+        private EntityCollection NavigateToCollection(EntityCollection rootCollection, IEnumerable<string> segments)
+        {
+            if (!segments.Any())
+                return rootCollection;
+
+            var associationName = GetNavigationPropertyExactName(rootCollection.Name, segments.First());
+            var typeName = IsSingleSegmentWithTypeSpecification(segments)
+                ? segments.Last()
+                : GetNavigationPropertyPartnerTypeName(rootCollection.Name, associationName);
+            var entityCollection = GetEntityCollection(typeName);
+
+            return segments.Count() == 1 || IsSingleSegmentWithTypeSpecification(segments)
+                ? entityCollection
+                : NavigateToCollection(entityCollection, segments.Skip(1));
+        }
+
+        protected bool SegmentsIncludeTypeSpecification(IEnumerable<string> segments)
+        {
+            return segments.Last().Contains(".");
+        }
+
+        protected bool IsSingleSegmentWithTypeSpecification(IEnumerable<string> segments)
+        {
+            return segments.Count() == 2 && SegmentsIncludeTypeSpecification(segments);
         }
 
         public EntryDetails ParseEntryDetails(string collectionName, IDictionary<string, object> entryData, string contentId = null)
@@ -107,12 +146,9 @@ namespace Simple.OData.Client
             return entryDetails;
         }
 
-        //private string ExtractCollectionName(string text)
-        //{
-        //    if (text.Contains("("))
-        //        return text.Substring(0, text.IndexOf('('));
-        //    else
-        //        return text;
-        //}
+        public IEnumerable<string> GetCollectionPathSegments(string path)
+        {
+            return path.Split('/').Select(x => x.Contains("(") ? x.Substring(0, x.IndexOf("(")) : x);
+        }
     }
 }

@@ -45,7 +45,8 @@ namespace Simple.OData.Client.V3.Adapter
             using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), model))
             {
                 var contentId = _deferredBatchWriter != null ? _deferredBatchWriter.Value.GetContentId(entryData, null) : null;
-                var entityCollection = _session.Metadata.GetEntityCollection(collection);
+                //var entityCollection = _session.Metadata.GetEntityCollection(collection);
+                var entityCollection = _session.Metadata.NavigateToCollection(collection);
                 var entryDetails = _session.Metadata.ParseEntryDetails(entityCollection.Name, entryData, contentId);
 
                 var entryWriter = messageWriter.CreateODataEntryWriter();

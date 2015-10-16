@@ -92,7 +92,7 @@ namespace Simple.OData.Client
                 if (!string.IsNullOrEmpty(_details.LinkName))
                 {
                     var parent = new FluentCommand(_details.Parent).Resolve();
-                    var collectionName = _details.Session.Metadata.GetNavigationPropertyPartnerName(
+                    var collectionName = _details.Session.Metadata.GetNavigationPropertyPartnerTypeName(
                         parent.EntityCollection.Name, _details.LinkName);
                     entityCollection = _details.Session.Metadata.GetEntityCollection(collectionName);
                 }
