@@ -472,9 +472,21 @@ namespace Simple.OData.Client.V4.Adapter
 
         private IEdmFunction GetFunction(string functionName)
         {
-            var function = _model.SchemaElements
-                .BestMatch(x => x.SchemaElementKind == EdmSchemaElementKind.Function,
-                    x => x.Name, functionName, _session.Pluralizer) as IEdmFunction;
+            IEdmFunction function = null;
+            var functionImport = _model.SchemaElements
+                .Where(x => x.SchemaElementKind == EdmSchemaElementKind.EntityContainer)
+                .SelectMany(x => (x as IEdmEntityContainer).Elements
+                    .Where(y => y.ContainerElementKind == EdmContainerElementKind.FunctionImport))
+                    .BestMatch(x => x.Name, functionName, _session.Pluralizer) as IEdmFunctionImport;
+            if (functionImport != null)
+                function = functionImport.Function;
+
+            if (function == null)
+            {
+                function = _model.SchemaElements
+                    .BestMatch(x => x.SchemaElementKind == EdmSchemaElementKind.Function,
+                        x => x.Name, functionName, _session.Pluralizer) as IEdmFunction;
+            }
 
             if (function == null)
                 throw new UnresolvableObjectException(functionName, string.Format("Function [{0}] not found", functionName));
@@ -484,9 +496,21 @@ namespace Simple.OData.Client.V4.Adapter
 
         private IEdmAction GetAction(string actionName)
         {
-            var action = _model.SchemaElements
-                .BestMatch(x => x.SchemaElementKind == EdmSchemaElementKind.Action,
-                    x => x.Name, actionName, _session.Pluralizer) as IEdmAction;
+            IEdmAction action = null;
+            var actionImport = _model.SchemaElements
+                .Where(x => x.SchemaElementKind == EdmSchemaElementKind.EntityContainer)
+                .SelectMany(x => (x as IEdmEntityContainer).Elements
+                    .Where(y => y.ContainerElementKind == EdmContainerElementKind.ActionImport))
+                    .BestMatch(x => x.Name, actionName, _session.Pluralizer) as IEdmActionImport;
+            if (actionImport != null)
+                action = actionImport.Action;
+
+            if (action == null)
+            {
+                action = _model.SchemaElements
+                    .BestMatch(x => x.SchemaElementKind == EdmSchemaElementKind.Action,
+                        x => x.Name, actionName, _session.Pluralizer) as IEdmAction;
+            }
 
             if (action == null)
                 throw new UnresolvableObjectException(actionName, string.Format("Action [{0}] not found", actionName));
