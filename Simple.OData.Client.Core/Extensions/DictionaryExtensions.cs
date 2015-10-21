@@ -70,7 +70,9 @@ namespace Simple.OData.Client.Extensions
                 if (property != null && property.CanWrite && !property.IsNotMapped())
                 {
                     if (item.Value != null)
+                    {
                         property.SetValue(instance, ConvertValue(property.PropertyType, item.Value), null);
+                    }
                 }
                 else if (dynamicProperties != null)
                 {
@@ -135,13 +137,19 @@ namespace Simple.OData.Client.Extensions
 
         private static object ConvertSingle(Type type, object itemValue)
         {
+            Func<object, Type, object> TryConvert = (v, t) =>
+            {
+                object result;
+                return Utils.TryConvert(v, t, out result) ? result : v;
+            };
+
             return type == typeof(ODataEntryAnnotations)
                 ? itemValue
                 : IsCompoundType(type)
                     ? itemValue.ToDictionary().ToObject(type)
                     : type.IsEnumType()
                         ? ConvertEnum(type, itemValue)
-                        : itemValue;
+                        : TryConvert(itemValue, type);
         }
 
         private static object ConvertCollection(Type type, object itemValue)
@@ -161,7 +169,7 @@ namespace Simple.OData.Client.Extensions
             count = 0;
             foreach (var item in (itemValue as System.Collections.IEnumerable))
             {
-                (arrayValue as Array).SetValue(ConvertSingle(elementType, item), count++);
+                arrayValue.SetValue(ConvertSingle(elementType, item), count++);
             }
 
             if (type.IsArray || type.IsTypeAssignableFrom(arrayValue.GetType()))

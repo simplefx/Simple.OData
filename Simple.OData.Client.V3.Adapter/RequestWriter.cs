@@ -135,9 +135,14 @@ namespace Simple.OData.Client.V3.Adapter
                     .Where(x => x.SchemaElementKind == EdmSchemaElementKind.EntityContainer)
                     .SelectMany(x => (x as IEdmEntityContainer).FunctionImports())
                     .BestMatch(x => x.Name, actionName, _session.Pluralizer);
-                var parameterWriter = messageWriter.CreateODataParameterWriter(action);
+#if SILVERLIGHT
+                    var parameterWriter = messageWriter.CreateODataParameterWriter(action);
+                    parameterWriter.WriteStart();
+#else
+                    var parameterWriter = await messageWriter.CreateODataParameterWriterAsync(action);
+                    await parameterWriter.WriteStartAsync();
+#endif
 
-                parameterWriter.WriteStart();
 
                 foreach (var parameter in parameters)
                 {
@@ -152,7 +157,11 @@ namespace Simple.OData.Client.V3.Adapter
 #endif
                 }
 
+#if SILVERLIGHT
                 parameterWriter.WriteEnd();
+#else
+                await parameterWriter.WriteEndAsync();
+#endif
 
                 if (IsBatch)
                     return null;

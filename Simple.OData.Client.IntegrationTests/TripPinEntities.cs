@@ -79,6 +79,21 @@ namespace Simple.OData.Client.Tests
         public IEnumerable<PlanItem> PlanItems { get; set; }
     }
 
+    class TripWithDateTime
+    {
+        public int TripId { get; set; }
+        public Guid ShareId { get; set; }
+        public string Description { get; set; }
+        public string Name { get; set; }
+        public float Budget { get; set; }
+        public DateTime StartsAt { get; set; }
+        public DateTime EndsAt { get; set; }
+        public IList<string> Tags { get; set; }
+
+        public IEnumerable<Photo> Photos { get; set; }
+        public IEnumerable<PlanItem> PlanItems { get; set; }
+    }
+
     class Photo
     {
         public long Id { get; set; }

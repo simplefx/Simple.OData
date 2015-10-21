@@ -702,6 +702,18 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task FindPersonTripsWithDateTime()
+        {
+            var trips = await _client
+                .For<Person>()
+                .Key("russellwhyte")
+                .NavigateTo<TripWithDateTime>("Trip")
+                .FindEntriesAsync();
+
+            Assert.Equal(3, trips.Count());
+        }
+
+        [Fact]
         public async Task FindPersonTripsFilterDescription()
         {
             var trips = await _client
