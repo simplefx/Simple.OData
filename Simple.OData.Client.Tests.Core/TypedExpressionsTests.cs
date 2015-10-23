@@ -449,5 +449,23 @@ namespace Simple.OData.Client.Tests
             Assert.Equal(string.Format("Address/Type eq {0}", FormatSettings.GetEnumFormat(AddressType.Corporate, typeof(AddressType), "NorthwindModel")),
                 ODataExpression.FromLinqExpression(filter).AsString(_session));
         }
+
+        [Fact]
+        public void ExpressionBuilder()
+        {
+            Expression<Predicate<TestEntity>> condition1 = x => x.ProductName == "Chai";
+            Expression<Func<TestEntity, bool>> condition2 = x => x.ProductID == 1;
+            var filter = new ODataExpression(condition1);
+            filter = filter || new ODataExpression(condition2);
+            Assert.Equal("ProductName eq 'Chai' or ProductID eq 1", filter.AsString(_session));
+        }
+
+        [Fact]
+        public void ExpressionBuilderGeneric()
+        {
+            var filter = new ODataExpression<TestEntity>(x => x.ProductName == "Chai");
+            filter = filter || new ODataExpression<TestEntity>(x => x.ProductID == 1);
+            Assert.Equal("ProductName eq 'Chai' or ProductID eq 1", filter.AsString(_session));
+        }
     }
 }

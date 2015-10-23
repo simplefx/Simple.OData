@@ -24,60 +24,79 @@ namespace Simple.OData.Client
         {
         }
 
-        protected ODataExpression(object value)
+        public ODataExpression(Expression expression)
+            : this(FromLinqExpression(expression))
+        {
+        }
+
+        protected internal ODataExpression(ODataExpression expression)
+        {
+            _functionCaller = expression._functionCaller;
+            _left = expression._left;
+            _right = expression._right;
+            _operator = expression._operator;
+            _conversionType = expression._conversionType;
+
+            this.Reference = expression.Reference;
+            this.ReferenceScope = expression.ReferenceScope;
+            this.Value = expression.Value;
+            this.Function = expression.Function;
+        }
+
+        protected internal ODataExpression(object value)
         {
             this.Value = value;
         }
 
-        protected ODataExpression(string reference)
+        protected internal ODataExpression(string reference)
         {
             this.Reference = reference;
         }
 
-        protected ODataExpression(string reference, string referenceScope)
+        protected internal ODataExpression(string reference, string referenceScope)
         {
             this.Reference = reference;
             this.ReferenceScope = referenceScope;
         }
 
-        protected ODataExpression(string reference, object value)
+        protected internal ODataExpression(string reference, object value)
         {
             this.Reference = reference;
             this.Value = value;
         }
 
-        protected ODataExpression(string reference, string referenceScope, object value)
+        protected internal ODataExpression(string reference, string referenceScope, object value)
         {
             this.Reference = reference;
             this.Value = value;
             this.ReferenceScope = referenceScope;
         }
 
-        protected ODataExpression(ExpressionFunction function)
+        protected internal ODataExpression(ExpressionFunction function)
         {
             this.Function = function;
         }
 
-        protected ODataExpression(ODataExpression left, ODataExpression right, ExpressionOperator expressionOperator)
+        protected internal ODataExpression(ODataExpression left, ODataExpression right, ExpressionOperator expressionOperator)
         {
             _left = left;
             _right = right;
             _operator = expressionOperator;
         }
 
-        protected ODataExpression(ODataExpression caller, string reference)
+        protected internal ODataExpression(ODataExpression caller, string reference)
         {
             _functionCaller = caller;
             this.Reference = reference;
         }
 
-        protected ODataExpression(ODataExpression caller, ExpressionFunction function)
+        protected internal ODataExpression(ODataExpression caller, ExpressionFunction function)
         {
             _functionCaller = caller;
             this.Function = function;
         }
 
-        protected ODataExpression(ODataExpression expr, Type conversionType)
+        protected internal ODataExpression(ODataExpression expr, Type conversionType)
         {
             _left = expr;
             _conversionType = conversionType;
@@ -189,6 +208,19 @@ namespace Simple.OData.Client
             {
                 return false;
             }
+        }
+    }
+
+    public partial class ODataExpression<T> : ODataExpression
+    {
+        public ODataExpression(Expression<Predicate<T>> predicate)
+            : base(predicate)
+        {
+        }
+
+        internal ODataExpression(ODataExpression expression)
+            : base(expression)
+        {
         }
     }
 }
