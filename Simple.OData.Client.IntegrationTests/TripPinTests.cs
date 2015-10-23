@@ -106,6 +106,35 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task FindPersonExpandAndSelectTripsAndFriendsTyped()
+        {
+            var person = await _client
+                .For<Person>()
+                .Key("russellwhyte")
+                .Expand(x => new { x.Trips, x.Friends })
+                .Select(x => x.Trips.Select(y => y.Name))
+                .Select(x => x.Friends.Select(y => y.LastName))
+                .FindEntryAsync();
+            Assert.Equal("Trip in US", person.Trips.First().Name);
+            Assert.Equal("Ketchum", person.Friends.First().LastName);
+        }
+
+        [Fact]
+        public async Task FindPersonExpandAndSelectTripsAndFriendsDynamic()
+        {
+            var x = ODataDynamic.Expression;
+            var person = await _client
+                .For(x.Person)
+                .Key("russellwhyte")
+                .Expand(x.Trips, x.Friends)
+                .Select(x.Trips.Name)
+                .Select(x.Friends.LastName)
+                .FindEntryAsync();
+            Assert.Equal("Trip in US", (person.Trips as IEnumerable<dynamic>).First().Name);
+            Assert.Equal("Ketchum", (person.Friends as IEnumerable<dynamic>).First().LastName);
+        }
+
+        [Fact]
         public async Task FindPersonExpandFriendsWithOrderBy()
         {
             var person = await _client

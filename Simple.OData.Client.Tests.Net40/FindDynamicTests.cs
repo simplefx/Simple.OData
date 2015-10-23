@@ -273,7 +273,7 @@ namespace Simple.OData.Client.Tests
                 .OrderBy(x.ProductID)
                 .Expand(x.Category.Products.Category)
                 .FindEntriesAsync() as IEnumerable<dynamic>).Last();
-            Assert.Equal("Condiments", ((product.Category.Products as IEnumerable<dynamic>).First()["Category"] as IDictionary<string, object>)["CategoryName"]);
+            Assert.Equal("Condiments", (product.Category.Products as IEnumerable<dynamic>).First().Category.CategoryName);
         }
 
         [Fact]

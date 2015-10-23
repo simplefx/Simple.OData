@@ -16,8 +16,30 @@ namespace Simple.OData.Client
         }
 
         internal DynamicODataEntry(IDictionary<string, object> entry)
-            : base(entry)
+            : base(ToDynamicODataEntry(entry))
         {
+        }
+
+        private static IDictionary<string, object> ToDynamicODataEntry(IDictionary<string, object> entry)
+        {
+            return entry == null
+                ? null
+                : entry.ToDictionary(
+                        x => x.Key,
+                        y => y.Value is IDictionary<string, object>
+                            ? new DynamicODataEntry(y.Value as IDictionary<string, object>)
+                            : y.Value is IEnumerable<object>
+                            ? ToDynamicODataEntry(y.Value as IEnumerable<object>)
+                            : y.Value);
+        }
+
+        private static IEnumerable<object> ToDynamicODataEntry(IEnumerable<object> entry)
+        {
+            return entry == null
+                ? null
+                : entry.Select(x => x is IDictionary<string, object>
+                    ? new DynamicODataEntry(x as IDictionary<string, object>)
+                    : x).ToList();
         }
 
         private object GetEntryValue(string propertyName)
@@ -51,7 +73,7 @@ namespace Simple.OData.Client
                 };
 
                 return new DynamicMetaObject(
-                    Expression.Call(Expression.Convert(Expression, LimitType), methodInfo, arguments), 
+                    Expression.Call(Expression.Convert(Expression, LimitType), methodInfo, arguments),
                     BindingRestrictions.GetTypeRestriction(Expression, LimitType));
             }
 
