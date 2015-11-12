@@ -48,13 +48,12 @@ namespace Simple.OData.Client
             return request;
         }
 
-        public async Task<ODataRequest> CreateInsertRequestAsync(string collection, IDictionary<string, object> entryData, bool resultRequired)
+        public async Task<ODataRequest> CreateInsertRequestAsync(string collection, string commandText, IDictionary<string, object> entryData, bool resultRequired)
         {
-            var commandText = collection;
-            var segments = collection.Split('/');
+            var segments = commandText.Split('/');
             if (segments.Count() > 1 && segments.Last().Contains("."))
             {
-                commandText = collection.Substring(0, collection.Length - segments.Last().Length - 1);
+                commandText = commandText.Substring(0, commandText.Length - segments.Last().Length - 1);
             }
 
             var entryContent = await WriteEntryContentAsync(
