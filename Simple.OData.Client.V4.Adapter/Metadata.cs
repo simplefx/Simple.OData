@@ -72,7 +72,7 @@ namespace Simple.OData.Client.V4.Adapter
             IEdmEntityType entityType;
             if (TryGetEntitySet(collectionName, out entitySet))
             {
-                entityType = (_model.FindDirectlyDerivedTypes(entitySet.EntityType())
+                entityType = (_model.FindAllDerivedTypes(entitySet.EntityType())
                     .BestMatch(x => (x as IEdmEntityType).Name, entityTypeName, _session.Pluralizer)) as IEdmEntityType;
                 if (entityType != null)
                     return entityType.Name;
