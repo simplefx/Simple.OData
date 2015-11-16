@@ -12,7 +12,7 @@ namespace Simple.OData.Client
         private readonly ODataExpression _functionCaller;
         private readonly ODataExpression _left;
         private readonly ODataExpression _right;
-        private readonly ExpressionOperator _operator;
+        private readonly ExpressionType _operator = ExpressionType.Default;
         private readonly Type _conversionType;
 
         public string Reference { get; private set; }
@@ -77,7 +77,7 @@ namespace Simple.OData.Client
             this.Function = function;
         }
 
-        protected internal ODataExpression(ODataExpression left, ODataExpression right, ExpressionOperator expressionOperator)
+        protected internal ODataExpression(ODataExpression left, ODataExpression right, ExpressionType expressionOperator)
         {
             _left = left;
             _right = right;
@@ -145,8 +145,9 @@ namespace Simple.OData.Client
         {
             get { return this.Value == null && 
                 this.Reference == null && 
-                this.Function == null && 
-                _operator == ExpressionOperator.None; }
+                this.Function == null &&
+                _operator == ExpressionType.Default;
+            }
         }
 
         public string AsString(ISession session)
@@ -158,13 +159,13 @@ namespace Simple.OData.Client
         {
             switch (_operator)
             {
-                case ExpressionOperator.AND:
+                case ExpressionType.And:
                     var ok = _left.ExtractLookupColumns(lookupColumns);
                     if (ok)
                         ok = _right.ExtractLookupColumns(lookupColumns);
                     return ok;
 
-                case ExpressionOperator.EQ:
+                case ExpressionType.Equal:
                     var expr = _left;
                     while (expr._conversionType != null)
                     {
@@ -192,7 +193,7 @@ namespace Simple.OData.Client
 
         internal bool HasTypeConstraint(string typeName)
         {
-            if (_operator == ExpressionOperator.AND)
+            if (_operator == ExpressionType.And)
             {
                 return _left.HasTypeConstraint(typeName) || _right.HasTypeConstraint(typeName);
             }

@@ -396,5 +396,42 @@ namespace Simple.OData.Client.Tests
             var filter = x.Price.Ceiling() == 2;
             Assert.Equal("ceiling(Price) eq 2", filter.AsString(_session));
         }
+
+        [Fact]
+        public void EqualNestedProperty()
+        {
+            var x = ODataDynamic.Expression;
+            var filter = x.Nested.ProductID == 1;
+            Assert.Equal("Nested/ProductID eq 1", filter.AsString(_session));
+        }
+
+        [Fact]
+        public void FilterWithEnum()
+        {
+            var x = ODataDynamic.Expression;
+            var filter = x.Address.Type == AddressType.Corporate;
+            Assert.Equal(string.Format("Address/Type eq {0}", FormatSettings.GetEnumFormat(AddressType.Corporate, typeof(AddressType), "NorthwindModel")),
+                filter.AsString(_session));
+        }
+
+        [Fact]
+        public void FilterWithEnum_LocalVar()
+        {
+            var x = ODataDynamic.Expression;
+            var addressType = AddressType.Corporate;
+            var filter = x.Address.Type == addressType;
+            Assert.Equal(string.Format("Address/Type eq {0}", FormatSettings.GetEnumFormat(AddressType.Corporate, typeof(AddressType), "NorthwindModel")),
+                filter.AsString(_session));
+        }
+
+        [Fact]
+        public void FilterWithEnum_Const()
+        {
+            var x = ODataDynamic.Expression;
+            const AddressType addressType = AddressType.Corporate;
+            var filter = x.Address.Type == addressType;
+            Assert.Equal(string.Format("Address/Type eq {0}", FormatSettings.GetEnumFormat(AddressType.Corporate, typeof(AddressType), "NorthwindModel")),
+                filter.AsString(_session));
+        }
     }
 }

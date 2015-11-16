@@ -36,7 +36,7 @@ namespace Simple.OData.Client
         {
         }
 
-        protected DynamicODataExpression(ODataExpression left, ODataExpression right, ExpressionOperator expressionOperator)
+        protected DynamicODataExpression(ODataExpression left, ODataExpression right, ExpressionType expressionOperator)
             : base(left, right, expressionOperator)
         {
         }
@@ -161,6 +161,28 @@ namespace Simple.OData.Client
                     return base.BindInvokeMember(binder, args);
                 }
             }
+
+            public override DynamicMetaObject BindBinaryOperation(BinaryOperationBinder binder, DynamicMetaObject arg)
+            {
+                if (arg.RuntimeType != null && arg.RuntimeType.IsEnumType())
+                {
+                    var expression = Expression.New(CtorWithExpressionAndExpressionAndOperator,
+                        new[]
+                        {
+                            Expression.Constant(this.Value), 
+                            Expression.Constant(new ODataExpression(arg.Value)),
+                            Expression.Constant(binder.Operation)
+                        });
+
+                    return new DynamicMetaObject(
+                        expression,
+                        BindingRestrictions.GetTypeRestriction(Expression, LimitType));
+                }
+                else
+                {
+                    return base.BindBinaryOperation(binder, arg);
+                }
+            }
         }
 
         private static IEnumerable<ConstructorInfo> GetConstructorInfo()
@@ -215,10 +237,24 @@ namespace Simple.OData.Client
             }
         }
 
+        private static ConstructorInfo CtorWithExpressionAndExpressionAndOperator
+        {
+            get
+            {
+                return _ctorWithExpressionAndExpressionAndOperator ??
+                       (_ctorWithExpressionAndExpressionAndOperator = GetConstructorInfo().Single(x =>
+                           x.GetParameters().Count() == 3 &&
+                           x.GetParameters()[0].ParameterType == typeof(ODataExpression) &&
+                           x.GetParameters()[1].ParameterType == typeof(ODataExpression) &&
+                           x.GetParameters()[2].ParameterType == typeof(ExpressionType)));
+            }
+        }
+
         private static ConstructorInfo[] _ctors;
         private static ConstructorInfo _ctorWithString;
         private static ConstructorInfo _ctorWithStringAndStringAndValue;
         private static ConstructorInfo _ctorWithExpressionAndString;
         private static ConstructorInfo _ctorWithExpressionAndFunction;
+        private static ConstructorInfo _ctorWithExpressionAndExpressionAndOperator;
     }
 }
