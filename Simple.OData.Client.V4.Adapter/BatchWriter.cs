@@ -68,7 +68,7 @@ namespace Simple.OData.Client.V4.Adapter
                 message.SetHeader(HttpLiteral.ContentId, contentId);
 
             if (method == RestVerbs.Post || method == RestVerbs.Put || method == RestVerbs.Patch)
-                message.SetHeader(HttpLiteral.Prefer, resultRequired ? HttpLiteral.ReturnContent : HttpLiteral.ReturnNoContent);
+                message.SetHeader(HttpLiteral.Prefer, resultRequired ? HttpLiteral.ReturnRepresentation : HttpLiteral.ReturnMinimal);
 
             if (collection != null && _session.Metadata.EntityCollectionRequiresOptimisticConcurrencyCheck(collection) &&
                 (method == RestVerbs.Put || method == RestVerbs.Patch || method == RestVerbs.Delete))
