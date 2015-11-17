@@ -85,7 +85,7 @@ namespace Simple.OData.Client.V4.Adapter
         protected override async Task<Stream> WriteFunctionContentAsync(string method, string commandText)
         {
             if (IsBatch)
-                await CreateBatchOperationMessageAsync(method, null, null, commandText, false);
+                await CreateBatchOperationMessageAsync(method, null, null, commandText, true);
 
             return null;
         }
@@ -93,7 +93,7 @@ namespace Simple.OData.Client.V4.Adapter
         protected override async Task<Stream> WriteActionContentAsync(string method, string commandText, string actionName, IDictionary<string, object> parameters)
         {
             IODataRequestMessageAsync message = IsBatch
-                ? await CreateBatchOperationMessageAsync(method, null, null, commandText, false)
+                ? await CreateBatchOperationMessageAsync(method, null, null, commandText, true)
                 : new ODataRequestMessage();
 
             using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), _model))
