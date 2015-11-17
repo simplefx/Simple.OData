@@ -27,7 +27,7 @@ namespace Simple.OData.Client
         }
 
         protected DynamicODataExpression(string reference, object value)
-            : base(reference, null, value)
+            : base(reference, value)
         {
         }
 
