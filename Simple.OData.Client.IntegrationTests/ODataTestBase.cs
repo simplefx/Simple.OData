@@ -115,13 +115,13 @@ namespace Simple.OData.Client.Tests
                 foreach (var product in products)
                 {
                     if (product["Name"].ToString().StartsWith("Test"))
-                        await _client.DeleteEntryAsync("Products", product);
+                        await _client.For("Products").Key(product).DeleteEntryAsync();
                 }
                 var categories = await _client.For("Categories").Select("ID", "Name").FindEntriesAsync();
                 foreach (var category in categories)
                 {
                     if (category["Name"].ToString().StartsWith("Test"))
-                        await _client.DeleteEntryAsync("Categories", category);
+                        await _client.For("Categories").Key(category).DeleteEntryAsync();
                 }
             }
             catch (Exception)

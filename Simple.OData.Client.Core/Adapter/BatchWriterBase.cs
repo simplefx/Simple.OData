@@ -25,7 +25,7 @@ namespace Simple.OData.Client
 
         public abstract Task StartBatchAsync();
         public abstract Task<HttpRequestMessage> EndBatchAsync();
-        
+
         protected abstract Task StartChangesetAsync();
         protected abstract Task EndChangesetAsync();
         protected abstract Task<object> CreateOperationMessageAsync(Uri uri, string method, string collection, string contentId, bool resultRequired);

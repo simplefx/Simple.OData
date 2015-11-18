@@ -35,7 +35,7 @@ namespace Simple.OData.Client
                 nodeStack.Peek().Feed = feedNode.Feed;
             else
                 rootNode = feedNode;
-            
+
             feedNode.Feed.SetAnnotations(feedAnnotations);
         }
 

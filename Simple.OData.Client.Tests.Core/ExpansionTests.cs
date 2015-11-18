@@ -175,7 +175,7 @@ namespace Simple.OData.Client.Tests
             var client = CreateClient("ClientProductSku.xml");
 
             string[] CreateUpdateExpandTables = {
-                "Product/ProductCategory/Category/CategorySalesArea",            
+                "Product/ProductCategory/Category/CategorySalesArea",
                 "ClientProductSkuPriceList",
                 "ClientProductSkuSalesArea",
                 "Product/SupplierProductSkuClient/SupplierProductSku/SupplierProductSkuPriceList/SupplierPriceList",

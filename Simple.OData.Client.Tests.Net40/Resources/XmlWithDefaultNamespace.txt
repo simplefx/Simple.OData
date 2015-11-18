@@ -2,8 +2,8 @@
 <root xmlns="http://schemas.next.lib/tests">
   <child>
     <sub>Foo</sub>
-  </child>  
+  </child>
   <child>
     <sub>Bar</sub>
-  </child>  
+  </child>
 </root>
