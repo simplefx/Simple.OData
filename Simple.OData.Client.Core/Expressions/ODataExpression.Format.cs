@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
@@ -11,13 +12,13 @@ namespace Simple.OData.Client
 
         internal string Format(ExpressionContext context)
         {
-            if (context.IsQueryOption && _operator != ExpressionOperator.None && 
-                _operator != ExpressionOperator.AND && _operator != ExpressionOperator.EQ)
+            if (context.IsQueryOption && _operator != ExpressionType.Default &&
+                _operator != ExpressionType.And && _operator != ExpressionType.Equal)
             {
                 throw new InvalidOperationException("Invalid custom query option");
             }
 
-            if (_operator == ExpressionOperator.None && _conversionType == null)
+            if (_operator == ExpressionType.Default && _conversionType == null)
             {
                 return this.Reference != null ?
                     FormatReference(context) : this.Function != null ?
@@ -41,7 +42,7 @@ namespace Simple.OData.Client
                 }
                 return FormatExpression(expr, context);
             }
-            else if (_operator == ExpressionOperator.NOT || _operator == ExpressionOperator.NEG)
+            else if (_operator == ExpressionType.Not || _operator == ExpressionType.Negate)
             {
                 var left = FormatExpression(_left, context);
                 var op = FormatOperator(context);
@@ -200,35 +201,35 @@ namespace Simple.OData.Client
         {
             switch (_operator)
             {
-                case ExpressionOperator.AND:
+                case ExpressionType.And:
                     return context.IsQueryOption ? "&" : "and";
-                case ExpressionOperator.OR:
+                case ExpressionType.Or:
                     return "or";
-                case ExpressionOperator.NOT:
+                case ExpressionType.Not:
                     return "not";
-                case ExpressionOperator.EQ:
+                case ExpressionType.Equal:
                     return context.IsQueryOption ? "=" : "eq";
-                case ExpressionOperator.NE:
+                case ExpressionType.NotEqual:
                     return "ne";
-                case ExpressionOperator.GT:
+                case ExpressionType.GreaterThan:
                     return "gt";
-                case ExpressionOperator.GE:
+                case ExpressionType.GreaterThanOrEqual:
                     return "ge";
-                case ExpressionOperator.LT:
+                case ExpressionType.LessThan:
                     return "lt";
-                case ExpressionOperator.LE:
+                case ExpressionType.LessThanOrEqual:
                     return "le";
-                case ExpressionOperator.ADD:
+                case ExpressionType.Add:
                     return "add";
-                case ExpressionOperator.SUB:
+                case ExpressionType.Subtract:
                     return "sub";
-                case ExpressionOperator.MUL:
+                case ExpressionType.Multiply:
                     return "mul";
-                case ExpressionOperator.DIV:
+                case ExpressionType.Divide:
                     return "div";
-                case ExpressionOperator.MOD:
+                case ExpressionType.Modulo:
                     return "mod";
-                case ExpressionOperator.NEG:
+                case ExpressionType.Negate:
                     return "-";
                 default:
                     return null;
@@ -313,31 +314,31 @@ namespace Simple.OData.Client
             }
         }
 
-        private int GetPrecedence(ExpressionOperator op)
+        private int GetPrecedence(ExpressionType op)
         {
             switch (op)
             {
-                case ExpressionOperator.NOT:
-                case ExpressionOperator.NEG:
+                case ExpressionType.Not:
+                case ExpressionType.Negate:
                     return 1;
-                case ExpressionOperator.MOD:
-                case ExpressionOperator.MUL:
-                case ExpressionOperator.DIV:
+                case ExpressionType.Modulo:
+                case ExpressionType.Multiply:
+                case ExpressionType.Divide:
                     return 2;
-                case ExpressionOperator.ADD:
-                case ExpressionOperator.SUB:
+                case ExpressionType.Add:
+                case ExpressionType.Subtract:
                     return 3;
-                case ExpressionOperator.GT:
-                case ExpressionOperator.GE:
-                case ExpressionOperator.LT:
-                case ExpressionOperator.LE:
+                case ExpressionType.GreaterThan:
+                case ExpressionType.GreaterThanOrEqual:
+                case ExpressionType.LessThan:
+                case ExpressionType.LessThanOrEqual:
                     return 4;
-                case ExpressionOperator.EQ:
-                case ExpressionOperator.NE:
+                case ExpressionType.Equal:
+                case ExpressionType.NotEqual:
                     return 5;
-                case ExpressionOperator.AND:
+                case ExpressionType.And:
                     return 6;
-                case ExpressionOperator.OR:
+                case ExpressionType.Or:
                     return 7;
                 default:
                     return 0;
@@ -346,11 +347,11 @@ namespace Simple.OData.Client
 
         private bool NeedsGrouping(ODataExpression expr)
         {
-            if (_operator == ExpressionOperator.None)
+            if (_operator == ExpressionType.Default)
                 return false;
             if (ReferenceEquals(expr, null))
                 return false;
-            if (expr._operator == ExpressionOperator.None)
+            if (expr._operator == ExpressionType.Default)
                 return false;
 
             int outerPrecedence = GetPrecedence(_operator);

@@ -69,7 +69,6 @@
     <Compile Include="Extensions\XElementExtensions.cs" />
     <Compile Include="Expressions\ExpressionContext.cs" />
     <Compile Include="Expressions\ExpressionFunction.cs" />
-    <Compile Include="Expressions\ExpressionOperator.cs" />
     <Compile Include="Expressions\ODataExpression.cs" />
     <Compile Include="Expressions\ODataExpression.Format.cs" />
     <Compile Include="Expressions\ODataExpression.Operators.cs" />

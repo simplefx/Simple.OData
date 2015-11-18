@@ -12,11 +12,10 @@ namespace Simple.OData.Client
         private readonly ODataExpression _functionCaller;
         private readonly ODataExpression _left;
         private readonly ODataExpression _right;
-        private readonly ExpressionOperator _operator;
+        private readonly ExpressionType _operator = ExpressionType.Default;
         private readonly Type _conversionType;
 
         public string Reference { get; private set; }
-        public string ReferenceScope { get; private set; }
         public object Value { get; private set; }
         public ExpressionFunction Function { get; private set; }
 
@@ -38,7 +37,6 @@ namespace Simple.OData.Client
             _conversionType = expression._conversionType;
 
             this.Reference = expression.Reference;
-            this.ReferenceScope = expression.ReferenceScope;
             this.Value = expression.Value;
             this.Function = expression.Function;
         }
@@ -53,23 +51,10 @@ namespace Simple.OData.Client
             this.Reference = reference;
         }
 
-        protected internal ODataExpression(string reference, string referenceScope)
-        {
-            this.Reference = reference;
-            this.ReferenceScope = referenceScope;
-        }
-
         protected internal ODataExpression(string reference, object value)
         {
             this.Reference = reference;
             this.Value = value;
-        }
-
-        protected internal ODataExpression(string reference, string referenceScope, object value)
-        {
-            this.Reference = reference;
-            this.Value = value;
-            this.ReferenceScope = referenceScope;
         }
 
         protected internal ODataExpression(ExpressionFunction function)
@@ -77,7 +62,7 @@ namespace Simple.OData.Client
             this.Function = function;
         }
 
-        protected internal ODataExpression(ODataExpression left, ODataExpression right, ExpressionOperator expressionOperator)
+        protected internal ODataExpression(ODataExpression left, ODataExpression right, ExpressionType expressionOperator)
         {
             _left = left;
             _right = right;
@@ -102,19 +87,14 @@ namespace Simple.OData.Client
             _conversionType = conversionType;
         }
 
-        internal static ODataExpression FromReference(string reference, string referenceScope = null)
+        internal static ODataExpression FromReference(string reference)
         {
-            return new ODataExpression(reference, referenceScope);
+            return new ODataExpression(reference);
         }
 
         internal static ODataExpression FromValue(object value)
         {
             return new ODataExpression(value);
-        }
-
-        internal static ODataExpression FromAssignment(string reference, object value, string referenceScope = null)
-        {
-            return new ODataExpression(reference, referenceScope, value);
         }
 
         internal static ODataExpression FromFunction(ExpressionFunction function)
@@ -145,8 +125,9 @@ namespace Simple.OData.Client
         {
             get { return this.Value == null && 
                 this.Reference == null && 
-                this.Function == null && 
-                _operator == ExpressionOperator.None; }
+                this.Function == null &&
+                _operator == ExpressionType.Default;
+            }
         }
 
         public string AsString(ISession session)
@@ -158,13 +139,13 @@ namespace Simple.OData.Client
         {
             switch (_operator)
             {
-                case ExpressionOperator.AND:
+                case ExpressionType.And:
                     var ok = _left.ExtractLookupColumns(lookupColumns);
                     if (ok)
                         ok = _right.ExtractLookupColumns(lookupColumns);
                     return ok;
 
-                case ExpressionOperator.EQ:
+                case ExpressionType.Equal:
                     var expr = _left;
                     while (expr._conversionType != null)
                     {
@@ -192,7 +173,7 @@ namespace Simple.OData.Client
 
         internal bool HasTypeConstraint(string typeName)
         {
-            if (_operator == ExpressionOperator.AND)
+            if (_operator == ExpressionType.And)
             {
                 return _left.HasTypeConstraint(typeName) || _right.HasTypeConstraint(typeName);
             }

@@ -35,7 +35,7 @@ namespace Simple.OData.Client
                 if (loadAdapter != null)
                     return loadAdapter();
             }
-            throw new NotSupportedException(string.Format("OData protocol {0} is not supported", protocolVersions));
+            throw new NotSupportedException(string.Format("OData protocols {0} are not supported", string.Join(",", protocolVersions)));
         }
 
         public IODataAdapter CreateAdapter(string metadataString)

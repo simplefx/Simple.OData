@@ -198,9 +198,6 @@
     <Compile Include="..\Simple.OData.Client.Core\Expressions\ExpressionFunction.cs">
       <Link>Expressions\ExpressionFunction.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Core\Expressions\ExpressionOperator.cs">
-      <Link>Expressions\ExpressionOperator.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Expressions\ODataExpression.cs">
       <Link>Expressions\ODataExpression.cs</Link>
     </Compile>

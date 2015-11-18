@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq.Expressions;
 
 #pragma warning disable 0660,0661
 #pragma warning disable 1591
@@ -27,77 +28,77 @@ namespace Simple.OData.Client
 
         public static ODataExpression operator !(ODataExpression expr)
         {
-            return new ODataExpression(expr, null, ExpressionOperator.NOT);
+            return new ODataExpression(expr, null, ExpressionType.Not);
         }
 
         public static ODataExpression operator -(ODataExpression expr)
         {
-            return new ODataExpression(expr, null, ExpressionOperator.NEG);
+            return new ODataExpression(expr, null, ExpressionType.Negate);
         }
 
         public static ODataExpression operator ==(ODataExpression expr1, ODataExpression expr2)
         {
-            return new ODataExpression(expr1, expr2, ExpressionOperator.EQ);
+            return new ODataExpression(expr1, expr2, ExpressionType.Equal);
         }
 
         public static ODataExpression operator !=(ODataExpression expr1, ODataExpression expr2)
         {
-            return new ODataExpression(expr1, expr2, ExpressionOperator.NE);
+            return new ODataExpression(expr1, expr2, ExpressionType.NotEqual);
         }
 
         public static ODataExpression operator &(ODataExpression expr1, ODataExpression expr2)
         {
-            return new ODataExpression(expr1, expr2, ExpressionOperator.AND);
+            return new ODataExpression(expr1, expr2, ExpressionType.And);
         }
 
         public static ODataExpression operator |(ODataExpression expr1, ODataExpression expr2)
         {
-            return new ODataExpression(expr1, expr2, ExpressionOperator.OR);
+            return new ODataExpression(expr1, expr2, ExpressionType.Or);
         }
 
         public static ODataExpression operator >(ODataExpression expr1, ODataExpression expr2)
         {
-            return new ODataExpression(expr1, expr2, ExpressionOperator.GT);
+            return new ODataExpression(expr1, expr2, ExpressionType.GreaterThan);
         }
 
         public static ODataExpression operator <(ODataExpression expr1, ODataExpression expr2)
         {
-            return new ODataExpression(expr1, expr2, ExpressionOperator.LT);
+            return new ODataExpression(expr1, expr2, ExpressionType.LessThan);
         }
 
         public static ODataExpression operator >=(ODataExpression expr1, ODataExpression expr2)
         {
-            return new ODataExpression(expr1, expr2, ExpressionOperator.GE);
+            return new ODataExpression(expr1, expr2, ExpressionType.GreaterThanOrEqual);
         }
 
         public static ODataExpression operator <=(ODataExpression expr1, ODataExpression expr2)
         {
-            return new ODataExpression(expr1, expr2, ExpressionOperator.LE);
+            return new ODataExpression(expr1, expr2, ExpressionType.LessThanOrEqual);
         }
 
         public static ODataExpression operator +(ODataExpression expr1, ODataExpression expr2)
         {
-            return new ODataExpression(expr1, expr2, ExpressionOperator.ADD);
+            return new ODataExpression(expr1, expr2, ExpressionType.Add);
         }
 
         public static ODataExpression operator -(ODataExpression expr1, ODataExpression expr2)
         {
-            return new ODataExpression(expr1, expr2, ExpressionOperator.SUB);
+            return new ODataExpression(expr1, expr2, ExpressionType.Subtract);
         }
 
         public static ODataExpression operator *(ODataExpression expr1, ODataExpression expr2)
         {
-            return new ODataExpression(expr1, expr2, ExpressionOperator.MUL);
+            return new ODataExpression(expr1, expr2, ExpressionType.Multiply);
         }
 
         public static ODataExpression operator /(ODataExpression expr1, ODataExpression expr2)
         {
-            return new ODataExpression(expr1, expr2, ExpressionOperator.DIV);
+            return new ODataExpression(expr1, expr2, ExpressionType.Divide);
         }
 
         public static ODataExpression operator %(ODataExpression expr1, ODataExpression expr2)
         {
-            return new ODataExpression(expr1, expr2, ExpressionOperator.MOD);
+            return new ODataExpression(expr1, expr2, ExpressionType.Modulo);
         }
 
         public static bool operator true(ODataExpression expr)
@@ -116,77 +117,77 @@ namespace Simple.OData.Client
 
         public static ODataExpression<T> operator !(ODataExpression<T> expr)
         {
-            return new ODataExpression<T>(new ODataExpression(expr, null, ExpressionOperator.NOT));
+            return new ODataExpression<T>(new ODataExpression(expr, null, ExpressionType.Not));
         }
 
         public static ODataExpression<T> operator -(ODataExpression<T> expr)
         {
-            return new ODataExpression<T>(new ODataExpression(expr, null, ExpressionOperator.NEG));
+            return new ODataExpression<T>(new ODataExpression(expr, null, ExpressionType.Negate));
         }
 
         public static ODataExpression<T> operator ==(ODataExpression<T> expr1, ODataExpression<T> expr2)
         {
-            return new ODataExpression<T>(new ODataExpression(expr1, expr2, ExpressionOperator.EQ));
+            return new ODataExpression<T>(new ODataExpression(expr1, expr2, ExpressionType.Equal));
         }
 
         public static ODataExpression<T> operator !=(ODataExpression<T> expr1, ODataExpression<T> expr2)
         {
-            return new ODataExpression<T>(new ODataExpression(expr1, expr2, ExpressionOperator.NE));
+            return new ODataExpression<T>(new ODataExpression(expr1, expr2, ExpressionType.NotEqual));
         }
 
         public static ODataExpression<T> operator &(ODataExpression<T> expr1, ODataExpression<T> expr2)
         {
-            return new ODataExpression<T>(new ODataExpression(expr1, expr2, ExpressionOperator.AND));
+            return new ODataExpression<T>(new ODataExpression(expr1, expr2, ExpressionType.And));
         }
 
         public static ODataExpression<T> operator |(ODataExpression<T> expr1, ODataExpression<T> expr2)
         {
-            return new ODataExpression<T>(new ODataExpression(expr1, expr2, ExpressionOperator.OR));
+            return new ODataExpression<T>(new ODataExpression(expr1, expr2, ExpressionType.Or));
         }
 
         public static ODataExpression<T> operator >(ODataExpression<T> expr1, ODataExpression<T> expr2)
         {
-            return new ODataExpression<T>(new ODataExpression(expr1, expr2, ExpressionOperator.GT));
+            return new ODataExpression<T>(new ODataExpression(expr1, expr2, ExpressionType.GreaterThan));
         }
 
         public static ODataExpression<T> operator <(ODataExpression<T> expr1, ODataExpression<T> expr2)
         {
-            return new ODataExpression<T>(new ODataExpression(expr1, expr2, ExpressionOperator.LT));
+            return new ODataExpression<T>(new ODataExpression(expr1, expr2, ExpressionType.LessThan));
         }
 
         public static ODataExpression<T> operator >=(ODataExpression<T> expr1, ODataExpression<T> expr2)
         {
-            return new ODataExpression<T>(new ODataExpression(expr1, expr2, ExpressionOperator.GE));
+            return new ODataExpression<T>(new ODataExpression(expr1, expr2, ExpressionType.GreaterThanOrEqual));
         }
 
         public static ODataExpression<T> operator <=(ODataExpression<T> expr1, ODataExpression<T> expr2)
         {
-            return new ODataExpression<T>(new ODataExpression(expr1, expr2, ExpressionOperator.LE));
+            return new ODataExpression<T>(new ODataExpression(expr1, expr2, ExpressionType.LessThanOrEqual));
         }
 
         public static ODataExpression<T> operator +(ODataExpression<T> expr1, ODataExpression<T> expr2)
         {
-            return new ODataExpression<T>(new ODataExpression(expr1, expr2, ExpressionOperator.ADD));
+            return new ODataExpression<T>(new ODataExpression(expr1, expr2, ExpressionType.Add));
         }
 
         public static ODataExpression<T> operator -(ODataExpression<T> expr1, ODataExpression<T> expr2)
         {
-            return new ODataExpression<T>(new ODataExpression(expr1, expr2, ExpressionOperator.SUB));
+            return new ODataExpression<T>(new ODataExpression(expr1, expr2, ExpressionType.Subtract));
         }
 
         public static ODataExpression<T> operator *(ODataExpression<T> expr1, ODataExpression<T> expr2)
         {
-            return new ODataExpression<T>(new ODataExpression(expr1, expr2, ExpressionOperator.MUL));
+            return new ODataExpression<T>(new ODataExpression(expr1, expr2, ExpressionType.Multiply));
         }
 
         public static ODataExpression<T> operator /(ODataExpression<T> expr1, ODataExpression<T> expr2)
         {
-            return new ODataExpression<T>(new ODataExpression(expr1, expr2, ExpressionOperator.DIV));
+            return new ODataExpression<T>(new ODataExpression(expr1, expr2, ExpressionType.Divide));
         }
 
         public static ODataExpression<T> operator %(ODataExpression<T> expr1, ODataExpression<T> expr2)
         {
-            return new ODataExpression<T>(new ODataExpression(expr1, expr2, ExpressionOperator.MOD));
+            return new ODataExpression<T>(new ODataExpression(expr1, expr2, ExpressionType.Modulo));
         }
 
         public static bool operator true(ODataExpression<T> expr)

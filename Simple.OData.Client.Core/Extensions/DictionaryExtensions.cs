@@ -31,7 +31,7 @@ namespace Simple.OData.Client.Extensions
         public static object ToObject(this IDictionary<string, object> source, Type type, string dynamicPropertiesContainerName = null)
         {
             var ctor = type.GetDefaultConstructor();
-            if (ctor == null && !CustomConverters.HasConverter(type))
+            if (ctor == null && !CustomConverters.HasDictionaryConverter(type))
             {
                 throw new InvalidOperationException(
                     string.Format("Unable to create an instance of type {0} that does not have a default constructor.", type.Name));
@@ -50,7 +50,7 @@ namespace Simple.OData.Client.Extensions
             if (type == typeof(ODataEntry))
                 return CreateODataEntry(source, dynamicObject);
 
-            if (CustomConverters.HasConverter(type))
+            if (CustomConverters.HasDictionaryConverter(type))
             {
                 return CustomConverters.Convert(source, type);
             }

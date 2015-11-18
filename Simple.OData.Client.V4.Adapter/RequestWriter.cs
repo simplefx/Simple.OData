@@ -85,7 +85,7 @@ namespace Simple.OData.Client.V4.Adapter
         protected override async Task<Stream> WriteFunctionContentAsync(string method, string commandText)
         {
             if (IsBatch)
-                await CreateBatchOperationMessageAsync(method, null, null, commandText, false);
+                await CreateBatchOperationMessageAsync(method, null, null, commandText, true);
 
             return null;
         }
@@ -93,7 +93,7 @@ namespace Simple.OData.Client.V4.Adapter
         protected override async Task<Stream> WriteActionContentAsync(string method, string commandText, string actionName, IDictionary<string, object> parameters)
         {
             IODataRequestMessageAsync message = IsBatch
-                ? await CreateBatchOperationMessageAsync(method, null, null, commandText, false)
+                ? await CreateBatchOperationMessageAsync(method, null, null, commandText, true)
                 : new ODataRequestMessage();
 
             using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), _model))
@@ -366,12 +366,19 @@ namespace Simple.OData.Client.V4.Adapter
                             if (Utils.TryConvert(value, mappedType.Key, out result))
                                 return result;
                         }
-                        throw new FormatException(string.Format("Unable to convert value of type {0} to OData type {1}", value.GetType(), propertyType));
+                        throw new NotSupportedException(string.Format("Conversion is not supported from type {0} to OData type {1}", value.GetType(), propertyType));
                     }
                     return value;
 
                 case EdmTypeKind.Enum:
                     return new ODataEnumValue(value.ToString());
+
+                case EdmTypeKind.None:
+                    if (CustomConverters.HasObjectConverter(value.GetType()))
+                    {
+                        return CustomConverters.Convert(value, value.GetType());
+                    }
+                    throw new NotSupportedException(string.Format("Conversion is not supported from type {0} to OData type {1}", value.GetType(), propertyType));
 
                 default:
                     return value;
