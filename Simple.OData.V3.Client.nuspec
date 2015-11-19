@@ -25,6 +25,19 @@
       <group>
         <dependency id="Microsoft.Bcl.Build" version="1.0.21" />
         <dependency id="Microsoft.Bcl" version="1.1.9" />
+        <dependency id="Microsoft.Net.Http" version="2.2.28" />
+        <dependency id="Microsoft.Data.OData" version="5.6.4" />
+      </group>
+      <group targetFramework="net40">
+        <dependency id="Microsoft.Bcl.Build" version="1.0.21" />
+        <dependency id="Microsoft.Bcl" version="1.1.9" />
+        <dependency id="Microsoft.Bcl.Async" version="1.0.168" />
+        <dependency id="Microsoft.Net.Http" version="2.2.28" />
+        <dependency id="Microsoft.Data.OData" version="5.6.4" />
+      </group>
+      <group targetFramework="sl5">
+        <dependency id="Microsoft.Bcl.Build" version="1.0.21" />
+        <dependency id="Microsoft.Bcl" version="1.1.9" />
         <dependency id="Microsoft.Bcl.Async" version="1.0.168" />
         <dependency id="Microsoft.Net.Http" version="2.2.28" />
         <dependency id="Microsoft.Data.OData" version="5.6.4" />
@@ -32,7 +45,8 @@
     </dependencies>
     <frameworkAssemblies>
       <frameworkAssembly assemblyName="System.Xml.Linq" targetFramework="sl5" />
-    </frameworkAssemblies>  </metadata>
+    </frameworkAssemblies>
+  </metadata>
   <files>
     <!-- PCL -->
     <file src="Simple.OData.Client.Core\bin\Release\Simple.OData.Client.Core.dll" target="lib\portable-net45+win8+wp8+wpa81\Simple.OData.Client.Core.dll" />
