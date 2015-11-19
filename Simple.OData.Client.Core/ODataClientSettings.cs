@@ -166,9 +166,17 @@ namespace Simple.OData.Client
         /// Gets or sets the method that will be executed to write trace messages.
         /// </summary>
         /// <value>
-        /// The trace action on <see cref="HttpResponseMessage"/>.
+        /// The trace message handler.
         /// </value>
         public Action<string, object[]> OnTrace { get; set; }
+
+        /// <summary>
+        /// Gets or sets the filter of information that is written to trace messages.
+        /// </summary>
+        /// <value>
+        /// The <see cref="ODataTrace"/> filter value.
+        /// </value>
+        public ODataTrace TraceFilter { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ODataClientSettings"/> class.
@@ -209,11 +217,15 @@ namespace Simple.OData.Client
             this.IncludeAnnotationsInResults = session.Settings.IncludeAnnotationsInResults;
             this.IgnoreResourceNotFoundException = session.Settings.IgnoreResourceNotFoundException;
             this.IgnoreUnmappedProperties = session.Settings.IgnoreUnmappedProperties;
+            this.PreferredUpdateMethod = session.Settings.PreferredUpdateMethod;
             this.MetadataDocument = session.Settings.MetadataDocument;
-            this.BeforeRequest = session.Settings.BeforeRequest;
-            this.AfterResponse = session.Settings.AfterResponse;
+            this.RenewHttpConnection = session.Settings.RenewHttpConnection;
             this.OnCreateMessageHandler = session.Settings.OnCreateMessageHandler;
             this.OnApplyClientHandler = session.Settings.OnApplyClientHandler;
+            this.BeforeRequest = session.Settings.BeforeRequest;
+            this.AfterResponse = session.Settings.AfterResponse;
+            this.OnTrace = session.Settings.OnTrace;
+            this.TraceFilter = session.Settings.TraceFilter;
         }
     }
 }

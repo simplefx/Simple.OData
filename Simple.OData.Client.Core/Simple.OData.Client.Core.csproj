@@ -108,6 +108,7 @@
     <Compile Include="ODataEntry.cs" />
     <Compile Include="ODataResponse.cs" />
     <Compile Include="ODataProtocolVersion.cs" />
+    <Compile Include="ODataTrace.cs" />
     <Compile Include="ODataUpdateMethod.cs" />
     <Compile Include="Pluralizer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
