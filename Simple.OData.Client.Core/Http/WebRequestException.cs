@@ -42,6 +42,16 @@ namespace Simple.OData.Client
         }
 
         /// <summary>
+        /// Creates from the instance of AggregateException.
+        /// </summary>
+        /// <param name="ex">The instance of <see cref="AggregateException"/>.</param>
+        /// <returns>The instance of <see cref="WebRequestException"/>.</returns>
+        public static WebRequestException CreateFromAggregateException(AggregateException ex)
+        {
+            return new WebRequestException(ex.Message, 0, null, ex);
+        }
+
+        /// <summary>
         /// Creates from the instance of HttpResponseMessage.
         /// </summary>
         /// <param name="statusCode">The HTTP status code.</param>

@@ -217,50 +217,17 @@ namespace Simple.OData.Client
                 return;
 
             var responseIndexes = new List<int>();
-
-            // Write batch operations into a batch content
-            var lastOperationId = 0;
-            foreach (var action in actions)
+            var request = await _lazyBatchWriter.Value.CreateBatchRequestAsync(this, actions, responseIndexes);
+            if (request != null)
             {
-                await action(this);
-                var responseIndex = -1;
-                if (_lazyBatchWriter.Value.LastOperationId > lastOperationId)
-                {
-                    lastOperationId = _lazyBatchWriter.Value.LastOperationId;
-                    responseIndex = lastOperationId - 1;
-                }
-                responseIndexes.Add(responseIndex);
-            }
-
-            if (_lazyBatchWriter.Value.HasOperations)
-            {
-                // Create batch request message
-                var requestMessage = await _lazyBatchWriter.Value.EndBatchAsync();
-                var request = new ODataRequest(RestVerbs.Post, _session, ODataLiteral.Batch, requestMessage);
-
                 // Execute batch and get response
-                ODataResponse batchResponse;
                 using (var response = await _requestRunner.ExecuteRequestAsync(request, cancellationToken))
                 {
                     var responseReader = _session.Adapter.GetResponseReader();
-                    batchResponse = await responseReader.GetResponseAsync(response);
-                }
+                    var batchResponse = await responseReader.GetResponseAsync(response);
 
-                // Replay batch operations to assign results
-                for (int actionIndex = 0; actionIndex < actions.Count; actionIndex++)
-                {
-                    var responseIndex = responseIndexes[actionIndex];
-                    if (responseIndex >= 0)
-                    {
-                        var actionResponse = batchResponse.Batch[responseIndex];
-                        if (actionResponse.StatusCode >= 400)
-                        {
-                            throw WebRequestException.CreateFromStatusCode((HttpStatusCode)actionResponse.StatusCode);
-                        }
-
-                        var client = new ODataClient(this, actionResponse);
-                        await actions[actionIndex](client);
-                    }
+                    // Replay batch operations to assign results
+                    await responseReader.AssignBatchActionResultsAsync(this, batchResponse, actions, responseIndexes);
                 }
             }
         }

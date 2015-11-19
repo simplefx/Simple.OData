@@ -25,6 +25,35 @@ namespace Simple.OData.Client
 
         public abstract Task StartBatchAsync();
         public abstract Task<HttpRequestMessage> EndBatchAsync();
+
+        public async Task<ODataRequest> CreateBatchRequestAsync(
+            IODataClient client, IList<Func<IODataClient, Task>> actions, IList<int> responseIndexes)
+        {
+            // Write batch operations into a batch content
+            var lastOperationId = 0;
+            foreach (var action in actions)
+            {
+                await action(client);
+                var responseIndex = -1;
+                if (this.LastOperationId > lastOperationId)
+                {
+                    lastOperationId = LastOperationId;
+                    responseIndex = lastOperationId - 1;
+                }
+                responseIndexes.Add(responseIndex);
+            }
+
+            if (this.HasOperations)
+            {
+                // Create batch request message
+                var requestMessage = await EndBatchAsync();
+                return new ODataRequest(RestVerbs.Post, _session, ODataLiteral.Batch, requestMessage);
+            }
+            else
+            {
+                return null;
+            }
+        }
         
         protected abstract Task StartChangesetAsync();
         protected abstract Task EndChangesetAsync();
