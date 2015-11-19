@@ -65,7 +65,7 @@ namespace Simple.OData.Client.Tests
         //    var batch = new ODataBatch(_serviceUri);
         //    batch += x => x.InsertEntryAsync("Products", CreateProduct(5003, "Test3"), false);
         //    batch += x => x.InsertEntryAsync("Products", CreateProduct(0, "Test4"), false);
-        //    await AssertThrowsAsync<WebRequestException>(async () => await batch.ExecuteAsync());
+        //    await AssertThrowsAsync<AggregateException>(async () => await batch.ExecuteAsync());
         //}
 
         // OData.org sample service doesn't fail on this request
@@ -75,7 +75,7 @@ namespace Simple.OData.Client.Tests
         //    var batch = new ODataBatch(_serviceUri);
         //    batch += x => x.InsertEntryAsync("Products", CreateProduct(0, "Test5"), false);
         //    batch += x => x.InsertEntryAsync("Products", CreateProduct(0, "Test6"), false);
-        //    await AssertThrowsAsync<WebRequestException>(async () => await batch.ExecuteAsync());
+        //    await AssertThrowsAsync<AggregateException>(async () => await batch.ExecuteAsync());
         //}
 
         [Fact]

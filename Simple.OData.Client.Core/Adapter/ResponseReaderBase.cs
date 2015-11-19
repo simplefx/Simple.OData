@@ -24,13 +24,17 @@ namespace Simple.OData.Client
             ODataResponse batchResponse, IList<Func<IODataClient, Task>> actions, IList<int> responseIndexes)
         {
             var exceptions = new List<Exception>();
-            for (var actionIndex = 0; actionIndex < actions.Count && !exceptions.Any(); actionIndex++)
+            for (var actionIndex = 0; actionIndex < actions.Count; actionIndex++)
             {
                 var responseIndex = responseIndexes[actionIndex];
-                if (responseIndex >= 0)
+                if (responseIndex >= 0 && responseIndex < batchResponse.Batch.Count)
                 {
                     var actionResponse = batchResponse.Batch[responseIndex];
-                    if (actionResponse.StatusCode >= 400)
+                    if (actionResponse.Exception != null)
+                    {
+                        exceptions.Add(actionResponse.Exception);
+                    }
+                    else if (actionResponse.StatusCode >= (int)HttpStatusCode.BadRequest)
                     {
                         exceptions.Add(WebRequestException.CreateFromStatusCode((HttpStatusCode)actionResponse.StatusCode));
                     }
@@ -43,7 +47,7 @@ namespace Simple.OData.Client
 
             if (exceptions.Any())
             {
-                throw WebRequestException.CreateFromAggregateException(new AggregateException(exceptions));
+                throw new AggregateException(exceptions);
             }
         }
 

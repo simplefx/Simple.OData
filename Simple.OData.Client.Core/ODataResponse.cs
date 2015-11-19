@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
+using Simple.OData.Client.Extensions;
 
 #pragma warning disable 1591
 
@@ -67,6 +69,8 @@ namespace Simple.OData.Client
         public int StatusCode { get; private set; }
         public AnnotatedFeed Feed { get; private set; }
         public IList<ODataResponse> Batch { get; private set; }
+        public Exception Exception { get; private set; }
+        public string DynamicPropertiesContainerName { get; private set; }
 
         private ODataResponse()
         {
@@ -156,12 +160,33 @@ namespace Simple.OData.Client
             };
         }
 
-        public static ODataResponse FromStatusCode(int statusCode)
+        public static ODataResponse FromStatusCode(int statusCode, Exception exception = null)
         {
             return new ODataResponse
             {
                 StatusCode = statusCode,
+                Exception = exception,
             };
+        }
+
+        public static ODataResponse FromStatusCode(int statusCode, Stream responseStream)
+        {
+            if (statusCode >= (int)HttpStatusCode.BadRequest)
+            {
+                var responseContent = Utils.StreamToString(responseStream, true);
+                return new ODataResponse
+                {
+                    StatusCode = statusCode,
+                    Exception = WebRequestException.CreateFromStatusCode((HttpStatusCode)statusCode, responseContent),
+                };
+            }
+            else
+            {
+                return new ODataResponse
+                {
+                    StatusCode = statusCode,
+                };
+            }
         }
 
         public static ODataResponse EmptyFeed

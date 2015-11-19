@@ -78,7 +78,20 @@ namespace Simple.OData.Client.Tests
                 .For<Product>()
                 .Set(new { ProductName = "Test2", UnitPrice = 20m, SupplierID = 0xFFFF })
                 .InsertEntryAsync(false);
-            await AssertThrowsAsync<WebRequestException>(async () => await batch.ExecuteAsync());
+
+            try
+            {
+                await batch.ExecuteAsync();
+            }
+            catch (AggregateException exception)
+            {
+                Assert.Equal(1, exception.InnerExceptions.Count);
+                foreach (var innerException in exception.InnerExceptions)
+                {
+                    Assert.IsType<WebRequestException>(innerException);
+                    Assert.NotNull((innerException as WebRequestException).Response);
+                }
+            }
         }
 
         [Fact]
@@ -93,7 +106,20 @@ namespace Simple.OData.Client.Tests
                 .For<Product>()
                 .Set(new { UnitPrice = 20m })
                 .InsertEntryAsync(false);
-            await AssertThrowsAsync<WebRequestException>(async () => await batch.ExecuteAsync());
+
+            try
+            {
+                await batch.ExecuteAsync();
+            }
+            catch (AggregateException exception)
+            {
+                Assert.Equal(1, exception.InnerExceptions.Count);
+                foreach (var innerException in exception.InnerExceptions)
+                {
+                    Assert.IsType<WebRequestException>(innerException);
+                    Assert.NotNull((innerException as WebRequestException).Response);
+                }
+            }
         }
 
         [Fact]
