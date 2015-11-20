@@ -83,14 +83,9 @@ namespace Simple.OData.Client.Tests
             {
                 await batch.ExecuteAsync();
             }
-            catch (AggregateException exception)
+            catch (WebRequestException exception)
             {
-                Assert.Equal(1, exception.InnerExceptions.Count);
-                foreach (var innerException in exception.InnerExceptions)
-                {
-                    Assert.IsType<WebRequestException>(innerException);
-                    Assert.NotNull((innerException as WebRequestException).Response);
-                }
+                Assert.NotNull(exception.Response);
             }
         }
 
@@ -111,14 +106,9 @@ namespace Simple.OData.Client.Tests
             {
                 await batch.ExecuteAsync();
             }
-            catch (AggregateException exception)
+            catch (WebRequestException exception)
             {
-                Assert.Equal(1, exception.InnerExceptions.Count);
-                foreach (var innerException in exception.InnerExceptions)
-                {
-                    Assert.IsType<WebRequestException>(innerException);
-                    Assert.NotNull((innerException as WebRequestException).Response);
-                }
+                Assert.NotNull(exception.Response);
             }
         }
 

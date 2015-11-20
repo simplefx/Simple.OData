@@ -24,7 +24,7 @@ namespace Simple.OData.Client
             ODataResponse batchResponse, IList<Func<IODataClient, Task>> actions, IList<int> responseIndexes)
         {
             var exceptions = new List<Exception>();
-            for (var actionIndex = 0; actionIndex < actions.Count; actionIndex++)
+            for (var actionIndex = 0; actionIndex < actions.Count && !exceptions.Any(); actionIndex++)
             {
                 var responseIndex = responseIndexes[actionIndex];
                 if (responseIndex >= 0 && responseIndex < batchResponse.Batch.Count)
@@ -47,7 +47,7 @@ namespace Simple.OData.Client
 
             if (exceptions.Any())
             {
-                throw new AggregateException(exceptions);
+                throw exceptions.First();
             }
         }
 
