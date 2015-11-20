@@ -99,7 +99,8 @@ namespace Simple.OData.Client.Tests
             }
             catch (AggregateException exception)
             {
-                Assert.IsType<T>(exception.InnerExceptions.Single());
+                var innerException = exception.InnerExceptions.Single();
+                Assert.IsType<T>(innerException);
             }
         }
     }

@@ -134,6 +134,10 @@ namespace Simple.OData.Client.V4.Adapter
                         var operationMessage = odataReader.CreateOperationResponseMessage();
                         if (operationMessage.StatusCode == (int)HttpStatusCode.NoContent)
                             batch.Add(ODataResponse.FromStatusCode(operationMessage.StatusCode));
+                        else if (operationMessage.StatusCode >= (int)HttpStatusCode.BadRequest)
+                            batch.Add(ODataResponse.FromStatusCode(
+                                operationMessage.StatusCode,
+                                await operationMessage.GetStreamAsync()));
                         else
                             batch.Add(await GetResponseAsync(operationMessage));
                         break;

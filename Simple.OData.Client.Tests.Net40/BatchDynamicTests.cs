@@ -82,7 +82,15 @@ namespace Simple.OData.Client.Tests
                 .For<Product>()
                 .Set(x.ProductName = "Test2", x.UnitPrice = 20m, x.SupplierID = 0xFFFF)
                 .InsertEntryAsync(false);
-            await AssertThrowsAsync<WebRequestException>(async () => await batch.ExecuteAsync());
+
+            try
+            {
+                await batch.ExecuteAsync();
+            }
+            catch (WebRequestException exception)
+            {
+                Assert.NotNull(exception.Response);
+            }
         }
 
         [Fact]
@@ -98,7 +106,15 @@ namespace Simple.OData.Client.Tests
                 .For<Product>()
                 .Set(x.UnitPrice = 20m)
                 .InsertEntryAsync(false);
-            await AssertThrowsAsync<WebRequestException>(async () => await batch.ExecuteAsync());
+
+            try
+            {
+                await batch.ExecuteAsync();
+            }
+            catch (WebRequestException exception)
+            {
+                Assert.NotNull(exception.Response);
+            }
         }
 
         [Fact]

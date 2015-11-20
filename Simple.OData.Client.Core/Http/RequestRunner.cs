@@ -1,9 +1,4 @@
-﻿#if DEBUG
-#undef TRACE_REQUEST_CONTENT
-#undef TRACE_RESPONSE_CONTENT
-#endif
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -35,25 +30,21 @@ namespace Simple.OData.Client
                 PreExecute(httpConnection.HttpClient, request);
 
                 _session.Trace("{0} request: {1}", request.Method, request.RequestMessage.RequestUri.AbsoluteUri);
-#if TRACE_REQUEST_CONTENT
-                    if (request.RequestMessage.Content != null)
-                    {
-                        var content = await request.RequestMessage.Content.ReadAsStringAsync();
-                        _session.Trace("Request content:{0}{1}", Environment.NewLine, content);
-                    }
-#endif
+                if (request.RequestMessage.Content != null && (_session.Settings.TraceFilter & ODataTrace.RequestContent) != 0)
+                {
+                    var content = await request.RequestMessage.Content.ReadAsStringAsync();
+                    _session.Trace("Request content:{0}{1}", Environment.NewLine, content);
+                }
 
                 var response = await httpConnection.HttpClient.SendAsync(request.RequestMessage, cancellationToken);
                 if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
                 _session.Trace("Request completed: {0}", response.StatusCode);
-#if TRACE_RESPONSE_CONTENT
-                    if (response.Content != null)
-                    {
-                        var content = await response.Content.ReadAsStringAsync();
-                        _session.Trace("Response content:{0}{1}", Environment.NewLine, content);
-                    }
-#endif
+                if (response.Content != null && (_session.Settings.TraceFilter & ODataTrace.ResponseContent) != 0)
+                {
+                    var content = await response.Content.ReadAsStringAsync();
+                    _session.Trace("Response content:{0}{1}", Environment.NewLine, content);
+                }
 
                 await PostExecute(response);
                 return response;

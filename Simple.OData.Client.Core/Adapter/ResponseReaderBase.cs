@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -17,6 +19,37 @@ namespace Simple.OData.Client
         }
 
         public abstract Task<ODataResponse> GetResponseAsync(HttpResponseMessage responseMessage);
+
+        public async Task AssignBatchActionResultsAsync(IODataClient client,
+            ODataResponse batchResponse, IList<Func<IODataClient, Task>> actions, IList<int> responseIndexes)
+        {
+            var exceptions = new List<Exception>();
+            for (var actionIndex = 0; actionIndex < actions.Count && !exceptions.Any(); actionIndex++)
+            {
+                var responseIndex = responseIndexes[actionIndex];
+                if (responseIndex >= 0 && responseIndex < batchResponse.Batch.Count)
+                {
+                    var actionResponse = batchResponse.Batch[responseIndex];
+                    if (actionResponse.Exception != null)
+                    {
+                        exceptions.Add(actionResponse.Exception);
+                    }
+                    else if (actionResponse.StatusCode >= (int)HttpStatusCode.BadRequest)
+                    {
+                        exceptions.Add(WebRequestException.CreateFromStatusCode((HttpStatusCode)actionResponse.StatusCode));
+                    }
+                    else
+                    {
+                        await actions[actionIndex](new ODataClient(client as ODataClient, actionResponse));
+                    }
+                }
+            }
+
+            if (exceptions.Any())
+            {
+                throw exceptions.First();
+            }
+        }
 
         protected abstract void ConvertEntry(ResponseNode entryNode, object entry);
 

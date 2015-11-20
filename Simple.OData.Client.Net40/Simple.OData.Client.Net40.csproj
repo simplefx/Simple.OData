@@ -315,6 +315,9 @@
     <Compile Include="..\Simple.OData.Client.Core\ODataResponse.cs">
       <Link>ODataResponse.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\ODataTrace.cs">
+      <Link>ODataTrace.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ODataUpdateMethod.cs">
       <Link>ODataUpdateMethod.cs</Link>
     </Compile>

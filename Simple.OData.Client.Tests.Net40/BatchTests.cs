@@ -92,7 +92,15 @@ namespace Simple.OData.Client.Tests
             var batch = new ODataBatch(_serviceUri);
             batch += c => c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test1" }, { "UnitPrice", 10m } }, false);
             batch += c => c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test2" }, { "UnitPrice", 10m }, { "SupplierID", 0xFFFF } }, false);
-            await AssertThrowsAsync<WebRequestException>(async () => await batch.ExecuteAsync());
+
+            try
+            {
+                await batch.ExecuteAsync();
+            }
+            catch (WebRequestException exception)
+            {
+                Assert.NotNull(exception.Response);
+            }
         }
 
         [Fact]
@@ -101,7 +109,15 @@ namespace Simple.OData.Client.Tests
             var batch = new ODataBatch(_serviceUri);
             batch += c => c.InsertEntryAsync("Products", new Entry() { { "UnitPrice", 10m } }, false);
             batch += c => c.InsertEntryAsync("Products", new Entry() { { "UnitPrice", 20m } }, false);
-            await AssertThrowsAsync<WebRequestException>(async () => await batch.ExecuteAsync());
+
+            try
+            {
+                await batch.ExecuteAsync();
+            }
+            catch (WebRequestException exception)
+            {
+                Assert.NotNull(exception.Response);
+            }
         }
 
         [Fact]
