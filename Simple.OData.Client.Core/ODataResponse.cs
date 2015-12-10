@@ -78,14 +78,18 @@ namespace Simple.OData.Client
 
         public IEnumerable<IDictionary<string, object>> AsEntries(bool includeAnnotations)
         {
-            if (this.Feed == null)
-                return null;
-
-            var data = this.Feed.Entries;
-            return data.Select(x =>
-                data.Any() && data.First().Data.ContainsKey(FluentCommand.ResultLiteral)
-                ? ExtractDictionary(x, includeAnnotations)
-                : ExtractData(x, includeAnnotations));
+            if (this.Feed != null)
+            {
+                var data = this.Feed.Entries;
+                return data.Select(x =>
+                    data.Any() && data.First().Data.ContainsKey(FluentCommand.ResultLiteral)
+                    ? ExtractDictionary(x, includeAnnotations)
+                    : ExtractData(x, includeAnnotations));
+            }
+            else
+            {
+                return new IDictionary<string, object>[] { };
+            }
         }
 
         public IDictionary<string, object> AsEntry(bool includeAnnotations)
