@@ -346,7 +346,7 @@ namespace Simple.OData.Client
         }
 
         private async Task<int> IterateEntriesAsync(FluentCommand command,
-            Func<FluentCommand, IDictionary<string, object>, Task> funcAsync, CancellationToken cancellationToken)
+            Func<string, IDictionary<string, object>, Task> funcAsync, CancellationToken cancellationToken)
         {
             var collectionName = command.QualifiedEntityCollectionName;
             var commandText = await command.GetCommandTextAsync(cancellationToken);
@@ -360,7 +360,7 @@ namespace Simple.OData.Client
                 var entryList = entries.ToList();
                 foreach (var entry in entryList)
                 {
-                    await funcAsync(command, entry);
+                    await funcAsync(collectionName, entry);
                     if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
                     ++result;
                 }

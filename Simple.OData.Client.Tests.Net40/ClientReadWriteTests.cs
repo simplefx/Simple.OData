@@ -115,7 +115,7 @@ namespace Simple.OData.Client.Tests
             product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'Test3'");
             Assert.NotNull(product);
 
-            await _client.For("Products").Key(product).DeleteEntryAsync();
+            await _client.DeleteEntryAsync("Products", product);
 
             product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'Test3'");
             Assert.Null(product);
@@ -128,7 +128,7 @@ namespace Simple.OData.Client.Tests
             ship = await _client.FindEntryAsync("Transport?$filter=TransportID eq " + ship["TransportID"]);
             Assert.NotNull(ship);
 
-            await _client.For("Transport").Key(ship).DeleteEntryAsync();
+            await _client.DeleteEntryAsync("Transport", ship);
 
             ship = await _client.FindEntryAsync("Transport?$filter=TransportID eq " + ship["TransportID"]);
             Assert.Null(ship);
@@ -147,7 +147,7 @@ namespace Simple.OData.Client.Tests
             ship = await client.FindEntryAsync("Transport?$filter=TransportID eq " + ship["TransportID"]);
             Assert.NotNull(ship);
 
-            await client.For("Transport").Key(ship).DeleteEntryAsync();
+            await client.DeleteEntryAsync("Transport", ship);
 
             ship = await client.FindEntryAsync("Transport?$filter=TransportID eq " + ship["TransportID"]);
             Assert.Null(ship);

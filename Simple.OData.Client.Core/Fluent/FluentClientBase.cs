@@ -458,7 +458,7 @@ namespace Simple.OData.Client
         /// Navigates to the linked entity.
         /// </summary>
         /// <param name="linkName">Name of the link.</param>
-        /// <returns>Self.</returns>
+        /// <returns>Self.</returns>        
         public IBoundClient<IDictionary<string, object>> NavigateTo(string linkName)
         {
             return this.Link<IDictionary<string, object>>(this.Command, linkName);

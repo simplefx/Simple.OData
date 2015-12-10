@@ -47,19 +47,19 @@ namespace Simple.OData.Client.Tests
             foreach (var product in products)
             {
                 if (product["ProductName"].ToString().StartsWith("Test"))
-                    await _client.For("Products").Key(product).DeleteEntryAsync();
+                    await _client.DeleteEntryAsync("Products", product);
             }
             var categories = await _client.For("Categories").Select("CategoryID", "CategoryName").FindEntriesAsync();
             foreach (var category in categories)
             {
                 if (category["CategoryName"].ToString().StartsWith("Test"))
-                    await _client.For("Categories").Key(category).DeleteEntryAsync();
+                    await _client.DeleteEntryAsync("Categories", category);
             }
             var employees = await _client.For("Employees").Select("EmployeeID", "LastName").FindEntriesAsync();
             foreach (var employee in employees)
             {
                 if (employee["LastName"].ToString().StartsWith("Test"))
-                    await _client.For("Employees").Key(employee).DeleteEntryAsync();
+                    await _client.DeleteEntryAsync("Employees", employee);
             }
         }
 

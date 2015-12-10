@@ -97,7 +97,7 @@ namespace Simple.OData.Client.V4.Adapter
             var entityType = GetEntityTypes().BestMatch(x => x.Name, collectionName, _session.Pluralizer);
             if (entityType != null)
                 return entityType.Name;
-
+            
             throw new UnresolvableObjectException(collectionName, string.Format("Entity type [{0}] not found", collectionName));
         }
 

@@ -53,7 +53,7 @@ namespace Simple.OData.Client.Tests
             batch2 += c => c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test3" }, { "UnitPrice", 30m } }, false);
             batch2 += c => c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test4" }, { "UnitPrice", 40m } }, false);
             await batch2.ExecuteAsync();
-
+            
             await batch1.ExecuteAsync();
 
             var product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'Test1'");
@@ -159,7 +159,7 @@ namespace Simple.OData.Client.Tests
             batch = new ODataBatch(_serviceUri);
             batch += c => c.UpdateEntryAsync("Products", product, new Entry() { { "UnitPrice", 22m } });
             batch += async c => product1 = await c.FindEntryAsync("Products?$filter=ProductName eq 'Test11'");
-            batch += c => c.For("Products").Key(product).DeleteEntryAsync(); //c.DeleteEntryAsync("Products", product);
+            batch += c => c.DeleteEntryAsync("Products", product);
             batch += async c => product2 = await c.FindEntryAsync("Products?$filter=ProductName eq 'Test11'");
             await batch.ExecuteAsync();
 
@@ -184,12 +184,12 @@ namespace Simple.OData.Client.Tests
             batch = new ODataBatch(_serviceUri);
             batch += c => c.UpdateEntryAsync("Products", key, new Entry() { { "UnitPrice", 22m } });
             await batch.ExecuteAsync();
-
+            
             product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'Test12'");
             Assert.Equal(22m, product["UnitPrice"]);
 
             batch = new ODataBatch(_serviceUri);
-            batch += c => c.For("Products").Key(key).DeleteEntryAsync(); //c.DeleteEntryAsync("Products", key);
+            batch += c => c.DeleteEntryAsync("Products", key);
             await batch.ExecuteAsync();
 
             product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'Test12'");
@@ -216,7 +216,7 @@ namespace Simple.OData.Client.Tests
             Assert.Equal(22m, product["UnitPrice"]);
 
             batch = new ODataBatch(client);
-            batch += c => c.For("Products").Key(key).DeleteEntryAsync(); //c.DeleteEntryAsync("Products", key);
+            batch += c => c.DeleteEntryAsync("Products", key);
             await batch.ExecuteAsync();
 
             product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test12'");
@@ -263,7 +263,7 @@ namespace Simple.OData.Client.Tests
         public async Task DeleteEntryNonExisting()
         {
             var batch = new ODataBatch(_serviceUri);
-            batch += c => c.For("Products").Key(new Entry { { "ProductID", "0xFFFF" } }).DeleteEntryAsync(); //c.DeleteEntryAsync("Products", new Entry { { "ProductID", 0xFFFF } });
+            batch += c => c.DeleteEntryAsync("Products", new Entry { { "ProductID", 0xFFFF } });
             await AssertThrowsAsync<WebRequestException>(async () => await batch.ExecuteAsync());
         }
 

@@ -40,7 +40,7 @@ namespace Simple.OData.Client.TestPcl
 
         public async Task DeleteEntryAsync(string collection, IDictionary<string, object> entrykey)
         {
-            await _client.For(collection).Key(entrykey).DeleteEntryAsync();
+            await _client.DeleteEntryAsync(collection, entrykey);
         }
     }
 }

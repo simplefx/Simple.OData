@@ -618,12 +618,12 @@ namespace Simple.OData.Client
             return await ExecuteUpdateEntriesAsync(command, resultRequired, cancellationToken);
         }
 
-        public Task DeleteEntryAsync(FluentCommand command, IDictionary<string, object> entryKey)
+        public Task DeleteEntryAsync(string collection, IDictionary<string, object> entryKey)
         {
-            return DeleteEntryAsync(command, entryKey, CancellationToken.None);
+            return DeleteEntryAsync(collection, entryKey, CancellationToken.None);
         }
 
-        public async Task DeleteEntryAsync(FluentCommand command, IDictionary<string, object> entryKey, CancellationToken cancellationToken)
+        public async Task DeleteEntryAsync(string collection, IDictionary<string, object> entryKey, CancellationToken cancellationToken)
         {
             if (IsBatchResponse)
                 return;
@@ -632,6 +632,11 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             RemoveAnnotationProperties(entryKey);
+
+            var command = GetFluentClient()
+                .For(collection)
+                .Key(entryKey)
+                .AsBoundClient().Command;
 
             await ExecuteDeleteEntryAsync(command, cancellationToken);
         }

@@ -44,7 +44,7 @@ namespace Simple.OData.Client
         /// The link can be used to edit the entry.
         /// </summary>
         public Uri EditLink { get; set; }
-
+        
         /// <summary>
         /// The entry ETag.
         /// </summary>
