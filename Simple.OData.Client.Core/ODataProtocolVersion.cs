@@ -14,12 +14,12 @@
         /// Version 2.0
         /// </summary>
         public const string V2 = "2.0";
-        
+
         /// <summary>
         /// Version 3.0
         /// </summary>
         public const string V3 = "3.0";
-        
+
         /// <summary>
         /// Version 4.0
         /// </summary>

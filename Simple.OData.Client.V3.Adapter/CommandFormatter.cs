@@ -10,7 +10,7 @@ namespace Simple.OData.Client.V3.Adapter
     {
         public CommandFormatter(ISession session)
             : base(session)
-        {            
+        {
         }
 
         public override FunctionFormat FunctionFormat

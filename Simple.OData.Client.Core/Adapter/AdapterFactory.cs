@@ -93,7 +93,7 @@ namespace Simple.OData.Client
             if (response.Headers.TryGetValues(HttpLiteral.DataServiceVersion, out headerValues) ||
                 response.Headers.TryGetValues(HttpLiteral.ODataVersion, out headerValues))
             {
-                return headerValues.SelectMany(x => x.Split(';')).Where(x => x.Length > 0);                
+                return headerValues.SelectMany(x => x.Split(';')).Where(x => x.Length > 0);
             }
             else
             {

@@ -18,7 +18,7 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-                .CreateInsertRequestAsync(commandText, entryData, resultRequired);
+                .CreateInsertRequestAsync(command.QualifiedEntityCollectionName, commandText, entryData, resultRequired);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var result = await ExecuteRequestWithResultAsync(request, cancellationToken,
@@ -346,7 +346,7 @@ namespace Simple.OData.Client
         }
 
         private async Task<int> IterateEntriesAsync(FluentCommand command,
-            Func<string, IDictionary<string, object>, Task> funcAsync, CancellationToken cancellationToken)
+            Func<FluentCommand, IDictionary<string, object>, Task> funcAsync, CancellationToken cancellationToken)
         {
             var collectionName = command.QualifiedEntityCollectionName;
             var commandText = await command.GetCommandTextAsync(cancellationToken);
@@ -360,7 +360,7 @@ namespace Simple.OData.Client
                 var entryList = entries.ToList();
                 foreach (var entry in entryList)
                 {
-                    await funcAsync(collectionName, entry);
+                    await funcAsync(command, entry);
                     if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
                     ++result;
                 }

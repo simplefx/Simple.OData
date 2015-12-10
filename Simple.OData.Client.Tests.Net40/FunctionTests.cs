@@ -23,7 +23,7 @@ namespace Simple.OData.Client.Tests
                 .Function("ParseInt")
                 .Set(new Entry() { { "number", "1" } })
                 .ExecuteAsScalarAsync<int>();
-            
+
             Assert.Equal(1, result);
         }
 
@@ -57,7 +57,7 @@ namespace Simple.OData.Client.Tests
                 .Function("ReturnIntCollection")
                 .Set(new Entry() { { "count", 1 } })
                 .ExecuteAsArrayAsync<int>();
-            
+
             Assert.Equal(new[] { 1 }, result);
         }
 
@@ -69,7 +69,7 @@ namespace Simple.OData.Client.Tests
                 .Function("ReturnIntCollection")
                 .Set(new Entry() { { "count", 3 } })
                 .ExecuteAsArrayAsync<int>();
-            
+
             Assert.Equal(new[] { 1, 2, 3 }, result);
         }
 
@@ -81,7 +81,7 @@ namespace Simple.OData.Client.Tests
                 .Function("PassThroughLong")
                 .Set(new Entry() { { "number", 1L } })
                 .ExecuteAsScalarAsync<long>();
-            
+
             Assert.Equal(1L, result);
         }
 
@@ -94,7 +94,7 @@ namespace Simple.OData.Client.Tests
                 .Function("PassThroughDateTime")
                 .Set(new Entry() { { "dateTime", dateTime } })
                 .ExecuteAsScalarAsync<DateTime>();
-            
+
             Assert.Equal(dateTime, result);
         }
 
@@ -120,7 +120,7 @@ namespace Simple.OData.Client.Tests
                 .Function("PassThroughGuid")
                 .Set(new Entry() { { "guid", guid } })
                 .ExecuteAsScalarAsync<Guid>();
-            
+
             Assert.Equal(guid, result);
         }
 

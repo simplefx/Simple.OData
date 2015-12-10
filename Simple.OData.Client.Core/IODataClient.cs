@@ -345,7 +345,7 @@ namespace Simple.OData.Client
         /// <param name="collection">The name of the collection.</param>
         /// <param name="entryKey">The entry key.</param>
         /// <returns>Task instance.</returns>
-        Task DeleteEntryAsync(string collection, IDictionary<string, object> entryKey);
+        Task DeleteEntryAsync(FluentCommand command, IDictionary<string, object> entryKey);
         /// <summary>
         /// Deletes the existing entry by executing OData DELETE request.
         /// </summary>
@@ -353,7 +353,7 @@ namespace Simple.OData.Client
         /// <param name="entryKey">The entry key.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Task instance.</returns>
-        Task DeleteEntryAsync(string collection, IDictionary<string, object> entryKey, CancellationToken cancellationToken);
+        Task DeleteEntryAsync(FluentCommand command, IDictionary<string, object> entryKey, CancellationToken cancellationToken);
 
         /// <summary>
         /// Deletes entries by executing multiple OData DELETE requests.

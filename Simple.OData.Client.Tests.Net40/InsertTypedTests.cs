@@ -87,7 +87,7 @@ namespace Simple.OData.Client.Tests
                 .FindEntryAsync();
             Assert.True(category.Products.Count() == 1);
         }
-        
+
         [Fact]
         public async Task InsertShip()
         {
