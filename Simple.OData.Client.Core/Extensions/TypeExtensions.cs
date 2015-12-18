@@ -109,7 +109,7 @@ namespace Simple.OData.Client.Extensions
 #else
         public static IEnumerable<PropertyInfo> GetAllProperties(this Type type)
         {
-            var properties = type.GetTypeInfo().DeclaredProperties.ToList();
+            var properties = GetDeclaredProperties(type).ToList();
 
             var baseType = type.GetTypeInfo().BaseType;
             if (baseType != null && baseType != typeof(object))
@@ -131,10 +131,16 @@ namespace Simple.OData.Client.Extensions
             }
             return null;
         }
+        
+        private static bool IsInstanceProperty(PropertyInfo propertyInfo)
+        {
+            return (propertyInfo.CanRead  && !propertyInfo.GetGetMethod().IsStatic)
+                || (propertyInfo.CanWrite && !propertyInfo.GetSetMethod().IsStatic);
+        }
 
         public static IEnumerable<PropertyInfo> GetDeclaredProperties(this Type type)
         {
-            return type.GetTypeInfo().DeclaredProperties;
+            return type.GetTypeInfo().DeclaredProperties.Where(x => IsInstanceProperty(x));
         }
 
         public static PropertyInfo GetDeclaredProperty(this Type type, string propertyName)
@@ -144,7 +150,7 @@ namespace Simple.OData.Client.Extensions
 
         public static IEnumerable<FieldInfo> GetAllFields(this Type type)
         {
-            var fields = type.GetTypeInfo().DeclaredFields.ToList();
+            var fields = GetDeclaredFields(type).ToList();
 
             var baseType = type.GetTypeInfo().BaseType;
             if (baseType != null && baseType != typeof(object))
@@ -169,7 +175,7 @@ namespace Simple.OData.Client.Extensions
 
         public static IEnumerable<FieldInfo> GetDeclaredFields(this Type type)
         {
-            return type.GetTypeInfo().DeclaredFields;
+            return type.GetTypeInfo().DeclaredFields.Where(x => !x.IsStatic);
         }
 
         public static FieldInfo GetDeclaredField(this Type type, string fieldName)
@@ -184,12 +190,12 @@ namespace Simple.OData.Client.Extensions
 
         public static IEnumerable<ConstructorInfo> GetDeclaredConstructors(this Type type)
         {
-            return type.GetTypeInfo().DeclaredConstructors;
+            return type.GetTypeInfo().DeclaredConstructors.Where(x => !x.IsStatic);
         }
 
         public static ConstructorInfo GetDefaultConstructor(this Type type)
         {
-            return type.GetTypeInfo().DeclaredConstructors.SingleOrDefault(x => x.GetParameters().Length == 0);
+            return GetDeclaredConstructors(type).SingleOrDefault(x => x.GetParameters().Length == 0);
         }
 
         public static TypeAttributes GetTypeAttributes(this Type type)
