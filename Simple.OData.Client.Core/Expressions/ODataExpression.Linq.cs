@@ -106,8 +106,10 @@ namespace Simple.OData.Client
                 var target = callExpression.Arguments.FirstOrDefault();
                 if (target != null)
                 {
-                    return FromFunction(callExpression.Method.Name, ParseLinqExpression(target).Reference,
-                        callExpression.Arguments.Skip(1));
+                    var callArguments = string.Equals(callExpression.Method.DeclaringType.FullName, "System.Convert", StringComparison.Ordinal)
+                        ? callExpression.Arguments
+                        : callExpression.Arguments.Skip(1);
+                    return FromFunction(callExpression.Method.Name, ParseLinqExpression(target).Reference, callArguments);
                 }
                 else
                 {

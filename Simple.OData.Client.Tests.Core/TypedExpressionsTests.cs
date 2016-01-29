@@ -410,6 +410,14 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void ConvertEqual()
+        {
+            var id = "1";
+            Expression<Func<TestEntity, bool>> filter = x => x.Nested.ProductID == Convert.ToInt32(id);
+            Assert.Equal("Nested/ProductID eq 1", ODataExpression.FromLinqExpression(filter).AsString(_session));
+        }
+
+        [Fact]
         public void FilterWithMappedProperties()
         {
             Expression<Func<TestEntity, bool>> filter = x => x.MappedName1 == "Milk";

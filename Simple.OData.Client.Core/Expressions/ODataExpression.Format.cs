@@ -121,10 +121,34 @@ namespace Simple.OData.Client
             {
                 return _functionCaller.Reference;
             }
-            else
+            else if (_functionCaller.IsNull && this.Function.Arguments.Count == 1)
             {
-                throw new NotSupportedException(string.Format("The function {0} is not supported or called with wrong number of arguments", this.Function.FunctionName));
+                var val = this.Function.Arguments.First();
+                if (val.Value != null)
+                {
+                    var formattedVal = ODataExpression.FromValue(
+                        string.Equals(this.Function.FunctionName, "ToBoolean", StringComparison.Ordinal) ? Convert.ToBoolean(val.Value) :
+                        string.Equals(this.Function.FunctionName, "ToByte", StringComparison.Ordinal) ? Convert.ToByte(val.Value) :
+                        string.Equals(this.Function.FunctionName, "ToChar", StringComparison.Ordinal) ? Convert.ToChar(val.Value) :
+                        string.Equals(this.Function.FunctionName, "ToDateTime", StringComparison.Ordinal) ? Convert.ToDateTime(val.Value) :
+                        string.Equals(this.Function.FunctionName, "ToDecimal", StringComparison.Ordinal) ? Convert.ToDecimal(val.Value) :
+                        string.Equals(this.Function.FunctionName, "ToDouble", StringComparison.Ordinal) ? Convert.ToDouble(val.Value) :
+                        string.Equals(this.Function.FunctionName, "ToInt16", StringComparison.Ordinal) ? Convert.ToInt16(val.Value) :
+                        string.Equals(this.Function.FunctionName, "ToInt32", StringComparison.Ordinal) ? Convert.ToInt32(val.Value) :
+                        string.Equals(this.Function.FunctionName, "ToInt64", StringComparison.Ordinal) ? Convert.ToInt64(val.Value) :
+                        string.Equals(this.Function.FunctionName, "ToSByte", StringComparison.Ordinal) ? Convert.ToSByte(val.Value) :
+                        string.Equals(this.Function.FunctionName, "ToSingle", StringComparison.Ordinal) ? Convert.ToSingle(val.Value) :
+                        string.Equals(this.Function.FunctionName, "ToString", StringComparison.Ordinal) ? Convert.ToString(val.Value) :
+                        string.Equals(this.Function.FunctionName, "ToUInt16", StringComparison.Ordinal) ? Convert.ToUInt16(val.Value) :
+                        string.Equals(this.Function.FunctionName, "ToUInt32", StringComparison.Ordinal) ? Convert.ToUInt32(val.Value) :
+                        string.Equals(this.Function.FunctionName, "ToUInt64", StringComparison.Ordinal) ? (object)Convert.ToUInt64(val.Value)
+                        : null);
+                    if (formattedVal.Value != null)
+                        return FormatExpression(formattedVal, context);
+                }
             }
+
+            throw new NotSupportedException(string.Format("The function {0} is not supported or called with wrong number of arguments", this.Function.FunctionName));
         }
 
         private string FormatMappedFunction(ExpressionContext context, FunctionMapping mapping)
