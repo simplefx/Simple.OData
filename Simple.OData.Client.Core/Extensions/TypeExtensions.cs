@@ -134,8 +134,8 @@ namespace Simple.OData.Client.Extensions
         
         private static bool IsInstanceProperty(PropertyInfo propertyInfo)
         {
-            return (propertyInfo.CanRead  && !propertyInfo.GetGetMethod().IsStatic)
-                || (propertyInfo.CanWrite && !propertyInfo.GetSetMethod().IsStatic);
+            return (propertyInfo.CanRead  && !propertyInfo.GetMethod.IsStatic)
+                || (propertyInfo.CanWrite && !propertyInfo.SetMethod.IsStatic);
         }
 
         public static IEnumerable<PropertyInfo> GetDeclaredProperties(this Type type)
