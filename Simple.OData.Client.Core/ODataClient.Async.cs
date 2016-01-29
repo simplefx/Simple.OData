@@ -836,7 +836,7 @@ namespace Simple.OData.Client
                 : result == null
                 ? null
                 : result.SelectMany(x => x.Values)
-                        .Select(x => (T)Convert.ChangeType(x, typeof(T), CultureInfo.InvariantCulture))
+                        .Select(x => (T)Utils.Convert(x, typeof(T)))
                         .ToArray();
         }
 
@@ -940,7 +940,7 @@ namespace Simple.OData.Client
                 : result == null
                 ? null
                 : result.SelectMany(x => x.Values)
-                        .Select(x => (T)Convert.ChangeType(x, typeof(T), CultureInfo.InvariantCulture))
+                        .Select(x => (T)Utils.Convert(x, typeof(T)))
                         .ToArray();
         }
 
@@ -1183,7 +1183,7 @@ namespace Simple.OData.Client
                 ? default(T)
                 : result == null 
                 ? default(T) 
-                : (T)Convert.ChangeType(result.First().Value, typeof(T), CultureInfo.InvariantCulture);
+                : (T)Utils.Convert(result.First().Value, typeof(T));
         }
 
         internal async Task<T[]> ExecuteAsArrayAsync<T>(FluentCommand command, CancellationToken cancellationToken)
@@ -1196,9 +1196,9 @@ namespace Simple.OData.Client
                 ? new T[] { }
                 : result == null
                 ? null
-                : result.SelectMany(x => x.Values)
-                        .Select(x => (T)Convert.ChangeType(x, typeof(T), CultureInfo.InvariantCulture))
-                        .ToArray();
+                : typeof(T).IsValue()
+                ? result.SelectMany(x => x.Values).Select(x => (T)Utils.Convert(x, typeof(T))).ToArray()
+                : result.Select(x => (T)x.ToObject(typeof(T))).ToArray();
         }
 
         internal async Task ExecuteBatchAsync(IList<Func<IODataClient, Task>> actions, CancellationToken cancellationToken)

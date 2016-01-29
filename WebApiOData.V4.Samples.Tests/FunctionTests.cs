@@ -98,6 +98,17 @@ namespace WebApiOData.V4.Samples.Tests
         }
 
         [Fact]
+        public async Task Get_the_top_10_expensive_products_typed_array()
+        {
+            var result = await _client
+                .For<Product>()
+                .Function("Top10")
+                .ExecuteAsArrayAsync<Product>();
+
+            Assert.Equal(10, result.Count());
+        }
+
+        [Fact]
         public async Task Get_the_top_10_expensive_products_dynamic()
         {
             var x = ODataDynamic.Expression;

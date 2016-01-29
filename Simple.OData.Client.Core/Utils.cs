@@ -170,7 +170,7 @@ namespace Simple.OData.Client
                 }
                 else
                 {
-                    result = Convert.ChangeType(value, targetType, CultureInfo.InvariantCulture);
+                    result = System.Convert.ChangeType(value, targetType, CultureInfo.InvariantCulture);
                 }
                 return true;
             }
@@ -179,6 +179,18 @@ namespace Simple.OData.Client
                 result = null;
                 return false;
             }
+        }
+
+        public static object Convert(object value, Type targetType)
+        {
+            object result;
+
+            if (value == null && !targetType.IsValue())
+                return null;
+            else if (TryConvert(value, targetType, out result))
+                return result;
+
+            throw new FormatException(string.Format("Unable to convert value from type {0} to type {1}", value.GetType(), targetType));
         }
 
         public static bool IsSystemType(Type type)

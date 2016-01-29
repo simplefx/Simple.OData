@@ -109,14 +109,14 @@ namespace Simple.OData.Client
 
             return value == null 
                 ? default(T) 
-                : (T)Convert.ChangeType(value, typeof(T), CultureInfo.InvariantCulture);
+                : (T)Utils.Convert(value, typeof(T));
         }
 
         public T[] AsArray<T>()
         {
             return this.AsEntries(false)
                 .SelectMany(x => x.Values)
-                .Select(x => (T)Convert.ChangeType(x, typeof(T), CultureInfo.InvariantCulture))
+                .Select(x => (T)Utils.Convert(x, typeof(T)))
                 .ToArray();
         }
 

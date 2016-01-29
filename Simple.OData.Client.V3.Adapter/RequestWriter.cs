@@ -415,7 +415,7 @@ namespace Simple.OData.Client.V3.Adapter
                         foreach (var mappedType in mappedTypes)
                         {
                             object result;
-                            if (Client.Utils.TryConvert(value, mappedType.Key, out result))
+                            if (Utils.TryConvert(value, mappedType.Key, out result))
                                 return result;
                         }
                         throw new NotSupportedException(string.Format("Conversion is not supported from type {0} to OData type {1}", value.GetType(), propertyType));
