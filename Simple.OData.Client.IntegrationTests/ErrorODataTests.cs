@@ -56,14 +56,13 @@ namespace Simple.OData.Client.Tests
 
                 Assert.False(true, "Expected exception");
             }
-            catch (AggregateException ex)
+            catch (WebRequestException ex)
             {
-                Assert.IsType<WebRequestException>(ex.InnerException);
-                Assert.NotNull((ex.InnerException as WebRequestException).Response);
+                Assert.NotNull(ex.Response);
             }
             catch (Exception)
             {
-                Assert.False(true, "Expected AggregateException with WebRequestException");
+                Assert.False(true, "Expected WebRequestException");
             }
         }
     }
