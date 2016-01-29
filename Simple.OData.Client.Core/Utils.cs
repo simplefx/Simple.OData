@@ -152,15 +152,15 @@ namespace Simple.OData.Client
                     else
                         result = null;
                 }
-                else if (targetType.IsEnumType() && value.GetType() == typeof(string))
+                else if (targetType.IsEnumType() && value is string)
                 {
                     result = Enum.Parse(targetType, value.ToString(), true);
                 }
-                else if (targetType == typeof(DateTime) && value.GetType() == typeof(DateTimeOffset))
+                else if ((targetType == typeof(DateTime) || targetType == typeof(DateTime?)) && value is DateTimeOffset)
                 {
-                    result = ((DateTimeOffset) value).DateTime;
+                    result = ((DateTimeOffset)value).DateTime;
                 }
-                else if (targetType == typeof(DateTimeOffset) && value.GetType() == typeof(DateTime))
+                else if ((targetType == typeof(DateTimeOffset) || targetType == typeof(DateTimeOffset)) && value is DateTime)
                 {
                     result = new DateTimeOffset((DateTime)value);
                 }

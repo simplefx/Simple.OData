@@ -15,7 +15,7 @@ namespace Simple.OData.Client.Tests
         Unknown,
     }
 
-    class Person
+    class PersonBase
     {
         public string UserName { get; set; }
         public string FirstName { get; set; }
@@ -24,9 +24,19 @@ namespace Simple.OData.Client.Tests
         public List<Location> AddressInfo { get; set; }
         public PersonGender Gender { get; set; }
         public long Concurrency { get; set; }
+    }
 
+    class Person : PersonBase
+    {
         public IEnumerable<Person> Friends { get; set; }
         public IEnumerable<Trip> Trips { get; set; }
+        public IEnumerable<Photo> Photos { get; set; }
+    }
+
+    class PersonWithDateTime : PersonBase
+    {
+        public IEnumerable<PersonWithDateTime> Friends { get; set; }
+        public IEnumerable<TripWithDateTime> Trips { get; set; }
         public IEnumerable<Photo> Photos { get; set; }
     }
 
@@ -64,7 +74,7 @@ namespace Simple.OData.Client.Tests
     {
     }
 
-    class Trip
+    class TripBase
     {
         public int TripId { get; set; }
         public Guid ShareId { get; set; }
@@ -76,22 +86,16 @@ namespace Simple.OData.Client.Tests
         public IList<string> Tags { get; set; }
 
         public IEnumerable<Photo> Photos { get; set; }
+    }
+
+    class Trip : TripBase
+    {
         public IEnumerable<PlanItem> PlanItems { get; set; }
     }
 
-    class TripWithDateTime
+    class TripWithDateTime : TripBase
     {
-        public int TripId { get; set; }
-        public Guid ShareId { get; set; }
-        public string Description { get; set; }
-        public string Name { get; set; }
-        public float Budget { get; set; }
-        public DateTime StartsAt { get; set; }
-        public DateTime EndsAt { get; set; }
-        public IList<string> Tags { get; set; }
-
-        public IEnumerable<Photo> Photos { get; set; }
-        public IEnumerable<PlanItem> PlanItems { get; set; }
+        public IEnumerable<PlanItemWithDateTime> PlanItems { get; set; }
     }
 
     class Photo
@@ -107,6 +111,15 @@ namespace Simple.OData.Client.Tests
         public string ConfirmationCode { get; set; }
         public DateTimeOffset? StartsAt { get; set; }
         public DateTimeOffset? EndsAt { get; set; }
+        public TimeSpan Duration { get; set; }
+    }
+
+    class PlanItemWithDateTime
+    {
+        public int PlanItemId { get; set; }
+        public string ConfirmationCode { get; set; }
+        public DateTime? StartsAt { get; set; }
+        public DateTime? EndsAt { get; set; }
         public TimeSpan Duration { get; set; }
     }
 

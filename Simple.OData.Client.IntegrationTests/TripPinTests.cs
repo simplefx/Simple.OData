@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -152,6 +151,19 @@ namespace Simple.OData.Client.Tests
         {
             var flights = await _client
                 .For<Person>()
+                .Key("russellwhyte")
+                .NavigateTo(x => x.Trips)
+                .Key(1003)
+                .NavigateTo(x => x.PlanItems)
+                .FindEntriesAsync();
+            Assert.Equal(3, flights.Count());
+        }
+
+        [Fact]
+        public async Task FindPersonPlanItemsWithDateTime()
+        {
+            var flights = await _client
+                .For<PersonWithDateTime>("People")
                 .Key("russellwhyte")
                 .NavigateTo(x => x.Trips)
                 .Key(1003)
