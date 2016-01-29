@@ -19,8 +19,8 @@ namespace Simple.OData.Client
         public string Filter { get; set; }
         public ODataExpression FilterExpression { get; set; }
         public string Search { get; set; }
-        public int SkipCount { get; set; }
-        public int TopCount { get; set; }
+        public long SkipCount { get; set; }
+        public long TopCount { get; set; }
         public List<KeyValuePair<string, ODataExpandOptions>> ExpandAssociations { get; private set; }
         public List<string> SelectColumns { get; private set; }
         public List<KeyValuePair<string, bool>> OrderbyColumns { get; private set; }

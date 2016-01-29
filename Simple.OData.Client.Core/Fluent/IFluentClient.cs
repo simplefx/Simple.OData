@@ -114,14 +114,14 @@ namespace Simple.OData.Client
         /// </summary>
         /// <param name="count">The count.</param>
         /// <returns>Self.</returns>
-        FT Skip(int count);
+        FT Skip(long count);
 
         /// <summary>
         /// Limits the number of results with the specified value.
         /// </summary>
         /// <param name="count">The count.</param>
         /// <returns>Self.</returns>
-        FT Top(int count);
+        FT Top(long count);
 
         /// <summary>
         /// Expands top level of all associations.

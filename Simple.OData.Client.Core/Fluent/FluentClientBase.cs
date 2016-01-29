@@ -148,13 +148,13 @@ namespace Simple.OData.Client
             return this as FT;
         }
 
-        public FT Skip(int count)
+        public FT Skip(long count)
         {
             this.Command.Skip(count);
             return this as FT;
         }
 
-        public FT Top(int count)
+        public FT Top(long count)
         {
             this.Command.Top(count);
             return this as FT;

@@ -287,7 +287,7 @@ namespace Simple.OData.Client
             return this;
         }
 
-        public FluentCommand Skip(int count)
+        public FluentCommand Skip(long count)
         {
             if (IsBatchResponse) return this;
 
@@ -295,7 +295,7 @@ namespace Simple.OData.Client
             return this;
         }
 
-        public FluentCommand Top(int count)
+        public FluentCommand Top(long count)
         {
             if (IsBatchResponse) return this;
 
