@@ -64,7 +64,31 @@ namespace Simple.OData.Client.Tests
             await _client
                 .For("Products")
                 .Filter("ProductName eq 'Test1'")
-                .DeleteEntryAsync();
+                .DeleteEntriesAsync();
+
+            product = await _client
+                .For("Products")
+                .Filter("ProductName eq 'Test1'")
+                .FindEntryAsync();
+
+            Assert.Null(product);
+        }
+
+        [Fact]
+        public async Task DeleteByFilterFromCommand()
+        {
+            var product = await _client
+                .For("Products")
+                .Set(new { ProductName = "Test1", UnitPrice = 18m })
+                .InsertEntryAsync();
+
+            var commandText = await _client
+                .For("Products")
+                .Filter("ProductName eq 'Test1'")
+                .GetCommandTextAsync();
+
+            await _client
+                .DeleteEntriesAsync("Products", commandText);
 
             product = await _client
                 .For("Products")

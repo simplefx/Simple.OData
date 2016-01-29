@@ -34,7 +34,8 @@ namespace Simple.OData.Client
                 var parent = new FluentCommand(command.Details.Parent).Resolve();
                 commandText += string.Format("{0}/{1}",
                     FormatCommand(parent),
-                    _session.Metadata.GetNavigationPropertyExactName(parent.EntityCollection.Name, command.Details.LinkName));
+                    _session.Metadata.GetNavigationPropertyExactName(parent.EntityCollection.Name,
+                        command.Details.LinkName));
             }
 
             if (command.HasKey)
@@ -95,14 +96,30 @@ namespace Simple.OData.Client
 
         public string ConvertKeyValuesToUriLiteral(IDictionary<string, object> key, bool skipKeyNameForSingleValue)
         {
-            var formattedKeyValues = key.Count == 1 && skipKeyNameForSingleValue ?
-                string.Join(",", key.Select(x => ConvertValueToUriLiteral(x.Value, true))) :
-                string.Join(",", key.Select(x => string.Format("{0}={1}", x.Key, ConvertValueToUriLiteral(x.Value, true))));
+            var formattedKeyValues = key.Count == 1 && skipKeyNameForSingleValue
+                ? string.Join(",", key.Select(x => ConvertValueToUriLiteral(x.Value, true)))
+                : string.Join(",",
+                    key.Select(x => string.Format("{0}={1}", x.Key, ConvertValueToUriLiteral(x.Value, true))));
             return "(" + formattedKeyValues + ")";
         }
 
         protected abstract void FormatExpandSelectOrderby(IList<string> commandClauses, EntityCollection resultCollection, FluentCommand command);
+
         protected abstract void FormatInlineCount(IList<string> commandClauses);
+
+        private const string ReservedUriCharacters = @"!*'();:@&=+$,/?#[] ";
+        private const string ReservedUriCharactersPriorNet45 = @";:@&=+$,/?#[] ";
+
+        private string EscapeUnescapedString(string text)
+        {
+            var reserverdUriCharacters = Uri.EscapeDataString("'") == "'"
+                ? ReservedUriCharactersPriorNet45
+                : ReservedUriCharacters;
+
+            return text.ToCharArray().Intersect(reserverdUriCharacters.ToCharArray()).Any()
+                ? Uri.EscapeDataString(text)
+                : text;
+        }
 
         private string FormatClauses(FluentCommand command)
         {
@@ -116,10 +133,10 @@ namespace Simple.OData.Client
                     x.Key, ConvertValueToUriLiteral(x.Value, true)))));
 
             if (command.Details.Filter != null)
-                extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Filter, Uri.EscapeDataString(command.Details.Filter)));
+                extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Filter, EscapeUnescapedString(command.Details.Filter)));
 
             if (command.Details.Search != null)
-                extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Search, Uri.EscapeDataString(command.Details.Search)));
+                extraClauses.Add(string.Format("{0}={1}", ODataLiteral.Search, EscapeUnescapedString(command.Details.Search)));
 
             if (command.Details.QueryOptions != null)
                 extraClauses.Add(command.Details.QueryOptions);
