@@ -168,6 +168,10 @@ namespace Simple.OData.Client
                 {
                     result = Enum.ToObject(targetType, value);
                 }
+                else if (Nullable.GetUnderlyingType(targetType) == value.GetType())
+                {
+                    result = value;
+                }
                 else
                 {
                     result = System.Convert.ChangeType(value, targetType, CultureInfo.InvariantCulture);
