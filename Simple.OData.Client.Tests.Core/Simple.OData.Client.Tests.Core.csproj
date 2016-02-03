@@ -190,7 +190,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\MultipleCategoriesWithProducts.xml" />
+    <EmbeddedResource Include="Resources\MultipleCategoriesWithProducts.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\MultipleProducts.xml" />

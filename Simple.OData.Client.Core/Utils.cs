@@ -156,6 +156,14 @@ namespace Simple.OData.Client
                 {
                     result = Enum.Parse(targetType, value.ToString(), true);
                 }
+                else if (targetType == typeof(byte[]) && value is string)
+                {
+                    result = System.Convert.FromBase64String(value.ToString());
+                }
+                else if (targetType == typeof(string) && value is byte[])
+                {
+                    result = System.Convert.ToBase64String((byte[])value);
+                }
                 else if ((targetType == typeof(DateTime) || targetType == typeof(DateTime?)) && value is DateTimeOffset)
                 {
                     result = ((DateTimeOffset)value).DateTime;
