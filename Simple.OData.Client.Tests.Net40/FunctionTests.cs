@@ -42,11 +42,13 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task FunctionWithStringAsCollection()
         {
-            await AssertThrowsAsync<InvalidOperationException>(async () => await _client
+            var result = await _client
                 .Unbound<string>()
                 .Function("ReturnString")
                 .Set(new Entry() { { "text", "abc" } })
-                .ExecuteAsSingleAsync());
+                .ExecuteAsSingleAsync();
+
+            Assert.Equal("abc", result);
         }
 
         [Fact]

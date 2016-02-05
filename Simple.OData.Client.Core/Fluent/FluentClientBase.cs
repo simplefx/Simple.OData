@@ -595,13 +595,13 @@ namespace Simple.OData.Client
             Task<IEnumerable<IDictionary<string, object>>> entries, IList<string> selectedColumns, string dynamicPropertiesContainerName)
         {
             var result = RectifyColumnSelection(await entries, selectedColumns);
-            return result == null ? null : result.Select(z => z.ToObject<T>(dynamicPropertiesContainerName, _dynamicResults));
+            return result == null ? null : result.Select(z => ConvertResult(z, dynamicPropertiesContainerName));
         }
 
         protected async Task<T> RectifyColumnSelectionAsync(
             Task<IDictionary<string, object>> entry, IList<string> selectedColumns, string dynamicPropertiesContainerName)
         {
-            return RectifyColumnSelection(await entry, selectedColumns).ToObject<T>(dynamicPropertiesContainerName, _dynamicResults);
+            return ConvertResult(RectifyColumnSelection(await entry, selectedColumns), dynamicPropertiesContainerName);
         }
 
         protected async Task<Tuple<IEnumerable<T>, int>> RectifyColumnSelectionAsync(
@@ -609,7 +609,7 @@ namespace Simple.OData.Client
         {
             var result = await entries;
             return new Tuple<IEnumerable<T>, int>(
-                RectifyColumnSelection(result.Item1, selectedColumns).Select(y => y.ToObject<T>(dynamicPropertiesContainerName, _dynamicResults)),
+                RectifyColumnSelection(result.Item1, selectedColumns).Select(y => ConvertResult(y, dynamicPropertiesContainerName)),
                 result.Item2);
         }
 
@@ -628,6 +628,15 @@ namespace Simple.OData.Client
             {
                 return entry.Where(x => selectedColumns.Any(y => IsSelectedColumn(x, y))).ToIDictionary();
             }
+        }
+
+        private T ConvertResult(IDictionary<string, object> result, string dynamicPropertiesContainerName)
+        {
+            if (result != null && result.Keys.Count == 1 && result.ContainsKey(FluentCommand.ResultLiteral) &&
+                typeof(T).IsValue() || typeof(T) == typeof(string) || typeof(T) == typeof(object))
+                return (T)Utils.Convert(result.Values.First(), typeof(T));
+            else
+                return result.ToObject<T>(dynamicPropertiesContainerName, _dynamicResults);
         }
 
         private static bool IsSelectedColumn(KeyValuePair<string, object> kv, string columnName)
