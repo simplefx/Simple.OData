@@ -124,11 +124,17 @@ namespace Simple.OData.Client
                         var memberExpression = callExpression.Object as MemberExpression;
                         var arguments = new List<object>();
                         arguments.AddRange(callExpression.Arguments.Select(ParseCallArgumentExpression));
-                        var function = new ExpressionFunction(callExpression.Method.Name, arguments);
-                        return new ODataExpression(ParseMemberExpression(memberExpression), function);
+                        return new ODataExpression(
+                            ParseMemberExpression(memberExpression), 
+                            new ExpressionFunction(callExpression.Method.Name, arguments));
 
                     case ExpressionType.Call:
-                        return ParseCallExpression(callExpression.Object);
+                        if (string.Equals(callExpression.Method.Name, "ToString", StringComparison.Ordinal))
+                            return ParseCallExpression(callExpression.Object);
+                        else
+                            return new ODataExpression(
+                                new ODataExpression(callExpression.Object), 
+                                new ExpressionFunction(callExpression.Method.Name, callExpression.Arguments));
                 }
 
                 throw Utils.NotSupportedExpression(callExpression.Object);

@@ -278,6 +278,14 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void StringToLowerAndContains()
+        {
+            var x = ODataDynamic.Expression;
+            var filter = x.ProductName.ToLower().Contains("Chai");
+            Assert.Equal(FormatSettings.GetContainsFormat("tolower(ProductName)", "Chai"), filter.AsString(_session));
+        }
+
+        [Fact]
         public void IndexOfStringEqual()
         {
             var x = ODataDynamic.Expression;

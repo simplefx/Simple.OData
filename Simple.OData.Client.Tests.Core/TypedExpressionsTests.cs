@@ -296,6 +296,13 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void StringToLowerAndContains()
+        {
+            Expression<Func<TestEntity, bool>> filter = x => x.ProductName.ToLower().Contains("Chai");
+            Assert.Equal(FormatSettings.GetContainsFormat("tolower(ProductName)","Chai"), ODataExpression.FromLinqExpression(filter).AsString(_session));
+        }
+
+        [Fact]
         public void IndexOfStringEqual()
         {
             Expression<Func<TestEntity, bool>> filter = x => x.ProductName.IndexOf("ai") == 1;
