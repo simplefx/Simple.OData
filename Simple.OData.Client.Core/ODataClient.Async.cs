@@ -1196,7 +1196,7 @@ namespace Simple.OData.Client
                 ? new T[] { }
                 : result == null
                 ? null
-                : typeof(T).IsValue()
+                : typeof(T) == typeof(string) || typeof(T).IsValue()
                 ? result.SelectMany(x => x.Values).Select(x => (T)Utils.Convert(x, typeof(T))).ToArray()
                 : result.Select(x => (T)x.ToObject(typeof(T))).ToArray();
         }
