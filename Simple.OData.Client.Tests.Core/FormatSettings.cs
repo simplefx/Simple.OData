@@ -11,7 +11,7 @@ namespace Simple.OData.Client.Tests
         string TimeSpanPrefix { get; }
         string GetDateTimeOffsetFormat(string text, bool escapeDataString = false);
         string GetGuidFormat(string text, bool escapeDataString = false);
-        string GetEnumFormat(object value, Type enumType, string ns, bool escapeDataString = false);
+        string GetEnumFormat(object value, Type enumType, string ns, bool prefixFree = false, bool escapeDataString = false);
         string GetContainsFormat(string item, string text, bool escapeDataString = false);
     }
 
@@ -39,7 +39,7 @@ namespace Simple.OData.Client.Tests
             return result;
         }
 
-        public string GetEnumFormat(object value, Type enumType, string ns, bool escapeDataString = false)
+        public string GetEnumFormat(object value, Type enumType, string ns, bool prefixFree = false, bool escapeDataString = false)
         {
             return Convert.ToInt32(value).ToString();
         }
@@ -75,9 +75,11 @@ namespace Simple.OData.Client.Tests
             return escapeDataString ? Uri.EscapeDataString(text) : text;
         }
 
-        public string GetEnumFormat(object value, Type enumType, string ns, bool escapeDataString = false)
+        public string GetEnumFormat(object value, Type enumType, string ns, bool prefixFree = false, bool escapeDataString = false)
         {
-            var result = string.Format("{0}.{1}'{2}'", ns, enumType.Name, Enum.ToObject(enumType, value));
+            var result = prefixFree
+                ? string.Format("'{0}'", Enum.ToObject(enumType, value))
+                : string.Format("{0}.{1}'{2}'", ns, enumType.Name, Enum.ToObject(enumType, value));
             if (escapeDataString)
                 result = Uri.EscapeDataString(result);
             return result;

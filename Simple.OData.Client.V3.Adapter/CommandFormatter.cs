@@ -22,14 +22,13 @@ namespace Simple.OData.Client.V3.Adapter
         {
             if (value != null && value.GetType().IsEnumType())
                 value = Convert.ToInt32(value);
+            if (value is ODataExpression)
+                return (value as ODataExpression).AsString(_session);
 
             var odataVersion = (ODataVersion) Enum.Parse(typeof (ODataVersion), _session.Adapter.GetODataVersionString(), false);
-
             Func<object, string> convertValue = x => ODataUriUtils.ConvertToUriLiteral(x, odataVersion, (_session.Adapter as ODataAdapter).Model);
 
-            return value is ODataExpression
-                ? (value as ODataExpression).AsString(_session)
-                : escapeDataString
+            return escapeDataString
                 ? Uri.EscapeDataString(convertValue(value))
                 : convertValue(value);
         }

@@ -466,6 +466,23 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void FilterWithEnum_PrefixFree()
+        {
+            var enumPrefixFree = _session.Settings.EnumPrefixFree;
+            _session.Settings.EnumPrefixFree = true;
+            try
+            {
+                Expression<Func<TestEntity, bool>> filter = x => x.Address.Type == AddressType.Corporate;
+                Assert.Equal(string.Format("Address/Type eq {0}", FormatSettings.GetEnumFormat(AddressType.Corporate, typeof(AddressType), "NorthwindModel", true)),
+                    ODataExpression.FromLinqExpression(filter).AsString(_session));
+            }
+            finally
+            {
+                _session.Settings.EnumPrefixFree = enumPrefixFree;
+            }
+        }
+
+        [Fact]
         public void ExpressionBuilder()
         {
             Expression<Predicate<TestEntity>> condition1 = x => x.ProductName == "Chai";

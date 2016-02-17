@@ -226,7 +226,7 @@ namespace Simple.OData.Client.V4.Adapter
         public override string GetFunctionFullName(string functionName)
         {
             var function = GetFunction(functionName);
-            return function.IsBound ? function.ShortQualifiedName() : function.Name;
+            return function.IsBound && !_session.Settings.UnqualifiedNameCall ? function.ShortQualifiedName() : function.Name;
         }
 
         public override EntityCollection GetFunctionReturnCollection(string functionName)
@@ -248,7 +248,7 @@ namespace Simple.OData.Client.V4.Adapter
         public override string GetActionFullName(string actionName)
         {
             var action = GetAction(actionName);
-            return action.IsBound ? action.ShortQualifiedName() : action.Name;
+            return action.IsBound && !_session.Settings.UnqualifiedNameCall ? action.ShortQualifiedName() : action.Name;
         }
 
         public override EntityCollection GetActionReturnCollection(string actionName)

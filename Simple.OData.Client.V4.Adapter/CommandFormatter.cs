@@ -23,14 +23,16 @@ namespace Simple.OData.Client.V4.Adapter
         {
             if (value != null && value.GetType().IsEnumType())
                 value = new ODataEnumValue(value.ToString(), _session.Metadata.GetQualifiedTypeName(value.GetType().Name));
+            if (value is ODataExpression)
+                return (value as ODataExpression).AsString(_session);
 
             var odataVersion = (ODataVersion)Enum.Parse(typeof(ODataVersion), _session.Adapter.GetODataVersionString(), false);
-
             Func<object, string> convertValue = x => ODataUriUtils.ConvertToUriLiteral(x, odataVersion, (_session.Adapter as ODataAdapter).Model);
 
-            return value is ODataExpression
-                ? (value as ODataExpression).AsString(_session)
-                : escapeDataString
+            if (value is ODataEnumValue && _session.Settings.EnumPrefixFree)
+                value = (value as ODataEnumValue).Value;
+
+            return escapeDataString
                 ? Uri.EscapeDataString(convertValue(value))
                 : convertValue(value);
         }

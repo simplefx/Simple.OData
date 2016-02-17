@@ -130,6 +130,22 @@ namespace Simple.OData.Client
         public bool RenewHttpConnection { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether <see cref="HttpClient"/> should omit namespaces for function and action calls in generated URI.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> to omit namespaces for function and action calls in generated URI; <c>false</c> otherwise.
+        /// </value>
+        public bool UnqualifiedNameCall { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether <see cref="HttpClient"/> should omit type prefix for Enum values in generated URI.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> to omit type prefix for Enum values in generated URI; <c>false</c> otherwise.
+        /// </value>
+        public bool EnumPrefixFree { get; set; }
+
+        /// <summary>
         /// Gets or sets the HttpMessageHandler factory used by HttpClient.
         /// If not set, ODataClient creates an instance of HttpClientHandler.
         /// </summary>
@@ -213,13 +229,14 @@ namespace Simple.OData.Client
             this.Credentials = session.Settings.Credentials;
             this.PayloadFormat = session.Settings.PayloadFormat;
             this.RequestTimeout = session.Settings.RequestTimeout;
-            this.IncludeResourceTypeInEntryProperties = session.Settings.IncludeResourceTypeInEntryProperties;
             this.IncludeAnnotationsInResults = session.Settings.IncludeAnnotationsInResults;
             this.IgnoreResourceNotFoundException = session.Settings.IgnoreResourceNotFoundException;
             this.IgnoreUnmappedProperties = session.Settings.IgnoreUnmappedProperties;
             this.PreferredUpdateMethod = session.Settings.PreferredUpdateMethod;
             this.MetadataDocument = session.Settings.MetadataDocument;
             this.RenewHttpConnection = session.Settings.RenewHttpConnection;
+            this.UnqualifiedNameCall = session.Settings.UnqualifiedNameCall;
+            this.EnumPrefixFree = session.Settings.EnumPrefixFree;
             this.OnCreateMessageHandler = session.Settings.OnCreateMessageHandler;
             this.OnApplyClientHandler = session.Settings.OnApplyClientHandler;
             this.BeforeRequest = session.Settings.BeforeRequest;
