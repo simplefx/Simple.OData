@@ -92,7 +92,8 @@ namespace Simple.OData.Client
             if (_contentStream == null)
                 return null;
 
-            _contentStream.Seek(0, SeekOrigin.Begin);
+            if (_contentStream.CanSeek)
+                _contentStream.Seek(0, SeekOrigin.Begin);
             var content = new StreamContent(_contentStream);
             content.Headers.ContentType = new MediaTypeHeaderValue(this.GetContentType());
             content.Headers.ContentLength = _contentStream.Length;

@@ -15,9 +15,8 @@ namespace Simple.OData.Client
     {
         public static string StreamToString(Stream stream, bool disposeStream = false)
         {
-            if (!disposeStream)
-                if (stream.CanSeek)
-                    stream.Seek(0, SeekOrigin.Begin);
+            if (!disposeStream && stream.CanSeek)
+                stream.Seek(0, SeekOrigin.Begin);
             var result = new StreamReader(stream).ReadToEnd();
             if (disposeStream)
                 stream.Dispose();
@@ -26,7 +25,7 @@ namespace Simple.OData.Client
 
         public static byte[] StreamToByteArray(Stream stream, bool disposeStream = false)
         {
-            if (!disposeStream)
+            if (!disposeStream && stream.CanSeek)
                 stream.Seek(0, SeekOrigin.Begin);
             var bytes = new byte[stream.Length];
             var result = new BinaryReader(stream).ReadBytes(bytes.Length);
