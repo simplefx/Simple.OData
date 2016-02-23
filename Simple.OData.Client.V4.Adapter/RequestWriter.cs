@@ -353,7 +353,7 @@ namespace Simple.OData.Client.V4.Adapter
                     return new ODataCollectionValue()
                     {
                         TypeName = propertyType.FullName(),
-                        Items = (value as IEnumerable<object>).Select(x => GetPropertyValue(collection.ElementType(), x)),
+                        Items = ((IEnumerable)value).Cast<object>().Select(x => GetPropertyValue(collection.ElementType(), x)),
                     };
 
                 case EdmTypeKind.Primitive:
