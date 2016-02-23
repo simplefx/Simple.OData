@@ -123,6 +123,7 @@
     <Compile Include="Extensions\DictionaryExtensionsTests.cs" />
     <Compile Include="Extensions\StringExtensionTests.cs" />
     <Compile Include="Extensions\TypeExtensionTests.cs" />
+    <Compile Include="RequestWriterTests.cs" />
     <Compile Include="ResponseReaderTests.cs" />
     <Compile Include="PluralizerTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

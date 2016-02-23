@@ -73,7 +73,9 @@ namespace Simple.OData.Client
             var entryDetails = _session.Metadata.ParseEntryDetails(entityCollection.Name, entryData);
 
             var hasPropertiesToUpdate = entryDetails.Properties.Count > 0;
-            var usePatch = _session.Settings.PreferredUpdateMethod == ODataUpdateMethod.Patch || !hasPropertiesToUpdate || !HasUpdatedKeyProperties(collection, entryKey, entryData);
+            var usePatch = _session.Settings.PreferredUpdateMethod == ODataUpdateMethod.Patch || !hasPropertiesToUpdate;
+            if (HasUpdatedKeyProperties(collection, entryKey, entryData))
+                usePatch = false;
 
             var entryContent = await WriteEntryContentAsync(
                 usePatch ? RestVerbs.Patch : RestVerbs.Put, collection, entryIdent, entryData, resultRequired);
