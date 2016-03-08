@@ -64,11 +64,11 @@ namespace Simple.OData.Client
                 else
                 {
                     if (NeedsGrouping(_left))
-                        return string.Format("({0}) {1} {2}", left, op, right);
-                    else if (NeedsGrouping(_right))
-                        return string.Format("{0} {1} ({2})", left, op, right);
-                    else
-                        return string.Format("{0} {1} {2}", left, op, right);
+                        left = string.Format("({0})", left);
+                    if (NeedsGrouping(_right))
+                        right = string.Format("({0})", right);
+
+                    return string.Format("{0} {1} {2}", left, op, right);
                 }
             }
         }

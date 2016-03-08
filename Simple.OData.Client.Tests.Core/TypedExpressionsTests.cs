@@ -499,5 +499,18 @@ namespace Simple.OData.Client.Tests
             filter = filter || new ODataExpression<TestEntity>(x => x.ProductID == 1);
             Assert.Equal("ProductName eq 'Chai' or ProductID eq 1", filter.AsString(_session));
         }
+
+        [Fact]
+        public void ExpressionBuilderGrouping()
+        {
+            Expression<Predicate<TestEntity>> condition1 = x => x.ProductName == "Chai";
+            Expression<Func<TestEntity, bool>> condition2 = x => x.ProductID == 1;
+            Expression<Predicate<TestEntity>> condition3 = x => x.ProductName == "Kaffe";
+            Expression<Func<TestEntity, bool>> condition4 = x => x.ProductID == 2;
+            var filter1 = new ODataExpression(condition1) || new ODataExpression(condition2);
+            var filter2 = new ODataExpression(condition3) || new ODataExpression(condition4);
+            var filter = filter1 && filter2;
+            Assert.Equal("(ProductName eq 'Chai' or ProductID eq 1) and (ProductName eq 'Kaffe' or ProductID eq 2)", filter.AsString(_session));
+        }
     }
 }
