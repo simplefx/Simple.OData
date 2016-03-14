@@ -1,0 +1,48 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+  <edmx:DataServices>
+    <Schema Namespace="Models" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <EntityType Name="Entity">
+        <Key>
+          <PropertyRef Name="Id" />
+
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Name" Type="Edm.String" />
+        <Property Name="Rank" Type="Models.Rank" Nullable="false" />
+
+      </EntityType>
+      <ComplexType Name="EnumClass">
+        <Property Name="Rank" Type="Models.Rank" Nullable="false" />
+        <Property Name="Name" Type="Edm.String" />
+
+      </ComplexType>
+      <EnumType Name="Rank">
+        <Member Name="First" Value="0" />
+        <Member Name="Second" Value="1" />
+        <Member Name="Third" Value="2" />
+
+      </EnumType>
+
+    </Schema>
+    <Schema Namespace="Test" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <Action Name="MakeFromClass" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(Models.Entity)" />
+        <Parameter Name="args" Type="Models.EnumClass" />
+        <ReturnType Type="Models.Entity" />
+
+      </Action>
+      <Action Name="MakeFromParam" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(Models.Entity)" />
+        <Parameter Name="Name" Type="Edm.String" Unicode="false" />
+        <Parameter Name="Rank" Type="Models.Rank" Nullable="false" />
+        <ReturnType Type="Models.Entity" />
+
+      </Action>
+      <EntityContainer Name="Container">
+        <EntitySet Name="Entities" EntityType="Models.Entity" />
+
+      </EntityContainer>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>

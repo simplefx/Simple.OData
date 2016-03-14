@@ -124,9 +124,12 @@ namespace Simple.OData.Client.V4.Adapter
             switch (operationParameter.Type.Definition.TypeKind)
             {
                 case EdmTypeKind.Primitive:
-                case EdmTypeKind.Enum:
                 case EdmTypeKind.Complex:
                     await parameterWriter.WriteValueAsync(paramName, paramValue);
+                    break;
+
+                case EdmTypeKind.Enum:
+                    await parameterWriter.WriteValueAsync(paramName, new ODataEnumValue(paramValue.ToString()));
                     break;
 
                 case EdmTypeKind.Entity:
