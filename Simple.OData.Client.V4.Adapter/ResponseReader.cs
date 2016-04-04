@@ -78,7 +78,6 @@ namespace Simple.OData.Client.V4.Adapter
         {
             var readerSettings = new ODataMessageReaderSettings();
             readerSettings.MessageQuotas.MaxReceivedMessageSize = Int32.MaxValue;
-            readerSettings.ShouldIncludeAnnotation = x => _session.Settings.IncludeAnnotationsInResults;
             using (var messageReader = new ODataMessageReader(responseMessage, readerSettings, _model))
             {
                 var payloadKind = messageReader.DetectPayloadKind();
