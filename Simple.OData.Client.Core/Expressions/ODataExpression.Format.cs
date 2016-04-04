@@ -116,6 +116,11 @@ namespace Simple.OData.Client
             {
                 return FormatArrayIndexFunction(context);
             }
+            else if (string.Equals(this.Function.FunctionName, "HasFlag", StringComparison.Ordinal) &&
+                this.Function.Arguments.Count == 1)
+            {
+                return FormatEnumHasFlagFunction(context);
+            }
             else if (string.Equals(this.Function.FunctionName, "ToString", StringComparison.Ordinal) &&
                 this.Function.Arguments.Count == 0)
             {
@@ -193,6 +198,12 @@ namespace Simple.OData.Client
 
             return string.Format("{0}({1})",
                 this.Function.FunctionName.ToLower(), formattedArguments);
+        }
+
+        private string FormatEnumHasFlagFunction(ExpressionContext context)
+        {
+            var value = FormatExpression(this.Function.Arguments.First(), new ExpressionContext(context.Session));
+            return string.Format("{0} has {1}", _functionCaller.Reference, value);
         }
 
         private string FormatArrayIndexFunction(ExpressionContext context)
