@@ -417,6 +417,13 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public void EqualNestedPropertyLengthOfStringEqual()
+        {
+            Expression<Func<TestEntity, bool>> filter = x => x.Nested.ProductName.Length == 4;
+            Assert.Equal("length(Nested/ProductName) eq 4", ODataExpression.FromLinqExpression(filter).AsString(_session));
+        }
+
+        [Fact]
         public void ConvertEqual()
         {
             var id = "1";
@@ -480,6 +487,22 @@ namespace Simple.OData.Client.Tests
             {
                 _session.Settings.EnumPrefixFree = enumPrefixFree;
             }
+        }
+
+        [Fact]
+        public void FilterWithEnum_HasFlag()
+        {
+            Expression<Func<TestEntity, bool>> filter = x => x.Address.Type.HasFlag(AddressType.Corporate);
+            Assert.Equal(string.Format("Address/Type has {0}", FormatSettings.GetEnumFormat(AddressType.Corporate, typeof(AddressType), "NorthwindModel")),
+                ODataExpression.FromLinqExpression(filter).AsString(_session));
+        }
+
+        [Fact]
+        public void FilterWithEnum_ToString()
+        {
+            Expression<Func<TestEntity, bool>> filter = x => x.Address.Type.ToString() == AddressType.Corporate.ToString();
+            Assert.Equal(string.Format("Address/Type eq {0}", FormatSettings.GetEnumFormat(AddressType.Corporate, typeof(AddressType), "NorthwindModel")),
+                ODataExpression.FromLinqExpression(filter).AsString(_session));
         }
 
         [Fact]

@@ -78,14 +78,13 @@ namespace Simple.OData.Client
                 switch (memberExpression.Expression.NodeType)
                 {
                     case ExpressionType.Parameter:
-                        return new ODataExpression(memberNames);
+                        return FromReference(memberNames);
                     case ExpressionType.Constant:
                         return ParseConstantExpression(memberExpression.Expression, memberNames);
                     case ExpressionType.MemberAccess:
                         if (FunctionMapping.ContainsFunction(memberName, 0))
                         {
-                            var contextExpression = memberExpression.Expression as MemberExpression;
-                            return FromFunction(memberName, contextExpression.Member.Name, new List<object>());
+                            return FromFunction(memberName, ParseMemberExpression(memberExpression.Expression), new List<object>());
                         }
                         else
                         {
@@ -109,7 +108,7 @@ namespace Simple.OData.Client
                     var callArguments = string.Equals(callExpression.Method.DeclaringType.FullName, "System.Convert", StringComparison.Ordinal)
                         ? callExpression.Arguments
                         : callExpression.Arguments.Skip(1);
-                    return FromFunction(callExpression.Method.Name, ParseLinqExpression(target).Reference, callArguments);
+                    return FromFunction(callExpression.Method.Name, ParseLinqExpression(target), callArguments);
                 }
                 else
                 {
@@ -135,6 +134,9 @@ namespace Simple.OData.Client
                             return new ODataExpression(
                                 new ODataExpression(callExpression.Object), 
                                 new ExpressionFunction(callExpression.Method.Name, callExpression.Arguments));
+
+                    case ExpressionType.Constant:
+                        return new ODataExpression(ParseConstantExpression(callExpression.Object).Value);
                 }
 
                 throw Utils.NotSupportedExpression(callExpression.Object);
@@ -160,6 +162,8 @@ namespace Simple.OData.Client
                     return new ODataExpression(ParseMemberExpression(expression).Value);
                 case ExpressionType.ArrayIndex:
                     return new ODataExpression(ParseArrayExpression(expression).Value);
+                case ExpressionType.Convert:
+                    return new ODataExpression(ParseUnaryExpression(expression));
 
                 default:
                     throw Utils.NotSupportedExpression(expression);

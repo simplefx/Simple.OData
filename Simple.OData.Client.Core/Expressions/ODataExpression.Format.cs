@@ -18,17 +18,17 @@ namespace Simple.OData.Client
                 throw new InvalidOperationException("Invalid custom query option");
             }
 
-            if (_operator == ExpressionType.Default && _conversionType == null)
+            if (_operator == ExpressionType.Default && !this.IsValueConversion)
             {
                 return this.Reference != null ?
                     FormatReference(context) : this.Function != null ?
                     FormatFunction(context) :
                     FormatValue(context);
             }
-            else if (_conversionType != null)
+            else if (this.IsValueConversion)
             {
-                var expr = _left;
-                if (expr.Reference == null && expr.Function == null && expr._conversionType == null)
+                var expr = this.Value as ODataExpression;
+                if (expr.Reference == null && expr.Function == null && !expr.IsValueConversion)
                 {
                     object result;
                     if (expr.Value != null && expr.Value.GetType().IsEnumType())
@@ -124,9 +124,9 @@ namespace Simple.OData.Client
             else if (string.Equals(this.Function.FunctionName, "ToString", StringComparison.Ordinal) &&
                 this.Function.Arguments.Count == 0)
             {
-                return _functionCaller.Reference;
+                return FormatCallerReference();
             }
-            else if (_functionCaller.IsNull && this.Function.Arguments.Count == 1)
+            else if (this.Function.Arguments.Count == 1)
             {
                 var val = this.Function.Arguments.First();
                 if (val.Value != null)
@@ -170,7 +170,7 @@ namespace Simple.OData.Client
 
         private string FormatAnyAllFunction(ExpressionContext context)
         {
-            var navigationPath = _functionCaller.Reference.Replace('.', '/');
+            var navigationPath = FormatCallerReference();
             var entityCollection = context.Session.Metadata.NavigateToCollection(context.EntityCollection, navigationPath);
 
             var targetQualifier = string.Format("x{0}", ArgumentCounter >= 0 ? (1 + (ArgumentCounter++) % 9).ToString() : string.Empty);
@@ -203,7 +203,7 @@ namespace Simple.OData.Client
         private string FormatEnumHasFlagFunction(ExpressionContext context)
         {
             var value = FormatExpression(this.Function.Arguments.First(), new ExpressionContext(context.Session));
-            return string.Format("{0} has {1}", _functionCaller.Reference, value);
+            return string.Format("{0} has {1}", FormatCallerReference(), value);
         }
 
         private string FormatArrayIndexFunction(ExpressionContext context)
@@ -212,7 +212,7 @@ namespace Simple.OData.Client
                 FormatExpression(this.Function.Arguments.First(), new ExpressionContext(context.Session)).Trim('\'');
             return _functionCaller.Reference == context.DynamicPropertiesContainerName
                 ? propertyName
-                : string.Format("{0}.{1}", _functionCaller.Reference, propertyName);
+                : string.Format("{0}.{1}", FormatCallerReference(), propertyName);
         }
 
         private string FormatValue(ExpressionContext context)
@@ -341,12 +341,17 @@ namespace Simple.OData.Client
             if (FunctionMapping.TryGetFunctionMapping(objectName, 0, adapterVersion, out mapping))
             {
                 var mappedFunction = mapping.FunctionMapper(objectName, _functionCaller, null).Function;
-                return string.Format("{0}({1})", mappedFunction.FunctionName, _functionCaller.Format(context));
+                return string.Format("{0}({1})", mappedFunction.FunctionName, FormatCallerReference());
             }
             else
             {
                 return null;
             }
+        }
+
+        private string FormatCallerReference()
+        {
+            return _functionCaller.Reference.Replace(".", "/");
         }
 
         private int GetPrecedence(ExpressionType op)
