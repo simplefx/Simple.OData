@@ -128,6 +128,35 @@ namespace Simple.OData.Client.Tests
             Assert.Equal(expectedCommand, commandText);
         }
 
+        [Theory]
+        [InlineData("Northwind.xml", "Employees?$expand=Subordinates&$select=LastName,Subordinates&$orderby=Superior/LastName")]
+        [InlineData("Northwind4.xml", "Employees?$expand=Subordinates&$select=LastName,Subordinates&$orderby=Superior/LastName")]
+        public async Task ExpandSubordinatesWithSelectThenDeepOrderby(string metadataFile, string expectedCommand)
+        {
+            var client = CreateClient(metadataFile);
+            var command = client
+                .For<Employee>()
+                .Expand(x => x.Subordinates)
+                .Select(x => new { x.LastName, x.Subordinates })
+                .OrderBy(x => x.Superior.LastName);
+            string commandText = await command.GetCommandTextAsync();
+            Assert.Equal(expectedCommand, commandText);
+        }
+
+        [Theory]
+        [InlineData("Northwind.xml", "Employees?$select=LastName,Subordinates&$orderby=Superior/LastName")]
+        [InlineData("Northwind4.xml", "Employees?$select=LastName,Subordinates&$orderby=Superior/LastName")]
+        public async Task SelectAndDeepOrderby(string metadataFile, string expectedCommand)
+        {
+            var client = CreateClient(metadataFile);
+            var command = client
+                .For<Employee>()
+                .Select(x => new { x.LastName, x.Subordinates })
+                .OrderBy(x => x.Superior.LastName);
+            string commandText = await command.GetCommandTextAsync();
+            Assert.Equal(expectedCommand, commandText);
+        }
+
         [Fact]
         public async Task ExpandSubordinates2LevelsByValue()
         {

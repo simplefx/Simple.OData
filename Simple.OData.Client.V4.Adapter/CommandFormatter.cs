@@ -45,16 +45,18 @@ namespace Simple.OData.Client.V4.Adapter
                     string.Join(",", command.Details.ExpandAssociations.Select(x =>
                         FormatExpansionSegment(x.Key, resultCollection,
                         x.Value,
-                        SelectExpansionSegmentColumns(command.Details.SelectColumns, x.Key),
-                        SelectExpansionSegmentColumns(command.Details.OrderbyColumns, x.Key))))));
+                        SelectPathSegmentColumns(command.Details.SelectColumns, x.Key),
+                        SelectPathSegmentColumns(command.Details.OrderbyColumns, x.Key))))));
             }
 
-            FormatClause(commandClauses, resultCollection, 
-                SelectExpansionSegmentColumns(command.Details.SelectColumns, null), 
+            FormatClause(commandClauses, resultCollection,
+                SelectPathSegmentColumns(command.Details.SelectColumns, null, 
+                    command.Details.ExpandAssociations.Select(FormatFirstSegment).ToList()), 
                 ODataLiteral.Select, FormatSelectItem);
 
-            FormatClause(commandClauses, resultCollection, 
-                SelectExpansionSegmentColumns(command.Details.OrderbyColumns, null), 
+            FormatClause(commandClauses, resultCollection,
+                SelectPathSegmentColumns(command.Details.OrderbyColumns, null,
+                    command.Details.ExpandAssociations.Select(FormatFirstSegment).ToList()), 
                 ODataLiteral.OrderBy, FormatOrderByItem);
         }
 
@@ -82,8 +84,8 @@ namespace Simple.OData.Client.V4.Adapter
 
                 clauses.Add(string.Format("{0}={1}", ODataLiteral.Expand, 
                     FormatExpansionSegment(path, entityCollection, expandOptions,
-                        SelectExpansionSegmentColumns(selectColumns, path),
-                        SelectExpansionSegmentColumns(orderbyColumns, path))));
+                        SelectPathSegmentColumns(selectColumns, path),
+                        SelectPathSegmentColumns(orderbyColumns, path))));
             }
 
             if (expandOptions.Levels > 1)
@@ -97,14 +99,14 @@ namespace Simple.OData.Client.V4.Adapter
 
             if (selectColumns.Any())
             {
-                var columns = string.Join(",", SelectExpansionSegmentColumns(selectColumns, null));
+                var columns = string.Join(",", SelectPathSegmentColumns(selectColumns, null));
                 if (!string.IsNullOrEmpty(columns))
                     clauses.Add(string.Format("{0}={1}", ODataLiteral.Select, columns));
             }
 
             if (orderbyColumns.Any())
             {
-                var columns = string.Join(",", SelectExpansionSegmentColumns(orderbyColumns, null)
+                var columns = string.Join(",", SelectPathSegmentColumns(orderbyColumns, null)
                     .Select(x => x.Key + (x.Value ? " desc" : string.Empty)).ToList());
                 if (!string.IsNullOrEmpty(columns))
                     clauses.Add(string.Format("{0}={1}", ODataLiteral.OrderBy, columns));
@@ -116,25 +118,70 @@ namespace Simple.OData.Client.V4.Adapter
             return text;
         }
 
-        private IList<string> SelectExpansionSegmentColumns(
-            IList<string> columns, string path)
+        private IList<string> SelectPathSegmentColumns(
+            IList<string> columns, string path, IList<string> excludePaths = null)
         {
             if (string.IsNullOrEmpty(path))
-                return columns.Where(x => !x.Contains("/")).ToList();
+            {
+                var resultColumns = columns.Where(x => !HasMultipleSegments(x)).ToList();
+                if (excludePaths != null)
+                    resultColumns.AddRange(columns.Where(x => HasMultipleSegments(x) && 
+                        !excludePaths.Any(y => FormatFirstSegment(y).Contains(FormatFirstSegment(x)))));
+                return resultColumns;
+            }
             else
-                return columns.Where(x => x.Contains("/") && x.Split('/').First() == path.Split('/').First())
-                    .Select(x => string.Join("/", x.Split('/').Skip(1))).ToList();
+            {
+                return columns.Where(x => HasMultipleSegments(x) && FormatFirstSegment(x) == FormatFirstSegment(path))
+                    .Select(x => FormatSkipSegments(x, 1)).ToList();
+            }
         }
 
-        private IList<KeyValuePair<string, bool>> SelectExpansionSegmentColumns(
-            IList<KeyValuePair<string, bool>> columns, string path)
+        private IList<KeyValuePair<string, bool>> SelectPathSegmentColumns(
+            IList<KeyValuePair<string, bool>> columns, string path, IList<string> excludePaths = null)
         {
             if (string.IsNullOrEmpty(path))
-                return columns.Where(x => !x.Key.Contains("/")).ToList();
+            {
+                var resultColumns = columns.Where(x => !HasMultipleSegments(x)).ToList();
+                if (excludePaths != null)
+                    resultColumns.AddRange(columns.Where(x => HasMultipleSegments(x) &&
+                        !excludePaths.Any(y => FormatFirstSegment(y).Contains(FormatFirstSegment(x)))));
+                return resultColumns;
+            }
             else
-                return columns.Where(x => x.Key.Contains("/") && x.Key.Split('/').First() == path.Split('/').First())
-                    .Select(x => new KeyValuePair<string, bool>(
-                        string.Join("/", x.Key.Split('/').Skip(1)), x.Value)).ToList();
+            {
+                return columns.Where(x => HasMultipleSegments(x) && FormatFirstSegment(x) == FormatFirstSegment(path))
+                    .Select(x => new KeyValuePair<string, bool>(FormatSkipSegments(x, 1), x.Value)).ToList();
+            }
+        }
+
+        private bool HasMultipleSegments(string path)
+        {
+            return path.Contains("/");
+        }
+
+        private bool HasMultipleSegments<T>(KeyValuePair<string, T> path)
+        {
+            return path.Key.Contains("/");
+        }
+
+        private string FormatFirstSegment(string path)
+        {
+            return path.Split('/').First();
+        }
+
+        private string FormatFirstSegment<T>(KeyValuePair<string, T> path)
+        {
+            return path.Key.Split('/').First();
+        }
+
+        private string FormatSkipSegments(string path, int skipCount)
+        {
+            return string.Join("/", path.Split('/').Skip(skipCount));
+        }
+
+        private string FormatSkipSegments<T>(KeyValuePair<string, T> path, int skipCount)
+        {
+            return string.Join("/", path.Key.Split('/').Skip(skipCount));
         }
     }
 }
