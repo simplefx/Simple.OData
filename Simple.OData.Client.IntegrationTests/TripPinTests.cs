@@ -935,6 +935,18 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task GetFavoriteAirline()
+        {
+            var airport = await _client
+                .For<Person>()
+                .Key("russellwhyte")
+                .Function("GetFavoriteAirline")
+                .ExecuteAsArrayAsync<Airline>();
+
+            Assert.Equal("AA", airport.First().AirlineCode);
+        }
+
+        [Fact]
         public async Task GetPhotoMedia()
         {
             var photo = await _client
