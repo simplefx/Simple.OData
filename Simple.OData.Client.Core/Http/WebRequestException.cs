@@ -16,6 +16,7 @@ namespace Simple.OData.Client
     {
         private readonly HttpStatusCode _statusCode;
         private readonly string _responseContent;
+        private readonly Uri _requestUri;
 
         /// <summary>
         /// Creates from the instance of HttpResponseMessage.
@@ -24,7 +25,8 @@ namespace Simple.OData.Client
         /// <returns>The instance of <see cref="WebRequestException"/>.</returns>
         public static async Task<WebRequestException> CreateFromResponseMessageAsync(HttpResponseMessage response)
         {
-            return new WebRequestException(response.ReasonPhrase, response.StatusCode,
+            var requestUri = response.RequestMessage != null ? response.RequestMessage.RequestUri : null;
+            return new WebRequestException(response.ReasonPhrase, response.StatusCode, requestUri,
                 response.Content != null ? await response.Content.ReadAsStringAsync() : null, null);
         }
 
@@ -38,7 +40,7 @@ namespace Simple.OData.Client
             var response = ex.Response as HttpWebResponse;
             return response == null ?
                 new WebRequestException(ex) :
-                new WebRequestException(ex.Message, response.StatusCode, Utils.StreamToString(response.GetResponseStream()), ex);
+                new WebRequestException(ex.Message, response.StatusCode, response.ResponseUri, Utils.StreamToString(response.GetResponseStream()), ex);
         }
 
         /// <summary>
@@ -48,7 +50,7 @@ namespace Simple.OData.Client
         /// <returns>The instance of <see cref="WebRequestException"/>.</returns>
         public static WebRequestException CreateFromStatusCode(HttpStatusCode statusCode, string responseContent = null)
         {
-            return new WebRequestException(statusCode.ToString(), statusCode, responseContent, null);
+            return new WebRequestException(statusCode.ToString(), statusCode, null, responseContent, null);
         }
 
         /// <summary>
@@ -58,11 +60,12 @@ namespace Simple.OData.Client
         /// <param name="statusCode">The HTTP status code.</param>
         /// <param name="responseContent">The response content.</param>
         /// <param name="inner">The inner exception.</param>
-        private WebRequestException(string message, HttpStatusCode statusCode, string responseContent, Exception inner)
+        private WebRequestException(string message, HttpStatusCode statusCode, Uri request, string responseContent, Exception inner)
             : base(message, inner)
         {
             _statusCode = statusCode;
             _responseContent = responseContent;
+            _requestUri = request;
         }
 
         /// <summary>
@@ -107,6 +110,17 @@ namespace Simple.OData.Client
         public string Response
         {
             get { return _responseContent; }
+        }
+
+        /// <summary>
+        /// Gets the HTTP Uri
+        /// </summary>
+        /// <value>
+        /// The original request uri, or the resulting uri if a redirect took place.
+        /// </value>
+        public Uri RequestUri
+        {
+            get { return _requestUri; }
         }
     }
 }
