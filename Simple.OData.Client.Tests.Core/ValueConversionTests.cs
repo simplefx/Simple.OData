@@ -10,17 +10,31 @@ namespace Simple.OData.Client.Tests
     {
         [Theory]
         [InlineData(1, typeof(int), typeof(byte))]
+        [InlineData(1, typeof(int), typeof(byte?))]
         [InlineData(1, typeof(int), typeof(short))]
+        [InlineData(1, typeof(int), typeof(short?))]
         [InlineData(1, typeof(int), typeof(long))]
+        [InlineData(1, typeof(int), typeof(long?))]
         [InlineData(1, typeof(int), typeof(decimal))]
+        [InlineData(1, typeof(int), typeof(decimal?))]
         [InlineData(1, typeof(int), typeof(float))]
+        [InlineData(1, typeof(int), typeof(float?))]
         [InlineData(1, typeof(int), typeof(double))]
+        [InlineData(1, typeof(int), typeof(double?))]
         [InlineData(1, typeof(double), typeof(byte))]
+        [InlineData(1, typeof(double), typeof(byte?))]
         [InlineData(1, typeof(double), typeof(short))]
+        [InlineData(1, typeof(double), typeof(short?))]
         [InlineData(1, typeof(double), typeof(long))]
+        [InlineData(1, typeof(double), typeof(long?))]
         [InlineData(1, typeof(double), typeof(decimal))]
+        [InlineData(1, typeof(double), typeof(decimal?))]
         [InlineData(1, typeof(double), typeof(float))]
+        [InlineData(1, typeof(double), typeof(float?))]
+        [InlineData("Utc", typeof(string), typeof(DateTimeKind))]
+        [InlineData("Utc", typeof(string), typeof(DateTimeKind?))]
         [InlineData("2014-02-01T12:00:00.123", typeof(DateTimeOffset), typeof(DateTime))]
+        [InlineData("2014-02-01T12:00:00.123", typeof(DateTimeOffset), typeof(DateTime?))]
         [InlineData("58D6C94D-B18A-43C9-AC1B-0B5A5BF10C35", typeof(string), typeof(Guid))]
         [InlineData("58D6C94D-B18A-43C9-AC1B-0B5A5BF10C35", typeof(string), typeof(Guid?))]
         public void TryConvert(object value, Type sourceType, Type targetType)
@@ -45,6 +59,8 @@ namespace Simple.OData.Client.Tests
                 return DateTime.Parse(value.ToString());
             if (targetType == typeof(DateTimeOffset))
                 return DateTimeOffset.Parse(value.ToString());
+            if (targetType.IsEnum)
+                return Enum.Parse(targetType, value.ToString(), true);
             if (targetType == typeof(Guid))
                 return new Guid(value.ToString());
             if (Nullable.GetUnderlyingType(targetType) != null)
