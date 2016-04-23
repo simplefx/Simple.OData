@@ -152,6 +152,10 @@ namespace Simple.OData.Client
                     else
                         result = null;
                 }
+                else if (targetType == typeof(string))
+                {
+                    result = value.ToString();
+                }
                 else if (targetType.IsEnumType() && value is string)
                 {
                     result = Enum.Parse(targetType, value.ToString(), true);
@@ -176,9 +180,13 @@ namespace Simple.OData.Client
                 {
                     result = Enum.ToObject(targetType, value);
                 }
-                else if (Nullable.GetUnderlyingType(targetType) == value.GetType())
+                else if (targetType == typeof(Guid) && value is string)
                 {
-                    result = value;
+                    result = new Guid(value.ToString());
+                }
+                else if (Nullable.GetUnderlyingType(targetType) != null)
+                {
+                    result = Convert(value, Nullable.GetUnderlyingType(targetType));
                 }
                 else
                 {
