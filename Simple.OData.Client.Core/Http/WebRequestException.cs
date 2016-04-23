@@ -58,14 +58,15 @@ namespace Simple.OData.Client
         /// </summary>
         /// <param name="message">The message that describes the error.</param>
         /// <param name="statusCode">The HTTP status code.</param>
+        /// <param name="requestUri">The original request URI.</param>
         /// <param name="responseContent">The response content.</param>
         /// <param name="inner">The inner exception.</param>
-        private WebRequestException(string message, HttpStatusCode statusCode, Uri request, string responseContent, Exception inner)
+        private WebRequestException(string message, HttpStatusCode statusCode, Uri requestUri, string responseContent, Exception inner)
             : base(message, inner)
         {
             _statusCode = statusCode;
             _responseContent = responseContent;
-            _requestUri = request;
+            _requestUri = requestUri;
         }
 
         /// <summary>
@@ -116,7 +117,7 @@ namespace Simple.OData.Client
         /// Gets the HTTP Uri
         /// </summary>
         /// <value>
-        /// The original request uri, or the resulting uri if a redirect took place.
+        /// The original request URI, or the resulting URI if a redirect took place.
         /// </value>
         public Uri RequestUri
         {
