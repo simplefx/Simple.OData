@@ -94,8 +94,8 @@ namespace Simple.OData.Client.Tests
 
         [Theory]
         [InlineData("Northwind.xml", "Employees?$expand=Subordinates/Subordinates&$select=LastName,Subordinates,Subordinates/LastName,Subordinates/Subordinates&$orderby=LastName,Subordinates/LastName")]
-        [InlineData("Northwind4.xml", "Employees?$expand=Subordinates($expand=Subordinates;$select=LastName,Subordinates;$orderby=LastName)&$select=LastName,Subordinates&$orderby=LastName")]
-        public async Task ExpandSubordinatesWithSelectAndOrderbyTwoTimes(string metadataFile, string expectedCommand)
+        [InlineData("Northwind4.xml", "Employees?$expand=Subordinates($expand=Subordinates;$select=LastName,Subordinates)&$select=LastName,Subordinates&$orderby=LastName,Subordinates/LastName")]
+        public async Task ExpandSubordinatesWithSelectAndOuterOrderbyTwoTimes(string metadataFile, string expectedCommand)
         {
             var client = CreateClient(metadataFile);
             var command = client
@@ -110,9 +110,26 @@ namespace Simple.OData.Client.Tests
         }
 
         [Theory]
+        [InlineData("Northwind.xml", "Employees?$expand=Subordinates/Subordinates&$select=LastName,Subordinates,Subordinates/LastName,Subordinates/Subordinates&$orderby=LastName,Subordinates/LastName")]
+        [InlineData("Northwind4.xml", "Employees?$expand=Subordinates($expand=Subordinates;$select=LastName,Subordinates;$orderby=LastName)&$select=LastName,Subordinates&$orderby=LastName")]
+        public async Task ExpandSubordinatesWithSelectAndInnerOrderbyTwoTimes(string metadataFile, string expectedCommand)
+        {
+            var client = CreateClient(metadataFile);
+            var command = client
+                .For<Employee>()
+                .Expand(x => x.Subordinates.Select(y => y.Subordinates))
+                .Select(x => new {x.LastName, x.Subordinates})
+                .Select(x => x.Subordinates.Select(y => new {y.LastName, y.Subordinates})
+                                           .OrderBy(y => y.LastName))
+                .OrderBy(x => x.LastName);
+            string commandText = await command.GetCommandTextAsync();
+            Assert.Equal(expectedCommand, commandText);
+        }
+
+        [Theory]
         [InlineData("Northwind.xml", "Employees?$expand=Subordinates/Subordinates/Subordinates&$select=LastName,Subordinates,Subordinates/LastName,Subordinates/Subordinates,Subordinates/Subordinates/LastName,Subordinates/Subordinates/Subordinates&$orderby=LastName,Subordinates/LastName,Subordinates/Subordinates/LastName")]
-        [InlineData("Northwind4.xml", "Employees?$expand=Subordinates($expand=Subordinates($expand=Subordinates;$select=LastName,Subordinates;$orderby=LastName);$select=LastName,Subordinates;$orderby=LastName)&$select=LastName,Subordinates&$orderby=LastName")]
-        public async Task ExpandSubordinatesWithSelectAndOrderbyThreeTimes(string metadataFile, string expectedCommand)
+        [InlineData("Northwind4.xml", "Employees?$expand=Subordinates($expand=Subordinates($expand=Subordinates;$select=LastName,Subordinates);$select=LastName,Subordinates)&$select=LastName,Subordinates&$orderby=LastName,Subordinates/LastName,Subordinates/Subordinates/LastName")]
+        public async Task ExpandSubordinatesWithSelectAndOuterOrderbyThreeTimes(string metadataFile, string expectedCommand)
         {
             var client = CreateClient(metadataFile);
             var command = client
@@ -124,6 +141,25 @@ namespace Simple.OData.Client.Tests
                 .OrderBy(x => x.LastName)
                 .OrderBy(x => x.Subordinates.Select(y => y.LastName))
                 .OrderBy(x => x.Subordinates.Select(y => y.Subordinates.Select(z => z.LastName)));
+            string commandText = await command.GetCommandTextAsync();
+            Assert.Equal(expectedCommand, commandText);
+        }
+
+        [Theory]
+        [InlineData("Northwind.xml", "Employees?$expand=Subordinates/Subordinates/Subordinates&$select=LastName,Subordinates,Subordinates/LastName,Subordinates/Subordinates,Subordinates/Subordinates/LastName,Subordinates/Subordinates/Subordinates&$orderby=LastName,Subordinates/LastName,Subordinates/Subordinates/LastName")]
+        [InlineData("Northwind4.xml", "Employees?$expand=Subordinates($expand=Subordinates($expand=Subordinates;$select=LastName,Subordinates;$orderby=LastName);$select=LastName,Subordinates;$orderby=LastName)&$select=LastName,Subordinates&$orderby=LastName")]
+        public async Task ExpandSubordinatesWithSelectAndInnerOrderbyThreeTimes(string metadataFile, string expectedCommand)
+        {
+            var client = CreateClient(metadataFile);
+            var command = client
+                .For<Employee>()
+                .Expand(x => x.Subordinates.Select(y => y.Subordinates.Select(z => z.Subordinates)))
+                .Select(x => new { x.LastName, x.Subordinates })
+                .Select(x => x.Subordinates.Select(y => new { y.LastName, y.Subordinates })
+                                           .OrderBy(y => y.LastName))
+                .Select(x => x.Subordinates.Select(y => y.Subordinates.Select(z => new { z.LastName, z.Subordinates })
+                                                                      .OrderBy(z => z.LastName)))
+                .OrderBy(x => x.LastName);
             string commandText = await command.GetCommandTextAsync();
             Assert.Equal(expectedCommand, commandText);
         }
@@ -153,6 +189,33 @@ namespace Simple.OData.Client.Tests
                 .For<Employee>()
                 .Select(x => new { x.LastName, x.Subordinates })
                 .OrderBy(x => x.Superior.LastName);
+            string commandText = await command.GetCommandTextAsync();
+            Assert.Equal(expectedCommand, commandText);
+        }
+
+        [Theory]
+        [InlineData("Northwind.xml", "Products?$expand=Category&$select=ProductName,Category/CategoryName")]
+        [InlineData("Northwind4.xml", "Products?$expand=Category($select=CategoryName)&$select=ProductName")]
+        public async Task ExpandCategorySelectProductNameCategoryName(string metadataFile, string expectedCommand)
+        {
+            var client = CreateClient(metadataFile);
+            var command = client.For<Product>()
+                .Expand(p => p.Category)
+                .Select(p => new { p.ProductName, p.Category.CategoryName });
+            string commandText = await command.GetCommandTextAsync();
+            Assert.Equal(expectedCommand, commandText);
+        }
+
+        [Theory]
+        [InlineData("Northwind.xml", "Products?$expand=Category&$select=ProductName,Category/CategoryName&$orderby=Category/CategoryName")]
+        [InlineData("Northwind4.xml", "Products?$expand=Category($select=CategoryName)&$select=ProductName&$orderby=Category/CategoryName")]
+        public async Task ExpandCategorySelectProductNameCategoryNameThenOrderBy(string metadataFile, string expectedCommand)
+        {
+            var client = CreateClient(metadataFile);
+            var command = client.For<Product>()
+                .Expand(p => p.Category)
+                .Select(p => new {p.ProductName, p.Category.CategoryName})
+                .OrderBy(p => p.Category.CategoryName);
             string commandText = await command.GetCommandTextAsync();
             Assert.Equal(expectedCommand, commandText);
         }

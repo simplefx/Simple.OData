@@ -68,6 +68,18 @@ namespace Simple.OData.Client
                     .SelectMany(x => ExtractColumnNames(callExpression.Arguments[1])
                         .Select(y => String.Join("/", x, y)));
             }
+            else if (callExpression.Method.Name == "OrderBy" && callExpression.Arguments.Count == 2)
+            {
+                return ExtractColumnNames(callExpression.Arguments[0])
+                    .SelectMany(x => ExtractColumnNames(callExpression.Arguments[1])
+                        .OrderBy(y => String.Join("/", x, y)));
+            }
+            else if (callExpression.Method.Name == "OrderByDescending" && callExpression.Arguments.Count == 2)
+            {
+                return ExtractColumnNames(callExpression.Arguments[0])
+                    .SelectMany(x => ExtractColumnNames(callExpression.Arguments[1])
+                        .OrderByDescending(y => String.Join("/", x, y)));
+            }
             else
             {
                 throw Utils.NotSupportedExpression(callExpression);
