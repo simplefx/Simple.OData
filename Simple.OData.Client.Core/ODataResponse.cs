@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
-using Simple.OData.Client.Extensions;
 
 #pragma warning disable 1591
 
@@ -70,7 +68,6 @@ namespace Simple.OData.Client
         public AnnotatedFeed Feed { get; private set; }
         public IList<ODataResponse> Batch { get; private set; }
         public Exception Exception { get; private set; }
-        public string DynamicPropertiesContainerName { get; private set; }
 
         private ODataResponse()
         {

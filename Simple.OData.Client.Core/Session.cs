@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -28,19 +27,6 @@ namespace Simple.OData.Client
             this.Settings.BaseUri = baseUri;
             this.MetadataCache = MetadataCache.Instances.GetOrAdd(baseUri.AbsoluteUri, new MetadataCache());
             this.MetadataCache.SetMetadataDocument(metadataString);
-            this.Pluralizer = new SimplePluralizer();
-        }
-
-        private Session(Uri baseUri, ICredentials credentials, ODataPayloadFormat payloadFormat)
-        {
-            _adapterFactory = new AdapterFactory(this);
-            _createAdapter = () => _adapterFactory.ParseMetadata(this.MetadataCache.MetadataDocument);
-
-            this.Settings = new ODataClientSettings();
-            this.Settings.BaseUri = baseUri;
-            this.Settings.Credentials = credentials;
-            this.Settings.PayloadFormat = payloadFormat;
-            this.MetadataCache = MetadataCache.Instances.GetOrAdd(baseUri.AbsoluteUri, new MetadataCache());
             this.Pluralizer = new SimplePluralizer();
         }
 

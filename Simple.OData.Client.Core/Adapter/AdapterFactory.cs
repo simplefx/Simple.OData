@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
 using Simple.OData.Client.Extensions;
@@ -126,13 +125,14 @@ namespace Simple.OData.Client
         {
             try
             {
+                Assembly assembly = null;
 #if PORTABLE
                 var assemblyName = new AssemblyName(adapterAssemblyName);
-                var assembly = Assembly.Load(assemblyName);
-                var constructors = assembly.GetType(adapterTypeName).GetDeclaredConstructors();
+                assembly = Assembly.Load(assemblyName);
 #else
-                var constructors = this.GetType().Assembly.GetType(adapterTypeName).GetDeclaredConstructors();
+                assembly = this.GetType().Assembly;
 #endif
+                var constructors = assembly.GetType(adapterTypeName).GetDeclaredConstructors();
                 var ctor = constructors.Single(x => 
                     x.GetParameters().Count() == ctorParams.Count() &&
                     x.GetParameters().Last().ParameterType == ctorParams.Last().GetType());
