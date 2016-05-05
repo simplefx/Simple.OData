@@ -110,6 +110,12 @@
     <Compile Include="..\CommonAssemblyVersion.cs">
       <Link>Properties\CommonAssemblyVersion.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Core\Entities\Address.cs">
+      <Link>Entities\Address.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Core\Entities\AddressType.cs">
+      <Link>Entities\AddressType.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Core\Entities\Category.cs">
       <Link>Entities\Category.cs</Link>
     </Compile>
