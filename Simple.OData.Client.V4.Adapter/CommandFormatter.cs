@@ -9,6 +9,8 @@ namespace Simple.OData.Client.V4.Adapter
 {
     public class CommandFormatter : CommandFormatterBase
     {
+        const bool EnableInnerOrderBy = false;
+
         public CommandFormatter(ISession session)
             : base(session)
         {
@@ -54,10 +56,17 @@ namespace Simple.OData.Client.V4.Adapter
                     command.Details.ExpandAssociations.Select(FormatFirstSegment).ToList()), 
                 ODataLiteral.Select, FormatSelectItem);
 
-            FormatClause(commandClauses, resultCollection,
-                SelectPathSegmentColumns(command.Details.OrderbyColumns, null,
-                    command.Details.ExpandAssociations.Select(FormatFirstSegment).ToList()), 
-                ODataLiteral.OrderBy, FormatOrderByItem);
+            if (EnableInnerOrderBy)
+            {
+                FormatClause(commandClauses, resultCollection,
+                    SelectPathSegmentColumns(command.Details.OrderbyColumns, null,
+                        command.Details.ExpandAssociations.Select(FormatFirstSegment).ToList()),
+                    ODataLiteral.OrderBy, FormatOrderByItem);
+            }
+            else
+            {
+                FormatClause(commandClauses, resultCollection, command.Details.OrderbyColumns, ODataLiteral.OrderBy, FormatOrderByItem);
+            }
         }
 
         protected override void FormatInlineCount(IList<string> commandClauses)
@@ -104,12 +113,15 @@ namespace Simple.OData.Client.V4.Adapter
                     clauses.Add(string.Format("{0}={1}", ODataLiteral.Select, columns));
             }
 
-            if (orderbyColumns.Any())
+            if (EnableInnerOrderBy)
             {
-                var columns = string.Join(",", SelectPathSegmentColumns(orderbyColumns, null)
-                    .Select(x => x.Key + (x.Value ? " desc" : string.Empty)).ToList());
-                if (!string.IsNullOrEmpty(columns))
-                    clauses.Add(string.Format("{0}={1}", ODataLiteral.OrderBy, columns));
+                if (orderbyColumns.Any())
+                {
+                    var columns = string.Join(",", SelectPathSegmentColumns(orderbyColumns, null)
+                        .Select(x => x.Key + (x.Value ? " desc" : string.Empty)).ToList());
+                    if (!string.IsNullOrEmpty(columns))
+                        clauses.Add(string.Format("{0}={1}", ODataLiteral.OrderBy, columns));
+                }
             }
 
             if (clauses.Any())
