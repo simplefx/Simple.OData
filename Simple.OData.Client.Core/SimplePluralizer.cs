@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Simple.OData.Client
 {
@@ -29,7 +30,7 @@ namespace Simple.OData.Client
 
         public bool IsNounPluralOfNoun(string plural, string singular)
         {
-            return String.Compare(ToSingularInternal(plural), singular, StringComparison.OrdinalIgnoreCase) == 0;
+            return string.Compare(ToSingularInternal(plural), singular, StringComparison.OrdinalIgnoreCase) == 0;
         }
 
         static readonly string[] _specialWordsStringTable = 
@@ -254,7 +255,7 @@ namespace Simple.OData.Client
 
         private string ToPluralInternal(string s)
         {
-            if (string.IsNullOrEmpty(s))
+            if (string.IsNullOrEmpty(s) || s.ToCharArray().Any(x => x > 0x7F))
             {
                 return s;
             }
@@ -265,9 +266,9 @@ namespace Simple.OData.Client
                 return word.Plural;
             }
             // apply suffix rules
-            string plural;
             foreach (var rule in _suffixRules)
             {
+                string plural;
                 if (rule.TryToPlural(s, out plural))
                 {
                     return plural;
@@ -279,7 +280,7 @@ namespace Simple.OData.Client
 
         private string ToSingularInternal(string s)
         {
-            if (string.IsNullOrEmpty(s))
+            if (string.IsNullOrEmpty(s) || s.ToCharArray().Any(x => x > 0x7F))
             {
                 return s;
             }
@@ -290,9 +291,9 @@ namespace Simple.OData.Client
                 return word.Singular;
             }
             // apply suffix rules
-            string singular;
             foreach (var rule in _suffixRules)
             {
+                string singular;
                 if (rule.TryToSingular(s, out singular))
                 {
                     return singular;
@@ -320,13 +321,13 @@ namespace Simple.OData.Client
             var firstUpper = false;
             for (var i = 0; i < template.Length; i++)
             {
-                if (Char.IsUpper(template[i]))
+                if (char.IsUpper(template[i]))
                 {
                     if (i == 0) firstUpper = true;
                     allLower = false;
                     foundUpperOrLower = true;
                 }
-                else if (Char.IsLower(template[i]))
+                else if (char.IsLower(template[i]))
                 {
                     allUpper = false;
                     foundUpperOrLower = true;
@@ -346,7 +347,7 @@ namespace Simple.OData.Client
                 }
                 else if (firstUpper)
                 {
-                    if (!Char.IsUpper(s[0]))
+                    if (!char.IsUpper(s[0]))
                     {
                         s = s.Substring(0, 1).ToUpperInvariant() + s.Substring(1);
                     }

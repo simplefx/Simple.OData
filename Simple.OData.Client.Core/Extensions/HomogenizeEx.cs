@@ -7,7 +7,7 @@ namespace Simple.OData.Client.Extensions
     {
         private static readonly SimpleDictionary<string, string> Cache
             = new SimpleDictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-        private static Regex _homogenizeRegex = new Regex("[^a-z0-9]");
+        private static Regex _homogenizeRegex = new Regex(@"[\s\p{P}]");
 
         /// <summary>
         /// Downshift a string and remove all non-alphanumeric characters.
