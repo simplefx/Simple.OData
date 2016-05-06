@@ -28,11 +28,12 @@ namespace Simple.OData.Client
         public async Task<ODataRequest> CreateGetRequestAsync(string commandText, bool scalarResult)
         {
             await WriteEntryContentAsync(
-                RestVerbs.Get, Utils.ExtractCollectionName(commandText), commandText, null, false);
+                RestVerbs.Get, Utils.ExtractCollectionName(commandText), commandText, null, true);
 
             var request = new ODataRequest(RestVerbs.Get, _session, commandText)
             {
                 ReturnsScalarResult = scalarResult,
+                ResultRequired = true,
             };
             AssignHeaders(request);
             return request;

@@ -28,28 +28,24 @@ namespace Simple.OData.Client
         {
             get
             {
-                if (this.Method == RestVerbs.Get && !this.ReturnsScalarResult || this.ResultRequired)
-                {
-                    if (this.RequestMessage.RequestUri.LocalPath.EndsWith(ODataLiteral.Metadata))
-                    {
-                        return new[] { "application/xml" };
-                    }
-                    else
-                    {
-                        switch (this._payloadFormat)
-                        {
-                            default:
-                            case ODataPayloadFormat.Atom:
-                                return new[] { "application/atom+xml", "application/xml", "application/text" };
+                if (this.ReturnsScalarResult || !this.ResultRequired)
+                    return null;
 
-                            case ODataPayloadFormat.Json:
-                                return new[] { "application/json", "application/xml", "application/text" };
-                        }
-                    }
+                if (this.RequestMessage.RequestUri.LocalPath.EndsWith(ODataLiteral.Metadata))
+                {
+                    return new[] { "application/xml" };
                 }
                 else
                 {
-                    return null;
+                    switch (this._payloadFormat)
+                    {
+                        default:
+                        case ODataPayloadFormat.Atom:
+                            return new[] { "application/atom+xml", "application/xml", "application/text" };
+
+                        case ODataPayloadFormat.Json:
+                            return new[] { "application/json", "application/xml", "application/text" };
+                    }
                 }
             }
         }
@@ -67,8 +63,8 @@ namespace Simple.OData.Client
             this.Method = method;
 
             var uri = new Uri(commandText, UriKind.RelativeOrAbsolute);
-            _uri = uri.IsAbsoluteUri 
-                ? uri.AbsoluteUri 
+            _uri = uri.IsAbsoluteUri
+                ? uri.AbsoluteUri
                 : Utils.CreateAbsoluteUri(session.Settings.BaseUri.AbsoluteUri, commandText).AbsoluteUri;
             _payloadFormat = session.Settings.PayloadFormat;
         }
