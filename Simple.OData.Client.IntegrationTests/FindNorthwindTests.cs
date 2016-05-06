@@ -8,6 +8,23 @@ using Entry = System.Collections.Generic.Dictionary<string, object>;
 
 namespace Simple.OData.Client.Tests
 {
+    public class Product
+    {
+        public int ProductID { get; set; }
+        public string ProductName { get; set; }
+        public int? CategoryID { get; set; }
+
+        public Category Category { get; set; }
+    }
+
+    public class Category
+    {
+        public int CategoryID { get; set; }
+        public string CategoryName { get; set; }
+
+        public Product[] Products { get; set; }
+    }
+
 #if ODATA_V3
     public class FindNorthwindTestsV2Atom : FindNorthwindTests
     {
@@ -157,6 +174,32 @@ namespace Simple.OData.Client.Tests
                 .Expand("Category/Products")
                 .FindEntriesAsync()).Last();
             Assert.Equal(13, ((product["Category"] as IDictionary<string, object>)["Products"] as IEnumerable<object>).Count());
+        }
+
+        [Fact]
+        public async Task ExpandProductsOrderByCategoryName()
+        {
+            var product = (await _client
+                .For<Product>()
+                .Expand(x => x.Category)
+                .OrderBy(x => x.Category.CategoryName)
+                .Select(x => x.Category.CategoryName)
+                .FindEntriesAsync()).Last();
+            Assert.Equal("Condiments", product.Category.CategoryName);
+        }
+
+        [Fact]
+        public async Task ExpandCategoryOrderByProductName()
+        {
+            if (_serviceUri.AbsoluteUri == ODataV4ReadWriteUri)
+            {
+                var category = (await _client
+                    .For<Category>()
+                    .Expand(x => x.Products)
+                    .OrderBy(x => x.Products.Select(y => y.ProductName))
+                    .FindEntriesAsync()).Last();
+                Assert.Equal("Röd Kaviar", category.Products.Last().ProductName);
+            }
         }
 
         [Fact]

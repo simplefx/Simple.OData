@@ -9,8 +9,6 @@ namespace Simple.OData.Client.V4.Adapter
 {
     public class CommandFormatter : CommandFormatterBase
     {
-        const bool EnableInnerOrderBy = false;
-
         public CommandFormatter(ISession session)
             : base(session)
         {
@@ -52,20 +50,22 @@ namespace Simple.OData.Client.V4.Adapter
             }
 
             FormatClause(commandClauses, resultCollection,
-                SelectPathSegmentColumns(command.Details.SelectColumns, null, 
-                    command.Details.ExpandAssociations.Select(FormatFirstSegment).ToList()), 
+                SelectPathSegmentColumns(command.Details.SelectColumns, null,
+                    command.Details.ExpandAssociations.Select(FormatFirstSegment).ToList()),
                 ODataLiteral.Select, FormatSelectItem);
 
-            if (EnableInnerOrderBy)
+            FormatClause(commandClauses, resultCollection,
+                SelectPathSegmentColumns(command.Details.OrderbyColumns, null,
+                    command.Details.ExpandAssociations.Select(FormatFirstSegment).ToList()),
+                ODataLiteral.OrderBy, FormatOrderByItem);
+
+            foreach (var x in command.Details.ExpandAssociations)
             {
-                FormatClause(commandClauses, resultCollection,
-                    SelectPathSegmentColumns(command.Details.OrderbyColumns, null,
-                        command.Details.ExpandAssociations.Select(FormatFirstSegment).ToList()),
-                    ODataLiteral.OrderBy, FormatOrderByItem);
-            }
-            else
-            {
-                FormatClause(commandClauses, resultCollection, command.Details.OrderbyColumns, ODataLiteral.OrderBy, FormatOrderByItem);
+                var segmentOrderByColumns = SelectPathSegmentColumns(command.Details.OrderbyColumns, x.Key);
+                if (segmentOrderByColumns.Any() && !IsInnerCollectionOrderBy(x.Key, resultCollection, segmentOrderByColumns))
+                {
+                    FormatClause(commandClauses, resultCollection, command.Details.OrderbyColumns, ODataLiteral.OrderBy, FormatOrderByItem);
+                }
             }
         }
 
@@ -79,6 +79,7 @@ namespace Simple.OData.Client.V4.Adapter
         {
             var items = path.Split('/');
             var associationName = _session.Metadata.GetNavigationPropertyExactName(entityCollection.Name, items.First());
+            bool expandsToCollection = _session.Metadata.IsNavigationPropertyCollection(entityCollection.Name, associationName);
 
             var clauses = new List<string>();
             var text = associationName;
@@ -91,7 +92,7 @@ namespace Simple.OData.Client.V4.Adapter
                 entityCollection = _session.Metadata.GetEntityCollection(
                     _session.Metadata.GetNavigationPropertyPartnerTypeName(entityCollection.Name, associationName));
 
-                clauses.Add(string.Format("{0}={1}", ODataLiteral.Expand, 
+                clauses.Add(string.Format("{0}={1}", ODataLiteral.Expand,
                     FormatExpansionSegment(path, entityCollection, expandOptions,
                         SelectPathSegmentColumns(selectColumns, path),
                         SelectPathSegmentColumns(orderbyColumns, path))));
@@ -113,15 +114,12 @@ namespace Simple.OData.Client.V4.Adapter
                     clauses.Add(string.Format("{0}={1}", ODataLiteral.Select, columns));
             }
 
-            if (EnableInnerOrderBy)
+            if (expandsToCollection && orderbyColumns.Any())
             {
-                if (orderbyColumns.Any())
-                {
-                    var columns = string.Join(",", SelectPathSegmentColumns(orderbyColumns, null)
-                        .Select(x => x.Key + (x.Value ? " desc" : string.Empty)).ToList());
-                    if (!string.IsNullOrEmpty(columns))
-                        clauses.Add(string.Format("{0}={1}", ODataLiteral.OrderBy, columns));
-                }
+                var columns = string.Join(",", SelectPathSegmentColumns(orderbyColumns, null)
+                    .Select(x => x.Key + (x.Value ? " desc" : string.Empty)).ToList());
+                if (!string.IsNullOrEmpty(columns))
+                    clauses.Add(string.Format("{0}={1}", ODataLiteral.OrderBy, columns));
             }
 
             if (clauses.Any())
@@ -137,7 +135,7 @@ namespace Simple.OData.Client.V4.Adapter
             {
                 var resultColumns = columns.Where(x => !HasMultipleSegments(x)).ToList();
                 if (excludePaths != null)
-                    resultColumns.AddRange(columns.Where(x => HasMultipleSegments(x) && 
+                    resultColumns.AddRange(columns.Where(x => HasMultipleSegments(x) &&
                         !excludePaths.Any(y => FormatFirstSegment(y).Contains(FormatFirstSegment(x)))));
                 return resultColumns;
             }
@@ -164,6 +162,26 @@ namespace Simple.OData.Client.V4.Adapter
                 return columns.Where(x => HasMultipleSegments(x) && FormatFirstSegment(x) == FormatFirstSegment(path))
                     .Select(x => new KeyValuePair<string, bool>(FormatSkipSegments(x, 1), x.Value)).ToList();
             }
+        }
+
+        private bool IsInnerCollectionOrderBy(string path, EntityCollection entityCollection, IList<KeyValuePair<string, bool>> orderbyColumns)
+        {
+            var items = path.Split('/');
+            var associationName = _session.Metadata.GetNavigationPropertyExactName(entityCollection.Name, items.First());
+
+            if (_session.Metadata.IsNavigationPropertyCollection(entityCollection.Name, associationName) && orderbyColumns.Any())
+                return true;
+
+            if (items.Count() > 1)
+            {
+                path = path.Substring(items.First().Length + 1);
+                entityCollection = _session.Metadata.GetEntityCollection(
+                    _session.Metadata.GetNavigationPropertyPartnerTypeName(entityCollection.Name, associationName));
+
+                return IsInnerCollectionOrderBy(path, entityCollection, SelectPathSegmentColumns(orderbyColumns, path));
+            }
+
+            return false;
         }
 
         private bool HasMultipleSegments(string path)
