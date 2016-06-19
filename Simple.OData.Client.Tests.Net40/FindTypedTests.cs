@@ -29,13 +29,14 @@ namespace Simple.OData.Client.Tests
             Assert.Equal("Chai", product.ProductName);
         }
 
+        private string productName = "Chai";
+
         [Fact]
-        public async Task SingleConditionWithMemberVariable()
+        public async Task SingleConditionWithMemberrVariable()
         {
-            var productName = "Chai";
             var product = await _client
                 .For<Product>()
-                .Filter(x => x.ProductName == productName)
+                .Filter(x => x.ProductName == this.productName)
                 .FindEntryAsync();
             var sameProduct = await _client
                 .For<Product>()

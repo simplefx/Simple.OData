@@ -36,9 +36,12 @@ namespace Simple.OData.Client.Extensions
             return type.GetFields(BindingFlags.Instance | BindingFlags.Public);
         }
 
-        public static FieldInfo GetAnyField(this Type type, string fieldName)
+        public static FieldInfo GetAnyField(this Type type, string fieldName, bool includeNonPublic = false)
         {
-            var field = type.GetField(fieldName, BindingFlags.Instance | BindingFlags.Public);
+            var bindingFlags = BindingFlags.Instance | BindingFlags.Public;
+            if (includeNonPublic)
+                bindingFlags |= BindingFlags.NonPublic;
+            var field = type.GetField(fieldName, bindingFlags);
             return field == null || field.DeclaringType == typeof (object) ? null : field;
         }
 
@@ -47,9 +50,12 @@ namespace Simple.OData.Client.Extensions
             return type.GetFields(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly);
         }
 
-        public static FieldInfo GetDeclaredField(this Type type, string fieldName)
+        public static FieldInfo GetDeclaredField(this Type type, string fieldName, bool includeNonPublic = false)
         {
-            return type.GetField(fieldName, BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly);
+            var bindingFlags = BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.DeclaredOnly;
+            if (includeNonPublic)
+                bindingFlags |= BindingFlags.NonPublic;
+            return type.GetField(fieldName, bindingFlags);
         }
 
         public static MethodInfo GetDeclaredMethod(this Type type, string methodName)
@@ -121,20 +127,20 @@ namespace Simple.OData.Client.Extensions
         public static PropertyInfo GetAnyProperty(this Type type, string propertyName)
         {
             var currentType = type;
-            while (currentType != null && currentType != typeof (object))
+            while (currentType != null && currentType != typeof(object))
             {
                 var property = currentType.GetTypeInfo().GetDeclaredProperty(propertyName);
-                    if (property != null)
-                        return property;
+                if (property != null)
+                    return property;
 
                 currentType = currentType.GetTypeInfo().BaseType;
             }
             return null;
         }
-        
+
         private static bool IsInstanceProperty(PropertyInfo propertyInfo)
         {
-            return (propertyInfo.CanRead  && !propertyInfo.GetMethod.IsStatic)
+            return (propertyInfo.CanRead && !propertyInfo.GetMethod.IsStatic)
                 || (propertyInfo.CanWrite && !propertyInfo.SetMethod.IsStatic);
         }
 
@@ -159,12 +165,12 @@ namespace Simple.OData.Client.Extensions
             return fields.ToArray();
         }
 
-        public static FieldInfo GetAnyField(this Type type, string fieldName)
+        public static FieldInfo GetAnyField(this Type type, string fieldName, bool includeNonPublic = false)
         {
             var currentType = type;
             while (currentType != null && currentType != typeof(object))
             {
-                var field = currentType.GetTypeInfo().GetDeclaredField(fieldName);
+                var field = currentType.GetDeclaredField(fieldName, includeNonPublic);
                 if (field != null)
                     return field;
 
@@ -178,9 +184,19 @@ namespace Simple.OData.Client.Extensions
             return type.GetTypeInfo().DeclaredFields.Where(x => !x.IsStatic);
         }
 
-        public static FieldInfo GetDeclaredField(this Type type, string fieldName)
+        public static FieldInfo GetDeclaredField(this Type type, string fieldName, bool includeNonPublic = false)
         {
-            return type.GetTypeInfo().GetDeclaredField(fieldName);
+            if (includeNonPublic)
+            {
+                return type.GetTypeInfo().DeclaredFields.SingleOrDefault(x =>
+                    x.Name == fieldName &&
+                    x.DeclaringType == type &&
+                    (x.IsPrivate || x.IsPublic || x.IsStatic));
+            }
+            else
+            {
+                return type.GetTypeInfo().GetDeclaredField(fieldName);
+            }
         }
 
         public static MethodInfo GetDeclaredMethod(this Type type, string methodName)

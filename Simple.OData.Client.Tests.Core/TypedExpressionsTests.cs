@@ -463,6 +463,16 @@ namespace Simple.OData.Client.Tests
                 ODataExpression.FromLinqExpression(filter).AsString(_session));
         }
 
+        private AddressType addressType = AddressType.Corporate;
+
+        [Fact]
+        public void FilterWithEnum_MemberVar()
+        {
+            Expression<Func<TestEntity, bool>> filter = x => x.Address.Type == this.addressType;
+            Assert.Equal(string.Format("Address/Type eq {0}", FormatSettings.GetEnumFormat(AddressType.Corporate, typeof(AddressType), "NorthwindModel")),
+                ODataExpression.FromLinqExpression(filter).AsString(_session));
+        }
+
         [Fact]
         public void FilterWithEnum_Const()
         {

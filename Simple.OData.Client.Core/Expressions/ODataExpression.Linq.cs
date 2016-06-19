@@ -360,7 +360,7 @@ namespace Simple.OData.Client
             }
             else
             {
-                var field = type.GetAnyField(memberName);
+                var field = type.GetAnyField(memberName, true);
                 if (field != null)
                 {
                     itemType = field.FieldType;
