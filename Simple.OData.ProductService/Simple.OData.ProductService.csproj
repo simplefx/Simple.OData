@@ -14,13 +14,14 @@
     <RootNamespace>Simple.OData.ProductService</RootNamespace>
     <AssemblyName>Simple.OData.ProductService</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <UseIISExpress>false</UseIISExpress>
+    <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\Solutions\</SolutionDir>
     <RestorePackages>true</RestorePackages>
+    <UseGlobalApplicationHostFile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -167,7 +168,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>51849</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost/ProductService</IISUrl>
+          <IISUrl>http://localhost:51849/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
