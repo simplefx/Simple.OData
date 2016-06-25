@@ -142,7 +142,10 @@ namespace Simple.OData.Client
 
             await WriteFunctionContentAsync(verb, commandText);
 
-            var request = new ODataRequest(verb, _session, commandText);
+            var request = new ODataRequest(verb, _session, commandText)
+            {
+                ResultRequired = true,
+            };
             AssignHeaders(request);
             return request;
         }
