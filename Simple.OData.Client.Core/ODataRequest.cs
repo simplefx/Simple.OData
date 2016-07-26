@@ -28,10 +28,11 @@ namespace Simple.OData.Client
         {
             get
             {
-                if (this.ReturnsScalarResult || !this.ResultRequired)
+                bool isMetadataRequest = this.RequestMessage.RequestUri.LocalPath.EndsWith(ODataLiteral.Metadata);
+                if (!isMetadataRequest && (this.ReturnsScalarResult || !this.ResultRequired))
                     return null;
 
-                if (this.RequestMessage.RequestUri.LocalPath.EndsWith(ODataLiteral.Metadata))
+                if (isMetadataRequest)
                 {
                     return new[] { "application/xml" };
                 }
