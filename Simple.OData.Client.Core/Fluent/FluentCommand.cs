@@ -617,7 +617,9 @@ namespace Simple.OData.Client
                     object keyValue = null;
                     if (_details.NamedKeyValues != null && _details.NamedKeyValues.Count > 0)
                     {
-                        found = _details.NamedKeyValues.TryGetValue(keyNames[index], out keyValue);
+                        keyValue = _details.NamedKeyValues.FirstOrDefault(
+                            x => Utils.NamesMatch(x.Key, keyNames[index], _details.Session.Pluralizer));
+                        found = keyValue != null;
                     }
                     else if (_details.KeyValues != null && _details.KeyValues.Count >= index)
                     {
@@ -711,7 +713,8 @@ namespace Simple.OData.Client
                 return null;
 
             var keyNames = _details.Session.Metadata.GetDeclaredKeyPropertyNames(this.EntityCollection.Name).ToList();
-            return keyNames.Count == namedKeyValues.Count() && keyNames.All(namedKeyValues.ContainsKey)
+            return keyNames.Count == namedKeyValues.Count() && keyNames.All(
+                    x => namedKeyValues.Any(y => Utils.NamesMatch(x, y.Key, _details.Session.Pluralizer)))
                 ? namedKeyValues
                 : null;
         }

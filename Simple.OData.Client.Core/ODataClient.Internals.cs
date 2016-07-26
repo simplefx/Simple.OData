@@ -26,7 +26,8 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             if (result == null && resultRequired &&
-                _session.Metadata.GetDeclaredKeyPropertyNames(commandText).All(entryData.ContainsKey))
+                _session.Metadata.GetDeclaredKeyPropertyNames(commandText).All(
+                    x => entryData.Any(y => Utils.NamesMatch(x, y.Key, _session.Pluralizer))))
             {
                 result = await this.GetEntryAsync(commandText, entryData, cancellationToken);
                 if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
