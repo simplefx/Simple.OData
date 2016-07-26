@@ -32,6 +32,7 @@ namespace Simple.OData.Client
     {
         public IDictionary<string, object> Data { get; private set; }
         public ODataEntryAnnotations Annotations { get; private set; }
+        public ODataFeedAnnotations LinkAnnotations { get; private set; }
 
         public AnnotatedEntry(IDictionary<string, object> data, ODataEntryAnnotations annotations = null)
         {
@@ -45,6 +46,14 @@ namespace Simple.OData.Client
                 this.Annotations = annotations;
             else
                 this.Annotations.Merge(annotations);
+        }
+
+        public void SetLinkAnnotations(ODataFeedAnnotations annotations)
+        {
+            if (this.LinkAnnotations == null)
+                this.LinkAnnotations = annotations;
+            else
+                this.LinkAnnotations.Merge(annotations);
         }
 
         public IDictionary<string, object> GetData(bool includeAnnotations)

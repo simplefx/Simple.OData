@@ -1,0 +1,14 @@
+﻿{
+    "@odata.context": "https://demoodataendpoint.crm4.dynamics.com/api/data/v8.1/$metadata#accounts(name,Account_Tasks)",
+    "value": [
+        {
+            "@odata.etag": "W/\"596351\"",
+            "name": "Account 1",
+            "accountid": "5f4c87e4-4952-e611-80dd-c4346bacfc18",
+            "Account_Tasks": [
+
+            ],
+            "Account_Tasks@odata.nextLink": "https://demoodataendpoint.crm4.dynamics.com/api/data/v8.1/accounts(5f4c87e4-4952-e611-80dd-c4346bacfc18)/Account_Tasks"
+        }
+    ]
+}

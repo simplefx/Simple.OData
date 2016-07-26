@@ -69,7 +69,7 @@ namespace Simple.OData.Client
             else
                 rootNode = feedNode;
             
-            feedNode.Feed.SetAnnotations(feedAnnotations);
+            feedNode.Feed.SetAnnotations(feedAnnotations);            
         }
 
         protected void StartEntry(Stack<ResponseNode> nodeStack)
@@ -120,6 +120,8 @@ namespace Simple.OData.Client
                     linkValue = null;
                 nodeStack.Peek().Entry.Data.Add(linkNode.LinkName, linkValue);
             }
+            if (linkNode.Feed != null && linkNode.Feed.Annotations != null)
+                nodeStack.Peek().Entry.SetLinkAnnotations(linkNode.Feed.Annotations);
         }
     }
 }

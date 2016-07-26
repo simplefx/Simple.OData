@@ -377,9 +377,14 @@ namespace Simple.OData.Client
                 runActionsOnExist = true;
             }
 
-            if (!_settings.IncludeAnnotationsInResults && entryData.ContainsKey(FluentCommand.AnnotationsLiteral))
+            if (!_settings.IncludeAnnotationsInResults)
             {
-                actions.Add(() => entryData.Remove(FluentCommand.AnnotationsLiteral));
+                foreach (var entry in entryData)
+                {
+                    var key = entry.Key;
+                    if (key == FluentCommand.AnnotationsLiteral || key.StartsWith(FluentCommand.AnnotationsLiteral + "_"))
+                        actions.Add(() => entryData.Remove(key));
+                }
 
                 var nestedEntries = entryData.Where(x => x.Value is IDictionary<string, object>);
                 foreach (var nestedEntry in nestedEntries)
