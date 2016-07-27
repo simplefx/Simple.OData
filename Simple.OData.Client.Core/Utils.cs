@@ -64,6 +64,16 @@ namespace Simple.OData.Client
                 pluralizer.Pluralize(actualName) == requestedName);
         }
 
+        public static bool ContainsMatch(IEnumerable<string> actualNames, string requestedName, IPluralizer pluralizer)
+        {
+            return actualNames.Any(x => NamesMatch(x, requestedName, pluralizer));
+        }
+
+        public static bool AllMatch(IEnumerable<string> subset, IEnumerable<string> superset, IPluralizer pluralizer)
+        {
+            return subset.All(x => superset.Any(y => NamesMatch(x, y, pluralizer)));
+        }
+
         public static T BestMatch<T>(this IEnumerable<T> collection, 
             Func<T, string> fieldFunc, string value, IPluralizer pluralizer)
             where T : class
