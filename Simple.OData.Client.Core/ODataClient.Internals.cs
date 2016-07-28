@@ -424,7 +424,7 @@ namespace Simple.OData.Client
                 .Key(entryKey)
                 .GetCommandTextAsync(cancellationToken);
 
-            return RemoveTypeSpecification(entryIdent);
+            return entryIdent;
         }
 
         private async Task<string> FormatEntryKeyAsync(FluentCommand command, CancellationToken cancellationToken)
@@ -433,16 +433,6 @@ namespace Simple.OData.Client
                 ? await command.GetCommandTextAsync(cancellationToken)
                 : await (new FluentCommand(command).Key(command.FilterAsKey).GetCommandTextAsync(cancellationToken));
 
-            return RemoveTypeSpecification(entryIdent);
-        }
-
-        private string RemoveTypeSpecification(string entryIdent)
-        {
-            var segments = entryIdent.Split('/');
-            if (segments.Count() > 1 && segments.Last().Contains("."))
-            {
-                entryIdent = entryIdent.Substring(0, entryIdent.Length - segments.Last().Length - 1);
-            }
             return entryIdent;
         }
 

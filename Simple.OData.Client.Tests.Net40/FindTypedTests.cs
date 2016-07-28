@@ -581,6 +581,27 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task BaseClassEntryByKey()
+        {
+            var transport = await _client
+                .For<Transport>()
+                .Key(1)
+                .FindEntryAsync();
+            Assert.Equal(1, transport.TransportID);
+        }
+
+        [Fact]
+        public async Task DerivedClassEntryByKey()
+        {
+            var transport = await _client
+                .For<Transport>()
+                .As<Ship>()
+                .Key(1)
+                .FindEntryAsync();
+            Assert.Equal("Titanic", transport.ShipName);
+        }
+
+        [Fact]
         public async Task DerivedClassEntryBaseAndDerivedFields()
         {
             var transport = await _client
