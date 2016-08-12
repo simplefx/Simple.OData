@@ -63,6 +63,10 @@
     <file src="Simple.OData.Client.Net40\bin\Release\Simple.OData.Client.Net40.dll" target="lib\net40\Simple.OData.Client.Net40.dll" />
     <file src="Simple.OData.Client.Net40\bin\Release\Simple.OData.Client.Net40.xml" target="lib\net40\Simple.OData.Client.Net40.xml" />
 
+    <!-- NET45 -->
+    <file src="Simple.OData.Client.Net45\bin\Release\Simple.OData.Client.Net45.dll" target="lib\net45\Simple.OData.Client.Net45.dll" />
+    <file src="Simple.OData.Client.Net45\bin\Release\Simple.OData.Client.Net45.xml" target="lib\net45\Simple.OData.Client.Net45.xml" />
+
     <!-- Silverlight 5 -->
     <file src="Simple.OData.Client.SL5\bin\Release\Simple.OData.Client.SL5.dll" target="lib\sl5\Simple.OData.Client.SL5.dll" />
     <file src="Simple.OData.Client.SL5\bin\Release\Simple.OData.Client.SL5.xml" target="lib\sl5\Simple.OData.Client.SL5.xml" />
