@@ -69,8 +69,12 @@
     <file src="Simple.OData.Client.Net40\bin\Release\Simple.OData.Client.Net40.xml" target="lib\net40\Simple.OData.Client.Net40.xml" />
 
     <!-- NET45 -->
-    <file src="Simple.OData.Client.Net45\bin\Release\Simple.OData.Client.Net45.dll" target="lib\net45\Simple.OData.Client.Net45.dll" />
-    <file src="Simple.OData.Client.Net45\bin\Release\Simple.OData.Client.Net45.xml" target="lib\net45\Simple.OData.Client.Net45.xml" />
+    <file src="Simple.OData.Client.Core\bin\Release\Simple.OData.Client.Core.dll" target="lib\net45\Simple.OData.Client.Core.dll" />
+    <file src="Simple.OData.Client.Core\bin\Release\Simple.OData.Client.Core.xml" target="lib\net45\Simple.OData.Client.Core.xml" />
+    <file src="Simple.OData.Client.Dynamic\bin\Release\Simple.OData.Client.Dynamic.dll" target="lib\net45\Simple.OData.Client.Dynamic.dll" />
+    <file src="Simple.OData.Client.Dynamic\bin\Release\Simple.OData.Client.Dynamic.xml" target="lib\net45\Simple.OData.Client.Dynamic.xml" />
+    <file src="Simple.OData.Client.V3.Adapter\bin\Release\Simple.OData.Client.V3.Adapter.dll" target="lib\net45\Simple.OData.Client.V3.Adapter.dll" />
+    <file src="Simple.OData.Client.V4.Adapter\bin\Release\Simple.OData.Client.V4.Adapter.dll" target="lib\net45\Simple.OData.Client.V4.Adapter.dll" />
 
     <!-- Silverlight 5 -->
     <file src="Simple.OData.Client.SL5\bin\Release\Simple.OData.Client.SL5.dll" target="lib\sl5\Simple.OData.Client.SL5.dll" />
