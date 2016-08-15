@@ -46,12 +46,12 @@ namespace Simple.OData.Client.V4.Adapter
                     }
                     else
                     {
-                        return ODataResponse.FromValueStream(await responseMessage.GetStreamAsync(), responseMessage is ODataBatchOperationResponseMessage);
+                        return ODataResponse.FromValueStream(await responseMessage.GetStreamAsync().ConfigureAwait(false), responseMessage is ODataBatchOperationResponseMessage);
                     }
                 }
                 else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Batch))
                 {
-                    return await ReadResponse(messageReader.CreateODataBatchReader());
+                    return await ReadResponse(messageReader.CreateODataBatchReader()).ConfigureAwait(false);
                 }
                 else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Feed))
                 {
@@ -90,9 +90,9 @@ namespace Simple.OData.Client.V4.Adapter
                         else if (operationMessage.StatusCode >= (int)HttpStatusCode.BadRequest)
                             batch.Add(ODataResponse.FromStatusCode(
                                 operationMessage.StatusCode,
-                                await operationMessage.GetStreamAsync()));
+                                await operationMessage.GetStreamAsync().ConfigureAwait(false)));
                         else
-                            batch.Add(await GetResponseAsync(operationMessage));
+                            batch.Add(await GetResponseAsync(operationMessage).ConfigureAwait(false));
                         break;
                     case ODataBatchReaderState.ChangesetEnd:
                         break;

@@ -33,7 +33,7 @@ namespace Simple.OData.Client.V3.Adapter
 #endif
             message = IsBatch
                 ? await CreateBatchOperationMessageAsync(method, collection, entryData, commandText, resultRequired)
-                : new ODataRequestMessage();
+.ConfigureAwait(false) : new ODataRequestMessage();
 
             if (method == RestVerbs.Get || method == RestVerbs.Delete)
                 return null;
@@ -73,7 +73,7 @@ namespace Simple.OData.Client.V3.Adapter
 #if SILVERLIGHT
                 return message.GetStream();
 #else
-                return await message.GetStreamAsync();
+                return await message.GetStreamAsync().ConfigureAwait(false);
 #endif
             }
         }
@@ -88,7 +88,7 @@ namespace Simple.OData.Client.V3.Adapter
 #endif
  message = IsBatch
                 ? await CreateBatchOperationMessageAsync(method, null, null, commandText, false)
-                : new ODataRequestMessage();
+.ConfigureAwait(false) : new ODataRequestMessage();
 
             using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), _model))
             {
@@ -104,7 +104,7 @@ namespace Simple.OData.Client.V3.Adapter
 #if SILVERLIGHT
                 return message.GetStream();
 #else
-                return await message.GetStreamAsync();
+                return await message.GetStreamAsync().ConfigureAwait(false);
 #endif
             }
         }
@@ -113,7 +113,7 @@ namespace Simple.OData.Client.V3.Adapter
         protected override async Task<Stream> WriteFunctionContentAsync(string method, string commandText)
         {
             if (IsBatch)
-                await CreateBatchOperationMessageAsync(method, null, null, commandText, true);
+                await CreateBatchOperationMessageAsync(method, null, null, commandText, true).ConfigureAwait(false);
 
             return null;
         }
@@ -127,7 +127,7 @@ namespace Simple.OData.Client.V3.Adapter
 #endif
  message = IsBatch
                 ? await CreateBatchOperationMessageAsync(method, null, null, commandText, true)
-                : new ODataRequestMessage();
+.ConfigureAwait(false) : new ODataRequestMessage();
 
             using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), _model))
             {
@@ -139,8 +139,8 @@ namespace Simple.OData.Client.V3.Adapter
                     var parameterWriter = messageWriter.CreateODataParameterWriter(action);
                     parameterWriter.WriteStart();
 #else
-                    var parameterWriter = await messageWriter.CreateODataParameterWriterAsync(action);
-                    await parameterWriter.WriteStartAsync();
+                    var parameterWriter = await messageWriter.CreateODataParameterWriterAsync(action).ConfigureAwait(false);
+                    await parameterWriter.WriteStartAsync().ConfigureAwait(false);
 #endif
 
 
@@ -153,14 +153,14 @@ namespace Simple.OData.Client.V3.Adapter
 #if SILVERLIGHT
                     WriteOperationParameter(parameterWriter, operationParameter, parameter.Key, parameter.Value);
 #else
-                    await WriteOperationParameterAsync(parameterWriter, operationParameter, parameter.Key, parameter.Value);
+                    await WriteOperationParameterAsync(parameterWriter, operationParameter, parameter.Key, parameter.Value).ConfigureAwait(false);
 #endif
                 }
 
 #if SILVERLIGHT
                 parameterWriter.WriteEnd();
 #else
-                await parameterWriter.WriteEndAsync();
+                await parameterWriter.WriteEndAsync().ConfigureAwait(false);
 #endif
 
                 if (IsBatch)
@@ -169,7 +169,7 @@ namespace Simple.OData.Client.V3.Adapter
 #if SILVERLIGHT
                 return message.GetStream();
 #else
-                return await message.GetStreamAsync();
+                return await message.GetStreamAsync().ConfigureAwait(false);
 #endif
             }
         }
@@ -197,17 +197,17 @@ namespace Simple.OData.Client.V3.Adapter
         {
             if (operationParameter.Type.Definition.TypeKind == EdmTypeKind.Collection)
             {
-                var collectionWriter = await parameterWriter.CreateCollectionWriterAsync(paramName);
-                await collectionWriter.WriteStartAsync(new ODataCollectionStart());
+                var collectionWriter = await parameterWriter.CreateCollectionWriterAsync(paramName).ConfigureAwait(false);
+                await collectionWriter.WriteStartAsync(new ODataCollectionStart()).ConfigureAwait(false);
                 foreach (var item in paramValue as IEnumerable)
                 {
-                    await collectionWriter.WriteItemAsync(item);
+                    await collectionWriter.WriteItemAsync(item).ConfigureAwait(false);
                 }
-                await collectionWriter.WriteEndAsync();
+                await collectionWriter.WriteEndAsync().ConfigureAwait(false);
             }
             else
             {
-                await parameterWriter.WriteValueAsync(paramName, paramValue);
+                await parameterWriter.WriteValueAsync(paramName, paramValue).ConfigureAwait(false);
             }
         }
 #endif
@@ -304,8 +304,8 @@ namespace Simple.OData.Client.V3.Adapter
 #endif
         {
             var message = (await _deferredBatchWriter.Value.CreateOperationMessageAsync(
-                Utils.CreateAbsoluteUri(_session.Settings.BaseUri.AbsoluteUri, commandText), 
-                method, collection, entryData, resultRequired))
+                Utils.CreateAbsoluteUri(_session.Settings.BaseUri.AbsoluteUri, commandText),
+                method, collection, entryData, resultRequired).ConfigureAwait(false))
 #if SILVERLIGHT
                 as IODataRequestMessage;
 #else

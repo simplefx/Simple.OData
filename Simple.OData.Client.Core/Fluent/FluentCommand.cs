@@ -132,7 +132,7 @@ namespace Simple.OData.Client
 
         public async Task<string> GetCommandTextAsync(CancellationToken cancellationToken)
         {
-            await _details.Session.ResolveAdapterAsync(cancellationToken);
+            await _details.Session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
             return new FluentCommand(this).Resolve().Format();
         }
 

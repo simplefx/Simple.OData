@@ -27,7 +27,7 @@ namespace Simple.OData.Client
         {
             var requestUri = response.RequestMessage != null ? response.RequestMessage.RequestUri : null;
             return new WebRequestException(response.ReasonPhrase, response.StatusCode, requestUri,
-                response.Content != null ? await response.Content.ReadAsStringAsync() : null, null);
+                response.Content != null ? await response.Content.ReadAsStringAsync().ConfigureAwait(false) : null, null);
         }
 
         /// <summary>

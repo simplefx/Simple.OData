@@ -40,7 +40,7 @@ namespace Simple.OData.Client
                     }
                     else
                     {
-                        await actions[actionIndex](new ODataClient(client as ODataClient, actionResponse));
+                        await actions[actionIndex](new ODataClient(client as ODataClient, actionResponse)).ConfigureAwait(false);
                     }
                 }
             }

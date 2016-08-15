@@ -33,7 +33,7 @@ namespace Simple.OData.Client
             var lastOperationId = 0;
             foreach (var action in actions)
             {
-                await action(client);
+                await action(client).ConfigureAwait(false);
                 var responseIndex = -1;
                 if (this.LastOperationId > lastOperationId)
                 {
@@ -46,7 +46,7 @@ namespace Simple.OData.Client
             if (this.HasOperations)
             {
                 // Create batch request message
-                var requestMessage = await EndBatchAsync();
+                var requestMessage = await EndBatchAsync().ConfigureAwait(false);
                 return new ODataRequest(RestVerbs.Post, _session, ODataLiteral.Batch, requestMessage);
             }
             else
@@ -92,12 +92,12 @@ namespace Simple.OData.Client
         {
             if (method != RestVerbs.Get && !_pendingChangeSet)
             {
-                await StartChangesetAsync();
+                await StartChangesetAsync().ConfigureAwait(false);
                 _pendingChangeSet = true;
             }
             else if (method == RestVerbs.Get && _pendingChangeSet)
             {
-                await EndChangesetAsync();
+                await EndChangesetAsync().ConfigureAwait(false);
                 _pendingChangeSet = false;
             }
 
@@ -107,7 +107,7 @@ namespace Simple.OData.Client
                 MapContentId(entryData, contentId);
             }
 
-            return await CreateOperationMessageAsync(uri, method, collection, contentId, resultRequired);
+            return await CreateOperationMessageAsync(uri, method, collection, contentId, resultRequired).ConfigureAwait(false);
         }
 
         public bool HasOperations { get; protected set; }

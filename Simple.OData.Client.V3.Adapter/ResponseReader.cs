@@ -57,14 +57,14 @@ namespace Simple.OData.Client.V3.Adapter
 #if SILVERLIGHT
                         var stream = responseMessage.GetStream();
 #else
-                        var stream = await responseMessage.GetStreamAsync();
+                        var stream = await responseMessage.GetStreamAsync().ConfigureAwait(false);
 #endif
                         return ODataResponse.FromValueStream(stream, responseMessage is ODataBatchOperationResponseMessage);
                     }
                 }
                 else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Batch))
                 {
-                    return await ReadResponse(messageReader.CreateODataBatchReader());
+                    return await ReadResponse(messageReader.CreateODataBatchReader()).ConfigureAwait(false);
                 }
                 else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Feed))
                 {
@@ -116,10 +116,10 @@ namespace Simple.OData.Client.V3.Adapter
 #if SILVERLIGHT
                                 operationMessage.GetStream()));
 #else
-                                await operationMessage.GetStreamAsync()));
+                                await operationMessage.GetStreamAsync().ConfigureAwait(false)));
 #endif
                         else
-                            batch.Add(await GetResponseAsync(operationMessage));
+                            batch.Add(await GetResponseAsync(operationMessage).ConfigureAwait(false));
                         break;
                     case ODataBatchReaderState.ChangesetEnd:
                         break;

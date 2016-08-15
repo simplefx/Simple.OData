@@ -594,20 +594,20 @@ namespace Simple.OData.Client
         protected async Task<IEnumerable<T>> RectifyColumnSelectionAsync(
             Task<IEnumerable<IDictionary<string, object>>> entries, IList<string> selectedColumns, string dynamicPropertiesContainerName)
         {
-            var result = RectifyColumnSelection(await entries, selectedColumns);
+            var result = RectifyColumnSelection(await entries.ConfigureAwait(false), selectedColumns);
             return result == null ? null : result.Select(z => ConvertResult(z, dynamicPropertiesContainerName));
         }
 
         protected async Task<T> RectifyColumnSelectionAsync(
             Task<IDictionary<string, object>> entry, IList<string> selectedColumns, string dynamicPropertiesContainerName)
         {
-            return ConvertResult(RectifyColumnSelection(await entry, selectedColumns), dynamicPropertiesContainerName);
+            return ConvertResult(RectifyColumnSelection(await entry.ConfigureAwait(false), selectedColumns), dynamicPropertiesContainerName);
         }
 
         protected async Task<Tuple<IEnumerable<T>, int>> RectifyColumnSelectionAsync(
             Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> entries, IList<string> selectedColumns, string dynamicPropertiesContainerName)
         {
-            var result = await entries;
+            var result = await entries.ConfigureAwait(false);
             return new Tuple<IEnumerable<T>, int>(
                 RectifyColumnSelection(result.Item1, selectedColumns).Select(y => ConvertResult(y, dynamicPropertiesContainerName)),
                 result.Item2);

@@ -44,13 +44,13 @@ namespace Simple.OData.Client
 
         public async Task<IEnumerable<T>> FindEntriesAsync(ODataFeedAnnotations annotations, CancellationToken cancellationToken)
         {
-            var commandText = await _command.WithCount().GetCommandTextAsync(cancellationToken);
+            var commandText = await _command.WithCount().GetCommandTextAsync(cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested)
                 cancellationToken.ThrowIfCancellationRequested();
 
             var result = _client.FindEntriesAsync(commandText, annotations, cancellationToken);
             return await RectifyColumnSelectionAsync(
-                result, _command.SelectedColumns, _command.DynamicPropertiesContainerName);
+                result, _command.SelectedColumns, _command.DynamicPropertiesContainerName).ConfigureAwait(false);
         }
 
         public Task<IEnumerable<T>> FindEntriesAsync(Uri annotatedUri, ODataFeedAnnotations annotations)
@@ -66,7 +66,7 @@ namespace Simple.OData.Client
 
             var result = _client.FindEntriesAsync(commandText, annotations, cancellationToken);
             return await RectifyColumnSelectionAsync(
-                result, _command.SelectedColumns, _command.DynamicPropertiesContainerName);
+                result, _command.SelectedColumns, _command.DynamicPropertiesContainerName).ConfigureAwait(false);
         }
 
         public Task<T> FindEntryAsync()
@@ -88,7 +88,7 @@ namespace Simple.OData.Client
 
         public async Task<U> FindScalarAsync<U>(CancellationToken cancellationToken)
         {
-            var result = await _client.FindScalarAsync(_command, cancellationToken);
+            var result = await _client.FindScalarAsync(_command, cancellationToken).ConfigureAwait(false);
             return _client.IsBatchRequest 
                 ? default(U) 
                 : (U)Utils.Convert(result, typeof(U));
@@ -111,7 +111,7 @@ namespace Simple.OData.Client
 
         public async Task<T> InsertEntryAsync(bool resultRequired, CancellationToken cancellationToken)
         {
-            var result = await _client.InsertEntryAsync(_command, _command.CommandData, resultRequired, cancellationToken);
+            var result = await _client.InsertEntryAsync(_command, _command.CommandData, resultRequired, cancellationToken).ConfigureAwait(false);
             return result.ToObject<T>(_command.DynamicPropertiesContainerName, _dynamicResults);
         }
 
@@ -134,14 +134,14 @@ namespace Simple.OData.Client
         {
             if (_command.HasFilter)
             {
-                var result = await UpdateEntriesAsync(resultRequired, cancellationToken);
+                var result = await UpdateEntriesAsync(resultRequired, cancellationToken).ConfigureAwait(false);
                 return resultRequired 
                     ? result == null ? null : result.First()
                     : null;
             }
             else
             {
-                var result = await _client.UpdateEntryAsync(_command, resultRequired, cancellationToken);
+                var result = await _client.UpdateEntryAsync(_command, resultRequired, cancellationToken).ConfigureAwait(false);
                 return resultRequired
                     ? result == null ? null : result.ToObject<T>(_command.DynamicPropertiesContainerName, _dynamicResults)
                     : null;
@@ -165,7 +165,7 @@ namespace Simple.OData.Client
 
         public async Task<IEnumerable<T>> UpdateEntriesAsync(bool resultRequired, CancellationToken cancellationToken)
         {
-            var result = await _client.UpdateEntriesAsync(_command, _command.CommandData, resultRequired, cancellationToken);
+            var result = await _client.UpdateEntriesAsync(_command, _command.CommandData, resultRequired, cancellationToken).ConfigureAwait(false);
             return result.Select(y => y.ToObject<T>(_command.DynamicPropertiesContainerName, _dynamicResults));
         }
 

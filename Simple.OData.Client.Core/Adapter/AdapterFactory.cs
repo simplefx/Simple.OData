@@ -26,7 +26,7 @@ namespace Simple.OData.Client
 
         public async Task<IODataAdapter> CreateAdapterAsync(HttpResponseMessage response)
         {
-            var protocolVersions = (await GetSupportedProtocolVersionsAsync(response)).ToArray();
+            var protocolVersions = (await GetSupportedProtocolVersionsAsync(response).ConfigureAwait(false)).ToArray();
 
             foreach (var protocolVersion in protocolVersions)
             {
@@ -49,7 +49,7 @@ namespace Simple.OData.Client
 
         public async Task<string> GetMetadataDocumentAsync(HttpResponseMessage response)
         {
-            return await response.Content.ReadAsStringAsync();
+            return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
         }
 
         public IODataAdapter ParseMetadata(string metadataDocument)
@@ -98,7 +98,7 @@ namespace Simple.OData.Client
             {
                 try
                 {
-                    var metadataString = await GetMetadataDocumentAsync(response);
+                    var metadataString = await GetMetadataDocumentAsync(response).ConfigureAwait(false);
                     var protocolVersion = GetMetadataProtocolVersion(metadataString);
                     return new[] { protocolVersion };
                 }

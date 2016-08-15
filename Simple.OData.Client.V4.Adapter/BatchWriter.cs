@@ -24,26 +24,26 @@ namespace Simple.OData.Client.V4.Adapter
         {
             _requestMessage = new ODataRequestMessage() { Url = _session.Settings.BaseUri };
             _messageWriter = new ODataMessageWriter(_requestMessage);
-            _batchWriter = await _messageWriter.CreateODataBatchWriterAsync();
-            await _batchWriter.WriteStartBatchAsync();
+            _batchWriter = await _messageWriter.CreateODataBatchWriterAsync().ConfigureAwait(false);
+            await _batchWriter.WriteStartBatchAsync().ConfigureAwait(false);
             this.HasOperations = true;
         }
 
         public override async Task<HttpRequestMessage> EndBatchAsync()
         {
             if (_pendingChangeSet)
-                await _batchWriter.WriteEndChangesetAsync();
-            await _batchWriter.WriteEndBatchAsync();
-            var stream = await _requestMessage.GetStreamAsync();
+                await _batchWriter.WriteEndChangesetAsync().ConfigureAwait(false);
+            await _batchWriter.WriteEndBatchAsync().ConfigureAwait(false);
+            var stream = await _requestMessage.GetStreamAsync().ConfigureAwait(false);
             return CreateMessageFromStream(stream, _requestMessage.Url, _requestMessage.GetHeader);
         }
 
         protected override async Task StartChangesetAsync()
         {
             if (_batchWriter == null)
-                await StartBatchAsync();
+                await StartBatchAsync().ConfigureAwait(false);
 
-            await _batchWriter.WriteStartChangesetAsync();
+            await _batchWriter.WriteStartChangesetAsync().ConfigureAwait(false);
         }
 
         protected override Task EndChangesetAsync()
@@ -54,15 +54,15 @@ namespace Simple.OData.Client.V4.Adapter
         protected override async Task<object> CreateOperationMessageAsync(Uri uri, string method, string collection, string contentId, bool resultRequired)
         {
             if (_batchWriter == null)
-                await StartBatchAsync();
+                await StartBatchAsync().ConfigureAwait(false);
 
-            return await CreateBatchOperationMessageAsync(uri, method, collection, contentId, resultRequired);
+            return await CreateBatchOperationMessageAsync(uri, method, collection, contentId, resultRequired).ConfigureAwait(false);
         }
 
         private async Task<ODataBatchOperationRequestMessage> CreateBatchOperationMessageAsync(
             Uri uri, string method, string collection, string contentId, bool resultRequired)
         {
-            var message = await _batchWriter.CreateOperationRequestMessageAsync(method, uri, contentId);
+            var message = await _batchWriter.CreateOperationRequestMessageAsync(method, uri, contentId).ConfigureAwait(false);
 
             if (method == RestVerbs.Post || method == RestVerbs.Put || method == RestVerbs.Patch)
                 message.SetHeader(HttpLiteral.ContentId, contentId);
