@@ -60,9 +60,7 @@ namespace Simple.OData.Client
                 if (settings.Credentials != null)
                 {
                     clientHandler.Credentials = settings.Credentials;
-#if !NET45
-                    if (clientHandler.SupportsPreAuthenticate())
-#endif
+                    if (Utils.IsDesktopPlatform() || clientHandler.SupportsPreAuthenticate())
                     {
                         clientHandler.PreAuthenticate = true;
                     }

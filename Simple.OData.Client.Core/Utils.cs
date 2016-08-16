@@ -230,6 +230,12 @@ namespace Simple.OData.Client
                 type.FullName.StartsWith("Microsoft.");
         }
 
+        public static bool IsDesktopPlatform()
+        {
+            var cmdm = Type.GetType("System.ComponentModel.DesignerProperties, PresentationFramework, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
+            return cmdm != null;
+        }
+
 #if NET40 || SILVERLIGHT || PORTABLE_LEGACY
         public static Task<T> GetTaskFromResult<T>(T result)
         {
