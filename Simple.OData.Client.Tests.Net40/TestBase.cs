@@ -31,6 +31,24 @@ namespace Simple.OData.Client.Tests
             _client = CreateClientWithDefaultSettings();
         }
 
+        /* Original Northwind database
+         * protected const int ExpectedCountOfProducts = 77;
+         * protected const int ExpectedCountOfBeveragesProducts = 12;
+         * protected const int ExpectedCountOfCondimentsProducts = 12;
+         * protected const int ExpectedCountOfOrdersHavingAnyDetail = 160;
+         * protected const int ExpectedCountOfOrdersHavingAllDetails = 11;
+         * protected const int ExpectedCountOfProductsWithOrdersHavingAnyDetail = 160;
+         * protected const int ExpectedCountOfProductsWithOrdersHavingAllDetails = 11;
+        */
+
+        protected const int ExpectedCountOfProducts = 22;
+        protected const int ExpectedCountOfBeveragesProducts = 2;
+        protected const int ExpectedCountOfCondimentsProducts = 7;
+        protected const int ExpectedCountOfOrdersHavingAnyDetail = 5;
+        protected const int ExpectedCountOfOrdersHavingAllDetails = 6;
+        protected const int ExpectedCountOfProductsWithOrdersHavingAnyDetail = 5;
+        protected const int ExpectedCountOfProductsWithOrdersHavingAllDetails = 6;
+
         protected IODataClient CreateClientWithDefaultSettings()
         {
             return new ODataClient(new ODataClientSettings
@@ -64,13 +82,15 @@ namespace Simple.OData.Client.Tests
             var products = await _client.FindEntriesAsync("Products");
             foreach (var product in products)
             {
-                if (product["ProductName"].ToString().StartsWith("Test"))
+                var productName = product["ProductName"] as string;
+                if (string.IsNullOrEmpty(productName) || productName.StartsWith("Test"))
                     await _client.DeleteEntryAsync("Products", product);
             }
             var categories = await _client.FindEntriesAsync("Categories");
             foreach (var category in categories)
             {
-                if (category["CategoryName"].ToString().StartsWith("Test"))
+                var categoryName = category["CategoryName"] as string;
+                if (string.IsNullOrEmpty(categoryName) || categoryName.StartsWith("Test"))
                     await _client.DeleteEntryAsync("Categories", category);
             }
             var transports = await _client.FindEntriesAsync("Transport");
@@ -82,7 +102,8 @@ namespace Simple.OData.Client.Tests
             var employees = await _client.FindEntriesAsync("Employees");
             foreach (var employee in employees)
             {
-                if (employee["LastName"].ToString().StartsWith("Test"))
+                var employeeName = employee["LastName"] as string;
+                if (string.IsNullOrEmpty(employeeName) || employeeName.StartsWith("Test"))
                     await _client.DeleteEntryAsync("Employees", employee);
             }
         }

@@ -249,7 +249,7 @@ namespace Simple.OData.Client.Tests
                 .Expand(x.Products)
                 .Filter(x.CategoryName == "Beverages")
                 .FindEntryAsync();
-            Assert.Equal(12, (category.Products as IEnumerable<dynamic>).Count());
+            Assert.Equal(ExpectedCountOfBeveragesProducts, (category.Products as IEnumerable<dynamic>).Count());
         }
 
         [Fact]
@@ -261,7 +261,7 @@ namespace Simple.OData.Client.Tests
                 .OrderBy(x.ProductID)
                 .Expand(x.Category.Products)
                 .FindEntriesAsync() as IEnumerable<dynamic>).Last();
-            Assert.Equal(12, (product.Category.Products as IEnumerable<dynamic>).Count());
+            Assert.Equal(ExpectedCountOfCondimentsProducts, (product.Category.Products as IEnumerable<dynamic>).Count());
         }
 
         [Fact]
@@ -346,7 +346,7 @@ namespace Simple.OData.Client.Tests
                 .Key(2)
                 .NavigateTo(x.Products)
                 .FindEntriesAsync();
-            Assert.Equal(12, products.Count());
+            Assert.Equal(ExpectedCountOfCondimentsProducts, products.Count());
         }
 
         [Fact]
@@ -431,7 +431,7 @@ namespace Simple.OData.Client.Tests
                 .As(x.Ships)
                 .FindEntriesAsync();
             Assert.Equal("Titanic", (transport as IEnumerable<dynamic>).Single().ShipName);
-            Assert.Equal("NorthwindModel.Ships", ((transport as IEnumerable<dynamic>).Single()[FluentCommand.AnnotationsLiteral] as ODataEntryAnnotations).TypeName);
+            Assert.Equal("Ship", ((transport as IEnumerable<dynamic>).Single()[FluentCommand.AnnotationsLiteral] as ODataEntryAnnotations).TypeName);
         }
 
         [Fact]
@@ -544,7 +544,7 @@ namespace Simple.OData.Client.Tests
                 .For(x.Orders)
                 .Filter(x.OrderDetails.Any(x.Quantity > 50))
                 .FindEntriesAsync();
-            Assert.Equal(160, (products as IEnumerable<dynamic>).Count());
+            Assert.Equal(ExpectedCountOfOrdersHavingAnyDetail, (products as IEnumerable<dynamic>).Count());
         }
 
         [Fact]
@@ -555,7 +555,7 @@ namespace Simple.OData.Client.Tests
                 .For(x.Orders)
                 .Filter(x.OrderDetails.All(x.Quantity > 50))
                 .FindEntriesAsync();
-            Assert.Equal(11, (products as IEnumerable<dynamic>).Count());
+            Assert.Equal(ExpectedCountOfOrdersHavingAllDetails, (products as IEnumerable<dynamic>).Count());
         }
 
         [Fact]

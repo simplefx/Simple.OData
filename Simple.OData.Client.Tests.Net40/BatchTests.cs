@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -370,7 +370,8 @@ namespace Simple.OData.Client.Tests
                 .FindScalarAsync<int>();
             await batch.ExecuteAsync();
 
-            Assert.Equal(77, count);
+            Assert.Equal(ExpectedCountOfProducts, count);
         }
     }
 }
+

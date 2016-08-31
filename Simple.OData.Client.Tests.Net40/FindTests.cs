@@ -61,7 +61,7 @@ namespace Simple.OData.Client.Tests
                 .For("Products")
                 .Skip(1)
                 .FindEntriesAsync();
-            Assert.Equal(76, products.Count());
+            Assert.Equal(ExpectedCountOfProducts-1, products.Count());
         }
 
         [Fact]
@@ -180,7 +180,7 @@ namespace Simple.OData.Client.Tests
                 .Expand("Products")
                 .Filter("CategoryName eq 'Beverages'")
                 .FindEntryAsync();
-            Assert.Equal(12, (category["Products"] as IEnumerable<object>).Count());
+            Assert.Equal(ExpectedCountOfBeveragesProducts, (category["Products"] as IEnumerable<object>).Count());
         }
 
         [Fact]
@@ -191,7 +191,7 @@ namespace Simple.OData.Client.Tests
                 .OrderBy("ProductID")
                 .Expand("Category/Products")
                 .FindEntriesAsync()).Last();
-            Assert.Equal(12, ((product["Category"] as IDictionary<string, object>)["Products"] as IEnumerable<object>).Count());
+            Assert.Equal(ExpectedCountOfCondimentsProducts, ((product["Category"] as IDictionary<string, object>)["Products"] as IEnumerable<object>).Count());
         }
 
         [Fact]
@@ -246,7 +246,7 @@ namespace Simple.OData.Client.Tests
                 .For("Products")
                 .Count()
                 .FindScalarAsync<int>();
-            Assert.Equal(77, count);
+            Assert.Equal(ExpectedCountOfProducts, count);
         }
 
         [Fact]
@@ -267,8 +267,8 @@ namespace Simple.OData.Client.Tests
             var products = await _client
                 .For("Products")
                 .FindEntriesAsync(annotations);
-            Assert.Equal(77, annotations.Count);
-            Assert.Equal(77, products.Count());
+            Assert.Equal(ExpectedCountOfProducts, annotations.Count);
+            Assert.Equal(ExpectedCountOfProducts, products.Count());
         }
 
         [Fact]
@@ -318,7 +318,7 @@ namespace Simple.OData.Client.Tests
                 .Key(2)
                 .NavigateTo("Products")
                 .FindEntriesAsync();
-            Assert.Equal(12, products.Count());
+            Assert.Equal(ExpectedCountOfCondimentsProducts, products.Count());
         }
 
         [Fact]
@@ -397,7 +397,7 @@ namespace Simple.OData.Client.Tests
                 .As("Ships")
                 .FindEntriesAsync();
             Assert.Equal("Titanic", transport.Single()["ShipName"]);
-            Assert.Equal("NorthwindModel.Ships", (transport.Single()[FluentCommand.AnnotationsLiteral] as ODataEntryAnnotations).TypeName);
+            Assert.Equal("Ship", (transport.Single()[FluentCommand.AnnotationsLiteral] as ODataEntryAnnotations).TypeName);
         }
 
         [Fact]
@@ -448,7 +448,7 @@ namespace Simple.OData.Client.Tests
         {
             var transport = await _client
                 .For("Transport")
-                .Filter("isof('NorthwindModel.Ships')")
+                .Filter("isof('NorthwindModel.Ship')")
                 .FindEntryAsync();
             Assert.Equal("Titanic", transport["ShipName"]);
         }
@@ -458,7 +458,7 @@ namespace Simple.OData.Client.Tests
         {
             var employee = await _client
                 .For("Employees")
-                .Filter("isof(Superior, 'NorthwindModel.Employees')")
+                .Filter("isof(Superior, 'NorthwindModel.Employee')")
                 .FindEntryAsync();
             Assert.NotNull(employee);
         }
@@ -478,7 +478,7 @@ namespace Simple.OData.Client.Tests
         {
             var employee = await _client
                 .For("Employees")
-                .Filter("cast('NorthwindModel.Employees') ne null")
+                .Filter("cast('NorthwindModel.Employee') ne null")
                 .FindEntryAsync();
             Assert.NotNull(employee);
         }
@@ -488,7 +488,7 @@ namespace Simple.OData.Client.Tests
         {
             var employee = await _client
                 .For("Employees")
-                .Filter("cast(Superior, 'NorthwindModel.Employees') ne null")
+                .Filter("cast(Superior, 'NorthwindModel.Employee') ne null")
                 .FindEntryAsync();
             Assert.NotNull(employee);
         }
@@ -500,7 +500,7 @@ namespace Simple.OData.Client.Tests
                 .For("Orders")
                 .Filter("Order_Details/any(d:d/Quantity gt 50)")
                 .FindEntriesAsync();
-            Assert.Equal(160, products.Count());
+            Assert.Equal(ExpectedCountOfOrdersHavingAnyDetail, products.Count());
         }
 
         [Fact]
@@ -510,7 +510,7 @@ namespace Simple.OData.Client.Tests
                 .For("Orders")
                 .Filter("Order_Details/all(d:d/Quantity gt 50)")
                 .FindEntriesAsync();
-            Assert.Equal(11, products.Count());
+            Assert.Equal(ExpectedCountOfOrdersHavingAllDetails, products.Count());
         }
     }
 }

@@ -332,7 +332,7 @@ namespace Simple.OData.Client.Tests
                 .Expand(x => x.Products)
                 .Filter(x => x.CategoryName == "Beverages")
                 .FindEntryAsync();
-            Assert.Equal(12, category.Products.Count());
+            Assert.Equal(ExpectedCountOfBeveragesProducts, category.Products.Count());
         }
 
         [Fact]
@@ -343,7 +343,7 @@ namespace Simple.OData.Client.Tests
                 .Expand(x => x.Products)
                 .Filter(x => x.CategoryName == "Beverages")
                 .FindEntryAsync();
-            Assert.Equal(12, category.Products.Count());
+            Assert.Equal(ExpectedCountOfBeveragesProducts, category.Products.Count());
         }
 
         [Fact]
@@ -354,7 +354,7 @@ namespace Simple.OData.Client.Tests
                 .Expand(x => x.Products)
                 .Filter(x => x.CategoryName == "Beverages")
                 .FindEntryAsync();
-            Assert.Equal(12, category.Products.Count());
+            Assert.Equal(ExpectedCountOfBeveragesProducts, category.Products.Count());
         }
 
         [Fact]
@@ -365,7 +365,7 @@ namespace Simple.OData.Client.Tests
                 .Expand(x => x.Products)
                 .Filter(x => x.CategoryName == "Beverages")
                 .FindEntryAsync();
-            Assert.Equal(12, category.Products.Count());
+            Assert.Equal(ExpectedCountOfBeveragesProducts, category.Products.Count());
         }
 
         [Fact]
@@ -376,7 +376,7 @@ namespace Simple.OData.Client.Tests
                 .Expand(x => x.Products)
                 .Filter(x => x.CategoryName == "Beverages")
                 .FindEntryAsync();
-            Assert.Equal(12, category.Products.Count());
+            Assert.Equal(ExpectedCountOfBeveragesProducts, category.Products.Count());
         }
 
         [Fact]
@@ -387,7 +387,7 @@ namespace Simple.OData.Client.Tests
                 .OrderBy(x => x.ProductID)
                 .Expand(x => x.Category.Products)
                 .FindEntriesAsync()).Last();
-            Assert.Equal(12, product.Category.Products.Length);
+            Assert.Equal(ExpectedCountOfCondimentsProducts, product.Category.Products.Length);
         }
 
         [Fact]
@@ -476,7 +476,7 @@ namespace Simple.OData.Client.Tests
                 .Key(2)
                 .NavigateTo<Product>()
                 .FindEntriesAsync();
-            Assert.Equal(12, products.Count());
+            Assert.Equal(ExpectedCountOfCondimentsProducts, products.Count());
         }
 
         [Fact]
@@ -670,7 +670,7 @@ namespace Simple.OData.Client.Tests
                 .For<Order>()
                 .Filter(x => x.OrderDetails.Any(y => y.Quantity > 50))
                 .FindEntriesAsync();
-            Assert.Equal(160, products.Count());
+            Assert.Equal(ExpectedCountOfOrdersHavingAnyDetail, products.Count());
         }
 
         [Fact]
@@ -680,29 +680,31 @@ namespace Simple.OData.Client.Tests
                 .For<Order>()
                 .Filter(x => x.OrderDetails.All(y => y.Quantity > 50))
                 .FindEntriesAsync();
-            Assert.Equal(11, products.Count());
+            Assert.Equal(ExpectedCountOfOrdersHavingAllDetails, products.Count());
         }
 
-        [Fact]
+        class OrderDetails : OrderDetail { }
+
+        [Fact(Skip = "Enable after revising pluralizer")]
         public async Task PluralizerSingleClient()
         {
             _client.SetPluralizer(null);
             await AssertThrowsAsync<UnresolvableObjectException>(async () =>
-                await _client.For<Product>().FindEntriesAsync());
+                await _client.For<OrderDetails>().FindEntriesAsync());
             _client.SetPluralizer(new SimplePluralizer());
-            var products = await _client.For<Product>().FindEntriesAsync();
-            Assert.NotEqual(0, products.Count());
+            var orderDetails = await _client.For<OrderDetails>().FindEntriesAsync();
+            Assert.NotEqual(0, orderDetails.Count());
         }
 
-        [Fact]
+        [Fact(Skip = "Enable after revising pluralizer")]
         public async Task PluralizerMultipleClients()
         {
             var client = CreateClientWithDefaultSettings();
             client.SetPluralizer(null);
             await AssertThrowsAsync<UnresolvableObjectException>(async () =>
-                await client.For<Product>().FindEntriesAsync());
-            var products = await _client.For<Product>().FindEntriesAsync();
-            Assert.NotEqual(0, products.Count());
+                await client.For<OrderDetails>().FindEntriesAsync());
+            var orderDetails = await _client.For<OrderDetails>().FindEntriesAsync();
+            Assert.NotEqual(0, orderDetails.Count());
         }
 
         public class ODataOrgProduct

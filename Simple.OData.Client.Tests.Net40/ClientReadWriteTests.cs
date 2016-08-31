@@ -50,7 +50,7 @@ namespace Simple.OData.Client.Tests
             };
             var client = new ODataClient(settings);
             var model = await client.GetMetadataAsync<IEdmModel>();
-            var type = model.FindDeclaredType("NorthwindModel.Customers");
+            var type = model.FindDeclaredType("NorthwindModel.Customer");
             var property = (type as IEdmEntityType).DeclaredProperties.Single(x => x.Name == "CompanyName");
             Assert.Equal(true, property.Type.IsNullable);
 

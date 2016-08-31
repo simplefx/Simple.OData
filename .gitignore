@@ -30,5 +30,6 @@ TestResults/
 Simple.OData.ProductService/Properties/PublishProfiles/va-odata-integration - FTP.pubxml
 Simple.OData.ProductService/Properties/PublishProfiles/va-odata-integration - Web Deploy.pubxml
 Simple.OData.Client.AdHocTests/
+Simple.OData.Client.IntegrationTests/AdHocTests.cs
 Solutions/AdHocTests.sln
 nuget.exe

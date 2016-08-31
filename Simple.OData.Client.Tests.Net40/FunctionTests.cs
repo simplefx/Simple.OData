@@ -126,6 +126,19 @@ namespace Simple.OData.Client.Tests
             Assert.Equal(guid, result);
         }
 
+        [Fact(Skip = "Add support for actions on complex types in V3")]
+        public async Task FunctionWithComplexType()
+        {
+            var address = new Address { City = "Oslo", Country = "Norway", Region = "Oslo", PostalCode = "1234" };
+            var result = await _client
+                .Unbound()
+                .Action("PassThroughAddress")
+                .Set(new Entry() { { "address", address } })
+                .ExecuteAsScalarAsync<Address>();
+
+            Assert.Equal(address, result);
+        }
+
         [Fact]
         public async Task FunctionWithComplexTypeCollectionSingleElement()
         {

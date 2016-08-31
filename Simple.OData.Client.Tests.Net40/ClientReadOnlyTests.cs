@@ -42,14 +42,14 @@ namespace Simple.OData.Client.Tests
         public async Task FindEntriesFilterAny()
         {
             var orders = await _client.FindEntriesAsync("Orders?$filter=Order_Details/any(d:d/Quantity gt 50)");
-            Assert.Equal(160, orders.Count());
+            Assert.Equal(ExpectedCountOfOrdersHavingAnyDetail, orders.Count());
         }
 
         [Fact]
         public async Task FindEntriesFilterAll()
         {
             var orders = await _client.FindEntriesAsync("Orders?$filter=Order_Details/all(d:d/Quantity gt 50)");
-            Assert.Equal(11, orders.Count());
+            Assert.Equal(ExpectedCountOfOrdersHavingAllDetails, orders.Count());
         }
 
         [Fact]
@@ -69,7 +69,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task GetEntryExistingCompoundKey()
         {
-            var orderDetail = await _client.GetEntryAsync("OrderDetails", new Entry() { { "OrderID", 10248 }, { "ProductID", 11 } });
+            var orderDetail = await _client.GetEntryAsync("Order_Details", new Entry() { { "OrderID", 10248 }, { "ProductID", 11 } });
             Assert.Equal(11, orderDetail["ProductID"]);
         }
 
