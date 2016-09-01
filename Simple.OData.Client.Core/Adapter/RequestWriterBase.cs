@@ -154,10 +154,12 @@ namespace Simple.OData.Client
         {
             var verb = RestVerbs.Post;
             Stream entryContent = null;
+            ODataPayloadFormat usePayloadFormat = ODataPayloadFormat.Unspecified;
 
             if (parameters != null && parameters.Any())
             {
                 entryContent = await WriteActionContentAsync(RestVerbs.Post, commandText, actionName, parameters).ConfigureAwait(false);
+                usePayloadFormat = ODataPayloadFormat.Json;
             }
             else
             {
@@ -167,6 +169,7 @@ namespace Simple.OData.Client
             var request = new ODataRequest(verb, _session, commandText, parameters, entryContent)
             {
                 ResultRequired = resultRequired,
+                UsePayloadFormat = usePayloadFormat,
             };
             AssignHeaders(request);
             return request;

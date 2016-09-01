@@ -176,7 +176,7 @@ namespace Simple.OData.Client.V4.Adapter
         protected override async Task<Stream> WriteStreamContentAsync(Stream stream, bool writeAsText)
         {
             var message = new ODataRequestMessage();
-            using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(true), _model))
+            using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(ODataFormat.RawValue), _model))
             {
                 var value = writeAsText ? (object)Utils.StreamToString(stream) : Utils.StreamToByteArray(stream);
                 await messageWriter.WriteValueAsync(value);
@@ -270,7 +270,7 @@ namespace Simple.OData.Client.V4.Adapter
                 return navigationProperty.Type.Definition as IEdmEntityType;
         }
 
-        private ODataMessageWriterSettings GetWriterSettings(bool isRawValue = false)
+        private ODataMessageWriterSettings GetWriterSettings(ODataFormat preferredContentType = null)
         {
             var settings = new ODataMessageWriterSettings()
             {
@@ -282,9 +282,9 @@ namespace Simple.OData.Client.V4.Adapter
                 DisableMessageStreamDisposal = !IsBatch,
             };
             ODataFormat contentType;
-            if (isRawValue)
+            if (preferredContentType != null)
             {
-                contentType = ODataFormat.RawValue;
+                contentType = preferredContentType;
             }
             else
             {

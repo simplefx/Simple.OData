@@ -31,7 +31,7 @@ namespace Simple.OData.Client.V3.Adapter
 #else
             IODataRequestMessageAsync
 #endif
-            message = IsBatch
+ message = IsBatch
                 ? await CreateBatchOperationMessageAsync(method, collection, entryData, commandText, resultRequired)
 .ConfigureAwait(false) : new ODataRequestMessage();
 
@@ -129,7 +129,7 @@ namespace Simple.OData.Client.V3.Adapter
                 ? await CreateBatchOperationMessageAsync(method, null, null, commandText, true)
 .ConfigureAwait(false) : new ODataRequestMessage();
 
-            using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), _model))
+            using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(ODataFormat.Json), _model))
             {
                 var action = _model.SchemaElements
                     .Where(x => x.SchemaElementKind == EdmSchemaElementKind.EntityContainer)
@@ -139,8 +139,8 @@ namespace Simple.OData.Client.V3.Adapter
                     var parameterWriter = messageWriter.CreateODataParameterWriter(action);
                     parameterWriter.WriteStart();
 #else
-                    var parameterWriter = await messageWriter.CreateODataParameterWriterAsync(action).ConfigureAwait(false);
-                    await parameterWriter.WriteStartAsync().ConfigureAwait(false);
+                var parameterWriter = await messageWriter.CreateODataParameterWriterAsync(action).ConfigureAwait(false);
+                await parameterWriter.WriteStartAsync().ConfigureAwait(false);
 #endif
 
 
@@ -195,19 +195,26 @@ namespace Simple.OData.Client.V3.Adapter
 #else
         private async Task WriteOperationParameterAsync(ODataParameterWriter parameterWriter, IEdmFunctionParameter operationParameter, string paramName, object paramValue)
         {
-            if (operationParameter.Type.Definition.TypeKind == EdmTypeKind.Collection)
+            switch (operationParameter.Type.Definition.TypeKind)
             {
-                var collectionWriter = await parameterWriter.CreateCollectionWriterAsync(paramName).ConfigureAwait(false);
-                await collectionWriter.WriteStartAsync(new ODataCollectionStart()).ConfigureAwait(false);
-                foreach (var item in paramValue as IEnumerable)
-                {
-                    await collectionWriter.WriteItemAsync(item).ConfigureAwait(false);
-                }
-                await collectionWriter.WriteEndAsync().ConfigureAwait(false);
-            }
-            else
-            {
-                await parameterWriter.WriteValueAsync(paramName, paramValue).ConfigureAwait(false);
+                case EdmTypeKind.Primitive:
+                case EdmTypeKind.Complex:
+                    var value = GetPropertyValue(operationParameter.Type, paramValue);
+                    await parameterWriter.WriteValueAsync(paramName, value).ConfigureAwait(false);
+                    break;
+
+                case EdmTypeKind.Collection:
+                    var collectionWriter = await parameterWriter.CreateCollectionWriterAsync(paramName).ConfigureAwait(false);
+                    await collectionWriter.WriteStartAsync(new ODataCollectionStart()).ConfigureAwait(false);
+                    foreach (var item in paramValue as IEnumerable)
+                    {
+                        await collectionWriter.WriteItemAsync(item).ConfigureAwait(false);
+                    }
+                    await collectionWriter.WriteEndAsync().ConfigureAwait(false);
+                    break;
+
+                default:
+                    throw new NotSupportedException(string.Format("Unable to write action parameter of a type {0}", operationParameter.Type.Definition.TypeKind));
             }
         }
 #endif
@@ -215,7 +222,7 @@ namespace Simple.OData.Client.V3.Adapter
         protected override async Task<Stream> WriteStreamContentAsync(Stream stream, bool writeAsText)
         {
             var message = new ODataRequestMessage();
-            using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(true), _model))
+            using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(ODataFormat.RawValue), _model))
             {
                 var value = writeAsText ? (object)Utils.StreamToString(stream) : Utils.StreamToByteArray(stream);
 #if SILVERLIGHT
@@ -239,7 +246,7 @@ namespace Simple.OData.Client.V3.Adapter
             request.Headers.Add(HttpLiteral.Prefer, request.ResultRequired ? HttpLiteral.ReturnContent : HttpLiteral.ReturnNoContent);
         }
 
-        private ODataMessageWriterSettings GetWriterSettings(bool isRawValue = false)
+        private ODataMessageWriterSettings GetWriterSettings(ODataFormat preferredContentType = null)
         {
             var settings = new ODataMessageWriterSettings()
             {
@@ -248,9 +255,9 @@ namespace Simple.OData.Client.V3.Adapter
                 DisableMessageStreamDisposal = !IsBatch,
             };
             ODataFormat contentType;
-            if (isRawValue)
+            if (preferredContentType != null)
             {
-                contentType = ODataFormat.RawValue;
+                contentType = preferredContentType;
             }
             else
             {
@@ -309,7 +316,7 @@ namespace Simple.OData.Client.V3.Adapter
 #if SILVERLIGHT
                 as IODataRequestMessage;
 #else
-                as IODataRequestMessageAsync;
+ as IODataRequestMessageAsync;
 #endif
 
             return message;
