@@ -177,19 +177,26 @@ namespace Simple.OData.Client.V3.Adapter
 #if SILVERLIGHT
         private void WriteOperationParameter(ODataParameterWriter parameterWriter, IEdmFunctionParameter operationParameter, string paramName, object paramValue)
         {
-            if (operationParameter.Type.Definition.TypeKind == EdmTypeKind.Collection)
+            switch (operationParameter.Type.Definition.TypeKind)
             {
-                var collectionWriter = parameterWriter.CreateCollectionWriter(paramName);
-                collectionWriter.WriteStart(new ODataCollectionStart());
-                foreach (var item in paramValue as IEnumerable)
-                {
-                    collectionWriter.WriteItem(item);
-                }
-                collectionWriter.WriteEnd();
-            }
-            else
-            {
-                parameterWriter.WriteValue(paramName, paramValue);
+                case EdmTypeKind.Primitive:
+                case EdmTypeKind.Complex:
+                    var value = GetPropertyValue(operationParameter.Type, paramValue);
+                    parameterWriter.WriteValue(paramName, value);
+                    break;
+
+                case EdmTypeKind.Collection:
+                    var collectionWriter = parameterWriter.CreateCollectionWriter(paramName);
+                    collectionWriter.WriteStart(new ODataCollectionStart());
+                    foreach (var item in paramValue as IEnumerable)
+                    {
+                        collectionWriter.WriteItem(item);
+                    }
+                    collectionWriter.WriteEnd();
+                    break;
+
+                default:
+                    throw new NotSupportedException(string.Format("Unable to write action parameter of a type {0}", operationParameter.Type.Definition.TypeKind));
             }
         }
 #else

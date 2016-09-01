@@ -125,7 +125,8 @@ namespace Simple.OData.Client.V4.Adapter
             {
                 case EdmTypeKind.Primitive:
                 case EdmTypeKind.Complex:
-                    await parameterWriter.WriteValueAsync(paramName, paramValue).ConfigureAwait(false);
+                    var value = GetPropertyValue(operationParameter.Type, paramValue);
+                    await parameterWriter.WriteValueAsync(paramName, value).ConfigureAwait(false);
                     break;
 
                 case EdmTypeKind.Enum:
