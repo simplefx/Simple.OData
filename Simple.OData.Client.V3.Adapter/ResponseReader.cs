@@ -34,10 +34,9 @@ namespace Simple.OData.Client.V3.Adapter
         public async Task<ODataResponse> GetResponseAsync(IODataResponseMessageAsync responseMessage)
 #endif
         {
-            var readerSettings = new ODataMessageReaderSettings
-            {
-                UndeclaredPropertyBehaviorKinds = ODataUndeclaredPropertyBehaviorKinds.IgnoreUndeclaredValueProperty
-            };
+            var readerSettings = new ODataMessageReaderSettings();
+            if (_session.Settings.IgnoreUnmappedProperties)
+                readerSettings.UndeclaredPropertyBehaviorKinds = ODataUndeclaredPropertyBehaviorKinds.IgnoreUndeclaredValueProperty;
             readerSettings.MessageQuotas.MaxReceivedMessageSize = Int32.MaxValue;
             readerSettings.ShouldIncludeAnnotation = x => _session.Settings.IncludeAnnotationsInResults;
             using (var messageReader = new ODataMessageReader(responseMessage, readerSettings, _model))
