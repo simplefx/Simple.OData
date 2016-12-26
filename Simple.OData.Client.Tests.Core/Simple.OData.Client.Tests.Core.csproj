@@ -122,6 +122,7 @@
     <Compile Include="Entities\QueryOptions.cs" />
     <Compile Include="Entities\Ship.cs" />
     <Compile Include="Entities\Transport.cs" />
+    <Compile Include="Entities\TypeWithGuidKey.cs" />
     <Compile Include="ExpansionTests.cs" />
     <Compile Include="Extensions\DictionaryExtensionsTests.cs" />
     <Compile Include="Extensions\StringExtensionTests.cs" />
@@ -249,7 +250,9 @@
     <EmbeddedResource Include="Resources\Insight.edmx" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\TripPin.xml" />
+    <EmbeddedResource Include="Resources\TripPin.xml">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\ClientProductSku.xml" />
