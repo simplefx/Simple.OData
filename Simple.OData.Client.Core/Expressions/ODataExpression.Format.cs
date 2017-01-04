@@ -173,8 +173,12 @@ namespace Simple.OData.Client
             var navigationPath = FormatCallerReference();
             var entityCollection = context.Session.Metadata.NavigateToCollection(context.EntityCollection, navigationPath);
 
-            string formattedArguments = string.Empty;
-            if (this.Function.Arguments.Any() || this.Function.FunctionName != ODataLiteral.Any)
+            string formattedArguments;
+            if(!this.Function.Arguments.Any() && string.Equals(this.Function.FunctionName, ODataLiteral.Any, StringComparison.OrdinalIgnoreCase))
+            {
+                formattedArguments = string.Empty;
+            }
+            else
             {
                 var targetQualifier = string.Format("x{0}", ArgumentCounter >= 0 ? (1 + (ArgumentCounter++) % 9).ToString() : string.Empty);
                 formattedArguments = string.Format("{0}:{1}",
