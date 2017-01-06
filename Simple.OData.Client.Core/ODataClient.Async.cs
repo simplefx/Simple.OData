@@ -1186,7 +1186,7 @@ namespace Simple.OData.Client
                 : (T)Utils.Convert(result.First().Value, typeof(T));
         }
 
-        internal async Task<T[]> ExecuteAsArrayAsync<T>(FluentCommand command, CancellationToken cancellationToken)
+        internal async Task<T[]> ExecuteAsArrayAsync<T>(FluentCommand command, CancellationToken cancellationToken, string dynamicPropertiesContainerName)
         {
             if (IsBatchResponse)
                 return _batchResponse.AsArray<T>();
@@ -1198,7 +1198,7 @@ namespace Simple.OData.Client
                 ? null
                 : typeof(T) == typeof(string) || typeof(T).IsValue()
                 ? result.SelectMany(x => x.Values).Select(x => (T)Utils.Convert(x, typeof(T))).ToArray()
-                : result.Select(x => (T)x.ToObject(typeof(T))).ToArray();
+                : result.Select(x => (T)x.ToObject(typeof(T), dynamicPropertiesContainerName)).ToArray();
         }
 
         internal async Task ExecuteBatchAsync(IList<Func<IODataClient, Task>> actions, CancellationToken cancellationToken)
