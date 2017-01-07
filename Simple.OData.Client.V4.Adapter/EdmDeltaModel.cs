@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Microsoft.OData.Core;
 using Microsoft.OData.Edm;
 using Microsoft.OData.Edm.Annotations;
 using Microsoft.OData.Edm.Library;
@@ -11,7 +12,7 @@ namespace Simple.OData.Client.V4.Adapter
         private readonly IEdmModel _source;
         private readonly EdmEntityType _entityType;
 
-        public EdmDeltaModel(IEdmModel source, IEdmEntityType entityType, IEnumerable<string> propertyNames)
+        public EdmDeltaModel(IEdmModel source, IEdmEntityType entityType, ICollection<string> propertyNames)
         {
             _source = source;
             _entityType = new EdmEntityType(entityType.Namespace, entityType.Name, null, entityType.IsAbstract, entityType.IsOpen, entityType.HasStream);
