@@ -270,7 +270,7 @@ namespace Simple.OData.Client.Extensions
                 type = propertyInfo.GetType();
                 instance = propertyInfo.GetValue(instance, null);
 #else
-                var propertyInfo = type.GetTypeInfo().GetDeclaredProperty(splitted[i-1]);
+                var propertyInfo = type.GetTypeInfo().GetAnyProperty(splitted[i-1]);
                 type = propertyInfo.GetType();
                 instance = propertyInfo.GetValue(instance, null);
 #endif
