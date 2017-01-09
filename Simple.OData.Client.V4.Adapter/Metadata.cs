@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using Microsoft.OData.Edm;
 
 #pragma warning disable 1591
@@ -260,6 +261,15 @@ namespace Simple.OData.Client.V4.Adapter
 
             IEdmEntityType entityType;
             return !TryGetEntityType(action.ReturnType, out entityType) ? null : new EntityCollection(entityType.Name);
+        }
+
+        protected override bool IsOpenTypeProperty(string collectionName, string propertyName)
+        {
+            IEdmProperty property = GetEntityType(collectionName).DeclaredProperties.FirstOrDefault(x => x.Name == propertyName);
+            if (property != null)
+            {
+            }
+            return false;
         }
 
         private IEnumerable<IEdmEntitySet> GetEntitySets()

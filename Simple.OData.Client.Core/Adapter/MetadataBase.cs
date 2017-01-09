@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
+using Simple.OData.Client.Extensions;
 
 #pragma warning disable 1591
 
@@ -31,6 +33,7 @@ namespace Simple.OData.Client
         public abstract string GetFunctionVerb(string functionName);
         public abstract string GetActionFullName(string actionName);
         public abstract EntityCollection GetActionReturnCollection(string actionName);
+        protected abstract bool IsOpenTypeProperty(string collectionName, string propertyName);
 
         public EntityCollection GetEntityCollection(string collectionPath)
         {
@@ -104,6 +107,10 @@ namespace Simple.OData.Client
 
             foreach (var item in entryData)
             {
+                if (this.IsOpenTypeProperty(collectionName, item.Key))
+                {
+                    
+                }
                 if (this.HasStructuralProperty(collectionName, item.Key))
                 {
                     entryDetails.AddProperty(item.Key, item.Value);
