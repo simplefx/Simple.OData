@@ -132,8 +132,22 @@ namespace Simple.OData.Client.Extensions
             string[] parts = propertyName.Split('/');
 
             return (parts.Length > 1)
-                ? GetAnyProperty(type.GetTypeInfo().GetProperty(parts[0]).PropertyType, parts.Skip(1).Aggregate((a, i) => a + "." + i))
-                : type.GetTypeInfo().GetProperty(propertyName);
+                ? GetAnyProperty(type.FindAnyProperty(parts[0]).PropertyType, parts.Skip(1).Aggregate((a, i) => a + "." + i))
+                : type.FindAnyProperty(propertyName);
+        }
+
+        private static PropertyInfo FindAnyProperty(this Type type, string fieldName)
+        {
+            var currentType = type;
+            while (currentType != null && currentType != typeof(object))
+            {
+                var field = currentType.GetDeclaredProperties().FirstOrDefault(r => r.Name == fieldName);
+                if (field != null)
+                    return field;
+
+                currentType = currentType.GetTypeInfo().BaseType;
+            }
+            return null;
         }
 
         private static bool IsInstanceProperty(PropertyInfo propertyInfo)
