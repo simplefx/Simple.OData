@@ -17,8 +17,11 @@ namespace Simple.OData.Client.Extensions
 
         public static PropertyInfo GetAnyProperty(this Type type, string propertyName)
         {
-            var property = type.GetProperty(propertyName, BindingFlags.Instance | BindingFlags.Public);
-            return property == null || property.DeclaringType == typeof (object) ? null : property;
+            string[] parts = propertyName.Split('/');
+
+            return (parts.Length > 1)
+                ? GetAnyProperty(type.GetProperty(parts[0]).PropertyType, parts.Skip(1).Aggregate((a, i) => a + "." + i))
+                : type.GetProperty(propertyName);
         }
 
         public static IEnumerable<PropertyInfo> GetDeclaredProperties(this Type type)
@@ -126,16 +129,11 @@ namespace Simple.OData.Client.Extensions
 
         public static PropertyInfo GetAnyProperty(this Type type, string propertyName)
         {
-            var currentType = type;
-            while (currentType != null && currentType != typeof(object))
-            {
-                var property = currentType.GetTypeInfo().GetDeclaredProperty(propertyName);
-                if (property != null)
-                    return property;
+            string[] parts = propertyName.Split('/');
 
-                currentType = currentType.GetTypeInfo().BaseType;
-            }
-            return null;
+            return (parts.Length > 1)
+                ? GetAnyProperty(type.GetTypeInfo().GetProperty(parts[0]).PropertyType, parts.Skip(1).Aggregate((a, i) => a + "." + i))
+                : type.GetTypeInfo().GetProperty(propertyName);
         }
 
         private static bool IsInstanceProperty(PropertyInfo propertyInfo)
@@ -157,7 +155,6 @@ namespace Simple.OData.Client.Extensions
         public static IEnumerable<FieldInfo> GetAllFields(this Type type)
         {
             var fields = GetDeclaredFields(type).ToList();
-
             var baseType = type.GetTypeInfo().BaseType;
             if (baseType != null && baseType != typeof(object))
                 fields.AddRange(baseType.GetAllFields().Where(x => fields.All(y => y.Name != x.Name)));

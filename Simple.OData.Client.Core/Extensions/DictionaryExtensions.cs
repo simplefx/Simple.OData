@@ -85,7 +85,7 @@ namespace Simple.OData.Client.Extensions
 
         private static PropertyInfo FindMatchingProperty(Type type, KeyValuePair<string, object> item)
         {
-            var property = type.GetAnyProperty(item.Key) ?? 
+            var property = type.GetAnyProperty(item.Key) ??
                 type.GetAllProperties().FirstOrDefault(x => x.GetMappedName() == item.Key);
 
             if (property == null && item.Key == FluentCommand.AnnotationsLiteral)
@@ -105,7 +105,7 @@ namespace Simple.OData.Client.Extensions
 
         private static bool IsCollectionType(Type type, object itemValue)
         {
-            return 
+            return
                 (type.IsArray || type.IsGeneric() &&
                 typeof(System.Collections.IEnumerable).IsTypeAssignableFrom(type)) &&
                 (itemValue as System.Collections.IEnumerable) != null;
@@ -260,7 +260,22 @@ namespace Simple.OData.Client.Extensions
                     string.Format("Property {0} must implement IDictionary<string,object> interface",
                     dynamicPropertiesContainerName));
 
+            var splitted = dynamicPropertiesContainerName.Split('/');
             var dynamicProperties = new Dictionary<string, object>();
+
+            for (int i = 1; i < splitted.Length; i++)
+            {
+#if NET40 || SILVERLIGHT || PORTABLE_LEGACY
+                var propertyInfo = type.GetProperty(splitted[i-1]);
+                type = propertyInfo.GetType();
+                instance = propertyInfo.GetValue(instance, null);
+#else
+                var propertyInfo = type.GetTypeInfo().GetDeclaredProperty(splitted[i-1]);
+                type = propertyInfo.GetType();
+                instance = propertyInfo.GetValue(instance, null);
+#endif
+            }
+
             property.SetValue(instance, dynamicProperties, null);
             return dynamicProperties;
         }
