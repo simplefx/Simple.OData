@@ -441,9 +441,8 @@ namespace Simple.OData.Client
         /// </summary>
         /// <typeparam name="U">The type of the result array.</typeparam>
         /// <param name="cancellationToken">The cancellation token.</param>
-        /// <param name="dynamicPropertiesContainerName">the name of dynamicPropertiesContainer</param>
         /// <returns>Action execution result.</returns>
-        Task<U[]> ExecuteAsArrayAsync<U>(CancellationToken cancellationToken, string dynamicPropertiesContainerName);
+        Task<U[]> ExecuteAsArrayAsync<U>(CancellationToken cancellationToken);
 
         /// <summary>
         /// Gets the OData command text.

@@ -568,9 +568,9 @@ namespace Simple.OData.Client
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <param name="dynamicPropertiesContainerName">the name of dynamicPropertiesContainer</param>
         /// <returns>Execution result.</returns>
-        public Task<U[]> ExecuteAsArrayAsync<U>(CancellationToken cancellationToken, string dynamicPropertiesContainerName = null)
+        public Task<U[]> ExecuteAsArrayAsync<U>(CancellationToken cancellationToken)
         {
-            return _client.ExecuteAsArrayAsync<U>(_command, cancellationToken, dynamicPropertiesContainerName);
+            return _client.ExecuteAsArrayAsync<U>(_command, cancellationToken);
         }
 
         /// <summary>

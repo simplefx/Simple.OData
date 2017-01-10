@@ -263,15 +263,6 @@ namespace Simple.OData.Client.V4.Adapter
             return !TryGetEntityType(action.ReturnType, out entityType) ? null : new EntityCollection(entityType.Name);
         }
 
-        protected override bool IsOpenTypeProperty(string collectionName, string propertyName)
-        {
-            IEdmProperty property = GetEntityType(collectionName).DeclaredProperties.FirstOrDefault(x => x.Name == propertyName);
-            if (property != null)
-            {
-            }
-            return false;
-        }
-
         private IEnumerable<IEdmEntitySet> GetEntitySets()
         {
             return _model.SchemaElements
