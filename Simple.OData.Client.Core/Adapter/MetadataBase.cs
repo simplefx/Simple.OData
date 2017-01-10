@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using Simple.OData.Client.Extensions;
 
 #pragma warning disable 1591
 

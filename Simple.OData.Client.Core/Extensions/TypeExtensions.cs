@@ -17,11 +17,8 @@ namespace Simple.OData.Client.Extensions
 
         public static PropertyInfo GetAnyProperty(this Type type, string propertyName)
         {
-            string[] parts = propertyName.Split('/');
-
-            return (parts.Length > 1)
-                ? GetAnyProperty(type.GetProperty(parts[0]).PropertyType, parts.Skip(1).Aggregate((a, i) => a + "." + i))
-                : type.GetProperty(propertyName);
+            var property = type.GetProperty(propertyName, BindingFlags.Instance | BindingFlags.Public);
+            return property == null || property.DeclaringType == typeof (object) ? null : property;
         }
 
         public static IEnumerable<PropertyInfo> GetDeclaredProperties(this Type type)
@@ -129,21 +126,12 @@ namespace Simple.OData.Client.Extensions
 
         public static PropertyInfo GetAnyProperty(this Type type, string propertyName)
         {
-            string[] parts = propertyName.Split('/');
-
-            return (parts.Length > 1)
-                ? GetAnyProperty(type.FindAnyProperty(parts[0]).PropertyType, parts.Skip(1).Aggregate((a, i) => a + "." + i))
-                : type.FindAnyProperty(propertyName);
-        }
-
-        private static PropertyInfo FindAnyProperty(this Type type, string fieldName)
-        {
             var currentType = type;
             while (currentType != null && currentType != typeof(object))
             {
-                var field = currentType.GetDeclaredProperties().FirstOrDefault(r => r.Name == fieldName);
-                if (field != null)
-                    return field;
+                var property = currentType.GetTypeInfo().GetDeclaredProperty(propertyName);
+                if (property != null)
+                    return property;
 
                 currentType = currentType.GetTypeInfo().BaseType;
             }
@@ -169,6 +157,7 @@ namespace Simple.OData.Client.Extensions
         public static IEnumerable<FieldInfo> GetAllFields(this Type type)
         {
             var fields = GetDeclaredFields(type).ToList();
+
             var baseType = type.GetTypeInfo().BaseType;
             if (baseType != null && baseType != typeof(object))
                 fields.AddRange(baseType.GetAllFields().Where(x => fields.All(y => y.Name != x.Name)));

@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using Microsoft.OData.Edm;
 
 #pragma warning disable 1591
