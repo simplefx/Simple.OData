@@ -15,7 +15,7 @@ namespace Simple.OData.Client.V4.Adapter
         public EdmDeltaModel(IEdmModel source, IEdmEntityType entityType, ICollection<string> propertyNames)
         {
             _source = source;
-            _entityType = new EdmEntityType(entityType.Namespace, entityType.Name, entityType.BaseEntityType(), entityType.IsAbstract, entityType.IsOpen, entityType.HasStream);
+            _entityType = new EdmEntityType(entityType.Namespace, entityType.Name, null, entityType.IsAbstract, entityType.IsOpen, entityType.HasStream);
 
             foreach (var property in entityType.StructuralProperties())
             {
