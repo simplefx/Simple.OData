@@ -79,7 +79,7 @@ namespace Simple.OData.Client.Tests
         public void Not()
         {
             Expression<Func<TestEntity, bool>> filter = x => !(x.ProductName == "Chai");
-            Assert.Equal("not(ProductName eq 'Chai')", ODataExpression.FromLinqExpression(filter).AsString(_session));
+            Assert.Equal("not (ProductName eq 'Chai')", ODataExpression.FromLinqExpression(filter).AsString(_session));
         }
 
         [Fact]
