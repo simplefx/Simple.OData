@@ -57,6 +57,18 @@ namespace Simple.OData.Client
             }
         }
 
+        internal ODataClient(ODataClient client, SimpleDictionary<object, IDictionary<string, object>> batchEntries)
+        {
+            _settings = client._settings;
+            _session = client.Session;
+            _requestRunner = client._requestRunner;
+            if (batchEntries != null)
+            {
+                _batchEntries = batchEntries;
+                _lazyBatchWriter = new Lazy<IBatchWriter>(() => _session.Adapter.GetBatchWriter(_batchEntries));
+            }
+        }
+
         internal ODataClient(ODataClient client, ODataResponse batchResponse)
         {
             _session = client.Session;
@@ -64,6 +76,7 @@ namespace Simple.OData.Client
         }
 
         internal Session Session { get { return _session; } }
+        internal ODataClientSettings Settings { get { return _settings; } }
         internal ODataResponse BatchResponse { get { return _batchResponse; } }
         internal bool IsBatchRequest { get { return _lazyBatchWriter != null; } }
         internal bool IsBatchResponse { get { return _batchResponse != null; } }
@@ -169,6 +182,28 @@ namespace Simple.OData.Client
         public void SetPluralizer(IPluralizer pluralizer)
         {
             _session.Pluralizer = pluralizer;
+        }
+
+        /// <summary>
+        /// Allows callers to manipulate the request headers in between request executions.
+        /// Useful for retrieval of x-csrf-tokens when you want to update the request header
+        /// with the retrieved token on subsequent requests.
+        /// </summary>
+        /// <param name="headers">The list of headers to update.</param>
+        public void UpdateRequestHeaders(Dictionary<string, IEnumerable<string>> headers)
+        {
+            _settings.BeforeRequest += (request) =>
+            {
+                foreach (var header in headers)
+                {
+                    if (request.Headers.Contains(header.Key))
+                    {
+                        request.Headers.Remove(header.Key);
+                    }
+
+                    request.Headers.Add(header.Key, header.Value);
+                }
+            };
         }
     }
 }
