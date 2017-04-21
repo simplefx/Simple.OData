@@ -14,7 +14,7 @@ namespace Simple.OData.Client.Tests
         {
             // Make sure the default doesn't contain any headers
             var concreteClient = _client as ODataClient;
-            Assert.Null(concreteClient.Settings.BeforeRequest);
+            Assert.Null(concreteClient.Session.Settings.BeforeRequest);
 
             // Add some headers - note this will simply set up the request action
             // to lazily add them to the request.
@@ -22,7 +22,7 @@ namespace Simple.OData.Client.Tests
             {
                 {"x-csrf-token", new List<string> {"fetch"}}
             });
-            Assert.NotNull(concreteClient.Settings.BeforeRequest);
+            Assert.NotNull(concreteClient.Session.Settings.BeforeRequest);
             
             // Make sure we can still execute a request
             Assert.DoesNotThrow(async () => await concreteClient.GetMetadataDocumentAsync());
