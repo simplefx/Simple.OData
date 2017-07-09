@@ -54,28 +54,12 @@ namespace Simple.OData.Client
 
         public IODataAdapter ParseMetadata(string metadataDocument)
         {
-            var reader = XmlReader.Create(new StringReader(metadataDocument));
-            reader.MoveToContent();
-            var protocolVersion = reader.GetAttribute("Version");
+            var protocolVersion = GetMetadataProtocolVersion(metadataDocument);
 
             if (protocolVersion == ODataProtocolVersion.V1 ||
                 protocolVersion == ODataProtocolVersion.V2 ||
                 protocolVersion == ODataProtocolVersion.V3)
             {
-                while (reader.Read())
-                {
-                    if (reader.NodeType == XmlNodeType.Element)
-                    {
-                        var version = reader.GetAttribute("m:" + HttpLiteral.MaxDataServiceVersion);
-                        if (string.IsNullOrEmpty(version))
-                            version = reader.GetAttribute("m:" + HttpLiteral.DataServiceVersion);
-                        if (!string.IsNullOrEmpty(version) && string.Compare(version, protocolVersion, StringComparison.Ordinal) > 0)
-                            protocolVersion = version;
-
-                        break;
-                    }
-                }
-
                 return LoadAdapter(AdapterV3AssemblyName, AdapterV3TypeName, _session, protocolVersion, metadataDocument);
             }
             else if (protocolVersion == ODataProtocolVersion.V4)
@@ -148,7 +132,29 @@ namespace Simple.OData.Client
         {
             var reader = XmlReader.Create(new StringReader(metadataString));
             reader.MoveToContent();
-            return reader.GetAttribute("Version");
+
+            var protocolVersion = reader.GetAttribute("Version");
+
+            if (protocolVersion == ODataProtocolVersion.V1 ||
+                protocolVersion == ODataProtocolVersion.V2 ||
+                protocolVersion == ODataProtocolVersion.V3)
+            {
+                while (reader.Read())
+                {
+                    if (reader.NodeType == XmlNodeType.Element)
+                    {
+                        var version = reader.GetAttribute("m:" + HttpLiteral.MaxDataServiceVersion);
+                        if (string.IsNullOrEmpty(version))
+                            version = reader.GetAttribute("m:" + HttpLiteral.DataServiceVersion);
+                        if (!string.IsNullOrEmpty(version) && string.Compare(version, protocolVersion, StringComparison.Ordinal) > 0)
+                            protocolVersion = version;
+
+                        break;
+                    }
+                }
+            }
+
+            return protocolVersion;
         }
     }
 }
