@@ -17,14 +17,7 @@ namespace Simple.OData.Client
         private const string AdapterV3TypeName = "Simple.OData.Client.V3.Adapter.ODataAdapter";
         private const string AdapterV4TypeName = "Simple.OData.Client.V4.Adapter.ODataAdapter";
 
-        private readonly ISession _session;
-
-        public AdapterFactory(ISession session)
-        {
-            _session = session;
-        }
-
-        public async Task<IODataAdapter> CreateAdapterAsync(HttpResponseMessage response)
+        public async Task<Func<ISession, IODataAdapter>> CreateAdapterAsync(HttpResponseMessage response)
         {
             var protocolVersions = (await GetSupportedProtocolVersionsAsync(response).ConfigureAwait(false)).ToArray();
 
@@ -32,42 +25,19 @@ namespace Simple.OData.Client
             {
                 var loadAdapter = GetAdapterLoader(protocolVersion, response);
                 if (loadAdapter != null)
-                    return loadAdapter();
+                    return loadAdapter;
             }
             throw new NotSupportedException(string.Format("OData protocols {0} are not supported", string.Join(",", protocolVersions)));
         }
 
-        public IODataAdapter CreateAdapter(string metadataString)
+        public Func<ISession, IODataAdapter> CreateAdapter(string metadataString)
         {
             var protocolVersion = GetMetadataProtocolVersion(metadataString);
             var loadAdapter = GetAdapterLoader(protocolVersion, metadataString);
             if (loadAdapter == null)
                 throw new NotSupportedException(string.Format("OData protocol {0} is not supported", protocolVersion));
 
-            return loadAdapter();
-        }
-
-        public async Task<string> GetMetadataDocumentAsync(HttpResponseMessage response)
-        {
-            return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-        }
-
-        public IODataAdapter ParseMetadata(string metadataDocument)
-        {
-            var protocolVersion = GetMetadataProtocolVersion(metadataDocument);
-
-            if (protocolVersion == ODataProtocolVersion.V1 ||
-                protocolVersion == ODataProtocolVersion.V2 ||
-                protocolVersion == ODataProtocolVersion.V3)
-            {
-                return LoadAdapter(AdapterV3AssemblyName, AdapterV3TypeName, _session, protocolVersion, metadataDocument);
-            }
-            else if (protocolVersion == ODataProtocolVersion.V4)
-            {
-                return LoadAdapter(AdapterV4AssemblyName, AdapterV4TypeName, _session, protocolVersion, metadataDocument);
-            }
-
-            throw new NotSupportedException(string.Format("OData protocol {0} is not supported", protocolVersion));
+            return loadAdapter;
         }
 
         private async Task<IEnumerable<string>> GetSupportedProtocolVersionsAsync(HttpResponseMessage response)
@@ -82,7 +52,7 @@ namespace Simple.OData.Client
             {
                 try
                 {
-                    var metadataString = await GetMetadataDocumentAsync(response).ConfigureAwait(false);
+                    var metadataString = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                     var protocolVersion = GetMetadataProtocolVersion(metadataString);
                     return new[] { protocolVersion };
                 }
@@ -93,14 +63,14 @@ namespace Simple.OData.Client
             }
         }
 
-        private Func<IODataAdapter> GetAdapterLoader(string protocolVersion, object extraInfo)
+        private Func<ISession, IODataAdapter> GetAdapterLoader(string protocolVersion, object extraInfo)
         {
             if (protocolVersion == ODataProtocolVersion.V1 ||
                 protocolVersion == ODataProtocolVersion.V2 ||
                 protocolVersion == ODataProtocolVersion.V3)
-                return () => LoadAdapter(AdapterV3AssemblyName, AdapterV3TypeName, _session, protocolVersion, extraInfo);
+                return session => LoadAdapter(AdapterV3AssemblyName, AdapterV3TypeName, session, protocolVersion, extraInfo);
             if (protocolVersion == ODataProtocolVersion.V4)
-                return () => LoadAdapter(AdapterV4AssemblyName, AdapterV4TypeName, _session, protocolVersion, extraInfo);
+                return session => LoadAdapter(AdapterV4AssemblyName, AdapterV4TypeName, session, protocolVersion, extraInfo);
 
             return null;
         }
@@ -130,31 +100,33 @@ namespace Simple.OData.Client
 
         private string GetMetadataProtocolVersion(string metadataString)
         {
-            var reader = XmlReader.Create(new StringReader(metadataString));
-            reader.MoveToContent();
-
-            var protocolVersion = reader.GetAttribute("Version");
-
-            if (protocolVersion == ODataProtocolVersion.V1 ||
-                protocolVersion == ODataProtocolVersion.V2 ||
-                protocolVersion == ODataProtocolVersion.V3)
+            using (var reader = XmlReader.Create(new StringReader(metadataString)))
             {
-                while (reader.Read())
-                {
-                    if (reader.NodeType == XmlNodeType.Element)
-                    {
-                        var version = reader.GetAttribute("m:" + HttpLiteral.MaxDataServiceVersion);
-                        if (string.IsNullOrEmpty(version))
-                            version = reader.GetAttribute("m:" + HttpLiteral.DataServiceVersion);
-                        if (!string.IsNullOrEmpty(version) && string.Compare(version, protocolVersion, StringComparison.Ordinal) > 0)
-                            protocolVersion = version;
+                reader.MoveToContent();
 
-                        break;
+                var protocolVersion = reader.GetAttribute("Version");
+
+                if (protocolVersion == ODataProtocolVersion.V1 ||
+                    protocolVersion == ODataProtocolVersion.V2 ||
+                    protocolVersion == ODataProtocolVersion.V3)
+                {
+                    while (reader.Read())
+                    {
+                        if (reader.NodeType == XmlNodeType.Element)
+                        {
+                            var version = reader.GetAttribute("m:" + HttpLiteral.MaxDataServiceVersion);
+                            if (string.IsNullOrEmpty(version))
+                                version = reader.GetAttribute("m:" + HttpLiteral.DataServiceVersion);
+                            if (!string.IsNullOrEmpty(version) && string.Compare(version, protocolVersion, StringComparison.Ordinal) > 0)
+                                protocolVersion = version;
+
+                            break;
+                        }
                     }
                 }
-            }
 
-            return protocolVersion;
+                return protocolVersion;
+            }
         }
     }
 }

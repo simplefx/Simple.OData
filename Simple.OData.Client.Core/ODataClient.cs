@@ -100,10 +100,7 @@ namespace Simple.OData.Client
         /// </summary>
         public static void ClearMetadataCache()
         {
-            lock (MetadataCache.Instances)
-            {
-                MetadataCache.Instances.Clear();
-            }
+            MetadataCache.Clear();
         }
 
         /// <summary>
