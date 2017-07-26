@@ -53,6 +53,7 @@
     <Compile Include="EdmDeltaModel.cs" />
     <Compile Include="Metadata.cs" />
     <Compile Include="ODataAdapter.cs" />
+    <Compile Include="ODataModelAdapter.cs" />
     <Compile Include="ODataRequestMessage.cs" />
     <Compile Include="ODataResponseMessage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
