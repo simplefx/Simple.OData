@@ -89,9 +89,16 @@ namespace Simple.OData.Client
 
         private async Task<string> ResolveMetadataAsync(CancellationToken cancellationToken)
         {
-            var response = await SendMetadataRequestAsync(cancellationToken).ConfigureAwait(false);
-            var metadataDocument = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            return metadataDocument;
+            if (string.IsNullOrEmpty(this.Settings.MetadataDocument))
+            {
+                var response = await SendMetadataRequestAsync(cancellationToken).ConfigureAwait(false);
+                var metadataDocument = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                return metadataDocument;
+            }
+            else
+            {
+                return this.Settings.MetadataDocument;
+            }
         }
 
         public IODataAdapter Adapter
