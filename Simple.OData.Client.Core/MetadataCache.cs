@@ -83,12 +83,12 @@ namespace Simple.OData.Client
             _key = key;
             SetMetadataDocument(metadataDocument);
 
-#if !NET40
-            _resolutionTask = Task.FromResult(metadataDocument);
-#else
+#if NET40 || SILVERLIGHT
             var tcs = new TaskCompletionSource<string>();
             tcs.SetResult(metadataDocument);
             _resolutionTask = tcs.Task;
+#else
+            _resolutionTask = Task.FromResult(metadataDocument);
 #endif
         }
 

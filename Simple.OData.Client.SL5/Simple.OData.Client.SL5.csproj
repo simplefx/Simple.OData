@@ -152,6 +152,9 @@
     <Compile Include="..\Simple.OData.Client.Core\Adapter\IODataAdapter.cs">
       <Link>Adapter\IODataAdapter.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Adapter\IODataModelAdapter.cs">
+      <Link>Adapter\IODataModelAdapter.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Adapter\IRequestWriter.cs">
       <Link>Adapter\IRequestWriter.cs</Link>
     </Compile>
@@ -163,6 +166,9 @@
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Adapter\ODataAdapterBase.cs">
       <Link>Adapter\ODataAdapterBase.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Adapter\ODataModelAdapterBase.cs">
+      <Link>Adapter\ODataModelAdapterBase.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Adapter\RequestWriterBase.cs">
       <Link>Adapter\RequestWriterBase.cs</Link>
@@ -386,6 +392,9 @@
     <Compile Include="..\Simple.OData.Client.V3.Adapter\ODataAdapter.cs">
       <Link>AdapterV3\ODataAdapter.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.V3.Adapter\ODataModelAdapter.cs">
+      <Link>AdapterV3\ODataModelAdapter.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.V3.Adapter\ODataRequestMessage.cs">
       <Link>AdapterV3\ODataRequestMessage.cs</Link>
     </Compile>
@@ -415,6 +424,9 @@
     </Compile>
     <Compile Include="..\Simple.OData.Client.V4.Adapter\ODataAdapter.cs">
       <Link>AdapterV4\ODataAdapter.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.V4.Adapter\ODataModelAdapter.cs">
+      <Link>AdapterV4\ODataModelAdapter.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.V4.Adapter\ODataRequestMessage.cs">
       <Link>AdapterV4\ODataRequestMessage.cs</Link>
