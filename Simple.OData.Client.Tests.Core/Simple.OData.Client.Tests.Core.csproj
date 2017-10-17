@@ -127,6 +127,7 @@
     <Compile Include="Extensions\DictionaryExtensionsTests.cs" />
     <Compile Include="Extensions\StringExtensionTests.cs" />
     <Compile Include="Extensions\TypeExtensionTests.cs" />
+    <Compile Include="MetadataCacheTests.cs" />
     <Compile Include="RequestWriterTests.cs" />
     <Compile Include="ResponseReaderV3Tests.cs" />
     <Compile Include="ResponseReaderV4Tests.cs" />
