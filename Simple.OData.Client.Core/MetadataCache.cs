@@ -1,9 +1,9 @@
 ﻿using System;
 #if NET40
 using System.Collections.Concurrent;
-#endif
+#else
 using System.Collections.Generic;
-using System.Threading.Tasks;
+#endif
 
 namespace Simple.OData.Client
 {
