@@ -67,19 +67,20 @@ namespace Simple.OData.Client
         {
             if (this.MetadataCache == null)
             {
+                string metadataDocument = Settings.MetadataDocument;
+                if (string.IsNullOrEmpty(metadataDocument))
+                {
+                    metadataDocument = await ResolveMetadataAsync(cancellationToken).ConfigureAwait(false);
+                }
                 this.MetadataCache =
                     MetadataCache.GetOrAdd(
                         this.Settings.BaseUri.AbsoluteUri,
                         uri =>
                         {
-                            var cache = new MetadataCache(uri);
-                            cache.SetMetadataDocument(ResolveMetadataAsync(cancellationToken));
-
+                            var cache = new MetadataCache(uri, metadataDocument);
                             return cache;
                         });
             }
-
-            await this.MetadataCache.Resolved;
 
             if (this.Settings.PayloadFormat == ODataPayloadFormat.Unspecified)
                 this.Settings.PayloadFormat = this.Adapter.DefaultPayloadFormat;

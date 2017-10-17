@@ -62,17 +62,8 @@ namespace Simple.OData.Client
         private readonly string _key;
         private Func<ISession, IODataAdapter> _adapterFactory;
 
-        private string _metadataDocument;
-        private Task _resolutionTask;
-
-        public MetadataCache(string key)
-        {
-            if (String.IsNullOrWhiteSpace(key))
-                throw new ArgumentNullException("key");
-
-            _key = key;
-        }
-
+        private readonly string _metadataDocument;
+        
         public MetadataCache(string key, string metadataDocument)
         {
             if (String.IsNullOrWhiteSpace(key))
@@ -81,15 +72,8 @@ namespace Simple.OData.Client
                 throw new ArgumentNullException("metadataDocument");
 
             _key = key;
-            SetMetadataDocument(metadataDocument);
-
-#if NET40 || SILVERLIGHT
-            var tcs = new TaskCompletionSource<string>();
-            tcs.SetResult(metadataDocument);
-            _resolutionTask = tcs.Task;
-#else
-            _resolutionTask = Task.FromResult(metadataDocument);
-#endif
+            _metadataDocument = metadataDocument;
+            _adapterFactory = new AdapterFactory().CreateAdapter(metadataDocument);
         }
 
         public string Key
@@ -104,30 +88,8 @@ namespace Simple.OData.Client
         {
             get
             {
-                if (_metadataDocument == null)
-                    throw new InvalidOperationException("Service metadata is not resolved");
-
                 return _metadataDocument;
             }
-        }
-
-        public Task Resolved
-        {
-            get
-            {
-                return _resolutionTask;
-            }
-        }
-
-        public void SetMetadataDocument(Task<string> metadataResolution)
-        {
-            _resolutionTask = metadataResolution.ContinueWith(t => SetMetadataDocument(t.Result));
-        }
-
-        public void SetMetadataDocument(string metadataString)
-        {
-            _metadataDocument = metadataString;
-            _adapterFactory = new AdapterFactory().CreateAdapter(metadataString);
         }
 
         public IODataAdapter GetODataAdapter(ISession session)
