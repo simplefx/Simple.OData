@@ -25,8 +25,13 @@ namespace Simple.OData.Client.Tests
         {
             var baseUri = new Uri("http://localhost/" + metadataFile);
             var metadataString = GetResourceAsString(@"Resources." + metadataFile);
+            var settings = new ODataClientSettings
+            {
+                BaseUri = baseUri,
+                MetadataDocument = metadataString
+            };
             _session = Session.FromMetadata(baseUri, metadataString);
-            return new ODataClient(baseUri);
+            return new ODataClient(settings);
         }
 
         public abstract string MetadataFile { get; }
