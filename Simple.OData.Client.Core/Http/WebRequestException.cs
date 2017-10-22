@@ -1,7 +1,9 @@
 using System;
 using System.Net;
 using System.Net.Http;
+#if NET40
 using System.Runtime.Serialization;
+#endif
 using System.Threading.Tasks;
 
 namespace Simple.OData.Client
