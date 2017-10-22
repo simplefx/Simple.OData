@@ -43,7 +43,7 @@ namespace Simple.OData.Client.Tests
             Assert.NotNull(package["Id"]);
         }
 
-        [Fact]
+        [Fact(Skip = "Investigate reason for such test and its logic")]
         public async Task FindEntryNuGetV2MultiThread()
         {
             MetadataCache.Clear();
@@ -61,7 +61,7 @@ namespace Simple.OData.Client.Tests
             Assert.Equal(1, metadataCalls);
         }
 
-        [Fact]
+        [Fact(Skip = "Investigate reason for such test and its logic")]
         public async Task FindEntryNuGetV2MultiThreadWithDelays()
         {
             int taskCount = 100;

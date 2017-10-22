@@ -105,7 +105,7 @@ namespace Simple.OData.Client
             try
             {
                 Assembly assembly = null;
-#if PORTABLE
+#if NETSTANDARD2_0
                 var assemblyName = new AssemblyName(modelAdapterAssemblyName);
                 assembly = Assembly.Load(assemblyName);
 #else
@@ -114,7 +114,7 @@ namespace Simple.OData.Client
 
                 var constructors = assembly.GetType(modelAdapterTypeName).GetDeclaredConstructors();
 
-#if PORTABLE
+#if NETSTANDARD2_0
                 var ctor = constructors.Single(x =>
                     x.GetParameters().Count() == ctorParams.Count() &&
                     x.GetParameters().Last().ParameterType.GetTypeInfo().IsAssignableFrom(ctorParams.Last().GetType().GetTypeInfo()));
@@ -137,7 +137,7 @@ namespace Simple.OData.Client
             try
             {
                 Assembly assembly = null;
-#if PORTABLE
+#if NETSTANDARD2_0
                 var assemblyName = new AssemblyName(adapterAssemblyName);
                 assembly = Assembly.Load(assemblyName);
 #else
@@ -146,7 +146,7 @@ namespace Simple.OData.Client
 
                 var constructors = assembly.GetType(adapterTypeName).GetDeclaredConstructors();
 
-#if PORTABLE
+#if NETSTANDARD2_0
                 var ctor = constructors.Single(x =>
                     x.GetParameters().Count() == ctorParams.Count() &&
                     x.GetParameters().Last().ParameterType.GetTypeInfo().IsAssignableFrom(ctorParams.Last().GetType().GetTypeInfo()));
