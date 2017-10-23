@@ -76,8 +76,7 @@ namespace Simple.OData.Client.Tests.Properties {
         ///&lt;user&gt;
         ///&lt;id&gt;1401881&lt;/id&gt;
         ///&lt;name&gt;Doug Williams&lt;/name&gt;
-        ///&lt;screen_name&gt;dougw&lt;/screen_name&gt;
-        /// [rest of string was truncated]&quot;;.
+        ///&lt;screen_name&gt;dougw [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string TwitterStatusesSample {
             get {
