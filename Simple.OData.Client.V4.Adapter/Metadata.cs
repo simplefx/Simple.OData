@@ -167,7 +167,10 @@ namespace Simple.OData.Client.V4.Adapter
 
         public override bool IsTypeWithId(string collectionName)
         {
-            return GetEntityType(collectionName).DeclaredKey != null;
+            if (TryGetEntityType(collectionName, out var entityType))
+                return entityType.DeclaredKey != null;
+            else
+                return false;
         }
 
         public override IEnumerable<string> GetStructuralPropertyNames(string collectionName)
