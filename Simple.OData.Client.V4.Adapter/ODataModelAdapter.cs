@@ -58,12 +58,14 @@ namespace Simple.OData.Client.V4.Adapter
         public ODataModelAdapter(string protocolVersion, string metadataString)
             : this(protocolVersion)
         {
+            // HACK to prevent failure due to unsupported ConcurrencyMode attribute
+            metadataString = metadataString
+                .Replace(" ConcurrencyMode=\"None\"", "")
+                .Replace(" ConcurrencyMode=\"Fixed\"", "");
             using (var reader = XmlReader.Create(new StringReader(metadataString)))
             {
                 reader.MoveToContent();
-                // TODO ODataLib7 throw on error
-                if (SchemaReader.TryParse(new [] {reader}, out var model, out _))
-                    this.Model = model;
+                Model = CsdlReader.Parse(reader);
             }
         }
     }
