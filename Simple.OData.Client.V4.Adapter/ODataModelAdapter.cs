@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -6,9 +7,10 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
-using Microsoft.OData.Core;
+using Microsoft.OData;
 using Microsoft.OData.Edm;
 using Microsoft.OData.Edm.Csdl;
+using Microsoft.OData.Edm.Validation;
 using Microsoft.Spatial;
 
 #pragma warning disable 1591
@@ -59,7 +61,9 @@ namespace Simple.OData.Client.V4.Adapter
             using (var reader = XmlReader.Create(new StringReader(metadataString)))
             {
                 reader.MoveToContent();
-                Model = EdmxReader.Parse(reader);
+                // TODO ODataLib7 throw on error
+                if (SchemaReader.TryParse(new [] {reader}, out var model, out _))
+                    this.Model = model;
             }
         }
     }
