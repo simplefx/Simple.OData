@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -13,7 +14,7 @@ namespace Simple.OData.Client
     {
         private readonly ODataClient _client;
         private readonly List<Func<IODataClient, Task>> _actions = new List<Func<IODataClient, Task>>();
-        private readonly SimpleDictionary<object, IDictionary<string, object>> _entryMap = new SimpleDictionary<object, IDictionary<string, object>>(); 
+        private readonly ConcurrentDictionary<object, IDictionary<string, object>> _entryMap = new ConcurrentDictionary<object, IDictionary<string, object>>(); 
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ODataBatch"/> class.

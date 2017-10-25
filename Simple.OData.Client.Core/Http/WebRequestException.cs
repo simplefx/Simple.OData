@@ -1,9 +1,6 @@
 using System;
 using System.Net;
 using System.Net.Http;
-#if NET40
-using System.Runtime.Serialization;
-#endif
 using System.Threading.Tasks;
 
 namespace Simple.OData.Client
@@ -11,9 +8,6 @@ namespace Simple.OData.Client
     /// <summary>
     /// The exception that is thrown when the service failed to process the Web request
     /// </summary>
-#if NET40
-    [Serializable]
-#endif
     public class WebRequestException : Exception
     {
         private readonly HttpStatusCode _statusCode;
@@ -79,19 +73,6 @@ namespace Simple.OData.Client
             : base("Unexpected WebException encountered", inner)
         {
         }
-
-#if NET40
-        /// <summary>
-        /// Initializes a new instance of the <see cref="WebRequestException"/> class.
-        /// </summary>
-        /// <param name="info">The exception serialization information.</param>
-        /// <param name="context">The exception serialization context.</param>
-        protected WebRequestException(
-            SerializationInfo info,
-            StreamingContext context) : base(info, context)
-        {
-        }
-#endif
 
         /// <summary>
         /// Gets the <see cref="HttpStatusCode"/>.

@@ -240,16 +240,9 @@ namespace Simple.OData.Client
             return cmdm != null;
         }
 
-#if NET40 || SILVERLIGHT || PORTABLE_LEGACY
-        public static Task<T> GetTaskFromResult<T>(T result)
-        {
-            return TaskEx.FromResult(result);
-        }
-#else
         public static Task<T> GetTaskFromResult<T>(T result)
         {
             return Task.FromResult(result);
         }
-#endif
     }
 }

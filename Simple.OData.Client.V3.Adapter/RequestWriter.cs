@@ -26,14 +26,9 @@ namespace Simple.OData.Client.V3.Adapter
 
         protected override async Task<Stream> WriteEntryContentAsync(string method, string collection, string commandText, IDictionary<string, object> entryData, bool resultRequired)
         {
-#if SILVERLIGHT
-            IODataRequestMessage
-#else
-            IODataRequestMessageAsync
-#endif
- message = IsBatch
-                ? await CreateBatchOperationMessageAsync(method, collection, entryData, commandText, resultRequired)
-.ConfigureAwait(false) : new ODataRequestMessage();
+            IODataRequestMessageAsync message = IsBatch
+                ? await CreateBatchOperationMessageAsync(method, collection, entryData, commandText, resultRequired).ConfigureAwait(false) 
+                : new ODataRequestMessage();
 
             if (method == RestVerbs.Get || method == RestVerbs.Delete)
                 return null;
@@ -70,25 +65,15 @@ namespace Simple.OData.Client.V3.Adapter
                 if (IsBatch)
                     return null;
 
-#if SILVERLIGHT
-                return message.GetStream();
-#else
                 return await message.GetStreamAsync().ConfigureAwait(false);
-#endif
             }
         }
 
-#pragma warning disable 1998
         protected override async Task<Stream> WriteLinkContentAsync(string method, string commandText, string linkIdent)
         {
-#if SILVERLIGHT
-            IODataRequestMessage
-#else
-            IODataRequestMessageAsync
-#endif
- message = IsBatch
-                ? await CreateBatchOperationMessageAsync(method, null, null, commandText, false)
-.ConfigureAwait(false) : new ODataRequestMessage();
+            IODataRequestMessageAsync message = IsBatch
+                ? await CreateBatchOperationMessageAsync(method, null, null, commandText, false).ConfigureAwait(false) 
+                : new ODataRequestMessage();
 
             using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), _model))
             {
@@ -101,14 +86,9 @@ namespace Simple.OData.Client.V3.Adapter
                 if (IsBatch)
                     return null;
 
-#if SILVERLIGHT
-                return message.GetStream();
-#else
                 return await message.GetStreamAsync().ConfigureAwait(false);
-#endif
             }
         }
-#pragma warning restore 1998
 
         protected override async Task<Stream> WriteFunctionContentAsync(string method, string commandText)
         {
@@ -120,14 +100,9 @@ namespace Simple.OData.Client.V3.Adapter
 
         protected override async Task<Stream> WriteActionContentAsync(string method, string commandText, string actionName, string boundTypeName, IDictionary<string, object> parameters)
         {
-#if SILVERLIGHT
-            IODataRequestMessage
-#else
-            IODataRequestMessageAsync
-#endif
- message = IsBatch
-                ? await CreateBatchOperationMessageAsync(method, null, null, commandText, true)
-.ConfigureAwait(false) : new ODataRequestMessage();
+            IODataRequestMessageAsync message = IsBatch
+                ? await CreateBatchOperationMessageAsync(method, null, null, commandText, true).ConfigureAwait(false) 
+                : new ODataRequestMessage();
 
             using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(ODataFormat.Json), _model))
             {
@@ -135,13 +110,8 @@ namespace Simple.OData.Client.V3.Adapter
                     .Where(x => x.SchemaElementKind == EdmSchemaElementKind.EntityContainer)
                     .SelectMany(x => (x as IEdmEntityContainer).FunctionImports())
                     .BestMatch(x => x.Name, actionName, _session.Pluralizer);
-#if SILVERLIGHT
-                    var parameterWriter = messageWriter.CreateODataParameterWriter(action);
-                    parameterWriter.WriteStart();
-#else
                 var parameterWriter = await messageWriter.CreateODataParameterWriterAsync(action).ConfigureAwait(false);
                 await parameterWriter.WriteStartAsync().ConfigureAwait(false);
-#endif
 
 
                 foreach (var parameter in parameters)
@@ -150,56 +120,18 @@ namespace Simple.OData.Client.V3.Adapter
                     if (operationParameter == null)
                         throw new UnresolvableObjectException(parameter.Key, string.Format("Parameter [{0}] not found for action [{1}]", parameter.Key, actionName));
 
-#if SILVERLIGHT
-                    WriteOperationParameter(parameterWriter, operationParameter, parameter.Key, parameter.Value);
-#else
                     await WriteOperationParameterAsync(parameterWriter, operationParameter, parameter.Key, parameter.Value).ConfigureAwait(false);
-#endif
                 }
 
-#if SILVERLIGHT
-                parameterWriter.WriteEnd();
-#else
                 await parameterWriter.WriteEndAsync().ConfigureAwait(false);
-#endif
 
                 if (IsBatch)
                     return null;
 
-#if SILVERLIGHT
-                return message.GetStream();
-#else
                 return await message.GetStreamAsync().ConfigureAwait(false);
-#endif
             }
         }
 
-#if SILVERLIGHT
-        private void WriteOperationParameter(ODataParameterWriter parameterWriter, IEdmFunctionParameter operationParameter, string paramName, object paramValue)
-        {
-            switch (operationParameter.Type.Definition.TypeKind)
-            {
-                case EdmTypeKind.Primitive:
-                case EdmTypeKind.Complex:
-                    var value = GetPropertyValue(operationParameter.Type, paramValue);
-                    parameterWriter.WriteValue(paramName, value);
-                    break;
-
-                case EdmTypeKind.Collection:
-                    var collectionWriter = parameterWriter.CreateCollectionWriter(paramName);
-                    collectionWriter.WriteStart(new ODataCollectionStart());
-                    foreach (var item in paramValue as IEnumerable)
-                    {
-                        collectionWriter.WriteItem(item);
-                    }
-                    collectionWriter.WriteEnd();
-                    break;
-
-                default:
-                    throw new NotSupportedException(string.Format("Unable to write action parameter of a type {0}", operationParameter.Type.Definition.TypeKind));
-            }
-        }
-#else
         private async Task WriteOperationParameterAsync(ODataParameterWriter parameterWriter, IEdmFunctionParameter operationParameter, string paramName, object paramValue)
         {
             switch (operationParameter.Type.Definition.TypeKind)
@@ -224,7 +156,6 @@ namespace Simple.OData.Client.V3.Adapter
                     throw new NotSupportedException(string.Format("Unable to write action parameter of a type {0}", operationParameter.Type.Definition.TypeKind));
             }
         }
-#endif
 
         protected override async Task<Stream> WriteStreamContentAsync(Stream stream, bool writeAsText)
         {
@@ -232,11 +163,7 @@ namespace Simple.OData.Client.V3.Adapter
             using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(ODataFormat.RawValue), _model))
             {
                 var value = writeAsText ? (object)Utils.StreamToString(stream) : Utils.StreamToByteArray(stream);
-#if SILVERLIGHT
-                messageWriter.WriteValue(value);
-#else
                 await messageWriter.WriteValueAsync(value);
-#endif
                 return await message.GetStreamAsync();
             }
         }
@@ -311,20 +238,11 @@ namespace Simple.OData.Client.V3.Adapter
             return entry;
         }
 
-#if SILVERLIGHT
-        private async Task<IODataRequestMessage> CreateBatchOperationMessageAsync(string method, string collection, IDictionary<string, object> entryData, string commandText, bool resultRequired)
-#else
         private async Task<IODataRequestMessageAsync> CreateBatchOperationMessageAsync(string method, string collection, IDictionary<string, object> entryData, string commandText, bool resultRequired)
-#endif
         {
             var message = (await _deferredBatchWriter.Value.CreateOperationMessageAsync(
                 Utils.CreateAbsoluteUri(_session.Settings.BaseUri.AbsoluteUri, commandText),
-                method, collection, entryData, resultRequired).ConfigureAwait(false))
-#if SILVERLIGHT
-                as IODataRequestMessage;
-#else
- as IODataRequestMessageAsync;
-#endif
+                method, collection, entryData, resultRequired).ConfigureAwait(false)) as IODataRequestMessageAsync;
 
             return message;
         }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -24,7 +25,7 @@ namespace Simple.OData.Client
         internal static readonly string AnnotationsLiteral = "__annotations";
         internal static readonly string MediaEntityLiteral = "__entity";
 
-        internal FluentCommand(Session session, FluentCommand parent, SimpleDictionary<object, IDictionary<string, object>> batchEntries)
+        internal FluentCommand(Session session, FluentCommand parent, ConcurrentDictionary<object, IDictionary<string, object>> batchEntries)
         {
             _details = new CommandDetails(session, parent, batchEntries);
         }
