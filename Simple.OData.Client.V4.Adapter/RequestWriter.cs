@@ -80,6 +80,16 @@ namespace Simple.OData.Client.V4.Adapter
             await entryWriter.WriteStartAsync(entry).ConfigureAwait(false);
             if (_resourceEntryMap.TryGetValue(entry, out var resourceEntry))
             {
+                if (resourceEntry.CollectionProperties != null)
+                {
+                    foreach (var prop in resourceEntry.CollectionProperties)
+                    {
+                        if (prop.Value != null)
+                        {
+                            await WriteNestedCollectionAsync(entryWriter, prop.Key, prop.Value).ConfigureAwait(false);
+                        }
+                    }
+                }
                 if (resourceEntry.StructuralProperties != null)
                 {
                     foreach (var prop in resourceEntry.StructuralProperties)
@@ -102,6 +112,24 @@ namespace Simple.OData.Client.V4.Adapter
                     }
                 }
             }
+
+            await entryWriter.WriteEndAsync().ConfigureAwait(false);
+        }
+
+        private async Task WriteNestedCollectionAsync(ODataWriter entryWriter, string entryName, ODataCollectionValue collection)
+        {
+            await entryWriter.WriteStartAsync(new ODataNestedResourceInfo()
+            {
+                Name = entryName,
+                IsCollection = true,
+            }).ConfigureAwait(false);
+
+            await entryWriter.WriteStartAsync(new ODataResourceSet());
+            foreach (var item in collection.Items)
+            {
+                await WriteEntryPropertiesAsync(entryWriter, item as ODataResource, null);
+            }
+            await entryWriter.WriteEndAsync().ConfigureAwait(false);
 
             await entryWriter.WriteEndAsync().ConfigureAwait(false);
         }
@@ -146,7 +174,7 @@ namespace Simple.OData.Client.V4.Adapter
 
         protected override async Task<Stream> WriteActionContentAsync(string method, string commandText, string actionName, string boundTypeName, IDictionary<string, object> parameters)
         {
-            IODataRequestMessageAsync message = IsBatch
+            var message = IsBatch
                 ? await CreateBatchOperationMessageAsync(method, null, null, commandText, true).ConfigureAwait(false)
                 : new ODataRequestMessage();
 
@@ -290,7 +318,7 @@ namespace Simple.OData.Client.V4.Adapter
         {
             var navigationProperty = (_model.FindDeclaredType(typeName) as IEdmEntityType).NavigationProperties()
                 .BestMatch(x => x.Name, linkName, _session.Pluralizer);
-            bool isCollection = navigationProperty.Type.Definition.TypeKind == EdmTypeKind.Collection;
+            var isCollection = navigationProperty.Type.Definition.TypeKind == EdmTypeKind.Collection;
 
             var linkType = GetNavigationPropertyEntityType(navigationProperty);
             var linkTypeWithKey = linkType;
@@ -318,11 +346,10 @@ namespace Simple.OData.Client.V4.Adapter
                 }
                 else
                 {
-                    bool isSingleton;
                     var formattedKey = _session.Adapter.GetCommandFormatter().ConvertKeyValuesToUriLiteral(
                         linkKey.ToDictionary(x => x.Name, x => linkEntry[x.Name]), true);
                     var linkedCollectionName = _session.Metadata.GetLinkedCollectionName(
-                        referenceLink.LinkData.GetType().Name, linkTypeWithKey.Name, out isSingleton);
+                        referenceLink.LinkData.GetType().Name, linkTypeWithKey.Name, out var isSingleton);
                     linkUri = linkedCollectionName + (isSingleton ? string.Empty : formattedKey);
                 }
                 var link = new ODataEntityReferenceLink
@@ -339,7 +366,7 @@ namespace Simple.OData.Client.V4.Adapter
         private static IEdmEntityType GetNavigationPropertyEntityType(IEdmNavigationProperty navigationProperty)
         {
             if (navigationProperty.Type.Definition.TypeKind == EdmTypeKind.Collection)
-                return (navigationProperty.Type.Definition as IEdmCollectionType).ElementType.Definition as IEdmEntityType;
+                return (navigationProperty.Type.Definition as IEdmCollectionType)?.ElementType.Definition as IEdmEntityType;
             else
                 return navigationProperty.Type.Definition as IEdmEntityType;
         }
@@ -383,16 +410,26 @@ namespace Simple.OData.Client.V4.Adapter
                 return property?.Type;
             }
 
+            bool isStructural(IEdmTypeReference type) => type.TypeKind() == EdmTypeKind.Complex;
+            bool isStructuralCollection(IEdmTypeReference type) => type.TypeKind() == EdmTypeKind.Collection && type.AsCollection().ElementType().TypeKind() == EdmTypeKind.Complex;
+            bool isPrimitive(IEdmTypeReference type) => !isStructural(type) && !isStructuralCollection(type);
+
+            var resourceEntry = new ResourceProperties(entry);
             entry.Properties = properties
-                .Where(x => findMatchingPropertyType(x.Key).TypeKind() != EdmTypeKind.Complex)
+                .Where(x => isPrimitive(findMatchingPropertyType(x.Key)))
                 .Select(x => new ODataProperty
             {
                 Name = findMatchingPropertyName(x.Key),
                 Value = GetPropertyValue(typeProperties, x.Key, x.Value, root)
             }).ToList();
-            var resourceEntry = new ResourceProperties(entry);
+            resourceEntry.CollectionProperties = properties
+                .Where(x => isStructuralCollection(findMatchingPropertyType(x.Key)))
+                .Select(x => new KeyValuePair<string, ODataCollectionValue>(
+                    findMatchingPropertyName(x.Key),
+                    GetPropertyValue(typeProperties, x.Key, x.Value, root) as ODataCollectionValue))
+                .ToDictionary();
             resourceEntry.StructuralProperties = properties
-                .Where(x => findMatchingPropertyType(x.Key).TypeKind() == EdmTypeKind.Complex)
+                .Where(x => isStructural(findMatchingPropertyType(x.Key)))
                 .Select(x => new KeyValuePair<string, ODataResource>(
                     findMatchingPropertyName(x.Key),
                     GetPropertyValue(typeProperties, x.Key, x.Value, root) as ODataResource))
@@ -441,7 +478,7 @@ namespace Simple.OData.Client.V4.Adapter
                             if (Utils.TryConvert(value, mappedType.Key, out var result))
                                 return result;
                         }
-                        throw new NotSupportedException(string.Format("Conversion is not supported from type {0} to OData type {1}", value.GetType(), propertyType));
+                        throw new NotSupportedException($"Conversion is not supported from type {value.GetType()} to OData type {propertyType}");
                     }
                     return value;
 
@@ -453,7 +490,7 @@ namespace Simple.OData.Client.V4.Adapter
                     {
                         return CustomConverters.Convert(value, value.GetType());
                     }
-                    throw new NotSupportedException(string.Format("Conversion is not supported from type {0} to OData type {1}", value.GetType(), propertyType));
+                    throw new NotSupportedException($"Conversion is not supported from type {value.GetType()} to OData type {propertyType}");
 
                 default:
                     return value;

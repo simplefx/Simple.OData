@@ -386,14 +386,14 @@
     <Compile Include="..\Simple.OData.Client.V4.Adapter\ODataRequestMessage.cs">
       <Link>AdapterV4\ODataRequestMessage.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.V4.Adapter\ODataResourceEntry.cs">
-      <Link>AdapterV4\ODataResourceEntry.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.V4.Adapter\ODataResponseMessage.cs">
       <Link>AdapterV4\ODataResponseMessage.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.V4.Adapter\RequestWriter.cs">
       <Link>AdapterV4\RequestWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.V4.Adapter\ResourceProperties.cs">
+      <Link>AdapterV4\ResourceProperties.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.V4.Adapter\ResponseReader.cs">
       <Link>AdapterV4\ResponseReader.cs</Link>
