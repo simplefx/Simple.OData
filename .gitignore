@@ -33,4 +33,5 @@ Simple.OData.Client.AdHocTests/
 Simple.OData.Client.IntegrationTests/AdHocTests.cs
 Solutions/AdHocTests.sln
 Solutions/.vs/
+Solutions/.idea/
 nuget.exe
