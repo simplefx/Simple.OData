@@ -228,6 +228,10 @@ namespace Simple.OData.Client.V4.Adapter
                     await parameterWriter.WriteValueAsync(paramName, new ODataEnumValue(paramValue.ToString())).ConfigureAwait(false);
                     break;
 
+                case EdmTypeKind.Untyped:
+                    await parameterWriter.WriteValueAsync(paramName, new ODataUntypedValue {RawValue = paramValue.ToString()}).ConfigureAwait(false);
+                    break;
+
                 case EdmTypeKind.Entity:
                     var entryWriter = await parameterWriter.CreateResourceWriterAsync(paramName).ConfigureAwait(false);
                     var entry = CreateODataEntry(operationParameter.Type.Definition.FullTypeName(), paramValue.ToDictionary(), null);
@@ -379,8 +383,6 @@ namespace Simple.OData.Client.V4.Adapter
                 {
                     RequestUri = _session.Settings.BaseUri,
                 },
-                // TODO ODataLib7
-                // Indent = true,
                 EnableMessageStreamDisposal = IsBatch,
             };
             var contentType = preferredContentType ?? ODataFormat.Json;
@@ -410,9 +412,12 @@ namespace Simple.OData.Client.V4.Adapter
                 return property?.Type;
             }
 
-            bool isStructural(IEdmTypeReference type) => type.TypeKind() == EdmTypeKind.Complex;
-            bool isStructuralCollection(IEdmTypeReference type) => type.TypeKind() == EdmTypeKind.Collection && type.AsCollection().ElementType().TypeKind() == EdmTypeKind.Complex;
-            bool isPrimitive(IEdmTypeReference type) => !isStructural(type) && !isStructuralCollection(type);
+            bool isStructural(IEdmTypeReference type) => 
+                type != null && type.TypeKind() == EdmTypeKind.Complex;
+            bool isStructuralCollection(IEdmTypeReference type) => 
+                type != null && type.TypeKind() == EdmTypeKind.Collection && type.AsCollection().ElementType().TypeKind() == EdmTypeKind.Complex;
+            bool isPrimitive(IEdmTypeReference type) => 
+                !isStructural(type) && !isStructuralCollection(type);
 
             var resourceEntry = new ResourceProperties(entry);
             entry.Properties = properties
@@ -484,6 +489,9 @@ namespace Simple.OData.Client.V4.Adapter
 
                 case EdmTypeKind.Enum:
                     return new ODataEnumValue(value.ToString());
+
+                case EdmTypeKind.Untyped:
+                    return new ODataUntypedValue{ RawValue = value.ToString() };
 
                 case EdmTypeKind.None:
                     if (CustomConverters.HasObjectConverter(value.GetType()))

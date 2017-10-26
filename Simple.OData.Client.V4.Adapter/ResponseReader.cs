@@ -245,21 +245,25 @@ namespace Simple.OData.Client.V4.Adapter
         {
             if (value is ODataResource)
             {
-                return (value as ODataResource).Properties.ToDictionary(
+                return ((ODataResource) value).Properties.ToDictionary(
                     x => x.Name, x => GetPropertyValue(x.Value));
             }
             else if (value is ODataCollectionValue)
             {
-                return (value as ODataCollectionValue).Items.Cast<object>()
+                return ((ODataCollectionValue) value).Items
                     .Select(GetPropertyValue).ToList();
             }
             else if (value is ODataEnumValue)
             {
-                return (value as ODataEnumValue).Value;
+                return ((ODataEnumValue) value).Value;
             }
-            else if (value is ODataStreamReferenceValue)
+            else if (value is ODataUntypedValue)
             {
-                return CreateAnnotations(value as ODataStreamReferenceValue);
+                return ((ODataUntypedValue) value).RawValue;
+            }
+            else if (value is ODataStreamReferenceValue referenceValue)
+            {
+                return CreateAnnotations(referenceValue);
             }
             else
             {
