@@ -15,19 +15,6 @@ namespace Simple.OData.Client
         /// <value>
         /// The URL address.
         /// </value>
-        [Obsolete("This property is obsolete. Use BaseUri instead.")]
-        public string UrlBase
-        {
-            get { return this.BaseUri == null ? null : this.BaseUri.AbsoluteUri; }
-            set { this.BaseUri = value == null ? null : new Uri(value); }
-        }
-
-        /// <summary>
-        /// Gets or sets the OData service URL.
-        /// </summary>
-        /// <value>
-        /// The URL address.
-        /// </value>
         public Uri BaseUri { get; set; }
 
         /// <summary>
@@ -53,19 +40,6 @@ namespace Simple.OData.Client
         /// The timeout.
         /// </value>
         public TimeSpan RequestTimeout { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether entry properties should be extended with the resource type.
-        /// </summary>
-        /// <value>
-        /// <c>true</c> to include resource type in entry properties; otherwise, <c>false</c>.
-        /// </value>
-        [Obsolete("This property is obsolete. Use IncludeAnnotationsInResults instead.")]
-        public bool IncludeResourceTypeInEntryProperties
-        {
-            get { return this.IncludeAnnotationsInResults; }
-            set { this.IncludeAnnotationsInResults = value; }
-        }
 
         /// <summary>
         /// Gets or sets a value indicating whether entry properties should be extended with the OData annotations.
@@ -107,19 +81,6 @@ namespace Simple.OData.Client
         /// The content of the service metadata document.
         /// </value>
         public string MetadataDocument { get; set; }
-
-        /// <summary>
-        /// Gets or sets a value indicating whether <see cref="HttpClient"/> connection should be reused between OData requests or disposed and renewed.
-        /// </summary>
-        /// <value>
-        /// <c>true</c> to reuse <see cref="HttpClient"/> between requests; <c>false</c> to create a new <see cref="HttpClient"/> instance for each request.
-        /// </value>
-        [Obsolete("This property is obsolete. Use RenewHttpConnection instead.")]
-        public bool ReuseHttpConnection
-        {
-            get { return !this.RenewHttpConnection; }
-            set { this.RenewHttpConnection = !value; }
-        }
 
         /// <summary>
         /// Gets or sets a value indicating whether <see cref="HttpClient"/> connection should be disposed and renewed between OData requests.
