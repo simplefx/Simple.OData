@@ -386,8 +386,8 @@
     <Compile Include="..\Simple.OData.Client.V4.Adapter\ODataRequestMessage.cs">
       <Link>AdapterV4\ODataRequestMessage.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.V4.Adapter\ODataResourceEx.cs">
-      <Link>ODataResourceEx.cs</Link>
+    <Compile Include="..\Simple.OData.Client.V4.Adapter\ODataResourceEntry.cs">
+      <Link>AdapterV4\ODataResourceEntry.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.V4.Adapter\ODataResponseMessage.cs">
       <Link>AdapterV4\ODataResponseMessage.cs</Link>
