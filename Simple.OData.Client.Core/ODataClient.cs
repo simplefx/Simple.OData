@@ -173,15 +173,6 @@ namespace Simple.OData.Client
         }
 
         /// <summary>
-        /// Sets the word pluralizer used when resolving metadata objects.
-        /// </summary>
-        /// <param name="pluralizer">The pluralizer.</param>
-        public void SetPluralizer(IPluralizer pluralizer)
-        {
-            _session.Pluralizer = pluralizer;
-        }
-
-        /// <summary>
         /// Allows callers to manipulate the request headers in between request executions.
         /// Useful for retrieval of x-csrf-tokens when you want to update the request header
         /// with the retrieved token on subsequent requests.

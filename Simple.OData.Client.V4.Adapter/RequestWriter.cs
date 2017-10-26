@@ -189,20 +189,20 @@ namespace Simple.OData.Client.V4.Adapter
                 var action = boundTypeName == null
                     ? _model.SchemaElements.BestMatch(
                         x => x.SchemaElementKind == EdmSchemaElementKind.Action,
-                        x => x.Name, actionName, _session.Pluralizer) as IEdmAction
+                        x => x.Name, actionName, _session.Settings.NameMatchResolver) as IEdmAction
                     : _model.SchemaElements.BestMatch(
                         x => x.SchemaElementKind == EdmSchemaElementKind.Action
                              && typeMatch(
                                  ((IEdmAction)x).Parameters.FirstOrDefault(p => p.Name == "bindingParameter"),
                                  _model.FindDeclaredType(boundTypeName)),
-                        x => x.Name, actionName, _session.Pluralizer) as IEdmAction;
+                        x => x.Name, actionName, _session.Settings.NameMatchResolver) as IEdmAction;
                 var parameterWriter = await messageWriter.CreateODataParameterWriterAsync(action).ConfigureAwait(false);
 
                 await parameterWriter.WriteStartAsync().ConfigureAwait(false);
 
                 foreach (var parameter in parameters)
                 {
-                    var operationParameter = action.Parameters.BestMatch(x => x.Name, parameter.Key, _session.Pluralizer);
+                    var operationParameter = action.Parameters.BestMatch(x => x.Name, parameter.Key, _session.Settings.NameMatchResolver);
                     if (operationParameter == null)
                         throw new UnresolvableObjectException(parameter.Key, string.Format("Parameter [{0}] not found for action [{1}]", parameter.Key, actionName));
 
@@ -321,7 +321,7 @@ namespace Simple.OData.Client.V4.Adapter
         private async Task WriteLinkAsync(ODataWriter entryWriter, string typeName, string linkName, IEnumerable<ReferenceLink> links)
         {
             var navigationProperty = (_model.FindDeclaredType(typeName) as IEdmEntityType).NavigationProperties()
-                .BestMatch(x => x.Name, linkName, _session.Pluralizer);
+                .BestMatch(x => x.Name, linkName, _session.Settings.NameMatchResolver);
             var isCollection = navigationProperty.Type.Definition.TypeKind == EdmTypeKind.Collection;
 
             var linkType = GetNavigationPropertyEntityType(navigationProperty);
@@ -402,13 +402,13 @@ namespace Simple.OData.Client.V4.Adapter
 
             string findMatchingPropertyName(string name)
             {
-                var property = typeProperties.BestMatch(y => y.Name, name, _session.Pluralizer);
+                var property = typeProperties.BestMatch(y => y.Name, name, _session.Settings.NameMatchResolver);
                 return property != null ? property.Name : name;
             }
 
             IEdmTypeReference findMatchingPropertyType(string name)
             {
-                var property = typeProperties.BestMatch(y => y.Name, name, _session.Pluralizer);
+                var property = typeProperties.BestMatch(y => y.Name, name, _session.Settings.NameMatchResolver);
                 return property?.Type;
             }
 
@@ -448,7 +448,7 @@ namespace Simple.OData.Client.V4.Adapter
 
         private object GetPropertyValue(IEnumerable<IEdmProperty> properties, string key, object value, ODataResource root)
         {
-            var property = properties.BestMatch(x => x.Name, key, _session.Pluralizer);
+            var property = properties.BestMatch(x => x.Name, key, _session.Settings.NameMatchResolver);
             return property != null ? GetPropertyValue(property.Type, value, root) : value;
         }
 

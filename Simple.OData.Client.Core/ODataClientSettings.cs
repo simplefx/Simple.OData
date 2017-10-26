@@ -9,6 +9,9 @@ namespace Simple.OData.Client
     /// </summary>
     public class ODataClientSettings
     {
+        private readonly INameMatchResolver _defaultNameMatchResolver = new BestMatchResolver();
+        private INameMatchResolver _nameMatchResolver;
+
         /// <summary>
         /// Gets or sets the OData service URL.
         /// </summary>
@@ -107,6 +110,18 @@ namespace Simple.OData.Client
         public bool EnumPrefixFree { get; set; }
 
         /// <summary>
+        /// Gets or sets a name resolver for OData resources, types and properties.
+        /// </summary>
+        /// <value>
+        /// If not set, a built-in word pluralizer is used to resolve resource, type and property names.
+        /// </value>
+        public INameMatchResolver NameMatchResolver
+        {
+            get => _nameMatchResolver ?? _defaultNameMatchResolver;
+            set => _nameMatchResolver = value;
+        }
+
+        /// <summary>
         /// Gets or sets the HttpMessageHandler factory used by HttpClient.
         /// If not set, ODataClient creates an instance of HttpClientHandler.
         /// </summary>
@@ -198,6 +213,7 @@ namespace Simple.OData.Client
             this.RenewHttpConnection = session.Settings.RenewHttpConnection;
             this.UnqualifiedNameCall = session.Settings.UnqualifiedNameCall;
             this.EnumPrefixFree = session.Settings.EnumPrefixFree;
+            this.NameMatchResolver = session.Settings.NameMatchResolver;
             this.OnCreateMessageHandler = session.Settings.OnCreateMessageHandler;
             this.OnApplyClientHandler = session.Settings.OnApplyClientHandler;
             this.BeforeRequest = session.Settings.BeforeRequest;

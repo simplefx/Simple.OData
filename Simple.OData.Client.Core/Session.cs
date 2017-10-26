@@ -12,16 +12,14 @@ namespace Simple.OData.Client
         private IODataAdapter _adapter;
         private HttpConnection _httpConnection;
 
-        public ODataClientSettings Settings { get; private set; }
+        public ODataClientSettings Settings { get; }
         public MetadataCache MetadataCache { get; private set; }
-        public IPluralizer Pluralizer { get; internal set; }
 
         private Session(Uri baseUri, string metadataString)
         {
             this.Settings = new ODataClientSettings();
             this.Settings.BaseUri = baseUri;
             this.MetadataCache = MetadataCache.GetOrAdd(baseUri.AbsoluteUri, uri => new MetadataCache(uri, metadataString));
-            this.Pluralizer = new SimplePluralizer();
         }
 
         private Session(ODataClientSettings settings)
@@ -30,7 +28,6 @@ namespace Simple.OData.Client
                 throw new InvalidOperationException("Unable to create client session with no URI specified");
 
             this.Settings = settings;
-            this.Pluralizer = new SimplePluralizer();
         }
 
         public void Dispose()

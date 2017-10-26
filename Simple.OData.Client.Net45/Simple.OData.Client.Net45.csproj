@@ -230,6 +230,9 @@
     <Compile Include="..\Simple.OData.Client.Core\Http\WebRequestException.cs">
       <Link>Http\WebRequestException.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\INameMatchResolver.cs">
+      <Link>INameMatchResolver.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\IODataClient.cs">
       <Link>IODataClient.cs</Link>
     </Compile>
@@ -238,6 +241,9 @@
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\MetadataCache.cs">
       <Link>MetadataCache.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\NameMatchResolvers.cs">
+      <Link>NameMatchResolvers.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\ODataClient.Async.cs">
       <Link>ODataClient.Async.cs</Link>

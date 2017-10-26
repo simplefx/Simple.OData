@@ -684,27 +684,18 @@ namespace Simple.OData.Client.Tests
         }
 
         class OrderDetails : OrderDetail { }
+        class Order_Details : OrderDetail { }
 
-        [Fact(Skip = "Enable after revising pluralizer")]
-        public async Task PluralizerSingleClient()
+        [Fact]
+        public async Task NameMatchResolver()
         {
-            _client.SetPluralizer(null);
-            await AssertThrowsAsync<UnresolvableObjectException>(async () =>
-                await _client.For<OrderDetails>().FindEntriesAsync());
-            _client.SetPluralizer(new SimplePluralizer());
-            var orderDetails = await _client.For<OrderDetails>().FindEntriesAsync();
-            Assert.NotEqual(0, orderDetails.Count());
-        }
-
-        [Fact(Skip = "Enable after revising pluralizer")]
-        public async Task PluralizerMultipleClients()
-        {
-            var client = CreateClientWithDefaultSettings();
-            client.SetPluralizer(null);
+            var client = CreateClientWithNameResolver(ODataNameMatchResolver.Strict);
             await AssertThrowsAsync<UnresolvableObjectException>(async () =>
                 await client.For<OrderDetails>().FindEntriesAsync());
-            var orderDetails = await _client.For<OrderDetails>().FindEntriesAsync();
-            Assert.NotEqual(0, orderDetails.Count());
+            var orderDetails1 = await client.For<Order_Details>().FindEntriesAsync();
+            Assert.NotEmpty(orderDetails1);
+            var orderDetails2 = await _client.For<OrderDetails>().FindEntriesAsync();
+            Assert.NotEmpty(orderDetails2);
         }
 
         public class ODataOrgProduct

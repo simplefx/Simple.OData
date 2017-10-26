@@ -49,6 +49,15 @@ namespace Simple.OData.Client.Tests
                 OnTrace = (x, y) => Console.WriteLine(string.Format(x, y)),
             });
         }
+        protected IODataClient CreateClientWithNameResolver(INameMatchResolver nameMatchResolver)
+        {
+            return new ODataClient(new ODataClientSettings
+            {
+                BaseUri = _serviceUri,
+                OnTrace = (x, y) => Console.WriteLine(string.Format(x, y)),
+                NameMatchResolver = nameMatchResolver,
+            });
+        }
 
         public void Dispose()
         {
@@ -95,12 +104,12 @@ namespace Simple.OData.Client.Tests
             }
         }
 
-        public async static Task AssertThrowsAsync<T>(Func<Task> testCode) where T : Exception
+        public static async Task AssertThrowsAsync<T>(Func<Task> testCode) where T : Exception
         {
             try
             {
                 await testCode();
-                throw new Exception(string.Format("Expected exception: {0}", typeof (T)));
+                throw new Exception($"Expected exception: {typeof(T)}");
             }
             catch (T)
             {
