@@ -289,7 +289,7 @@ namespace Simple.OData.Client
             var result = await ExecuteRequestWithResultAsync(request, cancellationToken,
                 x => x.AsEntries(_session.Settings.IncludeAnnotationsInResults),
                 () => new IDictionary<string, object>[] { }).ConfigureAwait(false);
-            return result == null ? null : result.FirstOrDefault();
+            return result?.FirstOrDefault();
         }
 
         public Task<object> FindScalarAsync(string commandText)
@@ -312,7 +312,7 @@ namespace Simple.OData.Client
                 x => x.AsEntries(_session.Settings.IncludeAnnotationsInResults),
                 () => new IDictionary<string, object>[] { }).ConfigureAwait(false);
 
-            Func<IDictionary<string, object>, object> extractScalar = x => (x == null) || !x.Any() ? null : x.Values.First();
+            object extractScalar(IDictionary<string, object> x) => (x == null) || !x.Any() ? null : x.Values.First();
             return result == null ? null : extractScalar(result.FirstOrDefault());
         }
 
@@ -622,7 +622,7 @@ namespace Simple.OData.Client
                 .AsBoundClient().Command;
 
             var result = await ExecuteFunctionAsync(command, cancellationToken).ConfigureAwait(false);
-            return result == null ? null : result.FirstOrDefault();
+            return result?.FirstOrDefault();
         }
 
         public Task<IEnumerable<IDictionary<string, object>>> ExecuteFunctionAsEnumerableAsync(string functionName, IDictionary<string, object> parameters)
@@ -679,11 +679,9 @@ namespace Simple.OData.Client
             var result = await ExecuteFunctionAsEnumerableAsync(functionName, parameters, cancellationToken).ConfigureAwait(false);
             return IsBatchRequest
                 ? new T[] {}
-                : result == null
-                ? null
-                : result.SelectMany(x => x.Values)
-                        .Select(x => (T)Utils.Convert(x, typeof(T)))
-                        .ToArray();
+                : result?.SelectMany(x => x.Values)
+                    .Select(x => (T)Utils.Convert(x, typeof(T)))
+                    .ToArray();
         }
 
         public Task ExecuteActionAsync(string actionName, IDictionary<string, object> parameters)
@@ -726,7 +724,7 @@ namespace Simple.OData.Client
                 .AsBoundClient().Command;
 
             var result = await ExecuteActionAsync(command, cancellationToken).ConfigureAwait(false);
-            return result == null ? null : result.FirstOrDefault();
+            return result?.FirstOrDefault();
         }
 
         public Task<IEnumerable<IDictionary<string, object>>> ExecuteActionAsEnumerableAsync(string actionName, IDictionary<string, object> parameters)
@@ -783,11 +781,9 @@ namespace Simple.OData.Client
             var result = await ExecuteActionAsEnumerableAsync(actionName, parameters, cancellationToken).ConfigureAwait(false);
             return IsBatchRequest
                 ? new T[] { }
-                : result == null
-                ? null
-                : result.SelectMany(x => x.Values)
-                        .Select(x => (T)Utils.Convert(x, typeof(T)))
-                        .ToArray();
+                : result?.SelectMany(x => x.Values)
+                    .Select(x => (T)Utils.Convert(x, typeof(T)))
+                    .ToArray();
         }
 
 #pragma warning restore 1591
@@ -803,7 +799,7 @@ namespace Simple.OData.Client
             }
 
             var result = await FindAnnotatedEntriesAsync(commandText, scalarResult, annotations, cancellationToken).ConfigureAwait(false);
-            return result == null ? null : result.Select(x => x.GetData(_session.Settings.IncludeAnnotationsInResults));
+            return result?.Select(x => x.GetData(_session.Settings.IncludeAnnotationsInResults));
         }
 
         private async Task<IEnumerable<AnnotatedEntry>> FindAnnotatedEntriesAsync(
@@ -845,7 +841,7 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             await EnrichWithMediaPropertiesAsync(result, command, cancellationToken).ConfigureAwait(false);
-            return result == null ? null : result.Select(x => x.GetData(_session.Settings.IncludeAnnotationsInResults));
+            return result?.Select(x => x.GetData(_session.Settings.IncludeAnnotationsInResults));
         }
 
         internal async Task<IDictionary<string, object>> FindEntryAsync(FluentCommand command, CancellationToken cancellationToken)
@@ -861,10 +857,10 @@ namespace Simple.OData.Client
 
             var results = await FindAnnotatedEntriesAsync(commandText, false, null, cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-            var result = results == null ? null : results.FirstOrDefault();
+            var result = results?.FirstOrDefault();
 
             await EnrichWithMediaPropertiesAsync(result, command.Details.MediaProperties, cancellationToken).ConfigureAwait(false);
-            return result == null ? null : result.GetData(_session.Settings.IncludeAnnotationsInResults);
+            return result?.GetData(_session.Settings.IncludeAnnotationsInResults);
         }
 
         internal async Task<object> FindScalarAsync(FluentCommand command, CancellationToken cancellationToken)
@@ -1000,7 +996,7 @@ namespace Simple.OData.Client
                 return _batchResponse.AsEntry(false);
 
             var result = await ExecuteAsEnumerableAsync(command, cancellationToken).ConfigureAwait(false);
-            return result == null ? null : result.FirstOrDefault();
+            return result?.FirstOrDefault();
         }
 
         internal async Task<IEnumerable<IDictionary<string, object>>> ExecuteAsEnumerableAsync(FluentCommand command, CancellationToken cancellationToken)
@@ -1045,6 +1041,23 @@ namespace Simple.OData.Client
                 : typeof(T) == typeof(string) || typeof(T).IsValue()
                 ? result.SelectMany(x => x.Values).Select(x => (T)Utils.Convert(x, typeof(T))).ToArray()
                 : result.Select(x => (T)x.ToObject(typeof(T))).ToArray();
+        }
+
+        internal async Task<Stream> GetResponseStreamAsync(FluentCommand command, CancellationToken cancellationToken)
+        {
+            if (IsBatchResponse)
+                throw new NotSupportedException("Requesting response stream is not supported in batch mode");
+
+            await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+            var commandText = await command.GetCommandTextAsync(cancellationToken);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+            var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
+                .CreateGetRequestAsync(commandText, true).ConfigureAwait(false);
+
+            return await ExecuteGetStreamRequestAsync(request, cancellationToken).ConfigureAwait(false);
         }
 
         internal async Task ExecuteBatchAsync(IList<Func<IODataClient, Task>> actions, CancellationToken cancellationToken)

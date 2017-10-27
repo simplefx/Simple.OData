@@ -62,7 +62,7 @@ namespace Simple.OData.Client.Tests
                 .Media()
                 .GetStreamAsync();
             var text = Utils.StreamToString(stream);
-            Assert.True(text.Contains("stream data"));
+            Assert.Contains("stream data", text);
         }
 
         [Fact]
@@ -75,7 +75,7 @@ namespace Simple.OData.Client.Tests
                 .Media("Photo")
                 .GetStreamAsync();
             var text = Utils.StreamToString(stream);
-            Assert.True(text.Contains("named stream data"));
+            Assert.Contains(text, "named stream data");
         }
 
         [Fact]
@@ -87,7 +87,7 @@ namespace Simple.OData.Client.Tests
                 .NavigateTo<PersonDetail>()
                 .Media(x => x.Photo)
                 .GetStreamAsStringAsync();
-            Assert.True(text.Contains("named stream data"));
+            Assert.Contains(text, "named stream data");
         }
 
         [Fact]
@@ -105,7 +105,7 @@ namespace Simple.OData.Client.Tests
                 .FindEntryAsync();
             Assert.NotNull(ad["Media"]);
             var text = Utils.StreamToString(ad["Media"] as Stream);
-            Assert.True(text.Contains("stream data"));
+            Assert.Contains(text, "stream data");
         }
 
         [Fact]
@@ -119,7 +119,7 @@ namespace Simple.OData.Client.Tests
                 .FindEntryAsync();
             Assert.NotNull(person["Photo"]);
             var text = Utils.StreamToString(person["Photo"] as Stream);
-            Assert.True(text.Contains("named stream data"));
+            Assert.Contains(text, "named stream data");
         }
 
         [Fact]

@@ -239,7 +239,7 @@ namespace Simple.OData.Client.Tests
                 .Filter(x => x.ProductName == "Chai")
                 .Top(1)
                 .FindEntriesAsync();
-            Assert.Equal(1, products.Count());
+            Assert.Single(products);
         }
 
         [Fact]

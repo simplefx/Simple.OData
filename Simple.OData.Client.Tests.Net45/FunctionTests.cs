@@ -178,7 +178,7 @@ namespace Simple.OData.Client.Tests
                 .Set(new Entry() { { "count", 0 } })
                 .ExecuteAsEnumerableAsync()).ToArray();
 
-            Assert.Equal(0, result.Length);
+            Assert.Empty(result);
         }
     }
 }

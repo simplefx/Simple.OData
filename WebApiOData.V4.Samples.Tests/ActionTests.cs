@@ -27,7 +27,7 @@ namespace WebApiOData.V4.Samples.Tests
             });
         }
 
-        public void Dispose()
+        private void Dispose()
         {
             _server.Dispose();
         }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
@@ -71,7 +72,7 @@ namespace Simple.OData.Client.Tests
                 .For("Products")
                 .Top(1)
                 .FindEntriesAsync();
-            Assert.Equal(1, products.Count());
+            Assert.Single(products);
         }
 
         [Fact]
@@ -82,7 +83,7 @@ namespace Simple.OData.Client.Tests
                 .Skip(1)
                 .Top(1)
                 .FindEntriesAsync();
-            Assert.Equal(1, products.Count());
+            Assert.Single(products);
         }
 
         [Fact]
@@ -354,7 +355,7 @@ namespace Simple.OData.Client.Tests
                 .For("Transport")
                 .FindEntriesAsync();
             Assert.Equal(2, transport.Count());
-            Assert.False(transport.Any(x => x.ContainsKey(FluentCommand.AnnotationsLiteral)));
+            Assert.DoesNotContain(transport, x => x.ContainsKey(FluentCommand.AnnotationsLiteral));
         }
 
         [Fact]
@@ -511,6 +512,17 @@ namespace Simple.OData.Client.Tests
                 .Filter("Order_Details/all(d:d/Quantity gt 50)")
                 .FindEntriesAsync();
             Assert.Equal(ExpectedCountOfOrdersHavingAllDetails, products.Count());
+        }
+
+        [Fact]
+        public async Task GetResponseStream()
+        {
+            var stream = await _client
+                .For("Products")
+                .Filter("ProductName eq 'Chai'")
+                .GetResponseStreamAsync();
+            var content = Utils.StreamToString(stream);
+            Assert.Contains("Chai", content);
         }
     }
 }

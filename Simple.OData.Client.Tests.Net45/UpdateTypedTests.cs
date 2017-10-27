@@ -190,7 +190,7 @@ namespace Simple.OData.Client.Tests
                 .Filter(x => x.CategoryID == category.CategoryID)
                 .Expand(x => x.Products)
                 .FindEntryAsync();
-            Assert.Equal(1, category.Products.Count());
+            Assert.Single(category.Products);
         }
 
         [Fact]
@@ -221,7 +221,7 @@ namespace Simple.OData.Client.Tests
                 .Filter(x => x.CategoryID == category.CategoryID)
                 .Expand(x => x.Products)
                 .FindEntryAsync();
-            Assert.Equal(1, category.Products.Count());
+            Assert.Single(category.Products);
         }
 
         [Fact]

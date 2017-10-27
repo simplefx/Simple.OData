@@ -61,7 +61,7 @@ namespace Simple.OData.Client.Tests
                 .Filter(x => x.UserName == "russellwhyte")
                 .FindEntriesAsync(annotations);
 
-            Assert.Equal(1, people.Count());
+            Assert.Single(people);
             Assert.Null(annotations.NextPageLink);
         }
 
@@ -197,7 +197,7 @@ namespace Simple.OData.Client.Tests
                 .NavigateTo(x => x.PlanItems)
                 .Filter(x => x.StartsAt == now)
                 .FindEntriesAsync();
-            Assert.Equal(0, flights.Count());
+            Assert.Empty(flights);
         }
 
         [Fact]
@@ -310,7 +310,7 @@ namespace Simple.OData.Client.Tests
                 .As<Flight>()
                 .FindEntriesAsync();
             Assert.Equal(2, flights.Count());
-            Assert.True(flights.Any(x => x.FlightNumber == "FM1930"));
+            Assert.Contains(flights, x => x.FlightNumber == "FM1930");
         }
 
         [Fact]
@@ -325,7 +325,7 @@ namespace Simple.OData.Client.Tests
                 .As<Flight>()
                 .Filter(x => x.FlightNumber == "FM1930")
                 .FindEntriesAsync();
-            Assert.Equal(1, flights.Count());
+            Assert.Single(flights);
             Assert.True(flights.All(x => x.FlightNumber == "FM1930"));
         }
 
@@ -819,7 +819,7 @@ namespace Simple.OData.Client.Tests
                 .Filter(x => x.Description.Contains("New York"))
                 .FindEntriesAsync();
 
-            Assert.Equal(1, trips.Count());
+            Assert.Single(trips);
             Assert.Contains("New York", trips.Single().Description);
         }
 
@@ -911,7 +911,7 @@ namespace Simple.OData.Client.Tests
                 .Key(1)
                 .Function("GetInvolvedPeople")
                 .ExecuteAsEnumerableAsync();
-            Assert.Equal(0, people.Count());
+            Assert.Empty(people);
         }
 
         [Fact]

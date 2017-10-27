@@ -97,6 +97,18 @@ namespace Simple.OData.Client
         Task SetStreamAsync(string streamContent, bool optimisticConcurrency, CancellationToken cancellationToken);
 
         /// <summary>
+        /// Executes the OData command and returns the HTTP response stream.
+        /// </summary>
+        /// <returns>The HTTP response stream.</returns>
+        Task<Stream> GetResponseStreamAsync();
+        /// <summary>
+        /// Executes the OData command and returns the HTTP response stream.
+        /// </summary>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>The HTTP response stream.</returns>
+        Task<Stream> GetResponseStreamAsync(CancellationToken cancellationToken);
+
+        /// <summary>
         /// Gets the OData command text.
         /// </summary>
         /// <returns>The command text.</returns>

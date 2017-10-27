@@ -149,8 +149,6 @@ namespace Simple.OData.Client.Tests
         public async Task MultipleUpdatesEntriesSingleBatch()
         {
             IDictionary<string, object> product = null;
-            IDictionary<string, object> product1 = null;
-            IDictionary<string, object> product2 = null;
 
             var batch = new ODataBatch(_serviceUri);
             batch += async c => product = await c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test11" }, { "UnitPrice", 121m } });

@@ -21,13 +21,13 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void GetDeclaredProperties_BaseType()
         {
-            Assert.Equal(1, typeof(Transport).GetDeclaredProperties().Count());
+            Assert.Single(typeof(Transport).GetDeclaredProperties());
         }
 
         [Fact]
         public void GetDeclaredProperties_DerivedType()
         {
-            Assert.Equal(1, typeof(Ship).GetDeclaredProperties().Count());
+            Assert.Single(typeof(Ship).GetDeclaredProperties());
         }
 
         [Fact]

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
@@ -570,6 +571,24 @@ namespace Simple.OData.Client
         public Task<U[]> ExecuteAsArrayAsync<U>(CancellationToken cancellationToken)
         {
             return _client.ExecuteAsArrayAsync<U>(_command, cancellationToken);
+        }
+
+        /// <summary>
+        /// Executes the OData command and returns the HTTP response stream.
+        /// </summary>
+        /// <returns>The command text.</returns>
+        public Task<Stream> GetResponseStreamAsync()
+        {
+            return GetResponseStreamAsync(CancellationToken.None);
+        }
+        /// <summary>
+        /// Executes the OData command and returns the HTTP response stream.
+        /// </summary>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>The command text.</returns>
+        public Task<Stream> GetResponseStreamAsync(CancellationToken cancellationToken)
+        {
+            return _client.GetResponseStreamAsync(_command, cancellationToken);
         }
 
         /// <summary>

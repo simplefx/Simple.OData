@@ -81,7 +81,7 @@ namespace Simple.OData.Client.Tests
                 .Skip(1)
                 .Top(1)
                 .FindEntriesAsync();
-            Assert.Equal(1, products.Count());
+            Assert.Single(products);
         }
 
         [Fact]
@@ -211,7 +211,7 @@ namespace Simple.OData.Client.Tests
                 .Media()
                 .GetStreamAsync();
             var text = Utils.StreamToString(stream);
-            Assert.True(text.StartsWith("Test stream data"));
+            Assert.StartsWith(text, "Test stream data");
         }
 
         [Fact]
@@ -227,7 +227,7 @@ namespace Simple.OData.Client.Tests
                 .Media("Photo")
                 .GetStreamAsync();
             var text = Utils.StreamToString(stream);
-            Assert.True(text.StartsWith("Test named stream data"));
+            Assert.StartsWith(text, "Test named stream data");
         }
 
         class PersonDetail
@@ -247,7 +247,7 @@ namespace Simple.OData.Client.Tests
                 .NavigateTo<PersonDetail>()
                 .Media(x => x.Photo)
                 .GetStreamAsStringAsync();
-            Assert.True(text.StartsWith("Test named stream data"));
+            Assert.StartsWith(text, "Test named stream data");
         }
     }
 }

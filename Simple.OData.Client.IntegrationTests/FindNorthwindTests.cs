@@ -119,7 +119,7 @@ namespace Simple.OData.Client.Tests
                 .Skip(1)
                 .Top(1)
                 .FindEntriesAsync();
-            Assert.Equal(1, products.Count());
+            Assert.Single(products);
         }
 
         [Fact]

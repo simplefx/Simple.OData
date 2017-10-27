@@ -167,7 +167,7 @@ namespace Simple.OData.Client.Tests
                 .Filter(x.ProductName == "Chai")
                 .Top(1)
                 .FindEntriesAsync();
-            Assert.Equal(1, products.Count());
+            Assert.Single(products);
         }
 
         [Fact]
@@ -384,7 +384,7 @@ namespace Simple.OData.Client.Tests
                 .For(x.Transport)
                 .FindEntriesAsync();
             Assert.Equal(2, transport.Count());
-            Assert.False(transport.Any(y => y.AsDictionary().ContainsKey(FluentCommand.AnnotationsLiteral)));
+            Assert.DoesNotContain(transport, y => y.AsDictionary().ContainsKey(FluentCommand.AnnotationsLiteral));
         }
 
         [Fact]

@@ -192,7 +192,7 @@ namespace Simple.OData.Client.Tests
                 .Filter("CategoryID eq " + category["CategoryID"])
                 .Expand("Products")
                 .FindEntryAsync();
-            Assert.Equal(1, (category["Products"] as IEnumerable<object>).Count());
+            Assert.Single((category["Products"] as IEnumerable<object>));
         }
 
         [Fact]
@@ -223,7 +223,7 @@ namespace Simple.OData.Client.Tests
                 .Filter("CategoryID eq " + category["CategoryID"])
                 .Expand("Products")
                 .FindEntryAsync();
-            Assert.Equal(1, (category["Products"] as IEnumerable<object>).Count());
+            Assert.Single((category["Products"] as IEnumerable<object>));
         }
 
         [Fact]

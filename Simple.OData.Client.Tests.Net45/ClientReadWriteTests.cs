@@ -52,7 +52,7 @@ namespace Simple.OData.Client.Tests
             var model = await client.GetMetadataAsync<IEdmModel>();
             var type = model.FindDeclaredType("NorthwindModel.Customer");
             var property = (type as IEdmEntityType).DeclaredProperties.Single(x => x.Name == "CompanyName");
-            Assert.Equal(true, property.Type.IsNullable);
+            Assert.True(property.Type.IsNullable);
 
             await AssertThrowsAsync<WebRequestException>(async () => 
                 await client.InsertEntryAsync("Customers", new Entry() { { "CompanyName", null } }));
