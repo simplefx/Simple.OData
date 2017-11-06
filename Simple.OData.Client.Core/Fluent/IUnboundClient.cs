@@ -8,7 +8,7 @@ namespace Simple.OData.Client
     /// Provides access to unbound OData operations in a fluent style.
     /// </summary>
     /// <typeparam name="T">The entity type.</typeparam>
-    public interface IUnboundClient<T> : IFluentClient<T, IUnboundClient<T>> 
+    public interface IUnboundClient<T> : IFluentClient<T, IUnboundClient<T>>
         where T : class
     {
         /// <summary>

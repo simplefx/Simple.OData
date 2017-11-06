@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Simple.OData.Client.Extensions;
@@ -786,6 +787,16 @@ namespace Simple.OData.Client
                     .ToArray();
         }
 
+        public Task<Stream> GetResponseStreamAsync(ODataRequest request)
+        {
+            return GetResponseStreamAsync(request, CancellationToken.None);
+        }
+
+        public Task<Stream> GetResponseStreamAsync(ODataRequest request, CancellationToken cancellationToken)
+        {
+            return ExecuteGetStreamRequestAsync(request, cancellationToken);
+        }
+
 #pragma warning restore 1591
 
         private async Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(
@@ -816,7 +827,7 @@ namespace Simple.OData.Client
                 if (annotations != null && x.Feed != null)
                     annotations.CopyFrom(x.Feed.Annotations);
 
-                return x.Feed != null ? x.Feed.Entries : null;
+                return x.Feed?.Entries;
             },
             () => new AnnotatedEntry[] { }).ConfigureAwait(false);
         }
@@ -1041,6 +1052,17 @@ namespace Simple.OData.Client
                 : typeof(T) == typeof(string) || typeof(T).IsValue()
                 ? result.SelectMany(x => x.Values).Select(x => (T)Utils.Convert(x, typeof(T))).ToArray()
                 : result.Select(x => (T)x.ToObject(typeof(T))).ToArray();
+        }
+
+        internal async Task<ODataRequest> GetFindEntryRequestAsync(FluentCommand command, CancellationToken cancellationToken)
+        {
+            await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+            var commandText = await command.GetCommandTextAsync(cancellationToken).ConfigureAwait(false);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+            return await _session.Adapter.GetRequestWriter(_lazyBatchWriter).CreateGetRequestAsync(commandText, false).ConfigureAwait(false);
         }
 
         internal async Task<Stream> GetResponseStreamAsync(FluentCommand command, CancellationToken cancellationToken)

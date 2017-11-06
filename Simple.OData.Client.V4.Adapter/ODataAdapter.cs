@@ -1,14 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Xml;
-using Microsoft.OData;
 using Microsoft.OData.Edm;
-using Microsoft.OData.Edm.Csdl;
 using Microsoft.Spatial;
-using Simple.OData.Client.Extensions;
 
 #pragma warning disable 1591
 
@@ -28,17 +21,14 @@ namespace Simple.OData.Client.V4.Adapter
     {
         private readonly ISession _session;
 
-        public override AdapterVersion AdapterVersion { get { return AdapterVersion.V4; } }
+        public override AdapterVersion AdapterVersion => AdapterVersion.V4;
 
-        public override ODataPayloadFormat DefaultPayloadFormat
-        {
-            get { return ODataPayloadFormat.Json; }
-        }
+        public override ODataPayloadFormat DefaultPayloadFormat => ODataPayloadFormat.Json;
 
         public new IEdmModel Model
         {
-            get { return base.Model as IEdmModel; }
-            set { base.Model = value; }
+            get => base.Model as IEdmModel;
+            set => base.Model = value;
         }
 
         public ODataAdapter(ISession session, IODataModelAdapter modelAdapter)

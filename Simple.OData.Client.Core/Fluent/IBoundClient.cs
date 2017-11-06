@@ -18,7 +18,7 @@ namespace Simple.OData.Client
     /// Provides access to collection-bound OData operations in a fluent style.
     /// </summary>
     /// <typeparam name="T">The entity type.</typeparam>
-    public interface IBoundClient<T> : IFluentClient<T, IBoundClient<T>> 
+    public interface IBoundClient<T> : IFluentClient<T, IBoundClient<T>>
         where T : class
     {
         /// <summary>
@@ -512,5 +512,7 @@ namespace Simple.OData.Client
         /// The filter as entry key.
         /// </value>
         IDictionary<string, object> FilterAsKey { get; }
+
+        IClientRequestBuilder<T> BuildRequestFor();
     }
 }

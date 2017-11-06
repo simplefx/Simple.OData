@@ -54,10 +54,7 @@ namespace Simple.OData.Client
             return new FluentCommand(this.Session, _parentCommand, _client.BatchEntries);
         }
 
-        internal Session Session
-        {
-            get { return _session; }
-        }
+        internal Session Session => _session;
 
         public FT WithProperties(Expression<Func<T, IDictionary<string, object>>> expression)
         {
@@ -498,7 +495,7 @@ namespace Simple.OData.Client
         /// <returns>Execution result.</returns>
         public Task<T> ExecuteAsSingleAsync()
         {
-            return RectifyColumnSelectionAsync(
+            return FilterAndTypeColumnsAsync(
                 _client.ExecuteAsSingleAsync(_command, CancellationToken.None),
                 _command.SelectedColumns, _command.DynamicPropertiesContainerName);
         }
@@ -509,7 +506,7 @@ namespace Simple.OData.Client
         /// <returns>Execution result.</returns>
         public Task<T> ExecuteAsSingleAsync(CancellationToken cancellationToken)
         {
-            return RectifyColumnSelectionAsync(
+            return FilterAndTypeColumnsAsync(
                 _client.ExecuteAsSingleAsync(_command, cancellationToken),
                 _command.SelectedColumns, _command.DynamicPropertiesContainerName);
         }
@@ -520,7 +517,7 @@ namespace Simple.OData.Client
         /// <returns>Execution result.</returns>
         public Task<IEnumerable<T>> ExecuteAsEnumerableAsync()
         {
-            return RectifyColumnSelectionAsync(
+            return FilterAndTypeColumnsAsync(
                 _client.ExecuteAsEnumerableAsync(_command, CancellationToken.None),
                 _command.SelectedColumns, _command.DynamicPropertiesContainerName);
         }
@@ -531,7 +528,7 @@ namespace Simple.OData.Client
         /// <returns>Execution result.</returns>
         public Task<IEnumerable<T>> ExecuteAsEnumerableAsync(CancellationToken cancellationToken)
         {
-            return RectifyColumnSelectionAsync(
+            return FilterAndTypeColumnsAsync(
                 _client.ExecuteAsEnumerableAsync(_command, cancellationToken),
                 _command.SelectedColumns, _command.DynamicPropertiesContainerName);
         }
@@ -574,24 +571,6 @@ namespace Simple.OData.Client
         }
 
         /// <summary>
-        /// Executes the OData command and returns the HTTP response stream.
-        /// </summary>
-        /// <returns>The command text.</returns>
-        public Task<Stream> GetResponseStreamAsync()
-        {
-            return GetResponseStreamAsync(CancellationToken.None);
-        }
-        /// <summary>
-        /// Executes the OData command and returns the HTTP response stream.
-        /// </summary>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns>The command text.</returns>
-        public Task<Stream> GetResponseStreamAsync(CancellationToken cancellationToken)
-        {
-            return _client.GetResponseStreamAsync(_command, cancellationToken);
-        }
-
-        /// <summary>
         /// Gets the OData command text.
         /// </summary>
         /// <returns>The command text.</returns>
@@ -611,34 +590,34 @@ namespace Simple.OData.Client
 
 #pragma warning disable 1591
 
-        protected async Task<IEnumerable<T>> RectifyColumnSelectionAsync(
+        protected async Task<IEnumerable<T>> FilterAndTypeColumnsAsync(
             Task<IEnumerable<IDictionary<string, object>>> entries, IList<string> selectedColumns, string dynamicPropertiesContainerName)
         {
-            var result = RectifyColumnSelection(await entries.ConfigureAwait(false), selectedColumns);
-            return result == null ? null : result.Select(z => ConvertResult(z, dynamicPropertiesContainerName));
+            var result = FilterColumns(await entries.ConfigureAwait(false), selectedColumns);
+            return result?.Select(z => ConvertResult(z, dynamicPropertiesContainerName));
         }
 
-        protected async Task<T> RectifyColumnSelectionAsync(
+        protected async Task<T> FilterAndTypeColumnsAsync(
             Task<IDictionary<string, object>> entry, IList<string> selectedColumns, string dynamicPropertiesContainerName)
         {
-            return ConvertResult(RectifyColumnSelection(await entry.ConfigureAwait(false), selectedColumns), dynamicPropertiesContainerName);
+            return ConvertResult(FilterColumns(await entry.ConfigureAwait(false), selectedColumns), dynamicPropertiesContainerName);
         }
 
-        protected async Task<Tuple<IEnumerable<T>, int>> RectifyColumnSelectionAsync(
+        protected async Task<Tuple<IEnumerable<T>, int>> FilterAndTypeColumnsAsync(
             Task<Tuple<IEnumerable<IDictionary<string, object>>, int>> entries, IList<string> selectedColumns, string dynamicPropertiesContainerName)
         {
             var result = await entries.ConfigureAwait(false);
             return new Tuple<IEnumerable<T>, int>(
-                RectifyColumnSelection(result.Item1, selectedColumns).Select(y => ConvertResult(y, dynamicPropertiesContainerName)),
+                FilterColumns(result.Item1, selectedColumns).Select(y => ConvertResult(y, dynamicPropertiesContainerName)),
                 result.Item2);
         }
 
-        protected IEnumerable<IDictionary<string, object>> RectifyColumnSelection(IEnumerable<IDictionary<string, object>> entries, IList<string> selectedColumns)
+        protected IEnumerable<IDictionary<string, object>> FilterColumns(IEnumerable<IDictionary<string, object>> entries, IList<string> selectedColumns)
         {
-            return entries == null ? null : entries.Select(x => RectifyColumnSelection(x, selectedColumns));
+            return entries?.Select(x => FilterColumns(x, selectedColumns));
         }
 
-        protected IDictionary<string, object> RectifyColumnSelection(IDictionary<string, object> entry, IList<string> selectedColumns)
+        protected IDictionary<string, object> FilterColumns(IDictionary<string, object> entry, IList<string> selectedColumns)
         {
             if (entry == null || selectedColumns == null || !selectedColumns.Any())
             {

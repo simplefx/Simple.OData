@@ -513,16 +513,5 @@ namespace Simple.OData.Client.Tests
                 .FindEntriesAsync();
             Assert.Equal(ExpectedCountOfOrdersHavingAllDetails, products.Count());
         }
-
-        [Fact]
-        public async Task GetResponseStream()
-        {
-            var stream = await _client
-                .For("Products")
-                .Filter("ProductName eq 'Chai'")
-                .GetResponseStreamAsync();
-            var content = Utils.StreamToString(stream);
-            Assert.Contains("Chai", content);
-        }
     }
 }

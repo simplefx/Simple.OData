@@ -191,6 +191,15 @@
     <Compile Include="..\Simple.OData.Client.Core\Fluent\BoundClient.cs">
       <Link>Fluent\BoundClient.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Fluent\ClientRequestBuilder.cs">
+      <Link>Fluent\ClientRequestBuilder.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Fluent\ClientWithRequest.cs">
+      <Link>Fluent\ClientWithRequest.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Fluent\ClientWithResponse.cs">
+      <Link>Fluent\ClientWithResponse.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Fluent\CommandDetails.cs">
       <Link>Fluent\CommandDetails.cs</Link>
     </Compile>
@@ -199,6 +208,9 @@
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Fluent\IBoundClient.cs">
       <Link>Fluent\IBoundClient.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Core\Fluent\IClientRequest.cs">
+      <Link>Fluent\IClientRequest.cs</Link>
     </Compile>
     <Compile Include="..\Simple.OData.Client.Core\Fluent\IFluentClient.cs">
       <Link>Fluent\IFluentClient.cs</Link>

@@ -304,6 +304,8 @@ namespace Simple.OData.Client
                     {
                         var stream = new MemoryStream();
                         await response.Content.CopyToAsync(stream);
+                        if (stream.CanSeek)
+                            stream.Seek(0L, SeekOrigin.Begin);
                         return stream;
                     }
                     else

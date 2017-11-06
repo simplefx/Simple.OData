@@ -20,8 +20,8 @@ namespace Simple.OData.Client
 
         public HttpRequestMessage RequestMessage
         {
-            get { return GetOrCreateRequestMessage(); }
-            private set { _requestMessage = value; }
+            get => GetOrCreateRequestMessage();
+            private set => _requestMessage = value;
         }
 
         public string[] Accept

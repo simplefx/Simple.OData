@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
+using System.Threading.Tasks;
 using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
@@ -120,17 +122,16 @@ namespace Simple.OData.Client
             return CreateClientForODataEntry();
         }
 
-        public bool FilterIsKey
+        public bool FilterIsKey => this.Command.FilterIsKey;
+
+        public IDictionary<string, object> FilterAsKey => this.Command.FilterAsKey;
+
+        public IClientRequestBuilder<T> BuildRequestFor()
         {
-            get { return this.Command.FilterIsKey; }
+            return new ClientRequestBuilder<T>(_client, _session, this.Command);
         }
 
-        public IDictionary<string, object> FilterAsKey
-        {
-            get { return this.Command.FilterAsKey; }
-        }
-
-        #pragma warning restore 1591
+#pragma warning restore 1591
 
         private BoundClient<ODataEntry> CreateClientForODataEntry() 
         {

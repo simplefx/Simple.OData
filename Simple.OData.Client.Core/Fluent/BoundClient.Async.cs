@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
@@ -20,7 +19,7 @@ namespace Simple.OData.Client
 
         public Task<IEnumerable<T>> FindEntriesAsync(CancellationToken cancellationToken)
         {
-            return RectifyColumnSelectionAsync(
+            return FilterAndTypeColumnsAsync(
                 _client.FindEntriesAsync(_command, false, null, cancellationToken), 
                 _command.SelectedColumns, _command.DynamicPropertiesContainerName);
         }
@@ -32,7 +31,7 @@ namespace Simple.OData.Client
 
         public Task<IEnumerable<T>> FindEntriesAsync(bool scalarResult, CancellationToken cancellationToken)
         {
-            return RectifyColumnSelectionAsync(
+            return FilterAndTypeColumnsAsync(
                 _client.FindEntriesAsync(_command, scalarResult, null, cancellationToken),
                 _command.SelectedColumns, _command.DynamicPropertiesContainerName);
         }
@@ -49,7 +48,7 @@ namespace Simple.OData.Client
                 cancellationToken.ThrowIfCancellationRequested();
 
             var result = _client.FindEntriesAsync(commandText, annotations, cancellationToken);
-            return await RectifyColumnSelectionAsync(
+            return await FilterAndTypeColumnsAsync(
                 result, _command.SelectedColumns, _command.DynamicPropertiesContainerName).ConfigureAwait(false);
         }
 
@@ -65,7 +64,7 @@ namespace Simple.OData.Client
                 cancellationToken.ThrowIfCancellationRequested();
 
             var result = _client.FindEntriesAsync(commandText, annotations, cancellationToken);
-            return await RectifyColumnSelectionAsync(
+            return await FilterAndTypeColumnsAsync(
                 result, _command.SelectedColumns, _command.DynamicPropertiesContainerName).ConfigureAwait(false);
         }
 
@@ -76,7 +75,7 @@ namespace Simple.OData.Client
 
         public Task<T> FindEntryAsync(CancellationToken cancellationToken)
         {
-            return RectifyColumnSelectionAsync(
+            return FilterAndTypeColumnsAsync(
                 _client.FindEntryAsync(_command, cancellationToken),
                 _command.SelectedColumns, _command.DynamicPropertiesContainerName);
         }
@@ -136,14 +135,14 @@ namespace Simple.OData.Client
             {
                 var result = await UpdateEntriesAsync(resultRequired, cancellationToken).ConfigureAwait(false);
                 return resultRequired 
-                    ? result == null ? null : result.First()
+                    ? result?.First()
                     : null;
             }
             else
             {
                 var result = await _client.UpdateEntryAsync(_command, resultRequired, cancellationToken).ConfigureAwait(false);
                 return resultRequired
-                    ? result == null ? null : result.ToObject<T>(_command.DynamicPropertiesContainerName, _dynamicResults)
+                    ? result?.ToObject<T>(_command.DynamicPropertiesContainerName, _dynamicResults)
                     : null;
             }
         }
@@ -319,22 +318,22 @@ namespace Simple.OData.Client
 
         public Task UnlinkEntryAsync(ODataExpression expression, IDictionary<string, object> linkedEntryKey)
         {
-            return _client.UnlinkEntryAsync(_command, expression.AsString(_session), linkedEntryKey != null ? linkedEntryKey.ToDictionary() : null, CancellationToken.None);
+            return _client.UnlinkEntryAsync(_command, expression.AsString(_session), linkedEntryKey?.ToDictionary(), CancellationToken.None);
         }
 
         public Task UnlinkEntryAsync(ODataExpression expression, IDictionary<string, object> linkedEntryKey, CancellationToken cancellationToken)
         {
-            return _client.UnlinkEntryAsync(_command, expression.AsString(_session), linkedEntryKey != null ? linkedEntryKey.ToDictionary() : null, cancellationToken);
+            return _client.UnlinkEntryAsync(_command, expression.AsString(_session), linkedEntryKey?.ToDictionary(), cancellationToken);
         }
 
         public Task UnlinkEntryAsync(ODataExpression expression, ODataEntry linkedEntryKey)
         {
-            return _client.UnlinkEntryAsync(_command, expression.AsString(_session), linkedEntryKey != null ? linkedEntryKey.ToDictionary() : null, CancellationToken.None);
+            return _client.UnlinkEntryAsync(_command, expression.AsString(_session), linkedEntryKey?.ToDictionary(), CancellationToken.None);
         }
 
         public Task UnlinkEntryAsync(ODataExpression expression, ODataEntry linkedEntryKey, CancellationToken cancellationToken)
         {
-            return _client.UnlinkEntryAsync(_command, expression.AsString(_session), linkedEntryKey != null ? linkedEntryKey.ToDictionary() : null, cancellationToken);
+            return _client.UnlinkEntryAsync(_command, expression.AsString(_session), linkedEntryKey?.ToDictionary(), cancellationToken);
         }
     }
 }
