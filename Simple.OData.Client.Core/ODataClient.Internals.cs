@@ -25,68 +25,6 @@ namespace Simple.OData.Client
             return await FindEntryAsync(await updatedCommand.GetCommandTextAsync(cancellationToken).ConfigureAwait(false), cancellationToken).ConfigureAwait(false);
         }
 
-        private async Task<int> ExecuteDeleteEntriesAsync(FluentCommand command, CancellationToken cancellationToken)
-        {
-            return await IterateEntriesAsync(
-                command,
-                async (x, y) => await DeleteEntryAsync(x, y, cancellationToken).ConfigureAwait(false),
-                cancellationToken).ConfigureAwait(false);
-        }
-
-        private async Task ExecuteLinkEntryAsync(FluentCommand command, string linkName, IDictionary<string, object> linkedEntryKey, CancellationToken cancellationToken)
-        {
-            AssertHasKey(command);
-
-            var collectionName = command.QualifiedEntityCollectionName;
-            var entryKey = command.HasKey ? command.KeyValues : command.FilterAsKey;
-
-            var entryIdent = await FormatEntryKeyAsync(collectionName, entryKey, cancellationToken).ConfigureAwait(false);
-            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-
-            var linkedCollection = _session.Metadata.GetNavigationPropertyPartnerTypeName(collectionName, linkName);
-            var linkIdent = await FormatEntryKeyAsync(linkedCollection, linkedEntryKey, cancellationToken).ConfigureAwait(false);
-            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-
-            var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-                .CreateLinkRequestAsync(collectionName, linkName, entryIdent, linkIdent).ConfigureAwait(false);
-
-            if (!IsBatchRequest)
-            {
-                using (await _requestRunner.ExecuteRequestAsync(request, cancellationToken).ConfigureAwait(false))
-                {
-                }
-            }
-        }
-
-        private async Task ExecuteUnlinkEntryAsync(FluentCommand command, string linkName, IDictionary<string, object> linkedEntryKey, CancellationToken cancellationToken)
-        {
-            AssertHasKey(command);
-
-            var collectionName = command.QualifiedEntityCollectionName;
-            var entryKey = command.HasKey ? command.KeyValues : command.FilterAsKey;
-
-            var entryIdent = await FormatEntryKeyAsync(collectionName, entryKey, cancellationToken).ConfigureAwait(false);
-            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-
-            string linkIdent = null;
-            if (linkedEntryKey != null)
-            {
-                var linkedCollection = _session.Metadata.GetNavigationPropertyPartnerTypeName(collectionName, linkName);
-                linkIdent = await FormatEntryKeyAsync(linkedCollection, linkedEntryKey, cancellationToken).ConfigureAwait(false);
-                if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-            }
-
-            var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-                .CreateUnlinkRequestAsync(collectionName, linkName, entryIdent, linkIdent).ConfigureAwait(false);
-
-            if (!IsBatchRequest)
-            {
-                using (await _requestRunner.ExecuteRequestAsync(request, cancellationToken).ConfigureAwait(false))
-                {
-                }
-            }
-        }
-
         private async Task<IEnumerable<IDictionary<string, object>>> ExecuteFunctionAsync(FluentCommand command, CancellationToken cancellationToken)
         {
             var commandText = await command.GetCommandTextAsync(cancellationToken).ConfigureAwait(false);

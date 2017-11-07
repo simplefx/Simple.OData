@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Net;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Simple.OData.Client.Extensions;
@@ -471,18 +469,12 @@ namespace Simple.OData.Client
 
         public async Task<int> DeleteEntriesAsync(string collection, string commandText, CancellationToken cancellationToken)
         {
-            if (IsBatchResponse)
-                return 0;
-
-            await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
-            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-
             var command = GetFluentClient()
                 .For(collection)
                 .Filter(ExtractFilterFromCommandText(collection, commandText))
                 .AsBoundClient().Command;
 
-            return await ExecuteDeleteEntriesAsync(command, cancellationToken).ConfigureAwait(false);
+            return await DeleteEntriesAsync(command, cancellationToken).ConfigureAwait(false);
         }
 
         public Task LinkEntryAsync(string collection, IDictionary<string, object> entryKey, string linkName, IDictionary<string, object> linkedEntryKey)
@@ -492,12 +484,6 @@ namespace Simple.OData.Client
 
         public async Task LinkEntryAsync(string collection, IDictionary<string, object> entryKey, string linkName, IDictionary<string, object> linkedEntryKey, CancellationToken cancellationToken)
         {
-            if (IsBatchResponse)
-                return;
-
-            await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
-            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-
             RemoveAnnotationProperties(entryKey);
             RemoveAnnotationProperties(linkedEntryKey);
 
@@ -506,7 +492,7 @@ namespace Simple.OData.Client
                 .Key(entryKey)
                 .AsBoundClient().Command;
 
-            await ExecuteLinkEntryAsync(command, linkName, linkedEntryKey, cancellationToken).ConfigureAwait(false);
+            await LinkEntryAsync(command, linkName, linkedEntryKey, cancellationToken).ConfigureAwait(false);
         }
 
         public Task UnlinkEntryAsync(string collection, IDictionary<string, object> entryKey, string linkName)
@@ -529,9 +515,6 @@ namespace Simple.OData.Client
             if (IsBatchResponse)
                 return;
 
-            await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
-            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-
             RemoveAnnotationProperties(entryKey);
 
             var command = GetFluentClient()
@@ -539,7 +522,7 @@ namespace Simple.OData.Client
                 .Key(entryKey)
                 .AsBoundClient().Command;
 
-            await ExecuteUnlinkEntryAsync(command, linkName, linkedEntryKey, cancellationToken).ConfigureAwait(false);
+            await UnlinkEntryAsync(command, linkName, linkedEntryKey, cancellationToken).ConfigureAwait(false);
         }
 
         public Task<Stream> GetMediaStreamAsync(string commandText)
@@ -869,9 +852,6 @@ namespace Simple.OData.Client
             if (IsBatchResponse)
                 return _batchResponse.AsEntry(false);
 
-            await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
-            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-
             var requestBuilder = new RequestBuilder(command, _session, this.BatchWriter);
             var request = await requestBuilder.InsertRequestAsync(resultRequired, cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
@@ -894,9 +874,6 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse)
                 return _batchResponse.AsEntry(false);
-
-            await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
-            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var requestBuilder = new RequestBuilder(command, _session, this.BatchWriter);
             var request = await requestBuilder.UpdateRequestAsync(resultRequired, cancellationToken);
@@ -961,9 +938,6 @@ namespace Simple.OData.Client
             if (IsBatchResponse)
                 return;
 
-            await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
-            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-
             var requestBuilder = new RequestBuilder(command, _session, this.BatchWriter);
             var request = await requestBuilder.DeleteRequestAsync(cancellationToken);
             if (!IsBatchRequest)
@@ -982,7 +956,10 @@ namespace Simple.OData.Client
             await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            return await ExecuteDeleteEntriesAsync(command, cancellationToken).ConfigureAwait(false);
+            return await IterateEntriesAsync(
+                command,
+                async (x, y) => await DeleteEntryAsync(x, y, cancellationToken).ConfigureAwait(false),
+                cancellationToken).ConfigureAwait(false);
         }
 
         internal async Task LinkEntryAsync(FluentCommand command, string linkName, IDictionary<string, object> linkedEntryKey, CancellationToken cancellationToken)
@@ -990,10 +967,15 @@ namespace Simple.OData.Client
             if (IsBatchResponse)
                 return;
 
-            await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
-            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+            var requestBuilder = new RequestBuilder(command, _session, this.BatchWriter);
+            var request = await requestBuilder.LinkRequestAsync(linkName, linkedEntryKey, cancellationToken);
 
-            await ExecuteLinkEntryAsync(new FluentCommand(command).Key(command.KeyValues), linkName, linkedEntryKey, cancellationToken).ConfigureAwait(false);
+            if (!IsBatchRequest)
+            {
+                using (await _requestRunner.ExecuteRequestAsync(request, cancellationToken).ConfigureAwait(false))
+                {
+                }
+            }
         }
 
         internal async Task UnlinkEntryAsync(FluentCommand command, string linkName, IDictionary<string, object> linkedEntryKey, CancellationToken cancellationToken)
@@ -1001,10 +983,15 @@ namespace Simple.OData.Client
             if (IsBatchResponse)
                 return;
 
-            await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
-            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+            var requestBuilder = new RequestBuilder(command, _session, this.BatchWriter);
+            var request = await requestBuilder.UnlinkRequestAsync(linkName, linkedEntryKey, cancellationToken);
 
-            await ExecuteUnlinkEntryAsync(new FluentCommand(command).Key(command.KeyValues), linkName, linkedEntryKey, cancellationToken).ConfigureAwait(false);
+            if (!IsBatchRequest)
+            {
+                using (await _requestRunner.ExecuteRequestAsync(request, cancellationToken).ConfigureAwait(false))
+                {
+                }
+            }
         }
 
         internal async Task<Stream> GetMediaStreamAsync(FluentCommand command, CancellationToken cancellationToken)

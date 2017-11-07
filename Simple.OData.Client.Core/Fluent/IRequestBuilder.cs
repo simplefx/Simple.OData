@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -10,6 +11,8 @@ namespace Simple.OData.Client
         Task<ODataRequest> InsertRequestAsync(bool resultRequired, CancellationToken cancellationToken);
         Task<ODataRequest> UpdateRequestAsync(bool resultRequired, CancellationToken cancellationToken);
         Task<ODataRequest> DeleteRequestAsync(CancellationToken cancellationToken);
+        Task<ODataRequest> LinkRequestAsync(string linkName, IDictionary<string, object> linkedEntryKey, CancellationToken cancellationToken);
+        Task<ODataRequest> UnlinkRequestAsync(string linkName, IDictionary<string, object> linkedEntryKey, CancellationToken cancellationToken);
     }
 
     public interface IRequestBuilder<T>
