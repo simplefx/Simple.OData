@@ -11,81 +11,6 @@ namespace Simple.OData.Client
 {
     public partial class ODataClient
     {
-        private async Task<IDictionary<string, object>> ExecuteInsertEntryAsync(FluentCommand command, bool resultRequired, CancellationToken cancellationToken)
-        {
-            var entryData = command.CommandData;
-            var commandText = await command.GetCommandTextAsync(cancellationToken).ConfigureAwait(false);
-            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-
-            var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-                .CreateInsertRequestAsync(command.QualifiedEntityCollectionName, commandText, entryData, resultRequired).ConfigureAwait(false);
-            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-
-            var result = await ExecuteRequestWithResultAsync(request, cancellationToken,
-                x => x.AsEntry(_session.Settings.IncludeAnnotationsInResults), () => null, () => request.EntryData).ConfigureAwait(false);
-            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-
-            var keyNames = _session.Metadata.GetDeclaredKeyPropertyNames(commandText);
-            if (result == null && resultRequired && Utils.AllMatch(keyNames, entryData.Keys, _session.Settings.NameMatchResolver))
-            {
-                result = await this.GetEntryAsync(commandText, entryData, cancellationToken).ConfigureAwait(false);
-                if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-            }
-
-            return result;
-        }
-
-        private async Task<IDictionary<string, object>> ExecuteUpdateEntryAsync(FluentCommand command, bool resultRequired, CancellationToken cancellationToken)
-        {
-            AssertHasKey(command);
-
-            var collectionName = command.QualifiedEntityCollectionName;
-            var entryKey = command.HasKey ? command.KeyValues : command.FilterAsKey;
-            var entryData = command.CommandData;
-            var entryIdent = await FormatEntryKeyAsync(command, cancellationToken).ConfigureAwait(false);
-
-            var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter).CreateUpdateRequestAsync(collectionName, entryIdent, entryKey, entryData, resultRequired).ConfigureAwait(false);
-            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-
-            var result = await ExecuteRequestWithResultAsync(request, cancellationToken,
-                x => x.AsEntry(_session.Settings.IncludeAnnotationsInResults), () => null, () => request.EntryData).ConfigureAwait(false);
-            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-
-            if (result == null && resultRequired)
-            {
-                try
-                {
-                    result = await GetUpdatedResult(command, cancellationToken).ConfigureAwait(false);
-                    if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-                }
-                catch (Exception)
-                {
-                }
-            }
-
-            var entityCollection = _session.Metadata.GetEntityCollection(collectionName);
-            var entryDetails = _session.Metadata.ParseEntryDetails(entityCollection.Name, entryData);
-
-            var removedLinks = entryDetails.Links
-                .SelectMany(x => x.Value.Where(y => y.LinkData == null))
-                .Select(x => _session.Metadata.GetNavigationPropertyExactName(entityCollection.Name, x.LinkName))
-                .ToList();
-
-            foreach (var associationName in removedLinks)
-            {
-                try
-                {
-                    await UnlinkEntryAsync(collectionName, entryKey, associationName, cancellationToken).ConfigureAwait(false);
-                    if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-                }
-                catch (Exception)
-                {
-                }
-            }
-
-            return result;
-        }
-
         private async Task<IDictionary<string, object>> GetUpdatedResult(FluentCommand command, CancellationToken cancellationToken)
         {
             var entryKey = command.HasKey ? command.KeyValues : command.FilterAsKey;
@@ -98,29 +23,6 @@ namespace Simple.OData.Client
             }
             var updatedCommand = new FluentCommand(command).Key(updatedKey);
             return await FindEntryAsync(await updatedCommand.GetCommandTextAsync(cancellationToken).ConfigureAwait(false), cancellationToken).ConfigureAwait(false);
-        }
-
-        private async Task<IEnumerable<IDictionary<string, object>>> ExecuteUpdateEntriesAsync(FluentCommand command, bool resultRequired, CancellationToken cancellationToken)
-        {
-            return await IterateEntriesAsync(
-                command, resultRequired,
-                async (x, y, z, w) => await UpdateEntryAsync(x, y, z, w, cancellationToken).ConfigureAwait(false),
-                cancellationToken).ConfigureAwait(false);
-        }
-
-        private async Task ExecuteDeleteEntryAsync(FluentCommand command, CancellationToken cancellationToken)
-        {
-            var collectionName = command.QualifiedEntityCollectionName;
-            var entryIdent = await FormatEntryKeyAsync(command, cancellationToken).ConfigureAwait(false);
-
-            var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-                .CreateDeleteRequestAsync(collectionName, entryIdent).ConfigureAwait(false);
-            if (!IsBatchRequest)
-            {
-                using (await _requestRunner.ExecuteRequestAsync(request, cancellationToken).ConfigureAwait(false))
-                {
-                }
-            }
         }
 
         private async Task<int> ExecuteDeleteEntriesAsync(FluentCommand command, CancellationToken cancellationToken)

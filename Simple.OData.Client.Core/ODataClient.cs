@@ -76,11 +76,12 @@ namespace Simple.OData.Client
             _batchResponse = batchResponse;
         }
 
-        internal Session Session { get { return _session; } }
-        internal ODataResponse BatchResponse { get { return _batchResponse; } }
-        internal bool IsBatchRequest { get { return _lazyBatchWriter != null; } }
-        internal bool IsBatchResponse { get { return _batchResponse != null; } }
-        internal ConcurrentDictionary<object, IDictionary<string, object>> BatchEntries { get { return _batchEntries; } }
+        internal Session Session => _session;
+        internal ODataResponse BatchResponse => _batchResponse;
+        internal bool IsBatchRequest => _lazyBatchWriter != null;
+        internal bool IsBatchResponse => _batchResponse != null;
+        internal ConcurrentDictionary<object, IDictionary<string, object>> BatchEntries => _batchEntries;
+        internal Lazy<IBatchWriter> BatchWriter => _lazyBatchWriter;
 
         /// <summary>
         /// Parses the OData service metadata string.

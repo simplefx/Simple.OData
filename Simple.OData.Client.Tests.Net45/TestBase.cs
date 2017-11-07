@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using Xunit;
 using Simple.OData.Client.TestUtils;
@@ -18,8 +20,12 @@ namespace Simple.OData.Client.Tests
         protected TestBase(bool readOnlyTests = false)
         {
             _readOnlyTests = readOnlyTests;
+#if MOCK_HTTP_
+            _serviceUri = new Uri("http://localhost/");
+#else
             _service = new TestService(typeof(NorthwindService));
             _serviceUri = _service.ServiceUri;
+#endif
             _client = CreateClientWithDefaultSettings();
         }
 
@@ -49,11 +55,24 @@ namespace Simple.OData.Client.Tests
                 OnTrace = (x, y) => Console.WriteLine(string.Format(x, y)),
             });
         }
+
+        protected IODataClient CreateClientWithCustomSettings(ODataClientSettings settings)
+        {
+            return new ODataClient(settings);
+        }
+
         protected IODataClient CreateClientWithNameResolver(INameMatchResolver nameMatchResolver)
         {
+                string metadataString =
+#if MOCK_HTTP_
+                    GetResourceAsString(@"Resources." + "Northwind.xml");
+#else
+                    null;
+#endif
             return new ODataClient(new ODataClientSettings
             {
                 BaseUri = _serviceUri,
+                MetadataDocument = metadataString,
                 OnTrace = (x, y) => Console.WriteLine(string.Format(x, y)),
                 NameMatchResolver = nameMatchResolver,
             });
@@ -61,15 +80,29 @@ namespace Simple.OData.Client.Tests
 
         public void Dispose()
         {
+#if !MOCK_HTTP_
             if (_client != null && !_readOnlyTests)
             {
                 DeleteTestData().Wait();
-            }
+        }
+#endif
 
             if (_service != null)
             {
                 _service.Dispose();
                 _service = null;
+            }
+        }
+
+        private static string GetResourceAsString(string resourceName)
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            var resourceNames = assembly.GetManifestResourceNames();
+            var completeResourceName = resourceNames.FirstOrDefault(o => o.EndsWith("." + resourceName, StringComparison.CurrentCultureIgnoreCase));
+            using (var resourceStream = assembly.GetManifestResourceStream(completeResourceName))
+            {
+                var reader = new StreamReader(resourceStream);
+                return reader.ReadToEnd();
             }
         }
 
@@ -119,6 +152,61 @@ namespace Simple.OData.Client.Tests
                 var innerException = exception.InnerExceptions.Single();
                 Assert.IsType<T>(innerException);
             }
+        }
+        public async Task<T> FindEntryAsync<T>(IBoundClient<T> command)
+            where T : class
+        {
+#if MOCK_HTTP
+            var request = await command
+                .BuildRequestFor()
+                .FindEntryAsync();
+            using (var response = await request.RunAsync())
+                return await response.ReadAsSingleAsync();
+#else
+            return await command.FindEntryAsync();
+#endif
+        }
+
+        public async Task<IEnumerable<T>> FindEntriesAsync<T>(IBoundClient<T> command)
+            where T : class
+        {
+#if MOCK_HTTP
+            var request = await command
+                .BuildRequestFor()
+                .FindEntriesAsync();
+            using (var response = await request.RunAsync())
+                return await response.ReadAsCollectionAsync();
+#else
+            return await command.FindEntriesAsync();
+#endif
+        }
+
+        public async Task<T> InsertEntryAsync<T>(IBoundClient<T> command, bool resultRequired = true)
+            where T : class
+        {
+#if MOCK_HTTP
+            var request = await command
+                .BuildRequestFor()
+                .InsertEntryAsync();
+            using (var response = await request.RunAsync())
+                return await response.ReadAsSingleAsync();
+#else
+            return await command.InsertEntryAsync(true);
+#endif
+        }
+
+        public async Task<T> UpdateEntryAsync<T>(IBoundClient<T> command, bool resultRequired = true)
+            where T : class
+        {
+#if MOCK_HTTP
+            var request = await command
+                .BuildRequestFor()
+                .UpdateEntryAsync();
+            using (var response = await request.RunAsync())
+                return await response.ReadAsSingleAsync();
+#else
+            return await command.UpdateEntryAsync(true);
+#endif
         }
     }
 }

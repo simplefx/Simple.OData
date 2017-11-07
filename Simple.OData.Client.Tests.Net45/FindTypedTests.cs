@@ -8,38 +8,10 @@ namespace Simple.OData.Client.Tests
 {
     public class FindTypedTests : TestBase
     {
-        private async Task<T> ExecuteCommandAsSingleAsync<T>(IBoundClient<T> command)
-            where T : class
-        {
-#if true
-            var request = await command
-                    .BuildRequestFor()
-                    .FindEntryAsync();
-            using (var response = await request.RunAsync())
-                return await response.ReadAsSingleAsync();
-#else
-            return await command.FindEntryAsync();
-#endif
-        }
-
-        private async Task<IEnumerable<T>> ExecuteCommandAsCollectionAsync<T>(IBoundClient<T> command)
-            where T : class
-        {
-#if true
-            var request = await command
-                .BuildRequestFor()
-                .FindEntryAsync();
-            using (var response = await request.RunAsync())
-                return await response.ReadAsCollectionAsync();
-#else
-            return await command.FindEntriesAsync();
-#endif
-        }
-
         [Fact]
         public async Task SingleCondition()
         {
-            var product = await ExecuteCommandAsSingleAsync(_client
+            var product = await FindEntryAsync(_client
                 .For<Product>()
                 .Filter(x => x.ProductName == "Chai"));
             Assert.Equal("Chai", product.ProductName);
@@ -48,7 +20,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task SingleConditionWithLocalVariable()
         {
-            var product = await ExecuteCommandAsSingleAsync(_client
+            var product = await FindEntryAsync(_client
                 .For<Product>()
                 .Filter(x => x.ProductName == "Chai"));
             Assert.Equal("Chai", product.ProductName);
@@ -59,10 +31,10 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task SingleConditionWithMemberVariable()
         {
-            var product = await ExecuteCommandAsSingleAsync(_client
+            var product = await FindEntryAsync(_client
                 .For<Product>()
                 .Filter(x => x.ProductName == this.productName));
-            var sameProduct = await ExecuteCommandAsSingleAsync(_client
+            var sameProduct = await FindEntryAsync(_client
                 .For<Product>()
                 .Filter(x => x.ProductName != product.ProductName));
             Assert.NotEqual(product.ProductName, sameProduct.ProductName);
@@ -71,7 +43,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task CombinedConditions()
         {
-            var employee = await ExecuteCommandAsSingleAsync(_client
+            var employee = await FindEntryAsync(_client
                 .For<Employee>()
                 .Filter(x => x.FirstName == "Nancy" && x.HireDate < DateTime.Now));
             Assert.Equal("Davolio", employee.LastName);
@@ -80,7 +52,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task CombineAll()
         {
-            var product = (await ExecuteCommandAsCollectionAsync(_client
+            var product = (await FindEntriesAsync(_client
                 .For<Product>()
                 .OrderBy(x => x.ProductName)
                 .ThenByDescending(x => x.UnitPrice)
@@ -94,7 +66,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task CombineAllReverse()
         {
-            var product = (await ExecuteCommandAsCollectionAsync(_client
+            var product = (await FindEntriesAsync(_client
                 .For<Product>()
                 .Select(x => x.Category)
                 .Expand(x => x.Category)
@@ -108,12 +80,11 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task MappedColumn()
         {
-            await _client
+            await InsertEntryAsync(_client
                 .For<Product>()
-                .Set(new Product { ProductName = "Test1", UnitPrice = 18m, MappedEnglishName = "EnglishTest" })
-                .InsertEntryAsync(false);
+                .Set(new Product { ProductName = "Test1", UnitPrice = 18m, MappedEnglishName = "EnglishTest" }), false);
 
-            var product = await ExecuteCommandAsSingleAsync(_client
+            var product = await FindEntryAsync(_client
                 .For<Product>()
                 .Filter(x => x.ProductName == "Test1")
                 .Select(x => new { x.ProductID, x.ProductName, x.MappedEnglishName}));
@@ -123,10 +94,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task UnmappedColumn()
         {
-            await AssertThrowsAsync<UnresolvableObjectException>(async () => await _client
+            await AssertThrowsAsync<UnresolvableObjectException>(async () => await InsertEntryAsync(_client
                 .For<ProductWithUnmappedProperty>("Products")
-                .Set(new ProductWithUnmappedProperty { ProductName = "Test1" })
-                .InsertEntryAsync());
+                .Set(new ProductWithUnmappedProperty { ProductName = "Test1" })));
         }
 
         [Fact]
@@ -137,20 +107,18 @@ namespace Simple.OData.Client.Tests
                 BaseUri = _serviceUri,
                 IgnoreUnmappedProperties = true,
             };
-            var client = new ODataClient(settings);
+            var client = CreateClientWithCustomSettings(settings);
 
-            var product = await client
+            var product = await InsertEntryAsync(client
                 .For<ProductWithUnmappedProperty>("Products")
-                .Set(new ProductWithUnmappedProperty { ProductName = "Test1" })
-                .InsertEntryAsync();
+                .Set(new ProductWithUnmappedProperty { ProductName = "Test1" }));
 
-            await client
+            await UpdateEntryAsync(client
                 .For<ProductWithUnmappedProperty>("Products")
                 .Key(product.ProductID)
-                .Set(new ProductWithUnmappedProperty { ProductName = "Test2" })
-                .UpdateEntryAsync(false);
+                .Set(new ProductWithUnmappedProperty { ProductName = "Test2" }), false);
 
-            product = await ExecuteCommandAsSingleAsync(_client
+            product = await FindEntryAsync(_client
                 .For<ProductWithUnmappedProperty>("Products")
                 .Key(product.ProductID));
             Assert.Equal("Test2", product.ProductName);
@@ -159,7 +127,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task Subclass()
         {
-            var product = await ExecuteCommandAsSingleAsync(_client
+            var product = await FindEntryAsync(_client
                 .For<ExtendedProduct>("Products")
                 .Filter(x => x.ProductName == "Chai"));
             Assert.Equal("Chai", product.ProductName);
@@ -168,7 +136,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task StringContains()
         {
-            var products = await ExecuteCommandAsCollectionAsync(_client
+            var products = await FindEntriesAsync(_client
                 .For<Product>()
                 .Filter(x => x.ProductName.Contains("ai")));
             Assert.Equal("Chai", products.Single().ProductName);
@@ -178,7 +146,7 @@ namespace Simple.OData.Client.Tests
         public async Task StringContainsWithLocalVariable()
         {
             var text = "ai";
-            var products = await ExecuteCommandAsCollectionAsync(_client
+            var products = await FindEntriesAsync(_client
                 .For<Product>()
                 .Filter(x => x.ProductName.Contains(text)));
             Assert.Equal("Chai", products.Single().ProductName);
@@ -188,7 +156,7 @@ namespace Simple.OData.Client.Tests
         public async Task StringContainsWithArrayVariable()
         {
             var text = new [] {"ai"};
-            var products = await ExecuteCommandAsCollectionAsync(_client
+            var products = await FindEntriesAsync(_client
                 .For<Product>()
                 .Filter(x => x.ProductName.Contains(text[0])));
             Assert.Equal("Chai", products.Single().ProductName);
@@ -197,7 +165,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task StringNotContains()
         {
-            var products = await ExecuteCommandAsCollectionAsync(_client
+            var products = await FindEntriesAsync(_client
                 .For<Product>()
                 .Filter(x => !x.ProductName.Contains("ai")));
             Assert.NotEqual("Chai", products.First().ProductName);
@@ -206,7 +174,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task StringStartsWith()
         {
-            var products = await ExecuteCommandAsCollectionAsync(_client
+            var products = await FindEntriesAsync(_client
                 .For<Product>()
                 .Filter(x => x.ProductName.StartsWith("Ch")));
             Assert.Equal("Chai", products.First().ProductName);
@@ -215,7 +183,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task LengthOfStringEqual()
         {
-            var products = await ExecuteCommandAsCollectionAsync(_client
+            var products = await FindEntriesAsync(_client
                 .For<Product>()
                 .Filter(x => x.ProductName.Length == 4));
             Assert.Equal("Chai", products.First().ProductName);
@@ -224,7 +192,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task SubstringWithPositionAndLengthEqual()
         {
-            var products = await ExecuteCommandAsCollectionAsync(_client
+            var products = await FindEntriesAsync(_client
                 .For<Product>()
                 .Filter(x => x.ProductName.Substring(1, 2) == "ha"));
             Assert.Equal("Chai", products.First().ProductName);
@@ -234,7 +202,7 @@ namespace Simple.OData.Client.Tests
         public async Task SubstringWithPositionAndLengthEqualWithLocalVariable()
         {
             var text = "ha";
-            var products = await ExecuteCommandAsCollectionAsync(_client
+            var products = await FindEntriesAsync(_client
                 .For<Product>()
                 .Filter(x => x.ProductName.Substring(1, 2) == text));
             Assert.Equal("Chai", products.First().ProductName);
@@ -243,7 +211,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task TopOne()
         {
-            var products = await ExecuteCommandAsCollectionAsync(_client
+            var products = await FindEntriesAsync(_client
                 .For<Product>()
                 .Filter(x => x.ProductName == "Chai")
                 .Top(1));
@@ -264,7 +232,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task Get()
         {
-            var category = await ExecuteCommandAsSingleAsync(_client
+            var category = await FindEntryAsync(_client
                 .For<Category>()
                 .Key(1));
             Assert.Equal(1, category.CategoryID);
@@ -273,7 +241,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task GetNonExisting()
         {
-            await AssertThrowsAsync<WebRequestException>(async () => await ExecuteCommandAsSingleAsync(_client
+            await AssertThrowsAsync<WebRequestException>(async () => await FindEntryAsync(_client
                 .For<Category>()
                 .Key(-1)));
         }
@@ -281,7 +249,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task SelectSingle()
         {
-            var product = await ExecuteCommandAsSingleAsync(_client
+            var product = await FindEntryAsync(_client
                 .For<Product>()
                 .Filter(x => x.ProductName == "Chai")
                 .Select(x => x.ProductName));
@@ -291,7 +259,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task SelectMultiple()
         {
-            var product = await ExecuteCommandAsSingleAsync(_client
+            var product = await FindEntryAsync(_client
                 .For<Product>()
                 .Filter(x => x.ProductName == "Chai")
                 .Select(x => new { x.ProductID, x.ProductName }));
@@ -308,7 +276,7 @@ namespace Simple.OData.Client.Tests
             };
             var client = new ODataClient(settings);
 
-            var product = await ExecuteCommandAsSingleAsync(_client
+            var product = await FindEntryAsync(_client
                 .For<ProductWithUnmappedProperty>("Products")
                 .Filter(x => x.ProductName == "Chai")
                 .Select(x => new { x.ProductID, UnmappedName = x.ProductName }));
@@ -319,7 +287,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task ExpandOne()
         {
-            var product = (await ExecuteCommandAsCollectionAsync(_client
+            var product = (await FindEntriesAsync(_client
                 .For<Product>()
                 .OrderBy(x => x.ProductID)
                 .Expand(x => x.Category))).Last();
@@ -329,7 +297,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task ExpandManyAsArray()
         {
-            var category = await ExecuteCommandAsSingleAsync(_client
+            var category = await FindEntryAsync(_client
                 .For<Category>()
                 .Expand(x => x.Products)
                 .Filter(x => x.CategoryName == "Beverages"));
@@ -339,7 +307,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task ExpandManyAsList()
         {
-            var category = await ExecuteCommandAsSingleAsync(_client
+            var category = await FindEntryAsync(_client
                 .For<CategoryWithList>("Categories")
                 .Expand(x => x.Products)
                 .Filter(x => x.CategoryName == "Beverages"));
@@ -349,7 +317,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task ExpandManyAsIList()
         {
-            var category = await ExecuteCommandAsSingleAsync(_client
+            var category = await FindEntryAsync(_client
                 .For<CategoryWithIList>("Categories")
                 .Expand(x => x.Products)
                 .Filter(x => x.CategoryName == "Beverages"));
@@ -359,7 +327,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task ExpandManyAsHashSet()
         {
-            var category = await ExecuteCommandAsSingleAsync(_client
+            var category = await FindEntryAsync(_client
                 .For<CategoryWithHashSet>("Categories")
                 .Expand(x => x.Products)
                 .Filter(x => x.CategoryName == "Beverages"));
@@ -369,7 +337,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task  ExpandManyAsICollection()
         {
-            var category = await ExecuteCommandAsSingleAsync(_client
+            var category = await FindEntryAsync(_client
                 .For<CategoryWithICollection>("Categories")
                 .Expand(x => x.Products)
                 .Filter(x => x.CategoryName == "Beverages"));
@@ -379,7 +347,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task ExpandSecondLevel()
         {
-            var product = (await ExecuteCommandAsCollectionAsync(_client
+            var product = (await FindEntriesAsync(_client
                 .For<Product>()
                 .OrderBy(x => x.ProductID)
                 .Expand(x => x.Category.Products))).Last();
@@ -389,7 +357,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task ExpandMultipleLevelsWithCollection()
         {
-            var product = (await ExecuteCommandAsCollectionAsync(_client
+            var product = (await FindEntriesAsync(_client
                 .For<Product>()
                 .OrderBy(x => x.ProductID)
                 .Expand(x => x.Category.Products.Select(y => y.Category)))).Last();
@@ -399,7 +367,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task ExpandWithSelect()
         {
-            var product = (await ExecuteCommandAsCollectionAsync(_client
+            var product = (await FindEntriesAsync(_client
                 .For<Product>()
                 .OrderBy(x => x.ProductID)
                 .Expand(x => x.Category)
@@ -410,7 +378,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task OrderBySingle()
         {
-            var product = await ExecuteCommandAsSingleAsync(_client
+            var product = await FindEntryAsync(_client
                 .For<Product>()
                 .Filter(x => x.ProductName == "Chai")
                 .OrderBy(x => x.ProductName));
@@ -420,7 +388,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task OrderByMultiple()
         {
-            var product = await ExecuteCommandAsSingleAsync(_client
+            var product = await FindEntryAsync(_client
                 .For<Product>()
                 .Filter(x => x.ProductName == "Chai")
                 .OrderBy(x => new { x.ProductID, x.ProductName }));
@@ -430,7 +398,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task OrderByExpanded()
         {
-            var product = (await ExecuteCommandAsCollectionAsync(_client
+            var product = (await FindEntriesAsync(_client
                 .For<Product>()
                 .Expand(x => x.Category)
                 .OrderBy(x => new { x.Category.CategoryName }))).Last();
@@ -440,7 +408,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task NavigateToSingle()
         {
-            var category = await ExecuteCommandAsSingleAsync(_client
+            var category = await FindEntryAsync(_client
                 .For<Product>()
                 .Key(new { ProductID = 2 })
                 .NavigateTo<Category>());
@@ -450,7 +418,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task NavigateToSingleByExpression()
         {
-            var category = await ExecuteCommandAsSingleAsync(_client
+            var category = await FindEntryAsync(_client
                 .For<Product>()
                 .Key(new { ProductID = 2 })
                 .NavigateTo(x => x.Category));
@@ -460,7 +428,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task NavigateToMultiple()
         {
-            var products = await ExecuteCommandAsCollectionAsync(_client
+            var products = await FindEntriesAsync(_client
                 .For<Category>()
                 .Key(2)
                 .NavigateTo<Product>());
@@ -470,7 +438,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task NavigateToRecursive()
         {
-            var employee = await ExecuteCommandAsSingleAsync(_client
+            var employee = await FindEntryAsync(_client
                 .For<Employee>()
                 .Key(14)
                 .NavigateTo<Employee>("Superior")
@@ -483,7 +451,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task NavigateToRecursiveByExpression()
         {
-            var employee = await ExecuteCommandAsSingleAsync(_client
+            var employee = await FindEntryAsync(_client
                 .For<Employee>()
                 .Key(14)
                 .NavigateTo(x => x.Superior)
@@ -496,7 +464,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task NavigateToRecursiveSingleClause()
         {
-            var employee = await ExecuteCommandAsSingleAsync(_client
+            var employee = await FindEntryAsync(_client
                 .For<Employee>()
                 .Key(14)
                 .NavigateTo(x => x.Superior.Superior.Subordinates)
@@ -507,7 +475,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task BaseClassEntries()
         {
-            var transport = await ExecuteCommandAsCollectionAsync(_client
+            var transport = await FindEntriesAsync(_client
                 .For<Transport>());
             Assert.Equal(2, transport.Count());
         }
@@ -521,7 +489,7 @@ namespace Simple.OData.Client.Tests
                 IncludeAnnotationsInResults = true,
             };
             var client = new ODataClient(clientSettings);
-            var transport = await ExecuteCommandAsCollectionAsync(_client
+            var transport = await FindEntriesAsync(_client
                 .For<Transport>());
             Assert.Equal(2, transport.Count());
         }
@@ -529,7 +497,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task AllDerivedClassEntries()
         {
-            var transport = await ExecuteCommandAsCollectionAsync(_client
+            var transport = await FindEntriesAsync(_client
                 .For<Transport>()
                 .As<Ship>());
             Assert.Equal("Titanic", transport.Single().ShipName);
@@ -544,7 +512,7 @@ namespace Simple.OData.Client.Tests
                 IncludeAnnotationsInResults = true,
             };
             var client = new ODataClient(clientSettings);
-            var transport = await ExecuteCommandAsCollectionAsync(_client
+            var transport = await FindEntriesAsync(_client
                 .For<Transport>()
                 .As<Ship>());
             Assert.Equal("Titanic", transport.Single().ShipName);
@@ -553,7 +521,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task DerivedClassEntry()
         {
-            var transport = await ExecuteCommandAsSingleAsync(_client
+            var transport = await FindEntryAsync(_client
                 .For<Transport>()
                 .As<Ship>()
                 .Filter(x => x.ShipName == "Titanic"));
@@ -563,7 +531,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task BaseClassEntryByKey()
         {
-            var transport = await ExecuteCommandAsSingleAsync(_client
+            var transport = await FindEntryAsync(_client
                 .For<Transport>()
                 .Key(1));
             Assert.Equal(1, transport.TransportID);
@@ -572,7 +540,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task DerivedClassEntryByKey()
         {
-            var transport = await ExecuteCommandAsSingleAsync(_client
+            var transport = await FindEntryAsync(_client
                 .For<Transport>()
                 .As<Ship>()
                 .Key(1));
@@ -582,7 +550,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task DerivedClassEntryBaseAndDerivedFields()
         {
-            var transport = await ExecuteCommandAsSingleAsync(_client
+            var transport = await FindEntryAsync(_client
                 .For<Transport>()
                 .As<Ship>()
                 .Filter(x => x.TransportID == 1 && x.ShipName == "Titanic"));
@@ -592,7 +560,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task IsOfDerivedClassEntry()
         {
-            var transport = await ExecuteCommandAsSingleAsync(_client
+            var transport = await FindEntryAsync(_client
                 .For<Transport>()
                 .Filter(x => x is Ship)
                 .As<Ship>());
@@ -602,7 +570,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task IsOfAssociation()
         {
-            var employee = await ExecuteCommandAsSingleAsync(_client
+            var employee = await FindEntryAsync(_client
                 .For<Employee>()
                 .Filter(x => x.Superior is Employee));
             Assert.NotNull(employee);
@@ -611,7 +579,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task CastToPrimitiveType()
         {
-            var product = await ExecuteCommandAsSingleAsync(_client
+            var product = await FindEntryAsync(_client
                 .For<Product>()
                 .Filter(x => x.CategoryID == (int)1L));
             Assert.NotNull(product);
@@ -620,7 +588,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task CastInstanceToEntityType()
         {
-            var employee = await ExecuteCommandAsSingleAsync(_client
+            var employee = await FindEntryAsync(_client
                 .For<Employee>()
                 .Filter(x => x as Employee != null));
             Assert.NotNull(employee);
@@ -629,7 +597,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task CastPropertyToEntityType()
         {
-            var employee = await ExecuteCommandAsSingleAsync(_client
+            var employee = await FindEntryAsync(_client
                 .For<Employee>()
                 .Filter(x => x.Superior as Employee != null));
             Assert.NotNull(employee);
@@ -638,7 +606,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task FilterAny()
         {
-            var products = await ExecuteCommandAsCollectionAsync(_client
+            var products = await FindEntriesAsync(_client
                 .For<Order>()
                 .Filter(x => x.OrderDetails.Any(y => y.Quantity > 50)));
             Assert.Equal(ExpectedCountOfOrdersHavingAnyDetail, products.Count());
@@ -647,7 +615,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task FilterAll()
         {
-            var products = await ExecuteCommandAsCollectionAsync(_client
+            var products = await FindEntriesAsync(_client
                 .For<Order>()
                 .Filter(x => x.OrderDetails.All(y => y.Quantity > 50)));
             Assert.Equal(ExpectedCountOfOrdersHavingAllDetails, products.Count());
@@ -661,11 +629,11 @@ namespace Simple.OData.Client.Tests
         {
             var client = CreateClientWithNameResolver(ODataNameMatchResolver.Strict);
             await AssertThrowsAsync<UnresolvableObjectException>(async () =>
-                await client.For<OrderDetails>().FindEntriesAsync());
-            var orderDetails1 = await ExecuteCommandAsCollectionAsync(_client
+                await FindEntriesAsync(client.For<OrderDetails>()));
+            var orderDetails1 = await FindEntriesAsync(_client
                 .For<Order_Details>());
             Assert.NotEmpty(orderDetails1);
-            var orderDetails2 = await ExecuteCommandAsCollectionAsync(_client
+            var orderDetails2 = await FindEntriesAsync(_client
                 .For<OrderDetails>());
             Assert.NotEmpty(orderDetails2);
         }

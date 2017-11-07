@@ -6,20 +6,6 @@ using System.Threading.Tasks;
 
 namespace Simple.OData.Client
 {
-    public interface IClientRequestBuilder<T>
-    {
-        Task<IClientWithRequest<T>> FindEntryAsync();
-        Task<IClientWithRequest<T>> FindEntryAsync(CancellationToken cancellationToken);
-    }
-
-    public interface IClientWithRequest<T>
-    {
-        ODataRequest GetRequest();
-
-        Task<IClientWithResponse<T>> RunAsync();
-        Task<IClientWithResponse<T>> RunAsync(CancellationToken cancellationToken);
-    }
-
     public interface IClientWithResponse<T> : IDisposable
     {
         Task<IEnumerable<T>> ReadAsCollectionAsync();

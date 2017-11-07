@@ -513,6 +513,6 @@ namespace Simple.OData.Client
         /// </value>
         IDictionary<string, object> FilterAsKey { get; }
 
-        IClientRequestBuilder<T> BuildRequestFor();
+        IRequestBuilder<T> BuildRequestFor();
     }
 }

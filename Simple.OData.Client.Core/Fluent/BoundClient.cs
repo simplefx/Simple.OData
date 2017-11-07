@@ -126,9 +126,9 @@ namespace Simple.OData.Client
 
         public IDictionary<string, object> FilterAsKey => this.Command.FilterAsKey;
 
-        public IClientRequestBuilder<T> BuildRequestFor()
+        public IRequestBuilder<T> BuildRequestFor()
         {
-            return new ClientRequestBuilder<T>(_client, _session, this.Command);
+            return new RequestBuilder<T>(this.Command, _session, _client.BatchWriter);
         }
 
 #pragma warning restore 1591
