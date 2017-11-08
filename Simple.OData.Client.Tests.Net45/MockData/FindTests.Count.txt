@@ -1,0 +1,5 @@
+--- Request ---
+GET http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService217/Products/$count
+
+--- Response ---
+22

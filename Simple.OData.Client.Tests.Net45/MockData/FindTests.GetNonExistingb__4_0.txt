@@ -1,0 +1,2 @@
+--- Request ---
+GET http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService8/Categories(-1)

@@ -12,6 +12,7 @@ namespace Simple.OData.Client.Tests
 {
     public class TestBase : IDisposable
     {
+        private const string MockDataDir = @"..\..\MockData";
         protected Uri _serviceUri;
         protected TestService _service;
         protected IODataClient _client;
@@ -158,11 +159,27 @@ namespace Simple.OData.Client.Tests
             where T : class
         {
 #if MOCK_HTTP
+            var testMethodName = GetTestMethodFullName();
+            bool hasMockData = File.Exists(GetMockDataPath(testMethodName));
             var request = await command
                 .BuildRequestFor()
                 .FindEntryAsync();
+            if (hasMockData)
+                await ValidateRequestAsync(testMethodName, request.GetRequest());
+            else
+                await SaveRequestAsync(testMethodName, request.GetRequest());
             using (var response = await request.RunAsync())
-                return await response.ReadAsSingleAsync();
+            {
+                if (hasMockData)
+                {
+                    return ReadMockResponseAsSingle<T>(testMethodName);
+                }
+                else
+                {
+                    await SaveResponseAsync(testMethodName, await response.GetResponseStreamAsync());
+                    return await response.ReadAsSingleAsync();
+                }
+            }
 #else
             return await command.FindEntryAsync();
 #endif
@@ -172,11 +189,27 @@ namespace Simple.OData.Client.Tests
             where T : class
         {
 #if MOCK_HTTP
+            var testMethodName = GetTestMethodFullName();
+            bool hasMockData = File.Exists(GetMockDataPath(testMethodName));
             var request = await command
                 .BuildRequestFor()
                 .FindEntriesAsync(annotations);
+            if (hasMockData)
+                await ValidateRequestAsync(testMethodName, request.GetRequest());
+            else
+                await SaveRequestAsync(testMethodName, request.GetRequest());
             using (var response = await request.RunAsync())
-                return await response.ReadAsCollectionAsync(annotations);
+            {
+                if (hasMockData)
+                {
+                    return ReadMockResponseAsCollection<T>(testMethodName);
+                }
+                else
+                {
+                    await SaveResponseAsync(testMethodName, await response.GetResponseStreamAsync());
+                    return await response.ReadAsCollectionAsync(annotations);
+                }
+            }
 #else
             return await command.FindEntriesAsync(annotations);
 #endif
@@ -186,11 +219,27 @@ namespace Simple.OData.Client.Tests
             where T : class
         {
 #if MOCK_HTTP
+            var testMethodName = GetTestMethodFullName();
+            bool hasMockData = File.Exists(GetMockDataPath(testMethodName));
             var request = await command
                 .BuildRequestFor()
                 .FindEntriesAsync(true);
+            if (hasMockData)
+                await ValidateRequestAsync(testMethodName, request.GetRequest());
+            else
+                await SaveRequestAsync(testMethodName, request.GetRequest());
             using (var response = await request.RunAsync())
-                return await response.ReadAsScalarAsync<U>();
+            {
+                if (hasMockData)
+                {
+                    return ReadMockResponseAsScalar<U>(testMethodName);
+                }
+                else
+                {
+                    await SaveResponseAsync(testMethodName, await response.GetResponseStreamAsync());
+                    return await response.ReadAsScalarAsync<U>();
+                }
+            }
 #else
             return await command.FindScalarAsync<U>();
 #endif
@@ -200,11 +249,27 @@ namespace Simple.OData.Client.Tests
             where T : class
         {
 #if MOCK_HTTP
+            var testMethodName = GetTestMethodFullName();
+            bool hasMockData = File.Exists(GetMockDataPath(testMethodName));
             var request = await command
                 .BuildRequestFor()
                 .InsertEntryAsync();
+            if (hasMockData)
+                await ValidateRequestAsync(testMethodName, request.GetRequest());
+            else
+                await SaveRequestAsync(testMethodName, request.GetRequest());
             using (var response = await request.RunAsync())
-                return await response.ReadAsSingleAsync();
+            {
+                if (hasMockData)
+                {
+                    return ReadMockResponseAsSingle<T>(testMethodName);
+                }
+                else
+                {
+                    await SaveResponseAsync(testMethodName, await response.GetResponseStreamAsync());
+                    return await response.ReadAsSingleAsync();
+                }
+            }
 #else
             return await command.InsertEntryAsync(true);
 #endif
@@ -214,14 +279,142 @@ namespace Simple.OData.Client.Tests
             where T : class
         {
 #if MOCK_HTTP
+            var testMethodName = GetTestMethodFullName();
+            bool hasMockData = File.Exists(GetMockDataPath(testMethodName));
             var request = await command
                 .BuildRequestFor()
                 .UpdateEntryAsync();
+            if (hasMockData)
+                await ValidateRequestAsync(testMethodName, request.GetRequest());
+            else
+                await SaveRequestAsync(testMethodName, request.GetRequest());
             using (var response = await request.RunAsync())
-                return await response.ReadAsSingleAsync();
+            {
+                if (hasMockData)
+                {
+                    return ReadMockResponseAsSingle<T>(testMethodName);
+                }
+                else
+                {
+                    await SaveResponseAsync(testMethodName, await response.GetResponseStreamAsync());
+                    return await response.ReadAsSingleAsync();
+                }
+            }
 #else
             return await command.UpdateEntryAsync(true);
 #endif
+        }
+
+        private string GetMockDataPath(string testMethodName)
+        {
+            return Path.Combine(MockDataDir, testMethodName + ".txt");
+        }
+
+        private async Task SaveRequestAsync(string testMethodName, ODataRequest request)
+        {
+            using (var writer = new StreamWriter(GetMockDataPath(testMethodName), false))
+            {
+                await writer.WriteLineAsync($"--- Request ---");
+                var requestMessage = request.RequestMessage;
+                await writer.WriteLineAsync($"{requestMessage.Method} {requestMessage.RequestUri.AbsoluteUri}");
+                foreach (var header in requestMessage.Headers)
+                    await writer.WriteLineAsync($"{header.Key}: {header.Value}");
+                if (requestMessage.Content != null)
+                {
+                    await writer.WriteLineAsync();
+                    await writer.WriteLineAsync(await requestMessage.Content.ReadAsStringAsync());
+                }
+            }
+        }
+
+        private async Task SaveResponseAsync(string testMethodName, Stream responseStream)
+        {
+            using (var writer = new StreamWriter(GetMockDataPath(testMethodName), true))
+            {
+                await writer.WriteLineAsync();
+                await writer.WriteLineAsync($"--- Response ---");
+                await writer.WriteLineAsync(Utils.StreamToString(responseStream));
+            }
+        }
+
+        private async Task ValidateRequestAsync(string testMethodName, ODataRequest request)
+        {
+            using (var reader = new StreamReader(GetMockDataPath(testMethodName)))
+            {
+                var line = await reader.ReadLineAsync();
+                while (line != "--- Request ---")
+                {
+                    if (line == null)
+                        throw new Exception("Request mock data not found");
+                }
+                var requestMessage = request.RequestMessage;
+                line = await reader.ReadLineAsync();
+                var splitPos = line.IndexOf(' ');
+                var expectedMethod = line.Substring(0, splitPos - 1);
+                Assert.Equal(expectedMethod, requestMessage.Method.ToString());
+                var expectedUri = line.Substring(splitPos + 1);
+                Assert.Equal(expectedUri, requestMessage.RequestUri.AbsoluteUri);
+            }
+        }
+
+        private IEnumerable<T> ReadMockResponseAsCollection<T>(string testMethodName)
+            where T : class
+        {
+            using (var reader = new StreamReader(GetMockDataPath(testMethodName)))
+            {
+                var line = reader.ReadLine();
+                while (line != "--- Response ---")
+                {
+                    if (line == null)
+                        throw new Exception("Response mock data not found");
+                }
+                return null;
+            }
+        }
+
+        private T ReadMockResponseAsSingle<T>(string testMethodName)
+            where T : class
+        {
+            using (var reader = new StreamReader(GetMockDataPath(testMethodName)))
+            {
+                var line = reader.ReadLine();
+                while (line != "--- Response ---")
+                {
+                    if (line == null)
+                        throw new Exception("Response mock data not found");
+                }
+                return default(T);
+            }
+        }
+
+        private T ReadMockResponseAsScalar<T>(string testMethodName)
+        {
+            using (var reader = new StreamReader(GetMockDataPath(testMethodName)))
+            {
+                var line = reader.ReadLine();
+                while (line != "--- Response ---")
+                {
+                    if (line == null)
+                        throw new Exception("Response mock data not found");
+                }
+                return default(T);
+            }
+        }
+
+        private string GetTestMethodFullName()
+        {
+            var stackTrace = new System.Diagnostics.StackTrace();
+            var baseType = stackTrace.GetFrame(0).GetMethod().DeclaringType;
+            for (var frameNumber = 1; ; frameNumber++)
+            {
+                var stackFrame = stackTrace.GetFrame(frameNumber);
+                if (stackFrame == null)
+                    throw new InvalidOperationException("Attempt to retrieve a frame beyond the call stack");
+                var method = stackFrame.GetMethod();
+                var methodName = new string(method.Name.Where(c => Char.IsLetterOrDigit(c) || c == '_').ToArray());
+                if (method.DeclaringType != baseType && baseType.IsAssignableFrom(method.DeclaringType))
+                    return String.Format($"{method.DeclaringType.Name}.{methodName}");
+            }
         }
     }
 }
