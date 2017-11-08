@@ -23,10 +23,6 @@ namespace Simple.OData.Client
         Task<IClientWithRequest<T>> FindEntriesAsync(CancellationToken cancellationToken);
         Task<IClientWithRequest<T>> FindEntriesAsync(bool scalarResult);
         Task<IClientWithRequest<T>> FindEntriesAsync(bool scalarResult, CancellationToken cancellationToken);
-        Task<IClientWithRequest<T>> FindEntriesAsync(ODataFeedAnnotations annotations);
-        Task<IClientWithRequest<T>> FindEntriesAsync(ODataFeedAnnotations annotations, CancellationToken cancellationToken);
-        Task<IClientWithRequest<T>> FindEntriesAsync(Uri annotatedUri, ODataFeedAnnotations annotations);
-        Task<IClientWithRequest<T>> FindEntriesAsync(Uri annotatedUri, ODataFeedAnnotations annotations, CancellationToken cancellationToken);
         Task<IClientWithRequest<T>> FindEntryAsync();
         Task<IClientWithRequest<T>> FindEntryAsync(CancellationToken cancellationToken);
         Task<IClientWithRequest<T>> InsertEntryAsync();

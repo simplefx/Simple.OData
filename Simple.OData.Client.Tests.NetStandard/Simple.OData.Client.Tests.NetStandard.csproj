@@ -159,6 +159,9 @@
     <Compile Include="..\Simple.OData.Client.Tests.Net45\ClientReadWriteTests.cs">
       <Link>ClientReadWriteTests.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Net45\ClientSettingsTests.cs">
+      <Link>ClientSettingsTests.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net45\DeleteDynamicTests.cs">
       <Link>DeleteDynamicTests.cs</Link>
     </Compile>

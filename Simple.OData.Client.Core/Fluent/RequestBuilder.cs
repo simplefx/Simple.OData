@@ -171,11 +171,12 @@ namespace Simple.OData.Client
     internal class RequestBuilder<T> : IRequestBuilder<T>
         where T : class
     {
+        private readonly Session _session;
         private readonly RequestBuilder _builder;
-        protected readonly Session _session;
 
         public RequestBuilder(FluentCommand command, Session session, Lazy<IBatchWriter> batchWriter)
         {
+            _session = session;
             _builder = new RequestBuilder(command, session, batchWriter);
         }
 
@@ -194,29 +195,9 @@ namespace Simple.OData.Client
             return FindEntriesAsync(scalarResult, CancellationToken.None);
         }
 
-        public Task<IClientWithRequest<T>> FindEntriesAsync(bool scalarResult, CancellationToken cancellationToken)
+        public async Task<IClientWithRequest<T>> FindEntriesAsync(bool scalarResult, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<IClientWithRequest<T>> FindEntriesAsync(ODataFeedAnnotations annotations)
-        {
-            return FindEntriesAsync(annotations, CancellationToken.None);
-        }
-
-        public Task<IClientWithRequest<T>> FindEntriesAsync(ODataFeedAnnotations annotations, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IClientWithRequest<T>> FindEntriesAsync(Uri annotatedUri, ODataFeedAnnotations annotations)
-        {
-            return FindEntriesAsync(annotatedUri, annotations, CancellationToken.None);
-        }
-
-        public Task<IClientWithRequest<T>> FindEntriesAsync(Uri annotatedUri, ODataFeedAnnotations annotations, CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
+            return new ClientWithRequest<T>(await _builder.GetRequestAsync(scalarResult, cancellationToken), _session);
         }
 
         public Task<IClientWithRequest<T>> FindEntryAsync()

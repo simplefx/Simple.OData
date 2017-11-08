@@ -72,6 +72,7 @@ namespace Simple.OData.Client
 
         internal ODataClient(ODataClient client, ODataResponse batchResponse)
         {
+            _settings = client._settings;
             _session = client.Session;
             _batchResponse = batchResponse;
         }
