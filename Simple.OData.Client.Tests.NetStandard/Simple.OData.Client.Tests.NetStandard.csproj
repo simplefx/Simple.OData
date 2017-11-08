@@ -150,12 +150,6 @@
     <Compile Include="..\Simple.OData.Client.Tests.Net45\BatchTypedTests.cs">
       <Link>BatchTypedTests.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net45\ClientAdapter.cs">
-      <Link>ClientAdapter.cs</Link>
-    </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net45\ClientAdapterTests.cs">
-      <Link>ClientAdapterTests.cs</Link>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net45\BatchTests.cs">
       <Link>BatchTests.cs</Link>
     </Compile>

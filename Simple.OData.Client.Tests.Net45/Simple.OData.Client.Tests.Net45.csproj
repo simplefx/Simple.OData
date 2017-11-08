@@ -151,8 +151,6 @@
     </Compile>
     <Compile Include="BatchDynamicTests.cs" />
     <Compile Include="BatchTypedTests.cs" />
-    <Compile Include="ClientAdapter.cs" />
-    <Compile Include="ClientAdapterTests.cs" />
     <Compile Include="BatchTests.cs" />
     <Compile Include="ClientReadOnlyTests.cs" />
     <Compile Include="ClientSettingsTests.cs" />
