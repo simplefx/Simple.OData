@@ -58,7 +58,17 @@ namespace Simple.OData.Client
             return ReadAsCollectionAsync(CancellationToken.None);
         }
 
-        public async Task<IEnumerable<T>> ReadAsCollectionAsync(CancellationToken cancellationToken)
+        public Task<IEnumerable<T>> ReadAsCollectionAsync(CancellationToken cancellationToken)
+        {
+            return ReadAsCollectionAsync(null, CancellationToken.None);
+        }
+
+        public Task<IEnumerable<T>> ReadAsCollectionAsync(ODataFeedAnnotations annotations)
+        {
+            return ReadAsCollectionAsync(annotations, CancellationToken.None);
+        }
+
+        public async Task<IEnumerable<T>> ReadAsCollectionAsync(ODataFeedAnnotations annotations, CancellationToken cancellationToken)
         {
             if (_responseMessage.IsSuccessStatusCode && _responseMessage.StatusCode != HttpStatusCode.NoContent &&
                 (_request.Method == RestVerbs.Get || _request.ResultRequired))
@@ -67,12 +77,14 @@ namespace Simple.OData.Client
                 var response = await responseReader.GetResponseAsync(_responseMessage).ConfigureAwait(false);
                 if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
+                if (annotations != null && response.Feed != null)
+                    annotations.CopyFrom(response.Feed.Annotations);
                 var result = response.AsEntries(_session.Settings.IncludeAnnotationsInResults);
                 return result.Select(x => x.ToObject<T>());
             }
             else
             {
-                return new T[] {};
+                return new T[] { };
             }
         }
 
@@ -96,6 +108,31 @@ namespace Simple.OData.Client
             else
             {
                 return default(T);
+            }
+        }
+
+        public Task<U> ReadAsScalarAsync<U>()
+        {
+            return ReadAsScalarAsync<U>(CancellationToken.None);
+        }
+
+        public async Task<U> ReadAsScalarAsync<U>(CancellationToken cancellationToken)
+        {
+            if (_responseMessage.IsSuccessStatusCode && _responseMessage.StatusCode != HttpStatusCode.NoContent &&
+                (_request.Method == RestVerbs.Get || _request.ResultRequired))
+            {
+                var responseReader = _session.Adapter.GetResponseReader();
+                var response = await responseReader.GetResponseAsync(_responseMessage).ConfigureAwait(false);
+                if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+                var result = response.AsEntries(_session.Settings.IncludeAnnotationsInResults);
+
+                object extractScalar(IDictionary<string, object> x) => (x == null) || !x.Any() ? null : x.Values.First();
+                return result == null ? default(U) : (U)Utils.Convert(extractScalar(result.FirstOrDefault()), typeof(U));
+            }
+            else
+            {
+                return default(U);
             }
         }
     }

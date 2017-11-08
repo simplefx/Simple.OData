@@ -171,13 +171,15 @@ namespace Simple.OData.Client
     internal class RequestBuilder<T> : IRequestBuilder<T>
         where T : class
     {
+        private FluentCommand _command;
         private readonly Session _session;
-        private readonly RequestBuilder _builder;
+        private readonly Lazy<IBatchWriter> _lazyBatchWriter;
 
         public RequestBuilder(FluentCommand command, Session session, Lazy<IBatchWriter> batchWriter)
         {
+            _command = command;
             _session = session;
-            _builder = new RequestBuilder(command, session, batchWriter);
+            _lazyBatchWriter = batchWriter;
         }
 
         public Task<IClientWithRequest<T>> FindEntriesAsync()
@@ -197,7 +199,19 @@ namespace Simple.OData.Client
 
         public async Task<IClientWithRequest<T>> FindEntriesAsync(bool scalarResult, CancellationToken cancellationToken)
         {
-            return new ClientWithRequest<T>(await _builder.GetRequestAsync(scalarResult, cancellationToken), _session);
+            var requestBuilder = new RequestBuilder(_command, _session, _lazyBatchWriter);
+            return new ClientWithRequest<T>(await requestBuilder.GetRequestAsync(scalarResult, cancellationToken), _session);
+        }
+
+        public Task<IClientWithRequest<T>> FindEntriesAsync(ODataFeedAnnotations annotations)
+        {
+            return FindEntriesAsync(annotations, CancellationToken.None);
+        }
+
+        public async Task<IClientWithRequest<T>> FindEntriesAsync(ODataFeedAnnotations annotations, CancellationToken cancellationToken)
+        {
+            var requestBuilder = new RequestBuilder(_command.WithCount(), _session, _lazyBatchWriter);
+            return new ClientWithRequest<T>(await requestBuilder.GetRequestAsync(false, cancellationToken), _session);
         }
 
         public Task<IClientWithRequest<T>> FindEntryAsync()
@@ -207,7 +221,8 @@ namespace Simple.OData.Client
 
         public async Task<IClientWithRequest<T>> FindEntryAsync(CancellationToken cancellationToken)
         {
-            return new ClientWithRequest<T>(await _builder.GetRequestAsync(false, cancellationToken), _session);
+            var requestBuilder = new RequestBuilder(_command, _session, _lazyBatchWriter);
+            return new ClientWithRequest<T>(await requestBuilder.GetRequestAsync(false, cancellationToken), _session);
         }
 
         public Task<IClientWithRequest<T>> InsertEntryAsync()
@@ -227,7 +242,8 @@ namespace Simple.OData.Client
 
         public async Task<IClientWithRequest<T>> InsertEntryAsync(bool resultRequired, CancellationToken cancellationToken)
         {
-            return new ClientWithRequest<T>(await _builder.InsertRequestAsync(resultRequired, cancellationToken), _session);
+            var requestBuilder = new RequestBuilder(_command, _session, _lazyBatchWriter);
+            return new ClientWithRequest<T>(await requestBuilder.InsertRequestAsync(resultRequired, cancellationToken), _session);
         }
 
         public Task<IClientWithRequest<T>> UpdateEntryAsync()
@@ -247,7 +263,8 @@ namespace Simple.OData.Client
 
         public async Task<IClientWithRequest<T>> UpdateEntryAsync(bool resultRequired, CancellationToken cancellationToken)
         {
-            return new ClientWithRequest<T>(await _builder.UpdateRequestAsync(resultRequired, cancellationToken), _session);
+            var requestBuilder = new RequestBuilder(_command, _session, _lazyBatchWriter);
+            return new ClientWithRequest<T>(await requestBuilder.UpdateRequestAsync(resultRequired, cancellationToken), _session);
         }
 
         public Task<IClientWithRequest<T>> DeleteEntryAsync()
@@ -257,7 +274,8 @@ namespace Simple.OData.Client
 
         public async Task<IClientWithRequest<T>> DeleteEntryAsync(CancellationToken cancellationToken)
         {
-            return new ClientWithRequest<T>(await _builder.DeleteRequestAsync(cancellationToken), _session);
+            var requestBuilder = new RequestBuilder(_command, _session, _lazyBatchWriter);
+            return new ClientWithRequest<T>(await requestBuilder.DeleteRequestAsync(cancellationToken), _session);
         }
     }
 }

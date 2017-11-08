@@ -153,6 +153,7 @@ namespace Simple.OData.Client.Tests
                 Assert.IsType<T>(innerException);
             }
         }
+
         public async Task<T> FindEntryAsync<T>(IBoundClient<T> command)
             where T : class
         {
@@ -167,17 +168,31 @@ namespace Simple.OData.Client.Tests
 #endif
         }
 
-        public async Task<IEnumerable<T>> FindEntriesAsync<T>(IBoundClient<T> command)
+        public async Task<IEnumerable<T>> FindEntriesAsync<T>(IBoundClient<T> command, ODataFeedAnnotations annotations = null)
             where T : class
         {
 #if MOCK_HTTP
             var request = await command
                 .BuildRequestFor()
-                .FindEntriesAsync();
+                .FindEntriesAsync(annotations);
             using (var response = await request.RunAsync())
-                return await response.ReadAsCollectionAsync();
+                return await response.ReadAsCollectionAsync(annotations);
 #else
-            return await command.FindEntriesAsync();
+            return await command.FindEntriesAsync(annotations);
+#endif
+        }
+
+        public async Task<U> FindScalarAsync<T,U>(IBoundClient<T> command)
+            where T : class
+        {
+#if MOCK_HTTP
+            var request = await command
+                .BuildRequestFor()
+                .FindEntriesAsync(true);
+            using (var response = await request.RunAsync())
+                return await response.ReadAsScalarAsync<U>();
+#else
+            return await command.FindScalarAsync<U>();
 #endif
         }
 
