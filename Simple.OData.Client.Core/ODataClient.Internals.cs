@@ -264,7 +264,7 @@ namespace Simple.OData.Client
 
         private async Task<string> FormatEntryKeyAsync(string collection, IDictionary<string, object> entryKey, CancellationToken cancellationToken)
         {
-            var entryIdent = await GetFluentClient()
+            var entryIdent = await GetBoundClient()
                 .For(collection)
                 .Key(entryKey)
                 .GetCommandTextAsync(cancellationToken).ConfigureAwait(false);

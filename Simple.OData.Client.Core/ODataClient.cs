@@ -114,7 +114,7 @@ namespace Simple.OData.Client
         /// </returns>
         public IBoundClient<IDictionary<string, object>> For(string collectionName)
         {
-            return GetFluentClient().For(collectionName);
+            return GetBoundClient().For(collectionName);
         }
 
         /// <summary>
@@ -162,7 +162,7 @@ namespace Simple.OData.Client
             return GetUnboundClient<T>();
         }
 
-        private BoundClient<IDictionary<string, object>> GetFluentClient()
+        private BoundClient<IDictionary<string, object>> GetBoundClient()
         {
             return new BoundClient<IDictionary<string, object>>(this, _session);
         }

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -9,13 +9,21 @@ namespace Simple.OData.Client
     internal class RequestBuilder : IRequestBuilder
     {
         private readonly FluentCommand _command;
+        private readonly string _commandText;
         private readonly Session _session;
         private readonly Lazy<IBatchWriter> _lazyBatchWriter;
 
         public RequestBuilder(FluentCommand command, Session session, Lazy<IBatchWriter> batchWriter)
         {
-            _session = session;
             _command = command;
+            _session = session;
+            _lazyBatchWriter = batchWriter;
+        }
+
+        public RequestBuilder(string commandText, Session session, Lazy<IBatchWriter> batchWriter)
+        {
+            _commandText = commandText;
+            _session = session;
             _lazyBatchWriter = batchWriter;
         }
 
@@ -24,10 +32,13 @@ namespace Simple.OData.Client
             await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var commandText = await _command.GetCommandTextAsync(cancellationToken).ConfigureAwait(false);
+            var commandText = _commandText == null
+                ? await _command.GetCommandTextAsync(cancellationToken).ConfigureAwait(false)
+                : _commandText;
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            return await _session.Adapter.GetRequestWriter(_lazyBatchWriter).CreateGetRequestAsync(commandText, scalarResult).ConfigureAwait(false);
+            return await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
+                .CreateGetRequestAsync(commandText, scalarResult).ConfigureAwait(false);
         }
 
         public async Task<ODataRequest> InsertRequestAsync(bool resultRequired, CancellationToken cancellationToken)
@@ -56,7 +67,17 @@ namespace Simple.OData.Client
             var entryIdent = await FormatEntryKeyAsync(_command, cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            return await _session.Adapter.GetRequestWriter(_lazyBatchWriter).CreateUpdateRequestAsync(collectionName, entryIdent, entryKey, entryData, resultRequired).ConfigureAwait(false);
+            return await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
+                .CreateUpdateRequestAsync(collectionName, entryIdent, entryKey, entryData, resultRequired).ConfigureAwait(false);
+        }
+
+        public async Task<ODataRequest> UpdateRequestAsync(Stream stream, string contentType, bool optimisticConcurrency, CancellationToken cancellationToken)
+        {
+            await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+            return await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
+                .CreatePutRequestAsync(_commandText, stream, contentType, optimisticConcurrency).ConfigureAwait(false);            
         }
 
         public async Task<ODataRequest> DeleteRequestAsync(CancellationToken cancellationToken)
@@ -70,7 +91,8 @@ namespace Simple.OData.Client
             var entryIdent = await FormatEntryKeyAsync(_command, cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            return await _session.Adapter.GetRequestWriter(_lazyBatchWriter).CreateDeleteRequestAsync(collectionName, entryIdent).ConfigureAwait(false);
+            return await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
+                .CreateDeleteRequestAsync(collectionName, entryIdent).ConfigureAwait(false);
         }
 
         public async Task<ODataRequest> LinkRequestAsync(string linkName, IDictionary<string, object> linkedEntryKey, CancellationToken cancellationToken)
