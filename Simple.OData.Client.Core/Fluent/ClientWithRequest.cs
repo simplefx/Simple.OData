@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -24,6 +25,11 @@ namespace Simple.OData.Client
             return _request;
         }
 
+        public IClientWithResponse<T> FromResponse(HttpResponseMessage responseMessage)
+        {
+            return new ClientWithResponse<T>(_session, _request, responseMessage);
+        }
+
         public Task<IClientWithResponse<T>> RunAsync()
         {
             return RunAsync(CancellationToken.None);
@@ -34,7 +40,7 @@ namespace Simple.OData.Client
             var response = await _requestRunner.ExecuteRequestAsync(_request, cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            return new ClientWithResponse<T>(_session, _request, response, null);
+            return new ClientWithResponse<T>(_session, _request, response);
         }
     }
 }

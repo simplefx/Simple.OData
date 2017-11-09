@@ -16,14 +16,12 @@ namespace Simple.OData.Client
         private readonly ISession _session;
         private readonly ODataRequest _request;
         private readonly HttpResponseMessage _responseMessage;
-        private readonly Func<ODataResponse, T> _createResult;
 
-        public ClientWithResponse(ISession session, ODataRequest request, HttpResponseMessage responseMessage, Func<ODataResponse, T> createResult)
+        public ClientWithResponse(ISession session, ODataRequest request, HttpResponseMessage responseMessage)
         {
             _session = session;
             _request = request;
             _responseMessage = responseMessage;
-            _createResult = createResult;
         }
 
         public void Dispose()
