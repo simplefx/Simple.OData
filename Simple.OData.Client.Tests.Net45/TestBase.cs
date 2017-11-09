@@ -23,7 +23,7 @@ namespace Simple.OData.Client.Tests
         protected TestBase(bool readOnlyTests = false)
         {
             _readOnlyTests = readOnlyTests;
-#if MOCK_HTTP
+#if MOCK_HTTP_
             _serviceUri = new Uri("http://localhost/");
 #else
             _service = new TestService(typeof(NorthwindService));
@@ -78,7 +78,7 @@ namespace Simple.OData.Client.Tests
 
         public void Dispose()
         {
-#if !MOCK_HTTP
+#if !MOCK_HTTP_
             if (_client != null && !_readOnlyTests)
             {
                 DeleteTestData().Wait();
@@ -106,7 +106,7 @@ namespace Simple.OData.Client.Tests
 
         private string GetMetadataDocument()
         {
-#if MOCK_HTTP
+#if MOCK_HTTP_
             return GetResourceAsString(@"Resources." + "Northwind.xml");
 #else
             return null;
@@ -162,10 +162,9 @@ namespace Simple.OData.Client.Tests
             }
         }
 
-        public async Task<IClientWithResponse<T>> MockRequestAsync<T>(IClientWithRequest<T> request)
+        public async Task<IClientWithResponse<T>> MockRequestAsync<T>(string testMethodName, IClientWithRequest<T> request)
             where T : class
         {
-            var testMethodName = GetTestMethodFullName();
             var hasMockData = File.Exists(GetMockDataPath(testMethodName));
             if (hasMockData)
                 await ValidateRequestAsync(testMethodName, request.GetRequest());
@@ -187,10 +186,11 @@ namespace Simple.OData.Client.Tests
             where T : class
         {
 #if MOCK_HTTP
+            var testMethodName = GetTestMethodFullName();
             var request = await command
                 .BuildRequestFor()
                 .FindEntryAsync();
-            var response = await MockRequestAsync(request);
+            var response = await MockRequestAsync(testMethodName, request);
             return await response.ReadAsSingleAsync();
 #else
             return await command.FindEntryAsync();
@@ -202,10 +202,11 @@ namespace Simple.OData.Client.Tests
             where T : class
         {
 #if MOCK_HTTP
+            var testMethodName = GetTestMethodFullName();
             var request = await command
                 .BuildRequestFor()
                 .FindEntriesAsync(annotations);
-            var response = await MockRequestAsync(request);
+            var response = await MockRequestAsync(testMethodName, request);
             return await response.ReadAsCollectionAsync(annotations);
 #else
             return await command.FindEntriesAsync(annotations);
@@ -216,10 +217,11 @@ namespace Simple.OData.Client.Tests
             where T : class
         {
 #if MOCK_HTTP
+            var testMethodName = GetTestMethodFullName();
             var request = await command
                 .BuildRequestFor()
                 .FindEntriesAsync(true);
-            var response = await MockRequestAsync(request);
+            var response = await MockRequestAsync(testMethodName, request);
             return await response.ReadAsScalarAsync<U>();
 #else
             return await command.FindScalarAsync<U>();
@@ -230,10 +232,11 @@ namespace Simple.OData.Client.Tests
             where T : class
         {
 #if MOCK_HTTP
+            var testMethodName = GetTestMethodFullName();
             var request = await command
                 .BuildRequestFor()
                 .InsertEntryAsync();
-            var response = await MockRequestAsync(request);
+            var response = await MockRequestAsync(testMethodName, request);
             return await response.ReadAsSingleAsync();
 #else
             return await command.InsertEntryAsync(true);
@@ -244,10 +247,11 @@ namespace Simple.OData.Client.Tests
             where T : class
         {
 #if MOCK_HTTP
+            var testMethodName = GetTestMethodFullName();
             var request = await command
                 .BuildRequestFor()
                 .UpdateEntryAsync();
-            var response = await MockRequestAsync(request);
+            var response = await MockRequestAsync(testMethodName, request);
             return await response.ReadAsSingleAsync();
 #else
             return await command.UpdateEntryAsync(true);
@@ -265,7 +269,9 @@ namespace Simple.OData.Client.Tests
             {
                 await writer.WriteLineAsync($"--- Request ---");
                 var requestMessage = request.RequestMessage;
-                await writer.WriteLineAsync($"{requestMessage.Method} {requestMessage.RequestUri.AbsolutePath}");
+                var methodName = requestMessage.Method.ToString();
+                var commandText = requestMessage.RequestUri.AbsolutePath.Split('/').Last();
+                await writer.WriteLineAsync($"{methodName} {commandText}");
                 foreach (var header in requestMessage.Headers)
                     await writer.WriteLineAsync($"{header.Key}: {header.Value}");
                 if (requestMessage.Content != null)
@@ -302,8 +308,8 @@ namespace Simple.OData.Client.Tests
                 var splitPos = line.IndexOf(' ');
                 var expectedMethod = line.Substring(0, splitPos);
                 Assert.Equal(expectedMethod, requestMessage.Method.ToString());
-                var expectedUri = line.Substring(splitPos + 1);
-                Assert.Equal(expectedUri, requestMessage.RequestUri.AbsolutePath);
+                var expectedCommand = line.Substring(splitPos + 1);
+                Assert.Equal(expectedCommand, requestMessage.RequestUri.AbsolutePath.Split('/').Last());
             }
         }
 
