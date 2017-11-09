@@ -1,2 +1,6 @@
 --- Request ---
-GET Categories(-1)
+
+Command: GET Categories(-1)
+
+Headers:
+

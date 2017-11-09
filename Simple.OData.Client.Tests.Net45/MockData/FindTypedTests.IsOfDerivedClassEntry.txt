@@ -1,5 +1,24 @@
 --- Request ---
-GET Transport
+
+Command: GET Transport
+
+Headers:
+
 
 --- Response ---
-<?xml version="1.0" encoding="utf-8"?><feed xml:base="http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService161/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><id>http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService161/Transport</id><title type="text">Transport</title><updated>2017-11-09T13:14:45Z</updated><link rel="self" title="Transport" href="Transport" /><entry><id>http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService161/Transport(1)</id><category term="NorthwindModel.Ship" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" /><link rel="edit" title="Transport" href="Transport(1)/NorthwindModel.Ship" /><title /><updated>2017-11-09T13:14:45Z</updated><author><name /></author><content type="application/xml"><m:properties><d:TransportID m:type="Edm.Int32">1</d:TransportID><d:TransportType m:type="Edm.Int32">1</d:TransportType><d:ShipName>Titanic</d:ShipName></m:properties></content></entry></feed>
+
+Status: OK
+
+Headers:
+X-Content-Type-Options: nosniff
+DataServiceVersion: 1.0;
+Cache-Control: no-cache
+Date: Thu, 09 Nov 2017 20:44:14 GMT
+Server: Microsoft-HTTPAPI/2.0
+
+Content headers:
+Content-Length: 1112
+Content-Type: application/atom+xml; type=feed; charset=utf-8
+
+Content:
+<?xml version="1.0" encoding="utf-8"?><feed xml:base="http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService66/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><id>http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService66/Transport</id><title type="text">Transport</title><updated>2017-11-09T20:44:15Z</updated><link rel="self" title="Transport" href="Transport" /><entry><id>http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService66/Transport(1)</id><category term="NorthwindModel.Ship" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" /><link rel="edit" title="Transport" href="Transport(1)/NorthwindModel.Ship" /><title /><updated>2017-11-09T20:44:15Z</updated><author><name /></author><content type="application/xml"><m:properties><d:TransportID m:type="Edm.Int32">1</d:TransportID><d:TransportType m:type="Edm.Int32">1</d:TransportType><d:ShipName>Titanic</d:ShipName></m:properties></content></entry></feed>

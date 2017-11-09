@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Reflection;
 using System.Threading.Tasks;
 using Xunit;
@@ -172,12 +173,13 @@ namespace Simple.OData.Client.Tests
                 await SaveRequestAsync(testMethodName, request.GetRequest());
             if (hasMockData)
             {
-                return request.FromResponse(await GetMockResponseAsync(testMethodName));
+                return request.FromResponse(await GetMockResponseAsync(
+                    testMethodName, request.GetRequest().RequestMessage));
             }
             else
             {
                 var response = await request.RunAsync();
-                await SaveResponseAsync(testMethodName, await response.GetResponseStreamAsync());
+                await SaveResponseAsync(testMethodName, response.ResponseMessage);
                 return response;
             }
         }
@@ -268,27 +270,55 @@ namespace Simple.OData.Client.Tests
             using (var writer = new StreamWriter(GetMockDataPath(testMethodName), false))
             {
                 await writer.WriteLineAsync($"--- Request ---");
+                await writer.WriteLineAsync();
                 var requestMessage = request.RequestMessage;
                 var methodName = requestMessage.Method.ToString();
                 var commandText = requestMessage.RequestUri.AbsolutePath.Split('/').Last();
-                await writer.WriteLineAsync($"{methodName} {commandText}");
-                foreach (var header in requestMessage.Headers)
-                    await writer.WriteLineAsync($"{header.Key}: {header.Value}");
+                await writer.WriteLineAsync($"Command: {methodName} {commandText}");
+                await writer.WriteLineAsync();
+                await writer.WriteLineAsync("Headers:");
+                await WriteHeadersAsync(writer, requestMessage.Headers);
+                await writer.WriteLineAsync();
                 if (requestMessage.Content != null)
                 {
+                    await writer.WriteLineAsync("Content headers:");
+                    await WriteHeadersAsync(writer, requestMessage.Content.Headers);
                     await writer.WriteLineAsync();
+                    await writer.WriteLineAsync("Content:");
                     await writer.WriteLineAsync(await requestMessage.Content.ReadAsStringAsync());
                 }
             }
         }
 
-        private async Task SaveResponseAsync(string testMethodName, Stream responseStream)
+        private async Task SaveResponseAsync(string testMethodName, HttpResponseMessage responseMessage)
         {
             using (var writer = new StreamWriter(GetMockDataPath(testMethodName), true))
             {
                 await writer.WriteLineAsync();
                 await writer.WriteLineAsync($"--- Response ---");
-                await writer.WriteLineAsync(Utils.StreamToString(responseStream));
+                await writer.WriteLineAsync();
+                await writer.WriteLineAsync($"Status: {responseMessage.StatusCode}");
+                await writer.WriteLineAsync();
+                await writer.WriteLineAsync("Headers:");
+                await WriteHeadersAsync(writer, responseMessage.Headers);
+                await writer.WriteLineAsync();
+                if (responseMessage.Content != null)
+                {
+                    await writer.WriteLineAsync("Content headers:");
+                    await WriteHeadersAsync(writer, responseMessage.Content.Headers);
+                    await writer.WriteLineAsync();
+                    await writer.WriteLineAsync("Content:");
+                    await writer.WriteLineAsync(await responseMessage.Content.ReadAsStringAsync());
+                }
+            }
+        }
+
+        private async Task WriteHeadersAsync(StreamWriter writer, IEnumerable<KeyValuePair<string, IEnumerable<string>>> headers)
+        {
+            foreach (var header in headers)
+            {
+                var headerValue = header.Value.FirstOrDefault();
+                await writer.WriteLineAsync($"{header.Key}: {headerValue}");
             }
         }
 
@@ -305,15 +335,61 @@ namespace Simple.OData.Client.Tests
                 }
                 var requestMessage = request.RequestMessage;
                 line = await reader.ReadLineAsync();
-                var splitPos = line.IndexOf(' ');
-                var expectedMethod = line.Substring(0, splitPos);
-                Assert.Equal(expectedMethod, requestMessage.Method.ToString());
-                var expectedCommand = line.Substring(splitPos + 1);
-                Assert.Equal(expectedCommand, requestMessage.RequestUri.AbsolutePath.Split('/').Last());
+                line = await SkipEmptyLinesAsync(reader, line);
+                if (line.StartsWith("Command:"))
+                {
+                    var splitPos = line.IndexOf(' ');
+                    line = line.Substring(splitPos + 1);
+                    splitPos = line.IndexOf(' ');
+                    var expectedMethod = line.Substring(0, splitPos);
+                    Assert.Equal(expectedMethod, requestMessage.Method.ToString());
+                    var expectedCommand = line.Substring(splitPos + 1);
+                    Assert.Equal(expectedCommand, requestMessage.RequestUri.AbsolutePath.Split('/').Last());
+                    line = await reader.ReadLineAsync();
+                }
+                line = await SkipEmptyLinesAsync(reader, line);
+                if (line.StartsWith("Headers:"))
+                {
+                    var expectedHeaders = new Dictionary<string, IEnumerable<string>>();
+                    line = await ReadHeadersAsync(reader, expectedHeaders);
+                    var actualHeaders = new Dictionary<string, IEnumerable<string>>();
+                    foreach (var header in request.RequestMessage.Headers)
+                        actualHeaders.Add(header.Key, header.Value);
+                    ValidateHeaders(expectedHeaders, actualHeaders);
+                }
+                line = await SkipEmptyLinesAsync(reader, line);
+                if (line.StartsWith("Content headers:"))
+                {
+                    var expectedHeaders = new Dictionary<string, IEnumerable<string>>();
+                    line = await ReadHeadersAsync(reader, expectedHeaders);
+                    var actualHeaders = new Dictionary<string, IEnumerable<string>>();
+                    foreach (var header in request.RequestMessage.Content.Headers)
+                        actualHeaders.Add(header.Key, header.Value);
+                    ValidateHeaders(expectedHeaders, actualHeaders);
+                }
+                line = await SkipEmptyLinesAsync(reader, line);
+                if (line.StartsWith("Content:"))
+                {
+                    var expectedContent = await reader.ReadToEndAsync();
+                    var actualContent = await request.RequestMessage.Content.ReadAsStringAsync();
+                    Assert.Equal(expectedContent, actualContent);
+                }
             }
         }
 
-        private async Task<HttpResponseMessage> GetMockResponseAsync(string testMethodName)
+        private void ValidateHeaders(
+            IDictionary<string, IEnumerable<string>> expectedHeaders,
+            IDictionary<string, IEnumerable<string>> actualHeaders)
+        {
+            Assert.Equal(expectedHeaders.Count(), actualHeaders.Count());
+            foreach (var header in expectedHeaders)
+            {
+                Assert.Contains(header.Key, actualHeaders.Keys);
+                Assert.Equal(header.Value.FirstOrDefault(), actualHeaders[header.Key].FirstOrDefault());
+            }
+        }
+
+        private async Task<HttpResponseMessage> GetMockResponseAsync(string testMethodName, HttpRequestMessage requestMessage)
         {
             using (var reader = new StreamReader(GetMockDataPath(testMethodName)))
             {
@@ -324,14 +400,78 @@ namespace Simple.OData.Client.Tests
                         throw new Exception("Response mock data not found");
                     line = await reader.ReadLineAsync();
                 }
-                var content = await reader.ReadToEndAsync();
-                var responseMessage = new HttpResponseMessage
+                line = await reader.ReadLineAsync();
+                line = await SkipEmptyLinesAsync(reader, line);
+                var statusCode = HttpStatusCode.OK;
+                var headers = new Dictionary<string, IEnumerable<string>>();
+                var contentHeaders = new Dictionary<string, IEnumerable<string>>();
+                string content = null;
+                while (line != null)
                 {
-                    StatusCode = HttpStatusCode.OK,
-                    Content = new StringContent(content)
-                };
-                return responseMessage;
+                    if (line.StartsWith("Status:"))
+                    {
+                        statusCode = (HttpStatusCode)Enum.Parse(typeof(HttpStatusCode), line.Split(' ').Last());
+                        line = await reader.ReadLineAsync();
+                    }
+                    line = await SkipEmptyLinesAsync(reader, line);
+                    if (line.StartsWith("Headers:"))
+                        line = await ReadHeadersAsync(reader, headers);
+                    line = await SkipEmptyLinesAsync(reader, line);
+                    if (line.StartsWith("Content headers:"))
+                        line = await ReadHeadersAsync(reader, contentHeaders);
+                    line = await SkipEmptyLinesAsync(reader, line);
+                    if (line.StartsWith("Content:"))
+                    {
+                        content = await reader.ReadToEndAsync();
+                        content = content.TrimEnd('\r', '\n');
+                    }
+                    var responseMessage = new HttpResponseMessage
+                    {
+                        StatusCode = statusCode,
+                        Content = content == null 
+                            ? null 
+                            : new StreamContent(Utils.StringToStream(content)),
+                        RequestMessage = requestMessage,
+                        Version = new Version(1, 1),
+                    };
+                    foreach (var header in headers)
+                    {
+                        if (responseMessage.Headers.Contains(header.Key))
+                            responseMessage.Headers.Remove(header.Key);
+                        responseMessage.Headers.Add(header.Key, header.Value);
+                    }
+                    if (content != null)
+                        foreach (var header in contentHeaders)
+                        {
+                            if (responseMessage.Content.Headers.Contains(header.Key))
+                                responseMessage.Content.Headers.Remove(header.Key);
+                            responseMessage.Content.Headers.Add(header.Key, header.Value);
+                        }
+                    return responseMessage;
+                }
+                return null;
             }
+        }
+
+        private async Task<string> ReadHeadersAsync(StreamReader reader, IDictionary<string, IEnumerable<string>> headers)
+        {
+            var line = await reader.ReadLineAsync();
+            while (line != null && line.Length > 0)
+            {
+                var splitPos = line.IndexOf(':');
+                var key = line.Substring(0, splitPos);
+                var value = line.Substring(splitPos + 2);
+                headers.Add(key, new[] { value });
+                line = await reader.ReadLineAsync();
+            }
+            return line;
+        }
+
+        private async Task<string> SkipEmptyLinesAsync(StreamReader reader, string line)
+        {
+            while (line != null && line.Length == 0)
+                line = await reader.ReadLineAsync();
+            return line;
         }
 
         private string GetTestMethodFullName()

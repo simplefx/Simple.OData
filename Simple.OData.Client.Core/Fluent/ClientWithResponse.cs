@@ -17,6 +17,8 @@ namespace Simple.OData.Client
         private readonly ODataRequest _request;
         private readonly HttpResponseMessage _responseMessage;
 
+        public HttpResponseMessage ResponseMessage => _responseMessage;
+
         public ClientWithResponse(ISession session, ODataRequest request, HttpResponseMessage responseMessage)
         {
             _session = session;

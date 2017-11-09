@@ -1,5 +1,24 @@
 --- Request ---
-GET Products
+
+Command: GET Products
+
+Headers:
+
 
 --- Response ---
-<?xml version="1.0" encoding="utf-8"?><feed xml:base="http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService137/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><m:count>1</m:count><id>http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService137/Products</id><title type="text">Products</title><updated>2017-11-09T13:14:40Z</updated><link rel="self" title="Products" href="Products" /><entry><id>http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService137/Products(1)</id><category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" /><link rel="edit" title="Product" href="Products(1)" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(1)/Category" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/OrderDetails" type="application/atom+xml;type=feed" title="OrderDetails" href="Products(1)/OrderDetails" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(1)/Supplier" /><title /><updated>2017-11-09T13:14:40Z</updated><author><name /></author><content type="application/xml"><m:properties><d:ProductID m:type="Edm.Int32">1</d:ProductID><d:ProductName>Chai</d:ProductName><d:EnglishName m:null="true" /><d:SupplierID m:type="Edm.Int32">1</d:SupplierID><d:CategoryID m:type="Edm.Int32">1</d:CategoryID><d:QuantityPerUnit>10 boxes x 20 bags</d:QuantityPerUnit><d:UnitPrice m:type="Edm.Decimal">18.00</d:UnitPrice><d:UnitsInStock m:type="Edm.Int16">39</d:UnitsInStock><d:UnitsOnOrder m:type="Edm.Int16">0</d:UnitsOnOrder><d:ReorderLevel m:type="Edm.Int16">10</d:ReorderLevel><d:Discontinued m:type="Edm.Boolean">false</d:Discontinued></m:properties></content></entry></feed>
+
+Status: OK
+
+Headers:
+X-Content-Type-Options: nosniff
+DataServiceVersion: 2.0;
+Cache-Control: no-cache
+Date: Thu, 09 Nov 2017 20:44:10 GMT
+Server: Microsoft-HTTPAPI/2.0
+
+Content headers:
+Content-Length: 2028
+Content-Type: application/atom+xml; type=feed; charset=utf-8
+
+Content:
+<?xml version="1.0" encoding="utf-8"?><feed xml:base="http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService42/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><m:count>1</m:count><id>http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService42/Products</id><title type="text">Products</title><updated>2017-11-09T20:44:11Z</updated><link rel="self" title="Products" href="Products" /><entry><id>http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService42/Products(1)</id><category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" /><link rel="edit" title="Product" href="Products(1)" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(1)/Category" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/OrderDetails" type="application/atom+xml;type=feed" title="OrderDetails" href="Products(1)/OrderDetails" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(1)/Supplier" /><title /><updated>2017-11-09T20:44:11Z</updated><author><name /></author><content type="application/xml"><m:properties><d:ProductID m:type="Edm.Int32">1</d:ProductID><d:ProductName>Chai</d:ProductName><d:EnglishName m:null="true" /><d:SupplierID m:type="Edm.Int32">1</d:SupplierID><d:CategoryID m:type="Edm.Int32">1</d:CategoryID><d:QuantityPerUnit>10 boxes x 20 bags</d:QuantityPerUnit><d:UnitPrice m:type="Edm.Decimal">18.00</d:UnitPrice><d:UnitsInStock m:type="Edm.Int16">39</d:UnitsInStock><d:UnitsOnOrder m:type="Edm.Int16">0</d:UnitsOnOrder><d:ReorderLevel m:type="Edm.Int16">10</d:ReorderLevel><d:Discontinued m:type="Edm.Boolean">false</d:Discontinued></m:properties></content></entry></feed>

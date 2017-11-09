@@ -1,5 +1,24 @@
 --- Request ---
-GET NorthwindModel.Ship
+
+Command: GET NorthwindModel.Ship
+
+Headers:
+
 
 --- Response ---
-<?xml version="1.0" encoding="utf-8"?><entry xml:base="http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService282/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><id>http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService282/Transport(1)</id><category term="NorthwindModel.Ship" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" /><link rel="edit" title="Ship" href="Transport(1)/NorthwindModel.Ship" /><title /><updated>2017-11-09T13:15:18Z</updated><author><name /></author><content type="application/xml"><m:properties><d:TransportID m:type="Edm.Int32">1</d:TransportID><d:TransportType m:type="Edm.Int32">1</d:TransportType><d:ShipName>Titanic</d:ShipName></m:properties></content></entry>
+
+Status: OK
+
+Headers:
+X-Content-Type-Options: nosniff
+DataServiceVersion: 1.0;
+Cache-Control: no-cache
+Date: Thu, 09 Nov 2017 20:44:43 GMT
+Server: Microsoft-HTTPAPI/2.0
+
+Content headers:
+Content-Length: 874
+Content-Type: application/atom+xml; type=entry; charset=utf-8
+
+Content:
+<?xml version="1.0" encoding="utf-8"?><entry xml:base="http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService243/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><id>http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService243/Transport(1)</id><category term="NorthwindModel.Ship" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" /><link rel="edit" title="Ship" href="Transport(1)/NorthwindModel.Ship" /><title /><updated>2017-11-09T20:44:44Z</updated><author><name /></author><content type="application/xml"><m:properties><d:TransportID m:type="Edm.Int32">1</d:TransportID><d:TransportType m:type="Edm.Int32">1</d:TransportType><d:ShipName>Titanic</d:ShipName></m:properties></content></entry>
