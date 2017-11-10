@@ -23,11 +23,7 @@ namespace Simple.OData.Client
             HttpConnection httpConnection = null;
             try
             {
-                httpConnection = _session.Settings.RenewHttpConnection
-                    ? new HttpConnection(_session.Settings)
-                    : _session.GetHttpConnection();
-
-                PreExecute(httpConnection.HttpClient, request);
+                PreExecute(request);
 
                 _session.Trace("{0} request: {1}", request.Method, request.RequestMessage.RequestUri.AbsoluteUri);
                 if (request.RequestMessage.Content != null && (_session.Settings.TraceFilter & ODataTrace.RequestContent) != 0)
@@ -36,8 +32,20 @@ namespace Simple.OData.Client
                     _session.Trace("Request content:{0}{1}", Environment.NewLine, content);
                 }
 
-                var response = await httpConnection.HttpClient.SendAsync(request.RequestMessage, cancellationToken).ConfigureAwait(false);
-                if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+                HttpResponseMessage response;
+                if (_session.Settings.RequestExecutor != null)
+                {
+                    response = await _session.Settings.RequestExecutor(request.RequestMessage);
+                }
+                else
+                {
+                    httpConnection = _session.Settings.RenewHttpConnection
+                        ? new HttpConnection(_session.Settings)
+                        : _session.GetHttpConnection();
+
+                    response = await httpConnection.HttpClient.SendAsync(request.RequestMessage, cancellationToken).ConfigureAwait(false);
+                    if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+                }
 
                 _session.Trace("Request completed: {0}", response.StatusCode);
                 if (response.Content != null && (_session.Settings.TraceFilter & ODataTrace.ResponseContent) != 0)
@@ -73,7 +81,7 @@ namespace Simple.OData.Client
             }
         }
 
-        private void PreExecute(HttpClient httpClient, ODataRequest request)
+        private void PreExecute(ODataRequest request)
         {
             if (request.Accept != null)
             {
@@ -97,8 +105,7 @@ namespace Simple.OData.Client
                 request.RequestMessage.Headers.TryAddWithoutValidation(header.Key, header.Value);
             }
 
-            if (_session.Settings.BeforeRequest != null)
-                _session.Settings.BeforeRequest(request.RequestMessage);
+            _session.Settings.BeforeRequest?.Invoke(request.RequestMessage);
         }
 
         private async Task PostExecute(HttpResponseMessage responseMessage)

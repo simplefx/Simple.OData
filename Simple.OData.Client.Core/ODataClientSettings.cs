@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Net.Http;
+using System.Threading.Tasks;
 
 namespace Simple.OData.Client
 {
@@ -145,7 +146,7 @@ namespace Simple.OData.Client
         /// <value>
         /// The <see cref="HttpRequestMessage"/> executor.
         /// </value>
-        public Func<HttpRequestMessage, HttpResponseMessage> RequestExecutor { get; set; }
+        public Func<HttpRequestMessage, Task<HttpResponseMessage>> RequestExecutor { get; set; }
 
         /// <summary>
         /// Gets or sets the action executed before the OData request.
