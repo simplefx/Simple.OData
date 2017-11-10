@@ -139,6 +139,15 @@ namespace Simple.OData.Client
         public Action<HttpClientHandler> OnApplyClientHandler { get; set; }
 
         /// <summary>
+        /// Gets or sets the handler that executes <see cref="HttpRequestMessage"/> and returns <see cref="HttpResponseMessage"/>.
+        /// Can be used to mock OData request execution without sending messages to the server.
+        /// </summary>
+        /// <value>
+        /// The <see cref="HttpRequestMessage"/> executor.
+        /// </value>
+        public Func<HttpRequestMessage, HttpResponseMessage> RequestExecutor { get; set; }
+
+        /// <summary>
         /// Gets or sets the action executed before the OData request.
         /// </summary>
         /// <value>
@@ -216,6 +225,7 @@ namespace Simple.OData.Client
             this.NameMatchResolver = session.Settings.NameMatchResolver;
             this.OnCreateMessageHandler = session.Settings.OnCreateMessageHandler;
             this.OnApplyClientHandler = session.Settings.OnApplyClientHandler;
+            this.RequestExecutor = session.Settings.RequestExecutor;
             this.BeforeRequest = session.Settings.BeforeRequest;
             this.AfterResponse = session.Settings.AfterResponse;
             this.OnTrace = session.Settings.OnTrace;

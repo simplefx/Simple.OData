@@ -174,8 +174,7 @@ namespace Simple.OData.Client.Tests
             {
                 // Assuming that because the service end points don't return tokens at this time
                 // that we won't be setting the value of the token here.
-                IEnumerable<string> values;
-                token = response.Headers.TryGetValues("x-csrf-token", out values) ? values.First() : "myToken";
+                token = response.Headers.TryGetValues("x-csrf-token", out var values) ? values.First() : "myToken";
             };
 
             // Execute an arbitrary request to retrieve the csrf token
