@@ -1,0 +1,24 @@
+--- Request ---
+
+Command: DELETE Products(1011)
+
+Headers:
+Prefer: return-no-content
+
+
+--- Response ---
+
+Status: NoContent
+
+Headers:
+X-Content-Type-Options: nosniff
+DataServiceVersion: 1.0;
+Cache-Control: no-cache
+Date: Sun, 19 Nov 2017 16:05:29 GMT
+Server: Microsoft-HTTPAPI/2.0
+
+Content headers:
+Content-Length: 0
+
+Content:
+

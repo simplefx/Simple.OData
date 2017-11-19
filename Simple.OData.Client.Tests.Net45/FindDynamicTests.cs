@@ -16,8 +16,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task SingleCondition()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            var product = await _client
+            var product = await client
                 .For(x.Products)
                 .Filter(x.ProductName == "Chai")
                 .FindEntryAsync();
@@ -27,9 +28,10 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task SingleConditionWithVariable()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var productName = "Chai";
             var x = ODataDynamic.Expression;
-            var product = await _client
+            var product = await client
                 .For(x.Products)
                 .Filter(x.ProductName == productName)
                 .FindEntryAsync();
@@ -39,8 +41,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task CombinedConditions()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            var product = await _client
+            var product = await client
                 .For(x.Employees)
                 .Filter(x.FirstName == "Nancy" && x.HireDate < DateTime.Now)
                 .FindEntryAsync();
@@ -50,8 +53,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task CombineAll()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            IEnumerable<dynamic> products = await _client
+            IEnumerable<dynamic> products = await client
                 .For(x.Products)
                 .OrderBy(x.ProductName)
                 .ThenByDescending(x.UnitPrice)
@@ -66,8 +70,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task CombineAllReverse()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            IEnumerable<dynamic> products = await _client
+            IEnumerable<dynamic> products = await client
                 .For(x.Products)
                 .Select(x.Category)
                 .Expand(x.Category)
@@ -82,8 +87,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task StringContains()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            IEnumerable<dynamic> products = await _client
+            IEnumerable<dynamic> products = await client
                 .For(x.Products)
                 .Filter(x.ProductName.Contains("ai"))
                 .FindEntriesAsync();
@@ -93,9 +99,10 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task StringContainsWithLocalVariable()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var text = "ai";
             var x = ODataDynamic.Expression;
-            IEnumerable<dynamic> products = await _client
+            IEnumerable<dynamic> products = await client
                 .For(x.Products)
                 .Filter(x.ProductName.Contains(text))
                 .FindEntriesAsync();
@@ -105,8 +112,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task StringNotContains()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            IEnumerable<dynamic> products = await _client
+            IEnumerable<dynamic> products = await client
                 .For(x.Products)
                 .Filter(!x.ProductName.Contains("ai"))
                 .FindEntriesAsync();
@@ -116,8 +124,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task StringStartsWith()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            IEnumerable<dynamic> products = await _client
+            IEnumerable<dynamic> products = await client
                 .For(x.Products)
                 .Filter(x.ProductName.StartsWith("Ch"))
                 .FindEntriesAsync();
@@ -127,8 +136,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task LengthOfStringEqual()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            IEnumerable<dynamic> products = await _client
+            IEnumerable<dynamic> products = await client
                 .For(x.Products)
                 .Filter(x.ProductName.Length == 4)
                 .FindEntriesAsync();
@@ -138,8 +148,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task SubstringWithPositionAndLengthEqual()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            IEnumerable<dynamic> products = await _client
+            IEnumerable<dynamic> products = await client
                 .For(x.Products)
                 .Filter(x.ProductName.Substring(1, 2) == "ha")
                 .FindEntriesAsync();
@@ -149,9 +160,10 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task SubstringWithPositionAndLengthEqualWithLocalVariable()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var text = "ha";
             var x = ODataDynamic.Expression;
-            IEnumerable<dynamic> products = await _client
+            IEnumerable<dynamic> products = await client
                 .For(x.Products)
                 .Filter(x.ProductName.Substring(1, 2) == text)
                 .FindEntriesAsync();
@@ -161,8 +173,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task TopOne()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            IEnumerable<dynamic> products = await _client
+            IEnumerable<dynamic> products = await client
                 .For(x.Products)
                 .Filter(x.ProductName == "Chai")
                 .Top(1)
@@ -173,8 +186,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task Count()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            var count = await _client
+            var count = await client
                 .For(x.Products)
                 .Filter(x.ProductName == "Chai")
                 .Count()
@@ -185,8 +199,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task Get()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            var category = await _client
+            var category = await client
                 .For(x.Categories)
                 .Key(1)
                 .FindEntryAsync();
@@ -196,8 +211,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task GetNonExisting()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            await AssertThrowsAsync<WebRequestException>(async () => await _client
+            await AssertThrowsAsync<WebRequestException>(async () => await client
                 .For(x.Categories)
                 .Key(-1)
                 .FindEntryAsync());
@@ -206,8 +222,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task SelectSingle()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            var product = await _client
+            var product = await client
                 .For(x.Products)
                 .Filter(x.ProductName == "Chai")
                 .Select(x.ProductName)
@@ -218,8 +235,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task SelectMultiple()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            var product = await _client
+            var product = await client
                 .For(x.Products)
                 .Filter(x.ProductName == "Chai")
                 .Select(x.ProductID, x.ProductName)
@@ -230,8 +248,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task ExpandOne()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            var product = (await _client
+            var product = (await client
                 .For(x.Products)
                 .OrderBy(x.ProductID)
                 .Expand(x.Category)
@@ -242,8 +261,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task ExpandMany()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            var category = await _client
+            var category = await client
                 .For(x.Category)
                 .Expand(x.Products)
                 .Filter(x.CategoryName == "Beverages")
@@ -254,8 +274,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task ExpandSecondLevel()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            var product = (await _client
+            var product = (await client
                 .For(x.Product)
                 .OrderBy(x.ProductID)
                 .Expand(x.Category.Products)
@@ -266,8 +287,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task ExpandMultipleLevelsWithCollection()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            var product = (await _client
+            var product = (await client
                 .For(x.Product)
                 .OrderBy(x.ProductID)
                 .Expand(x.Category.Products.Category)
@@ -278,8 +300,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task ExpandWithSelect()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            var product = (await _client
+            var product = (await client
                 .For(x.Product)
                 .OrderBy(x.ProductID)
                 .Expand(x.Category.Products)
@@ -291,8 +314,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task OrderBySingle()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            var product = await _client
+            var product = await client
                 .For(x.Products)
                 .Filter(x.ProductName == "Chai")
                 .OrderBy(x.ProductName)
@@ -303,8 +327,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task OrderByMultiple()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            var product = await _client
+            var product = await client
                 .For(x.Products)
                 .Filter(x.ProductName == "Chai")
                 .OrderBy(x.ProductID, x.ProductName)
@@ -315,8 +340,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task OrderByExpanded()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            var product = (await _client
+            var product = (await client
                 .For(x.Products)
                 .Expand(x.Category)
                 .OrderBy(x.Category.CategoryName)
@@ -327,8 +353,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task NavigateToSingle()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            var category = await _client
+            var category = await client
                 .For(x.Products)
                 .Key(2)
                 .NavigateTo(x.Category)
@@ -339,8 +366,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task NavigateToMultiple()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            IEnumerable<dynamic> products = await _client
+            IEnumerable<dynamic> products = await client
                 .For(x.Categories)
                 .Key(2)
                 .NavigateTo(x.Products)
@@ -351,8 +379,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task NavigateToRecursive()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            var employee = await _client
+            var employee = await client
                 .For(x.Employees)
                 .Key(14)
                 .NavigateTo(x.Superior)
@@ -366,8 +395,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task NavigateToRecursiveSingleClause()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            var employee = await _client
+            var employee = await client
                 .For(x.Employees)
                 .Key(14)
                 .NavigateTo(x.Superior.Superior.Subordinates)
@@ -379,8 +409,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task BaseClassEntries()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            IEnumerable<dynamic> transport = await _client
+            IEnumerable<dynamic> transport = await client
                 .For(x.Transport)
                 .FindEntriesAsync();
             Assert.Equal(2, transport.Count());
@@ -390,13 +421,8 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task BaseClassEntriesWithAnnotations()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithAnnotations().WithHttpMock());
             var x = ODataDynamic.Expression;
-            var clientSettings = new ODataClientSettings
-            {
-                BaseUri = _serviceUri,
-                IncludeAnnotationsInResults = true,
-            };
-            var client = new ODataClient(clientSettings);
             IEnumerable<dynamic> transport = await client
                 .For(x.Transport)
                 .FindEntriesAsync();
@@ -407,8 +433,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task AllDerivedClassEntries()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            IEnumerable<dynamic> transport = await _client
+            IEnumerable<dynamic> transport = await client
                 .For(x.Transport)
                 .As(x.Ships)
                 .FindEntriesAsync();
@@ -418,13 +445,8 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task AllDerivedClassEntriesWithAnnotations()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithAnnotations().WithHttpMock());
             var x = ODataDynamic.Expression;
-            var clientSettings = new ODataClientSettings
-            {
-                BaseUri = _serviceUri,
-                IncludeAnnotationsInResults = true,
-            };
-            var client = new ODataClient(clientSettings);
             var transport = await client
                 .For(x.Transport)
                 .As(x.Ships)
@@ -436,8 +458,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task DerivedClassEntry()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            var transport = await _client
+            var transport = await client
                 .For(x.Transport)
                 .As(x.Ships)
                 .Filter(x.ShipName == "Titanic")
@@ -448,8 +471,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task BaseClassEntryByKey()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            var transport = await _client
+            var transport = await client
                 .For(x.Transport)
                 .Key(1)
                 .FindEntryAsync();
@@ -459,8 +483,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task DerivedClassEntryByKey()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            var transport = await _client
+            var transport = await client
                 .For(x.Transport)
                 .As(x.Ships)
                 .Key(1)
@@ -471,8 +496,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task DerivedClassEntryBaseAndDerivedFields()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            var transport = await _client
+            var transport = await client
                 .For(x.Transport)
                 .As(x.Ships)
                 .Filter(x.TransportID == 1 && x.ShipName == "Titanic")
@@ -483,8 +509,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task IsOfDerivedClassEntry()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            var transport = await _client
+            var transport = await client
                 .For(x.Transport)
                 .Filter(x.Is(typeof(Ship)))
                 .FindEntryAsync();
@@ -494,8 +521,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task IsOfAssociation()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            var employee = await _client
+            var employee = await client
                 .For(x.Employee)
                 .Filter(x.Superior.Is(typeof(Employee)))
                 .FindEntryAsync();
@@ -505,8 +533,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task CastToPrimitiveType()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            var product = await _client
+            var product = await client
                 .For(x.Product)
                 .Filter(x.CategoryID == (int)1L)
                 .FindEntryAsync();
@@ -516,8 +545,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task CastInstanceToEntityType()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            var employee = await _client
+            var employee = await client
                 .For(x.Employee)
                 .Filter(x.As(typeof(Employee)) != null)
                 .FindEntryAsync();
@@ -527,8 +557,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task CastPropertyToEntityType()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            var employee = await _client
+            var employee = await client
                 .For(x.Employee)
                 .Filter(x.Superior.As(typeof(Employee)) != null)
                 .FindEntryAsync();
@@ -538,8 +569,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task FilterAny()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            var products = await _client
+            var products = await client
                 .For(x.Orders)
                 .Filter(x.OrderDetails.Any(x.Quantity > 50))
                 .FindEntriesAsync();
@@ -549,8 +581,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task FilterAll()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            var products = await _client
+            var products = await client
                 .For(x.Orders)
                 .Filter(x.OrderDetails.All(x.Quantity > 50))
                 .FindEntriesAsync();
@@ -560,8 +593,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task ImplicitCastToType()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            Product product = await _client
+            Product product = await client
                 .For(x.Products)
                 .Filter(x.ProductName == "Chai")
                 .FindEntryAsync();
@@ -571,8 +605,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task ImplicitCastToTypeNullResult()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            Product product = await _client
+            Product product = await client
                 .For(x.Products)
                 .Filter(x.ProductName == "XYZ")
                 .FindEntryAsync();

@@ -1,0 +1,78 @@
+--- Request ---
+
+Command: POST $batch
+
+Headers:
+
+Content headers:
+Content-Type: multipart/mixed; boundary=batch_2e80ba36-1c7d-48a5-a989-afac8a04decf
+
+Content:
+--batch_2e80ba36-1c7d-48a5-a989-afac8a04decf
+Content-Type: multipart/mixed; boundary=changeset_6af16fa9-7a7e-433e-85ec-00976b2eedaa
+
+--changeset_6af16fa9-7a7e-433e-85ec-00976b2eedaa
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+POST http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService80/Products HTTP/1.1
+Content-ID: 1
+Prefer: return-content
+Content-Type: application/atom+xml;type=entry
+
+<?xml version="1.0" encoding="utf-8"?>
+<entry xml:base="http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService80/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
+  <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <id />
+  <title />
+  <updated>2017-11-19T20:27:13Z</updated>
+  <author>
+    <name />
+  </author>
+  <content type="application/xml">
+    <m:properties>
+      <d:ProductName>Test11</d:ProductName>
+      <d:UnitPrice m:type="Edm.Decimal">21</d:UnitPrice>
+    </m:properties>
+  </content>
+</entry>
+--changeset_6af16fa9-7a7e-433e-85ec-00976b2eedaa--
+--batch_2e80ba36-1c7d-48a5-a989-afac8a04decf--
+
+
+--- Response ---
+
+Status: Accepted
+
+Headers:
+X-Content-Type-Options: nosniff
+DataServiceVersion: 1.0;
+Cache-Control: no-cache
+Date: Sun, 19 Nov 2017 20:27:13 GMT
+Server: Microsoft-HTTPAPI/2.0
+
+Content headers:
+Content-Length: 2470
+Content-Type: multipart/mixed; boundary=batchresponse_502e7289-d951-47ad-961d-060f0daa937f
+
+Content:
+--batchresponse_502e7289-d951-47ad-961d-060f0daa937f
+Content-Type: multipart/mixed; boundary=changesetresponse_21d5e1f8-0d2b-4571-a61c-b0529d7edcd5
+
+--changesetresponse_21d5e1f8-0d2b-4571-a61c-b0529d7edcd5
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+HTTP/1.1 201 Created
+DataServiceVersion: 3.0;
+Content-Type: application/atom+xml;type=entry;charset=utf-8
+Content-ID: 1
+X-Content-Type-Options: nosniff
+Cache-Control: no-cache
+Preference-Applied: return-content
+Location: http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService80/Products(1036)
+
+<?xml version="1.0" encoding="utf-8"?><entry xml:base="http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService80/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml"><id>http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService80/Products(1036)</id><category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" /><link rel="edit" title="Product" href="Products(1036)" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(1036)/Category" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/OrderDetails" type="application/atom+xml;type=feed" title="OrderDetails" href="Products(1036)/OrderDetails" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(1036)/Supplier" /><title /><updated>2017-11-19T20:27:14Z</updated><author><name /></author><content type="application/xml"><m:properties><d:ProductID m:type="Edm.Int32">1036</d:ProductID><d:ProductName>Test11</d:ProductName><d:EnglishName m:null="true" /><d:SupplierID m:null="true" /><d:CategoryID m:null="true" /><d:QuantityPerUnit m:null="true" /><d:UnitPrice m:type="Edm.Decimal">21</d:UnitPrice><d:UnitsInStock m:null="true" /><d:UnitsOnOrder m:null="true" /><d:ReorderLevel m:null="true" /><d:Discontinued m:type="Edm.Boolean">false</d:Discontinued></m:properties></content></entry>
+--changesetresponse_21d5e1f8-0d2b-4571-a61c-b0529d7edcd5--
+--batchresponse_502e7289-d951-47ad-961d-060f0daa937f--
+

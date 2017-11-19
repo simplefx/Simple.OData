@@ -1,0 +1,48 @@
+--- Request ---
+
+Command: POST Transport
+
+Headers:
+Accept: application/atom+xml
+Prefer: return-content
+
+Content headers:
+Content-Type: application/atom+xml
+Content-Length: 748
+
+Content:
+<?xml version="1.0" encoding="utf-8"?>
+<entry xml:base="http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService137/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
+  <category term="NorthwindModel.Ship" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <id />
+  <title />
+  <updated>2017-11-19T15:55:34Z</updated>
+  <author>
+    <name />
+  </author>
+  <content type="application/xml">
+    <m:properties>
+      <d:ShipName>Test1</d:ShipName>
+    </m:properties>
+  </content>
+</entry>
+
+--- Response ---
+
+Status: Created
+
+Headers:
+X-Content-Type-Options: nosniff
+Preference-Applied: return-content
+DataServiceVersion: 3.0;
+Cache-Control: no-cache
+Date: Sun, 19 Nov 2017 15:55:34 GMT
+Location: http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService137/Transport(1100)/NorthwindModel.Ship
+Server: Microsoft-HTTPAPI/2.0
+
+Content headers:
+Content-Length: 964
+Content-Type: application/atom+xml; type=entry; charset=utf-8
+
+Content:
+<?xml version="1.0" encoding="utf-8"?><entry xml:base="http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService137/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml"><id>http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService137/Transport(1100)</id><category term="NorthwindModel.Ship" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" /><link rel="edit" title="Ship" href="Transport(1100)/NorthwindModel.Ship" /><title /><updated>2017-11-19T15:55:34Z</updated><author><name /></author><content type="application/xml"><m:properties><d:TransportID m:type="Edm.Int32">1100</d:TransportID><d:TransportType m:type="Edm.Int32">0</d:TransportType><d:ShipName>Test1</d:ShipName></m:properties></content></entry>

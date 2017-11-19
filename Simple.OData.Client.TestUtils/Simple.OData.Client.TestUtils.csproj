@@ -73,6 +73,7 @@
     <Compile Include="..\CommonAssemblyVersion.cs">
       <Link>Properties\CommonAssemblyVersion.cs</Link>
     </Compile>
+    <Compile Include="MockingRequestExecutor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TestService.cs" />
   </ItemGroup>
@@ -81,6 +82,12 @@
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\Solutions\packages\xunit.analyzers.0.7.0\analyzers\dotnet\cs\xunit.analyzers.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Simple.OData.Client.Net45\Simple.OData.Client.Net45.csproj">
+      <Project>{c20a3959-4895-41f8-86e2-7ded294fd904}</Project>
+      <Name>Simple.OData.Client.Net45</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

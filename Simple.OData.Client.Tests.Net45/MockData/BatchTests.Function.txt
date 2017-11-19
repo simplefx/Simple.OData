@@ -1,0 +1,49 @@
+--- Request ---
+
+Command: POST $batch
+
+Headers:
+
+Content headers:
+Content-Type: multipart/mixed; boundary=batch_5dcd62f5-cf28-4f2a-8cca-b1b6eb8b8144
+
+Content:
+--batch_5dcd62f5-cf28-4f2a-8cca-b1b6eb8b8144
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+GET http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService85/ParseInt?number=%271%27 HTTP/1.1
+
+
+--batch_5dcd62f5-cf28-4f2a-8cca-b1b6eb8b8144--
+
+
+--- Response ---
+
+Status: Accepted
+
+Headers:
+X-Content-Type-Options: nosniff
+DataServiceVersion: 1.0;
+Cache-Control: no-cache
+Date: Sun, 19 Nov 2017 20:27:17 GMT
+Server: Microsoft-HTTPAPI/2.0
+
+Content headers:
+Content-Length: 549
+Content-Type: multipart/mixed; boundary=batchresponse_030848f6-991a-42fd-982b-d5085f7d4b39
+
+Content:
+--batchresponse_030848f6-991a-42fd-982b-d5085f7d4b39
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+HTTP/1.1 200 OK
+DataServiceVersion: 1.0;
+Content-Type: application/xml;charset=utf-8
+X-Content-Type-Options: nosniff
+Cache-Control: no-cache
+
+<?xml version="1.0" encoding="utf-8"?><d:ParseInt xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" m:type="Edm.Int32">1</d:ParseInt>
+--batchresponse_030848f6-991a-42fd-982b-d5085f7d4b39--
+

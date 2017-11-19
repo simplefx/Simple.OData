@@ -1,0 +1,138 @@
+--- Request ---
+
+Command: POST $batch
+
+Headers:
+
+Content headers:
+Content-Type: multipart/mixed; boundary=batch_393b04d5-8ca3-418e-9def-40f2f9106f2c
+
+Content:
+--batch_393b04d5-8ca3-418e-9def-40f2f9106f2c
+Content-Type: multipart/mixed; boundary=changeset_5be0d18e-7197-4d88-bd30-5c63825252f9
+
+--changeset_5be0d18e-7197-4d88-bd30-5c63825252f9
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+POST http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService82/Products HTTP/1.1
+Content-ID: 1
+Prefer: return-no-content
+Content-Type: application/atom+xml;type=entry
+
+<?xml version="1.0" encoding="utf-8"?>
+<entry xml:base="http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService82/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
+  <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <id />
+  <title />
+  <updated>2017-11-19T20:27:17Z</updated>
+  <author>
+    <name />
+  </author>
+  <content type="application/xml">
+    <m:properties>
+      <d:ProductName>Test1</d:ProductName>
+      <d:UnitPrice m:type="Edm.Decimal">10</d:UnitPrice>
+    </m:properties>
+  </content>
+</entry>
+--changeset_5be0d18e-7197-4d88-bd30-5c63825252f9
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+POST http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService82/Products HTTP/1.1
+Content-ID: 2
+Prefer: return-no-content
+Content-Type: application/atom+xml;type=entry
+
+<?xml version="1.0" encoding="utf-8"?>
+<entry xml:base="http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService82/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
+  <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <id />
+  <title />
+  <updated>2017-11-19T20:27:17Z</updated>
+  <author>
+    <name />
+  </author>
+  <content type="application/xml">
+    <m:properties>
+      <d:ProductName>Test2</d:ProductName>
+      <d:UnitPrice m:type="Edm.Decimal">10</d:UnitPrice>
+      <d:SupplierID m:type="Edm.Int32">65535</d:SupplierID>
+    </m:properties>
+  </content>
+</entry>
+--changeset_5be0d18e-7197-4d88-bd30-5c63825252f9--
+--batch_393b04d5-8ca3-418e-9def-40f2f9106f2c--
+
+
+--- Response ---
+
+Status: Accepted
+
+Headers:
+X-Content-Type-Options: nosniff
+DataServiceVersion: 1.0;
+Cache-Control: no-cache
+Date: Sun, 19 Nov 2017 20:27:16 GMT
+Server: Microsoft-HTTPAPI/2.0
+
+Content headers:
+Content-Length: 6482
+Content-Type: multipart/mixed; boundary=batchresponse_89d2b5ff-ad30-4cc9-989d-c90c78b2ac86
+
+Content:
+--batchresponse_89d2b5ff-ad30-4cc9-989d-c90c78b2ac86
+Content-Type: multipart/mixed; boundary=changesetresponse_9051b59f-5081-4207-9468-2afed79746cb
+
+--changesetresponse_9051b59f-5081-4207-9468-2afed79746cb
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+HTTP/1.1 500 Internal Server Error
+Content-ID: 2
+X-Content-Type-Options: nosniff
+Cache-Control: no-cache
+Preference-Applied: return-no-content
+DataServiceVersion: 1.0;
+Content-Type: application/xml;charset=utf-8
+
+<?xml version="1.0" encoding="utf-8"?><m:error xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><m:code /><m:message xml:lang="en-US">An error occurred while processing this request.</m:message><m:innererror><m:message>An error occurred while updating the entries. See the inner exception for details.</m:message><m:type>System.Data.Entity.Infrastructure.DbUpdateException</m:type><m:stacktrace>   at System.Data.Entity.Internal.InternalContext.SaveChanges()&#xD;
+   at System.Data.Entity.Internal.LazyInternalContext.SaveChanges()&#xD;
+   at System.Data.Entity.DbContext.SaveChanges()&#xD;
+   at NorthwindModel.NorthwindContext.SaveChanges() in C:\Projects\Simple.OData.Client\Simple.OData.NorthwindModel\NorthwindContext.cs:line 54&#xD;
+   at lambda_method(Closure , Object )&#xD;
+   at System.Data.Services.Providers.DbContextHelper.&lt;&gt;c__DisplayClass4.&lt;GetObjectContext&gt;b__0()&#xD;
+   at System.Data.Services.Providers.ObjectContextServiceProvider.SaveContextChanges()&#xD;
+   at System.Data.Services.Providers.ObjectContextServiceProvider.SaveChanges()&#xD;
+   at System.Data.Services.Providers.EntityFrameworkDataServiceProvider2.SaveChanges()&#xD;
+   at System.Data.Services.DataService`1.BatchDataService.HandleBatchContent(Stream responseStream)</m:stacktrace><m:internalexception><m:message>An error occurred while updating the entries. See the inner exception for details.</m:message><m:type>System.Data.Entity.Core.UpdateException</m:type><m:stacktrace>   at System.Data.Entity.Core.Mapping.Update.Internal.UpdateTranslator.Update()&#xD;
+   at System.Data.Entity.Core.EntityClient.Internal.EntityAdapter.&lt;Update&gt;b__2(UpdateTranslator ut)&#xD;
+   at System.Data.Entity.Core.EntityClient.Internal.EntityAdapter.Update[T](T noChangesResult, Func`2 updateFunction)&#xD;
+   at System.Data.Entity.Core.EntityClient.Internal.EntityAdapter.Update()&#xD;
+   at System.Data.Entity.Core.Objects.ObjectContext.&lt;SaveChangesToStore&gt;b__35()&#xD;
+   at System.Data.Entity.Core.Objects.ObjectContext.ExecuteInTransaction[T](Func`1 func, IDbExecutionStrategy executionStrategy, Boolean startLocalTransaction, Boolean releaseConnectionOnSuccess)&#xD;
+   at System.Data.Entity.Core.Objects.ObjectContext.SaveChangesToStore(SaveOptions options, IDbExecutionStrategy executionStrategy, Boolean startLocalTransaction)&#xD;
+   at System.Data.Entity.Core.Objects.ObjectContext.&lt;&gt;c__DisplayClass2a.&lt;SaveChangesInternal&gt;b__27()&#xD;
+   at System.Data.Entity.SqlServer.DefaultSqlExecutionStrategy.Execute[TResult](Func`1 operation)&#xD;
+   at System.Data.Entity.Core.Objects.ObjectContext.SaveChangesInternal(SaveOptions options, Boolean executeInExistingTransaction)&#xD;
+   at System.Data.Entity.Core.Objects.ObjectContext.SaveChanges(SaveOptions options)&#xD;
+   at System.Data.Entity.Internal.InternalContext.SaveChanges()</m:stacktrace><m:internalexception><m:message>The INSERT statement conflicted with the FOREIGN KEY constraint "FK_dbo.Products_dbo.Suppliers_SupplierID". The conflict occurred in database "NorthwindModel.NorthwindContext", table "dbo.Suppliers", column 'SupplierID'.&#xD;
+The statement has been terminated.</m:message><m:type>System.Data.SqlClient.SqlException</m:type><m:stacktrace>   at System.Data.SqlClient.SqlConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)&#xD;
+   at System.Data.SqlClient.SqlInternalConnection.OnError(SqlException exception, Boolean breakConnection, Action`1 wrapCloseInAction)&#xD;
+   at System.Data.SqlClient.TdsParser.ThrowExceptionAndWarning(TdsParserStateObject stateObj, Boolean callerHasConnectionLock, Boolean asyncClose)&#xD;
+   at System.Data.SqlClient.TdsParser.TryRun(RunBehavior runBehavior, SqlCommand cmdHandler, SqlDataReader dataStream, BulkCopySimpleResultSet bulkCopyHandler, TdsParserStateObject stateObj, Boolean&amp; dataReady)&#xD;
+   at System.Data.SqlClient.SqlCommand.FinishExecuteReader(SqlDataReader ds, RunBehavior runBehavior, String resetOptionsString, Boolean isInternal, Boolean forDescribeParameterEncryption)&#xD;
+   at System.Data.SqlClient.SqlCommand.RunExecuteReaderTds(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, Boolean async, Int32 timeout, Task&amp; task, Boolean asyncWrite, Boolean inRetry, SqlDataReader ds, Boolean describeParameterEncryptionRequest)&#xD;
+   at System.Data.SqlClient.SqlCommand.RunExecuteReader(CommandBehavior cmdBehavior, RunBehavior runBehavior, Boolean returnStream, String method, TaskCompletionSource`1 completion, Int32 timeout, Task&amp; task, Boolean&amp; usedCache, Boolean asyncWrite, Boolean inRetry)&#xD;
+   at System.Data.SqlClient.SqlCommand.InternalExecuteNonQuery(TaskCompletionSource`1 completion, String methodName, Boolean sendToPipe, Int32 timeout, Boolean&amp; usedCache, Boolean asyncWrite, Boolean inRetry)&#xD;
+   at System.Data.SqlClient.SqlCommand.ExecuteNonQuery()&#xD;
+   at System.Data.Entity.Infrastructure.Interception.DbCommandDispatcher.&lt;NonQuery&gt;b__0(DbCommand t, DbCommandInterceptionContext`1 c)&#xD;
+   at System.Data.Entity.Infrastructure.Interception.InternalDispatcher`1.Dispatch[TTarget,TInterceptionContext,TResult](TTarget target, Func`3 operation, TInterceptionContext interceptionContext, Action`3 executing, Action`3 executed)&#xD;
+   at System.Data.Entity.Infrastructure.Interception.DbCommandDispatcher.NonQuery(DbCommand command, DbCommandInterceptionContext interceptionContext)&#xD;
+   at System.Data.Entity.Internal.InterceptableDbCommand.ExecuteNonQuery()&#xD;
+   at System.Data.Entity.Core.Mapping.Update.Internal.DynamicUpdateCommand.Execute(Dictionary`2 identifierValues, List`1 generatedValues)&#xD;
+   at System.Data.Entity.Core.Mapping.Update.Internal.UpdateTranslator.Update()</m:stacktrace></m:internalexception></m:internalexception></m:innererror></m:error>
+--changesetresponse_9051b59f-5081-4207-9468-2afed79746cb--
+--batchresponse_89d2b5ff-ad30-4cc9-989d-c90c78b2ac86--
+

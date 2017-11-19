@@ -35,6 +35,7 @@ using System.Runtime.InteropServices;
 [assembly: InternalsVisibleTo("Simple.OData.Client.V3.Adapter")]
 [assembly: InternalsVisibleTo("Simple.OData.Client.V4.Adapter")]
 [assembly: InternalsVisibleTo("Simple.OData.Client.IntegrationTests")]
+[assembly: InternalsVisibleTo("Simple.OData.Client.TestUtils")]
 [assembly: InternalsVisibleTo("Simple.OData.Client.Tests.Core")]
 [assembly: InternalsVisibleTo("Simple.OData.Client.Tests.Net45")]
 [assembly: InternalsVisibleTo("Simple.OData.Client.Tests.NetStandard")]

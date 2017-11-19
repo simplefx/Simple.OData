@@ -1,0 +1,49 @@
+--- Request ---
+
+Command: POST $batch
+
+Headers:
+
+Content headers:
+Content-Type: multipart/mixed; boundary=batch_da70028f-5383-4309-a6c4-47ecc73980a1
+
+Content:
+--batch_da70028f-5383-4309-a6c4-47ecc73980a1
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+GET http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService75/Products/$count HTTP/1.1
+
+
+--batch_da70028f-5383-4309-a6c4-47ecc73980a1--
+
+
+--- Response ---
+
+Status: Accepted
+
+Headers:
+X-Content-Type-Options: nosniff
+DataServiceVersion: 1.0;
+Cache-Control: no-cache
+Date: Sun, 19 Nov 2017 20:27:10 GMT
+Server: Microsoft-HTTPAPI/2.0
+
+Content headers:
+Content-Length: 326
+Content-Type: multipart/mixed; boundary=batchresponse_145f202f-c351-4800-a28a-94fbbb6fcb25
+
+Content:
+--batchresponse_145f202f-c351-4800-a28a-94fbbb6fcb25
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+HTTP/1.1 200 OK
+Content-Type: text/plain;charset=utf-8
+DataServiceVersion: 2.0;
+X-Content-Type-Options: nosniff
+Cache-Control: no-cache
+
+22
+--batchresponse_145f202f-c351-4800-a28a-94fbbb6fcb25--
+

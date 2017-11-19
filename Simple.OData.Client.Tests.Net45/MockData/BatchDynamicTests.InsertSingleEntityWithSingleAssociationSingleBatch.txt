@@ -1,0 +1,119 @@
+--- Request ---
+
+Command: POST $batch
+
+Headers:
+
+Content headers:
+Content-Type: multipart/mixed; boundary=batch_4e7dd9be-54a1-414d-aea3-48a3c726077d
+
+Content:
+--batch_4e7dd9be-54a1-414d-aea3-48a3c726077d
+Content-Type: multipart/mixed; boundary=changeset_6b501c19-0546-4807-86a2-cba8a685c3c4
+
+--changeset_6b501c19-0546-4807-86a2-cba8a685c3c4
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+POST http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService124/Categories HTTP/1.1
+Content-ID: 1
+Prefer: return-content
+Content-Type: application/atom+xml;type=entry
+
+<?xml version="1.0" encoding="utf-8"?>
+<entry xml:base="http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService124/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
+  <category term="NorthwindModel.Category" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <id />
+  <title />
+  <updated>2017-11-19T20:27:40Z</updated>
+  <author>
+    <name />
+  </author>
+  <content type="application/xml">
+    <m:properties>
+      <d:CategoryID m:type="Edm.Int32">0</d:CategoryID>
+      <d:CategoryName>Test13</d:CategoryName>
+      <d:Picture m:null="true" />
+    </m:properties>
+  </content>
+</entry>
+--changeset_6b501c19-0546-4807-86a2-cba8a685c3c4
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+POST http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService124/Products HTTP/1.1
+Content-ID: 2
+Prefer: return-content
+Content-Type: application/atom+xml;type=entry
+
+<?xml version="1.0" encoding="utf-8"?>
+<entry xml:base="http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService124/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
+  <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService124/$1" />
+  <id />
+  <title />
+  <updated>2017-11-19T20:27:40Z</updated>
+  <author>
+    <name />
+  </author>
+  <content type="application/xml">
+    <m:properties>
+      <d:ProductName>Test14</d:ProductName>
+      <d:UnitPrice m:type="Edm.Decimal">21</d:UnitPrice>
+    </m:properties>
+  </content>
+</entry>
+--changeset_6b501c19-0546-4807-86a2-cba8a685c3c4--
+--batch_4e7dd9be-54a1-414d-aea3-48a3c726077d--
+
+
+--- Response ---
+
+Status: Accepted
+
+Headers:
+X-Content-Type-Options: nosniff
+DataServiceVersion: 1.0;
+Cache-Control: no-cache
+Date: Sun, 19 Nov 2017 20:27:39 GMT
+Server: Microsoft-HTTPAPI/2.0
+
+Content headers:
+Content-Length: 4085
+Content-Type: multipart/mixed; boundary=batchresponse_6fc928cd-ca62-4421-950b-59eac9a76f95
+
+Content:
+--batchresponse_6fc928cd-ca62-4421-950b-59eac9a76f95
+Content-Type: multipart/mixed; boundary=changesetresponse_5d835c38-5fc0-410c-8164-dc2e4f362fe3
+
+--changesetresponse_5d835c38-5fc0-410c-8164-dc2e4f362fe3
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+HTTP/1.1 201 Created
+DataServiceVersion: 3.0;
+Content-Type: application/atom+xml;type=entry;charset=utf-8
+Content-ID: 1
+X-Content-Type-Options: nosniff
+Cache-Control: no-cache
+Preference-Applied: return-content
+Location: http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService124/Categories(1106)
+
+<?xml version="1.0" encoding="utf-8"?><entry xml:base="http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService124/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml"><id>http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService124/Categories(1106)</id><category term="NorthwindModel.Category" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" /><link rel="edit" title="Category" href="Categories(1106)" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Products" type="application/atom+xml;type=feed" title="Products" href="Categories(1106)/Products" /><title /><updated>2017-11-19T20:27:40Z</updated><author><name /></author><content type="application/xml"><m:properties><d:CategoryID m:type="Edm.Int32">1106</d:CategoryID><d:CategoryName>Test13</d:CategoryName><d:Description m:null="true" /><d:Picture m:null="true" /></m:properties></content></entry>
+--changesetresponse_5d835c38-5fc0-410c-8164-dc2e4f362fe3
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+HTTP/1.1 201 Created
+DataServiceVersion: 3.0;
+Content-Type: application/atom+xml;type=entry;charset=utf-8
+Content-ID: 2
+X-Content-Type-Options: nosniff
+Cache-Control: no-cache
+Preference-Applied: return-content
+Location: http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService124/Products(1107)
+
+<?xml version="1.0" encoding="utf-8"?><entry xml:base="http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService124/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml"><id>http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService124/Products(1107)</id><category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" /><link rel="edit" title="Product" href="Products(1107)" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(1107)/Category" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/OrderDetails" type="application/atom+xml;type=feed" title="OrderDetails" href="Products(1107)/OrderDetails" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(1107)/Supplier" /><title /><updated>2017-11-19T20:27:40Z</updated><author><name /></author><content type="application/xml"><m:properties><d:ProductID m:type="Edm.Int32">1107</d:ProductID><d:ProductName>Test14</d:ProductName><d:EnglishName m:null="true" /><d:SupplierID m:null="true" /><d:CategoryID m:type="Edm.Int32">1106</d:CategoryID><d:QuantityPerUnit m:null="true" /><d:UnitPrice m:type="Edm.Decimal">21</d:UnitPrice><d:UnitsInStock m:null="true" /><d:UnitsOnOrder m:null="true" /><d:ReorderLevel m:null="true" /><d:Discontinued m:type="Edm.Boolean">false</d:Discontinued></m:properties></content></entry>
+--changesetresponse_5d835c38-5fc0-410c-8164-dc2e4f362fe3--
+--batchresponse_6fc928cd-ca62-4421-950b-59eac9a76f95--
+

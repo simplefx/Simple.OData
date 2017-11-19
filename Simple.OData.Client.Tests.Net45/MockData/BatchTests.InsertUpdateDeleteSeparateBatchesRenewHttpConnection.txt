@@ -1,0 +1,78 @@
+--- Request ---
+
+Command: POST $batch
+
+Headers:
+
+Content headers:
+Content-Type: multipart/mixed; boundary=batch_6f59b42e-3c4b-49a1-8f38-4f5a8054d400
+
+Content:
+--batch_6f59b42e-3c4b-49a1-8f38-4f5a8054d400
+Content-Type: multipart/mixed; boundary=changeset_90ee6ba5-e6e9-4c67-9d43-67b7d92c4f9b
+
+--changeset_90ee6ba5-e6e9-4c67-9d43-67b7d92c4f9b
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+POST http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService69/Products HTTP/1.1
+Content-ID: 1
+Prefer: return-no-content
+Content-Type: application/atom+xml;type=entry
+
+<?xml version="1.0" encoding="utf-8"?>
+<entry xml:base="http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService69/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
+  <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <id />
+  <title />
+  <updated>2017-11-19T20:27:04Z</updated>
+  <author>
+    <name />
+  </author>
+  <content type="application/xml">
+    <m:properties>
+      <d:ProductName>Test12</d:ProductName>
+      <d:UnitPrice m:type="Edm.Decimal">21</d:UnitPrice>
+    </m:properties>
+  </content>
+</entry>
+--changeset_90ee6ba5-e6e9-4c67-9d43-67b7d92c4f9b--
+--batch_6f59b42e-3c4b-49a1-8f38-4f5a8054d400--
+
+
+--- Response ---
+
+Status: Accepted
+
+Headers:
+X-Content-Type-Options: nosniff
+DataServiceVersion: 1.0;
+Cache-Control: no-cache
+Date: Sun, 19 Nov 2017 20:27:04 GMT
+Server: Microsoft-HTTPAPI/2.0
+
+Content headers:
+Content-Length: 769
+Content-Type: multipart/mixed; boundary=batchresponse_2e1c9e17-9167-4a9a-8cd6-e98739074db1
+
+Content:
+--batchresponse_2e1c9e17-9167-4a9a-8cd6-e98739074db1
+Content-Type: multipart/mixed; boundary=changesetresponse_d42c0e22-ab8e-4199-bb73-021ce742be61
+
+--changesetresponse_d42c0e22-ab8e-4199-bb73-021ce742be61
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+HTTP/1.1 204 No Content
+Content-ID: 1
+X-Content-Type-Options: nosniff
+Cache-Control: no-cache
+Preference-Applied: return-no-content
+DataServiceVersion: 3.0;
+Location: http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService69/Products(1021)
+DataServiceId: http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService69/Products(1021)
+
+
+--changesetresponse_d42c0e22-ab8e-4199-bb73-021ce742be61--
+--batchresponse_2e1c9e17-9167-4a9a-8cd6-e98739074db1--
+

@@ -1,0 +1,31 @@
+--- Request ---
+
+Command: PUT Category
+
+Headers:
+Prefer: return-no-content
+
+Content headers:
+Content-Type: application/xml
+Content-Length: 205
+
+Content:
+<?xml version="1.0" encoding="utf-8"?>
+<uri xmlns="http://schemas.microsoft.com/ado/2007/08/dataservices">http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService181/Categories(1072)</uri>
+
+--- Response ---
+
+Status: NoContent
+
+Headers:
+X-Content-Type-Options: nosniff
+DataServiceVersion: 1.0;
+Cache-Control: no-cache
+Date: Sun, 19 Nov 2017 20:06:36 GMT
+Server: Microsoft-HTTPAPI/2.0
+
+Content headers:
+Content-Length: 0
+
+Content:
+

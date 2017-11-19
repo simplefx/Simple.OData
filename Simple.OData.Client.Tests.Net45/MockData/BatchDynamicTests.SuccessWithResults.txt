@@ -1,0 +1,117 @@
+--- Request ---
+
+Command: POST $batch
+
+Headers:
+
+Content headers:
+Content-Type: multipart/mixed; boundary=batch_487d191a-b47e-458e-b30a-dbd5d2219220
+
+Content:
+--batch_487d191a-b47e-458e-b30a-dbd5d2219220
+Content-Type: multipart/mixed; boundary=changeset_31e652bb-7298-450d-b1f2-148d9aaa9c78
+
+--changeset_31e652bb-7298-450d-b1f2-148d9aaa9c78
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+POST http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService128/Products HTTP/1.1
+Content-ID: 1
+Prefer: return-content
+Content-Type: application/atom+xml;type=entry
+
+<?xml version="1.0" encoding="utf-8"?>
+<entry xml:base="http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService128/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
+  <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <id />
+  <title />
+  <updated>2017-11-19T20:27:44Z</updated>
+  <author>
+    <name />
+  </author>
+  <content type="application/xml">
+    <m:properties>
+      <d:ProductName>Test1</d:ProductName>
+      <d:UnitPrice m:type="Edm.Decimal">10</d:UnitPrice>
+    </m:properties>
+  </content>
+</entry>
+--changeset_31e652bb-7298-450d-b1f2-148d9aaa9c78
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+POST http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService128/Products HTTP/1.1
+Content-ID: 2
+Prefer: return-content
+Content-Type: application/atom+xml;type=entry
+
+<?xml version="1.0" encoding="utf-8"?>
+<entry xml:base="http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService128/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
+  <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <id />
+  <title />
+  <updated>2017-11-19T20:27:44Z</updated>
+  <author>
+    <name />
+  </author>
+  <content type="application/xml">
+    <m:properties>
+      <d:ProductName>Test2</d:ProductName>
+      <d:UnitPrice m:type="Edm.Decimal">20</d:UnitPrice>
+    </m:properties>
+  </content>
+</entry>
+--changeset_31e652bb-7298-450d-b1f2-148d9aaa9c78--
+--batch_487d191a-b47e-458e-b30a-dbd5d2219220--
+
+
+--- Response ---
+
+Status: Accepted
+
+Headers:
+X-Content-Type-Options: nosniff
+DataServiceVersion: 1.0;
+Cache-Control: no-cache
+Date: Sun, 19 Nov 2017 20:27:44 GMT
+Server: Microsoft-HTTPAPI/2.0
+
+Content headers:
+Content-Length: 4676
+Content-Type: multipart/mixed; boundary=batchresponse_adfa8aa9-19c2-4abb-9860-374d2752a75e
+
+Content:
+--batchresponse_adfa8aa9-19c2-4abb-9860-374d2752a75e
+Content-Type: multipart/mixed; boundary=changesetresponse_3a41c7ae-cec3-477f-ad54-511b777da46f
+
+--changesetresponse_3a41c7ae-cec3-477f-ad54-511b777da46f
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+HTTP/1.1 201 Created
+DataServiceVersion: 3.0;
+Content-Type: application/atom+xml;type=entry;charset=utf-8
+Content-ID: 1
+X-Content-Type-Options: nosniff
+Cache-Control: no-cache
+Preference-Applied: return-content
+Location: http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService128/Products(1113)
+
+<?xml version="1.0" encoding="utf-8"?><entry xml:base="http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService128/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml"><id>http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService128/Products(1113)</id><category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" /><link rel="edit" title="Product" href="Products(1113)" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(1113)/Category" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/OrderDetails" type="application/atom+xml;type=feed" title="OrderDetails" href="Products(1113)/OrderDetails" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(1113)/Supplier" /><title /><updated>2017-11-19T20:27:44Z</updated><author><name /></author><content type="application/xml"><m:properties><d:ProductID m:type="Edm.Int32">1113</d:ProductID><d:ProductName>Test1</d:ProductName><d:EnglishName m:null="true" /><d:SupplierID m:null="true" /><d:CategoryID m:null="true" /><d:QuantityPerUnit m:null="true" /><d:UnitPrice m:type="Edm.Decimal">10</d:UnitPrice><d:UnitsInStock m:null="true" /><d:UnitsOnOrder m:null="true" /><d:ReorderLevel m:null="true" /><d:Discontinued m:type="Edm.Boolean">false</d:Discontinued></m:properties></content></entry>
+--changesetresponse_3a41c7ae-cec3-477f-ad54-511b777da46f
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+HTTP/1.1 201 Created
+DataServiceVersion: 3.0;
+Content-Type: application/atom+xml;type=entry;charset=utf-8
+Content-ID: 2
+X-Content-Type-Options: nosniff
+Cache-Control: no-cache
+Preference-Applied: return-content
+Location: http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService128/Products(1114)
+
+<?xml version="1.0" encoding="utf-8"?><entry xml:base="http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService128/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml"><id>http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService128/Products(1114)</id><category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" /><link rel="edit" title="Product" href="Products(1114)" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(1114)/Category" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/OrderDetails" type="application/atom+xml;type=feed" title="OrderDetails" href="Products(1114)/OrderDetails" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(1114)/Supplier" /><title /><updated>2017-11-19T20:27:44Z</updated><author><name /></author><content type="application/xml"><m:properties><d:ProductID m:type="Edm.Int32">1114</d:ProductID><d:ProductName>Test2</d:ProductName><d:EnglishName m:null="true" /><d:SupplierID m:null="true" /><d:CategoryID m:null="true" /><d:QuantityPerUnit m:null="true" /><d:UnitPrice m:type="Edm.Decimal">20</d:UnitPrice><d:UnitsInStock m:null="true" /><d:UnitsOnOrder m:null="true" /><d:ReorderLevel m:null="true" /><d:Discontinued m:type="Edm.Boolean">false</d:Discontinued></m:properties></content></entry>
+--changesetresponse_3a41c7ae-cec3-477f-ad54-511b777da46f--
+--batchresponse_adfa8aa9-19c2-4abb-9860-374d2752a75e--
+

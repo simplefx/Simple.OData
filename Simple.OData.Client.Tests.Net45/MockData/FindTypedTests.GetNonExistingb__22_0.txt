@@ -1,6 +1,0 @@
---- Request ---
-
-Command: GET Categories(-1)
-
-Headers:
-

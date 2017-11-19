@@ -1,50 +1,26 @@
 --- Request ---
 
-Command: POST Products
+Command: GET Products(1044)
 
 Headers:
+Accept: application/atom+xml
+Prefer: return-content
 
-Content headers:
-Content-Type: application/atom+xml
-Content-Length: 945
-
-Content:
-<?xml version="1.0" encoding="utf-8"?>
-<entry xml:base="http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService56/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
-  <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
-  <id />
-  <title />
-  <updated>2017-11-09T20:44:13Z</updated>
-  <author>
-    <name />
-  </author>
-  <content type="application/xml">
-    <m:properties>
-      <d:ProductName>Test1</d:ProductName>
-      <d:UnitPrice m:type="Edm.Decimal">0</d:UnitPrice>
-      <d:ProductID m:type="Edm.Int32">0</d:ProductID>
-      <d:CategoryID m:null="true" />
-      <d:EnglishName m:null="true" />
-    </m:properties>
-  </content>
-</entry>
 
 --- Response ---
 
-Status: Created
+Status: OK
 
 Headers:
 X-Content-Type-Options: nosniff
-Preference-Applied: return-content
-DataServiceVersion: 3.0;
+DataServiceVersion: 1.0;
 Cache-Control: no-cache
-Date: Thu, 09 Nov 2017 20:44:12 GMT
-Location: http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService56/Products(1050)
+Date: Sun, 19 Nov 2017 10:54:05 GMT
 Server: Microsoft-HTTPAPI/2.0
 
 Content headers:
-Content-Length: 1750
+Content-Length: 1765
 Content-Type: application/atom+xml; type=entry; charset=utf-8
 
 Content:
-<?xml version="1.0" encoding="utf-8"?><entry xml:base="http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService56/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml"><id>http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService56/Products(1050)</id><category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" /><link rel="edit" title="Product" href="Products(1050)" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(1050)/Category" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/OrderDetails" type="application/atom+xml;type=feed" title="OrderDetails" href="Products(1050)/OrderDetails" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(1050)/Supplier" /><title /><updated>2017-11-09T20:44:13Z</updated><author><name /></author><content type="application/xml"><m:properties><d:ProductID m:type="Edm.Int32">1050</d:ProductID><d:ProductName>Test1</d:ProductName><d:EnglishName m:null="true" /><d:SupplierID m:null="true" /><d:CategoryID m:null="true" /><d:QuantityPerUnit m:null="true" /><d:UnitPrice m:type="Edm.Decimal">0</d:UnitPrice><d:UnitsInStock m:null="true" /><d:UnitsOnOrder m:null="true" /><d:ReorderLevel m:null="true" /><d:Discontinued m:type="Edm.Boolean">false</d:Discontinued></m:properties></content></entry>
+<?xml version="1.0" encoding="utf-8"?><entry xml:base="http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService54/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><id>http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService54/Products(1044)</id><category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" /><link rel="edit" title="Product" href="Products(1044)" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(1044)/Category" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/OrderDetails" type="application/atom+xml;type=feed" title="OrderDetails" href="Products(1044)/OrderDetails" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(1044)/Supplier" /><title /><updated>2017-11-19T10:54:06Z</updated><author><name /></author><content type="application/xml"><m:properties><d:ProductID m:type="Edm.Int32">1044</d:ProductID><d:ProductName>Test2</d:ProductName><d:EnglishName m:null="true" /><d:SupplierID m:type="Edm.Int32" m:null="true" /><d:CategoryID m:type="Edm.Int32" m:null="true" /><d:QuantityPerUnit m:null="true" /><d:UnitPrice m:type="Edm.Decimal">0.00</d:UnitPrice><d:UnitsInStock m:type="Edm.Int16" m:null="true" /><d:UnitsOnOrder m:type="Edm.Int16" m:null="true" /><d:ReorderLevel m:type="Edm.Int16" m:null="true" /><d:Discontinued m:type="Edm.Boolean">false</d:Discontinued></m:properties></content></entry>

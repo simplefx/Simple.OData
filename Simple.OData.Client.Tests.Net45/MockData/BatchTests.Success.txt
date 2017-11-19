@@ -1,0 +1,117 @@
+--- Request ---
+
+Command: POST $batch
+
+Headers:
+
+Content headers:
+Content-Type: multipart/mixed; boundary=batch_ec8d3c95-03e5-4d46-90ea-05f2d2b94df6
+
+Content:
+--batch_ec8d3c95-03e5-4d46-90ea-05f2d2b94df6
+Content-Type: multipart/mixed; boundary=changeset_e0681660-8ba5-421f-9155-6c9d8387dc5a
+
+--changeset_e0681660-8ba5-421f-9155-6c9d8387dc5a
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+POST http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService74/Products HTTP/1.1
+Content-ID: 1
+Prefer: return-no-content
+Content-Type: application/atom+xml;type=entry
+
+<?xml version="1.0" encoding="utf-8"?>
+<entry xml:base="http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService74/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
+  <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <id />
+  <title />
+  <updated>2017-11-19T20:27:08Z</updated>
+  <author>
+    <name />
+  </author>
+  <content type="application/xml">
+    <m:properties>
+      <d:ProductName>Test1</d:ProductName>
+      <d:UnitPrice m:type="Edm.Decimal">10</d:UnitPrice>
+    </m:properties>
+  </content>
+</entry>
+--changeset_e0681660-8ba5-421f-9155-6c9d8387dc5a
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+POST http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService74/Products HTTP/1.1
+Content-ID: 2
+Prefer: return-no-content
+Content-Type: application/atom+xml;type=entry
+
+<?xml version="1.0" encoding="utf-8"?>
+<entry xml:base="http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService74/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
+  <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <id />
+  <title />
+  <updated>2017-11-19T20:27:08Z</updated>
+  <author>
+    <name />
+  </author>
+  <content type="application/xml">
+    <m:properties>
+      <d:ProductName>Test2</d:ProductName>
+      <d:UnitPrice m:type="Edm.Decimal">20</d:UnitPrice>
+    </m:properties>
+  </content>
+</entry>
+--changeset_e0681660-8ba5-421f-9155-6c9d8387dc5a--
+--batch_ec8d3c95-03e5-4d46-90ea-05f2d2b94df6--
+
+
+--- Response ---
+
+Status: Accepted
+
+Headers:
+X-Content-Type-Options: nosniff
+DataServiceVersion: 1.0;
+Cache-Control: no-cache
+Date: Sun, 19 Nov 2017 20:27:09 GMT
+Server: Microsoft-HTTPAPI/2.0
+
+Content headers:
+Content-Length: 1270
+Content-Type: multipart/mixed; boundary=batchresponse_7371a067-0e7f-4b52-b766-3ec78926d085
+
+Content:
+--batchresponse_7371a067-0e7f-4b52-b766-3ec78926d085
+Content-Type: multipart/mixed; boundary=changesetresponse_692b1094-b8b7-4edc-9b45-b23ae61571e6
+
+--changesetresponse_692b1094-b8b7-4edc-9b45-b23ae61571e6
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+HTTP/1.1 204 No Content
+Content-ID: 1
+X-Content-Type-Options: nosniff
+Cache-Control: no-cache
+Preference-Applied: return-no-content
+DataServiceVersion: 3.0;
+Location: http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService74/Products(1028)
+DataServiceId: http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService74/Products(1028)
+
+
+--changesetresponse_692b1094-b8b7-4edc-9b45-b23ae61571e6
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+HTTP/1.1 204 No Content
+Content-ID: 2
+X-Content-Type-Options: nosniff
+Cache-Control: no-cache
+Preference-Applied: return-no-content
+DataServiceVersion: 3.0;
+Location: http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService74/Products(1029)
+DataServiceId: http://desktop-3dsrnq1/Temporary_Listen_Addresses/SimpleODataTestService74/Products(1029)
+
+
+--changesetresponse_692b1094-b8b7-4edc-9b45-b23ae61571e6--
+--batchresponse_7371a067-0e7f-4b52-b766-3ec78926d085--
+
