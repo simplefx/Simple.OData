@@ -8,5 +8,3 @@ Simple.OData.Client is a multiplatform OData client library supporting .NET 4.x,
 [Retrieving data](https://github.com/object/Simple.OData.Client/wiki/Retrieving-data)  
 [Modifying data](https://github.com/object/Simple.OData.Client/wiki/Modifying-data)  
 [Request authentication and interception](https://github.com/object/Simple.OData.Client/wiki/Request-authentication-and-interception)  
-
-<a href='https://pledgie.com/campaigns/28109'><img alt='Click here to lend your support to: Simple.OData.Client and make a donation at pledgie.com !' src='https://pledgie.com/campaigns/28109.png?skin_name=chrome' border='0' ></a>
