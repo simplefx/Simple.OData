@@ -109,7 +109,8 @@ namespace Simple.OData.Client
                 var assemblyName = new AssemblyName(modelAdapterAssemblyName);
                 assembly = Assembly.Load(assemblyName);
 #else
-                assembly = this.GetType().Assembly;
+                var assemblyName = new AssemblyName(modelAdapterAssemblyName);
+                assembly = Assembly.Load(assemblyName);
 #endif
 
                 var constructors = assembly.GetType(modelAdapterTypeName).GetDeclaredConstructors();
@@ -141,7 +142,8 @@ namespace Simple.OData.Client
                 var assemblyName = new AssemblyName(adapterAssemblyName);
                 assembly = Assembly.Load(assemblyName);
 #else
-                assembly = this.GetType().Assembly;
+                var assemblyName = new AssemblyName(adapterAssemblyName);
+                assembly = Assembly.Load(assemblyName);
 #endif
 
                 var constructors = assembly.GetType(adapterTypeName).GetDeclaredConstructors();

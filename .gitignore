@@ -35,3 +35,4 @@ Solutions/AdHocTests.sln
 Solutions/.vs/
 Solutions/.idea/
 nuget.exe
+/Solutions/build/
