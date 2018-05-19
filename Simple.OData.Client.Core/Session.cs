@@ -17,8 +17,7 @@ namespace Simple.OData.Client
 
         private Session(Uri baseUri, string metadataString)
         {
-            this.Settings = new ODataClientSettings();
-            this.Settings.BaseUri = baseUri;
+            this.Settings = new ODataClientSettings {BaseUri = baseUri};
             this.MetadataCache = MetadataCache.GetOrAdd(baseUri.AbsoluteUri, uri => new MetadataCache(uri, metadataString));
         }
 
@@ -28,6 +27,8 @@ namespace Simple.OData.Client
                 throw new InvalidOperationException("Unable to create client session with no URI specified");
 
             this.Settings = settings;
+            if (!string.IsNullOrEmpty(settings.MetadataDocument))
+                this.MetadataCache = MetadataCache.GetOrAdd(this.Settings.BaseUri.AbsoluteUri, uri => new MetadataCache(uri, settings.MetadataDocument));
         }
 
         public void Dispose()

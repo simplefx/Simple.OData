@@ -1,0 +1,104 @@
+--- Request ---
+
+Command: POST $batch
+
+Headers:
+
+Content headers:
+Content-Type: multipart/mixed; boundary=batch_31514414-43c8-430d-8faa-3e381904b6a1
+
+Content:
+--batch_31514414-43c8-430d-8faa-3e381904b6a1
+Content-Type: multipart/mixed; boundary=changeset_49788e05-c0bd-4700-badb-871c2020803a
+
+--changeset_49788e05-c0bd-4700-badb-871c2020803a
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+POST http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService141/Products HTTP/1.1
+Content-ID: 1
+Prefer: return-no-content
+Content-Type: application/atom+xml;type=entry
+
+<?xml version="1.0" encoding="utf-8"?>
+<entry xml:base="http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService141/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
+  <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <id />
+  <title />
+  <updated>2018-05-19T10:24:09Z</updated>
+  <author>
+    <name />
+  </author>
+  <content type="application/xml">
+    <m:properties>
+      <d:UnitPrice m:type="Edm.Decimal">10</d:UnitPrice>
+    </m:properties>
+  </content>
+</entry>
+--changeset_49788e05-c0bd-4700-badb-871c2020803a
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+POST http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService141/Products HTTP/1.1
+Content-ID: 2
+Prefer: return-no-content
+Content-Type: application/atom+xml;type=entry
+
+<?xml version="1.0" encoding="utf-8"?>
+<entry xml:base="http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService141/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
+  <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <id />
+  <title />
+  <updated>2018-05-19T10:24:09Z</updated>
+  <author>
+    <name />
+  </author>
+  <content type="application/xml">
+    <m:properties>
+      <d:UnitPrice m:type="Edm.Decimal">20</d:UnitPrice>
+    </m:properties>
+  </content>
+</entry>
+--changeset_49788e05-c0bd-4700-badb-871c2020803a--
+--batch_31514414-43c8-430d-8faa-3e381904b6a1--
+
+
+--- Response ---
+
+Status: Accepted
+
+Headers:
+X-Content-Type-Options: nosniff
+DataServiceVersion: 1.0;
+Cache-Control: no-cache
+Date: Sat, 19 May 2018 10:24:08 GMT
+Server: Microsoft-HTTPAPI/2.0
+
+Content headers:
+Content-Length: 1802
+Content-Type: multipart/mixed; boundary=batchresponse_eb5b42d9-27ee-4e25-92cc-840442d53ecd
+
+Content:
+--batchresponse_eb5b42d9-27ee-4e25-92cc-840442d53ecd
+Content-Type: multipart/mixed; boundary=changesetresponse_5afa2bbc-31fb-4e09-8171-be21f8fc0f6f
+
+--changesetresponse_5afa2bbc-31fb-4e09-8171-be21f8fc0f6f
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+HTTP/1.1 500 Internal Server Error
+Content-ID: 2
+X-Content-Type-Options: nosniff
+Cache-Control: no-cache
+Preference-Applied: return-no-content
+DataServiceVersion: 1.0;
+Content-Type: application/xml;charset=utf-8
+
+<?xml version="1.0" encoding="utf-8"?><m:error xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><m:code /><m:message xml:lang="en-US">An error occurred while processing this request.</m:message><m:innererror><m:message>The ProductName field is required.&#xD;
+The ProductName field is required.</m:message><m:type>System.InvalidOperationException</m:type><m:stacktrace>   at System.Data.Services.Providers.ObjectContextServiceProvider.SaveChanges()&#xD;
+   at System.Data.Services.DataService`1.BatchDataService.HandleBatchContent(Stream responseStream)</m:stacktrace><m:internalexception><m:message>Validation failed for one or more entities. See 'EntityValidationErrors' property for more details.</m:message><m:type>System.Data.Entity.Validation.DbEntityValidationException</m:type><m:stacktrace>   at System.Data.Entity.Internal.InternalContext.SaveChanges()&#xD;
+   at NorthwindModel.NorthwindContext.SaveChanges() in F:\Projects\Git\Simple.OData.Client\Simple.OData.NorthwindModel\NorthwindContext.cs:line 54&#xD;
+   at System.Data.Services.Providers.ObjectContextServiceProvider.SaveChanges()</m:stacktrace></m:internalexception></m:innererror></m:error>
+--changesetresponse_5afa2bbc-31fb-4e09-8171-be21f8fc0f6f--
+--batchresponse_eb5b42d9-27ee-4e25-92cc-840442d53ecd--
+

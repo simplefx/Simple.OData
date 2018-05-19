@@ -1,0 +1,56 @@
+--- Request ---
+
+Command: POST $batch
+
+Headers:
+
+Content headers:
+Content-Type: multipart/mixed; boundary=batch_0d273644-6207-4982-b6e9-344b3df3e24f
+
+Content:
+--batch_0d273644-6207-4982-b6e9-344b3df3e24f
+Content-Type: multipart/mixed; boundary=changeset_80db695a-efdb-436f-8b04-5a1045ea21f5
+
+--changeset_80db695a-efdb-436f-8b04-5a1045ea21f5
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+DELETE http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService52/Products(1044) HTTP/1.1
+
+
+--changeset_80db695a-efdb-436f-8b04-5a1045ea21f5--
+--batch_0d273644-6207-4982-b6e9-344b3df3e24f--
+
+
+--- Response ---
+
+Status: Accepted
+
+Headers:
+X-Content-Type-Options: nosniff
+DataServiceVersion: 1.0;
+Cache-Control: no-cache
+Date: Sat, 19 May 2018 10:24:02 GMT
+Server: Microsoft-HTTPAPI/2.0
+
+Content headers:
+Content-Length: 508
+Content-Type: multipart/mixed; boundary=batchresponse_5d96acf0-54c2-4655-a3e5-25d407bc20d8
+
+Content:
+--batchresponse_5d96acf0-54c2-4655-a3e5-25d407bc20d8
+Content-Type: multipart/mixed; boundary=changesetresponse_f1cc8ed7-f99d-4a31-8915-01454cabe09d
+
+--changesetresponse_f1cc8ed7-f99d-4a31-8915-01454cabe09d
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+HTTP/1.1 204 No Content
+X-Content-Type-Options: nosniff
+Cache-Control: no-cache
+DataServiceVersion: 1.0;
+
+
+--changesetresponse_f1cc8ed7-f99d-4a31-8915-01454cabe09d--
+--batchresponse_5d96acf0-54c2-4655-a3e5-25d407bc20d8--
+

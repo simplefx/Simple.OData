@@ -1,0 +1,157 @@
+--- Request ---
+
+Command: POST $batch
+
+Headers:
+
+Content headers:
+Content-Type: multipart/mixed; boundary=batch_13ccb734-7ebd-4d4e-be05-e465f34b6083
+
+Content:
+--batch_13ccb734-7ebd-4d4e-be05-e465f34b6083
+Content-Type: multipart/mixed; boundary=changeset_a1f16dcb-9f70-46bc-8750-35603e504f8c
+
+--changeset_a1f16dcb-9f70-46bc-8750-35603e504f8c
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+POST http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService173/Products HTTP/1.1
+Content-ID: 1
+Prefer: return-no-content
+Content-Type: application/atom+xml;type=entry
+
+<?xml version="1.0" encoding="utf-8"?>
+<entry xml:base="http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService173/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
+  <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <id />
+  <title />
+  <updated>2018-05-19T10:24:13Z</updated>
+  <author>
+    <name />
+  </author>
+  <content type="application/xml">
+    <m:properties>
+      <d:ProductName>Test15</d:ProductName>
+      <d:UnitPrice m:type="Edm.Decimal">21</d:UnitPrice>
+    </m:properties>
+  </content>
+</entry>
+--changeset_a1f16dcb-9f70-46bc-8750-35603e504f8c
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+POST http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService173/Products HTTP/1.1
+Content-ID: 2
+Prefer: return-no-content
+Content-Type: application/atom+xml;type=entry
+
+<?xml version="1.0" encoding="utf-8"?>
+<entry xml:base="http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService173/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
+  <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <id />
+  <title />
+  <updated>2018-05-19T10:24:13Z</updated>
+  <author>
+    <name />
+  </author>
+  <content type="application/xml">
+    <m:properties>
+      <d:ProductName>Test16</d:ProductName>
+      <d:UnitPrice m:type="Edm.Decimal">22</d:UnitPrice>
+    </m:properties>
+  </content>
+</entry>
+--changeset_a1f16dcb-9f70-46bc-8750-35603e504f8c
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+POST http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService173/Categories HTTP/1.1
+Content-ID: 3
+Prefer: return-no-content
+Content-Type: application/atom+xml;type=entry
+
+<?xml version="1.0" encoding="utf-8"?>
+<entry xml:base="http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService173/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
+  <category term="NorthwindModel.Category" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Products" type="application/atom+xml;type=feed" title="Products" href="http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService173/$1" />
+  <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Products" type="application/atom+xml;type=feed" title="Products" href="http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService173/$2" />
+  <id />
+  <title />
+  <updated>2018-05-19T10:24:13Z</updated>
+  <author>
+    <name />
+  </author>
+  <content type="application/xml">
+    <m:properties>
+      <d:CategoryName>Test17</d:CategoryName>
+    </m:properties>
+  </content>
+</entry>
+--changeset_a1f16dcb-9f70-46bc-8750-35603e504f8c--
+--batch_13ccb734-7ebd-4d4e-be05-e465f34b6083--
+
+
+--- Response ---
+
+Status: Accepted
+
+Headers:
+X-Content-Type-Options: nosniff
+DataServiceVersion: 1.0;
+Cache-Control: no-cache
+Date: Sat, 19 May 2018 10:24:13 GMT
+Server: Microsoft-HTTPAPI/2.0
+
+Content headers:
+Content-Length: 1751
+Content-Type: multipart/mixed; boundary=batchresponse_5bcad92c-78f8-4108-9068-961d0657885c
+
+Content:
+--batchresponse_5bcad92c-78f8-4108-9068-961d0657885c
+Content-Type: multipart/mixed; boundary=changesetresponse_d93189b1-2507-4af5-80d7-cab59896979f
+
+--changesetresponse_d93189b1-2507-4af5-80d7-cab59896979f
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+HTTP/1.1 204 No Content
+Content-ID: 1
+X-Content-Type-Options: nosniff
+Cache-Control: no-cache
+Preference-Applied: return-no-content
+DataServiceVersion: 3.0;
+Location: http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService173/Products(1151)
+DataServiceId: http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService173/Products(1151)
+
+
+--changesetresponse_d93189b1-2507-4af5-80d7-cab59896979f
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+HTTP/1.1 204 No Content
+Content-ID: 2
+X-Content-Type-Options: nosniff
+Cache-Control: no-cache
+Preference-Applied: return-no-content
+DataServiceVersion: 3.0;
+Location: http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService173/Products(1152)
+DataServiceId: http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService173/Products(1152)
+
+
+--changesetresponse_d93189b1-2507-4af5-80d7-cab59896979f
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+HTTP/1.1 204 No Content
+Content-ID: 3
+X-Content-Type-Options: nosniff
+Cache-Control: no-cache
+Preference-Applied: return-no-content
+DataServiceVersion: 3.0;
+Location: http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService173/Categories(1153)
+DataServiceId: http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService173/Categories(1153)
+
+
+--changesetresponse_d93189b1-2507-4af5-80d7-cab59896979f--
+--batchresponse_5bcad92c-78f8-4108-9068-961d0657885c--
+

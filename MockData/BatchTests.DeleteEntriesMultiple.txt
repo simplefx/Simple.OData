@@ -1,0 +1,90 @@
+--- Request ---
+
+Command: POST $batch
+
+Headers:
+
+Content headers:
+Content-Type: multipart/mixed; boundary=batch_fdffbea9-457a-4ed0-b4f6-b9f31340bbdc
+
+Content:
+--batch_fdffbea9-457a-4ed0-b4f6-b9f31340bbdc
+Content-Type: multipart/mixed; boundary=changeset_34984505-4ec2-455f-8ac4-346b6dd38739
+
+--changeset_34984505-4ec2-455f-8ac4-346b6dd38739
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+DELETE http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService45/Products(1034) HTTP/1.1
+
+
+--changeset_34984505-4ec2-455f-8ac4-346b6dd38739
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+DELETE http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService45/Products(1035) HTTP/1.1
+
+
+--changeset_34984505-4ec2-455f-8ac4-346b6dd38739
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+DELETE http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService45/Products(1036) HTTP/1.1
+
+
+--changeset_34984505-4ec2-455f-8ac4-346b6dd38739--
+--batch_fdffbea9-457a-4ed0-b4f6-b9f31340bbdc--
+
+
+--- Response ---
+
+Status: Accepted
+
+Headers:
+X-Content-Type-Options: nosniff
+DataServiceVersion: 1.0;
+Cache-Control: no-cache
+Date: Sat, 19 May 2018 10:24:01 GMT
+Server: Microsoft-HTTPAPI/2.0
+
+Content headers:
+Content-Length: 988
+Content-Type: multipart/mixed; boundary=batchresponse_3208f033-943e-4a8b-a456-e65e89db7848
+
+Content:
+--batchresponse_3208f033-943e-4a8b-a456-e65e89db7848
+Content-Type: multipart/mixed; boundary=changesetresponse_95403ad6-05cb-485c-90c0-bb9ff21e7a74
+
+--changesetresponse_95403ad6-05cb-485c-90c0-bb9ff21e7a74
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+HTTP/1.1 204 No Content
+X-Content-Type-Options: nosniff
+Cache-Control: no-cache
+DataServiceVersion: 1.0;
+
+
+--changesetresponse_95403ad6-05cb-485c-90c0-bb9ff21e7a74
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+HTTP/1.1 204 No Content
+X-Content-Type-Options: nosniff
+Cache-Control: no-cache
+DataServiceVersion: 1.0;
+
+
+--changesetresponse_95403ad6-05cb-485c-90c0-bb9ff21e7a74
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+HTTP/1.1 204 No Content
+X-Content-Type-Options: nosniff
+Cache-Control: no-cache
+DataServiceVersion: 1.0;
+
+
+--changesetresponse_95403ad6-05cb-485c-90c0-bb9ff21e7a74--
+--batchresponse_3208f033-943e-4a8b-a456-e65e89db7848--
+

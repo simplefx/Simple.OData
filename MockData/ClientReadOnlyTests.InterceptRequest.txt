@@ -1,0 +1,26 @@
+--- Request ---
+
+Command: PUT Products
+
+Headers:
+Accept: application/atom+xml
+Prefer: return-content
+
+
+--- Response ---
+
+Status: MethodNotAllowed
+
+Headers:
+X-Content-Type-Options: nosniff
+DataServiceVersion: 1.0;
+Date: Sat, 19 May 2018 10:24:19 GMT
+Server: Microsoft-HTTPAPI/2.0
+
+Content headers:
+Content-Length: 361
+Allow: GET
+Content-Type: application/xml; charset=utf-8
+
+Content:
+<?xml version="1.0" encoding="utf-8"?><m:error xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><m:code /><m:message xml:lang="en-US">The URI 'http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService297/Products' is not valid for PUT operation. The URI must point to a single resource for PUT operations.</m:message></m:error>

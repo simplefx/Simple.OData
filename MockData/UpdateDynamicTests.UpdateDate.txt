@@ -1,0 +1,47 @@
+--- Request ---
+
+Command: PATCH Employees(1172)
+
+Headers:
+Accept: application/atom+xml
+Prefer: return-content
+
+Content headers:
+Content-Type: application/atom+xml
+Content-Length: 789
+
+Content:
+<?xml version="1.0" encoding="utf-8"?>
+<entry xml:base="http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService185/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
+  <category term="NorthwindModel.Employee" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <id />
+  <title />
+  <updated>2018-05-19T10:24:15Z</updated>
+  <author>
+    <name />
+  </author>
+  <content type="application/xml">
+    <m:properties>
+      <d:HireDate m:type="Edm.DateTime">2018-05-20T00:00:00+02:00</d:HireDate>
+    </m:properties>
+  </content>
+</entry>
+
+--- Response ---
+
+Status: OK
+
+Headers:
+X-Content-Type-Options: nosniff
+Preference-Applied: return-content
+DataServiceVersion: 3.0;
+Cache-Control: no-cache
+Date: Sat, 19 May 2018 10:24:14 GMT
+Server: Microsoft-HTTPAPI/2.0
+
+Content headers:
+Content-Length: 1837
+Content-Type: application/atom+xml; type=entry; charset=utf-8
+
+Content:
+<?xml version="1.0" encoding="utf-8"?><entry xml:base="http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService185/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml"><id>http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService185/Employees(1172)</id><category term="NorthwindModel.Employee" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" /><link rel="edit" title="Employee" href="Employees(1172)" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Orders" type="application/atom+xml;type=feed" title="Orders" href="Employees(1172)/Orders" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Subordinates" type="application/atom+xml;type=feed" title="Subordinates" href="Employees(1172)/Subordinates" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Superior" type="application/atom+xml;type=entry" title="Superior" href="Employees(1172)/Superior" /><title /><updated>2018-05-19T10:24:15Z</updated><author><name /></author><content type="application/xml"><m:properties><d:EmployeeID m:type="Edm.Int32">1172</d:EmployeeID><d:FirstName>Test1</d:FirstName><d:LastName>Test1</d:LastName><d:Title m:null="true" /><d:BirthDate m:null="true" /><d:HireDate m:type="Edm.DateTime">2018-05-20T00:00:00+02:00</d:HireDate><d:Address m:null="true" /><d:City m:null="true" /><d:Region m:null="true" /><d:PostalCode m:null="true" /><d:Country m:null="true" /><d:HomePhone m:null="true" /><d:Extension m:null="true" /><d:Photo m:null="true" /><d:Notes m:null="true" /><d:ReportsTo m:null="true" /></m:properties></content></entry>

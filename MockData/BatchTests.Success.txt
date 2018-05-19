@@ -1,0 +1,117 @@
+--- Request ---
+
+Command: POST $batch
+
+Headers:
+
+Content headers:
+Content-Type: multipart/mixed; boundary=batch_67dc1cc8-ac10-478d-9cb4-3adf03145d00
+
+Content:
+--batch_67dc1cc8-ac10-478d-9cb4-3adf03145d00
+Content-Type: multipart/mixed; boundary=changeset_216142d1-7d25-499f-9a3b-170a340b80d4
+
+--changeset_216142d1-7d25-499f-9a3b-170a340b80d4
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+POST http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService54/Products HTTP/1.1
+Content-ID: 1
+Prefer: return-no-content
+Content-Type: application/atom+xml;type=entry
+
+<?xml version="1.0" encoding="utf-8"?>
+<entry xml:base="http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService54/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
+  <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <id />
+  <title />
+  <updated>2018-05-19T10:24:02Z</updated>
+  <author>
+    <name />
+  </author>
+  <content type="application/xml">
+    <m:properties>
+      <d:ProductName>Test1</d:ProductName>
+      <d:UnitPrice m:type="Edm.Decimal">10</d:UnitPrice>
+    </m:properties>
+  </content>
+</entry>
+--changeset_216142d1-7d25-499f-9a3b-170a340b80d4
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+POST http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService54/Products HTTP/1.1
+Content-ID: 2
+Prefer: return-no-content
+Content-Type: application/atom+xml;type=entry
+
+<?xml version="1.0" encoding="utf-8"?>
+<entry xml:base="http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService54/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
+  <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <id />
+  <title />
+  <updated>2018-05-19T10:24:02Z</updated>
+  <author>
+    <name />
+  </author>
+  <content type="application/xml">
+    <m:properties>
+      <d:ProductName>Test2</d:ProductName>
+      <d:UnitPrice m:type="Edm.Decimal">20</d:UnitPrice>
+    </m:properties>
+  </content>
+</entry>
+--changeset_216142d1-7d25-499f-9a3b-170a340b80d4--
+--batch_67dc1cc8-ac10-478d-9cb4-3adf03145d00--
+
+
+--- Response ---
+
+Status: Accepted
+
+Headers:
+X-Content-Type-Options: nosniff
+DataServiceVersion: 1.0;
+Cache-Control: no-cache
+Date: Sat, 19 May 2018 10:24:02 GMT
+Server: Microsoft-HTTPAPI/2.0
+
+Content headers:
+Content-Length: 1250
+Content-Type: multipart/mixed; boundary=batchresponse_a40078b7-9bd5-4f56-b9d6-6dc5147b604f
+
+Content:
+--batchresponse_a40078b7-9bd5-4f56-b9d6-6dc5147b604f
+Content-Type: multipart/mixed; boundary=changesetresponse_fefb74cf-0bd7-43f9-a387-38d2106d256d
+
+--changesetresponse_fefb74cf-0bd7-43f9-a387-38d2106d256d
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+HTTP/1.1 204 No Content
+Content-ID: 1
+X-Content-Type-Options: nosniff
+Cache-Control: no-cache
+Preference-Applied: return-no-content
+DataServiceVersion: 3.0;
+Location: http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService54/Products(1048)
+DataServiceId: http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService54/Products(1048)
+
+
+--changesetresponse_fefb74cf-0bd7-43f9-a387-38d2106d256d
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+HTTP/1.1 204 No Content
+Content-ID: 2
+X-Content-Type-Options: nosniff
+Cache-Control: no-cache
+Preference-Applied: return-no-content
+DataServiceVersion: 3.0;
+Location: http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService54/Products(1049)
+DataServiceId: http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService54/Products(1049)
+
+
+--changesetresponse_fefb74cf-0bd7-43f9-a387-38d2106d256d--
+--batchresponse_a40078b7-9bd5-4f56-b9d6-6dc5147b604f--
+

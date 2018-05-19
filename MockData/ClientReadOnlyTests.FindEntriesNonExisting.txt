@@ -1,0 +1,26 @@
+--- Request ---
+
+Command: GET Products
+
+Headers:
+Accept: application/atom+xml
+Prefer: return-content
+
+
+--- Response ---
+
+Status: OK
+
+Headers:
+X-Content-Type-Options: nosniff
+DataServiceVersion: 1.0;
+Cache-Control: no-cache
+Date: Sat, 19 May 2018 10:24:19 GMT
+Server: Microsoft-HTTPAPI/2.0
+
+Content headers:
+Content-Length: 546
+Content-Type: application/atom+xml; type=feed; charset=utf-8
+
+Content:
+<?xml version="1.0" encoding="utf-8"?><feed xml:base="http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService309/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><id>http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService309/Products</id><title type="text">Products</title><updated>2018-05-19T10:24:19Z</updated><link rel="self" title="Products" href="Products" /><author><name /></author></feed>

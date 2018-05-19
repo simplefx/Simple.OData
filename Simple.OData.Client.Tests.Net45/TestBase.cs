@@ -15,7 +15,7 @@ namespace Simple.OData.Client.Tests
 {
     public static class ODataClientSettingsExtensionMethods
     {
-        private const string MockDataDir = @"..\..\MockData";
+        private const string MockDataDir = @"..\..\..\MockData";
 
         public static ODataClientSettings WithNameResolver(this ODataClientSettings settings, INameMatchResolver resolver)
         {
@@ -88,14 +88,16 @@ namespace Simple.OData.Client.Tests
     public class TestBase : IDisposable
     {
         protected Uri _serviceUri;
+#if !MOCK_HTTP
         protected TestService _service;
+#endif
         protected IODataClient _client;
         protected readonly bool _readOnlyTests;
 
         protected TestBase(bool readOnlyTests = false)
         {
             _readOnlyTests = readOnlyTests;
-#if MOCK_HTTP_
+#if MOCK_HTTP
             _serviceUri = new Uri("http://localhost/");
 #else
             _service = new TestService(typeof(NorthwindService));
@@ -134,18 +136,18 @@ namespace Simple.OData.Client.Tests
 
         public void Dispose()
         {
-#if !MOCK_HTTP_
+#if !MOCK_HTTP
             if (_client != null && !_readOnlyTests)
             {
                 DeleteTestData().Wait();
             }
-#endif
 
             if (_service != null)
             {
                 _service.Dispose();
                 _service = null;
             }
+#endif
         }
 
         private static string GetResourceAsString(string resourceName)

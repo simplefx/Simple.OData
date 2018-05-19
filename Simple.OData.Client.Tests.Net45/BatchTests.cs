@@ -123,15 +123,16 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task MultipleUpdateEntrySingleBatch()
         {
+            var settings = CreateDefaultSettings().WithHttpMock();
             IDictionary<string, object> product = null;
             IDictionary<string, object> product1 = null;
             IDictionary<string, object> product2 = null;
 
-            var batch = new ODataBatch(CreateDefaultSettings().WithHttpMock());
+            var batch = new ODataBatch(settings);
             batch += async c => product = await c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test11" }, { "UnitPrice", 21m } });
             await batch.ExecuteAsync();
 
-            batch = new ODataBatch(CreateDefaultSettings().WithHttpMock());
+            batch = new ODataBatch(settings);
             batch += c => c.UpdateEntryAsync("Products", product, new Entry() { { "UnitPrice", 22m } });
             batch += async x => product1 = await x.FindEntryAsync("Products?$filter=ProductName eq 'Test11'");
             batch += c => c.UpdateEntryAsync("Products", product, new Entry() { { "UnitPrice", 23m } });
@@ -148,15 +149,16 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task MultipleUpdatesEntriesSingleBatch()
         {
+            var settings = CreateDefaultSettings().WithHttpMock();
             IDictionary<string, object> product = null;
 
-            var batch = new ODataBatch(CreateDefaultSettings().WithHttpMock());
+            var batch = new ODataBatch(settings);
             batch += async c => product = await c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test11" }, { "UnitPrice", 121m } });
             batch += async c => product = await c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test12" }, { "UnitPrice", 121m } });
             batch += async c => product = await c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test13" }, { "UnitPrice", 121m } });
             await batch.ExecuteAsync();
 
-            batch = new ODataBatch(CreateDefaultSettings().WithHttpMock());
+            batch = new ODataBatch(settings);
             batch += c => c.For("Products").Filter("UnitPrice eq 121").Set(new Entry() { { "UnitPrice", 122m } }).UpdateEntriesAsync();
             await batch.ExecuteAsync();
 
@@ -169,15 +171,16 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task UpdateDeleteSingleBatch()
         {
+            var settings = CreateDefaultSettings().WithHttpMock();
             IDictionary<string, object> product = null;
             IDictionary<string, object> product1 = null;
             IDictionary<string, object> product2 = null;
 
-            var batch = new ODataBatch(CreateDefaultSettings().WithHttpMock());
+            var batch = new ODataBatch(settings);
             batch += async x => product = await x.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test11" }, { "UnitPrice", 21m } });
             await batch.ExecuteAsync();
 
-            batch = new ODataBatch(CreateDefaultSettings().WithHttpMock());
+            batch = new ODataBatch(settings);
             batch += c => c.UpdateEntryAsync("Products", product, new Entry() { { "UnitPrice", 22m } });
             batch += async c => product1 = await c.FindEntryAsync("Products?$filter=ProductName eq 'Test11'");
             batch += c => c.DeleteEntryAsync("Products", product);
@@ -194,7 +197,8 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task InsertUpdateDeleteSeparateBatches()
         {
-            var batch = new ODataBatch(CreateDefaultSettings().WithHttpMock());
+            var settings = CreateDefaultSettings().WithHttpMock();
+            var batch = new ODataBatch(settings);
             batch += c => c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test12" }, { "UnitPrice", 21m } }, false);
             await batch.ExecuteAsync();
 
@@ -202,14 +206,14 @@ namespace Simple.OData.Client.Tests
             Assert.Equal(21m, product["UnitPrice"]);
             var key = new Entry() { { "ProductID", product["ProductID"] } };
 
-            batch = new ODataBatch(CreateDefaultSettings().WithHttpMock());
+            batch = new ODataBatch(settings);
             batch += c => c.UpdateEntryAsync("Products", key, new Entry() { { "UnitPrice", 22m } });
             await batch.ExecuteAsync();
             
             product = await _client.FindEntryAsync("Products?$filter=ProductName eq 'Test12'");
             Assert.Equal(22m, product["UnitPrice"]);
 
-            batch = new ODataBatch(CreateDefaultSettings().WithHttpMock());
+            batch = new ODataBatch(settings);
             batch += c => c.DeleteEntryAsync("Products", key);
             await batch.ExecuteAsync();
 
@@ -220,6 +224,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task InsertUpdateDeleteSeparateBatchesRenewHttpConnection()
         {
+            var settings = CreateDefaultSettings().WithHttpMock();
             var client = new ODataClient(new ODataClientSettings {BaseUri = _serviceUri, RenewHttpConnection = true});
             var batch = new ODataBatch(CreateDefaultSettings().WithHttpMock());
             batch += c => c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test12" }, { "UnitPrice", 21m } }, false);
@@ -229,14 +234,14 @@ namespace Simple.OData.Client.Tests
             Assert.Equal(21m, product["UnitPrice"]);
             var key = new Entry() { { "ProductID", product["ProductID"] } };
 
-            batch = new ODataBatch(CreateDefaultSettings().WithHttpMock());
+            batch = new ODataBatch(settings);
             batch += c => c.UpdateEntryAsync("Products", key, new Entry() { { "UnitPrice", 22m } });
             await batch.ExecuteAsync();
 
             product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test12'");
             Assert.Equal(22m, product["UnitPrice"]);
 
-            batch = new ODataBatch(CreateDefaultSettings().WithHttpMock());
+            batch = new ODataBatch(settings);
             batch += c => c.DeleteEntryAsync("Products", key);
             await batch.ExecuteAsync();
 
@@ -291,11 +296,12 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task DeleteEntriesExisting()
         {
-            var batch = new ODataBatch(CreateDefaultSettings().WithHttpMock());
+            var settings = CreateDefaultSettings().WithHttpMock();
+            var batch = new ODataBatch(settings);
             batch += async c => await c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test19" }, { "UnitPrice", 21m } });
             await batch.ExecuteAsync();
 
-            batch = new ODataBatch(CreateDefaultSettings().WithHttpMock());
+            batch = new ODataBatch(settings);
             batch += c => c.DeleteEntriesAsync("Products", "Products?$filter=ProductName eq 'Test19'");
             await batch.ExecuteAsync();
 
@@ -317,13 +323,14 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task DeleteEntriesMultiple()
         {
-            var batch = new ODataBatch(CreateDefaultSettings().WithHttpMock());
+            var settings = CreateDefaultSettings().WithHttpMock();
+            var batch = new ODataBatch(settings);
             batch += async c => await c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test21" }, { "UnitPrice", 111m } });
             batch += async c => await c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test22" }, { "UnitPrice", 111m } });
             batch += async c => await c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test23" }, { "UnitPrice", 111m } });
             await batch.ExecuteAsync();
 
-            batch = new ODataBatch(CreateDefaultSettings().WithHttpMock());
+            batch = new ODataBatch(settings);
             batch += c => c.DeleteEntriesAsync("Products", "Products?$filter=UnitPrice eq 111");
             await batch.ExecuteAsync();
 
@@ -348,14 +355,15 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task UpdateWithResultRequired()
         {
+            var settings = CreateDefaultSettings().WithHttpMock();
             IDictionary<string, object> product = null;
             IDictionary<string, object> product1 = null;
 
-            var batch = new ODataBatch(CreateDefaultSettings().WithHttpMock());
+            var batch = new ODataBatch(settings);
             batch += async x => product = await x.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test11" }, { "UnitPrice", 21m } }, true);
             await batch.ExecuteAsync();
 
-            batch = new ODataBatch(CreateDefaultSettings().WithHttpMock());
+            batch = new ODataBatch(settings);
             batch += async c => product1 = await c.UpdateEntryAsync("Products", product, new Entry() { { "UnitPrice", 22m } }, true);
             await batch.ExecuteAsync();
 
@@ -376,6 +384,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task LinkEntry()
         {
+            var settings = CreateDefaultSettings().WithHttpMock();
             var category = await _client
                 .For("Categories")
                 .Set(new { CategoryName = "Test4" })
@@ -385,7 +394,7 @@ namespace Simple.OData.Client.Tests
                 .Set(new { ProductName = "Test5" })
                 .InsertEntryAsync();
 
-            var batch = new ODataBatch(CreateDefaultSettings().WithHttpMock());
+            var batch = new ODataBatch(settings);
             batch += async c => await c
                 .For("Products")
                 .Key(product)

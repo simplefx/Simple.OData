@@ -1,0 +1,117 @@
+--- Request ---
+
+Command: POST $batch
+
+Headers:
+
+Content headers:
+Content-Type: multipart/mixed; boundary=batch_f2f35595-87fc-48aa-89aa-645fc6868431
+
+Content:
+--batch_f2f35595-87fc-48aa-89aa-645fc6868431
+Content-Type: multipart/mixed; boundary=changeset_6783ebe8-004d-44ef-a69e-ed9380b4339f
+
+--changeset_6783ebe8-004d-44ef-a69e-ed9380b4339f
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+POST http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService59/Categories HTTP/1.1
+Content-ID: 1
+Prefer: return-content
+Content-Type: application/atom+xml;type=entry
+
+<?xml version="1.0" encoding="utf-8"?>
+<entry xml:base="http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService59/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
+  <category term="NorthwindModel.Category" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <id />
+  <title />
+  <updated>2018-05-19T10:24:03Z</updated>
+  <author>
+    <name />
+  </author>
+  <content type="application/xml">
+    <m:properties>
+      <d:CategoryName>Test13</d:CategoryName>
+    </m:properties>
+  </content>
+</entry>
+--changeset_6783ebe8-004d-44ef-a69e-ed9380b4339f
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+POST http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService59/Products HTTP/1.1
+Content-ID: 2
+Prefer: return-no-content
+Content-Type: application/atom+xml;type=entry
+
+<?xml version="1.0" encoding="utf-8"?>
+<entry xml:base="http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService59/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
+  <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService59/$1" />
+  <id />
+  <title />
+  <updated>2018-05-19T10:24:03Z</updated>
+  <author>
+    <name />
+  </author>
+  <content type="application/xml">
+    <m:properties>
+      <d:ProductName>Test14</d:ProductName>
+      <d:UnitPrice m:type="Edm.Decimal">21</d:UnitPrice>
+    </m:properties>
+  </content>
+</entry>
+--changeset_6783ebe8-004d-44ef-a69e-ed9380b4339f--
+--batch_f2f35595-87fc-48aa-89aa-645fc6868431--
+
+
+--- Response ---
+
+Status: Accepted
+
+Headers:
+X-Content-Type-Options: nosniff
+DataServiceVersion: 1.0;
+Cache-Control: no-cache
+Date: Sat, 19 May 2018 10:24:02 GMT
+Server: Microsoft-HTTPAPI/2.0
+
+Content headers:
+Content-Length: 2331
+Content-Type: multipart/mixed; boundary=batchresponse_14d8798d-7f11-45ee-b81c-6954c08598f4
+
+Content:
+--batchresponse_14d8798d-7f11-45ee-b81c-6954c08598f4
+Content-Type: multipart/mixed; boundary=changesetresponse_b70bd169-572f-4b00-8759-df7758fae149
+
+--changesetresponse_b70bd169-572f-4b00-8759-df7758fae149
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+HTTP/1.1 201 Created
+DataServiceVersion: 3.0;
+Content-Type: application/atom+xml;type=entry;charset=utf-8
+Content-ID: 1
+X-Content-Type-Options: nosniff
+Cache-Control: no-cache
+Preference-Applied: return-content
+Location: http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService59/Categories(1052)
+
+<?xml version="1.0" encoding="utf-8"?><entry xml:base="http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService59/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml"><id>http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService59/Categories(1052)</id><category term="NorthwindModel.Category" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" /><link rel="edit" title="Category" href="Categories(1052)" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Products" type="application/atom+xml;type=feed" title="Products" href="Categories(1052)/Products" /><title /><updated>2018-05-19T10:24:03Z</updated><author><name /></author><content type="application/xml"><m:properties><d:CategoryID m:type="Edm.Int32">1052</d:CategoryID><d:CategoryName>Test13</d:CategoryName><d:Description m:null="true" /><d:Picture m:null="true" /></m:properties></content></entry>
+--changesetresponse_b70bd169-572f-4b00-8759-df7758fae149
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+HTTP/1.1 204 No Content
+Content-ID: 2
+X-Content-Type-Options: nosniff
+Cache-Control: no-cache
+Preference-Applied: return-no-content
+DataServiceVersion: 3.0;
+Location: http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService59/Products(1053)
+DataServiceId: http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService59/Products(1053)
+
+
+--changesetresponse_b70bd169-572f-4b00-8759-df7758fae149--
+--batchresponse_14d8798d-7f11-45ee-b81c-6954c08598f4--
+

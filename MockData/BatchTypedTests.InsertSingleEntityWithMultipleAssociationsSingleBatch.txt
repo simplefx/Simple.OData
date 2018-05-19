@@ -1,0 +1,163 @@
+--- Request ---
+
+Command: POST $batch
+
+Headers:
+
+Content headers:
+Content-Type: multipart/mixed; boundary=batch_493639d3-0280-4a80-8b88-7e1034042fdf
+
+Content:
+--batch_493639d3-0280-4a80-8b88-7e1034042fdf
+Content-Type: multipart/mixed; boundary=changeset_3b7474f9-0b14-49c4-bccf-a8aee5535ded
+
+--changeset_3b7474f9-0b14-49c4-bccf-a8aee5535ded
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+POST http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService139/Products HTTP/1.1
+Content-ID: 1
+Prefer: return-no-content
+Content-Type: application/atom+xml;type=entry
+
+<?xml version="1.0" encoding="utf-8"?>
+<entry xml:base="http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService139/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
+  <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <id />
+  <title />
+  <updated>2018-05-19T10:24:09Z</updated>
+  <author>
+    <name />
+  </author>
+  <content type="application/xml">
+    <m:properties>
+      <d:ProductID m:type="Edm.Int32">0</d:ProductID>
+      <d:ProductName>Test15</d:ProductName>
+      <d:UnitPrice m:type="Edm.Decimal">21</d:UnitPrice>
+      <d:CategoryID m:null="true" />
+      <d:EnglishName m:null="true" />
+    </m:properties>
+  </content>
+</entry>
+--changeset_3b7474f9-0b14-49c4-bccf-a8aee5535ded
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+POST http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService139/Products HTTP/1.1
+Content-ID: 2
+Prefer: return-no-content
+Content-Type: application/atom+xml;type=entry
+
+<?xml version="1.0" encoding="utf-8"?>
+<entry xml:base="http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService139/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
+  <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <id />
+  <title />
+  <updated>2018-05-19T10:24:09Z</updated>
+  <author>
+    <name />
+  </author>
+  <content type="application/xml">
+    <m:properties>
+      <d:ProductID m:type="Edm.Int32">0</d:ProductID>
+      <d:ProductName>Test16</d:ProductName>
+      <d:UnitPrice m:type="Edm.Decimal">22</d:UnitPrice>
+      <d:CategoryID m:null="true" />
+      <d:EnglishName m:null="true" />
+    </m:properties>
+  </content>
+</entry>
+--changeset_3b7474f9-0b14-49c4-bccf-a8aee5535ded
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+POST http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService139/Categories HTTP/1.1
+Content-ID: 3
+Prefer: return-no-content
+Content-Type: application/atom+xml;type=entry
+
+<?xml version="1.0" encoding="utf-8"?>
+<entry xml:base="http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService139/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
+  <category term="NorthwindModel.Category" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Products" type="application/atom+xml;type=feed" title="Products" href="http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService139/$1" />
+  <link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Products" type="application/atom+xml;type=feed" title="Products" href="http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService139/$2" />
+  <id />
+  <title />
+  <updated>2018-05-19T10:24:09Z</updated>
+  <author>
+    <name />
+  </author>
+  <content type="application/xml">
+    <m:properties>
+      <d:CategoryName>Test17</d:CategoryName>
+    </m:properties>
+  </content>
+</entry>
+--changeset_3b7474f9-0b14-49c4-bccf-a8aee5535ded--
+--batch_493639d3-0280-4a80-8b88-7e1034042fdf--
+
+
+--- Response ---
+
+Status: Accepted
+
+Headers:
+X-Content-Type-Options: nosniff
+DataServiceVersion: 1.0;
+Cache-Control: no-cache
+Date: Sat, 19 May 2018 10:24:08 GMT
+Server: Microsoft-HTTPAPI/2.0
+
+Content headers:
+Content-Length: 1751
+Content-Type: multipart/mixed; boundary=batchresponse_4187977d-72e5-46be-ac66-dd7e5af54099
+
+Content:
+--batchresponse_4187977d-72e5-46be-ac66-dd7e5af54099
+Content-Type: multipart/mixed; boundary=changesetresponse_673c9791-9fc7-457a-b761-144ab2a99edc
+
+--changesetresponse_673c9791-9fc7-457a-b761-144ab2a99edc
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+HTTP/1.1 204 No Content
+Content-ID: 1
+X-Content-Type-Options: nosniff
+Cache-Control: no-cache
+Preference-Applied: return-no-content
+DataServiceVersion: 3.0;
+Location: http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService139/Products(1100)
+DataServiceId: http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService139/Products(1100)
+
+
+--changesetresponse_673c9791-9fc7-457a-b761-144ab2a99edc
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+HTTP/1.1 204 No Content
+Content-ID: 2
+X-Content-Type-Options: nosniff
+Cache-Control: no-cache
+Preference-Applied: return-no-content
+DataServiceVersion: 3.0;
+Location: http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService139/Products(1101)
+DataServiceId: http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService139/Products(1101)
+
+
+--changesetresponse_673c9791-9fc7-457a-b761-144ab2a99edc
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+HTTP/1.1 204 No Content
+Content-ID: 3
+X-Content-Type-Options: nosniff
+Cache-Control: no-cache
+Preference-Applied: return-no-content
+DataServiceVersion: 3.0;
+Location: http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService139/Categories(1102)
+DataServiceId: http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService139/Categories(1102)
+
+
+--changesetresponse_673c9791-9fc7-457a-b761-144ab2a99edc--
+--batchresponse_4187977d-72e5-46be-ac66-dd7e5af54099--
+

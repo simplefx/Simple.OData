@@ -1,0 +1,117 @@
+--- Request ---
+
+Command: POST $batch
+
+Headers:
+
+Content headers:
+Content-Type: multipart/mixed; boundary=batch_57b946f3-d1ae-4547-a63a-402c9ff260e3
+
+Content:
+--batch_57b946f3-d1ae-4547-a63a-402c9ff260e3
+Content-Type: multipart/mixed; boundary=changeset_99f8f614-4cc4-428b-9ae9-556c6cb1286a
+
+--changeset_99f8f614-4cc4-428b-9ae9-556c6cb1286a
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+POST http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService175/Products HTTP/1.1
+Content-ID: 1
+Prefer: return-no-content
+Content-Type: application/atom+xml;type=entry
+
+<?xml version="1.0" encoding="utf-8"?>
+<entry xml:base="http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService175/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
+  <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <id />
+  <title />
+  <updated>2018-05-19T10:24:14Z</updated>
+  <author>
+    <name />
+  </author>
+  <content type="application/xml">
+    <m:properties>
+      <d:ProductName>Test1</d:ProductName>
+      <d:UnitPrice m:type="Edm.Decimal">10</d:UnitPrice>
+    </m:properties>
+  </content>
+</entry>
+--changeset_99f8f614-4cc4-428b-9ae9-556c6cb1286a
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+POST http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService175/Products HTTP/1.1
+Content-ID: 2
+Prefer: return-no-content
+Content-Type: application/atom+xml;type=entry
+
+<?xml version="1.0" encoding="utf-8"?>
+<entry xml:base="http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService175/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
+  <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <id />
+  <title />
+  <updated>2018-05-19T10:24:14Z</updated>
+  <author>
+    <name />
+  </author>
+  <content type="application/xml">
+    <m:properties>
+      <d:ProductName>Test2</d:ProductName>
+      <d:UnitPrice m:type="Edm.Decimal">20</d:UnitPrice>
+    </m:properties>
+  </content>
+</entry>
+--changeset_99f8f614-4cc4-428b-9ae9-556c6cb1286a--
+--batch_57b946f3-d1ae-4547-a63a-402c9ff260e3--
+
+
+--- Response ---
+
+Status: Accepted
+
+Headers:
+X-Content-Type-Options: nosniff
+DataServiceVersion: 1.0;
+Cache-Control: no-cache
+Date: Sat, 19 May 2018 10:24:13 GMT
+Server: Microsoft-HTTPAPI/2.0
+
+Content headers:
+Content-Length: 1254
+Content-Type: multipart/mixed; boundary=batchresponse_86a902c6-5fca-40fa-b49c-5cd3c30f35cb
+
+Content:
+--batchresponse_86a902c6-5fca-40fa-b49c-5cd3c30f35cb
+Content-Type: multipart/mixed; boundary=changesetresponse_5b721798-10c2-4cfe-be63-a5b1dd9afc1d
+
+--changesetresponse_5b721798-10c2-4cfe-be63-a5b1dd9afc1d
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+HTTP/1.1 204 No Content
+Content-ID: 1
+X-Content-Type-Options: nosniff
+Cache-Control: no-cache
+Preference-Applied: return-no-content
+DataServiceVersion: 3.0;
+Location: http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService175/Products(1156)
+DataServiceId: http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService175/Products(1156)
+
+
+--changesetresponse_5b721798-10c2-4cfe-be63-a5b1dd9afc1d
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+HTTP/1.1 204 No Content
+Content-ID: 2
+X-Content-Type-Options: nosniff
+Cache-Control: no-cache
+Preference-Applied: return-no-content
+DataServiceVersion: 3.0;
+Location: http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService175/Products(1157)
+DataServiceId: http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService175/Products(1157)
+
+
+--changesetresponse_5b721798-10c2-4cfe-be63-a5b1dd9afc1d--
+--batchresponse_86a902c6-5fca-40fa-b49c-5cd3c30f35cb--
+

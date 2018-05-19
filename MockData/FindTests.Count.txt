@@ -1,0 +1,25 @@
+--- Request ---
+
+Command: GET $count
+
+Headers:
+Prefer: return-content
+
+
+--- Response ---
+
+Status: OK
+
+Headers:
+X-Content-Type-Options: nosniff
+DataServiceVersion: 2.0;
+Cache-Control: no-cache
+Date: Sat, 19 May 2018 10:24:18 GMT
+Server: Microsoft-HTTPAPI/2.0
+
+Content headers:
+Content-Length: 2
+Content-Type: text/plain; charset=utf-8
+
+Content:
+22

@@ -1,0 +1,136 @@
+--- Request ---
+
+Command: POST $batch
+
+Headers:
+
+Content headers:
+Content-Type: multipart/mixed; boundary=batch_8ecc8e51-64c1-44d6-85fd-3f038fe12308
+
+Content:
+--batch_8ecc8e51-64c1-44d6-85fd-3f038fe12308
+Content-Type: multipart/mixed; boundary=changeset_cd84480c-f294-4afd-9f63-94a6396be3ee
+
+--changeset_cd84480c-f294-4afd-9f63-94a6396be3ee
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+PATCH http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService170/Products(1147) HTTP/1.1
+Content-ID: 1
+Prefer: return-no-content
+Content-Type: application/atom+xml;type=entry
+
+<?xml version="1.0" encoding="utf-8"?>
+<entry xml:base="http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService170/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:georss="http://www.georss.org/georss" xmlns:gml="http://www.opengis.net/gml">
+  <category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" />
+  <id />
+  <title />
+  <updated>2018-05-19T10:24:13Z</updated>
+  <author>
+    <name />
+  </author>
+  <content type="application/xml">
+    <m:properties>
+      <d:UnitPrice m:type="Edm.Decimal">22</d:UnitPrice>
+    </m:properties>
+  </content>
+</entry>
+--changeset_cd84480c-f294-4afd-9f63-94a6396be3ee--
+--batch_8ecc8e51-64c1-44d6-85fd-3f038fe12308
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+GET http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService170/Products?$filter=ProductName%20eq%20%27Test11%27 HTTP/1.1
+
+
+--batch_8ecc8e51-64c1-44d6-85fd-3f038fe12308
+Content-Type: multipart/mixed; boundary=changeset_c0da9ab3-5a17-4087-a14a-a49daccdd98a
+
+--changeset_c0da9ab3-5a17-4087-a14a-a49daccdd98a
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+DELETE http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService170/Products(1147) HTTP/1.1
+
+
+--changeset_c0da9ab3-5a17-4087-a14a-a49daccdd98a--
+--batch_8ecc8e51-64c1-44d6-85fd-3f038fe12308
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+GET http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService170/Products?$filter=ProductName%20eq%20%27Test11%27 HTTP/1.1
+
+
+--batch_8ecc8e51-64c1-44d6-85fd-3f038fe12308--
+
+
+--- Response ---
+
+Status: Accepted
+
+Headers:
+X-Content-Type-Options: nosniff
+DataServiceVersion: 1.0;
+Cache-Control: no-cache
+Date: Sat, 19 May 2018 10:24:13 GMT
+Server: Microsoft-HTTPAPI/2.0
+
+Content headers:
+Content-Length: 4122
+Content-Type: multipart/mixed; boundary=batchresponse_5831768c-4e0d-4da5-a515-234560154ab6
+
+Content:
+--batchresponse_5831768c-4e0d-4da5-a515-234560154ab6
+Content-Type: multipart/mixed; boundary=changesetresponse_f89327b1-c856-45bb-8564-0be4464303a6
+
+--changesetresponse_f89327b1-c856-45bb-8564-0be4464303a6
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+HTTP/1.1 204 No Content
+Content-ID: 1
+X-Content-Type-Options: nosniff
+Cache-Control: no-cache
+Preference-Applied: return-no-content
+DataServiceVersion: 3.0;
+
+
+--changesetresponse_f89327b1-c856-45bb-8564-0be4464303a6--
+--batchresponse_5831768c-4e0d-4da5-a515-234560154ab6
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+HTTP/1.1 200 OK
+DataServiceVersion: 1.0;
+Content-Type: application/atom+xml;type=feed;charset=utf-8
+X-Content-Type-Options: nosniff
+Cache-Control: no-cache
+
+<?xml version="1.0" encoding="utf-8"?><feed xml:base="http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService170/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><id>http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService170/Products</id><title type="text">Products</title><updated>2018-05-19T10:24:13Z</updated><link rel="self" title="Products" href="Products" /><entry><id>http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService170/Products(1147)</id><category term="NorthwindModel.Product" scheme="http://schemas.microsoft.com/ado/2007/08/dataservices/scheme" /><link rel="edit" title="Product" href="Products(1147)" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Category" type="application/atom+xml;type=entry" title="Category" href="Products(1147)/Category" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/OrderDetails" type="application/atom+xml;type=feed" title="OrderDetails" href="Products(1147)/OrderDetails" /><link rel="http://schemas.microsoft.com/ado/2007/08/dataservices/related/Supplier" type="application/atom+xml;type=entry" title="Supplier" href="Products(1147)/Supplier" /><title /><updated>2018-05-19T10:24:13Z</updated><author><name /></author><content type="application/xml"><m:properties><d:ProductID m:type="Edm.Int32">1147</d:ProductID><d:ProductName>Test11</d:ProductName><d:EnglishName m:null="true" /><d:SupplierID m:type="Edm.Int32" m:null="true" /><d:CategoryID m:type="Edm.Int32" m:null="true" /><d:QuantityPerUnit m:null="true" /><d:UnitPrice m:type="Edm.Decimal">22.00</d:UnitPrice><d:UnitsInStock m:type="Edm.Int16" m:null="true" /><d:UnitsOnOrder m:type="Edm.Int16" m:null="true" /><d:ReorderLevel m:type="Edm.Int16" m:null="true" /><d:Discontinued m:type="Edm.Boolean">false</d:Discontinued></m:properties></content></entry></feed>
+--batchresponse_5831768c-4e0d-4da5-a515-234560154ab6
+Content-Type: multipart/mixed; boundary=changesetresponse_4d772c56-5d00-4117-a798-ef413c726696
+
+--changesetresponse_4d772c56-5d00-4117-a798-ef413c726696
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+HTTP/1.1 204 No Content
+X-Content-Type-Options: nosniff
+Cache-Control: no-cache
+DataServiceVersion: 1.0;
+
+
+--changesetresponse_4d772c56-5d00-4117-a798-ef413c726696--
+--batchresponse_5831768c-4e0d-4da5-a515-234560154ab6
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+HTTP/1.1 200 OK
+DataServiceVersion: 1.0;
+Content-Type: application/atom+xml;type=feed;charset=utf-8
+X-Content-Type-Options: nosniff
+Cache-Control: no-cache
+
+<?xml version="1.0" encoding="utf-8"?><feed xml:base="http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService170/" xmlns="http://www.w3.org/2005/Atom" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata"><id>http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService170/Products</id><title type="text">Products</title><updated>2018-05-19T10:24:13Z</updated><link rel="self" title="Products" href="Products" /><author><name /></author></feed>
+--batchresponse_5831768c-4e0d-4da5-a515-234560154ab6--
+

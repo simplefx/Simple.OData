@@ -1,0 +1,61 @@
+--- Request ---
+
+Command: POST $batch
+
+Headers:
+
+Content headers:
+Content-Type: multipart/mixed; boundary=batch_85c7978c-e45b-4e2c-974f-32a75f853d5d
+
+Content:
+--batch_85c7978c-e45b-4e2c-974f-32a75f853d5d
+Content-Type: multipart/mixed; boundary=changeset_96a34e23-080d-4186-b586-ba3d281c7305
+
+--changeset_96a34e23-080d-4186-b586-ba3d281c7305
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+PUT http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService61/Products(1057)/$links/Category HTTP/1.1
+Content-ID: 1
+Prefer: return-no-content
+Content-Type: application/xml
+
+<?xml version="1.0" encoding="utf-8"?>
+<uri xmlns="http://schemas.microsoft.com/ado/2007/08/dataservices">http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService61/Categories(1056)</uri>
+--changeset_96a34e23-080d-4186-b586-ba3d281c7305--
+--batch_85c7978c-e45b-4e2c-974f-32a75f853d5d--
+
+
+--- Response ---
+
+Status: Accepted
+
+Headers:
+X-Content-Type-Options: nosniff
+DataServiceVersion: 1.0;
+Cache-Control: no-cache
+Date: Sat, 19 May 2018 10:24:02 GMT
+Server: Microsoft-HTTPAPI/2.0
+
+Content headers:
+Content-Length: 523
+Content-Type: multipart/mixed; boundary=batchresponse_8abe0252-7435-412a-82ec-a238e228e2a8
+
+Content:
+--batchresponse_8abe0252-7435-412a-82ec-a238e228e2a8
+Content-Type: multipart/mixed; boundary=changesetresponse_048c236f-9894-4d60-8be8-cea1335a0a68
+
+--changesetresponse_048c236f-9894-4d60-8be8-cea1335a0a68
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+HTTP/1.1 204 No Content
+Content-ID: 1
+X-Content-Type-Options: nosniff
+Cache-Control: no-cache
+DataServiceVersion: 1.0;
+
+
+--changesetresponse_048c236f-9894-4d60-8be8-cea1335a0a68--
+--batchresponse_8abe0252-7435-412a-82ec-a238e228e2a8--
+

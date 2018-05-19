@@ -119,19 +119,20 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task MultipleUpdatesSingleBatch()
         {
+            var settings = CreateDefaultSettings().WithHttpMock();
             var x = ODataDynamic.Expression;
             dynamic product = null;
             dynamic product1 = null;
             dynamic product2 = null;
 
-            var batch = new ODataBatch(CreateDefaultSettings().WithHttpMock());
+            var batch = new ODataBatch(settings);
             batch += async c => product = await c
                 .For(x.Products)
                 .Set(x.ProductName = "Test11", x.UnitPrice = 21m)
                 .InsertEntryAsync();
             await batch.ExecuteAsync();
 
-            batch = new ODataBatch(CreateDefaultSettings().WithHttpMock());
+            batch = new ODataBatch(settings);
             batch += c => c
                 .For(x.Products)
                 .Key(product.ProductID)
@@ -165,19 +166,20 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task UpdateDeleteSingleBatch()
         {
+            var settings = CreateDefaultSettings().WithHttpMock();
             var x = ODataDynamic.Expression;
             dynamic product = null;
             dynamic product1 = null;
             dynamic product2 = null;
 
-            var batch = new ODataBatch(CreateDefaultSettings().WithHttpMock());
+            var batch = new ODataBatch(settings);
             batch += async c => product = await c
                 .For(x.Products)
                 .Set(x.ProductName = "Test11", x.UnitPrice = 21m)
                 .InsertEntryAsync();
             await batch.ExecuteAsync();
 
-            batch = new ODataBatch(CreateDefaultSettings().WithHttpMock());
+            batch = new ODataBatch(settings);
             batch += c => c
                 .For(x.Products)
                 .Filter(x.ProductName == "Test11")
@@ -210,8 +212,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task InsertUpdateDeleteSeparateBatches()
         {
+            var settings = CreateDefaultSettings().WithHttpMock();
             var x = ODataDynamic.Expression;
-            var batch = new ODataBatch(CreateDefaultSettings().WithHttpMock());
+            var batch = new ODataBatch(settings);
             batch += c => c
                 .For(x.Products)
                 .Set(new { ProductName = "Test12", UnitPrice = 21m })
@@ -225,7 +228,7 @@ namespace Simple.OData.Client.Tests
             Assert.Equal(21m, product.UnitPrice);
             var productID = product.ProductID;
 
-            batch = new ODataBatch(CreateDefaultSettings().WithHttpMock());
+            batch = new ODataBatch(settings);
             batch += c => c
                 .For(x.Products)
                 .Key(productID)
@@ -239,7 +242,7 @@ namespace Simple.OData.Client.Tests
                 .FindEntryAsync();
             Assert.Equal(22m, product.UnitPrice);
 
-            batch = new ODataBatch(CreateDefaultSettings().WithHttpMock());
+            batch = new ODataBatch(settings);
             batch += c => c
                 .For(x.Products)
                 .Key(productID)

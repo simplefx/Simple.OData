@@ -1,0 +1,49 @@
+--- Request ---
+
+Command: POST $batch
+
+Headers:
+
+Content headers:
+Content-Type: multipart/mixed; boundary=batch_efcc9350-ac8d-4b10-a767-9923673b4563
+
+Content:
+--batch_efcc9350-ac8d-4b10-a767-9923673b4563
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+GET http://nrkdt66337/Temporary_Listen_Addresses/SimpleODataTestService46/Products/$count HTTP/1.1
+
+
+--batch_efcc9350-ac8d-4b10-a767-9923673b4563--
+
+
+--- Response ---
+
+Status: Accepted
+
+Headers:
+X-Content-Type-Options: nosniff
+DataServiceVersion: 1.0;
+Cache-Control: no-cache
+Date: Sat, 19 May 2018 10:24:01 GMT
+Server: Microsoft-HTTPAPI/2.0
+
+Content headers:
+Content-Length: 326
+Content-Type: multipart/mixed; boundary=batchresponse_f266ae02-4e8a-47a9-bdf4-b5829eb08f6d
+
+Content:
+--batchresponse_f266ae02-4e8a-47a9-bdf4-b5829eb08f6d
+Content-Type: application/http
+Content-Transfer-Encoding: binary
+
+HTTP/1.1 200 OK
+Content-Type: text/plain;charset=utf-8
+DataServiceVersion: 2.0;
+X-Content-Type-Options: nosniff
+Cache-Control: no-cache
+
+22
+--batchresponse_f266ae02-4e8a-47a9-bdf4-b5829eb08f6d--
+

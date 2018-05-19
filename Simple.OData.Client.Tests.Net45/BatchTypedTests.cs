@@ -204,7 +204,8 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task InsertUpdateDeleteSeparateBatches()
         {
-            var batch = new ODataBatch(CreateDefaultSettings().WithHttpMock());
+            var settings = CreateDefaultSettings().WithHttpMock();
+            var batch = new ODataBatch(settings);
             batch += c => c
                 .For<Product>()
                 .Set(new { ProductName = "Test12", UnitPrice = 21m })
@@ -218,7 +219,7 @@ namespace Simple.OData.Client.Tests
             Assert.Equal(21m, product.UnitPrice);
             var productID = product.ProductID;
 
-            batch = new ODataBatch(CreateDefaultSettings().WithHttpMock());
+            batch = new ODataBatch(settings);
             batch += c => c
                 .For<Product>()
                 .Key(productID)
@@ -232,7 +233,7 @@ namespace Simple.OData.Client.Tests
                 .FindEntryAsync();
             Assert.Equal(22m, product.UnitPrice);
 
-            batch = new ODataBatch(CreateDefaultSettings().WithHttpMock());
+            batch = new ODataBatch(settings);
             batch += c => c
                 .For<Product>()
                 .Key(productID)
