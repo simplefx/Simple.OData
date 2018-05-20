@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -89,6 +90,9 @@ namespace Simple.OData.Client.TestUtils
         private readonly string _mockDataPathBase;
         private readonly bool _recording;
         private int _fileCounter;
+        private static Regex _regexBatch = new Regex(@"batch_([0-9AFa-f]){8}-([0-9AFa-f]){4}-([0-9AFa-f]){4}-([0-9AFa-f]){4}-([0-9AFa-f]){12}");
+        private static Regex _regexChangeset = new Regex(@"changeset_([0-9AFa-f]){8}-([0-9AFa-f]){4}-([0-9AFa-f]){4}-([0-9AFa-f]){4}-([0-9AFa-f]){12}");
+        private static Regex _regexBaseUrl = new Regex(@"http:\/\/((\w|_|\.|)+\/){3}");
 
         public MockingRequestExecutor(ODataClientSettings settings, string mockDataPathBase, bool recording = false)
         {
@@ -171,8 +175,8 @@ namespace Simple.OData.Client.TestUtils
                         actualHeaders.Add(header.Key, header.Value);
                     ValidateHeaders(expectedHeaders, actualHeaders);
                     var expectedContent = savedRequest.Content;
-                    expectedContent = RemoveElements(expectedContent, new[] { "updated" });
-                    var actualContent = RemoveElements(await request.Content.ReadAsStringAsync(), new[] { "updated" });
+                    expectedContent = AdjustContent(expectedContent);
+                    var actualContent = AdjustContent(await request.Content.ReadAsStringAsync());
                     Assert.Equal(expectedContent, actualContent);
                 }
             }
@@ -220,8 +224,20 @@ namespace Simple.OData.Client.TestUtils
             foreach (var header in expectedHeaders)
             {
                 Assert.Contains(header.Key, actualHeaders.Keys);
-                Assert.Equal(header.Value.FirstOrDefault(), actualHeaders[header.Key].FirstOrDefault());
+                var expectedValue = AdjustBatchIds(header.Value.FirstOrDefault());
+                var actualValue = AdjustBatchIds(actualHeaders[header.Key].FirstOrDefault());
+                Assert.Equal(expectedValue, actualValue);
             }
+        }
+
+        private string AdjustContent(string content)
+        {
+            return 
+                AdjustBatchIds(
+                AdjustNewLines(
+                AdjustBaseUrl(
+                RemoveElements(content, new[] { "updated" }))));
+            
         }
 
         private string RemoveElements(string content, IEnumerable<string> elementNames)
@@ -243,6 +259,23 @@ namespace Simple.OData.Client.TestUtils
                 }
             }
             return content;
+        }
+
+        private string AdjustNewLines(string content)
+        {
+            return content.Replace("\r\n", "\n");
+        }
+
+        private string AdjustBaseUrl(string content)
+        {
+            return _regexBaseUrl.Replace(content, "http://localhost/");
+        }
+        
+        private string AdjustBatchIds(string content)
+        {
+            var result = _regexBatch.Replace(content, Guid.Empty.ToString());
+            result = _regexChangeset.Replace(result, Guid.Empty.ToString());
+            return result;
         }
     }
 }
