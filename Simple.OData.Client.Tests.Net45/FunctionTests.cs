@@ -116,7 +116,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task FunctionWithGuid()
         {
-            var guid = Guid.NewGuid();
+            var guid = new Guid("8DA69EAD-C2DC-4E1E-A588-BA9EB6AA7294");
             var result = await _client
                 .Unbound()
                 .Function("PassThroughGuid")

@@ -95,10 +95,11 @@ namespace WebApiOData.V4.Samples.Tests
         [Fact]
         public async Task CreateMovie()
         {
+            var guid = new Guid("EC9DB412-AF7F-4157-B9F5-BFAB8A942B16");
             var result = await _client
                 .Unbound<Movie>()
                 .Action("CreateMovie")
-                .Set(new { Title = Guid.NewGuid().ToString() })
+                .Set(new { Title = guid.ToString() })
                 .ExecuteAsSingleAsync();
 
             Assert.True(result.ID > 0);
@@ -107,12 +108,13 @@ namespace WebApiOData.V4.Samples.Tests
         [Fact]
         public async Task CreateMovie_batch()
         {
+            var guid = new Guid("E7857D7F-5B85-406A-A5C7-0DBA1D411576");
             Movie result = null;
             var batch = new ODataBatch(_client);
             batch += async c => result = await c
                 .Unbound<Movie>()
                 .Action("CreateMovie")
-                .Set(new { Title = Guid.NewGuid().ToString() })
+                .Set(new { Title = guid.ToString() })
                 .ExecuteAsSingleAsync();
             await batch.ExecuteAsync();
 

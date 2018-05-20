@@ -2,20 +2,20 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Reflection;
 using System.Threading.Tasks;
 using Xunit;
 using Simple.OData.Client.TestUtils;
+#if !MOCK_HTTP
 using Simple.OData.NorthwindModel;
+#endif
 
 namespace Simple.OData.Client.Tests
 {
     public static class ODataClientSettingsExtensionMethods
     {
-        private const string MockDataDir = @"..\..\..\MockData";
+        private const string MockDataDir = @"../../../MockData";
 
         public static ODataClientSettings WithNameResolver(this ODataClientSettings settings, INameMatchResolver resolver)
         {
@@ -56,16 +56,20 @@ namespace Simple.OData.Client.Tests
         public static ODataClientSettings WithHttpMock(this ODataClientSettings settings)
         {
             var methodName = GetTestMethodFullName();
-            var mockDataPath = GetMockDataPath(methodName);
-            var recording = !File.Exists(mockDataPath);
-            var requestExecutor = new MockingRequestExecutor(settings, mockDataPath, recording);
+            var mockDataPathBase = GetMockDataPathBase(methodName);
+#if MOCK_HTTP
+            var recording = false;
+#else
+            var recording = true;
+#endif
+            var requestExecutor = new MockingRequestExecutor(settings, mockDataPathBase, recording);
             settings.RequestExecutor = requestExecutor.ExecuteRequestAsync;
             return settings;
         }
 
-        private static string GetMockDataPath(string testMethodName)
+        private static string GetMockDataPathBase(string testMethodName)
         {
-            return Path.Combine(MockDataDir, testMethodName + ".txt");
+            return Path.Combine(MockDataDir, testMethodName);
         }
 
         private static string GetTestMethodFullName()

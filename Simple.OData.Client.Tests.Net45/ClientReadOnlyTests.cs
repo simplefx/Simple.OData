@@ -126,7 +126,7 @@ namespace Simple.OData.Client.Tests
         public async Task ExecuteScalarFunctionWithGuidParameter()
         {
             var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
-            var guid = Guid.NewGuid();
+            var guid = new Guid("7d8f1758-00d4-4c53-a2e3-8fca73ebb92c");
             var result = await client.ExecuteFunctionAsScalarAsync<Guid>("PassThroughGuid", new Entry() { { "guid", guid } });
             Assert.Equal(guid, result);
         }
