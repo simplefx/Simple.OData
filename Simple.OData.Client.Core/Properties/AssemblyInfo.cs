@@ -42,3 +42,5 @@ using System.Runtime.InteropServices;
 [assembly: InternalsVisibleTo("Simple.OData.Client.Tests.WinRT")]
 [assembly: InternalsVisibleTo("Simple.OData.Client.Tests.Droid")]
 [assembly: InternalsVisibleTo("Simple.OData.Client.Tests.Touch")]
+[assembly: InternalsVisibleTo("WebApiOData.V3.Samples.Tests")]
+[assembly: InternalsVisibleTo("WebApiOData.V4.Samples.Tests")]

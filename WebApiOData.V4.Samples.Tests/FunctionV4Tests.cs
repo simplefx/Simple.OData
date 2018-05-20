@@ -1,30 +1,64 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Owin.Testing;
 using Simple.OData.Client;
+using Simple.OData.Client.TestUtils;
 using WebApiOData.V4.Samples.Models;
 using WebApiOData.V4.Samples.Startups;
 using Xunit;
 
 namespace WebApiOData.V4.Samples.Tests
 {
-    public class FunctionTests : IDisposable
+    public static partial class ODataClientSettingsExtensionMethods2
+    {
+        private const string MockDataDir = @"../../../MockData";
+
+        public static ODataClientSettings WithHttpMock2(this ODataClientSettings settings)
+        {
+            var methodName = GetTestMethodFullName();
+            var mockDataPathBase = GetMockDataPathBase(methodName);
+#if MOCK_HTTP
+            var recording = false;
+#else
+            var recording = true;
+#endif
+            var requestExecutor = new MockingRequestExecutor(settings, mockDataPathBase, recording);
+            settings.RequestExecutor = requestExecutor.ExecuteRequestAsync;
+            return settings;
+        }
+
+        private static string GetMockDataPathBase(string testMethodName)
+        {
+            return Path.Combine(MockDataDir, testMethodName);
+        }
+
+        private static string GetTestMethodFullName()
+        {
+            var stackTrace = new System.Diagnostics.StackTrace();
+            var baseType = typeof(FunctionV4Tests);
+            for (var frameNumber = 1; ; frameNumber++)
+            {
+                var stackFrame = stackTrace.GetFrame(frameNumber);
+                if (stackFrame == null)
+                    throw new InvalidOperationException("Attempt to retrieve a frame beyond the call stack");
+                var method = stackFrame.GetMethod();
+                var methodName = new string(method.Name.Where(c => char.IsLetterOrDigit(c) || c == '_').ToArray());
+                if (method.DeclaringType == baseType)
+                    return string.Format($"{method.DeclaringType.Name}.{methodName}");
+            }
+        }
+    }
+
+    public class FunctionV4Tests : IDisposable
     {
         private readonly TestServer _server;
-        private readonly ODataClient _client;
 
-        public FunctionTests()
+        public FunctionV4Tests()
         {
             _server = TestServer.Create<FunctionStartup>();
-            _client = new ODataClient(new ODataClientSettings()
-            {
-                BaseUri = new Uri("http://localhost/functions"),
-                PayloadFormat = ODataPayloadFormat.Json,
-                OnCreateMessageHandler = () => _server.Handler,
-                OnTrace = (x,y) => Console.WriteLine(string.Format(x,y)),
-            });
         }
 
         public void Dispose()
@@ -32,10 +66,23 @@ namespace WebApiOData.V4.Samples.Tests
             _server.Dispose();
         }
 
+        private ODataClientSettings CreateDefaultSettings()
+        {
+            return new ODataClientSettings()
+            {
+                BaseUri = new Uri("http://localhost/functions"),
+                PayloadFormat = ODataPayloadFormat.Json,
+                OnCreateMessageHandler = () => _server.Handler,
+                OnTrace = (x, y) => Console.WriteLine(string.Format(x, y)),
+            };
+        }
+
         [Fact]
         public async Task Get_the_most_expensive_product_untyped()
         {
-            var result = (double)await _client
+            var settings = CreateDefaultSettings().WithHttpMock2();
+            var client = new ODataClient(settings);
+            var result = (double)await client
                 .FindScalarAsync("Products/Default.MostExpensive()");
 
             Assert.InRange(result, 500, 1000);
@@ -44,8 +91,10 @@ namespace WebApiOData.V4.Samples.Tests
         [Fact]
         public async Task Get_the_most_expensive_product_untyped_batch()
         {
+            var settings = CreateDefaultSettings().WithHttpMock2();
+            var client = new ODataClient(settings);
             object result = 0;
-            var batch = new ODataBatch(_client);
+            var batch = new ODataBatch(settings);
             batch += async c => result = await c
                 .FindScalarAsync("Products/Default.MostExpensive()");
             await batch.ExecuteAsync();
@@ -56,7 +105,9 @@ namespace WebApiOData.V4.Samples.Tests
         [Fact]
         public async Task Get_the_most_expensive_product_typed()
         {
-            var result = await _client
+            var settings = CreateDefaultSettings().WithHttpMock2();
+            var client = new ODataClient(settings);
+            var result = await client
                 .For<Product>()
                 .Function("MostExpensive")
                 .ExecuteAsScalarAsync<double>();
@@ -67,9 +118,11 @@ namespace WebApiOData.V4.Samples.Tests
         [Fact]
         public async Task Get_the_most_expensive_product_dynamic()
         {
+            var settings = CreateDefaultSettings().WithHttpMock2();
+            var client = new ODataClient(settings);
             var x = ODataDynamic.Expression;
 
-            var result = await _client
+            var result = await client
                 .For(x.Products)
                 .Function("MostExpensive")
                 .ExecuteAsScalarAsync<double>();
@@ -80,7 +133,9 @@ namespace WebApiOData.V4.Samples.Tests
         [Fact]
         public async Task Get_the_top_10_expensive_products_untyped()
         {
-            var result = await _client
+            var settings = CreateDefaultSettings().WithHttpMock2();
+            var client = new ODataClient(settings);
+            var result = await client
                 .FindEntriesAsync("Products/Default.Top10()");
 
             Assert.Equal(10, result.Count());
@@ -89,7 +144,9 @@ namespace WebApiOData.V4.Samples.Tests
         [Fact]
         public async Task Get_the_top_10_expensive_products_typed()
         {
-            var result = await _client
+            var settings = CreateDefaultSettings().WithHttpMock2();
+            var client = new ODataClient(settings);
+            var result = await client
                 .For<Product>()
                 .Function("Top10")
                 .ExecuteAsEnumerableAsync();
@@ -100,7 +157,9 @@ namespace WebApiOData.V4.Samples.Tests
         [Fact]
         public async Task Get_the_top_10_expensive_products_typed_array()
         {
-            var result = await _client
+            var settings = CreateDefaultSettings().WithHttpMock2();
+            var client = new ODataClient(settings);
+            var result = await client
                 .For<Product>()
                 .Function("Top10")
                 .ExecuteAsArrayAsync<Product>();
@@ -111,9 +170,11 @@ namespace WebApiOData.V4.Samples.Tests
         [Fact]
         public async Task Get_the_top_10_expensive_products_dynamic()
         {
+            var settings = CreateDefaultSettings().WithHttpMock2();
+            var client = new ODataClient(settings);
             var x = ODataDynamic.Expression;
 
-            IEnumerable<dynamic> result = await _client
+            IEnumerable<dynamic> result = await client
                 .For(x.Products)
                 .Function("Top10")
                 .ExecuteAsEnumerableAsync();
@@ -124,7 +185,9 @@ namespace WebApiOData.V4.Samples.Tests
         [Fact]
         public async Task Get_the_rank_of_the_product_price_untyped()
         {
-            var result = (int)await _client
+            var settings = CreateDefaultSettings().WithHttpMock2();
+            var client = new ODataClient(settings);
+            var result = (int)await client
                 .FindScalarAsync("Products(33)/Default.GetPriceRank()");
 
             Assert.InRange(result, 0, 100);
@@ -133,7 +196,9 @@ namespace WebApiOData.V4.Samples.Tests
         [Fact]
         public async Task Get_the_rank_of_the_product_price_typed()
         {
-            var result = await _client
+            var settings = CreateDefaultSettings().WithHttpMock2();
+            var client = new ODataClient(settings);
+            var result = await client
                 .For<Product>()
                 .Key(33)
                 .Function("GetPriceRank")
@@ -145,9 +210,11 @@ namespace WebApiOData.V4.Samples.Tests
         [Fact]
         public async Task Get_the_rank_of_the_product_price_dynamic()
         {
+            var settings = CreateDefaultSettings().WithHttpMock2();
+            var client = new ODataClient(settings);
             var x = ODataDynamic.Expression;
 
-            var result = await _client
+            var result = await client
                 .For(x.Products)
                 .Key(33)
                 .Function("GetPriceRank")
@@ -159,7 +226,9 @@ namespace WebApiOData.V4.Samples.Tests
         [Fact]
         public async Task Get_the_sales_tax_untyped()
         {
-            var result = (double)await _client
+            var settings = CreateDefaultSettings().WithHttpMock2();
+            var client = new ODataClient(settings);
+            var result = (double)await client
                 .FindScalarAsync("Products(33)/Default.CalculateGeneralSalesTax(state='WA')");
 
             Assert.InRange(result, 1, 200);
@@ -168,7 +237,9 @@ namespace WebApiOData.V4.Samples.Tests
         [Fact]
         public async Task Get_the_sales_tax_typed()
         {
-            var result = await _client
+            var settings = CreateDefaultSettings().WithHttpMock2();
+            var client = new ODataClient(settings);
+            var result = await client
                 .For<Product>()
                 .Key(33)
                 .Function("CalculateGeneralSalesTax")
@@ -181,9 +252,11 @@ namespace WebApiOData.V4.Samples.Tests
         [Fact]
         public async Task Get_the_sales_tax_dynamic()
         {
+            var settings = CreateDefaultSettings().WithHttpMock2();
+            var client = new ODataClient(settings);
             var x = ODataDynamic.Expression;
 
-            var result = await _client
+            var result = await client
                 .For(x.Products)
                 .Key(33)
                 .Function("CalculateGeneralSalesTax")
@@ -196,7 +269,9 @@ namespace WebApiOData.V4.Samples.Tests
         [Fact]
         public async Task Get_the_sales_tax_rate_untyped()
         {
-            var result = await _client
+            var settings = CreateDefaultSettings().WithHttpMock2();
+            var client = new ODataClient(settings);
+            var result = await client
                 .ExecuteFunctionAsScalarAsync<double>("GetSalesTaxRate", 
                 new Dictionary<string, object>() { { "state", "CA" } });
 
@@ -206,7 +281,9 @@ namespace WebApiOData.V4.Samples.Tests
         [Fact]
         public async Task Get_the_sales_tax_rate_typed()
         {
-            var result = await _client
+            var settings = CreateDefaultSettings().WithHttpMock2();
+            var client = new ODataClient(settings);
+            var result = await client
                 .Unbound()
                 .Function("GetSalesTaxRate")
                 .Set(new { state = "CA" })
@@ -218,9 +295,11 @@ namespace WebApiOData.V4.Samples.Tests
         [Fact]
         public async Task Get_the_sales_tax_rate_dynamic()
         {
+            var settings = CreateDefaultSettings().WithHttpMock2();
+            var client = new ODataClient(settings);
             var x = ODataDynamic.Expression;
 
-            var result = await _client
+            var result = await client
                 .Unbound()
                 .Function("GetSalesTaxRate")
                 .Set(x.state = "CA")

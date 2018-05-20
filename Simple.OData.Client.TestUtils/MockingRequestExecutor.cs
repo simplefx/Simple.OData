@@ -281,4 +281,44 @@ namespace Simple.OData.Client.TestUtils
             return result;
         }
     }
+    public static partial class ODataClientSettingsExtensionMethods
+    {
+        private const string MockDataDir = @"../../../MockData";
+
+        public static ODataClientSettings WithNameResolver(this ODataClientSettings settings, INameMatchResolver resolver)
+        {
+            settings.NameMatchResolver = resolver;
+            return settings;
+        }
+
+        public static ODataClientSettings WithAnnotations(this ODataClientSettings settings)
+        {
+            settings.IncludeAnnotationsInResults = true;
+            return settings;
+        }
+
+        public static ODataClientSettings WithIgnoredUnmappedProperties(this ODataClientSettings settings)
+        {
+            settings.IgnoreUnmappedProperties = true;
+            return settings;
+        }
+
+        public static ODataClientSettings WithIgnoredResourceNotFoundException(this ODataClientSettings settings)
+        {
+            settings.IgnoreResourceNotFoundException = true;
+            return settings;
+        }
+
+        public static ODataClientSettings WithRequestInterceptor(this ODataClientSettings settings, Action<HttpRequestMessage> action)
+        {
+            settings.BeforeRequest = action;
+            return settings;
+        }
+
+        public static ODataClientSettings WithResponseInterceptor(this ODataClientSettings settings, Action<HttpResponseMessage> action)
+        {
+            settings.AfterResponse = action;
+            return settings;
+        }
+    }
 }
