@@ -14,7 +14,7 @@ namespace Simple.OData.Client.Tests
         public async Task UpdateByKey()
         {
             var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
-            var product = await _client
+            var product = await client
                 .For("Products")
                 .Set(new { ProductName = "Test1", UnitPrice = 18m })
                 .InsertEntryAsync();
@@ -25,30 +25,31 @@ namespace Simple.OData.Client.Tests
                 .Set(new {UnitPrice = 123m})
                 .UpdateEntryAsync();
 
-            //product = await _client
-            //    .For("Products")
-            //    .Filter("ProductName eq 'Test1'")
-            //    .FindEntryAsync();
+            product = await client
+                .For("Products")
+                .Filter("ProductName eq 'Test1'")
+                .FindEntryAsync();
 
-            //Assert.Equal(123m, product["UnitPrice"]);
+            Assert.Equal(123m, product["UnitPrice"]);
         }
 
         [Fact(Skip = "Cannot mock")]
         public async Task UpdateByKeyClearMetadataCache()
         {
-            var product = await _client
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
+            var product = await client
                 .For("Products")
                 .Set(new { ProductName = "Test1", UnitPrice = 18m })
                 .InsertEntryAsync();
 
-            (_client as ODataClient).Session.ClearMetadataCache();
-            await _client
+            (client as ODataClient).Session.ClearMetadataCache();
+            await client
                 .For("Products")
                 .Key(product["ProductID"])
                 .Set(new { UnitPrice = 123m })
                 .UpdateEntryAsync();
 
-            product = await _client
+            product = await client
                 .For("Products")
                 .Filter("ProductName eq 'Test1'")
                 .FindEntryAsync();
@@ -60,7 +61,7 @@ namespace Simple.OData.Client.Tests
         public async Task UpdateByFilter()
         {
             var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
-            var product = await _client
+            var product = await client
                 .For("Products")
                 .Set(new { ProductName = "Test1", UnitPrice = 18m })
                 .InsertEntryAsync();
@@ -71,19 +72,19 @@ namespace Simple.OData.Client.Tests
                 .Set(new { UnitPrice = 123m })
                 .UpdateEntryAsync();
 
-            //product = await _client
-            //    .For("Products")
-            //    .Filter("ProductName eq 'Test1'")
-            //    .FindEntryAsync();
+            product = await client
+                .For("Products")
+                .Filter("ProductName eq 'Test1'")
+                .FindEntryAsync();
 
-            //Assert.Equal(123m, product["UnitPrice"]);
+            Assert.Equal(123m, product["UnitPrice"]);
         }
 
         [Fact]
         public async Task UpdateMultipleWithResult()
         {
             var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
-            var product = await _client
+            var product = await client
                 .For("Products")
                 .Set(new { ProductName = "Test1", UnitPrice = 18m })
                 .InsertEntryAsync();
@@ -101,7 +102,7 @@ namespace Simple.OData.Client.Tests
         public async Task UpdateMultipleNoResult()
         {
             var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
-            var product = await _client
+            var product = await client
                 .For("Products")
                 .Set(new { ProductName = "Test1", UnitPrice = 18m })
                 .InsertEntryAsync();
@@ -113,19 +114,19 @@ namespace Simple.OData.Client.Tests
                 .UpdateEntriesAsync(false)).Single();
             Assert.Null(product);
 
-            //product = await _client
-            //    .For("Products")
-            //    .Filter("ProductName eq 'Test1'")
-            //    .FindEntryAsync();
+            product = await client
+                .For("Products")
+                .Filter("ProductName eq 'Test1'")
+                .FindEntryAsync();
 
-            //Assert.Equal(123m, product["UnitPrice"]);
+            Assert.Equal(123m, product["UnitPrice"]);
         }
 
         [Fact]
         public async Task UpdateByObjectAsKey()
         {
             var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
-            var product = await _client
+            var product = await client
                 .For("Products")
                 .Set(new { ProductName = "Test1", UnitPrice = 18m })
                 .InsertEntryAsync();
@@ -136,12 +137,12 @@ namespace Simple.OData.Client.Tests
                 .Set(new { UnitPrice = 456m })
                 .UpdateEntryAsync();
 
-            //product = await _client
-            //    .For("Products")
-            //    .Filter("ProductName eq 'Test1'")
-            //    .FindEntryAsync();
+            product = await client
+                .For("Products")
+                .Filter("ProductName eq 'Test1'")
+                .FindEntryAsync();
 
-            //Assert.Equal(456m, product["UnitPrice"]);
+            Assert.Equal(456m, product["UnitPrice"]);
         }
 
         [Fact]
@@ -151,7 +152,7 @@ namespace Simple.OData.Client.Tests
             var today = DateTime.Now.Date;
             var tomorrow = today.AddDays(1);
 
-            var employee = await _client
+            var employee = await client
                 .For("Employees")
                 .Set(new { FirstName="Test1", LastName="Test1", HireDate = today })
                 .InsertEntryAsync();
@@ -162,23 +163,23 @@ namespace Simple.OData.Client.Tests
                 .Set(new { HireDate = tomorrow })
                 .UpdateEntryAsync();
 
-            //employee = await _client
-            //    .For("Employees")
-            //    .Key(employee["EmployeeID"])
-            //    .FindEntryAsync();
+            employee = await client
+                .For("Employees")
+                .Key(employee["EmployeeID"])
+                .FindEntryAsync();
 
-            //Assert.Equal(tomorrow, employee["HireDate"]);
+            Assert.Equal(tomorrow, employee["HireDate"]);
         }
 
         [Fact]
         public async Task AddSingleAssociation()
         {
             var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
-            var category = await _client
+            var category = await client
                 .For("Categories")
                 .Set(new { CategoryName = "Test1" })
                 .InsertEntryAsync();
-            var product = await _client
+            var product = await client
                 .For("Products")
                 .Set(new { ProductName = "Test2", UnitPrice = 18m })
                 .InsertEntryAsync();
@@ -189,28 +190,28 @@ namespace Simple.OData.Client.Tests
                 .Set(new { Category = category })
                 .UpdateEntryAsync();
 
-            //product = await _client
-            //    .For("Products")
-            //    .Filter("ProductID eq "+ product["ProductID"])
-            //    .FindEntryAsync();
-            //Assert.Equal(category["CategoryID"], product["CategoryID"]);
-            //category = await _client
-            //    .For("Categories")
-            //    .Filter("CategoryID eq " + category["CategoryID"])
-            //    .Expand("Products")
-            //    .FindEntryAsync();
-            //Assert.Single((category["Products"] as IEnumerable<object>));
+            product = await client
+                .For("Products")
+                .Filter("ProductID eq " + product["ProductID"])
+                .FindEntryAsync();
+            Assert.Equal(category["CategoryID"], product["CategoryID"]);
+            category = await client
+                .For("Categories")
+                .Filter("CategoryID eq " + category["CategoryID"])
+                .Expand("Products")
+                .FindEntryAsync();
+            Assert.Single((category["Products"] as IEnumerable<object>));
         }
 
         [Fact]
         public async Task UpdateSingleAssociation()
         {
             var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
-            var category = await _client
+            var category = await client
                 .For("Categories")
                 .Set(new { CategoryName = "Test1" })
                 .InsertEntryAsync();
-            var product = await _client
+            var product = await client
                 .For("Products")
                 .Set(new { ProductName = "Test2", UnitPrice = 18m, CategoryID = 1 })
                 .InsertEntryAsync();
@@ -221,28 +222,28 @@ namespace Simple.OData.Client.Tests
                 .Set(new { Category = category })
                 .UpdateEntryAsync();
 
-            //product = await _client
-            //    .For("Products")
-            //    .Filter("ProductID eq " + product["ProductID"])
-            //    .FindEntryAsync();
-            //Assert.Equal(category["CategoryID"], product["CategoryID"]);
-            //category = await _client
-            //    .For("Categories")
-            //    .Filter("CategoryID eq " + category["CategoryID"])
-            //    .Expand("Products")
-            //    .FindEntryAsync();
-            //Assert.Single((category["Products"] as IEnumerable<object>));
+            product = await client
+                .For("Products")
+                .Filter("ProductID eq " + product["ProductID"])
+                .FindEntryAsync();
+            Assert.Equal(category["CategoryID"], product["CategoryID"]);
+            category = await client
+                .For("Categories")
+                .Filter("CategoryID eq " + category["CategoryID"])
+                .Expand("Products")
+                .FindEntryAsync();
+            Assert.Single((category["Products"] as IEnumerable<object>));
         }
 
         [Fact]
         public async Task RemoveSingleAssociation()
         {
             var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
-            var category = await _client
+            var category = await client
                 .For("Categories")
                 .Set(new { CategoryName = "Test6" })
                 .InsertEntryAsync();
-            var product = await _client
+            var product = await client
                 .For("Products")
                 .Set(new { ProductName = "Test7", UnitPrice = 18m, Category = category })
                 .InsertEntryAsync();
@@ -253,26 +254,26 @@ namespace Simple.OData.Client.Tests
                 .Set(new { Category = (int?)null })
                 .UpdateEntryAsync();
 
-            //product = await _client
-            //    .For("Products")
-            //    .Filter("ProductID eq " + product["ProductID"])
-            //    .FindEntryAsync();
-            //Assert.Null(product["CategoryID"]);
+            product = await client
+                .For("Products")
+                .Filter("ProductID eq " + product["ProductID"])
+                .FindEntryAsync();
+            Assert.Null(product["CategoryID"]);
         }
 
         [Fact]
         public async Task UpdateMultipleAssociations()
         {
             var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
-            var category = await _client
+            var category = await client
                 .For("Categories")
                 .Set(new { CategoryName = "Test3" })
                 .InsertEntryAsync();
-            var product1 = await _client
+            var product1 = await client
                 .For("Products")
                 .Set(new { ProductName = "Test4", UnitPrice = 18m, CategoryID = 1 })
                 .InsertEntryAsync();
-            var product2 = await _client
+            var product2 = await client
                 .For("Products")
                 .Set(new { ProductName = "Test5", UnitPrice = 18m, CategoryID = 1 })
                 .InsertEntryAsync();
@@ -283,19 +284,19 @@ namespace Simple.OData.Client.Tests
                 .Set(new { Products = new[] { product1, product2 } })
                 .UpdateEntryAsync();
 
-            //category = await _client
-            //    .For("Categories")
-            //    .Filter("CategoryID eq " + category["CategoryID"])
-            //    .Expand("Products")
-            //    .FindEntryAsync();
-            //Assert.Equal(2, (category["Products"] as IEnumerable<object>).Count());
+            category = await client
+                .For("Categories")
+                .Filter("CategoryID eq " + category["CategoryID"])
+                .Expand("Products")
+                .FindEntryAsync();
+            Assert.Equal(2, (category["Products"] as IEnumerable<object>).Count());
         }
 
         [Fact]
         public async Task UpdateDerived()
         {
             var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
-            var ship = await _client
+            var ship = await client
                 .For("Transport")
                 .As("Ship")
                 .Set(new { ShipName = "Test1" })

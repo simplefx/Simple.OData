@@ -18,7 +18,8 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task FunctionWithStringToInt()
         {
-            var result = await _client
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
+            var result = await client
                 .Unbound()
                 .Function("ParseInt")
                 .Set(new Entry() { { "number", "1" } })
@@ -30,7 +31,8 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task FunctionWithString()
         {
-            var result = await _client
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
+            var result = await client
                 .Unbound()
                 .Function("ReturnString")
                 .Set(new Entry() { { "text", "abc" } })
@@ -42,7 +44,8 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task FunctionWithStringAsCollection()
         {
-            var result = await _client
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
+            var result = await client
                 .Unbound<string>()
                 .Function("ReturnString")
                 .Set(new Entry() { { "text", "abc" } })
@@ -54,7 +57,8 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task FunctionWithIntCollectionSingleElement()
         {
-            var result = await _client
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
+            var result = await client
                 .Unbound()
                 .Function("ReturnIntCollection")
                 .Set(new Entry() { { "count", 1 } })
@@ -66,7 +70,8 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task FunctionWithIntCollectionMultipleElements()
         {
-            var result = await _client
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
+            var result = await client
                 .Unbound()
                 .Function("ReturnIntCollection")
                 .Set(new Entry() { { "count", 3 } })
@@ -78,7 +83,8 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task FunctionWithLong()
         {
-            var result = await _client
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
+            var result = await client
                 .Unbound()
                 .Function("PassThroughLong")
                 .Set(new Entry() { { "number", 1L } })
@@ -90,8 +96,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task FunctionWithDateTime()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var dateTime = new DateTime(2013, 1, 1, 12, 13, 14);
-            var result = await _client
+            var result = await client
                 .Unbound()
                 .Function("PassThroughDateTime")
                 .Set(new Entry() { { "dateTime", dateTime } })
@@ -103,8 +110,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task FunctionWithLocalDateTime()
         {
-            var dateTime = DateTime.Now;
-            var result = await _client
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
+            var dateTime = DateTime.Parse("2018-05-20T20:30:40.6779345+02:00");
+            var result = await client
                 .Unbound()
                 .Function("PassThroughDateTime")
                 .Set(new Entry() { { "dateTime", dateTime } })
@@ -116,8 +124,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task FunctionWithGuid()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var guid = new Guid("8DA69EAD-C2DC-4E1E-A588-BA9EB6AA7294");
-            var result = await _client
+            var result = await client
                 .Unbound()
                 .Function("PassThroughGuid")
                 .Set(new Entry() { { "guid", guid } })
@@ -129,8 +138,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task FunctionWithComplexType()
         {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var address = new Address { City = "Oslo", Country = "Norway", Region = "Oslo", PostalCode = "1234" };
-            var result = await _client
+            var result = await client
                 .Unbound<IDictionary<string, object>>()
                 .Action("PassThroughAddress")
                 .Set(new Entry() {{"address", address}})
@@ -144,7 +154,8 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task FunctionWithComplexTypeCollectionSingleElement()
         {
-            var result = (await _client
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
+            var result = (await client
                 .Unbound<IDictionary<string, object>>()
                 .Function("ReturnAddressCollection")
                 .Set(new Entry() { { "count", 1 } })
@@ -157,7 +168,8 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task FunctionWithComplexTypeCollectionMultipleElements()
         {
-            var result = (await _client
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
+            var result = (await client
                 .Unbound<IDictionary<string, object>>()
                 .Function("ReturnAddressCollection")
                 .Set(new Entry() { { "count", 3 } })
@@ -172,7 +184,8 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task FunctionWithComplexTypeCollectionEmpty()
         {
-            var result = (await _client
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
+            var result = (await client
                 .Unbound<IDictionary<string, object>>()
                 .Function("ReturnAddressCollection")
                 .Set(new Entry() { { "count", 0 } })

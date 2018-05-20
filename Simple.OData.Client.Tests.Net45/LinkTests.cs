@@ -14,11 +14,11 @@ namespace Simple.OData.Client.Tests
         public async Task LinkEntry()
         {
             var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
-            var category = await _client
+            var category = await client
                 .For("Categories")
                 .Set(new { CategoryName = "Test4" })
                 .InsertEntryAsync();
-            var product = await _client
+            var product = await client
                 .For("Products")
                 .Set(new { ProductName = "Test5" })
                 .InsertEntryAsync();
@@ -28,23 +28,23 @@ namespace Simple.OData.Client.Tests
                 .Key(product)
                 .LinkEntryAsync("Category", category);
 
-            //product = await _client
-            //    .For("Products")
-            //    .Filter("ProductName eq 'Test5'")
-            //    .FindEntryAsync();
-            //Assert.NotNull(product["CategoryID"]);
-            //Assert.Equal(category["CategoryID"], product["CategoryID"]);
+            product = await client
+                .For("Products")
+                .Filter("ProductName eq 'Test5'")
+                .FindEntryAsync();
+            Assert.NotNull(product["CategoryID"]);
+            Assert.Equal(category["CategoryID"], product["CategoryID"]);
         }
 
         [Fact]
         public async Task UnlinkEntry()
         {
             var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
-            var category = await _client
+            var category = await client
                 .For("Categories")
                 .Set(new { CategoryName = "Test4" })
                 .InsertEntryAsync();
-            var product = await _client
+            var product = await client
                 .For("Products")
                 .Set(new { ProductName = "Test5", CategoryID = category["CategoryID"] })
                 .InsertEntryAsync();
@@ -54,11 +54,11 @@ namespace Simple.OData.Client.Tests
                 .Key(product)
                 .UnlinkEntryAsync("Category");
 
-            //product = await _client
-            //    .For("Products")
-            //    .Filter("ProductName eq 'Test5'")
-            //    .FindEntryAsync();
-            //Assert.Null(product["CategoryID"]);
+            product = await client
+                .For("Products")
+                .Filter("ProductName eq 'Test5'")
+                .FindEntryAsync();
+            Assert.Null(product["CategoryID"]);
         }
     }
 }

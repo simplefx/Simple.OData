@@ -51,7 +51,7 @@ namespace Simple.OData.Client.Tests
         public async Task InsertProductWithCategoryByID()
         {
             var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
-            var category = await _client
+            var category = await client
                 .For<Category>()
                 .Set(new { CategoryName = "Test3" })
                 .InsertEntryAsync();
@@ -62,19 +62,19 @@ namespace Simple.OData.Client.Tests
 
             Assert.Equal("Test4", product.ProductName);
             Assert.Equal(category.CategoryID, product.CategoryID);
-            //category = await client
-            //    .For<Category>()
-            //    .Expand(x => new { x.Products })
-            //    .Filter(x => x.CategoryName == "Test3")
-            //    .FindEntryAsync();
-            //Assert.True(category.Products.Count() == 1);
+            category = await client
+                .For<Category>()
+                .Expand(x => new { x.Products })
+                .Filter(x => x.CategoryName == "Test3")
+                .FindEntryAsync();
+            Assert.True(category.Products.Count() == 1);
         }
 
         [Fact]
         public async Task InsertProductWithCategoryByAssociation()
         {
             var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
-            var category = await _client
+            var category = await client
                 .For<Category>()
                 .Set(new { CategoryName = "Test5" })
                 .InsertEntryAsync();
@@ -85,12 +85,12 @@ namespace Simple.OData.Client.Tests
 
             Assert.Equal("Test6", product.ProductName);
             Assert.Equal(category.CategoryID, product.CategoryID);
-            //category = await client
-            //    .For<Category>()
-            //    .Expand(x => new { x.Products })
-            //    .Filter(x => x.CategoryName == "Test5")
-            //    .FindEntryAsync();
-            //Assert.True(category.Products.Count() == 1);
+            category = await client
+                .For<Category>()
+                .Expand(x => new { x.Products })
+                .Filter(x => x.CategoryName == "Test5")
+                .FindEntryAsync();
+            Assert.True(category.Products.Count() == 1);
         }
 
         [Fact]
@@ -102,12 +102,12 @@ namespace Simple.OData.Client.Tests
                 .Set(new { CategoryName = "Test7", Picture = new byte[] {1,2,3,4,5} })
                 .InsertEntryAsync();
 
-            //category = await client
-            //    .For<Category>()
-            //    .Expand(x => new { x.Products })
-            //    .Filter(x => x.CategoryName == "Test7")
-            //    .FindEntryAsync();
-            //Assert.True(category.Picture.Length > 0);
+            category = await client
+                .For<Category>()
+                .Expand(x => new { x.Products })
+                .Filter(x => x.CategoryName == "Test7")
+                .FindEntryAsync();
+            Assert.True(category.Picture.Length > 0);
         }
 
         [Fact]
@@ -119,12 +119,12 @@ namespace Simple.OData.Client.Tests
                 .Set(new { CategoryName = "Test7", Picture = Convert.ToBase64String(new byte[] { 1, 2, 3, 4, 5 }) })
                 .InsertEntryAsync();
 
-            //category = await client
-            //    .For<Category>()
-            //    .Expand(x => new { x.Products })
-            //    .Filter(x => x.CategoryName == "Test7")
-            //    .FindEntryAsync();
-            //Assert.True(category.Picture.Length > 0);
+            category = await client
+                .For<Category>()
+                .Expand(x => new { x.Products })
+                .Filter(x => x.CategoryName == "Test7")
+                .FindEntryAsync();
+            Assert.True(category.Picture.Length > 0);
         }
         
         [Fact]

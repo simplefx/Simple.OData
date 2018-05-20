@@ -188,6 +188,7 @@ namespace Simple.OData.Client.Tests
             Assert.Equal("Titanic", ship["ShipName"]);
         }
 
+#if !MOCK_HTTP
         [Fact]
         public async Task InterceptRequest()
         {
@@ -202,7 +203,7 @@ namespace Simple.OData.Client.Tests
             await AssertThrowsAsync<InvalidOperationException>(async () => await client.FindEntriesAsync("Products"));
         }
 
-        [Fact(Skip = "Cannot mock")]
+        [Fact]
         public async Task FindEntryParallelThreads()
         {
             var products = (await _client.FindEntriesAsync("Products")).ToArray();
@@ -221,7 +222,7 @@ namespace Simple.OData.Client.Tests
             Assert.Equal(0, summary.NonEqualCount);
         }
 
-        [Fact(Skip = "Cannot mock")]
+        [Fact]
         public async Task FindEntryParallelThreadsRenewConnection()
         {
             var client = new ODataClient(new ODataClientSettings() { BaseUri = _serviceUri, RenewHttpConnection = true });
@@ -276,5 +277,6 @@ namespace Simple.OData.Client.Tests
                 }
             }
         }
+#endif
     }
 }

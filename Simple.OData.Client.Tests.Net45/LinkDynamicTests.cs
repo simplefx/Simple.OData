@@ -13,11 +13,11 @@ namespace Simple.OData.Client.Tests
         {
             var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            var category = await _client
+            var category = await client
                 .For(x.Categories)
                 .Set(x.CategoryName = "Test4")
                 .InsertEntryAsync();
-            var product = await _client
+            var product = await client
                 .For(x.Products)
                 .Set(x.ProductName = "Test5")
                 .InsertEntryAsync();
@@ -27,12 +27,12 @@ namespace Simple.OData.Client.Tests
                 .Key(product)
                 .LinkEntryAsync(x.Category, category);
 
-            //product = await _client
-            //    .For(x.Products)
-            //    .Filter(x.ProductName == "Test5")
-            //    .FindEntryAsync();
-            //Assert.NotNull(product.CategoryID);
-            //Assert.Equal(category.CategoryID, product.CategoryID);
+            product = await client
+                .For(x.Products)
+                .Filter(x.ProductName == "Test5")
+                .FindEntryAsync();
+            Assert.NotNull(product.CategoryID);
+            Assert.Equal(category.CategoryID, product.CategoryID);
         }
 
         [Fact]
@@ -40,11 +40,11 @@ namespace Simple.OData.Client.Tests
         {
             var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            var category = await _client
+            var category = await client
                 .For(x.Categories)
                 .Set(x.CategoryName = "Test4")
                 .InsertEntryAsync();
-            var product = await _client
+            var product = await client
                 .For(x.Products)
                 .Set(x.ProductName = "Test5", x.CategoryID = category.CategoryID)
                 .InsertEntryAsync();
@@ -54,11 +54,11 @@ namespace Simple.OData.Client.Tests
                 .Key(product)
                 .UnlinkEntryAsync(x.Category);
 
-            //product = await _client
-            //    .For(x.Products)
-            //    .Filter(x.ProductName == "Test5")
-            //    .FindEntryAsync();
-            //Assert.Null(product.CategoryID);
+            product = await client
+                .For(x.Products)
+                .Filter(x.ProductName == "Test5")
+                .FindEntryAsync();
+            Assert.Null(product.CategoryID);
         }
     }
 }

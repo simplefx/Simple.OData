@@ -224,9 +224,12 @@ namespace Simple.OData.Client.TestUtils
             foreach (var header in expectedHeaders)
             {
                 Assert.Contains(header.Key, actualHeaders.Keys);
-                var expectedValue = AdjustBatchIds(header.Value.FirstOrDefault());
-                var actualValue = AdjustBatchIds(actualHeaders[header.Key].FirstOrDefault());
-                Assert.Equal(expectedValue, actualValue);
+                if (header.Key != "Content-Length")
+                {
+                    var expectedValue = AdjustBatchIds(header.Value.FirstOrDefault());
+                    var actualValue = AdjustBatchIds(actualHeaders[header.Key].FirstOrDefault());
+                    Assert.Equal(expectedValue, actualValue);
+                }
             }
         }
 
