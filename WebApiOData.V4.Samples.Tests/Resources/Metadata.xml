@@ -11,6 +11,14 @@
         <Property Name="Year" Type="Edm.Int32" Nullable="false" />
         <Property Name="DueDate" Type="Edm.DateTimeOffset" />
       </EntityType>
+      <EntityType Name="Product">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Name" Type="Edm.String" />
+        <Property Name="Price" Type="Edm.Double" Nullable="false" />
+      </EntityType>
       <Action Name="CheckOut" IsBound="true">
         <Parameter Name="bindingParameter" Type="WebApiOData.V4.Samples.Models.Movie" />
         <ReturnType Type="WebApiOData.V4.Samples.Models.Movie" />
@@ -28,9 +36,34 @@
         <Parameter Name="Title" Type="Edm.String" Unicode="false" />
         <ReturnType Type="WebApiOData.V4.Samples.Models.Movie" />
       </Action>
+    </Schema>
+    <Schema Namespace="Default" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <Function Name="MostExpensive" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(WebApiOData.V4.Samples.Models.Product)" />
+        <ReturnType Type="Edm.Double" Nullable="false" />
+      </Function>
+      <Function Name="Top10" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(WebApiOData.V4.Samples.Models.Product)" />
+        <ReturnType Type="Collection(WebApiOData.V4.Samples.Models.Product)" />
+      </Function>
+      <Function Name="GetPriceRank" IsBound="true">
+        <Parameter Name="bindingParameter" Type="WebApiOData.V4.Samples.Models.Product" />
+        <ReturnType Type="Edm.Int32" Nullable="false" />
+      </Function>
+      <Function Name="CalculateGeneralSalesTax" IsBound="true">
+        <Parameter Name="bindingParameter" Type="WebApiOData.V4.Samples.Models.Product" />
+        <Parameter Name="state" Type="Edm.String" Unicode="false" />
+        <ReturnType Type="Edm.Double" Nullable="false" />
+      </Function>
+      <Function Name="GetSalesTaxRate">
+        <Parameter Name="state" Type="Edm.String" Unicode="false" />
+        <ReturnType Type="Edm.Double" Nullable="false" />
+      </Function>
       <EntityContainer Name="Container">
         <EntitySet Name="Movies" EntityType="WebApiOData.V4.Samples.Models.Movie" />
+        <EntitySet Name="Products" EntityType="WebApiOData.V4.Samples.Models.Product" />
         <ActionImport Name="CreateMovie" Action="WebApiOData.V4.Samples.Models.CreateMovie" EntitySet="Movies" />
+        <FunctionImport Name="GetSalesTaxRate" Function="Default.GetSalesTaxRate" IncludeInServiceDocument="true" />
       </EntityContainer>
     </Schema>
   </edmx:DataServices>
