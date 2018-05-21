@@ -31,10 +31,21 @@ namespace WebApiOData.V4.Samples.Tests
             return new ODataClientSettings()
             {
                 BaseUri = new Uri("http://localhost/functions"),
+                MetadataDocument = GetMetadataDocument(),
                 PayloadFormat = ODataPayloadFormat.Json,
                 OnCreateMessageHandler = () => _server.Handler,
                 OnTrace = (x, y) => Console.WriteLine(string.Format(x, y)),
             };
+        }
+
+        private string GetMetadataDocument()
+        {
+#if MOCK_HTTP
+            return MetadataResolver.GetMetadataDocument("Metadata.xml");
+#else
+            return null;
+#endif
+
         }
 
         [Fact]

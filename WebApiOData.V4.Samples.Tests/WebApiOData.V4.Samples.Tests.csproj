@@ -24,7 +24,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;MOCK_HTTP</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -92,6 +92,9 @@
     <Compile Include="..\CommonAssemblyVersion.cs">
       <Link>Properties\CommonAssemblyVersion.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.TestUtils\MetadataResolver.cs">
+      <Link>MetadataResolver.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.TestUtils\MockingRequestExecutor.cs">
       <Link>MockingRequestExecutor.cs</Link>
     </Compile>
@@ -128,6 +131,9 @@
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\Solutions\packages\xunit.analyzers.0.7.0\analyzers\dotnet\cs\xunit.analyzers.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Metadata.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

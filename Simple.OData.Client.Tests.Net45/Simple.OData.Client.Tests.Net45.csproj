@@ -150,6 +150,9 @@
     <Compile Include="..\Simple.OData.Client.Tests.Core\Entities\Transport.cs">
       <Link>Entities\Transport.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.TestUtils\MetadataResolver.cs">
+      <Link>MetadataResolver.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.TestUtils\MockingRequestExecutor.cs">
       <Link>MockingRequestExecutor.cs</Link>
     </Compile>

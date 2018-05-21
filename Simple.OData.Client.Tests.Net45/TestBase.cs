@@ -79,22 +79,10 @@ namespace Simple.OData.Client.Tests
 #endif
         }
 
-        private static string GetResourceAsString(string resourceName)
-        {
-            var assembly = Assembly.GetExecutingAssembly();
-            var resourceNames = assembly.GetManifestResourceNames();
-            var completeResourceName = resourceNames.FirstOrDefault(o => o.EndsWith("." + resourceName, StringComparison.CurrentCultureIgnoreCase));
-            using (var resourceStream = assembly.GetManifestResourceStream(completeResourceName))
-            {
-                var reader = new StreamReader(resourceStream);
-                return reader.ReadToEnd();
-            }
-        }
-
         private string GetMetadataDocument()
         {
 #if MOCK_HTTP
-            return GetResourceAsString(@"Resources." + "Northwind.xml");
+            return MetadataResolver.GetMetadataDocument("Northwind.xml");
 #else
             return null;
 #endif

@@ -1,0 +1,37 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+  <edmx:DataServices>
+    <Schema Namespace="WebApiOData.V4.Samples.Models" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <EntityType Name="Movie">
+        <Key>
+          <PropertyRef Name="ID" />
+        </Key>
+        <Property Name="ID" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Title" Type="Edm.String" />
+        <Property Name="Year" Type="Edm.Int32" Nullable="false" />
+        <Property Name="DueDate" Type="Edm.DateTimeOffset" />
+      </EntityType>
+      <Action Name="CheckOut" IsBound="true">
+        <Parameter Name="bindingParameter" Type="WebApiOData.V4.Samples.Models.Movie" />
+        <ReturnType Type="WebApiOData.V4.Samples.Models.Movie" />
+      </Action>
+      <Action Name="Return" IsBound="true">
+        <Parameter Name="bindingParameter" Type="WebApiOData.V4.Samples.Models.Movie" />
+        <ReturnType Type="WebApiOData.V4.Samples.Models.Movie" />
+      </Action>
+      <Action Name="CheckOutMany" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(WebApiOData.V4.Samples.Models.Movie)" />
+        <Parameter Name="MovieIDs" Type="Collection(Edm.Int32)" Nullable="false" />
+        <ReturnType Type="Collection(WebApiOData.V4.Samples.Models.Movie)" />
+      </Action>
+      <Action Name="CreateMovie">
+        <Parameter Name="Title" Type="Edm.String" Unicode="false" />
+        <ReturnType Type="WebApiOData.V4.Samples.Models.Movie" />
+      </Action>
+      <EntityContainer Name="Container">
+        <EntitySet Name="Movies" EntityType="WebApiOData.V4.Samples.Models.Movie" />
+        <ActionImport Name="CreateMovie" Action="WebApiOData.V4.Samples.Models.CreateMovie" EntitySet="Movies" />
+      </EntityContainer>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>

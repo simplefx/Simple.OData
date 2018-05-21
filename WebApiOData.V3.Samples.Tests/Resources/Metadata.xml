@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx">
+  <edmx:DataServices m:DataServiceVersion="3.0" m:MaxDataServiceVersion="3.0" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">
+    <Schema Namespace="WebApiOData.V3.Samples.Models" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <EntityType Name="Movie">
+        <Key>
+          <PropertyRef Name="ID" />
+        </Key>
+        <Property Name="ID" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Title" Type="Edm.String" />
+        <Property Name="Year" Type="Edm.Int32" Nullable="false" />
+        <Property Name="DueDate" Type="Edm.DateTime" />
+      </EntityType>
+    </Schema>
+    <Schema Namespace="Default" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <EntityContainer Name="Container" m:IsDefaultEntityContainer="true">
+        <EntitySet Name="Movies" EntityType="WebApiOData.V3.Samples.Models.Movie" />
+        <FunctionImport Name="CheckOut" ReturnType="WebApiOData.V3.Samples.Models.Movie" IsBindable="true" EntitySet="Movies">
+          <Parameter Name="bindingParameter" Type="WebApiOData.V3.Samples.Models.Movie" />
+        </FunctionImport>
+        <FunctionImport Name="Return" ReturnType="WebApiOData.V3.Samples.Models.Movie" IsBindable="true" EntitySet="Movies" m:IsAlwaysBindable="true">
+          <Parameter Name="bindingParameter" Type="WebApiOData.V3.Samples.Models.Movie" />
+        </FunctionImport>
+        <FunctionImport Name="SetDueDate" ReturnType="WebApiOData.V3.Samples.Models.Movie" IsBindable="true" EntitySet="Movies" m:IsAlwaysBindable="true">
+          <Parameter Name="bindingParameter" Type="WebApiOData.V3.Samples.Models.Movie" />
+          <Parameter Name="DueDate" Type="Edm.DateTime" Nullable="false" />
+        </FunctionImport>
+        <FunctionImport Name="CheckOut" ReturnType="Collection(WebApiOData.V3.Samples.Models.Movie)" IsBindable="true" EntitySet="Movies" m:IsAlwaysBindable="true">
+          <Parameter Name="bindingParameter" Type="Collection(WebApiOData.V3.Samples.Models.Movie)" Nullable="false" />
+        </FunctionImport>
+        <FunctionImport Name="CheckOutMany" ReturnType="Collection(WebApiOData.V3.Samples.Models.Movie)" IsBindable="true" EntitySet="Movies" m:IsAlwaysBindable="true">
+          <Parameter Name="bindingParameter" Type="Collection(WebApiOData.V3.Samples.Models.Movie)" Nullable="false" />
+          <Parameter Name="MovieIDs" Type="Collection(Edm.Int32)" Nullable="false" />
+        </FunctionImport>
+        <FunctionImport Name="CreateMovie" ReturnType="WebApiOData.V3.Samples.Models.Movie" EntitySet="Movies">
+          <Parameter Name="Title" Type="Edm.String" FixedLength="false" Unicode="false" />
+        </FunctionImport>
+      </EntityContainer>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>

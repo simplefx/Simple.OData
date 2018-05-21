@@ -229,6 +229,9 @@
     <Compile Include="..\Simple.OData.Client.Tests.Net45\UpdateTypedTests.cs">
       <Link>UpdateTypedTests.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.TestUtils\MetadataResolver.cs">
+      <Link>MetadataResolver.cs</Link>
+    </Compile>
     <Compile Include="..\Simple.OData.Client.TestUtils\MockingRequestExecutor.cs">
       <Link>MockingRequestExecutor.cs</Link>
     </Compile>
