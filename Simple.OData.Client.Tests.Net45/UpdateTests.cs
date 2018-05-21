@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
+using Simple.OData.Client.TestUtils;
 
 using Entry = System.Collections.Generic.Dictionary<string, object>;
 
@@ -149,7 +150,7 @@ namespace Simple.OData.Client.Tests
         public async Task UpdateDate()
         {
             var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
-            var today = DateTime.Now.Date;
+            var today = DateTime.Parse("2018-05-20T20:30:40.6770000");
             var tomorrow = today.AddDays(1);
 
             var employee = await client

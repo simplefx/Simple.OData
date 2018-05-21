@@ -64,7 +64,7 @@ namespace Simple.OData.Client.TestUtils
 
         public SerializableHttpResponseMessage()
         {
-            
+
         }
 
         public SerializableHttpResponseMessage(HttpResponseMessage response)
@@ -92,7 +92,7 @@ namespace Simple.OData.Client.TestUtils
         private int _fileCounter;
         private static Regex _regexBatch = new Regex(@"batch_([0-9AFa-f]){8}-([0-9AFa-f]){4}-([0-9AFa-f]){4}-([0-9AFa-f]){4}-([0-9AFa-f]){12}");
         private static Regex _regexChangeset = new Regex(@"changeset_([0-9AFa-f]){8}-([0-9AFa-f]){4}-([0-9AFa-f]){4}-([0-9AFa-f]){4}-([0-9AFa-f]){12}");
-        private static Regex _regexBaseUrl = new Regex(@"http:\/\/((\w|_|\.|)+\/){3}");
+        private static Regex _regexBaseUrl = new Regex(@"http:\/\/((\w|_|-|\.|)+\/){3}");
 
         public MockingRequestExecutor(ODataClientSettings settings, string mockDataPathBase, bool recording = false)
         {
@@ -138,7 +138,7 @@ namespace Simple.OData.Client.TestUtils
             {
                 var ser = new DataContractJsonSerializer(typeof(SerializableHttpRequestMessage));
                 ser.WriteObject(stream, new SerializableHttpRequestMessage(request));
-            }                
+            }
         }
 
         private void SaveResponse(HttpResponseMessage response)
@@ -147,7 +147,7 @@ namespace Simple.OData.Client.TestUtils
             {
                 var ser = new DataContractJsonSerializer(typeof(SerializableHttpResponseMessage));
                 ser.WriteObject(stream, new SerializableHttpResponseMessage(response));
-            }                
+            }
         }
 
         private async Task ValidateRequestAsync(HttpRequestMessage request)
@@ -213,7 +213,7 @@ namespace Simple.OData.Client.TestUtils
                         response.Content.Headers.Add(header.Key, header.Value);
                     }
                 }
-                return response;            }
+                return response; }
         }
 
         private void ValidateHeaders(
@@ -235,12 +235,12 @@ namespace Simple.OData.Client.TestUtils
 
         private string AdjustContent(string content)
         {
-            return 
+            return
                 AdjustBatchIds(
                 AdjustNewLines(
                 AdjustBaseUrl(
                 RemoveElements(content, new[] { "updated" }))));
-            
+
         }
 
         private string RemoveElements(string content, IEnumerable<string> elementNames)
@@ -273,7 +273,7 @@ namespace Simple.OData.Client.TestUtils
         {
             return _regexBaseUrl.Replace(content, "http://localhost/");
         }
-        
+
         private string AdjustBatchIds(string content)
         {
             var result = _regexBatch.Replace(content, Guid.Empty.ToString());
@@ -281,6 +281,7 @@ namespace Simple.OData.Client.TestUtils
             return result;
         }
     }
+
     public static partial class ODataClientSettingsExtensionMethods
     {
         private const string MockDataDir = @"../../../MockData";
@@ -319,6 +320,40 @@ namespace Simple.OData.Client.TestUtils
         {
             settings.AfterResponse = action;
             return settings;
+        }
+
+        public static ODataClientSettings WithHttpMock(this ODataClientSettings settings)
+        {
+            var methodName = GetTestMethodFullName();
+            var mockDataPathBase = GetMockDataPathBase(methodName);
+#if MOCK_HTTP
+            var recording = false;
+#else
+            var recording = true;
+#endif
+            var requestExecutor = new MockingRequestExecutor(settings, mockDataPathBase, recording);
+            settings.RequestExecutor = requestExecutor.ExecuteRequestAsync;
+            return settings;
+        }
+
+        private static string GetMockDataPathBase(string testMethodName)
+        {
+            return Path.Combine(MockDataDir, testMethodName);
+        }
+
+        private static string GetTestMethodFullName()
+        {
+            var stackTrace = new System.Diagnostics.StackTrace();
+            for (var frameNumber = 2; ; frameNumber++)
+            {
+                var stackFrame = stackTrace.GetFrame(frameNumber);
+                if (stackFrame == null)
+                    throw new InvalidOperationException("Attempt to retrieve a frame beyond the call stack");
+                var method = stackFrame.GetMethod();
+                var methodName = new string(method.Name.Where(c => char.IsLetterOrDigit(c) || c == '_').ToArray());
+                if (method.IsPublic && !method.IsGenericMethod)
+                    return string.Format($"{method.DeclaringType.Name}.{methodName}");
+            }
         }
     }
 }

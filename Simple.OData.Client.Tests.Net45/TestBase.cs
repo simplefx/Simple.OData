@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
 using Simple.OData.Client.TestUtils;
+
 using Xunit;
 #if !MOCK_HTTP
 using Simple.OData.NorthwindModel;
@@ -13,46 +14,6 @@ using Simple.OData.NorthwindModel;
 
 namespace Simple.OData.Client.Tests
 {
-    public static partial class ODataClientSettingsExtensionMethods
-    {
-        private const string MockDataDir = @"../../../MockData";
-
-        public static ODataClientSettings WithHttpMock(this ODataClientSettings settings)
-        {
-            var methodName = GetTestMethodFullName();
-            var mockDataPathBase = GetMockDataPathBase(methodName);
-#if MOCK_HTTP
-            var recording = false;
-#else
-            var recording = true;
-#endif
-            var requestExecutor = new MockingRequestExecutor(settings, mockDataPathBase, recording);
-            settings.RequestExecutor = requestExecutor.ExecuteRequestAsync;
-            return settings;
-        }
-
-        private static string GetMockDataPathBase(string testMethodName)
-        {
-            return Path.Combine(MockDataDir, testMethodName);
-        }
-
-        private static string GetTestMethodFullName()
-        {
-            var stackTrace = new System.Diagnostics.StackTrace();
-            var baseType = typeof(TestBase);
-            for (var frameNumber = 1; ; frameNumber++)
-            {
-                var stackFrame = stackTrace.GetFrame(frameNumber);
-                if (stackFrame == null)
-                    throw new InvalidOperationException("Attempt to retrieve a frame beyond the call stack");
-                var method = stackFrame.GetMethod();
-                var methodName = new string(method.Name.Where(c => char.IsLetterOrDigit(c) || c == '_').ToArray());
-                if (method.DeclaringType != baseType && baseType.IsAssignableFrom(method.DeclaringType))
-                    return string.Format($"{method.DeclaringType.Name}.{methodName}");
-            }
-        }
-    }
-
     public class TestBase : IDisposable
     {
         protected Uri _serviceUri;
