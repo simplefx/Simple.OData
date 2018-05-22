@@ -1,5 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto" package="Simple.OData.Client.Tests.Droid" android:versionCode="1">
-	<uses-sdk />
-	<application android:label="Simple.OData.Client.Tests (Android)"></application>
-</manifest>

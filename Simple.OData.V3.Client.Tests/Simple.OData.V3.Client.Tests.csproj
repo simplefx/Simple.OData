@@ -39,14 +39,8 @@
     <Reference Include="Microsoft.Data.OData, Version=5.8.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\Solutions\packages\Microsoft.Data.OData.5.8.3\lib\net40\Microsoft.Data.OData.dll</HintPath>
     </Reference>
-    <Reference Include="Simple.OData.Client.Core, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\Solutions\packages\Simple.OData.V3.Client.5.0.0-beta1\lib\net45\Simple.OData.Client.Core.dll</HintPath>
-    </Reference>
-    <Reference Include="Simple.OData.Client.Dynamic, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\Solutions\packages\Simple.OData.V3.Client.5.0.0-beta1\lib\net45\Simple.OData.Client.Dynamic.dll</HintPath>
-    </Reference>
-    <Reference Include="Simple.OData.Client.V3.Adapter, Version=5.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\Solutions\packages\Simple.OData.V3.Client.5.0.0-beta1\lib\net45\Simple.OData.Client.V3.Adapter.dll</HintPath>
+    <Reference Include="Simple.OData.Client.Net45, Version=5.0.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\Solutions\packages\Simple.OData.V3.Client.5.0.0.1\lib\net45\Simple.OData.Client.Net45.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
