@@ -202,17 +202,29 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Simple.OData.Client.Core\Simple.OData.Client.Core.csproj">
+      <Project>{361868b8-a63e-4c74-aa87-b70e1ab22313}</Project>
+      <Name>Simple.OData.Client.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Simple.OData.Client.Dynamic\Simple.OData.Client.Dynamic.csproj">
+      <Project>{c025fb0f-452b-4795-b9a4-64c9e6abbeee}</Project>
+      <Name>Simple.OData.Client.Dynamic</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Simple.OData.Client.TestUtils\Simple.OData.Client.TestUtils.csproj">
       <Project>{072f8be4-81c1-4276-a9a5-1aec87a84265}</Project>
       <Name>Simple.OData.Client.TestUtils</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Simple.OData.Client.V3.Adapter\Simple.OData.Client.V3.Adapter.csproj">
+      <Project>{a08b2d3d-91a6-4ecd-b7af-5977e840e383}</Project>
+      <Name>Simple.OData.Client.V3.Adapter</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Simple.OData.Client.V4.Adapter\Simple.OData.Client.V4.Adapter.csproj">
+      <Project>{31d1cc1d-316e-4516-a2bd-f07423b394f6}</Project>
+      <Name>Simple.OData.Client.V4.Adapter</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Simple.OData.NorthwindModel\Simple.OData.NorthwindModel.csproj">
       <Project>{2A909E4D-6493-4D36-9FDE-786B89F9A387}</Project>
       <Name>Simple.OData.NorthwindModel</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Simple.OData.Client.Net45\Simple.OData.Client.Net45.csproj">
-      <Project>{c20a3959-4895-41f8-86e2-7ded294fd904}</Project>
-      <Name>Simple.OData.Client.Net45</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
