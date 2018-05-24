@@ -1,15 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net45</TargetFrameworks>
+    <TargetFrameworks>net452</TargetFrameworks>
 	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
 	<OutputPath>$(SolutionDir)/build/$(Configuration)/$(AssemblyName)/$(TargetFramework)/</OutputPath>
 	<OutDir>$(OutputPath)</OutDir>
   </PropertyGroup>
   <ItemGroup>
     <None Include="App.config">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
     <EmbeddedResource Include="..\Simple.OData.Client.Tests.Net45\Properties\XmlSamples.resx">
@@ -23,7 +22,9 @@
     <PackageReference Include="Microsoft.Data.OData" Version="5.8.3" />
     <PackageReference Include="Microsoft.OData.Core" Version="7.3.1" />
     <PackageReference Include="Microsoft.Net.Test.Sdk" Version="15.7.0" />
-    <PackageReference Include="xunit" Version="2.3.0" />
+    <PackageReference Include="xunit" Version="2.3.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
+    <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\CommonAssemblyInfo.cs">

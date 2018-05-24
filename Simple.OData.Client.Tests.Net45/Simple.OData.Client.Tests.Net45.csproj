@@ -1,8 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>net45</TargetFrameworks>
+    <TargetFrameworks>net452</TargetFrameworks>
 	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <RootNamespace>Simple.OData.Client.Tests</RootNamespace>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
 	<OutputPath>$(SolutionDir)/build/$(Configuration)/$(AssemblyName)/$(TargetFramework)/</OutputPath>
 	<OutDir>$(OutputPath)</OutDir>
   </PropertyGroup>
@@ -15,7 +17,9 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.4.1" />
     <PackageReference Include="Microsoft.Net.Test.Sdk" Version="15.7.0" />
-    <PackageReference Include="xunit" Version="2.3.0" />
+    <PackageReference Include="xunit" Version="2.3.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
+    <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config">
@@ -80,5 +84,34 @@
       <Project>{2A909E4D-6493-4D36-9FDE-786B89F9A387}</Project>
       <Name>Simple.OData.NorthwindModel</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="MockData\BatchDynamicTests.AllFailures.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MockData\BatchDynamicTests.InsertSingleEntityWithMultipleAssociationsSingleBatch.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MockData\BatchDynamicTests.InsertSingleEntityWithSingleAssociationSingleBatch.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="MockData\BatchDynamicTests.InsertUpdateDeleteSeparateBatches.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MockData\BatchDynamicTests.MultipleUpdatesSingleBatch.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MockData\BatchDynamicTests.PartialFailures.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MockData\BatchDynamicTests.Success.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MockData\BatchDynamicTests.SuccessWithResults.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MockData\BatchDynamicTests.UpdateDeleteSingleBatch.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>
