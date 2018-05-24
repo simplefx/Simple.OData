@@ -36,3 +36,7 @@ Solutions/.vs/
 Solutions/.idea/
 nuget.exe
 /Solutions/build/
+/.fake
+/paket-files
+/.paket/paket.exe
+/.paket/Paket.Restore.targets
