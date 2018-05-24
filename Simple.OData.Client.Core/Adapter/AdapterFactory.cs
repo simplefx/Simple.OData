@@ -132,15 +132,14 @@ namespace Simple.OData.Client
         {
             try
             {
-                Assembly assembly = null;
                 var assemblyName = new AssemblyName(adapterAssemblyName);
-                assembly = Assembly.Load(assemblyName);
+                var assembly = Assembly.Load(assemblyName);
 
                 var constructors = assembly.GetType(adapterTypeName).GetDeclaredConstructors();
 
                 var ctor = constructors.Single(x =>
                     x.GetParameters().Count() == ctorParams.Count() &&
-                    x.GetParameters().Last().ParameterType.GetTypeInfo().IsAssignableFrom(ctorParams.Last().GetType().GetTypeInfo()));
+                    x.GetParameters().Last().ParameterType.IsInstanceOfType(ctorParams.Last()));
 
                 return ctor.Invoke(ctorParams) as IODataAdapter;
             }

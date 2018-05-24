@@ -5,6 +5,7 @@ VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{D1D23CCD-C556-480A-8817-6FD58817A0C8}"
 	ProjectSection(SolutionItems) = preProject
+		..\build.fsx = ..\build.fsx
 		..\CommonAssemblyInfo.cs = ..\CommonAssemblyInfo.cs
 		..\CommonAssemblyVersion.cs = ..\CommonAssemblyVersion.cs
 		..\NugetPack.cmd = ..\NugetPack.cmd
@@ -16,25 +17,23 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{78D04AF9-B9B4-4025-93C6-B3DB01EDAAE9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.OData.NorthwindModel", "..\Simple.OData.NorthwindModel\Simple.OData.NorthwindModel.csproj", "{2A909E4D-6493-4D36-9FDE-786B89F9A387}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Simple.OData.NorthwindModel", "..\Simple.OData.NorthwindModel\Simple.OData.NorthwindModel.csproj", "{2A909E4D-6493-4D36-9FDE-786B89F9A387}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.OData.Client.TestUtils", "..\Simple.OData.Client.TestUtils\Simple.OData.Client.TestUtils.csproj", "{072F8BE4-81C1-4276-A9A5-1AEC87A84265}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.OData.Client.Tests.Net45", "..\Simple.OData.Client.Tests.Net45\Simple.OData.Client.Tests.Net45.csproj", "{898FFD08-B7FC-45FE-A6DD-5AE9C2280D28}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Simple.OData.Client.TestUtils", "..\Simple.OData.Client.TestUtils\Simple.OData.Client.TestUtils.csproj", "{072F8BE4-81C1-4276-A9A5-1AEC87A84265}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Simple.OData.Client.Core", "..\Simple.OData.Client.Core\Simple.OData.Client.Core.csproj", "{361868B8-A63E-4C74-AA87-B70E1AB22313}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.OData.Client.Tests.NetStandard", "..\Simple.OData.Client.Tests.NetStandard\Simple.OData.Client.Tests.NetStandard.csproj", "{95B3E5A3-BE4F-4EBD-AF3D-599AE5FD1B43}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Simple.OData.Client.Tests.NetStandard", "..\Simple.OData.Client.Tests.NetStandard\Simple.OData.Client.Tests.NetStandard.csproj", "{95B3E5A3-BE4F-4EBD-AF3D-599AE5FD1B43}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.OData.NorthwindService", "..\Simple.OData.NorthwindService\Simple.OData.NorthwindService.csproj", "{14436AD5-8995-406A-8468-F0B4DE53DFDB}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Simple.OData.Client.Dynamic", "..\Simple.OData.Client.Dynamic\Simple.OData.Client.Dynamic.csproj", "{C025FB0F-452B-4795-B9A4-64C9E6ABBEEE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.OData.Client.Tests.Core", "..\Simple.OData.Client.Tests.Core\Simple.OData.Client.Tests.Core.csproj", "{0D9F3744-9DB0-421D-8AC8-388EF7764643}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Simple.OData.Client.Tests.Core", "..\Simple.OData.Client.Tests.Core\Simple.OData.Client.Tests.Core.csproj", "{0D9F3744-9DB0-421D-8AC8-388EF7764643}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.OData.ProductService", "..\Simple.OData.ProductService\Simple.OData.ProductService.csproj", "{276DF698-6E22-4FF2-BAF1-09BCE205CCE5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.OData.Client.IntegrationTests", "..\Simple.OData.Client.IntegrationTests\Simple.OData.Client.IntegrationTests.csproj", "{812D678E-B428-41A1-BC05-8160695AD186}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Simple.OData.Client.IntegrationTests", "..\Simple.OData.Client.IntegrationTests\Simple.OData.Client.IntegrationTests.csproj", "{812D678E-B428-41A1-BC05-8160695AD186}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Simple.OData.Client.V3.Adapter", "..\Simple.OData.Client.V3.Adapter\Simple.OData.Client.V3.Adapter.csproj", "{A08B2D3D-91A6-4ECD-B7AF-5977E840E383}"
 EndProject
@@ -42,13 +41,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Simple.OData.Client.V4.Adap
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiOData.V4.Samples", "..\WebApiOData.V4.Samples\WebApiOData.V4.Samples.csproj", "{25EEBCD4-0604-4B5A-AAF5-8A788939A217}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiOData.V4.Samples.Tests", "..\WebApiOData.V4.Samples.Tests\WebApiOData.V4.Samples.Tests.csproj", "{F01F7750-85F6-43D8-9C7B-34C75A3861E7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApiOData.V4.Samples.Tests", "..\WebApiOData.V4.Samples.Tests\WebApiOData.V4.Samples.Tests.csproj", "{F01F7750-85F6-43D8-9C7B-34C75A3861E7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiOData.V3.Samples", "..\WebApiOData.V3.Samples\WebApiOData.V3.Samples.csproj", "{09CD2CB4-0B5B-4018-BFBB-7367CA7E10A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiOData.V3.Samples.Tests", "..\WebApiOData.V3.Samples.Tests\WebApiOData.V3.Samples.Tests.csproj", "{57AA878B-3DD3-4B79-AB0B-ECC29563AAAC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApiOData.V3.Samples.Tests", "..\WebApiOData.V3.Samples.Tests\WebApiOData.V3.Samples.Tests.csproj", "{57AA878B-3DD3-4B79-AB0B-ECC29563AAAC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ActionProviderImplementation", "..\ActionProviderImplementation\ActionProviderImplementation.csproj", "{6BE6677A-761E-4278-9059-233D775FE347}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ActionProviderImplementation", "..\ActionProviderImplementation\ActionProviderImplementation.csproj", "{6BE6677A-761E-4278-9059-233D775FE347}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Simple.OData.Client.Tests.Net45", "..\Simple.OData.Client.Tests.Net45\Simple.OData.Client.Tests.Net45.csproj", "{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -154,42 +155,6 @@ Global
 		{072F8BE4-81C1-4276-A9A5-1AEC87A84265}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{072F8BE4-81C1-4276-A9A5-1AEC87A84265}.Release|x64.ActiveCfg = Release|Any CPU
 		{072F8BE4-81C1-4276-A9A5-1AEC87A84265}.Release|x86.ActiveCfg = Release|Any CPU
-		{898FFD08-B7FC-45FE-A6DD-5AE9C2280D28}.Ad-Hoc|Any CPU.ActiveCfg = Release|Any CPU
-		{898FFD08-B7FC-45FE-A6DD-5AE9C2280D28}.Ad-Hoc|Any CPU.Build.0 = Release|Any CPU
-		{898FFD08-B7FC-45FE-A6DD-5AE9C2280D28}.Ad-Hoc|ARM.ActiveCfg = Release|Any CPU
-		{898FFD08-B7FC-45FE-A6DD-5AE9C2280D28}.Ad-Hoc|iPhone.ActiveCfg = Release|Any CPU
-		{898FFD08-B7FC-45FE-A6DD-5AE9C2280D28}.Ad-Hoc|iPhoneSimulator.ActiveCfg = Release|Any CPU
-		{898FFD08-B7FC-45FE-A6DD-5AE9C2280D28}.Ad-Hoc|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{898FFD08-B7FC-45FE-A6DD-5AE9C2280D28}.Ad-Hoc|Mixed Platforms.Build.0 = Release|Any CPU
-		{898FFD08-B7FC-45FE-A6DD-5AE9C2280D28}.Ad-Hoc|x64.ActiveCfg = Release|Any CPU
-		{898FFD08-B7FC-45FE-A6DD-5AE9C2280D28}.Ad-Hoc|x86.ActiveCfg = Release|Any CPU
-		{898FFD08-B7FC-45FE-A6DD-5AE9C2280D28}.AppStore|Any CPU.ActiveCfg = Release|Any CPU
-		{898FFD08-B7FC-45FE-A6DD-5AE9C2280D28}.AppStore|Any CPU.Build.0 = Release|Any CPU
-		{898FFD08-B7FC-45FE-A6DD-5AE9C2280D28}.AppStore|ARM.ActiveCfg = Release|Any CPU
-		{898FFD08-B7FC-45FE-A6DD-5AE9C2280D28}.AppStore|iPhone.ActiveCfg = Release|Any CPU
-		{898FFD08-B7FC-45FE-A6DD-5AE9C2280D28}.AppStore|iPhoneSimulator.ActiveCfg = Release|Any CPU
-		{898FFD08-B7FC-45FE-A6DD-5AE9C2280D28}.AppStore|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{898FFD08-B7FC-45FE-A6DD-5AE9C2280D28}.AppStore|Mixed Platforms.Build.0 = Release|Any CPU
-		{898FFD08-B7FC-45FE-A6DD-5AE9C2280D28}.AppStore|x64.ActiveCfg = Release|Any CPU
-		{898FFD08-B7FC-45FE-A6DD-5AE9C2280D28}.AppStore|x86.ActiveCfg = Release|Any CPU
-		{898FFD08-B7FC-45FE-A6DD-5AE9C2280D28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{898FFD08-B7FC-45FE-A6DD-5AE9C2280D28}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{898FFD08-B7FC-45FE-A6DD-5AE9C2280D28}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{898FFD08-B7FC-45FE-A6DD-5AE9C2280D28}.Debug|iPhone.ActiveCfg = Debug|Any CPU
-		{898FFD08-B7FC-45FE-A6DD-5AE9C2280D28}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
-		{898FFD08-B7FC-45FE-A6DD-5AE9C2280D28}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{898FFD08-B7FC-45FE-A6DD-5AE9C2280D28}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{898FFD08-B7FC-45FE-A6DD-5AE9C2280D28}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{898FFD08-B7FC-45FE-A6DD-5AE9C2280D28}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{898FFD08-B7FC-45FE-A6DD-5AE9C2280D28}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{898FFD08-B7FC-45FE-A6DD-5AE9C2280D28}.Release|Any CPU.Build.0 = Release|Any CPU
-		{898FFD08-B7FC-45FE-A6DD-5AE9C2280D28}.Release|ARM.ActiveCfg = Release|Any CPU
-		{898FFD08-B7FC-45FE-A6DD-5AE9C2280D28}.Release|iPhone.ActiveCfg = Release|Any CPU
-		{898FFD08-B7FC-45FE-A6DD-5AE9C2280D28}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
-		{898FFD08-B7FC-45FE-A6DD-5AE9C2280D28}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{898FFD08-B7FC-45FE-A6DD-5AE9C2280D28}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{898FFD08-B7FC-45FE-A6DD-5AE9C2280D28}.Release|x64.ActiveCfg = Release|Any CPU
-		{898FFD08-B7FC-45FE-A6DD-5AE9C2280D28}.Release|x86.ActiveCfg = Release|Any CPU
 		{361868B8-A63E-4C74-AA87-B70E1AB22313}.Ad-Hoc|Any CPU.ActiveCfg = Release|Any CPU
 		{361868B8-A63E-4C74-AA87-B70E1AB22313}.Ad-Hoc|Any CPU.Build.0 = Release|Any CPU
 		{361868B8-A63E-4C74-AA87-B70E1AB22313}.Ad-Hoc|ARM.ActiveCfg = Release|Any CPU
@@ -694,6 +659,62 @@ Global
 		{6BE6677A-761E-4278-9059-233D775FE347}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{6BE6677A-761E-4278-9059-233D775FE347}.Release|x64.ActiveCfg = Release|Any CPU
 		{6BE6677A-761E-4278-9059-233D775FE347}.Release|x86.ActiveCfg = Release|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.Ad-Hoc|Any CPU.ActiveCfg = Release|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.Ad-Hoc|Any CPU.Build.0 = Release|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.Ad-Hoc|ARM.ActiveCfg = Release|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.Ad-Hoc|ARM.Build.0 = Release|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.Ad-Hoc|iPhone.ActiveCfg = Release|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.Ad-Hoc|iPhone.Build.0 = Release|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.Ad-Hoc|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.Ad-Hoc|iPhoneSimulator.Build.0 = Release|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.Ad-Hoc|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.Ad-Hoc|Mixed Platforms.Build.0 = Release|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.Ad-Hoc|x64.ActiveCfg = Release|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.Ad-Hoc|x64.Build.0 = Release|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.Ad-Hoc|x86.ActiveCfg = Release|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.Ad-Hoc|x86.Build.0 = Release|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.AppStore|Any CPU.ActiveCfg = Release|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.AppStore|Any CPU.Build.0 = Release|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.AppStore|ARM.ActiveCfg = Release|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.AppStore|ARM.Build.0 = Release|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.AppStore|iPhone.ActiveCfg = Release|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.AppStore|iPhone.Build.0 = Release|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.AppStore|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.AppStore|iPhoneSimulator.Build.0 = Release|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.AppStore|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.AppStore|Mixed Platforms.Build.0 = Release|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.AppStore|x64.ActiveCfg = Release|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.AppStore|x64.Build.0 = Release|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.AppStore|x86.ActiveCfg = Release|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.AppStore|x86.Build.0 = Release|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.Debug|ARM.Build.0 = Debug|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.Debug|iPhone.ActiveCfg = Debug|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.Debug|iPhone.Build.0 = Debug|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.Debug|iPhoneSimulator.ActiveCfg = Debug|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.Debug|iPhoneSimulator.Build.0 = Debug|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.Debug|x64.Build.0 = Debug|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.Debug|x86.Build.0 = Debug|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.Release|ARM.ActiveCfg = Release|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.Release|ARM.Build.0 = Release|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.Release|iPhone.ActiveCfg = Release|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.Release|iPhone.Build.0 = Release|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.Release|iPhoneSimulator.ActiveCfg = Release|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.Release|iPhoneSimulator.Build.0 = Release|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.Release|x64.ActiveCfg = Release|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.Release|x64.Build.0 = Release|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.Release|x86.ActiveCfg = Release|Any CPU
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -701,7 +722,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{2A909E4D-6493-4D36-9FDE-786B89F9A387} = {78D04AF9-B9B4-4025-93C6-B3DB01EDAAE9}
 		{072F8BE4-81C1-4276-A9A5-1AEC87A84265} = {78D04AF9-B9B4-4025-93C6-B3DB01EDAAE9}
-		{898FFD08-B7FC-45FE-A6DD-5AE9C2280D28} = {78D04AF9-B9B4-4025-93C6-B3DB01EDAAE9}
 		{95B3E5A3-BE4F-4EBD-AF3D-599AE5FD1B43} = {78D04AF9-B9B4-4025-93C6-B3DB01EDAAE9}
 		{14436AD5-8995-406A-8468-F0B4DE53DFDB} = {78D04AF9-B9B4-4025-93C6-B3DB01EDAAE9}
 		{0D9F3744-9DB0-421D-8AC8-388EF7764643} = {78D04AF9-B9B4-4025-93C6-B3DB01EDAAE9}
@@ -712,6 +732,7 @@ Global
 		{09CD2CB4-0B5B-4018-BFBB-7367CA7E10A4} = {78D04AF9-B9B4-4025-93C6-B3DB01EDAAE9}
 		{57AA878B-3DD3-4B79-AB0B-ECC29563AAAC} = {78D04AF9-B9B4-4025-93C6-B3DB01EDAAE9}
 		{6BE6677A-761E-4278-9059-233D775FE347} = {78D04AF9-B9B4-4025-93C6-B3DB01EDAAE9}
+		{7D38129A-98D7-4DC7-9A9F-E8857FA57C76} = {78D04AF9-B9B4-4025-93C6-B3DB01EDAAE9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {EB40442F-5889-4697-BEA4-39E42E12EBCB}

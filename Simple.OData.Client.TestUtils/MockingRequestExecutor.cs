@@ -284,7 +284,7 @@ namespace Simple.OData.Client.TestUtils
 
     public static partial class ODataClientSettingsExtensionMethods
     {
-        private const string MockDataDir = @"../../../MockData";
+        private const string MockDataDir = @"../../../../../MockData";
 
         public static ODataClientSettings WithNameResolver(this ODataClientSettings settings, INameMatchResolver resolver)
         {
