@@ -26,8 +26,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Resources\Metadata.xml" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.4.1" />
-    <PackageReference Include="Microsoft.OData.Core" Version="[7.3.1, 8.0)" />
+    <PackageReference Include="Microsoft.OData.Core" Version="[7.4.4, 8.0)" />
     <PackageReference Include="Microsoft.Net.Test.Sdk" Version="15.7.0" />
     <PackageReference Include="Microsoft.Owin.Hosting" Version="3.0.0" />
     <PackageReference Include="Microsoft.Owin.Testing" Version="3.0.0" />
@@ -37,9 +40,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="packages.config">
-      <SubType>Designer</SubType>
-    </None>
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
@@ -52,9 +52,9 @@
     <Compile Include="..\Simple.OData.Client.TestUtils\MockingRequestExecutor.cs">
       <Link>MockingRequestExecutor.cs</Link>
     </Compile>
-    <Compile Include="ActionV4Tests.cs" />
-    <Compile Include="FunctionV4Tests.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Metadata.xml" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Simple.OData.Client.Core\Simple.OData.Client.Core.csproj">

@@ -2,8 +2,8 @@
   <PropertyGroup>
     <TargetFrameworks>net452</TargetFrameworks>
 	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-	<OutputPath>$(SolutionDir)/build/$(Configuration)/$(AssemblyName)/$(TargetFramework)/</OutputPath>
-	<OutDir>$(OutputPath)</OutDir>
+    <OutputPath>$(SolutionDir)/build/$(Configuration)/$(AssemblyName)/$(TargetFramework)/</OutputPath>
+    <OutDir>$(OutputPath)</OutDir>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="EntityFramework" Version="6.1.3" />

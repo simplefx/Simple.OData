@@ -116,12 +116,8 @@ namespace Simple.OData.Client
 
         private Assembly LoadAdapterAssembly(string modelAdapterAssemblyName)
         {
-#if NETSTANDARD2_0
             var assemblyName = new AssemblyName(modelAdapterAssemblyName);
             return Assembly.Load(assemblyName);
-#else
-            return this.GetType().Assembly;
-#endif
         }
 
         private ConstructorInfo FindAdapterConstructor(Assembly assembly, string modelAdapterTypeName, params object[] ctorParams)
@@ -142,13 +138,8 @@ namespace Simple.OData.Client
         {
             try
             {
-                Assembly assembly = null;
-#if NETSTANDARD2_0
                 var assemblyName = new AssemblyName(adapterAssemblyName);
-                assembly = Assembly.Load(assemblyName);
-#else
-                assembly = this.GetType().Assembly;
-#endif
+                var assembly = Assembly.Load(assemblyName);
 
                 var constructors = assembly.GetType(adapterTypeName).GetDeclaredConstructors();
 
@@ -159,7 +150,7 @@ namespace Simple.OData.Client
 #else
                 var ctor = constructors.Single(x =>
                     x.GetParameters().Count() == ctorParams.Count() &&
-                    x.GetParameters().Last().ParameterType.IsAssignableFrom(ctorParams.Last().GetType()));
+                    x.GetParameters().Last().ParameterType.IsInstanceOfType(ctorParams.Last()));
 #endif
 
                 return ctor.Invoke(ctorParams) as IODataAdapter;

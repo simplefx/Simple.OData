@@ -2,10 +2,11 @@
   <PropertyGroup>
     <TargetFrameworks>net452</TargetFrameworks>
 	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+	<RootNamespace>Simple.OData.Client.Tests</RootNamespace>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
-	<OutputPath>$(SolutionDir)/build/$(Configuration)/$(AssemblyName)/$(TargetFramework)/</OutputPath>
-	<OutDir>$(OutputPath)</OutDir>
+    <OutputPath>$(SolutionDir)/build/$(Configuration)/$(AssemblyName)/$(TargetFramework)/</OutputPath>
+    <OutDir>$(OutputPath)</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -30,16 +31,10 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <EmbeddedResource Include="..\Simple.OData.Client.Tests.Net45\Properties\XmlSamples.resx">
-      <Link>Properties\XmlSamples.resx</Link>
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>XmlSamples.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.4.1" />
     <PackageReference Include="Microsoft.Data.OData" Version="5.8.3" />
-    <PackageReference Include="Microsoft.OData.Core" Version="7.3.1" />
     <PackageReference Include="Microsoft.Net.Test.Sdk" Version="15.7.0" />
     <PackageReference Include="xunit" Version="2.3.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
@@ -151,12 +146,6 @@
     <Compile Include="..\Simple.OData.Client.Tests.Net45\Properties\AssemblyInfo.cs">
       <Link>Properties\AssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.Tests.Net45\Properties\XmlSamples.Designer.cs">
-      <Link>Properties\XmlSamples.Designer.cs</Link>
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>XmlSamples.resx</DependentUpon>
-    </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Net45\TestBase.cs">
       <Link>TestBase.cs</Link>
     </Compile>
@@ -199,17 +188,8 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\Simple.OData.Client.Tests.Net45\Resources\TwitterStatusesSample.txt">
-      <Link>Resources\TwitterStatusesSample.txt</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Simple.OData.Client.Tests.Net45\Resources\XmlWithDefaultNamespace.txt">
-      <Link>Resources\XmlWithDefaultNamespace.txt</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Simple.OData.Client.Tests.Net45\Resources\XmlWithNoNamespace.txt">
-      <Link>Resources\XmlWithNoNamespace.txt</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Simple.OData.Client.Tests.Net45\Resources\XmlWithPrefixedNamespace.txt">
-      <Link>Resources\XmlWithPrefixedNamespace.txt</Link>
+    <EmbeddedResource Include="..\Simple.OData.Client.Tests.Net45\Resources\Northwind.xml">
+      <Link>Resources\Northwind.xml</Link>
     </EmbeddedResource>
   </ItemGroup>
 </Project>
