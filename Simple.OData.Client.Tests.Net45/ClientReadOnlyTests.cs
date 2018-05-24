@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Simple.OData.Client.TestUtils;
 using Xunit;
 
 namespace Simple.OData.Client.Tests
@@ -126,7 +127,7 @@ namespace Simple.OData.Client.Tests
         public async Task ExecuteScalarFunctionWithGuidParameter()
         {
             var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
-            var guid = Guid.NewGuid();
+            var guid = new Guid("7d8f1758-00d4-4c53-a2e3-8fca73ebb92c");
             var result = await client.ExecuteFunctionAsScalarAsync<Guid>("PassThroughGuid", new Entry() { { "guid", guid } });
             Assert.Equal(guid, result);
         }
@@ -188,6 +189,7 @@ namespace Simple.OData.Client.Tests
             Assert.Equal("Titanic", ship["ShipName"]);
         }
 
+#if !MOCK_HTTP
         [Fact]
         public async Task InterceptRequest()
         {
@@ -202,7 +204,7 @@ namespace Simple.OData.Client.Tests
             await AssertThrowsAsync<InvalidOperationException>(async () => await client.FindEntriesAsync("Products"));
         }
 
-        [Fact(Skip = "Cannot mock")]
+        [Fact]
         public async Task FindEntryParallelThreads()
         {
             var products = (await _client.FindEntriesAsync("Products")).ToArray();
@@ -221,7 +223,7 @@ namespace Simple.OData.Client.Tests
             Assert.Equal(0, summary.NonEqualCount);
         }
 
-        [Fact(Skip = "Cannot mock")]
+        [Fact]
         public async Task FindEntryParallelThreadsRenewConnection()
         {
             var client = new ODataClient(new ODataClientSettings() { BaseUri = _serviceUri, RenewHttpConnection = true });
@@ -276,5 +278,6 @@ namespace Simple.OData.Client.Tests
                 }
             }
         }
+#endif
     }
 }

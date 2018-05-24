@@ -8,11 +8,24 @@
 	<OutputPath>$(SolutionDir)/build/$(Configuration)/$(AssemblyName)/$(TargetFramework)/</OutputPath>
 	<OutDir>$(OutputPath)</OutDir>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net45|AnyCPU'">
-    <DefineConstants>TRACE;DEBUG;NETFRAMEWORK;NET45;MOCK_HTTP</DefineConstants>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;MOCK_HTTP</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net45|AnyCPU'">
-    <DefineConstants>TRACE;RELEASE;NETFRAMEWORK;NET45;MOCK_HTTP</DefineConstants>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE;MOCK_HTTP</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.CSharp" Version="4.4.1" />
@@ -66,12 +79,44 @@
     </Compile>
     <Compile Include="..\Simple.OData.Client.Tests.Core\Entities\Transport.cs">
       <Link>Entities\Transport.cs</Link>
-    </Compile>    
-    <EmbeddedResource Include="Resources\TwitterStatusesSample.txt" />
-    <EmbeddedResource Include="Resources\XmlWithDefaultNamespace.txt" />
-    <EmbeddedResource Include="Resources\XmlWithNoNamespace.txt" />
-    <EmbeddedResource Include="Resources\XmlWithPrefixedNamespace.txt" />
-    <EmbeddedResource Include="Resources\Northwind.xml" />       
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.TestUtils\MetadataResolver.cs">
+      <Link>MetadataResolver.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.TestUtils\MockingRequestExecutor.cs">
+      <Link>MockingRequestExecutor.cs</Link>
+    </Compile>
+    <Compile Include="BatchDynamicTests.cs" />
+    <Compile Include="BatchTypedTests.cs" />
+    <Compile Include="BatchTests.cs" />
+    <Compile Include="ClientReadOnlyTests.cs" />
+    <Compile Include="ClientSettingsTests.cs" />
+    <Compile Include="DeleteDynamicTests.cs" />
+    <Compile Include="DeleteTypedTests.cs" />
+    <Compile Include="DeleteTests.cs" />
+    <Compile Include="Extensions\XElementExtensionsTests.cs" />
+    <Compile Include="FindDynamicTests.cs" />
+    <Compile Include="FindTypedTests.cs" />
+    <Compile Include="FunctionTests.cs" />
+    <Compile Include="InsertDynamicTests.cs" />
+    <Compile Include="InsertTests.cs" />
+    <Compile Include="InsertTypedTests.cs" />
+    <Compile Include="LinkDynamicTests.cs" />
+    <Compile Include="LinkTests.cs" />
+    <Compile Include="ClientReadWriteTests.cs" />
+    <Compile Include="FindTests.cs" />
+    <Compile Include="LinkTypedTests.cs" />
+    <Compile Include="ODataSchemaTests.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\XmlSamples.Designer.cs">
+      <DependentUpon>XmlSamples.resx</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <Compile Include="TestBase.cs" />
+    <Compile Include="UpdateDynamicTests.cs" />
+    <Compile Include="UpdateTests.cs" />
+    <Compile Include="UpdateTypedTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Simple.OData.Client.TestUtils\Simple.OData.Client.TestUtils.csproj">

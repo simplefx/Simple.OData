@@ -4,6 +4,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
+using Simple.OData.Client.TestUtils;
 
 namespace Simple.OData.Client.Tests
 {
@@ -58,7 +59,7 @@ namespace Simple.OData.Client.Tests
         {
             var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            var category = await _client
+            var category = await client
                 .For(x.Categories)
                 .Set(x.CategoryName = "Test3")
                 .InsertEntryAsync();
@@ -69,12 +70,12 @@ namespace Simple.OData.Client.Tests
 
             Assert.Equal("Test4", product.ProductName);
             Assert.Equal(category.CategoryID, product.CategoryID);
-            //category = await _client
-            //    .For(x.Categories)
-            //    .Expand(x.Products)
-            //    .Filter(x.CategoryName == "Test3")
-            //    .FindEntryAsync();
-            //Assert.True((category.Products as IEnumerable<dynamic>).Count() == 1);
+            category = await client
+                .For(x.Categories)
+                .Expand(x.Products)
+                .Filter(x.CategoryName == "Test3")
+                .FindEntryAsync();
+            Assert.True((category.Products as IEnumerable<dynamic>).Count() == 1);
         }
 
         [Fact]
@@ -82,7 +83,7 @@ namespace Simple.OData.Client.Tests
         {
             var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            var category = await _client
+            var category = await client
                 .For(x.Categories)
                 .Set(x.CategoryName = "Test5")
                 .InsertEntryAsync();
@@ -93,12 +94,12 @@ namespace Simple.OData.Client.Tests
 
             Assert.Equal("Test6", product.ProductName);
             Assert.Equal(category.CategoryID, product.CategoryID);
-            //category = await _client
-            //    .For(x.Categories)
-            //    .Expand(x.Products)
-            //    .Filter(x.CategoryName == "Test5")
-            //    .FindEntryAsync();
-            //Assert.True((category.Products as IEnumerable<dynamic>).Count() == 1);
+            category = await client
+                .For(x.Categories)
+                .Expand(x.Products)
+                .Filter(x.CategoryName == "Test5")
+                .FindEntryAsync();
+            Assert.True((category.Products as IEnumerable<dynamic>).Count() == 1);
         }
 
         [Fact]

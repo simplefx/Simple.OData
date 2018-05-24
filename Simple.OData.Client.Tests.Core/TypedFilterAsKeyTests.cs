@@ -270,7 +270,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void FindByGuidFilterEqual()
         {
-            var key = Guid.NewGuid();
+            var key = new Guid("D8F3F70F-C185-49AB-9A92-0C86C344AB1B");
             var command = _client
                 .For<TypeWithGuidKey>()
                 .Filter(x => x.Key == key);
@@ -281,7 +281,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public void FindByGuidKey()
         {
-            var key = Guid.NewGuid();
+            var key = new Guid("BEC6C966-8016-46D0-A3D1-99D69DF69D74");
             var command = _client
                 .For<TypeWithGuidKey>()
                 .Key(key);

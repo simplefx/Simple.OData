@@ -7,6 +7,25 @@
 	<OutputPath>$(SolutionDir)/build/$(Configuration)/$(AssemblyName)/$(TargetFramework)/</OutputPath>
 	<OutDir>$(OutputPath)</OutDir>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;MOCK_HTTP</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE;MOCK_HTTP</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
   <ItemGroup>
     <None Include="App.config">
       <SubType>Designer</SubType>
@@ -150,6 +169,12 @@
     <Compile Include="..\Simple.OData.Client.Tests.Net45\UpdateTypedTests.cs">
       <Link>UpdateTypedTests.cs</Link>
     </Compile>
+    <Compile Include="..\Simple.OData.Client.TestUtils\MetadataResolver.cs">
+      <Link>MetadataResolver.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.TestUtils\MockingRequestExecutor.cs">
+      <Link>MockingRequestExecutor.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Simple.OData.Client.Core\Simple.OData.Client.Core.csproj">
@@ -159,10 +184,6 @@
     <ProjectReference Include="..\Simple.OData.Client.Dynamic\Simple.OData.Client.Dynamic.csproj">
       <Project>{c025fb0f-452b-4795-b9a4-64c9e6abbeee}</Project>
       <Name>Simple.OData.Client.Dynamic</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Simple.OData.Client.TestUtils\Simple.OData.Client.TestUtils.csproj">
-      <Project>{072f8be4-81c1-4276-a9a5-1aec87a84265}</Project>
-      <Name>Simple.OData.Client.TestUtils</Name>
     </ProjectReference>
     <ProjectReference Include="..\Simple.OData.Client.V3.Adapter\Simple.OData.Client.V3.Adapter.csproj">
       <Project>{a08b2d3d-91a6-4ecd-b7af-5977e840e383}</Project>

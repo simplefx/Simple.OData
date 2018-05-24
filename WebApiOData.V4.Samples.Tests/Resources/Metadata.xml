@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+  <edmx:DataServices>
+    <Schema Namespace="WebApiOData.V4.Samples.Models" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <EntityType Name="Movie">
+        <Key>
+          <PropertyRef Name="ID" />
+        </Key>
+        <Property Name="ID" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Title" Type="Edm.String" />
+        <Property Name="Year" Type="Edm.Int32" Nullable="false" />
+        <Property Name="DueDate" Type="Edm.DateTimeOffset" />
+      </EntityType>
+      <EntityType Name="Product">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false" />
+        <Property Name="Name" Type="Edm.String" />
+        <Property Name="Price" Type="Edm.Double" Nullable="false" />
+      </EntityType>
+      <Action Name="CheckOut" IsBound="true">
+        <Parameter Name="bindingParameter" Type="WebApiOData.V4.Samples.Models.Movie" />
+        <ReturnType Type="WebApiOData.V4.Samples.Models.Movie" />
+      </Action>
+      <Action Name="Return" IsBound="true">
+        <Parameter Name="bindingParameter" Type="WebApiOData.V4.Samples.Models.Movie" />
+        <ReturnType Type="WebApiOData.V4.Samples.Models.Movie" />
+      </Action>
+      <Action Name="CheckOutMany" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(WebApiOData.V4.Samples.Models.Movie)" />
+        <Parameter Name="MovieIDs" Type="Collection(Edm.Int32)" Nullable="false" />
+        <ReturnType Type="Collection(WebApiOData.V4.Samples.Models.Movie)" />
+      </Action>
+      <Action Name="CreateMovie">
+        <Parameter Name="Title" Type="Edm.String" Unicode="false" />
+        <ReturnType Type="WebApiOData.V4.Samples.Models.Movie" />
+      </Action>
+    </Schema>
+    <Schema Namespace="Default" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <Function Name="MostExpensive" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(WebApiOData.V4.Samples.Models.Product)" />
+        <ReturnType Type="Edm.Double" Nullable="false" />
+      </Function>
+      <Function Name="Top10" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(WebApiOData.V4.Samples.Models.Product)" />
+        <ReturnType Type="Collection(WebApiOData.V4.Samples.Models.Product)" />
+      </Function>
+      <Function Name="GetPriceRank" IsBound="true">
+        <Parameter Name="bindingParameter" Type="WebApiOData.V4.Samples.Models.Product" />
+        <ReturnType Type="Edm.Int32" Nullable="false" />
+      </Function>
+      <Function Name="CalculateGeneralSalesTax" IsBound="true">
+        <Parameter Name="bindingParameter" Type="WebApiOData.V4.Samples.Models.Product" />
+        <Parameter Name="state" Type="Edm.String" Unicode="false" />
+        <ReturnType Type="Edm.Double" Nullable="false" />
+      </Function>
+      <Function Name="GetSalesTaxRate">
+        <Parameter Name="state" Type="Edm.String" Unicode="false" />
+        <ReturnType Type="Edm.Double" Nullable="false" />
+      </Function>
+      <EntityContainer Name="Container">
+        <EntitySet Name="Movies" EntityType="WebApiOData.V4.Samples.Models.Movie" />
+        <EntitySet Name="Products" EntityType="WebApiOData.V4.Samples.Models.Product" />
+        <ActionImport Name="CreateMovie" Action="WebApiOData.V4.Samples.Models.CreateMovie" EntitySet="Movies" />
+        <FunctionImport Name="GetSalesTaxRate" Function="Default.GetSalesTaxRate" IncludeInServiceDocument="true" />
+      </EntityContainer>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>

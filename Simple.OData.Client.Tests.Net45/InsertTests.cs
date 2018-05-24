@@ -4,6 +4,7 @@ using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
+using Simple.OData.Client.TestUtils;
 
 using Entry = System.Collections.Generic.Dictionary<string, object>;
 
@@ -68,7 +69,7 @@ namespace Simple.OData.Client.Tests
         public async Task InsertProductWithCategoryByID()
         {
             var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
-            var category = await _client
+            var category = await client
                 .For("Categories")
                 .Set(new { CategoryName = "Test3" })
                 .InsertEntryAsync();
@@ -79,12 +80,12 @@ namespace Simple.OData.Client.Tests
 
             Assert.Equal("Test4", product["ProductName"]);
             Assert.Equal(category["CategoryID"], product["CategoryID"]);
-            //category = await _client
-            //    .For("Categories")
-            //    .Expand("Products")
-            //    .Filter("CategoryName eq 'Test3'")
-            //    .FindEntryAsync();
-            //Assert.True((category["Products"] as IEnumerable<object>).Count() == 1);
+            category = await client
+                .For("Categories")
+                .Expand("Products")
+                .Filter("CategoryName eq 'Test3'")
+                .FindEntryAsync();
+            Assert.True((category["Products"] as IEnumerable<object>).Count() == 1);
         }
 
         [Fact(Skip = "Cannot be mocked")]
@@ -115,7 +116,7 @@ namespace Simple.OData.Client.Tests
         public async Task InsertProductWithCategoryByAssociation()
         {
             var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
-            var category = await _client
+            var category = await client
                 .For("Categories")
                 .Set(new { CategoryName = "Test5" })
                 .InsertEntryAsync();
@@ -126,12 +127,12 @@ namespace Simple.OData.Client.Tests
 
             Assert.Equal("Test6", product["ProductName"]);
             Assert.Equal(category["CategoryID"], product["CategoryID"]);
-            //category = await _client
-            //    .For("Categories")
-            //    .Expand("Products")
-            //    .Filter("CategoryName eq 'Test5'")
-            //    .FindEntryAsync();
-            //Assert.True((category["Products"] as IEnumerable<object>).Count() == 1);
+            category = await client
+                .For("Categories")
+                .Expand("Products")
+                .Filter("CategoryName eq 'Test5'")
+                .FindEntryAsync();
+            Assert.True((category["Products"] as IEnumerable<object>).Count() == 1);
         }
 
         [Fact]

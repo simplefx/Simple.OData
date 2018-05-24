@@ -1,0 +1,1 @@
+{"Content":null,"ContentHeaders":null,"Method":"GET","RequestHeaders":[{"Key":"Accept","Value":["application\/atom+xml","application\/xml","application\/text"]},{"Key":"Prefer","Value":["return-content"]}],"RequestUri":"http:\/\/nrkdt66337\/Temporary_Listen_Addresses\/SimpleODataTestService2\/PassThroughDateTime?dateTime=datetime%272018-05-20T20%3A30%3A40.6779345%2B02%3A00%27"}

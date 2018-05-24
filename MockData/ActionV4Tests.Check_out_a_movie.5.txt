@@ -1,0 +1,1 @@
+{"Content":null,"ContentHeaders":null,"Method":"POST","RequestHeaders":[{"Key":"Accept","Value":["application\/json","application\/xml","application\/text"]},{"Key":"Prefer","Value":["return=representation"]}],"RequestUri":"http:\/\/localhost\/actions\/Movies(1)\/WebApiOData.V4.Samples.Models.CheckOut"}

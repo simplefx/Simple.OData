@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
+using Simple.OData.Client.TestUtils;
 
 namespace Simple.OData.Client.Tests
 {
@@ -12,7 +13,7 @@ namespace Simple.OData.Client.Tests
         public async Task DeleteByKey()
         {
             var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
-            var product = await _client
+            var product = await client
                 .For<Product>()
                 .Set(new { ProductName = "Test1", UnitPrice = 18m })
                 .InsertEntryAsync();
@@ -22,19 +23,19 @@ namespace Simple.OData.Client.Tests
                 .Key(product.ProductID)
                 .DeleteEntryAsync();
 
-            //product = await _client
-            //    .For<Product>()
-            //    .Filter(x => x.ProductName == "Test1")
-            //    .FindEntryAsync();
+            product = await client
+                .For<Product>()
+                .Filter(x => x.ProductName == "Test1")
+                .FindEntryAsync();
 
-            //Assert.Null(product);
+            Assert.Null(product);
         }
 
         [Fact]
         public async Task DeleteByFilter()
         {
             var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
-            var product = await _client
+            var product = await client
                 .For<Product>()
                 .Set(new { ProductName = "Test1", UnitPrice = 18m })
                 .InsertEntryAsync();
@@ -44,19 +45,19 @@ namespace Simple.OData.Client.Tests
                 .Filter(x => x.ProductName == "Test1")
                 .DeleteEntryAsync();
 
-            //product = await _client
-            //    .For<Product>()
-            //    .Filter(x => x.ProductName == "Test1")
-            //    .FindEntryAsync();
+            product = await client
+                .For<Product>()
+                .Filter(x => x.ProductName == "Test1")
+                .FindEntryAsync();
 
-            //Assert.Null(product);
+            Assert.Null(product);
         }
 
         [Fact]
         public async Task DeleteByObjectAsKey()
         {
             var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
-            var product = await _client
+            var product = await client
                 .For<Product>()
                 .Set(new { ProductName = "Test1", UnitPrice = 18m })
                 .InsertEntryAsync();
@@ -66,19 +67,19 @@ namespace Simple.OData.Client.Tests
                 .Key(product)
                 .DeleteEntryAsync();
 
-            //product = await _client
-            //    .For<Product>()
-            //    .Filter(x => x.ProductName == "Test1")
-            //    .FindEntryAsync();
+            product = await client
+                .For<Product>()
+                .Filter(x => x.ProductName == "Test1")
+                .FindEntryAsync();
 
-            //Assert.Null(product);
+            Assert.Null(product);
         }
 
         [Fact]
         public async Task DeleteDerived()
         {
             var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
-            var ship = await _client
+            var ship = await client
                 .For<Transport>()
                 .As<Ship>()
                 .Set(new Ship { ShipName = "Test1" })
@@ -90,13 +91,13 @@ namespace Simple.OData.Client.Tests
                 .Key(ship.TransportID)
                 .DeleteEntryAsync();
 
-            //ship = await _client
-            //    .For<Transport>()
-            //    .As<Ship>()
-            //    .Filter(x => x.ShipName == "Test1")
-            //    .FindEntryAsync();
+            ship = await client
+                .For<Transport>()
+                .As<Ship>()
+                .Filter(x => x.ShipName == "Test1")
+                .FindEntryAsync();
 
-            //Assert.Null(ship);
+            Assert.Null(ship);
         }
     }
 }

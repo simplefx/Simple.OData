@@ -4,158 +4,216 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Json;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace Simple.OData.Client.TestUtils
 {
+    [DataContract]
+    public class SerializableHttpRequestMessage
+    {
+        [DataMember]
+        public string Method { get; set; }
+        [DataMember]
+        public Uri RequestUri { get; set; }
+        [DataMember]
+        public Dictionary<string, List<string>> RequestHeaders;
+        [DataMember]
+        public Dictionary<string, List<string>> ContentHeaders;
+        [DataMember]
+        public string Content { get; set; }
+
+        public SerializableHttpRequestMessage()
+        {
+        }
+
+        public SerializableHttpRequestMessage(HttpRequestMessage request)
+        {
+            this.Method = request.Method.ToString();
+            this.RequestUri = request.RequestUri;
+            this.RequestHeaders = request.Headers.Select(
+                x => new KeyValuePair<string, List<string>>(x.Key, new List<string>(x.Value))).ToList()
+                .ToDictionary(x => x.Key, x => x.Value);
+            if (request.Content != null)
+            {
+                this.ContentHeaders = request.Content.Headers.Select(
+                    x => new KeyValuePair<string, List<string>>(x.Key, new List<string>(x.Value))).ToList()
+                    .ToDictionary(x => x.Key, x => x.Value);
+                this.Content = request.Content.ReadAsStringAsync().Result;
+            }
+        }
+    }
+
+    [DataContract]
+    public class SerializableHttpResponseMessage
+    {
+        [DataMember]
+        public HttpStatusCode StatusCode { get; set; }
+        [DataMember]
+        public Uri RequestUri { get; set; }
+        [DataMember]
+        public Dictionary<string, List<string>> ResponseHeaders;
+        [DataMember]
+        public Dictionary<string, List<string>> ContentHeaders;
+        [DataMember]
+        public string Content { get; set; }
+
+        public SerializableHttpResponseMessage()
+        {
+
+        }
+
+        public SerializableHttpResponseMessage(HttpResponseMessage response)
+        {
+            this.StatusCode = response.StatusCode;
+            this.RequestUri = response.RequestMessage.RequestUri;
+            this.ResponseHeaders = response.Headers.Select(
+                    x => new KeyValuePair<string, List<string>>(x.Key, new List<string>(x.Value))).ToList()
+                .ToDictionary(x => x.Key, x => x.Value);
+            if (response.Content != null)
+            {
+                this.ContentHeaders = response.Content.Headers.Select(
+                        x => new KeyValuePair<string, List<string>>(x.Key, new List<string>(x.Value))).ToList()
+                    .ToDictionary(x => x.Key, x => x.Value);
+                this.Content = response.Content.ReadAsStringAsync().Result;
+            }
+        }
+    }
+
     public class MockingRequestExecutor
     {
         private readonly ODataClientSettings _settings;
-        private readonly string _mockDataPath;
+        private readonly string _mockDataPathBase;
         private readonly bool _recording;
+        private int _fileCounter;
+        private static Regex _regexBatch = new Regex(@"batch_([0-9AFa-f]){8}-([0-9AFa-f]){4}-([0-9AFa-f]){4}-([0-9AFa-f]){4}-([0-9AFa-f]){12}");
+        private static Regex _regexChangeset = new Regex(@"changeset_([0-9AFa-f]){8}-([0-9AFa-f]){4}-([0-9AFa-f]){4}-([0-9AFa-f]){4}-([0-9AFa-f]){12}");
+        private static Regex _regexBaseUrl = new Regex(@"http:\/\/((\w|_|-|\.|)+\/){3}");
 
-        public MockingRequestExecutor(ODataClientSettings settings, string mockDataPath, bool recording = false)
+        public MockingRequestExecutor(ODataClientSettings settings, string mockDataPathBase, bool recording = false)
         {
             _settings = settings;
-            _mockDataPath = mockDataPath;
+            _mockDataPathBase = mockDataPathBase;
             _recording = recording;
         }
 
         public async Task<HttpResponseMessage> ExecuteRequestAsync(HttpRequestMessage request)
         {
             if (_recording)
-                await SaveRequestAsync(request);
-            else
-                await ValidateRequestAsync(request);
-
-            if (_recording)
             {
+                if (!IsMetadataRequest(request))
+                    SaveRequest(request);
+
                 var httpConnection = new HttpConnection(_settings);
                 var response = await httpConnection.HttpClient.SendAsync(request);
-                await SaveResponseAsync(response);
+
+                if (!IsMetadataRequest(request))
+                    SaveResponse(response);
                 return response;
             }
             else
             {
-                return await GetMockResponseAsync(request);
+                await ValidateRequestAsync(request);
+                return GetMockResponse(request);
             }
         }
 
-        private async Task SaveRequestAsync(HttpRequestMessage request)
+        private bool IsMetadataRequest(HttpRequestMessage request)
         {
-            using (var writer = new StreamWriter(_mockDataPath, false))
+            return request.RequestUri.LocalPath.EndsWith(ODataLiteral.Metadata);
+        }
+
+        private string GenerateMockDataPath()
+        {
+            return string.Format($"{_mockDataPathBase}.{++_fileCounter}.txt");
+        }
+
+        private void SaveRequest(HttpRequestMessage request)
+        {
+            using (var stream = new FileStream(GenerateMockDataPath(), FileMode.Create))
             {
-                await writer.WriteLineAsync($"--- Request ---");
-                await writer.WriteLineAsync();
-                var methodName = request.Method.ToString();
-                var commandText = request.RequestUri.AbsolutePath.Split('/').Last();
-                await writer.WriteLineAsync($"Command: {methodName} {commandText}");
-                await writer.WriteLineAsync();
-                await writer.WriteLineAsync("Headers:");
-                await WriteHeadersAsync(writer, request.Headers);
-                await writer.WriteLineAsync();
-                if (request.Content != null)
-                {
-                    await writer.WriteLineAsync("Content headers:");
-                    await WriteHeadersAsync(writer, request.Content.Headers);
-                    await writer.WriteLineAsync();
-                    await writer.WriteLineAsync("Content:");
-                    await writer.WriteLineAsync(await request.Content.ReadAsStringAsync());
-                }
+                var ser = new DataContractJsonSerializer(typeof(SerializableHttpRequestMessage));
+                ser.WriteObject(stream, new SerializableHttpRequestMessage(request));
             }
         }
 
-        private async Task SaveResponseAsync(HttpResponseMessage responseMessage)
+        private void SaveResponse(HttpResponseMessage response)
         {
-            using (var writer = new StreamWriter(_mockDataPath, true))
+            using (var stream = new FileStream(GenerateMockDataPath(), FileMode.Create))
             {
-                await writer.WriteLineAsync();
-                await writer.WriteLineAsync($"--- Response ---");
-                await writer.WriteLineAsync();
-                await writer.WriteLineAsync($"Status: {responseMessage.StatusCode}");
-                await writer.WriteLineAsync();
-                await writer.WriteLineAsync("Headers:");
-                await WriteHeadersAsync(writer, responseMessage.Headers);
-                await writer.WriteLineAsync();
-                if (responseMessage.Content != null)
-                {
-                    await writer.WriteLineAsync("Content headers:");
-                    await WriteHeadersAsync(writer, responseMessage.Content.Headers);
-                    await writer.WriteLineAsync();
-                    await writer.WriteLineAsync("Content:");
-                    await writer.WriteLineAsync(await responseMessage.Content.ReadAsStringAsync());
-                }
-            }
-        }
-
-        private async Task WriteHeadersAsync(StreamWriter writer, IEnumerable<KeyValuePair<string, IEnumerable<string>>> headers)
-        {
-            foreach (var header in headers)
-            {
-                var headerValue = header.Value.FirstOrDefault();
-                await writer.WriteLineAsync($"{header.Key}: {headerValue}");
+                var ser = new DataContractJsonSerializer(typeof(SerializableHttpResponseMessage));
+                ser.WriteObject(stream, new SerializableHttpResponseMessage(response));
             }
         }
 
         private async Task ValidateRequestAsync(HttpRequestMessage request)
         {
-            using (var reader = new StreamReader(_mockDataPath))
+            using (var stream = new FileStream(GenerateMockDataPath(), FileMode.Open))
             {
-                var line = await reader.ReadLineAsync();
-                while (line != "--- Request ---")
+                var ser = new DataContractJsonSerializer(typeof(SerializableHttpRequestMessage));
+                var savedRequest = ser.ReadObject(stream) as SerializableHttpRequestMessage;
+                Assert.Equal(savedRequest.Method, request.Method.ToString());
+                Assert.Equal(savedRequest.RequestUri.AbsolutePath.Split('/').Last(), request.RequestUri.AbsolutePath.Split('/').Last());
+                var expectedHeaders = new Dictionary<string, IEnumerable<string>>();
+                foreach (var header in savedRequest.RequestHeaders)
+                    expectedHeaders.Add(header.Key, header.Value);
+                var actualHeaders = new Dictionary<string, IEnumerable<string>>();
+                foreach (var header in request.Headers)
+                    actualHeaders.Add(header.Key, header.Value);
+                ValidateHeaders(expectedHeaders, actualHeaders);
+                if (request.Content != null)
                 {
-                    Assert.NotNull(line);
-                    line = await reader.ReadLineAsync();
-                }
-                line = await reader.ReadLineAsync();
-                line = await SkipEmptyLinesAsync(reader, line);
-                if (line.StartsWith("Command:"))
-                {
-                    var splitPos = line.IndexOf(' ');
-                    line = line.Substring(splitPos + 1);
-                    splitPos = line.IndexOf(' ');
-                    var expectedMethod = line.Substring(0, splitPos);
-                    var actualMethod = request.Method.ToString();
-                    Assert.Equal(expectedMethod, actualMethod);
-                    var expectedCommand = line.Substring(splitPos + 1);
-                    var actualCommand = request.RequestUri.AbsolutePath.Split('/').Last();
-                    Assert.Equal(expectedCommand, actualCommand);
-                    line = await reader.ReadLineAsync();
-                }
-                line = await SkipEmptyLinesAsync(reader, line);
-                if (line.StartsWith("Headers:"))
-                {
-                    var expectedHeaders = new Dictionary<string, IEnumerable<string>>();
-                    line = await ReadHeadersAsync(reader, expectedHeaders);
-                    var actualHeaders = new Dictionary<string, IEnumerable<string>>();
-                    foreach (var header in request.Headers)
-                        actualHeaders.Add(header.Key, header.Value);
-                    ValidateHeaders(expectedHeaders, actualHeaders);
-                }
-                line = await SkipEmptyLinesAsync(reader, line);
-                if (line.StartsWith("Content headers:"))
-                {
-                    var expectedHeaders = new Dictionary<string, IEnumerable<string>>();
-                    line = await ReadHeadersAsync(reader, expectedHeaders);
-                    var actualHeaders = new Dictionary<string, IEnumerable<string>>();
+                    expectedHeaders = new Dictionary<string, IEnumerable<string>>();
+                    foreach (var header in savedRequest.ContentHeaders)
+                        expectedHeaders.Add(header.Key, header.Value);
+                    actualHeaders = new Dictionary<string, IEnumerable<string>>();
                     foreach (var header in request.Content.Headers)
                         actualHeaders.Add(header.Key, header.Value);
                     ValidateHeaders(expectedHeaders, actualHeaders);
-                }
-                line = await SkipEmptyLinesAsync(reader, line);
-                if (line.StartsWith("Content:"))
-                {
-                    var expectedContent = await reader.ReadToEndAsync();
-                    var pos = expectedContent.IndexOf("--- Response ---");
-                    if (pos > 0)
-                        expectedContent = expectedContent.Substring(0, pos).TrimEnd('\r', '\n');
-                    expectedContent = RemoveElements(expectedContent, new[] { "updated" });
-                    var actualContent = RemoveElements(await request.Content.ReadAsStringAsync(), new[] { "updated" });
+                    var expectedContent = savedRequest.Content;
+                    expectedContent = AdjustContent(expectedContent);
+                    var actualContent = AdjustContent(await request.Content.ReadAsStringAsync());
                     Assert.Equal(expectedContent, actualContent);
                 }
             }
+        }
+
+        private HttpResponseMessage GetMockResponse(HttpRequestMessage request)
+        {
+            using (var stream = new FileStream(GenerateMockDataPath(), FileMode.Open))
+            {
+                var ser = new DataContractJsonSerializer(typeof(SerializableHttpResponseMessage));
+                var savedResponse = ser.ReadObject(stream) as SerializableHttpResponseMessage;
+                var response = new HttpResponseMessage
+                {
+                    StatusCode = savedResponse.StatusCode,
+                    Content = savedResponse.Content == null
+                        ? null
+                        : new StreamContent(Utils.StringToStream(savedResponse.Content)),
+                    RequestMessage = request,
+                    Version = new Version(1, 1),
+                };
+                foreach (var header in savedResponse.ResponseHeaders)
+                {
+                    if (response.Headers.Contains(header.Key))
+                        response.Headers.Remove(header.Key);
+                    response.Headers.Add(header.Key, header.Value);
+                }
+
+                if (savedResponse.Content != null)
+                {
+                    foreach (var header in savedResponse.ContentHeaders)
+                    {
+                        if (response.Content.Headers.Contains(header.Key))
+                            response.Content.Headers.Remove(header.Key);
+                        response.Content.Headers.Add(header.Key, header.Value);
+                    }
+                }
+                return response; }
         }
 
         private void ValidateHeaders(
@@ -166,92 +224,23 @@ namespace Simple.OData.Client.TestUtils
             foreach (var header in expectedHeaders)
             {
                 Assert.Contains(header.Key, actualHeaders.Keys);
-                Assert.Equal(header.Value.FirstOrDefault(), actualHeaders[header.Key].FirstOrDefault());
-            }
-        }
-
-        private async Task<HttpResponseMessage> GetMockResponseAsync(HttpRequestMessage request)
-        {
-            using (var reader = new StreamReader(_mockDataPath))
-            {
-                var line = await reader.ReadLineAsync();
-                while (line != "--- Response ---")
+                if (header.Key != "Content-Length")
                 {
-                    Assert.NotNull(line);
-                    line = await reader.ReadLineAsync();
+                    var expectedValue = AdjustBatchIds(header.Value.FirstOrDefault());
+                    var actualValue = AdjustBatchIds(actualHeaders[header.Key].FirstOrDefault());
+                    Assert.Equal(expectedValue, actualValue);
                 }
-                line = await reader.ReadLineAsync();
-                line = await SkipEmptyLinesAsync(reader, line);
-                var statusCode = HttpStatusCode.OK;
-                var headers = new Dictionary<string, IEnumerable<string>>();
-                var contentHeaders = new Dictionary<string, IEnumerable<string>>();
-                string content = null;
-                while (line != null)
-                {
-                    if (line.StartsWith("Status:"))
-                    {
-                        statusCode = (HttpStatusCode)Enum.Parse(typeof(HttpStatusCode), line.Split(' ').Last());
-                        line = await reader.ReadLineAsync();
-                    }
-                    line = await SkipEmptyLinesAsync(reader, line);
-                    if (line.StartsWith("Headers:"))
-                        line = await ReadHeadersAsync(reader, headers);
-                    line = await SkipEmptyLinesAsync(reader, line);
-                    if (line.StartsWith("Content headers:"))
-                        line = await ReadHeadersAsync(reader, contentHeaders);
-                    line = await SkipEmptyLinesAsync(reader, line);
-                    if (line.StartsWith("Content:"))
-                    {
-                        content = await reader.ReadToEndAsync();
-                        content = content.TrimEnd('\r', '\n');
-                    }
-                    var response = new HttpResponseMessage
-                    {
-                        StatusCode = statusCode,
-                        Content = content == null
-                            ? null
-                            : new StreamContent(Utils.StringToStream(content)),
-                        RequestMessage = request,
-                        Version = new Version(1, 1),
-                    };
-                    foreach (var header in headers)
-                    {
-                        if (response.Headers.Contains(header.Key))
-                            response.Headers.Remove(header.Key);
-                        response.Headers.Add(header.Key, header.Value);
-                    }
-                    if (content != null)
-                        foreach (var header in contentHeaders)
-                        {
-                            if (response.Content.Headers.Contains(header.Key))
-                                response.Content.Headers.Remove(header.Key);
-                            response.Content.Headers.Add(header.Key, header.Value);
-                        }
-                    return response;
-                }
-                return null;
             }
         }
 
-        private async Task<string> ReadHeadersAsync(StreamReader reader, IDictionary<string, IEnumerable<string>> headers)
+        private string AdjustContent(string content)
         {
-            var line = await reader.ReadLineAsync();
-            while (line != null && line.Length > 0)
-            {
-                var splitPos = line.IndexOf(':');
-                var key = line.Substring(0, splitPos);
-                var value = line.Substring(splitPos + 2);
-                headers.Add(key, new[] { value });
-                line = await reader.ReadLineAsync();
-            }
-            return line;
-        }
+            return
+                AdjustBatchIds(
+                AdjustNewLines(
+                AdjustBaseUrl(
+                RemoveElements(content, new[] { "updated" }))));
 
-        private async Task<string> SkipEmptyLinesAsync(StreamReader reader, string line)
-        {
-            while (line != null && line.Length == 0)
-                line = await reader.ReadLineAsync();
-            return line;
         }
 
         private string RemoveElements(string content, IEnumerable<string> elementNames)
@@ -273,6 +262,98 @@ namespace Simple.OData.Client.TestUtils
                 }
             }
             return content;
+        }
+
+        private string AdjustNewLines(string content)
+        {
+            return content.Replace("\r\n", "\n");
+        }
+
+        private string AdjustBaseUrl(string content)
+        {
+            return _regexBaseUrl.Replace(content, "http://localhost/");
+        }
+
+        private string AdjustBatchIds(string content)
+        {
+            var result = _regexBatch.Replace(content, Guid.Empty.ToString());
+            result = _regexChangeset.Replace(result, Guid.Empty.ToString());
+            return result;
+        }
+    }
+
+    public static partial class ODataClientSettingsExtensionMethods
+    {
+        private const string MockDataDir = @"../../../MockData";
+
+        public static ODataClientSettings WithNameResolver(this ODataClientSettings settings, INameMatchResolver resolver)
+        {
+            settings.NameMatchResolver = resolver;
+            return settings;
+        }
+
+        public static ODataClientSettings WithAnnotations(this ODataClientSettings settings)
+        {
+            settings.IncludeAnnotationsInResults = true;
+            return settings;
+        }
+
+        public static ODataClientSettings WithIgnoredUnmappedProperties(this ODataClientSettings settings)
+        {
+            settings.IgnoreUnmappedProperties = true;
+            return settings;
+        }
+
+        public static ODataClientSettings WithIgnoredResourceNotFoundException(this ODataClientSettings settings)
+        {
+            settings.IgnoreResourceNotFoundException = true;
+            return settings;
+        }
+
+        public static ODataClientSettings WithRequestInterceptor(this ODataClientSettings settings, Action<HttpRequestMessage> action)
+        {
+            settings.BeforeRequest = action;
+            return settings;
+        }
+
+        public static ODataClientSettings WithResponseInterceptor(this ODataClientSettings settings, Action<HttpResponseMessage> action)
+        {
+            settings.AfterResponse = action;
+            return settings;
+        }
+
+        public static ODataClientSettings WithHttpMock(this ODataClientSettings settings)
+        {
+            var methodName = GetTestMethodFullName();
+            var mockDataPathBase = GetMockDataPathBase(methodName);
+#if MOCK_HTTP
+            var recording = false;
+#else
+            var recording = true;
+#endif
+            var requestExecutor = new MockingRequestExecutor(settings, mockDataPathBase, recording);
+            settings.RequestExecutor = requestExecutor.ExecuteRequestAsync;
+            return settings;
+        }
+
+        private static string GetMockDataPathBase(string testMethodName)
+        {
+            return Path.Combine(MockDataDir, testMethodName);
+        }
+
+        private static string GetTestMethodFullName()
+        {
+            var stackTrace = new System.Diagnostics.StackTrace();
+            for (var frameNumber = 2; ; frameNumber++)
+            {
+                var stackFrame = stackTrace.GetFrame(frameNumber);
+                if (stackFrame == null)
+                    throw new InvalidOperationException("Attempt to retrieve a frame beyond the call stack");
+                var method = stackFrame.GetMethod();
+                var methodName = new string(method.Name.Where(c => char.IsLetterOrDigit(c) || c == '_').ToArray());
+                if (method.IsPublic && !method.IsGenericMethod)
+                    return string.Format($"{method.DeclaringType.Name}.{methodName}");
+            }
         }
     }
 }

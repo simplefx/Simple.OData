@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Simple.OData.Client.TestUtils;
 using Xunit;
 
 namespace Simple.OData.Client.Tests
@@ -720,12 +721,22 @@ namespace Simple.OData.Client.Tests
         class Order_Details : OrderDetail { }
 
         [Fact]
-        public async Task NameMatchResolver()
+        public async Task NameMatchResolverStrict()
         {
             var client = new ODataClient(CreateDefaultSettings().WithNameResolver(ODataNameMatchResolver.Strict).WithHttpMock());
+            var orderDetails1 = await client
+                .For<Order_Details>()
+                .FindEntriesAsync();
+            Assert.NotEmpty(orderDetails1);
             await AssertThrowsAsync<UnresolvableObjectException>(async () =>
                 await client.For<OrderDetails>()
-                .FindEntriesAsync());
+                    .FindEntriesAsync());
+        }
+
+        [Fact]
+        public async Task NameMatchResolverNoStrict()
+        {
+            var client = new ODataClient(CreateDefaultSettings().WithNameResolver(ODataNameMatchResolver.NotStrict).WithHttpMock());
             var orderDetails1 = await client
                 .For<Order_Details>()
                 .FindEntriesAsync();

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
+using Simple.OData.Client.TestUtils;
 
 namespace Simple.OData.Client.Tests
 {
@@ -13,7 +14,7 @@ namespace Simple.OData.Client.Tests
         {
             var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            var product = await _client
+            var product = await client
                 .For(x.Products)
                 .Set(x.ProductName = "Test1", x.UnitPrice = 18m)
                 .InsertEntryAsync();
@@ -23,12 +24,12 @@ namespace Simple.OData.Client.Tests
                 .Key(product.ProductID)
                 .DeleteEntryAsync();
 
-            //product = await _client
-            //    .For(x.Products)
-            //    .Filter(x.ProductName == "Test1")
-            //    .FindEntryAsync();
+            product = await client
+                .For(x.Products)
+                .Filter(x.ProductName == "Test1")
+                .FindEntryAsync();
 
-            //Assert.Null(product);
+            Assert.Null(product);
         }
 
         [Fact]
@@ -36,7 +37,7 @@ namespace Simple.OData.Client.Tests
         {
             var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            var product = await _client
+            var product = await client
                 .For(x.Products)
                 .Set(x.ProductName = "Test1", x.UnitPrice = 18m)
                 .InsertEntryAsync();
@@ -46,12 +47,12 @@ namespace Simple.OData.Client.Tests
                 .Filter(x.ProductName == "Test1")
                 .DeleteEntryAsync();
 
-            //product = await _client
-            //    .For(x.Products)
-            //    .Filter(x.ProductName == "Test1")
-            //    .FindEntryAsync();
+            product = await client
+                .For(x.Products)
+                .Filter(x.ProductName == "Test1")
+                .FindEntryAsync();
 
-            //Assert.Null(product);
+            Assert.Null(product);
         }
 
         [Fact]
@@ -59,7 +60,7 @@ namespace Simple.OData.Client.Tests
         {
             var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            var product = await _client
+            var product = await client
                 .For(x.Products)
                 .Set(x.ProductName = "Test1", x.UnitPrice = 18m)
                 .InsertEntryAsync();
@@ -69,12 +70,12 @@ namespace Simple.OData.Client.Tests
                 .Key(product)
                 .DeleteEntryAsync();
 
-            //product = await _client
-            //    .For(x.Products)
-            //    .Filter(x.ProductName == "Test1")
-            //    .FindEntryAsync();
+            product = await client
+                .For(x.Products)
+                .Filter(x.ProductName == "Test1")
+                .FindEntryAsync();
 
-            //Assert.Null(product);
+            Assert.Null(product);
         }
 
         [Fact]
@@ -82,7 +83,7 @@ namespace Simple.OData.Client.Tests
         {
             var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            var ship = await _client
+            var ship = await client
                 .For(x.Transport)
                 .As(x.Ship)
                 .Set(x.ShipName = "Test1")
@@ -94,13 +95,13 @@ namespace Simple.OData.Client.Tests
                 .Key(ship.TransportID)
                 .DeleteEntryAsync();
 
-            //ship = await _client
-            //    .For(x.Transport)
-            //    .As(x.Ship)
-            //    .Filter(x.ShipName == "Test1")
-            //    .FindEntryAsync();
+            ship = await client
+                .For(x.Transport)
+                .As(x.Ship)
+                .Filter(x.ShipName == "Test1")
+                .FindEntryAsync();
 
-            //Assert.Null(ship);
+            Assert.Null(ship);
         }
     }
 }

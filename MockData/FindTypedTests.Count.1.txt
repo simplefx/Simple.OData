@@ -1,0 +1,1 @@
+{"Content":null,"ContentHeaders":null,"Method":"GET","RequestHeaders":[{"Key":"Prefer","Value":["return-content"]}],"RequestUri":"http:\/\/nrkdt66337\/Temporary_Listen_Addresses\/SimpleODataTestService81\/Products\/$count?$filter=ProductName%20eq%20%27Chai%27"}

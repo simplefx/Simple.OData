@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Simple.OData.Client.TestUtils;
 using Xunit;
 
 using Entry = System.Collections.Generic.Dictionary<string, object>;

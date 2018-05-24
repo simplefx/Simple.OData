@@ -1,0 +1,1 @@
+{"Content":null,"ContentHeaders":null,"Method":"GET","RequestHeaders":[{"Key":"Accept","Value":["application\/atom+xml","application\/xml","application\/text"]},{"Key":"Prefer","Value":["return-content"]}],"RequestUri":"http:\/\/nrkdt66337\/Temporary_Listen_Addresses\/SimpleODataTestService210\/Products?$filter=ProductID%20eq%20cast%281L%2C%20%27Edm.Int32%27%29"}

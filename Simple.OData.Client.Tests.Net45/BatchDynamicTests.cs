@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
+using Simple.OData.Client.TestUtils;
 
 namespace Simple.OData.Client.Tests
 {
@@ -11,8 +12,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task Success()
         {
+            var settings = CreateDefaultSettings().WithHttpMock();
             var x = ODataDynamic.Expression;
-            var batch = new ODataBatch(CreateDefaultSettings().WithHttpMock());
+            var batch = new ODataBatch(settings);
             batch += c => c
                 .For(x.Products)
                 .Set(x.ProductName = "Test1", x.UnitPrice = 10m)
@@ -23,26 +25,28 @@ namespace Simple.OData.Client.Tests
                 .InsertEntryAsync(false);
             await batch.ExecuteAsync();
 
-            //var product = await _client
-            //    .For(x.Products)
-            //    .Filter(x.ProductName == "Test1")
-            //    .FindEntryAsync();
-            //Assert.NotNull(product);
-            //product = await _client
-            //    .For(x.Products)
-            //    .Filter(x.ProductName == "Test2")
-            //    .FindEntryAsync();
-            //Assert.NotNull(product);
+            var client = new ODataClient(settings);
+            var product = await client
+                .For(x.Products)
+                .Filter(x.ProductName == "Test1")
+                .FindEntryAsync();
+            Assert.NotNull(product);
+            product = await client
+                .For(x.Products)
+                .Filter(x.ProductName == "Test2")
+                .FindEntryAsync();
+            Assert.NotNull(product);
         }
 
         [Fact]
         public async Task SuccessWithResults()
         {
+            var settings = CreateDefaultSettings().WithHttpMock();
             var x = ODataDynamic.Expression;
             dynamic product1 = null;
             dynamic product2 = null;
 
-            var batch = new ODataBatch(CreateDefaultSettings().WithHttpMock());
+            var batch = new ODataBatch(settings);
             batch += async c => product1 = await c
                 .For(x.Products)
                 .Set(x.ProductName = "Test1", x.UnitPrice = 10m)
@@ -56,23 +60,25 @@ namespace Simple.OData.Client.Tests
             Assert.NotEqual(0, product1.ProductID);
             Assert.NotEqual(0, product2.ProductID);
 
-            //product1 = await _client
-            //    .For(x.Products)
-            //    .Filter(x.ProductName == "Test1")
-            //    .FindEntryAsync();
-            //Assert.NotNull(product1);
-            //product2 = await _client
-            //    .For(x.Products)
-            //    .Filter(x.ProductName == "Test2")
-            //    .FindEntryAsync();
-            //Assert.NotNull(product2);
+            var client = new ODataClient(settings);
+            product1 = await client
+                .For(x.Products)
+                .Filter(x.ProductName == "Test1")
+                .FindEntryAsync();
+            Assert.NotNull(product1);
+            product2 = await client
+                .For(x.Products)
+                .Filter(x.ProductName == "Test2")
+                .FindEntryAsync();
+            Assert.NotNull(product2);
         }
 
         [Fact]
         public async Task PartialFailures()
         {
+            var settings = CreateDefaultSettings().WithHttpMock();
             var x = ODataDynamic.Expression;
-            var batch = new ODataBatch(CreateDefaultSettings().WithHttpMock());
+            var batch = new ODataBatch(settings);
             batch += c => c
                 .For(x.Products)
                 .Set(x.ProductName = "Test1", x.UnitPrice = 10m)
@@ -95,8 +101,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task AllFailures()
         {
+            var settings = CreateDefaultSettings().WithHttpMock();
             var x = ODataDynamic.Expression;
-            var batch = new ODataBatch(CreateDefaultSettings().WithHttpMock());
+            var batch = new ODataBatch(settings);
             batch += c => c
                 .For(x.Products)
                 .Set(x.UnitPrice = 10m)
@@ -119,19 +126,20 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task MultipleUpdatesSingleBatch()
         {
+            var settings = CreateDefaultSettings().WithHttpMock();
             var x = ODataDynamic.Expression;
             dynamic product = null;
             dynamic product1 = null;
             dynamic product2 = null;
 
-            var batch = new ODataBatch(CreateDefaultSettings().WithHttpMock());
+            var batch = new ODataBatch(settings);
             batch += async c => product = await c
                 .For(x.Products)
                 .Set(x.ProductName = "Test11", x.UnitPrice = 21m)
                 .InsertEntryAsync();
             await batch.ExecuteAsync();
 
-            batch = new ODataBatch(CreateDefaultSettings().WithHttpMock());
+            batch = new ODataBatch(settings);
             batch += c => c
                 .For(x.Products)
                 .Key(product.ProductID)
@@ -155,29 +163,31 @@ namespace Simple.OData.Client.Tests
             Assert.Equal(22m, product1.UnitPrice);
             Assert.Equal(23m, product2.UnitPrice);
 
-            //product = await _client
-            //    .For(x.Products)
-            //    .Filter(x.ProductName == "Test11")
-            //    .FindEntryAsync();
-            //Assert.Equal(23m, product.UnitPrice);
+            var client = new ODataClient(settings);
+            product = await client
+                .For(x.Products)
+                .Filter(x.ProductName == "Test11")
+                .FindEntryAsync();
+            Assert.Equal(23m, product.UnitPrice);
         }
 
         [Fact]
         public async Task UpdateDeleteSingleBatch()
         {
+            var settings = CreateDefaultSettings().WithHttpMock();
             var x = ODataDynamic.Expression;
             dynamic product = null;
             dynamic product1 = null;
             dynamic product2 = null;
 
-            var batch = new ODataBatch(CreateDefaultSettings().WithHttpMock());
+            var batch = new ODataBatch(settings);
             batch += async c => product = await c
                 .For(x.Products)
                 .Set(x.ProductName = "Test11", x.UnitPrice = 21m)
                 .InsertEntryAsync();
             await batch.ExecuteAsync();
 
-            batch = new ODataBatch(CreateDefaultSettings().WithHttpMock());
+            batch = new ODataBatch(settings);
             batch += c => c
                 .For(x.Products)
                 .Filter(x.ProductName == "Test11")
@@ -200,32 +210,35 @@ namespace Simple.OData.Client.Tests
             Assert.Equal(22m, product1.UnitPrice);
             Assert.Null(product2);
 
-            //product = await _client
-            //    .For(x.Products)
-            //    .Filter(x.ProductName == "Test11")
-            //    .FindEntryAsync();
-            //Assert.Null(product);
+            var client = new ODataClient(settings);
+            product = await client
+                .For(x.Products)
+                .Filter(x.ProductName == "Test11")
+                .FindEntryAsync();
+            Assert.Null(product);
         }
 
         [Fact]
         public async Task InsertUpdateDeleteSeparateBatches()
         {
+            var settings = CreateDefaultSettings().WithHttpMock();
             var x = ODataDynamic.Expression;
-            var batch = new ODataBatch(CreateDefaultSettings().WithHttpMock());
+            var batch = new ODataBatch(settings);
             batch += c => c
                 .For(x.Products)
                 .Set(new { ProductName = "Test12", UnitPrice = 21m })
                 .InsertEntryAsync(false);
             await batch.ExecuteAsync();
 
-            var product = await _client
+            var client = new ODataClient(settings);
+            var product = await client
                 .For(x.Products)
                 .Filter(x.ProductName == "Test12")
                 .FindEntryAsync();
             Assert.Equal(21m, product.UnitPrice);
             var productID = product.ProductID;
 
-            batch = new ODataBatch(CreateDefaultSettings().WithHttpMock());
+            batch = new ODataBatch(settings);
             batch += c => c
                 .For(x.Products)
                 .Key(productID)
@@ -233,32 +246,33 @@ namespace Simple.OData.Client.Tests
                 .UpdateEntryAsync(false);
             await batch.ExecuteAsync();
 
-            product = await _client
+            product = await client
                 .For(x.Products)
                 .Filter(x.ProductName == "Test12")
                 .FindEntryAsync();
             Assert.Equal(22m, product.UnitPrice);
 
-            batch = new ODataBatch(CreateDefaultSettings().WithHttpMock());
+            batch = new ODataBatch(settings);
             batch += c => c
                 .For(x.Products)
                 .Key(productID)
                 .DeleteEntryAsync();
             await batch.ExecuteAsync();
 
-            //product = await _client
-            //    .For(x.Products)
-            //    .Filter(x.ProductName == "Test12")
-            //    .FindEntryAsync();
-            //Assert.Null(product);
+            product = await client
+                .For(x.Products)
+                .Filter(x.ProductName == "Test12")
+                .FindEntryAsync();
+            Assert.Null(product);
         }
 
         [Fact]
         public async Task InsertSingleEntityWithSingleAssociationSingleBatch()
         {
+            var settings = CreateDefaultSettings().WithHttpMock();
             var x = ODataDynamic.Expression;
             var category = new Category() { CategoryName = "Test13" };
-            var batch = new ODataBatch(CreateDefaultSettings().WithHttpMock());
+            var batch = new ODataBatch(settings);
             batch += async c => await c
                 .For(x.Categories)
                 .Set(category)
@@ -269,22 +283,24 @@ namespace Simple.OData.Client.Tests
                 .InsertEntryAsync();
             await batch.ExecuteAsync();
 
-            //var product = await _client
-            //    .For(x.Products)
-            //    .Expand(x.Category)
-            //    .Filter(x.ProductName == "Test14")
-            //    .FindEntryAsync();
-            //Assert.Equal("Test13", product.Category.CategoryName);
+            var client = new ODataClient(settings);
+            var product = await client
+                .For(x.Products)
+                .Expand(x.Category)
+                .Filter(x.ProductName == "Test14")
+                .FindEntryAsync();
+            Assert.Equal("Test13", product.Category.CategoryName);
         }
 
         [Fact]
         public async Task InsertSingleEntityWithMultipleAssociationsSingleBatch()
         {
+            var settings = CreateDefaultSettings().WithHttpMock();
             var x = ODataDynamic.Expression;
             dynamic product1 = new { ProductName = "Test15", UnitPrice = 21m };
             dynamic product2 = new { ProductName = "Test16", UnitPrice = 22m };
 
-            var batch = new ODataBatch(CreateDefaultSettings().WithHttpMock());
+            var batch = new ODataBatch(settings);
             batch += c => c
                 .For(x.Products)
                 .Set(product1)
@@ -299,12 +315,13 @@ namespace Simple.OData.Client.Tests
                 .InsertEntryAsync(false);
             await batch.ExecuteAsync();
 
-            //var category = await _client
-            //    .For(x.Categories)
-            //    .Expand(x.Products)
-            //    .Filter(x.CategoryName == "Test17")
-            //    .FindEntryAsync();
-            //Assert.Equal(2, (category.Products as IEnumerable<dynamic>).Count());
+            var client = new ODataClient(settings);
+            var category = await client
+                .For(x.Categories)
+                .Expand(x.Products)
+                .Filter(x.CategoryName == "Test17")
+                .FindEntryAsync();
+            Assert.Equal(2, (category.Products as IEnumerable<dynamic>).Count());
         }
     }
 }

@@ -104,33 +104,38 @@ namespace Simple.OData.Client
         {
             try
             {
-                Assembly assembly = null;
-#if NETSTANDARD2_0
-                var assemblyName = new AssemblyName(modelAdapterAssemblyName);
-                assembly = Assembly.Load(assemblyName);
-#else
-                var assemblyName = new AssemblyName(modelAdapterAssemblyName);
-                assembly = Assembly.Load(assemblyName);
-#endif
-
-                var constructors = assembly.GetType(modelAdapterTypeName).GetDeclaredConstructors();
-
-#if NETSTANDARD2_0
-                var ctor = constructors.Single(x =>
-                    x.GetParameters().Count() == ctorParams.Count() &&
-                    x.GetParameters().Last().ParameterType.GetTypeInfo().IsAssignableFrom(ctorParams.Last().GetType().GetTypeInfo()));
-#else
-                var ctor = constructors.Single(x =>
-                    x.GetParameters().Count() == ctorParams.Count() &&
-                    x.GetParameters().Last().ParameterType.IsAssignableFrom(ctorParams.Last().GetType()));
-#endif
-
+                var assembly = LoadAdapterAssembly(modelAdapterAssemblyName);
+                var ctor = FindAdapterConstructor(assembly, modelAdapterTypeName, ctorParams);
                 return ctor.Invoke(ctorParams) as IODataModelAdapter;
             }
             catch (Exception exception)
             {
                 throw new InvalidOperationException(string.Format("Unable to load OData adapter from assembly {0}", modelAdapterAssemblyName), exception);
             }
+        }
+
+        private Assembly LoadAdapterAssembly(string modelAdapterAssemblyName)
+        {
+#if NETSTANDARD2_0
+            var assemblyName = new AssemblyName(modelAdapterAssemblyName);
+            return Assembly.Load(assemblyName);
+#else
+            return this.GetType().Assembly;
+#endif
+        }
+
+        private ConstructorInfo FindAdapterConstructor(Assembly assembly, string modelAdapterTypeName, params object[] ctorParams)
+        {
+            var constructors = assembly.GetType(modelAdapterTypeName).GetDeclaredConstructors();
+#if NETSTANDARD2_0
+            return constructors.Single(x =>
+                x.GetParameters().Count() == ctorParams.Count() &&
+                x.GetParameters().Last().ParameterType.GetTypeInfo().IsAssignableFrom(ctorParams.Last().GetType().GetTypeInfo()));
+#else
+            return constructors.Single(x =>
+                x.GetParameters().Count() == ctorParams.Count() &&
+                x.GetParameters().Last().ParameterType.IsInstanceOfType(ctorParams.Last()));
+#endif
         }
 
         private IODataAdapter LoadAdapter(string adapterAssemblyName, string adapterTypeName, params object[] ctorParams)
@@ -142,8 +147,7 @@ namespace Simple.OData.Client
                 var assemblyName = new AssemblyName(adapterAssemblyName);
                 assembly = Assembly.Load(assemblyName);
 #else
-                var assemblyName = new AssemblyName(adapterAssemblyName);
-                assembly = Assembly.Load(assemblyName);
+                assembly = this.GetType().Assembly;
 #endif
 
                 var constructors = assembly.GetType(adapterTypeName).GetDeclaredConstructors();
