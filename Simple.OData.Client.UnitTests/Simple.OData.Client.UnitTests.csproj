@@ -1,0 +1,153 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net452;netcoreapp2.0</TargetFrameworks>
+	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <RootNamespace>Simple.OData.Client.Tests</RootNamespace>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+    <OutputPath>$(SolutionDir)/build/$(Configuration)/$(AssemblyName)/$(TargetFramework)/</OutputPath>
+    <OutDir>$(OutputPath)</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;MOCK_HTTP</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE;MOCK_HTTP</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Remove="Resources\Northwind.xml" />
+    <None Remove="Resources\TwitterStatusesSample.txt" />
+    <None Remove="Resources\XmlWithDefaultNamespace.txt" />
+    <None Remove="Resources\XmlWithNoNamespace.txt" />
+    <None Remove="Resources\XmlWithPrefixedNamespace.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CSharp" Version="4.4.1" />
+    <PackageReference Include="Microsoft.Net.Test.Sdk" Version="15.7.0" />
+    <PackageReference Include="xunit" Version="2.3.1" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
+    <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+    <Compile Include="..\CommonAssemblyInfo.cs">
+      <Link>Properties\CommonAssemblyInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\CommonAssemblyVersion.cs">
+      <Link>Properties\CommonAssemblyVersion.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Core\Entities\Address.cs">
+      <Link>Entities\Address.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Core\Entities\AddressType.cs">
+      <Link>Entities\AddressType.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Core\Entities\Category.cs">
+      <Link>Entities\Category.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Core\Entities\CustomAttributes.cs">
+      <Link>Entities\CustomAttributes.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Core\Entities\Customer.cs">
+      <Link>Entities\Customer.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Core\Entities\Employee.cs">
+      <Link>Entities\Employee.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Core\Entities\Order.cs">
+      <Link>Entities\Order.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Core\Entities\OrderDetail.cs">
+      <Link>Entities\OrderDetail.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Core\Entities\Product.cs">
+      <Link>Entities\Product.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Core\Entities\Ship.cs">
+      <Link>Entities\Ship.cs</Link>
+    </Compile>
+    <Compile Include="..\Simple.OData.Client.Tests.Core\Entities\Transport.cs">
+      <Link>Entities\Transport.cs</Link>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Simple.OData.Client.TestUtils\MetadataResolver.cs" Link="MetadataResolver.cs" />
+    <Compile Include="..\Simple.OData.Client.TestUtils\MockingRequestExecutor.cs" Link="MockingRequestExecutor.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\Northwind.xml" />
+    <EmbeddedResource Include="Resources\TwitterStatusesSample.txt" />
+    <EmbeddedResource Include="Resources\XmlWithDefaultNamespace.txt" />
+    <EmbeddedResource Include="Resources\XmlWithNoNamespace.txt" />
+    <EmbeddedResource Include="Resources\XmlWithPrefixedNamespace.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Simple.OData.Client.Dynamic\Simple.OData.Client.Dynamic.csproj" />
+    <ProjectReference Include="..\Simple.OData.Client.V3.Adapter\Simple.OData.Client.V3.Adapter.csproj" />
+    <ProjectReference Include="..\Simple.OData.Client.V4.Adapter\Simple.OData.Client.V4.Adapter.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net452|AnyCPU'">
+    <ProjectReference Include="..\Simple.OData.NorthwindModel\Simple.OData.NorthwindModel.csproj">
+      <Project>{2A909E4D-6493-4D36-9FDE-786B89F9A387}</Project>
+      <Name>Simple.OData.NorthwindModel</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net452|AnyCPU'">
+    <ProjectReference Include="..\Simple.OData.NorthwindModel\Simple.OData.NorthwindModel.csproj">
+      <Project>{2A909E4D-6493-4D36-9FDE-786B89F9A387}</Project>
+      <Name>Simple.OData.NorthwindModel</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="MockData\BatchDynamicTests.AllFailures.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MockData\BatchDynamicTests.InsertSingleEntityWithMultipleAssociationsSingleBatch.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MockData\BatchDynamicTests.InsertSingleEntityWithSingleAssociationSingleBatch.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="MockData\BatchDynamicTests.InsertUpdateDeleteSeparateBatches.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MockData\BatchDynamicTests.MultipleUpdatesSingleBatch.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MockData\BatchDynamicTests.PartialFailures.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MockData\BatchDynamicTests.Success.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MockData\BatchDynamicTests.SuccessWithResults.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="MockData\BatchDynamicTests.UpdateDeleteSingleBatch.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>
