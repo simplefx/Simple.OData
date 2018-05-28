@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Data.Edm;
-using Simple.OData.Client.TestUtils;
 using Xunit;
 
 namespace Simple.OData.Client.Tests

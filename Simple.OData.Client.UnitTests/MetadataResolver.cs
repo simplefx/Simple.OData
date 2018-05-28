@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Simple.OData.Client.TestUtils
+namespace Simple.OData.Client.Tests
 {
     public static class MetadataResolver
     {

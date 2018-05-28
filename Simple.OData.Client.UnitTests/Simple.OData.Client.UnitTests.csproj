@@ -89,13 +89,6 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="packages.config">
-      <SubType>Designer</SubType>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\Simple.OData.Client.TestUtils\MetadataResolver.cs" Link="MetadataResolver.cs" />
-    <Compile Include="..\Simple.OData.Client.TestUtils\MockingRequestExecutor.cs" Link="MockingRequestExecutor.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Northwind.xml" />
@@ -120,6 +113,14 @@
       <Project>{2A909E4D-6493-4D36-9FDE-786B89F9A387}</Project>
       <Name>Simple.OData.NorthwindModel</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net452|AnyCPU'">
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Web" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net452|AnyCPU'">
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.ServiceModel.Web" />
   </ItemGroup>
   <ItemGroup>
     <None Update="MockData\BatchDynamicTests.AllFailures.txt">

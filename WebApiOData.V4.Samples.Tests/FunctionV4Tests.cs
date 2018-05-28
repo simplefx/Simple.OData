@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Owin.Testing;
 using Simple.OData.Client;
-using Simple.OData.Client.TestUtils;
+using Simple.OData.Client.Tests;
 using WebApiOData.V4.Samples.Models;
 using WebApiOData.V4.Samples.Startups;
 using Xunit;

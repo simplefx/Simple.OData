@@ -11,7 +11,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Simple.OData.Client.TestUtils
+namespace Simple.OData.Client.Tests
 {
     [DataContract]
     public class SerializableHttpRequestMessage

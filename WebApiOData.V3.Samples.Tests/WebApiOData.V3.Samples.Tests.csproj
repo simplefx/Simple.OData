@@ -49,8 +49,8 @@
     <Compile Include="..\CommonAssemblyVersion.cs">
       <Link>Properties\CommonAssemblyVersion.cs</Link>
     </Compile>
-    <Compile Include="..\Simple.OData.Client.TestUtils\MetadataResolver.cs" Link="MetadataResolver.cs" />
-    <Compile Include="..\Simple.OData.Client.TestUtils\MockingRequestExecutor.cs" Link="MockingRequestExecutor.cs" />
+    <Compile Include="..\Simple.OData.Client.UnitTests\MetadataResolver.cs" Link="MetadataResolver.cs" />
+    <Compile Include="..\Simple.OData.Client.UnitTests\MockingRequestExecutor.cs" Link="MockingRequestExecutor.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Metadata.xml" />

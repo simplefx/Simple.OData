@@ -1,12 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+#if NET452
 using System.ServiceModel.Web;
+#endif
 using System.Text;
 using System.Threading;
 
-namespace Simple.OData.Client.TestUtils
+    
+
+namespace Simple.OData.Client.Tests
 {
+#if NET452
     public class TestService : IDisposable
     {
         private WebServiceHost _host;
@@ -52,4 +57,5 @@ namespace Simple.OData.Client.TestUtils
             get { return this._serviceUri; }
         }
     }
+#endif
 }
