@@ -6,7 +6,6 @@ using Xunit;
 
 namespace Simple.OData.Client.Tests
 {
-#if ODATA_V3
     public class FindODataTestsV2Atom : FindODataTests
     {
         public FindODataTestsV2Atom() : base(ODataV2ReadWriteUri, ODataPayloadFormat.Atom, 2) { }
@@ -26,14 +25,11 @@ namespace Simple.OData.Client.Tests
     {
         public FindODataTestsV3Json() : base(ODataV3ReadOnlyUri, ODataPayloadFormat.Json, 3) { }
     }
-#endif
 
-#if ODATA_V4
     public class FindODataTestsV4Json : FindODataTests
     {
         public FindODataTestsV4Json() : base(ODataV4ReadOnlyUri, ODataPayloadFormat.Json, 4) { }
     }
-#endif
 
     public abstract class FindODataTests : ODataTestBase
     {

@@ -223,7 +223,6 @@ namespace Simple.OData.Client.Tests
         }
     }
 
-#if ODATA_V3
     public class WebApiTests : WebApiTestsBase
     {
         public WebApiTests()
@@ -247,5 +246,4 @@ namespace Simple.OData.Client.Tests
         {
         }
     }
-#endif
 }

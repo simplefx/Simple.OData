@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-#if ODATA_V4
 using Microsoft.Spatial;
-#else
 using System.Spatial;
-#endif
 
 namespace Simple.OData.Client.Tests
 {
@@ -172,7 +169,7 @@ namespace Simple.OData.Client.Tests
 
     class AirportLocation : Location
     {
-        public GeographyPoint Loc { get; set; }
+        public Microsoft.Spatial.GeographyPoint Loc { get; set; }
     }
 
     class EventLocation : Location

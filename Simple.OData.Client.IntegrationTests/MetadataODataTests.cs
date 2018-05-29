@@ -8,7 +8,6 @@ using Entry = System.Collections.Generic.Dictionary<string, object>;
 
 namespace Simple.OData.Client.Tests
 {
-#if ODATA_V3
     public class MetadataODataTestsV2Atom : MetadataODataTests
     {
         public MetadataODataTestsV2Atom() : base(ODataV2ReadWriteUri, ODataPayloadFormat.Atom, 2) { }
@@ -28,14 +27,11 @@ namespace Simple.OData.Client.Tests
     {
         public MetadataODataTestsV3Json() : base(ODataV3ReadWriteUri, ODataPayloadFormat.Json, 3) { }
     }
-#endif
 
-#if ODATA_V4
     public class MetadataODataTestsV4Json : MetadataODataTests
     {
         public MetadataODataTestsV4Json() : base(ODataV4ReadWriteUri, ODataPayloadFormat.Json, 4) { }
     }
-#endif
 
     public abstract class MetadataODataTests : ODataTestBase
     {

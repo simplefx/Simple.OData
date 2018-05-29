@@ -7,7 +7,6 @@ using Xunit;
 
 namespace Simple.OData.Client.Tests
 {
-#if ODATA_V3
     // Not supported by OData V2
     //public class MediaODataTestsV2Atom : MediaODataTests
     //{
@@ -28,14 +27,11 @@ namespace Simple.OData.Client.Tests
     {
         public MediaODataTestsV3Json() : base(ODataV3ReadWriteUri, ODataPayloadFormat.Json, 3) { }
     }
-#endif
 
-#if ODATA_V4
     public class MediaODataTestsV4Json : MediaODataTests
     {
         public MediaODataTestsV4Json() : base(ODataV4ReadWriteUri, ODataPayloadFormat.Json, 4) { }
     }
-#endif
 
     public abstract class MediaODataTests : ODataTestBase
     {
