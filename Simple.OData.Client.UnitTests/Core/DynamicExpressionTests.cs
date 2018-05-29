@@ -5,7 +5,7 @@ namespace Simple.OData.Client.Tests.Core
 {
     public class DynamicExpressionV3Tests : DynamicExpressionTests
     {
-        public override string MetadataFile { get { return "Northwind.xml"; } }
+        public override string MetadataFile { get { return "Northwind3.xml"; } }
         public override IFormatSettings FormatSettings { get { return new ODataV3Format(); } }
     }
 

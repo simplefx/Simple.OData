@@ -7,11 +7,11 @@ namespace Simple.OData.Client.Tests.Core
 {
     public class ExpansionTests : CoreTestBase
     {
-        public override string MetadataFile { get { return "Northwind.xml"; } }
+        public override string MetadataFile { get { return "Northwind3.xml"; } }
         public override IFormatSettings FormatSettings { get { return new ODataV3Format(); } }
 
         [Theory]
-        [InlineData("Northwind.xml", "Employees?$expand=Subordinates")]
+        [InlineData("Northwind3.xml", "Employees?$expand=Subordinates")]
         [InlineData("Northwind4.xml", "Employees?$expand=Subordinates")]
         public async Task ExpandSubordinates(string metadataFile, string expectedCommand)
         {
@@ -24,7 +24,7 @@ namespace Simple.OData.Client.Tests.Core
         }
 
         [Theory]
-        [InlineData("Northwind.xml", "Employees?$expand=Subordinates,Superior")]
+        [InlineData("Northwind3.xml", "Employees?$expand=Subordinates,Superior")]
         [InlineData("Northwind4.xml", "Employees?$expand=Subordinates,Superior")]
         public async Task ExpandSubordinatesAndSuperior(string metadataFile, string expectedCommand)
         {
@@ -37,7 +37,7 @@ namespace Simple.OData.Client.Tests.Core
         }
 
         [Theory]
-        [InlineData("Northwind.xml", "Employees?$expand=Subordinates,Superior")]
+        [InlineData("Northwind3.xml", "Employees?$expand=Subordinates,Superior")]
         [InlineData("Northwind4.xml", "Employees?$expand=Subordinates,Superior")]
         public async Task ExpandSubordinatesAndSuperiorTwoClauses(string metadataFile, string expectedCommand)
         {
@@ -51,7 +51,7 @@ namespace Simple.OData.Client.Tests.Core
         }
 
         [Theory]
-        [InlineData("Northwind.xml", "Employees?$expand=Subordinates/Subordinates")]
+        [InlineData("Northwind3.xml", "Employees?$expand=Subordinates/Subordinates")]
         [InlineData("Northwind4.xml", "Employees?$expand=Subordinates($expand=Subordinates)")]
         public async Task ExpandSubordinatesTwoTimes(string metadataFile, string expectedCommand)
         {
@@ -64,7 +64,7 @@ namespace Simple.OData.Client.Tests.Core
         }
 
         [Theory]
-        [InlineData("Northwind.xml", "Employees?$expand=Subordinates/Subordinates/Subordinates")]
+        [InlineData("Northwind3.xml", "Employees?$expand=Subordinates/Subordinates/Subordinates")]
         [InlineData("Northwind4.xml", "Employees?$expand=Subordinates($expand=Subordinates($expand=Subordinates))")]
         public async Task ExpandSubordinatesThreeTimes(string metadataFile, string expectedCommand)
         {
@@ -77,7 +77,7 @@ namespace Simple.OData.Client.Tests.Core
         }
 
         [Theory]
-        [InlineData("Northwind.xml", "Employees?$expand=Subordinates&$select=LastName,Subordinates&$orderby=LastName")]
+        [InlineData("Northwind3.xml", "Employees?$expand=Subordinates&$select=LastName,Subordinates&$orderby=LastName")]
         [InlineData("Northwind4.xml", "Employees?$expand=Subordinates&$select=LastName,Subordinates&$orderby=LastName")]
         public async Task ExpandSubordinatesWithSelectAndOrderby(string metadataFile, string expectedCommand)
         {
@@ -92,7 +92,7 @@ namespace Simple.OData.Client.Tests.Core
         }
 
         [Theory]
-        [InlineData("Northwind.xml", "Employees?$expand=Subordinates/Subordinates&$select=LastName,Subordinates,Subordinates/LastName,Subordinates/Subordinates")]
+        [InlineData("Northwind3.xml", "Employees?$expand=Subordinates/Subordinates&$select=LastName,Subordinates,Subordinates/LastName,Subordinates/Subordinates")]
         [InlineData("Northwind4.xml", "Employees?$expand=Subordinates($expand=Subordinates;$select=LastName,Subordinates)&$select=LastName,Subordinates")]
         public async Task ExpandSubordinatesWithInnerSelect(string metadataFile, string expectedCommand)
         {
@@ -107,7 +107,7 @@ namespace Simple.OData.Client.Tests.Core
         }
 
         [Theory]
-        [InlineData("Northwind.xml", "Employees?$expand=Subordinates/Subordinates&$select=LastName,Subordinates,Subordinates/LastName,Subordinates/Subordinates&$orderby=LastName,Subordinates/LastName")]
+        [InlineData("Northwind3.xml", "Employees?$expand=Subordinates/Subordinates&$select=LastName,Subordinates,Subordinates/LastName,Subordinates/Subordinates&$orderby=LastName,Subordinates/LastName")]
         [InlineData("Northwind4.xml", "Employees?$expand=Subordinates($expand=Subordinates;$select=LastName,Subordinates;$orderby=LastName)&$select=LastName,Subordinates&$orderby=LastName")]
         public async Task ExpandSubordinatesWithSelectAndOrderbyTwoTimes(string metadataFile, string expectedCommand)
         {
@@ -124,7 +124,7 @@ namespace Simple.OData.Client.Tests.Core
         }
 
         [Theory]
-        [InlineData("Northwind.xml", null)]
+        [InlineData("Northwind3.xml", null)]
         [InlineData("Northwind4.xml", null)]
         public async Task ExpandSubordinatesWithSelectAndInnerOrderby(string metadataFile, string expectedCommand)
         {
@@ -136,7 +136,7 @@ namespace Simple.OData.Client.Tests.Core
         }
 
         [Theory]
-        [InlineData("Northwind.xml", "Employees?$expand=Subordinates/Subordinates/Subordinates&$select=LastName,Subordinates,Subordinates/LastName,Subordinates/Subordinates,Subordinates/Subordinates/LastName,Subordinates/Subordinates/Subordinates&$orderby=LastName,Subordinates/LastName,Subordinates/Subordinates/LastName")]
+        [InlineData("Northwind3.xml", "Employees?$expand=Subordinates/Subordinates/Subordinates&$select=LastName,Subordinates,Subordinates/LastName,Subordinates/Subordinates,Subordinates/Subordinates/LastName,Subordinates/Subordinates/Subordinates&$orderby=LastName,Subordinates/LastName,Subordinates/Subordinates/LastName")]
         [InlineData("Northwind4.xml", "Employees?$expand=Subordinates($expand=Subordinates($expand=Subordinates;$select=LastName,Subordinates;$orderby=LastName);$select=LastName,Subordinates;$orderby=LastName)&$select=LastName,Subordinates&$orderby=LastName")]
         public async Task ExpandSubordinatesWithSelectAndOrderbyThreeTimes(string metadataFile, string expectedCommand)
         {
@@ -155,7 +155,7 @@ namespace Simple.OData.Client.Tests.Core
         }
 
         [Theory]
-        [InlineData("Northwind.xml", "Employees?$expand=Subordinates&$select=LastName,Subordinates&$orderby=Superior/LastName")]
+        [InlineData("Northwind3.xml", "Employees?$expand=Subordinates&$select=LastName,Subordinates&$orderby=Superior/LastName")]
         [InlineData("Northwind4.xml", "Employees?$expand=Subordinates&$select=LastName,Subordinates&$orderby=Superior/LastName")]
         public async Task ExpandSubordinatesWithSelectThenDeepOrderby(string metadataFile, string expectedCommand)
         {
@@ -170,7 +170,7 @@ namespace Simple.OData.Client.Tests.Core
         }
 
         [Theory]
-        [InlineData("Northwind.xml", "Employees?$select=LastName,Subordinates&$orderby=Superior/LastName")]
+        [InlineData("Northwind3.xml", "Employees?$select=LastName,Subordinates&$orderby=Superior/LastName")]
         [InlineData("Northwind4.xml", "Employees?$select=LastName,Subordinates&$orderby=Superior/LastName")]
         public async Task SelectAndDeepOrderby(string metadataFile, string expectedCommand)
         {
@@ -184,7 +184,7 @@ namespace Simple.OData.Client.Tests.Core
         }
 
         [Theory]
-        [InlineData("Northwind.xml", "Products?$expand=Category&$select=ProductName,Category/CategoryName")]
+        [InlineData("Northwind3.xml", "Products?$expand=Category&$select=ProductName,Category/CategoryName")]
         [InlineData("Northwind4.xml", "Products?$expand=Category($select=CategoryName)&$select=ProductName")]
         public async Task ExpandCategorySelectProductNameCategoryName(string metadataFile, string expectedCommand)
         {
@@ -197,7 +197,7 @@ namespace Simple.OData.Client.Tests.Core
         }
 
         [Theory]
-        [InlineData("Northwind.xml", "Products?$expand=Category&$select=ProductName,Category/CategoryName&$orderby=Category/CategoryName")]
+        [InlineData("Northwind3.xml", "Products?$expand=Category&$select=ProductName,Category/CategoryName&$orderby=Category/CategoryName")]
         [InlineData("Northwind4.xml", "Products?$expand=Category($select=CategoryName)&$select=ProductName&$orderby=Category/CategoryName")]
         public async Task ExpandCategorySelectProductNameCategoryNameThenOrderBy(string metadataFile, string expectedCommand)
         {
@@ -211,7 +211,7 @@ namespace Simple.OData.Client.Tests.Core
         }
 
         [Theory]
-        [InlineData("Northwind.xml", "Products?$expand=Category&$select=ProductName,Category/CategoryName&$orderby=Category/CategoryName,ProductName")]
+        [InlineData("Northwind3.xml", "Products?$expand=Category&$select=ProductName,Category/CategoryName&$orderby=Category/CategoryName,ProductName")]
         [InlineData("Northwind4.xml", "Products?$expand=Category($select=CategoryName)&$select=ProductName&$orderby=Category/CategoryName,ProductName")]
         public async Task ExpandCategorySelectProductNameCategoryNameThenOrderByCategoryNameThenByProductName(string metadataFile, string expectedCommand)
         {

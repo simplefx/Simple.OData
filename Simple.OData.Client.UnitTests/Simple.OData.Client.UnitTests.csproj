@@ -47,6 +47,7 @@
     <None Remove="Resources\MultipleProductsWithCategory.xml" />
     <None Remove="Resources\Nested.edmx" />
     <None Remove="Resources\Northwind.xml" />
+    <None Remove="Resources\Northwind3.xml" />
     <None Remove="Resources\Northwind4.xml" />
     <None Remove="Resources\QAS.Multiplatform.Demo.edmx" />
     <None Remove="Resources\Russian.xml" />
@@ -112,6 +113,7 @@
     <EmbeddedResource Include="Resources\MultipleProductsWithCategory.xml" />
     <EmbeddedResource Include="Resources\Nested.edmx" />
     <EmbeddedResource Include="Resources\Northwind.xml" />
+    <EmbeddedResource Include="Resources\Northwind3.xml" />
     <EmbeddedResource Include="Resources\Northwind4.xml" />
     <EmbeddedResource Include="Resources\QAS.Multiplatform.Demo.edmx" />
     <EmbeddedResource Include="Resources\Russian.xml" />
