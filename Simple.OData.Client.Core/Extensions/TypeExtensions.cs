@@ -39,9 +39,14 @@ namespace Simple.OData.Client.Extensions
                 || (propertyInfo.CanWrite && !propertyInfo.SetMethod.IsStatic);
         }
 
+        private static bool IsExplicitInterfaceProperty(PropertyInfo propertyInfo)
+        {
+            return propertyInfo.Name.Contains(".");
+        }
+
         public static IEnumerable<PropertyInfo> GetDeclaredProperties(this Type type)
         {
-            return type.GetTypeInfo().DeclaredProperties.Where(x => IsInstanceProperty(x));
+            return type.GetTypeInfo().DeclaredProperties.Where(x => IsInstanceProperty(x) && !IsExplicitInterfaceProperty(x));
         }
 
         public static PropertyInfo GetDeclaredProperty(this Type type, string propertyName)

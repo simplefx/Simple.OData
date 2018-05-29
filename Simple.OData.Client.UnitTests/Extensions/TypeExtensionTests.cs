@@ -2,20 +2,26 @@
 using Simple.OData.Client.Extensions;
 using Xunit;
 
-namespace Simple.OData.Client.Tests.Extensions
+namespace Simple.OData.Client.Tests
 {
     public class TypeExtensionTests
     {
         [Fact]
         public void GetAllProperties_BaseType()
         {
-            Assert.Equal(1, typeof(Transport).GetAllProperties().Count());
+            Assert.Single(typeof(Transport).GetAllProperties());
         }
 
         [Fact]
         public void GetAllProperties_DerivedType()
         {
             Assert.Equal(2, typeof(Ship).GetAllProperties().Count());
+        }
+
+        [Fact]
+        public void GetDeclaredProperties_ExcludeExplicitInterface()
+        {
+            Assert.Equal(5, typeof(Address).GetAllProperties().Count());
         }
 
         [Fact]
