@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net452</TargetFramework>
+    <TargetFrameworks>net452;netcoreapp2.0</TargetFrameworks>
 	<GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <RootNamespace>Simple.OData.Client.Tests</RootNamespace>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -32,17 +32,19 @@
     <PackageReference Include="Microsoft.CSharp" Version="4.4.1" />
     <PackageReference Include="Microsoft.Data.OData" Version="[5.8.3, 6.0)" />
     <PackageReference Include="Microsoft.Net.Test.Sdk" Version="15.7.0" />
-    <PackageReference Include="Microsoft.Owin.Hosting" Version="3.0.0" />
-    <PackageReference Include="Microsoft.Owin.Testing" Version="3.0.0" />
     <PackageReference Include="xunit" Version="2.3.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
     <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
   </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net452|AnyCPU'">
+    <PackageReference Include="Microsoft.Owin.Hosting" Version="3.0.0" />
+    <PackageReference Include="Microsoft.Owin.Testing" Version="3.0.0" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net452|AnyCPU'">
+    <PackageReference Include="Microsoft.Owin.Hosting" Version="3.0.0" />
+    <PackageReference Include="Microsoft.Owin.Testing" Version="3.0.0" />
+  </ItemGroup>
   <ItemGroup>
-    <None Include="app.config" />
-    <None Include="packages.config">
-      <SubType>Designer</SubType>
-    </None>
     <Compile Include="..\CommonAssemblyInfo.cs">
       <Link>Properties\CommonAssemblyInfo.cs</Link>
     </Compile>
@@ -51,6 +53,7 @@
     </Compile>
     <Compile Include="..\Simple.OData.Client.UnitTests\MetadataResolver.cs" Link="MetadataResolver.cs" />
     <Compile Include="..\Simple.OData.Client.UnitTests\MockingRequestExecutor.cs" Link="MockingRequestExecutor.cs" />
+    <Compile Include="..\WebApiOData.V3.Samples\Models\Movie.cs" Link="Movie.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Resources\Metadata.xml" />
@@ -68,6 +71,14 @@
       <Project>{a08b2d3d-91a6-4ecd-b7af-5977e840e383}</Project>
       <Name>Simple.OData.Client.V3.Adapter</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net452|AnyCPU'">
+    <ProjectReference Include="..\WebApiOData.V3.Samples\WebApiOData.V3.Samples.csproj">
+      <Project>{09cd2cb4-0b5b-4018-bfbb-7367ca7e10a4}</Project>
+      <Name>WebApiOData.V3.Samples</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net452|AnyCPU'">
     <ProjectReference Include="..\WebApiOData.V3.Samples\WebApiOData.V3.Samples.csproj">
       <Project>{09cd2cb4-0b5b-4018-bfbb-7367ca7e10a4}</Project>
       <Name>WebApiOData.V3.Samples</Name>

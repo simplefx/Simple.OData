@@ -4,7 +4,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+#if NET452
 using Microsoft.Owin.Testing;
+#endif
 using Xunit;
 using Simple.OData.Client;
 using Simple.OData.Client.Tests;
@@ -12,8 +14,9 @@ using WebApiOData.V3.Samples.Models;
 
 namespace WebApiOData.V3.Samples.Tests
 {
-    public class ActionV3Tests
+    public class ActionV3Tests : IDisposable
     {
+#if NET452
         private readonly TestServer _server;
 
         public ActionV3Tests()
@@ -25,6 +28,11 @@ namespace WebApiOData.V3.Samples.Tests
         {
             _server.Dispose();
         }
+#else
+        public void Dispose()
+        {
+        }
+#endif
 
         private ODataClientSettings CreateDefaultSettings()
         {
@@ -33,7 +41,9 @@ namespace WebApiOData.V3.Samples.Tests
                 BaseUri = new Uri("http://localhost/actions"),
                 MetadataDocument = GetMetadataDocument(),
                 PayloadFormat = ODataPayloadFormat.Json,
+#if NET452
                 OnCreateMessageHandler = () => _server.Handler,
+#endif
                 OnTrace = (x, y) => Console.WriteLine(string.Format(x, y)),
             };
         }
