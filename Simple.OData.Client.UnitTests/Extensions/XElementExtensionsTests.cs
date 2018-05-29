@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Linq;
 using System.Xml.Linq;
 using Simple.OData.Client.Extensions;
 using Xunit;
 
-namespace Simple.OData.Client.Tests
+namespace Simple.OData.Client.Tests.Extensions
 {
     public class XElementExtensionsTests
     {

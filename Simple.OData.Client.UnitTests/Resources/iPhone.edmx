@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx">
+  <edmx:DataServices m:DataServiceVersion="3.0" m:MaxDataServiceVersion="3.0" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">
+    <Schema Namespace="Mongo" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <EntityType Name="iPhone">
+        <Key>
+          <PropertyRef Name="db_id" />
+        </Key>
+        <Property Name="db_id" Type="Edm.String" Nullable="false" />
+        <Property Name="menu" Type="Mongo.iPhone__menu" />
+      </EntityType>
+      <ComplexType Name="iPhone__menu">
+        <Property Name="header" Type="Edm.String" />
+        <Property Name="items" Type="Collection(Mongo.iPhone__menu__items)" Nullable="false" />
+      </ComplexType>
+      <ComplexType Name="iPhone__menu__items">
+        <Property Name="id" Type="Edm.String" />
+      </ComplexType>
+      <EntityContainer Name="MongoContext" m:IsDefaultEntityContainer="true">
+        <EntitySet Name="iPhone" EntityType="Mongo.iPhone" />
+      </EntityContainer>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>

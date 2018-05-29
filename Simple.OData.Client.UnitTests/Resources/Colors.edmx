@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx">
+  <edmx:DataServices m:DataServiceVersion="3.0" m:MaxDataServiceVersion="3.0" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">
+    <Schema Namespace="Mongo" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <EntityType Name="Colors">
+        <Key>
+          <PropertyRef Name="db_id" />
+        </Key>
+        <Property Name="db_id" Type="Edm.String" Nullable="false" />
+        <Property Name="colorsArray" Type="Collection(Mongo.Colors__colorsArray)" Nullable="false" />
+      </EntityType>
+      <ComplexType Name="Colors__colorsArray">
+        <Property Name="colorName" Type="Edm.String" />
+        <Property Name="hexValue" Type="Edm.String" />
+      </ComplexType>
+      <EntityContainer Name="MongoContext" m:IsDefaultEntityContainer="true">
+        <EntitySet Name="Colors" EntityType="Mongo.Colors" />
+      </EntityContainer>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>

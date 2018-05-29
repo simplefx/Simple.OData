@@ -1,0 +1,2369 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">
+  <edmx:DataServices>
+    <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="Enferno.Storm.Entities.Data">
+      <EntityType Name="ClientProductSku">
+        <Key>
+          <PropertyRef Name="ClientId"/>
+          <PropertyRef Name="PartNo"/>
+        </Key>
+        <Property Name="ClientId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="PartNo" Type="Edm.String" Nullable="false"/>
+        <Property Name="ProductId" Type="Edm.Int32"/>
+        <Property Name="StatusId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="StatusLastUpdated" Type="Edm.DateTimeOffset"/>
+        <Property Name="StatusLastUpdatedBy" Type="Edm.Int32"/>
+        <Property Name="TypeId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="IntegrationPartNo" Type="Edm.String"/>
+        <Property Name="ErpName" Type="Edm.String"/>
+        <Property Name="DefaultComment" Type="Edm.String"/>
+        <Property Name="CommodityCode" Type="Edm.String"/>
+        <Property Name="EanCode" Type="Edm.String"/>
+        <Property Name="TrackingCode" Type="Edm.String"/>
+        <Property Name="GrossWeight" Type="Edm.Decimal"/>
+        <Property Name="NetWeight" Type="Edm.Decimal"/>
+        <Property Name="FreightClassId" Type="Edm.Int32"/>
+        <Property Name="UnitOfMeasurementId" Type="Edm.Int32"/>
+        <Property Name="UnitOfMeasurementCount" Type="Edm.Decimal" Nullable="false"/>
+        <Property Name="PackageId" Type="Edm.Int32"/>
+        <Property Name="TrackingCodeTypeId" Type="Edm.Int32"/>
+        <Property Name="Url" Type="Edm.String"/>
+        <Property Name="ImagePath" Type="Edm.String"/>
+        <Property Name="IsDropShipOnly" Type="Edm.Boolean"/>
+        <Property Name="IsPublished" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="PublishedLastUpdated" Type="Edm.DateTimeOffset"/>
+        <Property Name="PublishedLastUpdatedBy" Type="Edm.Int32"/>
+        <Property Name="IsBlocked" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="BlockedLastUpdated" Type="Edm.DateTimeOffset"/>
+        <Property Name="BlockedLastUpdatedBy" Type="Edm.Int32"/>
+        <Property Name="PopulationRuleId" Type="Edm.Int32"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <Property Name="LastChecked" Type="Edm.DateTimeOffset"/>
+        <Property Name="TrackingModeTypeId" Type="Edm.Int32"/>
+        <Property Name="IsStatusLocked" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="StatusLockedDate" Type="Edm.DateTimeOffset"/>
+        <Property Name="StatusLockedBy" Type="Edm.Int32"/>
+        <Property Name="RecommendedSalesQty" Type="Edm.Decimal"/>
+        <Property Name="LogisticWidth" Type="Edm.Decimal"/>
+        <Property Name="LogisticHeight" Type="Edm.Decimal"/>
+        <Property Name="LogisticDepth" Type="Edm.Decimal"/>
+        <Property Name="IsBuyable" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="BuyableLastUpdated" Type="Edm.DateTimeOffset"/>
+        <Property Name="BuyableLastUpdatedBy" Type="Edm.Int32"/>
+        <Property Name="DiscountClass" Type="Edm.String"/>
+        <Property Name="IsRecommendedSalesQtyFixed" Type="Edm.Boolean"/>
+        <NavigationProperty Name="Product" Type="Enferno.Storm.Entities.Data.Product">
+          <ReferentialConstraint Property="ProductId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+        <NavigationProperty Name="ClientProductSkuCulture" Type="Collection(Enferno.Storm.Entities.Data.ClientProductSkuCulture)"/>
+        <NavigationProperty Name="ClientProductSkuPriceList" Type="Collection(Enferno.Storm.Entities.Data.ClientProductSkuPriceList)"/>
+        <NavigationProperty Name="ClientProductSkuSalesArea" Type="Collection(Enferno.Storm.Entities.Data.ClientProductSkuSalesArea)"/>
+      </EntityType>
+      <EntityType Name="ClientProductSkuSalesArea">
+        <Key>
+          <PropertyRef Name="ClientId"/>
+          <PropertyRef Name="PartNo"/>
+          <PropertyRef Name="SalesAreaId"/>
+        </Key>
+        <Property Name="ClientId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="PartNo" Type="Edm.String" Nullable="false"/>
+        <Property Name="SalesAreaId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="VatCodeId" Type="Edm.Int32"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+      </EntityType>
+      <EntityType Name="ClientProductSkuPriceList">
+        <Key>
+          <PropertyRef Name="ClientId"/>
+          <PropertyRef Name="PartNo"/>
+          <PropertyRef Name="PriceListId"/>
+          <PropertyRef Name="QtyBreak"/>
+        </Key>
+        <Property Name="ClientId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="PartNo" Type="Edm.String" Nullable="false"/>
+        <Property Name="PriceListId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="QtyBreak" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="CurrencyId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="PriceSale" Type="Edm.Decimal" Nullable="false"/>
+        <Property Name="PriceSaleLastUpdated" Type="Edm.DateTimeOffset"/>
+        <Property Name="PriceSaleLastUpdatedBy" Type="Edm.Int32"/>
+        <Property Name="PriceRuleId" Type="Edm.Int32"/>
+        <Property Name="PriceRuleValue" Type="Edm.Decimal"/>
+        <Property Name="CostPurchase" Type="Edm.Decimal" Nullable="false"/>
+        <Property Name="CostPurchaseLastUpdated" Type="Edm.DateTimeOffset"/>
+        <Property Name="CostPurchaseLastUpdatedBy" Type="Edm.Int32"/>
+        <Property Name="CostUnit" Type="Edm.Decimal" Nullable="false"/>
+        <Property Name="CostUnitLastUpdated" Type="Edm.DateTimeOffset"/>
+        <Property Name="CostUnitLastUpdatedBy" Type="Edm.Int32"/>
+        <Property Name="SupplementChargePercentage" Type="Edm.Decimal"/>
+        <Property Name="PriceStandard" Type="Edm.Decimal"/>
+        <Property Name="PriceRecommended" Type="Edm.Decimal"/>
+        <Property Name="PriceRecommendedLastUpdated" Type="Edm.DateTimeOffset"/>
+        <Property Name="PriceRecommendedLastUpdatedBy" Type="Edm.Int32"/>
+        <Property Name="PricePrevious" Type="Edm.Decimal"/>
+        <Property Name="PricePreviousLastUpdated" Type="Edm.DateTimeOffset"/>
+        <Property Name="PricePreviousLastUpdatedBy" Type="Edm.Int32"/>
+        <Property Name="PriceCatalog" Type="Edm.Decimal"/>
+        <Property Name="PriceCatalogLastUpdated" Type="Edm.DateTimeOffset"/>
+        <Property Name="PriceCatalogLastUpdatedBy" Type="Edm.Int32"/>
+        <Property Name="IsPriceDiscountable" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="ChosenSupplierId" Type="Edm.Int32"/>
+        <Property Name="ChosenSupplierPartNo" Type="Edm.String"/>
+        <Property Name="ChosenSupplierPriceListId" Type="Edm.Int32"/>
+        <Property Name="ChosenSupplierQtyBreak" Type="Edm.Int32"/>
+        <Property Name="IsChosenSupplierLocked" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="IsActive" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="StoppedDate" Type="Edm.DateTimeOffset"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <Property Name="LastChecked" Type="Edm.DateTimeOffset"/>
+        <Property Name="MinimumMarginPercentage" Type="Edm.Decimal"/>
+        <Property Name="PriceRuleLastUpdated" Type="Edm.DateTimeOffset"/>
+        <Property Name="PriceRuleLastUpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="ClientProductSku" Type="Enferno.Storm.Entities.Data.ClientProductSku"/>
+      </EntityType>
+      <EntityType Name="Product">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ClientId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ManufacturerId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ManufacturerPartNo" Type="Edm.String"/>
+        <Property Name="DefaultName" Type="Edm.String"/>
+        <Property Name="DefaultSubHeader" Type="Edm.String"/>
+        <Property Name="DefaultSubDescription" Type="Edm.String"/>
+        <Property Name="DefaultDescriptionHeader" Type="Edm.String"/>
+        <Property Name="DefaultDescription" Type="Edm.String"/>
+        <Property Name="DefaultImagePath" Type="Edm.String"/>
+        <Property Name="DefaultThumbnailImagePath" Type="Edm.String"/>
+        <Property Name="DefaultCampaignImagePath" Type="Edm.String"/>
+        <Property Name="DefaultLargeImagePath" Type="Edm.String"/>
+        <Property Name="DefaultSynonyms" Type="Edm.String"/>
+        <Property Name="SortOrderValue" Type="Edm.Int32"/>
+        <Property Name="AssortmentId" Type="Edm.Int32"/>
+        <Property Name="AssortmentLastUpdated" Type="Edm.DateTimeOffset"/>
+        <Property Name="AssortmentLastUpdatedBy" Type="Edm.Int32"/>
+        <Property Name="IsVariant" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="VariantId" Type="Edm.Int32"/>
+        <Property Name="Alias" Type="Edm.String"/>
+        <Property Name="DefaultTitle" Type="Edm.String"/>
+        <Property Name="DefaultTags" Type="Edm.String"/>
+        <Property Name="DefaultMetaTags" Type="Edm.String"/>
+        <Property Name="DefaultMetaDescription" Type="Edm.String"/>
+        <Property Name="HideInTopList" Type="Edm.Boolean"/>
+        <Property Name="IsActive" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="StoppedDate" Type="Edm.DateTimeOffset"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <Property Name="InsuranceCurrencyId" Type="Edm.Int32"/>
+        <Property Name="InsuranceStartPrice" Type="Edm.Decimal"/>
+        <Property Name="InsuranceRunningPercentage" Type="Edm.Decimal"/>
+        <Property Name="Key" Type="Edm.Guid" Nullable="false"/>
+        <Property Name="ManufacturerPartNo2" Type="Edm.String"/>
+        <Property Name="ImageKey" Type="Edm.Guid"/>
+        <Property Name="DefaultUniqueUrlName" Type="Edm.String"/>
+        <Property Name="StockDisplayBreakPoint" Type="Edm.Int32"/>
+        <Property Name="IsDangerousGoods" Type="Edm.Boolean" Nullable="false"/>
+        <NavigationProperty Name="ExternalContentProduct" Type="Collection(Enferno.Storm.Entities.Data.ExternalContentProduct)"/>
+        <NavigationProperty Name="ProductCulture" Type="Collection(Enferno.Storm.Entities.Data.ProductCulture)"/>
+        <NavigationProperty Name="ProductFile" Type="Collection(Enferno.Storm.Entities.Data.ProductFile)"/>
+        <NavigationProperty Name="SupplierProductSkuClient" Type="Collection(Enferno.Storm.Entities.Data.SupplierProductSkuClient)"/>
+        <NavigationProperty Name="ClientProductSku" Type="Collection(Enferno.Storm.Entities.Data.ClientProductSku)"/>
+        <NavigationProperty Name="ProductCategory" Type="Collection(Enferno.Storm.Entities.Data.ProductCategory)"/>
+        <NavigationProperty Name="ProductParametric" Type="Collection(Enferno.Storm.Entities.Data.ProductParametric)"/>
+        <NavigationProperty Name="Variant" Type="Enferno.Storm.Entities.Data.Variant"/>
+        <NavigationProperty Name="ProductParametricMultiple" Type="Collection(Enferno.Storm.Entities.Data.ProductParametricMultiple)"/>
+      </EntityType>
+      <EntityType Name="ProductCulture">
+        <Key>
+          <PropertyRef Name="ProductId"/>
+          <PropertyRef Name="CultureCode"/>
+        </Key>
+        <Property Name="ProductId" Type="Edm.Int32"/>
+        <Property Name="CultureCode" Type="Edm.String" Nullable="false"/>
+        <Property Name="Name" Type="Edm.String"/>
+        <Property Name="NameLastUpdated" Type="Edm.DateTimeOffset"/>
+        <Property Name="NameLastUpdatedBy" Type="Edm.Int32"/>
+        <Property Name="SubHeader" Type="Edm.String"/>
+        <Property Name="SubHeaderLastUpdated" Type="Edm.DateTimeOffset"/>
+        <Property Name="SubHeaderLastUpdatedBy" Type="Edm.Int32"/>
+        <Property Name="SubDescription" Type="Edm.String"/>
+        <Property Name="SubDescriptionLastUpdated" Type="Edm.DateTimeOffset"/>
+        <Property Name="SubDescriptionLastUpdatedBy" Type="Edm.Int32"/>
+        <Property Name="DescriptionHeader" Type="Edm.String"/>
+        <Property Name="DescriptionHeaderLastUpdated" Type="Edm.DateTimeOffset"/>
+        <Property Name="DescriptionHeaderLastUpdatedBy" Type="Edm.Int32"/>
+        <Property Name="Description" Type="Edm.String"/>
+        <Property Name="DescriptionLastUpdated" Type="Edm.DateTimeOffset"/>
+        <Property Name="DescriptionLastUpdatedBy" Type="Edm.Int32"/>
+        <Property Name="ImagePath" Type="Edm.String"/>
+        <Property Name="ThumbnailImagePath" Type="Edm.String"/>
+        <Property Name="CampaignImagePath" Type="Edm.String"/>
+        <Property Name="LargeImagePath" Type="Edm.String"/>
+        <Property Name="ImageLastUpdated" Type="Edm.DateTimeOffset"/>
+        <Property Name="ImageLastUpdatedBy" Type="Edm.Int32"/>
+        <Property Name="Synonyms" Type="Edm.String"/>
+        <Property Name="SynonymsLastUpdated" Type="Edm.DateTimeOffset"/>
+        <Property Name="SynonymsLastUpdatedBy" Type="Edm.Int32"/>
+        <Property Name="Title" Type="Edm.String"/>
+        <Property Name="Tags" Type="Edm.String"/>
+        <Property Name="MetaTags" Type="Edm.String"/>
+        <Property Name="MetaDescription" Type="Edm.String"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <Property Name="UniqueUrlName" Type="Edm.String"/>
+        <Property Name="IsUniqueUrlNameManuallyMaintained" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="ImageKey" Type="Edm.Guid"/>
+        <NavigationProperty Name="Product" Type="Enferno.Storm.Entities.Data.Product">
+          <ReferentialConstraint Property="ProductId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+      </EntityType>
+      <EntityType Name="ProductCategory">
+        <Key>
+          <PropertyRef Name="ClientId"/>
+          <PropertyRef Name="ProductId"/>
+          <PropertyRef Name="CategoryId"/>
+        </Key>
+        <Property Name="ClientId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ProductId" Type="Edm.Int32"/>
+        <Property Name="CategoryId" Type="Edm.Int32"/>
+        <Property Name="IsPrimary" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="SortOrder" Type="Edm.Int32"/>
+        <Property Name="ProductSortOrder" Type="Edm.Int32"/>
+        <Property Name="IsActive" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="Category" Type="Enferno.Storm.Entities.Data.Category">
+          <ReferentialConstraint Property="CategoryId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+        <NavigationProperty Name="Product" Type="Enferno.Storm.Entities.Data.Product">
+          <ReferentialConstraint Property="ProductId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+      </EntityType>
+      <EntityType Name="Category">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ClientId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Code" Type="Edm.String"/>
+        <Property Name="DefaultName" Type="Edm.String"/>
+        <Property Name="DefaultDescription" Type="Edm.String"/>
+        <Property Name="DefaultSynonyms" Type="Edm.String"/>
+        <Property Name="DefaultImagePath" Type="Edm.String"/>
+        <Property Name="UnspcCode" Type="Edm.String"/>
+        <Property Name="BusinessArea" Type="Edm.String"/>
+        <Property Name="DefaultCommodityCode" Type="Edm.String"/>
+        <Property Name="DefaultIntegrationPartNo" Type="Edm.String"/>
+        <Property Name="DefaultTrackingCodeTypeId" Type="Edm.Int32"/>
+        <Property Name="FreightClassId" Type="Edm.Int32"/>
+        <Property Name="DefaultGrossWeight" Type="Edm.Decimal"/>
+        <Property Name="DefaultNetWeight" Type="Edm.Decimal"/>
+        <Property Name="DefaultUnitOfMeasurementId" Type="Edm.Int32"/>
+        <Property Name="DefaultPackageId" Type="Edm.Int32"/>
+        <Property Name="DefaultIsReturnable" Type="Edm.Boolean"/>
+        <Property Name="DefaultIsDropShipOnly" Type="Edm.Boolean"/>
+        <Property Name="InsuranceCurrencyId" Type="Edm.Int32"/>
+        <Property Name="InsuranceStartPrice" Type="Edm.Decimal"/>
+        <Property Name="InsuranceRunningPercentage" Type="Edm.Decimal"/>
+        <Property Name="PopulationRuleId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="HideInTopList" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="PhoneNumber" Type="Edm.String"/>
+        <Property Name="IsActive" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <Property Name="CompetitivePricingMinPercentage" Type="Edm.Decimal"/>
+        <Property Name="CompetitivePricingTargetPercentage" Type="Edm.Decimal"/>
+        <Property Name="DefaultVariantGroupId" Type="Edm.Int32"/>
+        <Property Name="DefaultRecommendedSalesQty" Type="Edm.Decimal"/>
+        <Property Name="ImageKey" Type="Edm.Guid"/>
+        <Property Name="DefaultFullName" Type="Edm.String"/>
+        <Property Name="StructureSortOrder" Type="Edm.Int64"/>
+        <Property Name="DefaultStockDisplayBreakPoint" Type="Edm.Int32"/>
+        <Property Name="DefaultIsRecommendedSalesQtyFixed" Type="Edm.Boolean"/>
+        <NavigationProperty Name="ProductCategory" Type="Collection(Enferno.Storm.Entities.Data.ProductCategory)"/>
+        <NavigationProperty Name="CategoryCompetitor" Type="Collection(Enferno.Storm.Entities.Data.CategoryCompetitor)"/>
+        <NavigationProperty Name="CategoryStructureItem" Type="Collection(Enferno.Storm.Entities.Data.CategoryStructureItem)"/>
+        <NavigationProperty Name="CategorySalesArea" Type="Collection(Enferno.Storm.Entities.Data.CategorySalesArea)"/>
+      </EntityType>
+      <EntityType Name="CategoryCompetitor">
+        <Key>
+          <PropertyRef Name="CategoryId"/>
+          <PropertyRef Name="CompetitorId"/>
+        </Key>
+        <Property Name="CategoryId" Type="Edm.Int32"/>
+        <Property Name="CompetitorId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ClientId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="PriceListId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="PositioningTypeId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="PercentageValue" Type="Edm.Decimal"/>
+        <Property Name="CurrencyId" Type="Edm.Int32"/>
+        <Property Name="FixedAmount" Type="Edm.Decimal"/>
+        <Property Name="IsStockRequired" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="Category" Type="Enferno.Storm.Entities.Data.Category">
+          <ReferentialConstraint Property="CategoryId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+        <NavigationProperty Name="CategoryCompetitorPositioningType" Type="Enferno.Storm.Entities.Data.CategoryCompetitorPositioningType"/>
+      </EntityType>
+      <EntityType Name="CategoryCompetitorPositioningType">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="DefaultName" Type="Edm.String"/>
+        <Property Name="DefaultDescription" Type="Edm.String"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <NavigationProperty Name="CategoryCompetitor" Type="Collection(Enferno.Storm.Entities.Data.CategoryCompetitor)"/>
+        <NavigationProperty Name="CategoryCompetitorPositioningTypeCulture" Type="Collection(Enferno.Storm.Entities.Data.CategoryCompetitorPositioningTypeCulture)"/>
+      </EntityType>
+      <EntityType Name="CategoryCompetitorPositioningTypeCulture">
+        <Key>
+          <PropertyRef Name="TypeId"/>
+          <PropertyRef Name="CultureCode"/>
+        </Key>
+        <Property Name="TypeId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="CultureCode" Type="Edm.String" Nullable="false"/>
+        <Property Name="Name" Type="Edm.String"/>
+        <Property Name="Description" Type="Edm.String"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="CategoryCompetitorPositioningType" Type="Enferno.Storm.Entities.Data.CategoryCompetitorPositioningType"/>
+      </EntityType>
+      <EntityType Name="CategoryStructureItem">
+        <Key>
+          <PropertyRef Name="Id"/>
+          <PropertyRef Name="CategoryId"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="CategoryId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="StructureId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="DefaultName" Type="Edm.String"/>
+        <Property Name="UseCategoryName" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="ManufacturerId" Type="Edm.Int32"/>
+        <Property Name="TargetPath" Type="Edm.String"/>
+        <Property Name="StructureLevel" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ParentItemId" Type="Edm.Int32"/>
+        <Property Name="IsParent" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="IsDisplayOnly" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="SortOrder" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <Property Name="Key" Type="Edm.Guid" Nullable="false"/>
+        <NavigationProperty Name="Category" Type="Enferno.Storm.Entities.Data.Category"/>
+        <NavigationProperty Name="CategoryStructure" Type="Enferno.Storm.Entities.Data.CategoryStructure"/>
+        <NavigationProperty Name="CategoryStructureItemCulture" Type="Collection(Enferno.Storm.Entities.Data.CategoryStructureItemCulture)"/>
+      </EntityType>
+      <EntityType Name="CategoryStructureItemCulture">
+        <Key>
+          <PropertyRef Name="ItemId"/>
+          <PropertyRef Name="CultureCode"/>
+        </Key>
+        <Property Name="ItemId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="CultureCode" Type="Edm.String" Nullable="false"/>
+        <Property Name="Name" Type="Edm.String"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="CategoryStructureItem" Type="Enferno.Storm.Entities.Data.CategoryStructureItem"/>
+      </EntityType>
+      <EntityType Name="CategoryStructure">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ClientId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="DefaultName" Type="Edm.String"/>
+        <Property Name="DefaultDescription" Type="Edm.String"/>
+        <Property Name="TypeId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ApplicationId" Type="Edm.Int32"/>
+        <Property Name="IsPrimary" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="IsActive" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="CategoryStructureCulture" Type="Collection(Enferno.Storm.Entities.Data.CategoryStructureCulture)"/>
+        <NavigationProperty Name="CategoryStructureItem" Type="Collection(Enferno.Storm.Entities.Data.CategoryStructureItem)"/>
+      </EntityType>
+      <EntityType Name="CategoryStructureCulture">
+        <Key>
+          <PropertyRef Name="StructureId"/>
+          <PropertyRef Name="CultureCode"/>
+        </Key>
+        <Property Name="StructureId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="CultureCode" Type="Edm.String" Nullable="false"/>
+        <Property Name="Name" Type="Edm.String"/>
+        <Property Name="Description" Type="Edm.String"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="CategoryStructure" Type="Enferno.Storm.Entities.Data.CategoryStructure"/>
+      </EntityType>
+      <EntityType Name="CategorySalesArea">
+        <Key>
+          <PropertyRef Name="CategoryId"/>
+          <PropertyRef Name="SalesAreaId"/>
+        </Key>
+        <Property Name="CategoryId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="SalesAreaId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ClientId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="VatCodeId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+      </EntityType>
+      <EntityType Name="ClientProductSkuCulture">
+        <Key>
+          <PropertyRef Name="ClientId"/>
+          <PropertyRef Name="PartNo"/>
+        </Key>
+        <Property Name="ClientId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="PartNo" Type="Edm.String" Nullable="false"/>
+        <Property Name="CultureCode" Type="Edm.String"/>
+        <Property Name="ErpName" Type="Edm.String"/>
+        <Property Name="Comment" Type="Edm.String"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="ClientProductSku" Type="Enferno.Storm.Entities.Data.ClientProductSku"/>
+      </EntityType>
+      <EntityType Name="ExternalContentProduct">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ExternalContentId" Type="Edm.Int32"/>
+        <Property Name="ProductCode" Type="Edm.String"/>
+        <Property Name="CategoryCode" Type="Edm.String"/>
+        <Property Name="ProductId" Type="Edm.Int32"/>
+        <Property Name="IsBlocked" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="LastChecked" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="ExternalContent" Type="Enferno.Storm.Entities.Data.ExternalContent">
+          <ReferentialConstraint Property="ExternalContentId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+        <NavigationProperty Name="Product" Type="Enferno.Storm.Entities.Data.Product"/>
+        <NavigationProperty Name="ExternalContentProductParametric" Type="Collection(Enferno.Storm.Entities.Data.ExternalContentProductParametric)"/>
+      </EntityType>
+      <EntityType Name="ExternalContent">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ClientId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="DefaultName" Type="Edm.String"/>
+        <Property Name="DefaultDescription" Type="Edm.String"/>
+        <Property Name="DefaultImagePath" Type="Edm.String"/>
+        <Property Name="XsltFileName" Type="Edm.String"/>
+        <Property Name="SupplierId" Type="Edm.Int32"/>
+        <Property Name="AccountId" Type="Edm.Int32"/>
+        <Property Name="SortOrder" Type="Edm.Int32"/>
+        <Property Name="IsActive" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="ExternalContentCategory" Type="Collection(Enferno.Storm.Entities.Data.ExternalContentCategory)"/>
+        <NavigationProperty Name="ExternalContentCategoryParametric" Type="Collection(Enferno.Storm.Entities.Data.ExternalContentCategoryParametric)"/>
+        <NavigationProperty Name="ExternalContentCulture" Type="Collection(Enferno.Storm.Entities.Data.ExternalContentCulture)"/>
+        <NavigationProperty Name="ExternalContentLanguage" Type="Collection(Enferno.Storm.Entities.Data.ExternalContentLanguage)"/>
+        <NavigationProperty Name="ExternalContentManufacturer" Type="Collection(Enferno.Storm.Entities.Data.ExternalContentManufacturer)"/>
+        <NavigationProperty Name="ExternalContentParametric" Type="Collection(Enferno.Storm.Entities.Data.ExternalContentParametric)"/>
+        <NavigationProperty Name="ExternalContentParametricGroup" Type="Collection(Enferno.Storm.Entities.Data.ExternalContentParametricGroup)"/>
+        <NavigationProperty Name="ExternalContentParametricValue" Type="Collection(Enferno.Storm.Entities.Data.ExternalContentParametricValue)"/>
+        <NavigationProperty Name="ExternalContentProduct" Type="Collection(Enferno.Storm.Entities.Data.ExternalContentProduct)"/>
+      </EntityType>
+      <EntityType Name="ExternalContentCulture">
+        <Key>
+          <PropertyRef Name="ExternalContentId"/>
+          <PropertyRef Name="CultureCode"/>
+        </Key>
+        <Property Name="ExternalContentId" Type="Edm.Int32"/>
+        <Property Name="CultureCode" Type="Edm.String" Nullable="false"/>
+        <Property Name="Name" Type="Edm.String"/>
+        <Property Name="Description" Type="Edm.String"/>
+        <Property Name="ImagePath" Type="Edm.String"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="ExternalContent" Type="Enferno.Storm.Entities.Data.ExternalContent">
+          <ReferentialConstraint Property="ExternalContentId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+      </EntityType>
+      <EntityType Name="ExternalContentCategory">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ExternalContentId" Type="Edm.Int32"/>
+        <Property Name="CategoryCode" Type="Edm.String"/>
+        <Property Name="CategoryName" Type="Edm.String"/>
+        <Property Name="CategoryFullName" Type="Edm.String"/>
+        <Property Name="UnspcCode" Type="Edm.String"/>
+        <Property Name="ParentCategoryCode" Type="Edm.String"/>
+        <Property Name="HasRequirements" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="RequiredExternalContentParametricIdSeed" Type="Edm.String"/>
+        <Property Name="CategoryId" Type="Edm.Int32"/>
+        <Property Name="IsHidden" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="IsActive" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="LastChecked" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="ExternalContent" Type="Enferno.Storm.Entities.Data.ExternalContent">
+          <ReferentialConstraint Property="ExternalContentId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+        <NavigationProperty Name="ExternalContentCategoryCulture" Type="Collection(Enferno.Storm.Entities.Data.ExternalContentCategoryCulture)"/>
+        <NavigationProperty Name="ExternalContentCategoryParametric" Type="Collection(Enferno.Storm.Entities.Data.ExternalContentCategoryParametric)"/>
+        <NavigationProperty Name="ExternalContentCategoryRequirements" Type="Collection(Enferno.Storm.Entities.Data.ExternalContentCategoryRequirements)"/>
+      </EntityType>
+      <EntityType Name="ExternalContentCategoryCulture">
+        <Key>
+          <PropertyRef Name="ExternalContentCategoryId"/>
+          <PropertyRef Name="CultureCode"/>
+        </Key>
+        <Property Name="ExternalContentCategoryId" Type="Edm.Int32"/>
+        <Property Name="CultureCode" Type="Edm.String" Nullable="false"/>
+        <Property Name="CategoryName" Type="Edm.String"/>
+        <Property Name="CategoryFullName" Type="Edm.String"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="ExternalContentCategory" Type="Enferno.Storm.Entities.Data.ExternalContentCategory">
+          <ReferentialConstraint Property="ExternalContentCategoryId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+      </EntityType>
+      <EntityType Name="ExternalContentParametric">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ExternalContentId" Type="Edm.Int32"/>
+        <Property Name="Code" Type="Edm.String"/>
+        <Property Name="Name" Type="Edm.String"/>
+        <Property Name="Uom" Type="Edm.String"/>
+        <Property Name="ParametricTypeId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="HasListValues" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="HasMultipleValues" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="ExampleValues" Type="Edm.String"/>
+        <Property Name="IsMapped" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="IsActive" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="LastChecked" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="ExternalContent" Type="Enferno.Storm.Entities.Data.ExternalContent">
+          <ReferentialConstraint Property="ExternalContentId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+        <NavigationProperty Name="ExternalContentCategoryParametric" Type="Collection(Enferno.Storm.Entities.Data.ExternalContentCategoryParametric)"/>
+        <NavigationProperty Name="ExternalContentParametricCulture" Type="Collection(Enferno.Storm.Entities.Data.ExternalContentParametricCulture)"/>
+        <NavigationProperty Name="ExternalContentParametricMapping" Type="Collection(Enferno.Storm.Entities.Data.ExternalContentParametricMapping)"/>
+        <NavigationProperty Name="ExternalContentParametricValue" Type="Collection(Enferno.Storm.Entities.Data.ExternalContentParametricValue)"/>
+        <NavigationProperty Name="ExternalContentParametricValueMapping" Type="Collection(Enferno.Storm.Entities.Data.ExternalContentParametricValueMapping)"/>
+        <NavigationProperty Name="ExternalContentProductParametric" Type="Collection(Enferno.Storm.Entities.Data.ExternalContentProductParametric)"/>
+      </EntityType>
+      <EntityType Name="ExternalContentParametricMapping">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ExternalContentParametricId" Type="Edm.Int32"/>
+        <Property Name="ParametricId" Type="Edm.Int32"/>
+        <Property Name="IsValueMapped" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="IsMultiply" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="Factor" Type="Edm.Decimal" Nullable="false"/>
+        <Property Name="UseDefaultIfNotMapped" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="DefaultListId" Type="Edm.Int32"/>
+        <Property Name="DefaultMultipleId" Type="Edm.Int32"/>
+        <Property Name="DefaultVarcharValue" Type="Edm.String"/>
+        <Property Name="DefaultIntegerValue" Type="Edm.Int32"/>
+        <Property Name="DefaultDecimalValue" Type="Edm.Decimal"/>
+        <Property Name="DefaultBooleanValue" Type="Edm.Boolean"/>
+        <Property Name="DefaultDateValue" Type="Edm.DateTimeOffset"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="ExternalContentParametric" Type="Enferno.Storm.Entities.Data.ExternalContentParametric">
+          <ReferentialConstraint Property="ExternalContentParametricId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+        <NavigationProperty Name="ExternalContentParametricValueMapping" Type="Collection(Enferno.Storm.Entities.Data.ExternalContentParametricValueMapping)"/>
+        <NavigationProperty Name="Parametric" Type="Enferno.Storm.Entities.Data.Parametric">
+          <ReferentialConstraint Property="ParametricId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+      </EntityType>
+      <EntityType Name="Parametric">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ClientId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="DefaultName" Type="Edm.String"/>
+        <Property Name="DefaultDescription" Type="Edm.String"/>
+        <Property Name="DefaultUom" Type="Edm.String"/>
+        <Property Name="TypeId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="HasListValues" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="HasMultipleValues" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="IsVariantType" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="IsRequired" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="IsHidden" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="IsActive" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <Property Name="Code" Type="Edm.String"/>
+        <Property Name="CodeListKey" Type="Edm.String"/>
+        <NavigationProperty Name="ExternalContentParametricMapping" Type="Collection(Enferno.Storm.Entities.Data.ExternalContentParametricMapping)"/>
+        <NavigationProperty Name="ParametricCulture" Type="Collection(Enferno.Storm.Entities.Data.ParametricCulture)"/>
+        <NavigationProperty Name="ParametricList" Type="Collection(Enferno.Storm.Entities.Data.ParametricList)"/>
+        <NavigationProperty Name="ParametricMultiple" Type="Collection(Enferno.Storm.Entities.Data.ParametricMultiple)"/>
+        <NavigationProperty Name="ProductParametric" Type="Collection(Enferno.Storm.Entities.Data.ProductParametric)"/>
+        <NavigationProperty Name="ProductParametricMultiple" Type="Collection(Enferno.Storm.Entities.Data.ProductParametricMultiple)"/>
+        <NavigationProperty Name="CategoryParametric" Type="Collection(Enferno.Storm.Entities.Data.CategoryParametric)"/>
+      </EntityType>
+      <EntityType Name="ParametricCulture">
+        <Key>
+          <PropertyRef Name="ParametricId"/>
+          <PropertyRef Name="CultureCode"/>
+        </Key>
+        <Property Name="ParametricId" Type="Edm.Int32"/>
+        <Property Name="CultureCode" Type="Edm.String" Nullable="false"/>
+        <Property Name="Name" Type="Edm.String"/>
+        <Property Name="Description" Type="Edm.String"/>
+        <Property Name="Uom" Type="Edm.String"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="Parametric" Type="Enferno.Storm.Entities.Data.Parametric">
+          <ReferentialConstraint Property="ParametricId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+      </EntityType>
+      <EntityType Name="ParametricGroup">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ClientId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="DefaultName" Type="Edm.String"/>
+        <Property Name="DefaultDescription" Type="Edm.String"/>
+        <Property Name="IsActive" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <Property Name="Code" Type="Edm.String"/>
+        <NavigationProperty Name="ExternalContentParametricGroup" Type="Collection(Enferno.Storm.Entities.Data.ExternalContentParametricGroup)"/>
+        <NavigationProperty Name="ParametricGroupCulture" Type="Collection(Enferno.Storm.Entities.Data.ParametricGroupCulture)"/>
+        <NavigationProperty Name="CategoryParametric" Type="Collection(Enferno.Storm.Entities.Data.CategoryParametric)"/>
+      </EntityType>
+      <EntityType Name="ParametricGroupCulture">
+        <Key>
+          <PropertyRef Name="GroupId"/>
+          <PropertyRef Name="CultureCode"/>
+        </Key>
+        <Property Name="GroupId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="CultureCode" Type="Edm.String" Nullable="false"/>
+        <Property Name="Name" Type="Edm.String"/>
+        <Property Name="Description" Type="Edm.String"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="ParametricGroup" Type="Enferno.Storm.Entities.Data.ParametricGroup"/>
+      </EntityType>
+      <EntityType Name="ParametricList">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ParametricId" Type="Edm.Int32"/>
+        <Property Name="DefaultVarcharValue" Type="Edm.String"/>
+        <Property Name="DefaultDescription" Type="Edm.String"/>
+        <Property Name="SortOrder" Type="Edm.Int32"/>
+        <Property Name="IsActive" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <Property Name="Code" Type="Edm.String"/>
+        <Property Name="ImageKey" Type="Edm.Guid"/>
+        <Property Name="ImagePath" Type="Edm.String"/>
+        <NavigationProperty Name="Parametric" Type="Enferno.Storm.Entities.Data.Parametric">
+          <ReferentialConstraint Property="ParametricId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+        <NavigationProperty Name="ParametricListCulture" Type="Collection(Enferno.Storm.Entities.Data.ParametricListCulture)"/>
+        <NavigationProperty Name="ProductParametric" Type="Collection(Enferno.Storm.Entities.Data.ProductParametric)"/>
+      </EntityType>
+      <EntityType Name="ParametricListCulture">
+        <Key>
+          <PropertyRef Name="ListId"/>
+          <PropertyRef Name="CultureCode"/>
+        </Key>
+        <Property Name="ListId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="CultureCode" Type="Edm.String" Nullable="false"/>
+        <Property Name="VarcharValue" Type="Edm.String"/>
+        <Property Name="Description" Type="Edm.String"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="ParametricList" Type="Enferno.Storm.Entities.Data.ParametricList"/>
+      </EntityType>
+      <EntityType Name="ProductParametric">
+        <Key>
+          <PropertyRef Name="ProductId"/>
+          <PropertyRef Name="ParametricId"/>
+          <PropertyRef Name="ClientId"/>
+        </Key>
+        <Property Name="ProductId" Type="Edm.Int32"/>
+        <Property Name="ParametricId" Type="Edm.Int32"/>
+        <Property Name="ClientId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="DefaultVarcharValue" Type="Edm.String"/>
+        <Property Name="DefaultHtmlValue" Type="Edm.String"/>
+        <Property Name="IntegerValue" Type="Edm.Int32"/>
+        <Property Name="DecimalValue" Type="Edm.Decimal"/>
+        <Property Name="BooleanValue" Type="Edm.Boolean"/>
+        <Property Name="DateValue" Type="Edm.DateTimeOffset"/>
+        <Property Name="ListId" Type="Edm.Int32"/>
+        <Property Name="NormalizedValue" Type="Edm.Decimal"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <Property Name="IsVariantUnique" Type="Edm.Boolean" Nullable="false"/>
+        <NavigationProperty Name="Parametric" Type="Enferno.Storm.Entities.Data.Parametric">
+          <ReferentialConstraint Property="ParametricId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+        <NavigationProperty Name="ParametricList" Type="Enferno.Storm.Entities.Data.ParametricList"/>
+        <NavigationProperty Name="Product" Type="Enferno.Storm.Entities.Data.Product">
+          <ReferentialConstraint Property="ProductId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+        <NavigationProperty Name="ProductParametricCulture" Type="Collection(Enferno.Storm.Entities.Data.ProductParametricCulture)"/>
+        <NavigationProperty Name="ProductParametricMultiple" Type="Collection(Enferno.Storm.Entities.Data.ProductParametricMultiple)"/>
+      </EntityType>
+      <EntityType Name="ProductParametricCulture">
+        <Key>
+          <PropertyRef Name="ProductId"/>
+          <PropertyRef Name="ParametricId"/>
+          <PropertyRef Name="CultureCode"/>
+          <PropertyRef Name="ClientId"/>
+        </Key>
+        <Property Name="ProductId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ParametricId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="CultureCode" Type="Edm.String" Nullable="false"/>
+        <Property Name="ClientId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="VarcharValue" Type="Edm.String"/>
+        <Property Name="HtmlValue" Type="Edm.String"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="ProductParametric" Type="Enferno.Storm.Entities.Data.ProductParametric"/>
+      </EntityType>
+      <EntityType Name="ParametricMultiple">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ParametricId" Type="Edm.Int32"/>
+        <Property Name="DefaultValue" Type="Edm.String"/>
+        <Property Name="DefaultDescription" Type="Edm.String"/>
+        <Property Name="SortOrder" Type="Edm.Int32"/>
+        <Property Name="IsActive" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <Property Name="Code" Type="Edm.String"/>
+        <Property Name="ImageKey" Type="Edm.Guid"/>
+        <Property Name="ImagePath" Type="Edm.String"/>
+        <NavigationProperty Name="Parametric" Type="Enferno.Storm.Entities.Data.Parametric">
+          <ReferentialConstraint Property="ParametricId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+        <NavigationProperty Name="ParametricMultipleCulture" Type="Collection(Enferno.Storm.Entities.Data.ParametricMultipleCulture)"/>
+        <NavigationProperty Name="ProductParametricMultiple" Type="Collection(Enferno.Storm.Entities.Data.ProductParametricMultiple)"/>
+      </EntityType>
+      <EntityType Name="ParametricMultipleCulture">
+        <Key>
+          <PropertyRef Name="MultipleId"/>
+          <PropertyRef Name="CultureCode"/>
+        </Key>
+        <Property Name="MultipleId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="CultureCode" Type="Edm.String" Nullable="false"/>
+        <Property Name="Value" Type="Edm.String"/>
+        <Property Name="Description" Type="Edm.String"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="ParametricMultiple" Type="Enferno.Storm.Entities.Data.ParametricMultiple"/>
+      </EntityType>
+      <EntityType Name="ProductParametricMultiple">
+        <Key>
+          <PropertyRef Name="ProductId"/>
+          <PropertyRef Name="ClientId"/>
+          <PropertyRef Name="MultipleId"/>
+          <PropertyRef Name="ParametricId"/>
+        </Key>
+        <Property Name="ProductId" Type="Edm.Int32"/>
+        <Property Name="ClientId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="MultipleId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ParametricId" Type="Edm.Int32"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="ParametricMultiple" Type="Enferno.Storm.Entities.Data.ParametricMultiple"/>
+        <NavigationProperty Name="ProductParametric" Type="Enferno.Storm.Entities.Data.ProductParametric"/>
+        <NavigationProperty Name="Product" Type="Enferno.Storm.Entities.Data.Product">
+          <ReferentialConstraint Property="ProductId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+        <NavigationProperty Name="Parametric" Type="Enferno.Storm.Entities.Data.Parametric">
+          <ReferentialConstraint Property="ParametricId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+      </EntityType>
+      <EntityType Name="CategoryParametric">
+        <Key>
+          <PropertyRef Name="CategoryId"/>
+          <PropertyRef Name="ParametricId"/>
+        </Key>
+        <Property Name="CategoryId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ParametricId" Type="Edm.Int32"/>
+        <Property Name="ClientId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="GroupId" Type="Edm.Int32"/>
+        <Property Name="SortOrder" Type="Edm.Int32"/>
+        <Property Name="FocusSortOrder" Type="Edm.Int32"/>
+        <Property Name="IsSecondary" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="IsRequired" Type="Edm.Boolean"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <Property Name="PrioritySortOrder" Type="Edm.Int32"/>
+        <NavigationProperty Name="Parametric" Type="Enferno.Storm.Entities.Data.Parametric">
+          <ReferentialConstraint Property="ParametricId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+        <NavigationProperty Name="ParametricGroup" Type="Enferno.Storm.Entities.Data.ParametricGroup"/>
+      </EntityType>
+      <EntityType Name="ExternalContentParametricCulture">
+        <Key>
+          <PropertyRef Name="ExternalContentParametricId"/>
+          <PropertyRef Name="CultureCode"/>
+        </Key>
+        <Property Name="ExternalContentParametricId" Type="Edm.Int32"/>
+        <Property Name="CultureCode" Type="Edm.String" Nullable="false"/>
+        <Property Name="Name" Type="Edm.String"/>
+        <Property Name="Uom" Type="Edm.String"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="ExternalContentParametric" Type="Enferno.Storm.Entities.Data.ExternalContentParametric">
+          <ReferentialConstraint Property="ExternalContentParametricId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+      </EntityType>
+      <EntityType Name="ExternalContentParametricGroup">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ExternalContentId" Type="Edm.Int32"/>
+        <Property Name="Code" Type="Edm.String"/>
+        <Property Name="Name" Type="Edm.String"/>
+        <Property Name="ParametricGroupId" Type="Edm.Int32"/>
+        <Property Name="IsActive" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="LastChecked" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="ExternalContent" Type="Enferno.Storm.Entities.Data.ExternalContent">
+          <ReferentialConstraint Property="ExternalContentId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+        <NavigationProperty Name="ExternalContentCategoryParametric" Type="Collection(Enferno.Storm.Entities.Data.ExternalContentCategoryParametric)"/>
+        <NavigationProperty Name="ExternalContentParametricGroupCulture" Type="Collection(Enferno.Storm.Entities.Data.ExternalContentParametricGroupCulture)"/>
+        <NavigationProperty Name="ParametricGroup" Type="Enferno.Storm.Entities.Data.ParametricGroup"/>
+      </EntityType>
+      <EntityType Name="ExternalContentParametricGroupCulture">
+        <Key>
+          <PropertyRef Name="ExternalContentParametricGroupId"/>
+          <PropertyRef Name="CultureCode"/>
+        </Key>
+        <Property Name="ExternalContentParametricGroupId" Type="Edm.Int32"/>
+        <Property Name="CultureCode" Type="Edm.String" Nullable="false"/>
+        <Property Name="Name" Type="Edm.String"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="ExternalContentParametricGroup" Type="Enferno.Storm.Entities.Data.ExternalContentParametricGroup">
+          <ReferentialConstraint Property="ExternalContentParametricGroupId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+      </EntityType>
+      <EntityType Name="SupplierProductSku">
+        <Key>
+          <PropertyRef Name="SupplierId"/>
+          <PropertyRef Name="PartNo"/>
+        </Key>
+        <Property Name="SupplierId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="PartNo" Type="Edm.String" Nullable="false"/>
+        <Property Name="Name" Type="Edm.String"/>
+        <Property Name="ManufacturerId" Type="Edm.Int32"/>
+        <Property Name="ManufacturerCode" Type="Edm.String"/>
+        <Property Name="ManufacturerPartNo" Type="Edm.String"/>
+        <Property Name="CategoryId" Type="Edm.Int32"/>
+        <Property Name="CategoryCode" Type="Edm.String"/>
+        <Property Name="CommodityCode" Type="Edm.String"/>
+        <Property Name="EanCode" Type="Edm.String"/>
+        <Property Name="GrossWeight" Type="Edm.Decimal"/>
+        <Property Name="NetWeight" Type="Edm.Decimal"/>
+        <Property Name="VatCodeId" Type="Edm.Int32"/>
+        <Property Name="UnitOfMeasurementId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="UnitOfMeasurementCount" Type="Edm.Decimal" Nullable="false"/>
+        <Property Name="Url" Type="Edm.String"/>
+        <Property Name="ImagePath" Type="Edm.String"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <Property Name="ImagePathLastUpdated" Type="Edm.DateTimeOffset"/>
+        <Property Name="IsUsed" Type="Edm.Boolean" Nullable="false"/>
+        <NavigationProperty Name="SupplierProductSkuClient" Type="Collection(Enferno.Storm.Entities.Data.SupplierProductSkuClient)"/>
+        <NavigationProperty Name="SupplierProductSkuCulture" Type="Collection(Enferno.Storm.Entities.Data.SupplierProductSkuCulture)"/>
+        <NavigationProperty Name="SupplierProductSkuPriceList" Type="Collection(Enferno.Storm.Entities.Data.SupplierProductSkuPriceList)"/>
+        <NavigationProperty Name="SupplierProductSkuOnHand" Type="Collection(Enferno.Storm.Entities.Data.SupplierProductSkuOnHand)"/>
+      </EntityType>
+      <EntityType Name="SupplierProductSkuCulture">
+        <Key>
+          <PropertyRef Name="SupplierId"/>
+          <PropertyRef Name="PartNo"/>
+        </Key>
+        <Property Name="SupplierId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="PartNo" Type="Edm.String" Nullable="false"/>
+        <Property Name="CultureCode" Type="Edm.String"/>
+        <Property Name="Name" Type="Edm.String"/>
+        <Property Name="Url" Type="Edm.String"/>
+        <Property Name="ImagePath" Type="Edm.String"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="SupplierProductSku" Type="Enferno.Storm.Entities.Data.SupplierProductSku"/>
+      </EntityType>
+      <EntityType Name="SupplierProductSkuClient">
+        <Key>
+          <PropertyRef Name="SupplierId"/>
+          <PropertyRef Name="PartNo"/>
+        </Key>
+        <Property Name="SupplierId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="PartNo" Type="Edm.String" Nullable="false"/>
+        <Property Name="ClientId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ProductId" Type="Edm.Int32"/>
+        <Property Name="ManufacturerId" Type="Edm.Int32"/>
+        <Property Name="CategoryId" Type="Edm.Int32"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="SupplierProductSku" Type="Enferno.Storm.Entities.Data.SupplierProductSku"/>
+        <NavigationProperty Name="Product" Type="Enferno.Storm.Entities.Data.Product"/>
+      </EntityType>
+      <EntityType Name="SupplierProductSkuPriceList">
+        <Key>
+          <PropertyRef Name="SupplierId"/>
+          <PropertyRef Name="PartNo"/>
+        </Key>
+        <Property Name="SupplierId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="PartNo" Type="Edm.String" Nullable="false"/>
+        <Property Name="SupplierPriceListId" Type="Edm.Int32"/>
+        <Property Name="QtyBreak" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="CurrencyId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="CostPurchase" Type="Edm.Decimal" Nullable="false"/>
+        <Property Name="CostPurchaseLastChecked" Type="Edm.DateTimeOffset"/>
+        <Property Name="CostPurchaseLastUpdated" Type="Edm.DateTimeOffset"/>
+        <Property Name="CostPurchaseLastUpdatedBy" Type="Edm.Int32"/>
+        <Property Name="CostPurchaseValidTo" Type="Edm.DateTimeOffset"/>
+        <Property Name="PriceRecommended" Type="Edm.Decimal"/>
+        <Property Name="PriceRecommendedLastUpdated" Type="Edm.DateTimeOffset"/>
+        <Property Name="PriceRecommendedLastUpdatedBy" Type="Edm.Int32"/>
+        <Property Name="PriceMax" Type="Edm.Decimal"/>
+        <Property Name="PriceMaxLastUpdated" Type="Edm.DateTimeOffset"/>
+        <Property Name="PriceMaxLastUpdatedBy" Type="Edm.Int32"/>
+        <Property Name="PriceDealer" Type="Edm.Decimal"/>
+        <Property Name="PriceDealerLastUpdated" Type="Edm.DateTimeOffset"/>
+        <Property Name="PriceDealerLastUpdatedBy" Type="Edm.Int32"/>
+        <Property Name="IsActive" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="IsActiveLastUpdated" Type="Edm.DateTimeOffset"/>
+        <Property Name="StoppedDate" Type="Edm.DateTimeOffset"/>
+        <Property Name="IsPromotion" Type="Edm.Boolean"/>
+        <Property Name="IsFocus" Type="Edm.Boolean"/>
+        <Property Name="PriceRanking" Type="Edm.Int32"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <Property Name="FreightCost" Type="Edm.Decimal"/>
+        <Property Name="CostFee" Type="Edm.Decimal"/>
+        <Property Name="CostFeeLastUpdated" Type="Edm.DateTimeOffset"/>
+        <Property Name="CostFeeLastUpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="SupplierPriceList" Type="Enferno.Storm.Entities.Data.SupplierPriceList">
+          <ReferentialConstraint Property="SupplierPriceListId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+        <NavigationProperty Name="SupplierProductSku" Type="Enferno.Storm.Entities.Data.SupplierProductSku"/>
+      </EntityType>
+      <EntityType Name="SupplierPriceList">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="SupplierId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ManufacturerId" Type="Edm.Int32"/>
+        <Property Name="ManufacturerCode" Type="Edm.String"/>
+        <Property Name="DefaultName" Type="Edm.String"/>
+        <Property Name="Code" Type="Edm.String"/>
+        <Property Name="Description" Type="Edm.String"/>
+        <Property Name="EndCustomer" Type="Edm.String"/>
+        <Property Name="StartDate" Type="Edm.DateTimeOffset"/>
+        <Property Name="EndDate" Type="Edm.DateTimeOffset"/>
+        <Property Name="TransferMethodId" Type="Edm.Int32"/>
+        <Property Name="TransferMethodValue" Type="Edm.String"/>
+        <Property Name="LastImported" Type="Edm.DateTimeOffset"/>
+        <Property Name="NextExpectedDate" Type="Edm.DateTimeOffset"/>
+        <Property Name="IsPrimary" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="ParentSupplierPriceListId" Type="Edm.Int32"/>
+        <Property Name="Contact" Type="Edm.String"/>
+        <Property Name="Comment" Type="Edm.String"/>
+        <Property Name="IsSpecialTerms" Type="Edm.Boolean"/>
+        <Property Name="IsManuallyMaintained" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="IgniteSourceId" Type="Edm.Int32"/>
+        <Property Name="IgniteSourceLastImported" Type="Edm.DateTimeOffset"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <Property Name="CurrencyId" Type="Edm.Int32"/>
+        <Property Name="TraderaStockCodeSeed" Type="Edm.String"/>
+        <Property Name="TraderaExternalStockCodeSeed" Type="Edm.String"/>
+        <NavigationProperty Name="SupplierPriceListClient" Type="Collection(Enferno.Storm.Entities.Data.SupplierPriceListClient)"/>
+        <NavigationProperty Name="SupplierPriceListWarehouse" Type="Collection(Enferno.Storm.Entities.Data.SupplierPriceListWarehouse)"/>
+        <NavigationProperty Name="SupplierProductSkuPriceList" Type="Collection(Enferno.Storm.Entities.Data.SupplierProductSkuPriceList)"/>
+      </EntityType>
+      <EntityType Name="SupplierPriceListClient">
+        <Key>
+          <PropertyRef Name="SupplierPriceListId"/>
+          <PropertyRef Name="ClientId"/>
+        </Key>
+        <Property Name="SupplierPriceListId" Type="Edm.Int32"/>
+        <Property Name="ClientId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="IsActive" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="SupplierPriceList" Type="Enferno.Storm.Entities.Data.SupplierPriceList">
+          <ReferentialConstraint Property="SupplierPriceListId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+      </EntityType>
+      <EntityType Name="SupplierPriceListWarehouse">
+        <Key>
+          <PropertyRef Name="SupplierPriceListId"/>
+          <PropertyRef Name="WarehouseId"/>
+        </Key>
+        <Property Name="SupplierPriceListId" Type="Edm.Int32"/>
+        <Property Name="WarehouseId" Type="Edm.Int32"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="SupplierPriceList" Type="Enferno.Storm.Entities.Data.SupplierPriceList">
+          <ReferentialConstraint Property="SupplierPriceListId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+        <NavigationProperty Name="SupplierPriceListWarehouseLocation" Type="Collection(Enferno.Storm.Entities.Data.SupplierPriceListWarehouseLocation)"/>
+        <NavigationProperty Name="Warehouse" Type="Enferno.Storm.Entities.Data.Warehouse">
+          <ReferentialConstraint Property="WarehouseId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+      </EntityType>
+      <EntityType Name="Warehouse">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="DefaultName" Type="Edm.String"/>
+        <Property Name="IsActive" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="ClientWarehouse" Type="Collection(Enferno.Storm.Entities.Data.ClientWarehouse)"/>
+        <NavigationProperty Name="ClientWarehouseLocation" Type="Collection(Enferno.Storm.Entities.Data.ClientWarehouseLocation)"/>
+        <NavigationProperty Name="SupplierPriceListWarehouse" Type="Collection(Enferno.Storm.Entities.Data.SupplierPriceListWarehouse)"/>
+        <NavigationProperty Name="SupplierProductSkuOnHand" Type="Collection(Enferno.Storm.Entities.Data.SupplierProductSkuOnHand)"/>
+        <NavigationProperty Name="SupplierWarehouse" Type="Collection(Enferno.Storm.Entities.Data.SupplierWarehouse)"/>
+        <NavigationProperty Name="SupplierWarehouseLocation" Type="Collection(Enferno.Storm.Entities.Data.SupplierWarehouseLocation)"/>
+      </EntityType>
+      <EntityType Name="SupplierPriceListWarehouseLocation">
+        <Key>
+          <PropertyRef Name="SupplierPriceListId"/>
+          <PropertyRef Name="WarehouseId"/>
+        </Key>
+        <Property Name="SupplierPriceListId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="WarehouseId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="LocationId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="SupplierPriceListWarehouse" Type="Enferno.Storm.Entities.Data.SupplierPriceListWarehouse"/>
+        <NavigationProperty Name="WarehouseLocation" Type="Enferno.Storm.Entities.Data.WarehouseLocation"/>
+      </EntityType>
+      <EntityType Name="WarehouseLocation">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="DefaultName" Type="Edm.String"/>
+        <Property Name="IsActive" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="ClientWarehouseLocation" Type="Collection(Enferno.Storm.Entities.Data.ClientWarehouseLocation)"/>
+        <NavigationProperty Name="SupplierPriceListWarehouseLocation" Type="Collection(Enferno.Storm.Entities.Data.SupplierPriceListWarehouseLocation)"/>
+        <NavigationProperty Name="SupplierProductSkuOnHand" Type="Collection(Enferno.Storm.Entities.Data.SupplierProductSkuOnHand)"/>
+        <NavigationProperty Name="SupplierWarehouseLocation" Type="Collection(Enferno.Storm.Entities.Data.SupplierWarehouseLocation)"/>
+      </EntityType>
+      <EntityType Name="SupplierProductSkuOnHand">
+        <Key>
+          <PropertyRef Name="PartNo"/>
+          <PropertyRef Name="SupplierId"/>
+          <PropertyRef Name="WarehouseId"/>
+          <PropertyRef Name="LocationId"/>
+        </Key>
+        <Property Name="PartNo" Type="Edm.String" Nullable="false"/>
+        <Property Name="SupplierId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="WarehouseId" Type="Edm.Int32"/>
+        <Property Name="LocationId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="OnHandValue" Type="Edm.Decimal" Nullable="false"/>
+        <Property Name="OnHandLastChecked" Type="Edm.DateTimeOffset"/>
+        <Property Name="OnHandLastUpdated" Type="Edm.DateTimeOffset"/>
+        <Property Name="OnHandLastUpdatedBy" Type="Edm.Int32"/>
+        <Property Name="IncomingValue" Type="Edm.Decimal"/>
+        <Property Name="IncomingLastChecked" Type="Edm.DateTimeOffset"/>
+        <Property Name="IncomingLastUpdated" Type="Edm.DateTimeOffset"/>
+        <Property Name="IncomingLastUpdatedBy" Type="Edm.Int32"/>
+        <Property Name="NextDeliveryDate" Type="Edm.DateTimeOffset"/>
+        <Property Name="NextDeliveryLastChecked" Type="Edm.DateTimeOffset"/>
+        <Property Name="NextDeliveryLastUpdated" Type="Edm.DateTimeOffset"/>
+        <Property Name="NextDeliveryLastUpdatedBy" Type="Edm.Int32"/>
+        <Property Name="IsReturnable" Type="Edm.Boolean"/>
+        <Property Name="LeadTimeDayCount" Type="Edm.Int32"/>
+        <Property Name="IsActive" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="StoppedDate" Type="Edm.DateTimeOffset"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <Property Name="ExternalStockValue" Type="Edm.Decimal"/>
+        <Property Name="PackageValue" Type="Edm.Decimal" Nullable="false"/>
+        <Property Name="MinimumOrderValue" Type="Edm.Decimal" Nullable="false"/>
+        <NavigationProperty Name="Warehouse" Type="Enferno.Storm.Entities.Data.Warehouse">
+          <ReferentialConstraint Property="WarehouseId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+        <NavigationProperty Name="WarehouseLocation" Type="Enferno.Storm.Entities.Data.WarehouseLocation"/>
+        <NavigationProperty Name="SupplierProductSku" Type="Enferno.Storm.Entities.Data.SupplierProductSku"/>
+      </EntityType>
+      <EntityType Name="ClientWarehouseLocation">
+        <Key>
+          <PropertyRef Name="ClientId"/>
+          <PropertyRef Name="WarehouseId"/>
+          <PropertyRef Name="LocationId"/>
+        </Key>
+        <Property Name="ClientId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="WarehouseId" Type="Edm.Int32"/>
+        <Property Name="LocationId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Code" Type="Edm.String"/>
+        <Property Name="Name" Type="Edm.String"/>
+        <Property Name="IsStandard" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="IsIncludedInStockCalculation" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="StandardLeadTimeDayCount" Type="Edm.Int32"/>
+        <Property Name="FreightCost" Type="Edm.Decimal"/>
+        <Property Name="UpToDateTypeId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="CostBlock" Type="Edm.Int32"/>
+        <Property Name="ValueBT" Type="Edm.String"/>
+        <Property Name="PrimaryPriceListId" Type="Edm.Int32"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <Property Name="SupportsReservation" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="SupportsStockQuery" Type="Edm.Boolean" Nullable="false"/>
+        <NavigationProperty Name="Warehouse" Type="Enferno.Storm.Entities.Data.Warehouse">
+          <ReferentialConstraint Property="WarehouseId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+        <NavigationProperty Name="WarehouseLocation" Type="Enferno.Storm.Entities.Data.WarehouseLocation"/>
+      </EntityType>
+      <EntityType Name="ClientWarehouse">
+        <Key>
+          <PropertyRef Name="ClientId"/>
+          <PropertyRef Name="WarehouseId"/>
+        </Key>
+        <Property Name="ClientId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="WarehouseId" Type="Edm.Int32"/>
+        <Property Name="TypeId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Code" Type="Edm.String"/>
+        <Property Name="Name" Type="Edm.String"/>
+        <Property Name="IsStandard" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="StandardLeadTimeDayCount" Type="Edm.Int32"/>
+        <Property Name="FreightCost" Type="Edm.Decimal"/>
+        <Property Name="CostBlock" Type="Edm.Int32"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="Warehouse" Type="Enferno.Storm.Entities.Data.Warehouse">
+          <ReferentialConstraint Property="WarehouseId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+      </EntityType>
+      <EntityType Name="SupplierWarehouse">
+        <Key>
+          <PropertyRef Name="SupplierId"/>
+          <PropertyRef Name="WarehouseId"/>
+        </Key>
+        <Property Name="SupplierId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="WarehouseId" Type="Edm.Int32"/>
+        <Property Name="IsStandard" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="StandardLeadTimeDayCount" Type="Edm.Int32"/>
+        <Property Name="MinimumOrderValue" Type="Edm.Decimal"/>
+        <Property Name="MinimumOrderValueCost" Type="Edm.Decimal"/>
+        <Property Name="FreightCost" Type="Edm.Decimal"/>
+        <Property Name="CostBlock" Type="Edm.Int32"/>
+        <Property Name="IsConsignment" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="TransferMethodId" Type="Edm.Int32"/>
+        <Property Name="TransferMethodValue" Type="Edm.String"/>
+        <Property Name="LastImported" Type="Edm.DateTimeOffset"/>
+        <Property Name="NextExpectedDate" Type="Edm.DateTimeOffset"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="Warehouse" Type="Enferno.Storm.Entities.Data.Warehouse">
+          <ReferentialConstraint Property="WarehouseId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+      </EntityType>
+      <EntityType Name="SupplierWarehouseLocation">
+        <Key>
+          <PropertyRef Name="SupplierId"/>
+          <PropertyRef Name="WarehouseId"/>
+          <PropertyRef Name="LocationId"/>
+        </Key>
+        <Property Name="SupplierId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="WarehouseId" Type="Edm.Int32"/>
+        <Property Name="LocationId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="IsStandard" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="StandardLeadTimeDayCount" Type="Edm.Int32"/>
+        <Property Name="MinimumOrderValue" Type="Edm.Decimal"/>
+        <Property Name="MinimumOrderValueCost" Type="Edm.Decimal"/>
+        <Property Name="FreightCost" Type="Edm.Decimal"/>
+        <Property Name="CostBlock" Type="Edm.Int32"/>
+        <Property Name="IsConsignment" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="TransferMethodId" Type="Edm.Int32"/>
+        <Property Name="TransferMethodValue" Type="Edm.String"/>
+        <Property Name="LastImported" Type="Edm.DateTimeOffset"/>
+        <Property Name="NextExpectedDate" Type="Edm.DateTimeOffset"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="Warehouse" Type="Enferno.Storm.Entities.Data.Warehouse">
+          <ReferentialConstraint Property="WarehouseId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+        <NavigationProperty Name="WarehouseLocation" Type="Enferno.Storm.Entities.Data.WarehouseLocation"/>
+      </EntityType>
+      <EntityType Name="Variant">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ClientId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="DefaultName" Type="Edm.String"/>
+        <Property Name="DefaultImagePath" Type="Edm.String"/>
+        <Property Name="DefaultThumbnailImagePath" Type="Edm.String"/>
+        <Property Name="DefaultCampaignImagePath" Type="Edm.String"/>
+        <Property Name="DefaultLargeImagePath" Type="Edm.String"/>
+        <Property Name="GroupId" Type="Edm.Int32"/>
+        <Property Name="Alias" Type="Edm.String"/>
+        <Property Name="DefaultTitle" Type="Edm.String"/>
+        <Property Name="DefaultTags" Type="Edm.String"/>
+        <Property Name="DefaultMetaTags" Type="Edm.String"/>
+        <Property Name="DefaultMetaDescription" Type="Edm.String"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <Property Name="ImageKey" Type="Edm.Guid"/>
+        <Property Name="Code" Type="Edm.String"/>
+        <Property Name="DefaultUniqueUrlName" Type="Edm.String"/>
+        <NavigationProperty Name="Product" Type="Collection(Enferno.Storm.Entities.Data.Product)"/>
+        <NavigationProperty Name="VariantCulture" Type="Collection(Enferno.Storm.Entities.Data.VariantCulture)"/>
+        <NavigationProperty Name="VariantGroup" Type="Enferno.Storm.Entities.Data.VariantGroup"/>
+      </EntityType>
+      <EntityType Name="VariantCulture">
+        <Key>
+          <PropertyRef Name="VariantId"/>
+          <PropertyRef Name="CultureCode"/>
+        </Key>
+        <Property Name="VariantId" Type="Edm.Int32"/>
+        <Property Name="CultureCode" Type="Edm.String" Nullable="false"/>
+        <Property Name="Name" Type="Edm.String"/>
+        <Property Name="ImagePath" Type="Edm.String"/>
+        <Property Name="ThumbnailImagePath" Type="Edm.String"/>
+        <Property Name="CampaignImagePath" Type="Edm.String"/>
+        <Property Name="LargeImagePath" Type="Edm.String"/>
+        <Property Name="Title" Type="Edm.String"/>
+        <Property Name="Tags" Type="Edm.String"/>
+        <Property Name="MetaTags" Type="Edm.String"/>
+        <Property Name="MetaDescription" Type="Edm.String"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <Property Name="UniqueUrlName" Type="Edm.String"/>
+        <Property Name="IsUniqueUrlNameManuallyMaintained" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="ImageKey" Type="Edm.Guid"/>
+        <NavigationProperty Name="Variant" Type="Enferno.Storm.Entities.Data.Variant">
+          <ReferentialConstraint Property="VariantId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+      </EntityType>
+      <EntityType Name="VariantGroup">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ClientId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="DefaultName" Type="Edm.String"/>
+        <Property Name="DefaultDescription" Type="Edm.String"/>
+        <Property Name="IsActive" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <Property Name="Code" Type="Edm.String"/>
+        <NavigationProperty Name="Variant" Type="Collection(Enferno.Storm.Entities.Data.Variant)"/>
+        <NavigationProperty Name="VariantGroupCulture" Type="Collection(Enferno.Storm.Entities.Data.VariantGroupCulture)"/>
+        <NavigationProperty Name="VariantGroupType" Type="Collection(Enferno.Storm.Entities.Data.VariantGroupType)"/>
+      </EntityType>
+      <EntityType Name="VariantGroupCulture">
+        <Key>
+          <PropertyRef Name="GroupId"/>
+          <PropertyRef Name="CultureCode"/>
+        </Key>
+        <Property Name="GroupId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="CultureCode" Type="Edm.String" Nullable="false"/>
+        <Property Name="Name" Type="Edm.String"/>
+        <Property Name="Description" Type="Edm.String"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="VariantGroup" Type="Enferno.Storm.Entities.Data.VariantGroup"/>
+      </EntityType>
+      <EntityType Name="VariantGroupType">
+        <Key>
+          <PropertyRef Name="TypeId"/>
+        </Key>
+        <Property Name="TypeId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="GroupId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="SortOrder" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="IsActive" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="VariantGroup" Type="Enferno.Storm.Entities.Data.VariantGroup"/>
+        <NavigationProperty Name="VariantType" Type="Enferno.Storm.Entities.Data.VariantType"/>
+      </EntityType>
+      <EntityType Name="VariantType">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ClientId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="DefaultName" Type="Edm.String"/>
+        <Property Name="DefaultDescription" Type="Edm.String"/>
+        <Property Name="ParametricId" Type="Edm.Int32"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <Property Name="Code" Type="Edm.String"/>
+        <NavigationProperty Name="VariantGroupType" Type="Collection(Enferno.Storm.Entities.Data.VariantGroupType)"/>
+        <NavigationProperty Name="VariantTypeCulture" Type="Collection(Enferno.Storm.Entities.Data.VariantTypeCulture)"/>
+      </EntityType>
+      <EntityType Name="VariantTypeCulture">
+        <Key>
+          <PropertyRef Name="TypeId"/>
+          <PropertyRef Name="CultureCode"/>
+        </Key>
+        <Property Name="TypeId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="CultureCode" Type="Edm.String" Nullable="false"/>
+        <Property Name="Name" Type="Edm.String"/>
+        <Property Name="Description" Type="Edm.String"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="VariantType" Type="Enferno.Storm.Entities.Data.VariantType"/>
+      </EntityType>
+      <EntityType Name="ApplicationCulture">
+        <Key>
+          <PropertyRef Name="ApplicationId"/>
+          <PropertyRef Name="CultureCode"/>
+        </Key>
+        <Property Name="ApplicationId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="CultureCode" Type="Edm.String" Nullable="false"/>
+        <Property Name="IsPrimary" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="IsActive" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+      </EntityType>
+      <EntityType Name="ApplicationCurrency">
+        <Key>
+          <PropertyRef Name="ApplicationId"/>
+          <PropertyRef Name="CurrencyId"/>
+        </Key>
+        <Property Name="ApplicationId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="CurrencyId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="IsPrimary" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="IsActive" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+      </EntityType>
+      <EntityType Name="ApplicationSalesArea">
+        <Key>
+          <PropertyRef Name="ApplicationId"/>
+          <PropertyRef Name="SalesAreaId"/>
+        </Key>
+        <Property Name="ApplicationId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="SalesAreaId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="IsPrimary" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="IsActive" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+      </EntityType>
+      <EntityType Name="ClientManufacturer">
+        <Key>
+          <PropertyRef Name="ClientId"/>
+          <PropertyRef Name="ManufacturerId"/>
+        </Key>
+        <Property Name="ClientId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ManufacturerId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ManufacturerCode" Type="Edm.String"/>
+        <Property Name="Name" Type="Edm.String"/>
+        <Property Name="IsActive" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <Property Name="UniqueUrlName" Type="Edm.String"/>
+        <Property Name="IsUniqueUrlNameManuallyMaintained" Type="Edm.Boolean" Nullable="false"/>
+        <NavigationProperty Name="Manufacturer" Type="Enferno.Storm.Entities.Data.Manufacturer"/>
+      </EntityType>
+      <EntityType Name="Manufacturer">
+        <Key>
+          <PropertyRef Name="Id"/>
+          <PropertyRef Name="CorporationId"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="CorporationId" Type="Edm.Int32"/>
+        <Property Name="IsActive" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <Property Name="Key" Type="Edm.Guid" Nullable="false"/>
+        <NavigationProperty Name="ClientManufacturer" Type="Collection(Enferno.Storm.Entities.Data.ClientManufacturer)"/>
+        <NavigationProperty Name="Corporation" Type="Enferno.Storm.Entities.Data.Corporation">
+          <ReferentialConstraint Property="CorporationId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+      </EntityType>
+      <EntityType Name="Corporation">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Key" Type="Edm.Guid" Nullable="false"/>
+        <Property Name="OrganizationNo" Type="Edm.String"/>
+        <Property Name="DefaultName" Type="Edm.String"/>
+        <Property Name="IsActive" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="Manufacturer" Type="Collection(Enferno.Storm.Entities.Data.Manufacturer)"/>
+        <NavigationProperty Name="Supplier" Type="Collection(Enferno.Storm.Entities.Data.Supplier)"/>
+      </EntityType>
+      <EntityType Name="Supplier">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="CorporationId" Type="Edm.Int32"/>
+        <Property Name="IsActive" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <Property Name="Key" Type="Edm.Guid" Nullable="false"/>
+        <Property Name="SecretKey" Type="Edm.Guid" Nullable="false"/>
+        <NavigationProperty Name="ClientSupplier" Type="Collection(Enferno.Storm.Entities.Data.ClientSupplier)"/>
+        <NavigationProperty Name="Corporation" Type="Enferno.Storm.Entities.Data.Corporation">
+          <ReferentialConstraint Property="CorporationId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+      </EntityType>
+      <EntityType Name="ClientSupplier">
+        <Key>
+          <PropertyRef Name="ClientId"/>
+          <PropertyRef Name="SupplierId"/>
+        </Key>
+        <Property Name="ClientId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="SupplierId" Type="Edm.Int32"/>
+        <Property Name="SupplierCodePrefix" Type="Edm.String"/>
+        <Property Name="SupplierCode" Type="Edm.String"/>
+        <Property Name="Name" Type="Edm.String"/>
+        <Property Name="IsActive" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="ClientSupplierAddress" Type="Collection(Enferno.Storm.Entities.Data.ClientSupplierAddress)"/>
+        <NavigationProperty Name="ClientSupplierContact" Type="Collection(Enferno.Storm.Entities.Data.ClientSupplierContact)"/>
+        <NavigationProperty Name="Supplier" Type="Enferno.Storm.Entities.Data.Supplier">
+          <ReferentialConstraint Property="SupplierId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+      </EntityType>
+      <EntityType Name="ClientSupplierAddress">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="SupplierId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ClientId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="TypeId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="CareOf" Type="Edm.String"/>
+        <Property Name="AddressLine1" Type="Edm.String"/>
+        <Property Name="AddressLine2" Type="Edm.String"/>
+        <Property Name="ZipCode" Type="Edm.String"/>
+        <Property Name="City" Type="Edm.String"/>
+        <Property Name="Region" Type="Edm.String"/>
+        <Property Name="CountryId" Type="Edm.Int32"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="ClientSupplier" Type="Enferno.Storm.Entities.Data.ClientSupplier"/>
+      </EntityType>
+      <EntityType Name="ClientSupplierContact">
+        <Key>
+          <PropertyRef Name="ClientId"/>
+          <PropertyRef Name="SupplierId"/>
+          <PropertyRef Name="ContactId"/>
+        </Key>
+        <Property Name="ClientId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="SupplierId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ContactId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="ClientSupplier" Type="Enferno.Storm.Entities.Data.ClientSupplier"/>
+        <NavigationProperty Name="ClientSupplierContactResponsibility" Type="Collection(Enferno.Storm.Entities.Data.ClientSupplierContactResponsibility)"/>
+      </EntityType>
+      <EntityType Name="ClientSupplierContactResponsibility">
+        <Key>
+          <PropertyRef Name="ClientId"/>
+          <PropertyRef Name="SupplierId"/>
+          <PropertyRef Name="ContactId"/>
+          <PropertyRef Name="ResponsibilityId"/>
+        </Key>
+        <Property Name="ClientId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="SupplierId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ContactId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ResponsibilityId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="SortOrder" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="ClientSupplierContact" Type="Enferno.Storm.Entities.Data.ClientSupplierContact"/>
+      </EntityType>
+      <EntityType Name="ApplicationPriceList">
+        <Key>
+          <PropertyRef Name="ApplicationId"/>
+          <PropertyRef Name="PriceListId"/>
+        </Key>
+        <Property Name="ApplicationId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="PriceListId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="IsPrimary" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="IsActive" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+      </EntityType>
+      <EntityType Name="ExternalContentCategoryParametric">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ExternalContentId" Type="Edm.Int32"/>
+        <Property Name="ExternalContentCategoryId" Type="Edm.Int32"/>
+        <Property Name="ExternalContentParametricId" Type="Edm.Int32"/>
+        <Property Name="ExternalContentParametricGroupId" Type="Edm.Int32"/>
+        <Property Name="SortOrder" Type="Edm.Int32"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <NavigationProperty Name="ExternalContent" Type="Enferno.Storm.Entities.Data.ExternalContent">
+          <ReferentialConstraint Property="ExternalContentId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+        <NavigationProperty Name="ExternalContentCategory" Type="Enferno.Storm.Entities.Data.ExternalContentCategory">
+          <ReferentialConstraint Property="ExternalContentCategoryId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+        <NavigationProperty Name="ExternalContentParametric" Type="Enferno.Storm.Entities.Data.ExternalContentParametric">
+          <ReferentialConstraint Property="ExternalContentParametricId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+        <NavigationProperty Name="ExternalContentParametricGroup" Type="Enferno.Storm.Entities.Data.ExternalContentParametricGroup"/>
+      </EntityType>
+      <EntityType Name="ExternalContentParametricValueMapping">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ExternalContentParametricId" Type="Edm.Int32"/>
+        <Property Name="ExternalContentParametricMappingId" Type="Edm.Int32"/>
+        <Property Name="ExternalContentParametricValueId" Type="Edm.Int32"/>
+        <Property Name="LookupVarcharValue" Type="Edm.String"/>
+        <Property Name="LookupDecimalValueFrom" Type="Edm.Decimal"/>
+        <Property Name="LookupDecimalValueTo" Type="Edm.Decimal"/>
+        <Property Name="LookupBooleanValue" Type="Edm.Boolean"/>
+        <Property Name="LookupUom" Type="Edm.String"/>
+        <Property Name="ParametricListId" Type="Edm.Int32"/>
+        <Property Name="ParametricMultipleId" Type="Edm.Int32"/>
+        <Property Name="VarcharValue" Type="Edm.String"/>
+        <Property Name="IntegerValue" Type="Edm.Int32"/>
+        <Property Name="DecimalValue" Type="Edm.Decimal"/>
+        <Property Name="BooleanValue" Type="Edm.Boolean"/>
+        <Property Name="DateValue" Type="Edm.DateTimeOffset"/>
+        <Property Name="IsIgnored" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="IsMultiply" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="Factor" Type="Edm.Decimal" Nullable="false"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="ExternalContentParametric" Type="Enferno.Storm.Entities.Data.ExternalContentParametric">
+          <ReferentialConstraint Property="ExternalContentParametricId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+        <NavigationProperty Name="ExternalContentParametricMapping" Type="Enferno.Storm.Entities.Data.ExternalContentParametricMapping">
+          <ReferentialConstraint Property="ExternalContentParametricMappingId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+      </EntityType>
+      <EntityType Name="ExternalContentParametricValue">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ExternalContentId" Type="Edm.Int32"/>
+        <Property Name="ExternalContentParametricId" Type="Edm.Int32"/>
+        <Property Name="Code" Type="Edm.String"/>
+        <Property Name="Name" Type="Edm.String"/>
+        <Property Name="IsMapped" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="ExternalContent" Type="Enferno.Storm.Entities.Data.ExternalContent">
+          <ReferentialConstraint Property="ExternalContentId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+        <NavigationProperty Name="ExternalContentParametric" Type="Enferno.Storm.Entities.Data.ExternalContentParametric">
+          <ReferentialConstraint Property="ExternalContentParametricId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+        <NavigationProperty Name="ExternalContentProductParametric" Type="Collection(Enferno.Storm.Entities.Data.ExternalContentProductParametric)"/>
+      </EntityType>
+      <EntityType Name="ExternalContentProductParametric">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int64" Nullable="false"/>
+        <Property Name="ExternalContentProductId" Type="Edm.Int32"/>
+        <Property Name="ExternalContentParametricId" Type="Edm.Int32"/>
+        <Property Name="ExternalContentParametricValueId" Type="Edm.Int32"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <NavigationProperty Name="ExternalContentProduct" Type="Enferno.Storm.Entities.Data.ExternalContentProduct">
+          <ReferentialConstraint Property="ExternalContentProductId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+        <NavigationProperty Name="ExternalContentParametric" Type="Enferno.Storm.Entities.Data.ExternalContentParametric">
+          <ReferentialConstraint Property="ExternalContentParametricId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+        <NavigationProperty Name="ExternalContentParametricValue" Type="Enferno.Storm.Entities.Data.ExternalContentParametricValue">
+          <ReferentialConstraint Property="ExternalContentParametricValueId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+      </EntityType>
+      <EntityType Name="ExternalContentCategoryRequirements">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ExternalContentCategoryId" Type="Edm.Int32"/>
+        <Property Name="CategoryId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ExternalContentParametricId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ExternalContentParametricValueId" Type="Edm.Int32"/>
+        <Property Name="VarcharValue" Type="Edm.String"/>
+        <Property Name="DecimalValueFrom" Type="Edm.Decimal"/>
+        <Property Name="DecimalValueTo" Type="Edm.Decimal"/>
+        <Property Name="BooleanValue" Type="Edm.Boolean"/>
+        <Property Name="MustBeSet" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <NavigationProperty Name="ExternalContentCategory" Type="Enferno.Storm.Entities.Data.ExternalContentCategory">
+          <ReferentialConstraint Property="ExternalContentCategoryId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+      </EntityType>
+      <EntityType Name="ExternalContentLanguage">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ExternalContentId" Type="Edm.Int32"/>
+        <Property Name="LanguageCode" Type="Edm.String"/>
+        <Property Name="LanguageName" Type="Edm.String"/>
+        <Property Name="CultureCode" Type="Edm.String"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="ExternalContent" Type="Enferno.Storm.Entities.Data.ExternalContent">
+          <ReferentialConstraint Property="ExternalContentId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+      </EntityType>
+      <EntityType Name="ExternalContentManufacturer">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ExternalContentId" Type="Edm.Int32"/>
+        <Property Name="ManufacturerCode" Type="Edm.String"/>
+        <Property Name="ManufacturerName" Type="Edm.String"/>
+        <Property Name="ManufacturerId" Type="Edm.Int32"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="ExternalContent" Type="Enferno.Storm.Entities.Data.ExternalContent">
+          <ReferentialConstraint Property="ExternalContentId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+      </EntityType>
+      <EntityType Name="ProductFile">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ProductId" Type="Edm.Int32"/>
+        <Property Name="ClientId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="FileId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="DefaultName" Type="Edm.String"/>
+        <Property Name="DefaultDescription" Type="Edm.String"/>
+        <Property Name="DefaultPath" Type="Edm.String"/>
+        <Property Name="DefaultThumbnailPath" Type="Edm.String"/>
+        <Property Name="DefaultSize" Type="Edm.String"/>
+        <Property Name="IsActive" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <Property Name="FileKey" Type="Edm.Guid"/>
+        <Property Name="IsVariantUnique" Type="Edm.Boolean" Nullable="false"/>
+        <NavigationProperty Name="Product" Type="Enferno.Storm.Entities.Data.Product">
+          <ReferentialConstraint Property="ProductId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+      </EntityType>
+    </Schema>
+    <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="Enferno.Storm.Entities.Core">
+      <EntityType Name="SalesArea">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="DefaultName" Type="Edm.String"/>
+        <Property Name="DefaultDescription" Type="Edm.String"/>
+        <Property Name="DefaultCurrencyId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="DefaultVatCodeId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="IsActive" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="VatCode" Type="Enferno.Storm.Entities.Core.VatCode"/>
+      </EntityType>
+      <EntityType Name="Currency">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Code" Type="Edm.String"/>
+        <Property Name="DefaultName" Type="Edm.String"/>
+        <Property Name="ExchangeRate" Type="Edm.Decimal" Nullable="false"/>
+        <Property Name="DefaultPrefix" Type="Edm.String"/>
+        <Property Name="DefaultSuffix" Type="Edm.String"/>
+        <Property Name="IsActive" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+      </EntityType>
+      <EntityType Name="VatCode">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="DefaultName" Type="Edm.String"/>
+        <Property Name="DefaultDescription" Type="Edm.String"/>
+        <Property Name="Value" Type="Edm.Decimal" Nullable="false"/>
+        <Property Name="IsActive" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="VatCodeCulture" Type="Collection(Enferno.Storm.Entities.Core.VatCodeCulture)"/>
+        <NavigationProperty Name="SalesArea" Type="Collection(Enferno.Storm.Entities.Core.SalesArea)"/>
+      </EntityType>
+      <EntityType Name="VatCodeCulture">
+        <Key>
+          <PropertyRef Name="VatCodeId"/>
+          <PropertyRef Name="CultureCode"/>
+        </Key>
+        <Property Name="VatCodeId" Type="Edm.Int32"/>
+        <Property Name="CultureCode" Type="Edm.String" Nullable="false"/>
+        <Property Name="Name" Type="Edm.String"/>
+        <Property Name="Description" Type="Edm.String"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="VatCode" Type="Enferno.Storm.Entities.Core.VatCode">
+          <ReferentialConstraint Property="VatCodeId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+      </EntityType>
+      <EntityType Name="ClientProductSkuStatus">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="DefaultName" Type="Edm.String"/>
+        <Property Name="DefaultDescription" Type="Edm.String"/>
+        <Property Name="IsActive" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="ClientProductSkuStatusCulture" Type="Collection(Enferno.Storm.Entities.Core.ClientProductSkuStatusCulture)"/>
+      </EntityType>
+      <EntityType Name="ClientProductSkuStatusCulture">
+        <Key>
+          <PropertyRef Name="StatusId"/>
+          <PropertyRef Name="CultureCode"/>
+        </Key>
+        <Property Name="StatusId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="CultureCode" Type="Edm.String" Nullable="false"/>
+        <Property Name="Name" Type="Edm.String"/>
+        <Property Name="Description" Type="Edm.String"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="ClientProductSkuStatus" Type="Enferno.Storm.Entities.Core.ClientProductSkuStatus"/>
+      </EntityType>
+      <EntityType Name="Application">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Key" Type="Edm.Guid" Nullable="false"/>
+        <Property Name="Name" Type="Edm.String"/>
+        <Property Name="Description" Type="Edm.String"/>
+        <Property Name="Url" Type="Edm.String"/>
+        <Property Name="CmsUrl" Type="Edm.String"/>
+        <Property Name="SalesUrl" Type="Edm.String"/>
+        <Property Name="SenderEmailAddress" Type="Edm.String"/>
+        <Property Name="HostClientId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="IsActive" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <Property Name="UrlMatch" Type="Edm.String"/>
+        <Property Name="ParentId" Type="Edm.Int32"/>
+        <Property Name="ImageKey" Type="Edm.String"/>
+        <NavigationProperty Name="StormAccount" Type="Collection(Enferno.Storm.Entities.Core.StormAccount)"/>
+      </EntityType>
+      <EntityType Name="StormAccount">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ApplicationId" Type="Edm.Int32"/>
+        <Property Name="Key" Type="Edm.Guid" Nullable="false"/>
+        <Property Name="LoginName" Type="Edm.String"/>
+        <Property Name="Password" Type="Edm.Binary"/>
+        <Property Name="TypeId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="ContactId" Type="Edm.Int32"/>
+        <Property Name="CustomerId" Type="Edm.Int32"/>
+        <Property Name="StatusId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="Application" Type="Enferno.Storm.Entities.Core.Application">
+          <ReferentialConstraint Property="ApplicationId" ReferencedProperty="Id"/>
+        </NavigationProperty>
+        <NavigationProperty Name="ApplicationAccountStatus" Type="Enferno.Storm.Entities.Core.ApplicationAccountStatus"/>
+        <NavigationProperty Name="ApplicationAccountType" Type="Enferno.Storm.Entities.Core.ApplicationAccountType"/>
+      </EntityType>
+      <EntityType Name="ApplicationAccountStatus">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="DefaultName" Type="Edm.String"/>
+        <Property Name="DefaultDescription" Type="Edm.String"/>
+        <Property Name="IsActive" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="StormAccount" Type="Collection(Enferno.Storm.Entities.Core.StormAccount)"/>
+        <NavigationProperty Name="ApplicationAccountStatusCulture" Type="Collection(Enferno.Storm.Entities.Core.ApplicationAccountStatusCulture)"/>
+      </EntityType>
+      <EntityType Name="ApplicationAccountStatusCulture">
+        <Key>
+          <PropertyRef Name="StatusId"/>
+          <PropertyRef Name="CultureCode"/>
+        </Key>
+        <Property Name="StatusId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="CultureCode" Type="Edm.String" Nullable="false"/>
+        <Property Name="Name" Type="Edm.String"/>
+        <Property Name="Description" Type="Edm.String"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="ApplicationAccountStatus" Type="Enferno.Storm.Entities.Core.ApplicationAccountStatus"/>
+      </EntityType>
+      <EntityType Name="ApplicationAccountType">
+        <Key>
+          <PropertyRef Name="Id"/>
+        </Key>
+        <Property Name="Id" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="DefaultName" Type="Edm.String"/>
+        <Property Name="DefaultDescription" Type="Edm.String"/>
+        <Property Name="IsActive" Type="Edm.Boolean" Nullable="false"/>
+        <Property Name="Created" Type="Edm.DateTimeOffset" Nullable="false"/>
+        <Property Name="CreatedBy" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="StormAccount" Type="Collection(Enferno.Storm.Entities.Core.StormAccount)"/>
+        <NavigationProperty Name="ApplicationAccountTypeCulture" Type="Collection(Enferno.Storm.Entities.Core.ApplicationAccountTypeCulture)"/>
+      </EntityType>
+      <EntityType Name="ApplicationAccountTypeCulture">
+        <Key>
+          <PropertyRef Name="TypeId"/>
+          <PropertyRef Name="CultureCode"/>
+        </Key>
+        <Property Name="TypeId" Type="Edm.Int32" Nullable="false"/>
+        <Property Name="CultureCode" Type="Edm.String" Nullable="false"/>
+        <Property Name="Name" Type="Edm.String"/>
+        <Property Name="Description" Type="Edm.String"/>
+        <Property Name="Updated" Type="Edm.DateTimeOffset"/>
+        <Property Name="UpdatedBy" Type="Edm.Int32"/>
+        <NavigationProperty Name="ApplicationAccountType" Type="Enferno.Storm.Entities.Core.ApplicationAccountType"/>
+      </EntityType>
+    </Schema>
+    <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="FunctionService">
+      <Function Name="GetUpdateSkuOnhandDelta" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(Enferno.Storm.Entities.Data.ClientProductSku)"/>
+        <Parameter Name="clientId" Type="Edm.Int32" Nullable="false"/>
+        <Parameter Name="offsetInMinutes" Type="Edm.Int32" Nullable="false"/>
+        <ReturnType Type="Collection(Enferno.Storm.Entities.Data.ClientProductSku)"/>
+      </Function>
+      <Function Name="GetUpdateSkuPriceDelta" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(Enferno.Storm.Entities.Data.ClientProductSku)"/>
+        <Parameter Name="clientId" Type="Edm.Int32" Nullable="false"/>
+        <Parameter Name="offsetInMinutes" Type="Edm.Int32" Nullable="false"/>
+        <ReturnType Type="Collection(Enferno.Storm.Entities.Data.ClientProductSku)"/>
+      </Function>
+      <Function Name="GetCreateUpdateSkuDelta" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(Enferno.Storm.Entities.Data.ClientProductSku)"/>
+        <Parameter Name="clientId" Type="Edm.Int32" Nullable="false"/>
+        <Parameter Name="offsetInMinutes" Type="Edm.Int32" Nullable="false"/>
+        <ReturnType Type="Collection(Enferno.Storm.Entities.Data.ClientProductSku)"/>
+      </Function>
+      <Function Name="GetExportProductFull" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(Enferno.Storm.Entities.Data.ClientProductSku)"/>
+        <Parameter Name="clientId" Type="Edm.Int32" Nullable="false"/>
+        <Parameter Name="skuTypeIdToExclude" Type="Edm.Int32" Nullable="false"/>
+        <Parameter Name="skuStatusIdToExclude" Type="Edm.Int32" Nullable="false"/>
+        <ReturnType Type="Collection(Enferno.Storm.Entities.Data.ClientProductSku)"/>
+      </Function>
+      <Function Name="GetExportProductDelta" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(Enferno.Storm.Entities.Data.ClientProductSku)"/>
+        <Parameter Name="clientId" Type="Edm.Int32" Nullable="false"/>
+        <Parameter Name="skuTypeIdToExclude" Type="Edm.Int32" Nullable="false"/>
+        <Parameter Name="offsetInMinutes" Type="Edm.Int32" Nullable="false"/>
+        <ReturnType Type="Collection(Enferno.Storm.Entities.Data.ClientProductSku)"/>
+      </Function>
+      <Function Name="GetExportProductVariantFull" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(Enferno.Storm.Entities.Data.Variant)"/>
+        <Parameter Name="clientId" Type="Edm.Int32" Nullable="false"/>
+        <Parameter Name="skuTypeIdToExclude" Type="Edm.Int32" Nullable="false"/>
+        <Parameter Name="skuStatusIdToExclude" Type="Edm.Int32" Nullable="false"/>
+        <ReturnType Type="Collection(Enferno.Storm.Entities.Data.Variant)"/>
+      </Function>
+      <Function Name="GetExportProductVariantDelta" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(Enferno.Storm.Entities.Data.Variant)"/>
+        <Parameter Name="clientId" Type="Edm.Int32" Nullable="false"/>
+        <Parameter Name="skuTypeIdToExclude" Type="Edm.Int32" Nullable="false"/>
+        <Parameter Name="offsetInMinutes" Type="Edm.Int32" Nullable="false"/>
+        <ReturnType Type="Collection(Enferno.Storm.Entities.Data.Variant)"/>
+      </Function>
+      <EntityContainer Name="Container">
+        <EntitySet Name="ClientProductSkus" EntityType="Enferno.Storm.Entities.Data.ClientProductSku">
+          <NavigationPropertyBinding Path="Product" Target="Products"/>
+          <NavigationPropertyBinding Path="ClientProductSkuCulture" Target="ClientProductSkuCultures"/>
+          <NavigationPropertyBinding Path="ClientProductSkuPriceList" Target="ClientProductSkuPriceLists"/>
+          <NavigationPropertyBinding Path="ClientProductSkuSalesArea" Target="ClientProductSkuSalesAreas"/>
+        </EntitySet>
+        <EntitySet Name="ClientProductSkuSalesAreas" EntityType="Enferno.Storm.Entities.Data.ClientProductSkuSalesArea"/>
+        <EntitySet Name="ClientProductSkuPriceLists" EntityType="Enferno.Storm.Entities.Data.ClientProductSkuPriceList">
+          <NavigationPropertyBinding Path="ClientProductSku" Target="ClientProductSkus"/>
+        </EntitySet>
+        <EntitySet Name="Products" EntityType="Enferno.Storm.Entities.Data.Product">
+          <NavigationPropertyBinding Path="ExternalContentProduct" Target="ExternalContentProducts"/>
+          <NavigationPropertyBinding Path="ProductCulture" Target="ProductCultures"/>
+          <NavigationPropertyBinding Path="SupplierProductSkuClient" Target="SupplierProductSkuClients"/>
+          <NavigationPropertyBinding Path="ClientProductSku" Target="ClientProductSkus"/>
+          <NavigationPropertyBinding Path="ProductCategory" Target="ProductCategories"/>
+          <NavigationPropertyBinding Path="ProductParametric" Target="ProductParametrics"/>
+          <NavigationPropertyBinding Path="Variant" Target="Variants"/>
+          <NavigationPropertyBinding Path="ProductParametricMultiple" Target="ProductParametricMultiples"/>
+        </EntitySet>
+        <EntitySet Name="ProductCultures" EntityType="Enferno.Storm.Entities.Data.ProductCulture">
+          <NavigationPropertyBinding Path="Product" Target="Products"/>
+        </EntitySet>
+        <EntitySet Name="ProductCategories" EntityType="Enferno.Storm.Entities.Data.ProductCategory">
+          <NavigationPropertyBinding Path="Category" Target="Categories"/>
+          <NavigationPropertyBinding Path="Product" Target="Products"/>
+        </EntitySet>
+        <EntitySet Name="Categories" EntityType="Enferno.Storm.Entities.Data.Category">
+          <NavigationPropertyBinding Path="ProductCategory" Target="ProductCategories"/>
+          <NavigationPropertyBinding Path="CategoryCompetitor" Target="CategoryCompetitors"/>
+          <NavigationPropertyBinding Path="CategoryStructureItem" Target="CategoryStructureItems"/>
+          <NavigationPropertyBinding Path="CategorySalesArea" Target="CategorySalesAreas"/>
+        </EntitySet>
+        <EntitySet Name="CategoryCompetitors" EntityType="Enferno.Storm.Entities.Data.CategoryCompetitor">
+          <NavigationPropertyBinding Path="Category" Target="Categories"/>
+          <NavigationPropertyBinding Path="CategoryCompetitorPositioningType" Target="CategoryCompetitorPositioningTypes"/>
+        </EntitySet>
+        <EntitySet Name="CategoryCompetitorPositioningTypes" EntityType="Enferno.Storm.Entities.Data.CategoryCompetitorPositioningType">
+          <NavigationPropertyBinding Path="CategoryCompetitor" Target="CategoryCompetitors"/>
+          <NavigationPropertyBinding Path="CategoryCompetitorPositioningTypeCulture" Target="CategoryCompetitorPositioningTypeCultures"/>
+        </EntitySet>
+        <EntitySet Name="CategoryCompetitorPositioningTypeCultures" EntityType="Enferno.Storm.Entities.Data.CategoryCompetitorPositioningTypeCulture">
+          <NavigationPropertyBinding Path="CategoryCompetitorPositioningType" Target="CategoryCompetitorPositioningTypes"/>
+        </EntitySet>
+        <EntitySet Name="CategoryStructureItems" EntityType="Enferno.Storm.Entities.Data.CategoryStructureItem">
+          <NavigationPropertyBinding Path="Category" Target="Categories"/>
+          <NavigationPropertyBinding Path="CategoryStructure" Target="CategoryStructures"/>
+          <NavigationPropertyBinding Path="CategoryStructureItemCulture" Target="CategoryStructureItemCultures"/>
+        </EntitySet>
+        <EntitySet Name="CategoryStructureItemCultures" EntityType="Enferno.Storm.Entities.Data.CategoryStructureItemCulture">
+          <NavigationPropertyBinding Path="CategoryStructureItem" Target="CategoryStructureItems"/>
+        </EntitySet>
+        <EntitySet Name="CategoryStructures" EntityType="Enferno.Storm.Entities.Data.CategoryStructure">
+          <NavigationPropertyBinding Path="CategoryStructureCulture" Target="CategoryStructureCultures"/>
+          <NavigationPropertyBinding Path="CategoryStructureItem" Target="CategoryStructureItems"/>
+        </EntitySet>
+        <EntitySet Name="CategoryStructureCultures" EntityType="Enferno.Storm.Entities.Data.CategoryStructureCulture">
+          <NavigationPropertyBinding Path="CategoryStructure" Target="CategoryStructures"/>
+        </EntitySet>
+        <EntitySet Name="CategorySalesAreas" EntityType="Enferno.Storm.Entities.Data.CategorySalesArea"/>
+        <EntitySet Name="ClientProductSkuCultures" EntityType="Enferno.Storm.Entities.Data.ClientProductSkuCulture">
+          <NavigationPropertyBinding Path="ClientProductSku" Target="ClientProductSkus"/>
+        </EntitySet>
+        <EntitySet Name="ExternalContentProducts" EntityType="Enferno.Storm.Entities.Data.ExternalContentProduct">
+          <NavigationPropertyBinding Path="ExternalContent" Target="ExternalContents"/>
+          <NavigationPropertyBinding Path="Product" Target="Products"/>
+        </EntitySet>
+        <EntitySet Name="ExternalContents" EntityType="Enferno.Storm.Entities.Data.ExternalContent">
+          <NavigationPropertyBinding Path="ExternalContentCategory" Target="ExternalContentCategorys"/>
+          <NavigationPropertyBinding Path="ExternalContentCulture" Target="ExternalContentCultures"/>
+          <NavigationPropertyBinding Path="ExternalContentParametric" Target="ExternalContentParametrics"/>
+          <NavigationPropertyBinding Path="ExternalContentParametricGroup" Target="ExternalContentParametricGroups"/>
+          <NavigationPropertyBinding Path="ExternalContentProduct" Target="ExternalContentProducts"/>
+        </EntitySet>
+        <EntitySet Name="ExternalContentCultures" EntityType="Enferno.Storm.Entities.Data.ExternalContentCulture">
+          <NavigationPropertyBinding Path="ExternalContent" Target="ExternalContents"/>
+        </EntitySet>
+        <EntitySet Name="ExternalContentCategorys" EntityType="Enferno.Storm.Entities.Data.ExternalContentCategory">
+          <NavigationPropertyBinding Path="ExternalContent" Target="ExternalContents"/>
+          <NavigationPropertyBinding Path="ExternalContentCategoryCulture" Target="ExternalContentCategoryCultures"/>
+        </EntitySet>
+        <EntitySet Name="ExternalContentCategoryCultures" EntityType="Enferno.Storm.Entities.Data.ExternalContentCategoryCulture">
+          <NavigationPropertyBinding Path="ExternalContentCategory" Target="ExternalContentCategorys"/>
+        </EntitySet>
+        <EntitySet Name="ExternalContentParametrics" EntityType="Enferno.Storm.Entities.Data.ExternalContentParametric">
+          <NavigationPropertyBinding Path="ExternalContent" Target="ExternalContents"/>
+          <NavigationPropertyBinding Path="ExternalContentParametricCulture" Target="ExternalContentParametricCultures"/>
+          <NavigationPropertyBinding Path="ExternalContentParametricMapping" Target="ExternalContentParametricMappings"/>
+        </EntitySet>
+        <EntitySet Name="ExternalContentParametricMappings" EntityType="Enferno.Storm.Entities.Data.ExternalContentParametricMapping">
+          <NavigationPropertyBinding Path="ExternalContentParametric" Target="ExternalContentParametrics"/>
+          <NavigationPropertyBinding Path="Parametric" Target="Parametics"/>
+        </EntitySet>
+        <EntitySet Name="Parametics" EntityType="Enferno.Storm.Entities.Data.Parametric">
+          <NavigationPropertyBinding Path="ExternalContentParametricMapping" Target="ExternalContentParametricMappings"/>
+          <NavigationPropertyBinding Path="ParametricCulture" Target="ParameticCultures"/>
+          <NavigationPropertyBinding Path="ParametricList" Target="ParametricLists"/>
+          <NavigationPropertyBinding Path="ParametricMultiple" Target="ParametricMultiples"/>
+          <NavigationPropertyBinding Path="ProductParametric" Target="ProductParametrics"/>
+          <NavigationPropertyBinding Path="ProductParametricMultiple" Target="ProductParametricMultiples"/>
+          <NavigationPropertyBinding Path="CategoryParametric" Target="CategoryParametrics"/>
+        </EntitySet>
+        <EntitySet Name="ParameticCultures" EntityType="Enferno.Storm.Entities.Data.ParametricCulture">
+          <NavigationPropertyBinding Path="Parametric" Target="Parametics"/>
+        </EntitySet>
+        <EntitySet Name="ParameticGroups" EntityType="Enferno.Storm.Entities.Data.ParametricGroup">
+          <NavigationPropertyBinding Path="ExternalContentParametricGroup" Target="ExternalContentParametricGroups"/>
+          <NavigationPropertyBinding Path="ParametricGroupCulture" Target="ParametricGroupCultures"/>
+          <NavigationPropertyBinding Path="CategoryParametric" Target="CategoryParametrics"/>
+        </EntitySet>
+        <EntitySet Name="ParametricGroupCultures" EntityType="Enferno.Storm.Entities.Data.ParametricGroupCulture">
+          <NavigationPropertyBinding Path="ParametricGroup" Target="ParameticGroups"/>
+        </EntitySet>
+        <EntitySet Name="ParametricLists" EntityType="Enferno.Storm.Entities.Data.ParametricList">
+          <NavigationPropertyBinding Path="Parametric" Target="Parametics"/>
+          <NavigationPropertyBinding Path="ParametricListCulture" Target="ParametricListCultures"/>
+          <NavigationPropertyBinding Path="ProductParametric" Target="ProductParametrics"/>
+        </EntitySet>
+        <EntitySet Name="ParametricListCultures" EntityType="Enferno.Storm.Entities.Data.ParametricListCulture">
+          <NavigationPropertyBinding Path="ParametricList" Target="ParametricLists"/>
+        </EntitySet>
+        <EntitySet Name="ProductParametrics" EntityType="Enferno.Storm.Entities.Data.ProductParametric">
+          <NavigationPropertyBinding Path="Parametric" Target="Parametics"/>
+          <NavigationPropertyBinding Path="ParametricList" Target="ParametricLists"/>
+          <NavigationPropertyBinding Path="Product" Target="Products"/>
+          <NavigationPropertyBinding Path="ProductParametricCulture" Target="ProductParametricCultures"/>
+          <NavigationPropertyBinding Path="ProductParametricMultiple" Target="ProductParametricMultiples"/>
+        </EntitySet>
+        <EntitySet Name="ProductParametricCultures" EntityType="Enferno.Storm.Entities.Data.ProductParametricCulture">
+          <NavigationPropertyBinding Path="ProductParametric" Target="ProductParametrics"/>
+        </EntitySet>
+        <EntitySet Name="ParametricMultiples" EntityType="Enferno.Storm.Entities.Data.ParametricMultiple">
+          <NavigationPropertyBinding Path="Parametric" Target="Parametics"/>
+          <NavigationPropertyBinding Path="ParametricMultipleCulture" Target="ParametricMultipleCultures"/>
+          <NavigationPropertyBinding Path="ProductParametricMultiple" Target="ProductParametricMultiples"/>
+        </EntitySet>
+        <EntitySet Name="ParametricMultipleCultures" EntityType="Enferno.Storm.Entities.Data.ParametricMultipleCulture">
+          <NavigationPropertyBinding Path="ParametricMultiple" Target="ParametricMultiples"/>
+        </EntitySet>
+        <EntitySet Name="ProductParametricMultiples" EntityType="Enferno.Storm.Entities.Data.ProductParametricMultiple">
+          <NavigationPropertyBinding Path="ParametricMultiple" Target="ParametricMultiples"/>
+          <NavigationPropertyBinding Path="ProductParametric" Target="ProductParametrics"/>
+          <NavigationPropertyBinding Path="Product" Target="Products"/>
+          <NavigationPropertyBinding Path="Parametric" Target="Parametics"/>
+        </EntitySet>
+        <EntitySet Name="CategoryParametrics" EntityType="Enferno.Storm.Entities.Data.CategoryParametric">
+          <NavigationPropertyBinding Path="Parametric" Target="Parametics"/>
+          <NavigationPropertyBinding Path="ParametricGroup" Target="ParameticGroups"/>
+        </EntitySet>
+        <EntitySet Name="ExternalContentParametricCultures" EntityType="Enferno.Storm.Entities.Data.ExternalContentParametricCulture">
+          <NavigationPropertyBinding Path="ExternalContentParametric" Target="ExternalContentParametrics"/>
+        </EntitySet>
+        <EntitySet Name="ExternalContentParametricGroups" EntityType="Enferno.Storm.Entities.Data.ExternalContentParametricGroup">
+          <NavigationPropertyBinding Path="ExternalContent" Target="ExternalContents"/>
+          <NavigationPropertyBinding Path="ExternalContentParametricGroupCulture" Target="ExternalContentParametricGroupCultures"/>
+          <NavigationPropertyBinding Path="ParametricGroup" Target="ParameticGroups"/>
+        </EntitySet>
+        <EntitySet Name="ExternalContentParametricGroupCultures" EntityType="Enferno.Storm.Entities.Data.ExternalContentParametricGroupCulture">
+          <NavigationPropertyBinding Path="ExternalContentParametricGroup" Target="ExternalContentParametricGroups"/>
+        </EntitySet>
+        <EntitySet Name="SupplierProductSkus" EntityType="Enferno.Storm.Entities.Data.SupplierProductSku">
+          <NavigationPropertyBinding Path="SupplierProductSkuClient" Target="SupplierProductSkuClients"/>
+          <NavigationPropertyBinding Path="SupplierProductSkuCulture" Target="SupplierProductSkuCultures"/>
+          <NavigationPropertyBinding Path="SupplierProductSkuPriceList" Target="SupplierProductSkuPriceLists"/>
+          <NavigationPropertyBinding Path="SupplierProductSkuOnHand" Target="SupplierProductSkuOnHands"/>
+        </EntitySet>
+        <EntitySet Name="SupplierProductSkuCultures" EntityType="Enferno.Storm.Entities.Data.SupplierProductSkuCulture">
+          <NavigationPropertyBinding Path="SupplierProductSku" Target="SupplierProductSkus"/>
+        </EntitySet>
+        <EntitySet Name="SupplierProductSkuClients" EntityType="Enferno.Storm.Entities.Data.SupplierProductSkuClient">
+          <NavigationPropertyBinding Path="SupplierProductSku" Target="SupplierProductSkus"/>
+          <NavigationPropertyBinding Path="Product" Target="Products"/>
+        </EntitySet>
+        <EntitySet Name="SupplierProductSkuPriceLists" EntityType="Enferno.Storm.Entities.Data.SupplierProductSkuPriceList">
+          <NavigationPropertyBinding Path="SupplierPriceList" Target="SupplierPriceLists"/>
+          <NavigationPropertyBinding Path="SupplierProductSku" Target="SupplierProductSkus"/>
+        </EntitySet>
+        <EntitySet Name="SupplierPriceLists" EntityType="Enferno.Storm.Entities.Data.SupplierPriceList">
+          <NavigationPropertyBinding Path="SupplierPriceListClient" Target="SupplierPriceListClients"/>
+          <NavigationPropertyBinding Path="SupplierPriceListWarehouse" Target="SupplierPriceListWarehouses"/>
+          <NavigationPropertyBinding Path="SupplierProductSkuPriceList" Target="SupplierProductSkuPriceLists"/>
+        </EntitySet>
+        <EntitySet Name="SupplierPriceListClients" EntityType="Enferno.Storm.Entities.Data.SupplierPriceListClient">
+          <NavigationPropertyBinding Path="SupplierPriceList" Target="SupplierPriceLists"/>
+        </EntitySet>
+        <EntitySet Name="SupplierPriceListWarehouses" EntityType="Enferno.Storm.Entities.Data.SupplierPriceListWarehouse">
+          <NavigationPropertyBinding Path="SupplierPriceList" Target="SupplierPriceLists"/>
+          <NavigationPropertyBinding Path="SupplierPriceListWarehouseLocation" Target="SupplierPriceListWarehouseLocations"/>
+          <NavigationPropertyBinding Path="Warehouse" Target="Warehouses"/>
+        </EntitySet>
+        <EntitySet Name="Warehouses" EntityType="Enferno.Storm.Entities.Data.Warehouse">
+          <NavigationPropertyBinding Path="ClientWarehouse" Target="ClientWarehouses"/>
+          <NavigationPropertyBinding Path="ClientWarehouseLocation" Target="ClientWarehouseLocations"/>
+          <NavigationPropertyBinding Path="SupplierPriceListWarehouse" Target="SupplierPriceListWarehouses"/>
+          <NavigationPropertyBinding Path="SupplierProductSkuOnHand" Target="SupplierProductSkuOnHands"/>
+          <NavigationPropertyBinding Path="SupplierWarehouse" Target="SupplierWarehouses"/>
+          <NavigationPropertyBinding Path="SupplierWarehouseLocation" Target="SupplierWarehouseLocations"/>
+        </EntitySet>
+        <EntitySet Name="SupplierPriceListWarehouseLocations" EntityType="Enferno.Storm.Entities.Data.SupplierPriceListWarehouseLocation">
+          <NavigationPropertyBinding Path="SupplierPriceListWarehouse" Target="SupplierPriceListWarehouses"/>
+          <NavigationPropertyBinding Path="WarehouseLocation" Target="WarehouseLocations"/>
+        </EntitySet>
+        <EntitySet Name="WarehouseLocations" EntityType="Enferno.Storm.Entities.Data.WarehouseLocation">
+          <NavigationPropertyBinding Path="ClientWarehouseLocation" Target="ClientWarehouseLocations"/>
+          <NavigationPropertyBinding Path="SupplierPriceListWarehouseLocation" Target="SupplierPriceListWarehouseLocations"/>
+          <NavigationPropertyBinding Path="SupplierProductSkuOnHand" Target="SupplierProductSkuOnHands"/>
+          <NavigationPropertyBinding Path="SupplierWarehouseLocation" Target="SupplierWarehouseLocations"/>
+        </EntitySet>
+        <EntitySet Name="SupplierProductSkuOnHands" EntityType="Enferno.Storm.Entities.Data.SupplierProductSkuOnHand">
+          <NavigationPropertyBinding Path="Warehouse" Target="Warehouses"/>
+          <NavigationPropertyBinding Path="WarehouseLocation" Target="WarehouseLocations"/>
+          <NavigationPropertyBinding Path="SupplierProductSku" Target="SupplierProductSkus"/>
+        </EntitySet>
+        <EntitySet Name="ClientWarehouseLocations" EntityType="Enferno.Storm.Entities.Data.ClientWarehouseLocation">
+          <NavigationPropertyBinding Path="Warehouse" Target="Warehouses"/>
+          <NavigationPropertyBinding Path="WarehouseLocation" Target="WarehouseLocations"/>
+        </EntitySet>
+        <EntitySet Name="ClientWarehouses" EntityType="Enferno.Storm.Entities.Data.ClientWarehouse">
+          <NavigationPropertyBinding Path="Warehouse" Target="Warehouses"/>
+        </EntitySet>
+        <EntitySet Name="SupplierWarehouses" EntityType="Enferno.Storm.Entities.Data.SupplierWarehouse">
+          <NavigationPropertyBinding Path="Warehouse" Target="Warehouses"/>
+        </EntitySet>
+        <EntitySet Name="SupplierWarehouseLocations" EntityType="Enferno.Storm.Entities.Data.SupplierWarehouseLocation">
+          <NavigationPropertyBinding Path="Warehouse" Target="Warehouses"/>
+          <NavigationPropertyBinding Path="WarehouseLocation" Target="WarehouseLocations"/>
+        </EntitySet>
+        <EntitySet Name="SalesAreas" EntityType="Enferno.Storm.Entities.Core.SalesArea">
+          <NavigationPropertyBinding Path="VatCode" Target="VatCodes"/>
+        </EntitySet>
+        <EntitySet Name="Variants" EntityType="Enferno.Storm.Entities.Data.Variant">
+          <NavigationPropertyBinding Path="Product" Target="Products"/>
+          <NavigationPropertyBinding Path="VariantCulture" Target="VariantCultures"/>
+          <NavigationPropertyBinding Path="VariantGroup" Target="VariantGroups"/>
+        </EntitySet>
+        <EntitySet Name="VariantCultures" EntityType="Enferno.Storm.Entities.Data.VariantCulture">
+          <NavigationPropertyBinding Path="Variant" Target="Variants"/>
+        </EntitySet>
+        <EntitySet Name="VariantGroups" EntityType="Enferno.Storm.Entities.Data.VariantGroup">
+          <NavigationPropertyBinding Path="Variant" Target="Variants"/>
+          <NavigationPropertyBinding Path="VariantGroupCulture" Target="VariantGroupCultures"/>
+          <NavigationPropertyBinding Path="VariantGroupType" Target="VariantGroupTypes"/>
+        </EntitySet>
+        <EntitySet Name="VariantGroupCultures" EntityType="Enferno.Storm.Entities.Data.VariantGroupCulture">
+          <NavigationPropertyBinding Path="VariantGroup" Target="VariantGroups"/>
+        </EntitySet>
+        <EntitySet Name="VariantGroupTypes" EntityType="Enferno.Storm.Entities.Data.VariantGroupType">
+          <NavigationPropertyBinding Path="VariantGroup" Target="VariantGroups"/>
+          <NavigationPropertyBinding Path="VariantType" Target="VariantTypes"/>
+        </EntitySet>
+        <EntitySet Name="VariantTypes" EntityType="Enferno.Storm.Entities.Data.VariantType">
+          <NavigationPropertyBinding Path="VariantGroupType" Target="VariantGroupTypes"/>
+          <NavigationPropertyBinding Path="VariantTypeCulture" Target="VariantTypeCultures"/>
+        </EntitySet>
+        <EntitySet Name="VariantTypeCultures" EntityType="Enferno.Storm.Entities.Data.VariantTypeCulture">
+          <NavigationPropertyBinding Path="VariantType" Target="VariantTypes"/>
+        </EntitySet>
+        <EntitySet Name="Currencies" EntityType="Enferno.Storm.Entities.Core.Currency"/>
+        <EntitySet Name="VatCodes" EntityType="Enferno.Storm.Entities.Core.VatCode">
+          <NavigationPropertyBinding Path="VatCodeCulture" Target="VatCodeCultures"/>
+          <NavigationPropertyBinding Path="SalesArea" Target="SalesAreas"/>
+        </EntitySet>
+        <EntitySet Name="VatCodeCultures" EntityType="Enferno.Storm.Entities.Core.VatCodeCulture">
+          <NavigationPropertyBinding Path="VatCode" Target="VatCodes"/>
+        </EntitySet>
+        <EntitySet Name="ClientProductSkuStatuses" EntityType="Enferno.Storm.Entities.Core.ClientProductSkuStatus">
+          <NavigationPropertyBinding Path="ClientProductSkuStatusCulture" Target="ClientProductSkuStatusCultures"/>
+        </EntitySet>
+        <EntitySet Name="ClientProductSkuStatusCultures" EntityType="Enferno.Storm.Entities.Core.ClientProductSkuStatusCulture">
+          <NavigationPropertyBinding Path="ClientProductSkuStatus" Target="ClientProductSkuStatuses"/>
+        </EntitySet>
+        <EntitySet Name="Applications" EntityType="Enferno.Storm.Entities.Core.Application">
+          <NavigationPropertyBinding Path="StormAccount" Target="StormAccounts"/>
+        </EntitySet>
+        <EntitySet Name="ApplicationCultures" EntityType="Enferno.Storm.Entities.Data.ApplicationCulture"/>
+        <EntitySet Name="ApplicationCurrencies" EntityType="Enferno.Storm.Entities.Data.ApplicationCurrency"/>
+        <EntitySet Name="ApplicationSalesAreas" EntityType="Enferno.Storm.Entities.Data.ApplicationSalesArea"/>
+        <EntitySet Name="StormAccounts" EntityType="Enferno.Storm.Entities.Core.StormAccount">
+          <NavigationPropertyBinding Path="Application" Target="Applications"/>
+          <NavigationPropertyBinding Path="ApplicationAccountStatus" Target="ApplicationAccountStatuses"/>
+          <NavigationPropertyBinding Path="ApplicationAccountType" Target="ApplicationAccountTypes"/>
+        </EntitySet>
+        <EntitySet Name="ApplicationAccountStatuses" EntityType="Enferno.Storm.Entities.Core.ApplicationAccountStatus">
+          <NavigationPropertyBinding Path="StormAccount" Target="StormAccounts"/>
+          <NavigationPropertyBinding Path="ApplicationAccountStatusCulture" Target="ApplicationAccountStatusCultures"/>
+        </EntitySet>
+        <EntitySet Name="ApplicationAccountStatusCultures" EntityType="Enferno.Storm.Entities.Core.ApplicationAccountStatusCulture">
+          <NavigationPropertyBinding Path="ApplicationAccountStatus" Target="ApplicationAccountStatuses"/>
+        </EntitySet>
+        <EntitySet Name="ApplicationAccountTypes" EntityType="Enferno.Storm.Entities.Core.ApplicationAccountType">
+          <NavigationPropertyBinding Path="StormAccount" Target="StormAccounts"/>
+          <NavigationPropertyBinding Path="ApplicationAccountTypeCulture" Target="ApplicationAccountTypeCultures"/>
+        </EntitySet>
+        <EntitySet Name="ApplicationAccountTypeCultures" EntityType="Enferno.Storm.Entities.Core.ApplicationAccountTypeCulture">
+          <NavigationPropertyBinding Path="ApplicationAccountType" Target="ApplicationAccountTypes"/>
+        </EntitySet>
+        <EntitySet Name="ClientManufacturers" EntityType="Enferno.Storm.Entities.Data.ClientManufacturer">
+          <NavigationPropertyBinding Path="Manufacturer" Target="Manufacturers"/>
+        </EntitySet>
+        <EntitySet Name="Manufacturers" EntityType="Enferno.Storm.Entities.Data.Manufacturer">
+          <NavigationPropertyBinding Path="ClientManufacturer" Target="ClientManufacturers"/>
+          <NavigationPropertyBinding Path="Corporation" Target="Corporations"/>
+        </EntitySet>
+        <EntitySet Name="Corporations" EntityType="Enferno.Storm.Entities.Data.Corporation">
+          <NavigationPropertyBinding Path="Manufacturer" Target="Manufacturers"/>
+          <NavigationPropertyBinding Path="Supplier" Target="Suppliers"/>
+        </EntitySet>
+        <EntitySet Name="Suppliers" EntityType="Enferno.Storm.Entities.Data.Supplier">
+          <NavigationPropertyBinding Path="ClientSupplier" Target="ClientSuppliers"/>
+          <NavigationPropertyBinding Path="Corporation" Target="Corporations"/>
+        </EntitySet>
+        <EntitySet Name="ClientSuppliers" EntityType="Enferno.Storm.Entities.Data.ClientSupplier">
+          <NavigationPropertyBinding Path="ClientSupplierAddress" Target="ClientSupplierAddresss"/>
+          <NavigationPropertyBinding Path="ClientSupplierContact" Target="ClientSupplierContacts"/>
+          <NavigationPropertyBinding Path="Supplier" Target="Suppliers"/>
+        </EntitySet>
+        <EntitySet Name="ClientSupplierAddresss" EntityType="Enferno.Storm.Entities.Data.ClientSupplierAddress">
+          <NavigationPropertyBinding Path="ClientSupplier" Target="ClientSuppliers"/>
+        </EntitySet>
+        <EntitySet Name="ClientSupplierContacts" EntityType="Enferno.Storm.Entities.Data.ClientSupplierContact">
+          <NavigationPropertyBinding Path="ClientSupplier" Target="ClientSuppliers"/>
+          <NavigationPropertyBinding Path="ClientSupplierContactResponsibility" Target="ClientSupplierContactResponsibilities"/>
+        </EntitySet>
+        <EntitySet Name="ClientSupplierContactResponsibilities" EntityType="Enferno.Storm.Entities.Data.ClientSupplierContactResponsibility">
+          <NavigationPropertyBinding Path="ClientSupplierContact" Target="ClientSupplierContacts"/>
+        </EntitySet>
+        <EntitySet Name="ApplicationPriceLists" EntityType="Enferno.Storm.Entities.Data.ApplicationPriceList"/>
+      </EntityContainer>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>

@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx">
+  <edmx:DataServices m:DataServiceVersion="3.0" m:MaxDataServiceVersion="3.0" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">
+    <Schema Namespace="Mongo" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <EntityType Name="Flickr">
+        <Key>
+          <PropertyRef Name="db_id" />
+        </Key>
+        <Property Name="db_id" Type="Edm.String" Nullable="false" />
+        <Property Name="title" Type="Edm.String" />
+        <Property Name="link" Type="Edm.String" />
+        <Property Name="description" Type="Edm.String" />
+        <Property Name="modified" Type="Edm.String" />
+        <Property Name="generator" Type="Edm.String" />
+        <Property Name="items" Type="Collection(Mongo.Flickr__items)" Nullable="false" />
+      </EntityType>
+      <ComplexType Name="Flickr__items">
+        <Property Name="title" Type="Edm.String" />
+        <Property Name="link" Type="Edm.String" />
+        <Property Name="media" Type="Mongo.Flickr__items__media" />
+        <Property Name="date_taken" Type="Edm.String" />
+        <Property Name="description" Type="Edm.String" />
+        <Property Name="published" Type="Edm.String" />
+        <Property Name="author" Type="Edm.String" />
+        <Property Name="author_id" Type="Edm.String" />
+        <Property Name="tags" Type="Edm.String" />
+      </ComplexType>
+      <ComplexType Name="Flickr__items__media">
+        <Property Name="m" Type="Edm.String" />
+      </ComplexType>
+      <EntityContainer Name="MongoContext" m:IsDefaultEntityContainer="true">
+        <EntitySet Name="Flickr" EntityType="Mongo.Flickr" />
+      </EntityContainer>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>

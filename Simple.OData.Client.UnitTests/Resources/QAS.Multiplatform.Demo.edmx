@@ -1,0 +1,148 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx">
+  <edmx:DataServices m:DataServiceVersion="3.0" m:MaxDataServiceVersion="3.0" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata">
+    <Schema Namespace="QAS.Multiplatform.Demo.Models" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <EntityType Name="WorkActivityReportModel">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Code" Type="Edm.String" />
+        <Property Name="StartDate" Type="Edm.DateTime" Nullable="false" />
+        <Property Name="EndDate" Type="Edm.DateTime" Nullable="false" />
+        <Property Name="Description" Type="Edm.String" />
+        <Property Name="Type" Type="Edm.Guid" Nullable="false" />
+        <Property Name="Location" Type="QAS.Multiplatform.Demo.Models.GeoLocationModel" />
+        <Property Name="WorkTaskId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="WorkerId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="Id" Type="Edm.Guid" Nullable="false" />
+      </EntityType>
+      <EntityType Name="WorkerModel">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="FirstName" Type="Edm.String" />
+        <Property Name="LastName" Type="Edm.String" />
+        <Property Name="LoginId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="Id" Type="Edm.Guid" Nullable="false" />
+      </EntityType>
+      <EntityType Name="WorkTaskAttachmentModel">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Type" Type="Edm.Guid" Nullable="false" />
+        <Property Name="FileName" Type="Edm.String" />
+        <Property Name="WorkTaskId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="Id" Type="Edm.Guid" Nullable="false" />
+      </EntityType>
+      <EntityType Name="WorkTaskModel">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Code" Type="Edm.String" />
+        <Property Name="StartDate" Type="Edm.DateTime" Nullable="false" />
+        <Property Name="EndDate" Type="Edm.DateTime" Nullable="false" />
+        <Property Name="State" Type="Edm.Guid" Nullable="false" />
+        <Property Name="Location" Type="QAS.Multiplatform.Demo.Models.GeoLocationModel" />
+        <Property Name="WorkerId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="CustomerId" Type="Edm.Guid" Nullable="false" />
+        <Property Name="Id" Type="Edm.Guid" Nullable="false" />
+        <NavigationProperty Name="Attachments" Relationship="QAS.Multiplatform.Demo.Models.QAS_Multiplatform_Demo_Models_WorkTaskModel_Attachments_QAS_Multiplatform_Demo_Models_WorkTaskAttachmentModel_AttachmentsPartner" ToRole="Attachments" FromRole="AttachmentsPartner" />
+        <NavigationProperty Name="WorkActivityReports" Relationship="QAS.Multiplatform.Demo.Models.QAS_Multiplatform_Demo_Models_WorkTaskModel_WorkActivityReports_QAS_Multiplatform_Demo_Models_WorkActivityReportModel_WorkActivityReportsPartner" ToRole="WorkActivityReports" FromRole="WorkActivityReportsPartner" />
+      </EntityType>
+      <EntityType Name="CustomerModel">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Code" Type="Edm.String" />
+        <Property Name="Name" Type="Edm.String" />
+        <Property Name="Location" Type="QAS.Multiplatform.Demo.Models.GeoLocationModel" />
+        <Property Name="VatId" Type="Edm.String" />
+        <Property Name="Id" Type="Edm.Guid" Nullable="false" />
+        <NavigationProperty Name="ContactPersons" Relationship="QAS.Multiplatform.Demo.Models.QAS_Multiplatform_Demo_Models_CustomerModel_ContactPersons_QAS_Multiplatform_Demo_Models_ContactPersonModel_ContactPersonsPartner" ToRole="ContactPersons" FromRole="ContactPersonsPartner" />
+      </EntityType>
+      <EntityType Name="ContactPersonModel">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="FirstName" Type="Edm.String" />
+        <Property Name="LastName" Type="Edm.String" />
+        <Property Name="Phone" Type="Edm.String" />
+        <Property Name="Email" Type="Edm.String" />
+        <Property Name="Address" Type="QAS.Multiplatform.Demo.Models.AddressModel" />
+        <Property Name="Id" Type="Edm.Guid" Nullable="false" />
+      </EntityType>
+      <EntityType Name="ItemListModel">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Code" Type="Edm.String" />
+        <Property Name="Id" Type="Edm.Guid" Nullable="false" />
+        <NavigationProperty Name="Items" Relationship="QAS.Multiplatform.Demo.Models.QAS_Multiplatform_Demo_Models_ItemListModel_Items_QAS_Multiplatform_Demo_Models_ItemListItemModel_ItemsPartner" ToRole="Items" FromRole="ItemsPartner" />
+      </EntityType>
+      <EntityType Name="ItemListItemModel">
+        <Key>
+          <PropertyRef Name="Id" />
+        </Key>
+        <Property Name="Code" Type="Edm.String" />
+        <Property Name="ItemListID" Type="Edm.Guid" Nullable="false" />
+        <Property Name="Id" Type="Edm.Guid" Nullable="false" />
+      </EntityType>
+      <ComplexType Name="GeoLocationModel">
+        <Property Name="Latitude" Type="Edm.Double" Nullable="false" />
+        <Property Name="Longitude" Type="Edm.Double" Nullable="false" />
+      </ComplexType>
+      <ComplexType Name="AddressModel">
+        <Property Name="Street" Type="Edm.String" />
+        <Property Name="BuildingNumber" Type="Edm.String" />
+        <Property Name="PostalCode" Type="Edm.String" />
+        <Property Name="City" Type="Edm.String" />
+        <Property Name="Region" Type="Edm.String" />
+        <Property Name="Country" Type="Edm.String" />
+      </ComplexType>
+      <Association Name="QAS_Multiplatform_Demo_Models_WorkTaskModel_Attachments_QAS_Multiplatform_Demo_Models_WorkTaskAttachmentModel_AttachmentsPartner">
+        <End Type="QAS.Multiplatform.Demo.Models.WorkTaskAttachmentModel" Role="Attachments" Multiplicity="*" />
+        <End Type="QAS.Multiplatform.Demo.Models.WorkTaskModel" Role="AttachmentsPartner" Multiplicity="0..1" />
+      </Association>
+      <Association Name="QAS_Multiplatform_Demo_Models_WorkTaskModel_WorkActivityReports_QAS_Multiplatform_Demo_Models_WorkActivityReportModel_WorkActivityReportsPartner">
+        <End Type="QAS.Multiplatform.Demo.Models.WorkActivityReportModel" Role="WorkActivityReports" Multiplicity="*" />
+        <End Type="QAS.Multiplatform.Demo.Models.WorkTaskModel" Role="WorkActivityReportsPartner" Multiplicity="0..1" />
+      </Association>
+      <Association Name="QAS_Multiplatform_Demo_Models_CustomerModel_ContactPersons_QAS_Multiplatform_Demo_Models_ContactPersonModel_ContactPersonsPartner">
+        <End Type="QAS.Multiplatform.Demo.Models.ContactPersonModel" Role="ContactPersons" Multiplicity="*" />
+        <End Type="QAS.Multiplatform.Demo.Models.CustomerModel" Role="ContactPersonsPartner" Multiplicity="0..1" />
+      </Association>
+      <Association Name="QAS_Multiplatform_Demo_Models_ItemListModel_Items_QAS_Multiplatform_Demo_Models_ItemListItemModel_ItemsPartner">
+        <End Type="QAS.Multiplatform.Demo.Models.ItemListItemModel" Role="Items" Multiplicity="*" />
+        <End Type="QAS.Multiplatform.Demo.Models.ItemListModel" Role="ItemsPartner" Multiplicity="0..1" />
+      </Association>
+    </Schema>
+    <Schema Namespace="Default" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+      <EntityContainer Name="Container" m:IsDefaultEntityContainer="true">
+        <EntitySet Name="WorkActivityReportModel" EntityType="QAS.Multiplatform.Demo.Models.WorkActivityReportModel" />
+        <EntitySet Name="WorkerModel" EntityType="QAS.Multiplatform.Demo.Models.WorkerModel" />
+        <EntitySet Name="WorkTaskAttachmentModel" EntityType="QAS.Multiplatform.Demo.Models.WorkTaskAttachmentModel" />
+        <EntitySet Name="WorkTaskModel" EntityType="QAS.Multiplatform.Demo.Models.WorkTaskModel" />
+        <EntitySet Name="CustomerModel" EntityType="QAS.Multiplatform.Demo.Models.CustomerModel" />
+        <EntitySet Name="ContactPersonModel" EntityType="QAS.Multiplatform.Demo.Models.ContactPersonModel" />
+        <EntitySet Name="ItemListModel" EntityType="QAS.Multiplatform.Demo.Models.ItemListModel" />
+        <EntitySet Name="ItemListItemModel" EntityType="QAS.Multiplatform.Demo.Models.ItemListItemModel" />
+        <AssociationSet Name="QAS_Multiplatform_Demo_Models_WorkTaskModel_Attachments_QAS_Multiplatform_Demo_Models_WorkTaskAttachmentModel_AttachmentsPartnerSet" Association="QAS.Multiplatform.Demo.Models.QAS_Multiplatform_Demo_Models_WorkTaskModel_Attachments_QAS_Multiplatform_Demo_Models_WorkTaskAttachmentModel_AttachmentsPartner">
+          <End Role="AttachmentsPartner" EntitySet="WorkTaskModel" />
+          <End Role="Attachments" EntitySet="WorkTaskAttachmentModel" />
+        </AssociationSet>
+        <AssociationSet Name="QAS_Multiplatform_Demo_Models_WorkTaskModel_WorkActivityReports_QAS_Multiplatform_Demo_Models_WorkActivityReportModel_WorkActivityReportsPartnerSet" Association="QAS.Multiplatform.Demo.Models.QAS_Multiplatform_Demo_Models_WorkTaskModel_WorkActivityReports_QAS_Multiplatform_Demo_Models_WorkActivityReportModel_WorkActivityReportsPartner">
+          <End Role="WorkActivityReportsPartner" EntitySet="WorkTaskModel" />
+          <End Role="WorkActivityReports" EntitySet="WorkActivityReportModel" />
+        </AssociationSet>
+        <AssociationSet Name="QAS_Multiplatform_Demo_Models_CustomerModel_ContactPersons_QAS_Multiplatform_Demo_Models_ContactPersonModel_ContactPersonsPartnerSet" Association="QAS.Multiplatform.Demo.Models.QAS_Multiplatform_Demo_Models_CustomerModel_ContactPersons_QAS_Multiplatform_Demo_Models_ContactPersonModel_ContactPersonsPartner">
+          <End Role="ContactPersonsPartner" EntitySet="CustomerModel" />
+          <End Role="ContactPersons" EntitySet="ContactPersonModel" />
+        </AssociationSet>
+        <AssociationSet Name="QAS_Multiplatform_Demo_Models_ItemListModel_Items_QAS_Multiplatform_Demo_Models_ItemListItemModel_ItemsPartnerSet" Association="QAS.Multiplatform.Demo.Models.QAS_Multiplatform_Demo_Models_ItemListModel_Items_QAS_Multiplatform_Demo_Models_ItemListItemModel_ItemsPartner">
+          <End Role="ItemsPartner" EntitySet="ItemListModel" />
+          <End Role="Items" EntitySet="ItemListItemModel" />
+        </AssociationSet>
+      </EntityContainer>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>
