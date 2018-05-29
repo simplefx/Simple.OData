@@ -19,10 +19,9 @@ namespace Simple.OData.Client.V4.Adapter
 
         public Task<Stream> GetStreamAsync()
         {
-            var responseContent = _response.Content as StreamContent;
-            if (responseContent != null)
+            if (_response.Content != null)
             {
-                return responseContent.ReadAsStreamAsync();
+                return _response.Content.ReadAsStreamAsync();
             }
             else
             {
