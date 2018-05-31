@@ -9,10 +9,10 @@ namespace Simple.OData.Client.Tests.Core
         string DoubleNumberSuffix { get; }
         string DecimalNumberSuffix { get; }
         string TimeSpanPrefix { get; }
-        string GetDateTimeOffsetFormat(string text, bool escapeDataString = false);
-        string GetGuidFormat(string text, bool escapeDataString = false);
-        string GetEnumFormat(object value, Type enumType, string ns, bool prefixFree = false, bool escapeDataString = false);
-        string GetContainsFormat(string item, string text, bool escapeDataString = false);
+        string GetDateTimeOffsetFormat(string text, bool escapeString = false);
+        string GetGuidFormat(string text, bool escapeString = false);
+        string GetEnumFormat(object value, Type enumType, string ns, bool prefixFree = false, bool escapeString = false);
+        string GetContainsFormat(string item, string text, bool escapeString = false);
     }
 
     class ODataV3Format : IFormatSettings
@@ -23,31 +23,31 @@ namespace Simple.OData.Client.Tests.Core
         public string DecimalNumberSuffix { get { return "M"; } }
         public string TimeSpanPrefix { get { return "time"; } }
 
-        public string GetDateTimeOffsetFormat(string text, bool escapeDataString = false)
+        public string GetDateTimeOffsetFormat(string text, bool escapeString = false)
         {
             var result = string.Format("datetimeoffset'{0}'", text);
-            if (escapeDataString)
+            if (escapeString)
                 result = Uri.EscapeDataString(result);
             return result;
         }
 
-        public string GetGuidFormat(string text, bool escapeDataString = false)
+        public string GetGuidFormat(string text, bool escapeString = false)
         {
             var result = string.Format("guid'{0}'", text);
-            if (escapeDataString)
+            if (escapeString)
                 result = Uri.EscapeDataString(result);
             return result;
         }
 
-        public string GetEnumFormat(object value, Type enumType, string ns, bool prefixFree = false, bool escapeDataString = false)
+        public string GetEnumFormat(object value, Type enumType, string ns, bool prefixFree = false, bool escapeString = false)
         {
             return Convert.ToInt32(value).ToString();
         }
 
-        public string GetContainsFormat(string item, string text, bool escapeDataString = false)
+        public string GetContainsFormat(string item, string text, bool escapeString = false)
         {
             var result = string.Format("substringof('{0}',{1})", text, item);
-            if (escapeDataString)
+            if (escapeString)
                 result = Uri.EscapeDataString(result);
             return result;
         }
@@ -65,30 +65,30 @@ namespace Simple.OData.Client.Tests.Core
         public string DecimalNumberSuffix { get { return string.Empty; } }
         public string TimeSpanPrefix { get { return "duration"; } }
 
-        public string GetDateTimeOffsetFormat(string text, bool escapeDataString = false)
+        public string GetDateTimeOffsetFormat(string text, bool escapeString = false)
         {
-            return escapeDataString ? Uri.EscapeDataString(text) : text;
+            return escapeString ? Uri.EscapeDataString(text) : text;
         }
 
-        public string GetGuidFormat(string text, bool escapeDataString = false)
+        public string GetGuidFormat(string text, bool escapeString = false)
         {
-            return escapeDataString ? Uri.EscapeDataString(text) : text;
+            return escapeString ? Uri.EscapeDataString(text) : text;
         }
 
-        public string GetEnumFormat(object value, Type enumType, string ns, bool prefixFree = false, bool escapeDataString = false)
+        public string GetEnumFormat(object value, Type enumType, string ns, bool prefixFree = false, bool escapeString = false)
         {
             var result = prefixFree
                 ? string.Format("'{0}'", Enum.ToObject(enumType, value))
                 : string.Format("{0}.{1}'{2}'", ns, enumType.Name, Enum.ToObject(enumType, value));
-            if (escapeDataString)
+            if (escapeString)
                 result = Uri.EscapeDataString(result);
             return result;
         }
 
-        public string GetContainsFormat(string item, string text, bool escapeDataString = false)
+        public string GetContainsFormat(string item, string text, bool escapeString = false)
         {
             var result = string.Format("contains({0},'{1}')", item, text);
-            if (escapeDataString)
+            if (escapeString)
                 result = Uri.EscapeDataString(result);
             return result;
         }
