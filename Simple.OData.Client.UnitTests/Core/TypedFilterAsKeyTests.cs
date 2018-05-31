@@ -268,6 +268,16 @@ namespace Simple.OData.Client.Tests.Core
         }
 
         [Fact]
+        public void FindByStringKeyWithSpaceAndPunctuation()
+        {
+            var command = _client
+                .For<Product>()
+                .Key("CRONUS USA, Inc.");
+            var commandText = command.GetCommandTextAsync().Result;
+            Assert.Equal("'CRONUS%20USA%2C%20Inc.'", commandText);
+        }
+
+        [Fact]
         public void FindByGuidFilterEqual()
         {
             var key = new Guid("D8F3F70F-C185-49AB-9A92-0C86C344AB1B");

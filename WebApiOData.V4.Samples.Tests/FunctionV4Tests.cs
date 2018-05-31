@@ -7,7 +7,7 @@ using Simple.OData.Client;
 using Simple.OData.Client.Tests;
 using Xunit;
 using WebApiOData.V4.Samples.Models;
-#if NET452
+#if NET452 && !MOCK_HTTP
 using Microsoft.Owin.Testing;
 using WebApiOData.V4.Samples.Startups;
 #endif
@@ -16,7 +16,7 @@ namespace WebApiOData.V4.Samples.Tests
 {
     public class FunctionV4Tests : IDisposable
     {
-#if NET452
+#if NET452 && !MOCK_HTTP
         private readonly TestServer _server;
 
         public FunctionV4Tests()
@@ -41,7 +41,7 @@ namespace WebApiOData.V4.Samples.Tests
                 BaseUri = new Uri("http://localhost/functions"),
                 MetadataDocument = GetMetadataDocument(),
                 PayloadFormat = ODataPayloadFormat.Json,
-#if NET452
+#if NET452 && !MOCK_HTTP
                 OnCreateMessageHandler = () => _server.Handler,
 #endif
                 OnTrace = (x, y) => Console.WriteLine(string.Format(x, y)),

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-#if NET452
+#if NET452 && !MOCK_HTTP
 using System.ServiceModel.Web;
 #endif
 using System.Text;
@@ -11,7 +11,7 @@ using System.Threading;
 
 namespace Simple.OData.Client.Tests
 {
-#if NET452
+#if NET452 && !MOCK_HTTP
     public class TestService : IDisposable
     {
         private WebServiceHost _host;

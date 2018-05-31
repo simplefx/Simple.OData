@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-#if NET452
+#if NET452 && !MOCK_HTTP
 using Microsoft.Owin.Testing;
 #endif
 using Xunit;
@@ -16,7 +16,7 @@ namespace WebApiOData.V3.Samples.Tests
 {
     public class ActionV3Tests : IDisposable
     {
-#if NET452
+#if NET452 && !MOCK_HTTP
         private readonly TestServer _server;
 
         public ActionV3Tests()
@@ -41,7 +41,7 @@ namespace WebApiOData.V3.Samples.Tests
                 BaseUri = new Uri("http://localhost/actions"),
                 MetadataDocument = GetMetadataDocument(),
                 PayloadFormat = ODataPayloadFormat.Json,
-#if NET452
+#if NET452 && !MOCK_HTTP
                 OnCreateMessageHandler = () => _server.Handler,
 #endif
                 OnTrace = (x, y) => Console.WriteLine(string.Format(x, y)),

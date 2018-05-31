@@ -7,7 +7,7 @@ using System.Reflection;
 using System.Threading.Tasks;
 
 using Xunit;
-#if !MOCK_HTTP
+#if NET452 && !MOCK_HTTP
 using Simple.OData.NorthwindModel;
 #endif
 
@@ -16,7 +16,7 @@ namespace Simple.OData.Client.Tests
     public class TestBase : IDisposable
     {
         protected Uri _serviceUri;
-#if !MOCK_HTTP
+#if NET452 && !MOCK_HTTP
         protected TestService _service;
 #endif
         protected IODataClient _client;
@@ -27,7 +27,7 @@ namespace Simple.OData.Client.Tests
             _readOnlyTests = readOnlyTests;
 #if MOCK_HTTP
             _serviceUri = new Uri("http://localhost/");
-#else
+#elif NET452
             _service = new TestService(typeof(NorthwindService));
             _serviceUri = _service.ServiceUri;
 #endif
@@ -64,7 +64,7 @@ namespace Simple.OData.Client.Tests
 
         public void Dispose()
         {
-#if !MOCK_HTTP
+#if NET452 && !MOCK_HTTP
             if (_client != null && !_readOnlyTests)
             {
                 DeleteTestData().Wait();
@@ -85,7 +85,6 @@ namespace Simple.OData.Client.Tests
 #else
             return null;
 #endif
-
         }
 
         private async Task DeleteTestData()
