@@ -25,11 +25,11 @@ namespace Simple.OData.Client.Tests
         protected TestBase(bool readOnlyTests = false)
         {
             _readOnlyTests = readOnlyTests;
-#if MOCK_HTTP
-            _serviceUri = new Uri("http://localhost/");
-#elif NET452
+#if NET452 && !MOCK_HTTP
             _service = new TestService(typeof(NorthwindService));
             _serviceUri = _service.ServiceUri;
+#else
+            _serviceUri = new Uri("http://localhost/");
 #endif
             _client = new ODataClient(CreateDefaultSettings());
         }
