@@ -14,7 +14,7 @@ namespace Simple.OData.Client
             _session = session;
         }
 
-        public abstract string ConvertValueToUriLiteral(object value, bool escapeDataString);
+        public abstract string ConvertValueToUriLiteral(object value, bool escapeString);
         public abstract FunctionFormat FunctionFormat { get; }
 
         public string FormatCommand(FluentCommand command)
@@ -151,15 +151,10 @@ namespace Simple.OData.Client
         protected abstract void FormatInlineCount(IList<string> commandClauses);
 
         private const string ReservedUriCharacters = @"!*'();:@&=+$,/?#[] ";
-        private const string ReservedUriCharactersPriorNet45 = @";:@&=+$,/?#[] ";
 
         private string EscapeUnescapedString(string text)
         {
-            var reserverdUriCharacters = Uri.EscapeDataString("'") == "'"
-                ? ReservedUriCharactersPriorNet45
-                : ReservedUriCharacters;
-
-            return text.ToCharArray().Intersect(reserverdUriCharacters.ToCharArray()).Any()
+            return text.ToCharArray().Intersect(ReservedUriCharacters.ToCharArray()).Any()
                 ? Uri.EscapeDataString(text)
                 : text;
         }

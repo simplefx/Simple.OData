@@ -7,7 +7,7 @@ namespace Simple.OData.Client
         string FormatCommand(FluentCommand command);
         string FormatNavigationPath(EntityCollection entityCollection, string path);
         string ConvertKeyValuesToUriLiteral(IDictionary<string, object> key, bool skipKeyNameForSingleValue);
-        string ConvertValueToUriLiteral(object value, bool escapeDataString);
+        string ConvertValueToUriLiteral(object value, bool escapeString);
         FunctionFormat FunctionFormat { get; }
     }
 }
