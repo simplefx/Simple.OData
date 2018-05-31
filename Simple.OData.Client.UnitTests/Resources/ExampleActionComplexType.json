@@ -1,0 +1,5 @@
+﻿{
+  "@odata.context": "http://localhost/ApiActionExample/odata/$metadata#Microsoft.Dynamics.CRM.ExampleComplex",
+  "SomeProperty": "MyPropertyValue",
+  "SomeOtherProperty": 1
+}

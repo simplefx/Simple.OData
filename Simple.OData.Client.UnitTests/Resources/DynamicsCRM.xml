@@ -10,6 +10,17 @@
   </edmx:Reference>
   <edmx:DataServices>
     <Schema Namespace="Microsoft.Dynamics.CRM" Alias="mscrm" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <ComplexType Name="ExampleComplex">
+        <Property Name="SomeProperty" Type="Edm.String" />
+        <Property Name="SomeOtherProperty" Type="Edm.Int32" Nullable="false" />
+      </ComplexType>
+      <EntityType Name="ExampleEntity">
+        <Key>
+          <PropertyRef Name="ID" />
+        </Key>
+        <Property Name="ID" Type="Edm.Int32" Nullable="false" />
+        <Property Name="SomeProperty" Type="Edm.String" />
+      </EntityType>
       <EntityType Name="crmbaseentity" Abstract="true"/>
       <EntityType Name="accountleads" BaseType="mscrm.crmbaseentity">
         <Key>
@@ -38945,6 +38956,10 @@
         </NavigationProperty>
         <Annotation Term="Org.OData.Core.V1.Description" String="Set of logical rules that define the steps necessary to automate a specific business process, task, or set of actions to be performed."/>
       </EntityType>
+      <Action Name="ExampleAction" IsBound="true">
+        <Parameter Name="bindingParameter" Type="Collection(Microsoft.Dynamics.CRM.ExampleEntity)" />
+        <ReturnType Type="Microsoft.Dynamics.CRM.ExampleComplex" />
+      </Action>
       <Action Name="AddChannelAccessProfilePrivileges">
         <Parameter Name="ChannelAccessProfileId" Type="Edm.Guid" Nullable="false"/>
         <Parameter Name="Privileges" Type="Collection(mscrm.ChannelAccessProfilePrivilege)"/>
@@ -41675,6 +41690,7 @@
         <Annotation Term="Org.OData.Core.V1.Description" String="Logical entity name of the look up entity that the property references"/>
       </Term>
       <EntityContainer Name="System">
+        <EntitySet Name="ExampleEntity" EntityType="Microsoft.Dynamics.CRM.ExampleEntity" />
         <EntitySet Name="accountleadscollection" EntityType="Microsoft.Dynamics.CRM.accountleads">
           <Annotation Term="Org.OData.Capabilities.V1.IndexableByKey" Bool="true"/>
           <Annotation Term="Org.OData.Capabilities.V1.SkipSupported" Bool="false"/>

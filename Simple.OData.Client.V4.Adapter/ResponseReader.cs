@@ -66,8 +66,15 @@ namespace Simple.OData.Client.V4.Adapter
                 }
                 else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Property))
                 {
-                    var property = messageReader.ReadProperty();
-                    return ODataResponse.FromProperty(property.Name, GetPropertyValue(property.Value));
+                    if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Resource))
+                    {
+                        return ODataResponse.FromValueStream(await responseMessage.GetStreamAsync().ConfigureAwait(false), responseMessage is ODataBatchOperationResponseMessage);
+                    }
+                    else
+                    {
+                        var property = messageReader.ReadProperty();
+                        return ODataResponse.FromProperty(property.Name, GetPropertyValue(property.Value));
+                    }
                 }
                 else
                 {

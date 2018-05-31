@@ -36,6 +36,7 @@
     <None Remove="Resources\ClientProductSku.xml" />
     <None Remove="Resources\Colors.edmx" />
     <None Remove="Resources\DynamicsCRM.xml" />
+    <None Remove="Resources\ExampleActionComplexType.json" />
     <None Remove="Resources\Facebook.edmx" />
     <None Remove="Resources\Flickr.edmx" />
     <None Remove="Resources\GoogleMaps.edmx" />
@@ -102,6 +103,7 @@
     <EmbeddedResource Include="Resources\ClientProductSku.xml" />
     <EmbeddedResource Include="Resources\Colors.edmx" />
     <EmbeddedResource Include="Resources\DynamicsCRM.xml" />
+    <EmbeddedResource Include="Resources\ExampleActionComplexType.json" />
     <EmbeddedResource Include="Resources\Facebook.edmx" />
     <EmbeddedResource Include="Resources\Flickr.edmx" />
     <EmbeddedResource Include="Resources\GoogleMaps.edmx" />

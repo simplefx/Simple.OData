@@ -33,6 +33,15 @@ namespace Simple.OData.Client.Tests.Core
             Assert.NotNull(result.Entries.First().LinkAnnotations);
         }
 
+        [Fact]
+        public async Task ExampleActionReturnsComplexType()
+        {
+            var response = SetUpResourceMock("ExampleActionComplexType.json");
+            var responseReader = new ResponseReader(_session, await _client.GetMetadataAsync<IEdmModel>());
+            var result = (await responseReader.GetResponseAsync(response)).Feed;
+            Assert.NotNull(result.Entries.First());
+        }
+
         private IODataResponseMessageAsync SetUpResourceMock(string resourceName)
         {
             var document = GetResourceAsString(resourceName);
