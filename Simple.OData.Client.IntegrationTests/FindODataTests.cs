@@ -222,7 +222,7 @@ namespace Simple.OData.Client.Tests
                 .Media()
                 .GetStreamAsync();
             var text = Utils.StreamToString(stream);
-            Assert.StartsWith(text, "Test stream data");
+            Assert.StartsWith("Test stream data", text);
         }
 
         [Fact]
@@ -238,7 +238,7 @@ namespace Simple.OData.Client.Tests
                 .Media("Photo")
                 .GetStreamAsync();
             var text = Utils.StreamToString(stream);
-            Assert.StartsWith(text, "Test named stream data");
+            Assert.StartsWith("Test named stream data", text);
         }
 
         class PersonDetail
@@ -258,7 +258,7 @@ namespace Simple.OData.Client.Tests
                 .NavigateTo<PersonDetail>()
                 .Media(x => x.Photo)
                 .GetStreamAsStringAsync();
-            Assert.StartsWith(text, "Test named stream data");
+            Assert.StartsWith("Test named stream data", text);
         }
     }
 }
