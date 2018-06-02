@@ -4,6 +4,7 @@ using System.Linq;
 using System.Web.Http;
 using System.Web.Http.Results;
 using System.Web.OData;
+using System.Web.OData.Query;
 using System.Web.OData.Routing;
 using WebApiOData.V4.Samples.Models;
 
@@ -114,6 +115,15 @@ namespace WebApiOData.V4.Samples.Controllers
         public IHttpActionResult GetSalesTaxRate([FromODataUri] string state)
         {
             return Ok(GetRate(state));
+        }
+        
+        [HttpGet]
+        [EnableQuery(MaxTop = Int32.MaxValue)]
+        [ODataRoute("Products({key})/Default.Placements()")]
+        public IHttpActionResult Placements([FromODataUri] int key, ODataQueryOptions<Movie> options)
+        {
+            var source = new MoviesContext().Movies.Where(x=>x.ID < key).AsQueryable();
+            return Ok(source);
         }
 
         private static double GetRate(string state)

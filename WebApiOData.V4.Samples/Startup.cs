@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Web.Http;
 using System.Web.Http.Dispatcher;
+using System.Web.OData.Extensions;
 using Owin;
 
 namespace WebApiOData.V4.Samples
@@ -23,6 +24,8 @@ namespace WebApiOData.V4.Samples
             config.Services.Replace(
                 typeof(IHttpControllerTypeResolver),
                 new CustomHttpControllerTypeResolver(_controllerType));
+
+            config.Select().Expand().Filter().OrderBy().MaxTop(null).Count();//https://stackoverflow.com/a/40021161/19671
 
             ConfigureController(config);
 

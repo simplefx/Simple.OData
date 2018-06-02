@@ -60,6 +60,12 @@ namespace WebApiOData.V4.Samples.Startups
                 .Function("CalculateGeneralSalesTax")
                 .Returns<double>()
                 .Parameter<string>("state");
+            
+            // Function bound to a single entity
+            // Returns the list of movies with a product placement for this product
+            productType
+                .Function("Placements")
+                .ReturnsCollectionFromEntitySet<Movie>("Movies");
 
             // Unbound Function
             builder.Function("GetSalesTaxRate")
