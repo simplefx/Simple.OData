@@ -269,13 +269,9 @@ namespace Simple.OData.Client.V4.Adapter
                 {
                     // Remove extra quoting as has been read as a string
                     // Don't just replace \" in case we have embedded quotes
-                    if (result.StartsWith("\""))
+                    if (result.StartsWith("\"") && result.EndsWith("\""))
                     {
-                        result = result.Substring(1);
-                    }
-                    if (result.EndsWith("\""))
-                    {
-                        result = result.Substring(0, result.Length - 1);
+                        result = result.Substring(1, result.Length - 1);
                     }
                 }
                 return result;
