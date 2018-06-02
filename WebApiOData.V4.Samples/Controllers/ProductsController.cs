@@ -118,7 +118,7 @@ namespace WebApiOData.V4.Samples.Controllers
         }
         
         [HttpGet]
-        [EnableQuery(MaxTop = Int32.MaxValue)]
+        [EnableQuery]
         [ODataRoute("Products({key})/Default.Placements()")]
         public IHttpActionResult Placements([FromODataUri] int key, ODataQueryOptions<Movie> options)
         {
