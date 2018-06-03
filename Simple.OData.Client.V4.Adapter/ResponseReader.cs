@@ -271,7 +271,7 @@ namespace Simple.OData.Client.V4.Adapter
                     // Don't just replace \" in case we have embedded quotes
                     if (result.StartsWith("\"") && result.EndsWith("\""))
                     {
-                        result = result.Substring(1, result.Length - 1);
+                        result = result.Substring(1, result.Length - 2);
                     }
                 }
                 return result;
