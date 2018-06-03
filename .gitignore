@@ -32,10 +32,10 @@ Simple.OData.ProductService/Properties/PublishProfiles/va-odata-integration - We
 Simple.OData.Client.AdHocTests/
 Simple.OData.Client.IntegrationTests/AdHocTests.cs
 Solutions/AdHocTests.sln
-Solutions/.vs/
-Solutions/.idea/
+.vs/
+.idea/
+build/
 nuget.exe
-/Solutions/build/
 /.fake
 /paket-files
 /.paket/paket.exe
