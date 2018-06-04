@@ -140,6 +140,12 @@ namespace Simple.OData.Client
             return this as FT;
         }
 
+        public IBoundClient<U> Function<U>(string functionName) where U : class
+        {
+            this.Command.Function(functionName);
+            return new BoundClient<U>(_client, _session, _parentCommand, this.Command, _dynamicResults);
+        }
+
         public FT Action(string actionName)
         {
             this.Command.Action(actionName);

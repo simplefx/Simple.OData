@@ -59,8 +59,17 @@ namespace Simple.OData.Client
                 _details.NamedKeyValues = TryInterpretFilterExpressionAsKey(_details.FilterExpression);
                 if (_details.NamedKeyValues == null)
                 {
+                    var entityCollection = this.EntityCollection;
+                    if (this.HasFunction)
+                    {
+                        var collection = _details.Session.Metadata.GetFunctionReturnCollection(this.FunctionName);
+                        if (collection != null)
+                        {
+                            entityCollection = collection;
+                        }
+                    }
                     _details.Filter = _details.FilterExpression.Format(
-                        new ExpressionContext(_details.Session, this.EntityCollection, null, this.DynamicPropertiesContainerName));
+                        new ExpressionContext(_details.Session, entityCollection, null, this.DynamicPropertiesContainerName));
                 }
                 else
                 {
@@ -301,7 +310,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            if (!HasKey)
+            if (!HasKey || HasFunction)
             {
                 _details.TopCount = count;
             }

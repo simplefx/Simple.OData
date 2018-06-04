@@ -55,6 +55,10 @@
         <Parameter Name="state" Type="Edm.String" Unicode="false" />
         <ReturnType Type="Edm.Double" Nullable="false" />
       </Function>
+      <Function Name="Placements" IsBound="true">
+        <Parameter Name="bindingParameter" Type="WebApiOData.V4.Samples.Models.Product" />
+        <ReturnType Type="Collection(WebApiOData.V4.Samples.Models.Movie)" />
+      </Function>
       <Function Name="GetSalesTaxRate">
         <Parameter Name="state" Type="Edm.String" Unicode="false" />
         <ReturnType Type="Edm.Double" Nullable="false" />

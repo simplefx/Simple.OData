@@ -104,6 +104,12 @@ namespace Simple.OData.Client
         /// <returns>Self.</returns>
         FT Function(string functionName);
         /// <summary>
+        /// Sets the OData function name.
+        /// </summary>
+        /// <param name="functionName">Name of the function.</param>
+        /// <returns>Self.</returns>
+        IBoundClient<U> Function<U>(string functionName) where U : class;
+        /// <summary>
         /// Sets the OData action name.
         /// </summary>
         /// <param name="actionName">Name of the action.</param>

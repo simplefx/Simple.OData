@@ -288,6 +288,88 @@ namespace WebApiOData.V4.Samples.Tests
 
             Assert.InRange(result, 5, 20);
         }
+        
+        [Fact]
+        public async Task Get_product_placements_untyped()
+        {
+            var settings = CreateDefaultSettings().WithHttpMock();
+            var client = new ODataClient(settings);
+            var result = await client.FindEntriesAsync("Products(4)/Default.Placements()", null);
+            Assert.Equal(3, result.Count());
+            result = await client.FindEntriesAsync("Products(5)/Default.Placements()?$top=1&$orderby=ID desc&$skip=1", null);
+            Assert.Single(result);
+            Assert.Equal("Fatal Vengeance 2", result.First()["Title"]);
+            result = await client.FindEntriesAsync("Products(5)/Default.Placements()?$top=1&$orderby=ID desc&$skip=1&$filter=ID gt 5", null);
+            Assert.Empty(result);
+        }
+
+        [Fact]
+        public async Task Get_product_placements_typed()
+        {
+            var settings = CreateDefaultSettings().WithHttpMock();
+            var client = new ODataClient(settings);
+            var result = await client
+                .For<Product>()
+                .Key(4)
+                .Function<Movie>("Placements")
+                .FindEntriesAsync();
+            Assert.Equal(3, result.Count());
+            result = await client
+                .For<Product>()
+                .Key(5)
+                .Function<Movie>("Placements")
+                .Top(1)
+                .OrderByDescending(x => x.ID)
+                .Skip(1)
+                .FindEntriesAsync();
+            Assert.Equal(1, result.Count());
+            Assert.Equal("Fatal Vengeance 2", result.First().Title);
+            result = await client
+                .For<Product>()
+                .Key(5)
+                .Function<Movie>("Placements")
+                .Top(1)
+                .OrderByDescending(x => x.ID)
+                .Skip(1)
+                .Filter(x => x.ID > 5)
+                .FindEntriesAsync();
+            Assert.Equal(0, result.Count());
+        }
+
+        [Fact]
+        public async Task Get_product_placements_dynamic()
+        {
+            var settings = CreateDefaultSettings().WithHttpMock();
+            var client = new ODataClient(settings);
+            var x = ODataDynamic.Expression;
+            
+            IEnumerable<dynamic> result = await client
+                .For(x.Product)
+                .Key(4)
+                .Function("Placements")
+                .FindEntriesAsync();
+            Assert.Equal(3, result.Count());
+            result = await client
+                .For(x.Product)
+                .Key(5)
+                .Function("Placements")
+                .Top(1)
+                .OrderByDescending(x.ID)
+                .Skip(1)
+                .FindEntriesAsync();
+            Assert.Single(result);
+            Assert.Equal("Fatal Vengeance 2", result.First().Title);
+            result = await client
+                .For(x.Product)
+                .Key(5)
+                .Function("Placements")
+                .Top(1)
+                .OrderByDescending(x.ID)
+                .Skip(1)
+                .Filter(x.ID > 5)
+                .FindEntriesAsync();
+            Assert.Empty(result);
+        }
 
         //[Fact]
         //public async Task Call_function_with_parameter_alias_untyped()
