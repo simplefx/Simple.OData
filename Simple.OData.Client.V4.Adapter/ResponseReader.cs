@@ -250,23 +250,31 @@ namespace Simple.OData.Client.V4.Adapter
 
         private object GetPropertyValue(object value)
         {
-            if (value is ODataResource)
+            if (value is ODataResource resource)
             {
-                return ((ODataResource) value).Properties.ToDictionary(
-                    x => x.Name, x => GetPropertyValue(x.Value));
+                return resource.Properties.ToDictionary(x => x.Name, x => GetPropertyValue(x.Value));
             }
-            else if (value is ODataCollectionValue)
+            else if (value is ODataCollectionValue collectionValue)
             {
-                return ((ODataCollectionValue) value).Items
-                    .Select(GetPropertyValue).ToList();
+                return collectionValue.Items.Select(GetPropertyValue).ToList();
             }
-            else if (value is ODataEnumValue)
+            else if (value is ODataEnumValue enumValue)
             {
-                return ((ODataEnumValue) value).Value;
+                return enumValue.Value;
             }
-            else if (value is ODataUntypedValue)
+            else if (value is ODataUntypedValue untypedValue)
             {
-                return ((ODataUntypedValue) value).RawValue;
+                var result = untypedValue.RawValue;
+                if (!string.IsNullOrEmpty(result))
+                {
+                    // Remove extra quoting as has been read as a string
+                    // Don't just replace \" in case we have embedded quotes
+                    if (result.StartsWith("\"") && result.EndsWith("\""))
+                    {
+                        result = result.Substring(1, result.Length - 2);
+                    }
+                }
+                return result;
             }
             else if (value is ODataStreamReferenceValue referenceValue)
             {
