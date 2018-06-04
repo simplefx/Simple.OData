@@ -881,6 +881,13 @@
             <param name="functionName">Name of the function.</param>
             <returns>Self.</returns>
         </member>
+        <member name="M:Simple.OData.Client.IFluentClient`2.Function``1(System.String)">
+            <summary>
+            Sets the OData function name.
+            </summary>
+            <param name="functionName">Name of the function.</param>
+            <returns>Self.</returns>
+        </member>
         <member name="M:Simple.OData.Client.IFluentClient`2.Action(System.String)">
             <summary>
             Sets the OData action name.

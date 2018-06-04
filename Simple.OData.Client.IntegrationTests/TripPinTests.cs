@@ -393,7 +393,7 @@ namespace Simple.OData.Client.Tests
                 .For<PersonWithOpenTypeFields>("Person")
                 .Key("gregorsamsa")
                 .FindEntryAsync();
-            Assert.Equal(@"""Description""", person.OpenTypeString);
+            Assert.Equal(@"Description", person.OpenTypeString);
         }
 
         [Fact]
@@ -416,7 +416,7 @@ namespace Simple.OData.Client.Tests
                 .WithProperties(x => x.Properties)
                 .Key("gregorsamsa")
                 .FindEntryAsync();
-            Assert.Equal(@"""Description""", person.Properties["OpenTypeString"]);
+            Assert.Equal(@"Description", person.Properties["OpenTypeString"]);
         }
 
         [Fact]
@@ -448,7 +448,7 @@ namespace Simple.OData.Client.Tests
                 .WithProperties(x => x.Properties)
                 .Key("gregorsamsa")
                 .FindEntryAsync();
-            Assert.Equal(@"""New description""", person.Properties["OpenTypeString"]);
+            Assert.Equal(@"New description", person.Properties["OpenTypeString"]);
             Assert.Equal("Samsa", person.LastName);
         }
 
@@ -470,7 +470,7 @@ namespace Simple.OData.Client.Tests
                 .For<PersonWithOpenTypeFields>("Person")
                 .Filter(x => x.OpenTypeString == "Description")
                 .FindEntryAsync();
-            Assert.Equal(@"""Description""", person.OpenTypeString);
+            Assert.Equal(@"Description", person.OpenTypeString);
         }
 
         [Fact]
@@ -493,7 +493,7 @@ namespace Simple.OData.Client.Tests
                 .WithProperties(x => x.Properties)
                 .Filter(x => x.Properties["OpenTypeString"].ToString() == "Description")
                 .FindEntryAsync();
-            Assert.Equal(@"""Description""", person.Properties["OpenTypeString"]);
+            Assert.Equal(@"Description", person.Properties["OpenTypeString"]);
         }
 
         [Fact(Skip = "Fails at server")]
@@ -567,7 +567,7 @@ namespace Simple.OData.Client.Tests
                 .For<PersonWithOpenTypeFields>("Person")
                 .Filter(x => x.OpenTypeString == "Description")
                 .FindEntryAsync();
-                Assert.Equal(@"""Description""", person.OpenTypeString);
+                Assert.Equal(@"Description", person.OpenTypeString);
         }
 
         [Fact]
@@ -589,7 +589,7 @@ namespace Simple.OData.Client.Tests
                 .Key("gregorsamsa")
                 .Select(x => new { x.UserName, x.OpenTypeString })
                 .FindEntryAsync();
-            Assert.Equal(@"""\""Description\""""", person.OpenTypeString);
+            Assert.Equal(@"\""Description\""", person.OpenTypeString);
         }
 
         [Fact]
