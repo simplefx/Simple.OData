@@ -107,7 +107,6 @@ namespace Simple.OData.Client.Tests
         {
             var person = await _client
                 .For<Person>()
-                //.Key("russellwhyte")
                 .Key("keithpinckney")
                 .Expand(x => new { x.Trips })
                 .FindEntryAsync();
