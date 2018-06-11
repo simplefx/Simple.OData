@@ -17,7 +17,7 @@ namespace Simple.OData.Client
             get
             {
                 return
-                    this.Feed != null && this.Feed.Entries !=null && this.Feed.Entries.Any()
+                    this.Feed != null && this.Feed.Entries !=null
                     ? (object)this.Feed.Entries.Select(x => x.Data)
                     : this.Entry != null
                     ? this.Entry.Data

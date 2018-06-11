@@ -103,6 +103,19 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task FindPersonExpandEmptyTrips()
+        {
+            var person = await _client
+                .For<Person>()
+                .Key("keithpinckney")
+                .Expand(x => new { x.Trips })
+                .FindEntryAsync();
+            Assert.Empty(person.Trips);
+            Assert.Null(person.Friends);
+            Assert.Null(person.Photos);
+        }
+
+        [Fact]
         public async Task FindPersonExpandAndSelectTripsAndFriendsTyped()
         {
             var person = await _client
