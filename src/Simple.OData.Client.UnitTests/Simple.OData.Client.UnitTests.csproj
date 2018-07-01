@@ -191,4 +191,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.0'">
+    <PackageReference Include="BenchmarkDotNet">
+      <Version>0.10.14</Version>
+    </PackageReference>
+  </ItemGroup>
 </Project>

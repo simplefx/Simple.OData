@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -88,16 +89,29 @@ namespace Simple.OData.Client.Tests
     {
         private readonly ODataClientSettings _settings;
         private readonly string _mockDataPathBase;
+        private readonly string[] _mockResponses;
+        private readonly bool _validate;
         private readonly bool _recording;
         private int _fileCounter;
-        private static Regex _regexBatch = new Regex(@"batch_([0-9AFa-f]){8}-([0-9AFa-f]){4}-([0-9AFa-f]){4}-([0-9AFa-f]){4}-([0-9AFa-f]){12}");
-        private static Regex _regexChangeset = new Regex(@"changeset_([0-9AFa-f]){8}-([0-9AFa-f]){4}-([0-9AFa-f]){4}-([0-9AFa-f]){4}-([0-9AFa-f]){12}");
-        private static Regex _regexBaseUrl = new Regex(@"http:\/\/((\w|_|-|\.|)+\/){3}");
+        private static readonly Regex _regexBatch = new Regex(@"batch_([0-9AFa-f]){8}-([0-9AFa-f]){4}-([0-9AFa-f]){4}-([0-9AFa-f]){4}-([0-9AFa-f]){12}");
+        private static readonly Regex _regexChangeset = new Regex(@"changeset_([0-9AFa-f]){8}-([0-9AFa-f]){4}-([0-9AFa-f]){4}-([0-9AFa-f]){4}-([0-9AFa-f]){12}");
+        private static readonly Regex _regexBaseUrl = new Regex(@"http:\/\/((\w|_|-|\.|)+\/){3}");
 
-        public MockingRequestExecutor(ODataClientSettings settings, string mockDataPathBase, bool recording = false)
+        public MockingRequestExecutor(ODataClientSettings settings, string mockDataPathBase, bool validate, bool recording)
         {
             _settings = settings;
             _mockDataPathBase = mockDataPathBase;
+            _mockResponses = null;
+            _validate = validate;
+            _recording = recording;
+        }
+
+        public MockingRequestExecutor(ODataClientSettings settings, IEnumerable<string> mockResponses, bool validate, bool recording)
+        {
+            _settings = settings;
+            _mockDataPathBase = null;
+            _mockResponses = mockResponses.ToArray();
+            _validate = validate;
             _recording = recording;
         }
 
@@ -117,8 +131,12 @@ namespace Simple.OData.Client.Tests
             }
             else
             {
-                await ValidateRequestAsync(request);
-                return GetMockResponse(request);
+                if (_validate)
+                    await ValidateRequestAsync(request);
+                if (_mockResponses == null)
+                    return GetResponseFromResponseMessage(request);
+                else
+                    return GetResponseFromJson(request);
             }
         }
 
@@ -129,7 +147,10 @@ namespace Simple.OData.Client.Tests
 
         private string GenerateMockDataPath()
         {
-            return string.Format($"{_mockDataPathBase}.{++_fileCounter}.txt");
+            if (!string.IsNullOrEmpty(_mockDataPathBase))
+                return string.Format($"{_mockDataPathBase}.{++_fileCounter}.txt");
+            else
+                return _mockResponses[_fileCounter++];
         }
 
         private void SaveRequest(HttpRequestMessage request)
@@ -182,7 +203,7 @@ namespace Simple.OData.Client.Tests
             }
         }
 
-        private HttpResponseMessage GetMockResponse(HttpRequestMessage request)
+        private HttpResponseMessage GetResponseFromResponseMessage(HttpRequestMessage request)
         {
             using (var stream = new FileStream(GenerateMockDataPath(), FileMode.Open))
             {
@@ -214,6 +235,20 @@ namespace Simple.OData.Client.Tests
                     }
                 }
                 return response; }
+        }
+
+        private HttpResponseMessage GetResponseFromJson(HttpRequestMessage request)
+        {
+            var response = new HttpResponseMessage
+            {
+                StatusCode = HttpStatusCode.OK,
+                Content = new StreamContent(Utils.StringToStream(File.ReadAllText(GenerateMockDataPath()))),
+                RequestMessage = request,
+                Version = new Version(1, 1),
+            };
+            response.Headers.Add("DataServiceVersion", "1.0;");
+            response.Content.Headers.Add("Content-Type", "application/json; type=feed; charset=utf-8");
+            return response;
         }
 
         private void ValidateHeaders(
@@ -331,7 +366,14 @@ namespace Simple.OData.Client.Tests
 #else
             var recording = true;
 #endif
-            var requestExecutor = new MockingRequestExecutor(settings, mockDataPathBase, recording);
+            var requestExecutor = new MockingRequestExecutor(settings, mockDataPathBase, true, recording);
+            settings.RequestExecutor = requestExecutor.ExecuteRequestAsync;
+            return settings;
+        }
+
+        public static ODataClientSettings WithHttpResponses(this ODataClientSettings settings, IEnumerable<string> responses)
+        {
+            var requestExecutor = new MockingRequestExecutor(settings, responses, false, false);
             settings.RequestExecutor = requestExecutor.ExecuteRequestAsync;
             return settings;
         }
