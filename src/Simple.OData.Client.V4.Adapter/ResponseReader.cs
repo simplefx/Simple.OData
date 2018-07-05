@@ -68,7 +68,7 @@ namespace Simple.OData.Client.V4.Adapter
                 {
                     if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Resource))
                     {
-                        return ODataResponse.FromValueStream(await responseMessage.GetStreamAsync().ConfigureAwait(false), responseMessage is ODataBatchOperationResponseMessage);
+                        return ReadResponse(messageReader.CreateODataResourceReader());
                     }
                     else
                     {

@@ -39,7 +39,9 @@ namespace Simple.OData.Client.Tests.Core
             var response = SetUpResourceMock("ExampleActionComplexType.json");
             var responseReader = new ResponseReader(_session, await _client.GetMetadataAsync<IEdmModel>());
             var result = (await responseReader.GetResponseAsync(response)).Feed;
-            Assert.NotNull(result.Entries.First());
+            var entry = result.Entries.First();
+            Assert.NotNull(entry);
+            Assert.Equal("MyPropertyValue", entry.Data["SomeProperty"]);
         }
 
         private IODataResponseMessageAsync SetUpResourceMock(string resourceName)
