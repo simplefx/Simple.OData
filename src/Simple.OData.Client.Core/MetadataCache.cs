@@ -48,7 +48,7 @@ namespace Simple.OData.Client
                 if (_instances.TryGetValue(key, out found))
                     return found;
             }
-            found = await valueFactory(key);
+            found = await valueFactory(key).ConfigureAwait(false);
             lock(metadataLock)
             {
                 if (!_instances.ContainsKey(key))
