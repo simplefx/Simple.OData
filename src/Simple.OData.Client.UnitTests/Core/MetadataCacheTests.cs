@@ -54,7 +54,7 @@ namespace Simple.OData.Client.Tests.Core
             settings.BeforeRequest = x => throw new Exception("metadata cache was not used");
             await client.GetMetadataAsync();
             
-            settings = new ODataClientSettings{BaseUri = baseUri, BeforeRequest = x=>throw new Exception("not reusing settings with defeat metadata cache")};
+            settings = new ODataClientSettings{BaseUri = baseUri, BeforeRequest = x=>throw new Exception("not reusing settings will defeat metadata cache")};
             client = new ODataClient(settings);
             await client.GetMetadataAsync();
         }
