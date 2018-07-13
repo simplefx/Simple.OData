@@ -71,7 +71,7 @@ namespace Simple.OData.Client
                         this.Settings.BaseUri.AbsoluteUri,
                         async uri =>
                         {
-                            var metadata = await ResolveMetadataAsync(cancellationToken);
+                            var metadata = await ResolveMetadataAsync(cancellationToken).ConfigureAwait(false);
                             return new MetadataCache(uri, metadata);
                         });
                 }
