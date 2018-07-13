@@ -40,5 +40,23 @@ namespace Simple.OData.Client.Tests.Core
             Assert.False(wasCached);
             Assert.Null(cached);
         }
+
+        [Fact]
+        public async Task MetadataIsCached()
+        {
+            var baseUri = new Uri("http://services.odata.org/V3/OData/OData.svc/");
+            var settings = new ODataClientSettings{ BaseUri = baseUri};
+            var client = new ODataClient(settings);
+
+            await client.GetMetadataAsync();
+            MetadataCache.GetOrAdd(baseUri.ToString(), x => throw new Exception("metadata was not cached"));
+
+            settings.BeforeRequest = x => throw new Exception("metadata cache was not used");
+            await client.GetMetadataAsync();
+            
+            settings = new ODataClientSettings{BaseUri = baseUri, BeforeRequest = x=>throw new Exception("not reusing settings with defeat metadata cache")};
+            client = new ODataClient(settings);
+            await client.GetMetadataAsync();
+        }
     }
 }
