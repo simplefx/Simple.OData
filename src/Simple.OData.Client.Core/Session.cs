@@ -45,10 +45,7 @@ namespace Simple.OData.Client
 
         public void Trace(string message, params object[] messageParams)
         {
-            if (this.Settings.OnTrace != null)
-            {
-                this.Settings.OnTrace(message, messageParams);
-            }
+            Settings.OnTrace?.Invoke(message, messageParams);
         }
 
         public void ClearMetadataCache()
@@ -124,10 +121,7 @@ namespace Simple.OData.Client
             }
         }
 
-        public IMetadata Metadata
-        {
-            get { return this.Adapter.GetMetadata(); }
-        }
+        public IMetadata Metadata => this.Adapter.GetMetadata();
 
         public HttpConnection GetHttpConnection()
         {

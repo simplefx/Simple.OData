@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Simple.OData.Client
@@ -30,12 +29,10 @@ namespace Simple.OData.Client
         {
             lock (metadataLock)
             {
-                MetadataCache found;
-                if (!_instances.TryGetValue(key, out found))
+                if (!_instances.TryGetValue(key, out var found))
                 {
                     _instances[key] = found = valueFactory(key);
                 }
-
                 return found;
             }
         }
@@ -57,38 +54,23 @@ namespace Simple.OData.Client
             }
         }
 
-        private readonly string _key;
-        private Func<ISession, IODataAdapter> _adapterFactory;
+        private readonly Func<ISession, IODataAdapter> _adapterFactory;
 
-        private readonly string _metadataDocument;
-        
         public MetadataCache(string key, string metadataDocument)
         {
             if (String.IsNullOrWhiteSpace(key))
-                throw new ArgumentNullException("key");
+                throw new ArgumentNullException(nameof(key));
             if (String.IsNullOrWhiteSpace(metadataDocument))
-                throw new ArgumentNullException("metadataDocument");
+                throw new ArgumentNullException(nameof(metadataDocument));
 
-            _key = key;
-            _metadataDocument = metadataDocument;
+            Key = key;
+            MetadataDocument = metadataDocument;
             _adapterFactory = new AdapterFactory().CreateAdapter(metadataDocument);
         }
 
-        public string Key
-        {
-            get
-            {
-                return _key;
-            }
-        }
+        public string Key { get; }
 
-        public string MetadataDocument
-        {
-            get
-            {
-                return _metadataDocument;
-            }
-        }
+        public string MetadataDocument { get; }
 
         public IODataAdapter GetODataAdapter(ISession session)
         {
