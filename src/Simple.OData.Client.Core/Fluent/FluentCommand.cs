@@ -316,7 +316,7 @@ namespace Simple.OData.Client
             }
             else if (count != 1)
             {
-                throw new InvalidOperationException("Top count may only be assigned to 1 when key is assigned");
+                throw new InvalidOperationException("Top count may only be assigned to 1 when key is assigned.");
             }
             return this;
         }

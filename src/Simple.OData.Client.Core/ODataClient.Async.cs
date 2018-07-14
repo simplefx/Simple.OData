@@ -529,7 +529,7 @@ namespace Simple.OData.Client
         public async Task<Stream> GetMediaStreamAsync(string commandText, CancellationToken cancellationToken)
         {
             if (IsBatchResponse)
-                throw new NotSupportedException("Media stream requests are not supported in batch mode");
+                throw new NotSupportedException("Media stream requests are not supported in batch mode.");
 
             var requestBuilder = new RequestBuilder(commandText, _session, this.BatchWriter);
             var request = await requestBuilder.GetRequestAsync(true, cancellationToken);
@@ -546,7 +546,7 @@ namespace Simple.OData.Client
         public async Task SetMediaStreamAsync(string commandText, Stream stream, string contentType, bool optimisticConcurrency, CancellationToken cancellationToken)
         {
             if (IsBatchResponse)
-                throw new NotSupportedException("Media stream requests are not supported in batch mode");
+                throw new NotSupportedException("Media stream requests are not supported in batch mode.");
 
             var requestBuilder = new RequestBuilder(commandText, _session, this.BatchWriter);
             var request = await requestBuilder.UpdateRequestAsync(stream, contentType, optimisticConcurrency, cancellationToken);
@@ -989,7 +989,7 @@ namespace Simple.OData.Client
         internal async Task<Stream> GetMediaStreamAsync(FluentCommand command, CancellationToken cancellationToken)
         {
             if (IsBatchResponse)
-                throw new NotSupportedException("Media stream requests are not supported in batch mode");
+                throw new NotSupportedException("Media stream requests are not supported in batch mode.");
 
             await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
@@ -1003,7 +1003,7 @@ namespace Simple.OData.Client
         internal async Task SetMediaStreamAsync(FluentCommand command, Stream stream, string contentType, bool optimisticConcurrency, CancellationToken cancellationToken)
         {
             if (IsBatchResponse)
-                throw new NotSupportedException("Media stream requests are not supported in batch mode");
+                throw new NotSupportedException("Media stream requests are not supported in batch mode.");
 
             await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();

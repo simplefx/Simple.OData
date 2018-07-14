@@ -15,7 +15,7 @@ namespace Simple.OData.Client
             if (context.IsQueryOption && _operator != ExpressionType.Default &&
                 _operator != ExpressionType.And && _operator != ExpressionType.Equal)
             {
-                throw new InvalidOperationException("Invalid custom query option");
+                throw new InvalidOperationException("Invalid custom query option.");
             }
 
             if (_operator == ExpressionType.Default && !this.IsValueConversion)

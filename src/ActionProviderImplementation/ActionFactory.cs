@@ -88,7 +88,7 @@ namespace ActionProviderImplementation
             }
             else if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IQueryable<>))
             { 
-                throw new Exception("IQueryable<> is not supported for non-binding parameters");
+                throw new Exception("IQueryable<> is not supported for non-binding parameters.");
             }
             return resourceType;
         }

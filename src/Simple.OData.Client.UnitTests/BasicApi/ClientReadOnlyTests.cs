@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -197,9 +196,39 @@ namespace Simple.OData.Client.Tests.BasicApi
         }
 
         [Fact]
+        public async Task InterceptRequestAsync()
+        {
+            var settings = new ODataClientSettings
+            {
+                BaseUri = _serviceUri,
+                BeforeRequestAsync = x =>
+                {
+                    x.Method = new HttpMethod("PUT");
+
+                    var tcs = new TaskCompletionSource<HttpRequestMessage>();
+                    var task = tcs.Task;
+                    tcs.SetResult(x);
+
+                    return task;
+                }
+              };
+
+        [Fact]
         public async Task InterceptResponse()
         {
             var client = new ODataClient(CreateDefaultSettings().WithResponseInterceptor(x => { throw new InvalidOperationException(); }).WithHttpMock());
+            await AssertThrowsAsync<InvalidOperationException>(async () => await client.FindEntriesAsync("Products"));
+        }
+
+        [Fact]
+        public async Task InterceptResponseAsync()
+        {
+            var settings = new ODataClientSettings
+            {
+                BaseUri = _serviceUri,
+                AfterResponseAsync = x => { throw new InvalidOperationException(); },
+            };
+            var client = new ODataClient(settings);
             await AssertThrowsAsync<InvalidOperationException>(async () => await client.FindEntriesAsync("Products"));
         }
 

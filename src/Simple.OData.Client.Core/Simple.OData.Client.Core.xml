@@ -2518,6 +2518,9 @@
             Allows callers to manipulate the request headers in between request executions.
             Useful for retrieval of x-csrf-tokens when you want to update the request header
             with the retrieved token on subsequent requests.
+            <para>
+            Note that this overrides any current <see cref="P:Simple.OData.Client.ODataClientSettings.BeforeRequest"/> method.
+            </para>
             </summary>
             <param name="headers">The list of headers to update.</param>
         </member>
@@ -2665,7 +2668,23 @@
             The action on <see cref="T:System.Net.Http.HttpRequestMessage"/>.
             </value>
         </member>
+        <member name="P:Simple.OData.Client.ODataClientSettings.BeforeRequestAsync">
+            <summary>
+            Gets or sets the action executed before the OData request.
+            </summary>
+            <value>
+            The action on <see cref="T:System.Net.Http.HttpRequestMessage"/>.
+            </value>
+        </member>
         <member name="P:Simple.OData.Client.ODataClientSettings.AfterResponse">
+            <summary>
+            Gets or sets the action executed after the OData request.
+            </summary>
+            <value>
+            The action on <see cref="T:System.Net.Http.HttpResponseMessage"/>.
+            </value>
+        </member>
+        <member name="P:Simple.OData.Client.ODataClientSettings.AfterResponseAsync">
             <summary>
             Gets or sets the action executed after the OData request.
             </summary>

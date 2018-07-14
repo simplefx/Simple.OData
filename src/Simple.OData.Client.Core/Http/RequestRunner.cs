@@ -23,7 +23,7 @@ namespace Simple.OData.Client
             HttpConnection httpConnection = null;
             try
             {
-                PreExecute(request);
+                await PreExecuteAsync(request).ConfigureAwait(false);
 
                 _session.Trace("{0} request: {1}", request.Method, request.RequestMessage.RequestUri.AbsoluteUri);
                 if (request.RequestMessage.Content != null && (_session.Settings.TraceFilter & ODataTrace.RequestContent) != 0)
@@ -81,7 +81,7 @@ namespace Simple.OData.Client
             }
         }
 
-        private void PreExecute(ODataRequest request)
+        private async Task PreExecuteAsync(ODataRequest request)
         {
             if (request.Accept != null)
             {
@@ -106,12 +106,15 @@ namespace Simple.OData.Client
             }
 
             _session.Settings.BeforeRequest?.Invoke(request.RequestMessage);
+            if (_session.Settings.BeforeRequestAsync != null)
+                await _session.Settings.BeforeRequestAsync(request.RequestMessage).ConfigureAwait(false);
         }
 
         private async Task PostExecute(HttpResponseMessage responseMessage)
         {
-            if (_session.Settings.AfterResponse != null)
-                _session.Settings.AfterResponse(responseMessage);
+            _session.Settings.AfterResponse?.Invoke(responseMessage);
+            if (_session.Settings.AfterResponseAsync != null)
+                await _session.Settings.AfterResponseAsync(responseMessage).ConfigureAwait(false);
 
             if (!responseMessage.IsSuccessStatusCode)
             {

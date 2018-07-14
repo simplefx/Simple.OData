@@ -336,7 +336,7 @@ namespace Simple.OData.Client
             {
                 var pi = (PropertyInfo)expression.Member;
                 if (pi.GetIndexParameters().Length != 0)
-                    throw new ArgumentException("cannot eliminate closure references to indexed properties");
+                    throw new ArgumentException("cannot eliminate closure references to indexed properties.");
                 value = pi.GetValue(null, null);
             }
             return value;

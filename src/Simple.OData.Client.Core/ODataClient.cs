@@ -178,6 +178,9 @@ namespace Simple.OData.Client
         /// Allows callers to manipulate the request headers in between request executions.
         /// Useful for retrieval of x-csrf-tokens when you want to update the request header
         /// with the retrieved token on subsequent requests.
+        /// <para>
+        /// Note that this overrides any current <see cref="ODataClientSettings.BeforeRequest"/> method.
+        /// </para>
         /// </summary>
         /// <param name="headers">The list of headers to update.</param>
         public void UpdateRequestHeaders(Dictionary<string, IEnumerable<string>> headers)

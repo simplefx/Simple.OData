@@ -390,7 +390,7 @@ namespace Simple.OData.Client.Tests
             {
                 var stackFrame = stackTrace.GetFrame(frameNumber);
                 if (stackFrame == null)
-                    throw new InvalidOperationException("Attempt to retrieve a frame beyond the call stack");
+                    throw new InvalidOperationException("Attempt to retrieve a frame beyond the call stack.");
                 var method = stackFrame.GetMethod();
                 var methodName = new string(method.Name.Where(c => char.IsLetterOrDigit(c) || c == '_').ToArray());
                 if (method.IsPublic && !method.IsGenericMethod)

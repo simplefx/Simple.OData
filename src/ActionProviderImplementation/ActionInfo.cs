@@ -58,7 +58,7 @@ namespace ActionProviderImplementation
         private MethodInfo GetAvailabilityMethod(string availabilityMethodName)
         {
             if (availabilityMethodName == null)
-                throw new Exception("If the action is conditionally available you need to provide a method to calculate availability");
+                throw new Exception("If the action is conditionally available you need to provide a method to calculate availability.");
 
             var declaringType = ActionMethod.DeclaringType;
             var method = declaringType.GetMethod(availabilityMethodName);

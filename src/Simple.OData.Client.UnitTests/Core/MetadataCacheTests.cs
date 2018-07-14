@@ -49,12 +49,12 @@ namespace Simple.OData.Client.Tests.Core
             var client = new ODataClient(settings);
 
             await client.GetMetadataAsync();
-            MetadataCache.GetOrAdd(baseUri.ToString(), x => throw new Exception("metadata was not cached"));
+            MetadataCache.GetOrAdd(baseUri.ToString(), x => throw new Exception("metadata was not cached."));
 
-            settings.BeforeRequest = x => throw new Exception("metadata cache was not used");
+            settings.BeforeRequest = x => throw new Exception("metadata cache was not used.");
             await client.GetMetadataAsync();
             
-            settings = new ODataClientSettings{BaseUri = baseUri, BeforeRequest = x=>throw new Exception("not reusing settings will defeat metadata cache")};
+            settings = new ODataClientSettings{BaseUri = baseUri, BeforeRequest = x=>throw new Exception("not reusing settings will defeat metadata cache.")};
             client = new ODataClient(settings);
             await client.GetMetadataAsync();
         }

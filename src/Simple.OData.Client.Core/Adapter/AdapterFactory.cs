@@ -71,7 +71,7 @@ namespace Simple.OData.Client
                 }
                 catch (Exception)
                 {
-                    throw new InvalidOperationException("Unable to identify OData protocol version");
+                    throw new InvalidOperationException("Unable to identify OData protocol version.");
                 }
             }
         }
