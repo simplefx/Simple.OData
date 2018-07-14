@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace Simple.OData.Client
 {
@@ -35,6 +37,23 @@ namespace Simple.OData.Client
                 }
 
                 return found;
+            }
+        }
+
+        public static async Task<MetadataCache> GetOrAddAsync(string key, Func<string, Task<MetadataCache>> valueFactory)
+        {
+            MetadataCache found;
+            lock (metadataLock)
+            {
+                if (_instances.TryGetValue(key, out found))
+                    return found;
+            }
+            found = await valueFactory(key).ConfigureAwait(false);
+            lock(metadataLock)
+            {
+                if (!_instances.ContainsKey(key))
+                    _instances[key] = found;
+                return _instances[key];
             }
         }
 
