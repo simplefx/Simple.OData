@@ -23,10 +23,10 @@
     <tags>odata data rest client portable pcl netfx net40 net45 netstandard netcore mono adnroid ios</tags>
     <dependencies>
       <group targetFramework="net452">
-        <dependency id="Microsoft.OData.Core" version="[7.4.4,8)" />
+        <dependency id="Microsoft.OData.Core" version="[7.5.0,8)" />
       </group>
       <group targetFramework="netstandard2.0">
-        <dependency id="Microsoft.OData.Core" version="[7.4.4,8)" />
+        <dependency id="Microsoft.OData.Core" version="[7.5.0,8)" />
       </group>
     </dependencies>
   </metadata>
