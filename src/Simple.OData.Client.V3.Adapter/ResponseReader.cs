@@ -218,6 +218,7 @@ namespace Simple.OData.Client.V3.Adapter
             string id = null;
             Uri readLink = null;
             Uri editLink = null;
+            IEnumerable<ODataAssociationLink> associationLinks = null;
             if (_session.Adapter.GetMetadata().IsTypeWithId(odataEntry.TypeName))
             {
                 try
@@ -225,8 +226,9 @@ namespace Simple.OData.Client.V3.Adapter
                     id = odataEntry.Id;
                     readLink = odataEntry.ReadLink;
                     editLink = odataEntry.EditLink;
+                    associationLinks = odataEntry.AssociationLinks;
                 }
-                catch (Exception)
+                catch (ODataException)
                 {
                     // Ignored
                 }
@@ -239,7 +241,7 @@ namespace Simple.OData.Client.V3.Adapter
                 ReadLink = readLink,
                 EditLink = editLink,
                 ETag = odataEntry.ETag,
-                AssociationLinks = odataEntry.AssociationLinks == null
+                AssociationLinks = associationLinks == null
                     ? null
                     : new List<ODataEntryAnnotations.AssociationLink>(
                     odataEntry.AssociationLinks.Select(x => new ODataEntryAnnotations.AssociationLink

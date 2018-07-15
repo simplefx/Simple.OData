@@ -219,7 +219,7 @@ namespace Simple.OData.Client.V4.Adapter
                     readLink = odataEntry.ReadLink;
                     editLink = odataEntry.EditLink;
                 }
-                catch (Exception)
+                catch (ODataException)
                 {
                     // Ingored
                 }
