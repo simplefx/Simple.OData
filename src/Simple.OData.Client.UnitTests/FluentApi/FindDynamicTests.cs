@@ -51,6 +51,19 @@ namespace Simple.OData.Client.Tests.FluentApi
         }
 
         [Fact]
+        public async Task CombinedConditionsWithMultipleFilters()
+        {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
+            var x = ODataDynamic.Expression;
+            var product = await client
+                .For(x.Employees)
+                .Filter(x.FirstName == "Nancy")
+                .Filter(x.HireDate < DateTime.Now)
+                .FindEntryAsync();
+            Assert.Equal("Davolio", product.LastName);
+        }
+
+        [Fact]
         public async Task CombineAll()
         {
             var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
