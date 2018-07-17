@@ -67,9 +67,9 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task FindSinglePersonExternalHttpClient()
         {
-            var client = new ODataClient(new ODataClientSettings(_serviceUri)
+            var client = new ODataClient(new ODataClientSettings()
             {
-                ExternalHttpClient = new HttpClient(),
+                ExternalHttpClient = new HttpClient() { BaseAddress = _serviceUri }
             });
 
             var person = await client

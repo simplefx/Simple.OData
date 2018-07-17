@@ -12,6 +12,7 @@ namespace Simple.OData.Client
     {
         private readonly INameMatchResolver _defaultNameMatchResolver = new BestMatchResolver();
         private INameMatchResolver _nameMatchResolver;
+        private Uri _baseUri;
 
         /// <summary>
         /// Gets or sets the OData service URL.
@@ -19,7 +20,11 @@ namespace Simple.OData.Client
         /// <value>
         /// The URL address.
         /// </value>
-        public Uri BaseUri { get; set; }
+        public Uri BaseUri
+        {
+            get => _baseUri != null ? _baseUri : ExternalHttpClient?.BaseAddress;
+            set => _baseUri = value;
+        }
 
         /// <summary>
         /// Gets or sets the OData client credentials.
