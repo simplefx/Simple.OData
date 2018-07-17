@@ -8,6 +8,12 @@ namespace Simple.OData.Client.Tests.Core
     public class SettingsTests
     {
         [Fact]
+        public void ClientWithEmptySettings()
+        {
+            Assert.Throws<InvalidOperationException>(() => new ODataClient(new ODataClientSettings()));
+        }
+
+        [Fact]
         public void DefaultCtorAndBaseUri()
         {
             var settings = new ODataClientSettings {BaseUri = new Uri("http://localhost")};
