@@ -140,6 +140,14 @@ namespace Simple.OData.Client
         public Action<HttpClientHandler> OnApplyClientHandler { get; set; }
 
         /// <summary>
+        /// Gets or sets external instance of HttpClient to be used when issuing OData requests.
+        /// </summary>
+        /// <value>
+        /// The instance of <see cref="HttpClient"/>.
+        /// </value>
+        public HttpClient ExternalHttpClient { get; set; }
+
+        /// <summary>
         /// Gets or sets the handler that executes <see cref="HttpRequestMessage"/> and returns <see cref="HttpResponseMessage"/>.
         /// Can be used to mock OData request execution without sending messages to the server.
         /// </summary>
@@ -242,6 +250,7 @@ namespace Simple.OData.Client
             this.NameMatchResolver = session.Settings.NameMatchResolver;
             this.OnCreateMessageHandler = session.Settings.OnCreateMessageHandler;
             this.OnApplyClientHandler = session.Settings.OnApplyClientHandler;
+            this.ExternalHttpClient = session.Settings.ExternalHttpClient;
             this.RequestExecutor = session.Settings.RequestExecutor;
             this.BeforeRequest = session.Settings.BeforeRequest;
             this.BeforeRequestAsync = session.Settings.BeforeRequestAsync;
