@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -89,7 +90,7 @@ namespace Simple.OData.Client.Tests
                 .Expand(ProductCategoryName)
                 .FindEntryAsync();
             if (ProductCategoryName == "Categories")
-                Assert.DoesNotContain(ProductCategoryName, product.Keys);
+                Assert.Empty(product[ProductCategoryName] as IEnumerable);
             else
                 Assert.Null(product[ProductCategoryName]);
         }
