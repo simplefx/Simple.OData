@@ -33,8 +33,7 @@ namespace Simple.OData.Client.V4.Adapter
 
         private static T GetValueOrDefault<T>(this IDictionary<string, object> source, string key)
         {
-            object value;
-            if (source.TryGetValue(key, out value))
+            if (source.TryGetValue(key, out var value))
             {
                 return (T)value;
             }

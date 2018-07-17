@@ -59,7 +59,7 @@ namespace Simple.OData.Client
         protected abstract Task EndChangesetAsync();
         protected abstract Task<object> CreateOperationMessageAsync(Uri uri, string method, string collection, string contentId, bool resultRequired);
 
-        public int LastOperationId { get { return _lastOperationId; } }
+        public int LastOperationId => _lastOperationId;
 
         public string NextContentId()
         {
@@ -68,11 +68,9 @@ namespace Simple.OData.Client
 
         public string GetContentId(IDictionary<string, object> entryData, object linkData)
         {
-            string contentId;
-            if (!_contentIdMap.TryGetValue(entryData, out contentId) && linkData != null)
+            if (!_contentIdMap.TryGetValue(entryData, out var contentId) && linkData != null)
             {
-                IDictionary<string, object> mappedEntry;
-                if (this.BatchEntries.TryGetValue(linkData, out mappedEntry))
+                if (this.BatchEntries.TryGetValue(linkData, out var mappedEntry))
                     _contentIdMap.TryGetValue(mappedEntry, out contentId);
             }
             return contentId;
@@ -80,8 +78,7 @@ namespace Simple.OData.Client
 
         public void MapContentId(IDictionary<string, object> entryData, string contentId)
         {
-            string cid;
-            if (entryData != null && !_contentIdMap.TryGetValue(entryData, out cid))
+            if (entryData != null && !_contentIdMap.TryGetValue(entryData, out _))
             {
                 _contentIdMap.Add(entryData, contentId);
             }

@@ -42,11 +42,9 @@ namespace ActionProviderImplementation
             {
                 _action();
             }
-            catch {
-                throw new DataServiceException(
-                    500,
-                    string.Format("Exception executing action {0}", _serviceAction.Name)
-                );
+            catch 
+            {
+                throw new DataServiceException(500, $"Exception executing action {_serviceAction.Name}");
             }
         }
     }

@@ -22,8 +22,7 @@ namespace Simple.OData.Client.Extensions
             if (typeof(T) == typeof(ODataEntry))
                 return CreateODataEntry(source, dynamicObject) as T;
             if (typeof(T) == typeof(string) || typeof(T).IsValue())
-                throw new InvalidOperationException(
-                    string.Format("Unable to convert structural data to {0}.", typeof(T).Name));
+                throw new InvalidOperationException($"Unable to convert structural data to {typeof(T).Name}.");
 
             return (T)ToObject(source, typeof(T), CreateInstance<T>, dynamicPropertiesContainerName, dynamicObject);
         }
@@ -33,8 +32,7 @@ namespace Simple.OData.Client.Extensions
             var ctor = type.GetDefaultConstructor();
             if (ctor == null && !CustomConverters.HasDictionaryConverter(type))
             {
-                throw new InvalidOperationException(
-                    string.Format("Unable to create an instance of type {0} that does not have a default constructor.", type.Name));
+                throw new InvalidOperationException($"Unable to create an instance of type {type.Name} that does not have a default constructor.");
             }
 
             return ToObject(source, type, () => ctor.Invoke(new object[] { }), dynamicPropertiesContainerName, false);
@@ -122,11 +120,9 @@ namespace Simple.OData.Client.Extensions
                 return null;
 
             var stringValue = itemValue.ToString();
-            int intValue;
-            if (int.TryParse(stringValue, out intValue))
+            if (int.TryParse(stringValue, out var intValue))
             {
-                object result;
-                Utils.TryConvert(intValue, type, out result);
+                Utils.TryConvert(intValue, type, out var result);
                 return result;
             }
             else
@@ -137,10 +133,7 @@ namespace Simple.OData.Client.Extensions
 
         private static object ConvertSingle(Type type, object itemValue)
         {
-            Func<object, Type, object> TryConvert = (v, t) =>
-            {
-                return Utils.TryConvert(v, t, out var result) ? result : v;
-            };
+            Func<object, Type, object> TryConvert = (v, t) => Utils.TryConvert(v, t, out var result) ? result : v;
 
             return type == typeof(ODataEntryAnnotations)
                 ? itemValue
@@ -207,9 +200,7 @@ namespace Simple.OData.Client.Extensions
         private static T CreateInstance<T>()
             where T : class
         {
-            ConstructorInfo ctor = null;
-
-            if (!_constructors.TryGetValue(typeof(T), out ctor))
+            if (!_constructors.TryGetValue(typeof(T), out var ctor))
             {
                 if (typeof(T) == typeof(IDictionary<string, object>))
                 {
@@ -231,8 +222,7 @@ namespace Simple.OData.Client.Extensions
 
             if (ctor == null)
             {
-                throw new InvalidOperationException(
-                    string.Format("Unable to create an instance of type {0} that does not have a default constructor.", typeof(T).Name));
+                throw new InvalidOperationException($"Unable to create an instance of type {typeof(T).Name} that does not have a default constructor.");
             }
 
             return ctor.Invoke(new object[] { }) as T;
@@ -251,13 +241,10 @@ namespace Simple.OData.Client.Extensions
             var property = type.GetAnyProperty(dynamicPropertiesContainerName);
 
             if (property == null)
-                throw new ArgumentException(string.Format("Type {0} does not have property {1} ",
-                    type, dynamicPropertiesContainerName));
+                throw new ArgumentException($"Type {type} does not have property {dynamicPropertiesContainerName} ");
 
             if (!typeof(IDictionary<string, object>).IsTypeAssignableFrom(property.PropertyType))
-                throw new InvalidOperationException(
-                    string.Format("Property {0} must implement IDictionary<string,object> interface",
-                    dynamicPropertiesContainerName));
+                throw new InvalidOperationException($"Property {dynamicPropertiesContainerName} must implement IDictionary<string,object> interface");
 
             var dynamicProperties = new Dictionary<string, object>();
             property.SetValue(instance, dynamicProperties, null);

@@ -48,8 +48,7 @@ namespace WebApiOData.V4.Samples.Controllers
 
         public IHttpActionResult GetProduct(int key)
         {
-            Product retval;
-            if (_data.TryGetValue(key, out retval))
+            if (_data.TryGetValue(key, out var retval))
             {
                 return Ok(retval);
             }
@@ -79,13 +78,12 @@ namespace WebApiOData.V4.Samples.Controllers
         [HttpGet]
         public IHttpActionResult GetPriceRank(int key)
         {
-            Product p;
-            if (_data.TryGetValue(key, out p))
+            if (_data.TryGetValue(key, out var product))
             {
                 // NOTE: Use where clause to get the rank of the price may not
                 // offer the good time complexity. The following code is intended
                 // for demostration only.
-                return Ok(_data.Values.Where(one => one.Price > p.Price).Count());
+                return Ok(_data.Values.Count(one => one.Price > product.Price));
             }
             else
             {
@@ -98,10 +96,9 @@ namespace WebApiOData.V4.Samples.Controllers
         {
             double taxRate = GetRate(state);
 
-            Product product;
-            if (_data.TryGetValue(key, out product))
+            if (_data.TryGetValue(key, out var product))
             {
-                double tax = product.Price * taxRate / 100;
+                var tax = product.Price * taxRate / 100;
                 return Ok(tax);
             }
             else

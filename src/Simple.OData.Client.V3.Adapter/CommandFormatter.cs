@@ -42,7 +42,7 @@ namespace Simple.OData.Client.V3.Adapter
 
         protected override void FormatInlineCount(IList<string> commandClauses)
         {
-            commandClauses.Add(string.Format("{0}={1}", ODataLiteral.InlineCount, ODataLiteral.AllPages));
+            commandClauses.Add($"{ODataLiteral.InlineCount}={ODataLiteral.AllPages}");
         }
     }
 }

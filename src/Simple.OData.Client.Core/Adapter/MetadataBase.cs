@@ -141,7 +141,7 @@ namespace Simple.OData.Client
                 }
                 else if (!this.Session.Settings.IgnoreUnmappedProperties)
                 {
-                    throw new UnresolvableObjectException(item.Key, String.Format("No property or association found for [{0}].", item.Key));
+                    throw new UnresolvableObjectException(item.Key, $"No property or association found for [{item.Key}].");
                 }
             }
 

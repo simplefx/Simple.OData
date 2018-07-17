@@ -72,24 +72,22 @@ namespace Simple.OData.Client
 
         public static object Convert(IDictionary<string, object> value, Type type)
         {
-            Func<IDictionary<string, object>, object> converter;
-            if (_dictionaryConverters.TryGetValue(type, out converter))
+            if (_dictionaryConverters.TryGetValue(type, out var converter))
             {
                 return converter(value);
             }
 
-            throw new InvalidOperationException(string.Format("No custom converter found for type {0}", type));
+            throw new InvalidOperationException($"No custom converter found for type {type}");
         }
 
         public static object Convert(object value, Type type)
         {
-            Func<object, object> converter;
-            if (_objectConverters.TryGetValue(type, out converter))
+            if (_objectConverters.TryGetValue(type, out var converter))
             {
                 return converter(value);
             }
 
-            throw new InvalidOperationException(string.Format("No custom converter found for type {0}", type));
+            throw new InvalidOperationException($"No custom converter found for type {type}");
         }
     }
 }

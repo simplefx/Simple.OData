@@ -25,7 +25,7 @@ namespace Simple.OData.Client.Tests.Core
 
         public string GetDateTimeOffsetFormat(string text, bool escapeString = false)
         {
-            var result = string.Format("datetimeoffset'{0}'", text);
+            var result = $"datetimeoffset'{text}'";
             if (escapeString)
                 result = Uri.EscapeDataString(result);
             return result;
@@ -33,7 +33,7 @@ namespace Simple.OData.Client.Tests.Core
 
         public string GetGuidFormat(string text, bool escapeString = false)
         {
-            var result = string.Format("guid'{0}'", text);
+            var result = $"guid'{text}'";
             if (escapeString)
                 result = Uri.EscapeDataString(result);
             return result;
@@ -46,7 +46,7 @@ namespace Simple.OData.Client.Tests.Core
 
         public string GetContainsFormat(string item, string text, bool escapeString = false)
         {
-            var result = string.Format("substringof('{0}',{1})", text, item);
+            var result = $"substringof('{text}',{item})";
             if (escapeString)
                 result = Uri.EscapeDataString(result);
             return result;
@@ -78,8 +78,8 @@ namespace Simple.OData.Client.Tests.Core
         public string GetEnumFormat(object value, Type enumType, string ns, bool prefixFree = false, bool escapeString = false)
         {
             var result = prefixFree
-                ? string.Format("'{0}'", Enum.ToObject(enumType, value))
-                : string.Format("{0}.{1}'{2}'", ns, enumType.Name, Enum.ToObject(enumType, value));
+                ? $"'{Enum.ToObject(enumType, value)}'"
+                : $"{ns}.{enumType.Name}'{Enum.ToObject(enumType, value)}'";
             if (escapeString)
                 result = Uri.EscapeDataString(result);
             return result;
@@ -87,7 +87,7 @@ namespace Simple.OData.Client.Tests.Core
 
         public string GetContainsFormat(string item, string text, bool escapeString = false)
         {
-            var result = string.Format("contains({0},'{1}')", item, text);
+            var result = $"contains({item},'{text}')";
             if (escapeString)
                 result = Uri.EscapeDataString(result);
             return result;

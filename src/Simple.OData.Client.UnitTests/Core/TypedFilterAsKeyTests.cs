@@ -6,14 +6,14 @@ namespace Simple.OData.Client.Tests.Core
 {
     public class TypedFilterAsKeyV3Tests : TypedFilterAsKeyTests
     {
-        public override string MetadataFile { get { return "Northwind3.xml"; } }
-        public override IFormatSettings FormatSettings { get { return new ODataV3Format(); } }
+        public override string MetadataFile => "Northwind3.xml";
+        public override IFormatSettings FormatSettings => new ODataV3Format();
     }
 
     public class TypedFilterAsKeyV4Tests : TypedFilterAsKeyTests
     {
-        public override string MetadataFile { get { return "Northwind4.xml"; } }
-        public override IFormatSettings FormatSettings { get { return new ODataV4Format(); } }
+        public override string MetadataFile => "Northwind4.xml";
+        public override IFormatSettings FormatSettings => new ODataV4Format();
 
         [Fact]
         public void FunctionWithCollectionAsParameter()
@@ -78,8 +78,7 @@ namespace Simple.OData.Client.Tests.Core
                 .For<Product>()
                 .Filter(x => !(x.ProductID == 1));
             var commandText = command.GetCommandTextAsync().Result;
-            Assert.Equal(string.Format("Products?$filter=not%20{0}ProductID%20eq%201{1}", 
-                Uri.EscapeDataString("("), Uri.EscapeDataString(")")), commandText);
+            Assert.Equal($"Products?$filter=not%20{Uri.EscapeDataString("(")}ProductID%20eq%201{Uri.EscapeDataString(")")}", commandText);
         }
 
         [Fact]
@@ -89,7 +88,7 @@ namespace Simple.OData.Client.Tests.Core
                 .For<Product>()
                 .Filter(x => x.ProductID == 1L);
             var commandText = command.GetCommandTextAsync().Result;
-            Assert.Equal(string.Format("Products(1{0})", FormatSettings.LongNumberSuffix), commandText);
+            Assert.Equal($"Products(1{FormatSettings.LongNumberSuffix})", commandText);
         }
 
         [Fact]
@@ -141,8 +140,7 @@ namespace Simple.OData.Client.Tests.Core
                 .For<Order>()
                 .Filter(x => x.ShippedDateTimeOffset > created);
             var commandText = command.GetCommandTextAsync().Result;
-            Assert.Equal(string.Format("Orders?$filter=ShippedDateTimeOffset%20gt%20{0}", 
-                FormatSettings.GetDateTimeOffsetFormat("2010-12-01T12:11:10Z", true)), commandText);
+            Assert.Equal($"Orders?$filter=ShippedDateTimeOffset%20gt%20{FormatSettings.GetDateTimeOffsetFormat("2010-12-01T12:11:10Z", true)}", commandText);
         }
 
         [Fact]
@@ -153,8 +151,7 @@ namespace Simple.OData.Client.Tests.Core
                 .For<Order>()
                 .Filter(x => x.ShippedDateTimeOffset > (DateTimeOffset)created);
             var commandText = command.GetCommandTextAsync().Result;
-            Assert.Equal(string.Format("Orders?$filter=ShippedDateTimeOffset%20gt%20{0}",
-                FormatSettings.GetDateTimeOffsetFormat("2010-12-01T12:11:10Z", true)), commandText);
+            Assert.Equal($"Orders?$filter=ShippedDateTimeOffset%20gt%20{FormatSettings.GetDateTimeOffsetFormat("2010-12-01T12:11:10Z", true)}", commandText);
         }
 
         [Fact]
@@ -165,8 +162,7 @@ namespace Simple.OData.Client.Tests.Core
                 .For<Order>()
                 .Filter(x => x.ShippedDateTimeOffset > (DateTimeOffset)created);
             var commandText = command.GetCommandTextAsync().Result;
-            Assert.Equal(string.Format("Orders?$filter=ShippedDateTimeOffset%20gt%20{0}",
-                FormatSettings.GetDateTimeOffsetFormat("2010-12-01T12:11:10Z", true)), commandText);
+            Assert.Equal($"Orders?$filter=ShippedDateTimeOffset%20gt%20{FormatSettings.GetDateTimeOffsetFormat("2010-12-01T12:11:10Z", true)}", commandText);
         }
 
         [Fact]
@@ -285,7 +281,7 @@ namespace Simple.OData.Client.Tests.Core
                 .For<TypeWithGuidKey>()
                 .Filter(x => x.Key == key);
             var commandText = command.GetCommandTextAsync().Result;
-            Assert.Equal(string.Format("TypeWithGuidKey({0})", Uri.EscapeDataString(FormatSettings.GetGuidFormat(key.ToString()))), commandText);
+            Assert.Equal($"TypeWithGuidKey({Uri.EscapeDataString(FormatSettings.GetGuidFormat(key.ToString()))})", commandText);
         }
 
         [Fact]

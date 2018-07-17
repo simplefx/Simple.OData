@@ -306,8 +306,7 @@ namespace Simple.OData.Client
 
                 foreach (var propertyName in mediaProperties)
                 {
-                    object value;
-                    if (entry.Data.TryGetValue(propertyName, out value))
+                    if (entry.Data.TryGetValue(propertyName, out var value))
                     {
                         await GetMediaStreamValueAsync(entry.Data, propertyName, value as ODataMediaAnnotations, cancellationToken);
                     }
@@ -323,8 +322,7 @@ namespace Simple.OData.Client
                 var stream = await GetMediaStreamAsync(mediaLink.AbsoluteUri, cancellationToken);
                 if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-                object propertyValue;
-                if (entry.TryGetValue(propertyName, out propertyValue))
+                if (entry.TryGetValue(propertyName, out _))
                     entry[propertyName] = stream;
                 else
                     entry.Add(propertyName, stream);

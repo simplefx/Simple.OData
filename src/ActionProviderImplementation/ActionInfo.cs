@@ -64,15 +64,15 @@ namespace ActionProviderImplementation
             var method = declaringType.GetMethod(availabilityMethodName);
 
             if (method == null)
-                throw new Exception(string.Format("Availability Method {0} was not found on type {1}", availabilityMethodName, declaringType.FullName));
+                throw new Exception($"Availability Method {availabilityMethodName} was not found on type {declaringType.FullName}");
 
             if (method.ReturnType != typeof(bool))
-                throw new Exception(string.Format("AvailabilityCheck method ({0}) MUST return bool.", availabilityMethodName));
+                throw new Exception($"AvailabilityCheck method ({availabilityMethodName}) MUST return bool.");
 
             var actionBindingParameterType = ActionMethod.GetParameters().First().ParameterType;
             var methodParameters = method.GetParameters();
             if (methodParameters.Count() != 1 || methodParameters.First().ParameterType != actionBindingParameterType)
-                throw new Exception(string.Format("AvailabilityCheck method was expected to have this signature 'bool {0}({1})'", availabilityMethodName, actionBindingParameterType.FullName));
+                throw new Exception($"AvailabilityCheck method was expected to have this signature 'bool {availabilityMethodName}({actionBindingParameterType.FullName})'");
 
             return method;
         }

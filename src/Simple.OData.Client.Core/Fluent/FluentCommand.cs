@@ -125,16 +125,11 @@ namespace Simple.OData.Client
                 var entityCollection = new FluentCommand(this).Resolve().EntityCollection;
                 return entityCollection.BaseEntityCollection == null
                     ? entityCollection.Name
-                    : string.Format("{0}/{1}",
-                        entityCollection.BaseEntityCollection.Name,
-                        _details.Session.Metadata.GetQualifiedTypeName(entityCollection.Name));
+                    : $"{entityCollection.BaseEntityCollection.Name}/{_details.Session.Metadata.GetQualifiedTypeName(entityCollection.Name)}";
             }
         }
 
-        public string DynamicPropertiesContainerName
-        {
-            get { return _details.DynamicPropertiesContainerName; }
-        }
+        public string DynamicPropertiesContainerName => _details.DynamicPropertiesContainerName;
 
         public Task<string> GetCommandTextAsync()
         {
@@ -275,7 +270,7 @@ namespace Simple.OData.Client
             if (string.IsNullOrEmpty(_details.Filter))
                 _details.Filter = filter;
             else
-                _details.Filter = string.Format("({0}) and ({1})", _details.Filter, filter);
+                _details.Filter = $"({_details.Filter}) and ({filter})";
             return this;
         }
 
@@ -453,7 +448,7 @@ namespace Simple.OData.Client
             if (_details.QueryOptions == null)
                 _details.QueryOptions = queryOptions;
             else
-                _details.QueryOptions = string.Format("{0}&{1}", _details.QueryOptions, queryOptions);
+                _details.QueryOptions = $"{_details.QueryOptions}&{queryOptions}";
             return this;
         }
 
@@ -663,12 +658,11 @@ namespace Simple.OData.Client
                 {
                     entryData.Add(key, _details.EntryData[key]);
                 }
-                object dynamicProperties;
-                if (_details.EntryData.TryGetValue(_details.DynamicPropertiesContainerName, out dynamicProperties) && dynamicProperties != null)
+
+                if (_details.EntryData.TryGetValue(_details.DynamicPropertiesContainerName, out var dynamicProperties) && dynamicProperties != null)
                 {
-                    if (dynamicProperties is IDictionary<string, object>)
+                    if (dynamicProperties is IDictionary<string, object> kv)
                     {
-                        var kv = dynamicProperties as IDictionary<string, object>;
                         foreach (var key in kv.Keys)
                         {
                             entryData.Add(key, kv[key]);
@@ -676,9 +670,7 @@ namespace Simple.OData.Client
                     }
                     else
                     {
-                        throw new InvalidOperationException(
-                            string.Format("Property {0} must implement IDictionary<string,object> interface", 
-                            _details.DynamicPropertiesContainerName));
+                        throw new InvalidOperationException($"Property {_details.DynamicPropertiesContainerName} must implement IDictionary<string,object> interface");
                     }
                 }
 
@@ -686,20 +678,11 @@ namespace Simple.OData.Client
             }
         }
 
-        internal IList<string> SelectedColumns
-        {
-            get { return _details.SelectColumns; }
-        }
+        internal IList<string> SelectedColumns => _details.SelectColumns;
 
-        internal string FunctionName
-        {
-            get { return _details.FunctionName; }
-        }
+        internal string FunctionName => _details.FunctionName;
 
-        internal string ActionName
-        {
-            get { return _details.ActionName; }
-        }
+        internal string ActionName => _details.ActionName;
 
         private IEnumerable<string> SplitItems(IEnumerable<string> columns)
         {
@@ -713,7 +696,7 @@ namespace Simple.OData.Client
 
         private IDictionary<string, object> TryInterpretFilterExpressionAsKey(ODataExpression expression)
         {
-            bool ok = false;
+            var ok = false;
             IDictionary<string, object> namedKeyValues = new Dictionary<string, object>();
             if (!ReferenceEquals(expression, null))
             {

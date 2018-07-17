@@ -72,7 +72,7 @@ namespace ActionProviderImplementation
                 if (type.GetGenericTypeDefinition() == typeof(IQueryable<>))
                     return resourceType;
             }
-            throw new Exception(string.Format("Type {0} is not a valid binding parameter", type.FullName));
+            throw new Exception($"Type {type.FullName} is not a valid binding parameter");
         }
         // Only allow Primitive/Complex or IEnumerable<Primitive>/IEnumerable<Complex>
         private ResourceType GetParameterResourceType(Type type)
@@ -80,11 +80,11 @@ namespace ActionProviderImplementation
             var resourceType = GetResourceType(type);
             if (resourceType.ResourceTypeKind == ResourceTypeKind.EntityType)
             {
-                throw new Exception(string.Format("Entity Types ({0}) MUST not be used as non-binding parameters.", type.FullName));
+                throw new Exception($"Entity Types ({type.FullName}) MUST not be used as non-binding parameters.");
             }
             else if (resourceType.ResourceTypeKind == ResourceTypeKind.EntityCollection)
             {
-                throw new Exception(string.Format("Entity Type Collections ({0}) MUST not be used as non-binding parameters.", type.FullName));
+                throw new Exception($"Entity Type Collections ({type.FullName}) MUST not be used as non-binding parameters.");
             }
             else if (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IQueryable<>))
             { 
@@ -109,7 +109,7 @@ namespace ActionProviderImplementation
                             return ResourceType.GetCollectionResourceType(elementResource);
                     }
                 }
-                throw new Exception(string.Format("Generic action parameter type {0} not supported", type.ToString()));
+                throw new Exception($"Generic action parameter type {type.ToString()} not supported");
             }
 
             if (ActionFactory.__primitives.Contains(type))
@@ -117,7 +117,7 @@ namespace ActionProviderImplementation
 
             ResourceType resourceType = _metadata.Types.SingleOrDefault(s => s.Name == type.Name);
             if (resourceType == null)
-                throw new Exception(string.Format("Generic action parameter type {0} not supported", type.ToString()));
+                throw new Exception($"Generic action parameter type {type.ToString()} not supported");
             return resourceType;
         }
         // Given a type try to find the resource set.

@@ -82,12 +82,12 @@ namespace Simple.OData.Client.Tests
 
         protected abstract Task DeleteTestData();
 
-        public async static Task AssertThrowsAsync<T>(Func<Task> testCode) where T : Exception
+        public static async Task AssertThrowsAsync<T>(Func<Task> testCode) where T : Exception
         {
             try
             {
                 await testCode();
-                throw new Exception(string.Format("Expected exception: {0}", typeof (T)));
+                throw new Exception($"Expected exception: {typeof(T)}");
             }
             catch (T)
             {

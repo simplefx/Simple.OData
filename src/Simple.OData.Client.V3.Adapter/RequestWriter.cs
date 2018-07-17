@@ -118,7 +118,7 @@ namespace Simple.OData.Client.V3.Adapter
                 {
                     var operationParameter = action.Parameters.BestMatch(x => x.Name, parameter.Key, _session.Settings.NameMatchResolver);
                     if (operationParameter == null)
-                        throw new UnresolvableObjectException(parameter.Key, string.Format("Parameter [{0}] not found for action [{1}]", parameter.Key, actionName));
+                        throw new UnresolvableObjectException(parameter.Key, $"Parameter [{parameter.Key}] not found for action [{actionName}]");
 
                     await WriteOperationParameterAsync(parameterWriter, operationParameter, parameter.Key, parameter.Value).ConfigureAwait(false);
                 }
@@ -145,7 +145,7 @@ namespace Simple.OData.Client.V3.Adapter
                 case EdmTypeKind.Collection:
                     var collectionWriter = await parameterWriter.CreateCollectionWriterAsync(paramName).ConfigureAwait(false);
                     await collectionWriter.WriteStartAsync(new ODataCollectionStart()).ConfigureAwait(false);
-                    foreach (var item in paramValue as IEnumerable)
+                    foreach (var item in (IEnumerable) paramValue)
                     {
                         await collectionWriter.WriteItemAsync(item).ConfigureAwait(false);
                     }
@@ -153,7 +153,7 @@ namespace Simple.OData.Client.V3.Adapter
                     break;
 
                 default:
-                    throw new NotSupportedException(string.Format("Unable to write action parameter of a type {0}", operationParameter.Type.Definition.TypeKind));
+                    throw new NotSupportedException($"Unable to write action parameter of a type {operationParameter.Type.Definition.TypeKind}");
             }
         }
 
@@ -171,8 +171,8 @@ namespace Simple.OData.Client.V3.Adapter
         protected override string FormatLinkPath(string entryIdent, string navigationPropertyName, string linkIdent = null)
         {
             return linkIdent == null
-                ? string.Format("{0}/$links/{1}", entryIdent, navigationPropertyName)
-                : string.Format("{0}/$links/{1}", entryIdent, linkIdent);
+                ? $"{entryIdent}/$links/{navigationPropertyName}"
+                : $"{entryIdent}/$links/{linkIdent}";
         }
 
         protected override void AssignHeaders(ODataRequest request)
@@ -279,11 +279,10 @@ namespace Simple.OData.Client.V3.Adapter
                 }
                 else
                 {
-                    bool isSingleton;
                     var formattedKey = _session.Adapter.GetCommandFormatter().ConvertKeyValuesToUriLiteral(
                         linkKey.ToDictionary(x => x.Name, x => linkEntry[x.Name]), true);
                     var linkedCollectionName = _session.Metadata.GetLinkedCollectionName(
-                        referenceLink.LinkData.GetType().Name, linkTypeWithKey.Name, out isSingleton);
+                        referenceLink.LinkData.GetType().Name, linkTypeWithKey.Name, out var isSingleton);
                     linkUri = linkedCollectionName + (isSingleton ? string.Empty : formattedKey);
                 }
                 var link = new ODataEntityReferenceLink
@@ -350,11 +349,10 @@ namespace Simple.OData.Client.V3.Adapter
                     {
                         foreach (var mappedType in mappedTypes)
                         {
-                            object result;
-                            if (Utils.TryConvert(value, mappedType.Key, out result))
+                            if (Utils.TryConvert(value, mappedType.Key, out var result))
                                 return result;
                         }
-                        throw new NotSupportedException(string.Format("Conversion is not supported from type {0} to OData type {1}", value.GetType(), propertyType));
+                        throw new NotSupportedException($"Conversion is not supported from type {value.GetType()} to OData type {propertyType}");
                     }
                     return value;
 
@@ -366,7 +364,7 @@ namespace Simple.OData.Client.V3.Adapter
                     {
                         return CustomConverters.Convert(value, value.GetType());
                     }
-                    throw new NotSupportedException(string.Format("Conversion is not supported from type {0} to OData type {1}", value.GetType(), propertyType));
+                    throw new NotSupportedException($"Conversion is not supported from type {value.GetType()} to OData type {propertyType}");
 
                 default:
                     return value;

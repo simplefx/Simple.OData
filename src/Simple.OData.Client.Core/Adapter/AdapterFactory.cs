@@ -29,7 +29,7 @@ namespace Simple.OData.Client
                 if (loadModelAdapter != null)
                     return loadModelAdapter();
             }
-            throw new NotSupportedException(string.Format("OData protocols {0} are not supported", string.Join(",", protocolVersions)));
+            throw new NotSupportedException($"OData protocols {string.Join(",", protocolVersions)} are not supported");
         }
 
         public IODataModelAdapter CreateModelAdapter(string metadataString)
@@ -37,7 +37,7 @@ namespace Simple.OData.Client
             var protocolVersion = GetMetadataProtocolVersion(metadataString);
             var loadModelAdapter = GetModelAdapterLoader(protocolVersion, metadataString);
             if (loadModelAdapter == null)
-                throw new NotSupportedException(string.Format("OData protocol {0} is not supported", protocolVersion));
+                throw new NotSupportedException($"OData protocol {protocolVersion} is not supported");
 
             return loadModelAdapter();
         }
@@ -48,15 +48,14 @@ namespace Simple.OData.Client
 
             var loadAdapter = GetAdapterLoader(modelAdapter);
             if (loadAdapter == null)
-                throw new NotSupportedException(string.Format("OData protocol {0} is not supported", modelAdapter.ProtocolVersion));
+                throw new NotSupportedException($"OData protocol {modelAdapter.ProtocolVersion} is not supported");
 
             return loadAdapter;
         }
 
         private async Task<IEnumerable<string>> GetSupportedProtocolVersionsAsync(HttpResponseMessage response)
         {
-            IEnumerable<string> headerValues;
-            if (response.Headers.TryGetValues(HttpLiteral.DataServiceVersion, out headerValues) ||
+            if (response.Headers.TryGetValues(HttpLiteral.DataServiceVersion, out var headerValues) ||
                 response.Headers.TryGetValues(HttpLiteral.ODataVersion, out headerValues))
             {
                 return headerValues.SelectMany(x => x.Split(';')).Where(x => x.Length > 0);                
@@ -110,7 +109,7 @@ namespace Simple.OData.Client
             }
             catch (Exception exception)
             {
-                throw new InvalidOperationException(string.Format("Unable to load OData adapter from assembly {0}", modelAdapterAssemblyName), exception);
+                throw new InvalidOperationException($"Unable to load OData adapter from assembly {modelAdapterAssemblyName}", exception);
             }
         }
 
@@ -145,7 +144,7 @@ namespace Simple.OData.Client
             }
             catch (Exception exception)
             {
-                throw new InvalidOperationException(string.Format("Unable to load OData adapter from assembly {0}", adapterAssemblyName), exception);
+                throw new InvalidOperationException($"Unable to load OData adapter from assembly {adapterAssemblyName}", exception);
             }
         }
 

@@ -42,35 +42,18 @@ namespace Simple.OData.Client.V4.Adapter
         {
             if (command.Details.ExpandAssociations.Any())
             {
-                commandClauses.Add(string.Format("{0}={1}", ODataLiteral.Expand,
-                    string.Join(",", command.Details.ExpandAssociations.Select(x =>
-                        FormatExpansionSegment(x.Key, resultCollection,
+                var formattedExpand = string.Join(",", command.Details.ExpandAssociations.Select(x =>
+                    FormatExpansionSegment(x.Key, resultCollection,
                         x.Value,
                         SelectPathSegmentColumns(command.Details.SelectColumns, x.Key),
-                        SelectPathSegmentColumns(command.Details.OrderbyColumns, x.Key))))));
+                        SelectPathSegmentColumns(command.Details.OrderbyColumns, x.Key))));
+                commandClauses.Add($"{ODataLiteral.Expand}={formattedExpand}");
             }
 
             FormatClause(commandClauses, resultCollection,
                 SelectPathSegmentColumns(command.Details.SelectColumns, null,
                     command.Details.ExpandAssociations.Select(FormatFirstSegment).ToList()),
                 ODataLiteral.Select, FormatSelectItem);
-
-            /*FormatClause(commandClauses, resultCollection,
-                SelectPathSegmentColumns(command.Details.OrderbyColumns, null,
-                    command.Details.ExpandAssociations.Select(FormatFirstSegment).ToList()),
-                ODataLiteral.OrderBy, FormatOrderByItem);
-
-            foreach (var x in command.Details.ExpandAssociations)
-            {
-                var segmentOrderByColumns = SelectPathSegmentColumns(command.Details.OrderbyColumns, x.Key);
-                if (segmentOrderByColumns.Any() && !IsInnerCollectionOrderBy(x.Key, resultCollection, segmentOrderByColumns))
-                {
-                    FormatClause(commandClauses, resultCollection, command.Details.OrderbyColumns, ODataLiteral.OrderBy, FormatOrderByItem);
-                }
-            }*/
-
-            var l = command.Details.OrderbyColumns
-                 .Where(o => !command.Details.ExpandAssociations.Select(ea => ea.Key).Any(ea => IsInnerCollectionOrderBy(ea, resultCollection, o.Key))).ToList();
 
             FormatClause(commandClauses, resultCollection,
                 command.Details.OrderbyColumns
@@ -81,7 +64,7 @@ namespace Simple.OData.Client.V4.Adapter
 
         protected override void FormatInlineCount(IList<string> commandClauses)
         {
-            commandClauses.Add(string.Format("{0}={1}", ODataLiteral.Count, ODataLiteral.True));
+            commandClauses.Add($"{ODataLiteral.Count}={ODataLiteral.True}");
         }
 
         private string FormatExpansionSegment(string path, EntityCollection entityCollection,
@@ -102,26 +85,26 @@ namespace Simple.OData.Client.V4.Adapter
                 entityCollection = _session.Metadata.GetEntityCollection(
                     _session.Metadata.GetNavigationPropertyPartnerTypeName(entityCollection.Name, associationName));
 
-                clauses.Add(string.Format("{0}={1}", ODataLiteral.Expand,
-                    FormatExpansionSegment(path, entityCollection, expandOptions,
-                        SelectPathSegmentColumns(selectColumns, path),
-                        SelectPathSegmentColumns(orderbyColumns, path))));
+                var formattedExpand = FormatExpansionSegment(path, entityCollection, expandOptions,
+                    SelectPathSegmentColumns(selectColumns, path),
+                    SelectPathSegmentColumns(orderbyColumns, path));
+                clauses.Add($"{ODataLiteral.Expand}={formattedExpand}");
             }
 
             if (expandOptions.Levels > 1)
             {
-                clauses.Add(string.Format("{0}={1}", ODataLiteral.Levels, expandOptions.Levels));
+                clauses.Add($"{ODataLiteral.Levels}={expandOptions.Levels}");
             }
             else if (expandOptions.Levels == 0)
             {
-                clauses.Add(string.Format("{0}={1}", ODataLiteral.Levels, ODataLiteral.Max));
+                clauses.Add($"{ODataLiteral.Levels}={ODataLiteral.Max}");
             }
 
             if (selectColumns.Any())
             {
                 var columns = string.Join(",", SelectPathSegmentColumns(selectColumns, null));
                 if (!string.IsNullOrEmpty(columns))
-                    clauses.Add(string.Format("{0}={1}", ODataLiteral.Select, columns));
+                    clauses.Add($"{ODataLiteral.Select}={columns}");
             }
 
             if (expandsToCollection && orderbyColumns.Any())
@@ -129,11 +112,11 @@ namespace Simple.OData.Client.V4.Adapter
                 var columns = string.Join(",", SelectPathSegmentColumns(orderbyColumns, null)
                     .Select(x => x.Key + (x.Value ? " desc" : string.Empty)).ToList());
                 if (!string.IsNullOrEmpty(columns))
-                    clauses.Add(string.Format("{0}={1}", ODataLiteral.OrderBy, columns));
+                    clauses.Add($"{ODataLiteral.OrderBy}={columns}");
             }
 
             if (clauses.Any())
-                text += string.Format("({0})", string.Join(";", clauses));
+                text += $"({string.Join(";", clauses)})";
 
             return text;
         }

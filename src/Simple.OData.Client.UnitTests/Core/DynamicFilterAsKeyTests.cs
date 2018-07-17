@@ -72,8 +72,7 @@ namespace Simple.OData.Client.Tests.Core
                 .For(x.Products)
                 .Filter(!(x.ProductID == 1));
             var commandText = await command.GetCommandTextAsync();
-            Assert.Equal(string.Format("Products?$filter=not%20{0}ProductID%20eq%201{1}", 
-                Uri.EscapeDataString("("), Uri.EscapeDataString(")")), commandText);
+            Assert.Equal($"Products?$filter=not%20{Uri.EscapeDataString("(")}ProductID%20eq%201{Uri.EscapeDataString(")")}", commandText);
         }
 
         [Fact]
@@ -84,7 +83,7 @@ namespace Simple.OData.Client.Tests.Core
                 .For(x.Products)
                 .Filter(x.ProductID == 1L);
             var commandText = await command.GetCommandTextAsync();
-            Assert.Equal(string.Format("Products(1{0})", FormatSettings.LongNumberSuffix), commandText);
+            Assert.Equal($"Products(1{FormatSettings.LongNumberSuffix})", commandText);
         }
 
         [Fact]

@@ -27,8 +27,7 @@ namespace Simple.OData.Client
 
         public void AddLink(string linkName, object linkData, string contentId = null)
         {
-            List<ReferenceLink> links;
-            if (!_links.TryGetValue(linkName, out links))
+            if (!_links.TryGetValue(linkName, out var links))
             {
                 links = new List<ReferenceLink>();
                 _links.Add(linkName, links);

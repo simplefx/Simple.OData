@@ -30,12 +30,11 @@ namespace Simple.OData.Client
                 var expr = this.Value as ODataExpression;
                 if (expr.Reference == null && expr.Function == null && !expr.IsValueConversion)
                 {
-                    object result;
                     if (expr.Value != null && expr.Value.GetType().IsEnumType())
                     {
                         expr = new ODataExpression(expr.Value);
                     }
-                    else if (Utils.TryConvert(expr.Value, _conversionType, out result))
+                    else if (Utils.TryConvert(expr.Value, _conversionType, out var result))
                     {
                         expr = new ODataExpression(result);
                     }
@@ -47,9 +46,9 @@ namespace Simple.OData.Client
                 var left = FormatExpression(_left, context);
                 var op = FormatOperator(context);
                 if (NeedsGrouping(_left))
-                    return string.Format("{0} ({1})", op, left);
+                    return $"{op} ({left})";
                 else
-                    return string.Format("{0} {1}", op, left);
+                    return $"{op} {left}";
             }
             else
             {
@@ -59,16 +58,16 @@ namespace Simple.OData.Client
 
                 if (context.IsQueryOption)
                 {
-                    return string.Format("{0}{1}{2}", left, op, right);
+                    return $"{left}{op}{right}";
                 }
                 else
                 {
                     if (NeedsGrouping(_left))
-                        left = string.Format("({0})", left);
+                        left = $"({left})";
                     if (NeedsGrouping(_right))
-                        right = string.Format("({0})", right);
+                        right = $"({right})";
 
-                    return string.Format("{0} {1} {2}", left, op, right);
+                    return $"{left} {op} {right}";
                 }
             }
         }
@@ -95,9 +94,8 @@ namespace Simple.OData.Client
 
         private string FormatFunction(ExpressionContext context)
         {
-            FunctionMapping mapping;
-            var adapterVersion = context.Session == null ? AdapterVersion.Default : context.Session.Adapter.AdapterVersion;
-            if (FunctionMapping.TryGetFunctionMapping(this.Function.FunctionName, this.Function.Arguments.Count(), adapterVersion, out mapping))
+            var adapterVersion = context.Session?.Adapter.AdapterVersion ?? AdapterVersion.Default;
+            if (FunctionMapping.TryGetFunctionMapping(this.Function.FunctionName, this.Function.Arguments.Count(), adapterVersion, out var mapping))
             {
                 return FormatMappedFunction(context, mapping);
             }
@@ -153,7 +151,7 @@ namespace Simple.OData.Client
                 }
             }
 
-            throw new NotSupportedException(string.Format("The function {0} is not supported or called with wrong number of arguments", this.Function.FunctionName));
+            throw new NotSupportedException($"The function {this.Function.FunctionName} is not supported or called with wrong number of arguments");
         }
 
         private string FormatMappedFunction(ExpressionContext context, FunctionMapping mapping)
@@ -163,9 +161,7 @@ namespace Simple.OData.Client
             var formattedArguments = string.Join(",",
                 (IEnumerable<object>)mappedFunction.Arguments.Select(x => FormatExpression(x, context)));
 
-            return string.Format("{0}({1})",
-                mappedFunction.FunctionName,
-                formattedArguments);
+            return $"{mappedFunction.FunctionName}({formattedArguments})";
         }
 
         private string FormatAnyAllFunction(ExpressionContext context)
@@ -180,18 +176,13 @@ namespace Simple.OData.Client
             }
             else
             {
-                var targetQualifier = string.Format("x{0}", ArgumentCounter >= 0 ? (1 + (ArgumentCounter++) % 9).ToString() : string.Empty);
-                formattedArguments = string.Format("{0}:{1}",
-                    targetQualifier,
-                    FormatExpression(this.Function.Arguments.First(), new ExpressionContext(context.Session,
-                        entityCollection, targetQualifier, context.DynamicPropertiesContainerName)));
+                var targetQualifier = $"x{(ArgumentCounter >= 0 ? (1 + (ArgumentCounter++) % 9).ToString() : string.Empty)}";
+                var expressionContext = new ExpressionContext(context.Session, entityCollection, targetQualifier, context.DynamicPropertiesContainerName);
+                formattedArguments = $"{targetQualifier}:{FormatExpression(this.Function.Arguments.First(), expressionContext)}";
             }
 
-            return FormatScope(
-                string.Format("{0}/{1}({2})",
-                    context.Session.Adapter.GetCommandFormatter().FormatNavigationPath(context.EntityCollection, navigationPath),
-                    this.Function.FunctionName.ToLower(),
-                formattedArguments), context);
+            var formattedNavigationPath = context.Session.Adapter.GetCommandFormatter().FormatNavigationPath(context.EntityCollection, navigationPath);
+            return FormatScope($"{formattedNavigationPath}/{this.Function.FunctionName.ToLower()}({formattedArguments})", context);
         }
 
         private string FormatIsOfCastFunction(ExpressionContext context)
@@ -204,14 +195,13 @@ namespace Simple.OData.Client
             }
             formattedArguments += FormatExpression(this.Function.Arguments.Last(), new ExpressionContext(context.Session));
 
-            return string.Format("{0}({1})",
-                this.Function.FunctionName.ToLower(), formattedArguments);
+            return $"{this.Function.FunctionName.ToLower()}({formattedArguments})";
         }
 
         private string FormatEnumHasFlagFunction(ExpressionContext context)
         {
             var value = FormatExpression(this.Function.Arguments.First(), new ExpressionContext(context.Session));
-            return string.Format("{0} has {1}", FormatCallerReference(), value);
+            return $"{FormatCallerReference()} has {value}";
         }
 
         private string FormatArrayIndexFunction(ExpressionContext context)
@@ -220,18 +210,18 @@ namespace Simple.OData.Client
                 FormatExpression(this.Function.Arguments.First(), new ExpressionContext(context.Session)).Trim('\'');
             return _functionCaller.Reference == context.DynamicPropertiesContainerName
                 ? propertyName
-                : string.Format("{0}.{1}", FormatCallerReference(), propertyName);
+                : $"{FormatCallerReference()}.{propertyName}";
         }
 
         private string FormatValue(ExpressionContext context)
         {
-            if (Value is ODataExpression)
+            if (Value is ODataExpression expression)
             {
-                return (Value as ODataExpression).Format(context);
+                return expression.Format(context);
             }
-            else if (Value is Type)
+            else if (Value is Type type)
             {
-                var typeName = context.Session.Adapter.GetMetadata().GetQualifiedTypeName((Value as Type).Name);
+                var typeName = context.Session.Adapter.GetMetadata().GetQualifiedTypeName(type.Name);
                 return context.Session.Adapter.GetCommandFormatter().ConvertValueToUriLiteral(typeName, false);
             }
             else
@@ -319,7 +309,7 @@ namespace Simple.OData.Client
                 }
                 else
                 {
-                    throw new UnresolvableObjectException(objectName, string.Format("Invalid referenced object [{0}]", objectName));
+                    throw new UnresolvableObjectException(objectName, $"Invalid referenced object [{objectName}]");
                 }
             }
             else if (FunctionMapping.ContainsFunction(elementNames.First(), 0))
@@ -337,19 +327,17 @@ namespace Simple.OData.Client
 
         private bool IsFunction(string objectName, ExpressionContext context)
         {
-            FunctionMapping mapping;
-            var adapterVersion = context.Session == null ? AdapterVersion.Default : context.Session.Adapter.AdapterVersion;
-            return FunctionMapping.TryGetFunctionMapping(objectName, 0, adapterVersion, out mapping);
+            var adapterVersion = context.Session?.Adapter.AdapterVersion ?? AdapterVersion.Default;
+            return FunctionMapping.TryGetFunctionMapping(objectName, 0, adapterVersion, out _);
         }
 
         private string FormatAsFunction(string objectName, ExpressionContext context)
         {
-            FunctionMapping mapping;
-            var adapterVersion = context.Session == null ? AdapterVersion.Default : context.Session.Adapter.AdapterVersion;
-            if (FunctionMapping.TryGetFunctionMapping(objectName, 0, adapterVersion, out mapping))
+            var adapterVersion = context.Session?.Adapter.AdapterVersion ?? AdapterVersion.Default;
+            if (FunctionMapping.TryGetFunctionMapping(objectName, 0, adapterVersion, out var mapping))
             {
                 var mappedFunction = mapping.FunctionMapper(objectName, _functionCaller, null).Function;
-                return string.Format("{0}({1})", mappedFunction.FunctionName, FormatCallerReference());
+                return $"{mappedFunction.FunctionName}({FormatCallerReference()})";
             }
             else
             {
@@ -411,7 +399,7 @@ namespace Simple.OData.Client
         {
             return string.IsNullOrEmpty(context.ScopeQualifier)
                 ? text
-                : string.Format("{0}/{1}", context.ScopeQualifier, text);
+                : $"{context.ScopeQualifier}/{text}";
         }
     }
 }

@@ -116,8 +116,8 @@ namespace Simple.OData.Client
                 var uriHost = uri.AbsoluteUri.Substring(
                     0, uri.AbsoluteUri.Length - uri.AbsolutePath.Length - uri.Query.Length);
                 var query = string.IsNullOrEmpty(uri.Query)
-                    ? string.Format("?{0}", baseQuery)
-                    : string.Format("{0}&{1}", uri.Query, baseQuery);
+                    ? $"?{baseQuery}"
+                    : $"{uri.Query}&{baseQuery}";
 
                 return new Uri(uriHost + uri.AbsolutePath + query);
             }
@@ -202,14 +202,12 @@ namespace Simple.OData.Client
 
         public static object Convert(object value, Type targetType)
         {
-            object result;
-
             if (value == null && !targetType.IsValue())
                 return null;
-            else if (TryConvert(value, targetType, out result))
+            else if (TryConvert(value, targetType, out var result))
                 return result;
 
-            throw new FormatException(string.Format("Unable to convert value from type {0} to type {1}", value.GetType(), targetType));
+            throw new FormatException($"Unable to convert value from type {value.GetType()} to type {targetType}");
         }
 
         public static bool IsSystemType(Type type)

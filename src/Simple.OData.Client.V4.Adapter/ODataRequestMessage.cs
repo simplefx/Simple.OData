@@ -17,8 +17,7 @@ namespace Simple.OData.Client.V4.Adapter
 
         public string GetHeader(string headerName)
         {
-            string value;
-            return _headers.TryGetValue(headerName, out value) ? value : null;
+            return _headers.TryGetValue(headerName, out var value) ? value : null;
         }
 
         public void SetHeader(string headerName, string headerValue)

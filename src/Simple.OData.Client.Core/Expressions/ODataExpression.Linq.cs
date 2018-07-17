@@ -224,8 +224,7 @@ namespace Simple.OData.Client
             var leftExpression = ParseLinqExpression(binaryExpression.Left);
             var rightExpression = ParseLinqExpression(binaryExpression.Right);
 
-            Type enumType;
-            if (IsConvertFromCustomEnum(binaryExpression.Left, out enumType))
+            if (IsConvertFromCustomEnum(binaryExpression.Left, out var enumType))
             {
                 return ParseBinaryExpression(leftExpression, ParseLinqExpression(Expression.Convert(binaryExpression.Right, enumType)), expression);
             }

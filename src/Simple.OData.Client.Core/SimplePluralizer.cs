@@ -260,16 +260,14 @@ namespace Simple.OData.Client
                 return s;
             }
             // lookup special words
-            Word word;
-            if (_specialSingulars.TryGetValue(s, out word))
+            if (_specialSingulars.TryGetValue(s, out var word))
             {
                 return word.Plural;
             }
             // apply suffix rules
             foreach (var rule in _suffixRules)
             {
-                string plural;
-                if (rule.TryToPlural(s, out plural))
+                if (rule.TryToPlural(s, out var plural))
                 {
                     return plural;
                 }
@@ -285,16 +283,14 @@ namespace Simple.OData.Client
                 return s;
             }
             // lookup special words
-            Word word;
-            if (_specialPlurals.TryGetValue(s, out word))
+            if (_specialPlurals.TryGetValue(s, out var word))
             {
                 return word.Singular;
             }
             // apply suffix rules
             foreach (var rule in _suffixRules)
             {
-                string singular;
-                if (rule.TryToSingular(s, out singular))
+                if (rule.TryToSingular(s, out var singular))
                 {
                     return singular;
                 }

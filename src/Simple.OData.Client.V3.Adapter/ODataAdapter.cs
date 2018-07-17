@@ -52,7 +52,7 @@ namespace Simple.OData.Client.V3.Adapter
                 case ODataProtocolVersion.V3:
                     return "V3";
             }
-            throw new InvalidOperationException(string.Format("Unsupported OData protocol version: \"{0}\"", this.ProtocolVersion));
+            throw new InvalidOperationException($"Unsupported OData protocol version: \"{this.ProtocolVersion}\"");
         }
 
         public override IMetadata GetMetadata()

@@ -282,7 +282,7 @@ namespace Simple.OData.Client.Tests.BasicApi
         {
             try
             {
-                var product = await client.FindEntryAsync(string.Format("Products({0})", productID));
+                var product = await client.FindEntryAsync($"Products({productID})");
                 if (productID != Convert.ToInt32(product["ProductID"]))
                 {
                     lock (result)
