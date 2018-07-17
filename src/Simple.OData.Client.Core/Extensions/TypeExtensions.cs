@@ -143,5 +143,30 @@ namespace Simple.OData.Client.Extensions
         {
             return type.GetTypeInfo().BaseType;
         }
+
+        public static string GetMappedName(this Type type)
+        {
+            var supportedAttributeNames = new[]
+            {
+                "DataContractAttribute",
+                "TableAttribute",
+            };
+
+            var mappingAttribute = type.GetCustomAttributes()
+                .FirstOrDefault(x => supportedAttributeNames.Any(y => x.GetType().Name == y));
+
+            if (mappingAttribute != null)
+            {
+                var nameProperty = mappingAttribute.GetType().GetAnyProperty("Name");
+                if (nameProperty != null)
+                {
+                    var propertyValue = nameProperty.GetValue(mappingAttribute, null);
+                    if (propertyValue != null)
+                        return propertyValue.ToString();
+                }
+            }
+
+            return type.Name;
+        }
     }
 }
