@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using Microsoft.Spatial;
 using System.Spatial;
 
@@ -21,6 +22,11 @@ namespace Simple.OData.Client.Tests
         public List<Location> AddressInfo { get; set; }
         public PersonGender Gender { get; set; }
         public long Concurrency { get; set; }
+    }
+
+    [DataContract(Name = "Person")]
+    class PersonWithDataContract : PersonBase
+    {
     }
 
     class Person : PersonBase

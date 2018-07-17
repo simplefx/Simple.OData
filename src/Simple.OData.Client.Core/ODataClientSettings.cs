@@ -12,6 +12,15 @@ namespace Simple.OData.Client
     {
         private readonly INameMatchResolver _defaultNameMatchResolver = new BestMatchResolver();
         private INameMatchResolver _nameMatchResolver;
+        private Uri _baseOrRelativeUri;
+
+        /// <summary>
+        /// Gets or sets external instance of HttpClient to be used when issuing OData requests.
+        /// </summary>
+        /// <value>
+        /// The instance of <see cref="System.Net.Http.HttpClient"/>.
+        /// </value>
+        public HttpClient HttpClient { get; private set; }
 
         /// <summary>
         /// Gets or sets the OData service URL.
@@ -19,7 +28,30 @@ namespace Simple.OData.Client
         /// <value>
         /// The URL address.
         /// </value>
-        public Uri BaseUri { get; set; }
+        public Uri BaseUri
+        {
+            get
+            {
+                if (this.HttpClient != null && this.HttpClient.BaseAddress != null)
+                {
+                    if (_baseOrRelativeUri != null)
+                        return new Uri(this.HttpClient.BaseAddress, _baseOrRelativeUri);
+                    else
+                        return this.HttpClient.BaseAddress;
+                }
+                else
+                {
+                    return _baseOrRelativeUri;
+                }
+            }
+            set
+            {
+                if (value != null && value.IsAbsoluteUri && this.HttpClient != null && this.HttpClient.BaseAddress != null)
+                    throw new InvalidOperationException("Unable to set BaseUri when BaseAddress is specified on HttpClient.");
+
+                _baseOrRelativeUri = value;
+            }
+        }
 
         /// <summary>
         /// Gets or sets the OData client credentials.
@@ -87,15 +119,15 @@ namespace Simple.OData.Client
         public string MetadataDocument { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether <see cref="HttpClient"/> connection should be disposed and renewed between OData requests.
+        /// Gets or sets a value indicating whether <see cref="System.Net.Http.HttpClient"/> connection should be disposed and renewed between OData requests.
         /// </summary>
         /// <value>
-        /// <c>true</c> to create a new <see cref="HttpClient"/> instance for each request; <c>false</c> to reuse <see cref="HttpClient"/> between requests.
+        /// <c>true</c> to create a new <see cref="System.Net.Http.HttpClient"/> instance for each request; <c>false</c> to reuse <see cref="System.Net.Http.HttpClient"/> between requests.
         /// </value>
         public bool RenewHttpConnection { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether <see cref="HttpClient"/> should omit namespaces for function and action calls in generated URI.
+        /// Gets or sets a value indicating whether <see cref="System.Net.Http.HttpClient"/> should omit namespaces for function and action calls in generated URI.
         /// </summary>
         /// <value>
         /// <c>true</c> to omit namespaces for function and action calls in generated URI; <c>false</c> otherwise.
@@ -103,7 +135,7 @@ namespace Simple.OData.Client
         public bool UnqualifiedNameCall { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether <see cref="HttpClient"/> should omit type prefix for Enum values in generated URI.
+        /// Gets or sets a value indicating whether <see cref="System.Net.Http.HttpClient"/> should omit type prefix for Enum values in generated URI.
         /// </summary>
         /// <value>
         /// <c>true</c> to omit type prefix for Enum values in generated URI; <c>false</c> otherwise.
@@ -208,6 +240,7 @@ namespace Simple.OData.Client
         /// </summary>
         /// <param name="baseUri">The URL address.</param>
         /// <param name="credentials">The client credentials.</param>
+        [Obsolete("Use of string-typed baseUri is deprecated, please use Uri-typed baseUri instead.")]
         public ODataClientSettings(string baseUri, ICredentials credentials = null)
         {
             this.BaseUri = new Uri(baseUri);
@@ -222,6 +255,26 @@ namespace Simple.OData.Client
         public ODataClientSettings(Uri baseUri, ICredentials credentials = null)
         {
             this.BaseUri = baseUri;
+            this.Credentials = credentials;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="ODataClientSettings"/> class.
+        /// </summary>
+        /// <param name="httpClient">The instance of <see cref="System.Net.Http.HttpClient"/>.</param>
+        /// <param name="relativeUri">The URL address.</param>
+        /// <param name="credentials">The client credentials.</param>
+        public ODataClientSettings(HttpClient httpClient, Uri relativeUri = null, ICredentials credentials = null)
+        {
+            if (httpClient != null && httpClient.BaseAddress != null && !httpClient.BaseAddress.IsAbsoluteUri)
+                throw new ArgumentException("HttpClient BaseAddress must be an absolute URI", nameof(httpClient));
+            if (relativeUri != null && relativeUri.IsAbsoluteUri)
+                throw new ArgumentException("Must be a relative URI", nameof(relativeUri));
+            if (httpClient != null && httpClient.BaseAddress == null && relativeUri != null)
+                throw new ArgumentException("Must not specify relative URI when HttpClient has no BaseAddress", nameof(relativeUri));
+
+            this.HttpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+            this.BaseUri = relativeUri;
             this.Credentials = credentials;
         }
 
@@ -242,6 +295,7 @@ namespace Simple.OData.Client
             this.NameMatchResolver = session.Settings.NameMatchResolver;
             this.OnCreateMessageHandler = session.Settings.OnCreateMessageHandler;
             this.OnApplyClientHandler = session.Settings.OnApplyClientHandler;
+            this.HttpClient = session.Settings.HttpClient;
             this.RequestExecutor = session.Settings.RequestExecutor;
             this.BeforeRequest = session.Settings.BeforeRequest;
             this.BeforeRequestAsync = session.Settings.BeforeRequestAsync;

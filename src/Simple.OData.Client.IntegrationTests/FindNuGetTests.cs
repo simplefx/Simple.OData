@@ -22,7 +22,7 @@ namespace Simple.OData.Client.Tests
         [Fact]
         public async Task FindEntryNuGetV2()
         {
-            var settings = new ODataClientSettings("http://nuget.org/api/v2")
+            var settings = new ODataClientSettings(new Uri("http://nuget.org/api/v2"))
             {
                 OnTrace = (format, args) =>
                 {

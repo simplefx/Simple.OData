@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -61,6 +62,19 @@ namespace Simple.OData.Client.Tests
 
             Assert.Single(people);
             Assert.Null(annotations.NextPageLink);
+        }
+
+        [Fact]
+        public async Task FindSinglePersonExternalHttpClient()
+        {
+            var client = new ODataClient(new ODataClientSettings(new HttpClient() { BaseAddress = _serviceUri }));
+
+            var person = await client
+                .For<Person>()
+                .Key("russellwhyte")
+                .FindEntryAsync();
+
+            Assert.Equal("russellwhyte", person.UserName);
         }
 
         [Fact]
@@ -181,6 +195,16 @@ namespace Simple.OData.Client.Tests
                 .NavigateTo(x => x.PlanItems)
                 .FindEntriesAsync();
             Assert.Equal(3, flights.Count());
+        }
+
+        [Fact]
+        public async Task FindPersonWithDataContract()
+        {
+            var person = await _client
+                .For<PersonWithDataContract>()
+                .Key("russellwhyte")
+                .FindEntryAsync();
+            Assert.Equal("russellwhyte", person.UserName);
         }
 
         [Fact]

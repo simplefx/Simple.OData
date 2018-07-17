@@ -18,7 +18,7 @@ namespace Simple.OData.Client.Benchmarks
     {
         private ODataClient GetClient(string responseFile)
         {
-            return new ODataClient(new ODataClientSettings("http://localhost/odata")
+            return new ODataClient(new ODataClientSettings(new Uri("http://localhost/odata"))
             {
                 MetadataDocument = MetadataResolver.GetMetadataDocument("crm_schema.xml"),
                 IgnoreUnmappedProperties = true
