@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -211,7 +212,11 @@ namespace Simple.OData.Client.Tests.BasicApi
 
                     return task;
                 }
-              };
+            };
+            var client = new ODataClient(settings);
+            await AssertThrowsAsync<WebRequestException>(async () => await client.FindEntriesAsync("Products"));
+        }
+
 
         [Fact]
         public async Task InterceptResponse()

@@ -2529,6 +2529,14 @@
             OData client configuration settings
             </summary>
         </member>
+        <member name="P:Simple.OData.Client.ODataClientSettings.HttpClient">
+            <summary>
+            Gets or sets external instance of HttpClient to be used when issuing OData requests.
+            </summary>
+            <value>
+            The instance of <see cref="T:System.Net.Http.HttpClient"/>.
+            </value>
+        </member>
         <member name="P:Simple.OData.Client.ODataClientSettings.BaseUri">
             <summary>
             Gets or sets the OData service URL.
@@ -2725,6 +2733,14 @@
             Initializes a new instance of the <see cref="T:Simple.OData.Client.ODataClientSettings"/> class.
             </summary>
             <param name="baseUri">The URL address.</param>
+            <param name="credentials">The client credentials.</param>
+        </member>
+        <member name="M:Simple.OData.Client.ODataClientSettings.#ctor(System.Net.Http.HttpClient,System.Uri,System.Net.ICredentials)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Simple.OData.Client.ODataClientSettings"/> class.
+            </summary>
+            <param name="httpClient">The instance of <see cref="T:System.Net.Http.HttpClient"/>.</param>
+            <param name="relativeUri">The URL address.</param>
             <param name="credentials">The client credentials.</param>
         </member>
         <member name="T:Simple.OData.Client.ODataEntry">

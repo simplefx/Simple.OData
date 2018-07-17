@@ -134,6 +134,23 @@ namespace Simple.OData.Client.Tests.FluentApi
         }
 
         [Fact]
+        public async Task RemappedColumn()
+        {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
+            await client
+                .For<Product>()
+                .Set(new ProductWithRemappedColumn { ProductName = "Test1", UnitPrice = 18m, MappedEnglishName = "EnglishTest" })
+                .InsertEntryAsync(false);
+
+            var product = await client
+                .For<Product>()
+                .Filter(x => x.ProductName == "Test1")
+                .Select(x => new { x.ProductID, x.ProductName, x.MappedEnglishName })
+                .FindEntryAsync();
+            Assert.Equal("EnglishTest", product.MappedEnglishName);
+        }
+
+        [Fact]
         public async Task Subclass()
         {
             var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
