@@ -36,34 +36,6 @@ namespace Simple.OData.Client.Tests.BasicApi
             Assert.Equal("Test1", ship["ShipName"]);
         }
 
-#if !MOCK_HTTP
-        [Fact]
-        public async Task InsertUsingModifiedSchema()
-        {
-            await AssertThrowsAsync<Microsoft.Data.OData.ODataException>(async () => 
-                await _client.InsertEntryAsync("Customers", new Entry() { { "CompanyName", null } }));
-
-            var metadataDocument = await _client.GetMetadataDocumentAsync();
-            metadataDocument = metadataDocument.Replace(@"Name=""CompanyName"" Type=""Edm.String"" Nullable=""false""", @"Name=""CompanyName"" Type=""Edm.String"" Nullable=""true""");
-            ODataClient.ClearMetadataCache();
-            var settings = new ODataClientSettings
-            {
-                BaseUri = _serviceUri,
-                MetadataDocument = metadataDocument,
-            };
-            var client = new ODataClient(settings);
-            var model = await client.GetMetadataAsync<IEdmModel>();
-            var type = model.FindDeclaredType("NorthwindModel.Customer");
-            var property = (type as IEdmEntityType).DeclaredProperties.Single(x => x.Name == "CompanyName");
-            Assert.True(property.Type.IsNullable);
-
-            await AssertThrowsAsync<WebRequestException>(async () => 
-                await client.InsertEntryAsync("Customers", new Entry() { { "CompanyName", null } }));
-
-            ODataClient.ClearMetadataCache();
-        }
-#endif
-
         [Fact]
         public async Task UpdateEntryWithResult()
         {

@@ -234,36 +234,6 @@ namespace Simple.OData.Client.Tests.FluentApi
             Assert.Null(product);
         }
 
-#if !MOCK_HTTP
-        [Fact]
-        public async Task InsertUpdateDeleteSeparateBatchesRenewHttpConnection()
-        {
-            var settings = CreateDefaultSettings().WithHttpMock();
-            var batch = new ODataBatch(settings);
-            batch += c => c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test12" }, { "UnitPrice", 21m } }, false);
-            await batch.ExecuteAsync();
-
-            var client = new ODataClient(new ODataClientSettings {BaseUri = _serviceUri, RenewHttpConnection = true});
-            var product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test12'");
-            Assert.Equal(21m, product["UnitPrice"]);
-            var key = new Entry() { { "ProductID", product["ProductID"] } };
-
-            batch = new ODataBatch(settings);
-            batch += c => c.UpdateEntryAsync("Products", key, new Entry() { { "UnitPrice", 22m } });
-            await batch.ExecuteAsync();
-
-            product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test12'");
-            Assert.Equal(22m, product["UnitPrice"]);
-
-            batch = new ODataBatch(settings);
-            batch += c => c.DeleteEntryAsync("Products", key);
-            await batch.ExecuteAsync();
-
-            product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test12'");
-            Assert.Null(product);
-        }
-#endif
-
         [Fact]
         public async Task InsertSingleEntityWithSingleAssociationSingleBatch()
         {
