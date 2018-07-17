@@ -9,17 +9,17 @@ namespace Simple.OData.Client.Tests
 {
     public abstract class TestBase : IDisposable
     {
-        protected const string ODataV2ReadWriteUri = "http://services.odata.org/V2/%28S%28readwrite%29%29/OData/OData.svc/";
-        protected const string ODataV3ReadOnlyUri = "http://services.odata.org/V3/OData/OData.svc/";
-        protected const string ODataV3ReadWriteUri = "http://services.odata.org/V3/%28S%28readwrite%29%29/OData/OData.svc/";
-        protected const string ODataV4ReadOnlyUri = "http://services.odata.org/V4/OData/OData.svc/";
-        protected const string ODataV4ReadWriteUri = "http://services.odata.org/V4/OData/%28S%28readwrite%29%29/OData.svc/";
+        protected const string ODataV2ReadWriteUri = "https://services.odata.org/V2/%28S%28readwrite%29%29/OData/OData.svc/";
+        protected const string ODataV3ReadOnlyUri = "https://services.odata.org/V3/OData/OData.svc/";
+        protected const string ODataV3ReadWriteUri = "https://services.odata.org/V3/%28S%28readwrite%29%29/OData/OData.svc/";
+        protected const string ODataV4ReadOnlyUri = "https://services.odata.org/V4/OData/OData.svc/";
+        protected const string ODataV4ReadWriteUri = "https://services.odata.org/V4/OData/%28S%28readwrite%29%29/OData.svc/";
 
-        protected const string NorthwindV2ReadOnlyUri = "http://services.odata.org/V2/Northwind/Northwind.svc/";
-        protected const string NorthwindV3ReadOnlyUri = "http://services.odata.org/V3/Northwind/Northwind.svc/";
-        protected const string NorthwindV4ReadOnlyUri = "http://services.odata.org/V4/Northwind/Northwind.svc/";
+        protected const string NorthwindV2ReadOnlyUri = "https://services.odata.org/V2/Northwind/Northwind.svc/";
+        protected const string NorthwindV3ReadOnlyUri = "https://services.odata.org/V3/Northwind/Northwind.svc/";
+        protected const string NorthwindV4ReadOnlyUri = "https://services.odata.org/V4/Northwind/Northwind.svc/";
 
-        protected const string TripPinV4ReadWriteUri = "http://services.odata.org/V4/TripPinServiceRW/";
+        protected const string TripPinV4ReadWriteUri = "https://services.odata.org/V4/TripPinServiceRW/";
 
         protected readonly Uri _serviceUri;
         protected readonly ODataPayloadFormat _payloadFormat;
