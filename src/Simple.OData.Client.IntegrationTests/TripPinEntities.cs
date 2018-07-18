@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using Microsoft.Spatial;
-using System.Spatial;
 
 namespace Simple.OData.Client.Tests
 {

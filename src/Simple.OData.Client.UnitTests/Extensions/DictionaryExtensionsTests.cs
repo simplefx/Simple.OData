@@ -323,7 +323,7 @@ namespace Simple.OData.Client.Tests.Extensions
                 { "Data", new ClassNoDefaultConstructor("test") },
             };
 
-            Assert.Throws<InvalidOperationException>(() => dict.ToObject<ClassNoDefaultConstructor>());
+            Assert.Throws<ConstructorNotFoundException>(() => dict.ToObject<ClassNoDefaultConstructor>());
         }
     }
 }

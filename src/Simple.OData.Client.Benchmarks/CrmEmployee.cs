@@ -16,19 +16,10 @@ namespace Simple.OData.Client.Benchmarks
 
     public class CrmEmployee
     {
-        private ODataClient GetClient(string responseFile)
-        {
-            return new ODataClient(new ODataClientSettings(new Uri("http://localhost/odata"))
-            {
-                MetadataDocument = MetadataResolver.GetMetadataDocument("crm_schema.xml"),
-                IgnoreUnmappedProperties = true
-            }.WithHttpResponses(new [] { @"..\..\..\..\..\..\..\Resources\" + responseFile }));
-        }
-
         [Benchmark]
         public void GetAll()
         {
-            var result = GetClient("crm_result_10.json")
+            var result = Utils.GetClient("crm_schema.xml", "crm_result_10.json")
                 .For<he_employee>()
                 .FindEntriesAsync()
                 .Result.ToList();
@@ -38,7 +29,7 @@ namespace Simple.OData.Client.Benchmarks
         [Benchmark]
         public void GetSingle()
         {
-            var result = GetClient("crm_result_1.json")
+            var result = Utils.GetClient("crm_schema.xml", "crm_result_1.json")
                 .For<he_employee>()
                 .Filter(x => x.he_employeenumber == 123456)
                 .FindEntryAsync()

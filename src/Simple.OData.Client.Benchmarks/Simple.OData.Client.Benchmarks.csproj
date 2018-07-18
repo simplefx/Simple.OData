@@ -15,11 +15,17 @@
 
   <ItemGroup>
     <None Remove="Resources\crm_schema.xml" />
+    <None Remove="Resources\Transfers.xml" />
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Include="..\Simple.OData.Client.IntegrationTests\TripPinEntities.cs" Link="TripPinEntities.cs" />
     <Compile Include="..\Simple.OData.Client.UnitTests\MetadataResolver.cs" Link="MetadataResolver.cs" />
     <Compile Include="..\Simple.OData.Client.UnitTests\MockingRequestExecutor.cs" Link="MockingRequestExecutor.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="..\Simple.OData.Client.UnitTests\Resources\TripPin.xml" Link="Resources\TripPin.xml" />
   </ItemGroup>
 
   <ItemGroup>

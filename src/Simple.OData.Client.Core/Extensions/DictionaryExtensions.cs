@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -7,7 +8,8 @@ namespace Simple.OData.Client.Extensions
 {
     static class DictionaryExtensions
     {
-        private static readonly Dictionary<Type, ConstructorInfo> _constructors = new Dictionary<Type, ConstructorInfo>();
+        private static readonly ConcurrentDictionary<Type, ActivatorDelegate> DefaultActivators = new ConcurrentDictionary<Type, ActivatorDelegate>();
+        private static readonly ConcurrentDictionary<Tuple<Type,Type>, ActivatorDelegate> CollectionActivators = new ConcurrentDictionary<Tuple<Type,Type>, ActivatorDelegate>();
 
         internal static Func<IDictionary<string, object>, ODataEntry> CreateDynamicODataEntry { get; set; }
 
@@ -24,22 +26,15 @@ namespace Simple.OData.Client.Extensions
             if (typeof(T) == typeof(string) || typeof(T).IsValue())
                 throw new InvalidOperationException($"Unable to convert structural data to {typeof(T).Name}.");
 
-            return (T)ToObject(source, typeof(T), CreateInstance<T>, dynamicPropertiesContainerName, dynamicObject);
+            return (T)ToObject(source, typeof(T), dynamicPropertiesContainerName, dynamicObject);
         }
 
         public static object ToObject(this IDictionary<string, object> source, Type type, string dynamicPropertiesContainerName = null)
         {
-            var ctor = type.GetDefaultConstructor();
-            if (ctor == null && !CustomConverters.HasDictionaryConverter(type))
-            {
-                throw new InvalidOperationException($"Unable to create an instance of type {type.Name} that does not have a default constructor.");
-            }
-
-            return ToObject(source, type, () => ctor.Invoke(new object[] { }), dynamicPropertiesContainerName, false);
+            return ToObject(source, type, dynamicPropertiesContainerName, false);
         }
 
-        private static object ToObject(this IDictionary<string, object> source, Type type, Func<object> instanceFactory,
-            string dynamicPropertiesContainerName, bool dynamicObject)
+        private static object ToObject(this IDictionary<string, object> source, Type type, string dynamicPropertiesContainerName, bool dynamicObject)
         {
             if (source == null)
                 return null;
@@ -53,7 +48,7 @@ namespace Simple.OData.Client.Extensions
                 return CustomConverters.Convert(source, type);
             }
 
-            var instance = instanceFactory();
+            var instance = CreateInstance(type);
 
             IDictionary<string, object> dynamicProperties = null;
             if (!string.IsNullOrEmpty(dynamicPropertiesContainerName))
@@ -133,7 +128,7 @@ namespace Simple.OData.Client.Extensions
 
         private static object ConvertSingle(Type type, object itemValue)
         {
-            Func<object, Type, object> TryConvert = (v, t) => Utils.TryConvert(v, t, out var result) ? result : v;
+            object TryConvert(object v, Type t) => Utils.TryConvert(v, t, out var result) ? result : v;
 
             return type == typeof(ODataEntryAnnotations)
                 ? itemValue
@@ -170,13 +165,9 @@ namespace Simple.OData.Client.Extensions
             }
             else
             {
-                var typedef = typeof(IEnumerable<>);
-                var enumerableType = typedef.MakeGenericType(elementType);
-                var ctor = type.GetDeclaredConstructors().FirstOrDefault(
-                    x => x.GetParameters().Length == 1 && x.GetParameters().First().ParameterType == enumerableType);
-                return ctor != null
-                    ? ctor.Invoke(new object[] { arrayValue })
-                    : null;
+                var collectionType = typeof(IEnumerable<>).MakeGenericType(elementType);
+                var activator = CollectionActivators.GetOrAdd(new Tuple<Type, Type>(type, collectionType), t => type.CreateActivator(collectionType));
+                return activator?.Invoke(arrayValue);
             }
         }
 
@@ -184,10 +175,10 @@ namespace Simple.OData.Client.Extensions
         {
             if (source == null)
                 return new Dictionary<string, object>();
-            if (source is IDictionary<string, object>)
-                return source as IDictionary<string, object>;
-            if (source is ODataEntry)
-                return (Dictionary<string, object>)(source as ODataEntry);
+            if (source is IDictionary<string, object> objects)
+                return objects;
+            if (source is ODataEntry entry)
+                return (Dictionary<string, object>)entry;
 
             var properties = Utils.GetMappedProperties(source.GetType());
             return properties.ToDictionary
@@ -197,35 +188,17 @@ namespace Simple.OData.Client.Extensions
             );
         }
 
-        private static T CreateInstance<T>()
-            where T : class
+        private static object CreateInstance(Type type)
         {
-            if (!_constructors.TryGetValue(typeof(T), out var ctor))
+            if (type == typeof(IDictionary<string, object>))
             {
-                if (typeof(T) == typeof(IDictionary<string, object>))
-                {
-                    return new Dictionary<string, object>() as T;
-                }
-                else
-                {
-                    ctor = typeof(T).GetDefaultConstructor();
-                    if (ctor != null)
-                    {
-                        lock (_constructors)
-                        {
-                            if (!_constructors.ContainsKey(typeof(T)))
-                                _constructors.Add(typeof(T), ctor);
-                        }
-                    }
-                }
+                return new Dictionary<string, object>();
             }
-
-            if (ctor == null)
+            else
             {
-                throw new InvalidOperationException($"Unable to create an instance of type {typeof(T).Name} that does not have a default constructor.");
+                var ctor = DefaultActivators.GetOrAdd(type, t => t.CreateActivator());
+                return ctor.Invoke();
             }
-
-            return ctor.Invoke(new object[] { }) as T;
         }
 
         private static ODataEntry CreateODataEntry(IDictionary<string, object> source, bool dynamicObject = false)
