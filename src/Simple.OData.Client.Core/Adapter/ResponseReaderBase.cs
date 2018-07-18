@@ -116,12 +116,25 @@ namespace Simple.OData.Client
             if (linkNode.Value != null)
             {
                 var linkValue = linkNode.Value;
-                if (linkNode.Value is IDictionary<string, object> && !(linkNode.Value as IDictionary<string, object>).Any())
-                    linkValue = null;
+                if (linkNode.Value is IDictionary<string, object> d)
+                {
+                    if (!d.Any())
+                    {
+                        linkValue = null;
+                    }
+                    else if (_session.Settings.IncludeAnnotationsInResults)
+                    {
+                        d[FluentCommand.AnnotationsLiteral] = linkNode.Entry.Annotations;
+                    }
+                }
+
                 nodeStack.Peek().Entry.Data.Add(linkNode.LinkName, linkValue);
             }
-            if (linkNode.Feed != null && linkNode.Feed.Annotations != null)
+
+            if (linkNode.Feed?.Annotations != null)
+            {
                 nodeStack.Peek().Entry.SetLinkAnnotations(linkNode.Feed.Annotations);
+            }
         }
     }
 }
