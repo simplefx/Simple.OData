@@ -8,10 +8,16 @@ namespace Simple.OData.Client.Extensions
 {
     static class DictionaryExtensions
     {
-        private static readonly ConcurrentDictionary<Type, ActivatorDelegate> DefaultActivators = new ConcurrentDictionary<Type, ActivatorDelegate>();
-        private static readonly ConcurrentDictionary<Tuple<Type,Type>, ActivatorDelegate> CollectionActivators = new ConcurrentDictionary<Tuple<Type,Type>, ActivatorDelegate>();
+        private static ConcurrentDictionary<Type, ActivatorDelegate> _defaultActivators = new ConcurrentDictionary<Type, ActivatorDelegate>();
+        private static ConcurrentDictionary<Tuple<Type,Type>, ActivatorDelegate> _collectionActivators = new ConcurrentDictionary<Tuple<Type,Type>, ActivatorDelegate>();
 
         internal static Func<IDictionary<string, object>, ODataEntry> CreateDynamicODataEntry { get; set; }
+
+        internal static void ClearCache()
+        {
+            _defaultActivators = new ConcurrentDictionary<Type, ActivatorDelegate>();
+            _collectionActivators = new ConcurrentDictionary<Tuple<Type,Type>, ActivatorDelegate>();
+        }
 
         public static T ToObject<T>(this IDictionary<string, object> source,
             string dynamicPropertiesContainerName = null, bool dynamicObject = false)
@@ -79,7 +85,7 @@ namespace Simple.OData.Client.Extensions
         private static PropertyInfo FindMatchingProperty(Type type, KeyValuePair<string, object> item)
         {
             var property = type.GetAnyProperty(item.Key) ?? 
-                type.GetAllProperties().FirstOrDefault(x => x.GetMappedName() == item.Key);
+                type.GetAllProperties().FirstOrDefault(x => !x.IsNotMapped() && x.GetMappedName() == item.Key);
 
             if (property == null && item.Key == FluentCommand.AnnotationsLiteral)
             {
@@ -166,7 +172,7 @@ namespace Simple.OData.Client.Extensions
             else
             {
                 var collectionType = typeof(IEnumerable<>).MakeGenericType(elementType);
-                var activator = CollectionActivators.GetOrAdd(new Tuple<Type, Type>(type, collectionType), t => type.CreateActivator(collectionType));
+                var activator = _collectionActivators.GetOrAdd(new Tuple<Type, Type>(type, collectionType), t => type.CreateActivator(collectionType));
                 return activator?.Invoke(arrayValue);
             }
         }
@@ -196,7 +202,7 @@ namespace Simple.OData.Client.Extensions
             }
             else
             {
-                var ctor = DefaultActivators.GetOrAdd(type, t => t.CreateActivator());
+                var ctor = _defaultActivators.GetOrAdd(type, t => t.CreateActivator());
                 return ctor.Invoke();
             }
         }

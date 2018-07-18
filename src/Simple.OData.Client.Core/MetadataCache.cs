@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
@@ -14,6 +16,7 @@ namespace Simple.OData.Client
             lock (metadataLock)
             {
                 _instances.Clear();
+                DictionaryExtensions.ClearCache();
             }
         }
 
