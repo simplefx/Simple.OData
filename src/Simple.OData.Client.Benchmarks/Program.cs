@@ -9,9 +9,8 @@ namespace Simple.OData.Client.Benchmarks
     {
         static void Main(string[] args)
         {
-            BenchmarkRunner.Run<CrmEmployee>();
+            //BenchmarkRunner.Run<CrmEmployee>();
             BenchmarkRunner.Run<TripPinPeople>();
-            //BenchmarkRunner.Run<Transfers>();
         }
     }
 
