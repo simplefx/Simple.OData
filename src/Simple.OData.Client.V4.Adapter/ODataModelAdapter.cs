@@ -29,12 +29,12 @@ namespace Simple.OData.Client.V4.Adapter
 {
     public class ODataModelAdapter : ODataModelAdapterBase
     {
-        public override AdapterVersion AdapterVersion { get { return AdapterVersion.V4; } }
+        public override AdapterVersion AdapterVersion => AdapterVersion.V4;
 
         public new IEdmModel Model
         {
-            get { return base.Model as IEdmModel; }
-            set { base.Model = value; }
+            get => base.Model as IEdmModel;
+            set => base.Model = value;
         }
 
         private ODataModelAdapter(string protocolVersion)

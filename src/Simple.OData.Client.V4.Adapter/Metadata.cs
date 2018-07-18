@@ -19,7 +19,7 @@ namespace Simple.OData.Client.V4.Adapter
             _model = model;
         }
 
-        public override ISession Session { get { return _session; } }
+        public override ISession Session => _session;
 
         public override string GetEntityCollectionExactName(string collectionName)
         {
@@ -182,10 +182,9 @@ namespace Simple.OData.Client.V4.Adapter
             if (propertyNames == null || propertyNames.Length == 0)
                 throw new ArgumentNullException(nameof(propertyNames));
             var property = GetStructuralProperty(collectionName, propertyNames[0]);
-            var exactNames = new List<string>();
-            exactNames.Add(property.Name);
+            var exactNames = new List<string> {property.Name};
 
-            for (int i = 1; i < propertyNames.Length; i++)
+            for (var i = 1; i < propertyNames.Length; i++)
             {
                 var entityType = GetComplexType(property.Type.FullName());
                 property = GetStructuralProperty(entityType, propertyNames[i]);

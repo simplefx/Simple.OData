@@ -543,21 +543,9 @@ namespace Simple.OData.Client
             return this;
         }
 
-        public bool FilterIsKey
-        {
-            get
-            {
-                return _details.NamedKeyValues != null;
-            }
-        }
+        public bool FilterIsKey => _details.NamedKeyValues != null;
 
-        public IDictionary<string, object> FilterAsKey
-        {
-            get
-            {
-                return _details.NamedKeyValues;
-            }
-        }
+        public IDictionary<string, object> FilterAsKey => _details.NamedKeyValues;
 
         public FluentCommand WithCount()
         {
@@ -577,36 +565,15 @@ namespace Simple.OData.Client
             return _details.Session.Adapter.GetCommandFormatter().FormatCommand(this);
         }
 
-        internal bool HasKey
-        {
-            get { return _details.KeyValues != null && _details.KeyValues.Count > 0 || _details.NamedKeyValues != null && _details.NamedKeyValues.Count > 0; }
-        }
+        internal bool HasKey => _details.KeyValues != null && _details.KeyValues.Count > 0 || _details.NamedKeyValues != null && _details.NamedKeyValues.Count > 0;
 
-        internal bool HasFilter
-        {
-            get { return !string.IsNullOrEmpty(_details.Filter) || !ReferenceEquals(_details.FilterExpression, null); }
-        }
+        internal bool HasFilter => !string.IsNullOrEmpty(_details.Filter) || !ReferenceEquals(_details.FilterExpression, null);
 
-        internal bool HasSearch
-        {
-            get { return !string.IsNullOrEmpty(_details.Search); }
-        }
+        internal bool HasSearch => !string.IsNullOrEmpty(_details.Search);
 
-        public bool HasFunction
-        {
-            get
-            {
-                return !string.IsNullOrEmpty(_details.FunctionName);
-            }
-        }
+        public bool HasFunction => !string.IsNullOrEmpty(_details.FunctionName);
 
-        public bool HasAction
-        {
-            get
-            {
-                return !string.IsNullOrEmpty(_details.ActionName);
-            }
-        }
+        public bool HasAction => !string.IsNullOrEmpty(_details.ActionName);
 
         internal IDictionary<string, object> KeyValues
         {
@@ -617,9 +584,9 @@ namespace Simple.OData.Client
 
                 var keyNames = _details.Session.Metadata.GetDeclaredKeyPropertyNames(this.EntityCollection.Name).ToList();
                 var namedKeyValues = new Dictionary<string, object>();
-                for (int index = 0; index < keyNames.Count; index++)
+                for (var index = 0; index < keyNames.Count; index++)
                 {
-                    bool found = false;
+                    var found = false;
                     object keyValue = null;
                     if (_details.NamedKeyValues != null && _details.NamedKeyValues.Count > 0)
                     {
