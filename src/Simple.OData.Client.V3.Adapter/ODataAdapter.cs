@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Spatial;
+
 using Microsoft.Data.Edm;
+
+using Simple.OData.Client.Adapter;
 
 #pragma warning disable 1591
 
@@ -20,6 +23,7 @@ namespace Simple.OData.Client.V3.Adapter
     public class ODataAdapter : ODataAdapterBase
     {
         private readonly ISession _session;
+        private IMetadata _metadata;
 
         public override AdapterVersion AdapterVersion => AdapterVersion.V3;
 
@@ -28,7 +32,12 @@ namespace Simple.OData.Client.V3.Adapter
         public new IEdmModel Model
         {
             get => base.Model as IEdmModel;
-            set => base.Model = value;
+            set
+            {
+                base.Model = value;
+                // Ensure we replace the cache on change of model
+                _metadata = null;
+            }
         }
 
         public ODataAdapter(ISession session, IODataModelAdapter modelAdapter)
@@ -57,7 +66,7 @@ namespace Simple.OData.Client.V3.Adapter
 
         public override IMetadata GetMetadata()
         {
-            return new Metadata(_session, Model);
+            return _metadata ?? (_metadata = new CachedMetadata(new Metadata(_session, Model)));
         }
 
         public override ICommandFormatter GetCommandFormatter()
