@@ -12,8 +12,8 @@ namespace Simple.OData.Client.Tests.Core
 {
     public class ResponseReaderV4Tests : CoreTestBase
     {
-        public override string MetadataFile { get { return "DynamicsCRM.xml"; } }
-        public override IFormatSettings FormatSettings { get { return new ODataV4Format(); } }
+        public override string MetadataFile => "DynamicsCRM.xml";
+        public override IFormatSettings FormatSettings => new ODataV4Format();
 
         [Fact]
         public async Task GetExpandedLinkAnnotationOnlyLink()
@@ -44,7 +44,7 @@ namespace Simple.OData.Client.Tests.Core
             Assert.Equal("MyPropertyValue", entry.Data["SomeProperty"]);
         }
 
-        private IODataResponseMessageAsync SetUpResourceMock(string resourceName)
+        private new IODataResponseMessageAsync SetUpResourceMock(string resourceName)
         {
             var document = GetResourceAsString(resourceName);
             var mock = new Mock<IODataResponseMessageAsync>();

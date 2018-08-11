@@ -47,7 +47,7 @@ namespace Simple.OData.Client.V3.Adapter
             if (TryGetEntitySet(collectionName, out var entitySet))
             {
                 entityType = (_model.FindAllDerivedTypes(entitySet.ElementType)
-                    .BestMatch(x => (x as IEdmEntityType).Name, entityTypeName, _session.Settings.NameMatchResolver) as IEdmEntityType);
+                    .BestMatch(x => (x as IEdmEntityType)?.Name, entityTypeName, _session.Settings.NameMatchResolver) as IEdmEntityType);
                 if (entityType != null)
                     return entityType.Name;
             }
@@ -253,7 +253,7 @@ namespace Simple.OData.Client.V3.Adapter
         private IEnumerable<IEdmEntityType> GetEntityTypes()
         {
             return _model.SchemaElements
-                .Where(x => x.SchemaElementKind == EdmSchemaElementKind.TypeDefinition && (x as IEdmType).TypeKind == EdmTypeKind.Entity)
+                .Where(x => x.SchemaElementKind == EdmSchemaElementKind.TypeDefinition && ((IEdmType) x).TypeKind == EdmTypeKind.Entity)
                 .Select(x => x as IEdmEntityType);
         }
 

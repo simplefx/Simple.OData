@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Microsoft.OData.Edm;
 using Microsoft.Spatial;
 
 #pragma warning disable 1591
