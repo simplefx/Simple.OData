@@ -19,6 +19,10 @@
   <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
     <DefineConstants>TRACE;DEBUG</DefineConstants>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
+    <Compile Include="..\CommonAssemblyVersion.cs" Link="Properties\CommonAssemblyVersion.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Simple.OData.Client.Core\Simple.OData.Client.Core.csproj" />

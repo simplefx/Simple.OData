@@ -6,6 +6,10 @@
     <OutDir>$(OutputPath)</OutDir>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\CommonAssemblyInfo.cs" Link="Properties\CommonAssemblyInfo.cs" />
+    <Compile Include="..\CommonAssemblyVersion.cs" Link="Properties\CommonAssemblyVersion.cs" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Microsoft.OData.Core" Version="7.5.0" />
   </ItemGroup>
   <ItemGroup>

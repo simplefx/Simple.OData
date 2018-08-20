@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -41,6 +41,10 @@
   <ItemGroup>
     <ProjectReference Include="..\Simple.OData.Client.Core\Simple.OData.Client.Core.csproj" />
     <ProjectReference Include="..\Simple.OData.Client.V4.Adapter\Simple.OData.Client.V4.Adapter.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
 
 </Project>
