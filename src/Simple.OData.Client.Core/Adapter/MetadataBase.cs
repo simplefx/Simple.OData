@@ -105,28 +105,26 @@ namespace Simple.OData.Client
 
             foreach (var item in entryData)
             {
-                if (this.HasStructuralProperty(collectionName, item.Key))
+                if (HasStructuralProperty(collectionName, item.Key))
                 {
                     entryDetails.AddProperty(item.Key, item.Value);
                 }
-                else if (this.HasNavigationProperty(collectionName, item.Key))
+                else if (HasNavigationProperty(collectionName, item.Key))
                 {
-                    if (this.IsNavigationPropertyCollection(collectionName, item.Key))
+                    if (IsNavigationPropertyCollection(collectionName, item.Key))
                     {
-                        if (item.Value == null)
+                        switch (item.Value)
                         {
-                            entryDetails.AddLink(item.Key, null, contentId);
-                        }
-                        else
-                        {
-                            var collection = item.Value as IEnumerable<object>;
-                            if (collection != null)
-                            {
+                            case null:
+                                entryDetails.AddLink(item.Key, null, contentId);
+                                break;
+                            case IEnumerable<object> collection:
                                 foreach (var element in collection)
                                 {
                                     entryDetails.AddLink(item.Key, element, contentId);
                                 }
-                            }
+
+                                break;
                         }
                     }
                     else
@@ -134,12 +132,12 @@ namespace Simple.OData.Client
                         entryDetails.AddLink(item.Key, item.Value, contentId);
                     }
                 }
-                else if (this.IsOpenType(collectionName))
+                else if (IsOpenType(collectionName))
                 {
                     entryDetails.HasOpenTypeProperties = true;
                     entryDetails.AddProperty(item.Key, item.Value);
                 }
-                else if (!this.Session.Settings.IgnoreUnmappedProperties)
+                else if (!Session.Settings.IgnoreUnmappedProperties)
                 {
                     throw new UnresolvableObjectException(item.Key, $"No property or association found for [{item.Key}].");
                 }

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 
+#pragma warning disable 1591
+
 namespace Simple.OData.Client.Adapter
 {
     public class CachedMetadata : IMetadata
@@ -189,8 +191,49 @@ namespace Simple.OData.Client.Adapter
 
         public EntryDetails ParseEntryDetails(string collectionName, IDictionary<string, object> entryData, string contentId = null)
         {
-            // Dictionary arg makes cachcing difficult
-            return metadata.ParseEntryDetails(collectionName, entryData, contentId);
+            // Copied from MetadataBase so we use caches for the property acquisition
+            var entryDetails = new EntryDetails();
+
+            foreach (var item in entryData)
+            {
+                if (HasStructuralProperty(collectionName, item.Key))
+                {
+                    entryDetails.AddProperty(item.Key, item.Value);
+                }
+                else if (HasNavigationProperty(collectionName, item.Key))
+                {
+                    if (IsNavigationPropertyCollection(collectionName, item.Key))
+                    {
+                        switch (item.Value)
+                        {
+                            case null:
+                                entryDetails.AddLink(item.Key, null, contentId);
+                                break;
+                            case IEnumerable<object> collection:
+                                foreach (var element in collection)
+                                {
+                                    entryDetails.AddLink(item.Key, element, contentId);
+                                }
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        entryDetails.AddLink(item.Key, item.Value, contentId);
+                    }
+                }
+                else if (IsOpenType(collectionName))
+                {
+                    entryDetails.HasOpenTypeProperties = true;
+                    entryDetails.AddProperty(item.Key, item.Value);
+                }
+                else if (!Session.Settings.IgnoreUnmappedProperties)
+                {
+                    throw new UnresolvableObjectException(item.Key, $"No property or association found for [{item.Key}].");
+                }
+            }
+
+            return entryDetails;
         }
     }
 }

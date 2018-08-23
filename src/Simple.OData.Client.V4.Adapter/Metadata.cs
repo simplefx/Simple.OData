@@ -347,7 +347,7 @@ namespace Simple.OData.Client.V4.Adapter
             entityType = null;
             if (collectionName.Contains("/"))
             {
-                var segments = GetCollectionPathSegments(collectionName);
+                var segments = GetCollectionPathSegments(collectionName).ToList();
 
                 if (SegmentsIncludeTypeSpecification(segments))
                 {
