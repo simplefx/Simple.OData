@@ -14,9 +14,9 @@ Simple.OData.Client is a multiplatform OData client library supporting .NET 4.x,
 [Simple.OData.Client fluent API](https://github.com/object/Simple.OData.Client/wiki/Simple.OData.Client-fluent-API)  
 [Retrieving data](https://github.com/object/Simple.OData.Client/wiki/Retrieving-data)  
 [Modifying data](https://github.com/object/Simple.OData.Client/wiki/Modifying-data)  
-[Request authentication and interception](https://github.com/object/Simple.OData.Client/wiki/Request-authentication-and-interception)
-[Advanced OData tutorial](https://github.com/object/Simple.OData.Client/wiki/Advanced-OData-tutorial)
-[Using Simple.OData.Client with Xamarin iOS and Android mobile apps](https://github.com/object/Simple.OData.Client/wiki/Using-Simple.OData.Client-with-Xamarin-iOS-and-Android-mobile-apps)
+[Request authentication and interception](https://github.com/object/Simple.OData.Client/wiki/Request-authentication-and-interception)   
+[Advanced OData tutorial](https://github.com/object/Simple.OData.Client/wiki/Advanced-OData-tutorial)   
+[Using Simple.OData.Client with Xamarin iOS and Android mobile apps](https://github.com/object/Simple.OData.Client/wiki/Using-Simple.OData.Client-with-Xamarin-iOS-and-Android-mobile-apps)   
 
 
 Further information can be found on the [wiki](https://github.com/object/Simple.OData.Client/wiki).
