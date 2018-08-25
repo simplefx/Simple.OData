@@ -8,29 +8,61 @@ namespace Simple.OData.Client
 {
     public abstract class MetadataBase : IMetadata
     {
-        public abstract ISession Session { get; }
+        protected MetadataBase(INameMatchResolver nameMatchResolver, bool ignoreUnmappedProperties, bool unqualifiedNameCall)
+        {
+            IgnoreUnmappedProperties = ignoreUnmappedProperties;
+            NameMatchResolver = nameMatchResolver;
+            UnqualifiedNameCall = unqualifiedNameCall;
+        }
+
+        public bool IgnoreUnmappedProperties { get; }
+
+        public INameMatchResolver NameMatchResolver { get; }
+
+        public bool UnqualifiedNameCall { get; }
 
         public abstract string GetEntityCollectionExactName(string collectionName);
+
         public abstract string GetDerivedEntityTypeExactName(string collectionName, string entityTypeName);
+
         public abstract bool EntityCollectionRequiresOptimisticConcurrencyCheck(string collectionName);
+
         public abstract string GetEntityTypeExactName(string collectionName);
+
         public abstract string GetLinkedCollectionName(string instanceTypeName, string typeName, out bool isSingleton);
+
         public abstract string GetQualifiedTypeName(string collectionName);
+
         public abstract bool IsOpenType(string collectionName);
+
         public abstract bool IsTypeWithId(string collectionName);
+
         public abstract IEnumerable<string> GetStructuralPropertyNames(string collectionName);
+
         public abstract bool HasStructuralProperty(string collectionName, string propertyName);
+
         public abstract string GetStructuralPropertyExactName(string collectionName, string propertyName);
+
         public abstract string GetStructuralPropertyPath(string collectionName, params string[] propertyNames);
+
         public abstract IEnumerable<string> GetDeclaredKeyPropertyNames(string collectionName);
+
         public abstract bool HasNavigationProperty(string collectionName, string propertyName);
+
         public abstract string GetNavigationPropertyExactName(string collectionName, string propertyName);
+
         public abstract string GetNavigationPropertyPartnerTypeName(string collectionName, string propertyName);
+
         public abstract bool IsNavigationPropertyCollection(string collectionName, string propertyName);
+
         public abstract string GetFunctionFullName(string functionName);
+
         public abstract EntityCollection GetFunctionReturnCollection(string functionName);
+
         public abstract string GetFunctionVerb(string functionName);
+
         public abstract string GetActionFullName(string actionName);
+
         public abstract EntityCollection GetActionReturnCollection(string actionName);
 
         public EntityCollection GetEntityCollection(string collectionPath)
@@ -137,7 +169,7 @@ namespace Simple.OData.Client
                     entryDetails.HasOpenTypeProperties = true;
                     entryDetails.AddProperty(item.Key, item.Value);
                 }
-                else if (!Session.Settings.IgnoreUnmappedProperties)
+                else if (!IgnoreUnmappedProperties)
                 {
                     throw new UnresolvableObjectException(item.Key, $"No property or association found for [{item.Key}].");
                 }

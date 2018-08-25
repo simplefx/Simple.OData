@@ -28,16 +28,6 @@ namespace Simple.OData.Client.V4.Adapter
 
         public override ODataPayloadFormat DefaultPayloadFormat => ODataPayloadFormat.Json;
 
-        public new IEdmModel Model
-        {
-            get => base.Model as IEdmModel;
-            set
-            {
-                base.Model = value;
-                _metadata = null;
-            }
-        }
-
         public ODataAdapter(ISession session, IODataModelAdapter modelAdapter)
         {
             _session = session;
@@ -48,9 +38,19 @@ namespace Simple.OData.Client.V4.Adapter
             CustomConverters.RegisterTypeConverter(typeof(GeometryPoint), TypeConverters.CreateGeometryPoint);
         }
 
+        public new IEdmModel Model
+        {
+            get => base.Model as IEdmModel;
+            set
+            {
+                base.Model = value;
+                _metadata = null;
+            }
+        }
+
         public override string GetODataVersionString()
         {
-            switch (this.ProtocolVersion)
+            switch (ProtocolVersion)
             {
                 case ODataProtocolVersion.V4:
                     return "V4";
@@ -60,7 +60,8 @@ namespace Simple.OData.Client.V4.Adapter
 
         public override IMetadata GetMetadata()
         {
-            return _metadata ?? (_metadata = new CachedMetadata(new Metadata(_session, Model)));
+            // TODO: Should use a MetadataFactory here 
+            return _metadata ?? (_metadata = new MetadataCache(new Metadata(Model, _session.Settings.NameMatchResolver, _session.Settings.IgnoreUnmappedProperties, _session.Settings.UnqualifiedNameCall)));
         }
 
         public override ICommandFormatter GetCommandFormatter()

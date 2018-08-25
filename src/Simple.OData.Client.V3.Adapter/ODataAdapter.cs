@@ -29,6 +29,16 @@ namespace Simple.OData.Client.V3.Adapter
 
         public override ODataPayloadFormat DefaultPayloadFormat => ODataPayloadFormat.Atom;
 
+        public ODataAdapter(ISession session, IODataModelAdapter modelAdapter)
+        {
+            _session = session;
+            ProtocolVersion = modelAdapter.ProtocolVersion;
+            Model = modelAdapter.Model as IEdmModel;
+
+            CustomConverters.RegisterTypeConverter(typeof(GeographyPoint), TypeConverters.CreateGeographyPoint);
+            CustomConverters.RegisterTypeConverter(typeof(GeometryPoint), TypeConverters.CreateGeometryPoint);
+        }
+
         public new IEdmModel Model
         {
             get => base.Model as IEdmModel;
@@ -40,19 +50,9 @@ namespace Simple.OData.Client.V3.Adapter
             }
         }
 
-        public ODataAdapter(ISession session, IODataModelAdapter modelAdapter)
-        {
-            _session = session;
-            ProtocolVersion = modelAdapter.ProtocolVersion;
-            Model = modelAdapter.Model as IEdmModel;
-
-            CustomConverters.RegisterTypeConverter(typeof(GeographyPoint), TypeConverters.CreateGeographyPoint);
-            CustomConverters.RegisterTypeConverter(typeof(GeometryPoint), TypeConverters.CreateGeometryPoint);
-        }
-
         public override string GetODataVersionString()
         {
-            switch (this.ProtocolVersion)
+            switch (ProtocolVersion)
             {
                 case ODataProtocolVersion.V1:
                     return "V1";
@@ -66,7 +66,8 @@ namespace Simple.OData.Client.V3.Adapter
 
         public override IMetadata GetMetadata()
         {
-            return _metadata ?? (_metadata = new CachedMetadata(new Metadata(_session, Model)));
+            // TODO: Should use a MetadataFactory here 
+            return _metadata ?? (_metadata = new MetadataCache(new Metadata(Model, _session.Settings.NameMatchResolver, _session.Settings.IgnoreUnmappedProperties, _session.Settings.UnqualifiedNameCall)));
         }
 
         public override ICommandFormatter GetCommandFormatter()

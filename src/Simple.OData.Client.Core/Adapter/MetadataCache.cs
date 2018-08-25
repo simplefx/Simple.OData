@@ -6,7 +6,10 @@ using System.Linq;
 
 namespace Simple.OData.Client.Adapter
 {
-    public class CachedMetadata : IMetadata
+    /// <summary>
+    /// A caching layer for <see cref="IMetadata"/>
+    /// </summary>
+    public class MetadataCache : IMetadata
     {
         private readonly IMetadata metadata;
         private readonly ConcurrentDictionary<string, EntityCollection> ec;
@@ -32,9 +35,11 @@ namespace Simple.OData.Client.Adapter
         private readonly ConcurrentDictionary<string, EntityCollection> frc;
         private readonly ConcurrentDictionary<string, string> spen;
 
-        public CachedMetadata(IMetadata metadata)
+        public MetadataCache(IMetadata metadata)
         {
             this.metadata = metadata;
+            IgnoreUnmappedProperties = (metadata as MetadataBase).IgnoreUnmappedProperties;
+
             ec = new ConcurrentDictionary<string, EntityCollection>();
             nav = new ConcurrentDictionary<string, EntityCollection>();
             ecen = new ConcurrentDictionary<string, string>();
@@ -59,7 +64,7 @@ namespace Simple.OData.Client.Adapter
             spen = new ConcurrentDictionary<string, string>();
         }
 
-        public ISession Session => metadata.Session;
+        public bool IgnoreUnmappedProperties { get; }
 
         public EntityCollection GetEntityCollection(string collectionPath)
         {
@@ -227,7 +232,7 @@ namespace Simple.OData.Client.Adapter
                     entryDetails.HasOpenTypeProperties = true;
                     entryDetails.AddProperty(item.Key, item.Value);
                 }
-                else if (!Session.Settings.IgnoreUnmappedProperties)
+                else if (!IgnoreUnmappedProperties)
                 {
                     throw new UnresolvableObjectException(item.Key, $"No property or association found for [{item.Key}].");
                 }

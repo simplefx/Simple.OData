@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using Microsoft.Data.Edm;
 using Microsoft.Data.Edm.Library.Values;
 
@@ -10,16 +11,12 @@ namespace Simple.OData.Client.V3.Adapter
 {
     public class Metadata : MetadataBase
     {
-        private readonly ISession _session;
         private readonly IEdmModel _model;
 
-        public Metadata(ISession session, IEdmModel model)
+        public Metadata(IEdmModel model, INameMatchResolver nameMatchResolver, bool ignoreUnmappedProperties, bool unqualifiedNameCall) : base(nameMatchResolver, ignoreUnmappedProperties, unqualifiedNameCall)
         {
-            _session = session;
             _model = model;
         }
-
-        public override ISession Session => _session;
 
         public override string GetEntityCollectionExactName(string collectionName)
         {
@@ -47,7 +44,7 @@ namespace Simple.OData.Client.V3.Adapter
             if (TryGetEntitySet(collectionName, out var entitySet))
             {
                 entityType = (_model.FindAllDerivedTypes(entitySet.ElementType)
-                    .BestMatch(x => (x as IEdmEntityType).Name, entityTypeName, _session.Settings.NameMatchResolver) as IEdmEntityType);
+                    .BestMatch(x => (x as IEdmEntityType).Name, entityTypeName, NameMatchResolver) as IEdmEntityType);
                 if (entityType != null)
                     return entityType.Name;
             }
@@ -61,7 +58,7 @@ namespace Simple.OData.Client.V3.Adapter
 
         public override string GetEntityTypeExactName(string collectionName)
         {
-            var entityType = GetEntityTypes().BestMatch(x => x.Name, collectionName, _session.Settings.NameMatchResolver);
+            var entityType = GetEntityTypes().BestMatch(x => x.Name, collectionName, NameMatchResolver);
             if (entityType != null)
                 return entityType.Name;
 
@@ -124,7 +121,7 @@ namespace Simple.OData.Client.V3.Adapter
 
         public override bool HasStructuralProperty(string collectionName, string propertyName)
         {
-            return GetEntityType(collectionName).StructuralProperties().Any(x => _session.Settings.NameMatchResolver.IsMatch(x.Name, propertyName));
+            return GetEntityType(collectionName).StructuralProperties().Any(x => NameMatchResolver.IsMatch(x.Name, propertyName));
         }
 
         public override string GetStructuralPropertyExactName(string collectionName, string propertyName)
@@ -153,7 +150,7 @@ namespace Simple.OData.Client.V3.Adapter
 
         public override bool HasNavigationProperty(string collectionName, string propertyName)
         {
-            return GetEntityType(collectionName).NavigationProperties().Any(x => _session.Settings.NameMatchResolver.IsMatch(x.Name, propertyName));
+            return GetEntityType(collectionName).NavigationProperties().Any(x => NameMatchResolver.IsMatch(x.Name, propertyName));
         }
 
         public override string GetNavigationPropertyExactName(string collectionName, string propertyName)
@@ -245,7 +242,7 @@ namespace Simple.OData.Client.V3.Adapter
             entitySet = _model.SchemaElements
                 .Where(x => x.SchemaElementKind == EdmSchemaElementKind.EntityContainer)
                 .SelectMany(x => (x as IEdmEntityContainer).EntitySets())
-                .BestMatch(x => x.Name, entitySetName, _session.Settings.NameMatchResolver);
+                .BestMatch(x => x.Name, entitySetName, NameMatchResolver);
 
             return entitySet != null;
         }
@@ -284,7 +281,7 @@ namespace Simple.OData.Client.V3.Adapter
                 }
                 else
                 {
-                    var collection = _session.Metadata.NavigateToCollection(collectionName);
+                    var collection = NavigateToCollection(collectionName);
                     entityType = GetEntityTypes().SingleOrDefault(x => x.Name == collection.Name);
                     if (entityType != null)
                     {
@@ -294,14 +291,14 @@ namespace Simple.OData.Client.V3.Adapter
             }
             else
             {
-                var entitySet = GetEntitySets().BestMatch(x => x.Name, collectionName, _session.Settings.NameMatchResolver);
+                var entitySet = GetEntitySets().BestMatch(x => x.Name, collectionName, NameMatchResolver);
                 if (entitySet != null)
                 {
                     entityType = entitySet.ElementType;
                     return true;
                 }
 
-                var derivedType = GetEntityTypes().BestMatch(x => x.Name, collectionName, _session.Settings.NameMatchResolver);
+                var derivedType = GetEntityTypes().BestMatch(x => x.Name, collectionName, NameMatchResolver);
                 if (derivedType != null)
                 {
                     var baseType = GetEntityTypes()
@@ -343,7 +340,7 @@ namespace Simple.OData.Client.V3.Adapter
             complexType = _model.SchemaElements
                 .Where(x => x.SchemaElementKind == EdmSchemaElementKind.TypeDefinition && (x as IEdmType).TypeKind == EdmTypeKind.Complex)
                 .Select(x => x as IEdmComplexType)
-                .BestMatch(x => x.Name, typeName, _session.Settings.NameMatchResolver);
+                .BestMatch(x => x.Name, typeName, NameMatchResolver);
 
             return complexType != null;
         }
@@ -361,7 +358,7 @@ namespace Simple.OData.Client.V3.Adapter
             enumType = _model.SchemaElements
                 .Where(x => x.SchemaElementKind == EdmSchemaElementKind.TypeDefinition && (x as IEdmType).TypeKind == EdmTypeKind.Enum)
                 .Select(x => x as IEdmEnumType)
-                .BestMatch(x => x.Name, typeName, _session.Settings.NameMatchResolver);
+                .BestMatch(x => x.Name, typeName, NameMatchResolver);
 
             return enumType != null;
         }
@@ -374,8 +371,7 @@ namespace Simple.OData.Client.V3.Adapter
 
         private IEdmStructuralProperty GetStructuralProperty(IEdmStructuredType edmType, string propertyName)
         {
-            var property = edmType.StructuralProperties().BestMatch(
-                x => x.Name, propertyName, _session.Settings.NameMatchResolver);
+            var property = edmType.StructuralProperties().BestMatch(x => x.Name, propertyName, NameMatchResolver);
 
             if (property == null)
                 throw new UnresolvableObjectException(propertyName, $"Structural property [{propertyName}] not found");
@@ -385,8 +381,7 @@ namespace Simple.OData.Client.V3.Adapter
 
         private IEdmNavigationProperty GetNavigationProperty(string entitySetName, string propertyName)
         {
-            var property = GetEntityType(entitySetName).NavigationProperties().BestMatch(
-                x => x.Name, propertyName, _session.Settings.NameMatchResolver);
+            var property = GetEntityType(entitySetName).NavigationProperties().BestMatch(x => x.Name, propertyName, NameMatchResolver);
 
             if (property == null)
                 throw new UnresolvableObjectException(propertyName, $"Navigation property [{propertyName}] not found");
@@ -399,7 +394,7 @@ namespace Simple.OData.Client.V3.Adapter
             var function = _model.SchemaElements
                 .Where(x => x.SchemaElementKind == EdmSchemaElementKind.EntityContainer)
                 .SelectMany(x => (x as IEdmEntityContainer).FunctionImports())
-                .BestMatch(x => x.Name, functionName, _session.Settings.NameMatchResolver);
+                .BestMatch(x => x.Name, functionName, NameMatchResolver);
 
             if (function == null)
                 throw new UnresolvableObjectException(functionName, $"Function [{functionName}] not found");

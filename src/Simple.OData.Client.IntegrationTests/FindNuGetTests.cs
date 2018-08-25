@@ -46,7 +46,7 @@ namespace Simple.OData.Client.Tests
         [Fact(Skip = "Investigate reason for such test and its logic")]
         public async Task FindEntryNuGetV2MultiThread()
         {
-            MetadataCache.Clear();
+            EdmMetadataCache.Clear();
 
             var tasks = new List<Task>();
             metadataCalls = 0;
@@ -66,7 +66,7 @@ namespace Simple.OData.Client.Tests
         {
             int taskCount = 100;
             Random random = new Random();
-            MetadataCache.Clear();
+            EdmMetadataCache.Clear();
 
             var tasks = new List<Task>();
             metadataCalls = 0;

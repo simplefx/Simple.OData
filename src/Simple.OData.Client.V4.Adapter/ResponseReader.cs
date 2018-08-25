@@ -28,15 +28,10 @@ namespace Simple.OData.Client.V4.Adapter
 
         public async Task<ODataResponse> GetResponseAsync(IODataResponseMessageAsync responseMessage)
         {
-            var readerSettings = new ODataMessageReaderSettings();
-            // TODO ODataLib7
-            if (_session.Settings.IgnoreUnmappedProperties)
-                readerSettings.Validations &= ~ValidationKinds.ThrowOnUndeclaredPropertyForNonOpenType;
-            readerSettings.MessageQuotas.MaxReceivedMessageSize = Int32.MaxValue;
-            readerSettings.ShouldIncludeAnnotation = x => _session.Settings.IncludeAnnotationsInResults;
+            var readerSettings = _session.ToReaderSettings();
             using (var messageReader = new ODataMessageReader(responseMessage, readerSettings, _model))
             {
-                var payloadKind = messageReader.DetectPayloadKind();
+                var payloadKind = messageReader.DetectPayloadKind().ToList();
                 if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Error))
                 {
                     return ODataResponse.FromStatusCode(responseMessage.StatusCode);
