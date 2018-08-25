@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Spatial;
 
 #pragma warning disable 1591
@@ -29,6 +30,11 @@ namespace Simple.OData.Client.V3.Adapter
                 source.GetValueOrDefault<double>("Longitude"),
                 source.GetValueOrDefault<double?>("Z"),
                 source.GetValueOrDefault<double?>("M"));
+        }
+
+        public static object ConvertToEdmDate(object source)
+        {
+            return source;
         }
 
         private static T GetValueOrDefault<T>(this IDictionary<string, object> source, string key)

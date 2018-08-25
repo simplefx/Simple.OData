@@ -167,13 +167,13 @@ namespace Simple.OData.Client
                 {
                     result = System.Convert.ToBase64String((byte[])value);
                 }
-                else if ((targetType == typeof(DateTime) || targetType == typeof(DateTime?)) && value is DateTimeOffset)
+                else if ((targetType == typeof(DateTime) || targetType == typeof(DateTime?)) && value is DateTimeOffset offset)
                 {
-                    result = ((DateTimeOffset)value).DateTime;
+                    result = offset.DateTime;
                 }
-                else if ((targetType == typeof(DateTimeOffset) || targetType == typeof(DateTimeOffset)) && value is DateTime)
+                else if ((targetType == typeof(DateTimeOffset) || targetType == typeof(DateTimeOffset?)) && value is DateTime time)
                 {
-                    result = new DateTimeOffset((DateTime)value);
+                    result = new DateTimeOffset(time);
                 }
                 else if (targetType.IsEnumType())
                 {

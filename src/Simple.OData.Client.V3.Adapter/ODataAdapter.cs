@@ -37,6 +37,8 @@ namespace Simple.OData.Client.V3.Adapter
 
             CustomConverters.RegisterTypeConverter(typeof(GeographyPoint), TypeConverters.CreateGeographyPoint);
             CustomConverters.RegisterTypeConverter(typeof(GeometryPoint), TypeConverters.CreateGeometryPoint);
+            CustomConverters.RegisterTypeConverter(typeof(DateTime), TypeConverters.ConvertToEdmDate);
+            CustomConverters.RegisterTypeConverter(typeof(DateTimeOffset), TypeConverters.ConvertToEdmDate);
         }
 
         public new IEdmModel Model
