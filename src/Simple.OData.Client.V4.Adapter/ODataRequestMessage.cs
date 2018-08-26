@@ -37,10 +37,7 @@ namespace Simple.OData.Client.V4.Adapter
             return completionSource.Task;
         }
 
-        public IEnumerable<KeyValuePair<string, string>> Headers
-        {
-            get { return _headers; }
-        }
+        public IEnumerable<KeyValuePair<string, string>> Headers => _headers;
 
         public Uri Url { get; set; }
 

@@ -69,8 +69,8 @@ namespace Simple.OData.Client.V4.Adapter
 
         public int StatusCode
         {
-            get { return (int)_response.StatusCode; }
-            set { throw new NotImplementedException(); }
+            get => (int)_response.StatusCode;
+            set => throw new NotImplementedException();
         }
     }
 }

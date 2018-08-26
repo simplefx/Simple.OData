@@ -44,6 +44,16 @@
             The function arguments will be formatted as a a key-value list
             </summary>
         </member>
+        <member name="T:Simple.OData.Client.IMetadata">
+            <summary>
+            Abstraction over the OData Edm model.
+            </summary>
+        </member>
+        <member name="T:Simple.OData.Client.Adapter.MetadataCache">
+            <summary>
+            A caching layer for <see cref="T:Simple.OData.Client.IMetadata"/>
+            </summary>
+        </member>
         <member name="M:Simple.OData.Client.Extensions.HomogenizeEx.Homogenize(System.String)">
             <summary>
             Downshift a string and remove all non-alphanumeric characters.

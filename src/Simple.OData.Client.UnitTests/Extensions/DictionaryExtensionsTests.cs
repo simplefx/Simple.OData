@@ -148,7 +148,7 @@ namespace Simple.OData.Client.Tests.Extensions
             var value = dict.ToObject<ClassType>();
             Assert.Equal("a", value.StringProperty);
             Assert.Equal(1, value.IntProperty);
-            Assert.Equal(null, value.StringField);
+            Assert.Null(value.StringField);
         }
 
         [Fact]

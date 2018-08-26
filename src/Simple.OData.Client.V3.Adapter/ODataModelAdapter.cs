@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
-using System.Spatial;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
+
 using Microsoft.Data.Edm;
 using Microsoft.Data.Edm.Csdl;
 using Microsoft.Data.OData;
@@ -27,12 +23,12 @@ namespace Simple.OData.Client.V3.Adapter
 {
     public class ODataModelAdapter : ODataModelAdapterBase
     {
-        public override AdapterVersion AdapterVersion { get { return AdapterVersion.V3; } }
+        public override AdapterVersion AdapterVersion => AdapterVersion.V3;
 
         public new IEdmModel Model
         {
-            get { return base.Model as IEdmModel; }
-            set { base.Model = value; }
+            get => base.Model as IEdmModel;
+            set => base.Model = value;
         }
 
         private ODataModelAdapter(string protocolVersion)

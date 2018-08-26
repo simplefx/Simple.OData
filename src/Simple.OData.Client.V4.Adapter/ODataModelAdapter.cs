@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
+﻿using System.IO;
 using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 using System.Xml;
+
 using Microsoft.OData;
 using Microsoft.OData.Edm;
 using Microsoft.OData.Edm.Csdl;
-using Microsoft.OData.Edm.Validation;
-using Microsoft.Spatial;
 
 #pragma warning disable 1591
 
@@ -29,12 +22,12 @@ namespace Simple.OData.Client.V4.Adapter
 {
     public class ODataModelAdapter : ODataModelAdapterBase
     {
-        public override AdapterVersion AdapterVersion { get { return AdapterVersion.V4; } }
+        public override AdapterVersion AdapterVersion => AdapterVersion.V4;
 
         public new IEdmModel Model
         {
-            get { return base.Model as IEdmModel; }
-            set { base.Model = value; }
+            get => base.Model as IEdmModel;
+            set => base.Model = value;
         }
 
         private ODataModelAdapter(string protocolVersion)
@@ -47,7 +40,7 @@ namespace Simple.OData.Client.V4.Adapter
         {
             var readerSettings = new ODataMessageReaderSettings
             {
-                MessageQuotas = { MaxReceivedMessageSize = Int32.MaxValue }
+                MessageQuotas = { MaxReceivedMessageSize = int.MaxValue }
             };
             using (var messageReader = new ODataMessageReader(new ODataResponseMessage(response), readerSettings))
             {

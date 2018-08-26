@@ -1,15 +1,15 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+
 using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
-    class MetadataCache
+    class EdmMetadataCache
     {
         static readonly object metadataLock = new object();
-        static readonly IDictionary<string, MetadataCache> _instances = new Dictionary<string, MetadataCache>();
+        static readonly IDictionary<string, EdmMetadataCache> _instances = new Dictionary<string, EdmMetadataCache>();
 
         public static void Clear()
         {
@@ -28,7 +28,7 @@ namespace Simple.OData.Client
             }
         }
 
-        public static MetadataCache GetOrAdd(string key, Func<string, MetadataCache> valueFactory)
+        public static EdmMetadataCache GetOrAdd(string key, Func<string, EdmMetadataCache> valueFactory)
         {
             lock (metadataLock)
             {
@@ -40,9 +40,9 @@ namespace Simple.OData.Client
             }
         }
 
-        public static async Task<MetadataCache> GetOrAddAsync(string key, Func<string, Task<MetadataCache>> valueFactory)
+        public static async Task<EdmMetadataCache> GetOrAddAsync(string key, Func<string, Task<EdmMetadataCache>> valueFactory)
         {
-            MetadataCache found;
+            EdmMetadataCache found;
             lock (metadataLock)
             {
                 if (_instances.TryGetValue(key, out found))
@@ -59,11 +59,11 @@ namespace Simple.OData.Client
 
         private readonly Func<ISession, IODataAdapter> _adapterFactory;
 
-        public MetadataCache(string key, string metadataDocument)
+        public EdmMetadataCache(string key, string metadataDocument)
         {
-            if (String.IsNullOrWhiteSpace(key))
+            if (string.IsNullOrWhiteSpace(key))
                 throw new ArgumentNullException(nameof(key));
-            if (String.IsNullOrWhiteSpace(metadataDocument))
+            if (string.IsNullOrWhiteSpace(metadataDocument))
                 throw new ArgumentNullException(nameof(metadataDocument));
 
             Key = key;

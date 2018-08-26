@@ -103,7 +103,7 @@ namespace Simple.OData.Client
         /// </summary>
         public static void ClearMetadataCache()
         {
-            MetadataCache.Clear();
+            EdmMetadataCache.Clear();
         }
 
         /// <summary>

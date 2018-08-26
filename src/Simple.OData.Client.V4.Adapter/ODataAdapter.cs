@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using Microsoft.OData.Edm;
 using Microsoft.Spatial;
 
+using Simple.OData.Client.Adapter;
+
 #pragma warning disable 1591
 
 namespace Simple.OData.Client
@@ -20,16 +22,11 @@ namespace Simple.OData.Client.V4.Adapter
     public class ODataAdapter : ODataAdapterBase
     {
         private readonly ISession _session;
+        private IMetadata _metadata;
 
         public override AdapterVersion AdapterVersion => AdapterVersion.V4;
 
         public override ODataPayloadFormat DefaultPayloadFormat => ODataPayloadFormat.Json;
-
-        public new IEdmModel Model
-        {
-            get => base.Model as IEdmModel;
-            set => base.Model = value;
-        }
 
         public ODataAdapter(ISession session, IODataModelAdapter modelAdapter)
         {
@@ -41,9 +38,19 @@ namespace Simple.OData.Client.V4.Adapter
             CustomConverters.RegisterTypeConverter(typeof(GeometryPoint), TypeConverters.CreateGeometryPoint);
         }
 
+        public new IEdmModel Model
+        {
+            get => base.Model as IEdmModel;
+            set
+            {
+                base.Model = value;
+                _metadata = null;
+            }
+        }
+
         public override string GetODataVersionString()
         {
-            switch (this.ProtocolVersion)
+            switch (ProtocolVersion)
             {
                 case ODataProtocolVersion.V4:
                     return "V4";
@@ -53,7 +60,8 @@ namespace Simple.OData.Client.V4.Adapter
 
         public override IMetadata GetMetadata()
         {
-            return new Metadata(_session, Model);
+            // TODO: Should use a MetadataFactory here 
+            return _metadata ?? (_metadata = new MetadataCache(new Metadata(Model, _session.Settings.NameMatchResolver, _session.Settings.IgnoreUnmappedProperties, _session.Settings.UnqualifiedNameCall)));
         }
 
         public override ICommandFormatter GetCommandFormatter()

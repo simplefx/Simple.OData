@@ -67,8 +67,8 @@ namespace Simple.OData.Client.V3.Adapter
 
         public int StatusCode
         {
-            get { return (int)_response.StatusCode; }
-            set { throw new NotSupportedException(); }
+            get => (int)_response.StatusCode;
+            set => throw new NotSupportedException();
         }
     }
 }

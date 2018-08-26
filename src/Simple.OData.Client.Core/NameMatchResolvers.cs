@@ -12,6 +12,12 @@ namespace Simple.OData.Client
         public static INameMatchResolver NotStrict = new BestMatchResolver();
     }
 
+    public static class Pluralizers
+    {
+        public static IPluralizer Simple = new SimplePluralizer();
+        public static IPluralizer Cached = new CachedPluralizer(Simple);
+    }
+
     public class ExactMatchResolver : INameMatchResolver
     {
         private readonly StringComparison _stringComparison;
@@ -43,7 +49,7 @@ namespace Simple.OData.Client
 
         public BestMatchResolver()
         {
-            _pluralizer = new SimplePluralizer();
+            _pluralizer = Pluralizers.Cached;
         }
 
         public bool IsMatch(string actualName, string requestedName)

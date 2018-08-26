@@ -65,9 +65,9 @@ namespace Simple.OData.Client.V3.Adapter
         public IEdmValueTerm FindDeclaredValueTerm(string qualifiedName) { return _source.FindDeclaredValueTerm(qualifiedName); }
         public IEnumerable<IEdmVocabularyAnnotation> FindDeclaredVocabularyAnnotations(IEdmVocabularyAnnotatable element) { return _source.FindDeclaredVocabularyAnnotations(element); }
         public IEnumerable<IEdmStructuredType> FindDirectlyDerivedTypes(IEdmStructuredType baseType) { return _source.FindDirectlyDerivedTypes(baseType); }
-        public IEnumerable<IEdmSchemaElement> SchemaElements { get { return _source.SchemaElements; } }
-        public IEnumerable<IEdmVocabularyAnnotation> VocabularyAnnotations { get { return _source.VocabularyAnnotations; } }
-        public IEnumerable<IEdmModel> ReferencedModels { get { return _source.ReferencedModels; } }
-        public IEdmDirectValueAnnotationsManager DirectValueAnnotationsManager { get { return _source.DirectValueAnnotationsManager; } }
+        public IEnumerable<IEdmSchemaElement> SchemaElements => _source.SchemaElements;
+        public IEnumerable<IEdmVocabularyAnnotation> VocabularyAnnotations => _source.VocabularyAnnotations;
+        public IEnumerable<IEdmModel> ReferencedModels => _source.ReferencedModels;
+        public IEdmDirectValueAnnotationsManager DirectValueAnnotationsManager => _source.DirectValueAnnotationsManager;
     }
 }

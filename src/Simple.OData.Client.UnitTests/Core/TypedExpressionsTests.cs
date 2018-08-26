@@ -6,13 +6,13 @@ namespace Simple.OData.Client.Tests.Core
 {
     public class TypedExpressionV3Tests : TypedExpressionTests
     {
-        public override string MetadataFile { get { return "Northwind3.xml"; } }
+        public override string MetadataFile => "Northwind3.xml";
         public override IFormatSettings FormatSettings { get { return new ODataV3Format(); } }
     }
 
     public class TypedExpressionV4Tests : TypedExpressionTests
     {
-        public override string MetadataFile { get { return "Northwind4.xml"; } }
+        public override string MetadataFile => "Northwind4.xml";
         public override IFormatSettings FormatSettings { get { return new ODataV4Format(); } }
     }
 

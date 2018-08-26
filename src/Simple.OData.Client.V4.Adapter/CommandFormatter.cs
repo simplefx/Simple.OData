@@ -13,29 +13,26 @@ namespace Simple.OData.Client.V4.Adapter
         {
         }
 
-        public override FunctionFormat FunctionFormat
-        {
-            get { return FunctionFormat.Key; }
-        }
+        public override FunctionFormat FunctionFormat => FunctionFormat.Key;
 
         public override string ConvertValueToUriLiteral(object value, bool escapeDataString)
         {
             if (value != null && value.GetType().IsEnumType())
                 value = new ODataEnumValue(value.ToString(), _session.Metadata.GetQualifiedTypeName(value.GetType().Name));
-            if (value is ODataExpression)
-                return (value as ODataExpression).AsString(_session);
+            if (value is ODataExpression expression)
+                return expression.AsString(_session);
 
             var odataVersion = (ODataVersion)Enum.Parse(typeof(ODataVersion), _session.Adapter.GetODataVersionString(), false);
-            Func<object, string> convertValue = x => ODataUriUtils.ConvertToUriLiteral(x, odataVersion, (_session.Adapter as ODataAdapter).Model);
+            string ConvertValue(object x) => ODataUriUtils.ConvertToUriLiteral(x, odataVersion, (_session.Adapter as ODataAdapter).Model);
 
             if (value is ODataEnumValue && _session.Settings.EnumPrefixFree)
-                value = (value as ODataEnumValue).Value;
+                value = ((ODataEnumValue) value).Value;
             else if (value is DateTime)
                 value = new DateTimeOffset((DateTime)value);
 
             return escapeDataString
-                ? Uri.EscapeDataString(convertValue(value))
-                : convertValue(value);
+                ? Uri.EscapeDataString(ConvertValue(value))
+                : ConvertValue(value);
         }
 
         protected override void FormatExpandSelectOrderby(IList<string> commandClauses, EntityCollection resultCollection, FluentCommand command)
@@ -156,26 +153,6 @@ namespace Simple.OData.Client.V4.Adapter
                     .Select(x => new KeyValuePair<string, bool>(FormatSkipSegments(x, 1), x.Value)).ToList();
             }
         }
-
-        /*private bool IsInnerCollectionOrderBy(string path, EntityCollection entityCollection, IList<KeyValuePair<string, bool>> orderbyColumns)
-        {
-            var items = path.Split('/');
-            var associationName = _session.Metadata.GetNavigationPropertyExactName(entityCollection.Name, items.First());
-
-            if (_session.Metadata.IsNavigationPropertyCollection(entityCollection.Name, associationName) && orderbyColumns.Any())
-                return true;
-
-            if (items.Count() > 1)
-            {
-                path = path.Substring(items.First().Length + 1);
-                entityCollection = _session.Metadata.GetEntityCollection(
-                    _session.Metadata.GetNavigationPropertyPartnerTypeName(entityCollection.Name, associationName));
-
-                return IsInnerCollectionOrderBy(path, entityCollection, SelectPathSegmentColumns(orderbyColumns, path));
-            }
-
-            return false;
-        }*/
 
         private bool IsInnerCollectionOrderBy(string expandAssociation, EntityCollection entityCollection, string orderByColumn)
         {

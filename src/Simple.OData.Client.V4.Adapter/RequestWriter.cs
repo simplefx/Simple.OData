@@ -475,12 +475,14 @@ namespace Simple.OData.Client.V4.Adapter
                     };
 
                 case EdmTypeKind.Primitive:
-                    var mappedTypes = _typeMap.Where(x => x.Value == (propertyType.Definition as IEdmPrimitiveType).PrimitiveKind);
+                    var mappedTypes = _typeMap.Where(x => x.Value == ((IEdmPrimitiveType) propertyType.Definition).PrimitiveKind);
                     if (mappedTypes.Any())
                     {
                         foreach (var mappedType in mappedTypes)
                         {
-                            if (Utils.TryConvert(value, mappedType.Key, out var result))
+                            if (TryConvert(value, mappedType.Key, out var result))
+                                return result;
+                            else if (Utils.TryConvert(value, mappedType.Key, out result))
                                 return result;
                         }
                         throw new NotSupportedException($"Conversion is not supported from type {value.GetType()} to OData type {propertyType}");
@@ -502,6 +504,30 @@ namespace Simple.OData.Client.V4.Adapter
 
                 default:
                     return value;
+            }
+        }
+
+        public static bool TryConvert(object value, Type targetType, out object result)
+        {
+            try
+            {
+                if ((targetType == typeof(Date) || targetType == typeof(Date?)) && value is DateTimeOffset dto)
+                {
+                    result = new Date(dto.Year, dto.Month, dto.Day);
+                    return true;
+                }
+                else if ((targetType == typeof(Date) || targetType == typeof(Date?)) && value is DateTime dt)
+                {
+                    result = new Date(dt.Year, dt.Month, dt.Day);
+                    return true;
+                }
+                result = null;
+                return false;
+            }
+            catch (Exception)
+            {
+                result = null;
+                return false;
             }
         }
 
@@ -561,6 +587,9 @@ namespace Simple.OData.Client.V4.Adapter
                 new KeyValuePair<Type, EdmPrimitiveTypeKind>(typeof(char[]), EdmPrimitiveTypeKind.String),
                 new KeyValuePair<Type, EdmPrimitiveTypeKind>(typeof(char), EdmPrimitiveTypeKind.String),
                 new KeyValuePair<Type, EdmPrimitiveTypeKind>(typeof(char?), EdmPrimitiveTypeKind.String),
+
+                new KeyValuePair<Type, EdmPrimitiveTypeKind>(typeof(Date), EdmPrimitiveTypeKind.Date),
+                new KeyValuePair<Type, EdmPrimitiveTypeKind>(typeof(Date?), EdmPrimitiveTypeKind.Date),
             }
                     .ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
     }

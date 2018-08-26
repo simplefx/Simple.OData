@@ -13,24 +13,21 @@ namespace Simple.OData.Client.V3.Adapter
         {            
         }
 
-        public override FunctionFormat FunctionFormat
-        {
-            get { return FunctionFormat.Query; }
-        }
+        public override FunctionFormat FunctionFormat => FunctionFormat.Query;
 
         public override string ConvertValueToUriLiteral(object value, bool escapeDataString)
         {
             if (value != null && value.GetType().IsEnumType())
                 value = Convert.ToInt32(value);
-            if (value is ODataExpression)
-                return (value as ODataExpression).AsString(_session);
+            if (value is ODataExpression expression)
+                return expression.AsString(_session);
 
             var odataVersion = (ODataVersion) Enum.Parse(typeof (ODataVersion), _session.Adapter.GetODataVersionString(), false);
-            Func<object, string> convertValue = x => ODataUriUtils.ConvertToUriLiteral(x, odataVersion, (_session.Adapter as ODataAdapter).Model);
+            string ConvertValue(object x) => ODataUriUtils.ConvertToUriLiteral(x, odataVersion, (_session.Adapter as ODataAdapter).Model);
 
             return escapeDataString
-                ? Uri.EscapeDataString(convertValue(value))
-                : convertValue(value);
+                ? Uri.EscapeDataString(ConvertValue(value))
+                : ConvertValue(value);
         }
 
         protected override void FormatExpandSelectOrderby(IList<string> commandClauses, EntityCollection resultCollection, FluentCommand command)

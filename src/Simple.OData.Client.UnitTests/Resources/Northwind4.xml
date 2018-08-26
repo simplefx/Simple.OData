@@ -48,7 +48,7 @@
         <Property Name="Title" Type="Edm.String" MaxLength="30" />
         <Property Name="TitleOfCourtesy" Type="Edm.String" MaxLength="25" />
         <Property Name="BirthDate" Type="Edm.DateTimeOffset" />
-        <Property Name="HireDate" Type="Edm.DateTimeOffset" />
+        <Property Name="HireDate" Type="Edm.Date" />
         <Property Name="Address" Type="Edm.String" MaxLength="60" />
         <Property Name="City" Type="Edm.String" MaxLength="15" />
         <Property Name="Region" Type="Edm.String" MaxLength="15" />
@@ -120,6 +120,7 @@
         </Key>
         <Property Name="ProductID" Type="Edm.Int32" Nullable="false" p5:StoreGeneratedPattern="Identity" xmlns:p5="http://schemas.microsoft.com/ado/2009/02/edm/annotation" />
         <Property Name="ProductName" Type="Edm.String" Nullable="false" MaxLength="40" />
+        <Property Name="EnglishName" Type="Edm.String" MaxLength="40" />
         <Property Name="SupplierID" Type="Edm.Int32" />
         <Property Name="CategoryID" Type="Edm.Int32" />
         <Property Name="QuantityPerUnit" Type="Edm.String" MaxLength="20" />

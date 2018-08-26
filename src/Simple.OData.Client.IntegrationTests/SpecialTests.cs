@@ -208,7 +208,7 @@ namespace Simple.OData.Client.Tests
             }
 
             var wasCached = true;
-            var cached = MetadataCache.GetOrAdd("ftp://localhost/", x =>
+            var cached = EdmMetadataCache.GetOrAdd("ftp://localhost/", x =>
             {
                 wasCached = false;
                 return null;
@@ -224,7 +224,7 @@ namespace Simple.OData.Client.Tests
             var client = new ODataClient(settings);
 
             await client.GetMetadataAsync();
-            MetadataCache.GetOrAdd(_serviceUri.ToString(), x => throw new Exception("metadata was not cached."));
+            EdmMetadataCache.GetOrAdd(_serviceUri.ToString(), x => throw new Exception("metadata was not cached."));
 
             settings.BeforeRequest = x => throw new Exception("metadata cache was not used.");
             await client.GetMetadataAsync();

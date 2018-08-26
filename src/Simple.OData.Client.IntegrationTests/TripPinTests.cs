@@ -947,7 +947,7 @@ namespace Simple.OData.Client.Tests
                 .Key("russellwhyte")
                 .Action("ShareTrip")
                 .Set(new { userName = "scottketchum", tripId = 1003 })
-                .ExecuteAsSingleAsync();
+                .ExecuteAsync();
         }
 
         [Fact]

@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Spatial;
+
 using Microsoft.Data.Edm;
+
+using Simple.OData.Client.Adapter;
 
 #pragma warning disable 1591
 
@@ -20,16 +23,11 @@ namespace Simple.OData.Client.V3.Adapter
     public class ODataAdapter : ODataAdapterBase
     {
         private readonly ISession _session;
+        private IMetadata _metadata;
 
         public override AdapterVersion AdapterVersion => AdapterVersion.V3;
 
         public override ODataPayloadFormat DefaultPayloadFormat => ODataPayloadFormat.Atom;
-
-        public new IEdmModel Model
-        {
-            get => base.Model as IEdmModel;
-            set => base.Model = value;
-        }
 
         public ODataAdapter(ISession session, IODataModelAdapter modelAdapter)
         {
@@ -39,11 +37,24 @@ namespace Simple.OData.Client.V3.Adapter
 
             CustomConverters.RegisterTypeConverter(typeof(GeographyPoint), TypeConverters.CreateGeographyPoint);
             CustomConverters.RegisterTypeConverter(typeof(GeometryPoint), TypeConverters.CreateGeometryPoint);
+            CustomConverters.RegisterTypeConverter(typeof(DateTime), TypeConverters.ConvertToEdmDate);
+            CustomConverters.RegisterTypeConverter(typeof(DateTimeOffset), TypeConverters.ConvertToEdmDate);
+        }
+
+        public new IEdmModel Model
+        {
+            get => base.Model as IEdmModel;
+            set
+            {
+                base.Model = value;
+                // Ensure we replace the cache on change of model
+                _metadata = null;
+            }
         }
 
         public override string GetODataVersionString()
         {
-            switch (this.ProtocolVersion)
+            switch (ProtocolVersion)
             {
                 case ODataProtocolVersion.V1:
                     return "V1";
@@ -57,7 +68,8 @@ namespace Simple.OData.Client.V3.Adapter
 
         public override IMetadata GetMetadata()
         {
-            return new Metadata(_session, Model);
+            // TODO: Should use a MetadataFactory here 
+            return _metadata ?? (_metadata = new MetadataCache(new Metadata(Model, _session.Settings.NameMatchResolver, _session.Settings.IgnoreUnmappedProperties, _session.Settings.UnqualifiedNameCall)));
         }
 
         public override ICommandFormatter GetCommandFormatter()

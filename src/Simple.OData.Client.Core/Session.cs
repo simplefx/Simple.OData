@@ -13,12 +13,12 @@ namespace Simple.OData.Client
         private HttpConnection _httpConnection;
 
         public ODataClientSettings Settings { get; }
-        public MetadataCache MetadataCache { get; private set; }
+        public EdmMetadataCache MetadataCache { get; private set; }
 
         private Session(Uri baseUri, string metadataString)
         {
             this.Settings = new ODataClientSettings {BaseUri = baseUri};
-            this.MetadataCache = MetadataCache.GetOrAdd(baseUri.AbsoluteUri, uri => new MetadataCache(uri, metadataString));
+            this.MetadataCache = EdmMetadataCache.GetOrAdd(baseUri.AbsoluteUri, uri => new EdmMetadataCache(uri, metadataString));
         }
 
         private Session(ODataClientSettings settings)
@@ -28,7 +28,7 @@ namespace Simple.OData.Client
 
             this.Settings = settings;
             if (!string.IsNullOrEmpty(settings.MetadataDocument))
-                this.MetadataCache = MetadataCache.GetOrAdd(this.Settings.BaseUri.AbsoluteUri, uri => new MetadataCache(uri, settings.MetadataDocument));
+                this.MetadataCache = EdmMetadataCache.GetOrAdd(this.Settings.BaseUri.AbsoluteUri, uri => new EdmMetadataCache(uri, settings.MetadataDocument));
         }
 
         public void Dispose()
@@ -53,7 +53,7 @@ namespace Simple.OData.Client
             var metadataCache = this.MetadataCache;
             if (metadataCache != null)
             {
-                MetadataCache.Clear(metadataCache.Key);
+                EdmMetadataCache.Clear(metadataCache.Key);
                 this.MetadataCache = null;
             }
         }
@@ -64,22 +64,22 @@ namespace Simple.OData.Client
             {
                 if (string.IsNullOrEmpty(Settings.MetadataDocument))
                 {
-                    this.MetadataCache = await MetadataCache.GetOrAddAsync(
+                    this.MetadataCache = await EdmMetadataCache.GetOrAddAsync(
                         this.Settings.BaseUri.AbsoluteUri,
                         async uri =>
                         {
                             var metadata = await ResolveMetadataAsync(cancellationToken).ConfigureAwait(false);
-                            return new MetadataCache(uri, metadata);
+                            return new EdmMetadataCache(uri, metadata);
                         });
                 }
                 else
                 {
                     this.MetadataCache =
-                        MetadataCache.GetOrAdd(
+                        EdmMetadataCache.GetOrAdd(
                             this.Settings.BaseUri.AbsoluteUri,
                             uri =>
                             {
-                                var cache = new MetadataCache(uri, Settings.MetadataDocument);
+                                var cache = new EdmMetadataCache(uri, Settings.MetadataDocument);
                                 return cache;
                             });
                 }
