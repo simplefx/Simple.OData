@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http.Dispatcher;
-using System.Web.OData;
+using Microsoft.AspNet.OData;
 
 namespace WebApiOData.V4.Samples
 {

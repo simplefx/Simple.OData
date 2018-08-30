@@ -2,10 +2,9 @@
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Web.Http;
-using System.Web.Http.Results;
-using System.Web.OData;
-using System.Web.OData.Query;
-using System.Web.OData.Routing;
+using Microsoft.AspNet.OData;
+using Microsoft.AspNet.OData.Query;
+using Microsoft.AspNet.OData.Routing;
 using WebApiOData.V4.Samples.Models;
 
 namespace WebApiOData.V4.Samples.Controllers
