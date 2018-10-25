@@ -1072,7 +1072,7 @@ namespace Simple.OData.Client
                 ? null
                 : typeof(T) == typeof(string) || typeof(T).IsValue()
                 ? result.SelectMany(x => x.Values).Select(x => (T)Utils.Convert(x, typeof(T))).ToArray()
-                : result.Select(x => (T)x.ToObject(typeof(T))).ToArray();
+                : result.Select(x => (T)x.ToObject(command.TypeCache, typeof(T))).ToArray();
         }
 
         internal async Task ExecuteBatchAsync(IList<Func<IODataClient, Task>> actions, CancellationToken cancellationToken)

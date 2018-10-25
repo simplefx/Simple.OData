@@ -111,7 +111,7 @@ namespace Simple.OData.Client
         public async Task<T> InsertEntryAsync(bool resultRequired, CancellationToken cancellationToken)
         {
             var result = await _client.InsertEntryAsync(_command, resultRequired, cancellationToken).ConfigureAwait(false);
-            return result.ToObject<T>(_command.DynamicPropertiesContainerName, _dynamicResults);
+            return result.ToObject<T>(TypeCache, _command.DynamicPropertiesContainerName, _dynamicResults);
         }
 
         public Task<T> UpdateEntryAsync()
@@ -142,7 +142,7 @@ namespace Simple.OData.Client
             {
                 var result = await _client.UpdateEntryAsync(_command, resultRequired, cancellationToken).ConfigureAwait(false);
                 return resultRequired
-                    ? result?.ToObject<T>(_command.DynamicPropertiesContainerName, _dynamicResults)
+                    ? result?.ToObject<T>(TypeCache,_command.DynamicPropertiesContainerName, _dynamicResults)
                     : null;
             }
         }
@@ -165,7 +165,7 @@ namespace Simple.OData.Client
         public async Task<IEnumerable<T>> UpdateEntriesAsync(bool resultRequired, CancellationToken cancellationToken)
         {
             var result = await _client.UpdateEntriesAsync(_command, resultRequired, cancellationToken).ConfigureAwait(false);
-            return result.Select(y => y.ToObject<T>(_command.DynamicPropertiesContainerName, _dynamicResults));
+            return result.Select(y => y.ToObject<T>(TypeCache, _command.DynamicPropertiesContainerName, _dynamicResults));
         }
 
         public Task DeleteEntryAsync()

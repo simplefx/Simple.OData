@@ -26,6 +26,8 @@ namespace Simple.OData.Client
             _responseMessage = responseMessage;
         }
 
+        private ITypeCache TypeCache => _session.TypeCache;
+
         public void Dispose()
         {
             _responseMessage?.Dispose();
@@ -80,7 +82,7 @@ namespace Simple.OData.Client
                 if (annotations != null && response.Feed != null)
                     annotations.CopyFrom(response.Feed.Annotations);
                 var result = response.AsEntries(_session.Settings.IncludeAnnotationsInResults);
-                return result.Select(x => x.ToObject<T>());
+                return result.Select(x => x.ToObject<T>(TypeCache));
             }
             else
             {
@@ -103,7 +105,7 @@ namespace Simple.OData.Client
                 if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
                 var result = response.AsEntries(_session.Settings.IncludeAnnotationsInResults);
-                return result?.FirstOrDefault().ToObject<T>();
+                return result?.FirstOrDefault().ToObject<T>(TypeCache);
             }
             else
             {

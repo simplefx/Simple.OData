@@ -263,7 +263,7 @@ namespace Simple.OData.Client.Tests.Extensions
                 { "IntProperty", 1 },
             };
 
-            var value = dict.ToObject<ODataEntry>(null, false);
+            var value = dict.ToObject<ODataEntry>(null, null, false);
             Assert.Equal("a", value["StringProperty"]);
             Assert.Equal(1, value["IntProperty"]);
         }
@@ -278,7 +278,7 @@ namespace Simple.OData.Client.Tests.Extensions
                 { "IntProperty", 1 },
             };
 
-            dynamic value = dict.ToObject<ODataEntry>(null, true);
+            dynamic value = dict.ToObject<ODataEntry>(null, null, true);
             Assert.Equal("a", value.StringProperty);
             Assert.Equal(1, value.IntProperty);
         }
@@ -293,7 +293,7 @@ namespace Simple.OData.Client.Tests.Extensions
                 new Dictionary<string, object>() {{"StringProperty", "b"}, {"IntProperty", 2}},
             };
 
-            var values = (dict.Select(x => x.ToObject<ODataEntry>(null, true)) as IEnumerable<dynamic>).ToArray();
+            var values = (dict.Select(x => x.ToObject<ODataEntry>(null, null, true)) as IEnumerable<dynamic>).ToArray();
             for (var index = 0; index < values.Count(); index++)
             {
                 Assert.Equal(dict[index]["StringProperty"], values[index].StringProperty);

@@ -7,6 +7,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+
 using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
@@ -82,12 +83,12 @@ namespace Simple.OData.Client
             return new NotSupportedException($"Not supported expression of type {expression.GetType()} ({expression.NodeType}): {expression}");
         }
 
-        public static IEnumerable<PropertyInfo> GetMappedProperties(Type type)
+        public static IEnumerable<PropertyInfo> GetMappedProperties(this Type type)
         {
             return type.GetAllProperties().Where(x => !x.IsNotMapped());
         }
 
-        public static PropertyInfo GetMappedProperty(Type type, string propertyName)
+        public static PropertyInfo GetMappedProperty(this Type type, string propertyName)
         {
             var property = type.GetAnyProperty(propertyName);
             return property == null || property.IsNotMapped() ? null : property;

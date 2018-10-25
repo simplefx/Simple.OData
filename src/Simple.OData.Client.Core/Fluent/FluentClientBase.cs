@@ -56,6 +56,8 @@ namespace Simple.OData.Client
 
         internal Session Session => _session;
 
+        protected ITypeCache TypeCache => _session.TypeCache;
+
         public FT WithProperties(Expression<Func<T, IDictionary<string, object>>> expression)
         {
             this.Command.WithProperties(ColumnExpression.ExtractColumnName(expression));
@@ -637,11 +639,12 @@ namespace Simple.OData.Client
 
         private T ConvertResult(IDictionary<string, object> result, string dynamicPropertiesContainerName)
         {
+            // TODO: We should get the dynamicPropertiesContainer name from the type.
             if (result != null && result.Keys.Count == 1 && result.ContainsKey(FluentCommand.ResultLiteral) &&
-                typeof(T).IsValue() || typeof(T) == typeof(string) || typeof(T) == typeof(object))
+                TypeCache.IsValue(typeof(T)) || typeof(T) == typeof(string) || typeof(T) == typeof(object))
                 return (T)Utils.Convert(result.Values.First(), typeof(T));
             else
-                return result.ToObject<T>(dynamicPropertiesContainerName, _dynamicResults);
+                return result.ToObject<T>(TypeCache, dynamicPropertiesContainerName, _dynamicResults);
         }
 
         private bool IsSelectedColumn(KeyValuePair<string, object> kv, string columnName)

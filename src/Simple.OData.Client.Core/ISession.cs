@@ -2,6 +2,8 @@
 using System.Net;
 using System.Net.Http;
 
+using Simple.OData.Client.Extensions;
+
 namespace Simple.OData.Client
 {
     /// <summary>
@@ -23,6 +25,11 @@ namespace Simple.OData.Client
         /// Gets OData service metadata.
         /// </summary>
         IMetadata Metadata { get; }
+
+        /// <summary>
+        /// Gets type information for this session.
+        /// </summary>
+        ITypeCache TypeCache { get; }
 
         /// <summary>
         /// Writes a trace message.

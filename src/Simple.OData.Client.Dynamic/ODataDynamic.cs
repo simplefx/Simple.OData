@@ -9,7 +9,7 @@ namespace Simple.OData.Client
     {
         static ODataDynamic()
         {
-            DictionaryExtensions.CreateDynamicODataEntry = (x) => new DynamicODataEntry(x);
+            DictionaryExtensions.CreateDynamicODataEntry = (x, tc) => new DynamicODataEntry(x, tc);
         }
 
         public static dynamic Expression

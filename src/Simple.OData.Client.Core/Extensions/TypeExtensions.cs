@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace Simple.OData.Client.Extensions
 {
@@ -142,6 +142,16 @@ namespace Simple.OData.Client.Extensions
         public static Type GetBaseType(this Type type)
         {
             return type.GetTypeInfo().BaseType;
+        }
+ 
+        public static bool IsAnonymousType(this Type type)
+        {
+            // HACK: The only way to detect anonymous types right now.
+            return type.HasCustomAttribute(typeof(CompilerGeneratedAttribute), false)
+                   && type.IsGeneric() && type.Name.Contains("AnonymousType")
+                   && (type.Name.StartsWith("<>", StringComparison.OrdinalIgnoreCase) ||
+                       type.Name.StartsWith("VB$", StringComparison.OrdinalIgnoreCase))
+                   && (type.GetTypeAttributes() & TypeAttributes.NotPublic) == TypeAttributes.NotPublic;
         }
 
         public static string GetMappedName(this Type type)

@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Simple.OData.Client.Extensions;
 
 #pragma warning disable 1591
@@ -36,9 +34,11 @@ namespace Simple.OData.Client
             _details = new CommandDetails(ancestor._details);
         }
 
-        private bool IsBatchResponse { get { return _details.Session == null; } }
+        private bool IsBatchResponse => _details.Session == null;
 
-        internal CommandDetails Details { get { return _details; } }
+        internal ITypeCache TypeCache => _details.Session.TypeCache;
+
+        internal CommandDetails Details => _details;
 
         internal FluentCommand Resolve()
         {
@@ -232,10 +232,10 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            if (key != null && key.Length == 1 && IsAnonymousType(key.First().GetType()))
+            if (key != null && key.Length == 1 && TypeCache.IsAnonymousType(key.First().GetType()))
             {
                 var namedKeyValues = key.First();
-                _details.NamedKeyValues = Utils.GetMappedProperties(namedKeyValues.GetType())
+                _details.NamedKeyValues = TypeCache.GetMappedProperties(namedKeyValues.GetType())
                     .Select(x => new KeyValuePair<string, object>(x.Name, x.GetValue(namedKeyValues, null))).ToIDictionary();
             }
             else
@@ -501,11 +501,10 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _details.EntryData = Utils.GetMappedProperties(value.GetType())
+            _details.EntryData = TypeCache.GetMappedProperties(value.GetType())
                 .Select(x => new KeyValuePair<string, object>(x.GetMappedName(), x.GetValue(value, null)))
                 .ToDictionary();
-            if (_details.BatchEntries != null)
-                _details.BatchEntries.GetOrAdd(value, _details.EntryData);
+            _details.BatchEntries?.GetOrAdd(value, _details.EntryData);
             return this;
         }
 
@@ -676,16 +675,6 @@ namespace Simple.OData.Client
             return keyNames.Count == namedKeyValues.Count && Utils.AllMatch(keyNames, namedKeyValues.Keys, _details.Session.Settings.NameMatchResolver)
                 ? namedKeyValues
                 : null;
-        }
-
-        private static bool IsAnonymousType(Type type)
-        {
-            // HACK: The only way to detect anonymous types right now.
-            return type.HasCustomAttribute(typeof(CompilerGeneratedAttribute), false)
-                       && type.IsGeneric() && type.Name.Contains("AnonymousType")
-                       && (type.Name.StartsWith("<>", StringComparison.OrdinalIgnoreCase) ||
-                           type.Name.StartsWith("VB$", StringComparison.OrdinalIgnoreCase))
-                       && (type.GetTypeAttributes() & TypeAttributes.NotPublic) == TypeAttributes.NotPublic;
         }
     }
 }
