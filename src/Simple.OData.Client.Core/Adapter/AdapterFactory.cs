@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Reflection;
 using System.Threading.Tasks;
 using System.Xml;
+
 using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
@@ -19,34 +20,34 @@ namespace Simple.OData.Client
         private const string ModelAdapterV3TypeName = "Simple.OData.Client.V3.Adapter.ODataModelAdapter";
         private const string ModelAdapterV4TypeName = "Simple.OData.Client.V4.Adapter.ODataModelAdapter";
 
-        public async Task<IODataModelAdapter> CreateModelAdapterAsync(HttpResponseMessage response)
+        public async Task<IODataModelAdapter> CreateModelAdapterAsync(HttpResponseMessage response, ITypeCache typeCache)
         {
             var protocolVersions = (await GetSupportedProtocolVersionsAsync(response).ConfigureAwait(false)).ToArray();
 
             foreach (var protocolVersion in protocolVersions)
             {
-                var loadModelAdapter = GetModelAdapterLoader(protocolVersion, response);
+                var loadModelAdapter = GetModelAdapterLoader(protocolVersion, response, typeCache);
                 if (loadModelAdapter != null)
                     return loadModelAdapter();
             }
             throw new NotSupportedException($"OData protocols {string.Join(",", protocolVersions)} are not supported");
         }
 
-        public IODataModelAdapter CreateModelAdapter(string metadataString)
+        public IODataModelAdapter CreateModelAdapter(string metadataString, ITypeCache typeCache)
         {
             var protocolVersion = GetMetadataProtocolVersion(metadataString);
-            var loadModelAdapter = GetModelAdapterLoader(protocolVersion, metadataString);
+            var loadModelAdapter = GetModelAdapterLoader(protocolVersion, metadataString, typeCache);
             if (loadModelAdapter == null)
                 throw new NotSupportedException($"OData protocol {protocolVersion} is not supported");
 
             return loadModelAdapter();
         }
 
-        public Func<ISession, IODataAdapter> CreateAdapter(string metadataString)
+        public Func<ISession, IODataAdapter> CreateAdapter(string metadataString, ITypeCache typeCache)
         {
-            var modelAdapter = CreateModelAdapter(metadataString);
+            var modelAdapter = CreateModelAdapter(metadataString, typeCache);
 
-            var loadAdapter = GetAdapterLoader(modelAdapter);
+            var loadAdapter = GetAdapterLoader(modelAdapter, typeCache);
             if (loadAdapter == null)
                 throw new NotSupportedException($"OData protocol {modelAdapter.ProtocolVersion} is not supported");
 
@@ -75,36 +76,36 @@ namespace Simple.OData.Client
             }
         }
 
-        private Func<ISession, IODataAdapter> GetAdapterLoader(IODataModelAdapter modelAdapter)
+        private Func<ISession, IODataAdapter> GetAdapterLoader(IODataModelAdapter modelAdapter, ITypeCache typeCache)
         {
             if (modelAdapter.ProtocolVersion == ODataProtocolVersion.V1 ||
                 modelAdapter.ProtocolVersion == ODataProtocolVersion.V2 ||
                 modelAdapter.ProtocolVersion == ODataProtocolVersion.V3)
-                return session => LoadAdapter(AdapterV3AssemblyName, AdapterV3TypeName, session, modelAdapter);
+                return session => LoadAdapter(AdapterV3AssemblyName, typeCache, AdapterV3TypeName, session, modelAdapter);
             if (modelAdapter.ProtocolVersion == ODataProtocolVersion.V4)
-                return session => LoadAdapter(AdapterV4AssemblyName, AdapterV4TypeName, session, modelAdapter);
+                return session => LoadAdapter(AdapterV4AssemblyName, typeCache, AdapterV4TypeName, session, modelAdapter);
 
             return null;
         }
 
-        private Func<IODataModelAdapter> GetModelAdapterLoader(string protocolVersion, object extraInfo)
+        private Func<IODataModelAdapter> GetModelAdapterLoader(string protocolVersion, object extraInfo, ITypeCache typeCache)
         {
             if (protocolVersion == ODataProtocolVersion.V1 ||
                 protocolVersion == ODataProtocolVersion.V2 ||
                 protocolVersion == ODataProtocolVersion.V3)
-                return () => LoadModelAdapter(AdapterV3AssemblyName, ModelAdapterV3TypeName, protocolVersion, extraInfo);
+                return () => LoadModelAdapter(typeCache, AdapterV3AssemblyName, ModelAdapterV3TypeName, protocolVersion, extraInfo);
             if (protocolVersion == ODataProtocolVersion.V4)
-                return () => LoadModelAdapter(AdapterV4AssemblyName, ModelAdapterV4TypeName, protocolVersion, extraInfo);
+                return () => LoadModelAdapter(typeCache, AdapterV4AssemblyName, ModelAdapterV4TypeName, protocolVersion, extraInfo);
 
             return null;
         }
 
-        private IODataModelAdapter LoadModelAdapter(string modelAdapterAssemblyName, string modelAdapterTypeName, params object[] ctorParams)
+        private IODataModelAdapter LoadModelAdapter(ITypeCache typeCache, string modelAdapterAssemblyName, string modelAdapterTypeName, params object[] ctorParams)
         {
             try
             {
                 var assembly = LoadAdapterAssembly(modelAdapterAssemblyName);
-                var ctor = FindAdapterConstructor(assembly, modelAdapterTypeName, ctorParams);
+                var ctor = FindAdapterConstructor(assembly, typeCache, modelAdapterTypeName, ctorParams);
                 return ctor.Invoke(ctorParams) as IODataModelAdapter;
             }
             catch (Exception exception)
@@ -119,22 +120,22 @@ namespace Simple.OData.Client
             return Assembly.Load(assemblyName);
         }
 
-        private ConstructorInfo FindAdapterConstructor(Assembly assembly, string modelAdapterTypeName, params object[] ctorParams)
+        private ConstructorInfo FindAdapterConstructor(Assembly assembly, ITypeCache typeCache, string modelAdapterTypeName, params object[] ctorParams)
         {
-            var constructors = assembly.GetType(modelAdapterTypeName).GetDeclaredConstructors();
+            var constructors = typeCache.GetDeclaredConstructors(assembly.GetType(modelAdapterTypeName));
             return constructors.Single(x =>
                 x.GetParameters().Count() == ctorParams.Count() &&
                 x.GetParameters().Last().ParameterType.GetTypeInfo().IsAssignableFrom(ctorParams.Last().GetType().GetTypeInfo()));
         }
 
-        private IODataAdapter LoadAdapter(string adapterAssemblyName, string adapterTypeName, params object[] ctorParams)
+        private IODataAdapter LoadAdapter(string adapterAssemblyName, ITypeCache typeCache, string adapterTypeName, params object[] ctorParams)
         {
             try
             {
                 var assemblyName = new AssemblyName(adapterAssemblyName);
                 var assembly = Assembly.Load(assemblyName);
 
-                var constructors = assembly.GetType(adapterTypeName).GetDeclaredConstructors();
+                var constructors = typeCache.GetDeclaredConstructors(assembly.GetType(adapterTypeName));
 
                 var ctor = constructors.Single(x =>
                     x.GetParameters().Count() == ctorParams.Count() &&

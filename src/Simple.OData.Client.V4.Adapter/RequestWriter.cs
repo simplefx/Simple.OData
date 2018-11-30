@@ -234,7 +234,7 @@ namespace Simple.OData.Client.V4.Adapter
 
                 case EdmTypeKind.Entity:
                     var entryWriter = await parameterWriter.CreateResourceWriterAsync(paramName).ConfigureAwait(false);
-                    var entry = CreateODataEntry(operationParameter.Type.Definition.FullTypeName(), paramValue.ToDictionary(), null);
+                    var entry = CreateODataEntry(operationParameter.Type.Definition.FullTypeName(), paramValue.ToDictionary(TypeCache), null);
 
                     RegisterRootEntry(entry);
                     await entryWriter.WriteStartAsync(entry).ConfigureAwait(false);
@@ -253,7 +253,7 @@ namespace Simple.OData.Client.V4.Adapter
                         await feedWriter.WriteStartAsync(feed).ConfigureAwait(false);
                         foreach (var item in (IEnumerable)paramValue)
                         {
-                            var feedEntry = CreateODataEntry(elementType.Definition.FullTypeName(), item.ToDictionary(), null);
+                            var feedEntry = CreateODataEntry(elementType.Definition.FullTypeName(), item.ToDictionary(TypeCache), null);
 
                             RegisterRootEntry(feedEntry);
                             await feedWriter.WriteStartAsync(feedEntry).ConfigureAwait(false);
@@ -341,7 +341,7 @@ namespace Simple.OData.Client.V4.Adapter
             foreach (var referenceLink in links)
             {
                 var linkKey = linkTypeWithKey.DeclaredKey;
-                var linkEntry = referenceLink.LinkData.ToDictionary();
+                var linkEntry = referenceLink.LinkData.ToDictionary(TypeCache);
                 var contentId = GetContentId(referenceLink);
                 string linkUri;
                 if (contentId != null)
@@ -460,15 +460,16 @@ namespace Simple.OData.Client.V4.Adapter
             switch (propertyType.TypeKind())
             {
                 case EdmTypeKind.Complex:
+                    // TODO: Should be a method on TypeCache
                     if (CustomConverters.HasObjectConverter(value.GetType()))
                     {
                         return CustomConverters.Convert(value, value.GetType());
                     }
-                    return CreateODataEntry(propertyType.FullName(), value.ToDictionary(), root);
+                    return CreateODataEntry(propertyType.FullName(), value.ToDictionary(TypeCache), root);
 
                 case EdmTypeKind.Collection:
                     var collection = propertyType.AsCollection();
-                    return new ODataCollectionValue()
+                    return new ODataCollectionValue
                     {
                         TypeName = propertyType.FullName(),
                         Items = ((IEnumerable)value).Cast<object>().Select(x => GetPropertyValue(collection.ElementType(), x, root)),
@@ -482,7 +483,7 @@ namespace Simple.OData.Client.V4.Adapter
                         {
                             if (TryConvert(value, mappedType.Key, out var result))
                                 return result;
-                            else if (Utils.TryConvert(value, mappedType.Key, out result))
+                            else if (TypeCache.TryConvert(value, mappedType.Key, out result))
                                 return result;
                         }
                         throw new NotSupportedException($"Conversion is not supported from type {value.GetType()} to OData type {propertyType}");

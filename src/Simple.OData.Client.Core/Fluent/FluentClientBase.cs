@@ -60,7 +60,7 @@ namespace Simple.OData.Client
 
         public FT WithProperties(Expression<Func<T, IDictionary<string, object>>> expression)
         {
-            this.Command.WithProperties(ColumnExpression.ExtractColumnName(expression));
+            this.Command.WithProperties(expression.ExtractColumnName(Command.TypeCache));
             return this as FT;
         }
 
@@ -84,7 +84,7 @@ namespace Simple.OData.Client
 
         public FT WithMedia(Expression<Func<T, object>> expression)
         {
-            this.Command.WithMedia(ColumnExpression.ExtractColumnNames(expression));
+            this.Command.WithMedia(expression.ExtractColumnNames(Command.TypeCache));
             return this as FT;
         }
 
@@ -108,7 +108,7 @@ namespace Simple.OData.Client
 
         public FT Key(T entryKey)
         {
-            this.Command.Key(entryKey.ToDictionary());
+            this.Command.Key(entryKey.ToDictionary(Command.TypeCache));
             return this as FT;
         }
 
@@ -210,13 +210,13 @@ namespace Simple.OData.Client
 
         public FT Expand(Expression<Func<T, object>> expression)
         {
-            this.Command.Expand(ColumnExpression.ExtractColumnNames(expression));
+            this.Command.Expand(expression.ExtractColumnNames(Command.TypeCache));
             return this as FT;
         }
 
         public FT Expand(ODataExpandOptions expandOptions, Expression<Func<T, object>> expression)
         {
-            this.Command.Expand(expandOptions, ColumnExpression.ExtractColumnNames(expression));
+            this.Command.Expand(expandOptions, expression.ExtractColumnNames(Command.TypeCache));
             return this as FT;
         }
 
@@ -240,7 +240,7 @@ namespace Simple.OData.Client
 
         public FT Select(Expression<Func<T, object>> expression)
         {
-            this.Command.Select(ColumnExpression.ExtractColumnNames(expression));
+            this.Command.Select(expression.ExtractColumnNames(Command.TypeCache));
             return this as FT;
         }
 
@@ -264,7 +264,7 @@ namespace Simple.OData.Client
 
         public FT OrderBy(Expression<Func<T, object>> expression)
         {
-            this.Command.OrderBy(ColumnExpression.ExtractColumnNames(expression).Select(x => new KeyValuePair<string, bool>(x, false)));
+            this.Command.OrderBy(expression.ExtractColumnNames(Command.TypeCache).Select(x => new KeyValuePair<string, bool>(x, false)));
             return this as FT;
         }
 
@@ -276,7 +276,7 @@ namespace Simple.OData.Client
 
         public FT ThenBy(Expression<Func<T, object>> expression)
         {
-            this.Command.ThenBy(ColumnExpression.ExtractColumnNames(expression).ToArray());
+            this.Command.ThenBy(expression.ExtractColumnNames(TypeCache).ToArray());
             return this as FT;
         }
 
@@ -294,7 +294,7 @@ namespace Simple.OData.Client
 
         public FT OrderByDescending(Expression<Func<T, object>> expression)
         {
-            this.Command.OrderBy(ColumnExpression.ExtractColumnNames(expression).Select(x => new KeyValuePair<string, bool>(x, true)));
+            this.Command.OrderBy(expression.ExtractColumnNames(Command.TypeCache).Select(x => new KeyValuePair<string, bool>(x, true)));
             return this as FT;
         }
 
@@ -306,7 +306,7 @@ namespace Simple.OData.Client
 
         public FT ThenByDescending(Expression<Func<T, object>> expression)
         {
-            this.Command.ThenByDescending(ColumnExpression.ExtractColumnNames(expression).ToArray());
+            this.Command.ThenByDescending(expression.ExtractColumnNames(Command.TypeCache).ToArray());
             return this as FT;
         }
 
@@ -354,7 +354,7 @@ namespace Simple.OData.Client
 
         public IMediaClient Media(Expression<Func<T, object>> expression)
         {
-            this.Command.Media(ColumnExpression.ExtractColumnName(expression));
+            this.Command.Media(expression.ExtractColumnName(Command.TypeCache));
             return new MediaClient(_client, _session, this.Command, _dynamicResults);
         }
 
@@ -408,7 +408,7 @@ namespace Simple.OData.Client
         public IBoundClient<U> NavigateTo<U>(Expression<Func<T, U>> expression)
             where U : class
         {
-            return this.Link<U>(this.Command, ColumnExpression.ExtractColumnName(expression));
+            return this.Link<U>(this.Command, expression.ExtractColumnName(Command.TypeCache));
         }
         /// <summary>
         /// Navigates to the linked entity.
@@ -418,7 +418,7 @@ namespace Simple.OData.Client
         /// <returns>Self.</returns>
         public IBoundClient<U> NavigateTo<U>(Expression<Func<T, IEnumerable<U>>> expression) where U : class
         {
-            return this.Link<U>(this.Command, ColumnExpression.ExtractColumnName(expression));
+            return this.Link<U>(this.Command, expression.ExtractColumnName(Command.TypeCache));
         }
         /// <summary>
         /// Navigates to the linked entity.
@@ -428,7 +428,7 @@ namespace Simple.OData.Client
         /// <returns>Self.</returns>
         public IBoundClient<U> NavigateTo<U>(Expression<Func<T, IList<U>>> expression) where U : class
         {
-            return this.Link<U>(this.Command, ColumnExpression.ExtractColumnName(expression));
+            return this.Link<U>(this.Command, expression.ExtractColumnName(Command.TypeCache));
         }
         /// <summary>
         /// Navigates to the linked entity.
@@ -438,7 +438,7 @@ namespace Simple.OData.Client
         /// <returns>Self.</returns>
         public IBoundClient<U> NavigateTo<U>(Expression<Func<T, ISet<U>>> expression) where U : class
         {
-            return this.Link<U>(this.Command, ColumnExpression.ExtractColumnName(expression));
+            return this.Link<U>(this.Command, expression.ExtractColumnName(Command.TypeCache));
         }
         /// <summary>
         /// Navigates to the linked entity.
@@ -448,7 +448,7 @@ namespace Simple.OData.Client
         /// <returns>Self.</returns>
         public IBoundClient<U> NavigateTo<U>(Expression<Func<T, HashSet<U>>> expression) where U : class
         {
-            return this.Link<U>(this.Command, ColumnExpression.ExtractColumnName(expression));
+            return this.Link<U>(this.Command, expression.ExtractColumnName(Command.TypeCache));
         }
         /// <summary>
         /// Navigates to the linked entity.
@@ -458,7 +458,7 @@ namespace Simple.OData.Client
         /// <returns>Self.</returns>
         public IBoundClient<U> NavigateTo<U>(Expression<Func<T, U[]>> expression) where U : class
         {
-            return this.Link<U>(this.Command, ColumnExpression.ExtractColumnName(expression));
+            return this.Link<U>(this.Command, expression.ExtractColumnName(Command.TypeCache));
         }
         /// <summary>
         /// Navigates to the linked entity.
@@ -642,7 +642,7 @@ namespace Simple.OData.Client
             // TODO: We should get the dynamicPropertiesContainer name from the type.
             if (result != null && result.Keys.Count == 1 && result.ContainsKey(FluentCommand.ResultLiteral) &&
                 TypeCache.IsValue(typeof(T)) || typeof(T) == typeof(string) || typeof(T) == typeof(object))
-                return (T)Utils.Convert(result.Values.First(), typeof(T));
+                return TypeCache.Convert<T>(result.Values.First());
             else
                 return result.ToObject<T>(TypeCache, dynamicPropertiesContainerName, _dynamicResults);
         }

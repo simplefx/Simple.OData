@@ -5,6 +5,8 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
+using Simple.OData.Client.Extensions;
+
 #pragma warning disable 1591
 
 namespace Simple.OData.Client
@@ -17,6 +19,8 @@ namespace Simple.OData.Client
         {
             _session = session;
         }
+
+        protected ITypeCache TypeCache => _session.TypeCache;
 
         public abstract Task<ODataResponse> GetResponseAsync(HttpResponseMessage responseMessage);
 

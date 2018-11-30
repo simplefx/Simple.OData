@@ -89,7 +89,7 @@ namespace Simple.OData.Client
             Key = key;
             MetadataDocument = metadataDocument;
             TypeCache = typeCache;
-            _adapterFactory = new AdapterFactory().CreateAdapter(metadataDocument);
+            _adapterFactory = new AdapterFactory().CreateAdapter(metadataDocument, typeCache);
         }
 
         public string Key { get; }

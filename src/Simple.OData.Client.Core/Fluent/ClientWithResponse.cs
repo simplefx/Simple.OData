@@ -130,7 +130,7 @@ namespace Simple.OData.Client
                 var result = response.AsEntries(_session.Settings.IncludeAnnotationsInResults);
 
                 object extractScalar(IDictionary<string, object> x) => (x == null) || !x.Any() ? null : x.Values.First();
-                return result == null ? default(U) : (U)Utils.Convert(extractScalar(result.FirstOrDefault()), typeof(U));
+                return result == null ? default(U) : _session.TypeCache.Convert<U>(extractScalar(result.FirstOrDefault()));
             }
             else
             {

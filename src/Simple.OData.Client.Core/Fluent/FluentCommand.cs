@@ -234,9 +234,7 @@ namespace Simple.OData.Client
 
             if (key != null && key.Length == 1 && TypeCache.IsAnonymousType(key.First().GetType()))
             {
-                var namedKeyValues = key.First();
-                _details.NamedKeyValues = TypeCache.GetMappedProperties(namedKeyValues.GetType())
-                    .Select(x => new KeyValuePair<string, object>(x.Name, x.GetValue(namedKeyValues, null))).ToIDictionary();
+                _details.NamedKeyValues = TypeCache.ToDictionary(key.First());
             }
             else
             {
@@ -501,10 +499,9 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _details.EntryData = TypeCache.GetMappedProperties(value.GetType())
-                .Select(x => new KeyValuePair<string, object>(x.GetMappedName(), x.GetValue(value, null)))
-                .ToDictionary();
+            _details.EntryData = TypeCache.ToDictionary(value);
             _details.BatchEntries?.GetOrAdd(value, _details.EntryData);
+
             return this;
         }
 
@@ -521,8 +518,8 @@ namespace Simple.OData.Client
             if (IsBatchResponse) return this;
 
             _details.EntryData = value.Select(x => new KeyValuePair<string, object>(x.Reference, x.Value)).ToIDictionary();
-            if (_details.BatchEntries != null)
-                _details.BatchEntries.GetOrAdd(value, _details.EntryData);
+            _details.BatchEntries?.GetOrAdd(value, _details.EntryData);
+
             return this;
         }
 

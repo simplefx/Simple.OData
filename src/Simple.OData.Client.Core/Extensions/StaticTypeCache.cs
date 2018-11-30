@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 
 namespace Simple.OData.Client.Extensions
@@ -24,9 +25,24 @@ namespace Simple.OData.Client.Extensions
             return type.GetMappedProperties();
         }
 
+        public IEnumerable<Tuple<PropertyInfo, string>> GetMappedPropertiesWithNames(Type type)
+        {
+            return type.GetMappedPropertiesWithNames();
+        }
+
         public PropertyInfo GetMappedProperty(Type type, string propertyName)
         {
             return type.GetMappedProperty(propertyName);
+        }
+
+        public string GetMappedName(Type type, PropertyInfo propertyInfo)
+        {
+            return propertyInfo.GetMappedName();
+        }
+
+        public string GetMappedName(Type type, string propertyName)
+        {
+            return type.GetNamedProperty(propertyName).GetMappedName();
         }
 
         public IEnumerable<PropertyInfo> GetAllProperties(Type type)
@@ -34,9 +50,9 @@ namespace Simple.OData.Client.Extensions
             return type.GetAllProperties();
         }
 
-        public PropertyInfo GetAnyProperty(Type type, string propertyName)
+        public PropertyInfo GetNamedProperty(Type type, string propertyName)
         {
-            return type.GetAnyProperty(propertyName);
+            return type.GetNamedProperty(propertyName);
         }
 
         public IEnumerable<PropertyInfo> GetDeclaredProperties(Type type)

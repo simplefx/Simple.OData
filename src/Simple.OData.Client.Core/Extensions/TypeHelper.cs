@@ -19,6 +19,7 @@ namespace Simple.OData.Client.Extensions
             DeclaredFields = type.GetDeclaredFields().ToList();
             MappedName = type.GetMappedName();
             MappedProperties = type.GetMappedProperties().ToList();
+            MappedPropertiesWithNames = type.GetMappedPropertiesWithNames().ToList();
 
             IsAnonymousType = type.IsAnonymousType();
         }
@@ -54,9 +55,21 @@ namespace Simple.OData.Client.Extensions
 
         public IList<PropertyInfo> MappedProperties { get; }
 
+        public IList<Tuple<PropertyInfo, string>> MappedPropertiesWithNames { get; }
+
         public PropertyInfo GetMappedProperty(string propertyName)
         {
-            return MappedProperties.FirstOrDefault(x => x.Name == propertyName);
+            return (from t in MappedPropertiesWithNames where t.Item2 == propertyName select t.Item1).FirstOrDefault();
+        }
+
+        public string GetMappedName(PropertyInfo propertyInfo)
+        {
+            return (from t in MappedPropertiesWithNames where t.Item1 == propertyInfo select t.Item2).FirstOrDefault();
+        }
+
+        public string GetMappedName(string propertyName)
+        {
+            return (from t in MappedPropertiesWithNames where t.Item1.Name == propertyName select t.Item2).FirstOrDefault();
         }
 
         public PropertyInfo GetAnyProperty(string propertyName)

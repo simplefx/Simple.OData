@@ -19,16 +19,21 @@ namespace Simple.OData.Client.Extensions
             _collectionActivators = new ConcurrentDictionary<Tuple<Type,Type>, ActivatorDelegate>();
         }
 
-        public static T ToObject<T>(this IDictionary<string, object> source, ITypeCache typeCache = null, string dynamicPropertiesContainerName = null, bool dynamicObject = false)
+        public static T ToObject<T>(this IDictionary<string, object> source, ITypeCache typeCache, string dynamicPropertiesContainerName = null, bool dynamicObject = false)
             where T : class
         {
+            if (typeCache == null)
+            {
+                throw new ArgumentNullException(nameof(typeCache));
+            }
+
             if (source == null)
                 return default(T);
-            if (typeof(IDictionary<string, object>).IsTypeAssignableFrom(typeof(T)))
+            if (typeCache.IsTypeAssignableFrom(typeof(IDictionary<string, object>), typeof(T)))
                 return source as T;
             if (typeof(T) == typeof(ODataEntry))
                 return CreateODataEntry(source, typeCache, dynamicObject) as T;
-            if (typeof(T) == typeof(string) || typeof(T).IsValue())
+            if (typeof(T) == typeof(string) || typeCache.IsValue(typeof(T)))
                 throw new InvalidOperationException($"Unable to convert structural data to {typeof(T).Name}.");
 
             return (T)ToObject(source, typeCache, typeof(T), dynamicPropertiesContainerName, dynamicObject);
@@ -41,13 +46,13 @@ namespace Simple.OData.Client.Extensions
 
         private static object ToObject(this IDictionary<string, object> source, ITypeCache typeCache, Type type, string dynamicPropertiesContainerName, bool dynamicObject)
         {
-            if (source == null)
-                return null;
-
             if (typeCache == null)
             {
-                typeCache = new StaticTypeCache();
+                throw new ArgumentNullException(nameof(typeCache));
             }
+
+            if (source == null)
+                return null;
 
             if (typeof(IDictionary<string, object>).IsTypeAssignableFrom(type))
                 return source;
@@ -55,6 +60,7 @@ namespace Simple.OData.Client.Extensions
             if (type == typeof(ODataEntry))
                 return CreateODataEntry(source, typeCache, dynamicObject);
 
+            // TODO: Should be a method on TypeCache
             if (CustomConverters.HasDictionaryConverter(type))
             {
                 return CustomConverters.Convert(source, type);
@@ -72,6 +78,7 @@ namespace Simple.OData.Client.Extensions
             {
                 var property = FindMatchingProperty(type, typeCache, item);
 
+                // TODO: Duplicate test, MatchingProperty won't be NotMapped
                 if (property != null && property.CanWrite && !property.IsNotMapped())
                 {
                     if (item.Value != null)
@@ -90,11 +97,11 @@ namespace Simple.OData.Client.Extensions
 
         private static PropertyInfo FindMatchingProperty(Type type, ITypeCache typeCache, KeyValuePair<string, object> item)
         {
-            var property = typeCache.GetAnyProperty(type, item.Key) ?? 
-                typeCache.GetAllProperties(type).FirstOrDefault(x => !x.IsNotMapped() && x.GetMappedName() == item.Key);
+            var property = typeCache.GetMappedProperty(type, item.Key);
 
             if (property == null && item.Key == FluentCommand.AnnotationsLiteral)
             {
+                // TODO: Add AnnotationProperty method to ITypeCache
                 property = typeCache.GetAllProperties(type).FirstOrDefault(x => x.PropertyType == typeof(ODataEntryAnnotations));
             }
 
@@ -103,25 +110,25 @@ namespace Simple.OData.Client.Extensions
 
         private static object ConvertValue(Type type, ITypeCache typeCache, object itemValue)
         {
-            return IsCollectionType(type, itemValue)
+            return IsCollectionType(type, typeCache, itemValue)
                 ? ConvertCollection(type, typeCache, itemValue)
                 : ConvertSingle(type, typeCache, itemValue);
         }
 
-        private static bool IsCollectionType(Type type, object itemValue)
+        private static bool IsCollectionType(Type type, ITypeCache typeCache, object itemValue)
         {
-            return 
-                (type.IsArray || type.IsGeneric() &&
-                typeof(System.Collections.IEnumerable).IsTypeAssignableFrom(type)) &&
+            return
+                (type.IsArray || typeCache.IsGeneric(type) &&
+                 typeCache.IsTypeAssignableFrom(typeof(System.Collections.IEnumerable), type)) &&
                 (itemValue as System.Collections.IEnumerable) != null;
         }
 
-        private static bool IsCompoundType(Type type)
+        private static bool IsCompoundType(Type type, ITypeCache typeCache)
         {
-            return !type.IsValue() && !type.IsArray && type != typeof(string);
+            return !typeCache.IsValue(type) && !type.IsArray && type != typeof(string);
         }
 
-        private static object ConvertEnum(Type type, object itemValue)
+        private static object ConvertEnum(Type type, ITypeCache typeCache, object itemValue)
         {
             if (itemValue == null)
                 return null;
@@ -129,7 +136,7 @@ namespace Simple.OData.Client.Extensions
             var stringValue = itemValue.ToString();
             if (int.TryParse(stringValue, out var intValue))
             {
-                Utils.TryConvert(intValue, type, out var result);
+                typeCache.TryConvert(intValue, type, out var result);
                 return result;
             }
             else
@@ -140,14 +147,14 @@ namespace Simple.OData.Client.Extensions
 
         private static object ConvertSingle(Type type, ITypeCache typeCache, object itemValue)
         {
-            object TryConvert(object v, Type t) => Utils.TryConvert(v, t, out var result) ? result : v;
+            object TryConvert(object v, Type t) => typeCache.TryConvert(v, t, out var result) ? result : v;
 
             return type == typeof(ODataEntryAnnotations)
                 ? itemValue
-                : IsCompoundType(type)
-                    ? itemValue.ToDictionary().ToObject(typeCache, type)
+                : IsCompoundType(type, typeCache)
+                    ? itemValue.ToDictionary(typeCache).ToObject(typeCache, type)
                     : type.IsEnumType()
-                        ? ConvertEnum(type, itemValue)
+                        ? ConvertEnum(type, typeCache, itemValue)
                         : TryConvert(itemValue, type);
         }
 
@@ -155,7 +162,7 @@ namespace Simple.OData.Client.Extensions
         {
             var elementType = type.IsArray
                 ? type.GetElementType()
-                : type.IsGeneric() && typeCache.GetGenericTypeArguments(type).Length == 1
+                : typeCache.IsGeneric(type) && typeCache.GetGenericTypeArguments(type).Length == 1
                     ? typeCache.GetGenericTypeArguments(type)[0]
                     : null;
 
@@ -171,7 +178,7 @@ namespace Simple.OData.Client.Extensions
                 arrayValue.SetValue(ConvertSingle(elementType, typeCache, item), count++);
             }
 
-            if (type.IsArray || type.IsTypeAssignableFrom(arrayValue.GetType()))
+            if (type.IsArray || typeCache.IsTypeAssignableFrom(type, arrayValue.GetType()))
             {
                 return arrayValue;
             }
@@ -190,7 +197,7 @@ namespace Simple.OData.Client.Extensions
             }
         }
 
-        public static IDictionary<string, object> ToDictionary(this object source)
+        public static IDictionary<string, object> ToDictionary(this object source, ITypeCache typeCache)
         {
             if (source == null)
                 return new Dictionary<string, object>();
@@ -199,12 +206,7 @@ namespace Simple.OData.Client.Extensions
             if (source is ODataEntry entry)
                 return (Dictionary<string, object>)entry;
 
-            var properties = Utils.GetMappedProperties(source.GetType());
-            return properties.ToDictionary
-            (
-                x => x.GetMappedName(),
-                x => x.GetValue(source, null)
-            );
+            return typeCache.ToDictionary(source);
         }
 
         private static object CreateInstance(Type type)
@@ -229,12 +231,13 @@ namespace Simple.OData.Client.Extensions
 
         private static IDictionary<string, object> CreateDynamicPropertiesContainer(Type type, ITypeCache typeCache, object instance, string dynamicPropertiesContainerName)
         {
-            var property = typeCache.GetAnyProperty(type, dynamicPropertiesContainerName);
+            // TODO: Use typeCache.IsDynamicType and typeCache.DynamicPropertiesName
+            var property = typeCache.GetNamedProperty(type, dynamicPropertiesContainerName);
 
             if (property == null)
                 throw new ArgumentException($"Type {type} does not have property {dynamicPropertiesContainerName} ");
 
-            if (!typeof(IDictionary<string, object>).IsTypeAssignableFrom(property.PropertyType))
+            if (!typeCache.IsTypeAssignableFrom(typeof(IDictionary<string, object>), property.PropertyType))
                 throw new InvalidOperationException($"Property {dynamicPropertiesContainerName} must implement IDictionary<string,object> interface");
 
             var dynamicProperties = new Dictionary<string, object>();

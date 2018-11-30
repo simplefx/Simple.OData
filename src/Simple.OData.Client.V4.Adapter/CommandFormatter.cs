@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+
 using Microsoft.OData;
-using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client.V4.Adapter
 {
@@ -17,8 +17,10 @@ namespace Simple.OData.Client.V4.Adapter
 
         public override string ConvertValueToUriLiteral(object value, bool escapeDataString)
         {
-            if (value != null && value.GetType().IsEnumType())
-                value = new ODataEnumValue(value.ToString(), _session.Metadata.GetQualifiedTypeName(value.GetType().Name));
+            var type = value?.GetType();
+
+            if (value != null && _session.TypeCache.IsEnumType(type))
+                value = new ODataEnumValue(value.ToString(), _session.Metadata.GetQualifiedTypeName(type.Name));
             if (value is ODataExpression expression)
                 return expression.AsString(_session);
 

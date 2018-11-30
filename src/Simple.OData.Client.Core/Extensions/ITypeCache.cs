@@ -12,11 +12,41 @@ namespace Simple.OData.Client.Extensions
 
         IEnumerable<PropertyInfo> GetMappedProperties(Type type);
 
+        IEnumerable<Tuple<PropertyInfo, string>> GetMappedPropertiesWithNames(Type type);
+
+        /// <summary>
+        /// Get a property that is either directly named or mapped via an attribute
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="propertyName"></param>
+        /// <returns></returns>
         PropertyInfo GetMappedProperty(Type type, string propertyName);
+
+        /// <summary>
+        /// Get the mapping name for a property
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="propertyInfo"></param>
+        /// <returns></returns>
+        string GetMappedName(Type type, PropertyInfo propertyInfo);
+
+        /// <summary>
+        /// Get the mapping name for a named property
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="propertyName"></param>
+        /// <returns></returns>
+        string GetMappedName(Type type, string propertyName);
 
         IEnumerable<PropertyInfo> GetAllProperties(Type type);
 
-        PropertyInfo GetAnyProperty(Type type, string propertyName);
+        /// <summary>
+        /// Get a directly named property
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="propertyName"></param>
+        /// <returns></returns>
+        PropertyInfo GetNamedProperty(Type type, string propertyName);
 
         IEnumerable<PropertyInfo> GetDeclaredProperties(Type type);
 

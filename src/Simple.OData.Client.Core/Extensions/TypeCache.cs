@@ -41,9 +41,24 @@ namespace Simple.OData.Client.Extensions
             return Helper(type).MappedProperties;
         }
 
+        public IEnumerable<Tuple<PropertyInfo, string>> GetMappedPropertiesWithNames(Type type)
+        {
+            return Helper(type).MappedPropertiesWithNames;
+        }
+
         public PropertyInfo GetMappedProperty(Type type, string propertyName)
         {
             return Helper(type).GetMappedProperty(propertyName);
+        }
+
+        public string GetMappedName(Type type, PropertyInfo propertyInfo)
+        {
+            return Helper(type).GetMappedName(propertyInfo);
+        }
+
+        public string GetMappedName(Type type, string propertyName)
+        {
+            return Helper(type).GetMappedName(propertyName);
         }
 
         public IEnumerable<PropertyInfo> GetAllProperties(Type type)
@@ -51,7 +66,7 @@ namespace Simple.OData.Client.Extensions
             return Helper(type).AllProperties;
         }
 
-        public PropertyInfo GetAnyProperty(Type type, string propertyName)
+        public PropertyInfo GetNamedProperty(Type type, string propertyName)
         {
             return Helper(type).GetAnyProperty(propertyName);
         }
@@ -153,10 +168,7 @@ namespace Simple.OData.Client.Extensions
 
         private TypeHelper Helper(Type type)
         {
-            if (!cache.TryGetValue(type, out var helper))
-            {
-                helper = InternalRegister(type);
-            }
+            var helper = cache.GetOrAdd(type, x => InternalRegister(x));
 
             return helper;
         }
