@@ -315,5 +315,16 @@ namespace Simple.OData.Client.Tests.Core
             var commandText = command.GetCommandTextAsync().Result;
             Assert.Equal("project2(%27abc%27)", commandText);
         }
+
+        [Fact]
+        public void FindAllByFilterAndKey()
+        {
+            var command = _client
+                .For<Category>()
+                .Key(1)
+                .Filter(x => x.CategoryName == "Beverages");
+            var commandText = command.GetCommandTextAsync().Result;
+            Assert.Equal("Categories(1)?$filter=CategoryName%20eq%20%27Beverages%27", commandText);
+        }
     }
 }

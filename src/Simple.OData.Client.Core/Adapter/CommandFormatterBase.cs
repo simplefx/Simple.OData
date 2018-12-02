@@ -19,9 +19,6 @@ namespace Simple.OData.Client
 
         public string FormatCommand(FluentCommand command)
         {
-            if (command.HasKey && command.HasFilter && !command.HasFunction)
-                throw new InvalidOperationException("OData filter and key may not be combined.");
-
             if (command.HasFunction && command.HasAction)
                 throw new InvalidOperationException("OData function and action may not be combined.");
 
