@@ -19,8 +19,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ActionProviderImplementation\ActionProviderImplementation.csproj">
-      <Project>{6be6677a-761e-4278-9059-233d775fe347}</Project>
-      <Name>ActionProviderImplementation</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -144,14 +144,10 @@
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net452|AnyCPU'">
     <ProjectReference Include="..\Simple.OData.NorthwindModel\Simple.OData.NorthwindModel.csproj">
-      <Project>{2A909E4D-6493-4D36-9FDE-786B89F9A387}</Project>
-      <Name>Simple.OData.NorthwindModel</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net452|AnyCPU'">
     <ProjectReference Include="..\Simple.OData.NorthwindModel\Simple.OData.NorthwindModel.csproj">
-      <Project>{2A909E4D-6493-4D36-9FDE-786B89F9A387}</Project>
-      <Name>Simple.OData.NorthwindModel</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net452|AnyCPU'">
@@ -192,8 +188,7 @@
     </None>
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'netcoreapp2.0'">
-    <PackageReference Include="BenchmarkDotNet">
-      <Version>0.10.14</Version>
+    <PackageReference Include="BenchmarkDotNet" Version="0.10.14">
     </PackageReference>
   </ItemGroup>
 </Project>

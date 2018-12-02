@@ -26,7 +26,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{78D04AF9
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Simple.OData.NorthwindModel", "src\Simple.OData.NorthwindModel\Simple.OData.NorthwindModel.csproj", "{2A909E4D-6493-4D36-9FDE-786B89F9A387}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Simple.OData.Client.Core", "src\Simple.OData.Client.Core\Simple.OData.Client.Core.csproj", "{361868B8-A63E-4C74-AA87-B70E1AB22313}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.OData.Client.Core", "src\Simple.OData.Client.Core\Simple.OData.Client.Core.csproj", "{361868B8-A63E-4C74-AA87-B70E1AB22313}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Simple.OData.NorthwindService", "src\Simple.OData.NorthwindService\Simple.OData.NorthwindService.csproj", "{14436AD5-8995-406A-8468-F0B4DE53DFDB}"
 EndProject

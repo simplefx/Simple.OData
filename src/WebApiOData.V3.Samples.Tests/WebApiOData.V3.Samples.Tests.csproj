@@ -37,8 +37,8 @@
     <DotNetCliToolReference Include="dotnet-xunit" Version="2.3.1" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net452|AnyCPU'">
-    <PackageReference Include="Microsoft.Owin.Hosting" Version="3.0.0" />
-    <PackageReference Include="Microsoft.Owin.Testing" Version="3.0.0" />
+    <PackageReference Include="Microsoft.Owin.Hosting" Version="4.0.0" />
+    <PackageReference Include="Microsoft.Owin.Testing" Version="4.0.0" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net452|AnyCPU'">
     <PackageReference Include="Microsoft.Owin.Hosting" Version="4.0.0" />
@@ -60,28 +60,18 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Simple.OData.Client.Core\Simple.OData.Client.Core.csproj">
-      <Project>{361868b8-a63e-4c74-aa87-b70e1ab22313}</Project>
-      <Name>Simple.OData.Client.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\Simple.OData.Client.Dynamic\Simple.OData.Client.Dynamic.csproj">
-      <Project>{c025fb0f-452b-4795-b9a4-64c9e6abbeee}</Project>
-      <Name>Simple.OData.Client.Dynamic</Name>
     </ProjectReference>
     <ProjectReference Include="..\Simple.OData.Client.V3.Adapter\Simple.OData.Client.V3.Adapter.csproj">
-      <Project>{a08b2d3d-91a6-4ecd-b7af-5977e840e383}</Project>
-      <Name>Simple.OData.Client.V3.Adapter</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net452|AnyCPU'">
     <ProjectReference Include="..\WebApiOData.V3.Samples\WebApiOData.V3.Samples.csproj">
-      <Project>{09cd2cb4-0b5b-4018-bfbb-7367ca7e10a4}</Project>
-      <Name>WebApiOData.V3.Samples</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net452|AnyCPU'">
     <ProjectReference Include="..\WebApiOData.V3.Samples\WebApiOData.V3.Samples.csproj">
-      <Project>{09cd2cb4-0b5b-4018-bfbb-7367ca7e10a4}</Project>
-      <Name>WebApiOData.V3.Samples</Name>
     </ProjectReference>
   </ItemGroup>
 </Project>

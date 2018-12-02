@@ -31,20 +31,12 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Simple.OData.Client.Core\Simple.OData.Client.Core.csproj">
-      <Project>{361868b8-a63e-4c74-aa87-b70e1ab22313}</Project>
-      <Name>Simple.OData.Client.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\Simple.OData.Client.Dynamic\Simple.OData.Client.Dynamic.csproj">
-      <Project>{c025fb0f-452b-4795-b9a4-64c9e6abbeee}</Project>
-      <Name>Simple.OData.Client.Dynamic</Name>
     </ProjectReference>
     <ProjectReference Include="..\Simple.OData.Client.V3.Adapter\Simple.OData.Client.V3.Adapter.csproj">
-      <Project>{a08b2d3d-91a6-4ecd-b7af-5977e840e383}</Project>
-      <Name>Simple.OData.Client.V3.Adapter</Name>
     </ProjectReference>
     <ProjectReference Include="..\Simple.OData.Client.V4.Adapter\Simple.OData.Client.V4.Adapter.csproj">
-      <Project>{31d1cc1d-316e-4516-a2bd-f07423b394f6}</Project>
-      <Name>Simple.OData.Client.V4.Adapter</Name>
     </ProjectReference>
   </ItemGroup>  
 </Project>
