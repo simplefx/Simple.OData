@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Collections.Concurrent;
+using System.Linq;
 using System.Reflection;
 
 #pragma warning disable 1591
@@ -7,18 +8,45 @@ namespace Simple.OData.Client.Extensions
 {
     public static class MemberInfoExtensions
     {
-        public static bool IsNotMapped(this MemberInfo member)
+        private static ConcurrentDictionary<MemberInfo, MappingInfo> cache = new ConcurrentDictionary<MemberInfo, MappingInfo>();
+
+        public static bool IsNotMapped(this MemberInfo memberInfo)
+        {
+            return Helper(memberInfo).IsNotMapped;
+        }
+
+        /// <summary>
+        /// Extract a column name from the member's attributes
+        /// </summary>
+        /// <param name="memberInfo"></param>
+        /// <returns></returns>
+        public static string GetMappedName(this MemberInfo memberInfo)
+        {
+            return Helper(memberInfo).MappedName;
+        }
+
+        private static MappingInfo Helper(MemberInfo memberInfo)
+        {
+            var info = cache.GetOrAdd(memberInfo, MappingInfoFactory(memberInfo));
+
+            return info;
+        }
+
+        private static MappingInfo MappingInfoFactory(MemberInfo memberInfo)
+        {
+            return new MappingInfo
+            {
+                IsNotMapped = memberInfo.IsNotMappedInternal(),
+                MappedName = memberInfo.GetMappedNameInternal()
+            };
+        }
+
+        private static bool IsNotMappedInternal(this MemberInfo member)
         {
             return member.GetCustomAttributes().Any(x => x.GetType().Name == "NotMappedAttribute");
         }
 
-        /// <summary>
-        /// Extract a property name from the Member's attributes
-        /// </summary>
-        /// <param name="property"></param>
-        /// <returns></returns>
-        /// <remarks>Talks directly to the type extensions as the result will be cached by the ITypeCache.GetMappedProperty, also has to handle fields/dynamic from Linq expressions</remarks>
-        public static string GetMappedName(this MemberInfo property)
+        private static string GetMappedNameInternal(this MemberInfo property)
         {
             var supportedAttributeNames = new[]
             {
@@ -55,5 +83,12 @@ namespace Simple.OData.Client.Extensions
 
             return propertyName;
         }
+    }
+
+    public class MappingInfo
+    {
+        public bool IsNotMapped { get; set; }
+
+        public string MappedName { get; set; }
     }
 }

@@ -78,8 +78,7 @@ namespace Simple.OData.Client.Extensions
             {
                 var property = FindMatchingProperty(type, typeCache, item);
 
-                // TODO: Duplicate test, MatchingProperty won't be NotMapped
-                if (property != null && property.CanWrite && !property.IsNotMapped())
+                if (property != null && property.CanWrite)
                 {
                     if (item.Value != null)
                     {
