@@ -122,7 +122,7 @@ namespace Simple.OData.Client
             else if (string.Equals(this.Function.FunctionName, "ToString", StringComparison.Ordinal) &&
                 this.Function.Arguments.Count == 0)
             {
-                return FormatCallerReference();
+                return FormatToStringFunction(context);
             }
             else if (this.Function.Arguments.Count == 1)
             {
@@ -211,6 +211,13 @@ namespace Simple.OData.Client
             return _functionCaller.Reference == context.DynamicPropertiesContainerName
                 ? propertyName
                 : $"{FormatCallerReference()}.{propertyName}";
+        }
+
+        private string FormatToStringFunction(ExpressionContext context)
+        {
+            return _functionCaller.Reference != null 
+                ? FormatCallerReference() 
+                : _functionCaller.FormatValue(context);
         }
 
         private string FormatValue(ExpressionContext context)

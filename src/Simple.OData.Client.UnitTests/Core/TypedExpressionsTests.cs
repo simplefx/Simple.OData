@@ -96,9 +96,17 @@ namespace Simple.OData.Client.Tests.Core
         }
 
         [Fact]
-        public void EqualToString()
+        public void EqualFieldToString()
         {
             Expression<Func<TestEntity, bool>> filter = x => x.ProductName.ToString() == "Chai";
+            Assert.Equal("ProductName eq 'Chai'", ODataExpression.FromLinqExpression(filter).AsString(_session));
+        }
+
+        [Fact]
+        public void EqualValueToString()
+        {
+            var name = "Chai";
+            Expression<Func<TestEntity, bool>> filter = x => x.ProductName.ToString() == name.ToString();
             Assert.Equal("ProductName eq 'Chai'", ODataExpression.FromLinqExpression(filter).AsString(_session));
         }
 
