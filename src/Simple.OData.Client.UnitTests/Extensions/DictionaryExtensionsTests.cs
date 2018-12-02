@@ -182,7 +182,7 @@ namespace Simple.OData.Client.Tests.Extensions
                 { "IntArrayProperty", new [] {1, 2, 3}  }
             };
 
-            var value = dict.ToObject<ClassType>();
+            var value = dict.ToObject<ClassType>(new StaticTypeCache());
             Assert.Equal("a", value.StringProperty);
             Assert.Equal(1, value.IntProperty);
             for (var index = 0; index < 3; index++)
