@@ -171,7 +171,14 @@ namespace Simple.OData.Client.Extensions
             }
             else
             {
-                var collectionType = typeof(IEnumerable<>).MakeGenericType(elementType);
+                var collectionTypes = new []
+                {
+                    typeof(IList<>).MakeGenericType(elementType),
+                    typeof(IEnumerable<>).MakeGenericType(elementType)
+                };
+                var collectionType = type.GetConstructor(new [] {collectionTypes[0]}) != null
+                    ? collectionTypes[0]
+                    : collectionTypes[1];
                 var activator = _collectionActivators.GetOrAdd(new Tuple<Type, Type>(type, collectionType), t => type.CreateActivator(collectionType));
                 return activator?.Invoke(arrayValue);
             }

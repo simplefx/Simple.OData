@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using Simple.OData.Client.Extensions;
 using Xunit;
@@ -28,8 +29,9 @@ namespace Simple.OData.Client.Tests.Extensions
             public string StringPropertyPrivateSetter { get; private set; }
             public int IntProperty { get; set; }
             public EnumType EnumProperty { get; set; }
-            public string[] StringCollectionProperty { get; set; }
-            public int[] IntCollectionProperty { get; set; }
+            public string[] StringArrayProperty { get; set; }
+            public int[] IntArrayProperty { get; set; }
+            public Collection<int> IntCollectionProperty { get; set; }
             public SubclassType CompoundProperty { get; set; }
             public SubclassType[] CompoundCollectionProperty { get; set; }
             public SpatialV3.GeographyPoint PointV3 { get; set; }
@@ -152,13 +154,13 @@ namespace Simple.OData.Client.Tests.Extensions
         }
 
         [Fact]
-        public void ToObjectStringCollection()
+        public void ToObjectStringArray()
         {
             var dict = new Dictionary<string, object>()
             {
                 { "StringProperty", "a" }, 
                 { "IntProperty", 1 },
-                { "StringCollectionProperty", new [] {"x", "y", "z"}  }
+                { "StringArrayProperty", new [] {"x", "y", "z"}  }
             };
 
             var value = dict.ToObject<ClassType>();
@@ -166,7 +168,26 @@ namespace Simple.OData.Client.Tests.Extensions
             Assert.Equal(1, value.IntProperty);
             for (var index = 0; index < 3; index++)
             {
-                Assert.Equal((dict["StringCollectionProperty"] as IList<string>)[index], value.StringCollectionProperty[index]);
+                Assert.Equal((dict["StringArrayProperty"] as IList<string>)[index], value.StringArrayProperty[index]);
+            }
+        }
+
+        [Fact]
+        public void ToObjectIntArray()
+        {
+            var dict = new Dictionary<string, object>()
+            {
+                { "StringProperty", "a" }, 
+                { "IntProperty", 1 },
+                { "IntArrayProperty", new [] {1, 2, 3}  }
+            };
+
+            var value = dict.ToObject<ClassType>();
+            Assert.Equal("a", value.StringProperty);
+            Assert.Equal(1, value.IntProperty);
+            for (var index = 0; index < 3; index++)
+            {
+                Assert.Equal((dict["IntArrayProperty"] as IList<int>)[index], value.IntArrayProperty[index]);
             }
         }
 
@@ -175,9 +196,9 @@ namespace Simple.OData.Client.Tests.Extensions
         {
             var dict = new Dictionary<string, object>()
             {
-                { "StringProperty", "a" }, 
+                { "StringProperty", "a" },
                 { "IntProperty", 1 },
-                { "IntCollectionProperty", new [] {1, 2, 3}  }
+                { "IntCollectionProperty", new Collection<int> {1, 2, 3}  }
             };
 
             var value = dict.ToObject<ClassType>();
