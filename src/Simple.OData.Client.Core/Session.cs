@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+
+using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
@@ -11,25 +11,50 @@ namespace Simple.OData.Client
     {
         private IODataAdapter _adapter;
         private HttpConnection _httpConnection;
-
-        public ODataClientSettings Settings { get; }
-        public EdmMetadataCache MetadataCache { get; private set; }
+        private EdmMetadataCache _metadataCache;
 
         private Session(Uri baseUri, string metadataString)
         {
-            this.Settings = new ODataClientSettings {BaseUri = baseUri};
-            this.MetadataCache = EdmMetadataCache.GetOrAdd(baseUri.AbsoluteUri, uri => new EdmMetadataCache(uri, metadataString));
+            // Create a local setting with the correct uri and metadata
+            Settings = new ODataClientSettings
+            {
+                BaseUri = baseUri,
+                MetadataDocument = metadataString
+            };
         }
 
         private Session(ODataClientSettings settings)
         {
             if (settings.BaseUri == null || string.IsNullOrEmpty(settings.BaseUri.AbsoluteUri))
+            {
                 throw new InvalidOperationException("Unable to create client session with no URI specified.");
+            }
 
-            this.Settings = settings;
-            if (!string.IsNullOrEmpty(settings.MetadataDocument))
-                this.MetadataCache = EdmMetadataCache.GetOrAdd(this.Settings.BaseUri.AbsoluteUri, uri => new EdmMetadataCache(uri, settings.MetadataDocument));
+            Settings = settings;
         }
+
+        public EdmMetadataCache MetadataCache
+        {
+            get
+            {
+                if (_metadataCache == null)
+                {
+                    lock (this)
+                    {
+                        if (_metadataCache == null)
+                        {
+                            _metadataCache = InitializeMetadataCache().Result;
+                        }
+                    }
+                }
+
+                return _metadataCache;
+            } 
+        }
+
+        public ODataClientSettings Settings { get; }
+
+        public ITypeCache TypeCache => MetadataCache.TypeCache;
 
         public void Dispose()
         {
@@ -50,59 +75,22 @@ namespace Simple.OData.Client
 
         public void ClearMetadataCache()
         {
-            var metadataCache = this.MetadataCache;
+            var metadataCache = _metadataCache;
             if (metadataCache != null)
             {
                 EdmMetadataCache.Clear(metadataCache.Key);
-                this.MetadataCache = null;
+                _metadataCache = null;
             }
         }
 
-        public async Task<IODataAdapter> ResolveAdapterAsync(CancellationToken cancellationToken)
+        public Task<IODataAdapter> ResolveAdapterAsync(CancellationToken cancellationToken)
         {
-            if (this.MetadataCache == null)
+            if (Settings.PayloadFormat == ODataPayloadFormat.Unspecified)
             {
-                if (string.IsNullOrEmpty(Settings.MetadataDocument))
-                {
-                    this.MetadataCache = await EdmMetadataCache.GetOrAddAsync(
-                        this.Settings.BaseUri.AbsoluteUri,
-                        async uri =>
-                        {
-                            var metadata = await ResolveMetadataAsync(cancellationToken).ConfigureAwait(false);
-                            return new EdmMetadataCache(uri, metadata);
-                        });
-                }
-                else
-                {
-                    this.MetadataCache =
-                        EdmMetadataCache.GetOrAdd(
-                            this.Settings.BaseUri.AbsoluteUri,
-                            uri =>
-                            {
-                                var cache = new EdmMetadataCache(uri, Settings.MetadataDocument);
-                                return cache;
-                            });
-                }
+                Settings.PayloadFormat = Adapter.DefaultPayloadFormat;
             }
 
-            if (this.Settings.PayloadFormat == ODataPayloadFormat.Unspecified)
-                this.Settings.PayloadFormat = this.Adapter.DefaultPayloadFormat;
-
-            return this.Adapter;
-        }
-
-        private async Task<string> ResolveMetadataAsync(CancellationToken cancellationToken)
-        {
-            if (string.IsNullOrEmpty(this.Settings.MetadataDocument))
-            {
-                var response = await SendMetadataRequestAsync(cancellationToken).ConfigureAwait(false);
-                var metadataDocument = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                return metadataDocument;
-            }
-            else
-            {
-                return this.Settings.MetadataDocument;
-            }
+            return Task.FromResult(Adapter);
         }
 
         public IODataAdapter Adapter
@@ -114,14 +102,16 @@ namespace Simple.OData.Client
                     lock (this)
                     {
                         if (_adapter == null)
-                            _adapter = this.MetadataCache.GetODataAdapter(this);
+                        {
+                            _adapter = MetadataCache.GetODataAdapter(this);
+                        }
                     }
                 }
                 return _adapter;
             }
         }
 
-        public IMetadata Metadata => this.Adapter.GetMetadata();
+        public IMetadata Metadata => Adapter.GetMetadata();
 
         public HttpConnection GetHttpConnection()
         {
@@ -130,7 +120,9 @@ namespace Simple.OData.Client
                 lock (this)
                 {
                     if (_httpConnection == null)
-                        _httpConnection = new HttpConnection(this.Settings);
+                    {
+                        _httpConnection = new HttpConnection(Settings);
+                    }
                 }
             }
 
@@ -151,6 +143,35 @@ namespace Simple.OData.Client
         {
             var request = new ODataRequest(RestVerbs.Get, this, ODataLiteral.Metadata);
             return await new RequestRunner(this).ExecuteRequestAsync(request, cancellationToken).ConfigureAwait(false);
+        }
+
+        private async Task<EdmMetadataCache> InitializeMetadataCache()
+        {
+            return await EdmMetadataCache.GetOrAddAsync(
+                Settings.BaseUri.AbsoluteUri,
+                async uri =>
+                {
+                    var metadata = await ResolveMetadataAsync(new CancellationToken()).ConfigureAwait(false);
+                    return CreateMdc(uri, metadata);
+                });
+        }
+
+        private async Task<string> ResolveMetadataAsync(CancellationToken cancellationToken)
+        {
+            if (!string.IsNullOrEmpty(Settings.MetadataDocument))
+            {
+                return Settings.MetadataDocument;
+            }
+
+            var response = await SendMetadataRequestAsync(cancellationToken).ConfigureAwait(false);
+            var metadataDocument = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            return metadataDocument;
+        }
+
+        private EdmMetadataCache CreateMdc(string key, string metadata)
+        {
+            // TODO: Here we can change from static to typeCache, conditional on Settings
+            return new EdmMetadataCache(key, metadata, new TypeCache());
         }
     }
 }

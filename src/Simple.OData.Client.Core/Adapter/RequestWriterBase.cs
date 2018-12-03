@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+
 using Simple.OData.Client.Extensions;
 
 #pragma warning disable 1591
@@ -20,10 +21,9 @@ namespace Simple.OData.Client
             _deferredBatchWriter = deferredBatchWriter;
         }
 
-        protected bool IsBatch
-        {
-            get { return _deferredBatchWriter != null; }
-        }
+        protected bool IsBatch => _deferredBatchWriter != null;
+
+        protected ITypeCache TypeCache => _session.TypeCache;
 
         public async Task<ODataRequest> CreateGetRequestAsync(string commandText, bool scalarResult)
         {
@@ -193,7 +193,7 @@ namespace Simple.OData.Client
         protected string GetContentId(ReferenceLink referenceLink)
         {
             string contentId = null;
-            var linkEntry = referenceLink.LinkData.ToDictionary();
+            var linkEntry = referenceLink.LinkData.ToDictionary(TypeCache);
             if (_deferredBatchWriter != null)
             {
                 contentId = _deferredBatchWriter.Value.GetContentId(linkEntry, referenceLink.LinkData);

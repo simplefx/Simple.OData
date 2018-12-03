@@ -90,7 +90,7 @@ namespace Simple.OData.Client
             var result = await _client.FindScalarAsync(_command, cancellationToken).ConfigureAwait(false);
             return _client.IsBatchRequest 
                 ? default(U) 
-                : (U)Utils.Convert(result, typeof(U));
+                : _command.TypeCache.Convert<U>(result);
         }
 
         public Task<T> InsertEntryAsync()
@@ -111,7 +111,7 @@ namespace Simple.OData.Client
         public async Task<T> InsertEntryAsync(bool resultRequired, CancellationToken cancellationToken)
         {
             var result = await _client.InsertEntryAsync(_command, resultRequired, cancellationToken).ConfigureAwait(false);
-            return result.ToObject<T>(_command.DynamicPropertiesContainerName, _dynamicResults);
+            return result.ToObject<T>(TypeCache, _command.DynamicPropertiesContainerName, _dynamicResults);
         }
 
         public Task<T> UpdateEntryAsync()
@@ -142,7 +142,7 @@ namespace Simple.OData.Client
             {
                 var result = await _client.UpdateEntryAsync(_command, resultRequired, cancellationToken).ConfigureAwait(false);
                 return resultRequired
-                    ? result?.ToObject<T>(_command.DynamicPropertiesContainerName, _dynamicResults)
+                    ? result?.ToObject<T>(TypeCache,_command.DynamicPropertiesContainerName, _dynamicResults)
                     : null;
             }
         }
@@ -165,7 +165,7 @@ namespace Simple.OData.Client
         public async Task<IEnumerable<T>> UpdateEntriesAsync(bool resultRequired, CancellationToken cancellationToken)
         {
             var result = await _client.UpdateEntriesAsync(_command, resultRequired, cancellationToken).ConfigureAwait(false);
-            return result.Select(y => y.ToObject<T>(_command.DynamicPropertiesContainerName, _dynamicResults));
+            return result.Select(y => y.ToObject<T>(TypeCache, _command.DynamicPropertiesContainerName, _dynamicResults));
         }
 
         public Task DeleteEntryAsync()
@@ -208,7 +208,7 @@ namespace Simple.OData.Client
 
         public Task LinkEntryAsync<U>(U linkedEntryKey, string linkName, CancellationToken cancellationToken)
         {
-            return _client.LinkEntryAsync(_command, linkName ?? typeof(U).Name, linkedEntryKey.ToDictionary(), cancellationToken);
+            return _client.LinkEntryAsync(_command, linkName ?? typeof(U).Name, linkedEntryKey.ToDictionary(_command.TypeCache), cancellationToken);
         }
 
         public Task LinkEntryAsync<U>(Expression<Func<T, U>> expression, U linkedEntryKey)
@@ -218,7 +218,7 @@ namespace Simple.OData.Client
 
         public Task LinkEntryAsync<U>(Expression<Func<T, U>> expression, U linkedEntryKey, CancellationToken cancellationToken)
         {
-            return _client.LinkEntryAsync(_command, ColumnExpression.ExtractColumnName(expression), linkedEntryKey.ToDictionary(), cancellationToken);
+            return _client.LinkEntryAsync(_command, ColumnExpression.ExtractColumnName(expression, _command.TypeCache), linkedEntryKey.ToDictionary(_command.TypeCache), cancellationToken);
         }
 
         public Task LinkEntryAsync(ODataExpression expression, IDictionary<string, object> linkedEntryKey)
@@ -233,12 +233,12 @@ namespace Simple.OData.Client
 
         public Task LinkEntryAsync(ODataExpression expression, ODataEntry linkedEntryKey)
         {
-            return _client.LinkEntryAsync(_command, expression.AsString(_session), linkedEntryKey.ToDictionary(), CancellationToken.None);
+            return _client.LinkEntryAsync(_command, expression.AsString(_session), linkedEntryKey.ToDictionary(_command.TypeCache), CancellationToken.None);
         }
 
         public Task LinkEntryAsync(ODataExpression expression, ODataEntry linkedEntryKey, CancellationToken cancellationToken)
         {
-            return _client.LinkEntryAsync(_command, expression.AsString(_session), linkedEntryKey.ToDictionary(), cancellationToken);
+            return _client.LinkEntryAsync(_command, expression.AsString(_session), linkedEntryKey.ToDictionary(_command.TypeCache), cancellationToken);
         }
 
         public Task UnlinkEntryAsync<U>()
@@ -263,12 +263,12 @@ namespace Simple.OData.Client
 
         public Task UnlinkEntryAsync<U>(Expression<Func<T, U>> expression)
         {
-            return _client.UnlinkEntryAsync(_command, ColumnExpression.ExtractColumnName(expression), null, CancellationToken.None);
+            return _client.UnlinkEntryAsync(_command, expression.ExtractColumnName(_command.TypeCache), null, CancellationToken.None);
         }
 
         public Task UnlinkEntryAsync<U>(Expression<Func<T, U>> expression, CancellationToken cancellationToken)
         {
-            return _client.UnlinkEntryAsync(_command, ColumnExpression.ExtractColumnName(expression), null, cancellationToken);
+            return _client.UnlinkEntryAsync(_command, expression.ExtractColumnName(_command.TypeCache), null, cancellationToken);
         }
 
         public Task UnlinkEntryAsync(ODataExpression expression)
@@ -303,7 +303,7 @@ namespace Simple.OData.Client
 
         public Task UnlinkEntryAsync<U>(U linkedEntryKey, string linkName, CancellationToken cancellationToken)
         {
-            return _client.UnlinkEntryAsync(_command, linkName ?? typeof(U).Name, linkedEntryKey != null ? linkedEntryKey.ToDictionary() : null, cancellationToken);
+            return _client.UnlinkEntryAsync(_command, linkName ?? typeof(U).Name, linkedEntryKey != null ? linkedEntryKey.ToDictionary(_command.TypeCache) : null, cancellationToken);
         }
 
         public Task UnlinkEntryAsync<U>(Expression<Func<T, U>> expression, U linkedEntryKey)
@@ -313,7 +313,7 @@ namespace Simple.OData.Client
 
         public Task UnlinkEntryAsync<U>(Expression<Func<T, U>> expression, U linkedEntryKey, CancellationToken cancellationToken)
         {
-            return _client.UnlinkEntryAsync(_command, ColumnExpression.ExtractColumnName(expression), linkedEntryKey != null ? linkedEntryKey.ToDictionary() : null, cancellationToken);
+            return _client.UnlinkEntryAsync(_command, expression.ExtractColumnName(_command.TypeCache), linkedEntryKey != null ? linkedEntryKey.ToDictionary(_command.TypeCache) : null, cancellationToken);
         }
 
         public Task UnlinkEntryAsync(ODataExpression expression, IDictionary<string, object> linkedEntryKey)
@@ -328,12 +328,12 @@ namespace Simple.OData.Client
 
         public Task UnlinkEntryAsync(ODataExpression expression, ODataEntry linkedEntryKey)
         {
-            return _client.UnlinkEntryAsync(_command, expression.AsString(_session), linkedEntryKey?.ToDictionary(), CancellationToken.None);
+            return _client.UnlinkEntryAsync(_command, expression.AsString(_session), linkedEntryKey?.ToDictionary(_command.TypeCache), CancellationToken.None);
         }
 
         public Task UnlinkEntryAsync(ODataExpression expression, ODataEntry linkedEntryKey, CancellationToken cancellationToken)
         {
-            return _client.UnlinkEntryAsync(_command, expression.AsString(_session), linkedEntryKey?.ToDictionary(), cancellationToken);
+            return _client.UnlinkEntryAsync(_command, expression.AsString(_session), linkedEntryKey?.ToDictionary(_command.TypeCache), cancellationToken);
         }
     }
 }

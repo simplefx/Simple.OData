@@ -4,9 +4,9 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+
 using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
@@ -82,17 +82,6 @@ namespace Simple.OData.Client
             return new NotSupportedException($"Not supported expression of type {expression.GetType()} ({expression.NodeType}): {expression}");
         }
 
-        public static IEnumerable<PropertyInfo> GetMappedProperties(Type type)
-        {
-            return type.GetAllProperties().Where(x => !x.IsNotMapped());
-        }
-
-        public static PropertyInfo GetMappedProperty(Type type, string propertyName)
-        {
-            var property = type.GetAnyProperty(propertyName);
-            return property == null || property.IsNotMapped() ? null : property;
-        }
-
         public static Uri CreateAbsoluteUri(string baseUri, string relativePath)
         {
             var basePath = string.IsNullOrEmpty(baseUri) ? "http://" : baseUri;
@@ -136,18 +125,23 @@ namespace Simple.OData.Client
             }
         }
 
-        public static bool TryConvert(object value, Type targetType, out object result)
+        public static bool TryConvert(object value, Type targetType, ITypeCache typeCache, out object result)
         {
+            if (typeCache == null)
+            {
+                typeCache = new StaticTypeCache();
+            }
+
             try
             {
                 if (value == null)
                 {
-                    if (targetType.IsValue())
+                    if (typeCache.IsValue(targetType))
                         result = Activator.CreateInstance(targetType);
                     else
                         result = null;
                 }
-                else if (targetType.IsTypeAssignableFrom(value.GetType()))
+                else if (typeCache.IsTypeAssignableFrom(targetType, value.GetType()))
                 {
                     result = value;
                 }
@@ -155,7 +149,7 @@ namespace Simple.OData.Client
                 {
                     result = value.ToString();
                 }
-                else if (targetType.IsEnumType() && value is string)
+                else if (typeCache.IsEnumType(targetType) && value is string)
                 {
                     result = Enum.Parse(targetType, value.ToString(), true);
                 }
@@ -175,7 +169,7 @@ namespace Simple.OData.Client
                 {
                     result = new DateTimeOffset(time);
                 }
-                else if (targetType.IsEnumType())
+                else if (typeCache.IsEnumType(targetType))
                 {
                     result = Enum.ToObject(targetType, value);
                 }
@@ -185,7 +179,7 @@ namespace Simple.OData.Client
                 }
                 else if (Nullable.GetUnderlyingType(targetType) != null)
                 {
-                    result = Convert(value, Nullable.GetUnderlyingType(targetType));
+                    result = Convert(value, Nullable.GetUnderlyingType(targetType), typeCache);
                 }
                 else
                 {
@@ -200,11 +194,16 @@ namespace Simple.OData.Client
             }
         }
 
-        public static object Convert(object value, Type targetType)
+        public static object Convert(object value, Type targetType, ITypeCache typeCache = null)
         {
-            if (value == null && !targetType.IsValue())
+            if (typeCache == null)
+            {
+                typeCache = new StaticTypeCache();
+            }
+
+            if (value == null && !typeCache.IsValue(targetType))
                 return null;
-            else if (TryConvert(value, targetType, out var result))
+            else if (TryConvert(value, targetType, typeCache, out var result))
                 return result;
 
             throw new FormatException($"Unable to convert value from type {value.GetType()} to type {targetType}");

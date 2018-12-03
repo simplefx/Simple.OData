@@ -29,7 +29,7 @@ namespace Simple.OData.Client
 
         public IBoundClient<T> For(string collectionName = null)
         {
-            this.Command.For(collectionName ?? typeof(T).GetMappedName());
+            this.Command.For(collectionName ?? Command.TypeCache.GetMappedName(typeof(T)));
             return this;
         }
 

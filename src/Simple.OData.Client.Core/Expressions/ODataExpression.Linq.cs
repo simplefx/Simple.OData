@@ -73,7 +73,9 @@ namespace Simple.OData.Client
             }
             else
             {
+                // NOTE: Can't support ITypeCache here as we might be dealing with dynamic types/expressions
                 var memberName = memberExpression.Member.GetMappedName();
+
                 memberNames = memberNames == null ? memberName : string.Join(".", memberName, memberNames);
                 switch (memberExpression.Expression.NodeType)
                 {
@@ -351,7 +353,7 @@ namespace Simple.OData.Client
 
             Type itemType;
             object itemValue;
-            var property = type.GetAnyProperty(memberName);
+            var property = type.GetNamedProperty(memberName);
             if (property != null)
             {
                 itemType = property.PropertyType;

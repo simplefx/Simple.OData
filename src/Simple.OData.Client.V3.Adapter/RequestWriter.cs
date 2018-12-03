@@ -261,7 +261,7 @@ namespace Simple.OData.Client.V3.Adapter
                 linkTypeWithKey = linkTypeWithKey.BaseEntityType();
             }
 
-            entryWriter.WriteStart(new ODataNavigationLink()
+            entryWriter.WriteStart(new ODataNavigationLink
             {
                 Name = linkName,
                 IsCollection = isCollection,
@@ -271,7 +271,7 @@ namespace Simple.OData.Client.V3.Adapter
             foreach (var referenceLink in links)
             {
                 var linkKey = linkTypeWithKey.DeclaredKey;
-                var linkEntry = referenceLink.LinkData.ToDictionary();
+                var linkEntry = referenceLink.LinkData.ToDictionary(TypeCache);
                 var contentId = GetContentId(referenceLink);
                 string linkUri;
                 if (contentId != null)
@@ -327,7 +327,7 @@ namespace Simple.OData.Client.V3.Adapter
                     return new ODataComplexValue
                     {
                         TypeName = propertyType.FullName(),
-                        Properties = value.ToDictionary()
+                        Properties = value.ToDictionary(TypeCache)
                             .Where(val => complexTypeProperties.Any(p => p.Name == val.Key))
                             .Select(x => new ODataProperty
                             {
@@ -350,7 +350,7 @@ namespace Simple.OData.Client.V3.Adapter
                     {
                         foreach (var mappedType in mappedTypes)
                         {
-                            if (Utils.TryConvert(value, mappedType.Key, out var result))
+                            if (TypeCache.TryConvert(value, mappedType.Key, out var result))
                                 return result;
                         }
                         throw new NotSupportedException($"Conversion is not supported from type {value.GetType()} to OData type {propertyType}");

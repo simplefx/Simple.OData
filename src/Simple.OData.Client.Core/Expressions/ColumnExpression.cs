@@ -8,7 +8,7 @@ namespace Simple.OData.Client
 {
     internal static class ColumnExpression
     {
-        public static IEnumerable<string> ExtractColumnNames<T>(Expression<Func<T, object>> expression)
+        public static IEnumerable<string> ExtractColumnNames<T>(this Expression<Func<T, object>> expression, ITypeCache typeCache)
         {
             var lambdaExpression = expression as LambdaExpression;
             if (lambdaExpression == null)
@@ -18,73 +18,73 @@ namespace Simple.OData.Client
             {
                 case ExpressionType.MemberAccess:
                 case ExpressionType.Convert:
-                    return ExtractColumnNames(lambdaExpression.Body);
+                    return ExtractColumnNames(lambdaExpression.Body, typeCache);
 
                 case ExpressionType.Call:
-                    return ExtractColumnNames(lambdaExpression.Body as MethodCallExpression);
+                    return ExtractColumnNames(lambdaExpression.Body as MethodCallExpression, typeCache);
 
                 case ExpressionType.New:
-                    return ExtractColumnNames(lambdaExpression.Body as NewExpression);
+                    return ExtractColumnNames(lambdaExpression.Body as NewExpression, typeCache);
 
                 default:
                     throw Utils.NotSupportedExpression(lambdaExpression.Body);
             }
         }
 
-        public static string ExtractColumnName(Expression expression)
+        public static string ExtractColumnName(this Expression expression, ITypeCache typeCache)
         {
-            return ExtractColumnNames(expression).Single();
+            return expression.ExtractColumnNames(typeCache).Single();
         }
 
-        private static IEnumerable<string> ExtractColumnNames(Expression expression)
+        private static IEnumerable<string> ExtractColumnNames(this Expression expression, ITypeCache typeCache)
         {
             switch (expression.NodeType)
             {
                 case ExpressionType.MemberAccess:
-                    return ExtractColumnNames(expression as MemberExpression);
+                    return ExtractColumnNames(expression as MemberExpression, typeCache);
 
                 case ExpressionType.Convert:
-                    return ExtractColumnNames((expression as UnaryExpression).Operand);
+                    return ExtractColumnNames((expression as UnaryExpression).Operand, typeCache);
 
                 case ExpressionType.Lambda:
-                    return ExtractColumnNames((expression as LambdaExpression).Body);
+                    return ExtractColumnNames((expression as LambdaExpression).Body, typeCache);
 
                 case ExpressionType.Call:
-                    return ExtractColumnNames(expression as MethodCallExpression);
+                    return ExtractColumnNames(expression as MethodCallExpression, typeCache);
 
                 case ExpressionType.New:
-                    return ExtractColumnNames(expression as NewExpression);
+                    return ExtractColumnNames(expression as NewExpression, typeCache);
 
                 default:
                     throw Utils.NotSupportedExpression(expression);
             }
         }
 
-        private static IEnumerable<string> ExtractColumnNames(MethodCallExpression callExpression)
+        private static IEnumerable<string> ExtractColumnNames(MethodCallExpression callExpression, ITypeCache typeCache)
         {
             if (callExpression.Method.Name == "Select" && callExpression.Arguments.Count == 2)
             {
-                return ExtractColumnNames(callExpression.Arguments[0])
-                    .SelectMany(x => ExtractColumnNames(callExpression.Arguments[1])
-                        .Select(y => String.Join("/", x, y)));
+                return ExtractColumnNames(callExpression.Arguments[0], typeCache)
+                    .SelectMany(x => ExtractColumnNames(callExpression.Arguments[1], typeCache)
+                        .Select(y => string.Join("/", x, y)));
             }
             else if (callExpression.Method.Name == "OrderBy" && callExpression.Arguments.Count == 2)
             {
                 if (callExpression.Arguments[0] is MethodCallExpression && ((callExpression.Arguments[0] as MethodCallExpression).Method.Name == "Select"))
                     throw Utils.NotSupportedExpression(callExpression);
 
-                return ExtractColumnNames(callExpression.Arguments[0])
-                    .SelectMany(x => ExtractColumnNames(callExpression.Arguments[1])
-                        .OrderBy(y => String.Join("/", x, y)));
+                return ExtractColumnNames(callExpression.Arguments[0], typeCache)
+                    .SelectMany(x => ExtractColumnNames(callExpression.Arguments[1], typeCache)
+                        .OrderBy(y => string.Join("/", x, y)));
             }
             else if (callExpression.Method.Name == "OrderByDescending" && callExpression.Arguments.Count == 2)
             {
                 if (callExpression.Arguments[0] is MethodCallExpression && ((callExpression.Arguments[0] as MethodCallExpression).Method.Name == "Select"))
                     throw Utils.NotSupportedExpression(callExpression);
 
-                return ExtractColumnNames(callExpression.Arguments[0])
-                    .SelectMany(x => ExtractColumnNames(callExpression.Arguments[1])
-                        .OrderByDescending(y => String.Join("/", x, y)));
+                return ExtractColumnNames(callExpression.Arguments[0], typeCache)
+                    .SelectMany(x => ExtractColumnNames(callExpression.Arguments[1], typeCache)
+                        .OrderByDescending(y => string.Join("/", x, y)));
             }
             else
             {
@@ -92,20 +92,21 @@ namespace Simple.OData.Client
             }
         }
 
-        private static IEnumerable<string> ExtractColumnNames(NewExpression newExpression)
+        private static IEnumerable<string> ExtractColumnNames(NewExpression newExpression, ITypeCache typeCache)
         {
-            return newExpression.Arguments.SelectMany(ExtractColumnNames);
+            return newExpression.Arguments.SelectMany(x => ExtractColumnNames(x, typeCache));
         }
 
-        private static IEnumerable<string> ExtractColumnNames(MemberExpression memberExpression)
+        private static IEnumerable<string> ExtractColumnNames(MemberExpression memberExpression, ITypeCache typeCache)
         {
-            var memberName = memberExpression.Expression.Type
-                .GetAnyProperty(memberExpression.Member.Name)
-                .GetMappedName();
+            var memberName = typeCache.GetMappedName(memberExpression.Expression.Type, memberExpression.Member.Name);
+
+            //var memberName = memberExpression.Expression.Type
+            //    .GetNamedProperty(memberExpression.Member.Name)
+            //    .GetMappedName();
 
             return memberExpression.Expression is MemberExpression
-                ? ExtractColumnNames(memberExpression.Expression)
-                    .Select(x => String.Join("/", x, memberName))
+                ? memberExpression.Expression.ExtractColumnNames(typeCache).Select(x => string.Join("/", x, memberName))
                 : new[] { memberName };
         }
     }

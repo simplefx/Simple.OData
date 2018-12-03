@@ -9,6 +9,7 @@ namespace Simple.OData.Client
     class EdmMetadataCache
     {
         static readonly object metadataLock = new object();
+        // TODO: Do we want to swap for ConcurrentDictionary?
         static readonly IDictionary<string, EdmMetadataCache> _instances = new Dictionary<string, EdmMetadataCache>();
 
         public static void Clear()
@@ -30,36 +31,55 @@ namespace Simple.OData.Client
 
         public static EdmMetadataCache GetOrAdd(string key, Func<string, EdmMetadataCache> valueFactory)
         {
+            // Double lock check, cheaper to check outside the lock first
+            // ReSharper disable once InconsistentlySynchronizedField
+            if (_instances.TryGetValue(key, out var found))
+            {
+                return found;
+            }
+
+            // Now get it, don't lock as might be expensive
+            found = valueFactory(key);
+
+            // Check again and update cache
             lock (metadataLock)
             {
-                if (!_instances.TryGetValue(key, out var found))
+                if (!_instances.ContainsKey(key))
                 {
-                    _instances[key] = found = valueFactory(key);
+                    _instances[key] = found;
                 }
-                return found;
+
+                return _instances[key];
             }
         }
 
         public static async Task<EdmMetadataCache> GetOrAddAsync(string key, Func<string, Task<EdmMetadataCache>> valueFactory)
         {
-            EdmMetadataCache found;
+            // Double lock check, cheaper to check outside the lock first
+            // ReSharper disable once InconsistentlySynchronizedField
+            if (_instances.TryGetValue(key, out var found))
+            {
+                return found;
+            }
+
+            // Now get it, don't lock as might be expensive
+            found = await valueFactory(key).ConfigureAwait(false);
+
+            // Check again and update cache
             lock (metadataLock)
             {
-                if (_instances.TryGetValue(key, out found))
-                    return found;
-            }
-            found = await valueFactory(key).ConfigureAwait(false);
-            lock(metadataLock)
-            {
                 if (!_instances.ContainsKey(key))
+                {
                     _instances[key] = found;
+                }
+
                 return _instances[key];
             }
         }
 
         private readonly Func<ISession, IODataAdapter> _adapterFactory;
 
-        public EdmMetadataCache(string key, string metadataDocument)
+        public EdmMetadataCache(string key, string metadataDocument, ITypeCache typeCache)
         {
             if (string.IsNullOrWhiteSpace(key))
                 throw new ArgumentNullException(nameof(key));
@@ -68,12 +88,15 @@ namespace Simple.OData.Client
 
             Key = key;
             MetadataDocument = metadataDocument;
-            _adapterFactory = new AdapterFactory().CreateAdapter(metadataDocument);
+            TypeCache = typeCache;
+            _adapterFactory = new AdapterFactory().CreateAdapter(metadataDocument, typeCache);
         }
 
         public string Key { get; }
 
         public string MetadataDocument { get; }
+
+        public ITypeCache TypeCache { get; }
 
         public IODataAdapter GetODataAdapter(ISession session)
         {

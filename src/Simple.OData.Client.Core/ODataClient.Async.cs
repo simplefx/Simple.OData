@@ -632,7 +632,7 @@ namespace Simple.OData.Client
             return IsBatchRequest
                 ? new T[] {}
                 : result?.SelectMany(x => x.Values)
-                    .Select(x => (T)Utils.Convert(x, typeof(T)))
+                    .Select(x => _session.TypeCache.Convert<T>(x))
                     .ToArray();
         }
 
@@ -734,7 +734,7 @@ namespace Simple.OData.Client
             return IsBatchRequest
                 ? new T[] { }
                 : result?.SelectMany(x => x.Values)
-                    .Select(x => (T)Utils.Convert(x, typeof(T)))
+                    .Select(x => _session.TypeCache.Convert<T>(x))
                     .ToArray();
         }
 
@@ -1057,7 +1057,7 @@ namespace Simple.OData.Client
                 ? default(T)
                 : result == null 
                 ? default(T) 
-                : (T)Utils.Convert(result.First().Value, typeof(T));
+                : command.TypeCache.Convert<T>(result.First().Value);
         }
 
         internal async Task<T[]> ExecuteAsArrayAsync<T>(FluentCommand command, CancellationToken cancellationToken)
@@ -1071,8 +1071,8 @@ namespace Simple.OData.Client
                 : result == null
                 ? null
                 : typeof(T) == typeof(string) || typeof(T).IsValue()
-                ? result.SelectMany(x => x.Values).Select(x => (T)Utils.Convert(x, typeof(T))).ToArray()
-                : result.Select(x => (T)x.ToObject(typeof(T))).ToArray();
+                ? result.SelectMany(x => x.Values).Select(x => command.TypeCache.Convert<T>(x)).ToArray()
+                : result.Select(x => (T)x.ToObject(command.TypeCache, typeof(T))).ToArray();
         }
 
         internal async Task ExecuteBatchAsync(IList<Func<IODataClient, Task>> actions, CancellationToken cancellationToken)

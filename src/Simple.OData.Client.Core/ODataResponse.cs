@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using Simple.OData.Client.Extensions;
 
 #pragma warning disable 1591
 
@@ -112,17 +113,23 @@ namespace Simple.OData.Client
             Func<IDictionary<string, object>, object> extractScalar = x => (x == null) || !x.Any() ? null : x.Values.First();
             var result = this.AsEntry(false);
             var value = result == null ? null : extractScalar(result);
+            // TODO: How to get the typecache in here
+            var typeCache = new TypeCache();
 
+            // TODO: Figure out how we can get a ITypeCache here
             return value == null 
                 ? default(T) 
-                : (T)Utils.Convert(value, typeof(T));
+                : typeCache.Convert<T>(value);
         }
 
         public T[] AsArray<T>()
         {
+            // TODO: How to get the typecache in here
+            var typeCache = new TypeCache();
+
             return this.AsEntries(false)
                 .SelectMany(x => x.Values)
-                .Select(x => (T)Utils.Convert(x, typeof(T)))
+                .Select(x => typeCache.Convert<T>(x))
                 .ToArray();
         }
 

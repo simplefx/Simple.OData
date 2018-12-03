@@ -1,8 +1,8 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace Simple.OData.Client.Extensions
 {
@@ -19,7 +19,13 @@ namespace Simple.OData.Client.Extensions
             return properties.ToArray();
         }
 
-        public static PropertyInfo GetAnyProperty(this Type type, string propertyName)
+        /// <summary>
+        /// Get a directly named property
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="propertyName"></param>
+        /// <returns></returns>
+        public static PropertyInfo GetNamedProperty(this Type type, string propertyName)
         {
             var currentType = type;
             while (currentType != null && currentType != typeof(object))
@@ -31,6 +37,32 @@ namespace Simple.OData.Client.Extensions
                 currentType = currentType.GetTypeInfo().BaseType;
             }
             return null;
+        }
+
+        public static IEnumerable<PropertyInfo> GetMappedProperties(this Type type)
+        {
+            return type.GetAllProperties().Where(x => !x.IsNotMapped());
+        }
+
+        public static IEnumerable<Tuple<PropertyInfo, string>> GetMappedPropertiesWithNames(this Type type)
+        {
+            return type.GetMappedProperties().Select(p => new Tuple<PropertyInfo, string>(p, p.GetMappedName()));
+        }
+
+        /// <summary>
+        /// Get a property that is either directly named or mapped via an attribute
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="propertyName"></param>
+        /// <returns></returns>
+        public static PropertyInfo GetMappedProperty(this Type type, string propertyName)
+        {
+            var property = type.GetNamedProperty(propertyName);
+            if (property == null)
+            {
+                property = type.GetAllProperties().FirstOrDefault(x => !x.IsNotMapped() && x.GetMappedName() == propertyName);
+            }
+            return property == null || property.IsNotMapped() ? null : property;
         }
 
         private static bool IsInstanceProperty(PropertyInfo propertyInfo)
@@ -143,6 +175,16 @@ namespace Simple.OData.Client.Extensions
         {
             return type.GetTypeInfo().BaseType;
         }
+ 
+        public static bool IsAnonymousType(this Type type)
+        {
+            // HACK: The only way to detect anonymous types right now.
+            return type.HasCustomAttribute(typeof(CompilerGeneratedAttribute), false)
+                   && type.IsGeneric() && type.Name.Contains("AnonymousType")
+                   && (type.Name.StartsWith("<>", StringComparison.OrdinalIgnoreCase) ||
+                       type.Name.StartsWith("VB$", StringComparison.OrdinalIgnoreCase))
+                   && (type.GetTypeAttributes() & TypeAttributes.NotPublic) == TypeAttributes.NotPublic;
+        }
 
         public static string GetMappedName(this Type type)
         {
@@ -157,7 +199,7 @@ namespace Simple.OData.Client.Extensions
 
             if (mappingAttribute != null)
             {
-                var nameProperty = mappingAttribute.GetType().GetAnyProperty("Name");
+                var nameProperty = mappingAttribute.GetType().GetNamedProperty("Name");
                 if (nameProperty != null)
                 {
                     var propertyValue = nameProperty.GetValue(mappingAttribute, null);

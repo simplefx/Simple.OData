@@ -37,16 +37,16 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
-        public void GetAnyProperty_BaseType()
+        public void GetNamedProperty_BaseType()
         {
-            Assert.NotNull(typeof(Transport).GetAnyProperty("TransportID"));
+            Assert.NotNull(typeof(Transport).GetNamedProperty("TransportID"));
         }
 
         [Fact]
-        public void GetAnyProperty_DerivedType()
+        public void GetNamedProperty_DerivedType()
         {
-            Assert.NotNull(typeof(Ship).GetAnyProperty("TransportID"));
-            Assert.NotNull(typeof(Ship).GetAnyProperty("ShipName"));
+            Assert.NotNull(typeof(Ship).GetNamedProperty("TransportID"));
+            Assert.NotNull(typeof(Ship).GetNamedProperty("ShipName"));
         }
 
         [Fact]

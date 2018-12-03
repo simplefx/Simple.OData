@@ -68,6 +68,11 @@
             <param name="regex">A regular expression matching all non-comparing characters. The default is &quot;[^a-z0-9]&quot;.</param>
             <remarks>Homogenized strings are always forced to lower-case.</remarks>
         </member>
+        <member name="T:Simple.OData.Client.Extensions.StaticTypeCache">
+            <summary>
+            Just forwards to the static helpers
+            </summary>
+        </member>
         <member name="T:Simple.OData.Client.Extensions.XElementExtensions">
             <summary>
             Extension methods for <see cref="T:System.Xml.Linq.XElement"/>.
@@ -2269,6 +2274,11 @@
         <member name="P:Simple.OData.Client.ISession.Metadata">
             <summary>
             Gets OData service metadata.
+            </summary>
+        </member>
+        <member name="P:Simple.OData.Client.ISession.TypeCache">
+            <summary>
+            Gets type information for this session.
             </summary>
         </member>
         <member name="M:Simple.OData.Client.ISession.Trace(System.String,System.Object[])">

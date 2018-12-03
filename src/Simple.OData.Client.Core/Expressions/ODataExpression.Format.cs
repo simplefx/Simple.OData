@@ -30,11 +30,11 @@ namespace Simple.OData.Client
                 var expr = this.Value as ODataExpression;
                 if (expr.Reference == null && expr.Function == null && !expr.IsValueConversion)
                 {
-                    if (expr.Value != null && expr.Value.GetType().IsEnumType())
+                    if (expr.Value != null && context.Session.TypeCache.IsEnumType(expr.Value.GetType()))
                     {
                         expr = new ODataExpression(expr.Value);
                     }
-                    else if (Utils.TryConvert(expr.Value, _conversionType, out var result))
+                    else if (context.Session.TypeCache.TryConvert(expr.Value, _conversionType, out var result))
                     {
                         expr = new ODataExpression(result);
                     }

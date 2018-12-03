@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Dynamic;
 using System.Linq;
 using System.Linq.Expressions;
+
 using Simple.OData.Client.Extensions;
 
 #pragma warning disable 1591
@@ -15,30 +15,32 @@ namespace Simple.OData.Client
         {
         }
 
-        internal DynamicODataEntry(IDictionary<string, object> entry)
-            : base(ToDynamicODataEntry(entry))
+        internal DynamicODataEntry(IDictionary<string, object> entry, ITypeCache typeCache) : base(ToDynamicODataEntry(entry, typeCache))
         {
+            TypeCache = typeCache;
         }
 
-        private static IDictionary<string, object> ToDynamicODataEntry(IDictionary<string, object> entry)
+        internal ITypeCache TypeCache { get; }
+
+        private static IDictionary<string, object> ToDynamicODataEntry(IDictionary<string, object> entry, ITypeCache typeCache)
         {
             return entry == null
                 ? null
                 : entry.ToDictionary(
                         x => x.Key,
                         y => y.Value is IDictionary<string, object>
-                            ? new DynamicODataEntry(y.Value as IDictionary<string, object>)
+                            ? new DynamicODataEntry(y.Value as IDictionary<string, object>, typeCache)
                             : y.Value is IEnumerable<object>
-                            ? ToDynamicODataEntry(y.Value as IEnumerable<object>)
+                            ? ToDynamicODataEntry(y.Value as IEnumerable<object>, typeCache)
                             : y.Value);
         }
 
-        private static IEnumerable<object> ToDynamicODataEntry(IEnumerable<object> entry)
+        private static IEnumerable<object> ToDynamicODataEntry(IEnumerable<object> entry, ITypeCache typeCache)
         {
             return entry == null
                 ? null
                 : entry.Select(x => x is IDictionary<string, object>
-                    ? new DynamicODataEntry(x as IDictionary<string, object>)
+                    ? new DynamicODataEntry(x as IDictionary<string, object>, typeCache)
                     : x).ToList();
         }
 
@@ -46,7 +48,7 @@ namespace Simple.OData.Client
         {
             var value = base[propertyName];
             if (value is IDictionary<string, object>)
-                value = new DynamicODataEntry(value as IDictionary<string, object>);
+                value = new DynamicODataEntry(value as IDictionary<string, object>, TypeCache);
             return value;
         }
 
@@ -57,12 +59,13 @@ namespace Simple.OData.Client
 
         private class DynamicEntryMetaObject : DynamicMetaObject
         {
-            internal DynamicEntryMetaObject(
-                Expression parameter,
-                DynamicODataEntry value)
+            internal DynamicEntryMetaObject(Expression parameter, DynamicODataEntry value)
                 : base(parameter, BindingRestrictions.Empty, value)
             {
+                TypeCache = value.TypeCache;
             }
+
+            private ITypeCache TypeCache { get; }
 
             public override DynamicMetaObject BindGetMember(GetMemberBinder binder)
             {
@@ -79,8 +82,8 @@ namespace Simple.OData.Client
 
             public override DynamicMetaObject BindConvert(ConvertBinder binder)
             {
-                var value = this.HasValue
-                    ? (this.Value as ODataEntry).AsDictionary().ToObject(binder.Type)
+                var value = HasValue
+                    ? (Value as ODataEntry)?.AsDictionary().ToObject(TypeCache, binder.Type)
                     : null;
 
                 return new DynamicMetaObject(

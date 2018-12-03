@@ -15,7 +15,10 @@ namespace Simple.OData.Client
         }
 
         public abstract string ConvertValueToUriLiteral(object value, bool escapeString);
+
         public abstract FunctionFormat FunctionFormat { get; }
+
+        protected ITypeCache TypeCache => _session.TypeCache;
 
         public string FormatCommand(FluentCommand command)
         {
@@ -109,8 +112,7 @@ namespace Simple.OData.Client
                 if (item.Value != null)
                 {
                     var itemType = item.Value.GetType();
-                    if (itemType.IsArray || itemType.IsGeneric() &&
-                        typeof(System.Collections.IEnumerable).IsTypeAssignableFrom(itemType))
+                    if (itemType.IsArray || TypeCache.IsGeneric(itemType) && TypeCache.IsTypeAssignableFrom(typeof(System.Collections.IEnumerable),itemType))
                     {
                         var itemAlias = $"@p{++colIndex}";
                         var collection = item.Value as System.Collections.IEnumerable;
