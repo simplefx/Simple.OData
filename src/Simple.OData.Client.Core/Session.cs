@@ -180,7 +180,7 @@ namespace Simple.OData.Client
         private EdmMetadataCache CreateMdc(string key, string metadata)
         {
             // TODO: Here we can change from static to typeCache, conditional on Settings
-            return new EdmMetadataCache(key, metadata, new TypeCache());
+            return new EdmMetadataCache(key, metadata, TypeCaches.TypeCache(key));
         }
     }
 }

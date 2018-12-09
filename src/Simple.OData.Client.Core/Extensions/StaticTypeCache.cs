@@ -1,6 +1,6 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
 
 namespace Simple.OData.Client.Extensions
@@ -10,14 +10,34 @@ namespace Simple.OData.Client.Extensions
     /// </summary>
     public class StaticTypeCache : ITypeCache
     {
+        private ConcurrentDictionary<Type, string> containerNames;
+
+        public ITypeConverter Converter => CustomConverters.Converters;
+
+        public StaticTypeCache()
+        {
+            containerNames = new ConcurrentDictionary<Type, string>();
+        }
+
+        public void Register<T>(string dynamicContainerName = "DynamicProperties")
+        {
+            Register(typeof(T), dynamicContainerName);
+        }
+
+        public void Register(Type type, string dynamicContainerName = "DynamicProperties")
+        {
+            containerNames.GetOrAdd(type, dynamicContainerName);
+        }
+
         public bool IsDynamicType(Type type)
         {
-            throw new NotImplementedException();
+            // NB Not really supported for the StaticTypeCache
+            return false;
         }
 
         public string DynamicPropertiesName(Type type)
         {
-            throw new NotImplementedException();
+            return containerNames.TryGetValue(type, out var containerName) ? containerName : null;
         }
 
         public IEnumerable<PropertyInfo> GetMappedProperties(Type type)

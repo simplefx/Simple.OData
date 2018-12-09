@@ -639,12 +639,16 @@ namespace Simple.OData.Client
 
         private T ConvertResult(IDictionary<string, object> result, string dynamicPropertiesContainerName)
         {
-            // TODO: We should get the dynamicPropertiesContainer name from the type.
+            if (!string.IsNullOrEmpty(dynamicPropertiesContainerName))
+            {
+                TypeCache.Register<T>(dynamicPropertiesContainerName);
+            }
+
             if (result != null && result.Keys.Count == 1 && result.ContainsKey(FluentCommand.ResultLiteral) &&
                 TypeCache.IsValue(typeof(T)) || typeof(T) == typeof(string) || typeof(T) == typeof(object))
                 return TypeCache.Convert<T>(result.Values.First());
             else
-                return result.ToObject<T>(TypeCache, dynamicPropertiesContainerName, _dynamicResults);
+                return result.ToObject<T>(TypeCache, _dynamicResults);
         }
 
         private bool IsSelectedColumn(KeyValuePair<string, object> kv, string columnName)

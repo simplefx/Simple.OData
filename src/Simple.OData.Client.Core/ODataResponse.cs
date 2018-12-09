@@ -79,8 +79,12 @@ namespace Simple.OData.Client
         public IList<ODataResponse> Batch { get; private set; }
         public Exception Exception { get; private set; }
 
+        internal ITypeCache TypeCache { get; set; }
+
         private ODataResponse()
         {
+            // TODO: Figure out how we can get a ITypeCache here - need the base uri from somewhere
+            TypeCache = new TypeCache(CustomConverters.Converters);
         }
 
         public IEnumerable<IDictionary<string, object>> AsEntries(bool includeAnnotations)
@@ -113,23 +117,17 @@ namespace Simple.OData.Client
             Func<IDictionary<string, object>, object> extractScalar = x => (x == null) || !x.Any() ? null : x.Values.First();
             var result = this.AsEntry(false);
             var value = result == null ? null : extractScalar(result);
-            // TODO: How to get the typecache in here
-            var typeCache = new TypeCache();
 
-            // TODO: Figure out how we can get a ITypeCache here
             return value == null 
                 ? default(T) 
-                : typeCache.Convert<T>(value);
+                : TypeCache.Convert<T>(value);
         }
 
         public T[] AsArray<T>()
         {
-            // TODO: How to get the typecache in here
-            var typeCache = new TypeCache();
-
             return this.AsEntries(false)
                 .SelectMany(x => x.Values)
-                .Select(x => typeCache.Convert<T>(x))
+                .Select(x => TypeCache.Convert<T>(x))
                 .ToArray();
         }
 
@@ -145,7 +143,7 @@ namespace Simple.OData.Client
         {
             return FromFeed(new[]
             {
-                new Dictionary<string, object>() { {propertyName ?? FluentCommand.ResultLiteral, propertyValue} } 
+                new Dictionary<string, object> { {propertyName ?? FluentCommand.ResultLiteral, propertyValue} } 
             });
         }
 
@@ -153,7 +151,7 @@ namespace Simple.OData.Client
         {
             return FromFeed(new[]
             {
-                new Dictionary<string, object>() { {FluentCommand.ResultLiteral, Utils.StreamToString(stream, disposeStream)} } 
+                new Dictionary<string, object> { {FluentCommand.ResultLiteral, Utils.StreamToString(stream, disposeStream)} } 
             });
         }
 

@@ -129,7 +129,7 @@ namespace Simple.OData.Client
         {
             if (typeCache == null)
             {
-                typeCache = new StaticTypeCache();
+                typeCache = new TypeCache(CustomConverters.Converters);
             }
 
             try
@@ -198,7 +198,7 @@ namespace Simple.OData.Client
         {
             if (typeCache == null)
             {
-                typeCache = new StaticTypeCache();
+                typeCache = new TypeCache(CustomConverters.Converters);
             }
 
             if (value == null && !typeCache.IsValue(targetType))

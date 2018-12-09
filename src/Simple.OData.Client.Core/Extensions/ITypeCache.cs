@@ -6,6 +6,25 @@ namespace Simple.OData.Client.Extensions
 {
     public interface ITypeCache
     {
+        /// <summary>
+        /// Gets the type converters.
+        /// </summary>
+        ITypeConverter Converter { get; }
+
+        /// <summary>
+        /// Register the dynamic properties name, also applies to sub-types
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="dynamicContainerName"></param>
+        void Register<T>(string dynamicContainerName = "DynamicProperties");
+
+        /// <summary>
+        /// Register the dynamic properties name, also applies to sub-types
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="dynamicContainerName"></param>
+        void Register(Type type, string dynamicContainerName = "DynamicProperties");
+
         bool IsDynamicType(Type type);
 
         string DynamicPropertiesName(Type type);

@@ -7,23 +7,25 @@ namespace Simple.OData.Client.Extensions
 {
     public class TypeCache : ITypeCache
     {
-        private ConcurrentDictionary<Type, TypeHelper> cache;
+        private readonly ConcurrentDictionary<Type, TypeHelper> cache;
 
-        public TypeCache()
+        public TypeCache(ITypeConverter converter)
         {
             cache = new ConcurrentDictionary<Type, TypeHelper>();
+            Converter = converter;
         }
 
-        public void Register<T>(bool dynamicType = false, string dynamicContainerName = "DynamicProperties")
+        public ITypeConverter Converter { get; }
+
+        public void Register<T>(string dynamicContainerName = "DynamicProperties")
         {
-            // TODO: Implicitly register subtypes as well?
-            Register(typeof(T), dynamicType, dynamicContainerName);
+            Register(typeof(T), dynamicContainerName);
         }
 
-        public void Register(Type type, bool dynamicType = false, string dynamicContainerName = "DynamicProperties")
+        public void Register(Type type, string dynamicContainerName = "DynamicProperties")
         {
             // TODO: Implicitly register subtypes as well?
-            InternalRegister(type, dynamicType, dynamicContainerName);
+            InternalRegister(type, true, dynamicContainerName);
         }
 
         public bool IsDynamicType(Type type)
@@ -173,7 +175,7 @@ namespace Simple.OData.Client.Extensions
             return helper;
         }
 
-        private TypeHelper InternalRegister(Type type, bool dynamicType = false, string dynamicContainerName = "DynamicProperties")
+        private TypeHelper InternalRegister(Type type, bool dynamicType = false, string dynamicContainerName = null)
         {
             var helper = new TypeHelper(type, dynamicType, dynamicContainerName);
 
