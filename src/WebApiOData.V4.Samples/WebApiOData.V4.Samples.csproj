@@ -37,7 +37,7 @@
     <PackageReference Include="Microsoft.AspNet.WebApi.Owin" Version="5.2.6" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="1.0.0" />
     <PackageReference Include="Microsoft.OData.Core">
-      <Version>7.5.0</Version>
+      <Version>7.5.2</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Owin" Version="4.0.0" />
     <PackageReference Include="Microsoft.Owin.Host.HttpListener" Version="4.0.0" />
