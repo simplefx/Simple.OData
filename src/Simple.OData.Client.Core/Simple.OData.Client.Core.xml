@@ -68,10 +68,65 @@
             <param name="regex">A regular expression matching all non-comparing characters. The default is &quot;[^a-z0-9]&quot;.</param>
             <remarks>Homogenized strings are always forced to lower-case.</remarks>
         </member>
+        <member name="M:Simple.OData.Client.Extensions.ITypeCache.GetMappedProperty(System.Type,System.String)">
+            <summary>
+            Get a property that is either directly named or mapped via an attribute
+            </summary>
+            <param name="type"></param>
+            <param name="propertyName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.ITypeCache.GetMappedName(System.Type,System.Reflection.PropertyInfo)">
+            <summary>
+            Get the mapping name for a property
+            </summary>
+            <param name="type"></param>
+            <param name="propertyInfo"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.ITypeCache.GetMappedName(System.Type,System.String)">
+            <summary>
+            Get the mapping name for a named property
+            </summary>
+            <param name="type"></param>
+            <param name="propertyName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.ITypeCache.GetNamedProperty(System.Type,System.String)">
+            <summary>
+            Get a directly named property
+            </summary>
+            <param name="type"></param>
+            <param name="propertyName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.MemberInfoExtensions.GetMappedName(System.Reflection.MemberInfo)">
+            <summary>
+            Extract a column name from the member's attributes
+            </summary>
+            <param name="memberInfo"></param>
+            <returns></returns>
+        </member>
         <member name="T:Simple.OData.Client.Extensions.StaticTypeCache">
             <summary>
             Just forwards to the static helpers
             </summary>
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.TypeExtensions.GetNamedProperty(System.Type,System.String)">
+            <summary>
+            Get a directly named property
+            </summary>
+            <param name="type"></param>
+            <param name="propertyName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.TypeExtensions.GetMappedProperty(System.Type,System.String)">
+            <summary>
+            Get a property that is either directly named or mapped via an attribute
+            </summary>
+            <param name="type"></param>
+            <param name="propertyName"></param>
+            <returns></returns>
         </member>
         <member name="T:Simple.OData.Client.Extensions.XElementExtensions">
             <summary>
