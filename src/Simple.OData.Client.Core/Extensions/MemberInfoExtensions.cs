@@ -1,4 +1,6 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
@@ -27,26 +29,28 @@ namespace Simple.OData.Client.Extensions
 
         private static MappingInfo Helper(MemberInfo memberInfo)
         {
-            var info = cache.GetOrAdd(memberInfo, MappingInfoFactory(memberInfo));
+            var info = cache.GetOrAdd(memberInfo, MappingInfoFactory);
 
             return info;
         }
 
         private static MappingInfo MappingInfoFactory(MemberInfo memberInfo)
         {
+            var attributes = memberInfo.GetCustomAttributes().ToList();
+
             return new MappingInfo
             {
-                IsNotMapped = memberInfo.IsNotMappedInternal(),
-                MappedName = memberInfo.GetMappedNameInternal()
+                IsNotMapped = attributes.IsNotMapped(),
+                MappedName = memberInfo.Name.GetMappedName(attributes)
             };
         }
 
-        private static bool IsNotMappedInternal(this MemberInfo member)
+        private static bool IsNotMapped(this IList<Attribute> attributes)
         {
-            return member.GetCustomAttributes().Any(x => x.GetType().Name == "NotMappedAttribute");
+            return attributes.Any(x => x.GetType().Name == "NotMappedAttribute");
         }
 
-        private static string GetMappedNameInternal(this MemberInfo property)
+        private static string GetMappedName(this string name, IList<Attribute> attributes)
         {
             var supportedAttributeNames = new[]
             {
@@ -55,10 +59,9 @@ namespace Simple.OData.Client.Extensions
                 "ColumnAttribute",
             };
 
-            var propertyName = property.Name;
+            var propertyName = name;
             string attributeProperty;
-            var mappingAttribute = property.GetCustomAttributes()
-                                           .FirstOrDefault(x => supportedAttributeNames.Any(y => x.GetType().Name == y));
+            var mappingAttribute = attributes.FirstOrDefault(x => supportedAttributeNames.Any(y => x.GetType().Name == y));
             if (mappingAttribute != null)
             {
                 attributeProperty = "Name";
@@ -66,8 +69,7 @@ namespace Simple.OData.Client.Extensions
             else
             {
                 attributeProperty = "PropertyName";
-                mappingAttribute = property.GetCustomAttributes()
-                                           .FirstOrDefault(x => x.GetType().GetNamedProperty(attributeProperty) != null);
+                mappingAttribute = attributes.FirstOrDefault(x => x.GetType().GetNamedProperty(attributeProperty) != null);
             }
 
             if (mappingAttribute != null)

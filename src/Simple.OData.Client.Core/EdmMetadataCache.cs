@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Concurrent;
+using System.Threading;
 using System.Threading.Tasks;
 
 using Simple.OData.Client.Extensions;
@@ -8,72 +9,47 @@ namespace Simple.OData.Client
 {
     class EdmMetadataCache
     {
-        static readonly object metadataLock = new object();
-        // TODO: Do we want to swap for ConcurrentDictionary?
-        static readonly IDictionary<string, EdmMetadataCache> _instances = new Dictionary<string, EdmMetadataCache>();
+        static readonly ConcurrentDictionary<string, EdmMetadataCache> _instances = new ConcurrentDictionary<string, EdmMetadataCache>();
+        static readonly SemaphoreSlim semaphore = new SemaphoreSlim(1);
 
         public static void Clear()
         {
-            lock (metadataLock)
-            {
-                _instances.Clear();
-                DictionaryExtensions.ClearCache();
-            }
+            _instances.Clear();
+            // NOTE: Is this necessary, if so should we wipe the ITypeCache constructors?
+            DictionaryExtensions.ClearCache();
         }
 
         public static void Clear(string key)
         {
-            lock (metadataLock)
-            {
-                _instances.Remove(key);
-            }
+            _instances.TryRemove(key, out var md);
         }
 
         public static EdmMetadataCache GetOrAdd(string key, Func<string, EdmMetadataCache> valueFactory)
         {
-            // Double lock check, cheaper to check outside the lock first
-            // ReSharper disable once InconsistentlySynchronizedField
-            if (_instances.TryGetValue(key, out var found))
-            {
-                return found;
-            }
-
-            // Now get it, don't lock as might be expensive
-            found = valueFactory(key);
-
-            // Check again and update cache
-            lock (metadataLock)
-            {
-                if (!_instances.ContainsKey(key))
-                {
-                    _instances[key] = found;
-                }
-
-                return _instances[key];
-            }
+            return _instances.GetOrAdd(key, valueFactory);
         }
 
         public static async Task<EdmMetadataCache> GetOrAddAsync(string key, Func<string, Task<EdmMetadataCache>> valueFactory)
         {
-            // Double lock check, cheaper to check outside the lock first
-            // ReSharper disable once InconsistentlySynchronizedField
+            // Cheaper to check first before we do the remote call
             if (_instances.TryGetValue(key, out var found))
             {
                 return found;
             }
 
-            // Now get it, don't lock as might be expensive
-            found = await valueFactory(key).ConfigureAwait(false);
+            // Just allow one schema request at a time, unlikely to be much contention but avoids multiple requests for same endpoint.
+            await semaphore.WaitAsync().ConfigureAwait(false);
 
-            // Check again and update cache
-            lock (metadataLock)
+            try
             {
-                if (!_instances.ContainsKey(key))
-                {
-                    _instances[key] = found;
-                }
+                // Can't easily lock, could introduce a semaphoreSlim but not sure if it's worth it.
+                found = await valueFactory(key).ConfigureAwait(false);
 
-                return _instances[key];
+                return _instances.GetOrAdd(key, found);
+            }
+            finally
+            {
+                semaphore.Release();
             }
         }
 
@@ -88,15 +64,12 @@ namespace Simple.OData.Client
 
             Key = key;
             MetadataDocument = metadataDocument;
-            TypeCache = typeCache;
             _adapterFactory = new AdapterFactory().CreateAdapter(metadataDocument, typeCache);
         }
 
         public string Key { get; }
 
         public string MetadataDocument { get; }
-
-        public ITypeCache TypeCache { get; }
 
         public IODataAdapter GetODataAdapter(ISession session)
         {
