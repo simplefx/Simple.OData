@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta charset='utf-8' />
+<title>TripPinPeople</title>
+
+<style type="text/css">
+	table { border-collapse: collapse; display: block; width: 100%; overflow: auto; }
+	td, th { padding: 6px 13px; border: 1px solid #ddd; }
+	tr { background-color: #fff; border-top: 1px solid #ccc; }
+	tr:nth-child(even) { background: #f8f8f8; }
+</style>
+</head>
+<body>
+<pre><code>
+BenchmarkDotNet=v0.10.14, OS=Windows 10.0.17763
+Intel Core i7-4790 CPU 3.60GHz (Haswell), 1 CPU, 8 logical and 4 physical cores
+.NET Core SDK=2.1.502
+  [Host]     : .NET Core 2.0.9 (CoreCLR 4.6.26614.01, CoreFX 4.6.26614.01), 64bit RyuJIT
+  DefaultJob : .NET Core 2.0.9 (CoreCLR 4.6.26614.01, CoreFX 4.6.26614.01), 64bit RyuJIT
+</code></pre>
+<pre><code></code></pre>
+
+<table>
+<thead><tr><th>                        Method</th><th>Mean</th><th>Error</th><th>StdDev</th><th>Median</th>
+</tr>
+</thead><tbody><tr><td>FindTypedPeopleWithTripsAndFriends</td><td>8,668.0 us</td><td>172.27 us</td><td>191.47 us</td><td>8,652.4 us</td>
+</tr><tr><td>FindUntypedPeopleWithTripsAndFriends</td><td>7,510.5 us</td><td>143.00 us</td><td>175.61 us</td><td>7,491.5 us</td>
+</tr><tr><td>ConvertWithNewtonsoftJson</td><td>907.3 us</td><td>18.69 us</td><td>39.02 us</td><td>890.5 us</td>
+</tr></tbody></table>
+</body>
+</html>
