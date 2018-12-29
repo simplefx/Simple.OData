@@ -35,10 +35,10 @@ namespace Simple.OData.Client.V3.Adapter
             ProtocolVersion = modelAdapter.ProtocolVersion;
             Model = modelAdapter.Model as IEdmModel;
 
-            CustomConverters.RegisterTypeConverter(typeof(GeographyPoint), TypeConverters.CreateGeographyPoint);
-            CustomConverters.RegisterTypeConverter(typeof(GeometryPoint), TypeConverters.CreateGeometryPoint);
-            CustomConverters.RegisterTypeConverter(typeof(DateTime), TypeConverters.ConvertToEdmDate);
-            CustomConverters.RegisterTypeConverter(typeof(DateTimeOffset), TypeConverters.ConvertToEdmDate);
+            session.TypeCache.Converter.RegisterTypeConverter(typeof(GeographyPoint), TypeConverters.CreateGeographyPoint);
+            session.TypeCache.Converter.RegisterTypeConverter(typeof(GeometryPoint), TypeConverters.CreateGeometryPoint);
+            session.TypeCache.Converter.RegisterTypeConverter(typeof(DateTime), TypeConverters.ConvertToEdmDate);
+            session.TypeCache.Converter.RegisterTypeConverter(typeof(DateTimeOffset), TypeConverters.ConvertToEdmDate);
         }
 
         public new IEdmModel Model

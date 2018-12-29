@@ -14,6 +14,8 @@ namespace Simple.OData.Client
             _typeCaches = new ConcurrentDictionary<string, ITypeCache>();
         }
 
+        internal static ITypeCache Global => TypeCache("global");
+
         internal static ITypeCache TypeCache(string uri)
         {
             return _typeCaches.GetOrAdd(uri, new TypeCache(CustomConverters.Converter(uri)));

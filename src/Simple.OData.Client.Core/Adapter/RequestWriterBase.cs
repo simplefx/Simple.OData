@@ -25,6 +25,8 @@ namespace Simple.OData.Client
 
         protected ITypeCache TypeCache => _session.TypeCache;
 
+        protected ITypeConverter Converter => TypeCache.Converter;
+
         public async Task<ODataRequest> CreateGetRequestAsync(string commandText, bool scalarResult)
         {
             await WriteEntryContentAsync(

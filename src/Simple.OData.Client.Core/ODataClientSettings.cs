@@ -123,7 +123,18 @@ namespace Simple.OData.Client
         /// <summary>
         /// Gets the <see cref="ITypeCache"/> associated with the uri, used to register converters and dynamic types.
         /// </summary>
-        public ITypeCache TypeCache => TypeCaches.TypeCache(BaseUri.AbsoluteUri);
+        public ITypeCache TypeCache
+        {
+            get
+            {
+                if (BaseUri == null)
+                {
+                    throw new InvalidOperationException("Assign BaseUri before accessing TypeCache");
+                }
+
+                return TypeCaches.TypeCache(BaseUri.AbsoluteUri);
+            }
+        }
 
         /// <summary>
         /// Gets or sets a value indicating whether <see cref="System.Net.Http.HttpClient"/> connection should be disposed and renewed between OData requests.

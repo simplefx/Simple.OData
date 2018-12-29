@@ -13,6 +13,7 @@ namespace Simple.OData.Client
     /// Provides access to OData operations in a fluent style.
     /// </summary>
     /// <typeparam name="T">The entity type.</typeparam>
+    /// <typeparam name="FT"></typeparam>
     public abstract partial class FluentClientBase<T, FT> : IFluentClient<T, FT>
         where T : class
         where FT : class

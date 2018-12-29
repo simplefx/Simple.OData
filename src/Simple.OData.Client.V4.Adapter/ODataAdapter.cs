@@ -34,8 +34,8 @@ namespace Simple.OData.Client.V4.Adapter
             ProtocolVersion = modelAdapter.ProtocolVersion;
             Model = modelAdapter.Model as IEdmModel;
 
-            CustomConverters.RegisterTypeConverter(typeof(GeographyPoint), TypeConverters.CreateGeographyPoint);
-            CustomConverters.RegisterTypeConverter(typeof(GeometryPoint), TypeConverters.CreateGeometryPoint);
+            session.TypeCache.Converter.RegisterTypeConverter(typeof(GeographyPoint), TypeConverters.CreateGeographyPoint);
+            session.TypeCache.Converter.RegisterTypeConverter(typeof(GeometryPoint), TypeConverters.CreateGeometryPoint);
         }
 
         public new IEdmModel Model

@@ -63,7 +63,7 @@ namespace Simple.OData.Client.Extensions
             var instance = CreateInstance(type);
 
             IDictionary<string, object> dynamicProperties = null;
-            var dynamicPropertiesContainerName = typeCache.DynamicPropertiesName(type);
+            var dynamicPropertiesContainerName = typeCache.DynamicContainerName(type);
             if (!string.IsNullOrEmpty(dynamicPropertiesContainerName))
             {
                 dynamicProperties = CreateDynamicPropertiesContainer(type, typeCache, instance, dynamicPropertiesContainerName);

@@ -9,70 +9,84 @@ namespace Simple.OData.Client
     public static class CustomConverters
     {
         private static ConcurrentDictionary<string, ITypeConverter> _converters;
-        private static readonly ITypeConverter _converter;
         
         static CustomConverters()
         {
-            _converter = new TypeConverters();
-
-            // TODO: Have a global switch whether we use the dictionary or not
             _converters = new ConcurrentDictionary<string, ITypeConverter>();
         }
 
         public static ITypeConverter Converter(string uri)
         {
-            return _converter;
-            //return _converters.GetOrAdd(uri, new TypeConverters());
+            // TODO: Have a settings switch whether we use global dictionary or not?
+            return _converters.GetOrAdd(uri, new TypeConverter());
         }
 
-        public static ITypeConverter Converters => _converter;
+        public static ITypeConverter Global => Converter("global");
 
         [Obsolete("Use ITypeCache.Converter")]
         public static void RegisterTypeConverter(Type type, Func<IDictionary<string, object>, object> converter)
         {
-            _converter.RegisterTypeConverter(type, converter);
+            Global.RegisterTypeConverter(type, converter);
+
+            // Side-effect if we call the global is to register in all other converters
+            foreach (var kvp in _converters)
+            {
+                if (kvp.Key != "global")
+                {
+                    kvp.Value.RegisterTypeConverter(type, converter);
+                }
+            }
         }
 
         [Obsolete("Use ITypeCache.Converter")]
         public static void RegisterTypeConverter(Type type, Func<object, object> converter)
         {
-            _converter.RegisterTypeConverter(type, converter);
+            Global.RegisterTypeConverter(type, converter);
+
+            // Side-effect if we call the global is to register in all other converters
+            foreach (var kvp in _converters)
+            {
+                if (kvp.Key != "global")
+                {
+                    kvp.Value.RegisterTypeConverter(type, converter);
+                }
+            }
         }
 
         [Obsolete("Use ITypeCache.Converter")]
         public static bool HasDictionaryConverter(Type type)
         {
-            return _converter.HasDictionaryConverter(type);
+            return Global.HasDictionaryConverter(type);
         }
 
         [Obsolete("Use ITypeCache.Converter")]
         public static bool HasObjectConverter(Type type)
         {
-            return _converter.HasObjectConverter(type);
+            return Global.HasObjectConverter(type);
         }
 
         [Obsolete("Use ITypeCache.Converter")]
         public static T Convert<T>(IDictionary<string, object> value)
         {
-            return _converter.Convert<T>(value);
+            return Global.Convert<T>(value);
         }
 
         [Obsolete("Use ITypeCache.Converter")]
         public static T Convert<T>(object value)
         {
-            return _converter.Convert<T>(value);
+            return Global.Convert<T>(value);
         }
 
         [Obsolete("Use ITypeCache.Converter")]
         public static object Convert(IDictionary<string, object> value, Type type)
         {
-            return _converter.Convert(value, type);
+            return Global.Convert(value, type);
         }
 
         [Obsolete("Use ITypeCache.Converter")]
         public static object Convert(object value, Type type)
         {
-            return _converter.Convert(value, type);
+            return Global.Convert(value, type);
         }
     }
 }
