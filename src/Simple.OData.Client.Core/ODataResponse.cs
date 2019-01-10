@@ -79,8 +79,11 @@ namespace Simple.OData.Client
         public IList<ODataResponse> Batch { get; private set; }
         public Exception Exception { get; private set; }
 
-        private ODataResponse()
+        internal ITypeCache TypeCache { get; set; }
+
+        private ODataResponse(ITypeCache typeCache)
         {
+            TypeCache = typeCache;
         }
 
         public IEnumerable<IDictionary<string, object>> AsEntries(bool includeAnnotations)
@@ -113,53 +116,71 @@ namespace Simple.OData.Client
             Func<IDictionary<string, object>, object> extractScalar = x => (x == null) || !x.Any() ? null : x.Values.First();
             var result = this.AsEntry(false);
             var value = result == null ? null : extractScalar(result);
-            // TODO: How to get the typecache in here
-            var typeCache = new TypeCache();
 
-            // TODO: Figure out how we can get a ITypeCache here
             return value == null 
                 ? default(T) 
-                : typeCache.Convert<T>(value);
+                : TypeCache.Convert<T>(value);
         }
 
         public T[] AsArray<T>()
         {
-            // TODO: How to get the typecache in here
-            var typeCache = new TypeCache();
-
             return this.AsEntries(false)
                 .SelectMany(x => x.Values)
-                .Select(x => typeCache.Convert<T>(x))
+                .Select(x => TypeCache.Convert<T>(x))
                 .ToArray();
         }
 
+        [Obsolete("Internal: Use overload with ITypeCache")]
         public static ODataResponse FromNode(ResponseNode node)
         {
-            return new ODataResponse
+            return FromNode(TypeCaches.Global, node);
+        }
+
+        internal static ODataResponse FromNode(ITypeCache typeCache, ResponseNode node)
+        {
+            return new ODataResponse(typeCache)
             {
                 Feed = node.Feed ?? new AnnotatedFeed(node.Entry != null ? new[] { node.Entry } : null)
             };
         }
 
+        [Obsolete("Internal: Use overload with ITypeCache")]
         public static ODataResponse FromProperty(string propertyName, object propertyValue)
         {
-            return FromFeed(new[]
+            return FromProperty(TypeCaches.Global, propertyName, propertyValue);
+        }
+
+        internal static ODataResponse FromProperty(ITypeCache typeCache, string propertyName, object propertyValue)
+        {
+            return FromFeed(typeCache, new[]
             {
-                new Dictionary<string, object>() { {propertyName ?? FluentCommand.ResultLiteral, propertyValue} } 
+                new Dictionary<string, object> { {propertyName ?? FluentCommand.ResultLiteral, propertyValue} } 
             });
         }
 
+        [Obsolete("Internal: Use overload with ITypeCache")]
         public static ODataResponse FromValueStream(Stream stream, bool disposeStream = false)
         {
-            return FromFeed(new[]
+            return FromValueStream(TypeCaches.Global, stream, disposeStream);
+        }
+
+        internal static ODataResponse FromValueStream(ITypeCache typeCache, Stream stream, bool disposeStream = false)
+        {
+            return FromFeed(typeCache, new[]
             {
-                new Dictionary<string, object>() { {FluentCommand.ResultLiteral, Utils.StreamToString(stream, disposeStream)} } 
+                new Dictionary<string, object> { {FluentCommand.ResultLiteral, Utils.StreamToString(stream, disposeStream)} } 
             });
         }
 
+        [Obsolete("Internal: Use overload with ITypeCache")]
         public static ODataResponse FromCollection(IList<object> collection)
         {
-            return new ODataResponse
+            return FromCollection(TypeCaches.Global, collection);
+        }
+
+        internal static ODataResponse FromCollection(ITypeCache typeCache, IList<object> collection)
+        {
+            return new ODataResponse(typeCache)
             {
                 Feed = new AnnotatedFeed(collection.Select(
                         x => new AnnotatedEntry(new Dictionary<string, object>()
@@ -169,29 +190,48 @@ namespace Simple.OData.Client
             };
         }
 
+        [Obsolete("Internal: Use overload with ITypeCache")]
         public static ODataResponse FromBatch(IList<ODataResponse> batch)
         {
-            return new ODataResponse
+            return FromBatch(TypeCaches.Global, batch);
+        }
+
+        internal static ODataResponse FromBatch(ITypeCache typeCache, IList<ODataResponse> batch)
+        {
+            return new ODataResponse(typeCache)
             {
                 Batch = batch,
             };
         }
 
+
+        [Obsolete("Internal: Use overload with ITypeCache")]
         public static ODataResponse FromStatusCode(int statusCode, Exception exception = null)
         {
-            return new ODataResponse
+            return FromStatusCode(TypeCaches.Global, statusCode, exception);
+        }
+
+        internal static ODataResponse FromStatusCode(ITypeCache typeCache, int statusCode, Exception exception = null)
+        {
+            return new ODataResponse(typeCache)
             {
                 StatusCode = statusCode,
                 Exception = exception,
             };
         }
 
+        [Obsolete("Internal: Use overload with ITypeCache")]
         public static ODataResponse FromStatusCode(int statusCode, Stream responseStream)
+        {
+            return FromStatusCode(TypeCaches.Global, statusCode, responseStream);
+        }
+
+        internal static ODataResponse FromStatusCode(ITypeCache typeCache, int statusCode, Stream responseStream)
         {
             if (statusCode >= (int)HttpStatusCode.BadRequest)
             {
                 var responseContent = Utils.StreamToString(responseStream, true);
-                return new ODataResponse
+                return new ODataResponse(typeCache)
                 {
                     StatusCode = statusCode,
                     Exception = WebRequestException.CreateFromStatusCode((HttpStatusCode)statusCode, responseContent),
@@ -199,21 +239,24 @@ namespace Simple.OData.Client
             }
             else
             {
-                return new ODataResponse
+                return new ODataResponse(typeCache)
                 {
                     StatusCode = statusCode,
                 };
             }
         }
 
-        public static ODataResponse EmptyFeed
+        [Obsolete("Internal: Use overload with ITypeCache")]
+        public static ODataResponse EmptyFeed => FromFeed(TypeCaches.Global, new Dictionary<string, object>[] { });
+
+        internal static ODataResponse EmptyFeeds(ITypeCache typeCache)
         {
-            get { return FromFeed(new Dictionary<string, object>[] { }); }
+            return FromFeed(typeCache, new Dictionary<string, object>[] { });
         }
 
-        private static ODataResponse FromFeed(IEnumerable<IDictionary<string, object>> entries, ODataFeedAnnotations feedAnnotations = null)
+        private static ODataResponse FromFeed(ITypeCache typeCache, IEnumerable<IDictionary<string, object>> entries, ODataFeedAnnotations feedAnnotations = null)
         {
-            return new ODataResponse
+            return new ODataResponse(typeCache)
             {
                 Feed = new AnnotatedFeed(entries.Select(x => new AnnotatedEntry(x)), feedAnnotations)
             };
@@ -248,11 +291,12 @@ namespace Simple.OData.Client
             }
         }
 
-        private IDictionary<string, object> DataWithAnnotations(
-            IDictionary<string, object> data, ODataEntryAnnotations annotations)
+        private IDictionary<string, object> DataWithAnnotations(IDictionary<string, object> data, ODataEntryAnnotations annotations)
         {
-            var dataWithAnnotations = new Dictionary<string, object>(data);
-            dataWithAnnotations.Add(FluentCommand.AnnotationsLiteral, annotations);
+            var dataWithAnnotations = new Dictionary<string, object>(data)
+            {
+                {FluentCommand.AnnotationsLiteral, annotations}
+            };
             return dataWithAnnotations;
         }
     }

@@ -61,7 +61,7 @@ namespace Simple.OData.Client
 
         public ODataClientSettings Settings { get; }
 
-        public ITypeCache TypeCache => TypeCaches.GetOrAdd(Settings.BaseUri.AbsoluteUri);
+        public ITypeCache TypeCache => TypeCaches.TypeCache(Settings.BaseUri.AbsoluteUri);
 
         public void Dispose()
         {
@@ -179,8 +179,7 @@ namespace Simple.OData.Client
 
         private EdmMetadataCache CreateMdc(string key, string metadata)
         {
-            // TODO: Here we can change from static to typeCache, conditional on Settings
-            return new EdmMetadataCache(key, metadata, new TypeCache());
+            return new EdmMetadataCache(key, metadata, TypeCaches.TypeCache(key));
         }
     }
 }

@@ -5,8 +5,17 @@ using System.Reflection;
 
 namespace Simple.OData.Client.Extensions
 {
+    /// <summary>
+    /// Holds information about a type.
+    /// </summary>
     public class TypeHelper
     {
+        /// <summary>
+        /// Creates a new instance of the <see cref="TypeHelper"/> class.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="dynamicType"></param>
+        /// <param name="dynamicContainerName"></param>
         public TypeHelper(Type type, bool dynamicType = false, string dynamicContainerName = "DynamicProperties")
         {
             Type = type;
@@ -24,39 +33,89 @@ namespace Simple.OData.Client.Extensions
             IsAnonymousType = type.IsAnonymousType();
         }
 
-        public Type Type { get; set; }
+        /// <summary>
+        /// Gets the type we are responsible for.
+        /// </summary>
+        public Type Type { get; }
 
         public TypeInfo TypeInfo { get; }
 
+        /// <summary>
+        /// Gets the mapped name i.e. the OData type we correspond to.
+        /// </summary>
         public string MappedName { get; }
 
+        /// <summary>
+        /// Gets whether we are a dynamic type
+        /// </summary>
         public bool IsDynamicType { get; }
 
+        /// <summary>
+        /// Gets whether we are an anonymous type
+        /// </summary>
         public bool IsAnonymousType { get; }
 
+        /// <summary>
+        /// Gets whether we are a generic type
+        /// </summary>
         public bool IsGeneric => TypeInfo.IsGenericType;
 
+        /// <summary>
+        /// Gets whether we are a value type
+        /// </summary>
         public bool IsValue => TypeInfo.IsValueType;
 
+        /// <summary>
+        /// Gets whether we are an enum
+        /// </summary>
         public bool IsEnumType => TypeInfo.IsEnum;
 
+        /// <summary>
+        /// Gets the base type
+        /// </summary>
         public Type BaseType => TypeInfo.BaseType;
 
+        /// <summary>
+        /// Gets the dynamic properties container name
+        /// </summary>
         // TODO: Store this as a PropertyInfo?
         public string DynamicPropertiesName { get; set; }
 
+        /// <summary>
+        /// Gets all properties
+        /// </summary>
         public IList<PropertyInfo> AllProperties { get; }
 
+        /// <summary>
+        /// Gets declared properties
+        /// </summary>
         public IList<PropertyInfo> DeclaredProperties { get; }
 
+        /// <summary>
+        /// Gets all fields
+        /// </summary>
         public IList<FieldInfo> AllFields { get; }
 
+        /// <summary>
+        /// Gets declared fields.
+        /// </summary>
         public IList<FieldInfo> DeclaredFields { get; }
 
+        /// <summary>
+        /// Gets mapped properties
+        /// </summary>
         public IList<PropertyInfo> MappedProperties { get; }
 
+        /// <summary>
+        /// Gets mapped properties with the mapped name
+        /// </summary>
         public IList<Tuple<PropertyInfo, string>> MappedPropertiesWithNames { get; }
 
+        /// <summary>
+        /// Gets a mapped property
+        /// </summary>
+        /// <param name="propertyName"></param>
+        /// <returns></returns>
         public PropertyInfo GetMappedProperty(string propertyName)
         {
             return (from t in MappedPropertiesWithNames where t.Item2 == propertyName select t.Item1).FirstOrDefault();

@@ -460,10 +460,9 @@ namespace Simple.OData.Client.V4.Adapter
             switch (propertyType.TypeKind())
             {
                 case EdmTypeKind.Complex:
-                    // TODO: Should be a method on TypeCache
-                    if (CustomConverters.HasObjectConverter(value.GetType()))
+                    if (Converter.HasObjectConverter(value.GetType()))
                     {
-                        return CustomConverters.Convert(value, value.GetType());
+                        return Converter.Convert(value, value.GetType());
                     }
                     return CreateODataEntry(propertyType.FullName(), value.ToDictionary(TypeCache), root);
 
@@ -497,9 +496,9 @@ namespace Simple.OData.Client.V4.Adapter
                     return new ODataUntypedValue{ RawValue = value.ToString() };
 
                 case EdmTypeKind.None:
-                    if (CustomConverters.HasObjectConverter(value.GetType()))
+                    if (Converter.HasObjectConverter(value.GetType()))
                     {
-                        return CustomConverters.Convert(value, value.GetType());
+                        return Converter.Convert(value, value.GetType());
                     }
                     throw new NotSupportedException($"Conversion is not supported from type {value.GetType()} to OData type {propertyType}");
 

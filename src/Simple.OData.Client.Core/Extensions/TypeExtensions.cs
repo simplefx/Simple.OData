@@ -8,6 +8,13 @@ namespace Simple.OData.Client.Extensions
 {
     static class TypeExtensions
     {
+        public static IEnumerable<Type> DerivedTypes(this Type type)
+        {
+            return type
+                .Assembly.GetTypes()
+                .Where(t => t.IsSubclassOf(type) && !t.IsAbstract);
+        }
+
         public static IEnumerable<PropertyInfo> GetAllProperties(this Type type)
         {
             var properties = GetDeclaredProperties(type).ToList();

@@ -111,7 +111,11 @@ namespace Simple.OData.Client
         public async Task<T> InsertEntryAsync(bool resultRequired, CancellationToken cancellationToken)
         {
             var result = await _client.InsertEntryAsync(_command, resultRequired, cancellationToken).ConfigureAwait(false);
-            return result.ToObject<T>(TypeCache, _command.DynamicPropertiesContainerName, _dynamicResults);
+            if (!string.IsNullOrEmpty(_command.DynamicPropertiesContainerName))
+            {
+                TypeCache.Register<T>(_command.DynamicPropertiesContainerName);
+            }
+            return result.ToObject<T>(TypeCache, _dynamicResults);
         }
 
         public Task<T> UpdateEntryAsync()
@@ -141,8 +145,12 @@ namespace Simple.OData.Client
             else
             {
                 var result = await _client.UpdateEntryAsync(_command, resultRequired, cancellationToken).ConfigureAwait(false);
+                if (!string.IsNullOrEmpty(_command.DynamicPropertiesContainerName))
+                {
+                    TypeCache.Register<T>(_command.DynamicPropertiesContainerName);
+                }
                 return resultRequired
-                    ? result?.ToObject<T>(TypeCache,_command.DynamicPropertiesContainerName, _dynamicResults)
+                    ? result?.ToObject<T>(TypeCache, _dynamicResults)
                     : null;
             }
         }
@@ -165,7 +173,11 @@ namespace Simple.OData.Client
         public async Task<IEnumerable<T>> UpdateEntriesAsync(bool resultRequired, CancellationToken cancellationToken)
         {
             var result = await _client.UpdateEntriesAsync(_command, resultRequired, cancellationToken).ConfigureAwait(false);
-            return result.Select(y => y.ToObject<T>(TypeCache, _command.DynamicPropertiesContainerName, _dynamicResults));
+            if (!string.IsNullOrEmpty(_command.DynamicPropertiesContainerName))
+            {
+                TypeCache.Register<T>(_command.DynamicPropertiesContainerName);
+            }
+            return result.Select(y => y.ToObject<T>(TypeCache, _dynamicResults));
         }
 
         public Task DeleteEntryAsync()

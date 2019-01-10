@@ -43,6 +43,7 @@ namespace Simple.OData.Client
         /// Creates from the instance of HttpResponseMessage.
         /// </summary>
         /// <param name="statusCode">The HTTP status code.</param>
+        /// <param name="responseContent"></param>
         /// <returns>The instance of <see cref="WebRequestException"/>.</returns>
         public static WebRequestException CreateFromStatusCode(HttpStatusCode statusCode, string responseContent = null)
         {

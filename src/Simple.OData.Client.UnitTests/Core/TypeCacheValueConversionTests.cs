@@ -41,7 +41,7 @@ namespace Simple.OData.Client.Tests.Core
         [InlineData("58D6C94D-B18A-43C9-AC1B-0B5A5BF10C35", typeof(string), typeof(Guid?))]
         public void TryConvert(object value, Type sourceType, Type targetType)
         {
-            ITypeCache typeCache = new TypeCache();
+            var typeCache = TypeCaches.Global;
 
             var sourceValue = ChangeType(value, sourceType);
             var result = typeCache.TryConvert(sourceValue, targetType, out var targetValue);
@@ -57,7 +57,7 @@ namespace Simple.OData.Client.Tests.Core
         [Fact]
         public void TryConvertGeographyPoint()
         {
-            ITypeCache typeCache = new TypeCache();
+            var typeCache = TypeCaches.Global;
 
             var source = GeographyPoint.Create(10, 10);
             var result = typeCache.TryConvert(source, typeof(GeographyPoint), out _);
@@ -81,6 +81,5 @@ namespace Simple.OData.Client.Tests.Core
 
             return Convert.ChangeType(value, targetType);
         }
-
     }
 }

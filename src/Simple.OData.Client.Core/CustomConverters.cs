@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 
 #pragma warning disable 1591
@@ -7,87 +8,85 @@ namespace Simple.OData.Client
 {
     public static class CustomConverters
     {
-        private static readonly Dictionary<Type, Func<IDictionary<string, object>, object>> _dictionaryConverters;
-        private static readonly Dictionary<Type, Func<object, object>> _objectConverters; 
-
+        private static ConcurrentDictionary<string, ITypeConverter> _converters;
+        
         static CustomConverters()
         {
-            _dictionaryConverters = new Dictionary<Type, Func<IDictionary<string, object>, object>>();
-            _objectConverters = new Dictionary<Type, Func<object, object>>();
+            _converters = new ConcurrentDictionary<string, ITypeConverter>();
         }
 
+        public static ITypeConverter Converter(string uri)
+        {
+            // TODO: Have a settings switch whether we use global dictionary or not?
+            return _converters.GetOrAdd(uri, new TypeConverter());
+        }
+
+        public static ITypeConverter Global => Converter("global");
+
+        [Obsolete("Use ITypeCache.Converter")]
         public static void RegisterTypeConverter(Type type, Func<IDictionary<string, object>, object> converter)
         {
-            lock (_dictionaryConverters)
+            Global.RegisterTypeConverter(type, converter);
+
+            // Side-effect if we call the global is to register in all other converters
+            foreach (var kvp in _converters)
             {
-                if (_dictionaryConverters.ContainsKey(type))
+                if (kvp.Key != "global")
                 {
-                    _dictionaryConverters.Remove(type);
+                    kvp.Value.RegisterTypeConverter(type, converter);
                 }
-                _dictionaryConverters.Add(type, converter);
             }
         }
 
+        [Obsolete("Use ITypeCache.Converter")]
         public static void RegisterTypeConverter(Type type, Func<object, object> converter)
         {
-            lock (_objectConverters)
+            Global.RegisterTypeConverter(type, converter);
+
+            // Side-effect if we call the global is to register in all other converters
+            foreach (var kvp in _converters)
             {
-                if (_objectConverters.ContainsKey(type))
+                if (kvp.Key != "global")
                 {
-                    _objectConverters.Remove(type);
+                    kvp.Value.RegisterTypeConverter(type, converter);
                 }
-                _objectConverters.Add(type, converter);
             }
         }
 
-        public static bool HasDictionaryConverter<T>()
-        {
-            return HasDictionaryConverter(typeof (T));
-        }
-
+        [Obsolete("Use ITypeCache.Converter")]
         public static bool HasDictionaryConverter(Type type)
         {
-            return _dictionaryConverters.ContainsKey(type);
+            return Global.HasDictionaryConverter(type);
         }
 
-        public static bool HasObjectConverter<T>()
-        {
-            return HasObjectConverter(typeof(T));
-        }
-
+        [Obsolete("Use ITypeCache.Converter")]
         public static bool HasObjectConverter(Type type)
         {
-            return _objectConverters.ContainsKey(type);
+            return Global.HasObjectConverter(type);
         }
 
+        [Obsolete("Use ITypeCache.Converter")]
         public static T Convert<T>(IDictionary<string, object> value)
         {
-            return (T)Convert(value, typeof(T));
+            return Global.Convert<T>(value);
         }
 
+        [Obsolete("Use ITypeCache.Converter")]
         public static T Convert<T>(object value)
         {
-            return (T)Convert(value, typeof(T));
+            return Global.Convert<T>(value);
         }
 
+        [Obsolete("Use ITypeCache.Converter")]
         public static object Convert(IDictionary<string, object> value, Type type)
         {
-            if (_dictionaryConverters.TryGetValue(type, out var converter))
-            {
-                return converter(value);
-            }
-
-            throw new InvalidOperationException($"No custom converter found for type {type}");
+            return Global.Convert(value, type);
         }
 
+        [Obsolete("Use ITypeCache.Converter")]
         public static object Convert(object value, Type type)
         {
-            if (_objectConverters.TryGetValue(type, out var converter))
-            {
-                return converter(value);
-            }
-
-            throw new InvalidOperationException($"No custom converter found for type {type}");
+            return Global.Convert(value, type);
         }
     }
 }

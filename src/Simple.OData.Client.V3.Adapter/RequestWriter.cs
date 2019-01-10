@@ -319,9 +319,9 @@ namespace Simple.OData.Client.V3.Adapter
             switch (propertyType.TypeKind())
             {
                 case EdmTypeKind.Complex:
-                    if (CustomConverters.HasObjectConverter(value.GetType()))
+                    if (Converter.HasObjectConverter(value.GetType()))
                     {
-                        return CustomConverters.Convert(value, value.GetType());
+                        return Converter.Convert(value, value.GetType());
                     }
                     var complexTypeProperties = propertyType.AsComplex().StructuralProperties();
                     return new ODataComplexValue
@@ -361,9 +361,9 @@ namespace Simple.OData.Client.V3.Adapter
                     return value.ToString();
 
                 case EdmTypeKind.None:
-                    if (CustomConverters.HasObjectConverter(value.GetType()))
+                    if (Converter.HasObjectConverter(value.GetType()))
                     {
-                        return CustomConverters.Convert(value, value.GetType());
+                        return Converter.Convert(value, value.GetType());
                     }
                     throw new NotSupportedException($"Conversion is not supported from type {value.GetType()} to OData type {propertyType}");
 

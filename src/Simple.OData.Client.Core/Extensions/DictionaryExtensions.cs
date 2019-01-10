@@ -19,7 +19,7 @@ namespace Simple.OData.Client.Extensions
             _collectionActivators = new ConcurrentDictionary<Tuple<Type,Type>, ActivatorDelegate>();
         }
 
-        public static T ToObject<T>(this IDictionary<string, object> source, ITypeCache typeCache, string dynamicPropertiesContainerName = null, bool dynamicObject = false)
+        public static T ToObject<T>(this IDictionary<string, object> source, ITypeCache typeCache, bool dynamicObject = false)
             where T : class
         {
             if (typeCache == null)
@@ -36,15 +36,10 @@ namespace Simple.OData.Client.Extensions
             if (typeof(T) == typeof(string) || typeCache.IsValue(typeof(T)))
                 throw new InvalidOperationException($"Unable to convert structural data to {typeof(T).Name}.");
 
-            return (T)ToObject(source, typeCache, typeof(T), dynamicPropertiesContainerName, dynamicObject);
+            return (T)ToObject(source, typeCache, typeof(T), dynamicObject);
         }
 
-        public static object ToObject(this IDictionary<string, object> source, ITypeCache typeCache, Type type, string dynamicPropertiesContainerName = null)
-        {
-            return ToObject(source, typeCache, type, dynamicPropertiesContainerName, false);
-        }
-
-        private static object ToObject(this IDictionary<string, object> source, ITypeCache typeCache, Type type, string dynamicPropertiesContainerName, bool dynamicObject)
+        public static object ToObject(this IDictionary<string, object> source, ITypeCache typeCache, Type type, bool dynamicObject = false)
         {
             if (typeCache == null)
             {
@@ -60,15 +55,15 @@ namespace Simple.OData.Client.Extensions
             if (type == typeof(ODataEntry))
                 return CreateODataEntry(source, typeCache, dynamicObject);
 
-            // TODO: Should be a method on TypeCache
-            if (CustomConverters.HasDictionaryConverter(type))
+            if (typeCache.Converter.HasDictionaryConverter(type))
             {
-                return CustomConverters.Convert(source, type);
+                return typeCache.Converter.Convert(source, type);
             }
 
             var instance = CreateInstance(type);
 
             IDictionary<string, object> dynamicProperties = null;
+            var dynamicPropertiesContainerName = typeCache.DynamicContainerName(type);
             if (!string.IsNullOrEmpty(dynamicPropertiesContainerName))
             {
                 dynamicProperties = CreateDynamicPropertiesContainer(type, typeCache, instance, dynamicPropertiesContainerName);
@@ -230,7 +225,6 @@ namespace Simple.OData.Client.Extensions
 
         private static IDictionary<string, object> CreateDynamicPropertiesContainer(Type type, ITypeCache typeCache, object instance, string dynamicPropertiesContainerName)
         {
-            // TODO: Use typeCache.IsDynamicType and typeCache.DynamicPropertiesName
             var property = typeCache.GetNamedProperty(type, dynamicPropertiesContainerName);
 
             if (property == null)

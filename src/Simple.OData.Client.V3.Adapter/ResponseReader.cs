@@ -38,7 +38,7 @@ namespace Simple.OData.Client.V3.Adapter
 
                 if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Error))
                 {
-                    return ODataResponse.FromStatusCode(responseMessage.StatusCode);
+                    return ODataResponse.FromStatusCode(TypeCache, responseMessage.StatusCode);
                 }
                 else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Value))
                 {
@@ -49,7 +49,7 @@ namespace Simple.OData.Client.V3.Adapter
                     else
                     {
                         var stream = await responseMessage.GetStreamAsync().ConfigureAwait(false);
-                        return ODataResponse.FromValueStream(stream, responseMessage is ODataBatchOperationResponseMessage);
+                        return ODataResponse.FromValueStream(TypeCache, stream, responseMessage is ODataBatchOperationResponseMessage);
                     }
                 }
                 else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Batch))
@@ -72,11 +72,11 @@ namespace Simple.OData.Client.V3.Adapter
 
                     if (_hasResponse)
                     {
-                        return ODataResponse.FromProperty(property.Name, GetPropertyValue(property.Value));
+                        return ODataResponse.FromProperty(TypeCache, property.Name, GetPropertyValue(property.Value));
                     }
                     else
                     {
-                        return ODataResponse.EmptyFeed;
+                        return ODataResponse.EmptyFeeds(TypeCache);
                     }
                 }
                 else
@@ -100,9 +100,9 @@ namespace Simple.OData.Client.V3.Adapter
                     case ODataBatchReaderState.Operation:
                         var operationMessage = odataReader.CreateOperationResponseMessage();
                         if (operationMessage.StatusCode == (int)HttpStatusCode.NoContent)
-                            batch.Add(ODataResponse.FromStatusCode(operationMessage.StatusCode));
+                            batch.Add(ODataResponse.FromStatusCode(TypeCache, operationMessage.StatusCode));
                         else if (operationMessage.StatusCode >= (int)HttpStatusCode.BadRequest)
-                            batch.Add(ODataResponse.FromStatusCode(
+                            batch.Add(ODataResponse.FromStatusCode(TypeCache, 
                                 operationMessage.StatusCode,
                                 await operationMessage.GetStreamAsync().ConfigureAwait(false)));
                         else
@@ -114,7 +114,7 @@ namespace Simple.OData.Client.V3.Adapter
                 }
             }
 
-            return ODataResponse.FromBatch(batch);
+            return ODataResponse.FromBatch(TypeCache, batch);
         }
 
         private ODataResponse ReadResponse(ODataCollectionReader odataReader)
@@ -140,7 +140,7 @@ namespace Simple.OData.Client.V3.Adapter
                 }
             }
 
-            return ODataResponse.FromCollection(collection);
+            return ODataResponse.FromCollection(TypeCache, collection);
         }
 
         private ODataResponse ReadResponse(ODataReader odataReader)
@@ -181,7 +181,7 @@ namespace Simple.OData.Client.V3.Adapter
                 }
             }
 
-            return ODataResponse.FromNode(rootNode);
+            return ODataResponse.FromNode(TypeCache, rootNode);
         }
 
         protected override void ConvertEntry(ResponseNode entryNode, object entry)
@@ -199,7 +199,7 @@ namespace Simple.OData.Client.V3.Adapter
 
         private ODataFeedAnnotations CreateAnnotations(ODataFeed feed)
         {
-            return new ODataFeedAnnotations()
+            return new ODataFeedAnnotations
             {
                 Id = feed.Id,
                 Count = feed.Count,

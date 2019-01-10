@@ -68,6 +68,58 @@
             <param name="regex">A regular expression matching all non-comparing characters. The default is &quot;[^a-z0-9]&quot;.</param>
             <remarks>Homogenized strings are always forced to lower-case.</remarks>
         </member>
+        <member name="T:Simple.OData.Client.Extensions.ITypeCache">
+            <summary>
+            Access the type definition with good performance.
+            </summary>
+        </member>
+        <member name="P:Simple.OData.Client.Extensions.ITypeCache.Converter">
+            <summary>
+            Gets the type converters.
+            </summary>
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.ITypeCache.Register``1(System.String)">
+            <summary>
+            Register the type, along with its dynamic properties name, also applies to sub-types in the same assembly
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="dynamicContainerName"></param>
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.ITypeCache.Register(System.Type,System.String)">
+            <summary>
+            Register the type, along with its dynamic properties name, also applies to sub-types in the same assembly
+            </summary>
+            <param name="type"></param>
+            <param name="dynamicContainerName"></param>
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.ITypeCache.IsDynamicType(System.Type)">
+            <summary>
+            Get whether the type is a dynamic
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.ITypeCache.DynamicContainerName(System.Type)">
+            <summary>
+            Gets the dynamic properties container name for a type, will be <see cref="F:System.String.Empty"/> unless registered
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.ITypeCache.GetMappedProperties(System.Type)">
+            <summary>
+            Get the mapped properties for a type
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.ITypeCache.GetMappedPropertiesWithNames(System.Type)">
+            <summary>
+            Get the mapped properties for a type along with the associated property name
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
         <member name="M:Simple.OData.Client.Extensions.ITypeCache.GetMappedProperty(System.Type,System.String)">
             <summary>
             Get a property that is either directly named or mapped via an attribute
@@ -92,12 +144,160 @@
             <param name="propertyName"></param>
             <returns></returns>
         </member>
+        <member name="M:Simple.OData.Client.Extensions.ITypeCache.GetAllProperties(System.Type)">
+            <summary>
+            Get all properties for a type
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
         <member name="M:Simple.OData.Client.Extensions.ITypeCache.GetNamedProperty(System.Type,System.String)">
             <summary>
             Get a directly named property
             </summary>
             <param name="type"></param>
             <param name="propertyName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.ITypeCache.GetDeclaredProperties(System.Type)">
+            <summary>
+            Get declared properties for a type.
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.ITypeCache.GetDeclaredProperty(System.Type,System.String)">
+            <summary>
+            Get a declared property
+            </summary>
+            <param name="type"></param>
+            <param name="propertyName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.ITypeCache.GetAllFields(System.Type)">
+            <summary>
+            Get all fields for a type
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.ITypeCache.GetAnyField(System.Type,System.String,System.Boolean)">
+            <summary>
+            Get a field for a type
+            </summary>
+            <param name="type"></param>
+            <param name="fieldName"></param>
+            <param name="includeNonPublic"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.ITypeCache.GetDeclaredFields(System.Type)">
+            <summary>
+            Get declared fields for a type
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.ITypeCache.GetDeclaredField(System.Type,System.String)">
+            <summary>
+            Get a declared field for a type
+            </summary>
+            <param name="type"></param>
+            <param name="fieldName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.ITypeCache.GetDeclaredMethod(System.Type,System.String)">
+            <summary>
+            Get a declared method for a type
+            </summary>
+            <param name="type"></param>
+            <param name="methodName"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.ITypeCache.GetDeclaredConstructors(System.Type)">
+            <summary>
+            Get the declared constructors for a type
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.ITypeCache.GetDefaultConstructor(System.Type)">
+            <summary>
+            Get the default constructor for a type
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.ITypeCache.GetTypeAttributes(System.Type)">
+            <summary>
+            Get the type's attributes
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.ITypeCache.GetGenericTypeArguments(System.Type)">
+            <summary>
+            Get the generic type arguments for a type
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.ITypeCache.IsAnonymousType(System.Type)">
+            <summary>
+            Get whether a type is anonymous
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.ITypeCache.IsTypeAssignableFrom(System.Type,System.Type)">
+            <summary>
+            Get whether we can assign a value of this type to another
+            </summary>
+            <param name="type"></param>
+            <param name="otherType"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.ITypeCache.HasCustomAttribute(System.Type,System.Type,System.Boolean)">
+            <summary>
+            Get whether a type has a specific custom attribute
+            </summary>
+            <param name="type"></param>
+            <param name="attributeType"></param>
+            <param name="inherit"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.ITypeCache.IsGeneric(System.Type)">
+            <summary>
+            Get whether a type is generic
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.ITypeCache.IsValue(System.Type)">
+            <summary>
+            Gets whether a type is a value type
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.ITypeCache.IsEnumType(System.Type)">
+            <summary>
+            Gets whether a type is an enum
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.ITypeCache.GetBaseType(System.Type)">
+            <summary>
+            Get the base type of a type
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.ITypeCache.GetMappedName(System.Type)">
+            <summary>
+            Get the mapped name of a type.
+            </summary>
+            <param name="type"></param>
             <returns></returns>
         </member>
         <member name="M:Simple.OData.Client.Extensions.MemberInfoExtensions.GetMappedName(System.Reflection.MemberInfo)">
@@ -112,6 +312,206 @@
             Just forwards to the static helpers
             </summary>
         </member>
+        <member name="M:Simple.OData.Client.Extensions.StaticTypeCache.#ctor">
+            <summary>
+            Creates a new instance of the <see cref="T:Simple.OData.Client.Extensions.StaticTypeCache"/> class.
+            </summary>
+        </member>
+        <member name="P:Simple.OData.Client.Extensions.StaticTypeCache.Converter">
+            <copydoc cref="P:Simple.OData.Client.Extensions.ITypeCache.Converter" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.StaticTypeCache.Register``1(System.String)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.Register``1(System.String)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.StaticTypeCache.Register(System.Type,System.String)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.Register(System.Type,System.String)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.StaticTypeCache.IsDynamicType(System.Type)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.IsDynamicType(System.Type)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.StaticTypeCache.DynamicContainerName(System.Type)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.DynamicContainerName(System.Type)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.StaticTypeCache.GetMappedProperties(System.Type)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.GetMappedProperties(System.Type)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.StaticTypeCache.GetMappedPropertiesWithNames(System.Type)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.GetMappedPropertiesWithNames(System.Type)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.StaticTypeCache.GetMappedProperty(System.Type,System.String)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.GetMappedProperty(System.Type,System.String)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.StaticTypeCache.GetMappedName(System.Type,System.Reflection.PropertyInfo)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.GetMappedName(System.Type,System.Reflection.PropertyInfo)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.StaticTypeCache.GetMappedName(System.Type,System.String)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.GetMappedName(System.Type,System.String)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.StaticTypeCache.GetAllProperties(System.Type)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.GetAllProperties(System.Type)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.StaticTypeCache.GetNamedProperty(System.Type,System.String)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.GetNamedProperty(System.Type,System.String)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.StaticTypeCache.GetDeclaredProperties(System.Type)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.GetDeclaredProperties(System.Type)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.StaticTypeCache.GetDeclaredProperty(System.Type,System.String)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.GetDeclaredProperty(System.Type,System.String)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.StaticTypeCache.GetAllFields(System.Type)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.GetAllFields(System.Type)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.StaticTypeCache.GetAnyField(System.Type,System.String,System.Boolean)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.GetAnyField(System.Type,System.String,System.Boolean)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.StaticTypeCache.GetDeclaredFields(System.Type)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.GetDeclaredFields(System.Type)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.StaticTypeCache.GetDeclaredField(System.Type,System.String)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.GetDeclaredField(System.Type,System.String)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.StaticTypeCache.GetDeclaredMethod(System.Type,System.String)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.GetDeclaredMethod(System.Type,System.String)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.StaticTypeCache.GetDeclaredConstructors(System.Type)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.GetDeclaredConstructors(System.Type)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.StaticTypeCache.GetDefaultConstructor(System.Type)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.GetDefaultConstructor(System.Type)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.StaticTypeCache.GetTypeAttributes(System.Type)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.GetTypeAttributes(System.Type)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.StaticTypeCache.GetGenericTypeArguments(System.Type)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.GetGenericTypeArguments(System.Type)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.StaticTypeCache.IsAnonymousType(System.Type)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.IsAnonymousType(System.Type)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.StaticTypeCache.IsTypeAssignableFrom(System.Type,System.Type)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.IsTypeAssignableFrom(System.Type,System.Type)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.StaticTypeCache.HasCustomAttribute(System.Type,System.Type,System.Boolean)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.HasCustomAttribute(System.Type,System.Type,System.Boolean)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.StaticTypeCache.IsGeneric(System.Type)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.IsGeneric(System.Type)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.StaticTypeCache.IsValue(System.Type)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.IsValue(System.Type)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.StaticTypeCache.IsEnumType(System.Type)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.IsEnumType(System.Type)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.StaticTypeCache.GetBaseType(System.Type)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.GetBaseType(System.Type)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.StaticTypeCache.GetMappedName(System.Type)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.GetMappedName(System.Type)" />
+        </member>
+        <member name="T:Simple.OData.Client.Extensions.TypeCache">
+            <copydoc cref="T:Simple.OData.Client.Extensions.ITypeCache" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.TypeCache.#ctor(Simple.OData.Client.ITypeConverter)">
+            <summary>
+            Creates a new instance of the <see cref="T:Simple.OData.Client.Extensions.TypeCache"/> class.
+            </summary>
+            <param name="converter"></param>
+        </member>
+        <member name="P:Simple.OData.Client.Extensions.TypeCache.Converter">
+            <copydoc cref="P:Simple.OData.Client.Extensions.ITypeCache.Converter" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.TypeCache.Register``1(System.String)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.Register``1(System.String)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.TypeCache.Register(System.Type,System.String)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.Register(System.Type,System.String)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.TypeCache.IsDynamicType(System.Type)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.IsDynamicType(System.Type)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.TypeCache.DynamicContainerName(System.Type)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.DynamicContainerName(System.Type)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.TypeCache.GetMappedProperties(System.Type)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.GetMappedProperties(System.Type)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.TypeCache.GetMappedPropertiesWithNames(System.Type)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.GetMappedPropertiesWithNames(System.Type)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.TypeCache.GetMappedProperty(System.Type,System.String)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.GetMappedProperty(System.Type,System.String)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.TypeCache.GetMappedName(System.Type,System.Reflection.PropertyInfo)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.GetMappedName(System.Type,System.Reflection.PropertyInfo)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.TypeCache.GetMappedName(System.Type,System.String)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.GetMappedName(System.Type,System.String)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.TypeCache.GetAllProperties(System.Type)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.GetAllProperties(System.Type)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.TypeCache.GetNamedProperty(System.Type,System.String)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.GetNamedProperty(System.Type,System.String)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.TypeCache.GetDeclaredProperties(System.Type)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.GetDeclaredProperties(System.Type)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.TypeCache.GetDeclaredProperty(System.Type,System.String)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.GetDeclaredProperty(System.Type,System.String)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.TypeCache.GetAllFields(System.Type)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.GetAllFields(System.Type)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.TypeCache.GetAnyField(System.Type,System.String,System.Boolean)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.GetAnyField(System.Type,System.String,System.Boolean)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.TypeCache.GetDeclaredFields(System.Type)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.GetDeclaredFields(System.Type)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.TypeCache.GetDeclaredField(System.Type,System.String)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.GetDeclaredField(System.Type,System.String)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.TypeCache.GetDeclaredMethod(System.Type,System.String)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.GetDeclaredMethod(System.Type,System.String)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.TypeCache.GetDeclaredConstructors(System.Type)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.GetDeclaredConstructors(System.Type)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.TypeCache.GetDefaultConstructor(System.Type)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.GetDefaultConstructor(System.Type)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.TypeCache.GetTypeAttributes(System.Type)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.GetTypeAttributes(System.Type)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.TypeCache.GetGenericTypeArguments(System.Type)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.GetGenericTypeArguments(System.Type)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.TypeCache.IsAnonymousType(System.Type)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.IsAnonymousType(System.Type)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.TypeCache.IsGeneric(System.Type)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.IsGeneric(System.Type)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.TypeCache.IsValue(System.Type)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.IsValue(System.Type)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.TypeCache.IsEnumType(System.Type)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.IsEnumType(System.Type)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.TypeCache.GetBaseType(System.Type)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.GetBaseType(System.Type)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.TypeCache.IsTypeAssignableFrom(System.Type,System.Type)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.IsTypeAssignableFrom(System.Type,System.Type)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.TypeCache.HasCustomAttribute(System.Type,System.Type,System.Boolean)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.HasCustomAttribute(System.Type,System.Type,System.Boolean)" />
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.TypeCache.GetMappedName(System.Type)">
+            <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.GetMappedName(System.Type)" />
+        </member>
         <member name="M:Simple.OData.Client.Extensions.TypeExtensions.GetNamedProperty(System.Type,System.String)">
             <summary>
             Get a directly named property
@@ -125,6 +525,101 @@
             Get a property that is either directly named or mapped via an attribute
             </summary>
             <param name="type"></param>
+            <param name="propertyName"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Simple.OData.Client.Extensions.TypeHelper">
+            <summary>
+            Holds information about a type.
+            </summary>
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.TypeHelper.#ctor(System.Type,System.Boolean,System.String)">
+            <summary>
+            Creates a new instance of the <see cref="T:Simple.OData.Client.Extensions.TypeHelper"/> class.
+            </summary>
+            <param name="type"></param>
+            <param name="dynamicType"></param>
+            <param name="dynamicContainerName"></param>
+        </member>
+        <member name="P:Simple.OData.Client.Extensions.TypeHelper.Type">
+            <summary>
+            Gets the type we are responsible for.
+            </summary>
+        </member>
+        <member name="P:Simple.OData.Client.Extensions.TypeHelper.MappedName">
+            <summary>
+            Gets the mapped name i.e. the OData type we correspond to.
+            </summary>
+        </member>
+        <member name="P:Simple.OData.Client.Extensions.TypeHelper.IsDynamicType">
+            <summary>
+            Gets whether we are a dynamic type
+            </summary>
+        </member>
+        <member name="P:Simple.OData.Client.Extensions.TypeHelper.IsAnonymousType">
+            <summary>
+            Gets whether we are an anonymous type
+            </summary>
+        </member>
+        <member name="P:Simple.OData.Client.Extensions.TypeHelper.IsGeneric">
+            <summary>
+            Gets whether we are a generic type
+            </summary>
+        </member>
+        <member name="P:Simple.OData.Client.Extensions.TypeHelper.IsValue">
+            <summary>
+            Gets whether we are a value type
+            </summary>
+        </member>
+        <member name="P:Simple.OData.Client.Extensions.TypeHelper.IsEnumType">
+            <summary>
+            Gets whether we are an enum
+            </summary>
+        </member>
+        <member name="P:Simple.OData.Client.Extensions.TypeHelper.BaseType">
+            <summary>
+            Gets the base type
+            </summary>
+        </member>
+        <member name="P:Simple.OData.Client.Extensions.TypeHelper.DynamicPropertiesName">
+            <summary>
+            Gets the dynamic properties container name
+            </summary>
+        </member>
+        <member name="P:Simple.OData.Client.Extensions.TypeHelper.AllProperties">
+            <summary>
+            Gets all properties
+            </summary>
+        </member>
+        <member name="P:Simple.OData.Client.Extensions.TypeHelper.DeclaredProperties">
+            <summary>
+            Gets declared properties
+            </summary>
+        </member>
+        <member name="P:Simple.OData.Client.Extensions.TypeHelper.AllFields">
+            <summary>
+            Gets all fields
+            </summary>
+        </member>
+        <member name="P:Simple.OData.Client.Extensions.TypeHelper.DeclaredFields">
+            <summary>
+            Gets declared fields.
+            </summary>
+        </member>
+        <member name="P:Simple.OData.Client.Extensions.TypeHelper.MappedProperties">
+            <summary>
+            Gets mapped properties
+            </summary>
+        </member>
+        <member name="P:Simple.OData.Client.Extensions.TypeHelper.MappedPropertiesWithNames">
+            <summary>
+            Gets mapped properties with the mapped name
+            </summary>
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.TypeHelper.GetMappedProperty(System.String)">
+            <summary>
+            Gets a mapped property
+            </summary>
             <param name="propertyName"></param>
             <returns></returns>
         </member>
@@ -144,6 +639,7 @@
             Provides access to OData operations in a fluent style.
             </summary>
             <typeparam name="T">The entity type.</typeparam>
+            <typeparam name="FT"></typeparam>
         </member>
         <member name="M:Simple.OData.Client.FluentClientBase`2.NavigateTo``1(System.String)">
             <summary>
@@ -1611,6 +2107,7 @@
             Creates from the instance of HttpResponseMessage.
             </summary>
             <param name="statusCode">The HTTP status code.</param>
+            <param name="responseContent"></param>
             <returns>The instance of <see cref="T:Simple.OData.Client.WebRequestException"/>.</returns>
         </member>
         <member name="M:Simple.OData.Client.WebRequestException.#ctor(System.String,System.Net.HttpStatusCode,System.Uri,System.String,System.Exception)">
@@ -2349,6 +2846,80 @@
             </summary>
             <returns>An <see cref="T:System.Net.Http.HttpClient"/> instance.</returns>
         </member>
+        <member name="M:Simple.OData.Client.ITypeConverter.RegisterTypeConverter(System.Type,System.Func{System.Collections.Generic.IDictionary{System.String,System.Object},System.Object})">
+            <summary>
+            Register a dictionary type converter
+            </summary>
+            <param name="type"></param>
+            <param name="converter"></param>
+        </member>
+        <member name="M:Simple.OData.Client.ITypeConverter.RegisterTypeConverter(System.Type,System.Func{System.Object,System.Object})">
+            <summary>
+            Register an object type converter
+            </summary>
+            <param name="type"></param>
+            <param name="converter"></param>
+        </member>
+        <member name="M:Simple.OData.Client.ITypeConverter.HasDictionaryConverter``1">
+            <summary>
+            Determine if a type has a dictionary converter
+            </summary>
+            <typeparam name="T"></typeparam>
+            <returns></returns>
+        </member>
+        <member name="M:Simple.OData.Client.ITypeConverter.HasDictionaryConverter(System.Type)">
+            <summary>
+            Determine if a type has a dictionary converter
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Simple.OData.Client.ITypeConverter.HasObjectConverter``1">
+            <summary>
+            Determine if a type has an object converter
+            </summary>
+            <typeparam name="T"></typeparam>
+            <returns></returns>
+        </member>
+        <member name="M:Simple.OData.Client.ITypeConverter.HasObjectConverter(System.Type)">
+            <summary>
+            Determine if a type has an object converter
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Simple.OData.Client.ITypeConverter.Convert``1(System.Collections.Generic.IDictionary{System.String,System.Object})">
+            <summary>
+            Convert a dictionary to the specified type
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Simple.OData.Client.ITypeConverter.Convert``1(System.Object)">
+            <summary>
+            Convert an object to the specified type
+            </summary>
+            <typeparam name="T"></typeparam>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Simple.OData.Client.ITypeConverter.Convert(System.Collections.Generic.IDictionary{System.String,System.Object},System.Type)">
+            <summary>
+            Convert a dictionary to the specified type
+            </summary>
+            <param name="value"></param>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Simple.OData.Client.ITypeConverter.Convert(System.Object,System.Type)">
+            <summary>
+            Convert an object to the specified type
+            </summary>
+            <param name="value"></param>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
         <member name="T:Simple.OData.Client.ODataBatch">
             <summary>
             Performs batch processing of OData requests by grouping multiple operations in a single HTTP POST request in accordance with OData protocol
@@ -2684,6 +3255,11 @@
             <value>
             The content of the service metadata document.
             </value>
+        </member>
+        <member name="P:Simple.OData.Client.ODataClientSettings.TypeCache">
+            <summary>
+            Gets the <see cref="T:Simple.OData.Client.Extensions.ITypeCache"/> associated with the uri, used to register converters and dynamic types.
+            </summary>
         </member>
         <member name="P:Simple.OData.Client.ODataClientSettings.RenewHttpConnection">
             <summary>
@@ -3198,6 +3774,44 @@
               Overrides the current thread's CurrentUICulture property for all
               resource lookups using this strongly typed resource class.
             </summary>
+        </member>
+        <member name="T:Simple.OData.Client.TypeConverter">
+            <copydoc cref="T:Simple.OData.Client.ITypeConverter" />
+        </member>
+        <member name="M:Simple.OData.Client.TypeConverter.#ctor">
+            <summary>
+            Creates a new instance of the <see cref="T:Simple.OData.Client.TypeConverter"/> class.
+            </summary>
+        </member>
+        <member name="M:Simple.OData.Client.TypeConverter.RegisterTypeConverter(System.Type,System.Func{System.Collections.Generic.IDictionary{System.String,System.Object},System.Object})">
+            <copydoc cref="M:Simple.OData.Client.ITypeConverter.RegisterTypeConverter(System.Type,System.Func{System.Collections.Generic.IDictionary{System.String,System.Object},System.Object})" />
+        </member>
+        <member name="M:Simple.OData.Client.TypeConverter.RegisterTypeConverter(System.Type,System.Func{System.Object,System.Object})">
+            <copydoc cref="M:Simple.OData.Client.ITypeConverter.RegisterTypeConverter(System.Type,System.Func{System.Object,System.Object})" />
+        </member>
+        <member name="M:Simple.OData.Client.TypeConverter.HasDictionaryConverter``1">
+            <copydoc cref="M:Simple.OData.Client.ITypeConverter.HasDictionaryConverter``1" />
+        </member>
+        <member name="M:Simple.OData.Client.TypeConverter.HasDictionaryConverter(System.Type)">
+            <copydoc cref="M:Simple.OData.Client.ITypeConverter.HasDictionaryConverter(System.Type)" />
+        </member>
+        <member name="M:Simple.OData.Client.TypeConverter.HasObjectConverter``1">
+            <copydoc cref="M:Simple.OData.Client.ITypeConverter.HasObjectConverter``1" />
+        </member>
+        <member name="M:Simple.OData.Client.TypeConverter.HasObjectConverter(System.Type)">
+            <copydoc cref="M:Simple.OData.Client.ITypeConverter.HasObjectConverter(System.Type)" />
+        </member>
+        <member name="M:Simple.OData.Client.TypeConverter.Convert``1(System.Collections.Generic.IDictionary{System.String,System.Object})">
+            <copydoc cref="M:Simple.OData.Client.ITypeConverter.Convert``1(System.Collections.Generic.IDictionary{System.String,System.Object})" />
+        </member>
+        <member name="M:Simple.OData.Client.TypeConverter.Convert``1(System.Object)">
+            <copydoc cref="M:Simple.OData.Client.ITypeConverter.Convert``1(System.Object)" />
+        </member>
+        <member name="M:Simple.OData.Client.TypeConverter.Convert(System.Collections.Generic.IDictionary{System.String,System.Object},System.Type)">
+            <copydoc cref="M:Simple.OData.Client.ITypeConverter.Convert(System.Collections.Generic.IDictionary{System.String,System.Object},System.Type)" />
+        </member>
+        <member name="M:Simple.OData.Client.TypeConverter.Convert(System.Object,System.Type)">
+            <copydoc cref="M:Simple.OData.Client.ITypeConverter.Convert(System.Collections.Generic.IDictionary{System.String,System.Object},System.Type)" />
         </member>
         <member name="T:Simple.OData.Client.UnresolvableObjectException">
             <summary>

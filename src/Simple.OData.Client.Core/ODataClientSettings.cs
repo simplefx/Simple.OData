@@ -3,6 +3,8 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
+using Simple.OData.Client.Extensions;
+
 namespace Simple.OData.Client
 {
     /// <summary>
@@ -117,6 +119,22 @@ namespace Simple.OData.Client
         /// The content of the service metadata document.
         /// </value>
         public string MetadataDocument { get; set; }
+
+        /// <summary>
+        /// Gets the <see cref="ITypeCache"/> associated with the uri, used to register converters and dynamic types.
+        /// </summary>
+        public ITypeCache TypeCache
+        {
+            get
+            {
+                if (BaseUri == null)
+                {
+                    throw new InvalidOperationException("Assign BaseUri before accessing TypeCache");
+                }
+
+                return TypeCaches.TypeCache(BaseUri.AbsoluteUri);
+            }
+        }
 
         /// <summary>
         /// Gets or sets a value indicating whether <see cref="System.Net.Http.HttpClient"/> connection should be disposed and renewed between OData requests.

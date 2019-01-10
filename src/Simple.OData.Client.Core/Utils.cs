@@ -125,11 +125,12 @@ namespace Simple.OData.Client
             }
         }
 
+        [Obsolete("Use ITypeCache.TryConvert")]
         public static bool TryConvert(object value, Type targetType, ITypeCache typeCache, out object result)
         {
             if (typeCache == null)
             {
-                typeCache = new StaticTypeCache();
+                typeCache = TypeCaches.TypeCache("global");
             }
 
             try
@@ -194,11 +195,12 @@ namespace Simple.OData.Client
             }
         }
 
+        [Obsolete("Use ITypeCache.Convert")]
         public static object Convert(object value, Type targetType, ITypeCache typeCache = null)
         {
             if (typeCache == null)
             {
-                typeCache = new StaticTypeCache();
+                typeCache = TypeCaches.TypeCache("global");
             }
 
             if (value == null && !typeCache.IsValue(targetType))
