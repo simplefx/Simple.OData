@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Threading.Tasks;
-using Simple.OData.Client;
+
 using BenchmarkDotNet.Attributes;
-using Simple.OData.Client.Tests;
+
 using Xunit;
 
 namespace Simple.OData.Client.Benchmarks
@@ -17,23 +15,23 @@ namespace Simple.OData.Client.Benchmarks
     public class CrmEmployee
     {
         [Benchmark]
-        public void GetAll()
+        public async Task GetAll()
         {
-            var result = Utils.GetClient("crm_schema.xml", "crm_result_10.json")
+            var result = await Utils.GetClient("crm_schema.xml", "crm_result_10.json")
                 .For<he_employee>()
-                .FindEntriesAsync()
-                .Result.ToList();
-            Assert.Equal(10, result.Count);
+                .FindEntriesAsync();
+
+            Assert.Equal(10, result.ToList().Count);
         }
 
         [Benchmark]
-        public void GetSingle()
+        public async Task GetSingle()
         {
-            var result = Utils.GetClient("crm_schema.xml", "crm_result_1.json")
+            var result = await Utils.GetClient("crm_schema.xml", "crm_result_1.json")
                 .For<he_employee>()
                 .Filter(x => x.he_employeenumber == 123456)
-                .FindEntryAsync()
-                .Result;
+                .FindEntryAsync();
+
             Assert.Equal(123456, result.he_employeenumber);
         }
     }

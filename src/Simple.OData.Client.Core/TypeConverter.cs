@@ -18,6 +18,18 @@ namespace Simple.OData.Client
             _objectConverters = new Dictionary<Type, Func<object, object>>();
         }
 
+        /// <copydoc cref="ITypeConverter.RegisterTypeConverter{T}(Func{IDictionary{string, object}, object})" />
+        public void RegisterTypeConverter<T>(Func<IDictionary<string, object>, object> converter)
+        {
+            RegisterTypeConverter(typeof(T), converter);
+        }
+
+        /// <copydoc cref="ITypeConverter.RegisterTypeConverter{T}(Func{object, object})" />
+        public void RegisterTypeConverter<T>(Func<object, object> converter)
+        {
+            RegisterTypeConverter(typeof(T), converter);
+        }
+
         /// <copydoc cref="ITypeConverter.RegisterTypeConverter(Type, Func{IDictionary{string, object}, object})" />
         public void RegisterTypeConverter(Type type, Func<IDictionary<string, object>, object> converter)
         {

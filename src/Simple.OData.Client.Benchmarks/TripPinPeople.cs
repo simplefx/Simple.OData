@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
@@ -19,25 +17,25 @@ namespace Simple.OData.Client.Benchmarks
     public class TripPinPeople
     {
         [Benchmark]
-        public void FindTypedPeopleWithTripsAndFriends()
+        public async Task FindTypedPeopleWithTripsAndFriends()
         {
-            var result = Utils.GetClient("TripPin.xml", "TripPin_result_20.json")
+            var result = await Utils.GetClient("TripPin.xml", "TripPin_result_20.json")
                 .For<Person>()
                 .Expand(x => new {x.Trips, x.Friends})
-                .FindEntriesAsync()
-                .Result.ToList();
-            Assert.Equal(20, result.Count);
+                .FindEntriesAsync();
+
+            Assert.Equal(20, result.ToList().Count);
         }
 
         [Benchmark]
-        public void FindUntypedPeopleWithTripsAndFriends()
+        public async Task FindUntypedPeopleWithTripsAndFriends()
         {
-            var result = Utils.GetClient("TripPin.xml", "TripPin_result_20.json")
+            var result = await Utils.GetClient("TripPin.xml", "TripPin_result_20.json")
                 .For("People")
                 .Expand(new [] {"Trips", "Friends"})
-                .FindEntriesAsync()
-                .Result.ToList();
-            Assert.Equal(20, result.Count);
+                .FindEntriesAsync();
+
+            Assert.Equal(20, result.ToList().Count);
         }
 
         [Benchmark]
