@@ -8,6 +8,18 @@ namespace Simple.OData.Client
         /// <summary>
         /// Register a dictionary type converter
         /// </summary>
+        /// <param name="converter"></param>
+        void RegisterTypeConverter<T>(Func<IDictionary<string, object>, object> converter);
+
+        /// <summary>
+        /// Register an object type converter
+        /// </summary>
+        /// <param name="converter"></param>
+        void RegisterTypeConverter<T>(Func<object, object> converter);
+
+        /// <summary>
+        /// Register a dictionary type converter
+        /// </summary>
         /// <param name="type"></param>
         /// <param name="converter"></param>
         void RegisterTypeConverter(Type type, Func<IDictionary<string, object>, object> converter);

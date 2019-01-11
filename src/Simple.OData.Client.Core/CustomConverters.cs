@@ -23,7 +23,7 @@ namespace Simple.OData.Client
 
         public static ITypeConverter Global => Converter("global");
 
-        [Obsolete("Use ITypeCache.Converter")]
+        [Obsolete("Use ODataClientSettings.TypeCache.RegisterTypeConverter")]
         public static void RegisterTypeConverter(Type type, Func<IDictionary<string, object>, object> converter)
         {
             Global.RegisterTypeConverter(type, converter);
@@ -38,7 +38,7 @@ namespace Simple.OData.Client
             }
         }
 
-        [Obsolete("Use ITypeCache.Converter")]
+        [Obsolete("Use ODataClientSettings.TypeCache.RegisterTypeConverter")]
         public static void RegisterTypeConverter(Type type, Func<object, object> converter)
         {
             Global.RegisterTypeConverter(type, converter);
