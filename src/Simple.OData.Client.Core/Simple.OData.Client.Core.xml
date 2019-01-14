@@ -2846,6 +2846,18 @@
             </summary>
             <returns>An <see cref="T:System.Net.Http.HttpClient"/> instance.</returns>
         </member>
+        <member name="M:Simple.OData.Client.ITypeConverter.RegisterTypeConverter``1(System.Func{System.Collections.Generic.IDictionary{System.String,System.Object},System.Object})">
+            <summary>
+            Register a dictionary type converter
+            </summary>
+            <param name="converter"></param>
+        </member>
+        <member name="M:Simple.OData.Client.ITypeConverter.RegisterTypeConverter``1(System.Func{System.Object,System.Object})">
+            <summary>
+            Register an object type converter
+            </summary>
+            <param name="converter"></param>
+        </member>
         <member name="M:Simple.OData.Client.ITypeConverter.RegisterTypeConverter(System.Type,System.Func{System.Collections.Generic.IDictionary{System.String,System.Object},System.Object})">
             <summary>
             Register a dictionary type converter
@@ -3782,6 +3794,12 @@
             <summary>
             Creates a new instance of the <see cref="T:Simple.OData.Client.TypeConverter"/> class.
             </summary>
+        </member>
+        <member name="M:Simple.OData.Client.TypeConverter.RegisterTypeConverter``1(System.Func{System.Collections.Generic.IDictionary{System.String,System.Object},System.Object})">
+            <copydoc cref="M:Simple.OData.Client.ITypeConverter.RegisterTypeConverter``1(System.Func{System.Collections.Generic.IDictionary{System.String,System.Object},System.Object})" />
+        </member>
+        <member name="M:Simple.OData.Client.TypeConverter.RegisterTypeConverter``1(System.Func{System.Object,System.Object})">
+            <copydoc cref="M:Simple.OData.Client.ITypeConverter.RegisterTypeConverter``1(System.Func{System.Object,System.Object})" />
         </member>
         <member name="M:Simple.OData.Client.TypeConverter.RegisterTypeConverter(System.Type,System.Func{System.Collections.Generic.IDictionary{System.String,System.Object},System.Object})">
             <copydoc cref="M:Simple.OData.Client.ITypeConverter.RegisterTypeConverter(System.Type,System.Func{System.Collections.Generic.IDictionary{System.String,System.Object},System.Object})" />
