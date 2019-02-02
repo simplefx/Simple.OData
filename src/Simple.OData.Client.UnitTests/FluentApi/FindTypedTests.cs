@@ -744,13 +744,26 @@ namespace Simple.OData.Client.Tests.FluentApi
             Assert.Equal(ExpectedCountOfOrdersHavingAllDetails, products.Count());
         }
 
-        class OrderDetails : OrderDetail { }
         class Order_Details : OrderDetail { }
+        class OrderDetails
+        {
+            public int Order_ID { get; set; }
+            public int product_id { get; set; }
+            public int quantity { get; set; }
+        }
+        class orderDetails
+        {
+            public int orderID { get; set; }
+            public int productID { get; set; }
+            public int quantity { get; set; }
+        }
 
         [Fact]
         public async Task NameMatchResolverStrict()
         {
-            var client = new ODataClient(CreateDefaultSettings().WithNameResolver(ODataNameMatchResolver.Strict).WithHttpMock());
+            var client = new ODataClient(CreateDefaultSettings()
+                .WithNameResolver(ODataNameMatchResolver.Strict)
+                .WithHttpMock());
             var orderDetails1 = await client
                 .For<Order_Details>()
                 .FindEntriesAsync();
@@ -761,23 +774,34 @@ namespace Simple.OData.Client.Tests.FluentApi
         }
 
         [Fact]
-        public async Task NameMatchResolverNoStrict()
+        public async Task NameMatchResolverNotStrict()
         {
-            var client = new ODataClient(CreateDefaultSettings().WithNameResolver(ODataNameMatchResolver.NotStrict).WithHttpMock());
+            var client = new ODataClient(CreateDefaultSettings()
+                .WithNameResolver(ODataNameMatchResolver.NotStrict)
+                .WithHttpMock());
             var orderDetails1 = await client
                 .For<Order_Details>()
                 .FindEntriesAsync();
             Assert.NotEmpty(orderDetails1);
+            Assert.True(orderDetails1.First().OrderID > 0);
             var orderDetails2 = await client
                 .For<OrderDetails>()
                 .FindEntriesAsync();
             Assert.NotEmpty(orderDetails2);
+            Assert.True(orderDetails2.First().Order_ID > 0);
         }
 
-        public class ODataOrgProduct
+        [Fact]
+        public async Task NameMatchResolverCaseInsensitive()
         {
-            public string Name { get; set; }
-            public decimal Price { get; set; }
+            var client = new ODataClient(CreateDefaultSettings()
+                .WithNameResolver(ODataNameMatchResolver.AlpahumericCaseInsensitive)
+                .WithHttpMock());
+            var orderDetails = await client
+                .For<orderDetails>()
+                .FindEntriesAsync();
+            Assert.NotEmpty(orderDetails);
+            Assert.True(orderDetails.First().orderID > 0);
         }
     }
 }
