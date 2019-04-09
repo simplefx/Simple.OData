@@ -843,7 +843,7 @@ namespace Simple.OData.Client
                 return _batchResponse.AsEntry(false);
 
             var requestBuilder = new RequestBuilder(command, _session, this.BatchWriter);
-            var request = await requestBuilder.InsertRequestAsync(resultRequired, cancellationToken);
+            var request = await requestBuilder.InsertRequestAsync(resultRequired, cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var result = await ExecuteRequestWithResultAsync(request, cancellationToken,
@@ -866,7 +866,7 @@ namespace Simple.OData.Client
                 return _batchResponse.AsEntry(false);
 
             var requestBuilder = new RequestBuilder(command, _session, this.BatchWriter);
-            var request = await requestBuilder.UpdateRequestAsync(resultRequired, cancellationToken);
+            var request = await requestBuilder.UpdateRequestAsync(resultRequired, cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var result = await ExecuteRequestWithResultAsync(request, cancellationToken,
