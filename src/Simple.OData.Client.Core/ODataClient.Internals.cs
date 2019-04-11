@@ -82,7 +82,7 @@ namespace Simple.OData.Client
 
             try
             {
-                using (await _requestRunner.ExecuteRequestAsync(request, cancellationToken))
+                using (await _requestRunner.ExecuteRequestAsync(request, cancellationToken).ConfigureAwait(false))
                 {
                 }
             }
@@ -137,7 +137,7 @@ namespace Simple.OData.Client
 
             try
             {
-                using (var response = await _requestRunner.ExecuteRequestAsync(request, cancellationToken))
+                using (var response = await _requestRunner.ExecuteRequestAsync(request, cancellationToken).ConfigureAwait(false))
                 {
                     if (response.IsSuccessStatusCode && response.StatusCode != HttpStatusCode.NoContent &&
                         (request.Method == RestVerbs.Get || request.ResultRequired))
@@ -287,7 +287,7 @@ namespace Simple.OData.Client
             {
                 foreach (var entry in entries)
                 {
-                    await EnrichWithMediaPropertiesAsync(entry, command.Details.MediaProperties, cancellationToken);
+                    await EnrichWithMediaPropertiesAsync(entry, command.Details.MediaProperties, cancellationToken).ConfigureAwait(false);
                     if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
                 }
             }
@@ -301,14 +301,14 @@ namespace Simple.OData.Client
                 entityMediaPropertyName = entityMediaPropertyName ?? FluentCommand.AnnotationsLiteral;
                 if (entry.Annotations != null)
                 {
-                    await GetMediaStreamValueAsync(entry.Data, entityMediaPropertyName, entry.Annotations.MediaResource, cancellationToken);
+                    await GetMediaStreamValueAsync(entry.Data, entityMediaPropertyName, entry.Annotations.MediaResource, cancellationToken).ConfigureAwait(false);
                 }
 
                 foreach (var propertyName in mediaProperties)
                 {
                     if (entry.Data.TryGetValue(propertyName, out var value))
                     {
-                        await GetMediaStreamValueAsync(entry.Data, propertyName, value as ODataMediaAnnotations, cancellationToken);
+                        await GetMediaStreamValueAsync(entry.Data, propertyName, value as ODataMediaAnnotations, cancellationToken).ConfigureAwait(false);
                     }
                 }
             }
@@ -319,7 +319,7 @@ namespace Simple.OData.Client
             var mediaLink = annotations == null ? null : annotations.ReadLink ?? annotations.EditLink;
             if (mediaLink != null)
             {
-                var stream = await GetMediaStreamAsync(mediaLink.AbsoluteUri, cancellationToken);
+                var stream = await GetMediaStreamAsync(mediaLink.AbsoluteUri, cancellationToken).ConfigureAwait(false);
                 if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
                 if (entry.TryGetValue(propertyName, out _))

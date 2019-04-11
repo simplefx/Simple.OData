@@ -280,7 +280,7 @@ namespace Simple.OData.Client
                 return _batchResponse.AsEntry(false);
 
             var requestBuilder = new RequestBuilder(commandText, _session, this.BatchWriter);
-            var request = await requestBuilder.GetRequestAsync(false, cancellationToken);
+            var request = await requestBuilder.GetRequestAsync(false, cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var result = await ExecuteRequestWithResultAsync(request, cancellationToken,
@@ -300,7 +300,7 @@ namespace Simple.OData.Client
                 return _batchResponse.AsScalar<object>();
 
             var requestBuilder = new RequestBuilder(commandText, _session, this.BatchWriter);
-            var request = await requestBuilder.GetRequestAsync(true, cancellationToken);
+            var request = await requestBuilder.GetRequestAsync(true, cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var result = await ExecuteRequestWithResultAsync(request, cancellationToken,
@@ -350,7 +350,7 @@ namespace Simple.OData.Client
                 .AsBoundClient().Command;
 
             var requestBuilder = new RequestBuilder(command, _session, this.BatchWriter);
-            var request = await requestBuilder.GetRequestAsync(false, cancellationToken);
+            var request = await requestBuilder.GetRequestAsync(false, cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             return await ExecuteRequestWithResultAsync(request, cancellationToken,
@@ -532,7 +532,7 @@ namespace Simple.OData.Client
                 throw new NotSupportedException("Media stream requests are not supported in batch mode.");
 
             var requestBuilder = new RequestBuilder(commandText, _session, this.BatchWriter);
-            var request = await requestBuilder.GetRequestAsync(true, cancellationToken);
+            var request = await requestBuilder.GetRequestAsync(true, cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             return await ExecuteGetStreamRequestAsync(request, cancellationToken).ConfigureAwait(false);
@@ -549,7 +549,7 @@ namespace Simple.OData.Client
                 throw new NotSupportedException("Media stream requests are not supported in batch mode.");
 
             var requestBuilder = new RequestBuilder(commandText, _session, this.BatchWriter);
-            var request = await requestBuilder.UpdateRequestAsync(stream, contentType, optimisticConcurrency, cancellationToken);
+            var request = await requestBuilder.UpdateRequestAsync(stream, contentType, optimisticConcurrency, cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             await ExecuteRequestAsync(request, cancellationToken).ConfigureAwait(false);
@@ -768,7 +768,7 @@ namespace Simple.OData.Client
             string commandText, bool scalarResult, ODataFeedAnnotations annotations, CancellationToken cancellationToken)
         {
             var requestBuilder = new RequestBuilder(commandText, _session, this.BatchWriter);
-            var request = await requestBuilder.GetRequestAsync(scalarResult, cancellationToken);
+            var request = await requestBuilder.GetRequestAsync(scalarResult, cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             return await ExecuteRequestWithResultAsync(request, cancellationToken, x =>
@@ -929,7 +929,7 @@ namespace Simple.OData.Client
                 return;
 
             var requestBuilder = new RequestBuilder(command, _session, this.BatchWriter);
-            var request = await requestBuilder.DeleteRequestAsync(cancellationToken);
+            var request = await requestBuilder.DeleteRequestAsync(cancellationToken).ConfigureAwait(false);
             if (!IsBatchRequest)
             {
                 using (await _requestRunner.ExecuteRequestAsync(request, cancellationToken).ConfigureAwait(false))
@@ -958,7 +958,7 @@ namespace Simple.OData.Client
                 return;
 
             var requestBuilder = new RequestBuilder(command, _session, this.BatchWriter);
-            var request = await requestBuilder.LinkRequestAsync(linkName, linkedEntryKey, cancellationToken);
+            var request = await requestBuilder.LinkRequestAsync(linkName, linkedEntryKey, cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             if (!IsBatchRequest)
@@ -975,7 +975,7 @@ namespace Simple.OData.Client
                 return;
 
             var requestBuilder = new RequestBuilder(command, _session, this.BatchWriter);
-            var request = await requestBuilder.UnlinkRequestAsync(linkName, linkedEntryKey, cancellationToken);
+            var request = await requestBuilder.UnlinkRequestAsync(linkName, linkedEntryKey, cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             if (!IsBatchRequest)
