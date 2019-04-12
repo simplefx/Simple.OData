@@ -20,7 +20,7 @@
     <iconUrl>http://www.odata.org/wp-content/uploads/2014/05/ODataLogo-96.png</iconUrl>
     <copyright>Copyright 2012-2018 Vagif Abilov</copyright>
     <language>en-us</language>
-    <tags>odata data rest client portable pcl netfx net40 net45 netstandard netcore mono adnroid ios</tags>
+    <tags>odata data rest client portable pcl netfx net40 net45 netstandard netcore mono android ios</tags>
     <dependencies>
       <group targetFramework="net452">
         <dependency id="Microsoft.Data.OData" version="[5.8.4,6)" />
