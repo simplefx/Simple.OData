@@ -30,7 +30,7 @@ namespace Simple.OData.Client
 
         public async Task<byte[]> GetStreamAsArrayAsync(CancellationToken cancellationToken)
         {
-            using (var stream = await _client.GetMediaStreamAsync(_command, cancellationToken))
+            using (var stream = await _client.GetMediaStreamAsync(_command, cancellationToken).ConfigureAwait(false))
             {
                 return Utils.StreamToByteArray(stream);
             }
@@ -43,7 +43,7 @@ namespace Simple.OData.Client
 
         public async Task<string> GetStreamAsStringAsync(CancellationToken cancellationToken)
         {
-            using (var stream = await _client.GetMediaStreamAsync(_command, cancellationToken))
+            using (var stream = await _client.GetMediaStreamAsync(_command, cancellationToken).ConfigureAwait(false))
             {
                 return Utils.StreamToString(stream);
             }

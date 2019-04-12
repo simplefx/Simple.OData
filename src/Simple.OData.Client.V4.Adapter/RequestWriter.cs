@@ -68,7 +68,7 @@ namespace Simple.OData.Client.V4.Adapter
                 var entry = CreateODataEntry(entityType.FullName(), entryDetails.Properties, null);
 
                 RegisterRootEntry(entry);
-                await WriteEntryPropertiesAsync(entryWriter, entry, entryDetails.Links);
+                await WriteEntryPropertiesAsync(entryWriter, entry, entryDetails.Links).ConfigureAwait(false);
                 UnregisterRootEntry(entry);
 
                 return IsBatch ? null : await message.GetStreamAsync().ConfigureAwait(false);
