@@ -504,7 +504,7 @@ namespace Simple.OData.Client
         /// <returns>Execution result.</returns>
         public Task<T> ExecuteAsSingleAsync()
         {
-            return ExecuteAsSingleAsync<T>(CancellationToken.None);
+            return ExecuteAsSingleAsync(CancellationToken.None);
         }
         /// <summary>
         /// Executes the OData function or action and returns a single item.
@@ -521,7 +521,9 @@ namespace Simple.OData.Client
         /// <returns>Execution result.</returns>
         public Task<T> ExecuteAsSingleAsync(CancellationToken cancellationToken)
         {
-            return ExecuteAsSingleAsync<T>(cancellationToken);
+            return FilterAndTypeColumnsAsync(
+                _client.ExecuteAsSingleAsync(_command, cancellationToken),
+                _command.SelectedColumns, _command.DynamicPropertiesContainerName);
         }
         /// <summary>
         /// Executes the OData function or action and returns a single item.
