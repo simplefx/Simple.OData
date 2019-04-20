@@ -504,9 +504,15 @@ namespace Simple.OData.Client
         /// <returns>Execution result.</returns>
         public Task<T> ExecuteAsSingleAsync()
         {
-            return FilterAndTypeColumnsAsync(
-                _client.ExecuteAsSingleAsync(_command, CancellationToken.None),
-                _command.SelectedColumns, _command.DynamicPropertiesContainerName);
+            return ExecuteAsSingleAsync<T>(CancellationToken.None);
+        }
+        /// <summary>
+        /// Executes the OData function or action and returns a single item.
+        /// </summary>
+        /// <returns>Execution result.</returns>
+        public Task<U> ExecuteAsSingleAsync<U>()
+        {
+            return ExecuteAsSingleAsync<U>(CancellationToken.None);
         }
         /// <summary>
         /// Executes the OData function or action and returns a single item.
@@ -515,9 +521,16 @@ namespace Simple.OData.Client
         /// <returns>Execution result.</returns>
         public Task<T> ExecuteAsSingleAsync(CancellationToken cancellationToken)
         {
-            return FilterAndTypeColumnsAsync(
-                _client.ExecuteAsSingleAsync(_command, cancellationToken),
-                _command.SelectedColumns, _command.DynamicPropertiesContainerName);
+            return ExecuteAsSingleAsync<T>(cancellationToken);
+        }
+        /// <summary>
+        /// Executes the OData function or action and returns a single item.
+        /// </summary>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Execution result.</returns>
+        public async Task<U> ExecuteAsSingleAsync<U>(CancellationToken cancellationToken)
+        {
+            return (await ExecuteAsArrayAsync<U>(cancellationToken)).Single();
         }
 
         /// <summary>
@@ -572,11 +585,30 @@ namespace Simple.OData.Client
         /// <summary>
         /// Executes the OData function and returns an array.
         /// </summary>
+        /// <returns>Execution result.</returns>
+        public Task<T[]> ExecuteAsArrayAsync()
+        {
+            return ExecuteAsArrayAsync<T>(CancellationToken.None);
+        }
+
+        /// <summary>
+        /// Executes the OData function and returns an array.
+        /// </summary>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Execution result.</returns>
         public Task<U[]> ExecuteAsArrayAsync<U>(CancellationToken cancellationToken)
         {
             return _client.ExecuteAsArrayAsync<U>(_command, cancellationToken);
+        }
+
+        /// <summary>
+        /// Executes the OData function and returns an array.
+        /// </summary>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Execution result.</returns>
+        public Task<T[]> ExecuteAsArrayAsync(CancellationToken cancellationToken)
+        {
+            return ExecuteAsArrayAsync<T>(cancellationToken);
         }
 
         /// <summary>
