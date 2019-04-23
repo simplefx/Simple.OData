@@ -406,9 +406,20 @@ namespace Simple.OData.Client
         /// <summary>
         /// Executes the OData function or action.
         /// </summary>
+        /// <returns>Execution result.</returns>
+        Task<U> ExecuteAsSingleAsync<U>();
+        /// <summary>
+        /// Executes the OData function or action.
+        /// </summary>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Action execution result.</returns>
         Task<T> ExecuteAsSingleAsync(CancellationToken cancellationToken);
+        /// <summary>
+        /// Executes the OData function or action.
+        /// </summary>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Action execution result.</returns>
+        Task<U> ExecuteAsSingleAsync<U>(CancellationToken cancellationToken);
 
         /// <summary>
         /// Executes the OData function or action and returns collection.
@@ -446,10 +457,23 @@ namespace Simple.OData.Client
         /// <summary>
         /// Executes the OData function or action and returns an array.
         /// </summary>
+        /// <returns>Execution result.</returns>
+        Task<T[]> ExecuteAsArrayAsync();
+
+        /// <summary>
+        /// Executes the OData function or action and returns an array.
+        /// </summary>
         /// <typeparam name="U">The type of the result array.</typeparam>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>Action execution result.</returns>
         Task<U[]> ExecuteAsArrayAsync<U>(CancellationToken cancellationToken);
+
+        /// <summary>
+        /// Executes the OData function or action and returns an array.
+        /// </summary>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>Action execution result.</returns>
+        Task<T[]> ExecuteAsArrayAsync(CancellationToken cancellationToken);
 
         /// <summary>
         /// Gets the OData command text.
