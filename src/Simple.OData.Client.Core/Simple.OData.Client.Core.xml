@@ -730,7 +730,20 @@
             </summary>
             <returns>Execution result.</returns>
         </member>
+        <member name="M:Simple.OData.Client.FluentClientBase`2.ExecuteAsSingleAsync``1">
+            <summary>
+            Executes the OData function or action and returns a single item.
+            </summary>
+            <returns>Execution result.</returns>
+        </member>
         <member name="M:Simple.OData.Client.FluentClientBase`2.ExecuteAsSingleAsync(System.Threading.CancellationToken)">
+            <summary>
+            Executes the OData function or action and returns a single item.
+            </summary>
+            <param name="cancellationToken">The cancellation token.</param>
+            <returns>Execution result.</returns>
+        </member>
+        <member name="M:Simple.OData.Client.FluentClientBase`2.ExecuteAsSingleAsync``1(System.Threading.CancellationToken)">
             <summary>
             Executes the OData function or action and returns a single item.
             </summary>
@@ -769,7 +782,20 @@
             </summary>
             <returns>Execution result.</returns>
         </member>
+        <member name="M:Simple.OData.Client.FluentClientBase`2.ExecuteAsArrayAsync">
+            <summary>
+            Executes the OData function and returns an array.
+            </summary>
+            <returns>Execution result.</returns>
+        </member>
         <member name="M:Simple.OData.Client.FluentClientBase`2.ExecuteAsArrayAsync``1(System.Threading.CancellationToken)">
+            <summary>
+            Executes the OData function and returns an array.
+            </summary>
+            <param name="cancellationToken">The cancellation token.</param>
+            <returns>Execution result.</returns>
+        </member>
+        <member name="M:Simple.OData.Client.FluentClientBase`2.ExecuteAsArrayAsync(System.Threading.CancellationToken)">
             <summary>
             Executes the OData function and returns an array.
             </summary>
@@ -1783,7 +1809,20 @@
             </summary>
             <returns>Execution result.</returns>
         </member>
+        <member name="M:Simple.OData.Client.IFluentClient`2.ExecuteAsSingleAsync``1">
+            <summary>
+            Executes the OData function or action.
+            </summary>
+            <returns>Execution result.</returns>
+        </member>
         <member name="M:Simple.OData.Client.IFluentClient`2.ExecuteAsSingleAsync(System.Threading.CancellationToken)">
+            <summary>
+            Executes the OData function or action.
+            </summary>
+            <param name="cancellationToken">The cancellation token.</param>
+            <returns>Action execution result.</returns>
+        </member>
+        <member name="M:Simple.OData.Client.IFluentClient`2.ExecuteAsSingleAsync``1(System.Threading.CancellationToken)">
             <summary>
             Executes the OData function or action.
             </summary>
@@ -1825,11 +1864,24 @@
             <typeparam name="U">The type of the result array.</typeparam>
             <returns>Execution result.</returns>
         </member>
+        <member name="M:Simple.OData.Client.IFluentClient`2.ExecuteAsArrayAsync">
+            <summary>
+            Executes the OData function or action and returns an array.
+            </summary>
+            <returns>Execution result.</returns>
+        </member>
         <member name="M:Simple.OData.Client.IFluentClient`2.ExecuteAsArrayAsync``1(System.Threading.CancellationToken)">
             <summary>
             Executes the OData function or action and returns an array.
             </summary>
             <typeparam name="U">The type of the result array.</typeparam>
+            <param name="cancellationToken">The cancellation token.</param>
+            <returns>Action execution result.</returns>
+        </member>
+        <member name="M:Simple.OData.Client.IFluentClient`2.ExecuteAsArrayAsync(System.Threading.CancellationToken)">
+            <summary>
+            Executes the OData function or action and returns an array.
+            </summary>
             <param name="cancellationToken">The cancellation token.</param>
             <returns>Action execution result.</returns>
         </member>
