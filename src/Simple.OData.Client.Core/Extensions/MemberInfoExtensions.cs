@@ -14,7 +14,7 @@ namespace Simple.OData.Client.Extensions
 
         public static bool IsNotMapped(this MemberInfo memberInfo)
         {
-            return Helper(memberInfo).IsNotMapped;
+            return MappingInfo(memberInfo).IsNotMapped;
         }
 
         /// <summary>
@@ -24,10 +24,10 @@ namespace Simple.OData.Client.Extensions
         /// <returns></returns>
         public static string GetMappedName(this MemberInfo memberInfo)
         {
-            return Helper(memberInfo).MappedName;
+            return MappingInfo(memberInfo).MappedName;
         }
 
-        private static MappingInfo Helper(MemberInfo memberInfo)
+        private static MappingInfo MappingInfo(MemberInfo memberInfo)
         {
             var info = cache.GetOrAdd(memberInfo, MappingInfoFactory);
 

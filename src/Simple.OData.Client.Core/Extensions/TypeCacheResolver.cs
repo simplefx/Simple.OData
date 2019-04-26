@@ -8,15 +8,15 @@ namespace Simple.OData.Client.Extensions
     /// <summary>
     /// Holds information about a type.
     /// </summary>
-    public class TypeHelper
+    public class TypeCacheResolver
     {
         /// <summary>
-        /// Creates a new instance of the <see cref="TypeHelper"/> class.
+        /// Creates a new instance of the <see cref="TypeCacheResolver"/> class.
         /// </summary>
         /// <param name="type"></param>
         /// <param name="dynamicType"></param>
         /// <param name="dynamicContainerName"></param>
-        public TypeHelper(Type type, bool dynamicType = false, string dynamicContainerName = "DynamicProperties")
+        public TypeCacheResolver(Type type, bool dynamicType = false, string dynamicContainerName = "DynamicProperties")
         {
             Type = type;
             IsDynamicType = dynamicType;

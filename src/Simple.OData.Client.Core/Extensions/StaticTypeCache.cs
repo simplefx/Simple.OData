@@ -6,7 +6,7 @@ using System.Reflection;
 namespace Simple.OData.Client.Extensions
 {
     /// <summary>
-    /// Just forwards to the static helpers
+    /// Just forwards to the static resolvers
     /// </summary>
     [Obsolete("Use TypeCaches.Global")]
     public class StaticTypeCache : ITypeCache

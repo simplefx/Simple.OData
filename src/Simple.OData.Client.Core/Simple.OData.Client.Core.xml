@@ -309,7 +309,7 @@
         </member>
         <member name="T:Simple.OData.Client.Extensions.StaticTypeCache">
             <summary>
-            Just forwards to the static helpers
+            Just forwards to the static resolvers
             </summary>
         </member>
         <member name="M:Simple.OData.Client.Extensions.StaticTypeCache.#ctor">
@@ -512,6 +512,101 @@
         <member name="M:Simple.OData.Client.Extensions.TypeCache.GetMappedName(System.Type)">
             <copydoc cref="M:Simple.OData.Client.Extensions.ITypeCache.GetMappedName(System.Type)" />
         </member>
+        <member name="T:Simple.OData.Client.Extensions.TypeCacheResolver">
+            <summary>
+            Holds information about a type.
+            </summary>
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.TypeCacheResolver.#ctor(System.Type,System.Boolean,System.String)">
+            <summary>
+            Creates a new instance of the <see cref="T:Simple.OData.Client.Extensions.TypeCacheResolver"/> class.
+            </summary>
+            <param name="type"></param>
+            <param name="dynamicType"></param>
+            <param name="dynamicContainerName"></param>
+        </member>
+        <member name="P:Simple.OData.Client.Extensions.TypeCacheResolver.Type">
+            <summary>
+            Gets the type we are responsible for.
+            </summary>
+        </member>
+        <member name="P:Simple.OData.Client.Extensions.TypeCacheResolver.MappedName">
+            <summary>
+            Gets the mapped name i.e. the OData type we correspond to.
+            </summary>
+        </member>
+        <member name="P:Simple.OData.Client.Extensions.TypeCacheResolver.IsDynamicType">
+            <summary>
+            Gets whether we are a dynamic type
+            </summary>
+        </member>
+        <member name="P:Simple.OData.Client.Extensions.TypeCacheResolver.IsAnonymousType">
+            <summary>
+            Gets whether we are an anonymous type
+            </summary>
+        </member>
+        <member name="P:Simple.OData.Client.Extensions.TypeCacheResolver.IsGeneric">
+            <summary>
+            Gets whether we are a generic type
+            </summary>
+        </member>
+        <member name="P:Simple.OData.Client.Extensions.TypeCacheResolver.IsValue">
+            <summary>
+            Gets whether we are a value type
+            </summary>
+        </member>
+        <member name="P:Simple.OData.Client.Extensions.TypeCacheResolver.IsEnumType">
+            <summary>
+            Gets whether we are an enum
+            </summary>
+        </member>
+        <member name="P:Simple.OData.Client.Extensions.TypeCacheResolver.BaseType">
+            <summary>
+            Gets the base type
+            </summary>
+        </member>
+        <member name="P:Simple.OData.Client.Extensions.TypeCacheResolver.DynamicPropertiesName">
+            <summary>
+            Gets the dynamic properties container name
+            </summary>
+        </member>
+        <member name="P:Simple.OData.Client.Extensions.TypeCacheResolver.AllProperties">
+            <summary>
+            Gets all properties
+            </summary>
+        </member>
+        <member name="P:Simple.OData.Client.Extensions.TypeCacheResolver.DeclaredProperties">
+            <summary>
+            Gets declared properties
+            </summary>
+        </member>
+        <member name="P:Simple.OData.Client.Extensions.TypeCacheResolver.AllFields">
+            <summary>
+            Gets all fields
+            </summary>
+        </member>
+        <member name="P:Simple.OData.Client.Extensions.TypeCacheResolver.DeclaredFields">
+            <summary>
+            Gets declared fields.
+            </summary>
+        </member>
+        <member name="P:Simple.OData.Client.Extensions.TypeCacheResolver.MappedProperties">
+            <summary>
+            Gets mapped properties
+            </summary>
+        </member>
+        <member name="P:Simple.OData.Client.Extensions.TypeCacheResolver.MappedPropertiesWithNames">
+            <summary>
+            Gets mapped properties with the mapped name
+            </summary>
+        </member>
+        <member name="M:Simple.OData.Client.Extensions.TypeCacheResolver.GetMappedProperty(System.String)">
+            <summary>
+            Gets a mapped property
+            </summary>
+            <param name="propertyName"></param>
+            <returns></returns>
+        </member>
         <member name="M:Simple.OData.Client.Extensions.TypeExtensions.GetNamedProperty(System.Type,System.String)">
             <summary>
             Get a directly named property
@@ -525,101 +620,6 @@
             Get a property that is either directly named or mapped via an attribute
             </summary>
             <param name="type"></param>
-            <param name="propertyName"></param>
-            <returns></returns>
-        </member>
-        <member name="T:Simple.OData.Client.Extensions.TypeHelper">
-            <summary>
-            Holds information about a type.
-            </summary>
-        </member>
-        <member name="M:Simple.OData.Client.Extensions.TypeHelper.#ctor(System.Type,System.Boolean,System.String)">
-            <summary>
-            Creates a new instance of the <see cref="T:Simple.OData.Client.Extensions.TypeHelper"/> class.
-            </summary>
-            <param name="type"></param>
-            <param name="dynamicType"></param>
-            <param name="dynamicContainerName"></param>
-        </member>
-        <member name="P:Simple.OData.Client.Extensions.TypeHelper.Type">
-            <summary>
-            Gets the type we are responsible for.
-            </summary>
-        </member>
-        <member name="P:Simple.OData.Client.Extensions.TypeHelper.MappedName">
-            <summary>
-            Gets the mapped name i.e. the OData type we correspond to.
-            </summary>
-        </member>
-        <member name="P:Simple.OData.Client.Extensions.TypeHelper.IsDynamicType">
-            <summary>
-            Gets whether we are a dynamic type
-            </summary>
-        </member>
-        <member name="P:Simple.OData.Client.Extensions.TypeHelper.IsAnonymousType">
-            <summary>
-            Gets whether we are an anonymous type
-            </summary>
-        </member>
-        <member name="P:Simple.OData.Client.Extensions.TypeHelper.IsGeneric">
-            <summary>
-            Gets whether we are a generic type
-            </summary>
-        </member>
-        <member name="P:Simple.OData.Client.Extensions.TypeHelper.IsValue">
-            <summary>
-            Gets whether we are a value type
-            </summary>
-        </member>
-        <member name="P:Simple.OData.Client.Extensions.TypeHelper.IsEnumType">
-            <summary>
-            Gets whether we are an enum
-            </summary>
-        </member>
-        <member name="P:Simple.OData.Client.Extensions.TypeHelper.BaseType">
-            <summary>
-            Gets the base type
-            </summary>
-        </member>
-        <member name="P:Simple.OData.Client.Extensions.TypeHelper.DynamicPropertiesName">
-            <summary>
-            Gets the dynamic properties container name
-            </summary>
-        </member>
-        <member name="P:Simple.OData.Client.Extensions.TypeHelper.AllProperties">
-            <summary>
-            Gets all properties
-            </summary>
-        </member>
-        <member name="P:Simple.OData.Client.Extensions.TypeHelper.DeclaredProperties">
-            <summary>
-            Gets declared properties
-            </summary>
-        </member>
-        <member name="P:Simple.OData.Client.Extensions.TypeHelper.AllFields">
-            <summary>
-            Gets all fields
-            </summary>
-        </member>
-        <member name="P:Simple.OData.Client.Extensions.TypeHelper.DeclaredFields">
-            <summary>
-            Gets declared fields.
-            </summary>
-        </member>
-        <member name="P:Simple.OData.Client.Extensions.TypeHelper.MappedProperties">
-            <summary>
-            Gets mapped properties
-            </summary>
-        </member>
-        <member name="P:Simple.OData.Client.Extensions.TypeHelper.MappedPropertiesWithNames">
-            <summary>
-            Gets mapped properties with the mapped name
-            </summary>
-        </member>
-        <member name="M:Simple.OData.Client.Extensions.TypeHelper.GetMappedProperty(System.String)">
-            <summary>
-            Gets a mapped property
-            </summary>
             <param name="propertyName"></param>
             <returns></returns>
         </member>

@@ -8,7 +8,7 @@ namespace Simple.OData.Client.Extensions
     /// <copydoc cref="ITypeCache" />
     public class TypeCache : ITypeCache
     {
-        private readonly ConcurrentDictionary<Type, TypeHelper> cache;
+        private readonly ConcurrentDictionary<Type, TypeCacheResolver> cache;
 
         /// <summary>
         /// Creates a new instance of the <see cref="TypeCache"/> class.
@@ -16,7 +16,7 @@ namespace Simple.OData.Client.Extensions
         /// <param name="converter"></param>
         public TypeCache(ITypeConverter converter)
         {
-            cache = new ConcurrentDictionary<Type, TypeHelper>();
+            cache = new ConcurrentDictionary<Type, TypeCacheResolver>();
             Converter = converter;
         }
 
@@ -43,185 +43,185 @@ namespace Simple.OData.Client.Extensions
         /// <copydoc cref="ITypeCache.IsDynamicType" />
         public bool IsDynamicType(Type type)
         {
-            return Helper(type).IsDynamicType;
+            return Resolver(type).IsDynamicType;
         }
 
         /// <copydoc cref="ITypeCache.DynamicContainerName" />
         public string DynamicContainerName(Type type)
         {
-            return Helper(type).DynamicPropertiesName;
+            return Resolver(type).DynamicPropertiesName;
         }
 
         /// <copydoc cref="ITypeCache.GetMappedProperties" />
         public IEnumerable<PropertyInfo> GetMappedProperties(Type type)
         {
-            return Helper(type).MappedProperties;
+            return Resolver(type).MappedProperties;
         }
 
         /// <copydoc cref="ITypeCache.GetMappedPropertiesWithNames" />
         public IEnumerable<Tuple<PropertyInfo, string>> GetMappedPropertiesWithNames(Type type)
         {
-            return Helper(type).MappedPropertiesWithNames;
+            return Resolver(type).MappedPropertiesWithNames;
         }
 
         /// <copydoc cref="ITypeCache.GetMappedProperty" />
         public PropertyInfo GetMappedProperty(Type type, string propertyName)
         {
-            return Helper(type).GetMappedProperty(propertyName);
+            return Resolver(type).GetMappedProperty(propertyName);
         }
 
         /// <copydoc cref="ITypeCache.GetMappedName(Type, PropertyInfo)" />
         public string GetMappedName(Type type, PropertyInfo propertyInfo)
         {
-            return Helper(type).GetMappedName(propertyInfo);
+            return Resolver(type).GetMappedName(propertyInfo);
         }
 
         /// <copydoc cref="ITypeCache.GetMappedName(Type, string)" />
         public string GetMappedName(Type type, string propertyName)
         {
-            return Helper(type).GetMappedName(propertyName);
+            return Resolver(type).GetMappedName(propertyName);
         }
 
         /// <copydoc cref="ITypeCache.GetAllProperties" />
         public IEnumerable<PropertyInfo> GetAllProperties(Type type)
         {
-            return Helper(type).AllProperties;
+            return Resolver(type).AllProperties;
         }
 
         /// <copydoc cref="ITypeCache.GetNamedProperty(Type, string)" />
         public PropertyInfo GetNamedProperty(Type type, string propertyName)
         {
-            return Helper(type).GetAnyProperty(propertyName);
+            return Resolver(type).GetAnyProperty(propertyName);
         }
 
         /// <copydoc cref="ITypeCache.GetDeclaredProperties" />
         public IEnumerable<PropertyInfo> GetDeclaredProperties(Type type)
         {
-            return Helper(type).DeclaredProperties;
+            return Resolver(type).DeclaredProperties;
         }
 
         /// <copydoc cref="ITypeCache.GetDeclaredProperty" />
         public PropertyInfo GetDeclaredProperty(Type type, string propertyName)
         {
-            return Helper(type).GetDeclaredProperty(propertyName);
+            return Resolver(type).GetDeclaredProperty(propertyName);
         }
 
         /// <copydoc cref="ITypeCache.GetAllFields" />
         public IEnumerable<FieldInfo> GetAllFields(Type type)
         {
-            return Helper(type).AllFields;
+            return Resolver(type).AllFields;
         }
 
         /// <copydoc cref="ITypeCache.GetAnyField" />
         public FieldInfo GetAnyField(Type type, string fieldName, bool includeNonPublic = false)
         {
-            return Helper(type).GetAnyField(fieldName, includeNonPublic);
+            return Resolver(type).GetAnyField(fieldName, includeNonPublic);
         }
 
         /// <copydoc cref="ITypeCache.GetDeclaredFields" />
         public IEnumerable<FieldInfo> GetDeclaredFields(Type type)
         {
-            return Helper(type).DeclaredFields;
+            return Resolver(type).DeclaredFields;
         }
 
         /// <copydoc cref="ITypeCache.GetDeclaredField" />
         public FieldInfo GetDeclaredField(Type type, string fieldName)
         {
-            return Helper(type).GetDeclaredField(fieldName);
+            return Resolver(type).GetDeclaredField(fieldName);
         }
 
         /// <copydoc cref="ITypeCache.GetDeclaredMethod" />
         public MethodInfo GetDeclaredMethod(Type type, string methodName)
         {
-            return Helper(type).GetDeclaredMethod(methodName);
+            return Resolver(type).GetDeclaredMethod(methodName);
         }
 
         /// <copydoc cref="ITypeCache.GetDeclaredConstructors" />
         public IEnumerable<ConstructorInfo> GetDeclaredConstructors(Type type)
         {
-            return Helper(type).GetDeclaredConstructors();
+            return Resolver(type).GetDeclaredConstructors();
         }
 
         /// <copydoc cref="ITypeCache.GetDefaultConstructor" />
         public ConstructorInfo GetDefaultConstructor(Type type)
         {
-            return Helper(type).GetDefaultConstructor();
+            return Resolver(type).GetDefaultConstructor();
         }
 
         /// <copydoc cref="ITypeCache.GetTypeAttributes" />
         public TypeAttributes GetTypeAttributes(Type type)
         {
-            return Helper(type).GetTypeAttributes();
+            return Resolver(type).GetTypeAttributes();
         }
 
         /// <copydoc cref="ITypeCache.GetGenericTypeArguments" />
         public Type[] GetGenericTypeArguments(Type type)
         {
-            return Helper(type).GetGenericTypeArguments();
+            return Resolver(type).GetGenericTypeArguments();
         }
 
         /// <copydoc cref="ITypeCache.IsAnonymousType" />
         public bool IsAnonymousType(Type type)
         {
-            return Helper(type).IsAnonymousType;
+            return Resolver(type).IsAnonymousType;
         }
 
         /// <copydoc cref="ITypeCache.IsGeneric" />
         public bool IsGeneric(Type type)
         {
-            return Helper(type).IsGeneric;
+            return Resolver(type).IsGeneric;
         }
 
         /// <copydoc cref="ITypeCache.IsValue" />
         public bool IsValue(Type type)
         {
-            return Helper(type).IsValue;
+            return Resolver(type).IsValue;
         }
 
         /// <copydoc cref="ITypeCache.IsEnumType" />
         public bool IsEnumType(Type type)
         {
-            return Helper(type).IsEnumType;
+            return Resolver(type).IsEnumType;
         }
 
         /// <copydoc cref="ITypeCache.GetBaseType" />
         public Type GetBaseType(Type type)
         {
-            return Helper(type).BaseType;
+            return Resolver(type).BaseType;
         }
 
         /// <copydoc cref="ITypeCache.IsTypeAssignableFrom" />
         public bool IsTypeAssignableFrom(Type type, Type otherType)
         {
-            return Helper(type).IsTypeAssignableFrom(otherType);
+            return Resolver(type).IsTypeAssignableFrom(otherType);
         }
 
         /// <copydoc cref="ITypeCache.HasCustomAttribute" />
         public bool HasCustomAttribute(Type type, Type attributeType, bool inherit)
         {
-            return Helper(type).HasCustomAttribute(attributeType, inherit);
+            return Resolver(type).HasCustomAttribute(attributeType, inherit);
         }
 
         /// <copydoc cref="ITypeCache.GetMappedName(Type)" />
         public string GetMappedName(Type type)
         {
-            return Helper(type).MappedName;
+            return Resolver(type).MappedName;
         }
 
-        private TypeHelper Helper(Type type)
+        private TypeCacheResolver Resolver(Type type)
         {
-            var helper = cache.GetOrAdd(type, x => InternalRegister(x));
+            var resolver = cache.GetOrAdd(type, x => InternalRegister(x));
 
-            return helper;
+            return resolver;
         }
 
-        private TypeHelper InternalRegister(Type type, bool dynamicType = false, string dynamicContainerName = null)
+        private TypeCacheResolver InternalRegister(Type type, bool dynamicType = false, string dynamicContainerName = null)
         {
-            var helper = new TypeHelper(type, dynamicType, dynamicContainerName);
+            var resolver = new TypeCacheResolver(type, dynamicType, dynamicContainerName);
 
-            cache[type] = helper;
+            cache[type] = resolver;
 
-            return helper;
+            return resolver;
         }
     }
 }
