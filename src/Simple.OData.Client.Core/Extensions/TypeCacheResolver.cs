@@ -10,14 +10,20 @@ namespace Simple.OData.Client.Extensions
     /// </summary>
     public class TypeCacheResolver
     {
+        private readonly INameMatchResolver _nameMatchResolver;
+
         /// <summary>
         /// Creates a new instance of the <see cref="TypeCacheResolver"/> class.
         /// </summary>
-        /// <param name="type"></param>
-        /// <param name="dynamicType"></param>
-        /// <param name="dynamicContainerName"></param>
+        /// <param name="type">Type of the cached properties.</param>
+        /// <param name="nameMatchResolver">Name match resolver.</param>
+        /// <param name="dynamicType">Whether the cached type is dynamic.</param>
+        /// <param name="dynamicContainerName">Dynamic container name.</param>
         public TypeCacheResolver(Type type, bool dynamicType = false, string dynamicContainerName = "DynamicProperties")
         {
+            // TODO
+            _nameMatchResolver = ODataNameMatchResolver.Strict;
+
             Type = type;
             IsDynamicType = dynamicType;
             DynamicPropertiesName = dynamicContainerName;
@@ -118,7 +124,7 @@ namespace Simple.OData.Client.Extensions
         /// <returns></returns>
         public PropertyInfo GetMappedProperty(string propertyName)
         {
-            return (from t in MappedPropertiesWithNames where t.Item2 == propertyName select t.Item1).FirstOrDefault();
+            return (from t in MappedPropertiesWithNames where _nameMatchResolver.IsMatch(t.Item2, propertyName) select t.Item1).FirstOrDefault();
         }
 
         public string GetMappedName(PropertyInfo propertyInfo)
@@ -128,7 +134,7 @@ namespace Simple.OData.Client.Extensions
 
         public string GetMappedName(string propertyName)
         {
-            return (from t in MappedPropertiesWithNames where t.Item1.Name == propertyName select t.Item2).FirstOrDefault();
+            return (from t in MappedPropertiesWithNames where _nameMatchResolver.IsMatch(t.Item1.Name, propertyName) select t.Item2).FirstOrDefault();
         }
 
         public PropertyInfo GetAnyProperty(string propertyName)

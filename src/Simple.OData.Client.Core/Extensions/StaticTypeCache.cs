@@ -11,7 +11,7 @@ namespace Simple.OData.Client.Extensions
     [Obsolete("Use TypeCaches.Global")]
     public class StaticTypeCache : ITypeCache
     {
-        private ConcurrentDictionary<Type, string> containerNames;
+        private readonly ConcurrentDictionary<Type, string> containerNames;
 
         /// <summary>
         /// Creates a new instance of the <see cref="StaticTypeCache"/> class.

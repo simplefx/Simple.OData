@@ -6,7 +6,7 @@ namespace Simple.OData.Client
 {
     internal static class TypeCaches
     {
-        private static ConcurrentDictionary<string, ITypeCache> _typeCaches;
+        private static readonly ConcurrentDictionary<string, ITypeCache> _typeCaches;
         
         static TypeCaches()
         {
