@@ -44,6 +44,8 @@ namespace Simple.OData.Client.Tests.Extensions
             public int IntProperty { get; set; }
         }
 
+        private ITypeCache _typeCache => TypeCaches.TypeCache("test", null);
+
         [Fact]
         public void ToObjectPrimitiveProperties()
         {
@@ -53,7 +55,7 @@ namespace Simple.OData.Client.Tests.Extensions
                 { "IntProperty", 1 },
             };
 
-            var value = dict.ToObject<ClassType>(TypeCaches.Global);
+            var value = dict.ToObject<ClassType>(_typeCache);
             Assert.Equal("a", value.StringProperty);
             Assert.Equal(1, value.IntProperty);
         }
@@ -66,7 +68,7 @@ namespace Simple.OData.Client.Tests.Extensions
                 { "EnumProperty", EnumType.One },
             };
 
-            var value = dict.ToObject<ClassType>(TypeCaches.Global);
+            var value = dict.ToObject<ClassType>(_typeCache);
             Assert.Equal(EnumType.One, value.EnumProperty);
         }
 
@@ -78,7 +80,7 @@ namespace Simple.OData.Client.Tests.Extensions
                 { "EnumProperty", "One" },
             };
 
-            var value = dict.ToObject<ClassType>(TypeCaches.Global);
+            var value = dict.ToObject<ClassType>(_typeCache);
             Assert.Equal(EnumType.One, value.EnumProperty);
         }
 
@@ -90,7 +92,7 @@ namespace Simple.OData.Client.Tests.Extensions
                 { "EnumProperty", EnumType.One | EnumType.Two },
             };
 
-            var value = dict.ToObject<ClassType>(TypeCaches.Global);
+            var value = dict.ToObject<ClassType>(_typeCache);
             Assert.Equal(EnumType.Three, value.EnumProperty);
         }
 
@@ -102,7 +104,7 @@ namespace Simple.OData.Client.Tests.Extensions
                 { "EnumProperty", "One,Two" },
             };
 
-            var value = dict.ToObject<ClassType>(TypeCaches.Global);
+            var value = dict.ToObject<ClassType>(_typeCache);
             Assert.Equal(EnumType.Three, value.EnumProperty);
         }
 
@@ -116,7 +118,7 @@ namespace Simple.OData.Client.Tests.Extensions
                 { "UnknownProperty", "u" }
             };
 
-            var value = dict.ToObject<ClassType>(TypeCaches.Global);
+            var value = dict.ToObject<ClassType>(_typeCache);
             Assert.Equal("a", value.StringProperty);
             Assert.Equal(1, value.IntProperty);
         }
@@ -131,7 +133,7 @@ namespace Simple.OData.Client.Tests.Extensions
                 { "StringPropertyPrivateSetter", "p" }
             };
 
-            var value = dict.ToObject<ClassType>(TypeCaches.Global);
+            var value = dict.ToObject<ClassType>(_typeCache);
             Assert.Equal("a", value.StringProperty);
             Assert.Equal(1, value.IntProperty);
             Assert.Equal("p", value.StringPropertyPrivateSetter);
@@ -147,7 +149,7 @@ namespace Simple.OData.Client.Tests.Extensions
                 { "StringField", "f" }
             };
 
-            var value = dict.ToObject<ClassType>(TypeCaches.Global);
+            var value = dict.ToObject<ClassType>(_typeCache);
             Assert.Equal("a", value.StringProperty);
             Assert.Equal(1, value.IntProperty);
             Assert.Null(value.StringField);
@@ -163,7 +165,7 @@ namespace Simple.OData.Client.Tests.Extensions
                 { "StringArrayProperty", new [] {"x", "y", "z"}  }
             };
 
-            var value = dict.ToObject<ClassType>(TypeCaches.Global);
+            var value = dict.ToObject<ClassType>(_typeCache);
             Assert.Equal("a", value.StringProperty);
             Assert.Equal(1, value.IntProperty);
             for (var index = 0; index < 3; index++)
@@ -182,7 +184,7 @@ namespace Simple.OData.Client.Tests.Extensions
                 { "IntArrayProperty", new [] {1, 2, 3}  }
             };
 
-            var value = dict.ToObject<ClassType>(TypeCaches.Global);
+            var value = dict.ToObject<ClassType>(_typeCache);
             Assert.Equal("a", value.StringProperty);
             Assert.Equal(1, value.IntProperty);
             for (var index = 0; index < 3; index++)
@@ -201,7 +203,7 @@ namespace Simple.OData.Client.Tests.Extensions
                 { "IntCollectionProperty", new Collection<int> {1, 2, 3}  }
             };
 
-            var value = dict.ToObject<ClassType>(TypeCaches.Global);
+            var value = dict.ToObject<ClassType>(_typeCache);
             Assert.Equal("a", value.StringProperty);
             Assert.Equal(1, value.IntProperty);
             for (var index = 0; index < 3; index++)
@@ -220,7 +222,7 @@ namespace Simple.OData.Client.Tests.Extensions
                 { "CompoundProperty", new Dictionary<string, object> { { "StringProperty", "z" }, { "IntProperty", 0 } }  }
             };
 
-            var value = dict.ToObject<ClassType>(TypeCaches.Global);
+            var value = dict.ToObject<ClassType>(_typeCache);
             Assert.Equal("a", value.StringProperty);
             Assert.Equal(1, value.IntProperty);
             Assert.Equal("z", value.CompoundProperty.StringProperty);
@@ -243,7 +245,7 @@ namespace Simple.OData.Client.Tests.Extensions
                 }
             };
 
-            var value = dict.ToObject<ClassType>(TypeCaches.Global);
+            var value = dict.ToObject<ClassType>(_typeCache);
             Assert.Equal("a", value.StringProperty);
             Assert.Equal(1, value.IntProperty);
             for (var index = 0; index < 3; index++)
@@ -263,7 +265,7 @@ namespace Simple.OData.Client.Tests.Extensions
                 { "IntProperty", 1 },
             };
 
-            var value = dict.ToObject<ODataEntry>(TypeCaches.Global);
+            var value = dict.ToObject<ODataEntry>(_typeCache);
             Assert.Equal("a", value["StringProperty"]);
             Assert.Equal(1, value["IntProperty"]);
         }
@@ -278,10 +280,9 @@ namespace Simple.OData.Client.Tests.Extensions
                 { "IntProperty", 1 },
             };
 
-            var typeCache = TypeCaches.Global;
-            typeCache.Register<ODataEntry>();
+            _typeCache.Register<ODataEntry>();
 
-            dynamic value = dict.ToObject<ODataEntry>(typeCache, true);
+            dynamic value = dict.ToObject<ODataEntry>(_typeCache, true);
             Assert.Equal("a", value.StringProperty);
             Assert.Equal(1, value.IntProperty);
         }
@@ -296,9 +297,7 @@ namespace Simple.OData.Client.Tests.Extensions
                 new Dictionary<string, object> {{"StringProperty", "b"}, {"IntProperty", 2}},
             };
 
-            var typeCache = TypeCaches.Global;
-
-            var values = (dict.Select(x => x.ToObject<ODataEntry>(typeCache, true)) as IEnumerable<dynamic>).ToArray();
+            var values = (dict.Select(x => x.ToObject<ODataEntry>(_typeCache, true)) as IEnumerable<dynamic>).ToArray();
             for (var index = 0; index < values.Count(); index++)
             {
                 Assert.Equal(dict[index]["StringProperty"], values[index].StringProperty);
@@ -314,10 +313,9 @@ namespace Simple.OData.Client.Tests.Extensions
                 { "PointV3", SpatialV3.GeographyPoint.Create(SpatialV3.CoordinateSystem.Geography(100), 1, 2, null, null) },
             };
 
-            var typeCache = TypeCaches.Global;
-            typeCache.Converter.RegisterTypeConverter(typeof(SpatialV3.GeographyPoint), V3.Adapter.TypeConverters.CreateGeographyPoint);
+            _typeCache.Converter.RegisterTypeConverter(typeof(SpatialV3.GeographyPoint), V3.Adapter.TypeConverters.CreateGeographyPoint);
 
-            var value = dict.ToObject<ClassType>(typeCache);
+            var value = dict.ToObject<ClassType>(_typeCache);
             Assert.Equal(100, value.PointV3.CoordinateSystem.EpsgId);
             Assert.Equal(1d, value.PointV3.Latitude);
             Assert.Equal(2d, value.PointV3.Longitude);
@@ -331,10 +329,9 @@ namespace Simple.OData.Client.Tests.Extensions
                 { "PointV4", SpatialV4.GeographyPoint.Create(SpatialV4.CoordinateSystem.Geography(100), 1, 2, null, null) },
             };
 
-            var typeCache = TypeCaches.Global;
-            typeCache.Converter.RegisterTypeConverter(typeof(SpatialV4.GeographyPoint), V4.Adapter.TypeConverters.CreateGeographyPoint);
+            _typeCache.Converter.RegisterTypeConverter(typeof(SpatialV4.GeographyPoint), V4.Adapter.TypeConverters.CreateGeographyPoint);
 
-            var value = dict.ToObject<ClassType>(typeCache);
+            var value = dict.ToObject<ClassType>(_typeCache);
             Assert.Equal(100, value.PointV4.CoordinateSystem.EpsgId);
             Assert.Equal(1d, value.PointV4.Latitude);
             Assert.Equal(2d, value.PointV4.Longitude);
@@ -353,7 +350,7 @@ namespace Simple.OData.Client.Tests.Extensions
                 { "Data", new ClassNoDefaultConstructor("test") },
             };
 
-            Assert.Throws<ConstructorNotFoundException>(() => dict.ToObject<ClassNoDefaultConstructor>(TypeCaches.Global));
+            Assert.Throws<ConstructorNotFoundException>(() => dict.ToObject<ClassNoDefaultConstructor>(_typeCache));
         }
     }
 }

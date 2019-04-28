@@ -1,4 +1,5 @@
 ﻿using Simple.OData.Client.Tests.Entities;
+using Simple.OData.Client.Extensions;
 
 using Xunit;
 
@@ -6,34 +7,30 @@ namespace Simple.OData.Client.Tests.Core
 {
     public class DynamicContainerTests
     {
+        private ITypeCache _typeCache => TypeCaches.TypeCache("test", null);
+
         [Fact]
         public void ContainerName()
         {
-            var typeCache = TypeCaches.Global;
+            _typeCache.Register<Animal>();
 
-            typeCache.Register<Animal>();
-
-            Assert.Equal("DynamicProperties", typeCache.DynamicContainerName(typeof(Animal)));
+            Assert.Equal("DynamicProperties", _typeCache.DynamicContainerName(typeof(Animal)));
         }
 
         [Fact]
         public void ExplicitContainerName()
         {
-            var typeCache = TypeCaches.Global;
+            _typeCache.Register<Animal>("Foo");
 
-            typeCache.Register<Animal>("Foo");
-
-            Assert.Equal("Foo", typeCache.DynamicContainerName(typeof(Animal)));
+            Assert.Equal("Foo", _typeCache.DynamicContainerName(typeof(Animal)));
         }
 
         [Fact]
         public void SubTypeContainerName()
         {
-            var typeCache = TypeCaches.Global;
+            _typeCache.Register<Animal>();
 
-            typeCache.Register<Animal>();
-
-            Assert.Equal("DynamicProperties", typeCache.DynamicContainerName(typeof(Mammal)));
+            Assert.Equal("DynamicProperties", _typeCache.DynamicContainerName(typeof(Mammal)));
         }
     }
 }

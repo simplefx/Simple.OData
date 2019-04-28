@@ -8,6 +8,8 @@ namespace Simple.OData.Client.Tests.Core
 {
     public class TypeCacheValueConversionTests
     {
+        private ITypeCache _typeCache => TypeCaches.TypeCache("test", null);
+
         [Theory]
         [InlineData(1, typeof(int), typeof(byte))]
         [InlineData(1, typeof(int), typeof(byte?))]
@@ -41,15 +43,13 @@ namespace Simple.OData.Client.Tests.Core
         [InlineData("58D6C94D-B18A-43C9-AC1B-0B5A5BF10C35", typeof(string), typeof(Guid?))]
         public void TryConvert(object value, Type sourceType, Type targetType)
         {
-            var typeCache = TypeCaches.Global;
-
             var sourceValue = ChangeType(value, sourceType);
-            var result = typeCache.TryConvert(sourceValue, targetType, out var targetValue);
+            var result = _typeCache.TryConvert(sourceValue, targetType, out var targetValue);
             Assert.True(result);
             Assert.Equal(ChangeType(sourceValue, targetType), ChangeType(targetValue, targetType));
 
             sourceValue = ChangeType(value, targetType);
-            result = typeCache.TryConvert(sourceValue, sourceType, out targetValue);
+            result = _typeCache.TryConvert(sourceValue, sourceType, out targetValue);
             Assert.True(result);
             Assert.Equal(ChangeType(sourceValue, sourceType), ChangeType(targetValue, sourceType));
         }
@@ -57,10 +57,8 @@ namespace Simple.OData.Client.Tests.Core
         [Fact]
         public void TryConvertGeographyPoint()
         {
-            var typeCache = TypeCaches.Global;
-
             var source = GeographyPoint.Create(10, 10);
-            var result = typeCache.TryConvert(source, typeof(GeographyPoint), out _);
+            var result = _typeCache.TryConvert(source, typeof(GeographyPoint), out _);
             Assert.True(result);
         }
 

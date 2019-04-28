@@ -1,83 +1,67 @@
 ﻿using System.Linq;
-
 using Xunit;
+using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client.Tests.Extensions
 {
     public class TypeCacheTests
     {
+        private ITypeCache _typeCache => TypeCaches.TypeCache("test", null);
+
         [Fact]
         public void GetAllProperties_BaseType()
         {
-            var typeCache = TypeCaches.Global;
-
-            Assert.Single(typeCache.GetAllProperties(typeof(Transport)));
+            Assert.Single(_typeCache.GetAllProperties(typeof(Transport)));
         }
 
         [Fact]
         public void GetAllProperties_DerivedType()
         {
-            var typeCache = TypeCaches.Global;
-
-            Assert.Equal(2, typeCache.GetAllProperties(typeof(Ship)).Count());
+            Assert.Equal(2, _typeCache.GetAllProperties(typeof(Ship)).Count());
         }
 
         [Fact]
         public void GetDeclaredProperties_ExcludeExplicitInterface()
         {
-            var typeCache = TypeCaches.Global;
-
-            Assert.Equal(5, typeCache.GetAllProperties(typeof(Address)).Count());
+            Assert.Equal(5, _typeCache.GetAllProperties(typeof(Address)).Count());
         }
 
         [Fact]
         public void GetDeclaredProperties_BaseType()
         {
-            var typeCache = TypeCaches.Global;
-
-            Assert.Single(typeCache.GetDeclaredProperties(typeof(Transport)));
+            Assert.Single(_typeCache.GetDeclaredProperties(typeof(Transport)));
         }
 
         [Fact]
         public void GetDeclaredProperties_DerivedType()
         {
-            var typeCache = TypeCaches.Global;
-
-            Assert.Single(typeCache.GetDeclaredProperties(typeof(Ship)));
+            Assert.Single(_typeCache.GetDeclaredProperties(typeof(Ship)));
         }
 
         [Fact]
         public void GetNamedProperty_BaseType()
         {
-            var typeCache = TypeCaches.Global;
-
-            Assert.NotNull(typeCache.GetNamedProperty(typeof(Transport), "TransportID"));
+            Assert.NotNull(_typeCache.GetNamedProperty(typeof(Transport), "TransportID"));
         }
 
         [Fact]
         public void GetNamedProperty_DerivedType()
         {
-            var typeCache = TypeCaches.Global;
-
-            Assert.NotNull(typeCache.GetNamedProperty(typeof(Ship), "TransportID"));
-            Assert.NotNull(typeCache.GetNamedProperty(typeof(Ship), "ShipName"));
+            Assert.NotNull(_typeCache.GetNamedProperty(typeof(Ship), "TransportID"));
+            Assert.NotNull(_typeCache.GetNamedProperty(typeof(Ship), "ShipName"));
         }
 
         [Fact]
         public void GetDeclaredProperty_BaseType()
         {
-            var typeCache = TypeCaches.Global;
-
-            Assert.NotNull(typeCache.GetDeclaredProperty(typeof(Transport), "TransportID"));
+            Assert.NotNull(_typeCache.GetDeclaredProperty(typeof(Transport), "TransportID"));
         }
 
         [Fact]
         public void GetDeclaredProperty_DerivedType()
         {
-            var typeCache = TypeCaches.Global;
-
-            Assert.Null(typeCache.GetDeclaredProperty(typeof(Ship), "TransportID"));
-            Assert.NotNull(typeCache.GetDeclaredProperty(typeof(Ship), "ShipName"));
+            Assert.Null(_typeCache.GetDeclaredProperty(typeof(Ship), "TransportID"));
+            Assert.NotNull(_typeCache.GetDeclaredProperty(typeof(Ship), "ShipName"));
         }
     }
 }
