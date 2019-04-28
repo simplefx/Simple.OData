@@ -41,12 +41,12 @@ namespace Simple.OData.Client.Tests.Core
         public void TryConvert(object value, Type sourceType, Type targetType)
         {
             var sourceValue = ChangeType(value, sourceType);
-            var result = Utils.TryConvert(sourceValue, targetType, TypeCaches.Global, out var targetValue);
+            var result = TypeCaches.Global.TryConvert(sourceValue, targetType, out var targetValue);
             Assert.True(result);
             Assert.Equal(ChangeType(sourceValue, targetType), ChangeType(targetValue, targetType));
 
             sourceValue = ChangeType(value, targetType);
-            result = Utils.TryConvert(sourceValue, sourceType, TypeCaches.Global, out targetValue);
+            result = TypeCaches.Global.TryConvert(sourceValue, sourceType, out targetValue);
             Assert.True(result);
             Assert.Equal(ChangeType(sourceValue, sourceType), ChangeType(targetValue, sourceType));
         }
@@ -55,7 +55,7 @@ namespace Simple.OData.Client.Tests.Core
         public void TryConvertGeographyPoint()
         {
             var source = GeographyPoint.Create(10, 10);
-            var result = Utils.TryConvert(source, typeof(GeographyPoint), TypeCaches.Global, out _);
+            var result = TypeCaches.Global.TryConvert(source, typeof(GeographyPoint), out _);
             Assert.True(result);
         }
 

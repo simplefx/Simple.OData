@@ -236,5 +236,9 @@ namespace Simple.OData.Client.Extensions
         /// <param name="type"></param>
         /// <returns></returns>
         string GetMappedName(Type type);
+
+        bool TryConvert(object value, Type targetType, out object result);
+
+        object Convert(object value, Type targetType);
     }
 }

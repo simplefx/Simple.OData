@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Reflection;
 
 namespace Simple.OData.Client.Extensions
@@ -208,6 +209,80 @@ namespace Simple.OData.Client.Extensions
         public string GetMappedName(Type type)
         {
             return Resolver(type).MappedName;
+        }
+
+        public bool TryConvert(object value, Type targetType, out object result)
+        {
+            try
+            {
+                if (value == null)
+                {
+                    if (this.IsValue(targetType))
+                        result = Activator.CreateInstance(targetType);
+                    else
+                        result = null;
+                }
+                else if (this.IsTypeAssignableFrom(targetType, value.GetType()))
+                {
+                    result = value;
+                }
+                else if (targetType == typeof(string))
+                {
+                    result = value.ToString();
+                }
+                else if (this.IsEnumType(targetType) && value is string)
+                {
+                    result = Enum.Parse(targetType, value.ToString(), true);
+                }
+                else if (targetType == typeof(byte[]) && value is string)
+                {
+                    result = System.Convert.FromBase64String(value.ToString());
+                }
+                else if (targetType == typeof(string) && value is byte[])
+                {
+                    result = System.Convert.ToBase64String((byte[])value);
+                }
+                else if ((targetType == typeof(DateTime) || targetType == typeof(DateTime?)) && value is DateTimeOffset offset)
+                {
+                    result = offset.DateTime;
+                }
+                else if ((targetType == typeof(DateTimeOffset) || targetType == typeof(DateTimeOffset?)) && value is DateTime time)
+                {
+                    result = new DateTimeOffset(time);
+                }
+                else if (this.IsEnumType(targetType))
+                {
+                    result = Enum.ToObject(targetType, value);
+                }
+                else if (targetType == typeof(Guid) && value is string)
+                {
+                    result = new Guid(value.ToString());
+                }
+                else if (Nullable.GetUnderlyingType(targetType) != null)
+                {
+                    result = Convert(value, Nullable.GetUnderlyingType(targetType));
+                }
+                else
+                {
+                    result = System.Convert.ChangeType(value, targetType, CultureInfo.InvariantCulture);
+                }
+                return true;
+            }
+            catch (Exception)
+            {
+                result = null;
+                return false;
+            }
+        }
+
+        public object Convert(object value, Type targetType)
+        {
+            if (value == null && !this.IsValue(targetType))
+                return null;
+            else if (TryConvert(value, targetType, out var result))
+                return result;
+
+            throw new FormatException($"Unable to convert value from type {value.GetType()} to type {targetType}");
         }
 
         private TypeCacheResolver Resolver(Type type)
