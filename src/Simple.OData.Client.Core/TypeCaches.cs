@@ -14,11 +14,11 @@ namespace Simple.OData.Client
             _typeCaches = new ConcurrentDictionary<string, ITypeCache>();
         }
 
-        internal static ITypeCache Global => TypeCache("global");
+        internal static ITypeCache Global => TypeCache("global", null);
 
-        internal static ITypeCache TypeCache(string uri)
+        internal static ITypeCache TypeCache(string uri, INameMatchResolver nameMatchResolver)
         {
-            return _typeCaches.GetOrAdd(uri, new TypeCache(CustomConverters.Converter(uri)));
+            return _typeCaches.GetOrAdd(uri, new TypeCache(CustomConverters.Converter(uri), nameMatchResolver));
         }
     }
 }

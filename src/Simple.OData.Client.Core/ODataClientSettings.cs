@@ -132,7 +132,7 @@ namespace Simple.OData.Client
                     throw new InvalidOperationException("Assign BaseUri before accessing TypeCache");
                 }
 
-                return TypeCaches.TypeCache(BaseUri.AbsoluteUri);
+                return TypeCaches.TypeCache(BaseUri.AbsoluteUri, NameMatchResolver);
             }
         }
 

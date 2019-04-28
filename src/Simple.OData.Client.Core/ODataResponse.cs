@@ -130,24 +130,12 @@ namespace Simple.OData.Client
                 .ToArray();
         }
 
-        [Obsolete("Internal: Use overload with ITypeCache")]
-        public static ODataResponse FromNode(ResponseNode node)
-        {
-            return FromNode(TypeCaches.Global, node);
-        }
-
         internal static ODataResponse FromNode(ITypeCache typeCache, ResponseNode node)
         {
             return new ODataResponse(typeCache)
             {
                 Feed = node.Feed ?? new AnnotatedFeed(node.Entry != null ? new[] { node.Entry } : null)
             };
-        }
-
-        [Obsolete("Internal: Use overload with ITypeCache")]
-        public static ODataResponse FromProperty(string propertyName, object propertyValue)
-        {
-            return FromProperty(TypeCaches.Global, propertyName, propertyValue);
         }
 
         internal static ODataResponse FromProperty(ITypeCache typeCache, string propertyName, object propertyValue)
@@ -158,24 +146,12 @@ namespace Simple.OData.Client
             });
         }
 
-        [Obsolete("Internal: Use overload with ITypeCache")]
-        public static ODataResponse FromValueStream(Stream stream, bool disposeStream = false)
-        {
-            return FromValueStream(TypeCaches.Global, stream, disposeStream);
-        }
-
         internal static ODataResponse FromValueStream(ITypeCache typeCache, Stream stream, bool disposeStream = false)
         {
             return FromFeed(typeCache, new[]
             {
                 new Dictionary<string, object> { {FluentCommand.ResultLiteral, Utils.StreamToString(stream, disposeStream)} } 
             });
-        }
-
-        [Obsolete("Internal: Use overload with ITypeCache")]
-        public static ODataResponse FromCollection(IList<object> collection)
-        {
-            return FromCollection(TypeCaches.Global, collection);
         }
 
         internal static ODataResponse FromCollection(ITypeCache typeCache, IList<object> collection)
@@ -190,12 +166,6 @@ namespace Simple.OData.Client
             };
         }
 
-        [Obsolete("Internal: Use overload with ITypeCache")]
-        public static ODataResponse FromBatch(IList<ODataResponse> batch)
-        {
-            return FromBatch(TypeCaches.Global, batch);
-        }
-
         internal static ODataResponse FromBatch(ITypeCache typeCache, IList<ODataResponse> batch)
         {
             return new ODataResponse(typeCache)
@@ -205,12 +175,6 @@ namespace Simple.OData.Client
         }
 
 
-        [Obsolete("Internal: Use overload with ITypeCache")]
-        public static ODataResponse FromStatusCode(int statusCode, Exception exception = null)
-        {
-            return FromStatusCode(TypeCaches.Global, statusCode, exception);
-        }
-
         internal static ODataResponse FromStatusCode(ITypeCache typeCache, int statusCode, Exception exception = null)
         {
             return new ODataResponse(typeCache)
@@ -218,12 +182,6 @@ namespace Simple.OData.Client
                 StatusCode = statusCode,
                 Exception = exception,
             };
-        }
-
-        [Obsolete("Internal: Use overload with ITypeCache")]
-        public static ODataResponse FromStatusCode(int statusCode, Stream responseStream)
-        {
-            return FromStatusCode(TypeCaches.Global, statusCode, responseStream);
         }
 
         internal static ODataResponse FromStatusCode(ITypeCache typeCache, int statusCode, Stream responseStream)
@@ -245,9 +203,6 @@ namespace Simple.OData.Client
                 };
             }
         }
-
-        [Obsolete("Internal: Use overload with ITypeCache")]
-        public static ODataResponse EmptyFeed => FromFeed(TypeCaches.Global, new Dictionary<string, object>[] { });
 
         internal static ODataResponse EmptyFeeds(ITypeCache typeCache)
         {

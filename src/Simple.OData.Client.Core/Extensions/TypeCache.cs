@@ -8,15 +8,17 @@ namespace Simple.OData.Client.Extensions
     /// <copydoc cref="ITypeCache" />
     public class TypeCache : ITypeCache
     {
-        private readonly ConcurrentDictionary<Type, TypeCacheResolver> cache;
+        private readonly ConcurrentDictionary<Type, TypeCacheResolver> _cache;
+        private readonly INameMatchResolver _nameMatchResolver;
 
         /// <summary>
         /// Creates a new instance of the <see cref="TypeCache"/> class.
         /// </summary>
         /// <param name="converter"></param>
-        public TypeCache(ITypeConverter converter)
+        public TypeCache(ITypeConverter converter, INameMatchResolver nameMatchResolver)
         {
-            cache = new ConcurrentDictionary<Type, TypeCacheResolver>();
+            _cache = new ConcurrentDictionary<Type, TypeCacheResolver>();
+            _nameMatchResolver = nameMatchResolver ?? ODataNameMatchResolver.Strict;
             Converter = converter;
         }
 
@@ -210,16 +212,16 @@ namespace Simple.OData.Client.Extensions
 
         private TypeCacheResolver Resolver(Type type)
         {
-            var resolver = cache.GetOrAdd(type, x => InternalRegister(x));
+            var resolver = _cache.GetOrAdd(type, x => InternalRegister(x));
 
             return resolver;
         }
 
         private TypeCacheResolver InternalRegister(Type type, bool dynamicType = false, string dynamicContainerName = null)
         {
-            var resolver = new TypeCacheResolver(type, dynamicType, dynamicContainerName);
+            var resolver = new TypeCacheResolver(type, _nameMatchResolver, dynamicType, dynamicContainerName);
 
-            cache[type] = resolver;
+            _cache[type] = resolver;
 
             return resolver;
         }

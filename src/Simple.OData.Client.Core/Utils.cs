@@ -130,7 +130,7 @@ namespace Simple.OData.Client
         {
             if (typeCache == null)
             {
-                typeCache = TypeCaches.TypeCache("global");
+                typeCache = TypeCaches.Global;
             }
 
             try
@@ -200,7 +200,7 @@ namespace Simple.OData.Client
         {
             if (typeCache == null)
             {
-                typeCache = TypeCaches.TypeCache("global");
+                typeCache = TypeCaches.Global;
             }
 
             if (value == null && !typeCache.IsValue(targetType))

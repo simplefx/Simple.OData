@@ -19,10 +19,9 @@ namespace Simple.OData.Client.Extensions
         /// <param name="nameMatchResolver">Name match resolver.</param>
         /// <param name="dynamicType">Whether the cached type is dynamic.</param>
         /// <param name="dynamicContainerName">Dynamic container name.</param>
-        public TypeCacheResolver(Type type, bool dynamicType = false, string dynamicContainerName = "DynamicProperties")
+        public TypeCacheResolver(Type type, INameMatchResolver nameMatchResolver = null, bool dynamicType = false, string dynamicContainerName = "DynamicProperties")
         {
-            // TODO
-            _nameMatchResolver = ODataNameMatchResolver.Strict;
+            _nameMatchResolver = nameMatchResolver;
 
             Type = type;
             IsDynamicType = dynamicType;
