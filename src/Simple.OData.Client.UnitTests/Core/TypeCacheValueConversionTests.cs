@@ -1,7 +1,5 @@
 ﻿using System;
-
 using Microsoft.Spatial;
-using Simple.OData.Client.Extensions;
 using Xunit;
 
 namespace Simple.OData.Client.Tests.Core

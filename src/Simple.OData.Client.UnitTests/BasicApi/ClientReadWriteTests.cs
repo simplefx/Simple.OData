@@ -1,6 +1,4 @@
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Data.Edm;
 using Xunit;
 
 namespace Simple.OData.Client.Tests.BasicApi

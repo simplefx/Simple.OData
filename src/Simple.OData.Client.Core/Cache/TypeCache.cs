@@ -3,8 +3,9 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
+using Simple.OData.Client.Extensions;
 
-namespace Simple.OData.Client.Extensions
+namespace Simple.OData.Client
 {
     /// <copydoc cref="ITypeCache" />
     public class TypeCache : ITypeCache

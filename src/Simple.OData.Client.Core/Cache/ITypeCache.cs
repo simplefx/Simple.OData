@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace Simple.OData.Client.Extensions
+namespace Simple.OData.Client
 {
     /// <summary>
     /// Access the type definition with good performance.

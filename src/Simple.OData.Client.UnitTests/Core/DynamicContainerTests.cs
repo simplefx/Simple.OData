@@ -1,6 +1,4 @@
 ﻿using Simple.OData.Client.Tests.Entities;
-using Simple.OData.Client.Extensions;
-
 using Xunit;
 
 namespace Simple.OData.Client.Tests.Core
