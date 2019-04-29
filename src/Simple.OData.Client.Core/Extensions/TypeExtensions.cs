@@ -56,22 +56,6 @@ namespace Simple.OData.Client.Extensions
             return type.GetMappedProperties().Select(p => new Tuple<PropertyInfo, string>(p, p.GetMappedName()));
         }
 
-        /// <summary>
-        /// Get a property that is either directly named or mapped via an attribute
-        /// </summary>
-        /// <param name="type"></param>
-        /// <param name="propertyName"></param>
-        /// <returns></returns>
-        public static PropertyInfo GetMappedProperty(this Type type, string propertyName)
-        {
-            var property = type.GetNamedProperty(propertyName);
-            if (property == null)
-            {
-                property = type.GetAllProperties().FirstOrDefault(x => !x.IsNotMapped() && x.GetMappedName() == propertyName);
-            }
-            return property == null || property.IsNotMapped() ? null : property;
-        }
-
         private static bool IsInstanceProperty(PropertyInfo propertyInfo)
         {
             return (propertyInfo.CanRead && !propertyInfo.GetMethod.IsStatic)

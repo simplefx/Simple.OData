@@ -10,7 +10,7 @@ namespace Simple.OData.Client.Extensions
 {
     public static class MemberInfoExtensions
     {
-        private static ConcurrentDictionary<MemberInfo, MappingInfo> cache = new ConcurrentDictionary<MemberInfo, MappingInfo>();
+        private static readonly ConcurrentDictionary<MemberInfo, MappingInfo> cache = new ConcurrentDictionary<MemberInfo, MappingInfo>();
 
         public static bool IsNotMapped(this MemberInfo memberInfo)
         {
