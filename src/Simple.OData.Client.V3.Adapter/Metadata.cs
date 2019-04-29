@@ -303,7 +303,7 @@ namespace Simple.OData.Client.V3.Adapter
                 {
                     var baseType = GetEntityTypes()
                         .SingleOrDefault(x => _model.FindDirectlyDerivedTypes(x).Contains(derivedType));
-                    if (baseType != null && GetEntitySets().SingleOrDefault(x => x.ElementType == baseType) != null)
+                    if (baseType != null && GetEntitySets().Any(x => x.ElementType == baseType))
                     {
                         entityType = derivedType;
                         return true;
