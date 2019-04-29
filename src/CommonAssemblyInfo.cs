@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Reflection;
 using System.Resources;
-using System.Security;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 #if(DEBUG)
@@ -13,7 +11,7 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyCompany("Vagif Abilov")]
 [assembly: AssemblyProduct("Simple OData Client")]
-[assembly: AssemblyCopyright("Copyright © Vagif Abilov 2012-2018")]
+[assembly: AssemblyCopyright("Copyright © Vagif Abilov & Contributors 2012-2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
