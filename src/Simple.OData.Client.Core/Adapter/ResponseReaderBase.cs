@@ -117,10 +117,10 @@ namespace Simple.OData.Client
         protected void EndNavigationLink(Stack<ResponseNode> nodeStack)
         {
             var linkNode = nodeStack.Pop();
-            if (linkNode.Value != null)
+            var linkValue = linkNode.Value;
+            if (linkValue != null)
             {
-                var linkValue = linkNode.Value;
-                if (linkNode.Value is IDictionary<string, object> d)
+                if (linkValue is IDictionary<string, object> d)
                 {
                     if (!d.Any())
                     {
@@ -130,6 +130,17 @@ namespace Simple.OData.Client
                     {
                         d[FluentCommand.AnnotationsLiteral] = linkNode.Entry.Annotations;
                     }
+                }
+                else if (linkValue is IEnumerable<AnnotatedEntry> annotatedEntries)
+                {
+                    linkValue = annotatedEntries.Select(x =>
+                    {
+                        if (_session.Settings.IncludeAnnotationsInResults)
+                        {
+                            x.Data[FluentCommand.AnnotationsLiteral] = x.Annotations;
+                        }
+                        return x.Data;
+                    });
                 }
 
                 nodeStack.Peek().Entry.Data.Add(linkNode.LinkName, linkValue);
