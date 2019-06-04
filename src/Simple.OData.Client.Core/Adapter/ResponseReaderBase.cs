@@ -140,7 +140,7 @@ namespace Simple.OData.Client
                             x.Data[FluentCommand.AnnotationsLiteral] = x.Annotations;
                         }
                         return x.Data;
-                    });
+                    }).ToArray();
                 }
 
                 nodeStack.Peek().Entry.Data.Add(linkNode.LinkName, linkValue);
