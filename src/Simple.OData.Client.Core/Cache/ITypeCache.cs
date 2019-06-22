@@ -44,6 +44,18 @@ namespace Simple.OData.Client
         string DynamicContainerName(Type type);
 
         /// <summary>
+        /// Get the OData annotations property if any.
+        /// </summary>
+        PropertyInfo GetAnnotationsProperty(Type type);
+
+        /// <summary>
+        /// Get all derived types in the same assembly.
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        IEnumerable<Type> GetDerivedTypes(Type type);
+
+        /// <summary>
         /// Get the mapped properties for a type
         /// </summary>
         /// <param name="type"></param>

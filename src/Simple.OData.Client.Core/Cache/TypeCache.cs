@@ -3,7 +3,6 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
-using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
@@ -11,21 +10,23 @@ namespace Simple.OData.Client
     public class TypeCache : ITypeCache
     {
         private readonly ConcurrentDictionary<Type, TypeCacheResolver> _cache;
-        private readonly INameMatchResolver _nameMatchResolver;
 
         /// <summary>
         /// Creates a new instance of the <see cref="TypeCache"/> class.
         /// </summary>
         /// <param name="converter"></param>
+        /// <param name="nameMatchResolver"></param>
         public TypeCache(ITypeConverter converter, INameMatchResolver nameMatchResolver)
         {
             _cache = new ConcurrentDictionary<Type, TypeCacheResolver>();
-            _nameMatchResolver = nameMatchResolver ?? ODataNameMatchResolver.Strict;
+            NameMatchResolver = nameMatchResolver ?? ODataNameMatchResolver.Strict;;
             Converter = converter;
         }
 
         /// <copydoc cref="ITypeCache.Converter" />
         public ITypeConverter Converter { get; }
+
+        public INameMatchResolver NameMatchResolver { get; }
 
         /// <copydoc cref="ITypeCache.Register{T}" />
         public void Register<T>(string dynamicContainerName = "DynamicProperties")
@@ -38,7 +39,7 @@ namespace Simple.OData.Client
         {
             InternalRegister(type, true, dynamicContainerName);
 
-            foreach (var subType in type.DerivedTypes())
+            foreach (var subType in GetDerivedTypes(type))
             {
                 InternalRegister(subType, true, dynamicContainerName);
             }
@@ -54,6 +55,16 @@ namespace Simple.OData.Client
         public string DynamicContainerName(Type type)
         {
             return Resolver(type).DynamicPropertiesName;
+        }
+
+        public PropertyInfo GetAnnotationsProperty(Type type)
+        {
+            return Resolver(type).AnnotationsProperty;
+        }
+
+        public IEnumerable<Type> GetDerivedTypes(Type type)
+        {
+            return Resolver(type).DerivedTypes;
         }
 
         /// <copydoc cref="ITypeCache.GetMappedProperties" />
@@ -295,7 +306,7 @@ namespace Simple.OData.Client
 
         private TypeCacheResolver InternalRegister(Type type, bool dynamicType = false, string dynamicContainerName = null)
         {
-            var resolver = new TypeCacheResolver(type, _nameMatchResolver, dynamicType, dynamicContainerName);
+            var resolver = new TypeCacheResolver(type, NameMatchResolver, dynamicType, dynamicContainerName);
 
             _cache[type] = resolver;
 
