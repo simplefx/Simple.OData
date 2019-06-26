@@ -35,13 +35,14 @@ namespace Simple.OData.Client
                 {
                     var actionResponse = batchResponse.Batch[responseIndex];
                     if (actionResponse.Exception != null)
-                    {
-                        exceptions.Add(actionResponse.Exception);
-                    }
-                    else if (actionResponse.StatusCode >= (int)HttpStatusCode.BadRequest)
-                    {
-                        exceptions.Add(WebRequestException.CreateFromStatusCode((HttpStatusCode)actionResponse.StatusCode));
-                    }
+                        if (actionResponse.StatusCode == (int)HttpStatusCode.NotFound && _session.Settings.IgnoreResourceNotFoundException)
+                        {
+                            await actions[actionIndex](new ODataClient(client as ODataClient, actionResponse)).ConfigureAwait(false);
+                        }
+                        else
+                        {
+                            exceptions.Add(actionResponse.Exception);
+                        }
                     else
                     {
                         await actions[actionIndex](new ODataClient(client as ODataClient, actionResponse)).ConfigureAwait(false);

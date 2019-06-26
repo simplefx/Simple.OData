@@ -200,5 +200,30 @@ namespace Simple.OData.Client.Tests
                 .FindEntryAsync();
             Assert.Equal(2, (category["Products"] as IEnumerable<object>).Count());
         }
+
+        [Fact]
+        public async Task IgnoreResourceNotFoundExceptionInBatchRequest()
+        {
+            var settings = new ODataClientSettings(_serviceUri)
+            {
+                IgnoreResourceNotFoundException = true
+            };
+
+            var batch = new ODataBatch(settings);
+
+            IDictionary<string, object> bread = new Dictionary<string, object>();
+
+            IDictionary<string, object> milk = new Dictionary<string, object>();
+
+            batch += async x => bread = await x.For("Products").Key(0).FindEntryAsync();
+            batch += async x => await x.For("Products").Key(-1).FindEntryAsync();
+            batch += async x => milk = await x.For("Products").Key(1).FindEntryAsync();
+
+            await batch.ExecuteAsync();
+
+            Assert.True(bread.ContainsKey("ID"));
+            Assert.True(milk.ContainsKey("ID"));
+        }
+
     }
 }
