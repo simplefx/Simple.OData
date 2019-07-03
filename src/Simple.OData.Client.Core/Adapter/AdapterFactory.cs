@@ -11,7 +11,7 @@ using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
-    class AdapterFactory
+    public class AdapterFactory : IAdapterFactory
     {
         private const string AdapterV3AssemblyName = "Simple.OData.Client.V3.Adapter";
         private const string AdapterV4AssemblyName = "Simple.OData.Client.V4.Adapter";
@@ -20,7 +20,7 @@ namespace Simple.OData.Client
         private const string ModelAdapterV3TypeName = "Simple.OData.Client.V3.Adapter.ODataModelAdapter";
         private const string ModelAdapterV4TypeName = "Simple.OData.Client.V4.Adapter.ODataModelAdapter";
 
-        public async Task<IODataModelAdapter> CreateModelAdapterAsync(HttpResponseMessage response, ITypeCache typeCache)
+        public virtual async Task<IODataModelAdapter> CreateModelAdapterAsync(HttpResponseMessage response, ITypeCache typeCache)
         {
             var protocolVersions = (await GetSupportedProtocolVersionsAsync(response).ConfigureAwait(false)).ToArray();
 
@@ -33,7 +33,7 @@ namespace Simple.OData.Client
             throw new NotSupportedException($"OData protocols {string.Join(",", protocolVersions)} are not supported");
         }
 
-        public IODataModelAdapter CreateModelAdapter(string metadataString, ITypeCache typeCache)
+        public virtual IODataModelAdapter CreateModelAdapter(string metadataString, ITypeCache typeCache)
         {
             var protocolVersion = GetMetadataProtocolVersion(metadataString);
             var loadModelAdapter = GetModelAdapterLoader(protocolVersion, metadataString, typeCache);
@@ -43,7 +43,7 @@ namespace Simple.OData.Client
             return loadModelAdapter();
         }
 
-        public Func<ISession, IODataAdapter> CreateAdapter(string metadataString, ITypeCache typeCache)
+        public virtual Func<ISession, IODataAdapter> CreateAdapterLoader(string metadataString, ITypeCache typeCache)
         {
             var modelAdapter = CreateModelAdapter(metadataString, typeCache);
 
@@ -54,7 +54,7 @@ namespace Simple.OData.Client
             return loadAdapter;
         }
 
-        private async Task<IEnumerable<string>> GetSupportedProtocolVersionsAsync(HttpResponseMessage response)
+        protected async Task<IEnumerable<string>> GetSupportedProtocolVersionsAsync(HttpResponseMessage response)
         {
             if (response.Headers.TryGetValues(HttpLiteral.DataServiceVersion, out var headerValues) ||
                 response.Headers.TryGetValues(HttpLiteral.ODataVersion, out headerValues))
@@ -149,7 +149,7 @@ namespace Simple.OData.Client
             }
         }
 
-        private string GetMetadataProtocolVersion(string metadataString)
+        protected string GetMetadataProtocolVersion(string metadataString)
         {
             using (var reader = XmlReader.Create(new StringReader(metadataString)))
             {
