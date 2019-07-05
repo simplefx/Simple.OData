@@ -234,27 +234,21 @@ namespace Simple.OData.Client.V4.Adapter
 
                 case EdmTypeKind.Entity:
                     var entryWriter = await parameterWriter.CreateResourceWriterAsync(paramName).ConfigureAwait(false);
-                    var paramDict = paramValue.ToDictionary(TypeCache);
-                    var contentId = _deferredBatchWriter?.Value.GetContentId(paramDict, null);
+                    var paramValueDict = paramValue.ToDictionary(TypeCache);
+                    var contentId = _deferredBatchWriter?.Value.GetContentId(paramValueDict, null);
 
                     var typeName = operationParameter.Type.Definition.FullTypeName();
-                    if (paramDict.ContainsKey("@odata.type") && paramDict["@odata.type"] is string)
+                    if (paramValueDict.ContainsKey("@odata.type") && paramValueDict["@odata.type"] is string)
                     {
-                        typeName = paramDict["@odata.type"] as string;
-                        paramDict.Remove("@odata.type");
-                        //typeName = "orderclose";
+                        typeName = paramValueDict["@odata.type"] as string;
+                        paramValueDict.Remove("@odata.type");
                     }
 
-                    //var entityCollection = _session.Metadata.NavigateToCollection(collection);
-                    //var entryDetails = _session.Metadata.ParseEntryDetails(entityCollection.Name, entryData, contentId);
-                    var entryDetails = _session.Metadata.ParseEntryDetails(typeName, paramDict, contentId);
+                    var entryDetails = _session.Metadata.ParseEntryDetails(typeName, paramValueDict, contentId);
                     var entry = CreateODataEntry(typeName, entryDetails.Properties, null);
 
                     RegisterRootEntry(entry);
                     await WriteEntryPropertiesAsync(entryWriter, entry, entryDetails.Links).ConfigureAwait(false);
-
-                    //await entryWriter.WriteStartAsync(entry).ConfigureAwait(false);
-                    //await entryWriter.WriteEndAsync().ConfigureAwait(false);
                     UnregisterRootEntry(entry);
 
                     break;
@@ -400,7 +394,6 @@ namespace Simple.OData.Client.V4.Adapter
                     RequestUri = _session.Settings.BaseUri,
                 },
                 EnableMessageStreamDisposal = IsBatch,
-                //Validations = ValidationKinds.None
             };
             var contentType = preferredContentType ?? ODataFormat.Json;
             settings.SetContentType(contentType);
@@ -409,12 +402,6 @@ namespace Simple.OData.Client.V4.Adapter
 
         private ODataResource CreateODataEntry(string typeName, IDictionary<string, object> properties, ODataResource root)
         {
-            if (properties.ContainsKey("@odata.type"))
-            {
-                typeName = (string)properties["@odata.type"];
-                properties.Remove("@odata.type");
-            }
-
             var entry = new ODataResource { TypeName = typeName };
             root = root ?? entry;
 
@@ -439,14 +426,9 @@ namespace Simple.OData.Client.V4.Adapter
                 type != null && type.TypeKind() == EdmTypeKind.Complex;
             bool isStructuralCollection(IEdmTypeReference type) => 
                 type != null && type.TypeKind() == EdmTypeKind.Collection && type.AsCollection().ElementType().TypeKind() == EdmTypeKind.Complex;
-            //bool isEntity(IEdmTypeReference type) =>
-            //    type != null && type.TypeKind() == EdmTypeKind.Entity;
-            bool isPrimitive(IEdmTypeReference type) =>
-                !isStructural(type) && !isStructuralCollection(type); //&& !isEntity(type);
-            new ODataProperty
-            {
+            bool isPrimitive(IEdmTypeReference type) => 
+                !isStructural(type) && !isStructuralCollection(type);
 
-            };
             var resourceEntry = new ResourceProperties(entry);
             entry.Properties = properties
                 .Where(x => isPrimitive(findMatchingPropertyType(x.Key)))
