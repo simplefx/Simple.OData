@@ -234,11 +234,27 @@ namespace Simple.OData.Client.V4.Adapter
 
                 case EdmTypeKind.Entity:
                     var entryWriter = await parameterWriter.CreateResourceWriterAsync(paramName).ConfigureAwait(false);
-                    var entry = CreateODataEntry(operationParameter.Type.Definition.FullTypeName(), paramValue.ToDictionary(TypeCache), null);
+                    var paramDict = paramValue.ToDictionary(TypeCache);
+                    var contentId = _deferredBatchWriter?.Value.GetContentId(paramDict, null);
+
+                    var typeName = operationParameter.Type.Definition.FullTypeName();
+                    if (paramDict.ContainsKey("@odata.type") && paramDict["@odata.type"] is string)
+                    {
+                        typeName = paramDict["@odata.type"] as string;
+                        paramDict.Remove("@odata.type");
+                        //typeName = "orderclose";
+                    }
+
+                    //var entityCollection = _session.Metadata.NavigateToCollection(collection);
+                    //var entryDetails = _session.Metadata.ParseEntryDetails(entityCollection.Name, entryData, contentId);
+                    var entryDetails = _session.Metadata.ParseEntryDetails(typeName, paramDict, contentId);
+                    var entry = CreateODataEntry(typeName, entryDetails.Properties, null);
 
                     RegisterRootEntry(entry);
-                    await entryWriter.WriteStartAsync(entry).ConfigureAwait(false);
-                    await entryWriter.WriteEndAsync().ConfigureAwait(false);
+                    await WriteEntryPropertiesAsync(entryWriter, entry, entryDetails.Links).ConfigureAwait(false);
+
+                    //await entryWriter.WriteStartAsync(entry).ConfigureAwait(false);
+                    //await entryWriter.WriteEndAsync().ConfigureAwait(false);
                     UnregisterRootEntry(entry);
 
                     break;
@@ -384,6 +400,7 @@ namespace Simple.OData.Client.V4.Adapter
                     RequestUri = _session.Settings.BaseUri,
                 },
                 EnableMessageStreamDisposal = IsBatch,
+                //Validations = ValidationKinds.None
             };
             var contentType = preferredContentType ?? ODataFormat.Json;
             settings.SetContentType(contentType);
@@ -392,6 +409,12 @@ namespace Simple.OData.Client.V4.Adapter
 
         private ODataResource CreateODataEntry(string typeName, IDictionary<string, object> properties, ODataResource root)
         {
+            if (properties.ContainsKey("@odata.type"))
+            {
+                typeName = (string)properties["@odata.type"];
+                properties.Remove("@odata.type");
+            }
+
             var entry = new ODataResource { TypeName = typeName };
             root = root ?? entry;
 
@@ -416,9 +439,14 @@ namespace Simple.OData.Client.V4.Adapter
                 type != null && type.TypeKind() == EdmTypeKind.Complex;
             bool isStructuralCollection(IEdmTypeReference type) => 
                 type != null && type.TypeKind() == EdmTypeKind.Collection && type.AsCollection().ElementType().TypeKind() == EdmTypeKind.Complex;
-            bool isPrimitive(IEdmTypeReference type) => 
-                !isStructural(type) && !isStructuralCollection(type);
+            //bool isEntity(IEdmTypeReference type) =>
+            //    type != null && type.TypeKind() == EdmTypeKind.Entity;
+            bool isPrimitive(IEdmTypeReference type) =>
+                !isStructural(type) && !isStructuralCollection(type); //&& !isEntity(type);
+            new ODataProperty
+            {
 
+            };
             var resourceEntry = new ResourceProperties(entry);
             entry.Properties = properties
                 .Where(x => isPrimitive(findMatchingPropertyType(x.Key)))
