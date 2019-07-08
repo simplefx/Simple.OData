@@ -16,7 +16,7 @@
       To access V3 OData feeds use Simple.OData.V3.Client or Simple.OData.Client that can consume OData feeds of any version.
     </summary>
     <projectUrl>https://github.com/object/Simple.OData.Client</projectUrl>
-    <licenseUrl>http://www.opensource.org/licenses/mit-license.php</licenseUrl>
+    <license type="expression">MIT</license>
     <iconUrl>http://www.odata.org/wp-content/uploads/2014/05/ODataLogo-96.png</iconUrl>
     <copyright>Copyright 2012-2018 Vagif Abilov</copyright>
     <language>en-us</language>
