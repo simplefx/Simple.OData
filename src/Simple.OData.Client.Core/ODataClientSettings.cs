@@ -14,6 +14,8 @@ namespace Simple.OData.Client
     {
         private readonly INameMatchResolver _defaultNameMatchResolver = new BestMatchResolver();
         private INameMatchResolver _nameMatchResolver;
+        private readonly IAdapterFactory _defaultAdapterFactory = new AdapterFactory();
+        private IAdapterFactory _adapterFactory;
         private Uri _baseOrRelativeUri;
 
         /// <summary>
@@ -247,6 +249,15 @@ namespace Simple.OData.Client
         public ODataTrace TraceFilter { get; set; }
 
         /// <summary>
+        /// Gets or sets the adapter factory that is used by the session
+        /// </summary>
+        public IAdapterFactory AdapterFactory
+        {
+            get => _adapterFactory ?? _defaultAdapterFactory;
+            set => _adapterFactory = value;
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="ODataClientSettings"/> class.
         /// </summary>
         public ODataClientSettings()
@@ -321,6 +332,7 @@ namespace Simple.OData.Client
             this.AfterResponseAsync = session.Settings.AfterResponseAsync;
             this.OnTrace = session.Settings.OnTrace;
             this.TraceFilter = session.Settings.TraceFilter;
+            this.AdapterFactory = session.Settings.AdapterFactory;
         }
     }
 }
