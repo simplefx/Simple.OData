@@ -20,6 +20,7 @@ namespace Simple.OData.Client.Tests.Core
             {
                 this.session = session;
             }
+
             protected override async Task<object> CreateOperationMessageAsync(Uri uri, string method, string collection, string contentId, bool resultRequired)
             {
                 var result = await base.CreateOperationMessageAsync(AppendToken(uri), method, collection, contentId, resultRequired);
@@ -29,6 +30,7 @@ namespace Simple.OData.Client.Tests.Core
                 }
                 return result;
             }
+
             private static Uri AppendToken(Uri uri, string token = "123456")
             {
                 var uriBuilder = new UriBuilder(uri);
@@ -38,16 +40,20 @@ namespace Simple.OData.Client.Tests.Core
                 return uriBuilder.Uri;
             }
         }
+
         class CustomAdapter : ODataAdapter
         {
             private readonly ISession session;
+
             public CustomAdapter(ISession session, IODataModelAdapter modelAdapter) : base(session, modelAdapter)
             {
                 this.session = session;
             }
+
             public override IBatchWriter GetBatchWriter(IDictionary<object, IDictionary<string, object>> batchEntries) => new CustomBatchWriter(session,  batchEntries);
         }
-        class CustomAdapterFactory : AdapterFactory
+
+        class CustomAdapterFactory : ODataAdapterFactory
         {
             public override Func<ISession, IODataAdapter> CreateAdapterLoader(string metadataString, ITypeCache typeCache)
             {
@@ -55,6 +61,7 @@ namespace Simple.OData.Client.Tests.Core
                 return session => new CustomAdapter(session, modelAdapter);
             }
         }
+
         [Fact]
         public void CustomAdapterIsProduced()
         {
@@ -63,6 +70,7 @@ namespace Simple.OData.Client.Tests.Core
             var client = new ODataClient(settings);
             Assert.IsType<CustomAdapter>(client.Session.Adapter);
         }
+
         [Fact]
         public async void CustomBatchWriterAppendsToken()
         {
