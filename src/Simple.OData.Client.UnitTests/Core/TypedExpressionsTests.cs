@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
+using Newtonsoft.Json;
 using Xunit;
 
 namespace Simple.OData.Client.Tests.Core
@@ -48,16 +49,18 @@ namespace Simple.OData.Client.Tests.Core
             public TestEntity[] Collection { get; set; }
 
             [Column(Name = "Name")] 
-            public string MappedName1 { get; set; }
+            public string MappedNameUsingColumnAttribute { get; set; }
             [Data(Name = "Name", PropertyName = "OtherName")]
-            public string MappedName2 { get; set; }
+            public string MappedNameUsingDataAttribute { get; set; }
             [DataMember(Name = "Name", PropertyName = "OtherName")]
-            public string MappedName3 { get; set; }
-            [Other(Name = "OtherName", PropertyName = "Name")]
-            public string MappedName4 { get; set; }
+            public string MappedNameUsingDataMemberAttribute { get; set; }
+            [Other(Name = "Name", PropertyName = "OtherName")]
+            public string MappedNameUsingOtherAttribute { get; set; }
             [DataMember(Name = "Name", PropertyName = "OtherName")]
             [Other(Name = "OtherName", PropertyName = "OtherName")]
-            public string MappedName5 { get; set; }
+            public string MappedNameUsingDataMemberAndOtherAttribute { get; set; }
+            [JsonProperty("Name")]
+            public string MappedNameUsingJsonPropertyAttribute { get; set; }
         }
 
         [Fact]
@@ -437,17 +440,44 @@ namespace Simple.OData.Client.Tests.Core
         }
 
         [Fact]
-        public void FilterWithMappedProperties()
+        public void FilterWithMappedPropertiesUsingColumnAttribute()
         {
-            Expression<Func<TestEntity, bool>> filter = x => x.MappedName1 == "Milk";
+            Expression<Func<TestEntity, bool>> filter = x => x.MappedNameUsingColumnAttribute == "Milk";
             Assert.Equal("Name eq 'Milk'", ODataExpression.FromLinqExpression(filter).AsString(_session));
-            filter = x => x.MappedName2 == "Milk";
+        }
+
+        [Fact]
+        public void FilterWithMappedPropertiesUsingDataAttribute()
+        {
+            Expression<Func<TestEntity, bool>> filter = x => x.MappedNameUsingDataAttribute == "Milk";
             Assert.Equal("Name eq 'Milk'", ODataExpression.FromLinqExpression(filter).AsString(_session));
-            filter = x => x.MappedName3 == "Milk";
+        }
+
+        [Fact]
+        public void FilterWithMappedPropertiesUsingDataMemberAttribute()
+        {
+            Expression<Func<TestEntity, bool>> filter = x => x.MappedNameUsingDataMemberAttribute == "Milk";
             Assert.Equal("Name eq 'Milk'", ODataExpression.FromLinqExpression(filter).AsString(_session));
-            filter = x => x.MappedName4 == "Milk";
+        }
+
+        [Fact]
+        public void FilterWithMappedPropertiesUsingOtherAttribute()
+        {
+            Expression<Func<TestEntity, bool>> filter = x => x.MappedNameUsingOtherAttribute == "Milk";
             Assert.Equal("Name eq 'Milk'", ODataExpression.FromLinqExpression(filter).AsString(_session));
-            filter = x => x.MappedName5 == "Milk";
+        }
+
+        [Fact]
+        public void FilterWithMappedPropertiesUsingDataMemberAndOtherAttribute()
+        {
+            Expression<Func<TestEntity, bool>> filter = x => x.MappedNameUsingDataMemberAndOtherAttribute == "Milk";
+            Assert.Equal("Name eq 'Milk'", ODataExpression.FromLinqExpression(filter).AsString(_session));
+        }
+
+        [Fact]
+        public void FilterWithMappedPropertiesUsingJsonPropertyAttribute()
+        {
+            Expression<Func<TestEntity, bool>> filter = x => x.MappedNameUsingJsonPropertyAttribute == "Milk";
             Assert.Equal("Name eq 'Milk'", ODataExpression.FromLinqExpression(filter).AsString(_session));
         }
 

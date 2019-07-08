@@ -47,7 +47,13 @@ namespace Simple.OData.Client.Extensions
 
         private static bool IsNotMapped(this IList<Attribute> attributes)
         {
-            return attributes.Any(x => x.GetType().Name == "NotMappedAttribute");
+            var supportedAttributeNames = new[]
+            {
+                "NotMappedAttribute",
+                "JsonIgnoreAttribute",
+            };
+
+            return attributes.Any(x => supportedAttributeNames.Contains(x.GetType().Name));
         }
 
         private static string GetMappedName(this string name, IList<Attribute> attributes)
@@ -57,33 +63,35 @@ namespace Simple.OData.Client.Extensions
                 "DataAttribute",
                 "DataMemberAttribute",
                 "ColumnAttribute",
+                "JsonPropertyAttribute",
             };
 
-            var propertyName = name;
-            string attributeProperty;
             var mappingAttribute = attributes.FirstOrDefault(x => supportedAttributeNames.Any(y => x.GetType().Name == y));
-            if (mappingAttribute != null)
+            if (mappingAttribute == null)
             {
-                attributeProperty = "Name";
-            }
-            else
-            {
-                attributeProperty = "PropertyName";
-                mappingAttribute = attributes.FirstOrDefault(x => x.GetType().GetNamedProperty(attributeProperty) != null);
+                mappingAttribute = attributes.FirstOrDefault(x => x.GetType().GetNamedProperty("PropertyName") != null);
             }
 
+            var attributePropertyNames = new[]
+            {
+                "Name",
+                "PropertyName",
+            };
             if (mappingAttribute != null)
             {
-                var nameProperty = mappingAttribute.GetType().GetNamedProperty(attributeProperty);
-                if (nameProperty != null)
+                foreach (var attributeProperty in attributePropertyNames)
                 {
-                    var propertyValue = nameProperty.GetValue(mappingAttribute, null);
-                    if (propertyValue != null)
-                        propertyName = propertyValue.ToString();
+                    var nameProperty = mappingAttribute.GetType().GetNamedProperty(attributeProperty);
+                    if (nameProperty != null)
+                    {
+                        var propertyValue = nameProperty.GetValue(mappingAttribute, null);
+                        if (propertyValue != null)
+                            return propertyValue.ToString();
+                    }
                 }
             }
 
-            return propertyName;
+            return name;
         }
     }
 

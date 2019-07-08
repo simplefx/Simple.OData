@@ -49,10 +49,73 @@
             Abstraction over the OData Edm model.
             </summary>
         </member>
+        <member name="T:Simple.OData.Client.IODataAdapterFactory">
+            <summary>
+            IODataAdapterFactory interface contains collection of methods to create OData adapters.
+            It can be used as a customization point to create adapters with custom behavior.
+            </summary>
+        </member>
+        <member name="M:Simple.OData.Client.IODataAdapterFactory.CreateModelAdapterAsync(System.Net.Http.HttpResponseMessage,Simple.OData.Client.ITypeCache)">
+            <summary>
+            Creates an instance of IODataModelAdapter from an HTTP response with schema information.
+            </summary>
+            <param name="response">HTTP response message with schema information</param>
+            <param name="typeCache">Service type cache</param>
+            <returns></returns>
+            <exception cref="T:System.NotSupportedException"></exception>
+        </member>
+        <member name="M:Simple.OData.Client.IODataAdapterFactory.CreateModelAdapter(System.String,Simple.OData.Client.ITypeCache)">
+            <summary>
+            Creates an instance of IODataModelAdapter from a metadata string.
+            </summary>
+            <param name="metadataString">Service metadata</param>
+            <param name="typeCache">Service type cache</param>
+            <returns></returns>
+            <exception cref="T:System.NotSupportedException"></exception>
+        </member>
+        <member name="M:Simple.OData.Client.IODataAdapterFactory.CreateAdapterLoader(System.String,Simple.OData.Client.ITypeCache)">
+            <summary>
+            Creates an instance of OData adapter loader from a metadata string.
+            </summary>
+            <param name="metadataString">Service metadata</param>
+            <param name="typeCache">Service type cache</param>
+            <returns></returns>
+            <exception cref="T:System.NotSupportedException"></exception>
+        </member>
         <member name="T:Simple.OData.Client.Adapter.MetadataCache">
             <summary>
             A caching layer for <see cref="T:Simple.OData.Client.IMetadata"/>
             </summary>
+        </member>
+        <member name="T:Simple.OData.Client.ODataAdapterFactory">
+            <summary>
+            ODataAdapterFactory creates OData adapters for specific OData protocols.
+            Custom OData adapter classes can be derived from ODataAdapterFactory to provide custom implementation of its methods.
+            </summary>
+        </member>
+        <member name="M:Simple.OData.Client.ODataAdapterFactory.CreateModelAdapterAsync(System.Net.Http.HttpResponseMessage,Simple.OData.Client.ITypeCache)">
+            <inheritdoc />
+        </member>
+        <member name="M:Simple.OData.Client.ODataAdapterFactory.CreateModelAdapter(System.String,Simple.OData.Client.ITypeCache)">
+            <inheritdoc />
+        </member>
+        <member name="M:Simple.OData.Client.ODataAdapterFactory.CreateAdapterLoader(System.String,Simple.OData.Client.ITypeCache)">
+            <inheritdoc />
+        </member>
+        <member name="M:Simple.OData.Client.ODataAdapterFactory.GetSupportedProtocolVersionsAsync(System.Net.Http.HttpResponseMessage)">
+            <summary>
+            Returns a collection of supported protocol versions.
+            </summary>
+            <param name="response">HTTP response message with schema information</param>
+            <returns></returns>
+            <exception cref="T:System.InvalidOperationException"></exception>
+        </member>
+        <member name="M:Simple.OData.Client.ODataAdapterFactory.GetMetadataProtocolVersion(System.String)">
+            <summary>
+            Returns OData protocol version
+            </summary>
+            <param name="metadataString">Service metadata</param>
+            <returns></returns>
         </member>
         <member name="T:Simple.OData.Client.ITypeCache">
             <summary>
@@ -3246,6 +3309,11 @@
             <value>
             If not set, a built-in word pluralizer is used to resolve resource, type and property names.
             </value>
+        </member>
+        <member name="P:Simple.OData.Client.ODataClientSettings.AdapterFactory">
+            <summary>
+            Gets or sets the adapter factory that is used by the session
+            </summary>
         </member>
         <member name="P:Simple.OData.Client.ODataClientSettings.OnCreateMessageHandler">
             <summary>

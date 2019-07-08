@@ -53,7 +53,7 @@ namespace Simple.OData.Client
             }
         }
 
-        private readonly Func<ISession, IODataAdapter> _adapterFactory;
+        private readonly ITypeCache typeCache;
 
         public EdmMetadataCache(string key, string metadataDocument, ITypeCache typeCache)
         {
@@ -61,10 +61,10 @@ namespace Simple.OData.Client
                 throw new ArgumentNullException(nameof(key));
             if (string.IsNullOrWhiteSpace(metadataDocument))
                 throw new ArgumentNullException(nameof(metadataDocument));
+            this.typeCache = typeCache;
 
             Key = key;
             MetadataDocument = metadataDocument;
-            _adapterFactory = new AdapterFactory().CreateAdapter(metadataDocument, typeCache);
         }
 
         public string Key { get; }
@@ -73,7 +73,7 @@ namespace Simple.OData.Client
 
         public IODataAdapter GetODataAdapter(ISession session)
         {
-            return _adapterFactory(session);
+            return session.Settings.AdapterFactory.CreateAdapterLoader(MetadataDocument, typeCache)(session);
         }
     }
 }

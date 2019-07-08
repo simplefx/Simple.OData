@@ -14,6 +14,8 @@ namespace Simple.OData.Client
     {
         private readonly INameMatchResolver _defaultNameMatchResolver = new BestMatchResolver();
         private INameMatchResolver _nameMatchResolver;
+        private readonly IODataAdapterFactory _defaultAdapterFactory = new ODataAdapterFactory();
+        private IODataAdapterFactory _adapterFactory;
         private Uri _baseOrRelativeUri;
 
         /// <summary>
@@ -173,6 +175,15 @@ namespace Simple.OData.Client
         }
 
         /// <summary>
+        /// Gets or sets the adapter factory that is used by the session
+        /// </summary>
+        public IODataAdapterFactory AdapterFactory
+        {
+            get => _adapterFactory ?? _defaultAdapterFactory;
+            set => _adapterFactory = value;
+        }
+
+        /// <summary>
         /// Gets or sets the HttpMessageHandler factory used by HttpClient.
         /// If not set, ODataClient creates an instance of HttpClientHandler.
         /// </summary>
@@ -311,6 +322,7 @@ namespace Simple.OData.Client
             this.UnqualifiedNameCall = session.Settings.UnqualifiedNameCall;
             this.EnumPrefixFree = session.Settings.EnumPrefixFree;
             this.NameMatchResolver = session.Settings.NameMatchResolver;
+            this.AdapterFactory = session.Settings.AdapterFactory;
             this.OnCreateMessageHandler = session.Settings.OnCreateMessageHandler;
             this.OnApplyClientHandler = session.Settings.OnApplyClientHandler;
             this.HttpClient = session.Settings.HttpClient;
