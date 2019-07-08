@@ -1,0 +1,42 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+  <edmx:Reference Uri="http://vocabularies.odata.org/OData.Community.Keys.V1.xml">
+    <edmx:Include Namespace="OData.Community.Keys.V1" Alias="Keys" />
+    <edmx:IncludeAnnotations TermNamespace="OData.Community.Keys.V1" />
+  </edmx:Reference>
+  <edmx:Reference Uri="http://vocabularies.odata.org/OData.Community.Display.V1.xml">
+    <edmx:Include Namespace="OData.Community.Display.V1" Alias="Display" />
+    <edmx:IncludeAnnotations TermNamespace="OData.Community.Display.V1" />
+  </edmx:Reference>
+  <edmx:DataServices>
+    <Schema Namespace="Microsoft.Dynamics.CRM" Alias="mscrm" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+      <EntityType Name="crmbaseentity" Abstract="true" />
+      <EntityType Name="orderclose" BaseType="mscrm.activitypointer">
+        <Key>
+          <PropertyRef Name="activityid" />
+        </Key>
+        <Property Name="_salesorderid_value" Type="Edm.Guid" />
+        <NavigationProperty Name="salesorderid" Type="mscrm.salesorder" Nullable="false" Partner="SalesOrder_OrderClose">
+          <ReferentialConstraint Property="_salesorderid_value" ReferencedProperty="salesorderid" />
+        </NavigationProperty>
+      </EntityType>
+      <EntityType Name="salesorder" BaseType="mscrm.crmbaseentity">
+        <Key>
+          <PropertyRef Name="salesorderid" />
+        </Key>
+        <Property Name="salesorderid" Type="Edm.Guid" />
+      </EntityType>
+      <EntityType Name="activitypointer" BaseType="mscrm.crmbaseentity" Abstract="true">
+        <Key>
+          <PropertyRef Name="activityid" />
+        </Key>
+        <Property Name="activityid" Type="Edm.Guid" />
+        <Property Name="subject" Type="Edm.String" Unicode="false" />
+      </EntityType>
+      <Action Name="CancelSalesOrder">
+        <Parameter Name="OrderClose" Type="mscrm.crmbaseentity" Nullable="false" />
+        <Parameter Name="Status" Type="Edm.Int32" Nullable="false" />
+      </Action>
+    </Schema>
+  </edmx:DataServices>
+</edmx:Edmx>

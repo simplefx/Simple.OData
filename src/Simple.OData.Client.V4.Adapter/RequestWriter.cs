@@ -234,11 +234,21 @@ namespace Simple.OData.Client.V4.Adapter
 
                 case EdmTypeKind.Entity:
                     var entryWriter = await parameterWriter.CreateResourceWriterAsync(paramName).ConfigureAwait(false);
-                    var entry = CreateODataEntry(operationParameter.Type.Definition.FullTypeName(), paramValue.ToDictionary(TypeCache), null);
+                    var paramValueDict = paramValue.ToDictionary(TypeCache);
+                    var contentId = _deferredBatchWriter?.Value.GetContentId(paramValueDict, null);
+
+                    var typeName = operationParameter.Type.Definition.FullTypeName();
+                    if (paramValueDict.ContainsKey("@odata.type") && paramValueDict["@odata.type"] is string)
+                    {
+                        typeName = paramValueDict["@odata.type"] as string;
+                        paramValueDict.Remove("@odata.type");
+                    }
+
+                    var entryDetails = _session.Metadata.ParseEntryDetails(typeName, paramValueDict, contentId);
+                    var entry = CreateODataEntry(typeName, entryDetails.Properties, null);
 
                     RegisterRootEntry(entry);
-                    await entryWriter.WriteStartAsync(entry).ConfigureAwait(false);
-                    await entryWriter.WriteEndAsync().ConfigureAwait(false);
+                    await WriteEntryPropertiesAsync(entryWriter, entry, entryDetails.Links).ConfigureAwait(false);
                     UnregisterRootEntry(entry);
 
                     break;
