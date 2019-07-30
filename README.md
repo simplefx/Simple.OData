@@ -3,6 +3,7 @@
 <p align="center">
 <a href="https://www.nuget.org/packages/Simple.OData.Client/"><img src="https://img.shields.io/nuget/v/Simple.OData.Client.svg" alt="current release"><img src="https://img.shields.io/nuget/dt/Simple.OData.Client.svg" alt="downloads" />
 </a>
+ <a href="https://gitter.im/simple-odata-client/community"><img src="https://badges.gitter.im/gitterHQ/gitter.png"></a>
 </p>
 
 ## Introduction
