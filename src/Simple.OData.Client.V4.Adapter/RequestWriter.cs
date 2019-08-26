@@ -150,7 +150,7 @@ namespace Simple.OData.Client.V4.Adapter
         protected override async Task<Stream> WriteLinkContentAsync(string method, string commandText, string linkIdent)
         {
             var message = IsBatch
-                ? await CreateBatchOperationMessageAsync(method, null, null, commandText, false).ConfigureAwait(false) 
+                ? await CreateBatchOperationMessageAsync(method, null, null, commandText, false).ConfigureAwait(false)
                 : new ODataRequestMessage();
 
             using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), _model))
@@ -304,7 +304,7 @@ namespace Simple.OData.Client.V4.Adapter
         {
             return linkIdent == null
                 ? $"{entryIdent}/{navigationPropertyName}/$ref"
-                : $"{entryIdent}/{navigationPropertyName}/$ref?$id={linkIdent}";
+                : $"{entryIdent}/{navigationPropertyName}/$ref?$id={(_session.Settings.UseAbsoluteReferenceUris ? _session.Settings.BaseUri.AbsoluteUri + linkIdent : linkIdent)}";
         }
 
         protected override void AssignHeaders(ODataRequest request)
@@ -406,8 +406,8 @@ namespace Simple.OData.Client.V4.Adapter
             root = root ?? entry;
 
             var entryType = _model.FindDeclaredType(entry.TypeName);
-            var typeProperties = typeof(IEdmEntityType).IsTypeAssignableFrom(entryType.GetType()) 
-                ? (entryType as IEdmEntityType).Properties().ToList() 
+            var typeProperties = typeof(IEdmEntityType).IsTypeAssignableFrom(entryType.GetType())
+                ? (entryType as IEdmEntityType).Properties().ToList()
                 : (entryType as IEdmComplexType).Properties().ToList();
 
             string findMatchingPropertyName(string name)
@@ -422,21 +422,21 @@ namespace Simple.OData.Client.V4.Adapter
                 return property?.Type;
             }
 
-            bool isStructural(IEdmTypeReference type) => 
+            bool isStructural(IEdmTypeReference type) =>
                 type != null && type.TypeKind() == EdmTypeKind.Complex;
-            bool isStructuralCollection(IEdmTypeReference type) => 
+            bool isStructuralCollection(IEdmTypeReference type) =>
                 type != null && type.TypeKind() == EdmTypeKind.Collection && type.AsCollection().ElementType().TypeKind() == EdmTypeKind.Complex;
-            bool isPrimitive(IEdmTypeReference type) => 
+            bool isPrimitive(IEdmTypeReference type) =>
                 !isStructural(type) && !isStructuralCollection(type);
 
             var resourceEntry = new ResourceProperties(entry);
             entry.Properties = properties
                 .Where(x => isPrimitive(findMatchingPropertyType(x.Key)))
                 .Select(x => new ODataProperty
-            {
-                Name = findMatchingPropertyName(x.Key),
-                Value = GetPropertyValue(typeProperties, x.Key, x.Value, root)
-            }).ToList();
+                {
+                    Name = findMatchingPropertyName(x.Key),
+                    Value = GetPropertyValue(typeProperties, x.Key, x.Value, root)
+                }).ToList();
             resourceEntry.CollectionProperties = properties
                 .Where(x => isStructuralCollection(findMatchingPropertyType(x.Key)))
                 .Select(x => new KeyValuePair<string, ODataCollectionValue>(
@@ -451,7 +451,7 @@ namespace Simple.OData.Client.V4.Adapter
                 .ToDictionary();
             _resourceEntryMap.Add(entry, resourceEntry);
             if (root != null && _resourceEntries.TryGetValue(root, out var entries))
-                    entries.Add(entry);
+                entries.Add(entry);
 
             return entry;
         }
