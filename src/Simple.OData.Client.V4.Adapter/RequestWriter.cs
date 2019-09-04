@@ -304,7 +304,7 @@ namespace Simple.OData.Client.V4.Adapter
         {
             return linkIdent == null
                 ? $"{entryIdent}/{navigationPropertyName}/$ref"
-                : $"{entryIdent}/{navigationPropertyName}/$ref?$id={linkIdent}";
+                : $"{entryIdent}/{navigationPropertyName}/$ref?$id={(_session.Settings.UseAbsoluteReferenceUris ? _session.Settings.BaseUri.AbsoluteUri + linkIdent : linkIdent)}";
         }
 
         protected override void AssignHeaders(ODataRequest request)
