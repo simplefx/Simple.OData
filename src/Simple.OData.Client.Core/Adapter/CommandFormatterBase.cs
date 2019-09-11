@@ -75,8 +75,9 @@ namespace Simple.OData.Client
         public string FormatNavigationPath(EntityCollection entityCollection, string path)
         {
             var items = path.Split('/');
-            var associationName = _session.Metadata.GetNavigationPropertyExactName(entityCollection.Name, items.First());
-
+            var associationName = _session.Metadata.HasNavigationProperty(entityCollection.Name, items.First())
+                ? _session.Metadata.GetNavigationPropertyExactName(entityCollection.Name, items.First())
+                : items.First();
             var text = associationName;
             if (items.Count() == 1)
             {

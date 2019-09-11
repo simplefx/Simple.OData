@@ -44,13 +44,13 @@ namespace Simple.OData.Client.V4.Adapter
                 var formattedExpand = string.Join(",", command.Details.ExpandAssociations.Select(x =>
                     FormatExpansionSegment(x.Key, resultCollection,
                         x.Value,
-                        SelectPathSegmentColumns(command.Details.SelectColumns, x.Key),
-                        SelectPathSegmentColumns(command.Details.OrderbyColumns, x.Key))));
+                        SelectPathSegmentColumns(command.Details.SelectColumns, x.Key, resultCollection),
+                        SelectPathSegmentColumns(command.Details.OrderbyColumns, x.Key, resultCollection))));
                 commandClauses.Add($"{ODataLiteral.Expand}={formattedExpand}");
             }
 
             FormatClause(commandClauses, resultCollection,
-                SelectPathSegmentColumns(command.Details.SelectColumns, null,
+                SelectPathSegmentColumns(command.Details.SelectColumns, null, resultCollection,
                     command.Details.ExpandAssociations.Select(FormatFirstSegment).ToList()),
                 ODataLiteral.Select, FormatSelectItem);
 
@@ -70,8 +70,13 @@ namespace Simple.OData.Client.V4.Adapter
             ODataExpandOptions expandOptions, IList<string> selectColumns, IList<KeyValuePair<string, bool>> orderbyColumns)
         {
             var items = path.Split('/');
-            var associationName = _session.Metadata.GetNavigationPropertyExactName(entityCollection.Name, items.First());
-            bool expandsToCollection = _session.Metadata.IsNavigationPropertyCollection(entityCollection.Name, associationName);
+            var associationName = items.First();
+            var expandsToCollection = false;
+            if (_session.Metadata.HasNavigationProperty(entityCollection.Name, associationName))
+            {
+                associationName = _session.Metadata.GetNavigationPropertyExactName(entityCollection.Name, associationName);
+                expandsToCollection = _session.Metadata.IsNavigationPropertyCollection(entityCollection.Name, associationName);
+            }
 
             var clauses = new List<string>();
             var text = associationName;
@@ -85,8 +90,8 @@ namespace Simple.OData.Client.V4.Adapter
                     _session.Metadata.GetNavigationPropertyPartnerTypeName(entityCollection.Name, associationName));
 
                 var formattedExpand = FormatExpansionSegment(path, entityCollection, expandOptions,
-                    SelectPathSegmentColumns(selectColumns, path),
-                    SelectPathSegmentColumns(orderbyColumns, path));
+                    SelectPathSegmentColumns(selectColumns, path, entityCollection),
+                    SelectPathSegmentColumns(orderbyColumns, path, entityCollection));
                 clauses.Add($"{ODataLiteral.Expand}={formattedExpand}");
             }
 
@@ -101,14 +106,14 @@ namespace Simple.OData.Client.V4.Adapter
 
             if (selectColumns.Any())
             {
-                var columns = string.Join(",", SelectPathSegmentColumns(selectColumns, null));
+                var columns = string.Join(",", SelectPathSegmentColumns(selectColumns, null, entityCollection));
                 if (!string.IsNullOrEmpty(columns))
                     clauses.Add($"{ODataLiteral.Select}={columns}");
             }
 
             if (expandsToCollection && orderbyColumns.Any())
             {
-                var columns = string.Join(",", SelectPathSegmentColumns(orderbyColumns, null)
+                var columns = string.Join(",", SelectPathSegmentColumns(orderbyColumns, null, entityCollection)
                     .Select(x => x.Key + (x.Value ? " desc" : string.Empty)).ToList());
                 if (!string.IsNullOrEmpty(columns))
                     clauses.Add($"{ODataLiteral.OrderBy}={columns}");
@@ -121,38 +126,64 @@ namespace Simple.OData.Client.V4.Adapter
         }
 
         private IList<string> SelectPathSegmentColumns(
-            IList<string> columns, string path, IList<string> excludePaths = null)
+            IList<string> columns, string path, EntityCollection collection, IList<string> excludePaths = null)
         {
             if (string.IsNullOrEmpty(path))
             {
                 var resultColumns = columns.Where(x => !HasMultipleSegments(x)).ToList();
                 if (excludePaths != null)
-                    resultColumns.AddRange(columns.Where(x => HasMultipleSegments(x) &&
-                        !excludePaths.Any(y => FormatFirstSegment(y).Contains(FormatFirstSegment(x)))));
+                {
+                    if (excludePaths.Count == 1 && excludePaths[0] == "*")
+                    {
+                        resultColumns.AddRange(columns.Where(x => HasMultipleSegments(x) &&
+                           !_session.Metadata.GetNavigationPropertyNames(collection.Name).Any(y => FormatFirstSegment(y).Contains(FormatFirstSegment(x)))));
+                    }
+                    else
+                    {
+                        resultColumns.AddRange(columns.Where(x => HasMultipleSegments(x) &&
+                           !excludePaths.Any(y => FormatFirstSegment(y).Contains(FormatFirstSegment(x)))));
+                    }
+                }
+                   
                 return resultColumns;
             }
             else
             {
-                return columns.Where(x => HasMultipleSegments(x) && FormatFirstSegment(x) == FormatFirstSegment(path))
-                    .Select(x => FormatSkipSegments(x, 1)).ToList();
+                var resultColumns = FormatFirstSegment(path) == "*"
+                    ? columns.Where(x => HasMultipleSegments(x) && _session.Metadata.GetNavigationPropertyNames(collection.Name).Contains(FormatFirstSegment(x)))
+                    : columns.Where(x => HasMultipleSegments(x) && FormatFirstSegment(x) == FormatFirstSegment(path));
+                return resultColumns.Select(x => FormatSkipSegments(x, 1)).ToList();
             }
         }
 
         private IList<KeyValuePair<string, bool>> SelectPathSegmentColumns(
-            IList<KeyValuePair<string, bool>> columns, string path, IList<string> excludePaths = null)
+            IList<KeyValuePair<string, bool>> columns, string path, EntityCollection collection, IList<string> excludePaths = null)
         {
             if (string.IsNullOrEmpty(path))
             {
                 var resultColumns = columns.Where(x => !HasMultipleSegments(x)).ToList();
                 if (excludePaths != null)
-                    resultColumns.AddRange(columns.Where(x => HasMultipleSegments(x) &&
-                        !excludePaths.Any(y => FormatFirstSegment(y).Contains(FormatFirstSegment(x)))));
+                {
+                    if (excludePaths.Count == 1 && excludePaths[0] == "*")
+                    {
+                        resultColumns.AddRange(columns.Where(x => HasMultipleSegments(x) &&
+                           !_session.Metadata.GetNavigationPropertyNames(collection.Name).Any(y => FormatFirstSegment(y).Contains(FormatFirstSegment(x)))));
+                    }
+                    else
+                    {
+                        resultColumns.AddRange(columns.Where(x => HasMultipleSegments(x) &&
+                           !excludePaths.Any(y => FormatFirstSegment(y).Contains(FormatFirstSegment(x)))));
+                    }
+                }
+
                 return resultColumns;
             }
             else
             {
-                return columns.Where(x => HasMultipleSegments(x) && FormatFirstSegment(x) == FormatFirstSegment(path))
-                    .Select(x => new KeyValuePair<string, bool>(FormatSkipSegments(x, 1), x.Value)).ToList();
+                var resultColumns = FormatFirstSegment(path) == "*"
+                    ? columns.Where(x => HasMultipleSegments(x) && _session.Metadata.GetNavigationPropertyNames(collection.Name).Contains(FormatFirstSegment(x)))
+                    : columns.Where(x => HasMultipleSegments(x) && FormatFirstSegment(x) == FormatFirstSegment(path));
+                return resultColumns.Select(x => new KeyValuePair<string, bool>(FormatSkipSegments(x, 1), x.Value)).ToList();
             }
         }
 

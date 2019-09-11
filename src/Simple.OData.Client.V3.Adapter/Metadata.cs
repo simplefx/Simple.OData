@@ -186,6 +186,11 @@ namespace Simple.OData.Client.V3.Adapter
             return entityType.DeclaredKey.Select(x => x.Name);
         }
 
+        public override IEnumerable<string> GetNavigationPropertyNames(string collectionName)
+        {
+            return GetEntityType(collectionName).NavigationProperties().Select(x => x.Name);
+        }
+
         public override string GetFunctionFullName(string functionName)
         {
             var function = GetFunction(functionName);
