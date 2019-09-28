@@ -51,6 +51,7 @@ namespace Simple.OData.Client.Adapter
             tid = new ConcurrentDictionary<string, bool>();
             sp = new ConcurrentDictionary<string, bool>();
             np = new ConcurrentDictionary<string, bool>();
+            npn = new ConcurrentDictionary<string, IList<string>>();
             npc = new ConcurrentDictionary<string, bool>();
             spns = new ConcurrentDictionary<string, IList<string>>();
             dkpns = new ConcurrentDictionary<string, IList<string>>();
