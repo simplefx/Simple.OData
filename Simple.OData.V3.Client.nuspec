@@ -33,16 +33,27 @@
   <files>
     <!-- NET452 -->
     <file src="build\Release\Simple.OData.Client.Core\net452\Simple.OData.Client.Core.dll" target="lib\net452\Simple.OData.Client.Core.dll" />
+    <file src="build\Release\Simple.OData.Client.Core\net452\Simple.OData.Client.Core.pdb" target="lib\net452\Simple.OData.Client.Core.pdb" />
     <file src="build\Release\Simple.OData.Client.Core\net452\Simple.OData.Client.Core.xml" target="lib\net452\Simple.OData.Client.Core.xml" />
-    <file src="build\Release\Simple.OData.Client.Dynamic\net452\Simple.OData.Client.Dynamic.dll" target="lib\net452\Simple.OData.Client.Dynamic.dll" />
-    <file src="build\Release\Simple.OData.Client.Dynamic\net452\Simple.OData.Client.Dynamic.xml" target="lib\net452\Simple.OData.Client.Dynamic.xml" />
-    <file src="build\Release\Simple.OData.Client.V3.Adapter\net452\Simple.OData.Client.V3.Adapter.dll" target="lib\net452\Simple.OData.Client.V3.Adapter.dll" />
 
+    <file src="build\Release\Simple.OData.Client.Dynamic\net452\Simple.OData.Client.Dynamic.dll" target="lib\net452\Simple.OData.Client.Dynamic.dll" />
+    <file src="build\Release\Simple.OData.Client.Dynamic\net452\Simple.OData.Client.Dynamic.pdb" target="lib\net452\Simple.OData.Client.Dynamic.pdb" />
+    <file src="build\Release\Simple.OData.Client.Dynamic\net452\Simple.OData.Client.Dynamic.xml" target="lib\net452\Simple.OData.Client.Dynamic.xml" />
+
+    <file src="build\Release\Simple.OData.Client.V3.Adapter\net452\Simple.OData.Client.V3.Adapter.dll" target="lib\net452\Simple.OData.Client.V3.Adapter.dll" />
+    <file src="build\Release\Simple.OData.Client.V3.Adapter\net452\Simple.OData.Client.V3.Adapter.pdb" target="lib\net452\Simple.OData.Client.V3.Adapter.pdb" />
+
+    
     <!-- NETSTANDARD2.0 -->
     <file src="build\Release\Simple.OData.Client.Core\netstandard2.0\Simple.OData.Client.Core.dll" target="lib\netstandard2.0\Simple.OData.Client.Core.dll" />
+    <file src="build\Release\Simple.OData.Client.Core\netstandard2.0\Simple.OData.Client.Core.pdb" target="lib\netstandard2.0\Simple.OData.Client.Core.pdb" />
     <file src="build\Release\Simple.OData.Client.Core\netstandard2.0\Simple.OData.Client.Core.xml" target="lib\netstandard2.0\Simple.OData.Client.Core.xml" />
+
     <file src="build\Release\Simple.OData.Client.Dynamic\netstandard2.0\Simple.OData.Client.Dynamic.dll" target="lib\netstandard2.0\Simple.OData.Client.Dynamic.dll" />
+    <file src="build\Release\Simple.OData.Client.Dynamic\netstandard2.0\Simple.OData.Client.Dynamic.pdb" target="lib\netstandard2.0\Simple.OData.Client.Dynamic.pdb" />
     <file src="build\Release\Simple.OData.Client.Dynamic\netstandard2.0\Simple.OData.Client.Dynamic.xml" target="lib\netstandard2.0\Simple.OData.Client.Dynamic.xml" />
+
     <file src="build\Release\Simple.OData.Client.V3.Adapter\netstandard2.0\Simple.OData.Client.V3.Adapter.dll" target="lib\netstandard2.0\Simple.OData.Client.V3.Adapter.dll" />
+    <file src="build\Release\Simple.OData.Client.V3.Adapter\netstandard2.0\Simple.OData.Client.V3.Adapter.pdb" target="lib\netstandard2.0\Simple.OData.Client.V3.Adapter.pdb" />
   </files>
 </package>
