@@ -137,7 +137,7 @@ namespace Simple.OData.Client.V4.Adapter
                 {
                     if (excludePaths.Count == 1 && excludePaths[0] == StarString)
                     {
-                        var firstSegmentPropertyNames = _session.Metadata.GetNavigationPropertyNames(collection.Name).Select(x => FormatFirstSegment(x));
+                        var firstSegmentPropertyNames = new HashSet<string>(_session.Metadata.GetNavigationPropertyNames(collection.Name).Select(x => FormatFirstSegment(x)));
                         resultColumns.AddRange(columns.Where(x => HasMultipleSegments(x) && !firstSegmentPropertyNames.Any(y => y.Contains(FormatFirstSegment(x)))));
                     }
                     else
@@ -153,7 +153,7 @@ namespace Simple.OData.Client.V4.Adapter
                 var firstSegment = FormatFirstSegment(path);
                 if (firstSegment == StarString)
                 {
-                    var propertyNames = _session.Metadata.GetNavigationPropertyNames(collection.Name);
+                    var propertyNames = new HashSet<string>(_session.Metadata.GetNavigationPropertyNames(collection.Name));
                     return columns
                         .Where(x => HasMultipleSegments(x) && propertyNames.Contains(FormatFirstSegment(x)))
                         .Select(x => FormatSkipSegments(x, 1)).ToList();
@@ -177,7 +177,7 @@ namespace Simple.OData.Client.V4.Adapter
                 {
                     if (excludePaths.Count == 1 && excludePaths[0] == StarString)
                     {
-                        var firstSegmentPropertyNames = _session.Metadata.GetNavigationPropertyNames(collection.Name).Select(x => FormatFirstSegment(x));
+                        var firstSegmentPropertyNames = new HashSet<string>(_session.Metadata.GetNavigationPropertyNames(collection.Name).Select(x => FormatFirstSegment(x)));
                         resultColumns.AddRange(columns.Where(x => HasMultipleSegments(x) && !firstSegmentPropertyNames.Any(y => y.Contains(FormatFirstSegment(x)))));
                     }
                     else
@@ -193,7 +193,7 @@ namespace Simple.OData.Client.V4.Adapter
                 var firstSegment = FormatFirstSegment(path);
                 if (firstSegment == StarString)
                 {
-                    var propertyNames = _session.Metadata.GetNavigationPropertyNames(collection.Name);
+                    var propertyNames = new HashSet<string>(_session.Metadata.GetNavigationPropertyNames(collection.Name));
                     return columns
                         .Where(x => HasMultipleSegments(x) && propertyNames.Contains(FormatFirstSegment(x)))
                         .Select(x => new KeyValuePair<string, bool>(FormatSkipSegments(x, 1), x.Value)).ToList();
