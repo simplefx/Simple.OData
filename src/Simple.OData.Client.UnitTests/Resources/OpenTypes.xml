@@ -1,0 +1,15 @@
+﻿<edmx:Edmx xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" Version="4.0">
+    <edmx:DataServices>
+        <Schema xmlns="http://docs.oasis-open.org/odata/ns/edm" Namespace="Test.Namespace">
+            <EntityContainer Name="Default">
+                <EntitySet Name="TheRecords" EntityType="Test.Namespace.TheRecord"/>
+            </EntityContainer>
+            <EntityType Name="TheRecord" OpenType="true">
+                <Key>
+                    <PropertyRef Name="Id"/>
+                </Key>
+                <Property Name="Id" Type="Edm.Decimal" Nullable="false"/>
+            </EntityType>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

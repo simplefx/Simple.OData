@@ -1,0 +1,11 @@
+﻿{
+  "@odata.context": "http://localhost/ApiActionExample/odata/$metadata#TheRecords",
+  "value": [
+    {
+      "Id": 42,
+      "IntegerProperty": 43,
+      "NullProperty": null,
+      "StringProperty": "some string"
+    }
+  ]
+}
