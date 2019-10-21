@@ -267,6 +267,14 @@ namespace Simple.OData.Client
         public bool UseAbsoluteReferenceUris { get; set; }
 
         /// <summary>
+        /// Gets or sets the value that indicates either to read untyped properties as strings.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> (Default) to read untyped values as strings; <c>false</c> otherwise.
+        /// </value>
+        public bool ReadUntypedAsString { get; set; } = true;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="ODataClientSettings"/> class.
         /// </summary>
         public ODataClientSettings()
@@ -343,6 +351,7 @@ namespace Simple.OData.Client
             this.OnTrace = session.Settings.OnTrace;
             this.TraceFilter = session.Settings.TraceFilter;
             this.UseAbsoluteReferenceUris = session.Settings.UseAbsoluteReferenceUris;
+            this.ReadUntypedAsString = session.Settings.ReadUntypedAsString;
         }
     }
 }
