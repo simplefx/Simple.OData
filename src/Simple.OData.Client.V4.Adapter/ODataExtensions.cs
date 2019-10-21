@@ -17,6 +17,14 @@ namespace Simple.OData.Client.V4.Adapter
                 readerSettings.Validations &= ~ValidationKinds.ThrowOnUndeclaredPropertyForNonOpenType;
             readerSettings.MessageQuotas.MaxReceivedMessageSize = int.MaxValue;
             readerSettings.ShouldIncludeAnnotation = x => settings.IncludeAnnotationsInResults;
+
+            if (!settings.ReadUntypedAsString)
+            {
+                readerSettings.Version = ODataVersion.V401;
+                readerSettings.MaxProtocolVersion = ODataVersion.V401;
+                readerSettings.ReadUntypedAsString = false;
+            }
+
             return readerSettings;
         }
     }
