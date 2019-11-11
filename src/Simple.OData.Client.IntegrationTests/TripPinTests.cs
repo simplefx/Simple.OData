@@ -363,6 +363,20 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task FindPersonExpandFriendsWithSelect()
+        {
+            var persons = await _client
+                .For<Person>()
+                .Expand(x => x.Friends)
+                .Select(x => new {x.UserName, Friends = x.Friends.Select(y=>y.UserName)})
+                .Top(1)
+                .FindEntriesAsync();
+            var person = Assert.Single(persons);
+            Assert.DoesNotContain(person.Friends, x =>x.UserName == null);
+            Assert.True(person.Friends.All(x=>x.FirstName == null));
+        }
+
+        [Fact]
         public async Task FindPersonFlightsWithFilter()
         {
             var flights = await _client
