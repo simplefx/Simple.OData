@@ -31,7 +31,7 @@ namespace Simple.OData.Client.Tests
     {
         public IEnumerable<Person> Friends { get; set; }
         public IEnumerable<Trip> Trips { get; set; }
-        public IEnumerable<Photo> Photos { get; set; }
+        public Photo Photo { get; set; }
     }
 
     class PersonWithDateTime : PersonBase

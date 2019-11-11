@@ -126,7 +126,7 @@ namespace Simple.OData.Client.Tests
                 .FindEntryAsync();
             Assert.Empty(person.Trips);
             Assert.Null(person.Friends);
-            Assert.Null(person.Photos);
+            Assert.Null(person.Photo);
         }
 
         [Fact]
@@ -346,6 +346,20 @@ namespace Simple.OData.Client.Tests
                 .FindEntriesAsync();
             Assert.Equal(2, flights.Count());
             Assert.Contains(flights, x => x.FlightNumber == "FM1930");
+        }
+
+        [Fact]
+        public async Task FindPersonExpandPhotoWithSelect()
+        {
+            var persons = await _client
+                .For<Person>()
+                .Expand(x => x.Photo)
+                .Select(x => new {x.UserName, Photo = new {x.Photo.Name}})
+                .Top(1)
+                .FindEntriesAsync();
+            var person = Assert.Single(persons);
+            Assert.Null(person.Photo.Media);
+            Assert.Equal(default, person.Photo.Id);
         }
 
         [Fact]
