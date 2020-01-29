@@ -14,6 +14,7 @@ namespace Simple.OData.Client
         public string DynamicPropertiesContainerName { get; set; }
         public string FunctionName { get; set; }
         public string ActionName { get; set; }
+        public bool IsAlternateKey { get; set; }
         public IList<object> KeyValues { get; set; }
         public IDictionary<string, object> NamedKeyValues { get; set; }
         public IDictionary<string, object> EntryData { get; set; }
@@ -60,6 +61,7 @@ namespace Simple.OData.Client
             this.DynamicPropertiesContainerName = details.DynamicPropertiesContainerName;
             this.FunctionName = details.FunctionName;
             this.ActionName = details.ActionName;
+            this.IsAlternateKey = details.IsAlternateKey;
             this.KeyValues = details.KeyValues;
             this.NamedKeyValues = details.NamedKeyValues;
             this.EntryData = details.EntryData;

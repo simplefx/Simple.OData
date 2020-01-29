@@ -37,7 +37,7 @@ namespace Simple.OData.Client
             }
 
             if (command.HasKey)
-                commandText += ConvertKeyValuesToUriLiteral(command.KeyValues, true);
+                commandText += ConvertKeyValuesToUriLiteral(command.KeyValues, !command.Details.IsAlternateKey);
 
             if (!string.IsNullOrEmpty(command.Details.MediaName))
             {

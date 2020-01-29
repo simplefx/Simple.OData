@@ -288,6 +288,17 @@ namespace Simple.OData.Client.Tests.FluentApi
         }
 
         [Fact]
+        public async Task GetWithAltKey()
+        {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
+            var category = await client
+                .For<Category>()
+                .AltKey(new { CategoryName = "Beverages" })
+                .FindEntryAsync();
+            Assert.Equal(1, category.CategoryID);
+        }
+
+        [Fact]
         public async Task GetNonExisting()
         {
             var client = new ODataClient(CreateDefaultSettings().WithHttpMock());

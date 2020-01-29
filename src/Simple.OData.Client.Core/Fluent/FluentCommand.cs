@@ -240,6 +240,7 @@ namespace Simple.OData.Client
             {
                 _details.KeyValues = key.ToList();
             }
+            _details.IsAlternateKey = false;
             return this;
         }
 
@@ -249,6 +250,7 @@ namespace Simple.OData.Client
 
             _details.KeyValues = key.ToList();
             _details.NamedKeyValues = null;
+            _details.IsAlternateKey = false;
             return this;
         }
 
@@ -258,6 +260,31 @@ namespace Simple.OData.Client
 
             _details.NamedKeyValues = key;
             _details.KeyValues = null;
+            _details.IsAlternateKey = false;
+            return this;
+        }
+
+        public FluentCommand AltKey(object key)
+        {
+            if (IsBatchResponse) return this;
+
+            if (key != null && TypeCache.IsAnonymousType(key.GetType()))
+            {
+                _details.NamedKeyValues = TypeCache.ToDictionary(key);
+            }
+
+            _details.KeyValues = null;
+            _details.IsAlternateKey = true;
+            return this;
+        }
+
+        public FluentCommand AltKey(IDictionary<string, object> key)
+        {
+            if (IsBatchResponse) return this;
+
+            _details.NamedKeyValues = key;
+            _details.KeyValues = null;
+            _details.IsAlternateKey = true;
             return this;
         }
 
@@ -579,30 +606,25 @@ namespace Simple.OData.Client
                     return null;
 
                 var keyNames = _details.Session.Metadata.GetDeclaredKeyPropertyNames(this.EntityCollection.Name).ToList();
-                var namedKeyValues = new Dictionary<string, object>();
-                for (var index = 0; index < keyNames.Count; index++)
+
+                return (_details.NamedKeyValues?.Select(x => new
                 {
-                    var found = false;
-                    object keyValue = null;
-                    if (_details.NamedKeyValues != null && _details.NamedKeyValues.Count > 0)
-                    {
-                        keyValue = _details.NamedKeyValues.FirstOrDefault(x => _details.Session.Settings.NameMatchResolver.IsMatch(x.Key, keyNames[index])).Value;
-                        found = keyValue != null;
-                    }
-                    else if (_details.KeyValues != null && _details.KeyValues.Count >= index)
-                    {
-                        keyValue = _details.KeyValues[index];
-                        found = true;
-                    }
-                    if (found)
-                    {
-                        var value = keyValue is ODataExpression ?
-                            (keyValue as ODataExpression).Value :
-                            keyValue;
-                        namedKeyValues.Add(keyNames[index], value);
-                    }
-                }
-                return namedKeyValues;
+                    KeyName = x.Key,
+                    KeyValue = x.Value,
+                    MatchingModelKey = keyNames.FirstOrDefault(k => _details.Session.Settings.NameMatchResolver.IsMatch(x.Key, k))
+                })
+                ??
+                _details.KeyValues?.Zip(keyNames, (keyValue, keyName) => new
+                {
+                    KeyName = keyName,
+                    KeyValue = keyValue,
+                    MatchingModelKey = keyName
+                }))
+                ?.ToDictionary(
+                    x => x.KeyName,
+                    x => x.KeyValue is ODataExpression ?
+                        (x.KeyValue as ODataExpression).Value :
+                        x.KeyValue);
             }
         }
 

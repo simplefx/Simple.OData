@@ -113,6 +113,18 @@ namespace Simple.OData.Client
             return this as FT;
         }
 
+        public FT AltKey(object entryKey)
+        {
+            this.Command.AltKey(entryKey);
+            return this as FT;
+        }
+
+        public FT AltKey(IDictionary<string, object> entryKey)
+        {
+            this.Command.AltKey(entryKey);
+            return this as FT;
+        }
+
         public FT Filter(string filter)
         {
             this.Command.Filter(filter);
