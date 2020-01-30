@@ -288,6 +288,28 @@ namespace Simple.OData.Client.Tests.FluentApi
         }
 
         [Fact]
+        public async Task GetOmmitInvalidKeyValue()
+        {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
+            var category = await client
+                .For<Category>()
+                .Key(1, 2)
+                .FindEntryAsync();
+            Assert.Equal(1, category.CategoryID);
+        }
+
+        [Fact]
+        public async Task GetOmmitInvalidKeyName()
+        {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
+            var category = await client
+                .For<Category>()
+                .Key(new { CategoryID = 1, InvalidField = 2 })
+                .FindEntryAsync();
+            Assert.Equal(1, category.CategoryID);
+        }
+
+        [Fact]
         public async Task GetWithAltKey()
         {
             var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
