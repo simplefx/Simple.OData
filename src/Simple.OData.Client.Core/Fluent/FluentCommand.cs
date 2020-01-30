@@ -618,6 +618,7 @@ namespace Simple.OData.Client
                     KeyValue = keyValue,
                     MatchingModelKey = keyName
                 }))
+                .Where(x => _details.IsAlternateKey || x.MatchingModelKey != null)
                 ?.ToDictionary(
                     x => x.KeyName,
                     x => x.KeyValue is ODataExpression ?
