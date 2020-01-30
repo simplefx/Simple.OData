@@ -270,11 +270,9 @@ namespace Simple.OData.Client
 
             if (key != null && TypeCache.IsAnonymousType(key.GetType()))
             {
-                _details.NamedKeyValues = TypeCache.ToDictionary(key);
+                return AltKey(TypeCache.ToDictionary(key));
             }
 
-            _details.KeyValues = null;
-            _details.IsAlternateKey = true;
             return this;
         }
 
