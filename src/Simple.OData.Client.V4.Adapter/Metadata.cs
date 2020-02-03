@@ -231,6 +231,13 @@ namespace Simple.OData.Client.V4.Adapter
             return entityType.DeclaredKey.Select(x => x.Name);
         }
 
+        public override IEnumerable<IEnumerable<string>> GetAlternateKeyPropertyNames(string collectionName)
+        {
+            var entityType = GetEntityType(collectionName);
+            return _model.GetAlternateKeysAnnotation(entityType)
+                .Select(x => x.Select(y => y.Key));
+        }
+
         public override string GetFunctionFullName(string functionName)
         {
             var function = GetFunction(functionName);

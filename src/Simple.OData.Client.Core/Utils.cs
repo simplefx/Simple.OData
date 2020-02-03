@@ -62,7 +62,7 @@ namespace Simple.OData.Client
             return subset.All(x => superset.Any(y => matchResolver.IsMatch(x, y)));
         }
 
-        public static T BestMatch<T>(this IEnumerable<T> collection, 
+        public static T BestMatch<T>(this IEnumerable<T> collection,
             Func<T, string> fieldFunc, string value, INameMatchResolver matchResolver)
             where T : class
         {
@@ -76,7 +76,7 @@ namespace Simple.OData.Client
                 .Select(x => x.Match).FirstOrDefault();
         }
 
-        public static T BestMatch<T>(this IEnumerable<T> collection, 
+        public static T BestMatch<T>(this IEnumerable<T> collection,
             Func<T, bool> condition, Func<T, string> fieldFunc, string value,
             INameMatchResolver matchResolver)
             where T : class
@@ -155,6 +155,61 @@ namespace Simple.OData.Client
         public static Task<T> GetTaskFromResult<T>(T result)
         {
             return Task.FromResult(result);
+        }
+
+        public static bool NamedKeyValuesMatchKeyNames(IDictionary<string, object> namedKeyValues, INameMatchResolver resolver, IEnumerable<string> keyNames, out IEnumerable<KeyValuePair<string, object>> matchingNamedKeyValues)
+        {
+            matchingNamedKeyValues = null;
+            if (namedKeyValues is null || keyNames is null)
+                return false;
+
+            if (keyNames.Count() == namedKeyValues.Count)
+            {
+                var tmpMatchingNamedKeyValues = new List<KeyValuePair<string, object>>();
+                foreach (var keyProperty in keyNames)
+                {
+                    var namedKeyValue = namedKeyValues.FirstOrDefault(x => resolver.IsMatch(x.Key, keyProperty));
+                    if (namedKeyValue.Key != null)
+                    {
+                        tmpMatchingNamedKeyValues.Add(new KeyValuePair<string, object>(keyProperty, namedKeyValue.Value));
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                if (tmpMatchingNamedKeyValues.Any())
+                {
+                    matchingNamedKeyValues = tmpMatchingNamedKeyValues;
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public static bool NamedKeyValuesContainKeyNames(IDictionary<string, object> namedKeyValues, INameMatchResolver resolver, IEnumerable<string> keyNames, out IEnumerable<KeyValuePair<string, object>> matchingNamedKeyValues)
+        {
+            matchingNamedKeyValues = null;
+            if (namedKeyValues is null || keyNames is null)
+                return false;
+
+            var tmpMatchingNamedKeyValues = new List<KeyValuePair<string, object>>();
+            foreach (var namedKeyValue in namedKeyValues)
+            {
+                var keyProperty = keyNames.FirstOrDefault(x => resolver.IsMatch(x, namedKeyValue.Key));
+                if (keyProperty != null)
+                {
+                    tmpMatchingNamedKeyValues.Add(new KeyValuePair<string, object>(keyProperty, namedKeyValue.Value));
+                }
+            }
+            if (tmpMatchingNamedKeyValues.Any())
+            {
+                matchingNamedKeyValues = tmpMatchingNamedKeyValues;
+                return true;
+            }
+
+            return false;
         }
     }
 }

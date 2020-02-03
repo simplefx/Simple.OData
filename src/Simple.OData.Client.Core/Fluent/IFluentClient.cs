@@ -72,19 +72,6 @@ namespace Simple.OData.Client
         FT Key(T entryKey);
 
         /// <summary>
-        /// Sets the specified alternate entry key.
-        /// </summary>
-        /// <param name="entryKey">The alternate entry key.</param>
-        /// <returns>Self.</returns>
-        FT AltKey(object entryKey);
-        /// <summary>
-        /// Sets the specified alternate entry key.
-        /// </summary>
-        /// <param name="entryKey">The alternate entry key.</param>
-        /// <returns>Self.</returns>
-        FT AltKey(IDictionary<string, object> entryKey);
-
-        /// <summary>
         /// Sets the specified OData filter.
         /// </summary>
         /// <param name="filter">The filter.</param>

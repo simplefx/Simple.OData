@@ -1,1 +1,0 @@
-{"Content":null,"ContentHeaders":null,"Method":"GET","RequestHeaders":[{"Key":"Accept","Value":["application\/atom+xml","application\/xml","application\/text"]},{"Key":"Prefer","Value":["return-content"]}],"RequestUri":"http:\/\/nrkdt66337\/Temporary_Listen_Addresses\/SimpleODataTestService82\/Categories(CategoryName=%27Beverages%27)"}
