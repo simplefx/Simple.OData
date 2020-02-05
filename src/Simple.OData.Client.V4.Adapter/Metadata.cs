@@ -246,7 +246,6 @@ namespace Simple.OData.Client.V4.Adapter
 
         public override string GetFunctionFullName(string functionName)
         {
-            GetAlternateKeyPropertyNames("");
             var function = GetFunction(functionName);
             return function.IsBound && !UnqualifiedNameCall ? function.ShortQualifiedName() : function.Name;
         }
