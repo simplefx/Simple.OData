@@ -41,6 +41,13 @@ namespace Simple.OData.Client
 
         IEnumerable<string> GetDeclaredKeyPropertyNames(string collectionName);
 
+        /// <summary>
+        /// Gets a collection of key name collections that represent the alternate keys of the given entity.
+        /// Alternate keys are only supported on V4. On V3 this method will always return an empty enumeration.
+        /// </summary>
+        /// <see cref="https://github.com/OData/vocabularies/blob/master/OData.Community.Keys.V1.md"/>
+        /// <param name="collectionName">The collection name of the entity</param>
+        /// <returns>An empty enumeration of string enumerations representing the key names</returns>
         IEnumerable<IEnumerable<string>> GetAlternateKeyPropertyNames(string collectionName);
 
         bool HasNavigationProperty(string collectionName, string propertyName);
