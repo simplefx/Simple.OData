@@ -1,10 +1,11 @@
 <?xml version="1.0"?>
-<package xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <metadata xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
     <id>Simple.OData.V3.Client</id>
     <authors>Vagif Abilov</authors>
     <version>0.0.0.0</version>
     <owners>Vagif Abilov</owners>
+    <icon>images/Simple.OData.Client_128x128.png</icon>
     <description>
       Simple.OData.V3.Client is a multiplatform OData client library supporting .NET 4.x, .NET Standard, .NET Core, iOS and Android. The adapter provides a great alternative to WCF Data Services client. It does not require generation of context or entity classes and fits RESTful nature of OData services.
       The package Simple.OData.V3.Client contains libraries that can work with OData feeds that implement V1-3 OData protocol.
@@ -17,7 +18,6 @@
     </summary>
     <projectUrl>https://github.com/object/Simple.OData.Client</projectUrl>
     <license type="expression">MIT</license>
-    <iconUrl>http://www.odata.org/wp-content/uploads/2014/05/ODataLogo-96.png</iconUrl>
     <copyright>Copyright 2012-2018 Vagif Abilov and contributors</copyright>
     <language>en-us</language>
     <tags>odata data rest client portable pcl netfx net40 net45 netstandard netcore mono adnroid ios</tags>
@@ -31,6 +31,9 @@
     </dependencies>
   </metadata>
   <files>
+    <file src="icons/Simple.OData.Client_128x128.png" target="images\" />
+    <file src="icons/Simple.OData.Client_512x512.png" target="images\" />
+
     <!-- NET461 -->
     <file src="build\Release\Simple.OData.Client.Core\net461\Simple.OData.Client.Core.dll" target="lib\net461\Simple.OData.Client.Core.dll" />
     <file src="build\Release\Simple.OData.Client.Core\net461\Simple.OData.Client.Core.pdb" target="lib\net461\Simple.OData.Client.Core.pdb" />
