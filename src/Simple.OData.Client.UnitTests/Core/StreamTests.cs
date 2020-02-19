@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Simple.OData.Client.Tests.Core
@@ -21,9 +22,10 @@ namespace Simple.OData.Client.Tests.Core
             var command = _client
                 .For<Photo>()
                 .Key(1)
+                .QueryOptions(new Dictionary<string, object>() { { "IntOption", 42 }, { "StringOption", "xyz" } })
                 .Media();
             var commandText = await command.GetCommandTextAsync();
-            Assert.Equal("Photos(1)/$value", commandText);
+            Assert.Equal("Photos(1)/$value?IntOption=42&StringOption='xyz'", commandText);
         }
     }
 }

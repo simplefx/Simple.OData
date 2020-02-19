@@ -39,6 +39,7 @@ namespace Simple.OData.Client
             if (command.HasKey)
                 commandText += ConvertKeyValuesToUriLiteral(command.KeyValues, true);
 
+            var collectionValues = new List<string>();
             if (!string.IsNullOrEmpty(command.Details.MediaName))
             {
                 commandText += "/" + (command.Details.MediaName == FluentCommand.MediaEntityLiteral
@@ -57,7 +58,6 @@ namespace Simple.OData.Client
                         commandText += _session.Metadata.GetActionFullName(command.Details.ActionName);
                 }
 
-                var collectionValues = new List<string>();
                 if (!string.IsNullOrEmpty(command.Details.FunctionName) && FunctionFormat == FunctionFormat.Key)
                     commandText += ConvertKeyValuesToUriLiteralExtractCollections(command.CommandData, collectionValues, false);
 
@@ -65,10 +65,9 @@ namespace Simple.OData.Client
                 {
                     commandText += "/" + _session.Metadata.GetQualifiedTypeName(command.Details.DerivedCollectionName);
                 }
-
-                commandText += FormatClauses(command, collectionValues);
             }
 
+            commandText += FormatClauses(command, collectionValues);
             return commandText;
         }
 
@@ -113,7 +112,7 @@ namespace Simple.OData.Client
                 if (item.Value != null)
                 {
                     var itemType = item.Value.GetType();
-                    if (itemType.IsArray || TypeCache.IsGeneric(itemType) && TypeCache.IsTypeAssignableFrom(typeof(System.Collections.IEnumerable),itemType))
+                    if (itemType.IsArray || TypeCache.IsGeneric(itemType) && TypeCache.IsTypeAssignableFrom(typeof(System.Collections.IEnumerable), itemType))
                     {
                         var itemAlias = $"@p{++colIndex}";
                         var collection = item.Value as System.Collections.IEnumerable;
