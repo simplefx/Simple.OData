@@ -134,9 +134,10 @@ namespace Simple.OData.Client
         public async Task<ODataRequest> CreateUnlinkRequestAsync(string collection, string linkName, string entryIdent, string linkIdent)
         {
             var associationName = _session.Metadata.GetNavigationPropertyExactName(collection, linkName);
-            await WriteEntryContentAsync(RestVerbs.Delete, collection, entryIdent, null, false).ConfigureAwait(false);
-
             var commandText = FormatLinkPath(entryIdent, associationName, linkIdent);
+            
+            await WriteEntryContentAsync(RestVerbs.Delete, collection, commandText, null, false).ConfigureAwait(false);
+            
             var request = new ODataRequest(RestVerbs.Delete, _session, commandText)
             {
                 IsLink = true,
