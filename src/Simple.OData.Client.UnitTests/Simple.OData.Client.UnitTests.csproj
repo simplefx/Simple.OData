@@ -51,6 +51,7 @@
     <None Remove="Resources\Northwind.xml" />
     <None Remove="Resources\Northwind3.xml" />
     <None Remove="Resources\Northwind4.xml" />
+    <None Remove="Resources\Northwind4WithAlternateKeys.xml" />
     <None Remove="Resources\OpenTypes.xml" />
     <None Remove="Resources\OpenTypeV401.json" />
     <None Remove="Resources\QAS.Multiplatform.Demo.edmx" />
@@ -111,6 +112,7 @@
     <EmbeddedResource Include="Resources\ClientProductSku.xml" />
     <EmbeddedResource Include="Resources\Colors.edmx" />
     <EmbeddedResource Include="Resources\DynamicsCRM.xml" />
+    <EmbeddedResource Include="Resources\Northwind4WithAlternateKeys.xml" />
     <EmbeddedResource Include="Resources\OpenTypes.xml" />
     <EmbeddedResource Include="Resources\OpenTypeV401.json" />
     <EmbeddedResource Include="Resources\ExampleActionComplexType.json" />

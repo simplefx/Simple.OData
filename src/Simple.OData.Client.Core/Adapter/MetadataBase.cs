@@ -49,6 +49,8 @@ namespace Simple.OData.Client
 
         public abstract IEnumerable<string> GetNavigationPropertyNames(string collectionName);
 
+        public abstract IEnumerable<IEnumerable<string>> GetAlternateKeyPropertyNames(string collectionName);
+
         public abstract bool HasNavigationProperty(string collectionName, string propertyName);
 
         public abstract string GetNavigationPropertyExactName(string collectionName, string propertyName);
