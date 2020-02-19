@@ -7,7 +7,6 @@ using System.Reflection;
 using System.Threading.Tasks;
 using System.Xml;
 
-using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
@@ -117,8 +116,8 @@ namespace Simple.OData.Client
         {
             try
             {
-                var assembly = LoadAdapterAssembly(modelAdapterAssemblyName);
-                var ctor = FindAdapterConstructor(assembly, typeCache, modelAdapterTypeName, ctorParams);
+                var type = LoadType(modelAdapterAssemblyName, modelAdapterTypeName);
+                var ctor = FindAdapterConstructor(type, typeCache, ctorParams);
                 return ctor.Invoke(ctorParams) as IODataModelAdapter;
             }
             catch (Exception exception)
@@ -127,15 +126,27 @@ namespace Simple.OData.Client
             }
         }
 
-        private Assembly LoadAdapterAssembly(string modelAdapterAssemblyName)
+        private Type LoadType(string assemblyName, string typeName)
         {
-            var assemblyName = new AssemblyName(modelAdapterAssemblyName);
-            return Assembly.Load(assemblyName);
+            try
+            {
+                var assemblyNameObj = new AssemblyName(assemblyName);
+                return Assembly.Load(assemblyNameObj).GetType(typeName);
+            }
+            catch (FileNotFoundException)
+            {
+                var type = Type.GetType(typeName);
+                if (type == null)
+                {
+                    throw;
+                }
+                return type;
+            }
         }
 
-        private ConstructorInfo FindAdapterConstructor(Assembly assembly, ITypeCache typeCache, string modelAdapterTypeName, params object[] ctorParams)
+        private ConstructorInfo FindAdapterConstructor(Type type, ITypeCache typeCache, params object[] ctorParams)
         {
-            var constructors = typeCache.GetDeclaredConstructors(assembly.GetType(modelAdapterTypeName));
+            var constructors = typeCache.GetDeclaredConstructors(type);
             return constructors.Single(x =>
                 x.GetParameters().Count() == ctorParams.Count() &&
                 x.GetParameters().Last().ParameterType.GetTypeInfo().IsAssignableFrom(ctorParams.Last().GetType().GetTypeInfo()));
@@ -145,10 +156,9 @@ namespace Simple.OData.Client
         {
             try
             {
-                var assemblyName = new AssemblyName(adapterAssemblyName);
-                var assembly = Assembly.Load(assemblyName);
 
-                var constructors = typeCache.GetDeclaredConstructors(assembly.GetType(adapterTypeName));
+                Type type = LoadType(adapterAssemblyName, adapterTypeName);
+                var constructors = typeCache.GetDeclaredConstructors(type);
 
                 var ctor = constructors.Single(x =>
                     x.GetParameters().Count() == ctorParams.Count() &&
