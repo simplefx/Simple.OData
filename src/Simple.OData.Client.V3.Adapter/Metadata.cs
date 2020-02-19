@@ -191,6 +191,17 @@ namespace Simple.OData.Client.V3.Adapter
             return GetEntityType(collectionName).NavigationProperties().Select(x => x.Name);
         }
 
+        /// <summary>
+        /// Gets a collection of key name collections that represent the alternate keys of the given entity.
+        /// As alternate keys are not supported on V3, this method will always return an empty enumeration.
+        /// </summary>
+        /// <param name="collectionName">The collection name of the entity</param>
+        /// <returns>An empty enumeration of string enumerations representing the key names</returns>
+        public override IEnumerable<IEnumerable<string>> GetAlternateKeyPropertyNames(string collectionName)
+        {
+            return Enumerable.Empty<IEnumerable<string>>();
+        }
+
         public override string GetFunctionFullName(string functionName)
         {
             var function = GetFunction(functionName);

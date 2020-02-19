@@ -231,6 +231,19 @@ namespace Simple.OData.Client.V4.Adapter
             return entityType.DeclaredKey.Select(x => x.Name);
         }
 
+        /// <summary>
+        /// Gets a collection of key name collections that represent the alternate keys of the given entity
+        /// </summary>
+        /// <see cref="https://github.com/OData/vocabularies/blob/master/OData.Community.Keys.V1.md"/>
+        /// <param name="collectionName">The collection name of the entity</param>
+        /// <returns>An enumeration of string enumerations representing the key names</returns>
+        public override IEnumerable<IEnumerable<string>> GetAlternateKeyPropertyNames(string collectionName)
+        {
+            var entityType = GetEntityType(collectionName);
+            return _model.GetAlternateKeysAnnotation(entityType)
+                .Select(x => x.Select(y => y.Key));
+        }
+
         public override IEnumerable<string> GetNavigationPropertyNames(string collectionName)
         {
             return GetEntityType(collectionName).NavigationProperties().Select(x => x.Name);
