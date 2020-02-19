@@ -22,6 +22,7 @@ namespace Simple.OData.Client.Adapter
         private readonly ConcurrentDictionary<string, bool> tid;
         private readonly ConcurrentDictionary<string, bool> sp;
         private readonly ConcurrentDictionary<string, bool> np;
+        private readonly ConcurrentDictionary<string, IList<string>> npn;
         private readonly ConcurrentDictionary<string, bool> npc;
         private readonly ConcurrentDictionary<string, IList<string>> spns;
         private readonly ConcurrentDictionary<string, IList<string>> dkpns;
@@ -50,6 +51,7 @@ namespace Simple.OData.Client.Adapter
             tid = new ConcurrentDictionary<string, bool>();
             sp = new ConcurrentDictionary<string, bool>();
             np = new ConcurrentDictionary<string, bool>();
+            npn = new ConcurrentDictionary<string, IList<string>>();
             npc = new ConcurrentDictionary<string, bool>();
             spns = new ConcurrentDictionary<string, IList<string>>();
             dkpns = new ConcurrentDictionary<string, IList<string>>();
@@ -147,6 +149,11 @@ namespace Simple.OData.Client.Adapter
         public IEnumerable<string> GetDeclaredKeyPropertyNames(string collectionName)
         {
             return dkpns.GetOrAdd(collectionName, x => metadata.GetDeclaredKeyPropertyNames(collectionName).ToList());
+        }
+
+        public IEnumerable<string> GetNavigationPropertyNames(string collectionName)
+        {
+            return npn.GetOrAdd(collectionName, x => metadata.GetNavigationPropertyNames(collectionName).ToList());
         }
 
         public bool HasNavigationProperty(string collectionName, string propertyName)
