@@ -33,6 +33,24 @@ namespace Simple.OData.Client.Tests.FluentApi
         }
 
         [Fact]
+        public async Task InsertWithSelect()
+        {
+            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
+            var product = await client
+                .For<Product>()
+                .Set(new { ProductName = "Test1", UnitPrice = 18m })
+                .Select(x => new
+                {
+                    x.ProductID
+                })
+                .InsertEntryAsync();
+
+            Assert.NotEqual(default, product.ProductID);
+            Assert.Equal(default, product.ProductName);
+            Assert.Equal(default, product.UnitPrice);
+        }
+
+        [Fact]
         public async Task InsertWithMappedColumn()
         {
             var client = new ODataClient(CreateDefaultSettings().WithHttpMock());

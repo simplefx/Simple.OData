@@ -878,7 +878,7 @@ namespace Simple.OData.Client
                 x => x.AsEntry(_session.Settings.IncludeAnnotationsInResults), () => null, () => command.CommandData).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var keyNames = _session.Metadata.GetDeclaredKeyPropertyNames(request.CommandText);
+            var keyNames = _session.Metadata.GetDeclaredKeyPropertyNames(command.QualifiedEntityCollectionName);
             if (result == null && resultRequired && Utils.AllMatch(keyNames, command.CommandData.Keys, _session.Settings.NameMatchResolver))
             {
                 result = await this.GetEntryAsync(request.CommandText, request.EntryData, cancellationToken).ConfigureAwait(false);
