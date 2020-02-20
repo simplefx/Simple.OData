@@ -150,7 +150,7 @@ namespace Simple.OData.Client.V4.Adapter
         protected override async Task<Stream> WriteLinkContentAsync(string method, string commandText, string linkIdent)
         {
             var message = IsBatch
-                ? await CreateBatchOperationMessageAsync(method, null, null, commandText, false).ConfigureAwait(false) 
+                ? await CreateBatchOperationMessageAsync(method, null, null, commandText, false).ConfigureAwait(false)
                 : new ODataRequestMessage();
 
             using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), _model))
@@ -219,7 +219,6 @@ namespace Simple.OData.Client.V4.Adapter
             switch (operationParameter.Type.Definition.TypeKind)
             {
                 case EdmTypeKind.Primitive:
-                case EdmTypeKind.Complex:
                     var value = GetPropertyValue(operationParameter.Type, paramValue, null);
                     await parameterWriter.WriteValueAsync(paramName, value).ConfigureAwait(false);
                     break;
@@ -229,28 +228,48 @@ namespace Simple.OData.Client.V4.Adapter
                     break;
 
                 case EdmTypeKind.Untyped:
-                    await parameterWriter.WriteValueAsync(paramName, new ODataUntypedValue {RawValue = paramValue.ToString()}).ConfigureAwait(false);
+                    await parameterWriter.WriteValueAsync(paramName, new ODataUntypedValue { RawValue = paramValue.ToString() }).ConfigureAwait(false);
                     break;
 
                 case EdmTypeKind.Entity:
-                    var entryWriter = await parameterWriter.CreateResourceWriterAsync(paramName).ConfigureAwait(false);
-                    var paramValueDict = paramValue.ToDictionary(TypeCache);
-                    var contentId = _deferredBatchWriter?.Value.GetContentId(paramValueDict, null);
-
-                    var typeName = operationParameter.Type.Definition.FullTypeName();
-                    if (paramValueDict.ContainsKey("@odata.type") && paramValueDict["@odata.type"] is string)
                     {
-                        typeName = paramValueDict["@odata.type"] as string;
-                        paramValueDict.Remove("@odata.type");
+                        var entryWriter = await parameterWriter.CreateResourceWriterAsync(paramName).ConfigureAwait(false);
+                        var paramValueDict = paramValue.ToDictionary(TypeCache);
+                        var contentId = _deferredBatchWriter?.Value.GetContentId(paramValueDict, null);
+
+                        var typeName = operationParameter.Type.Definition.FullTypeName();
+                        if (paramValueDict.ContainsKey("@odata.type") && paramValueDict["@odata.type"] is string)
+                        {
+                            typeName = paramValueDict["@odata.type"] as string;
+                            paramValueDict.Remove("@odata.type");
+                        }
+
+                        var entryDetails = _session.Metadata.ParseEntryDetails(typeName, paramValueDict, contentId);
+                        var entry = CreateODataEntry(typeName, entryDetails.Properties, null);
+
+                        RegisterRootEntry(entry);
+                        await WriteEntryPropertiesAsync(entryWriter, entry, entryDetails.Links).ConfigureAwait(false);
+                        UnregisterRootEntry(entry);
                     }
+                    break;
+                case EdmTypeKind.Complex:
+                    {
+                        var entryWriter = await parameterWriter.CreateResourceWriterAsync(paramName).ConfigureAwait(false);
+                        var paramValueDict = paramValue.ToDictionary(TypeCache);
 
-                    var entryDetails = _session.Metadata.ParseEntryDetails(typeName, paramValueDict, contentId);
-                    var entry = CreateODataEntry(typeName, entryDetails.Properties, null);
+                        var typeName = operationParameter.Type.Definition.FullTypeName();
+                        if (paramValueDict.ContainsKey("@odata.type") && paramValueDict["@odata.type"] is string)
+                        {
+                            typeName = paramValueDict["@odata.type"] as string;
+                            paramValueDict.Remove("@odata.type");
+                        }
 
-                    RegisterRootEntry(entry);
-                    await WriteEntryPropertiesAsync(entryWriter, entry, entryDetails.Links).ConfigureAwait(false);
-                    UnregisterRootEntry(entry);
+                        var entry = CreateODataEntry(typeName, paramValueDict, null);
 
+                        RegisterRootEntry(entry);
+                        await WriteEntryPropertiesAsync(entryWriter, entry, new Dictionary<string, List<ReferenceLink>>()).ConfigureAwait(false);
+                        UnregisterRootEntry(entry);
+                    }
                     break;
 
                 case EdmTypeKind.Collection:
@@ -413,8 +432,8 @@ namespace Simple.OData.Client.V4.Adapter
             root = root ?? entry;
 
             var entryType = _model.FindDeclaredType(entry.TypeName);
-            var typeProperties = typeof(IEdmEntityType).IsTypeAssignableFrom(entryType.GetType()) 
-                ? (entryType as IEdmEntityType).Properties().ToList() 
+            var typeProperties = typeof(IEdmEntityType).IsTypeAssignableFrom(entryType.GetType())
+                ? (entryType as IEdmEntityType).Properties().ToList()
                 : (entryType as IEdmComplexType).Properties().ToList();
 
             string findMatchingPropertyName(string name)
@@ -429,21 +448,21 @@ namespace Simple.OData.Client.V4.Adapter
                 return property?.Type;
             }
 
-            bool isStructural(IEdmTypeReference type) => 
+            bool isStructural(IEdmTypeReference type) =>
                 type != null && type.TypeKind() == EdmTypeKind.Complex;
-            bool isStructuralCollection(IEdmTypeReference type) => 
+            bool isStructuralCollection(IEdmTypeReference type) =>
                 type != null && type.TypeKind() == EdmTypeKind.Collection && type.AsCollection().ElementType().TypeKind() == EdmTypeKind.Complex;
-            bool isPrimitive(IEdmTypeReference type) => 
+            bool isPrimitive(IEdmTypeReference type) =>
                 !isStructural(type) && !isStructuralCollection(type);
 
             var resourceEntry = new ResourceProperties(entry);
             entry.Properties = properties
                 .Where(x => isPrimitive(findMatchingPropertyType(x.Key)))
                 .Select(x => new ODataProperty
-            {
-                Name = findMatchingPropertyName(x.Key),
-                Value = GetPropertyValue(typeProperties, x.Key, x.Value, root)
-            }).ToList();
+                {
+                    Name = findMatchingPropertyName(x.Key),
+                    Value = GetPropertyValue(typeProperties, x.Key, x.Value, root)
+                }).ToList();
             resourceEntry.CollectionProperties = properties
                 .Where(x => isStructuralCollection(findMatchingPropertyType(x.Key)))
                 .Select(x => new KeyValuePair<string, ODataCollectionValue>(
@@ -458,7 +477,7 @@ namespace Simple.OData.Client.V4.Adapter
                 .ToDictionary();
             _resourceEntryMap.Add(entry, resourceEntry);
             if (root != null && _resourceEntries.TryGetValue(root, out var entries))
-                    entries.Add(entry);
+                entries.Add(entry);
 
             return entry;
         }
@@ -492,7 +511,7 @@ namespace Simple.OData.Client.V4.Adapter
                     };
 
                 case EdmTypeKind.Primitive:
-                    var mappedTypes = _typeMap.Where(x => x.Value == ((IEdmPrimitiveType) propertyType.Definition).PrimitiveKind);
+                    var mappedTypes = _typeMap.Where(x => x.Value == ((IEdmPrimitiveType)propertyType.Definition).PrimitiveKind);
                     if (mappedTypes.Any())
                     {
                         foreach (var mappedType in mappedTypes)
@@ -510,7 +529,7 @@ namespace Simple.OData.Client.V4.Adapter
                     return new ODataEnumValue(value.ToString());
 
                 case EdmTypeKind.Untyped:
-                    return new ODataUntypedValue{ RawValue = value.ToString() };
+                    return new ODataUntypedValue { RawValue = value.ToString() };
 
                 case EdmTypeKind.None:
                     if (Converter.HasObjectConverter(value.GetType()))
