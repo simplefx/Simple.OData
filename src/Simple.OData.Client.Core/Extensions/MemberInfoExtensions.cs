@@ -64,6 +64,7 @@ namespace Simple.OData.Client.Extensions
                 "DataMemberAttribute",
                 "ColumnAttribute",
                 "JsonPropertyAttribute",
+                "JsonPropertyNameAttribute",
             };
 
             var mappingAttribute = attributes.FirstOrDefault(x => supportedAttributeNames.Any(y => x.GetType().Name == y));
