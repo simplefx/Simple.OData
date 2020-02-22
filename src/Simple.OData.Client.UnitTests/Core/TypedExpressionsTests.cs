@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq.Expressions;
 using Newtonsoft.Json;
 using Xunit;
@@ -61,6 +61,8 @@ namespace Simple.OData.Client.Tests.Core
             public string MappedNameUsingDataMemberAndOtherAttribute { get; set; }
             [JsonProperty("Name")]
             public string MappedNameUsingJsonPropertyAttribute { get; set; }
+            [System.Text.Json.Serialization.JsonPropertyName("Name")]
+            public string MappedNameUsingJsonPropertyNameAttribute { get; set; }
         }
 
         [Fact]
@@ -478,6 +480,13 @@ namespace Simple.OData.Client.Tests.Core
         public void FilterWithMappedPropertiesUsingJsonPropertyAttribute()
         {
             Expression<Func<TestEntity, bool>> filter = x => x.MappedNameUsingJsonPropertyAttribute == "Milk";
+            Assert.Equal("Name eq 'Milk'", ODataExpression.FromLinqExpression(filter).AsString(_session));
+        }
+
+        [Fact]
+        public void FilterWithMappedPropertiesUsingJsonPropertyNameAttribute()
+        {
+            Expression<Func<TestEntity, bool>> filter = x => x.MappedNameUsingJsonPropertyNameAttribute == "Milk";
             Assert.Equal("Name eq 'Milk'", ODataExpression.FromLinqExpression(filter).AsString(_session));
         }
 
