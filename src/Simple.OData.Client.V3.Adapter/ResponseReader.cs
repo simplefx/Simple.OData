@@ -93,14 +93,14 @@ namespace Simple.OData.Client.V3.Adapter
         private async Task<ODataResponse> ReadResponse(ODataBatchReader odataReader)
         {
             var batch = new List<ODataResponse>();
-
+            
             while (odataReader.Read())
             {
                 switch (odataReader.State)
                 {
                     case ODataBatchReaderState.ChangesetStart:
                         break;
-
+                        
                     case ODataBatchReaderState.Operation:
                         var operationMessage = odataReader.CreateOperationResponseMessage();
                         if (operationMessage.StatusCode == (int)HttpStatusCode.NoContent)
@@ -109,7 +109,8 @@ namespace Simple.OData.Client.V3.Adapter
                             batch.Add(ODataResponse.FromStatusCode(TypeCache, 
                                 operationMessage.StatusCode,
                                 operationMessage.Headers,
-                                await operationMessage.GetStreamAsync().ConfigureAwait(false)));
+                                await operationMessage.GetStreamAsync().ConfigureAwait(false),
+                                _session.Settings.WebRequestExceptionMessage));
                         else
                             batch.Add(await GetResponseAsync(operationMessage).ConfigureAwait(false));
                         break;

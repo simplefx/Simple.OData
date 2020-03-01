@@ -7,6 +7,26 @@ using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
+    public interface IODataAnnotation
+    {
+        object Value { get; }
+    }
+
+    public class ODataAnnotation<T> : IODataAnnotation
+    {
+        public ODataAnnotation(T value)
+        {
+            Value = value;
+        }
+
+        public T Value { get; }
+
+        object IODataAnnotation.Value => Value;
+
+        public static implicit operator T(ODataAnnotation<T> annotator) => annotator.Value;
+        public static implicit operator ODataAnnotation<T>(T value) => new ODataAnnotation<T>(value);
+    }
+
     /// <copydoc cref="ITypeCache" />
     public class TypeCache : ITypeCache
     {
@@ -216,6 +236,9 @@ namespace Simple.OData.Client
         {
             try
             {
+                if (value is IODataAnnotation oDataAnnotation)
+                    value = oDataAnnotation.Value;
+
                 if (value == null)
                 {
                     if (this.IsValue(targetType))

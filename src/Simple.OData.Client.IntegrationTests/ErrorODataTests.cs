@@ -61,5 +61,71 @@ namespace Simple.OData.Client.Tests
                 Assert.False(true, "Expected WebRequestException");
             }
         }
+
+        [Fact]
+        public async Task ErrorMessage_ReasonPhrase()
+        {
+            try
+            {
+                var client = new ODataClient(CreateDefaultSettings(x => 
+                    x.WebRequestExceptionMessage = WebRequestExceptionMessage.ReasonPhrase));
+                
+                await client
+                    .For("Products")
+                    .Filter("NonExistingProperty eq 1")
+                    .FindEntryAsync();
+
+                Assert.False(true, "Expected exception");
+            }
+            catch (WebRequestException ex)
+            {
+                Assert.NotNull(ex.Message);
+                Assert.Equal(ex.ReasonPhrase, ex.Message);
+            }
+        }
+
+        [Fact]
+        public async Task ErrorMessage_ResponseContent()
+        {
+            try
+            {
+                var client = new ODataClient(CreateDefaultSettings(x =>
+                    x.WebRequestExceptionMessage = WebRequestExceptionMessage.ResponseContent));
+
+                await client
+                    .For("Products")
+                    .Filter("NonExistingProperty eq 1")
+                    .FindEntryAsync();
+
+                Assert.False(true, "Expected exception");
+            }
+            catch (WebRequestException ex)
+            {
+                Assert.NotNull(ex.Message);
+                Assert.Equal(ex.Response, ex.Message);
+            }
+        }
+
+        [Fact]
+        public async Task ErrorMessage_PhraseAndContent()
+        {
+            try
+            {
+                var client = new ODataClient(CreateDefaultSettings(x =>
+                    x.WebRequestExceptionMessage = WebRequestExceptionMessage.Both));
+
+                await client
+                    .For("Products")
+                    .Filter("NonExistingProperty eq 1")
+                    .FindEntryAsync();
+
+                Assert.False(true, "Expected exception");
+            }
+            catch (WebRequestException ex)
+            {
+                Assert.NotNull(ex.Message);
+                Assert.True(ex.Message.Contains(ex.ReasonPhrase) && ex.Message.Contains(ex.Response));
+            }
+        }
     }
 }

@@ -101,7 +101,8 @@ namespace Simple.OData.Client.V4.Adapter
                             batch.Add(ODataResponse.FromStatusCode(TypeCache, 
                                 operationMessage.StatusCode,
                                 operationMessage.Headers,
-                                await operationMessage.GetStreamAsync().ConfigureAwait(false)));
+                                await operationMessage.GetStreamAsync().ConfigureAwait(false),
+                                _session.Settings.WebRequestExceptionMessage));
                         else
                             batch.Add(await GetResponseAsync(operationMessage).ConfigureAwait(false));
                         break;
