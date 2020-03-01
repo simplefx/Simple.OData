@@ -93,14 +93,14 @@ namespace Simple.OData.Client.V3.Adapter
         private async Task<ODataResponse> ReadResponse(ODataBatchReader odataReader)
         {
             var batch = new List<ODataResponse>();
-            
+
             while (odataReader.Read())
             {
                 switch (odataReader.State)
                 {
                     case ODataBatchReaderState.ChangesetStart:
                         break;
-                        
+
                     case ODataBatchReaderState.Operation:
                         var operationMessage = odataReader.CreateOperationResponseMessage();
                         if (operationMessage.StatusCode == (int)HttpStatusCode.NoContent)

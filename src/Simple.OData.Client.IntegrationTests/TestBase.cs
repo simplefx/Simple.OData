@@ -26,7 +26,7 @@ namespace Simple.OData.Client.Tests
         protected readonly Uri _serviceUri;
         protected readonly ODataPayloadFormat _payloadFormat;
         protected readonly IODataClient _client;
-        
+
         protected TestBase(string serviceUri, ODataPayloadFormat payloadFormat)
         {
             //services.odata.org only works with Tls 1.2
