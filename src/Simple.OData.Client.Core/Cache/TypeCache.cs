@@ -216,9 +216,6 @@ namespace Simple.OData.Client
         {
             try
             {
-                if (value is IODataAnnotation oDataAnnotation)
-                    value = oDataAnnotation.Value;
-
                 if (value == null)
                 {
                     if (this.IsValue(targetType))
