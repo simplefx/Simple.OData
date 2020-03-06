@@ -139,6 +139,20 @@ namespace Simple.OData.Client.Tests.Core
         }
 
         [Theory]
+        [InlineData("Northwind3.xml", "Categories?$filter=CategoryName%20eq%20%27Beverages%27")]
+        [InlineData("Northwind4WithAlternateKeys.xml", "Categories(CategoryName=%27Beverages%27)")]
+        public async Task AlternateKey_SingleProperty_As_Filter(string metadataFile, string expectedCommand)
+        {
+            ODataExpression.ArgumentCounter = 0;
+            var client = CreateClient(metadataFile);
+            var command = client
+                .For<Category>()
+                .Filter(x => x.CategoryName == "Beverages");
+            var commandText = await command.GetCommandTextAsync();
+            Assert.Equal(expectedCommand, commandText);
+        }
+
+        [Theory]
         [InlineData("Northwind3.xml", "Employees")]
         [InlineData("Northwind4WithAlternateKeys.xml", "Employees(HomePhone=%27123%27,Title=%27Manager%27)")]
         public async Task AlternateKey_MultipleProperty(string metadataFile, string expectedCommand)
