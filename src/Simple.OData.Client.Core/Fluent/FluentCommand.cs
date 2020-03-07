@@ -56,7 +56,9 @@ namespace Simple.OData.Client
 
             if (!ReferenceEquals(_details.FilterExpression, null))
             {
-                _details.NamedKeyValues = TryInterpretFilterExpressionAsKey(_details.FilterExpression);
+                _details.NamedKeyValues = TryInterpretFilterExpressionAsKey(_details.FilterExpression, out var isAlternateKey);
+                _details.IsAlternateKey = isAlternateKey;
+
                 if (_details.NamedKeyValues == null)
                 {
                     var entityCollection = this.EntityCollection;
@@ -654,9 +656,11 @@ namespace Simple.OData.Client
             return columns.SelectMany(x => x.Key.Split(',').Select(y => new KeyValuePair<string, bool>(y.Trim(), x.Value)));
         }
 
-        private IDictionary<string, object> TryInterpretFilterExpressionAsKey(ODataExpression expression)
+        private IDictionary<string, object> TryInterpretFilterExpressionAsKey(ODataExpression expression, out bool isAlternateKey)
         {
+            isAlternateKey = false;
             var ok = false;
+            
             IDictionary<string, object> namedKeyValues = new Dictionary<string, object>();
             if (!ReferenceEquals(expression, null))
             {
@@ -665,7 +669,7 @@ namespace Simple.OData.Client
             if (!ok)
                 return null;
 
-            if (NamedKeyValuesMatchAnyKey(namedKeyValues, out var matchingNamedKeyValues, out var _))
+            if (NamedKeyValuesMatchAnyKey(namedKeyValues, out var matchingNamedKeyValues, out isAlternateKey))
                 return matchingNamedKeyValues.ToIDictionary();
 
             return null;
