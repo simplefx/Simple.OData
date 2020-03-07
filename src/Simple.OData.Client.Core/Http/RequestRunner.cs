@@ -118,7 +118,7 @@ namespace Simple.OData.Client
 
             if (!responseMessage.IsSuccessStatusCode)
             {
-                throw await WebRequestException.CreateFromResponseMessageAsync(responseMessage, _session.Settings.WebRequestExceptionMessage).ConfigureAwait(false);
+                throw await WebRequestException.CreateFromResponseMessageAsync(responseMessage, _session.Settings.WebRequestExceptionMessageSource).ConfigureAwait(false);
             }
         }
     }

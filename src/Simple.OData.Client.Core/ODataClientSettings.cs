@@ -278,15 +278,15 @@ namespace Simple.OData.Client
         /// Gets or sets the source of the message of web request exceptions.
         /// </summary>
         /// <value>
-        /// <c>ReasonPhrase</c> (Default) to ouput the reason phrase of the http request message.
+        /// <c>ReasonPhrase</c> (Default) to output the reason phrase of the HTTP request message.
         /// </value>
         /// <value>
-        /// <c>ResponseContent</c> (Default) to ouput the content of the http request message.
+        /// <c>ResponseContent</c> (Default) to output the content of the HTTP request message.
         /// </value>
         /// /// <value>
-        /// <c>Both</c> (Default) to ouput both the reason phrase and the content of the http request message.
+        /// <c>Both</c> (Default) to output both the reason phrase and the content of the HTTP request message.
         /// </value>
-        public WebRequestExceptionMessage WebRequestExceptionMessage { get; set; }
+        public WebRequestExceptionMessageSource WebRequestExceptionMessageSource { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ODataClientSettings"/> class.
@@ -366,7 +366,7 @@ namespace Simple.OData.Client
             this.TraceFilter = session.Settings.TraceFilter;
             this.UseAbsoluteReferenceUris = session.Settings.UseAbsoluteReferenceUris;
             this.ReadUntypedAsString = session.Settings.ReadUntypedAsString;
-            this.WebRequestExceptionMessage = session.Settings.WebRequestExceptionMessage;
+            this.WebRequestExceptionMessageSource = session.Settings.WebRequestExceptionMessageSource;
         }
     }
 }

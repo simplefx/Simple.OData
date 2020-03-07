@@ -102,7 +102,7 @@ namespace Simple.OData.Client.V4.Adapter
                                 operationMessage.StatusCode,
                                 operationMessage.Headers,
                                 await operationMessage.GetStreamAsync().ConfigureAwait(false),
-                                _session.Settings.WebRequestExceptionMessage));
+                                _session.Settings.WebRequestExceptionMessageSource));
                         else
                             batch.Add(await GetResponseAsync(operationMessage).ConfigureAwait(false));
                         break;

@@ -68,7 +68,7 @@ namespace Simple.OData.Client.Tests
             try
             {
                 var client = new ODataClient(CreateDefaultSettings(x => 
-                    x.WebRequestExceptionMessage = WebRequestExceptionMessage.ReasonPhrase));
+                    x.WebRequestExceptionMessageSource = WebRequestExceptionMessageSource.ReasonPhrase));
                 
                 await client
                     .For("Products")
@@ -90,7 +90,7 @@ namespace Simple.OData.Client.Tests
             try
             {
                 var client = new ODataClient(CreateDefaultSettings(x =>
-                    x.WebRequestExceptionMessage = WebRequestExceptionMessage.ResponseContent));
+                    x.WebRequestExceptionMessageSource = WebRequestExceptionMessageSource.ResponseContent));
 
                 await client
                     .For("Products")
@@ -112,7 +112,7 @@ namespace Simple.OData.Client.Tests
             try
             {
                 var client = new ODataClient(CreateDefaultSettings(x =>
-                    x.WebRequestExceptionMessage = WebRequestExceptionMessage.Both));
+                    x.WebRequestExceptionMessageSource = WebRequestExceptionMessageSource.Both));
 
                 await client
                     .For("Products")
