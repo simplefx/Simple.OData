@@ -20,11 +20,12 @@ namespace Simple.OData.Client
         /// <param name="nameMatchResolver">Name match resolver.</param>
         /// <param name="dynamicType">Whether the cached type is dynamic.</param>
         /// <param name="dynamicContainerName">Dynamic container name.</param>
-        public TypeCacheResolver(Type type, INameMatchResolver nameMatchResolver = null, bool dynamicType = false, string dynamicContainerName = "DynamicProperties")
+        public TypeCacheResolver(Type type, INameMatchResolver nameMatchResolver, bool dynamicType = false, string dynamicContainerName = "DynamicProperties")
         {
             _nameMatchResolver = nameMatchResolver;
 
             Type = type;
+            DerivedTypes = type.DerivedTypes().ToList();
             IsDynamicType = dynamicType;
             DynamicPropertiesName = dynamicContainerName;
             TypeInfo = type.GetTypeInfo();
@@ -37,12 +38,18 @@ namespace Simple.OData.Client
             MappedPropertiesWithNames = type.GetMappedPropertiesWithNames().ToList();
 
             IsAnonymousType = type.IsAnonymousType();
+            AnnotationsProperty = AllProperties.FirstOrDefault(x => x.PropertyType == typeof(ODataEntryAnnotations));
         }
 
         /// <summary>
         /// Gets the type we are responsible for.
         /// </summary>
         public Type Type { get; }
+
+        /// <summary>
+        /// Get all derived types in the same assembly.
+        /// </summary>
+        public IList<Type> DerivedTypes { get; }
 
         public TypeInfo TypeInfo { get; }
 
@@ -116,6 +123,8 @@ namespace Simple.OData.Client
         /// Gets mapped properties with the mapped name
         /// </summary>
         public IList<Tuple<PropertyInfo, string>> MappedPropertiesWithNames { get; }
+
+        public PropertyInfo AnnotationsProperty { get; }
 
         /// <summary>
         /// Gets a mapped property

@@ -415,8 +415,10 @@ namespace Simple.OData.Client.Tests.FluentApi
                 .For("Transport")
                 .As("Ships")
                 .FindEntriesAsync();
-            Assert.Equal("Titanic", transport.Single()["ShipName"]);
-            Assert.Equal("NorthwindModel.Ship", (transport.Single()[FluentCommand.AnnotationsLiteral] as ODataEntryAnnotations).TypeName);
+
+            var ship = transport.Single();
+            Assert.Equal("Titanic", ship["ShipName"]);
+            Assert.Equal("NorthwindModel.Ship", (ship[FluentCommand.AnnotationsLiteral] as ODataEntryAnnotations).TypeName);
         }
 
         [Fact]

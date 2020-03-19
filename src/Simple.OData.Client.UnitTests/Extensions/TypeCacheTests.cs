@@ -8,6 +8,12 @@ namespace Simple.OData.Client.Tests.Extensions
         private ITypeCache _typeCache => TypeCaches.TypeCache("test", null);
 
         [Fact]
+        public void GetDerivedTypes_BaseType()
+        {
+            Assert.Single(_typeCache.GetDerivedTypes(typeof(Transport)));
+        }
+
+        [Fact]
         public void GetAllProperties_BaseType()
         {
             Assert.Single(_typeCache.GetAllProperties(typeof(Transport)));

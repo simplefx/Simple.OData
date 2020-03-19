@@ -569,26 +569,22 @@ namespace Simple.OData.Client.Tests.FluentApi
         public async Task BaseClassEntries()
         {
             var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
-            var transport = await client
+            var query = await client
                 .For<Transport>()
                 .FindEntriesAsync();
-            Assert.Equal(2, transport.Count());
+            var transport = query.ToList();
+            Assert.Equal(2, transport.Count);
         }
 
         [Fact]
         public async Task BaseClassEntriesWithAnnotations()
         {
-            var clientSettings = new ODataClientSettings
-            {
-                BaseUri = _serviceUri,
-                IncludeAnnotationsInResults = true,
-            };
-            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
-            //var client = new ODataClient(clientSettings);
-            var transport = await client
+            var client = new ODataClient(CreateDefaultSettings().WithAnnotations().WithHttpMock());
+            var query = await client
                 .For<Transport>()
                 .FindEntriesAsync();
-            Assert.Equal(2, transport.Count());
+            var transport = query.ToList();
+            Assert.Equal(2, transport.Count);
         }
 
         [Fact]
@@ -605,13 +601,7 @@ namespace Simple.OData.Client.Tests.FluentApi
         [Fact]
         public async Task AllDerivedClassEntriesWithAnnotations()
         {
-            var clientSettings = new ODataClientSettings
-            {
-                BaseUri = _serviceUri,
-                IncludeAnnotationsInResults = true,
-            };
-            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
-            //var client = new ODataClient(clientSettings);
+            var client = new ODataClient(CreateDefaultSettings().WithAnnotations().WithHttpMock());
             var transport = await client
                 .For<Transport>()
                 .As<Ship>()

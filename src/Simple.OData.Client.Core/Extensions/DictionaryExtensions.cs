@@ -29,10 +29,13 @@ namespace Simple.OData.Client.Extensions
 
             if (source == null)
                 return default(T);
+
             if (typeCache.IsTypeAssignableFrom(typeof(IDictionary<string, object>), typeof(T)))
                 return source as T;
+
             if (typeof(T) == typeof(ODataEntry))
                 return CreateODataEntry(source, typeCache, dynamicObject) as T;
+
             if (typeof(T) == typeof(string) || typeCache.IsValue(typeof(T)))
                 throw new InvalidOperationException($"Unable to convert structural data to {typeof(T).Name}.");
 
@@ -49,11 +52,37 @@ namespace Simple.OData.Client.Extensions
             if (source == null)
                 return null;
 
-            if (typeof(IDictionary<string, object>).IsTypeAssignableFrom(type))
+            if (typeCache.IsTypeAssignableFrom(typeof(IDictionary<string, object>), type))
                 return source;
 
             if (type == typeof(ODataEntry))
                 return CreateODataEntry(source, typeCache, dynamicObject);
+
+            // Check before custom converter so we use the most appropriate type.
+            if (source.ContainsKey(FluentCommand.AnnotationsLiteral))
+            {
+                var annotations = source[FluentCommand.AnnotationsLiteral] as ODataEntryAnnotations;
+                var odataType = annotations?.TypeName;
+                if (!string.IsNullOrEmpty(odataType))
+                {
+                    // TODO: We could cast the ITypeCatcher to TypeCache and use it's property but it's a bit naughty - conditional?
+                    var resolver = ODataNameMatchResolver.NotStrict;
+                    if (!resolver.IsMatch(odataType, type.Name))
+                    {
+                        // Ok, something other than the base type, see if we can match it
+                        var derived = typeCache.GetDerivedTypes(type).FirstOrDefault(x => resolver.IsMatch(odataType, typeCache.GetMappedName(x)));
+                        if (derived != null)
+                        {
+                            // Use the derived type from now on
+                            type = derived;
+                        }
+                        else
+                        {
+                            // TODO: Should we throw an exception here or log a warning here as we don't understand the data
+                        }
+                    }
+                }
+            }
 
             if (typeCache.Converter.HasDictionaryConverter(type))
             {
@@ -95,8 +124,7 @@ namespace Simple.OData.Client.Extensions
 
             if (property == null && item.Key == FluentCommand.AnnotationsLiteral)
             {
-                // TODO: Add AnnotationProperty method to ITypeCache
-                property = typeCache.GetAllProperties(type).FirstOrDefault(x => x.PropertyType == typeof(ODataEntryAnnotations));
+                property = typeCache.GetAnnotationsProperty(type);
             }
 
             return property;

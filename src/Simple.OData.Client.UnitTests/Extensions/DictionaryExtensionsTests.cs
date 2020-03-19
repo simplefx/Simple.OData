@@ -337,6 +337,62 @@ namespace Simple.OData.Client.Tests.Extensions
             Assert.Equal(2d, value.PointV4.Longitude);
         }
 
+        [Fact]
+        public void ToObjectBaseType_NoType()
+        {
+            var dict = new Dictionary<string, object>
+            {
+                { "TransportID", 1 },
+            };
+
+            var value = dict.ToObject<Transport>(_typeCache);
+            Assert.Equal(1, value.TransportID);
+        }
+
+        [Fact]
+        public void ToObjectBaseType_Type()
+        {
+            var dict = new Dictionary<string, object>
+            {
+                { FluentCommand.AnnotationsLiteral, new ODataEntryAnnotations { TypeName = "Northwind.Transport" }} ,
+                { "TransportID", 1 },
+            };
+
+            var value = dict.ToObject<Transport>(_typeCache);
+            Assert.Equal(1, value.TransportID);
+        }
+
+        [Fact]
+        public void ToObjectBaseType_SubType()
+        {
+            var dict = new Dictionary<string, object>
+            {
+                { FluentCommand.AnnotationsLiteral, new ODataEntryAnnotations { TypeName = "Northwind.Ship" } },
+                { "TransportID", 1 },
+                { "ShipName", "Sloop John B" },
+            };
+
+            var value = dict.ToObject<Transport>(_typeCache);
+            var ship = value as Ship;
+            Assert.NotNull(ship);
+            Assert.Equal(1, ship.TransportID);
+            Assert.Equal("Sloop John B", ship.ShipName);
+        }
+
+        [Fact]
+        public void ToObjectBaseType_MissingSubType()
+        {
+            var dict = new Dictionary<string, object>
+            {
+                { FluentCommand.AnnotationsLiteral, new ODataEntryAnnotations { TypeName = "Northwind.Plane" } },
+                { "TransportID", 1 },
+                { "PlaneName", "Concorde" },
+            };
+
+            var value = dict.ToObject<Transport>(_typeCache);
+            Assert.Equal(1, value.TransportID);
+        }
+
         class ClassNoDefaultConstructor
         {
             public ClassNoDefaultConstructor(string arg) {}
