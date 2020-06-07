@@ -420,6 +420,7 @@ namespace Simple.OData.Client.V4.Adapter
                     RequestUri = _session.Settings.BaseUri,
                 },
                 EnableMessageStreamDisposal = IsBatch,
+                Validations = _session.Settings.Validations
             };
             var contentType = preferredContentType ?? ODataFormat.Json;
             settings.SetContentType(contentType);
