@@ -175,49 +175,49 @@ namespace Simple.OData.Client
 
         public FT Expand(IEnumerable<string> associations)
         {
-            this.Command.Expand(associations);
+            this.Command.Expand(associations.Select(ODataExpandAssociation.From));
             return this as FT;
         }
 
         public FT Expand(ODataExpandOptions expandOptions, IEnumerable<string> associations)
         {
-            this.Command.Expand(expandOptions, associations);
+            this.Command.Expand(expandOptions, associations.Select(ODataExpandAssociation.From));
             return this as FT;
         }
 
         public FT Expand(params string[] associations)
         {
-            this.Command.Expand(associations);
+            this.Command.Expand(associations.Select(ODataExpandAssociation.From));
             return this as FT;
         }
 
         public FT Expand(ODataExpandOptions expandOptions, params string[] associations)
         {
-            this.Command.Expand(expandOptions, associations);
+            this.Command.Expand(expandOptions, associations.Select(ODataExpandAssociation.From));
             return this as FT;
         }
 
         public FT Expand(params ODataExpression[] associations)
         {
-            this.Command.Expand(associations);
+            this.Command.Expand(associations.Select(a => ODataExpandAssociation.From(a.Reference)));
             return this as FT;
         }
 
         public FT Expand(ODataExpandOptions expandOptions, params ODataExpression[] associations)
         {
-            this.Command.Expand(expandOptions, associations);
+            this.Command.Expand(expandOptions, associations.Select(a => ODataExpandAssociation.From(a.Reference)));
             return this as FT;
         }
 
         public FT Expand(Expression<Func<T, object>> expression)
         {
-            this.Command.Expand(expression.ExtractColumnNames(Command.TypeCache));
+            this.Command.Expand(expression.ExtractExpandAssociations(Command.TypeCache));
             return this as FT;
         }
 
         public FT Expand(ODataExpandOptions expandOptions, Expression<Func<T, object>> expression)
         {
-            this.Command.Expand(expandOptions, expression.ExtractColumnNames(Command.TypeCache));
+            this.Command.Expand(expandOptions, expression.ExtractExpandAssociations(Command.TypeCache));
             return this as FT;
         }
 

@@ -148,7 +148,7 @@ namespace Simple.OData.Client
 
         private const string ReservedUriCharacters = @"!*'();:@&=+$,/?#[] ";
 
-        private string EscapeUnescapedString(string text)
+        protected string EscapeUnescapedString(string text)
         {
             return text.ToCharArray().Intersect(ReservedUriCharacters.ToCharArray()).Any()
                 ? Uri.EscapeDataString(text)
@@ -297,6 +297,19 @@ namespace Simple.OData.Client
             {
                 commandClauses.Add($"{clauseLiteral}={string.Join(",", clauses.Select(x => formatItem(x, entityCollection)))}");
             }
+        }
+
+        protected static IEnumerable<KeyValuePair<string, ODataExpandOptions>> FlatExpandAssociations(
+            IEnumerable<KeyValuePair<ODataExpandAssociation, ODataExpandOptions>> associations)
+        {
+            return associations
+                .SelectMany(a => a.Key.ExpandAssociations.Any()
+                    ? FlatExpandAssociations(a.Key.ExpandAssociations.Select(x =>
+                            new KeyValuePair<ODataExpandAssociation, ODataExpandOptions>(x,
+                                ODataExpandOptions.ByValue())))
+                        .Select(x => new KeyValuePair<string, ODataExpandOptions>(a.Key.Name + "/" + x.Key, x.Value))
+                    : new[] {new KeyValuePair<string, ODataExpandOptions>(a.Key.Name, a.Value)})
+                .ToList();
         }
     }
 }

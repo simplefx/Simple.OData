@@ -333,50 +333,30 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _details.ExpandAssociations.AddRange(new[] { new KeyValuePair<string, ODataExpandOptions>("*", ODataExpandOptions.ByValue()) });
+            _details.ExpandAssociations.AddRange(new[]
+            {
+                new KeyValuePair<ODataExpandAssociation, ODataExpandOptions>(new ODataExpandAssociation("*"),
+                    ODataExpandOptions.ByValue())
+            });
             return this;
         }
 
-        public FluentCommand Expand(IEnumerable<string> associations)
+        public FluentCommand Expand(IEnumerable<ODataExpandAssociation> associations)
         {
             if (IsBatchResponse) return this;
 
-            _details.ExpandAssociations.AddRange(SplitItems(associations).Select(x => new KeyValuePair<string, ODataExpandOptions>(x, ODataExpandOptions.ByValue())));
+            _details.ExpandAssociations.AddRange(associations.Select(x =>
+                new KeyValuePair<ODataExpandAssociation, ODataExpandOptions>(x, ODataExpandOptions.ByValue())));
             return this;
         }
 
-        public FluentCommand Expand(ODataExpandOptions expandOptions, IEnumerable<string> associations)
+        public FluentCommand Expand(ODataExpandOptions expandOptions, IEnumerable<ODataExpandAssociation> associations)
         {
             if (IsBatchResponse) return this;
 
-            _details.ExpandAssociations.AddRange(SplitItems(associations).Select(x => new KeyValuePair<string, ODataExpandOptions>(x, expandOptions)));
+            _details.ExpandAssociations.AddRange(associations.Select(x =>
+                new KeyValuePair<ODataExpandAssociation, ODataExpandOptions>(x, expandOptions)));
             return this;
-        }
-
-        public FluentCommand Expand(params string[] associations)
-        {
-            if (IsBatchResponse) return this;
-
-            _details.ExpandAssociations.AddRange(SplitItems(associations).Select(x => new KeyValuePair<string, ODataExpandOptions>(x, ODataExpandOptions.ByValue())));
-            return this;
-        }
-
-        public FluentCommand Expand(ODataExpandOptions expandOptions, params string[] associations)
-        {
-            if (IsBatchResponse) return this;
-
-            _details.ExpandAssociations.AddRange(SplitItems(associations).Select(x => new KeyValuePair<string, ODataExpandOptions>(x, expandOptions)));
-            return this;
-        }
-
-        public FluentCommand Expand(params ODataExpression[] columns)
-        {
-            return Expand(columns.Select(x => x.Reference));
-        }
-
-        public FluentCommand Expand(ODataExpandOptions expandOptions, params ODataExpression[] columns)
-        {
-            return Expand(expandOptions, columns.Select(x => x.Reference));
         }
 
         public FluentCommand Select(IEnumerable<string> columns)
