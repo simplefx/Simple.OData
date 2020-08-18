@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 
 namespace Simple.OData.Client
 {
-    public static class ExpandExpression
+    internal static class ExpandExpression
     {
         public static IEnumerable<ODataExpandAssociation> ExtractExpandAssociations<T>(this Expression<Func<T, object>> expression,
             ITypeCache typeCache)
