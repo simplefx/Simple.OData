@@ -333,11 +333,9 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _details.ExpandAssociations.AddRange(new[]
-            {
-                new KeyValuePair<ODataExpandAssociation, ODataExpandOptions>(new ODataExpandAssociation("*"),
-                    ODataExpandOptions.ByValue())
-            });
+            _details.ExpandAssociations.Add(new KeyValuePair<ODataExpandAssociation, ODataExpandOptions>(
+                new ODataExpandAssociation("*"),
+                expandOptions));
             return this;
         }
 
