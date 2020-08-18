@@ -119,7 +119,7 @@ namespace Simple.OData.Client
             var memberName = typeCache.GetMappedName(memberExpression.Expression.Type, memberExpression.Member.Name);
 
             return memberExpression.Expression is MemberExpression
-                ? ExtractExpandAssociations(memberExpression.Expression, typeCache)//.Select(x => string.Join("/", x, memberName))
+                ? ExtractExpandAssociations(memberExpression.Expression, typeCache)
                 : new[] { new ODataExpandAssociation(memberName) };
         }
     }
