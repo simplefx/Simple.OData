@@ -140,7 +140,7 @@ namespace Simple.OData.Client.V4.Adapter
                 if (expandsToCollection && association.OrderByColumns.Any())
                 {
                     var columns = string.Join(",", association.OrderByColumns
-                        .Select(o => o.Name + (o.Descending ? " desc" : string.Empty)).ToList());
+                        .Select(o => o.Name + (o.Descending ? " desc" : string.Empty)));
                     if (!string.IsNullOrEmpty(columns))
                         clauses.Add($"{ODataLiteral.OrderBy}={columns}");
                 }
