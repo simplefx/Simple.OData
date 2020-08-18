@@ -129,7 +129,7 @@ namespace Simple.OData.Client.V4.Adapter
                             .Select(formattedExpand => $"{ODataLiteral.Expand}={formattedExpand}"));
                     }
 
-                    var selectColumns = string.Join(",", association.ExpandAssociations.ToList()
+                    var selectColumns = string.Join(",", association.ExpandAssociations
                         .Where(a => a.Name != StarString &&
                                     !_session.Metadata.HasNavigationProperty(associatedEntityCollection.Name, a.Name))
                         .Select(a => a.Name));
