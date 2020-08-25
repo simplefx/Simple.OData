@@ -123,9 +123,9 @@ namespace Simple.OData.Client.Extensions
 
                 foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
                 {
-                    type = assembly.GetType(odataType);
-                    if (type != null)
-                        return type;
+                    var typeFound = assembly.GetType(odataType);
+                    if (typeFound != null)
+                        return typeFound;
                 }
 
                 // TODO: Should we throw an exception here or log a warning here as we don't understand the data
