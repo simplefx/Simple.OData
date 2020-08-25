@@ -43,6 +43,7 @@
     <None Remove="Resources\GoogleMaps.edmx" />
     <None Remove="Resources\Insight.edmx" />
     <None Remove="Resources\iPhone.edmx" />
+    <None Remove="Resources\KeyDemo.xml" />
     <None Remove="Resources\Marathon.edmx" />
     <None Remove="Resources\MultipleCategoriesWithProducts.xml" />
     <None Remove="Resources\MultipleProducts.xml" />
@@ -134,6 +135,7 @@
     <EmbeddedResource Include="Resources\SingleProductWithCollectionOfPrimitiveProperties.xml" />
     <EmbeddedResource Include="Resources\SingleProductWithComplexProperty.xml" />
     <EmbeddedResource Include="Resources\SingleProductWithEmptyCollectionOfComplexProperties.xml" />
+    <EmbeddedResource Include="Resources\KeyDemo.xml" />
     <EmbeddedResource Include="Resources\TripPin.xml" />
     <EmbeddedResource Include="Resources\Twitter.edmx" />
     <EmbeddedResource Include="Resources\TwitterStatusesSample.txt" />
