@@ -1,3 +1,4 @@
+using System.Linq;
 using Xunit;
 
 namespace Simple.OData.Client.Tests.Core
@@ -5,30 +6,37 @@ namespace Simple.OData.Client.Tests.Core
     public class ODataExpandAssociationTests
     {
         [Fact]
-        public void SimpleMerge()
+        public void CreateExpandAssociationFromString()
         {
-            var firstAssociation = new ODataExpandAssociation("Test");
-            var secondAssociation = new ODataExpandAssociation("Test");
-
-            var mergedAssociation = ODataExpandAssociation.MergeExpandAssociations(firstAssociation, secondAssociation);
+            var association = ODataExpandAssociation.From("Products");
             
-            Assert.Equal("Test", mergedAssociation.Name);
-            Assert.Empty(mergedAssociation.ExpandAssociations);
+            Assert.Equal("Products", association.Name);
         }
-        
-        [Fact]
-        public void MergeTwoLevels()
-        {
-            var firstAssociation = new ODataExpandAssociation("Test")
-            {
-                ExpandAssociations = {new ODataExpandAssociation("Test2")}
-            };
-            var secondAssociation = new ODataExpandAssociation("Test");
 
-            var mergedAssociation = ODataExpandAssociation.MergeExpandAssociations(firstAssociation, secondAssociation);
+        [Fact]
+        public void CreateExpandAssociationWithNestedAssociations()
+        {
+            var association = ODataExpandAssociation.From("Products/Category/Orders");
             
-            Assert.Equal("Test", mergedAssociation.Name);
-            Assert.Equal("Test2", mergedAssociation.ExpandAssociations[0].Name);
+            Assert.Equal("Products", association.Name);
+            Assert.Single(association.ExpandAssociations);
+            Assert.Equal("Category", association.ExpandAssociations.First().Name);
+            Assert.Single(association.ExpandAssociations.First().ExpandAssociations);
+            Assert.Equal("Orders", association.ExpandAssociations.First().ExpandAssociations.First().Name);
+        }
+
+        [Fact]
+        public void CloneProducesNewObjects()
+        {
+            var association = new ODataExpandAssociation("Products")
+            {
+                ExpandAssociations = {new ODataExpandAssociation("Category")}
+            };
+
+            var clonedAssociation = association.Clone();
+
+            Assert.NotSame(association, clonedAssociation);
+            Assert.NotSame(association.ExpandAssociations.First(), clonedAssociation.ExpandAssociations.First());
         }
     }
 }

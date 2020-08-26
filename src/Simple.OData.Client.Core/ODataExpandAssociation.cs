@@ -18,33 +18,6 @@ namespace Simple.OData.Client
         
         public ODataExpression FilterExpression { get; set; }
 
-        public static ODataExpandAssociation MergeExpandAssociations(ODataExpandAssociation expandAssociation, string path)
-        {
-            return MergeExpandAssociations(expandAssociation, From(path));
-        }
-        
-        public static ODataExpandAssociation MergeExpandAssociations(ODataExpandAssociation first, ODataExpandAssociation second)
-        {
-            var result = first.Clone();
-            if (result.Name != second.Name && result.Name != "*") return result;
-
-            var expandAssociations = new List<ODataExpandAssociation>(result.ExpandAssociations);
-            result.ExpandAssociations.Clear();
-            foreach (var association in expandAssociations)
-            {
-                result.ExpandAssociations.Add(second.ExpandAssociations.Aggregate(association, MergeExpandAssociations));
-            }
-            foreach (var association in second.ExpandAssociations)
-            {
-                if (result.ExpandAssociations.All(a => a.Name != association.Name))
-                {
-                    result.ExpandAssociations.Add(association.Clone());
-                }
-            }
-            
-            return result;
-        }
-
         public static ODataExpandAssociation From(string association)
         {
             if (string.IsNullOrEmpty(association))

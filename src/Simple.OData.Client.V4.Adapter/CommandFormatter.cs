@@ -70,12 +70,10 @@ namespace Simple.OData.Client.V4.Adapter
         {
             if (rootLevel)
             {
-                association = command.Details.SelectColumns.Aggregate(association,
-                    ODataExpandAssociation.MergeExpandAssociations);
-                association = command.Details.OrderbyColumns.Aggregate(association,
-                    MergeOrderByColumns);
+                association = command.Details.SelectColumns.Aggregate(association, MergeExpandAssociations);
+                association = command.Details.OrderbyColumns.Aggregate(association, MergeOrderByColumns);
             }
-            
+
             var associationName = association.Name;
             var expandsToCollection = false;
             if (_session.Metadata.HasNavigationProperty(entityCollection.Name, associationName))
@@ -150,6 +148,33 @@ namespace Simple.OData.Client.V4.Adapter
                 text += $"({string.Join(";", clauses)})";
 
             return text;
+        }
+
+        private static ODataExpandAssociation MergeExpandAssociations(ODataExpandAssociation expandAssociation, string path)
+        {
+            return MergeExpandAssociations(expandAssociation, ODataExpandAssociation.From(path));
+        }
+        
+        private static ODataExpandAssociation MergeExpandAssociations(ODataExpandAssociation first, ODataExpandAssociation second)
+        {
+            var result = first.Clone();
+            if (result.Name != second.Name && result.Name != "*") return result;
+
+            var expandAssociations = new List<ODataExpandAssociation>(result.ExpandAssociations);
+            result.ExpandAssociations.Clear();
+            foreach (var association in expandAssociations)
+            {
+                result.ExpandAssociations.Add(second.ExpandAssociations.Aggregate(association, MergeExpandAssociations));
+            }
+            foreach (var association in second.ExpandAssociations)
+            {
+                if (result.ExpandAssociations.All(a => a.Name != association.Name))
+                {
+                    result.ExpandAssociations.Add(association.Clone());
+                }
+            }
+            
+            return result;
         }
 
         private static ODataExpandAssociation MergeOrderByColumns(ODataExpandAssociation expandAssociation, KeyValuePair<string, bool> orderByColumn)
