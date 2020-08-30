@@ -11,17 +11,13 @@ using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
-    public partial class ResolvedCommand
+    public class ResolvedCommand
     {
-        private readonly FluentCommand _command;
-        private readonly Session _session;
-        private readonly CommandDetails _details;
-
         internal ResolvedCommand(FluentCommand command, Session session)
         {
-            _command = command;
-            _session = session;
-            _details = new CommandDetails(_command.Details);
+            Source = command;
+            Session = session;
+            Details = new CommandDetails(Source.Details);
 
             EvaluateCollectionName();
             EvaluateDerivedCollectionName();
@@ -30,37 +26,38 @@ namespace Simple.OData.Client
             EvaluateLinkName();
         }
 
-        public FluentCommand Source => _command; 
+        public FluentCommand Source { get; private set; }
 
-        private bool IsBatchResponse => _session == null;
+        internal Session Session { get; private set; }
+        internal CommandDetails Details { get; private set; }
+        private bool IsBatchResponse => this.Session == null;
 
-        internal ITypeCache TypeCache => _session.TypeCache;
+        internal ITypeCache TypeCache => this.Session.TypeCache;
 
-        internal CommandDetails Details => _details;
 
         internal EntityCollection EntityCollection
         {
             get
             {
-                if (string.IsNullOrEmpty(_details.CollectionName) && string.IsNullOrEmpty(_details.LinkName))
+                if (string.IsNullOrEmpty(Details.CollectionName) && string.IsNullOrEmpty(Details.LinkName))
                     return null;
 
                 EntityCollection entityCollection;
-                if (!string.IsNullOrEmpty(_details.LinkName))
+                if (!string.IsNullOrEmpty(Details.LinkName))
                 {
-                    var parent = new FluentCommand(_details.Parent).Resolve();
-                    var collectionName = _session.Metadata.GetNavigationPropertyPartnerTypeName(
-                        parent.EntityCollection.Name, _details.LinkName);
-                    entityCollection = _session.Metadata.GetEntityCollection(collectionName);
+                    var parent = new FluentCommand(Details.Parent).Resolve();
+                    var collectionName = this.Session.Metadata.GetNavigationPropertyPartnerTypeName(
+                        parent.EntityCollection.Name, Details.LinkName);
+                    entityCollection = this.Session.Metadata.GetEntityCollection(collectionName);
                 }
                 else
                 {
-                    entityCollection = _session.Metadata.GetEntityCollection(_details.CollectionName);
+                    entityCollection = this.Session.Metadata.GetEntityCollection(Details.CollectionName);
                 }
 
-                return string.IsNullOrEmpty(_details.DerivedCollectionName)
+                return string.IsNullOrEmpty(Details.DerivedCollectionName)
                     ? entityCollection
-                    : _session.Metadata.GetDerivedEntityCollection(entityCollection, _details.DerivedCollectionName);
+                    : this.Session.Metadata.GetDerivedEntityCollection(entityCollection, Details.DerivedCollectionName);
             }
         }
 
@@ -71,28 +68,28 @@ namespace Simple.OData.Client
                 var entityCollection = this.EntityCollection;
                 return entityCollection.BaseEntityCollection == null
                     ? entityCollection.Name
-                    : $"{entityCollection.BaseEntityCollection.Name}/{_session.Metadata.GetQualifiedTypeName(entityCollection.Name)}";
+                    : $"{entityCollection.BaseEntityCollection.Name}/{this.Session.Metadata.GetQualifiedTypeName(entityCollection.Name)}";
             }
         }
 
-        public string DynamicPropertiesContainerName => _details.DynamicPropertiesContainerName;
+        public string DynamicPropertiesContainerName => Details.DynamicPropertiesContainerName;
 
         private void EvaluateCollectionName()
         {
             if (IsBatchResponse) return;
 
-            if (_details.CollectionName == null && !ReferenceEquals(_command.Details.CollectionExpression, null))
+            if (Details.CollectionName == null && !ReferenceEquals(Source.Details.CollectionExpression, null))
             {
-                var collectionName = _command.Details.CollectionExpression.AsString(_session);
+                var collectionName = Source.Details.CollectionExpression.AsString(this.Session);
                 var items = collectionName.Split('/');
                 if (items.Count() > 1)
                 {
-                    _details.CollectionName = items[0];
-                    _details.DerivedCollectionName = items[1];
+                    Details.CollectionName = items[0];
+                    Details.DerivedCollectionName = items[1];
                 }
                 else
                 {
-                    _details.CollectionName = collectionName;
+                    Details.CollectionName = collectionName;
                 }
             }
         }
@@ -101,95 +98,74 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return;
 
-            if (_details.DerivedCollectionName == null && !ReferenceEquals(_command.Details.DerivedCollectionExpression, null))
+            if (Details.DerivedCollectionName == null && !ReferenceEquals(Source.Details.DerivedCollectionExpression, null))
             {
-                var derivedCollectionName = _command.Details.DerivedCollectionExpression.AsString(_session);
-                _details.DerivedCollectionName = derivedCollectionName;
+                var derivedCollectionName = Source.Details.DerivedCollectionExpression.AsString(this.Session);
+                Details.DerivedCollectionName = derivedCollectionName;
             }
         }
 
-        public void EvaluateNamedKeyValues()
+        private void EvaluateNamedKeyValues()
         {
-            if (_details.NamedKeyValues != null)
+            if (Details.NamedKeyValues != null)
             {
-                if (NamedKeyValuesMatchAnyKey(_details.NamedKeyValues, out var matchingKey, out bool isAlternateKey))
+                if (NamedKeyValuesMatchAnyKey(Details.NamedKeyValues, out var matchingKey, out bool isAlternateKey))
                 {
-                    _details.NamedKeyValues = matchingKey.ToDictionary();
-                    _details.IsAlternateKey = isAlternateKey;
+                    Details.NamedKeyValues = matchingKey.ToDictionary();
+                    Details.IsAlternateKey = isAlternateKey;
                 }
-                else if (TryExtractKeyFromNamedValues(_details.NamedKeyValues, out var containedKey))
+                else if (TryExtractKeyFromNamedValues(Details.NamedKeyValues, out var containedKey))
                 {
-                    _details.NamedKeyValues = containedKey.ToDictionary();
+                    Details.NamedKeyValues = containedKey.ToDictionary();
                 }
                 else
                 {
-                    _details.NamedKeyValues = null;
+                    Details.NamedKeyValues = null;
                 }
             }
         }
 
-        public void EvaluateFilter()
+        private void EvaluateFilter()
         {
-            if (_details.Filter == null && !ReferenceEquals(_command.Details.FilterExpression, null))
+            if (Details.Filter == null && !ReferenceEquals(Source.Details.FilterExpression, null))
             {
-                _details.NamedKeyValues = TryInterpretFilterExpressionAsKey(_command.Details.FilterExpression, out var isAlternateKey);
-                _details.IsAlternateKey = isAlternateKey;
+                Details.NamedKeyValues = TryInterpretFilterExpressionAsKey(Source.Details.FilterExpression, out var isAlternateKey);
+                Details.IsAlternateKey = isAlternateKey;
 
-                if (_details.NamedKeyValues == null)
+                if (Details.NamedKeyValues == null)
                 {
                     var entityCollection = this.EntityCollection;
-                    if (_command.HasFunction)
+                    if (Source.HasFunction)
                     {
-                        var collection = _session.Metadata.GetFunctionReturnCollection(_command.FunctionName);
+                        var collection = this.Session.Metadata.GetFunctionReturnCollection(Source.FunctionName);
                         if (collection != null)
                         {
                             entityCollection = collection;
                         }
                     }
-                    _details.Filter = _command.Details.FilterExpression.Format(
-                        new ExpressionContext(_session, entityCollection, null, this.DynamicPropertiesContainerName));
+                    Details.Filter = Source.Details.FilterExpression.Format(
+                        new ExpressionContext(this.Session, entityCollection, null, this.DynamicPropertiesContainerName));
                 }
                 else
                 {
-                    _details.KeyValues = null;
-                    _details.TopCount = -1;
+                    Details.KeyValues = null;
+                    Details.TopCount = -1;
                 }
-                if (_command.Details.FilterExpression.HasTypeConstraint(_command.Details.DerivedCollectionName))
+                if (Source.Details.FilterExpression.HasTypeConstraint(Source.Details.DerivedCollectionName))
                 {
-                    _details.DerivedCollectionName = null;
+                    Details.DerivedCollectionName = null;
                 }
             }
         }
 
-        public void EvaluateLinkName()
+        private void EvaluateLinkName()
         {
             if (IsBatchResponse) return;
 
-            if (_details.LinkName == null && !ReferenceEquals(_command.Details.LinkExpression, null))
+            if (Details.LinkName == null && !ReferenceEquals(Source.Details.LinkExpression, null))
             {
-                _details.LinkName = _command.Details.LinkExpression.AsString(_session);
+                Details.LinkName = Source.Details.LinkExpression.AsString(this.Session);
             }
-        }
-
-        public ResolvedCommand Key(IDictionary<string, object> key)
-        {
-            if (IsBatchResponse) return this;
-
-            _details.KeyValues = null;
-            _details.NamedKeyValues = null;
-            _details.IsAlternateKey = false;
-
-            if (NamedKeyValuesMatchAnyKey(key, out var matchingKey, out bool isAlternateKey))
-            {
-                _details.NamedKeyValues = matchingKey.ToDictionary();
-                _details.IsAlternateKey = isAlternateKey;
-            }
-            else if (TryExtractKeyFromNamedValues(key, out var containedKey))
-            {
-                _details.NamedKeyValues = containedKey.ToDictionary();
-            }
-
-            return this;
         }
 
         public Task<string> GetCommandTextAsync()
@@ -199,19 +175,17 @@ namespace Simple.OData.Client
 
         public async Task<string> GetCommandTextAsync(CancellationToken cancellationToken)
         {
-            await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
+            await this.Session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
             return Format();
         }
 
-        public bool FilterIsKey => _details.NamedKeyValues != null;
-
-        public IDictionary<string, object> FilterAsKey => _details.NamedKeyValues;
+        public IDictionary<string, object> FilterAsKey => Details.NamedKeyValues;
 
         public ResolvedCommand WithCount()
         {
             if (IsBatchResponse) return this;
 
-            _details.IncludeCount = true;
+            Details.IncludeCount = true;
             return this;
         }
 
@@ -222,18 +196,18 @@ namespace Simple.OData.Client
 
         private string Format()
         {
-            return _session.Adapter.GetCommandFormatter().FormatCommand(this);
+            return this.Session.Adapter.GetCommandFormatter().FormatCommand(this);
         }
 
-        internal bool HasKey => _details.KeyValues != null && _details.KeyValues.Count > 0 || _details.NamedKeyValues != null && _details.NamedKeyValues.Count > 0;
+        internal bool HasKey => Details.KeyValues != null && Details.KeyValues.Count > 0 || Details.NamedKeyValues != null && Details.NamedKeyValues.Count > 0;
 
-        internal bool HasFilter => !string.IsNullOrEmpty(_details.Filter) || !ReferenceEquals(_details.FilterExpression, null);
+        internal bool HasFilter => !string.IsNullOrEmpty(Details.Filter) || !ReferenceEquals(Details.FilterExpression, null);
 
-        internal bool HasSearch => !string.IsNullOrEmpty(_details.Search);
+        internal bool HasSearch => !string.IsNullOrEmpty(Details.Search);
 
-        public bool HasFunction => !string.IsNullOrEmpty(_details.FunctionName);
+        public bool HasFunction => !string.IsNullOrEmpty(Details.FunctionName);
 
-        public bool HasAction => !string.IsNullOrEmpty(_details.ActionName);
+        public bool HasAction => !string.IsNullOrEmpty(Details.ActionName);
 
         internal IDictionary<string, object> KeyValues
         {
@@ -242,12 +216,12 @@ namespace Simple.OData.Client
                 if (!HasKey)
                     return null;
 
-                var keyNames = _session.Metadata.GetDeclaredKeyPropertyNames(this.EntityCollection.Name).ToList();
-                var namedKeyValues = _details.KeyValues?.Zip(
+                var keyNames = this.Session.Metadata.GetDeclaredKeyPropertyNames(this.EntityCollection.Name).ToList();
+                var namedKeyValues = Details.KeyValues?.Zip(
                      keyNames, 
                      (keyValue, keyName) => new KeyValuePair<string, object>(keyName, keyValue))
                     ??
-                    _details.NamedKeyValues;
+                    Details.NamedKeyValues;
                 return namedKeyValues?.ToDictionary(
                     x => x.Key,
                     x => x.Value is ODataExpression oDataExpression ? oDataExpression.Value : x.Value);
@@ -258,19 +232,19 @@ namespace Simple.OData.Client
         {
             get
             {
-                if (_details.EntryData == null)
+                if (Details.EntryData == null)
                     return new Dictionary<string, object>();
-                if (string.IsNullOrEmpty(_details.DynamicPropertiesContainerName))
-                    return _details.EntryData;
+                if (string.IsNullOrEmpty(Details.DynamicPropertiesContainerName))
+                    return Details.EntryData;
 
                 var entryData = new Dictionary<string, object>();
-                foreach (var key in _details.EntryData.Keys.Where(x =>
-                    !string.Equals(x, _details.DynamicPropertiesContainerName, StringComparison.OrdinalIgnoreCase)))
+                foreach (var key in Details.EntryData.Keys.Where(x =>
+                    !string.Equals(x, Details.DynamicPropertiesContainerName, StringComparison.OrdinalIgnoreCase)))
                 {
-                    entryData.Add(key, _details.EntryData[key]);
+                    entryData.Add(key, Details.EntryData[key]);
                 }
 
-                if (_details.EntryData.TryGetValue(_details.DynamicPropertiesContainerName, out var dynamicProperties) && dynamicProperties != null)
+                if (Details.EntryData.TryGetValue(Details.DynamicPropertiesContainerName, out var dynamicProperties) && dynamicProperties != null)
                 {
                     if (dynamicProperties is IDictionary<string, object> kv)
                     {
@@ -281,7 +255,7 @@ namespace Simple.OData.Client
                     }
                     else
                     {
-                        throw new InvalidOperationException($"Property {_details.DynamicPropertiesContainerName} must implement IDictionary<string,object> interface");
+                        throw new InvalidOperationException($"Property {Details.DynamicPropertiesContainerName} must implement IDictionary<string,object> interface");
                     }
                 }
 
@@ -326,20 +300,20 @@ namespace Simple.OData.Client
 
         private bool NamedKeyValuesMatchPrimaryKey(IDictionary<string, object> namedKeyValues, out IEnumerable<KeyValuePair<string, object>> matchingNamedKeyValues)
         {
-            var keyNames = _session.Metadata.GetDeclaredKeyPropertyNames(this.EntityCollection.Name).ToList();
+            var keyNames = this.Session.Metadata.GetDeclaredKeyPropertyNames(this.EntityCollection.Name).ToList();
 
-            return Utils.NamedKeyValuesMatchKeyNames(namedKeyValues, _session.Settings.NameMatchResolver, keyNames, out matchingNamedKeyValues);
+            return Utils.NamedKeyValuesMatchKeyNames(namedKeyValues, this.Session.Settings.NameMatchResolver, keyNames, out matchingNamedKeyValues);
         }
 
         private bool NamedKeyValuesMatchAlternateKey(IDictionary<string, object> namedKeyValues, out IEnumerable<KeyValuePair<string, object>> alternateKeyNamedValues)
         {
             alternateKeyNamedValues = null;
 
-            var alternateKeys = _session.Metadata.GetAlternateKeyPropertyNames(this.EntityCollection.Name).ToList();
+            var alternateKeys = this.Session.Metadata.GetAlternateKeyPropertyNames(this.EntityCollection.Name).ToList();
 
             foreach (var alternateKey in alternateKeys)
             {
-                if (Utils.NamedKeyValuesMatchKeyNames(namedKeyValues, _session.Settings.NameMatchResolver, alternateKey, out alternateKeyNamedValues))
+                if (Utils.NamedKeyValuesMatchKeyNames(namedKeyValues, this.Session.Settings.NameMatchResolver, alternateKey, out alternateKeyNamedValues))
                     return true;
             }
 
@@ -349,8 +323,8 @@ namespace Simple.OData.Client
         private bool TryExtractKeyFromNamedValues(IDictionary<string, object> namedValues, out IEnumerable<KeyValuePair<string, object>> matchingNamedKeyValues)
         {
             return Utils.NamedKeyValuesContainKeyNames(namedValues,
-                _session.Settings.NameMatchResolver,
-                _session.Metadata.GetDeclaredKeyPropertyNames(this.EntityCollection.Name),
+                this.Session.Settings.NameMatchResolver,
+                this.Session.Metadata.GetDeclaredKeyPropertyNames(this.EntityCollection.Name),
                 out matchingNamedKeyValues);
         }
     }
