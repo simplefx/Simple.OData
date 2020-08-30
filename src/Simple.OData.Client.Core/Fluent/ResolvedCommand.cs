@@ -43,6 +43,23 @@ namespace Simple.OData.Client
                 As(_command.Details.DerivedCollectionExpression.AsString(_session));
             }
 
+            if (_details.NamedKeyValues != null)
+            {
+                if (NamedKeyValuesMatchAnyKey(_details.NamedKeyValues, out var matchingKey, out bool isAlternateKey))
+                {
+                    _details.NamedKeyValues = matchingKey.ToDictionary();
+                    _details.IsAlternateKey = isAlternateKey;
+                }
+                else if (TryExtractKeyFromNamedValues(_details.NamedKeyValues, out var containedKey))
+                {
+                    _details.NamedKeyValues = containedKey.ToDictionary();
+                }
+                else
+                {
+                    _details.NamedKeyValues = null;
+                }
+            }
+
             if (_details.Filter == null && !ReferenceEquals(_command.Details.FilterExpression, null))
             {
                 _details.NamedKeyValues = TryInterpretFilterExpressionAsKey(_command.Details.FilterExpression, out var isAlternateKey);
@@ -224,25 +241,6 @@ namespace Simple.OData.Client
 
         public bool HasAction => !string.IsNullOrEmpty(_details.ActionName);
 
-        //internal IDictionary<string, object> KeyValues
-        //{
-        //    get
-        //    {
-        //        if (!HasKey)
-        //            return null;
-
-        //        return (_details.KeyValues?.Zip(
-        //                    _session.Metadata.GetDeclaredKeyPropertyNames(this.EntityCollection.Name)
-        //                    , (keyValue, keyName)
-        //                        => new KeyValuePair<string, object>(keyName, keyValue))
-        //            ??
-        //                _details.NamedKeyValues)
-        //            ?.ToDictionary(
-        //                    x => x.Key,
-        //                    x => x.Value is ODataExpression oDataExpression ? oDataExpression.Value : x.Value);
-        //    }
-        //}
-
         internal IDictionary<string, object> KeyValues
         {
             get
@@ -250,31 +248,15 @@ namespace Simple.OData.Client
                 if (!HasKey)
                     return null;
 
-                var keyNames = _details.Session.Metadata.GetDeclaredKeyPropertyNames(this.EntityCollection.Name).ToList();
-                var namedKeyValues = new Dictionary<string, object>();
-                for (var index = 0; index < keyNames.Count; index++)
-                {
-                    var found = false;
-                    object keyValue = null;
-                    if (_details.NamedKeyValues != null && _details.NamedKeyValues.Count > 0)
-                    {
-                        keyValue = _details.NamedKeyValues.FirstOrDefault(x => _details.Session.Settings.NameMatchResolver.IsMatch(x.Key, keyNames[index])).Value;
-                        found = keyValue != null;
-                    }
-                    else if (_details.KeyValues != null && _details.KeyValues.Count >= index)
-                    {
-                        keyValue = _details.KeyValues[index];
-                        found = true;
-                    }
-                    if (found)
-                    {
-                        var value = keyValue is ODataExpression ?
-                            (keyValue as ODataExpression).Value :
-                            keyValue;
-                        namedKeyValues.Add(keyNames[index], value);
-                    }
-                }
-                return namedKeyValues;
+                var keyNames = _session.Metadata.GetDeclaredKeyPropertyNames(this.EntityCollection.Name).ToList();
+                var namedKeyValues = _details.KeyValues?.Zip(
+                     keyNames, 
+                     (keyValue, keyName) => new KeyValuePair<string, object>(keyName, keyValue))
+                    ??
+                    _details.NamedKeyValues;
+                return namedKeyValues?.ToDictionary(
+                    x => x.Key,
+                    x => x.Value is ODataExpression oDataExpression ? oDataExpression.Value : x.Value);
             }
         }
 
