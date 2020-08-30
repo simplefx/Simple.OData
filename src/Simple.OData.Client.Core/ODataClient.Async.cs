@@ -876,7 +876,7 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var result = await ExecuteRequestWithResultAsync(request, cancellationToken,
-                x => x.AsEntry(_session.Settings.IncludeAnnotationsInResults), () => null, () => command.CommandData).ConfigureAwait(false);
+                x => x.AsEntry(_session.Settings.IncludeAnnotationsInResults), () => null, () => resolvedCommand.CommandData).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var keyNames = _session.Metadata.GetDeclaredKeyPropertyNames(resolvedCommand.QualifiedEntityCollectionName);
@@ -927,7 +927,7 @@ namespace Simple.OData.Client
             {
                 try
                 {
-                    var entryKey = resolvedCommand.HasKey ? resolvedCommand.KeyValues : resolvedCommand.FilterAsKey;
+                    var entryKey = resolvedCommand.Details.HasKey ? resolvedCommand.KeyValues : resolvedCommand.FilterAsKey;
                     await UnlinkEntryAsync(resolvedCommand.QualifiedEntityCollectionName, entryKey, associationName, cancellationToken).ConfigureAwait(false);
                     if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
                 }
@@ -1070,9 +1070,9 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var resolvedCommand = command.Resolve(_session);
-            if (command.HasFunction)
+            if (command.Details.HasFunction)
                 return await ExecuteFunctionAsync(resolvedCommand, cancellationToken).ConfigureAwait(false);
-            else if (command.HasAction)
+            else if (command.Details.HasAction)
                 return await ExecuteActionAsync(resolvedCommand, cancellationToken).ConfigureAwait(false);
             else
                 throw new InvalidOperationException("Command is expected to be a function or an action.");

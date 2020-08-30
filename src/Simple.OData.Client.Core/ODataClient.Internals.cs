@@ -13,7 +13,7 @@ namespace Simple.OData.Client
     {
         private async Task<IDictionary<string, object>> GetUpdatedResult(ResolvedCommand command, CancellationToken cancellationToken)
         {
-            var entryKey = command.HasKey ? command.KeyValues : command.FilterAsKey;
+            var entryKey = command.Details.HasKey ? command.KeyValues : command.FilterAsKey;
             var entryData = command.CommandData;
 
             var updatedKey = entryKey.Where(x => !entryData.ContainsKey(x.Key)).ToIDictionary();
@@ -31,7 +31,7 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-                .CreateFunctionRequestAsync(commandText, command.Source.FunctionName).ConfigureAwait(false);
+                .CreateFunctionRequestAsync(commandText, command.Source.Details.FunctionName).ConfigureAwait(false);
 
             return await ExecuteRequestWithResultAsync(request, cancellationToken,
                 x => x.AsEntries(_session.Settings.IncludeAnnotationsInResults),
@@ -47,7 +47,7 @@ namespace Simple.OData.Client
                 ? _session.Metadata.GetQualifiedTypeName(command.EntityCollection.Name)
                 : null;
             var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-                .CreateActionRequestAsync(commandText, command.Source.ActionName, entityTypeName, command.CommandData, true).ConfigureAwait(false);
+                .CreateActionRequestAsync(commandText, command.Source.Details.ActionName, entityTypeName, command.CommandData, true).ConfigureAwait(false);
 
             return await ExecuteRequestWithResultAsync(request, cancellationToken,
                 x => x.AsEntries(_session.Settings.IncludeAnnotationsInResults),
@@ -260,7 +260,7 @@ namespace Simple.OData.Client
 
         private void AssertHasKey(FluentCommand command)
         {
-            if (!command.HasKey && command.FilterAsKey == null)
+            if (!command.Details.HasKey && command.Details.FilterAsKey == null)
                 throw new InvalidOperationException("No entry key specified.");
         }
 
@@ -276,9 +276,9 @@ namespace Simple.OData.Client
 
         private async Task<string> FormatEntryKeyAsync(FluentCommand command, CancellationToken cancellationToken)
         {
-            var entryIdent = command.HasKey
+            var entryIdent = command.Details.HasKey
                 ? await command.Resolve(_session).GetCommandTextAsync(cancellationToken)
-.ConfigureAwait(false) : await (new FluentCommand(command).Key(command.FilterAsKey).Resolve(_session).GetCommandTextAsync(cancellationToken)).ConfigureAwait(false);
+.ConfigureAwait(false) : await (new FluentCommand(command).Key(command.Details.FilterAsKey).Resolve(_session).GetCommandTextAsync(cancellationToken)).ConfigureAwait(false);
 
             return entryIdent;
         }

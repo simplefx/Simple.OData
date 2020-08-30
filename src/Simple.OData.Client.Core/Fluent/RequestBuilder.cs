@@ -62,7 +62,7 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var collectionName = _command.QualifiedEntityCollectionName;
-            var entryKey = _command.HasKey ? _command.KeyValues : _command.FilterAsKey;
+            var entryKey = _command.Details.HasKey ? _command.KeyValues : _command.FilterAsKey;
             var entryData = _command.CommandData;
             var entryIdent = await FormatEntryKeyAsync(_command, cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
@@ -103,7 +103,7 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var collectionName = _command.QualifiedEntityCollectionName;
-            var entryKey = _command.HasKey ? _command.KeyValues : _command.FilterAsKey;
+            var entryKey = _command.Details.HasKey ? _command.KeyValues : _command.FilterAsKey;
 
             var entryIdent = await FormatEntryKeyAsync(collectionName, entryKey, cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
@@ -124,7 +124,7 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var collectionName = _command.QualifiedEntityCollectionName;
-            var entryKey = _command.HasKey ? _command.KeyValues : _command.FilterAsKey;
+            var entryKey = _command.Details.HasKey ? _command.KeyValues : _command.FilterAsKey;
 
             var entryIdent = await FormatEntryKeyAsync(collectionName, entryKey, cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
@@ -143,7 +143,7 @@ namespace Simple.OData.Client
 
         private async Task<string> FormatEntryKeyAsync(ResolvedCommand command, CancellationToken cancellationToken)
         {
-            var entryIdent = command.HasKey
+            var entryIdent = command.Details.HasKey
                 ? await command.GetCommandTextAsync(cancellationToken).ConfigureAwait(false) 
                 : await (new FluentCommand(command.Source).Key(command.FilterAsKey).Resolve(_session).GetCommandTextAsync(cancellationToken)).ConfigureAwait(false);
 
@@ -163,7 +163,7 @@ namespace Simple.OData.Client
 
         private void AssertHasKey(ResolvedCommand command)
         {
-            if (!command.HasKey && command.FilterAsKey == null)
+            if (!command.Details.HasKey && command.FilterAsKey == null)
                 throw new InvalidOperationException("No entry key specified.");
         }
     }

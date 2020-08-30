@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -33,7 +32,6 @@ namespace Simple.OData.Client
         private bool IsBatchResponse => this.Session == null;
 
         internal ITypeCache TypeCache => this.Session.TypeCache;
-
 
         internal EntityCollection EntityCollection
         {
@@ -135,9 +133,9 @@ namespace Simple.OData.Client
                 if (Details.NamedKeyValues == null)
                 {
                     var entityCollection = this.EntityCollection;
-                    if (Source.HasFunction)
+                    if (Source.Details.HasFunction)
                     {
-                        var collection = this.Session.Metadata.GetFunctionReturnCollection(Source.FunctionName);
+                        var collection = this.Session.Metadata.GetFunctionReturnCollection(Source.Details.FunctionName);
                         if (collection != null)
                         {
                             entityCollection = collection;
@@ -199,21 +197,11 @@ namespace Simple.OData.Client
             return this.Session.Adapter.GetCommandFormatter().FormatCommand(this);
         }
 
-        internal bool HasKey => Details.KeyValues != null && Details.KeyValues.Count > 0 || Details.NamedKeyValues != null && Details.NamedKeyValues.Count > 0;
-
-        internal bool HasFilter => !string.IsNullOrEmpty(Details.Filter) || !ReferenceEquals(Details.FilterExpression, null);
-
-        internal bool HasSearch => !string.IsNullOrEmpty(Details.Search);
-
-        public bool HasFunction => !string.IsNullOrEmpty(Details.FunctionName);
-
-        public bool HasAction => !string.IsNullOrEmpty(Details.ActionName);
-
         internal IDictionary<string, object> KeyValues
         {
             get
             {
-                if (!HasKey)
+                if (!Details.HasKey)
                     return null;
 
                 var keyNames = this.Session.Metadata.GetDeclaredKeyPropertyNames(this.EntityCollection.Name).ToList();

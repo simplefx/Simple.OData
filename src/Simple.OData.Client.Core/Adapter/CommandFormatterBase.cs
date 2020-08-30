@@ -22,7 +22,7 @@ namespace Simple.OData.Client
 
         public string FormatCommand(ResolvedCommand command)
         {
-            if (command.HasFunction && command.HasAction)
+            if (command.Details.HasFunction && command.Details.HasAction)
                 throw new InvalidOperationException("OData function and action may not be combined.");
 
             var commandText = string.Empty;
@@ -36,7 +36,7 @@ namespace Simple.OData.Client
                 commandText += $"{FormatCommand(parent)}/{_session.Metadata.GetNavigationPropertyExactName(parent.EntityCollection.Name, command.Details.LinkName)}";
             }
 
-            if (command.HasKey)
+            if (command.Details.HasKey)
                 commandText += ConvertKeyValuesToUriLiteral(command.KeyValues, !command.Details.IsAlternateKey);
 
             var collectionValues = new List<string>();
@@ -194,11 +194,11 @@ namespace Simple.OData.Client
                 queryClauses.Add($"{ODataLiteral.Top}={command.Details.TopCount}");
 
             EntityCollection resultCollection;
-            if (command.HasFunction)
+            if (command.Details.HasFunction)
             {
                 resultCollection = _session.Adapter.GetMetadata().GetFunctionReturnCollection(command.Details.FunctionName);
             }
-            else if (command.HasAction)
+            else if (command.Details.HasAction)
             {
                 resultCollection = _session.Adapter.GetMetadata().GetActionReturnCollection(command.Details.ActionName);
             }

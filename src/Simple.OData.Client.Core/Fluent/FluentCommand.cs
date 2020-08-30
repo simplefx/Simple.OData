@@ -207,7 +207,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            if (!HasKey || HasFunction)
+            if (!Details.HasKey || Details.HasFunction)
             {
                 Details.TopCount = count;
             }
@@ -443,10 +443,6 @@ namespace Simple.OData.Client
             return this;
         }
 
-        public bool FilterIsKey => Details.NamedKeyValues != null;
-
-        public IDictionary<string, object> FilterAsKey => Details.NamedKeyValues;
-
         public FluentCommand WithCount()
         {
             if (IsBatchResponse) return this;
@@ -455,58 +451,7 @@ namespace Simple.OData.Client
             return this;
         }
 
-        internal bool HasKey => Details.KeyValues != null && Details.KeyValues.Count > 0 || Details.NamedKeyValues != null && Details.NamedKeyValues.Count > 0;
-
-        internal bool HasFilter => !string.IsNullOrEmpty(Details.Filter) || !ReferenceEquals(Details.FilterExpression, null);
-
-        internal bool HasSearch => !string.IsNullOrEmpty(Details.Search);
-
-        public bool HasFunction => !string.IsNullOrEmpty(Details.FunctionName);
-
-        public bool HasAction => !string.IsNullOrEmpty(Details.ActionName);
-
-        internal IDictionary<string, object> KeyValues => !HasKey ? null : Details.NamedKeyValues;
-
-        internal IDictionary<string, object> CommandData
-        {
-            get
-            {
-                if (Details.EntryData == null)
-                    return new Dictionary<string, object>();
-                if (string.IsNullOrEmpty(Details.DynamicPropertiesContainerName))
-                    return Details.EntryData;
-
-                var entryData = new Dictionary<string, object>();
-                foreach (var key in Details.EntryData.Keys.Where(x =>
-                    !string.Equals(x, Details.DynamicPropertiesContainerName, StringComparison.OrdinalIgnoreCase)))
-                {
-                    entryData.Add(key, Details.EntryData[key]);
-                }
-
-                if (Details.EntryData.TryGetValue(Details.DynamicPropertiesContainerName, out var dynamicProperties) && dynamicProperties != null)
-                {
-                    if (dynamicProperties is IDictionary<string, object> kv)
-                    {
-                        foreach (var key in kv.Keys)
-                        {
-                            entryData.Add(key, kv[key]);
-                        }
-                    }
-                    else
-                    {
-                        throw new InvalidOperationException($"Property {Details.DynamicPropertiesContainerName} must implement IDictionary<string,object> interface");
-                    }
-                }
-
-                return entryData;
-            }
-        }
-
         internal IList<string> SelectedColumns => Details.SelectColumns;
-
-        internal string FunctionName => Details.FunctionName;
-
-        internal string ActionName => Details.ActionName;
 
         private IEnumerable<string> SplitItems(IEnumerable<string> columns)
         {

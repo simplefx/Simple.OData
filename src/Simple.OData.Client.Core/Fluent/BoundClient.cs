@@ -122,9 +122,9 @@ namespace Simple.OData.Client
             return CreateClientForODataEntry();
         }
 
-        public bool FilterIsKey => this.Command.FilterIsKey;
+        public bool FilterIsKey => this.Command.Details.FilterIsKey;
 
-        public IDictionary<string, object> FilterAsKey => this.Command.FilterAsKey;
+        public IDictionary<string, object> FilterAsKey => this.Command.Details.FilterAsKey;
 
         public IRequestBuilder<T> BuildRequestFor()
         {

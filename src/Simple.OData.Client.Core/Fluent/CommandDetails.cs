@@ -84,5 +84,19 @@ namespace Simple.OData.Client
             this.QueryOptionsExpression = details.QueryOptionsExpression;
             this.BatchEntries = details.BatchEntries;
         }
+
+        public bool HasKey => this.KeyValues != null && this.KeyValues.Count > 0 || this.NamedKeyValues != null && this.NamedKeyValues.Count > 0;
+
+        public bool HasFilter => !string.IsNullOrEmpty(this.Filter) || !ReferenceEquals(this.FilterExpression, null);
+
+        public bool HasSearch => !string.IsNullOrEmpty(this.Search);
+
+        public bool HasFunction => !string.IsNullOrEmpty(this.FunctionName);
+
+        public bool HasAction => !string.IsNullOrEmpty(this.ActionName);
+
+        public bool FilterIsKey => this.NamedKeyValues != null;
+
+        public IDictionary<string, object> FilterAsKey => this.NamedKeyValues;
     }
 }

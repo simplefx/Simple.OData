@@ -136,7 +136,7 @@ namespace Simple.OData.Client
 
         public async Task<T> UpdateEntryAsync(bool resultRequired, CancellationToken cancellationToken)
         {
-            if (_command.HasFilter)
+            if (_command.Details.HasFilter)
             {
                 var result = await UpdateEntriesAsync(resultRequired, cancellationToken).ConfigureAwait(false);
                 return resultRequired 
@@ -188,7 +188,7 @@ namespace Simple.OData.Client
 
         public Task DeleteEntryAsync(CancellationToken cancellationToken)
         {
-            if (_command.HasFilter)
+            if (_command.Details.HasFilter)
                 return DeleteEntriesAsync(cancellationToken);
             else
                 return _client.DeleteEntryAsync(_command, cancellationToken);
