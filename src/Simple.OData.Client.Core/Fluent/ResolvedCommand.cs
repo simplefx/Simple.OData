@@ -45,7 +45,7 @@ namespace Simple.OData.Client
                 EntityCollection entityCollection;
                 if (!string.IsNullOrEmpty(Details.LinkName))
                 {
-                    var parent = new FluentCommand(Details.Parent).Resolve();
+                    var parent = new FluentCommand(Details.Parent).Resolve(this.Session);
                     var collectionName = this.Session.Metadata.GetNavigationPropertyPartnerTypeName(
                         parent.EntityCollection.Name, Details.LinkName);
                     entityCollection = this.Session.Metadata.GetEntityCollection(collectionName);

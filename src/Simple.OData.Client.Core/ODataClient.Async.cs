@@ -347,7 +347,7 @@ namespace Simple.OData.Client
             var command = GetBoundClient()
                 .For(collection)
                 .Key(entryKey)
-                .AsBoundClient().Command.Resolve();
+                .AsBoundClient().Command.Resolve(_session);
 
             var requestBuilder = new RequestBuilder(command, _session, this.BatchWriter);
             var request = await requestBuilder.GetRequestAsync(false, cancellationToken).ConfigureAwait(false);
@@ -573,7 +573,7 @@ namespace Simple.OData.Client
                 .Set(parameters)
                 .AsBoundClient().Command;
 
-            var result = await ExecuteFunctionAsync(command, cancellationToken).ConfigureAwait(false);
+            var result = await ExecuteFunctionAsync(command.Resolve(_session), cancellationToken).ConfigureAwait(false);
             return result?.FirstOrDefault();
         }
 
@@ -595,7 +595,7 @@ namespace Simple.OData.Client
                 .Set(parameters)
                 .AsBoundClient().Command;
 
-            return await ExecuteFunctionAsync(command, cancellationToken).ConfigureAwait(false);
+            return await ExecuteFunctionAsync(command.Resolve(_session), cancellationToken).ConfigureAwait(false);
         }
 
         public Task<T> ExecuteFunctionAsScalarAsync<T>(string functionName, IDictionary<string, object> parameters)
@@ -654,7 +654,7 @@ namespace Simple.OData.Client
                 .Set(parameters)
                 .AsBoundClient().Command;
 
-            await ExecuteActionAsync(command, cancellationToken).ConfigureAwait(false);
+            await ExecuteActionAsync(command.Resolve(_session), cancellationToken).ConfigureAwait(false);
         }
 
         public Task<IDictionary<string, object>> ExecuteActionAsSingleAsync(string actionName, IDictionary<string, object> parameters)
@@ -675,7 +675,7 @@ namespace Simple.OData.Client
                 .Set(parameters)
                 .AsBoundClient().Command;
 
-            var result = await ExecuteActionAsync(command, cancellationToken).ConfigureAwait(false);
+            var result = await ExecuteActionAsync(command.Resolve(_session), cancellationToken).ConfigureAwait(false);
             return result?.FirstOrDefault();
         }
 
@@ -697,7 +697,7 @@ namespace Simple.OData.Client
                 .Set(parameters)
                 .AsBoundClient().Command;
 
-            return await ExecuteActionAsync(command, cancellationToken).ConfigureAwait(false);
+            return await ExecuteActionAsync(command.Resolve(_session), cancellationToken).ConfigureAwait(false);
         }
 
         public Task<T> ExecuteActionAsScalarAsync<T>(string actionName, IDictionary<string, object> parameters)
@@ -822,7 +822,7 @@ namespace Simple.OData.Client
             await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var commandText = await command.Resolve().GetCommandTextAsync(cancellationToken).ConfigureAwait(false);
+            var commandText = await command.Resolve(_session).GetCommandTextAsync(cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var result = await FindAnnotatedEntriesAsync(commandText, scalarResult, annotations, cancellationToken).ConfigureAwait(false);
@@ -840,7 +840,7 @@ namespace Simple.OData.Client
             await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var commandText = await command.Resolve().GetCommandTextAsync(cancellationToken).ConfigureAwait(false);
+            var commandText = await command.Resolve(_session).GetCommandTextAsync(cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var results = await FindAnnotatedEntriesAsync(commandText, false, null, cancellationToken).ConfigureAwait(false);
@@ -859,7 +859,7 @@ namespace Simple.OData.Client
             await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var commandText = await command.Resolve().GetCommandTextAsync(cancellationToken).ConfigureAwait(false);
+            var commandText = await command.Resolve(_session).GetCommandTextAsync(cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             return await FindScalarAsync(commandText, cancellationToken).ConfigureAwait(false);
@@ -870,7 +870,7 @@ namespace Simple.OData.Client
             if (IsBatchResponse)
                 return _batchResponse.AsEntry(false);
 
-            var resolvedCommand = command.Resolve();
+            var resolvedCommand = command.Resolve(_session);
             var requestBuilder = new RequestBuilder(resolvedCommand, _session, this.BatchWriter);
             var request = await requestBuilder.InsertRequestAsync(resultRequired, cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
@@ -894,7 +894,7 @@ namespace Simple.OData.Client
             if (IsBatchResponse)
                 return _batchResponse.AsEntry(false);
 
-            var resolvedCommand = command.Resolve();
+            var resolvedCommand = command.Resolve(_session);
             var requestBuilder = new RequestBuilder(resolvedCommand, _session, this.BatchWriter);
             var request = await requestBuilder.UpdateRequestAsync(resultRequired, cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
@@ -907,7 +907,7 @@ namespace Simple.OData.Client
             {
                 try
                 {
-                    result = await GetUpdatedResult(resolvedCommand.Source, cancellationToken).ConfigureAwait(false);
+                    result = await GetUpdatedResult(resolvedCommand, cancellationToken).ConfigureAwait(false);
                     if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
                 }
                 catch (Exception)
@@ -958,7 +958,7 @@ namespace Simple.OData.Client
             if (IsBatchResponse)
                 return;
 
-            var requestBuilder = new RequestBuilder(command.Resolve(), _session, this.BatchWriter);
+            var requestBuilder = new RequestBuilder(command.Resolve(_session), _session, this.BatchWriter);
             var request = await requestBuilder.DeleteRequestAsync(cancellationToken).ConfigureAwait(false);
             if (!IsBatchRequest)
             {
@@ -987,7 +987,7 @@ namespace Simple.OData.Client
             if (IsBatchResponse)
                 return;
 
-            var requestBuilder = new RequestBuilder(command.Resolve(), _session, this.BatchWriter);
+            var requestBuilder = new RequestBuilder(command.Resolve(_session), _session, this.BatchWriter);
             var request = await requestBuilder.LinkRequestAsync(linkName, linkedEntryKey, cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
@@ -1004,7 +1004,7 @@ namespace Simple.OData.Client
             if (IsBatchResponse)
                 return;
 
-            var requestBuilder = new RequestBuilder(command.Resolve(), _session, this.BatchWriter);
+            var requestBuilder = new RequestBuilder(command.Resolve(_session), _session, this.BatchWriter);
             var request = await requestBuilder.UnlinkRequestAsync(linkName, linkedEntryKey, cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
@@ -1024,7 +1024,7 @@ namespace Simple.OData.Client
             await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var commandText = await command.Resolve().GetCommandTextAsync(cancellationToken).ConfigureAwait(false);
+            var commandText = await command.Resolve(_session).GetCommandTextAsync(cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             return await GetMediaStreamAsync(commandText, cancellationToken).ConfigureAwait(false);
@@ -1038,7 +1038,7 @@ namespace Simple.OData.Client
             await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var commandText = await command.Resolve().GetCommandTextAsync(cancellationToken).ConfigureAwait(false);
+            var commandText = await command.Resolve(_session).GetCommandTextAsync(cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             await SetMediaStreamAsync(commandText, stream, contentType, optimisticConcurrency, cancellationToken).ConfigureAwait(false);
@@ -1069,10 +1069,11 @@ namespace Simple.OData.Client
             await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
+            var resolvedCommand = command.Resolve(_session);
             if (command.HasFunction)
-                return await ExecuteFunctionAsync(command, cancellationToken).ConfigureAwait(false);
+                return await ExecuteFunctionAsync(resolvedCommand, cancellationToken).ConfigureAwait(false);
             else if (command.HasAction)
-                return await ExecuteActionAsync(command, cancellationToken).ConfigureAwait(false);
+                return await ExecuteActionAsync(resolvedCommand, cancellationToken).ConfigureAwait(false);
             else
                 throw new InvalidOperationException("Command is expected to be a function or an action.");
         }

@@ -43,7 +43,8 @@ namespace Simple.OData.Client
 
         public async Task<IEnumerable<T>> FindEntriesAsync(ODataFeedAnnotations annotations, CancellationToken cancellationToken)
         {
-            var commandText = await _command.WithCount().Resolve().GetCommandTextAsync(cancellationToken).ConfigureAwait(false);
+            await _session.ResolveAdapterAsync(cancellationToken);
+            var commandText = await _command.WithCount().Resolve(_session).GetCommandTextAsync(cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested)
                 cancellationToken.ThrowIfCancellationRequested();
 

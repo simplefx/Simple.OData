@@ -38,9 +38,9 @@ namespace Simple.OData.Client
         internal ITypeCache TypeCache => Details.Session.TypeCache;
 
 
-        internal ResolvedCommand Resolve()
+        internal ResolvedCommand Resolve(ISession session)
         {
-            return new ResolvedCommand(this, Details.Session);
+            return new ResolvedCommand(this, session as Session);
         }
 
         public string DynamicPropertiesContainerName => Details.DynamicPropertiesContainerName;
