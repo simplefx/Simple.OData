@@ -18,34 +18,32 @@ namespace Simple.OData.Client
 
     public partial class FluentCommand
     {
-        private readonly CommandDetails _details;
-
         internal static readonly string ResultLiteral = "__result";
         internal static readonly string AnnotationsLiteral = "__annotations";
         internal static readonly string MediaEntityLiteral = "__entity";
 
         internal FluentCommand(Session session, FluentCommand parent, ConcurrentDictionary<object, IDictionary<string, object>> batchEntries)
         {
-            _details = new CommandDetails(session, parent, batchEntries);
+            Details = new CommandDetails(session, parent, batchEntries);
         }
 
         internal FluentCommand(FluentCommand ancestor)
         {
-            _details = new CommandDetails(ancestor._details);
+            Details = new CommandDetails(ancestor.Details);
         }
 
-        private bool IsBatchResponse => _details.Session == null;
+        internal CommandDetails Details { get; private set; }
+        private bool IsBatchResponse => Details.Session == null;
 
-        internal ITypeCache TypeCache => _details.Session.TypeCache;
+        internal ITypeCache TypeCache => Details.Session.TypeCache;
 
-        internal CommandDetails Details => _details;
 
         internal ResolvedCommand Resolve()
         {
-            return new ResolvedCommand(this, _details.Session);
+            return new ResolvedCommand(this, Details.Session);
         }
 
-        public string DynamicPropertiesContainerName => _details.DynamicPropertiesContainerName;
+        public string DynamicPropertiesContainerName => Details.DynamicPropertiesContainerName;
 
         public FluentCommand For(string collectionName)
         {
@@ -54,12 +52,12 @@ namespace Simple.OData.Client
             var items = collectionName.Split('/');
             if (items.Count() > 1)
             {
-                _details.CollectionName = items[0];
-                _details.DerivedCollectionName = items[1];
+                Details.CollectionName = items[0];
+                Details.DerivedCollectionName = items[1];
             }
             else
             {
-                _details.CollectionName = collectionName;
+                Details.CollectionName = collectionName;
             }
             return this;
         }
@@ -68,7 +66,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _details.DynamicPropertiesContainerName = propertyName;
+            Details.DynamicPropertiesContainerName = propertyName;
             return this;
         }
 
@@ -76,7 +74,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _details.MediaProperties = properties;
+            Details.MediaProperties = properties;
             return this;
         }
 
@@ -84,7 +82,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _details.MediaProperties = SplitItems(properties).ToList();
+            Details.MediaProperties = SplitItems(properties).ToList();
             return this;
         }
 
@@ -97,7 +95,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _details.CollectionExpression = expression;
+            Details.CollectionExpression = expression;
             return this;
         }
 
@@ -105,7 +103,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _details.DerivedCollectionName = derivedCollectionName;
+            Details.DerivedCollectionName = derivedCollectionName;
             return this;
         }
 
@@ -113,7 +111,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _details.DerivedCollectionExpression = expression;
+            Details.DerivedCollectionExpression = expression;
             return this;
         }
 
@@ -121,7 +119,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _details.LinkName = linkName;
+            Details.LinkName = linkName;
             return this;
         }
 
@@ -129,7 +127,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _details.LinkExpression = expression;
+            Details.LinkExpression = expression;
             return this;
         }
 
@@ -151,9 +149,9 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _details.KeyValues = key.ToList();
-            _details.NamedKeyValues = null;
-            _details.IsAlternateKey = false;
+            Details.KeyValues = key.ToList();
+            Details.NamedKeyValues = null;
+            Details.IsAlternateKey = false;
             return this;
         }
 
@@ -161,9 +159,9 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _details.KeyValues = null;
-            _details.NamedKeyValues = key;
-            _details.IsAlternateKey = false;
+            Details.KeyValues = null;
+            Details.NamedKeyValues = key;
+            Details.IsAlternateKey = false;
             return this;
         }
 
@@ -171,10 +169,10 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            if (string.IsNullOrEmpty(_details.Filter))
-                _details.Filter = filter;
+            if (string.IsNullOrEmpty(Details.Filter))
+                Details.Filter = filter;
             else
-                _details.Filter = $"({_details.Filter}) and ({filter})";
+                Details.Filter = $"({Details.Filter}) and ({filter})";
             return this;
         }
 
@@ -182,10 +180,10 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            if (ReferenceEquals(_details.FilterExpression, null))
-                _details.FilterExpression = expression;
+            if (ReferenceEquals(Details.FilterExpression, null))
+                Details.FilterExpression = expression;
             else
-                _details.FilterExpression = _details.FilterExpression && expression;
+                Details.FilterExpression = Details.FilterExpression && expression;
             return this;
         }
 
@@ -193,7 +191,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _details.Search = search;
+            Details.Search = search;
             return this;
         }
 
@@ -201,7 +199,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _details.SkipCount = count;
+            Details.SkipCount = count;
             return this;
         }
 
@@ -211,7 +209,7 @@ namespace Simple.OData.Client
 
             if (!HasKey || HasFunction)
             {
-                _details.TopCount = count;
+                Details.TopCount = count;
             }
             else if (count != 1)
             {
@@ -224,7 +222,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _details.ExpandAssociations.AddRange(new[] { new KeyValuePair<string, ODataExpandOptions>("*", ODataExpandOptions.ByValue()) });
+            Details.ExpandAssociations.AddRange(new[] { new KeyValuePair<string, ODataExpandOptions>("*", ODataExpandOptions.ByValue()) });
             return this;
         }
 
@@ -232,7 +230,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _details.ExpandAssociations.AddRange(SplitItems(associations).Select(x => new KeyValuePair<string, ODataExpandOptions>(x, ODataExpandOptions.ByValue())));
+            Details.ExpandAssociations.AddRange(SplitItems(associations).Select(x => new KeyValuePair<string, ODataExpandOptions>(x, ODataExpandOptions.ByValue())));
             return this;
         }
 
@@ -240,7 +238,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _details.ExpandAssociations.AddRange(SplitItems(associations).Select(x => new KeyValuePair<string, ODataExpandOptions>(x, expandOptions)));
+            Details.ExpandAssociations.AddRange(SplitItems(associations).Select(x => new KeyValuePair<string, ODataExpandOptions>(x, expandOptions)));
             return this;
         }
 
@@ -248,7 +246,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _details.ExpandAssociations.AddRange(SplitItems(associations).Select(x => new KeyValuePair<string, ODataExpandOptions>(x, ODataExpandOptions.ByValue())));
+            Details.ExpandAssociations.AddRange(SplitItems(associations).Select(x => new KeyValuePair<string, ODataExpandOptions>(x, ODataExpandOptions.ByValue())));
             return this;
         }
 
@@ -256,7 +254,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _details.ExpandAssociations.AddRange(SplitItems(associations).Select(x => new KeyValuePair<string, ODataExpandOptions>(x, expandOptions)));
+            Details.ExpandAssociations.AddRange(SplitItems(associations).Select(x => new KeyValuePair<string, ODataExpandOptions>(x, expandOptions)));
             return this;
         }
 
@@ -274,7 +272,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _details.SelectColumns.AddRange(SplitItems(columns).ToList());
+            Details.SelectColumns.AddRange(SplitItems(columns).ToList());
             return this;
         }
 
@@ -282,7 +280,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _details.SelectColumns.AddRange(SplitItems(columns).ToList());
+            Details.SelectColumns.AddRange(SplitItems(columns).ToList());
             return this;
         }
 
@@ -295,7 +293,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _details.OrderbyColumns.AddRange(SplitItems(columns));
+            Details.OrderbyColumns.AddRange(SplitItems(columns));
             return this;
         }
 
@@ -313,7 +311,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _details.OrderbyColumns.AddRange(SplitItems(columns).Select(x => new KeyValuePair<string, bool>(x, false)));
+            Details.OrderbyColumns.AddRange(SplitItems(columns).Select(x => new KeyValuePair<string, bool>(x, false)));
             return this;
         }
 
@@ -336,7 +334,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _details.OrderbyColumns.AddRange(SplitItems(columns).Select(x => new KeyValuePair<string, bool>(x, true)));
+            Details.OrderbyColumns.AddRange(SplitItems(columns).Select(x => new KeyValuePair<string, bool>(x, true)));
             return this;
         }
 
@@ -349,10 +347,10 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            if (_details.QueryOptions == null)
-                _details.QueryOptions = queryOptions;
+            if (Details.QueryOptions == null)
+                Details.QueryOptions = queryOptions;
             else
-                _details.QueryOptions = $"{_details.QueryOptions}&{queryOptions}";
+                Details.QueryOptions = $"{Details.QueryOptions}&{queryOptions}";
             return this;
         }
 
@@ -360,7 +358,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _details.QueryOptionsKeyValues = queryOptions;
+            Details.QueryOptionsKeyValues = queryOptions;
             return this;
         }
 
@@ -368,10 +366,10 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            if (ReferenceEquals(_details.QueryOptionsExpression, null))
-                _details.QueryOptionsExpression = expression;
+            if (ReferenceEquals(Details.QueryOptionsExpression, null))
+                Details.QueryOptionsExpression = expression;
             else
-                _details.QueryOptionsExpression = _details.QueryOptionsExpression && expression;
+                Details.QueryOptionsExpression = Details.QueryOptionsExpression && expression;
             return this;
         }
 
@@ -384,7 +382,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _details.MediaName = streamName;
+            Details.MediaName = streamName;
             return this;
         }
 
@@ -397,7 +395,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _details.ComputeCount = true;
+            Details.ComputeCount = true;
             return this;
         }
 
@@ -405,8 +403,8 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _details.EntryData = TypeCache.ToDictionary(value);
-            _details.BatchEntries?.GetOrAdd(value, _details.EntryData);
+            Details.EntryData = TypeCache.ToDictionary(value);
+            Details.BatchEntries?.GetOrAdd(value, Details.EntryData);
 
             return this;
         }
@@ -415,7 +413,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _details.EntryData = value;
+            Details.EntryData = value;
             return this;
         }
 
@@ -423,8 +421,8 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _details.EntryData = value.Select(x => new KeyValuePair<string, object>(x.Reference, x.Value)).ToIDictionary();
-            _details.BatchEntries?.GetOrAdd(value, _details.EntryData);
+            Details.EntryData = value.Select(x => new KeyValuePair<string, object>(x.Reference, x.Value)).ToIDictionary();
+            Details.BatchEntries?.GetOrAdd(value, Details.EntryData);
 
             return this;
         }
@@ -433,7 +431,7 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _details.FunctionName = functionName;
+            Details.FunctionName = functionName;
             return this;
         }
 
@@ -441,51 +439,51 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse) return this;
 
-            _details.ActionName = actionName;
+            Details.ActionName = actionName;
             return this;
         }
 
-        public bool FilterIsKey => _details.NamedKeyValues != null;
+        public bool FilterIsKey => Details.NamedKeyValues != null;
 
-        public IDictionary<string, object> FilterAsKey => _details.NamedKeyValues;
+        public IDictionary<string, object> FilterAsKey => Details.NamedKeyValues;
 
         public FluentCommand WithCount()
         {
             if (IsBatchResponse) return this;
 
-            _details.IncludeCount = true;
+            Details.IncludeCount = true;
             return this;
         }
 
-        internal bool HasKey => _details.KeyValues != null && _details.KeyValues.Count > 0 || _details.NamedKeyValues != null && _details.NamedKeyValues.Count > 0;
+        internal bool HasKey => Details.KeyValues != null && Details.KeyValues.Count > 0 || Details.NamedKeyValues != null && Details.NamedKeyValues.Count > 0;
 
-        internal bool HasFilter => !string.IsNullOrEmpty(_details.Filter) || !ReferenceEquals(_details.FilterExpression, null);
+        internal bool HasFilter => !string.IsNullOrEmpty(Details.Filter) || !ReferenceEquals(Details.FilterExpression, null);
 
-        internal bool HasSearch => !string.IsNullOrEmpty(_details.Search);
+        internal bool HasSearch => !string.IsNullOrEmpty(Details.Search);
 
-        public bool HasFunction => !string.IsNullOrEmpty(_details.FunctionName);
+        public bool HasFunction => !string.IsNullOrEmpty(Details.FunctionName);
 
-        public bool HasAction => !string.IsNullOrEmpty(_details.ActionName);
+        public bool HasAction => !string.IsNullOrEmpty(Details.ActionName);
 
-        internal IDictionary<string, object> KeyValues => !HasKey ? null : _details.NamedKeyValues;
+        internal IDictionary<string, object> KeyValues => !HasKey ? null : Details.NamedKeyValues;
 
         internal IDictionary<string, object> CommandData
         {
             get
             {
-                if (_details.EntryData == null)
+                if (Details.EntryData == null)
                     return new Dictionary<string, object>();
-                if (string.IsNullOrEmpty(_details.DynamicPropertiesContainerName))
-                    return _details.EntryData;
+                if (string.IsNullOrEmpty(Details.DynamicPropertiesContainerName))
+                    return Details.EntryData;
 
                 var entryData = new Dictionary<string, object>();
-                foreach (var key in _details.EntryData.Keys.Where(x =>
-                    !string.Equals(x, _details.DynamicPropertiesContainerName, StringComparison.OrdinalIgnoreCase)))
+                foreach (var key in Details.EntryData.Keys.Where(x =>
+                    !string.Equals(x, Details.DynamicPropertiesContainerName, StringComparison.OrdinalIgnoreCase)))
                 {
-                    entryData.Add(key, _details.EntryData[key]);
+                    entryData.Add(key, Details.EntryData[key]);
                 }
 
-                if (_details.EntryData.TryGetValue(_details.DynamicPropertiesContainerName, out var dynamicProperties) && dynamicProperties != null)
+                if (Details.EntryData.TryGetValue(Details.DynamicPropertiesContainerName, out var dynamicProperties) && dynamicProperties != null)
                 {
                     if (dynamicProperties is IDictionary<string, object> kv)
                     {
@@ -496,7 +494,7 @@ namespace Simple.OData.Client
                     }
                     else
                     {
-                        throw new InvalidOperationException($"Property {_details.DynamicPropertiesContainerName} must implement IDictionary<string,object> interface");
+                        throw new InvalidOperationException($"Property {Details.DynamicPropertiesContainerName} must implement IDictionary<string,object> interface");
                     }
                 }
 
@@ -504,11 +502,11 @@ namespace Simple.OData.Client
             }
         }
 
-        internal IList<string> SelectedColumns => _details.SelectColumns;
+        internal IList<string> SelectedColumns => Details.SelectColumns;
 
-        internal string FunctionName => _details.FunctionName;
+        internal string FunctionName => Details.FunctionName;
 
-        internal string ActionName => _details.ActionName;
+        internal string ActionName => Details.ActionName;
 
         private IEnumerable<string> SplitItems(IEnumerable<string> columns)
         {
