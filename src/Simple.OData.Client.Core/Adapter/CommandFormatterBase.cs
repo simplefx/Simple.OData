@@ -20,7 +20,7 @@ namespace Simple.OData.Client
 
         protected ITypeCache TypeCache => _session.TypeCache;
 
-        public string FormatCommand(FluentCommand command)
+        public string FormatCommand(ResolvedCommand command)
         {
             if (command.HasFunction && command.HasAction)
                 throw new InvalidOperationException("OData function and action may not be combined.");
@@ -142,7 +142,7 @@ namespace Simple.OData.Client
             return "(" + formattedKeyValues + ")";
         }
 
-        protected abstract void FormatExpandSelectOrderby(IList<string> commandClauses, EntityCollection resultCollection, FluentCommand command);
+        protected abstract void FormatExpandSelectOrderby(IList<string> commandClauses, EntityCollection resultCollection, ResolvedCommand command);
 
         protected abstract void FormatInlineCount(IList<string> commandClauses);
 
@@ -155,7 +155,7 @@ namespace Simple.OData.Client
                 : text;
         }
 
-        private string FormatClauses(FluentCommand command, IList<string> queryClauses = null)
+        private string FormatClauses(ResolvedCommand command, IList<string> queryClauses = null)
         {
             var text = string.Empty;
             queryClauses = queryClauses ?? new List<string>();

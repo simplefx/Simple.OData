@@ -8,12 +8,12 @@ namespace Simple.OData.Client
 {
     internal class RequestBuilder : IRequestBuilder
     {
-        private readonly FluentCommand _command;
+        private readonly ResolvedCommand _command;
         private readonly string _commandText;
         private readonly Session _session;
         private readonly Lazy<IBatchWriter> _lazyBatchWriter;
 
-        public RequestBuilder(FluentCommand command, Session session, Lazy<IBatchWriter> batchWriter)
+        public RequestBuilder(ResolvedCommand command, Session session, Lazy<IBatchWriter> batchWriter)
         {
             _command = command;
             _session = session;
@@ -141,11 +141,11 @@ namespace Simple.OData.Client
                 .CreateUnlinkRequestAsync(collectionName, linkName, entryIdent, linkIdent).ConfigureAwait(false);
         }
 
-        private async Task<string> FormatEntryKeyAsync(FluentCommand command, CancellationToken cancellationToken)
+        private async Task<string> FormatEntryKeyAsync(ResolvedCommand command, CancellationToken cancellationToken)
         {
             var entryIdent = command.HasKey
                 ? await command.GetCommandTextAsync(cancellationToken).ConfigureAwait(false) 
-                : await (new FluentCommand(command).Key(command.FilterAsKey).GetCommandTextAsync(cancellationToken)).ConfigureAwait(false);
+                : await (new FluentCommand(command.Source).Key(command.FilterAsKey).Resolve().GetCommandTextAsync(cancellationToken)).ConfigureAwait(false);
 
             return entryIdent;
         }
@@ -161,7 +161,7 @@ namespace Simple.OData.Client
             return entryIdent;
         }
 
-        private void AssertHasKey(FluentCommand command)
+        private void AssertHasKey(ResolvedCommand command)
         {
             if (!command.HasKey && command.FilterAsKey == null)
                 throw new InvalidOperationException("No entry key specified.");
@@ -171,11 +171,11 @@ namespace Simple.OData.Client
     internal class RequestBuilder<T> : IRequestBuilder<T>
         where T : class
     {
-        private FluentCommand _command;
+        private ResolvedCommand _command;
         private readonly Session _session;
         private readonly Lazy<IBatchWriter> _lazyBatchWriter;
 
-        public RequestBuilder(FluentCommand command, Session session, Lazy<IBatchWriter> batchWriter)
+        public RequestBuilder(ResolvedCommand command, Session session, Lazy<IBatchWriter> batchWriter)
         {
             _command = command;
             _session = session;

@@ -628,7 +628,7 @@ namespace Simple.OData.Client
         /// <returns>The command text.</returns>
         public Task<string> GetCommandTextAsync(CancellationToken cancellationToken)
         {
-            return this.Command.GetCommandTextAsync(cancellationToken);
+            return this.Command.Resolve().GetCommandTextAsync(cancellationToken);
         }
 
 #pragma warning disable 1591

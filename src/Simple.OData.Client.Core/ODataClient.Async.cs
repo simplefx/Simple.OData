@@ -347,7 +347,7 @@ namespace Simple.OData.Client
             var command = GetBoundClient()
                 .For(collection)
                 .Key(entryKey)
-                .AsBoundClient().Command;
+                .AsBoundClient().Command.Resolve();
 
             var requestBuilder = new RequestBuilder(command, _session, this.BatchWriter);
             var request = await requestBuilder.GetRequestAsync(false, cancellationToken).ConfigureAwait(false);
@@ -822,7 +822,7 @@ namespace Simple.OData.Client
             await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var commandText = await command.GetCommandTextAsync(cancellationToken).ConfigureAwait(false);
+            var commandText = await command.Resolve().GetCommandTextAsync(cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var result = await FindAnnotatedEntriesAsync(commandText, scalarResult, annotations, cancellationToken).ConfigureAwait(false);
@@ -840,7 +840,7 @@ namespace Simple.OData.Client
             await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var commandText = await command.GetCommandTextAsync(cancellationToken).ConfigureAwait(false);
+            var commandText = await command.Resolve().GetCommandTextAsync(cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var results = await FindAnnotatedEntriesAsync(commandText, false, null, cancellationToken).ConfigureAwait(false);
@@ -859,7 +859,7 @@ namespace Simple.OData.Client
             await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var commandText = await command.GetCommandTextAsync(cancellationToken).ConfigureAwait(false);
+            var commandText = await command.Resolve().GetCommandTextAsync(cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             return await FindScalarAsync(commandText, cancellationToken).ConfigureAwait(false);
@@ -870,7 +870,8 @@ namespace Simple.OData.Client
             if (IsBatchResponse)
                 return _batchResponse.AsEntry(false);
 
-            var requestBuilder = new RequestBuilder(command, _session, this.BatchWriter);
+            var resolvedCommand = command.Resolve();
+            var requestBuilder = new RequestBuilder(resolvedCommand, _session, this.BatchWriter);
             var request = await requestBuilder.InsertRequestAsync(resultRequired, cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
@@ -878,8 +879,8 @@ namespace Simple.OData.Client
                 x => x.AsEntry(_session.Settings.IncludeAnnotationsInResults), () => null, () => command.CommandData).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var keyNames = _session.Metadata.GetDeclaredKeyPropertyNames(command.QualifiedEntityCollectionName);
-            if (result == null && resultRequired && Utils.AllMatch(keyNames, command.CommandData.Keys, _session.Settings.NameMatchResolver))
+            var keyNames = _session.Metadata.GetDeclaredKeyPropertyNames(resolvedCommand.QualifiedEntityCollectionName);
+            if (result == null && resultRequired && Utils.AllMatch(keyNames, resolvedCommand.CommandData.Keys, _session.Settings.NameMatchResolver))
             {
                 result = await this.GetEntryAsync(request.CommandText, request.EntryData, cancellationToken).ConfigureAwait(false);
                 if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
@@ -893,7 +894,8 @@ namespace Simple.OData.Client
             if (IsBatchResponse)
                 return _batchResponse.AsEntry(false);
 
-            var requestBuilder = new RequestBuilder(command, _session, this.BatchWriter);
+            var resolvedCommand = command.Resolve();
+            var requestBuilder = new RequestBuilder(resolvedCommand, _session, this.BatchWriter);
             var request = await requestBuilder.UpdateRequestAsync(resultRequired, cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
@@ -905,7 +907,7 @@ namespace Simple.OData.Client
             {
                 try
                 {
-                    result = await GetUpdatedResult(command, cancellationToken).ConfigureAwait(false);
+                    result = await GetUpdatedResult(resolvedCommand.Source, cancellationToken).ConfigureAwait(false);
                     if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
                 }
                 catch (Exception)
@@ -913,7 +915,7 @@ namespace Simple.OData.Client
                 }
             }
 
-            var entityCollection = _session.Metadata.GetEntityCollection(command.QualifiedEntityCollectionName);
+            var entityCollection = _session.Metadata.GetEntityCollection(resolvedCommand.QualifiedEntityCollectionName);
             var entryDetails = _session.Metadata.ParseEntryDetails(entityCollection.Name, request.EntryData);
 
             var removedLinks = entryDetails.Links
@@ -925,8 +927,8 @@ namespace Simple.OData.Client
             {
                 try
                 {
-                    var entryKey = command.HasKey ? command.KeyValues : command.FilterAsKey;
-                    await UnlinkEntryAsync(command.QualifiedEntityCollectionName, entryKey, associationName, cancellationToken).ConfigureAwait(false);
+                    var entryKey = resolvedCommand.HasKey ? resolvedCommand.KeyValues : resolvedCommand.FilterAsKey;
+                    await UnlinkEntryAsync(resolvedCommand.QualifiedEntityCollectionName, entryKey, associationName, cancellationToken).ConfigureAwait(false);
                     if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
                 }
                 catch (Exception)
@@ -956,7 +958,7 @@ namespace Simple.OData.Client
             if (IsBatchResponse)
                 return;
 
-            var requestBuilder = new RequestBuilder(command, _session, this.BatchWriter);
+            var requestBuilder = new RequestBuilder(command.Resolve(), _session, this.BatchWriter);
             var request = await requestBuilder.DeleteRequestAsync(cancellationToken).ConfigureAwait(false);
             if (!IsBatchRequest)
             {
@@ -985,7 +987,7 @@ namespace Simple.OData.Client
             if (IsBatchResponse)
                 return;
 
-            var requestBuilder = new RequestBuilder(command, _session, this.BatchWriter);
+            var requestBuilder = new RequestBuilder(command.Resolve(), _session, this.BatchWriter);
             var request = await requestBuilder.LinkRequestAsync(linkName, linkedEntryKey, cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
@@ -1002,7 +1004,7 @@ namespace Simple.OData.Client
             if (IsBatchResponse)
                 return;
 
-            var requestBuilder = new RequestBuilder(command, _session, this.BatchWriter);
+            var requestBuilder = new RequestBuilder(command.Resolve(), _session, this.BatchWriter);
             var request = await requestBuilder.UnlinkRequestAsync(linkName, linkedEntryKey, cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
@@ -1022,7 +1024,7 @@ namespace Simple.OData.Client
             await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var commandText = await command.GetCommandTextAsync(cancellationToken).ConfigureAwait(false);
+            var commandText = await command.Resolve().GetCommandTextAsync(cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             return await GetMediaStreamAsync(commandText, cancellationToken).ConfigureAwait(false);
@@ -1036,7 +1038,7 @@ namespace Simple.OData.Client
             await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var commandText = await command.GetCommandTextAsync(cancellationToken).ConfigureAwait(false);
+            var commandText = await command.Resolve().GetCommandTextAsync(cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             await SetMediaStreamAsync(commandText, stream, contentType, optimisticConcurrency, cancellationToken).ConfigureAwait(false);
