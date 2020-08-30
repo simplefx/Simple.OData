@@ -33,7 +33,6 @@ namespace Simple.OData.Client
         }
 
         internal CommandDetails Details { get; private set; }
-        private bool IsBatchResponse => Details.Session == null;
 
         internal ITypeCache TypeCache => Details.Session.TypeCache;
 
@@ -47,8 +46,6 @@ namespace Simple.OData.Client
 
         public FluentCommand For(string collectionName)
         {
-            if (IsBatchResponse) return this;
-
             var items = collectionName.Split('/');
             if (items.Count() > 1)
             {
@@ -64,24 +61,18 @@ namespace Simple.OData.Client
 
         public FluentCommand WithProperties(string propertyName)
         {
-            if (IsBatchResponse) return this;
-
             Details.DynamicPropertiesContainerName = propertyName;
             return this;
         }
 
         public FluentCommand WithMedia(IEnumerable<string> properties)
         {
-            if (IsBatchResponse) return this;
-
             Details.MediaProperties = properties;
             return this;
         }
 
         public FluentCommand WithMedia(params string[] properties)
         {
-            if (IsBatchResponse) return this;
-
             Details.MediaProperties = SplitItems(properties).ToList();
             return this;
         }
@@ -93,48 +84,36 @@ namespace Simple.OData.Client
 
         public FluentCommand For(ODataExpression expression)
         {
-            if (IsBatchResponse) return this;
-
             Details.CollectionExpression = expression;
             return this;
         }
 
         public FluentCommand As(string derivedCollectionName)
         {
-            if (IsBatchResponse) return this;
-
             Details.DerivedCollectionName = derivedCollectionName;
             return this;
         }
 
         public FluentCommand As(ODataExpression expression)
         {
-            if (IsBatchResponse) return this;
-
             Details.DerivedCollectionExpression = expression;
             return this;
         }
 
         public FluentCommand Link(string linkName)
         {
-            if (IsBatchResponse) return this;
-
             Details.LinkName = linkName;
             return this;
         }
 
         public FluentCommand Link(ODataExpression expression)
         {
-            if (IsBatchResponse) return this;
-
             Details.LinkExpression = expression;
             return this;
         }
 
         public FluentCommand Key(params object[] key)
         {
-            if (IsBatchResponse) return this;
-
             if (key != null && key.Length == 1 && TypeCache.IsAnonymousType(key.First().GetType()))
             {
                 return Key(TypeCache.ToDictionary(key.First()));
@@ -147,8 +126,6 @@ namespace Simple.OData.Client
 
         public FluentCommand Key(IEnumerable<object> key)
         {
-            if (IsBatchResponse) return this;
-
             Details.KeyValues = key.ToList();
             Details.NamedKeyValues = null;
             Details.IsAlternateKey = false;
@@ -157,8 +134,6 @@ namespace Simple.OData.Client
 
         public FluentCommand Key(IDictionary<string, object> key)
         {
-            if (IsBatchResponse) return this;
-
             Details.KeyValues = null;
             Details.NamedKeyValues = key;
             Details.IsAlternateKey = false;
@@ -167,8 +142,6 @@ namespace Simple.OData.Client
 
         public FluentCommand Filter(string filter)
         {
-            if (IsBatchResponse) return this;
-
             if (string.IsNullOrEmpty(Details.Filter))
                 Details.Filter = filter;
             else
@@ -178,8 +151,6 @@ namespace Simple.OData.Client
 
         public FluentCommand Filter(ODataExpression expression)
         {
-            if (IsBatchResponse) return this;
-
             if (ReferenceEquals(Details.FilterExpression, null))
                 Details.FilterExpression = expression;
             else
@@ -189,24 +160,18 @@ namespace Simple.OData.Client
 
         public FluentCommand Search(string search)
         {
-            if (IsBatchResponse) return this;
-
             Details.Search = search;
             return this;
         }
 
         public FluentCommand Skip(long count)
         {
-            if (IsBatchResponse) return this;
-
             Details.SkipCount = count;
             return this;
         }
 
         public FluentCommand Top(long count)
         {
-            if (IsBatchResponse) return this;
-
             if (!Details.HasKey || Details.HasFunction)
             {
                 Details.TopCount = count;
@@ -220,40 +185,30 @@ namespace Simple.OData.Client
 
         public FluentCommand Expand(ODataExpandOptions expandOptions)
         {
-            if (IsBatchResponse) return this;
-
             Details.ExpandAssociations.AddRange(new[] { new KeyValuePair<string, ODataExpandOptions>("*", ODataExpandOptions.ByValue()) });
             return this;
         }
 
         public FluentCommand Expand(IEnumerable<string> associations)
         {
-            if (IsBatchResponse) return this;
-
             Details.ExpandAssociations.AddRange(SplitItems(associations).Select(x => new KeyValuePair<string, ODataExpandOptions>(x, ODataExpandOptions.ByValue())));
             return this;
         }
 
         public FluentCommand Expand(ODataExpandOptions expandOptions, IEnumerable<string> associations)
         {
-            if (IsBatchResponse) return this;
-
             Details.ExpandAssociations.AddRange(SplitItems(associations).Select(x => new KeyValuePair<string, ODataExpandOptions>(x, expandOptions)));
             return this;
         }
 
         public FluentCommand Expand(params string[] associations)
         {
-            if (IsBatchResponse) return this;
-
             Details.ExpandAssociations.AddRange(SplitItems(associations).Select(x => new KeyValuePair<string, ODataExpandOptions>(x, ODataExpandOptions.ByValue())));
             return this;
         }
 
         public FluentCommand Expand(ODataExpandOptions expandOptions, params string[] associations)
         {
-            if (IsBatchResponse) return this;
-
             Details.ExpandAssociations.AddRange(SplitItems(associations).Select(x => new KeyValuePair<string, ODataExpandOptions>(x, expandOptions)));
             return this;
         }
@@ -270,16 +225,12 @@ namespace Simple.OData.Client
 
         public FluentCommand Select(IEnumerable<string> columns)
         {
-            if (IsBatchResponse) return this;
-
             Details.SelectColumns.AddRange(SplitItems(columns).ToList());
             return this;
         }
 
         public FluentCommand Select(params string[] columns)
         {
-            if (IsBatchResponse) return this;
-
             Details.SelectColumns.AddRange(SplitItems(columns).ToList());
             return this;
         }
@@ -291,8 +242,6 @@ namespace Simple.OData.Client
 
         public FluentCommand OrderBy(IEnumerable<KeyValuePair<string, bool>> columns)
         {
-            if (IsBatchResponse) return this;
-
             Details.OrderbyColumns.AddRange(SplitItems(columns));
             return this;
         }
@@ -309,8 +258,6 @@ namespace Simple.OData.Client
 
         public FluentCommand ThenBy(params string[] columns)
         {
-            if (IsBatchResponse) return this;
-
             Details.OrderbyColumns.AddRange(SplitItems(columns).Select(x => new KeyValuePair<string, bool>(x, false)));
             return this;
         }
@@ -332,8 +279,6 @@ namespace Simple.OData.Client
 
         public FluentCommand ThenByDescending(params string[] columns)
         {
-            if (IsBatchResponse) return this;
-
             Details.OrderbyColumns.AddRange(SplitItems(columns).Select(x => new KeyValuePair<string, bool>(x, true)));
             return this;
         }
@@ -345,8 +290,6 @@ namespace Simple.OData.Client
 
         public FluentCommand QueryOptions(string queryOptions)
         {
-            if (IsBatchResponse) return this;
-
             if (Details.QueryOptions == null)
                 Details.QueryOptions = queryOptions;
             else
@@ -356,16 +299,12 @@ namespace Simple.OData.Client
 
         public FluentCommand QueryOptions(IDictionary<string, object> queryOptions)
         {
-            if (IsBatchResponse) return this;
-
             Details.QueryOptionsKeyValues = queryOptions;
             return this;
         }
 
         public FluentCommand QueryOptions(ODataExpression expression)
         {
-            if (IsBatchResponse) return this;
-
             if (ReferenceEquals(Details.QueryOptionsExpression, null))
                 Details.QueryOptionsExpression = expression;
             else
@@ -380,8 +319,6 @@ namespace Simple.OData.Client
 
         public FluentCommand Media(string streamName)
         {
-            if (IsBatchResponse) return this;
-
             Details.MediaName = streamName;
             return this;
         }
@@ -393,60 +330,44 @@ namespace Simple.OData.Client
 
         public FluentCommand Count()
         {
-            if (IsBatchResponse) return this;
-
             Details.ComputeCount = true;
             return this;
         }
 
         public FluentCommand Set(object value)
         {
-            if (IsBatchResponse) return this;
-
             Details.EntryData = TypeCache.ToDictionary(value);
             Details.BatchEntries?.GetOrAdd(value, Details.EntryData);
-
             return this;
         }
 
         public FluentCommand Set(IDictionary<string, object> value)
         {
-            if (IsBatchResponse) return this;
-
             Details.EntryData = value;
             return this;
         }
 
         public FluentCommand Set(params ODataExpression[] value)
         {
-            if (IsBatchResponse) return this;
-
             Details.EntryData = value.Select(x => new KeyValuePair<string, object>(x.Reference, x.Value)).ToIDictionary();
             Details.BatchEntries?.GetOrAdd(value, Details.EntryData);
-
             return this;
         }
 
         public FluentCommand Function(string functionName)
         {
-            if (IsBatchResponse) return this;
-
             Details.FunctionName = functionName;
             return this;
         }
 
         public FluentCommand Action(string actionName)
         {
-            if (IsBatchResponse) return this;
-
             Details.ActionName = actionName;
             return this;
         }
 
         public FluentCommand WithCount()
         {
-            if (IsBatchResponse) return this;
-
             Details.IncludeCount = true;
             return this;
         }

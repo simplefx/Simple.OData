@@ -28,8 +28,8 @@ namespace Simple.OData.Client
         public FluentCommand Source { get; private set; }
 
         internal Session Session { get; private set; }
+
         internal CommandDetails Details { get; private set; }
-        private bool IsBatchResponse => this.Session == null;
 
         internal ITypeCache TypeCache => this.Session.TypeCache;
 
@@ -74,8 +74,6 @@ namespace Simple.OData.Client
 
         private void EvaluateCollectionName()
         {
-            if (IsBatchResponse) return;
-
             if (Details.CollectionName == null && !ReferenceEquals(Source.Details.CollectionExpression, null))
             {
                 var collectionName = Source.Details.CollectionExpression.AsString(this.Session);
@@ -94,8 +92,6 @@ namespace Simple.OData.Client
 
         private void EvaluateDerivedCollectionName()
         {
-            if (IsBatchResponse) return;
-
             if (Details.DerivedCollectionName == null && !ReferenceEquals(Source.Details.DerivedCollectionExpression, null))
             {
                 var derivedCollectionName = Source.Details.DerivedCollectionExpression.AsString(this.Session);
@@ -158,8 +154,6 @@ namespace Simple.OData.Client
 
         private void EvaluateLinkName()
         {
-            if (IsBatchResponse) return;
-
             if (Details.LinkName == null && !ReferenceEquals(Source.Details.LinkExpression, null))
             {
                 Details.LinkName = Source.Details.LinkExpression.AsString(this.Session);
@@ -181,8 +175,6 @@ namespace Simple.OData.Client
 
         public ResolvedCommand WithCount()
         {
-            if (IsBatchResponse) return this;
-
             Details.IncludeCount = true;
             return this;
         }
