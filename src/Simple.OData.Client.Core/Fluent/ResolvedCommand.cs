@@ -11,20 +11,11 @@ using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
-    // Although ResolvedCommand is never instantiated directly (only via ICommand interface)
-    // it's declared as public in order to resolve problem when it is used with dynamic C#
-    // For the same reason FluentClient is also declared as public
-    // More: http://bloggingabout.net/blogs/vagif/archive/2013/08/05/we-need-better-interoperability-between-dynamic-and-statically-compiled-c.aspx
-
     public partial class ResolvedCommand
     {
         private readonly FluentCommand _command;
         private readonly Session _session;
         private readonly CommandDetails _details;
-
-        internal static readonly string ResultLiteral = "__result";
-        internal static readonly string AnnotationsLiteral = "__annotations";
-        internal static readonly string MediaEntityLiteral = "__entity";
 
         internal ResolvedCommand(FluentCommand command, Session session)
         {
@@ -32,68 +23,11 @@ namespace Simple.OData.Client
             _session = session;
             _details = new CommandDetails(_command.Details);
 
-
-            if (_details.CollectionName == null && !ReferenceEquals(_command.Details.CollectionExpression, null))
-            {
-                For(_command.Details.CollectionExpression.AsString(_session));
-            }
-
-            if (_details.DerivedCollectionName == null && !ReferenceEquals(_command.Details.DerivedCollectionExpression, null))
-            {
-                As(_command.Details.DerivedCollectionExpression.AsString(_session));
-            }
-
-            if (_details.NamedKeyValues != null)
-            {
-                if (NamedKeyValuesMatchAnyKey(_details.NamedKeyValues, out var matchingKey, out bool isAlternateKey))
-                {
-                    _details.NamedKeyValues = matchingKey.ToDictionary();
-                    _details.IsAlternateKey = isAlternateKey;
-                }
-                else if (TryExtractKeyFromNamedValues(_details.NamedKeyValues, out var containedKey))
-                {
-                    _details.NamedKeyValues = containedKey.ToDictionary();
-                }
-                else
-                {
-                    _details.NamedKeyValues = null;
-                }
-            }
-
-            if (_details.Filter == null && !ReferenceEquals(_command.Details.FilterExpression, null))
-            {
-                _details.NamedKeyValues = TryInterpretFilterExpressionAsKey(_command.Details.FilterExpression, out var isAlternateKey);
-                _details.IsAlternateKey = isAlternateKey;
-
-                if (_details.NamedKeyValues == null)
-                {
-                    var entityCollection = this.EntityCollection;
-                    if (_command.HasFunction)
-                    {
-                        var collection = _session.Metadata.GetFunctionReturnCollection(_command.FunctionName);
-                        if (collection != null)
-                        {
-                            entityCollection = collection;
-                        }
-                    }
-                    _details.Filter = _command.Details.FilterExpression.Format(
-                        new ExpressionContext(_session, entityCollection, null, this.DynamicPropertiesContainerName));
-                }
-                else
-                {
-                    _details.KeyValues = null;
-                    _details.TopCount = -1;
-                }
-                if (_command.Details.FilterExpression.HasTypeConstraint(_command.Details.DerivedCollectionName))
-                {
-                    _details.DerivedCollectionName = null;
-                }
-            }
-
-            if (_details.LinkName == null && !ReferenceEquals(_command.Details.LinkExpression, null))
-            {
-                Link(_command.Details.LinkExpression.AsString(_session));
-            }
+            EvaluateCollectionName();
+            EvaluateDerivedCollectionName();
+            EvaluateNamedKeyValues();
+            EvaluateFilter();
+            EvaluateLinkName();
         }
 
         public FluentCommand Source => _command; 
@@ -143,37 +77,98 @@ namespace Simple.OData.Client
 
         public string DynamicPropertiesContainerName => _details.DynamicPropertiesContainerName;
 
-        public ResolvedCommand For(string collectionName)
+        private void EvaluateCollectionName()
         {
-            if (IsBatchResponse) return this;
+            if (IsBatchResponse) return;
 
-            var items = collectionName.Split('/');
-            if (items.Count() > 1)
+            if (_details.CollectionName == null && !ReferenceEquals(_command.Details.CollectionExpression, null))
             {
-                _details.CollectionName = items[0];
-                _details.DerivedCollectionName = items[1];
+                var collectionName = _command.Details.CollectionExpression.AsString(_session);
+                var items = collectionName.Split('/');
+                if (items.Count() > 1)
+                {
+                    _details.CollectionName = items[0];
+                    _details.DerivedCollectionName = items[1];
+                }
+                else
+                {
+                    _details.CollectionName = collectionName;
+                }
             }
-            else
-            {
-                _details.CollectionName = collectionName;
-            }
-            return this;
         }
 
-        public ResolvedCommand As(string derivedCollectionName)
+        private void EvaluateDerivedCollectionName()
         {
-            if (IsBatchResponse) return this;
+            if (IsBatchResponse) return;
 
-            _details.DerivedCollectionName = derivedCollectionName;
-            return this;
+            if (_details.DerivedCollectionName == null && !ReferenceEquals(_command.Details.DerivedCollectionExpression, null))
+            {
+                var derivedCollectionName = _command.Details.DerivedCollectionExpression.AsString(_session);
+                _details.DerivedCollectionName = derivedCollectionName;
+            }
         }
 
-        public ResolvedCommand Link(string linkName)
+        public void EvaluateNamedKeyValues()
         {
-            if (IsBatchResponse) return this;
+            if (_details.NamedKeyValues != null)
+            {
+                if (NamedKeyValuesMatchAnyKey(_details.NamedKeyValues, out var matchingKey, out bool isAlternateKey))
+                {
+                    _details.NamedKeyValues = matchingKey.ToDictionary();
+                    _details.IsAlternateKey = isAlternateKey;
+                }
+                else if (TryExtractKeyFromNamedValues(_details.NamedKeyValues, out var containedKey))
+                {
+                    _details.NamedKeyValues = containedKey.ToDictionary();
+                }
+                else
+                {
+                    _details.NamedKeyValues = null;
+                }
+            }
+        }
 
-            _details.LinkName = linkName;
-            return this;
+        public void EvaluateFilter()
+        {
+            if (_details.Filter == null && !ReferenceEquals(_command.Details.FilterExpression, null))
+            {
+                _details.NamedKeyValues = TryInterpretFilterExpressionAsKey(_command.Details.FilterExpression, out var isAlternateKey);
+                _details.IsAlternateKey = isAlternateKey;
+
+                if (_details.NamedKeyValues == null)
+                {
+                    var entityCollection = this.EntityCollection;
+                    if (_command.HasFunction)
+                    {
+                        var collection = _session.Metadata.GetFunctionReturnCollection(_command.FunctionName);
+                        if (collection != null)
+                        {
+                            entityCollection = collection;
+                        }
+                    }
+                    _details.Filter = _command.Details.FilterExpression.Format(
+                        new ExpressionContext(_session, entityCollection, null, this.DynamicPropertiesContainerName));
+                }
+                else
+                {
+                    _details.KeyValues = null;
+                    _details.TopCount = -1;
+                }
+                if (_command.Details.FilterExpression.HasTypeConstraint(_command.Details.DerivedCollectionName))
+                {
+                    _details.DerivedCollectionName = null;
+                }
+            }
+        }
+
+        public void EvaluateLinkName()
+        {
+            if (IsBatchResponse) return;
+
+            if (_details.LinkName == null && !ReferenceEquals(_command.Details.LinkExpression, null))
+            {
+                _details.LinkName = _command.Details.LinkExpression.AsString(_session);
+            }
         }
 
         public ResolvedCommand Key(IDictionary<string, object> key)
@@ -193,7 +188,6 @@ namespace Simple.OData.Client
             {
                 _details.NamedKeyValues = containedKey.ToDictionary();
             }
-            //Validation could throw exception here
 
             return this;
         }
