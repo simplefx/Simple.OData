@@ -24,17 +24,21 @@ namespace Simple.OData.Client
 
         internal FluentCommand(Session session, FluentCommand parent, ConcurrentDictionary<object, IDictionary<string, object>> batchEntries)
         {
-            Details = new CommandDetails(session, parent, batchEntries);
+            Session = session;
+            Details = new FluentCommandDetails(parent, batchEntries);
         }
 
-        internal FluentCommand(FluentCommand ancestor)
+        internal FluentCommand(FluentCommand command)
         {
-            Details = new CommandDetails(ancestor.Details);
+            Session = command.Session;
+            Details = new FluentCommandDetails(command.Details);
         }
 
-        internal CommandDetails Details { get; private set; }
+        internal Session Session { get; private set; }
 
-        internal ITypeCache TypeCache => Details.Session.TypeCache;
+        internal FluentCommandDetails Details { get; private set; }
+
+        internal ITypeCache TypeCache => Session.TypeCache;
 
 
         internal ResolvedCommand Resolve(ISession session)

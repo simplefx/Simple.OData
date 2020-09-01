@@ -16,7 +16,7 @@ namespace Simple.OData.Client
         {
             Source = command;
             Session = session;
-            Details = new CommandDetails(Source.Details);
+            Details = new FluentCommandDetails(Source.Details);
 
             EvaluateCollectionName();
             EvaluateDerivedCollectionName();
@@ -29,7 +29,7 @@ namespace Simple.OData.Client
 
         internal Session Session { get; private set; }
 
-        internal CommandDetails Details { get; private set; }
+        internal FluentCommandDetails Details { get; private set; }
 
         internal ITypeCache TypeCache => this.Session.TypeCache;
 

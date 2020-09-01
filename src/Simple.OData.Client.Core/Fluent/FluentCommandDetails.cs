@@ -3,9 +3,8 @@ using System.Collections.Generic;
 
 namespace Simple.OData.Client
 {
-    class CommandDetails
+    class FluentCommandDetails
     {
-        public Session Session { get; private set; }
         public FluentCommand Parent { get; private set; }
         public string CollectionName { get; set; }
         public ODataExpression CollectionExpression { get; set; }
@@ -37,9 +36,8 @@ namespace Simple.OData.Client
         public IEnumerable<string> MediaProperties { get; set; }
         public ConcurrentDictionary<object, IDictionary<string, object>> BatchEntries { get; set; }
 
-        public CommandDetails(Session session, FluentCommand parent, ConcurrentDictionary<object, IDictionary<string, object>> batchEntries)
+        public FluentCommandDetails(FluentCommand parent, ConcurrentDictionary<object, IDictionary<string, object>> batchEntries)
         {
-            this.Session = session;
             this.Parent = parent;
             this.SkipCount = -1;
             this.TopCount = -1;
@@ -50,9 +48,8 @@ namespace Simple.OData.Client
             this.BatchEntries = batchEntries;
         }
 
-        public CommandDetails(CommandDetails details)
+        public FluentCommandDetails(FluentCommandDetails details)
         {
-            this.Session = details.Session;
             this.Parent = details.Parent;
             this.CollectionName = details.CollectionName;
             this.CollectionExpression = details.CollectionExpression;

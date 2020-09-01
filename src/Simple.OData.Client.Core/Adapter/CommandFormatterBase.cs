@@ -177,13 +177,13 @@ namespace Simple.OData.Client
             var details = command.Details;
             if (!ReferenceEquals(details.QueryOptionsExpression, null))
             {
-                queryClauses.Add(details.QueryOptionsExpression.Format(new ExpressionContext(details.Session, true)));
+                queryClauses.Add(details.QueryOptionsExpression.Format(new ExpressionContext(command.Session, true)));
             }
             if (command.Details.QueryOptionsKeyValues != null)
             {
                 foreach (var kv in command.Details.QueryOptionsKeyValues)
                 {
-                    queryClauses.Add($"{kv.Key}={ODataExpression.FromValue(kv.Value).Format(new ExpressionContext(details.Session))}");
+                    queryClauses.Add($"{kv.Key}={ODataExpression.FromValue(kv.Value).Format(new ExpressionContext(command.Session))}");
                 }
             }
 
