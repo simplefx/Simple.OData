@@ -14,18 +14,15 @@ namespace Simple.OData.Client
     {
         internal ResolvedCommand(FluentCommand command, Session session)
         {
-            Source = command;
             Session = session;
-            Details = new FluentCommandDetails(Source.Details);
+            Details = new FluentCommandDetails(command.Details);
 
-            EvaluateCollectionName();
-            EvaluateDerivedCollectionName();
-            EvaluateNamedKeyValues();
-            EvaluateFilter();
-            EvaluateLinkName();
+            EvaluateCollectionName(command.Details);
+            EvaluateDerivedCollectionName(command.Details);
+            EvaluateNamedKeyValues(command.Details);
+            EvaluateFilter(command.Details);
+            EvaluateLinkName(command.Details);
         }
-
-        public FluentCommand Source { get; private set; }
 
         internal Session Session { get; private set; }
 
@@ -72,11 +69,11 @@ namespace Simple.OData.Client
 
         public string DynamicPropertiesContainerName => Details.DynamicPropertiesContainerName;
 
-        private void EvaluateCollectionName()
+        private void EvaluateCollectionName(FluentCommandDetails details)
         {
-            if (Details.CollectionName == null && !ReferenceEquals(Source.Details.CollectionExpression, null))
+            if (Details.CollectionName == null && !ReferenceEquals(details.CollectionExpression, null))
             {
-                var collectionName = Source.Details.CollectionExpression.AsString(this.Session);
+                var collectionName = details.CollectionExpression.AsString(this.Session);
                 var items = collectionName.Split('/');
                 if (items.Count() > 1)
                 {
@@ -90,16 +87,16 @@ namespace Simple.OData.Client
             }
         }
 
-        private void EvaluateDerivedCollectionName()
+        private void EvaluateDerivedCollectionName(FluentCommandDetails details)
         {
-            if (Details.DerivedCollectionName == null && !ReferenceEquals(Source.Details.DerivedCollectionExpression, null))
+            if (Details.DerivedCollectionName == null && !ReferenceEquals(details.DerivedCollectionExpression, null))
             {
-                var derivedCollectionName = Source.Details.DerivedCollectionExpression.AsString(this.Session);
+                var derivedCollectionName = details.DerivedCollectionExpression.AsString(this.Session);
                 Details.DerivedCollectionName = derivedCollectionName;
             }
         }
 
-        private void EvaluateNamedKeyValues()
+        private void EvaluateNamedKeyValues(FluentCommandDetails details)
         {
             if (Details.NamedKeyValues != null)
             {
@@ -119,25 +116,25 @@ namespace Simple.OData.Client
             }
         }
 
-        private void EvaluateFilter()
+        private void EvaluateFilter(FluentCommandDetails details)
         {
-            if (Details.Filter == null && !ReferenceEquals(Source.Details.FilterExpression, null))
+            if (Details.Filter == null && !ReferenceEquals(details.FilterExpression, null))
             {
-                Details.NamedKeyValues = TryInterpretFilterExpressionAsKey(Source.Details.FilterExpression, out var isAlternateKey);
+                Details.NamedKeyValues = TryInterpretFilterExpressionAsKey(details.FilterExpression, out var isAlternateKey);
                 Details.IsAlternateKey = isAlternateKey;
 
                 if (Details.NamedKeyValues == null)
                 {
                     var entityCollection = this.EntityCollection;
-                    if (Source.Details.HasFunction)
+                    if (details.HasFunction)
                     {
-                        var collection = this.Session.Metadata.GetFunctionReturnCollection(Source.Details.FunctionName);
+                        var collection = this.Session.Metadata.GetFunctionReturnCollection(details.FunctionName);
                         if (collection != null)
                         {
                             entityCollection = collection;
                         }
                     }
-                    Details.Filter = Source.Details.FilterExpression.Format(
+                    Details.Filter = details.FilterExpression.Format(
                         new ExpressionContext(this.Session, entityCollection, null, this.DynamicPropertiesContainerName));
                 }
                 else
@@ -145,18 +142,18 @@ namespace Simple.OData.Client
                     Details.KeyValues = null;
                     Details.TopCount = -1;
                 }
-                if (Source.Details.FilterExpression.HasTypeConstraint(Source.Details.DerivedCollectionName))
+                if (details.FilterExpression.HasTypeConstraint(details.DerivedCollectionName))
                 {
                     Details.DerivedCollectionName = null;
                 }
             }
         }
 
-        private void EvaluateLinkName()
+        private void EvaluateLinkName(FluentCommandDetails details)
         {
-            if (Details.LinkName == null && !ReferenceEquals(Source.Details.LinkExpression, null))
+            if (Details.LinkName == null && !ReferenceEquals(details.LinkExpression, null))
             {
-                Details.LinkName = Source.Details.LinkExpression.AsString(this.Session);
+                Details.LinkName = details.LinkExpression.AsString(this.Session);
             }
         }
 

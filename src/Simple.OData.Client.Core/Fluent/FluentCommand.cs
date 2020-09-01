@@ -34,6 +34,12 @@ namespace Simple.OData.Client
             Details = new FluentCommandDetails(command.Details);
         }
 
+        internal FluentCommand(ResolvedCommand command)
+        {
+            Session = command.Session;
+            Details = new FluentCommandDetails(command.Details);
+        }
+
         internal Session Session { get; private set; }
 
         internal FluentCommandDetails Details { get; private set; }

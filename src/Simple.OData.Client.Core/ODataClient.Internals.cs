@@ -21,7 +21,7 @@ namespace Simple.OData.Client
             {
                 updatedKey.Add(item);
             }
-            var updatedCommand = new FluentCommand(command.Source).Key(updatedKey);
+            var updatedCommand = new FluentCommand(command).Key(updatedKey);
             return await FindEntryAsync(await updatedCommand.Resolve(_session).GetCommandTextAsync(cancellationToken).ConfigureAwait(false), cancellationToken).ConfigureAwait(false);
         }
 
@@ -31,7 +31,7 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-                .CreateFunctionRequestAsync(commandText, command.Source.Details.FunctionName).ConfigureAwait(false);
+                .CreateFunctionRequestAsync(commandText, command.Details.FunctionName).ConfigureAwait(false);
 
             return await ExecuteRequestWithResultAsync(request, cancellationToken,
                 x => x.AsEntries(_session.Settings.IncludeAnnotationsInResults),
@@ -47,7 +47,7 @@ namespace Simple.OData.Client
                 ? _session.Metadata.GetQualifiedTypeName(command.EntityCollection.Name)
                 : null;
             var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-                .CreateActionRequestAsync(commandText, command.Source.Details.ActionName, entityTypeName, command.CommandData, true).ConfigureAwait(false);
+                .CreateActionRequestAsync(commandText, command.Details.ActionName, entityTypeName, command.CommandData, true).ConfigureAwait(false);
 
             return await ExecuteRequestWithResultAsync(request, cancellationToken,
                 x => x.AsEntries(_session.Settings.IncludeAnnotationsInResults),
