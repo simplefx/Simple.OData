@@ -25,13 +25,13 @@ namespace Simple.OData.Client
         internal FluentCommand(Session session, FluentCommand parent, ConcurrentDictionary<object, IDictionary<string, object>> batchEntries)
         {
             Session = session;
-            Details = new FluentCommandDetails(parent, batchEntries);
+            Details = new FluentCommandDetails(parent?.Details, batchEntries);
         }
 
-        internal FluentCommand(FluentCommand command)
+        internal FluentCommand(ISession session, FluentCommandDetails details)
         {
-            Session = command.Session;
-            Details = new FluentCommandDetails(command.Details);
+            Session = session as Session;
+            Details = new FluentCommandDetails(details);
         }
 
         internal FluentCommand(ResolvedCommand command)

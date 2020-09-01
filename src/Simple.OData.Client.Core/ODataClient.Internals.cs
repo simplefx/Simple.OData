@@ -278,7 +278,7 @@ namespace Simple.OData.Client
         {
             var entryIdent = command.Details.HasKey
                 ? await command.Resolve(_session).GetCommandTextAsync(cancellationToken)
-.ConfigureAwait(false) : await (new FluentCommand(command).Key(command.Details.FilterAsKey).Resolve(_session).GetCommandTextAsync(cancellationToken)).ConfigureAwait(false);
+.ConfigureAwait(false) : await (new FluentCommand(command.Session, command.Details).Key(command.Details.FilterAsKey).Resolve(_session).GetCommandTextAsync(cancellationToken)).ConfigureAwait(false);
 
             return entryIdent;
         }

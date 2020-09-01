@@ -5,7 +5,7 @@ namespace Simple.OData.Client
 {
     class FluentCommandDetails
     {
-        public FluentCommand Parent { get; private set; }
+        public FluentCommandDetails Parent { get; private set; }
         public string CollectionName { get; set; }
         public ODataExpression CollectionExpression { get; set; }
         public string DerivedCollectionName { get; set; }
@@ -36,7 +36,7 @@ namespace Simple.OData.Client
         public IEnumerable<string> MediaProperties { get; set; }
         public ConcurrentDictionary<object, IDictionary<string, object>> BatchEntries { get; set; }
 
-        public FluentCommandDetails(FluentCommand parent, ConcurrentDictionary<object, IDictionary<string, object>> batchEntries)
+        public FluentCommandDetails(FluentCommandDetails parent, ConcurrentDictionary<object, IDictionary<string, object>> batchEntries)
         {
             this.Parent = parent;
             this.SkipCount = -1;
