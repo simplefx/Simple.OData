@@ -20,6 +20,7 @@ namespace Simple.OData.Client
             ResolveCollectionName(command.Details);
             ResolveDerivedCollectionName(command.Details);
             ResolveLinkName(command.Details);
+            ResolveEntityCollection(command.Details);
             ResolveNamedKeyValues(command.Details);
             ResolveFilter(command.Details);
         }
@@ -30,31 +31,7 @@ namespace Simple.OData.Client
 
         internal ITypeCache TypeCache => this.Session.TypeCache;
 
-        internal EntityCollection EntityCollection
-        {
-            get
-            {
-                if (string.IsNullOrEmpty(Details.CollectionName) && string.IsNullOrEmpty(Details.LinkName))
-                    return null;
-
-                EntityCollection entityCollection;
-                if (!string.IsNullOrEmpty(Details.LinkName))
-                {
-                    var parent = new FluentCommand(this.Session, Details.Parent).Resolve(this.Session);
-                    var collectionName = this.Session.Metadata.GetNavigationPropertyPartnerTypeName(
-                        parent.EntityCollection.Name, Details.LinkName);
-                    entityCollection = this.Session.Metadata.GetEntityCollection(collectionName);
-                }
-                else
-                {
-                    entityCollection = this.Session.Metadata.GetEntityCollection(Details.CollectionName);
-                }
-
-                return string.IsNullOrEmpty(Details.DerivedCollectionName)
-                    ? entityCollection
-                    : this.Session.Metadata.GetDerivedEntityCollection(entityCollection, Details.DerivedCollectionName);
-            }
-        }
+        internal EntityCollection EntityCollection { get; private set; }
 
         public string QualifiedEntityCollectionName
         {
@@ -101,6 +78,34 @@ namespace Simple.OData.Client
             if (Details.LinkName == null && !ReferenceEquals(details.LinkExpression, null))
             {
                 Details.LinkName = details.LinkExpression.AsString(this.Session);
+            }
+        }
+
+        private void ResolveEntityCollection(FluentCommandDetails details)
+        {
+            if (string.IsNullOrEmpty(Details.CollectionName) && string.IsNullOrEmpty(Details.LinkName))
+            {
+                this.EntityCollection = null;
+            }
+            else
+            {
+                EntityCollection entityCollection;
+                if (!string.IsNullOrEmpty(Details.LinkName))
+                {
+                    var parent = new FluentCommand(this.Session, Details.Parent).Resolve(this.Session);
+                    var collectionName = this.Session.Metadata.GetNavigationPropertyPartnerTypeName(
+                        parent.EntityCollection.Name, Details.LinkName);
+                    entityCollection = this.Session.Metadata.GetEntityCollection(collectionName);
+                }
+                else
+                {
+                    entityCollection = this.Session.Metadata.GetEntityCollection(Details.CollectionName);
+                }
+
+                this.EntityCollection = 
+                    string.IsNullOrEmpty(Details.DerivedCollectionName)
+                    ? entityCollection
+                    : this.Session.Metadata.GetDerivedEntityCollection(entityCollection, Details.DerivedCollectionName);
             }
         }
 

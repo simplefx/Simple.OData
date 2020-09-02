@@ -871,6 +871,9 @@ namespace Simple.OData.Client
             if (IsBatchResponse)
                 return _batchResponse.AsEntry(false);
 
+            await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             var resolvedCommand = command.Resolve(_session);
             var requestBuilder = new RequestBuilder(resolvedCommand, _session, this.BatchWriter);
             var request = await requestBuilder.InsertRequestAsync(resultRequired, cancellationToken).ConfigureAwait(false);
@@ -894,6 +897,9 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse)
                 return _batchResponse.AsEntry(false);
+
+            await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var resolvedCommand = command.Resolve(_session);
             var requestBuilder = new RequestBuilder(resolvedCommand, _session, this.BatchWriter);
@@ -959,6 +965,9 @@ namespace Simple.OData.Client
             if (IsBatchResponse)
                 return;
 
+            await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             var requestBuilder = new RequestBuilder(command.Resolve(_session), _session, this.BatchWriter);
             var request = await requestBuilder.DeleteRequestAsync(cancellationToken).ConfigureAwait(false);
             if (!IsBatchRequest)
@@ -988,6 +997,9 @@ namespace Simple.OData.Client
             if (IsBatchResponse)
                 return;
 
+            await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
             var requestBuilder = new RequestBuilder(command.Resolve(_session), _session, this.BatchWriter);
             var request = await requestBuilder.LinkRequestAsync(linkName, linkedEntryKey, cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
@@ -1004,6 +1016,9 @@ namespace Simple.OData.Client
         {
             if (IsBatchResponse)
                 return;
+
+            await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var requestBuilder = new RequestBuilder(command.Resolve(_session), _session, this.BatchWriter);
             var request = await requestBuilder.UnlinkRequestAsync(linkName, linkedEntryKey, cancellationToken).ConfigureAwait(false);
