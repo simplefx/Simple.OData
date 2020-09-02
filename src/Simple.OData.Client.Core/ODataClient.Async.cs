@@ -822,13 +822,14 @@ namespace Simple.OData.Client
             await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var commandText = await command.Resolve(_session).GetCommandTextAsync(cancellationToken).ConfigureAwait(false);
+            var resolvedCommand = command.Resolve(_session);
+            var commandText = await resolvedCommand.GetCommandTextAsync(cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var result = await FindAnnotatedEntriesAsync(commandText, scalarResult, annotations, cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            await EnrichWithMediaPropertiesAsync(result, command, cancellationToken).ConfigureAwait(false);
+            await EnrichWithMediaPropertiesAsync(result, resolvedCommand, cancellationToken).ConfigureAwait(false);
             return result?.Select(x => x.GetData(_session.Settings.IncludeAnnotationsInResults));
         }
 
@@ -948,7 +949,7 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             return await IterateEntriesAsync(
-                command, resultRequired,
+                command.Resolve(_session), resultRequired,
                 async (x, y, z, w) => await UpdateEntryAsync(x, y, z, w, cancellationToken).ConfigureAwait(false),
                 cancellationToken).ConfigureAwait(false);
         }
@@ -977,7 +978,7 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             return await IterateEntriesAsync(
-                command,
+                command.Resolve(_session),
                 async (x, y) => await DeleteEntryAsync(x, y, cancellationToken).ConfigureAwait(false),
                 cancellationToken).ConfigureAwait(false);
         }

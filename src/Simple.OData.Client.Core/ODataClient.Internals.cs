@@ -164,13 +164,12 @@ namespace Simple.OData.Client
         }
 
         private async Task<IEnumerable<IDictionary<string, object>>> IterateEntriesAsync(
-            FluentCommand command, bool resultRequired,
+            ResolvedCommand command, bool resultRequired,
             Func<string, IDictionary<string, object>, IDictionary<string, object>, bool, Task<IDictionary<string, object>>> funcAsync, CancellationToken cancellationToken)
         {
-            var resolvedCommand = command.Resolve(_session);
-            var collectionName = resolvedCommand.QualifiedEntityCollectionName;
-            var entryData = resolvedCommand.CommandData;
-            var commandText = await resolvedCommand.GetCommandTextAsync(cancellationToken).ConfigureAwait(false);
+            var collectionName = command.QualifiedEntityCollectionName;
+            var entryData = command.CommandData;
+            var commandText = await command.GetCommandTextAsync(cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             IEnumerable<IDictionary<string, object>> result = null;
@@ -191,12 +190,11 @@ namespace Simple.OData.Client
             return result;
         }
 
-        private async Task<int> IterateEntriesAsync(FluentCommand command,
+        private async Task<int> IterateEntriesAsync(ResolvedCommand command,
             Func<string, IDictionary<string, object>, Task> funcAsync, CancellationToken cancellationToken)
         {
-            var resolvedCommand = command.Resolve(_session);
-            var collectionName = resolvedCommand.QualifiedEntityCollectionName;
-            var commandText = await resolvedCommand.GetCommandTextAsync(cancellationToken).ConfigureAwait(false);
+            var collectionName = command.QualifiedEntityCollectionName;
+            var commandText = await command.GetCommandTextAsync(cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var result = 0;
@@ -258,7 +256,7 @@ namespace Simple.OData.Client
             }
         }
 
-        private void AssertHasKey(FluentCommand command)
+        private void AssertHasKey(ResolvedCommand command)
         {
             if (!command.Details.HasKey && command.Details.FilterAsKey == null)
                 throw new InvalidOperationException("No entry key specified.");
@@ -274,16 +272,16 @@ namespace Simple.OData.Client
             return entryIdent;
         }
 
-        private async Task<string> FormatEntryKeyAsync(FluentCommand command, CancellationToken cancellationToken)
+        private async Task<string> FormatEntryKeyAsync(ResolvedCommand command, CancellationToken cancellationToken)
         {
             var entryIdent = command.Details.HasKey
-                ? await command.Resolve(_session).GetCommandTextAsync(cancellationToken)
-.ConfigureAwait(false) : await (new FluentCommand(command.Session, command.Details).Key(command.Details.FilterAsKey).Resolve(_session).GetCommandTextAsync(cancellationToken)).ConfigureAwait(false);
+                ? await command.GetCommandTextAsync(cancellationToken).ConfigureAwait(false) 
+                : await (new FluentCommand(command.Session, command.Details).Key(command.Details.FilterAsKey).Resolve(_session).GetCommandTextAsync(cancellationToken)).ConfigureAwait(false);
 
             return entryIdent;
         }
 
-        private async Task EnrichWithMediaPropertiesAsync(IEnumerable<AnnotatedEntry> entries, FluentCommand command, CancellationToken cancellationToken)
+        private async Task EnrichWithMediaPropertiesAsync(IEnumerable<AnnotatedEntry> entries, ResolvedCommand command, CancellationToken cancellationToken)
         {
             if (entries != null)
             {
