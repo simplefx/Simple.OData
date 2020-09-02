@@ -24,11 +24,13 @@
     <dependencies>
       <group targetFramework="net461">
         <dependency id="Microsoft.Data.OData" version="[5.8.4,6)" />
-        <dependency id="Microsoft.OData.Core" version="[7.6.3,8)" />
+        <dependency id="Microsoft.OData.Core" version="[7.7.1,8)" />
+        <dependency id="System.Text.Json" version="[4.7.1,5)" />
       </group>
       <group targetFramework="netstandard2.0">
         <dependency id="Microsoft.Data.OData" version="[5.8.4,6)" />
-        <dependency id="Microsoft.OData.Core" version="[7.6.3,8)" />
+        <dependency id="Microsoft.OData.Core" version="[7.7.1,8)" />
+        <dependency id="System.Text.Json" version="[4.7.1,5)" />
       </group>
     </dependencies>
   </metadata>
