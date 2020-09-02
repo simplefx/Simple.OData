@@ -2,8 +2,6 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 using Simple.OData.Client.Extensions;
 
@@ -40,7 +38,7 @@ namespace Simple.OData.Client
             Details = new FluentCommandDetails(command.Details);
         }
 
-        internal Session Session { get; private set; }
+        internal ISession Session { get; private set; }
 
         internal FluentCommandDetails Details { get; private set; }
 
@@ -49,7 +47,7 @@ namespace Simple.OData.Client
 
         internal ResolvedCommand Resolve(ISession session)
         {
-            return new ResolvedCommand(this, session as Session);
+            return new ResolvedCommand(this, session);
         }
 
         public string DynamicPropertiesContainerName => Details.DynamicPropertiesContainerName;

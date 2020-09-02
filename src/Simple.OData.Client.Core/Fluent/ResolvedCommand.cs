@@ -12,7 +12,7 @@ namespace Simple.OData.Client
 {
     public class ResolvedCommand
     {
-        internal ResolvedCommand(FluentCommand command, Session session)
+        internal ResolvedCommand(FluentCommand command, ISession session)
         {
             Session = session;
             Details = new FluentCommandDetails(command.Details);
@@ -25,7 +25,7 @@ namespace Simple.OData.Client
             ResolveFilter(command.Details);
         }
 
-        internal Session Session { get; private set; }
+        internal ISession Session { get; private set; }
 
         internal FluentCommandDetails Details { get; private set; }
 
@@ -162,17 +162,6 @@ namespace Simple.OData.Client
             }
         }
 
-        public Task<string> GetCommandTextAsync()
-        {
-            return GetCommandTextAsync(CancellationToken.None);
-        }
-
-        public async Task<string> GetCommandTextAsync(CancellationToken cancellationToken)
-        {
-            await this.Session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
-            return Format();
-        }
-
         public IDictionary<string, object> FilterAsKey => Details.NamedKeyValues;
 
         public ResolvedCommand WithCount()
@@ -186,7 +175,7 @@ namespace Simple.OData.Client
             return Format();
         }
 
-        private string Format()
+        public string Format()
         {
             return this.Session.Adapter.GetCommandFormatter().FormatCommand(this);
         }

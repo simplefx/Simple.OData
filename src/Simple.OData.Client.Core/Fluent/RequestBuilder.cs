@@ -32,13 +32,8 @@ namespace Simple.OData.Client
             await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            var commandText = _commandText == null
-                ? await _command.GetCommandTextAsync(cancellationToken).ConfigureAwait(false)
-                : _commandText;
-            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-
             return await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-                .CreateGetRequestAsync(commandText, scalarResult).ConfigureAwait(false);
+                .CreateGetRequestAsync(_commandText ?? _command.Format(), scalarResult).ConfigureAwait(false);
         }
 
         public async Task<ODataRequest> InsertRequestAsync(bool resultRequired, CancellationToken cancellationToken)
@@ -47,11 +42,9 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var entryData = _command.CommandData;
-            var commandText = await _command.GetCommandTextAsync(cancellationToken).ConfigureAwait(false);
-            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             return await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-                .CreateInsertRequestAsync(_command.QualifiedEntityCollectionName, commandText, entryData, resultRequired).ConfigureAwait(false);
+                .CreateInsertRequestAsync(_command.QualifiedEntityCollectionName, _command.Format(), entryData, resultRequired).ConfigureAwait(false);
         }
 
         public async Task<ODataRequest> UpdateRequestAsync(bool resultRequired, CancellationToken cancellationToken)
@@ -64,8 +57,7 @@ namespace Simple.OData.Client
             var collectionName = _command.QualifiedEntityCollectionName;
             var entryKey = _command.Details.HasKey ? _command.KeyValues : _command.FilterAsKey;
             var entryData = _command.CommandData;
-            var entryIdent = await FormatEntryKeyAsync(_command, cancellationToken).ConfigureAwait(false);
-            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+            var entryIdent = FormatEntryKey(_command);
 
             return await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
                 .CreateUpdateRequestAsync(collectionName, entryIdent, entryKey, entryData, resultRequired).ConfigureAwait(false);
@@ -88,8 +80,7 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var collectionName = _command.QualifiedEntityCollectionName;
-            var entryIdent = await FormatEntryKeyAsync(_command, cancellationToken).ConfigureAwait(false);
-            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+            var entryIdent = FormatEntryKey(_command);
 
             return await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
                 .CreateDeleteRequestAsync(collectionName, entryIdent).ConfigureAwait(false);
@@ -105,7 +96,7 @@ namespace Simple.OData.Client
             var collectionName = _command.QualifiedEntityCollectionName;
             var entryKey = _command.Details.HasKey ? _command.KeyValues : _command.FilterAsKey;
 
-            var entryIdent = await FormatEntryKeyAsync(collectionName, entryKey, cancellationToken).ConfigureAwait(false);
+            var entryIdent = await FormatEntryKeyAsync(collectionName, entryKey, cancellationToken);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             var linkedCollection = _session.Metadata.GetNavigationPropertyPartnerTypeName(collectionName, linkName);
@@ -141,11 +132,11 @@ namespace Simple.OData.Client
                 .CreateUnlinkRequestAsync(collectionName, linkName, entryIdent, linkIdent).ConfigureAwait(false);
         }
 
-        private async Task<string> FormatEntryKeyAsync(ResolvedCommand command, CancellationToken cancellationToken)
+        private string FormatEntryKey(ResolvedCommand command)
         {
             var entryIdent = command.Details.HasKey
-                ? await command.GetCommandTextAsync(cancellationToken).ConfigureAwait(false) 
-                : await (new FluentCommand(command).Key(command.FilterAsKey).Resolve(_session).GetCommandTextAsync(cancellationToken)).ConfigureAwait(false);
+                ? command.Format() 
+                : new FluentCommand(command).Key(command.FilterAsKey).Resolve(_session).Format();
 
             return entryIdent;
         }

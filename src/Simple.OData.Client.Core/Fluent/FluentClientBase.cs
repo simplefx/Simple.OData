@@ -626,9 +626,12 @@ namespace Simple.OData.Client
         /// </summary>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The command text.</returns>
-        public Task<string> GetCommandTextAsync(CancellationToken cancellationToken)
+        public async Task<string> GetCommandTextAsync(CancellationToken cancellationToken)
         {
-            return this.Command.Resolve(_session).GetCommandTextAsync(cancellationToken);
+            await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
+            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+
+            return this.Command.Resolve(_session).Format();
         }
 
 #pragma warning disable 1591

@@ -44,11 +44,11 @@ namespace Simple.OData.Client
         public async Task<IEnumerable<T>> FindEntriesAsync(ODataFeedAnnotations annotations, CancellationToken cancellationToken)
         {
             await _session.ResolveAdapterAsync(cancellationToken);
-            var commandText = await _command.WithCount().Resolve(_session).GetCommandTextAsync(cancellationToken).ConfigureAwait(false);
+            var command = _command.WithCount().Resolve(_session);
             if (cancellationToken.IsCancellationRequested)
                 cancellationToken.ThrowIfCancellationRequested();
 
-            var result = _client.FindEntriesAsync(commandText, annotations, cancellationToken);
+            var result = _client.FindEntriesAsync(command.Format(), annotations, cancellationToken);
             return await FilterAndTypeColumnsAsync(
                 result, _command.SelectedColumns, _command.DynamicPropertiesContainerName).ConfigureAwait(false);
         }
