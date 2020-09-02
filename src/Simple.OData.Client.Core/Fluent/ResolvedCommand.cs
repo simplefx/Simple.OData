@@ -17,11 +17,11 @@ namespace Simple.OData.Client
             Session = session;
             Details = new FluentCommandDetails(command.Details);
 
-            EvaluateCollectionName(command.Details);
-            EvaluateDerivedCollectionName(command.Details);
-            EvaluateNamedKeyValues(command.Details);
-            EvaluateFilter(command.Details);
-            EvaluateLinkName(command.Details);
+            ResolveCollectionName(command.Details);
+            ResolveDerivedCollectionName(command.Details);
+            ResolveLinkName(command.Details);
+            ResolveNamedKeyValues(command.Details);
+            ResolveFilter(command.Details);
         }
 
         internal Session Session { get; private set; }
@@ -69,7 +69,7 @@ namespace Simple.OData.Client
 
         public string DynamicPropertiesContainerName => Details.DynamicPropertiesContainerName;
 
-        private void EvaluateCollectionName(FluentCommandDetails details)
+        private void ResolveCollectionName(FluentCommandDetails details)
         {
             if (Details.CollectionName == null && !ReferenceEquals(details.CollectionExpression, null))
             {
@@ -87,7 +87,7 @@ namespace Simple.OData.Client
             }
         }
 
-        private void EvaluateDerivedCollectionName(FluentCommandDetails details)
+        private void ResolveDerivedCollectionName(FluentCommandDetails details)
         {
             if (Details.DerivedCollectionName == null && !ReferenceEquals(details.DerivedCollectionExpression, null))
             {
@@ -96,7 +96,15 @@ namespace Simple.OData.Client
             }
         }
 
-        private void EvaluateNamedKeyValues(FluentCommandDetails details)
+        private void ResolveLinkName(FluentCommandDetails details)
+        {
+            if (Details.LinkName == null && !ReferenceEquals(details.LinkExpression, null))
+            {
+                Details.LinkName = details.LinkExpression.AsString(this.Session);
+            }
+        }
+
+        private void ResolveNamedKeyValues(FluentCommandDetails details)
         {
             if (Details.NamedKeyValues != null)
             {
@@ -116,7 +124,7 @@ namespace Simple.OData.Client
             }
         }
 
-        private void EvaluateFilter(FluentCommandDetails details)
+        private void ResolveFilter(FluentCommandDetails details)
         {
             if (Details.Filter == null && !ReferenceEquals(details.FilterExpression, null))
             {
@@ -146,14 +154,6 @@ namespace Simple.OData.Client
                 {
                     Details.DerivedCollectionName = null;
                 }
-            }
-        }
-
-        private void EvaluateLinkName(FluentCommandDetails details)
-        {
-            if (Details.LinkName == null && !ReferenceEquals(details.LinkExpression, null))
-            {
-                Details.LinkName = details.LinkExpression.AsString(this.Session);
             }
         }
 
