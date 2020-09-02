@@ -21,8 +21,9 @@ namespace Simple.OData.Client
             ResolveDerivedCollectionName(command.Details);
             ResolveLinkName(command.Details);
             ResolveEntityCollection(command.Details);
-            ResolveNamedKeyValues(command.Details);
+            ResolveKeys(command.Details);
             ResolveFilter(command.Details);
+            ResolveEntryData(command.Details);
         }
 
         internal ISession Session { get; private set; }
@@ -92,7 +93,7 @@ namespace Simple.OData.Client
                 EntityCollection entityCollection;
                 if (!string.IsNullOrEmpty(Details.LinkName))
                 {
-                    var parent = new FluentCommand(this.Session, Details.Parent).Resolve(this.Session);
+                    var parent = new FluentCommand(Details.Parent).Resolve(this.Session);
                     var collectionName = this.Session.Metadata.GetNavigationPropertyPartnerTypeName(
                         parent.EntityCollection.Name, Details.LinkName);
                     entityCollection = this.Session.Metadata.GetEntityCollection(collectionName);
@@ -102,23 +103,29 @@ namespace Simple.OData.Client
                     entityCollection = this.Session.Metadata.GetEntityCollection(Details.CollectionName);
                 }
 
-                this.EntityCollection = 
+                this.EntityCollection =
                     string.IsNullOrEmpty(Details.DerivedCollectionName)
                     ? entityCollection
                     : this.Session.Metadata.GetDerivedEntityCollection(entityCollection, Details.DerivedCollectionName);
             }
         }
 
-        private void ResolveNamedKeyValues(FluentCommandDetails details)
+        private void ResolveKeys(FluentCommandDetails details)
         {
-            if (Details.NamedKeyValues != null)
+            var namedKeyValues =
+                details.KeyValues != null && details.KeyValues.Count == 1 &&
+                TypeCache.IsAnonymousType(details.KeyValues.First().GetType())
+                    ? TypeCache.ToDictionary(details.KeyValues.First())
+                    : details.NamedKeyValues;
+
+            if (namedKeyValues != null)
             {
-                if (NamedKeyValuesMatchAnyKey(Details.NamedKeyValues, out var matchingKey, out bool isAlternateKey))
+                if (NamedKeyValuesMatchAnyKey(namedKeyValues, out var matchingKey, out bool isAlternateKey))
                 {
                     Details.NamedKeyValues = matchingKey.ToDictionary();
                     Details.IsAlternateKey = isAlternateKey;
                 }
-                else if (TryExtractKeyFromNamedValues(Details.NamedKeyValues, out var containedKey))
+                else if (TryExtractKeyFromNamedValues(namedKeyValues, out var containedKey))
                 {
                     Details.NamedKeyValues = containedKey.ToDictionary();
                 }
@@ -126,6 +133,7 @@ namespace Simple.OData.Client
                 {
                     Details.NamedKeyValues = null;
                 }
+                Details.KeyValues = null;
             }
         }
 
@@ -162,6 +170,15 @@ namespace Simple.OData.Client
             }
         }
 
+        private void ResolveEntryData(FluentCommandDetails details)
+        {
+            if (details.EntryValue != null)
+            {
+                Details.EntryData = TypeCache.ToDictionary(details.EntryValue);
+                Details.BatchEntries?.GetOrAdd(details.EntryValue, Details.EntryData);
+            }
+        }
+
         public IDictionary<string, object> FilterAsKey => Details.NamedKeyValues;
 
         public ResolvedCommand WithCount()
@@ -189,7 +206,7 @@ namespace Simple.OData.Client
 
                 var keyNames = this.Session.Metadata.GetDeclaredKeyPropertyNames(this.EntityCollection.Name).ToList();
                 var namedKeyValues = Details.KeyValues?.Zip(
-                     keyNames, 
+                     keyNames,
                      (keyValue, keyName) => new KeyValuePair<string, object>(keyName, keyValue))
                     ??
                     Details.NamedKeyValues;

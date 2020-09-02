@@ -1102,7 +1102,7 @@ namespace Simple.OData.Client
                 ? default(T)
                 : result == null 
                 ? default(T) 
-                : command.TypeCache.Convert<T>(result.First().Value);
+                : _session.TypeCache.Convert<T>(result.First().Value);
         }
 
         internal async Task<T[]> ExecuteAsArrayAsync<T>(FluentCommand command, CancellationToken cancellationToken)
@@ -1116,8 +1116,8 @@ namespace Simple.OData.Client
                 : result == null
                 ? null
                 : typeof(T) == typeof(string) || typeof(T).IsValue()
-                ? result.SelectMany(x => x.Values).Select(x => command.TypeCache.Convert<T>(x)).ToArray()
-                : result.Select(x => (T)x.ToObject(command.TypeCache, typeof(T))).ToArray();
+                ? result.SelectMany(x => x.Values).Select(x => _session.TypeCache.Convert<T>(x)).ToArray()
+                : result.Select(x => (T)x.ToObject(_session.TypeCache, typeof(T))).ToArray();
         }
 
         internal async Task ExecuteBatchAsync(IList<Func<IODataClient, Task>> actions, CancellationToken cancellationToken)

@@ -266,7 +266,7 @@ namespace Simple.OData.Client
         {
             var entryIdent = command.Details.HasKey
                 ? command.Format() 
-                : new FluentCommand(command.Session, command.Details).Key(command.Details.FilterAsKey).Resolve(_session).Format();
+                : new FluentCommand(command.Details).Key(command.Details.FilterAsKey).Resolve(_session).Format();
 
             return entryIdent;
         }

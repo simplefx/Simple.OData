@@ -20,29 +20,22 @@ namespace Simple.OData.Client
         internal static readonly string AnnotationsLiteral = "__annotations";
         internal static readonly string MediaEntityLiteral = "__entity";
 
-        internal FluentCommand(Session session, FluentCommand parent, ConcurrentDictionary<object, IDictionary<string, object>> batchEntries)
+        internal FluentCommand(FluentCommand parent, ConcurrentDictionary<object, IDictionary<string, object>> batchEntries)
         {
-            Session = session;
             Details = new FluentCommandDetails(parent?.Details, batchEntries);
         }
 
-        internal FluentCommand(ISession session, FluentCommandDetails details)
+        internal FluentCommand(FluentCommandDetails details)
         {
-            Session = session as Session;
             Details = new FluentCommandDetails(details);
         }
 
         internal FluentCommand(ResolvedCommand command)
         {
-            Session = command.Session;
             Details = new FluentCommandDetails(command.Details);
         }
 
-        internal ISession Session { get; private set; }
-
         internal FluentCommandDetails Details { get; private set; }
-
-        internal ITypeCache TypeCache => Session.TypeCache;
 
 
         internal ResolvedCommand Resolve(ISession session)
@@ -122,14 +115,7 @@ namespace Simple.OData.Client
 
         public FluentCommand Key(params object[] key)
         {
-            if (key != null && key.Length == 1 && TypeCache.IsAnonymousType(key.First().GetType()))
-            {
-                return Key(TypeCache.ToDictionary(key.First()));
-            }
-            else
-            {
-                return Key(key.ToList());
-            }
+            return Key(key.ToList());
         }
 
         public FluentCommand Key(IEnumerable<object> key)
@@ -344,8 +330,7 @@ namespace Simple.OData.Client
 
         public FluentCommand Set(object value)
         {
-            Details.EntryData = TypeCache.ToDictionary(value);
-            Details.BatchEntries?.GetOrAdd(value, Details.EntryData);
+            Details.EntryValue = value;
             return this;
         }
 

@@ -16,6 +16,7 @@ namespace Simple.OData.Client
         public bool IsAlternateKey { get; set; }
         public IList<object> KeyValues { get; set; }
         public IDictionary<string, object> NamedKeyValues { get; set; }
+        public object EntryValue { get; set; }
         public IDictionary<string, object> EntryData { get; set; }
         public string Filter { get; set; }
         public ODataExpression FilterExpression { get; set; }
@@ -61,6 +62,7 @@ namespace Simple.OData.Client
             this.IsAlternateKey = details.IsAlternateKey;
             this.KeyValues = details.KeyValues;
             this.NamedKeyValues = details.NamedKeyValues;
+            this.EntryValue = details.EntryValue;
             this.EntryData = details.EntryData;
             this.Filter = details.Filter;
             this.FilterExpression = details.FilterExpression;

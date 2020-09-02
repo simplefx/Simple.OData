@@ -32,7 +32,7 @@ namespace Simple.OData.Client
             }
             else if (!string.IsNullOrEmpty(command.Details.LinkName))
             {
-                var parent = new FluentCommand(_session, command.Details.Parent).Resolve(_session);
+                var parent = new FluentCommand(command.Details.Parent).Resolve(_session);
                 commandText += $"{FormatCommand(parent)}/{_session.Metadata.GetNavigationPropertyExactName(parent.EntityCollection.Name, command.Details.LinkName)}";
             }
 
