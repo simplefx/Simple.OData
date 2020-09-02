@@ -128,7 +128,7 @@ namespace Simple.OData.Client
 
         public IRequestBuilder<T> BuildRequestFor()
         {
-            return new RequestBuilder<T>(this.Command.Resolve(_session), _session, _client.BatchWriter);
+            return new RequestBuilder<T>(this.Command, _session, _client.BatchWriter);
         }
 
 #pragma warning restore 1591
