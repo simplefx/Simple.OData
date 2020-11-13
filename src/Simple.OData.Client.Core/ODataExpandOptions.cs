@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Simple.OData.Client
 {
@@ -32,7 +33,7 @@ namespace Simple.OData.Client
     /// <summary>
     /// Specifies how to expand entity associations.
     /// </summary>
-    public class ODataExpandOptions
+    public class ODataExpandOptions : IEquatable<ODataExpandOptions>
     {
         /// <summary>
         /// The number of levels to expand.
@@ -89,6 +90,18 @@ namespace Simple.OData.Client
         public static ODataExpandOptions ByReference(ODataExpandLevels levels)
         {
             return new ODataExpandOptions(levels, ODataExpandMode.ByReference);
+        }
+
+        public bool Equals(ODataExpandOptions other)
+        {
+            if (other == null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return ExpandMode == other.ExpandMode && Levels == other.Levels;
+        }
+
+        public override int GetHashCode()
+        {
+            return (ExpandMode, Levels).GetHashCode();
         }
     }
 }

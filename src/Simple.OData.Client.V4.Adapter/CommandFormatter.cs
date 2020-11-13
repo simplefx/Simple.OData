@@ -43,7 +43,20 @@ namespace Simple.OData.Client.V4.Adapter
         {
             if (command.Details.ExpandAssociations.Any())
             {
-                var formattedExpand = string.Join(",", command.Details.ExpandAssociations.Select(x =>
+                var groupedExpandAssociations = command.Details.ExpandAssociations
+                    .GroupBy(x => (x.Key, x.Value), x => x.Key);
+                var mergedExpandAssociations = groupedExpandAssociations
+                    .Select(x =>
+                    {
+                        var mainAssociation = x.Key.Key;
+                        foreach (var association in x.Where(a => a != mainAssociation))
+                        {
+                            mainAssociation = MergeExpandAssociations(mainAssociation, association).First();
+                        }
+                        return new KeyValuePair<ODataExpandAssociation, ODataExpandOptions>(mainAssociation, x.Key.Value);
+                    });
+                
+                var formattedExpand = string.Join(",", mergedExpandAssociations.Select(x =>
                     FormatExpansionSegment(x.Key, resultCollection, x.Value, command)));
                 commandClauses.Add($"{ODataLiteral.Expand}={formattedExpand}");
             }
@@ -152,29 +165,32 @@ namespace Simple.OData.Client.V4.Adapter
 
         private static ODataExpandAssociation MergeExpandAssociations(ODataExpandAssociation expandAssociation, string path)
         {
-            return MergeExpandAssociations(expandAssociation, ODataExpandAssociation.From(path));
+            return MergeExpandAssociations(expandAssociation, ODataExpandAssociation.From(path)).First();
         }
         
-        private static ODataExpandAssociation MergeExpandAssociations(ODataExpandAssociation first, ODataExpandAssociation second)
+        private static IEnumerable<ODataExpandAssociation> MergeExpandAssociations(ODataExpandAssociation first, ODataExpandAssociation second)
         {
-            var result = first.Clone();
-            if (result.Name != second.Name && result.Name != "*") return result;
+            if (first.Name != second.Name && first.Name != "*") return new [] {first, second};
 
-            var expandAssociations = new List<ODataExpandAssociation>(result.ExpandAssociations);
+            var result = first.Clone();
             result.ExpandAssociations.Clear();
-            foreach (var association in expandAssociations)
-            {
-                result.ExpandAssociations.Add(second.ExpandAssociations.Aggregate(association, MergeExpandAssociations));
-            }
-            foreach (var association in second.ExpandAssociations)
-            {
-                if (result.ExpandAssociations.All(a => a.Name != association.Name))
+            var groupedExpandAssociations = first.ExpandAssociations
+                .Concat(second.ExpandAssociations)
+                .GroupBy(x => x);
+            var mergedExpandAssociations = groupedExpandAssociations
+                .Select(x =>
                 {
-                    result.ExpandAssociations.Add(association.Clone());
-                }
-            }
+                    var mainAssociation = x.Key;
+                    foreach (var association in x.Where(a => a != mainAssociation))
+                    {
+                        mainAssociation = MergeExpandAssociations(mainAssociation, association).First();
+                    }
+                    return mainAssociation;
+                });
             
-            return result;
+            result.ExpandAssociations.AddRange(mergedExpandAssociations);
+            
+            return new [] {result};
         }
 
         private static ODataExpandAssociation MergeOrderByColumns(ODataExpandAssociation expandAssociation, KeyValuePair<string, bool> orderByColumn)

@@ -1,9 +1,10 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Simple.OData.Client
 {
-    public class ODataExpandAssociation
+    public class ODataExpandAssociation : IEquatable<ODataExpandAssociation>
     {
         public ODataExpandAssociation(string name)
         {
@@ -42,6 +43,18 @@ namespace Simple.OData.Client
             clone.FilterExpression = FilterExpression;
             clone.OrderByColumns.AddRange(OrderByColumns);
             return clone;
+        }
+
+        public bool Equals(ODataExpandAssociation other)
+        {
+            if (other == null) return false;
+            if (ReferenceEquals(this, other)) return true;
+            return Name == other.Name;
+        }
+
+        public override int GetHashCode()
+        {
+            return Name.GetHashCode();
         }
     }
 }

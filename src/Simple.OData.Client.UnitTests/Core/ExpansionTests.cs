@@ -464,11 +464,9 @@ namespace Simple.OData.Client.Tests.Core
 
             var expectedResult =
                 @"ClientProductSkus/FunctionService.GetCreateUpdateSkuDelta(clientId=35,offsetInMinutes=2000)?" +
-                "$expand=Product($expand=ProductCategory($expand=Category($expand=CategorySalesArea;$select=Code);$select=IsPrimary);$select=Id,ManufacturerId)," +
+                "$expand=Product($expand=ProductCategory($expand=Category($expand=CategorySalesArea;$select=Code);$select=IsPrimary);$expand=SupplierProductSkuClient($expand=SupplierProductSku($expand=SupplierProductSkuPriceList($expand=SupplierPriceList);$expand=SupplierProductSkuOnHand($expand=Warehouse)));$select=Id,ManufacturerId)," +
                 "ClientProductSkuPriceList($select=CurrencyId)," +
-                "ClientProductSkuSalesArea," +
-                "Product($expand=SupplierProductSkuClient($expand=SupplierProductSku($expand=SupplierProductSkuPriceList($expand=SupplierPriceList)));$expand=ProductCategory($expand=Category($select=Code);$select=IsPrimary);$select=Id,ManufacturerId)," +
-                "Product($expand=SupplierProductSkuClient($expand=SupplierProductSku($expand=SupplierProductSkuOnHand($expand=Warehouse)));$expand=ProductCategory($expand=Category($select=Code);$select=IsPrimary);$select=Id,ManufacturerId)&" +
+                "ClientProductSkuSalesArea&" +
                 "$select=PartNo,ClientId,ErpName,EanCode";
 
             var clientId = 35;
