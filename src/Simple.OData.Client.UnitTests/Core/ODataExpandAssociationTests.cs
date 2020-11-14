@@ -27,19 +27,15 @@ namespace Simple.OData.Client.Tests.Core
         }
         
         [Fact]
-        public void CreateExpandAssociationFromNullString()
+        public void CreateExpandAssociationFromNullStringThrowsArgumentException()
         {
-            var association = ODataExpandAssociation.From(null);
-            
-            Assert.Equal(string.Empty, association.Name);
+            Assert.Throws<ArgumentException>(() => ODataExpandAssociation.From(null));
         }
         
         [Fact]
-        public void CreateExpandAssociationFromEmptyString()
+        public void CreateExpandAssociationFromEmptyStringThrowsArgumentException()
         {
-            var association = ODataExpandAssociation.From(string.Empty);
-            
-            Assert.Equal(string.Empty, association.Name);
+            Assert.Throws<ArgumentException>(() => ODataExpandAssociation.From(string.Empty));
         }
 
         [Fact]
