@@ -203,26 +203,26 @@ namespace Simple.OData.Client.V4.Adapter
                 return expandAssociation;
 
             var result = expandAssociation.Clone();
-            MergeOrderByColumns(result, segments.Skip(1).ToArray(), orderByColumn.Value);
+            MergeOrderByColumns(result, segments, orderByColumn.Value, 1);
             return result;
         }
 
         private static void MergeOrderByColumns(ODataExpandAssociation expandAssociation,
-            string[] segments, bool descending)
+            string[] segments, bool descending, int currentIndex)
         {
-            if (segments.Length == 0)
+            if (segments.Length == currentIndex)
                 return;
 
-            if (segments.Length == 1)
+            if (segments.Length == currentIndex + 1)
             {
-                expandAssociation.OrderByColumns.Add(new ODataOrderByColumn(segments[0], descending));
+                expandAssociation.OrderByColumns.Add(new ODataOrderByColumn(segments[currentIndex], descending));
                 return;
             }
             
-            var nestedAssociation = expandAssociation.ExpandAssociations.FirstOrDefault(a => a.Name == segments[0]);
+            var nestedAssociation = expandAssociation.ExpandAssociations.FirstOrDefault(a => a.Name == segments[currentIndex]);
             if (nestedAssociation != null)
             {
-                MergeOrderByColumns(nestedAssociation, segments.Skip(1).ToArray(), descending);
+                MergeOrderByColumns(nestedAssociation, segments, descending, currentIndex + 1);
             }
         }
 
