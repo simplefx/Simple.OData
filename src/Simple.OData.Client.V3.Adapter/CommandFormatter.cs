@@ -30,8 +30,7 @@ namespace Simple.OData.Client.V3.Adapter
                 : ConvertValue(value);
         }
 
-        protected override void FormatExpandSelectOrderby(IList<string> commandClauses,
-            EntityCollection resultCollection, FluentCommand command)
+        protected override void FormatExpandSelectOrderby(IList<string> commandClauses, EntityCollection resultCollection, ResolvedCommand command)
         {
             var expandAssociations = FlatExpandAssociations(command.Details.ExpandAssociations).ToList();
             FormatClause(commandClauses, resultCollection, expandAssociations, ODataLiteral.Expand, FormatExpandItem);

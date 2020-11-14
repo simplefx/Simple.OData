@@ -39,7 +39,7 @@ namespace Simple.OData.Client.V4.Adapter
                 : ConvertValue(value);
         }
 
-        protected override void FormatExpandSelectOrderby(IList<string> commandClauses, EntityCollection resultCollection, FluentCommand command)
+        protected override void FormatExpandSelectOrderby(IList<string> commandClauses, EntityCollection resultCollection, ResolvedCommand command)
         {
             if (command.Details.ExpandAssociations.Any())
             {
@@ -79,7 +79,7 @@ namespace Simple.OData.Client.V4.Adapter
         }
 
         private string FormatExpansionSegment(ODataExpandAssociation association, EntityCollection entityCollection,
-            ODataExpandOptions expandOptions, FluentCommand command, bool rootLevel = true)
+            ODataExpandOptions expandOptions, ResolvedCommand command, bool rootLevel = true)
         {
             if (rootLevel)
             {

@@ -3,10 +3,9 @@ using System.Collections.Generic;
 
 namespace Simple.OData.Client
 {
-    class CommandDetails
+    class FluentCommandDetails
     {
-        public Session Session { get; private set; }
-        public FluentCommand Parent { get; private set; }
+        public FluentCommandDetails Parent { get; private set; }
         public string CollectionName { get; set; }
         public ODataExpression CollectionExpression { get; set; }
         public string DerivedCollectionName { get; set; }
@@ -17,6 +16,7 @@ namespace Simple.OData.Client
         public bool IsAlternateKey { get; set; }
         public IList<object> KeyValues { get; set; }
         public IDictionary<string, object> NamedKeyValues { get; set; }
+        public object EntryValue { get; set; }
         public IDictionary<string, object> EntryData { get; set; }
         public string Filter { get; set; }
         public ODataExpression FilterExpression { get; set; }
@@ -37,9 +37,8 @@ namespace Simple.OData.Client
         public IEnumerable<string> MediaProperties { get; set; }
         public ConcurrentDictionary<object, IDictionary<string, object>> BatchEntries { get; set; }
 
-        public CommandDetails(Session session, FluentCommand parent, ConcurrentDictionary<object, IDictionary<string, object>> batchEntries)
+        public FluentCommandDetails(FluentCommandDetails parent, ConcurrentDictionary<object, IDictionary<string, object>> batchEntries)
         {
-            this.Session = session;
             this.Parent = parent;
             this.SkipCount = -1;
             this.TopCount = -1;
@@ -50,9 +49,8 @@ namespace Simple.OData.Client
             this.BatchEntries = batchEntries;
         }
 
-        public CommandDetails(CommandDetails details)
+        public FluentCommandDetails(FluentCommandDetails details)
         {
-            this.Session = details.Session;
             this.Parent = details.Parent;
             this.CollectionName = details.CollectionName;
             this.CollectionExpression = details.CollectionExpression;
@@ -64,6 +62,7 @@ namespace Simple.OData.Client
             this.IsAlternateKey = details.IsAlternateKey;
             this.KeyValues = details.KeyValues;
             this.NamedKeyValues = details.NamedKeyValues;
+            this.EntryValue = details.EntryValue;
             this.EntryData = details.EntryData;
             this.Filter = details.Filter;
             this.FilterExpression = details.FilterExpression;
@@ -84,5 +83,19 @@ namespace Simple.OData.Client
             this.QueryOptionsExpression = details.QueryOptionsExpression;
             this.BatchEntries = details.BatchEntries;
         }
+
+        public bool HasKey => this.KeyValues != null && this.KeyValues.Count > 0 || this.NamedKeyValues != null && this.NamedKeyValues.Count > 0;
+
+        public bool HasFilter => !string.IsNullOrEmpty(this.Filter) || !ReferenceEquals(this.FilterExpression, null);
+
+        public bool HasSearch => !string.IsNullOrEmpty(this.Search);
+
+        public bool HasFunction => !string.IsNullOrEmpty(this.FunctionName);
+
+        public bool HasAction => !string.IsNullOrEmpty(this.ActionName);
+
+        public bool FilterIsKey => this.NamedKeyValues != null;
+
+        public IDictionary<string, object> FilterAsKey => this.NamedKeyValues;
     }
 }
