@@ -179,42 +179,24 @@ namespace Simple.OData.Client
 
         public FluentCommand Expand(ODataExpandOptions expandOptions)
         {
-            Details.ExpandAssociations.AddRange(new[] { new KeyValuePair<string, ODataExpandOptions>("*", ODataExpandOptions.ByValue()) });
+            Details.ExpandAssociations.Add(new KeyValuePair<ODataExpandAssociation, ODataExpandOptions>(
+                new ODataExpandAssociation("*"),
+                expandOptions));
             return this;
         }
 
-        public FluentCommand Expand(IEnumerable<string> associations)
+        public FluentCommand Expand(IEnumerable<ODataExpandAssociation> associations)
         {
-            Details.ExpandAssociations.AddRange(SplitItems(associations).Select(x => new KeyValuePair<string, ODataExpandOptions>(x, ODataExpandOptions.ByValue())));
+            Details.ExpandAssociations.AddRange(associations.Select(x =>
+                new KeyValuePair<ODataExpandAssociation, ODataExpandOptions>(x, ODataExpandOptions.ByValue())));
             return this;
         }
 
-        public FluentCommand Expand(ODataExpandOptions expandOptions, IEnumerable<string> associations)
+        public FluentCommand Expand(ODataExpandOptions expandOptions, IEnumerable<ODataExpandAssociation> associations)
         {
-            Details.ExpandAssociations.AddRange(SplitItems(associations).Select(x => new KeyValuePair<string, ODataExpandOptions>(x, expandOptions)));
+            Details.ExpandAssociations.AddRange(associations.Select(x =>
+                new KeyValuePair<ODataExpandAssociation, ODataExpandOptions>(x, expandOptions)));
             return this;
-        }
-
-        public FluentCommand Expand(params string[] associations)
-        {
-            Details.ExpandAssociations.AddRange(SplitItems(associations).Select(x => new KeyValuePair<string, ODataExpandOptions>(x, ODataExpandOptions.ByValue())));
-            return this;
-        }
-
-        public FluentCommand Expand(ODataExpandOptions expandOptions, params string[] associations)
-        {
-            Details.ExpandAssociations.AddRange(SplitItems(associations).Select(x => new KeyValuePair<string, ODataExpandOptions>(x, expandOptions)));
-            return this;
-        }
-
-        public FluentCommand Expand(params ODataExpression[] columns)
-        {
-            return Expand(columns.Select(x => x.Reference));
-        }
-
-        public FluentCommand Expand(ODataExpandOptions expandOptions, params ODataExpression[] columns)
-        {
-            return Expand(expandOptions, columns.Select(x => x.Reference));
         }
 
         public FluentCommand Select(IEnumerable<string> columns)

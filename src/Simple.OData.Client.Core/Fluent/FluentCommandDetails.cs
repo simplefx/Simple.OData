@@ -23,7 +23,7 @@ namespace Simple.OData.Client
         public string Search { get; set; }
         public long SkipCount { get; set; }
         public long TopCount { get; set; }
-        public List<KeyValuePair<string, ODataExpandOptions>> ExpandAssociations { get; private set; }
+        public List<KeyValuePair<ODataExpandAssociation, ODataExpandOptions>> ExpandAssociations { get; private set; }
         public List<string> SelectColumns { get; private set; }
         public List<KeyValuePair<string, bool>> OrderbyColumns { get; private set; }
         public bool ComputeCount { get; set; }
@@ -42,7 +42,7 @@ namespace Simple.OData.Client
             this.Parent = parent;
             this.SkipCount = -1;
             this.TopCount = -1;
-            this.ExpandAssociations = new List<KeyValuePair<string, ODataExpandOptions>>();
+            this.ExpandAssociations = new List<KeyValuePair<ODataExpandAssociation, ODataExpandOptions>>();
             this.SelectColumns = new List<string>();
             this.OrderbyColumns = new List<KeyValuePair<string, bool>>();
             this.MediaProperties = new List<string>();
