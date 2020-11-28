@@ -6,11 +6,11 @@
     <OutDir>$(OutputPath)</OutDir>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.OData.Core" Version="7.7.1" />
+    <PackageReference Include="Microsoft.OData.Core" Version="7.7.3" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
-    <PackageReference Include="System.Text.Json" Version="4.7.1" />
+    <PackageReference Include="System.Text.Json" Version="5.0.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Simple.OData.Client.Core\Simple.OData.Client.Core.csproj" />
