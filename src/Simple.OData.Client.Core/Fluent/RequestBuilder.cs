@@ -33,7 +33,7 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             return await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-                .CreateGetRequestAsync(_commandText ?? _command.Format(), scalarResult).ConfigureAwait(false);
+                .CreateGetRequestAsync(_commandText ?? _command.Format(), scalarResult, _command.Details.Headers).ConfigureAwait(false);
         }
 
         public async Task<ODataRequest> InsertRequestAsync(bool resultRequired, CancellationToken cancellationToken)
@@ -44,7 +44,7 @@ namespace Simple.OData.Client
             var entryData = _command.CommandData;
 
             return await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-                .CreateInsertRequestAsync(_command.QualifiedEntityCollectionName, _command.Format(), entryData, resultRequired).ConfigureAwait(false);
+                .CreateInsertRequestAsync(_command.QualifiedEntityCollectionName, _command.Format(), entryData, resultRequired, _command.Details.Headers).ConfigureAwait(false);
         }
 
         public async Task<ODataRequest> UpdateRequestAsync(bool resultRequired, CancellationToken cancellationToken)
@@ -60,7 +60,7 @@ namespace Simple.OData.Client
             var entryIdent = FormatEntryKey(_command);
 
             return await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-                .CreateUpdateRequestAsync(collectionName, entryIdent, entryKey, entryData, resultRequired).ConfigureAwait(false);
+                .CreateUpdateRequestAsync(collectionName, entryIdent, entryKey, entryData, resultRequired, _command.Details.Headers).ConfigureAwait(false);
         }
 
         public async Task<ODataRequest> UpdateRequestAsync(Stream stream, string contentType, bool optimisticConcurrency, CancellationToken cancellationToken)
@@ -69,7 +69,7 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             return await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-                .CreatePutRequestAsync(_commandText, stream, contentType, optimisticConcurrency).ConfigureAwait(false);            
+                .CreatePutRequestAsync(_commandText, stream, contentType, optimisticConcurrency, _command.Details.Headers).ConfigureAwait(false);            
         }
 
         public async Task<ODataRequest> DeleteRequestAsync(CancellationToken cancellationToken)
@@ -83,7 +83,7 @@ namespace Simple.OData.Client
             var entryIdent = FormatEntryKey(_command);
 
             return await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-                .CreateDeleteRequestAsync(collectionName, entryIdent).ConfigureAwait(false);
+                .CreateDeleteRequestAsync(collectionName, entryIdent, _command.Details.Headers).ConfigureAwait(false);
         }
 
         public async Task<ODataRequest> LinkRequestAsync(string linkName, IDictionary<string, object> linkedEntryKey, CancellationToken cancellationToken)
@@ -104,7 +104,7 @@ namespace Simple.OData.Client
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
             return await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-                .CreateLinkRequestAsync(collectionName, linkName, entryIdent, linkIdent).ConfigureAwait(false);
+                .CreateLinkRequestAsync(collectionName, linkName, entryIdent, linkIdent, _command.Details.Headers).ConfigureAwait(false);
         }
 
         public async Task<ODataRequest> UnlinkRequestAsync(string linkName, IDictionary<string, object> linkedEntryKey, CancellationToken cancellationToken)
@@ -129,7 +129,7 @@ namespace Simple.OData.Client
             }
 
             return await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-                .CreateUnlinkRequestAsync(collectionName, linkName, entryIdent, linkIdent).ConfigureAwait(false);
+                .CreateUnlinkRequestAsync(collectionName, linkName, entryIdent, linkIdent, _command.Details.Headers).ConfigureAwait(false);
         }
 
         private string FormatEntryKey(ResolvedCommand command)
