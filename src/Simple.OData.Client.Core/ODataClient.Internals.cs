@@ -28,7 +28,7 @@ namespace Simple.OData.Client
         private async Task<IEnumerable<IDictionary<string, object>>> ExecuteFunctionAsync(ResolvedCommand command, CancellationToken cancellationToken)
         {
             var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-                .CreateFunctionRequestAsync(command.Format(), command.Details.FunctionName).ConfigureAwait(false);
+                .CreateFunctionRequestAsync(command.Format(), command.Details.FunctionName, command.Details.Headers).ConfigureAwait(false);
 
             return await ExecuteRequestWithResultAsync(request, cancellationToken,
                 x => x.AsEntries(_session.Settings.IncludeAnnotationsInResults),
@@ -41,7 +41,7 @@ namespace Simple.OData.Client
                 ? _session.Metadata.GetQualifiedTypeName(command.EntityCollection.Name)
                 : null;
             var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-                .CreateActionRequestAsync(command.Format(), command.Details.ActionName, entityTypeName, command.CommandData, true).ConfigureAwait(false);
+                .CreateActionRequestAsync(command.Format(), command.Details.ActionName, entityTypeName, command.CommandData, true, command.Details.Headers).ConfigureAwait(false);
 
             return await ExecuteRequestWithResultAsync(request, cancellationToken,
                 x => x.AsEntries(_session.Settings.IncludeAnnotationsInResults),

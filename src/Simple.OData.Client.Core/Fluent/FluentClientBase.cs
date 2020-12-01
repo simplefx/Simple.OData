@@ -89,6 +89,18 @@ namespace Simple.OData.Client
             return this as FT;
         }
 
+        public FT WithHeader(string name, string value)
+        {
+            this.Command.WithHeader(name, value);
+            return this as FT;
+        }
+        
+        public FT WithHeaders(IEnumerable<KeyValuePair<string, string>> headers)
+        {
+            this.Command.WithHeaders(headers);
+            return this as FT;
+        }
+
         public FT Key(params object[] entryKey)
         {
             this.Command.Key(entryKey);
