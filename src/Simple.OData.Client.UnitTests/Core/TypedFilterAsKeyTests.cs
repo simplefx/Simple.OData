@@ -112,7 +112,7 @@ namespace Simple.OData.Client.Tests.Core
                 .Filter(x => x.OrderID == 1 && x.Quantity == 1 );
             var commandText = await command.GetCommandTextAsync();
 
-            var expected = string.Format("Order_Details?$filter=OrderID%20eq%201%20and%20Quantity%20eq%201", Uri.EscapeDataString("'"));
+            var expected = "Order_Details?$filter=OrderID%20eq%201%20and%20Quantity%20eq%201";
             Assert.Equal(expected, commandText);
         }
 
@@ -124,7 +124,7 @@ namespace Simple.OData.Client.Tests.Core
                 .Filter(x => x.ProductID == 1 && x.Quantity == 1);
             var commandText = await command.GetCommandTextAsync();
 
-            var expected = string.Format("Order_Details?$filter=ProductID%20eq%201%20and%20Quantity%20eq%201", Uri.EscapeDataString("'"));
+            var expected = "Order_Details?$filter=ProductID%20eq%201%20and%20Quantity%20eq%201";
             Assert.Equal(expected, commandText);
         }
 
