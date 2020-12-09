@@ -34,11 +34,19 @@ namespace Simple.OData.Client
 
         protected override Expression VisitMember(MemberExpression node)
         {
-            var memberName = _typeCache.GetMappedName(node.Expression.Type, node.Member.Name);
-
-            ExpandAssociations.AddRange(node.Expression is MemberExpression
-                ? ExtractNestedExpandAssociations(node.Expression)
-                : new[] { new ODataExpandAssociation(memberName) });
+            var currentMemberExpression = node;
+            var memberName = _typeCache.GetMappedName(currentMemberExpression.Expression.Type, currentMemberExpression.Member.Name);
+            var expandAssociation = new ODataExpandAssociation(memberName);
+            while (currentMemberExpression.Expression is MemberExpression memberExpression)
+            {
+                currentMemberExpression = memberExpression;
+                memberName = _typeCache.GetMappedName(currentMemberExpression.Expression.Type, currentMemberExpression.Member.Name);
+                expandAssociation = new ODataExpandAssociation(memberName)
+                {
+                    ExpandAssociations = { expandAssociation }
+                };
+            }
+            ExpandAssociations.Add(expandAssociation);
             
             return node;
         }
@@ -58,12 +66,17 @@ namespace Simple.OData.Client
 
             var association = ExtractNestedExpandAssociations(node.Arguments[0]).Single();
             ExpandAssociations.Add(association);
+            var deepestChildAssociation = association;
+            while (deepestChildAssociation.ExpandAssociations.Any())
+            {
+                deepestChildAssociation = deepestChildAssociation.ExpandAssociations.First();
+            }
 
             switch (node.Method.Name)
             {
                 case "Select":
                 {
-                    association.ExpandAssociations.AddRange(ExtractNestedExpandAssociations(node.Arguments[1]));
+                    deepestChildAssociation.ExpandAssociations.AddRange(ExtractNestedExpandAssociations(node.Arguments[1]));
 
                     return node;
                 }
@@ -73,7 +86,7 @@ namespace Simple.OData.Client
                     if ((node.Arguments[0] as MethodCallExpression)?.Method.Name == "Select")
                         throw Utils.NotSupportedExpression(node);
 
-                    association.OrderByColumns
+                    deepestChildAssociation.OrderByColumns
                         .AddRange(node.Arguments[1]
                             .ExtractColumnNames(_typeCache).Select(c => new ODataOrderByColumn(c, false)));
 
@@ -85,7 +98,7 @@ namespace Simple.OData.Client
                     if ((node.Arguments[0] as MethodCallExpression)?.Method.Name == "Select")
                         throw Utils.NotSupportedExpression(node);
 
-                    association.OrderByColumns
+                    deepestChildAssociation.OrderByColumns
                         .AddRange(node.Arguments[1]
                             .ExtractColumnNames(_typeCache).Select(c => new ODataOrderByColumn(c, true)));
 
@@ -96,9 +109,9 @@ namespace Simple.OData.Client
                     var filterExpression =
                         ODataExpression.FromLinqExpression((node.Arguments[1] as LambdaExpression)?.Body);
                     if (ReferenceEquals(association.FilterExpression, null))
-                        association.FilterExpression = filterExpression;
+                        deepestChildAssociation.FilterExpression = filterExpression;
                     else
-                        association.FilterExpression = association.FilterExpression && filterExpression;
+                        deepestChildAssociation.FilterExpression = deepestChildAssociation.FilterExpression && filterExpression;
 
                     return node;
                 }

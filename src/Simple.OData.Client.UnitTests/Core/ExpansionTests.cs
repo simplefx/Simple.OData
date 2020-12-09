@@ -330,6 +330,30 @@ namespace Simple.OData.Client.Tests.Core
         }
 
         [Theory]
+        [InlineData("Northwind3.xml", "Employees?$expand=Superior/Subordinates")]
+        [InlineData("Northwind4.xml", "Employees?$expand=Superior($expand=Subordinates)")]
+        public async Task ExpandSuperiorWithSubordinates(string metadataFile, string expectedCommand)
+        {
+            var client = CreateClient(metadataFile);
+            var command = client.For<Employee>()
+                .Expand(x => x.Superior.Subordinates);
+            var commandText = await command.GetCommandTextAsync();
+            Assert.Equal(expectedCommand, commandText);
+        }
+
+        [Theory]
+        [InlineData("Northwind3.xml", "Employees?$expand=Superior/Superior/Superior")]
+        [InlineData("Northwind4.xml", "Employees?$expand=Superior($expand=Superior($expand=Superior))")]
+        public async Task ExpandSuperiorThreeTimes(string metadataFile, string expectedCommand)
+        {
+            var client = CreateClient(metadataFile);
+            var command = client.For<Employee>()
+                .Expand(x => x.Superior.Superior.Superior);
+            var commandText = await command.GetCommandTextAsync();
+            Assert.Equal(expectedCommand, commandText);
+        }
+
+        [Theory]
         [InlineData("Northwind3.xml", "Products?$expand=*&$select=ProductName,Category/CategoryName")]
         [InlineData("Northwind4.xml", "Products?$expand=*&$select=ProductName")]
         public async Task ExpandAllSelectProductNameCategoryName(string metadataFile, string expectedCommand)
@@ -526,6 +550,41 @@ namespace Simple.OData.Client.Tests.Core
                 .Expand(x => x.Products.OrderByDescending(p => p.UnitPrice).ThenByDescending(p => p.ProductName));
             var commandText = await command.GetCommandTextAsync();
             Assert.Equal("Categories?$expand=Products($orderby=UnitPrice desc,ProductName desc)", commandText);
+        }
+
+        [Fact]
+        public async Task ExpandSuperiorWithSubordinatesAndTheirSuperiorsAndDeepOrderby()
+        {
+            const string expectedCommand = "Employees?$expand=Superior($expand=Subordinates($expand=Superior;$orderby=LastName))";
+            var client = CreateClient("Northwind4.xml");
+            var command = client.For<Employee>()
+                .Expand(x => x.Superior.Subordinates.Select(s => s.Superior))
+                .Expand(x => x.Superior.Subordinates.OrderBy(s => s.LastName));
+            var commandText = await command.GetCommandTextAsync();
+            Assert.Equal(expectedCommand, commandText);
+            
+            command = client.For<Employee>()
+                .Expand(x => x.Superior.Subordinates.OrderBy(s => s.LastName))
+                .Expand(x => x.Superior.Subordinates.Select(s => s.Superior));
+            commandText = await command.GetCommandTextAsync();
+            Assert.Equal(expectedCommand, commandText);
+            
+            command = client.For<Employee>()
+                .Expand(x => x.Superior.Subordinates.OrderBy(s => s.LastName).Select(s => s.Superior));
+            commandText = await command.GetCommandTextAsync();
+            Assert.Equal(expectedCommand, commandText);
+        }
+        
+        [Fact]
+        public async Task ExpandProductsSelectProductNameAndUnitPriceThenOrderByUnitPriceDescendingThenByProductNameDescending()
+        {
+            var client = CreateClient("Northwind4.xml");
+            var command = client
+                .For<Category>()
+                .Expand(x => x.Products.Select(p => new {p.ProductName, p.UnitPrice}))
+                .Expand(x => x.Products.OrderByDescending(p => p.UnitPrice).ThenByDescending(p => p.ProductName));
+            var commandText = await command.GetCommandTextAsync();
+            Assert.Equal("Categories?$expand=Products($select=ProductName,UnitPrice;$orderby=UnitPrice desc,ProductName desc)", commandText);
         }
     }
 }
