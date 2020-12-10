@@ -34,19 +34,12 @@ namespace Simple.OData.Client
 
         protected override Expression VisitMember(MemberExpression node)
         {
-            var currentMemberExpression = node;
-            var memberName = _typeCache.GetMappedName(currentMemberExpression.Expression.Type, currentMemberExpression.Member.Name);
-            var expandAssociation = new ODataExpandAssociation(memberName);
-            while (currentMemberExpression.Expression is MemberExpression memberExpression)
-            {
-                currentMemberExpression = memberExpression;
-                memberName = _typeCache.GetMappedName(currentMemberExpression.Expression.Type, currentMemberExpression.Member.Name);
-                expandAssociation = new ODataExpandAssociation(memberName)
-                {
-                    ExpandAssociations = { expandAssociation }
-                };
-            }
-            ExpandAssociations.Add(expandAssociation);
+            var memberName = _typeCache.GetMappedName(node.Expression.Type, node.Member.Name);
+            var association = new ODataExpandAssociation(memberName);
+            var associationCollection = node.Expression is MemberExpression
+                ? AddNestedExpandAssociationAndGetDeepestChild(node.Expression).ExpandAssociations
+                : ExpandAssociations;
+            associationCollection.Add(association);
             
             return node;
         }
@@ -64,20 +57,14 @@ namespace Simple.OData.Client
             if (node.Arguments.Count != 2)
                 throw Utils.NotSupportedExpression(node);
 
-            var association = ExtractNestedExpandAssociations(node.Arguments[0]).Single();
-            ExpandAssociations.Add(association);
-            var deepestChildAssociation = association;
-            while (deepestChildAssociation.ExpandAssociations.Any())
-            {
-                deepestChildAssociation = deepestChildAssociation.ExpandAssociations.First();
-            }
+            var association = AddNestedExpandAssociationAndGetDeepestChild(node.Arguments[0]);
 
             switch (node.Method.Name)
             {
                 case "Select":
                 {
-                    deepestChildAssociation.ExpandAssociations.AddRange(ExtractNestedExpandAssociations(node.Arguments[1]));
-
+                    association.ExpandAssociations.AddRange(ExtractNestedExpandAssociations(node.Arguments[1]));
+                    
                     return node;
                 }
                 case "OrderBy":
@@ -86,7 +73,7 @@ namespace Simple.OData.Client
                     if ((node.Arguments[0] as MethodCallExpression)?.Method.Name == "Select")
                         throw Utils.NotSupportedExpression(node);
 
-                    deepestChildAssociation.OrderByColumns
+                    association.OrderByColumns
                         .AddRange(node.Arguments[1]
                             .ExtractColumnNames(_typeCache).Select(c => new ODataOrderByColumn(c, false)));
 
@@ -98,7 +85,7 @@ namespace Simple.OData.Client
                     if ((node.Arguments[0] as MethodCallExpression)?.Method.Name == "Select")
                         throw Utils.NotSupportedExpression(node);
 
-                    deepestChildAssociation.OrderByColumns
+                    association.OrderByColumns
                         .AddRange(node.Arguments[1]
                             .ExtractColumnNames(_typeCache).Select(c => new ODataOrderByColumn(c, true)));
 
@@ -109,9 +96,9 @@ namespace Simple.OData.Client
                     var filterExpression =
                         ODataExpression.FromLinqExpression((node.Arguments[1] as LambdaExpression)?.Body);
                     if (ReferenceEquals(association.FilterExpression, null))
-                        deepestChildAssociation.FilterExpression = filterExpression;
+                        association.FilterExpression = filterExpression;
                     else
-                        deepestChildAssociation.FilterExpression = deepestChildAssociation.FilterExpression && filterExpression;
+                        association.FilterExpression = association.FilterExpression && filterExpression;
 
                     return node;
                 }
@@ -124,6 +111,18 @@ namespace Simple.OData.Client
         {
             ExpandAssociations.AddRange(node.Arguments.SelectMany(ExtractNestedExpandAssociations));
             return node;
+        }
+
+        private ODataExpandAssociation AddNestedExpandAssociationAndGetDeepestChild(Expression nestedExpression)
+        {
+            var nestedAssociation = ExtractNestedExpandAssociations(nestedExpression).First();
+            ExpandAssociations.Add(nestedAssociation);
+            var deepestChildAssociation = nestedAssociation;
+            while (deepestChildAssociation.ExpandAssociations.Any())
+            {
+                deepestChildAssociation = deepestChildAssociation.ExpandAssociations.First();
+            }
+            return deepestChildAssociation;
         }
 
         private IEnumerable<ODataExpandAssociation> ExtractNestedExpandAssociations(Expression expression)
