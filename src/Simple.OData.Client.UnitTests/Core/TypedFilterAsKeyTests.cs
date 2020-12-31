@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-
+using Microsoft.Data.OData;
 using Xunit;
 
 namespace Simple.OData.Client.Tests.Core
@@ -9,7 +9,17 @@ namespace Simple.OData.Client.Tests.Core
     public class TypedFilterAsKeyV3Tests : TypedFilterAsKeyTests
     {
         public override string MetadataFile => "Northwind3.xml";
-        public override IFormatSettings FormatSettings { get { return new ODataV3Format(); } }
+        public override IFormatSettings FormatSettings => new ODataV3Format();
+
+        [Fact]
+        public async Task FindAllByFilterWithContainsThrowsExceptions()
+        {
+            var list = new List<int> {1};
+            var command = _client
+                .For<Product>()
+                .Filter(x => list.Contains(x.ProductID));
+            await Assert.ThrowsAsync<ODataException>(() => command.GetCommandTextAsync());
+        }
     }
 
     public class TypedFilterAsKeyV4Tests : TypedFilterAsKeyTests
@@ -26,6 +36,17 @@ namespace Simple.OData.Client.Tests.Core
                 .Set(new Dictionary<string, object>() { { "numbers", new[] { 1, 2, 3 } } });
             var commandText = await command.GetCommandTextAsync();
             Assert.Equal("PassThroughIntCollection(numbers=@p1)?@p1=[1,2,3]", commandText);
+        }
+
+        [Fact]
+        public async Task FindAllByFilterWithContains()
+        {
+            var ids = new List<int> {1, 2, 3};
+            var command = _client
+                .For<Product>()
+                .Filter(x => ids.Contains(x.ProductID));
+            var commandText = await command.GetCommandTextAsync();
+            Assert.Equal("Products?$filter=ProductID%20in%20%281%2C2%2C3%29", commandText);
         }
     }
 

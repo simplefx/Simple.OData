@@ -94,9 +94,13 @@ namespace Simple.OData.Client
         private string FormatFunction(ExpressionContext context)
         {
             var adapterVersion = context.Session?.Adapter.AdapterVersion ?? AdapterVersion.Default;
-            if (FunctionMapping.TryGetFunctionMapping(this.Function.FunctionName, this.Function.Arguments.Count(), adapterVersion, out var mapping))
+            if (FunctionToOperatorMapping.TryGetOperatorMapping(_functionCaller, Function, adapterVersion, out var operatorMapping))
             {
-                return FormatMappedFunction(context, mapping);
+                return FormatMappedOperator(context, operatorMapping);
+            }
+            if (FunctionMapping.TryGetFunctionMapping(this.Function.FunctionName, this.Function.Arguments.Count(), adapterVersion, out var functionMapping))
+            {
+                return FormatMappedFunction(context, functionMapping);
             }
             else if (string.Equals(this.Function.FunctionName, ODataLiteral.Any, StringComparison.OrdinalIgnoreCase) ||
                      string.Equals(this.Function.FunctionName, ODataLiteral.All, StringComparison.OrdinalIgnoreCase))
@@ -152,7 +156,12 @@ namespace Simple.OData.Client
 
             throw new NotSupportedException($"The function {this.Function.FunctionName} is not supported or called with wrong number of arguments");
         }
-
+        
+        private string FormatMappedOperator(ExpressionContext context, FunctionToOperatorMapping mapping)
+        {
+            return mapping.Format(context, _functionCaller, Function.Arguments);
+        }
+        
         private string FormatMappedFunction(ExpressionContext context, FunctionMapping mapping)
         {
             var mappedFunction = mapping.FunctionMapper(
