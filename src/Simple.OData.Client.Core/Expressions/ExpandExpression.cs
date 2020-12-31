@@ -35,10 +35,11 @@ namespace Simple.OData.Client
         protected override Expression VisitMember(MemberExpression node)
         {
             var memberName = _typeCache.GetMappedName(node.Expression.Type, node.Member.Name);
-
-            ExpandAssociations.AddRange(node.Expression is MemberExpression
-                ? ExtractNestedExpandAssociations(node.Expression)
-                : new[] { new ODataExpandAssociation(memberName) });
+            var association = new ODataExpandAssociation(memberName);
+            var associationCollection = node.Expression is MemberExpression
+                ? AddNestedExpandAssociationAndGetDeepestChild(node.Expression).ExpandAssociations
+                : ExpandAssociations;
+            associationCollection.Add(association);
             
             return node;
         }
@@ -56,15 +57,14 @@ namespace Simple.OData.Client
             if (node.Arguments.Count != 2)
                 throw Utils.NotSupportedExpression(node);
 
-            var association = ExtractNestedExpandAssociations(node.Arguments[0]).Single();
-            ExpandAssociations.Add(association);
+            var association = AddNestedExpandAssociationAndGetDeepestChild(node.Arguments[0]);
 
             switch (node.Method.Name)
             {
                 case "Select":
                 {
                     association.ExpandAssociations.AddRange(ExtractNestedExpandAssociations(node.Arguments[1]));
-
+                    
                     return node;
                 }
                 case "OrderBy":
@@ -111,6 +111,18 @@ namespace Simple.OData.Client
         {
             ExpandAssociations.AddRange(node.Arguments.SelectMany(ExtractNestedExpandAssociations));
             return node;
+        }
+
+        private ODataExpandAssociation AddNestedExpandAssociationAndGetDeepestChild(Expression nestedExpression)
+        {
+            var nestedAssociation = ExtractNestedExpandAssociations(nestedExpression).First();
+            ExpandAssociations.Add(nestedAssociation);
+            var deepestChildAssociation = nestedAssociation;
+            while (deepestChildAssociation.ExpandAssociations.Any())
+            {
+                deepestChildAssociation = deepestChildAssociation.ExpandAssociations.First();
+            }
+            return deepestChildAssociation;
         }
 
         private IEnumerable<ODataExpandAssociation> ExtractNestedExpandAssociations(Expression expression)
