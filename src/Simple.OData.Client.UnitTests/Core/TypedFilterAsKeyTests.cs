@@ -124,6 +124,30 @@ namespace Simple.OData.Client.Tests.Core
             Assert.Equal(string.Format("Products?$filter=ProductID%20eq%201%20and%20ProductName%20eq%20{0}abc{0}", 
                 Uri.EscapeDataString("'")), commandText);
         }
+       
+        [Fact]
+        public async Task FindAllByFilterAsFirstPartOfCompoundKeyEqualAndExtraClause()
+        {
+            var command = _client
+                .For<OrderDetail>()
+                .Filter(x => x.OrderID == 1 && x.Quantity == 1 );
+            var commandText = await command.GetCommandTextAsync();
+
+            var expected = "Order_Details?$filter=OrderID%20eq%201%20and%20Quantity%20eq%201";
+            Assert.Equal(expected, commandText);
+        }
+
+        [Fact]
+        public async Task FindAllByFilterAsSecondPartOfCompoundKeyEqualAndExtraClause()
+        {
+            var command = _client
+                .For<OrderDetail>()
+                .Filter(x => x.ProductID == 1 && x.Quantity == 1);
+            var commandText = await command.GetCommandTextAsync();
+
+            var expected = "Order_Details?$filter=ProductID%20eq%201%20and%20Quantity%20eq%201";
+            Assert.Equal(expected, commandText);
+        }
 
         [Fact]
         public async Task FindAllByFilterAsKeyEqualDuplicateClause()
