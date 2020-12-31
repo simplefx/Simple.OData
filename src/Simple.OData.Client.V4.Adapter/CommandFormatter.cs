@@ -173,6 +173,7 @@ namespace Simple.OData.Client.V4.Adapter
             if (first.Name != second.Name && first.Name != "*") return new [] {first, second};
 
             var result = first.Clone();
+            result.OrderByColumns.AddRange(second.OrderByColumns.Except(first.OrderByColumns));
             result.ExpandAssociations.Clear();
             var groupedExpandAssociations = first.ExpandAssociations
                 .Concat(second.ExpandAssociations)
@@ -184,6 +185,7 @@ namespace Simple.OData.Client.V4.Adapter
                     foreach (var association in x.Where(a => a != mainAssociation))
                     {
                         mainAssociation = MergeExpandAssociations(mainAssociation, association).First();
+                        mainAssociation.OrderByColumns.AddRange(association.OrderByColumns.Except(mainAssociation.OrderByColumns));
                     }
                     return mainAssociation;
                 });
