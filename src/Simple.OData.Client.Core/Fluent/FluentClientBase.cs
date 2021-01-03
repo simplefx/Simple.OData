@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
@@ -14,7 +13,7 @@ namespace Simple.OData.Client
     /// </summary>
     /// <typeparam name="T">The entity type.</typeparam>
     /// <typeparam name="FT"></typeparam>
-    public abstract partial class FluentClientBase<T, FT> : IFluentClient<T, FT>
+    public abstract class FluentClientBase<T, FT> : IFluentClient<T, FT>
         where T : class
         where FT : class
     {
@@ -36,7 +35,7 @@ namespace Simple.OData.Client
             _dynamicResults = dynamicResults;
         }
 
-        internal FluentCommand Command
+        internal virtual FluentCommand Command
         {
             get
             {
@@ -55,7 +54,7 @@ namespace Simple.OData.Client
             return new FluentCommand(_parentCommand, _client.BatchEntries);
         }
 
-        internal Session Session => _session;
+        internal virtual Session Session => _session;
 
         protected ITypeCache TypeCache => _session.TypeCache;
 
@@ -629,7 +628,7 @@ namespace Simple.OData.Client
         /// Gets the OData command text.
         /// </summary>
         /// <returns>The command text.</returns>
-        public Task<string> GetCommandTextAsync()
+        public virtual Task<string> GetCommandTextAsync()
         {
             return GetCommandTextAsync(CancellationToken.None);
         }
@@ -638,7 +637,7 @@ namespace Simple.OData.Client
         /// </summary>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The command text.</returns>
-        public async Task<string> GetCommandTextAsync(CancellationToken cancellationToken)
+        public virtual async Task<string> GetCommandTextAsync(CancellationToken cancellationToken)
         {
             await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();

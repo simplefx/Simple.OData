@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Simple.OData.Client
 {
-    class FluentCommandDetails
+    internal class FluentCommandDetails
     {
         public FluentCommandDetails Parent { get; private set; }
         public string CollectionName { get; set; }
@@ -37,6 +37,7 @@ namespace Simple.OData.Client
         public IEnumerable<string> MediaProperties { get; set; }
         public ConcurrentDictionary<object, IDictionary<string, object>> BatchEntries { get; set; }
         public IDictionary<string, string> Headers { get; set; }
+        public IDictionary<string, object> Extensions { get; set; }
 
         public FluentCommandDetails(FluentCommandDetails parent, ConcurrentDictionary<object, IDictionary<string, object>> batchEntries)
         {
@@ -49,6 +50,7 @@ namespace Simple.OData.Client
             this.MediaProperties = new List<string>();
             this.BatchEntries = batchEntries;
             this.Headers = new Dictionary<string, string>();
+            this.Extensions = new Dictionary<string, object>();
         }
 
         public FluentCommandDetails(FluentCommandDetails details)
@@ -85,6 +87,7 @@ namespace Simple.OData.Client
             this.QueryOptionsExpression = details.QueryOptionsExpression;
             this.BatchEntries = details.BatchEntries;
             this.Headers = details.Headers;
+            this.Extensions = details.Extensions;
         }
 
         public bool HasKey => this.KeyValues != null && this.KeyValues.Count > 0 || this.NamedKeyValues != null && this.NamedKeyValues.Count > 0;

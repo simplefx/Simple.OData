@@ -146,6 +146,8 @@ namespace Simple.OData.Client
 
         protected abstract void FormatInlineCount(IList<string> commandClauses);
 
+        protected abstract void FormatExtensions(IList<string> commandClauses, ResolvedCommand command);
+
         private const string ReservedUriCharacters = @"!*'();:@&=+$,/?#[] ";
 
         protected string EscapeUnescapedString(string text)
@@ -192,6 +194,9 @@ namespace Simple.OData.Client
 
             if (command.Details.TopCount >= 0)
                 queryClauses.Add($"{ODataLiteral.Top}={command.Details.TopCount}");
+            
+            if (command.Details.Extensions.Any())
+                FormatExtensions(queryClauses, command);
 
             EntityCollection resultCollection;
             if (command.Details.HasFunction)

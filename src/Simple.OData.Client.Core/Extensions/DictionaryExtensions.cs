@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace Simple.OData.Client.Extensions
 {
@@ -69,6 +70,11 @@ namespace Simple.OData.Client.Extensions
                 return typeCache.Converter.Convert(source, type);
             }
 
+            if (type.HasCustomAttribute(typeof(CompilerGeneratedAttribute), false))
+            {
+                return CreateInstanceOfAnonymousType(source, type, typeCache);
+            }
+            
             var instance = CreateInstance(type);
 
             IDictionary<string, object> dynamicProperties = null;
@@ -280,6 +286,22 @@ namespace Simple.OData.Client.Extensions
             var dynamicProperties = new Dictionary<string, object>();
             property.SetValue(instance, dynamicProperties, null);
             return dynamicProperties;
+        }
+
+        private static object CreateInstanceOfAnonymousType(IDictionary<string, object> source, Type type, ITypeCache typeCache)
+        {
+            var constructorParameterTypes = source.Values.Select(v => v.GetType()).ToArray();
+            var constructor = type.GetDeclaredConstructors().FirstOrDefault(c => c.GetParameters().Length == constructorParameterTypes.Length);
+            if (constructor == null)
+            {
+                throw new ConstructorNotFoundException(type, constructorParameterTypes);
+            }
+
+            constructorParameterTypes = constructor.GetParameters().Select(p => p.ParameterType).ToArray();
+            var constructorParameters = source.Values
+                .Select((v, i) => ConvertValue(constructorParameterTypes[i], typeCache, v))
+                .ToArray();
+            return constructor.Invoke(constructorParameters);
         }
     }
 }

@@ -14,7 +14,7 @@ namespace Simple.OData.Client
     // For the same reason FluentClient is also declared as public
     // More: http://bloggingabout.net/blogs/vagif/archive/2013/08/05/we-need-better-interoperability-between-dynamic-and-statically-compiled-c.aspx
 
-    public partial class FluentCommand
+    public class FluentCommand
     {
         internal static readonly string ResultLiteral = "__result";
         internal static readonly string AnnotationsLiteral = "__annotations";
@@ -36,8 +36,7 @@ namespace Simple.OData.Client
         }
 
         internal FluentCommandDetails Details { get; private set; }
-
-
+        
         internal ResolvedCommand Resolve(ISession session)
         {
             return new ResolvedCommand(this, session);

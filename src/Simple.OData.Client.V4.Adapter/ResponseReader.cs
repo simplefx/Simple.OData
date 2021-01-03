@@ -216,7 +216,7 @@ namespace Simple.OData.Client.V4.Adapter
             {
                 try
                 {
-                    id = odataEntry.Id.AbsoluteUri;
+                    id = odataEntry.Id?.AbsoluteUri;
                     readLink = odataEntry.ReadLink;
                     editLink = odataEntry.EditLink;
                 }
