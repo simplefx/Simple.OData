@@ -84,6 +84,7 @@ namespace Simple.OData.Client
             this.QueryOptionsKeyValues = details.QueryOptionsKeyValues;
             this.QueryOptionsExpression = details.QueryOptionsExpression;
             this.BatchEntries = details.BatchEntries;
+            this.Headers = details.Headers;
         }
 
         public bool HasKey => this.KeyValues != null && this.KeyValues.Count > 0 || this.NamedKeyValues != null && this.NamedKeyValues.Count > 0;
