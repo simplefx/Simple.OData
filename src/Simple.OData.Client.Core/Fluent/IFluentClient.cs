@@ -295,14 +295,14 @@ namespace Simple.OData.Client
         FT QueryOptions<U>(Expression<Func<U, bool>> expression);
 
         /// <summary>
-        /// Adds an header to be included in the http request.
+        /// Adds an header to be included in the HTTP request.
         /// </summary>
         /// <param name="name">The header name.</param>
         /// <param name="value">The header value.</param>
         /// <returns>Self.</returns>
         FT WithHeader(string name, string value);
         /// <summary>
-        /// Adds a collection of header to be included in the http request.
+        /// Adds a collection of header to be included in the HTTP request.
         /// </summary>
         /// <param name="name">The header name.</param>
         /// <param name="value">The header value.</param>

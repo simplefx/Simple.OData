@@ -12,7 +12,7 @@ namespace Simple.OData.Client
         Task<ODataRequest> CreatePutRequestAsync(string commandText, Stream stream, string contentType, bool optimisticConcurrency, IDictionary<string, string> headers = null);
         Task<ODataRequest> CreateInsertRequestAsync(string collection, string commandText, IDictionary<string, object> entryData, bool resultRequired, IDictionary<string, string> headers = null);
         Task<ODataRequest> CreateUpdateRequestAsync(string collection, string entryIdent, IDictionary<string, object> entryKey, IDictionary<string, object> entryData, bool resultRequired, IDictionary<string, string> headers = null);
-        Task<ODataRequest> CreateDeleteRequestAsync(string collection, string entryIdent, IDictionary<string, string> headers);
+        Task<ODataRequest> CreateDeleteRequestAsync(string collection, string entryIdent, IDictionary<string, string> headers = null);
         Task<ODataRequest> CreateLinkRequestAsync(string collection, string linkName, string entryIdent, string linkIdent, IDictionary<string, string> headers = null);
         Task<ODataRequest> CreateUnlinkRequestAsync(string collection, string linkName, string entryIdent, string linkIdent, IDictionary<string, string> headers = null);
         Task<ODataRequest> CreateFunctionRequestAsync(string commandText, string functionName, IDictionary<string, string> headers = null);

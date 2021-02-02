@@ -349,18 +349,12 @@ namespace Simple.OData.Client
 
         public FluentCommand WithHeader(string name, string value)
         {
-            if (Details.Headers is null)
-                Details.Headers = new Dictionary<string, string>();
-
             Details.Headers[name] = value;
             return this;
         }
 
         public FluentCommand WithHeaders(IEnumerable<KeyValuePair<string, string>> headers)
         {
-            if (Details.Headers is null)
-                Details.Headers = new Dictionary<string, string>();
-
             foreach (var header in headers)
                 Details.Headers[header.Key] = header.Value;
             return this;
