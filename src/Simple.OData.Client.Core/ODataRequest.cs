@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading.Tasks;
 
 #pragma warning disable 1591
 
@@ -57,7 +58,7 @@ namespace Simple.OData.Client
         public bool ReturnsScalarResult { get; set; }
         public bool ResultRequired { get; set; }
         public bool CheckOptimisticConcurrency { get; set; }
-        public readonly IDictionary<string, string> Headers = new Dictionary<string, string>();
+        public IDictionary<string, string> Headers { get; } = new Dictionary<string, string>();
 
         internal ODataRequest(string method, ISession session, string commandText, IDictionary<string, string> headers = null)
         {
@@ -69,7 +70,7 @@ namespace Simple.OData.Client
                 ? uri.AbsoluteUri
                 : Utils.CreateAbsoluteUri(session.Settings.BaseUri.AbsoluteUri, commandText).AbsoluteUri;
             _payloadFormat = session.Settings.PayloadFormat;
-            
+
             if (headers != null)
                 Headers = headers;
         }

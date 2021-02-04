@@ -1020,7 +1020,7 @@ namespace Simple.OData.Client
 
             await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-            
+
             var resolvedCommand = command.Resolve(_session);
             var requestBuilder = new RequestBuilder(resolvedCommand, _session, this.BatchWriter);
             var request = await requestBuilder.UnlinkRequestAsync(linkName, linkedEntryKey, cancellationToken).ConfigureAwait(false);
@@ -1100,8 +1100,8 @@ namespace Simple.OData.Client
             var result = await ExecuteAsSingleAsync(command, cancellationToken).ConfigureAwait(false);
             return IsBatchRequest
                 ? default(T)
-                : result == null 
-                ? default(T) 
+                : result == null
+                ? default(T)
                 : _session.TypeCache.Convert<T>(result.First().Value);
         }
 
@@ -1120,12 +1120,12 @@ namespace Simple.OData.Client
                 : result.Select(x => (T)x.ToObject(_session.TypeCache, typeof(T))).ToArray();
         }
 
-        internal async Task ExecuteBatchAsync(IList<Func<IODataClient, Task>> actions, CancellationToken cancellationToken)
+        internal async Task ExecuteBatchAsync(IList<Func<IODataClient, Task>> actions, IDictionary<string, string> headers, CancellationToken cancellationToken)
         {
             await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
 
-            await ExecuteBatchActionsAsync(actions, cancellationToken).ConfigureAwait(false);
+            await ExecuteBatchActionsAsync(actions, headers, cancellationToken).ConfigureAwait(false);
         }
 
         private string ExtractFilterFromCommandText(string collection, string commandText)

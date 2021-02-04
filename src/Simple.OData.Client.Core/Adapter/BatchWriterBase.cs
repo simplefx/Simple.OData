@@ -27,7 +27,8 @@ namespace Simple.OData.Client
         public abstract Task<HttpRequestMessage> EndBatchAsync();
 
         public async Task<ODataRequest> CreateBatchRequestAsync(
-            IODataClient client, IList<Func<IODataClient, Task>> actions, IList<int> responseIndexes)
+            IODataClient client, IList<Func<IODataClient, Task>> actions, IList<int> responseIndexes,
+            IDictionary<string, string> headers = null)
         {
             // Write batch operations into a batch content
             var lastOperationId = 0;
@@ -47,6 +48,10 @@ namespace Simple.OData.Client
             {
                 // Create batch request message
                 var requestMessage = await EndBatchAsync().ConfigureAwait(false);
+
+                foreach (var header in headers)
+                    requestMessage.Headers.Add(header.Key, header.Value);
+
                 return new ODataRequest(RestVerbs.Post, _session, ODataLiteral.Batch, requestMessage);
             }
             else
