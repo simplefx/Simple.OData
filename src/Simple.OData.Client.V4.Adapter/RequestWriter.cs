@@ -335,14 +335,8 @@ namespace Simple.OData.Client.V4.Adapter
 
         protected override void AssignHeaders(ODataRequest request)
         {
-            if (request.ResultRequired)
-            {
-                request.Headers.Add(HttpLiteral.Prefer, HttpLiteral.ReturnRepresentation);
-            }
-            else
-            {
-                request.Headers.Add(HttpLiteral.Prefer, HttpLiteral.ReturnMinimal);
-            }
+            request.Headers[HttpLiteral.Prefer] =
+                request.ResultRequired ? HttpLiteral.ReturnRepresentation : HttpLiteral.ReturnMinimal;
         }
 
         private async Task<IODataRequestMessageAsync> CreateBatchOperationMessageAsync(string method, string collection, IDictionary<string, object> entryData, string commandText, bool resultRequired)

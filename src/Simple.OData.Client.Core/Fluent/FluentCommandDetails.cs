@@ -36,6 +36,7 @@ namespace Simple.OData.Client
         public string MediaName { get; set; }
         public IEnumerable<string> MediaProperties { get; set; }
         public ConcurrentDictionary<object, IDictionary<string, object>> BatchEntries { get; set; }
+        public IDictionary<string, string> Headers { get; set; }
 
         public FluentCommandDetails(FluentCommandDetails parent, ConcurrentDictionary<object, IDictionary<string, object>> batchEntries)
         {
@@ -47,6 +48,7 @@ namespace Simple.OData.Client
             this.OrderbyColumns = new List<KeyValuePair<string, bool>>();
             this.MediaProperties = new List<string>();
             this.BatchEntries = batchEntries;
+            this.Headers = new Dictionary<string, string>();
         }
 
         public FluentCommandDetails(FluentCommandDetails details)
@@ -82,6 +84,7 @@ namespace Simple.OData.Client
             this.QueryOptionsKeyValues = details.QueryOptionsKeyValues;
             this.QueryOptionsExpression = details.QueryOptionsExpression;
             this.BatchEntries = details.BatchEntries;
+            this.Headers = details.Headers;
         }
 
         public bool HasKey => this.KeyValues != null && this.KeyValues.Count > 0 || this.NamedKeyValues != null && this.NamedKeyValues.Count > 0;

@@ -347,6 +347,19 @@ namespace Simple.OData.Client
             return this;
         }
 
+        public FluentCommand WithHeader(string name, string value)
+        {
+            Details.Headers[name] = value;
+            return this;
+        }
+
+        public FluentCommand WithHeaders(IEnumerable<KeyValuePair<string, string>> headers)
+        {
+            foreach (var header in headers)
+                Details.Headers[header.Key] = header.Value;
+            return this;
+        }
+
         internal IList<string> SelectedColumns => Details.SelectColumns;
 
         private IEnumerable<string> SplitItems(IEnumerable<string> columns)
