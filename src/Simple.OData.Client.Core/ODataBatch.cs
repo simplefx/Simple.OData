@@ -84,12 +84,24 @@ namespace Simple.OData.Client
             return _client.ExecuteBatchAsync(_actions, headers, cancellationToken);
         }
 
+        /// <summary>
+        /// Adds a header to be included in the HTTP request.
+        /// </summary>
+        /// <param name="name">The header name.</param>
+        /// <param name="value">The header value.</param>
+        /// <returns>Self.</returns>
         public ODataBatch WithHeader(string name, string value)
         {
             headers.Add(name, value);
             return this;
         }
 
+        /// <summary>
+        /// Adds a collection of headers to be included in the HTTP request.
+        /// </summary>
+        /// <param name="name">The header name.</param>
+        /// <param name="value">The header value.</param>
+        /// <returns>Self.</returns>
         public ODataBatch WithHeaders(IDictionary<string,string> headers)
         {
             foreach (var header in headers)
