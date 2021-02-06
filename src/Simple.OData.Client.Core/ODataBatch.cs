@@ -15,7 +15,7 @@ namespace Simple.OData.Client
         private readonly ODataClient _client;
         private readonly List<Func<IODataClient, Task>> _actions = new List<Func<IODataClient, Task>>();
         private readonly ConcurrentDictionary<object, IDictionary<string, object>> _entryMap = new ConcurrentDictionary<object, IDictionary<string, object>>();
-        private readonly Dictionary<string, string> headers = new Dictionary<string, string>();
+        private readonly Dictionary<string, string> _headers = new Dictionary<string, string>();
         /// <summary>
         /// Initializes a new instance of the <see cref="ODataBatch"/> class.
         /// </summary>
@@ -81,7 +81,7 @@ namespace Simple.OData.Client
         /// <returns></returns>
         public Task ExecuteAsync(CancellationToken cancellationToken)
         {
-            return _client.ExecuteBatchAsync(_actions, headers, cancellationToken);
+            return _client.ExecuteBatchAsync(_actions, _headers, cancellationToken);
         }
 
         /// <summary>
@@ -92,7 +92,7 @@ namespace Simple.OData.Client
         /// <returns>Self.</returns>
         public ODataBatch WithHeader(string name, string value)
         {
-            headers.Add(name, value);
+            _headers.Add(name, value);
             return this;
         }
 
