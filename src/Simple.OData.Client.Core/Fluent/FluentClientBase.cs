@@ -35,7 +35,7 @@ namespace Simple.OData.Client
             _dynamicResults = dynamicResults;
         }
 
-        internal virtual FluentCommand Command
+        internal FluentCommand Command
         {
             get
             {
@@ -54,7 +54,7 @@ namespace Simple.OData.Client
             return new FluentCommand(_parentCommand, _client.BatchEntries);
         }
 
-        internal virtual Session Session => _session;
+        internal Session Session => _session;
 
         protected ITypeCache TypeCache => _session.TypeCache;
 
@@ -628,7 +628,7 @@ namespace Simple.OData.Client
         /// Gets the OData command text.
         /// </summary>
         /// <returns>The command text.</returns>
-        public virtual Task<string> GetCommandTextAsync()
+        public Task<string> GetCommandTextAsync()
         {
             return GetCommandTextAsync(CancellationToken.None);
         }
@@ -637,7 +637,7 @@ namespace Simple.OData.Client
         /// </summary>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The command text.</returns>
-        public virtual async Task<string> GetCommandTextAsync(CancellationToken cancellationToken)
+        public async Task<string> GetCommandTextAsync(CancellationToken cancellationToken)
         {
             await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
             if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
