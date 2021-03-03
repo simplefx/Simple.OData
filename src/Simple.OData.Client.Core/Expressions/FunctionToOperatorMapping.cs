@@ -16,6 +16,8 @@ namespace Simple.OData.Client
         }
 
         public abstract string Format(ExpressionContext context, ODataExpression functionCaller, List<ODataExpression> functionArguments);
+        
+        internal abstract int Precedence { get; }
 
         protected abstract bool CanMap(string functionName, int argumentCount, ODataExpression functionCaller, AdapterVersion adapterVersion = AdapterVersion.Any);
 
@@ -47,6 +49,8 @@ namespace Simple.OData.Client
 
             return $"{functionArguments[0].Format(context)} in {listAsString}";
         }
+
+        internal override int Precedence => 2;
 
         protected override bool CanMap(string functionName, int argumentCount, ODataExpression functionCaller, AdapterVersion adapterVersion = AdapterVersion.Any)
         {

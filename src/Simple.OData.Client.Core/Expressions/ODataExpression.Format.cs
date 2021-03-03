@@ -44,7 +44,7 @@ namespace Simple.OData.Client
             {
                 var left = FormatExpression(_left, context);
                 var op = FormatOperator(context);
-                if (NeedsGrouping(_left))
+                if (NeedsGrouping(_left, context))
                     return $"{op} ({left})";
                 else
                     return $"{op} {left}";
@@ -61,9 +61,9 @@ namespace Simple.OData.Client
                 }
                 else
                 {
-                    if (NeedsGrouping(_left))
+                    if (NeedsGrouping(_left, context))
                         left = $"({left})";
-                    if (NeedsGrouping(_right))
+                    if (NeedsGrouping(_right, context))
                         right = $"({right})";
 
                     return $"{left} {op} {right}";
@@ -396,18 +396,30 @@ namespace Simple.OData.Client
             }
         }
 
-        private bool NeedsGrouping(ODataExpression expr)
+        private bool NeedsGrouping(ODataExpression innerExpression, ExpressionContext context)
         {
             if (_operator == ExpressionType.Default)
                 return false;
-            if (ReferenceEquals(expr, null))
+            if (ReferenceEquals(innerExpression, null))
                 return false;
-            if (expr._operator == ExpressionType.Default)
-                return false;
-
+            
+            int innerPrecedence = GetPrecedence(innerExpression, context);
             int outerPrecedence = GetPrecedence(_operator);
-            int innerPrecedence = GetPrecedence(expr._operator);
             return outerPrecedence < innerPrecedence;
+        }
+
+        private int GetPrecedence(ODataExpression expression, ExpressionContext context)
+        {
+            if (expression._operator != ExpressionType.Default)
+                return GetPrecedence(expression._operator);
+            if (ReferenceEquals(expression._functionCaller, null) || ReferenceEquals(expression.Function, null))
+                return 0;
+            
+            var adapterVersion = context.Session?.Adapter.AdapterVersion ?? AdapterVersion.Default;
+            if (FunctionToOperatorMapping.TryGetOperatorMapping(expression._functionCaller, expression.Function, adapterVersion, out var operatorMapping))
+                return operatorMapping.Precedence;
+            
+            return 0;
         }
 
         private string FormatScope(string text, ExpressionContext context)

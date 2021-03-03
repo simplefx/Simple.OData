@@ -48,6 +48,23 @@ namespace Simple.OData.Client.Tests.Core
             Expression<Func<TestEntity, bool>> filter = x => categories.Contains(x.ProductName.ToLower());
             Assert.Equal("tolower(ProductName) in ('chai','milk','water')", ODataExpression.FromLinqExpression(filter).AsString(_session));
         }
+        
+        [Fact]
+        public void FilterEntitiesWithNotContains()
+        {
+            var ids = new List<int> {1, 2, 3};
+            Expression<Func<TestEntity, bool>> filter = x => !ids.Contains(x.ProductID);
+            Assert.Equal("not (ProductID in (1,2,3))", ODataExpression.FromLinqExpression(filter).AsString(_session));
+        }
+        
+        [Fact]
+        public void FilterEntitiesWithContainsAndNotContains()
+        {
+            var ids = new List<int> {1, 2, 3};
+            var names = new List<string> {"Chai", "Milk", "Water"};
+            Expression<Func<TestEntity, bool>> filter = x => ids.Contains(x.ProductID) && !names.Contains(x.ProductName);
+            Assert.Equal("ProductID in (1,2,3) and not (ProductName in ('Chai','Milk','Water'))", ODataExpression.FromLinqExpression(filter).AsString(_session));
+        }
     }
 
     public abstract class TypedExpressionTests : CoreTestBase
