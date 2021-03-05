@@ -116,9 +116,10 @@ namespace Simple.OData.Client
 
         public T AsScalar<T>()
         {
-            Func<IDictionary<string, object>, object> extractScalar = x => (x == null) || !x.Any() ? null : x.Values.First();
             var result = this.AsEntry(false);
-            var value = result == null ? null : extractScalar(result);
+            var value = result == null || result.Count == 0 
+                ? null
+                : result.First().Value;
 
             return value == null 
                 ? default(T) 
