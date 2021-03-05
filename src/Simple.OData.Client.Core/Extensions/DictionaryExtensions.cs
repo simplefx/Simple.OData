@@ -290,18 +290,30 @@ namespace Simple.OData.Client.Extensions
 
         private static object CreateInstanceOfAnonymousType(IDictionary<string, object> source, Type type, ITypeCache typeCache)
         {
-            var constructorParameterTypes = source.Values.Select(v => v.GetType()).ToArray();
-            var constructor = type.GetDeclaredConstructors().FirstOrDefault(c => c.GetParameters().Length == constructorParameterTypes.Length);
+            var constructor = FindConstructorOfAnonymousType(type, source);
             if (constructor == null)
             {
-                throw new ConstructorNotFoundException(type, constructorParameterTypes);
+                throw new ConstructorNotFoundException(type, source.Values.Select(v => v.GetType()));
             }
 
-            constructorParameterTypes = constructor.GetParameters().Select(p => p.ParameterType).ToArray();
-            var constructorParameters = source.Values
-                .Select((v, i) => ConvertValue(constructorParameterTypes[i], typeCache, v))
-                .ToArray();
+            var parameterInfos = constructor.GetParameters();
+            var constructorParameters = new object[parameterInfos.Length];
+            for (var parameterIndex = 0; parameterIndex < parameterInfos.Length; parameterIndex++)
+            {
+                var parameterInfo = parameterInfos[parameterIndex];
+                constructorParameters[parameterIndex] = ConvertValue(parameterInfo.ParameterType, typeCache, source[parameterInfo.Name]);
+            }
             return constructor.Invoke(constructorParameters);
+        }
+
+        private static ConstructorInfo FindConstructorOfAnonymousType(Type type, IDictionary<string, object> source)
+        {
+            return type.GetDeclaredConstructors().FirstOrDefault(c =>
+            {
+                var parameters = c.GetParameters();
+                return parameters.Length == source.Count &&
+                       parameters.All(p => source.ContainsKey(p.Name));
+            });
         }
     }
 }
