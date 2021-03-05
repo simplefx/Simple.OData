@@ -101,7 +101,7 @@ namespace Simple.OData.Client
             }
             else
             {
-                return new IDictionary<string, object>[] { };
+                return Array.Empty<IDictionary<string, object>>();
             }
         }
 
@@ -213,7 +213,7 @@ namespace Simple.OData.Client
 
         internal static ODataResponse EmptyFeeds(ITypeCache typeCache)
         {
-            return FromFeed(typeCache, new Dictionary<string, object>[] { });
+            return FromFeed(typeCache, Array.Empty<Dictionary<string, object>>());
         }
 
         private static ODataResponse FromFeed(ITypeCache typeCache, IEnumerable<IDictionary<string, object>> entries, ODataFeedAnnotations feedAnnotations = null)

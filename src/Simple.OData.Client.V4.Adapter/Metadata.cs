@@ -226,7 +226,7 @@ namespace Simple.OData.Client.V4.Adapter
             }
 
             if (entityType.DeclaredKey == null)
-                return new string[] { };
+                return Array.Empty<string>();
 
             return entityType.DeclaredKey.Select(x => x.Name);
         }
