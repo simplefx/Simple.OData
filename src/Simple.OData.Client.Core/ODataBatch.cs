@@ -16,6 +16,7 @@ namespace Simple.OData.Client
         private readonly List<Func<IODataClient, Task>> _actions = new List<Func<IODataClient, Task>>();
         private readonly ConcurrentDictionary<object, IDictionary<string, object>> _entryMap = new ConcurrentDictionary<object, IDictionary<string, object>>();
         private readonly Dictionary<string, string> _headers = new Dictionary<string, string>();
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ODataBatch"/> class.
         /// </summary>
@@ -105,7 +106,9 @@ namespace Simple.OData.Client
         public ODataBatch WithHeaders(IDictionary<string,string> headers)
         {
             foreach (var header in headers)
+            {
                 WithHeader(header.Key, header.Value);
+            }
 
             return this;
         }

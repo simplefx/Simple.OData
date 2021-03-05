@@ -50,7 +50,9 @@ namespace Simple.OData.Client
                 var requestMessage = await EndBatchAsync().ConfigureAwait(false);
 
                 foreach (var header in headers)
+                {
                     requestMessage.Headers.Add(header.Key, header.Value);
+                }
 
                 return new ODataRequest(RestVerbs.Post, _session, ODataLiteral.Batch, requestMessage);
             }
