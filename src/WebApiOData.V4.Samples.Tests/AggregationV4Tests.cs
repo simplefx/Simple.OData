@@ -46,6 +46,7 @@ namespace WebApiOData.V4.Samples.Tests
                 OnCreateMessageHandler = () => _server.Handler,
 #endif
                 OnTrace = (x, y) => Console.WriteLine(string.Format(x, y)),
+                IgnoreUnmappedProperties = true
             };
         }
 

@@ -15,7 +15,7 @@ namespace Simple.OData.Client.V4.Adapter.Extensions
             DataAggregationClauses = new List<IDataAggregationClause>();
         }
         
-        internal virtual string Build(ResolvedCommand command, ISession session)
+        internal string Build(ResolvedCommand command, ISession session)
         {
             var context = new ExpressionContext(session, null, null, command.DynamicPropertiesContainerName);
             var commandText = string.Empty;

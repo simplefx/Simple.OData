@@ -6,6 +6,7 @@ namespace Simple.OData.Client.V4.Adapter.Extensions
     /// Provides access to extended OData operations e.g. data aggregation extensions in a fluent style.
     /// </summary>
     /// <typeparam name="T">The entry type.</typeparam>
+    /// <inheritdoc cref="IExtendedBoundClient{T}"/>
     public class ExtendedBoundClient<T> : BoundClient<T>, IExtendedBoundClient<T> where T : class
     {
         private ExtendedBoundClient(Session session, FluentCommand command) 
@@ -23,10 +24,6 @@ namespace Simple.OData.Client.V4.Adapter.Extensions
             var dataAggregationBuilder = new DataAggregationBuilder<T>(Session);
             dataAggregation(dataAggregationBuilder);
             AppendDataAggregationBuilder(dataAggregationBuilder);
-            if (typeof(T) != typeof(TR))
-            {
-                Session.Settings.IgnoreUnmappedProperties = true;
-            }
             return new ExtendedBoundClient<TR>(Session, Command);
         }
 
@@ -39,15 +36,12 @@ namespace Simple.OData.Client.V4.Adapter.Extensions
         public IExtendedBoundClient<TR> Apply<TR>(string dataAggregationCommand) where TR : class
         {
             AppendDataAggregationCommand(dataAggregationCommand);
-            Session.Settings.IgnoreUnmappedProperties = true;
             return new ExtendedBoundClient<TR>(Session, Command);
         }
 
         public IExtendedBoundClient<T> Apply(DynamicDataAggregation dataAggregation)
         {
             Command.Details.Extensions[ODataLiteral.Apply] = dataAggregation.CreateBuilder();
-            Session.Settings.IgnoreUnmappedProperties = true;
-            Session.Settings.ReadUntypedAsString = false;
             return this;
         }
 

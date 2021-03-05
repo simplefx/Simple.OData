@@ -15,12 +15,16 @@ namespace Simple.OData.Client.Tests
 
     public class TripPinRESTierTestsV4Json : TripPinTestBase
     {
-        public TripPinRESTierTestsV4Json() : base(TripPinV4RESTierUri, ODataPayloadFormat.Json) { }
+        public TripPinRESTierTestsV4Json() : base(TripPinV4RESTierUri, ODataPayloadFormat.Json) {}
         
         [Fact]
         public async Task FindPeopleCountByGender()
         {
-            var peopleGroupedByGender = await _client
+            var client = new ODataClient(CreateDefaultSettings(s =>
+            {
+                s.IgnoreUnmappedProperties = true;
+            }));
+            var peopleGroupedByGender = await client
                 .WithExtensions()
                 .For<Person>()
                 .Apply(x => x.GroupBy((p, a) => new
