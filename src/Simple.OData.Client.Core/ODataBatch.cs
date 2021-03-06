@@ -14,7 +14,8 @@ namespace Simple.OData.Client
     {
         private readonly ODataClient _client;
         private readonly List<Func<IODataClient, Task>> _actions = new List<Func<IODataClient, Task>>();
-        private readonly ConcurrentDictionary<object, IDictionary<string, object>> _entryMap = new ConcurrentDictionary<object, IDictionary<string, object>>(); 
+        private readonly ConcurrentDictionary<object, IDictionary<string, object>> _entryMap = new ConcurrentDictionary<object, IDictionary<string, object>>();
+        private readonly Dictionary<string, string> _headers = new Dictionary<string, string>();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ODataBatch"/> class.
@@ -50,7 +51,7 @@ namespace Simple.OData.Client
         public ODataBatch(IODataClient client, bool reuseSession)
         {
             _client = reuseSession
-                ? new ODataClient((client as ODataClient), _entryMap) 
+                ? new ODataClient((client as ODataClient), _entryMap)
                 : new ODataClient((client as ODataClient).Session.Settings, _entryMap);
         }
         /// <summary>
@@ -81,7 +82,35 @@ namespace Simple.OData.Client
         /// <returns></returns>
         public Task ExecuteAsync(CancellationToken cancellationToken)
         {
-            return _client.ExecuteBatchAsync(_actions, cancellationToken);
+            return _client.ExecuteBatchAsync(_actions, _headers, cancellationToken);
+        }
+
+        /// <summary>
+        /// Adds a header to be included in the HTTP request.
+        /// </summary>
+        /// <param name="name">The header name.</param>
+        /// <param name="value">The header value.</param>
+        /// <returns>Self.</returns>
+        public ODataBatch WithHeader(string name, string value)
+        {
+            _headers.Add(name, value);
+            return this;
+        }
+
+        /// <summary>
+        /// Adds a collection of headers to be included in the HTTP request.
+        /// </summary>
+        /// <param name="name">The header name.</param>
+        /// <param name="value">The header value.</param>
+        /// <returns>Self.</returns>
+        public ODataBatch WithHeaders(IDictionary<string,string> headers)
+        {
+            foreach (var header in headers)
+            {
+                WithHeader(header.Key, header.Value);
+            }
+
+            return this;
         }
     }
 }
