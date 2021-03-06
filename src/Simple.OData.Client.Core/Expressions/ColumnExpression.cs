@@ -43,6 +43,7 @@ namespace Simple.OData.Client
                     return ExtractColumnNames(expression as MemberExpression, typeCache);
 
                 case ExpressionType.Convert:
+                case ExpressionType.Quote:    
                     return ExtractColumnNames((expression as UnaryExpression).Operand, typeCache);
 
                 case ExpressionType.Lambda:
