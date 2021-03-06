@@ -22,6 +22,7 @@ namespace Simple.OData.Client.Tests
         protected const string NorthwindV4ReadOnlyUri = "https://services.odata.org/V4/Northwind/Northwind.svc/";
 
         protected const string TripPinV4ReadWriteUri = "https://services.odata.org/V4/TripPinServiceRW/";
+        protected const string TripPinV4RESTierUri = "https://services.odata.org/TripPinRESTierService/";
 
         protected readonly Uri _serviceUri;
         protected readonly ODataPayloadFormat _payloadFormat;

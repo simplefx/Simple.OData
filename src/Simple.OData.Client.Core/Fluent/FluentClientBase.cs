@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
@@ -14,7 +13,7 @@ namespace Simple.OData.Client
     /// </summary>
     /// <typeparam name="T">The entity type.</typeparam>
     /// <typeparam name="FT"></typeparam>
-    public abstract partial class FluentClientBase<T, FT> : IFluentClient<T, FT>
+    public abstract class FluentClientBase<T, FT> : IFluentClient<T, FT>
         where T : class
         where FT : class
     {

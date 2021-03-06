@@ -26,5 +26,6 @@
         public const string Is = "is";
         public const string Cast = "cast";
         public const string As = "as";
+        public const string Apply = "$apply";
     }
 }
