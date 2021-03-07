@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace Simple.OData.Client.Extensions
 {
@@ -69,6 +70,11 @@ namespace Simple.OData.Client.Extensions
                 return typeCache.Converter.Convert(source, type);
             }
 
+            if (type.HasCustomAttribute(typeof(CompilerGeneratedAttribute), false))
+            {
+                return CreateInstanceOfAnonymousType(source, type, typeCache);
+            }
+            
             var instance = CreateInstance(type);
 
             IDictionary<string, object> dynamicProperties = null;
@@ -280,6 +286,34 @@ namespace Simple.OData.Client.Extensions
             var dynamicProperties = new Dictionary<string, object>();
             property.SetValue(instance, dynamicProperties, null);
             return dynamicProperties;
+        }
+
+        private static object CreateInstanceOfAnonymousType(IDictionary<string, object> source, Type type, ITypeCache typeCache)
+        {
+            var constructor = FindConstructorOfAnonymousType(type, source);
+            if (constructor == null)
+            {
+                throw new ConstructorNotFoundException(type, source.Values.Select(v => v.GetType()));
+            }
+
+            var parameterInfos = constructor.GetParameters();
+            var constructorParameters = new object[parameterInfos.Length];
+            for (var parameterIndex = 0; parameterIndex < parameterInfos.Length; parameterIndex++)
+            {
+                var parameterInfo = parameterInfos[parameterIndex];
+                constructorParameters[parameterIndex] = ConvertValue(parameterInfo.ParameterType, typeCache, source[parameterInfo.Name]);
+            }
+            return constructor.Invoke(constructorParameters);
+        }
+
+        private static ConstructorInfo FindConstructorOfAnonymousType(Type type, IDictionary<string, object> source)
+        {
+            return type.GetDeclaredConstructors().FirstOrDefault(c =>
+            {
+                var parameters = c.GetParameters();
+                return parameters.Length == source.Count &&
+                       parameters.All(p => source.ContainsKey(p.Name));
+            });
         }
     }
 }

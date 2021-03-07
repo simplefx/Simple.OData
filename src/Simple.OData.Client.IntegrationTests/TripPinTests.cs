@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Simple.OData.Client.V4.Adapter.Extensions;
 using Xunit;
 
 namespace Simple.OData.Client.Tests
@@ -10,6 +11,50 @@ namespace Simple.OData.Client.Tests
     public class TripPinTestsV4Json : TripPinTests
     {
         public TripPinTestsV4Json() : base(TripPinV4ReadWriteUri, ODataPayloadFormat.Json) { }
+    }
+
+    public class TripPinRESTierTestsV4Json : TripPinTestBase
+    {
+        public TripPinRESTierTestsV4Json() : base(TripPinV4RESTierUri, ODataPayloadFormat.Json) {}
+        
+        [Fact]
+        public async Task FindPeopleCountByGender()
+        {
+            var client = new ODataClient(CreateDefaultSettings(s =>
+            {
+                s.IgnoreUnmappedProperties = true;
+            }));
+            var peopleGroupedByGender = await client
+                .WithExtensions()
+                .For<Person>()
+                .Apply(x => x.GroupBy((p, a) => new
+                {
+                    p.Gender,
+                    Count = a.Count()
+                }))
+                .FindEntriesAsync();
+
+            Assert.True(peopleGroupedByGender.All(x => x.Count > 0));
+        }
+        
+        [Fact]
+        public async Task FindPeopleCountByGenderDynamic()
+        {
+            var x = ODataDynamic.Expression;
+            var b = ODataDynamicDataAggregation.Builder;
+            var a = ODataDynamicDataAggregation.AggregationFunction;
+            IEnumerable<dynamic> peopleGroupedByGender = await _client
+                .WithExtensions()
+                .For(x.Person)
+                .Apply(b.GroupBy(new
+                {
+                    x.Gender,
+                    Count = a.Count()
+                }))
+                .FindEntriesAsync();
+
+            Assert.True(peopleGroupedByGender.First().Count > 0);
+        }
     }
 
     public abstract class TripPinTests : TripPinTestBase

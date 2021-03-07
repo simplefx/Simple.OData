@@ -544,38 +544,5 @@ namespace Simple.OData.Client.Tests.FluentApi
                 .FindEntriesAsync();
             Assert.Equal(ExpectedCountOfOrdersHavingAllDetails, products.Count());
         }
-
-        [Fact]
-        public async Task WithHeader()
-        {
-            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
-            
-            var request = await client
-                .For("Products")
-                .WithHeader("header1", "header1Value")
-                .WithHeader("header2", "header2Value")
-                .BuildRequestFor()
-                .FindEntryAsync();
-
-            Assert.Equal("header1Value", request.GetRequest().RequestMessage.Headers.GetValues("header1").SingleOrDefault());
-            Assert.Equal("header2Value", request.GetRequest().RequestMessage.Headers.GetValues("header2").SingleOrDefault());
-        }
-
-        [Fact]
-        public async Task WithHeaders()
-        {
-            var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
-
-            var request = await client
-                .For("Products")
-                .WithHeaders(new Dictionary<string, string>{
-                    { "header1", "header1Value" },
-                    { "header2", "header2Value" }})
-                .BuildRequestFor()
-                .FindEntryAsync();
-
-            Assert.Equal("header1Value", request.GetRequest().RequestMessage.Headers.GetValues("header1").SingleOrDefault()); 
-            Assert.Equal("header2Value", request.GetRequest().RequestMessage.Headers.GetValues("header2").SingleOrDefault());
-        }
     }
 }

@@ -102,7 +102,8 @@ namespace Simple.OData.Client
 
             foreach (var header in request.Headers)
             {
-                request.RequestMessage.Headers.TryAddWithoutValidation(header.Key, header.Value);
+                if (request.RequestMessage.Headers.TryGetValues(header.Key, out var values) && !values.Contains(header.Value))
+                    request.RequestMessage.Headers.TryAddWithoutValidation(header.Key, header.Value);
             }
 
             _session.Settings.BeforeRequest?.Invoke(request.RequestMessage);
