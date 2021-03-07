@@ -207,7 +207,7 @@ namespace Simple.OData.Client.Tests.FluentApi
                     }));
 
             var commandText = await command.GetCommandTextAsync();
-            Assert.Equal("Products?$apply=filter%28Category%2FCategoryName%20in%20%28%27Beverage%27%2C%27Food%27%29%29%2Fgroupby%28%28Category%2FCategoryName%29%2Caggregate%28UnitPrice%20with%20average%20as%20AverageUnitPrice%29%29", commandText);
+            Assert.Equal("Products?$apply=filter%28%28Category%2FCategoryName%20in%20%28%27Beverage%27%2C%27Food%27%29%29%29%2Fgroupby%28%28Category%2FCategoryName%29%2Caggregate%28UnitPrice%20with%20average%20as%20AverageUnitPrice%29%29", commandText);
         }
         
         [Fact]
