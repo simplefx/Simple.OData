@@ -45,7 +45,9 @@ namespace Simple.OData.Client
             }
             listAsString.Append(")");
 
-            return $"{functionArguments[0].Format(context)} in {listAsString}";
+            // to work around the issue in OData/odata.net (https://github.com/OData/odata.net/issues/2016) the 'in' is always grouped
+            // the workaround can be removed later if this issue is fixed
+            return $"({functionArguments[0].Format(context)} in {listAsString})";
         }
 
         protected override bool CanMap(string functionName, int argumentCount, ODataExpression functionCaller, AdapterVersion adapterVersion = AdapterVersion.Any)
