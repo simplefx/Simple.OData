@@ -1667,6 +1667,24 @@
             <param name="expression">The custom query options expression.</param>
             <returns>Self.</returns>
         </member>
+        <member name="M:Simple.OData.Client.IFluentClient`2.WithHeader(System.String,System.String)">
+            <summary>
+            Adds a header to be included in the HTTP request.
+            </summary>
+            <param name="name">The header name.</param>
+            <param name="value">The header value.</param>
+            <remarks>Ignored in batch actions. For batch headers use the <see cref="M:Simple.OData.Client.ODataBatch.WithHeader(System.String,System.String)"/> method.</remarks>
+            <returns>Self.</returns>
+        </member>
+        <member name="M:Simple.OData.Client.IFluentClient`2.WithHeaders(System.Collections.Generic.IEnumerable{System.Collections.Generic.KeyValuePair{System.String,System.String}})">
+            <summary>
+            Adds a collection of headers to be included in the HTTP request.
+            </summary>
+            <param name="name">The header name.</param>
+            <param name="value">The header value.</param>
+            <remarks>Ignored in batch actions. For batch headers use the <see cref="M:Simple.OData.Client.ODataBatch.WithHeaders(System.Collections.Generic.IDictionary{System.String,System.String})"/> method.</remarks>
+            <returns>Self.</returns>
+        </member>
         <member name="M:Simple.OData.Client.IFluentClient`2.Media">
             <summary>
             Selects retrieval of an entity media stream.
@@ -3045,6 +3063,22 @@
             </summary>
             <param name="cancellationToken">The cancellation token.</param>
             <returns></returns>
+        </member>
+        <member name="M:Simple.OData.Client.ODataBatch.WithHeader(System.String,System.String)">
+            <summary>
+            Adds a header to be included in the HTTP request.
+            </summary>
+            <param name="name">The header name.</param>
+            <param name="value">The header value.</param>
+            <returns>Self.</returns>
+        </member>
+        <member name="M:Simple.OData.Client.ODataBatch.WithHeaders(System.Collections.Generic.IDictionary{System.String,System.String})">
+            <summary>
+            Adds a collection of headers to be included in the HTTP request.
+            </summary>
+            <param name="name">The header name.</param>
+            <param name="value">The header value.</param>
+            <returns>Self.</returns>
         </member>
         <member name="T:Simple.OData.Client.ODataClient">
             <summary>

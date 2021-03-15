@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-
 using Microsoft.OData;
+using Simple.OData.Client.V4.Adapter.Extensions;
 
 namespace Simple.OData.Client.V4.Adapter
 {
@@ -76,6 +76,26 @@ namespace Simple.OData.Client.V4.Adapter
         protected override void FormatInlineCount(IList<string> commandClauses)
         {
             commandClauses.Add($"{ODataLiteral.Count}={ODataLiteral.True}");
+        }
+
+        protected override void FormatExtensions(IList<string> commandClauses, ResolvedCommand command)
+        {
+            if (command.Details.Extensions.TryGetValue(ODataLiteral.Apply, out var applyCommandObject))
+            {
+                var formattedApplyCommand = string.Empty;
+                switch (applyCommandObject)
+                {
+                    case DataAggregationBuilder applyCommandBuilder:
+                        formattedApplyCommand = applyCommandBuilder.Build(command, _session);
+                        break;
+                    case string applyCommand:
+                        formattedApplyCommand = applyCommand;
+                        break;
+                }
+
+                if (!string.IsNullOrEmpty(formattedApplyCommand))
+                    commandClauses.Add($"{ODataLiteral.Apply}={EscapeUnescapedString(formattedApplyCommand)}");
+            }
         }
 
         private string FormatExpansionSegment(ODataExpandAssociation association, EntityCollection entityCollection,

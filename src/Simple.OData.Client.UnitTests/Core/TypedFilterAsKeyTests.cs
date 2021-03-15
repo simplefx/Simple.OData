@@ -46,7 +46,7 @@ namespace Simple.OData.Client.Tests.Core
                 .For<Product>()
                 .Filter(x => ids.Contains(x.ProductID));
             var commandText = await command.GetCommandTextAsync();
-            Assert.Equal("Products?$filter=ProductID%20in%20%281%2C2%2C3%29", commandText);
+            Assert.Equal("Products?$filter=%28ProductID%20in%20%281%2C2%2C3%29%29", commandText);
         }
     }
 

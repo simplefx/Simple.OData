@@ -1,0 +1,1 @@
+{"Content":"stream_data","ContentHeaders":[{"Key":"Content-Type","Value":["text/plain"]},{"Key":"Content-Length","Value":["14"]}],"Method":"PUT","RequestHeaders":[{"Key":"Prefer","Value":["return-no-content"]},{"Key":"header1","Value":["header1Value"]}],"RequestUri":"http:\/\/nrkdt66337\/Temporary_Listen_Addresses\/SimpleODataTestService214\/Categories(1)/$value"}

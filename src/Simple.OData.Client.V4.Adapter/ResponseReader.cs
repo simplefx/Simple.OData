@@ -216,7 +216,8 @@ namespace Simple.OData.Client.V4.Adapter
             {
                 try
                 {
-                    id = odataEntry.Id.AbsoluteUri;
+                    // odataEntry.Id is null for transient entities (s. http://docs.oasis-open.org/odata/odata-json-format/v4.0/errata03/os/odata-json-format-v4.0-errata03-os-complete.html#_Toc453766634)
+                    id = odataEntry.Id?.AbsoluteUri;
                     readLink = odataEntry.ReadLink;
                     editLink = odataEntry.EditLink;
                 }

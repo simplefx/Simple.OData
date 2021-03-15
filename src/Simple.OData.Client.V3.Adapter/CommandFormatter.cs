@@ -42,5 +42,9 @@ namespace Simple.OData.Client.V3.Adapter
         {
             commandClauses.Add($"{ODataLiteral.InlineCount}={ODataLiteral.AllPages}");
         }
+
+        protected override void FormatExtensions(IList<string> commandClauses, ResolvedCommand command)
+        {
+        }
     }
 }
