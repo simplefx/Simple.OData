@@ -198,7 +198,7 @@ namespace Simple.OData.Client
                 else
                 {
                     return new ODataExpression(EvaluateConstValue(constExpression.Value,
-                        members == null ? new Stack<MemberInfo>() : members));
+                        members ?? new Stack<MemberInfo>()));
                 }
             }
         }
