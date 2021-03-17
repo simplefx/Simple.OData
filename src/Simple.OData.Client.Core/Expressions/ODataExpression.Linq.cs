@@ -73,8 +73,7 @@ namespace Simple.OData.Client
             }
             else
             {
-                if (memberChain == null)
-                    memberChain = new Stack<MemberInfo>();
+                memberChain ??= new Stack<MemberInfo>();
                 memberChain.Push(memberExpression.Member);
                 switch (memberExpression.Expression.NodeType)
                 {
