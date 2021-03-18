@@ -64,7 +64,7 @@ namespace Simple.OData.Client
             throw Utils.NotSupportedExpression(expression);
         }
 
-        private static ODataExpression ParseMemberExpression(Expression expression, string memberNames = null)
+        private static ODataExpression ParseMemberExpression(Expression expression, Stack<MemberInfo> memberChain = null)
         {
             var memberExpression = expression as MemberExpression;
             if (memberExpression.Expression == null)
@@ -73,24 +73,26 @@ namespace Simple.OData.Client
             }
             else
             {
-                // NOTE: Can't support ITypeCache here as we might be dealing with dynamic types/expressions
-                var memberName = memberExpression.Member.GetMappedName();
-
-                memberNames = memberNames == null ? memberName : string.Join(".", memberName, memberNames);
+                memberChain ??= new Stack<MemberInfo>();
+                memberChain.Push(memberExpression.Member);
                 switch (memberExpression.Expression.NodeType)
                 {
                     case ExpressionType.Parameter:
+                        // NOTE: Can't support ITypeCache here as we might be dealing with dynamic types/expressions
+                        var memberNames = string.Join(".", memberChain.Select(x => x.GetMappedName()));
                         return FromReference(memberNames);
                     case ExpressionType.Constant:
-                        return ParseConstantExpression(memberExpression.Expression, memberNames);
+                        return ParseConstantExpression(memberExpression.Expression, memberChain);
                     case ExpressionType.MemberAccess:
+                        // NOTE: Can't support ITypeCache here as we might be dealing with dynamic types/expressions
+                        var memberName = memberExpression.Member.GetMappedName();
                         if (FunctionMapping.ContainsFunction(memberName, 0))
                         {
                             return FromFunction(memberName, ParseMemberExpression(memberExpression.Expression), new List<object>());
                         }
                         else
                         {
-                            return ParseMemberExpression(memberExpression.Expression as MemberExpression, memberNames);
+                            return ParseMemberExpression(memberExpression.Expression as MemberExpression, memberChain);
                         }
 
                     default:
@@ -178,13 +180,13 @@ namespace Simple.OData.Client
             return ParseLinqExpression(lambdaExpression.Body);
         }
 
-        private static ODataExpression ParseConstantExpression(Expression expression, string memberNames = null)
+        private static ODataExpression ParseConstantExpression(Expression expression, Stack<MemberInfo> members = null)
         {
             var constExpression = expression as ConstantExpression;
 
             if (constExpression.Value is Expression)
             {
-                return ParseConstantExpression(constExpression.Value as Expression, memberNames);
+                return ParseConstantExpression(constExpression.Value as Expression, members);
             }
             else
             {
@@ -194,9 +196,8 @@ namespace Simple.OData.Client
                 }
                 else
                 {
-                    return new ODataExpression(EvaluateConstValue(
-                        constExpression.Type, constExpression.Value,
-                        memberNames == null ? new List<string>() : memberNames.Split('.').ToList()));
+                    return new ODataExpression(EvaluateConstValue(constExpression.Value,
+                        members ?? new Stack<MemberInfo>()));
                 }
             }
         }
@@ -327,52 +328,43 @@ namespace Simple.OData.Client
         private static object EvaluateStaticMember(MemberExpression expression)
         {
             object value = null;
-            if (expression.Member is FieldInfo)
+            switch (expression.Member)
             {
-                var fi = (FieldInfo)expression.Member;
-                value = fi.GetValue(null);
-            }
-            else if (expression.Member is PropertyInfo)
-            {
-                var pi = (PropertyInfo)expression.Member;
-                if (pi.GetIndexParameters().Length != 0)
-                    throw new ArgumentException("cannot eliminate closure references to indexed properties.");
-                value = pi.GetValue(null, null);
+                case FieldInfo field:
+                    value = field.GetValue(null);
+                    break;
+                case PropertyInfo property:
+                    if (property.GetIndexParameters().Length != 0)
+                        throw new ArgumentException("cannot eliminate closure references to indexed properties.");
+                    value = property.GetValue(null, null);
+                    break;
             }
             return value;
         }
 
-        private static object EvaluateConstValue(Type type, object value, IList<string> memberNames)
+        private static object EvaluateConstValue(object value, Stack<MemberInfo> memberChain)
         {
-            if (!memberNames.Any())
+            if (!memberChain.Any())
                 return value;
 
-            var memberName = memberNames.First();
-            memberNames = memberNames.Skip(1).ToList();
+            var member = memberChain.Pop();
 
-            Type itemType;
             object itemValue;
-            var property = type.GetNamedProperty(memberName);
-            if (property != null)
+            switch (member)
             {
-                itemType = property.PropertyType;
-                itemValue = property.GetValue(value, null);
-            }
-            else
-            {
-                var field = type.GetAnyField(memberName, true);
-                if (field != null)
-                {
-                    itemType = field.FieldType;
+                case PropertyInfo property:
+                    if (property.GetIndexParameters().Length != 0)
+                        throw new ArgumentException("cannot evaluate constant value of indexed properties.");
+                    itemValue = property.GetValue(value, null);
+                    break;
+                case FieldInfo field:
                     itemValue = field.GetValue(value);
-                }
-                else
-                {
+                    break;
+                default:
                     return value;
-                }
             }
 
-            return EvaluateConstValue(itemType, itemValue, memberNames);
+            return EvaluateConstValue(itemValue, memberChain);
         }
     }
 }

@@ -664,5 +664,23 @@ namespace Simple.OData.Client.Tests.Core
             var filter = filter1 && filter2;
             Assert.Equal("(ProductName eq 'Chai' or ProductID eq 1) and (ProductName eq 'Kaffe' or ProductID eq 2)", filter.AsString(_session));
         }
+
+        [Fact]
+        public void FilterEqualityToMappedPropertyOfOtherEntity()
+        {
+            var otherEntity = new TestEntity
+            {
+                MappedNameUsingDataMemberAttribute = "Other Name"
+            };
+            Expression<Func<TestEntity, bool>> filter = x => x.MappedNameUsingDataMemberAttribute == otherEntity.MappedNameUsingDataMemberAttribute;
+            Assert.Equal("Name eq 'Other Name'", ODataExpression.FromLinqExpression(filter).AsString(_session));
+            
+            otherEntity = new TestEntity
+            {
+                MappedNameUsingJsonPropertyAttribute = "Other Name"
+            };
+            filter = x => x.MappedNameUsingJsonPropertyAttribute == otherEntity.MappedNameUsingJsonPropertyAttribute;
+            Assert.Equal("Name eq 'Other Name'", ODataExpression.FromLinqExpression(filter).AsString(_session));
+        }
     }
 }
