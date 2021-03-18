@@ -86,7 +86,7 @@ namespace Simple.OData.Client
             }
             else
             {
-                return new T[] { };
+                return Array.Empty<T>();
             }
         }
 

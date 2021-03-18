@@ -213,7 +213,7 @@ namespace Simple.OData.Client.Extensions
             if (elementType == null)
                 return null;
 
-            var count = (itemValue as System.Collections.IEnumerable).Cast<object>().Count();
+            var count = GetCollectionCount(itemValue);
             var arrayValue = Array.CreateInstance(elementType, count);
 
             count = 0;
@@ -238,6 +238,29 @@ namespace Simple.OData.Client.Extensions
                     : collectionTypes[1];
                 var activator = _collectionActivators.GetOrAdd(new Tuple<Type, Type>(type, collectionType), t => type.CreateActivator(collectionType));
                 return activator?.Invoke(arrayValue);
+            }
+        }
+
+        private static int GetCollectionCount(object collection)
+        {
+            if (collection is System.Collections.IList)
+            {
+                return ((System.Collections.IList)collection).Count;
+            }
+            else if (collection is System.Collections.IDictionary)
+            {
+                return ((System.Collections.IDictionary)collection).Count;
+            }
+            else
+            {
+                int count = 0;
+                var e = ((System.Collections.IEnumerable)collection).GetEnumerator();
+                using (e as IDisposable)
+                {
+                    while (e.MoveNext()) count++;
+                }
+
+                return count;
             }
         }
 

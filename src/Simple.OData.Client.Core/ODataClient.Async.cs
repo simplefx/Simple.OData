@@ -594,7 +594,7 @@ namespace Simple.OData.Client
 
             var result = await ExecuteFunctionAsEnumerableAsync(functionName, parameters, cancellationToken).ConfigureAwait(false);
             return IsBatchRequest
-                ? new T[] { }
+                ? Array.Empty<T>()
                 : result?.SelectMany(x => x.Values)
                     .Select(x => _session.TypeCache.Convert<T>(x))
                     .ToArray();
@@ -696,7 +696,7 @@ namespace Simple.OData.Client
 
             var result = await ExecuteActionAsEnumerableAsync(actionName, parameters, cancellationToken).ConfigureAwait(false);
             return IsBatchRequest
-                ? new T[] { }
+                ? Array.Empty<T>()
                 : result?.SelectMany(x => x.Values)
                     .Select(x => _session.TypeCache.Convert<T>(x))
                     .ToArray();
@@ -770,7 +770,7 @@ namespace Simple.OData.Client
 
                 return x.Feed?.Entries;
             },
-            () => new AnnotatedEntry[] { }).ConfigureAwait(false);
+            () => Array.Empty<AnnotatedEntry>()).ConfigureAwait(false);
         }
 
         internal async Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(
@@ -806,7 +806,7 @@ namespace Simple.OData.Client
 
             var result = await ExecuteRequestWithResultAsync(request, cancellationToken,
                 x => x.AsEntries(_session.Settings.IncludeAnnotationsInResults),
-                () => new IDictionary<string, object>[] { }).ConfigureAwait(false);
+                () => Array.Empty<IDictionary<string, object>>()).ConfigureAwait(false);
             return result?.FirstOrDefault();
         }
 
@@ -839,9 +839,9 @@ namespace Simple.OData.Client
 
             var result = await ExecuteRequestWithResultAsync(request, cancellationToken,
                 x => x.AsEntries(_session.Settings.IncludeAnnotationsInResults),
-                () => new IDictionary<string, object>[] { }).ConfigureAwait(false);
+                () => Array.Empty<IDictionary<string, object>>()).ConfigureAwait(false);
 
-            object extractScalar(IDictionary<string, object> x) => (x == null) || !x.Any() ? null : x.Values.First();
+            object extractScalar(IDictionary<string, object> x) => (x == null) || (x.Count == 0) ? null : x.First().Value;
             return result == null ? null : extractScalar(result.FirstOrDefault());
         }
 
@@ -1132,7 +1132,7 @@ namespace Simple.OData.Client
 
             var result = await ExecuteAsEnumerableAsync(command, cancellationToken).ConfigureAwait(false);
             return IsBatchRequest
-                ? new T[] { }
+                ? Array.Empty<T>()
                 : result == null
                 ? null
                 : typeof(T) == typeof(string) || typeof(T).IsValue()

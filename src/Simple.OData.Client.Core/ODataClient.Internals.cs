@@ -32,7 +32,7 @@ namespace Simple.OData.Client
 
             return await ExecuteRequestWithResultAsync(request, cancellationToken,
                 x => x.AsEntries(_session.Settings.IncludeAnnotationsInResults),
-                () => new IDictionary<string, object>[] { }).ConfigureAwait(false);
+                () => Array.Empty<IDictionary<string, object>>()).ConfigureAwait(false);
         }
 
         private async Task<IEnumerable<IDictionary<string, object>>> ExecuteActionAsync(ResolvedCommand command, CancellationToken cancellationToken)
@@ -45,7 +45,7 @@ namespace Simple.OData.Client
 
             return await ExecuteRequestWithResultAsync(request, cancellationToken,
                 x => x.AsEntries(_session.Settings.IncludeAnnotationsInResults),
-                () => new IDictionary<string, object>[] { }).ConfigureAwait(false);
+                () => Array.Empty<IDictionary<string, object>>()).ConfigureAwait(false);
         }
 
         private async Task ExecuteBatchActionsAsync(IList<Func<IODataClient, Task>> actions, IDictionary<string, string> headers, CancellationToken cancellationToken)

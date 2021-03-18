@@ -101,7 +101,7 @@ namespace Simple.OData.Client
             }
             else
             {
-                return new IDictionary<string, object>[] { };
+                return Array.Empty<IDictionary<string, object>>();
             }
         }
 
@@ -116,9 +116,10 @@ namespace Simple.OData.Client
 
         public T AsScalar<T>()
         {
-            Func<IDictionary<string, object>, object> extractScalar = x => (x == null) || !x.Any() ? null : x.Values.First();
             var result = this.AsEntry(false);
-            var value = result == null ? null : extractScalar(result);
+            var value = result == null || result.Count == 0 
+                ? null
+                : result.First().Value;
 
             return value == null 
                 ? default(T) 
@@ -213,7 +214,7 @@ namespace Simple.OData.Client
 
         internal static ODataResponse EmptyFeeds(ITypeCache typeCache)
         {
-            return FromFeed(typeCache, new Dictionary<string, object>[] { });
+            return FromFeed(typeCache, Array.Empty<Dictionary<string, object>>());
         }
 
         private static ODataResponse FromFeed(ITypeCache typeCache, IEnumerable<IDictionary<string, object>> entries, ODataFeedAnnotations feedAnnotations = null)
