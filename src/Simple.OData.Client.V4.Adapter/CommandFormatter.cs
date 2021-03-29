@@ -55,14 +55,14 @@ namespace Simple.OData.Client.V4.Adapter
                         }
                         return new KeyValuePair<ODataExpandAssociation, ODataExpandOptions>(mainAssociation, x.Key.Value);
                     });
-                
+
                 var formattedExpand = string.Join(",", mergedExpandAssociations.Select(x =>
                     FormatExpansionSegment(x.Key, resultCollection, x.Value, command)));
                 commandClauses.Add($"{ODataLiteral.Expand}={formattedExpand}");
             }
 
             FormatClause(commandClauses, resultCollection,
-                SelectPathSegmentColumns(command.Details.SelectColumns, null, resultCollection,
+                SelectPathSegmentColumns(command.Details.SelectColumns, resultCollection,
                     command.Details.ExpandAssociations.Select(x => FormatFirstSegment(x.Key.Name)).ToList()),
                 ODataLiteral.Select, FormatSelectItem);
 
@@ -188,7 +188,7 @@ namespace Simple.OData.Client.V4.Adapter
         {
             return MergeExpandAssociations(expandAssociation, ODataExpandAssociation.From(path)).First();
         }
-        
+
         private static IEnumerable<ODataExpandAssociation> MergeExpandAssociations(ODataExpandAssociation first, ODataExpandAssociation second)
         {
             if (first.Name != second.Name && first.Name != "*") return new [] {first, second};
@@ -210,9 +210,9 @@ namespace Simple.OData.Client.V4.Adapter
                     }
                     return mainAssociation;
                 });
-            
+
             result.ExpandAssociations.AddRange(mergedExpandAssociations);
-            
+
             return new [] {result};
         }
 
@@ -220,7 +220,7 @@ namespace Simple.OData.Client.V4.Adapter
         {
             if (string.IsNullOrEmpty(orderByColumn.Key))
                 return expandAssociation;
-            
+
             var segments = orderByColumn.Key.Split('/');
             if (segments[0] != expandAssociation.Name)
                 return expandAssociation;
@@ -241,7 +241,7 @@ namespace Simple.OData.Client.V4.Adapter
                 expandAssociation.OrderByColumns.Add(new ODataOrderByColumn(segments[currentIndex], descending));
                 return;
             }
-            
+
             var nestedAssociation = expandAssociation.ExpandAssociations.FirstOrDefault(a => a.Name == segments[currentIndex]);
             if (nestedAssociation != null)
             {
@@ -250,34 +250,16 @@ namespace Simple.OData.Client.V4.Adapter
         }
 
         private IList<string> SelectPathSegmentColumns(
-            IList<string> columns, string path, EntityCollection collection, IList<string> excludePaths = null)
+            IList<string> columns, EntityCollection collection, IList<string> expandedPaths)
         {
-            if (string.IsNullOrEmpty(path))
-            {
-                if (excludePaths != null)
-                {
-                    if (excludePaths.Count == 1 && excludePaths[0] == StarString)
-                    {
-                        var firstSegmentPropertyNames = new HashSet<string>(_session.Metadata.GetNavigationPropertyNames(collection.Name).Select(FormatFirstSegment));
-                        return columns.Where(x => !firstSegmentPropertyNames.Any(y => y.Contains(FormatFirstSegment(x)))).ToList();
-                    }
-
-                    return columns.Where(x => !excludePaths.Any(y => FormatFirstSegment(y).Contains(FormatFirstSegment(x)))).ToList();
-                }
-            }
-
-            var firstSegment = FormatFirstSegment(path);
-            if (firstSegment == StarString)
-            {
-                var propertyNames = new HashSet<string>(_session.Metadata.GetNavigationPropertyNames(collection.Name));
-                return columns
-                    .Where(x => HasMultipleSegments(x) && propertyNames.Contains(FormatFirstSegment(x)))
-                    .Select(x => FormatSkipSegments(x, 1)).ToList();
-            }
+            var expandedNavigationProperties = new HashSet<string>(
+                expandedPaths.Contains(StarString) ?
+                _session.Metadata.GetNavigationPropertyNames(collection.Name).Select(FormatFirstSegment) :
+                expandedPaths.Select(FormatFirstSegment));
 
             return columns
-                .Where(x => HasMultipleSegments(x) && FormatFirstSegment(x) == firstSegment)
-                .Select(x => FormatSkipSegments(x, 1)).ToList();
+                .Where(x => !expandedNavigationProperties.Any(y => y.Equals(FormatFirstSegment(x))))
+                .ToList();
         }
 
         private bool IsInnerCollectionOrderBy(string expandAssociation, EntityCollection entityCollection, string orderByColumn)

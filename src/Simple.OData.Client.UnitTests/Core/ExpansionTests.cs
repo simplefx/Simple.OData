@@ -440,6 +440,32 @@ namespace Simple.OData.Client.Tests.Core
             Assert.Equal(expectedCommand, commandText);
         }
 
+        [Theory]
+        [InlineData("Northwind3.xml", "Order_Details?$expand=Order&$select=OrderID,Quantity,rde,Order/OrderDate&$orderby=Order/OrderDate,Quantity")]
+        [InlineData("Northwind4.xml", "Order_Details?$expand=Order($select=OrderDate)&$select=OrderID,Quantity,rde&$orderby=Order/OrderDate,Quantity")]
+        public async Task ExpandNavigationPropertyAndPropertyWithContainedName_Issue801(string metadataFile, string expectedCommand)
+        {
+            var client = CreateClient(metadataFile);
+
+            var order_detail = new
+            {
+                OrderID = default(int),
+                Quantity = default(int),
+                Order = default(Order),
+                //A property whose name is contained in the expandable property Order
+                rde = default(int),
+            };
+
+            var command = client.For(order_detail, "Order_Detail")
+                .Expand(x => x.Order)
+                .Select(p => new { p.OrderID, p.Quantity, p.rde, p.Order.OrderDate })
+                .OrderBy(p => p.Order.OrderDate)
+                .ThenBy(p => p.Quantity);
+
+            var commandText = await command.GetCommandTextAsync();
+            Assert.Equal(expectedCommand, commandText);
+        }
+
         [Fact]
         public async Task ExpandSubordinates2LevelsByValue()
         {
