@@ -440,5 +440,35 @@ namespace Simple.OData.Client.Tests.FluentApi
             
             Assert.True(headers.TryGetValue("batchHeader", out var value) && value == "batchHeaderValue");
         }
+
+        [Fact]
+        public async Task WithRelativeUrlInPayload()
+        {
+            var settings = CreateDefaultSettings().WithHttpMock();
+            settings.BatchPayloadUriOption = Microsoft.OData.BatchPayloadUriOption.RelativeUri;
+
+            settings.MetadataDocument = MetadataResolver.GetMetadataDocument("Northwind4.xml");
+            ODataClient.ClearMetadataCache();
+            var batch = new ODataBatch(settings);
+
+            batch += c => c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test1" }, { "UnitPrice", 10m } }, false);
+            batch += c => c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test2" }, { "UnitPrice", 20m } }, false);
+            await batch.ExecuteAsync();
+        }
+
+        [Fact]
+        public async Task WithAbsoluteUrlInPayload()
+        {
+            var settings = CreateDefaultSettings().WithHttpMock();
+            settings.BatchPayloadUriOption = Microsoft.OData.BatchPayloadUriOption.AbsoluteUri;
+
+            settings.MetadataDocument = MetadataResolver.GetMetadataDocument("Northwind4.xml");
+            ODataClient.ClearMetadataCache();
+            var batch = new ODataBatch(settings);
+
+            batch += c => c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test1" }, { "UnitPrice", 10m } }, false);
+            batch += c => c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test2" }, { "UnitPrice", 20m } }, false);
+            await batch.ExecuteAsync();
+        }
     }
 }
