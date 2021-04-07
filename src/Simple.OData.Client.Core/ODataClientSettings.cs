@@ -106,7 +106,7 @@ namespace Simple.OData.Client
         public bool IgnoreUnmappedProperties { get; set; }
 
         /// <summary>
-        /// Gets or sets a preferred update method for OData entries. The selected method will be used wherever it's compatible with the update scenario. 
+        /// Gets or sets a preferred update method for OData entries. The selected method will be used wherever it's compatible with the update scenario.
         /// If not specified, PATCH is preferred due to better performance.
         /// </summary>
         /// <value>
@@ -275,6 +275,14 @@ namespace Simple.OData.Client
         public bool ReadUntypedAsString { get; set; } = true;
 
         /// <summary>
+        /// Gets or sets the BatchPayloadUriOption to use when building a batch request payload
+        /// </summary>
+        /// <value>
+        /// <c>BatchPayloadUriOption.AbsoluteUri</c> (Default) to set the uri option for the batch payload
+        /// </value>
+        public BatchPayloadUriOption BatchPayloadUriOption { get; set; } = BatchPayloadUriOption.AbsoluteUri;
+
+        /// <summary>
         /// Gets or sets the source of the message of web request exceptions.
         /// </summary>
         /// <value>
@@ -372,6 +380,7 @@ namespace Simple.OData.Client
             this.UseAbsoluteReferenceUris = session.Settings.UseAbsoluteReferenceUris;
             this.ReadUntypedAsString = session.Settings.ReadUntypedAsString;
             this.WebRequestExceptionMessageSource = session.Settings.WebRequestExceptionMessageSource;
+            this.BatchPayloadUriOption = session.Settings.BatchPayloadUriOption;
         }
     }
 }
