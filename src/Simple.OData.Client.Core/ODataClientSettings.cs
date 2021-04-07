@@ -275,10 +275,16 @@ namespace Simple.OData.Client
         public bool ReadUntypedAsString { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets the BatchPayloadUriOption to use when building a batch request payload
+        /// Gets or sets the BatchPayloadUriOption to use when building a batch request payload.
         /// </summary>
         /// <value>
-        /// <c>BatchPayloadUriOption.AbsoluteUri</c> (Default) to set the uri option for the batch payload
+        /// <c>AbsoluteUri</c> (Default) to use absolute URIs for the batch payload.
+        /// </value>
+        /// <value>
+        /// <c>AbsoluteUriUsingHostHeader</c> to use absolute URIs from the Host header for the batch payload.
+        /// </value>
+        /// <value>
+        /// <c>RelativeUri</c> to use relative URIs for the batch payload.
         /// </value>
         public BatchPayloadUriOption BatchPayloadUriOption { get; set; } = BatchPayloadUriOption.AbsoluteUri;
 
