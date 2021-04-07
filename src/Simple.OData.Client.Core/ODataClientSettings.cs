@@ -275,7 +275,7 @@ namespace Simple.OData.Client
         public bool ReadUntypedAsString { get; set; } = true;
 
         /// <summary>
-        /// Gets or sets the BatchPayloadUriOption to use when building a batch request payload
+        /// Gets or sets the BatchPayloadUriOption to use when building a batch request payload.
         /// </summary>
         /// <value>
         /// <c>BatchPayloadUriOption.AbsoluteUri</c> (Default) to set the uri option for the batch payload
