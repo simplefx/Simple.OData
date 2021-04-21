@@ -1108,7 +1108,7 @@ namespace Simple.OData.Client.Tests
             Assert.Equal(8, airlines2.Count());
         }
 
-        [Fact]
+        [Fact(Skip = "Fails at server: https://github.com/OData/ODataSamples/issues/140")]
         public async Task BatchPayloadRelativeUri()
         {
             IEnumerable<Airline> airlines1 = null;
@@ -1166,7 +1166,7 @@ namespace Simple.OData.Client.Tests
             Assert.Equal(8, airlines2.Count());
         }
 
-        [Fact]
+        [Fact(Skip = "Fails at server: https://github.com/OData/ODataSamples/issues/140")]
         public async Task BatchPayloadAbsoluteUriUsingHostHeader()
         {
             IEnumerable<Airline> airlines1 = null;
