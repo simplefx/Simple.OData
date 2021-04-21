@@ -276,6 +276,7 @@ namespace Simple.OData.Client
 
         /// <summary>
         /// Gets or sets the BatchPayloadUriOption to use when building a batch request payload.
+        /// Only available for OData V4.
         /// </summary>
         /// <value>
         /// <c>AbsoluteUri</c> (Default) to use absolute URIs for the batch payload.
