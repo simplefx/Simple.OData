@@ -1145,6 +1145,7 @@ namespace Simple.OData.Client.Tests
 
             var client = new ODataClient(CreateDefaultSettings(s =>
             {
+                s.BaseUri = _serviceUri;
                 s.BatchPayloadUriOption = BatchPayloadUriOption.AbsoluteUri;
             }));
 
@@ -1173,6 +1174,7 @@ namespace Simple.OData.Client.Tests
 
             var client = new ODataClient(CreateDefaultSettings(s =>
             {
+                s.BaseUri = _serviceUri;
                 s.BatchPayloadUriOption = BatchPayloadUriOption.AbsoluteUriUsingHostHeader;
             }));
 
