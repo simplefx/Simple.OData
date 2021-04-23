@@ -23,7 +23,7 @@ namespace Simple.OData.Client.V4.Adapter
         public override async Task StartBatchAsync()
         {
             _requestMessage = new ODataRequestMessage() { Url = _session.Settings.BaseUri };
-            _messageWriter = new ODataMessageWriter(_requestMessage);
+            _messageWriter = new ODataMessageWriter(_requestMessage, new ODataMessageWriterSettings { BaseUri = _session.Settings.BaseUri });
             _batchWriter = await _messageWriter.CreateODataBatchWriterAsync().ConfigureAwait(false);
             await _batchWriter.WriteStartBatchAsync().ConfigureAwait(false);
             this.HasOperations = true;
@@ -62,7 +62,7 @@ namespace Simple.OData.Client.V4.Adapter
         private async Task<ODataBatchOperationRequestMessage> CreateBatchOperationMessageAsync(
             Uri uri, string method, string collection, string contentId, bool resultRequired)
         {
-            var message = await _batchWriter.CreateOperationRequestMessageAsync(method, uri, contentId).ConfigureAwait(false);
+            var message = await _batchWriter.CreateOperationRequestMessageAsync(method, uri, contentId, _session.Settings.BatchPayloadUriOption).ConfigureAwait(false);
 
             if (method == RestVerbs.Post || method == RestVerbs.Put || method == RestVerbs.Patch || method == RestVerbs.Merge)
                 message.SetHeader(HttpLiteral.ContentId, contentId);

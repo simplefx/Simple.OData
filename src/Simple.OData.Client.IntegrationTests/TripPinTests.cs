@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Microsoft.OData;
 using Simple.OData.Client.V4.Adapter.Extensions;
 using Xunit;
 
@@ -1091,6 +1092,93 @@ namespace Simple.OData.Client.Tests
             IEnumerable<Airline> airlines2 = null;
 
             var batch = new ODataBatch(_client);
+            batch += async c => airlines1 = await c
+               .For<Airline>()
+               .FindEntriesAsync();
+            batch += c => c
+               .For<Airline>()
+               .Set(new Airline() { AirlineCode = "TT", Name = "Test Airline" })
+               .InsertEntryAsync(false);
+            batch += async c => airlines2 = await c
+               .For<Airline>()
+               .FindEntriesAsync();
+            await batch.ExecuteAsync();
+
+            Assert.Equal(8, airlines1.Count());
+            Assert.Equal(8, airlines2.Count());
+        }
+
+        [Fact(Skip = "Fails at server: https://github.com/OData/ODataSamples/issues/140")]
+        public async Task BatchPayloadRelativeUri()
+        {
+            IEnumerable<Airline> airlines1 = null;
+            IEnumerable<Airline> airlines2 = null;
+
+            var client = new ODataClient(CreateDefaultSettings(s =>
+            {
+                s.BaseUri = _serviceUri;
+                s.BatchPayloadUriOption = BatchPayloadUriOption.RelativeUri;
+            }));
+
+            var batch = new ODataBatch(client);
+            batch += async c => airlines1 = await c
+               .For<Airline>()
+               .FindEntriesAsync();
+            batch += c => c
+               .For<Airline>()
+               .Set(new Airline() { AirlineCode = "TT", Name = "Test Airline" })
+               .InsertEntryAsync(false);
+            batch += async c => airlines2 = await c
+               .For<Airline>()
+               .FindEntriesAsync();
+            await batch.ExecuteAsync();
+
+            Assert.Equal(8, airlines1.Count());
+            Assert.Equal(8, airlines2.Count());
+        }
+
+        [Fact]
+        public async Task BatchPayloadAbsoluteUri()
+        {
+            IEnumerable<Airline> airlines1 = null;
+            IEnumerable<Airline> airlines2 = null;
+
+            var client = new ODataClient(CreateDefaultSettings(s =>
+            {
+                s.BaseUri = _serviceUri;
+                s.BatchPayloadUriOption = BatchPayloadUriOption.AbsoluteUri;
+            }));
+
+            var batch = new ODataBatch(client);
+            batch += async c => airlines1 = await c
+               .For<Airline>()
+               .FindEntriesAsync();
+            batch += c => c
+               .For<Airline>()
+               .Set(new Airline() { AirlineCode = "TT", Name = "Test Airline" })
+               .InsertEntryAsync(false);
+            batch += async c => airlines2 = await c
+               .For<Airline>()
+               .FindEntriesAsync();
+            await batch.ExecuteAsync();
+
+            Assert.Equal(8, airlines1.Count());
+            Assert.Equal(8, airlines2.Count());
+        }
+
+        [Fact(Skip = "Fails at server: https://github.com/OData/ODataSamples/issues/140")]
+        public async Task BatchPayloadAbsoluteUriUsingHostHeader()
+        {
+            IEnumerable<Airline> airlines1 = null;
+            IEnumerable<Airline> airlines2 = null;
+
+            var client = new ODataClient(CreateDefaultSettings(s =>
+            {
+                s.BaseUri = _serviceUri;
+                s.BatchPayloadUriOption = BatchPayloadUriOption.AbsoluteUriUsingHostHeader;
+            }));
+
+            var batch = new ODataBatch(client);
             batch += async c => airlines1 = await c
                .For<Airline>()
                .FindEntriesAsync();
