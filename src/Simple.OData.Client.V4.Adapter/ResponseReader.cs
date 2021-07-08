@@ -75,6 +75,17 @@ namespace Simple.OData.Client.V4.Adapter
                         return ODataResponse.FromProperty(TypeCache, property.Name, GetPropertyValue(property.Value));
                     }
                 }
+                else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Delta))
+                {
+                    if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Resource))
+                    {
+                        return ReadResponse(messageReader.CreateODataResourceReader(), responseMessage);
+                    }
+                    else
+                    {
+                        return ReadResponse(messageReader.CreateODataDeltaResourceSetReader(), responseMessage);
+                    }
+                }
                 else
                 {
                     return ReadResponse(messageReader.CreateODataResourceReader(), responseMessage);
@@ -154,11 +165,13 @@ namespace Simple.OData.Client.V4.Adapter
                 switch (odataReader.State)
                 {
                     case ODataReaderState.ResourceSetStart:
-                        StartFeed(nodeStack, CreateAnnotations(odataReader.Item as ODataResourceSet));
+                    case ODataReaderState.DeltaResourceSetStart:
+                        StartFeed(nodeStack, CreateAnnotations(odataReader.Item as ODataResourceSetBase));
                         break;
 
                     case ODataReaderState.ResourceSetEnd:
-                        EndFeed(nodeStack, CreateAnnotations(odataReader.Item as ODataResourceSet), ref rootNode);
+                    case ODataReaderState.DeltaResourceSetEnd:
+                        EndFeed(nodeStack, CreateAnnotations(odataReader.Item as ODataResourceSetBase), ref rootNode);
                         break;
 
                     case ODataReaderState.ResourceStart:
@@ -195,7 +208,7 @@ namespace Simple.OData.Client.V4.Adapter
             }
         }
 
-        private ODataFeedAnnotations CreateAnnotations(ODataResourceSet feed)
+        private ODataFeedAnnotations CreateAnnotations(ODataResourceSetBase feed)
         {
             return new ODataFeedAnnotations()
             {
