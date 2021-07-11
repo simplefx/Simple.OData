@@ -51,9 +51,9 @@ namespace Simple.OData.Client.Extensions
             return type.GetAllProperties().Where(x => !x.IsNotMapped());
         }
 
-        public static IEnumerable<(PropertyInfo property, string name)> GetMappedPropertiesWithNames(this Type type)
+        public static IEnumerable<Tuple<PropertyInfo, string>> GetMappedPropertiesWithNames(this Type type)
         {
-            return type.GetMappedProperties().Select(p => (p, p.GetMappedName()));
+            return type.GetMappedProperties().Select(p => new Tuple<PropertyInfo, string>(p, p.GetMappedName()));
         }
 
         private static bool IsInstanceProperty(PropertyInfo propertyInfo)

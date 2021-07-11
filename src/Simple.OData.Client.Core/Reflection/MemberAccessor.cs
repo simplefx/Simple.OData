@@ -11,21 +11,35 @@ namespace Simple.OData.Client
         static readonly ConcurrentDictionary<(Type, Type, MemberInfo), Delegate> getterCache = new ConcurrentDictionary<(Type, Type, MemberInfo), Delegate>();
         static readonly ConcurrentDictionary<(Type, Type, MemberInfo), Delegate> setterCache = new ConcurrentDictionary<(Type, Type, MemberInfo), Delegate>();
 
+        static readonly ConcurrentDictionary<(Type, MemberInfo), Delegate> staticGetterCache = new ConcurrentDictionary<(Type, MemberInfo), Delegate>();
+        static readonly ConcurrentDictionary<(Type, MemberInfo), Delegate> staticSetterCache = new ConcurrentDictionary<(Type, MemberInfo), Delegate>();
+
         public static Delegate BuildGetterAccessor(Type type, Type returnType, MemberInfo memberInfo)
         {
             var parameter = Expression.Parameter(type);
 
-            var castedParamter =
+            var castedParameter =
                 type != memberInfo.DeclaringType ?
                 Expression.Convert(parameter, memberInfo.DeclaringType) : (Expression)parameter;
 
             var delegateType = Expression.GetDelegateType(new[] { typeof(object), returnType });
-            var body = (Expression)Expression.PropertyOrField(castedParamter, memberInfo.Name);
+            var body = (Expression)Expression.MakeMemberAccess(castedParameter, memberInfo);
 
             if (body.Type != returnType)
                 body = Expression.Convert(body, returnType);
 
             return Expression.Lambda(delegateType, body, parameter).Compile();
+        }
+
+        public static Delegate BuildStaticGetterAccessor(Type returnType, MemberInfo memberInfo)
+        {
+            var delegateType = Expression.GetDelegateType(new[] { returnType });
+            var body = (Expression)Expression.MakeMemberAccess(null, memberInfo);
+
+            if (body.Type != returnType)
+                body = Expression.Convert(body, returnType);
+
+            return Expression.Lambda(delegateType, body).Compile();
         }
 
         public static Delegate BuildSetterAccessor(Type type, Type valueType, MemberInfo memberInfo)
@@ -45,9 +59,25 @@ namespace Simple.OData.Client
             var delegateType = Expression.GetDelegateType(new[] { typeof(object), valueType, typeof(void) });
             return Expression.Lambda(delegateType, 
                 Expression.Assign(
-                    Expression.PropertyOrField(castedParameter, memberInfo.Name),
+                    Expression.MakeMemberAccess(castedParameter, memberInfo),
                     castedValueParameter),
                     parameter, valueParameter).Compile();
+        }
+        public static Delegate BuildStaticSetterAccessor(Type valueType, MemberInfo memberInfo)
+        {
+            var valueParameter = Expression.Parameter(valueType);
+
+            var memberType = GetMemberType(memberInfo);
+            var castedValueParameter =
+                valueType != memberType ?
+                Expression.Convert(valueParameter, memberType) : (Expression)valueParameter;
+
+            var delegateType = Expression.GetDelegateType(new[] { valueType, typeof(void) });
+            return Expression.Lambda(delegateType,
+                Expression.Assign(
+                    Expression.MakeMemberAccess(null, memberInfo),
+                    castedValueParameter),
+                    valueParameter).Compile();
         }
 
         private static Type GetMemberType(MemberInfo memberInfo)
@@ -79,6 +109,17 @@ namespace Simple.OData.Client
                 return false;
         }
 
+        private static bool IsStatic(MemberInfo memberInfo)
+        {
+            if (memberInfo is PropertyInfo propertyInfo)
+                return (propertyInfo.CanRead && propertyInfo.GetMethod is not null && propertyInfo.GetMethod.IsStatic)
+                    || (propertyInfo.CanWrite && propertyInfo.SetMethod is not null && propertyInfo.SetMethod.IsStatic);
+            else if (memberInfo is FieldInfo fieldInfo)
+                return fieldInfo.IsStatic;
+            else
+                return false;
+        }
+
         private static MemberInfo GetMemberInfo(Type type, string memberName)
         {
             if (TryGetMemberInfo(type, memberName, out var memberInfo))
@@ -106,20 +147,34 @@ namespace Simple.OData.Client
             return !(memberInfo is null);
         }
 
-        public static TMember GetValue<TMember>(object instance, MemberInfo memberInfo)
+        private static Func<object, TMember> GetGetAccessor<TMember>(object instance, MemberInfo memberInfo)
         {
             AssertMemberInfoType(memberInfo);
-            if (instance is null) throw new ArgumentNullException(nameof(instance));
 
-            var type = instance.GetType();
-            var key = (type, typeof(TMember), memberInfo);
-            if (!getterCache.TryGetValue(key, out var accessor))
+            var isStatic = IsStatic(memberInfo);
+
+            if (!isStatic && instance is null) 
+                throw new ArgumentNullException(nameof(instance), "Instance cannot be null to access a non static member.");
+
+            if (isStatic)
             {
-                accessor = BuildGetterAccessor(typeof(object), typeof(TMember), memberInfo);
-                getterCache.TryAdd(key, accessor);
+                return (object _) => ((Func<TMember>)staticGetterCache.GetOrAdd(
+                    (typeof(TMember), memberInfo),
+                    key => BuildStaticGetterAccessor(key.Item1, key.Item2)))();
             }
+            else
+            {
+                return (Func<object, TMember>)getterCache.GetOrAdd(
+                    (instance.GetType(), typeof(TMember), memberInfo),
+                    key => BuildGetterAccessor(typeof(object), key.Item2, key.Item3));
+            }
+        }
 
-            return ((Func<object, TMember>)accessor)(instance);
+        public static TMember GetValue<TMember>(object instance, MemberInfo memberInfo)
+        {
+            var accessor = GetGetAccessor<TMember>(instance, memberInfo);
+
+            return accessor(instance);
         }
 
         public static TMember GetValue<TMember>(object instance, string memberName)
@@ -140,28 +195,23 @@ namespace Simple.OData.Client
 
         public static bool TryGetValue<TMember>(object instance, MemberInfo memberInfo, out TMember value)
         {
-            AssertMemberInfoType(memberInfo);
-
             value = default;
 
             if (instance is null) return false;
 
-            var type = instance.GetType();
             if (!(CanGet(memberInfo)))
                 return false;
 
-            var key = (type, typeof(TMember), memberInfo);
-            if (!getterCache.TryGetValue(key, out var accessor))
-            {
-                accessor = BuildGetterAccessor(typeof(object), typeof(TMember), memberInfo);
-                getterCache.TryAdd(key, accessor);
-            }
+            var accessor = GetGetAccessor<TMember>(instance, memberInfo);
 
             try
             {
-                value = ((Func<object, TMember>)accessor)(instance);
+                value = accessor(instance);
             }
-            catch { return false; }
+            catch 
+            { 
+                return false; 
+            }
 
             return true;
         }
@@ -175,7 +225,7 @@ namespace Simple.OData.Client
             var type = instance.GetType();
             var memberInfo = GetMemberInfo(type, memberName);
 
-            return TryGetValue<TMember>(instance, memberInfo, out value);
+            return TryGetValue(instance, memberInfo, out value);
         }
 
         public static bool TryGetValue(object instance, MemberInfo memberInfo, out object value)
@@ -184,21 +234,36 @@ namespace Simple.OData.Client
         public static bool TryGetValue(object instance, string memberName, out object value)
             => TryGetValue<object>(instance, memberName, out value);
 
+        private static Action<object, TMember> GetSetAccessor<TMember>(object instance, MemberInfo memberInfo)
+        {
+            AssertMemberInfoType(memberInfo);
+
+            var isStatic = IsStatic(memberInfo);
+
+            if (!isStatic && instance is null)
+                throw new ArgumentNullException(nameof(instance), "Instance cannot be null to access a non static member.");
+
+            if (isStatic)
+            {
+                return (object _, TMember x) => ((Action<TMember>)staticSetterCache.GetOrAdd(
+                    (typeof(TMember), memberInfo),
+                    key => BuildStaticSetterAccessor(key.Item1, key.Item2)))(x);
+            }
+            else
+            {
+                return (Action<object, TMember>)setterCache.GetOrAdd(
+                    (instance.GetType(), typeof(TMember), memberInfo),
+                    key => BuildSetterAccessor(typeof(object), key.Item2, key.Item3));
+            }
+        }
+
         public static void SetValue<TMember>(object instance, MemberInfo memberInfo, TMember value)
         {
             AssertMemberInfoType(memberInfo);
 
-            if (instance is null) throw new ArgumentNullException(nameof(instance));
+            var accessor = GetSetAccessor<TMember>(instance, memberInfo);
 
-            var type = instance.GetType();
-            var key = (type, typeof(TMember), memberInfo);
-            if (!setterCache.TryGetValue(key, out var accessor))
-            {
-                accessor = BuildSetterAccessor(typeof(object), typeof(TMember), memberInfo);
-                setterCache.TryAdd(key, accessor);
-            }
-
-            ((Action<object, TMember>)accessor)(instance, value);
+            accessor(instance, value);
         }
 
         public static void SetValue<TMember>(object instance, string memberName, TMember value)
@@ -219,26 +284,21 @@ namespace Simple.OData.Client
 
         public static bool TrySetValue<TMember>(object instance, MemberInfo memberInfo, TMember value)
         {
-            AssertMemberInfoType(memberInfo);
-
             if (instance is null) return false;
 
-            var type = instance.GetType();
             if (!(CanSet(memberInfo)))
                 return false;
 
-            var key = (type, typeof(TMember), memberInfo);
-            if (!setterCache.TryGetValue(key, out var accessor))
-            {
-                accessor = BuildSetterAccessor(typeof(object), typeof(TMember), memberInfo);
-                setterCache.TryAdd(key, accessor);
-            }
+            var accessor = GetSetAccessor<TMember>(instance, memberInfo);
 
             try
             {
-                ((Action<object, TMember>)accessor)(instance, value);
+                accessor(instance, value);
             }
-            catch { return false; }
+            catch 
+            { 
+                return false; 
+            }
 
             return true;
         }
