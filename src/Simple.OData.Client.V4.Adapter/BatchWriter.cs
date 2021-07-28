@@ -62,7 +62,7 @@ namespace Simple.OData.Client.V4.Adapter
         private async Task<ODataBatchOperationRequestMessage> CreateBatchOperationMessageAsync(
             Uri uri, string method, string collection, string contentId, bool resultRequired)
         {
-            var message = await _batchWriter.CreateOperationRequestMessageAsync(method, uri, contentId, _session.Settings.BatchPayloadUriOption).ConfigureAwait(false);
+            var message = await _batchWriter.CreateOperationRequestMessageAsync(method, uri, contentId, (Microsoft.OData.BatchPayloadUriOption) _session.Settings.BatchPayloadUriOption).ConfigureAwait(false);
 
             if (method == RestVerbs.Post || method == RestVerbs.Put || method == RestVerbs.Patch || method == RestVerbs.Merge)
                 message.SetHeader(HttpLiteral.ContentId, contentId);
