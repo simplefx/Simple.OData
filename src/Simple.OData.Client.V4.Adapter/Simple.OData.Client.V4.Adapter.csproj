@@ -10,6 +10,7 @@
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.OData.Core" Version="7.9.0" />
     <ProjectReference Include="..\Simple.OData.Client.Core\Simple.OData.Client.Core.csproj" />
   </ItemGroup>
 </Project>
