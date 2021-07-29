@@ -126,6 +126,36 @@
             <param name="metadataString">Service metadata</param>
             <returns></returns>
         </member>
+        <member name="T:Simple.OData.Client.BatchPayloadUriOption">
+            <summary>
+            Indicates the format of Request-URI in each sub request in the batch operation.
+            </summary>
+            <remarks>
+            This must be kept aligned with https://github.com/OData/odata.net/blob/master/src/Microsoft.OData.Core/Batch/ODataBatchPayloadUriOptions.cs
+            </remarks>
+        </member>
+        <member name="F:Simple.OData.Client.BatchPayloadUriOption.AbsoluteUri">
+            <summary>
+            Absolute URI with schema, host, port, and absolute resource path.
+            </summary>
+            Example:
+            GET https://host:1234/path/service/People(1) HTTP/1.1
+        </member>
+        <member name="F:Simple.OData.Client.BatchPayloadUriOption.AbsoluteUriUsingHostHeader">
+            <summary>
+            Absolute resource path and separate Host header.
+            </summary>
+            Example:
+            GET /path/service/People(1) HTTP/1.1
+            Host: myserver.mydomain.org:1234
+        </member>
+        <member name="F:Simple.OData.Client.BatchPayloadUriOption.RelativeUri">
+            <summary>
+            Resource path relative to the batch request URI.
+            </summary>
+            Example:
+            GET People(1) HTTP/1.1
+        </member>
         <member name="T:Simple.OData.Client.ITypeCache">
             <summary>
             Access the type definition with good performance.
@@ -4072,6 +4102,41 @@
             <value>
             The name of the object.
             </value>
+        </member>
+        <member name="T:Simple.OData.Client.ValidationKinds">
+            <summary>
+            Validation kinds used in ODataMessageReaderSettings and ODataMessageWriterSettings.
+            </summary>
+            <remarks>
+            This must be kept aligned with https://github.com/OData/odata.net/blob/master/src/Microsoft.OData.Core/ValidationKinds.cs
+            </remarks>
+        </member>
+        <member name="F:Simple.OData.Client.ValidationKinds.None">
+            <summary>
+            No validations.
+            </summary>
+        </member>
+        <member name="F:Simple.OData.Client.ValidationKinds.ThrowOnDuplicatePropertyNames">
+            <summary>
+            Disallow duplicate properties in ODataResource (i.e., properties with the same name).
+            If no duplication can be guaranteed, this flag can be turned off for better performance.
+            </summary>
+        </member>
+        <member name="F:Simple.OData.Client.ValidationKinds.ThrowOnUndeclaredPropertyForNonOpenType">
+            <summary>
+            Do not support for undeclared property for non open type.
+            </summary>
+        </member>
+        <member name="F:Simple.OData.Client.ValidationKinds.ThrowIfTypeConflictsWithMetadata">
+            <summary>
+            Validates that the type in input must exactly match the model.
+            If the input can be guaranteed to be valid, this flag can be turned off for better performance.
+            </summary>
+        </member>
+        <member name="F:Simple.OData.Client.ValidationKinds.All">
+            <summary>
+            Enable all validations.
+            </summary>
         </member>
     </members>
 </doc>
