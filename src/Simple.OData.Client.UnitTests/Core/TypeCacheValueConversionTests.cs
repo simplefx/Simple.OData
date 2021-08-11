@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.Spatial;
+using Simple.OData.Client.Tests.Entities;
 using Xunit;
 
 namespace Simple.OData.Client.Tests.Core
@@ -53,13 +54,55 @@ namespace Simple.OData.Client.Tests.Core
         }
 
         [Fact]
-        public void TryConvertGeographyPoint()
+        public void TryConvert_GeographyPoint()
         {
             var source = GeographyPoint.Create(10, 10);
             var result = _typeCache.TryConvert(source, typeof(GeographyPoint), out _);
             Assert.True(result);
         }
 
+        [Fact]
+        public void TryConvert_CustomType_WithTypeConverterLambda()
+        {
+            _typeCache.Converter.RegisterTypeConverter<PrimitiveType>(
+                c => new PrimitiveType(new Guid(c.ToString())));
+            
+            var source = Guid.NewGuid();
+            var result = _typeCache.TryConvert(source, typeof(PrimitiveType), out object converted);
+            Assert.True(result);
+            Assert.Equal(source, ((PrimitiveType)converted).Value);
+        }
+
+        [Fact]
+        public void TryConvert_CustomType_WithTypeConverterLambda_Nullable()
+        {
+            _typeCache.Converter.RegisterTypeConverter<PrimitiveType>(
+                c => new PrimitiveType(new Guid(c.ToString())));
+            
+            var source = (Guid?)Guid.NewGuid();
+            var result = _typeCache.TryConvert(source, typeof(PrimitiveType?), out object converted);
+            Assert.True(result);
+            Assert.Equal(source, ((PrimitiveType)converted).Value);
+        }
+
+        [Fact]
+        public void TryConvert_CustomType_WithTypeConverterComponent()
+        {
+            var source = Guid.NewGuid();
+            var result = _typeCache.TryConvert(source, typeof(PrimitiveType), out object converted);
+            Assert.True(result);
+            Assert.Equal(source, ((PrimitiveType)converted).Value);
+        }
+
+        [Fact]
+        public void TryConvert_CustomType_WithTypeConverterComponent_Nullable()
+        {
+            var source = (Guid?)Guid.NewGuid();
+            var result = _typeCache.TryConvert(source, typeof(PrimitiveType?), out object converted);
+            Assert.True(result);
+            Assert.Equal(source, ((PrimitiveType)converted).Value);
+        }
+        
         private object ChangeType(object value, Type targetType)
         {
             if (targetType == typeof(string))
@@ -72,6 +115,8 @@ namespace Simple.OData.Client.Tests.Core
                 return Enum.Parse(targetType, value.ToString(), true);
             if (targetType == typeof(Guid))
                 return new Guid(value.ToString());
+            if (targetType == typeof(PrimitiveType))
+                return new PrimitiveType(new Guid(value.ToString()));
             if (Nullable.GetUnderlyingType(targetType) != null)
                 return ChangeType(value, Nullable.GetUnderlyingType(targetType));
 

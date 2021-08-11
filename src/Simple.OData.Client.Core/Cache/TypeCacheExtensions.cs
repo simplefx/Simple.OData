@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 
@@ -79,9 +80,16 @@ namespace Simple.OData.Client.Extensions
                 {
                     result = typeCache.Convert(value, Nullable.GetUnderlyingType(targetType));
                 }
+                else if (typeCache.Converter.HasObjectConverter(targetType))
+                {
+                    result = typeCache.Convert(value, targetType);
+                }
                 else
                 {
-                    result = System.Convert.ChangeType(value, targetType, CultureInfo.InvariantCulture);
+                    var descriptor = TypeDescriptor.GetConverter(targetType);
+                    result = descriptor != null & descriptor.CanConvertTo(targetType)
+                        ? descriptor.ConvertTo(value, targetType)
+                        : System.Convert.ChangeType(value, targetType, CultureInfo.InvariantCulture);
                 }
                 return true;
             }
