@@ -11,7 +11,7 @@ namespace Simple.OData.Client.Extensions
         {
             var mpn = typeCache.GetMappedPropertiesWithNames(value.GetType());
 
-            return mpn.Select(x => new KeyValuePair<string, object>(x.Item2, x.Item1.GetValue(value, null)))
+            return mpn.Select(x => new KeyValuePair<string, object>(x.Item2, x.Item1.GetValueEx(value)))
                       .ToIDictionary();
         }
 
