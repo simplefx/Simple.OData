@@ -67,9 +67,15 @@ namespace Simple.OData.Client.Extensions
             return propertyInfo.Name.Contains(".");
         }
 
+        private static bool IsIndexerProperty(PropertyInfo propertyInfo)
+        {
+            return propertyInfo.GetIndexParameters().Length > 0;
+        }
+
         public static IEnumerable<PropertyInfo> GetDeclaredProperties(this Type type)
         {
-            return type.GetTypeInfo().DeclaredProperties.Where(x => IsInstanceProperty(x) && !IsExplicitInterfaceProperty(x));
+            return type.GetTypeInfo().DeclaredProperties
+                .Where(x => IsInstanceProperty(x) && !IsExplicitInterfaceProperty(x) && !IsIndexerProperty(x));
         }
 
         public static PropertyInfo GetDeclaredProperty(this Type type, string propertyName)
