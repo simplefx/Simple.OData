@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
+using System.Linq;
 using System.Reflection;
 
 namespace Simple.OData.Client
@@ -259,6 +260,10 @@ namespace Simple.OData.Client
                 {
                     result = offset.DateTime;
                 }
+                else if ((targetType == typeof(DateTime) || targetType == typeof(DateTime?)) && ImplicitConversionTo<DateTime>(value) is MethodInfo implicitMethod)
+                {
+                    result = (DateTime)implicitMethod.Invoke(value, new object[] { value });
+                }
                 else if ((targetType == typeof(DateTimeOffset) || targetType == typeof(DateTimeOffset?)) && value is DateTime time)
                 {
                     result = new DateTimeOffset(time);
@@ -320,5 +325,10 @@ namespace Simple.OData.Client
 
             return resolver;
         }
+
+        private MethodInfo ImplicitConversionTo<T>(object value)
+            => value.GetType().GetMethods()
+                    .FirstOrDefault(m => string.Equals(m.Name, "op_Implicit")
+                                      && m.ReturnType == typeof(T));
     }
 }
