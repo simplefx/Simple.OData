@@ -24,12 +24,12 @@
     <dependencies>
       <group targetFramework="net461">
         <dependency id="Microsoft.OData.Core" version="[7.9.0,8)" />
-        <dependency id="System.Text.Json" version="[5.0.2,6)" />
+        <dependency id="System.Text.Json" version="[5.0.2,7)" />
         <dependency id="System.ValueTuple" version="[4.5.0,5)" />
       </group>
       <group targetFramework="netstandard2.0">
         <dependency id="Microsoft.OData.Core" version="[7.9.0,8)" />
-        <dependency id="System.Text.Json" version="[5.0.2,6)" />
+        <dependency id="System.Text.Json" version="[5.0.2,7)" />
       </group>
     </dependencies>
   </metadata>
