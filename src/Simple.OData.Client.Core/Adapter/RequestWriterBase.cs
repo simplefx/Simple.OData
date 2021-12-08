@@ -162,7 +162,7 @@ namespace Simple.OData.Client
         {
             var verb = RestVerbs.Post;
             Stream entryContent = null;
-            ODataPayloadFormat usePayloadFormat = ODataPayloadFormat.Unspecified;
+            var usePayloadFormat = ODataPayloadFormat.Unspecified;
 
             if (parameters != null && parameters.Any())
             {

@@ -31,7 +31,7 @@ namespace ActionProviderImplementation
             {
 
                 // This entity is UNATTACHED. But people are likely to want to edit this...
-                IDataServiceUpdateProvider2 updateProvider = operationContext.GetService(typeof(IDataServiceUpdateProvider2)) as IDataServiceUpdateProvider2;
+                var updateProvider = operationContext.GetService(typeof(IDataServiceUpdateProvider2)) as IDataServiceUpdateProvider2;
                 value = updateProvider.GetResource(value as IQueryable, serviceActionParameter.ParameterType.InstanceType.FullName);
                 value = updateProvider.ResolveResource(value); // This will attach the entity.
             }
@@ -50,7 +50,7 @@ namespace ActionProviderImplementation
                 var elementType = (serviceActionParameter.ParameterType as CollectionResourceType).ItemType.InstanceType;
                 // call IEnumerable.Cast<T>();
                 var castMethod = CastMethodGeneric.MakeGenericMethod(elementType);
-                object marshalledValue = castMethod.Invoke(null, new[] { enumerable });
+                var marshalledValue = castMethod.Invoke(null, new[] { enumerable });
                 // call IEnumerable<T>.ToList();
                 var toListMethod = ToListMethodGeneric.MakeGenericMethod(elementType);
                 value = toListMethod.Invoke(null, new[] { marshalledValue });

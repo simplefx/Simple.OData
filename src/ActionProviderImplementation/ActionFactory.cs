@@ -40,12 +40,12 @@ namespace ActionProviderImplementation
 			{
 				var method = actionInfo.ActionMethod;
 
-				string actionName = method.Name;
-				ResourceType returnType = method.ReturnType == typeof(void) ? null : GetResourceType(method.ReturnType);
-				ResourceSet resourceSet = GetResourceSet(returnType);
+				var actionName = method.Name;
+				var returnType = method.ReturnType == typeof(void) ? null : GetResourceType(method.ReturnType);
+				var resourceSet = GetResourceSet(returnType);
 
 				var parameters = GetParameters(method, actionInfo.Binding != OperationParameterBindingKind.Never);
-				ServiceAction action = new ServiceAction(
+				var action = new ServiceAction(
 					actionName,
 					returnType,
 					resourceSet,
@@ -117,7 +117,7 @@ namespace ActionProviderImplementation
 			if (ActionFactory.__primitives.Contains(type))
 				return ResourceType.GetPrimitiveResourceType(type);
 
-			ResourceType resourceType = _metadata.Types.SingleOrDefault(s => s.Name == type.Name);
+			var resourceType = _metadata.Types.SingleOrDefault(s => s.Name == type.Name);
 			if (resourceType == null)
 				throw new Exception($"Generic action parameter type {type} not supported");
 			return resourceType;
@@ -131,7 +131,7 @@ namespace ActionProviderImplementation
 			}
 			else if (type.ResourceTypeKind == ResourceTypeKind.EntityCollection)
 			{
-				EntityCollectionResourceType ecType = type as EntityCollectionResourceType;
+				var ecType = type as EntityCollectionResourceType;
 				return GetResourceSet(ecType.ItemType);
 			}
 			else if (type.ResourceTypeKind == ResourceTypeKind.EntityType)

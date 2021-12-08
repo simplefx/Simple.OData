@@ -66,8 +66,8 @@ namespace ActionProviderImplementation
             if (_cache.ContainsKey(_instanceType))
                 return _cache[_instanceType];
 
-            IDataServiceMetadataProvider metadata = context.GetService(typeof(IDataServiceMetadataProvider)) as IDataServiceMetadataProvider;
-            ActionFactory factory = new ActionFactory(metadata);
+            var metadata = context.GetService(typeof(IDataServiceMetadataProvider)) as IDataServiceMetadataProvider;
+            var factory = new ActionFactory(metadata);
 
             var actions = factory.GetActions(_instanceType).ToList();
             _cache[_instanceType] = actions;

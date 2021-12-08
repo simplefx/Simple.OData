@@ -19,7 +19,7 @@ namespace ActionProviderImplementation
         public ActionInvokable(DataServiceOperationContext operationContext, ServiceAction serviceAction, object site, object[] parameters, IParameterMarshaller marshaller)
         {
             _serviceAction = serviceAction;
-            ActionInfo info = serviceAction.CustomState as ActionInfo;
+            var info = serviceAction.CustomState as ActionInfo;
             var marshalled = marshaller.Marshall(operationContext,serviceAction,parameters);
 
             info.AssertAvailable(site,marshalled[0], true);

@@ -127,7 +127,7 @@ namespace Simple.OData.Client.Extensions
                     return derived;
                 }
 
-                foreach (Assembly assembly in AppDomain.CurrentDomain.GetAssemblies())
+                foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
                 {
                     var typeFound = assembly.GetType(odataType);
                     if (typeFound != null)
@@ -253,7 +253,7 @@ namespace Simple.OData.Client.Extensions
             }
             else
             {
-                int count = 0;
+                var count = 0;
                 var e = ((System.Collections.IEnumerable)collection).GetEnumerator();
                 using (e as IDisposable)
                 {

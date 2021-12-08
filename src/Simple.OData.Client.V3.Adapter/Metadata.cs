@@ -363,7 +363,7 @@ namespace Simple.OData.Client.V3.Adapter
 
         private IEdmEnumType GetEnumType(string typeName)
         {
-            if (TryGetEnumType(typeName, out IEdmEnumType enumType))
+            if (TryGetEnumType(typeName, out var enumType))
                 return enumType;
 
             throw new UnresolvableObjectException(typeName, $"Enum [{typeName}] not found");

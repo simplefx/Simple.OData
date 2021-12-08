@@ -93,7 +93,7 @@ namespace Simple.OData.Client.Tests.Core
 				c => new PrimitiveType(new Guid(c.ToString())));
 
 			var source = Guid.NewGuid();
-			var result = TypeCache.TryConvert(source, typeof(PrimitiveType), out object converted);
+			var result = TypeCache.TryConvert(source, typeof(PrimitiveType), out var converted);
 			Assert.True(result);
 			Assert.Equal(source, ((PrimitiveType)converted).Value);
 		}
@@ -105,7 +105,7 @@ namespace Simple.OData.Client.Tests.Core
 				c => new PrimitiveType(new Guid(c.ToString())));
 
 			var source = (Guid?)Guid.NewGuid();
-			var result = TypeCache.TryConvert(source, typeof(PrimitiveType?), out object converted);
+			var result = TypeCache.TryConvert(source, typeof(PrimitiveType?), out var converted);
 			Assert.True(result);
 			Assert.Equal(source, ((PrimitiveType)converted).Value);
 		}
@@ -114,7 +114,7 @@ namespace Simple.OData.Client.Tests.Core
 		public void TryConvert_CustomType_WithTypeConverterComponent()
 		{
 			var source = Guid.NewGuid();
-			var result = TypeCache.TryConvert(source, typeof(PrimitiveType), out object converted);
+			var result = TypeCache.TryConvert(source, typeof(PrimitiveType), out var converted);
 			Assert.True(result);
 			Assert.Equal(source, ((PrimitiveType)converted).Value);
 		}
@@ -123,7 +123,7 @@ namespace Simple.OData.Client.Tests.Core
 		public void TryConvert_CustomType_WithTypeConverterComponent_Nullable()
 		{
 			var source = (Guid?)Guid.NewGuid();
-			var result = TypeCache.TryConvert(source, typeof(PrimitiveType?), out object converted);
+			var result = TypeCache.TryConvert(source, typeof(PrimitiveType?), out var converted);
 			Assert.True(result);
 			Assert.Equal(source, ((PrimitiveType)converted).Value);
 		}

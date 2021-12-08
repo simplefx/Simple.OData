@@ -61,7 +61,7 @@ namespace Simple.OData.Client.Tests
         public async Task ParallelBootstrapping()
         {
             ODataClient.ClearMetadataCache();
-            int metadataCallsCount = 0;
+            var metadataCallsCount = 0;
             var settings = new ODataClientSettings
             {
                 BaseUri = _serviceUri,

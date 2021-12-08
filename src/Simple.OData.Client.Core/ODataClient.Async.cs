@@ -305,7 +305,7 @@ namespace Simple.OData.Client
             var entryKeyWithNames = new Dictionary<string, object>();
             var entityCollection = _session.Metadata.GetEntityCollection(collection);
             var keyNames = _session.Metadata.GetDeclaredKeyPropertyNames(entityCollection.Name).ToList();
-            for (int index = 0; index < keyNames.Count; index++)
+            for (var index = 0; index < keyNames.Count; index++)
             {
                 entryKeyWithNames.Add(keyNames[index], entryKey.ElementAt(index));
             }

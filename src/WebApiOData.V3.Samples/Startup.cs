@@ -22,7 +22,7 @@ namespace WebApiOData.V3.Samples
 
             // Add a custom route convention for non-bindable actions.
             // (Web API does not have a built-in routing convention for non-bindable actions.)
-            IList<IODataRoutingConvention> conventions = ODataRoutingConventions.CreateDefault();
+            var conventions = ODataRoutingConventions.CreateDefault();
             conventions.Insert(0, new NonBindableActionRoutingConvention("NonBindableActions"));
 
             // Map the OData route.
@@ -49,13 +49,13 @@ namespace WebApiOData.V3.Samples
             // CheckOut
             // URI: ~/odata/Movies(1)/CheckOut
             // Transient action. It is not available when the item is already checked out.
-            ActionConfiguration checkout = modelBuilder.Entity<Movie>().TransientAction("CheckOut");
+            var checkout = modelBuilder.Entity<Movie>().TransientAction("CheckOut");
 
             // Provide a function that returns a link to the action, when the action is available, or
             // returns null when the action is not available.
             checkout.HasActionLink(ctx =>
             {
-                Movie movie = ctx.EntityInstance as Movie;
+                var movie = ctx.EntityInstance as Movie;
 
                 // Note: In some cases, checking whether the action is available may be relatively expensive.
                 // For example, it might require a DB lookup. 
@@ -67,7 +67,7 @@ namespace WebApiOData.V3.Samples
                 // is true AND your availability check is expensive, skip the check and return a link.
 
                 // In this sample, the check is not really expensive, but we honor the flag to show how it works.
-                bool createLink = true;
+                var createLink = true;
                 if (ctx.SkipExpensiveAvailabilityChecks)
                 {
                     // Caller asked us to skip the availability check.
@@ -118,14 +118,14 @@ namespace WebApiOData.V3.Samples
             // CheckOutMany action
             // URI: ~/odata/Movies/CheckOutMany
             // Shows an action that takes a collection parameter.
-            ActionConfiguration checkoutMany = modelBuilder.Entity<Movie>().Collection.Action("CheckOutMany");
+            var checkoutMany = modelBuilder.Entity<Movie>().Collection.Action("CheckOutMany");
             checkoutMany.CollectionParameter<int>("MovieIDs");
             checkoutMany.ReturnsCollectionFromEntitySet<Movie>("Movies");
 
             // CreateMovie action
             // URI: ~/odata/CreateMovie
             // Non-bindable action. You invoke it from the service root.
-            ActionConfiguration createMovie = modelBuilder.Action("CreateMovie");
+            var createMovie = modelBuilder.Action("CreateMovie");
             createMovie.Parameter<string>("Title");
             createMovie.ReturnsFromEntitySet<Movie>("Movies");
 

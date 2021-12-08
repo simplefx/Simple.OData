@@ -65,7 +65,7 @@ namespace Devbridge.BasicAuthentication
         {
             var context = ((HttpApplication)source).Context;
 
-            string authorizationHeader = context.Request.Headers[HttpAuthorizationHeader];
+            var authorizationHeader = context.Request.Headers[HttpAuthorizationHeader];
 
             // Extract the basic authentication credentials from the request
             string userName = null;
@@ -96,7 +96,7 @@ namespace Devbridge.BasicAuthentication
             if (!context.Request.Path.Contains("/secure"))
                 return;
 
-            string authorizationHeader = context.Request.Headers[HttpAuthorizationHeader];
+            var authorizationHeader = context.Request.Headers[HttpAuthorizationHeader];
 
             string userName = null;
             string password = null;
@@ -137,7 +137,7 @@ namespace Devbridge.BasicAuthentication
                 return false;
             }
 
-            string verifiedAuthorizationHeader = authorizationHeader.Trim();
+            var verifiedAuthorizationHeader = authorizationHeader.Trim();
             if (verifiedAuthorizationHeader.IndexOf(HttpBasicSchemeName, StringComparison.InvariantCultureIgnoreCase) != 0)
             {
                 return false;
@@ -146,11 +146,11 @@ namespace Devbridge.BasicAuthentication
             // get the credential payload
             verifiedAuthorizationHeader = verifiedAuthorizationHeader.Substring(HttpBasicSchemeName.Length, verifiedAuthorizationHeader.Length - HttpBasicSchemeName.Length).Trim();
             // decode the base 64 encoded credential payload
-            byte[] credentialBase64DecodedArray = Convert.FromBase64String(verifiedAuthorizationHeader);
-            string decodedAuthorizationHeader = Encoding.UTF8.GetString(credentialBase64DecodedArray, 0, credentialBase64DecodedArray.Length);
+            var credentialBase64DecodedArray = Convert.FromBase64String(verifiedAuthorizationHeader);
+            var decodedAuthorizationHeader = Encoding.UTF8.GetString(credentialBase64DecodedArray, 0, credentialBase64DecodedArray.Length);
 
             // get the username, password, and realm
-            int separatorPosition = decodedAuthorizationHeader.IndexOf(HttpCredentialSeparator);
+            var separatorPosition = decodedAuthorizationHeader.IndexOf(HttpCredentialSeparator);
 
             if (separatorPosition <= 0)
             {
@@ -174,7 +174,7 @@ namespace Devbridge.BasicAuthentication
             var basicAuth = (Configuration.BasicAuthenticationConfigurationSection)config;
             this.activeUsers = new Dictionary<string, string>();
 
-            for (int i = 0; i < basicAuth.Credentials.Count; i++)
+            for (var i = 0; i < basicAuth.Credentials.Count; i++)
             {
                 var credential = basicAuth.Credentials[i];
                 this.activeUsers.Add(credential.UserName, credential.Password);

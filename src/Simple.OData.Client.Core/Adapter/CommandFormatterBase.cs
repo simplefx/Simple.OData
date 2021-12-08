@@ -105,7 +105,7 @@ namespace Simple.OData.Client
         public string ConvertKeyValuesToUriLiteralExtractCollections(IDictionary<string, object> data, IList<string> collectionValues, bool skipKeyNameForSingleValue)
         {
             var escapedData = new Dictionary<string, object>();
-            int colIndex = 0;
+            var colIndex = 0;
             foreach (var item in data)
             {
                 object itemValue;

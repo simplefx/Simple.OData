@@ -134,7 +134,7 @@ namespace Simple.OData.Client.Tests.BasicApi
         {
             var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            string filter = await (Task<string>)client.GetCommandTextAsync("Products", x.ProductName == "Chai");
+            var filter = await (Task<string>)client.GetCommandTextAsync("Products", x.ProductName == "Chai");
             var product = await client.FindEntryAsync(filter);
             Assert.Equal("Chai", product["ProductName"]);
         }
@@ -144,7 +144,7 @@ namespace Simple.OData.Client.Tests.BasicApi
         {
             var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            string filter = await (Task<string>)client.GetCommandTextAsync("Transport", x.TransportID == 1);
+            var filter = await (Task<string>)client.GetCommandTextAsync("Transport", x.TransportID == 1);
             var ship = await client.FindEntryAsync(filter);
             Assert.Equal("Titanic", ship["ShipName"]);
         }
@@ -154,7 +154,7 @@ namespace Simple.OData.Client.Tests.BasicApi
         {
             var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
             var x = ODataDynamic.Expression;
-            string filter = await (Task<string>)client.GetCommandTextAsync("Transport/Ships", x.ShipName == "Titanic");
+            var filter = await (Task<string>)client.GetCommandTextAsync("Transport/Ships", x.ShipName == "Titanic");
             var ship = await client.FindEntryAsync(filter);
             Assert.Equal("Titanic", ship["ShipName"]);
         }
@@ -163,7 +163,7 @@ namespace Simple.OData.Client.Tests.BasicApi
         public async Task FindEntryExistingTypedFilter()
         {
             var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
-            string filter = await client.GetCommandTextAsync<Product>("Products", x => x.ProductName == "Chai");
+            var filter = await client.GetCommandTextAsync<Product>("Products", x => x.ProductName == "Chai");
             var product = await client.FindEntryAsync(filter);
             Assert.Equal("Chai", product["ProductName"]);
         }
@@ -172,7 +172,7 @@ namespace Simple.OData.Client.Tests.BasicApi
         public async Task FindBaseClassEntryTypedFilter()
         {
             var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
-            string filter = await client.GetCommandTextAsync<Transport>("Transport", x => x.TransportID == 1);
+            var filter = await client.GetCommandTextAsync<Transport>("Transport", x => x.TransportID == 1);
             var ship = await client.FindEntryAsync(filter);
             Assert.Equal("Titanic", ship["ShipName"]);
         }
@@ -181,7 +181,7 @@ namespace Simple.OData.Client.Tests.BasicApi
         public async Task FindDerivedClassEntryTypedFilter()
         {
             var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
-            string filter = await client.GetCommandTextAsync<Ship>("Transport/Ships", x => x.ShipName == "Titanic");
+            var filter = await client.GetCommandTextAsync<Ship>("Transport/Ships", x => x.ShipName == "Titanic");
             var ship = await client.FindEntryAsync(filter);
             Assert.Equal("Titanic", ship["ShipName"]);
         }

@@ -72,7 +72,7 @@ namespace Simple.OData.Client.Tests
             });
             var annotations = new ODataFeedAnnotations();
 
-            int count = 0;
+            var count = 0;
             var people = await client
                 .For<PersonWithAnnotations>("Person")
                 .FindEntriesAsync(annotations);

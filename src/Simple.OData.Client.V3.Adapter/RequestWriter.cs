@@ -27,7 +27,7 @@ namespace Simple.OData.Client.V3.Adapter
 
         protected override async Task<Stream> WriteEntryContentAsync(string method, string collection, string commandText, IDictionary<string, object> entryData, bool resultRequired)
         {
-            IODataRequestMessageAsync message = IsBatch
+            var message = IsBatch
                 ? await CreateBatchOperationMessageAsync(method, collection, entryData, commandText, resultRequired).ConfigureAwait(false) 
                 : new ODataRequestMessage();
 
@@ -72,7 +72,7 @@ namespace Simple.OData.Client.V3.Adapter
 
         protected override async Task<Stream> WriteLinkContentAsync(string method, string commandText, string linkIdent)
         {
-            IODataRequestMessageAsync message = IsBatch
+            var message = IsBatch
                 ? await CreateBatchOperationMessageAsync(method, null, null, commandText, false).ConfigureAwait(false) 
                 : new ODataRequestMessage();
 
@@ -101,7 +101,7 @@ namespace Simple.OData.Client.V3.Adapter
 
         protected override async Task<Stream> WriteActionContentAsync(string method, string commandText, string actionName, string boundTypeName, IDictionary<string, object> parameters)
         {
-            IODataRequestMessageAsync message = IsBatch
+            var message = IsBatch
                 ? await CreateBatchOperationMessageAsync(method, null, null, commandText, true).ConfigureAwait(false) 
                 : new ODataRequestMessage();
 
@@ -253,7 +253,7 @@ namespace Simple.OData.Client.V3.Adapter
         {
             var navigationProperty = (_model.FindDeclaredType(entry.TypeName) as IEdmEntityType).NavigationProperties()
                 .BestMatch(x => x.Name, linkName, _session.Settings.NameMatchResolver);
-            bool isCollection = navigationProperty.Type.Definition.TypeKind == EdmTypeKind.Collection;
+            var isCollection = navigationProperty.Type.Definition.TypeKind == EdmTypeKind.Collection;
 
             var linkType = GetNavigationPropertyEntityType(navigationProperty);
             var linkTypeWithKey = linkType;

@@ -103,7 +103,7 @@ namespace WebApiOData.V4.Samples.Controllers
         [HttpGet]
         public IHttpActionResult CalculateGeneralSalesTax(int key, string state)
         {
-            double taxRate = GetRate(state);
+            var taxRate = GetRate(state);
 
             if (_data.TryGetValue(key, out var product))
             {

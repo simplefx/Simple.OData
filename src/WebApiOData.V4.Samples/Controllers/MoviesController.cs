@@ -62,7 +62,7 @@ namespace WebApiOData.V4.Samples.Controllers
 
             // Try to check out each movie in the list.
             var results = new List<Movie>();
-            foreach (Movie movie in _db.Movies.Where(m => movieIDs.Contains(m.ID)))
+            foreach (var movie in _db.Movies.Where(m => movieIDs.Contains(m.ID)))
             {
                 if (TryCheckoutMovie(movie))
                 {
@@ -83,9 +83,9 @@ namespace WebApiOData.V4.Samples.Controllers
                 return BadRequest(ModelState);
             }
 
-            string title = parameters["Title"] as string;
+            var title = parameters["Title"] as string;
 
-            Movie movie = new Movie()
+            var movie = new Movie()
             {
                 Title = title,
                 ID = _db.Movies.Count + 1,

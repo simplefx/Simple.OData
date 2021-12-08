@@ -128,7 +128,7 @@ namespace WebApiOData.V3.Samples.Controllers
 
             // Try to check out each movie in the list.
             var results = new List<Movie>();
-            foreach (Movie movie in db.Movies.Where(m => movieIDs.Contains(m.ID)))
+            foreach (var movie in db.Movies.Where(m => movieIDs.Contains(m.ID)))
             {
                 if (TryCheckoutMovie(movie))
                 {
@@ -166,7 +166,7 @@ namespace WebApiOData.V3.Samples.Controllers
 
             // Try to check out each movie in the list.
             var results = new List<Movie>();
-            foreach (Movie movie in movies)
+            foreach (var movie in movies)
             {
                 if (TryCheckoutMovie(movie))
                 {

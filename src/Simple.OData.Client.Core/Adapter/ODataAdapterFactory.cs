@@ -157,7 +157,7 @@ namespace Simple.OData.Client
             try
             {
 
-                Type type = LoadType(adapterAssemblyName, adapterTypeName);
+                var type = LoadType(adapterAssemblyName, adapterTypeName);
                 var constructors = typeCache.GetDeclaredConstructors(type);
 
                 var ctor = constructors.Single(x =>

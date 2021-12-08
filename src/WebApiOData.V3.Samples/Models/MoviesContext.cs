@@ -31,7 +31,7 @@ namespace WebApiOData.V3.Samples.Models
     {
         protected override void Seed(MoviesContext context)
         {
-            List<Movie> movies = new List<Movie>()
+            var movies = new List<Movie>()
             {
                 new Movie() { Title = "Maximum Payback", Year = 1990 },
                 new Movie() { Title = "Inferno of Retribution", Year = 2005 },

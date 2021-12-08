@@ -18,9 +18,9 @@ namespace WebApiOData.V3.Samples.Controllers
                 throw new HttpResponseException(HttpStatusCode.BadRequest);
             }
 
-            string title = parameters["Title"] as string;
+            var title = parameters["Title"] as string;
 
-            Movie movie = new Movie()
+            var movie = new Movie()
             {
                 Title = title
             };

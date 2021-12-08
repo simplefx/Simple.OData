@@ -116,7 +116,7 @@ namespace Simple.OData.Client
 
             if (namedKeyValues != null)
             {
-                if (NamedKeyValuesMatchAnyKey(namedKeyValues, out var matchingKey, out bool isAlternateKey))
+                if (NamedKeyValuesMatchAnyKey(namedKeyValues, out var matchingKey, out var isAlternateKey))
                 {
                     Details.NamedKeyValues = matchingKey.ToDictionary();
                     Details.IsAlternateKey = isAlternateKey;

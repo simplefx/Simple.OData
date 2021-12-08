@@ -416,8 +416,8 @@ namespace Simple.OData.Client
             if (expr._operator == ExpressionType.Default)
                 return false;
 
-            int outerPrecedence = GetPrecedence(_operator);
-            int innerPrecedence = GetPrecedence(expr._operator);
+            var outerPrecedence = GetPrecedence(_operator);
+            var innerPrecedence = GetPrecedence(expr._operator);
             return outerPrecedence < innerPrecedence;
         }
 

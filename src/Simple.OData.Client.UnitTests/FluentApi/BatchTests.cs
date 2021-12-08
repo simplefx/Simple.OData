@@ -369,7 +369,7 @@ namespace Simple.OData.Client.Tests.FluentApi
         {
             var settings = CreateDefaultSettings().WithHttpMock();
             var batch = new ODataBatch(settings);
-            int result = 0;
+            var result = 0;
             batch += async c => result = await c.Unbound().Function("ParseInt").Set(new Entry() { { "number", "1" } }).ExecuteAsScalarAsync<int>();
             await batch.ExecuteAsync();
 
@@ -413,7 +413,7 @@ namespace Simple.OData.Client.Tests.FluentApi
         {
             var settings = CreateDefaultSettings().WithHttpMock();
             var batch = new ODataBatch(settings);
-            int count = 0;
+            var count = 0;
             batch += async c => count = await c
                 .For("Products")
                 .Count()
