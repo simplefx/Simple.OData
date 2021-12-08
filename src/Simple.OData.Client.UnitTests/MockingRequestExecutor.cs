@@ -93,9 +93,9 @@ namespace Simple.OData.Client.Tests
         private readonly bool _validate;
         private readonly bool _recording;
         private int _fileCounter;
-        private static readonly Regex _regexBatch = new Regex(@"batch_([0-9AFa-f]){8}-([0-9AFa-f]){4}-([0-9AFa-f]){4}-([0-9AFa-f]){4}-([0-9AFa-f]){12}");
-        private static readonly Regex _regexChangeset = new Regex(@"changeset_([0-9AFa-f]){8}-([0-9AFa-f]){4}-([0-9AFa-f]){4}-([0-9AFa-f]){4}-([0-9AFa-f]){12}");
-        private static readonly Regex _regexBaseUrl = new Regex(@"http:\/\/((\w|_|-|\.|)+\/){3}");
+        private static readonly Regex _regexBatch = new(@"batch_([0-9AFa-f]){8}-([0-9AFa-f]){4}-([0-9AFa-f]){4}-([0-9AFa-f]){4}-([0-9AFa-f]){12}");
+        private static readonly Regex _regexChangeset = new(@"changeset_([0-9AFa-f]){8}-([0-9AFa-f]){4}-([0-9AFa-f]){4}-([0-9AFa-f]){4}-([0-9AFa-f]){12}");
+        private static readonly Regex _regexBaseUrl = new(@"http:\/\/((\w|_|-|\.|)+\/){3}");
 
         public MockingRequestExecutor(ODataClientSettings settings, string mockDataPathBase, bool validate, bool recording)
         {

@@ -13,9 +13,9 @@ namespace Simple.OData.Client
     public class ODataBatch
     {
         private readonly ODataClient _client;
-        private readonly List<Func<IODataClient, Task>> _actions = new List<Func<IODataClient, Task>>();
-        private readonly ConcurrentDictionary<object, IDictionary<string, object>> _entryMap = new ConcurrentDictionary<object, IDictionary<string, object>>();
-        private readonly Dictionary<string, string> _headers = new Dictionary<string, string>();
+        private readonly List<Func<IODataClient, Task>> _actions = new();
+        private readonly ConcurrentDictionary<object, IDictionary<string, object>> _entryMap = new();
+        private readonly Dictionary<string, string> _headers = new();
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ODataBatch"/> class.

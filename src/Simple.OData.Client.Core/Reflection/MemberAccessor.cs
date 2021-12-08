@@ -8,10 +8,10 @@ namespace Simple.OData.Client
     internal static class MemberAccessor
 
     {
-		private static readonly ConcurrentDictionary<(Type, Type, MemberInfo), Delegate> getterCache = new ConcurrentDictionary<(Type, Type, MemberInfo), Delegate>();
-		private static readonly ConcurrentDictionary<(Type, Type, MemberInfo), Delegate> setterCache = new ConcurrentDictionary<(Type, Type, MemberInfo), Delegate>();
-		private static readonly ConcurrentDictionary<(Type, MemberInfo), Delegate> staticGetterCache = new ConcurrentDictionary<(Type, MemberInfo), Delegate>();
-		private static readonly ConcurrentDictionary<(Type, MemberInfo), Delegate> staticSetterCache = new ConcurrentDictionary<(Type, MemberInfo), Delegate>();
+		private static readonly ConcurrentDictionary<(Type, Type, MemberInfo), Delegate> getterCache = new();
+		private static readonly ConcurrentDictionary<(Type, Type, MemberInfo), Delegate> setterCache = new();
+		private static readonly ConcurrentDictionary<(Type, MemberInfo), Delegate> staticGetterCache = new();
+		private static readonly ConcurrentDictionary<(Type, MemberInfo), Delegate> staticSetterCache = new();
 
         public static Delegate BuildGetterAccessor(Type type, Type returnType, MemberInfo memberInfo)
         {

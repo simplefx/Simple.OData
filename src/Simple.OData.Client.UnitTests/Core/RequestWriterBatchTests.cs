@@ -45,7 +45,7 @@ namespace Simple.OData.Client.Tests.Core
     public abstract class RequestWriterBatchTests : CoreTestBase
     {
         private readonly Dictionary<object, IDictionary<string, object>> _batchContent =
-            new Dictionary<object, IDictionary<string, object>>(3);
+            new(3);
 
         protected Dictionary<object, IDictionary<string, object>> BatchContent => _batchContent;
 

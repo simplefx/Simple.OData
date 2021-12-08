@@ -11,7 +11,7 @@ namespace Simple.OData.ProductService.Controllers
 {
     public class WorkTaskModelsController : ODataController
     {
-        private readonly ProductServiceContext db = new ProductServiceContext();
+        private readonly ProductServiceContext db = new();
 
 
         // GET odata/WorkTaskModels

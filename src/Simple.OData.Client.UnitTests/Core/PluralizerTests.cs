@@ -6,7 +6,7 @@ namespace Simple.OData.Client.Tests.Core
 {
     public class PluralizerTests
     {
-        private readonly SimplePluralizer _pluralizer = new SimplePluralizer();
+        private readonly SimplePluralizer _pluralizer = new();
 
         [Theory]
         [InlineData("Person", "Persons")]

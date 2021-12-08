@@ -9,7 +9,7 @@ namespace Simple.OData.Client.V4.Adapter
 	internal class ODataRequestMessage : IODataRequestMessageAsync
     {
         private MemoryStream _stream;
-        private readonly Dictionary<string, string> _headers = new Dictionary<string, string>();
+        private readonly Dictionary<string, string> _headers = new();
 
         public ODataRequestMessage()
         {

@@ -89,8 +89,8 @@ namespace Simple.OData.Client.V4.Adapter.Extensions
 
     internal class AggregationClause<T>
     {
-        private static readonly Dictionary<string, string> KnownFunctionTemplates = new Dictionary<string, string>
-        {
+        private static readonly Dictionary<string, string> KnownFunctionTemplates = new()
+		{
             {nameof(IAggregationFunction<T>.Average), "{0} with average"},
             {nameof(IAggregationFunction<T>.Sum), "{0} with sum"},
             {nameof(IAggregationFunction<T>.Min), "{0} with min"},

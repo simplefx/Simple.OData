@@ -8,7 +8,7 @@ namespace WebApiOData.V3.Samples.Controllers
 {
     public class NonBindableActionsController : ODataController
     {
-		private readonly MoviesContext db = new MoviesContext();
+		private readonly MoviesContext db = new();
 
         [HttpPost]
         public Movie CreateMovie(ODataActionParameters parameters)

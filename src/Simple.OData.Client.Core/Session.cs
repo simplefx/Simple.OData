@@ -73,7 +73,7 @@ namespace Simple.OData.Client
             }
         }
 
-        private readonly SemaphoreSlim _initializeSemaphore = new SemaphoreSlim(1);
+        private readonly SemaphoreSlim _initializeSemaphore = new(1);
         public async Task Initialize(CancellationToken cancellationToken)
         {
             // Just allow one schema request at a time, unlikely to be much contention but avoids multiple requests for same endpoint.

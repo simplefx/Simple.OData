@@ -10,7 +10,7 @@ namespace WebApiOData.V4.Samples.Controllers
 {
 	public class MoviesController : ODataController
 	{
-		private readonly MoviesContext _db = new MoviesContext();
+		private readonly MoviesContext _db = new();
 
 		public IHttpActionResult Get()
 		{

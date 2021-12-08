@@ -9,8 +9,8 @@ namespace Simple.OData.Client.Extensions
 {
 	internal static class DictionaryExtensions
     {
-        private static ConcurrentDictionary<Type, ActivatorDelegate> _defaultActivators = new ConcurrentDictionary<Type, ActivatorDelegate>();
-        private static ConcurrentDictionary<Tuple<Type,Type>, ActivatorDelegate> _collectionActivators = new ConcurrentDictionary<Tuple<Type,Type>, ActivatorDelegate>();
+        private static ConcurrentDictionary<Type, ActivatorDelegate> _defaultActivators = new();
+        private static ConcurrentDictionary<Tuple<Type,Type>, ActivatorDelegate> _collectionActivators = new();
 
         internal static Func<IDictionary<string, object>, ITypeCache, ODataEntry> CreateDynamicODataEntry { get; set; }
 

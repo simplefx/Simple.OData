@@ -7,8 +7,8 @@ namespace Simple.OData.Client.Extensions
 	internal static class HomogenizeEx
     {
         private static readonly ConcurrentDictionary<string, string> Cache
-            = new ConcurrentDictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-        private static Regex _homogenizeRegex = new Regex(@"[\s\p{P}]");
+            = new(StringComparer.OrdinalIgnoreCase);
+        private static Regex _homogenizeRegex = new(@"[\s\p{P}]");
 
         /// <summary>
         /// Downshift a string and remove all non-alphanumeric characters.

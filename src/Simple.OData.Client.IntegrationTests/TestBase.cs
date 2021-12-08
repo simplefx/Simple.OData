@@ -9,7 +9,7 @@ namespace Simple.OData.Client.Tests
 {
     public abstract class TestBase : IDisposable
     {
-        private static readonly HttpClient metadataHttpClient = new HttpClient();
+        private static readonly HttpClient metadataHttpClient = new();
 
         protected const string ODataV2ReadWriteUri = "https://services.odata.org/V2/%28S%28readwrite%29%29/OData/OData.svc/";
         protected const string ODataV3ReadOnlyUri = "https://services.odata.org/V3/OData/OData.svc/";

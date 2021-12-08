@@ -9,8 +9,8 @@ namespace Simple.OData.Client
 {
 	internal class EdmMetadataCache
     {
-		private static readonly ConcurrentDictionary<string, EdmMetadataCache> _instances = new ConcurrentDictionary<string, EdmMetadataCache>();
-		private static readonly SemaphoreSlim semaphore = new SemaphoreSlim(1);
+		private static readonly ConcurrentDictionary<string, EdmMetadataCache> _instances = new();
+		private static readonly SemaphoreSlim semaphore = new(1);
 
         public static void Clear()
         {

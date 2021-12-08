@@ -12,7 +12,7 @@ namespace WebApiOData.V3.Samples.Controllers
 {
     public class MoviesController : EntitySetController<Movie, int>
     {
-        private readonly MoviesContext db = new MoviesContext();
+        private readonly MoviesContext db = new();
 
         private static bool TryCheckoutMovie(Movie movie)
         {
