@@ -34,7 +34,7 @@ namespace WebApiOData.V3.Samples.Tests
 		}
 #endif
 
-		private ODataClientSettings CreateDefaultSettings()
+		private static ODataClientSettings CreateDefaultSettings()
 		{
 			return new ODataClientSettings()
 			{

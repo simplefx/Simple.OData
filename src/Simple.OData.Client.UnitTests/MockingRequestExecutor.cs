@@ -276,7 +276,7 @@ namespace Simple.OData.Client.Tests
 			return response;
 		}
 
-		private void ValidateHeaders(
+		private static void ValidateHeaders(
 			IDictionary<string, IEnumerable<string>> expectedHeaders,
 			IDictionary<string, IEnumerable<string>> actualHeaders)
 		{
@@ -293,7 +293,7 @@ namespace Simple.OData.Client.Tests
 			}
 		}
 
-		private string AdjustContent(string content)
+		private static string AdjustContent(string content)
 		{
 			return
 				AdjustBatchIds(
