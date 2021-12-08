@@ -335,8 +335,10 @@ namespace Simple.OData.Client
 		}
 
 		private MethodInfo ImplicitConversionTo<T>(object value)
-			=> value.GetType().GetMethods()
-					.FirstOrDefault(m => string.Equals(m.Name, "op_Implicit")
-									  && m.ReturnType == typeof(T));
+		{
+			return value.GetType().GetMethods()
+							   .FirstOrDefault(m => string.Equals(m.Name, "op_Implicit")
+												 && m.ReturnType == typeof(T));
+		}
 	}
 }

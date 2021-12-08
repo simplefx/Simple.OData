@@ -50,7 +50,10 @@ namespace Simple.OData.Client.Tests.Core
 				this.session = session;
 			}
 
-			public override IBatchWriter GetBatchWriter(IDictionary<object, IDictionary<string, object>> batchEntries) => new CustomBatchWriter(session, batchEntries);
+			public override IBatchWriter GetBatchWriter(IDictionary<object, IDictionary<string, object>> batchEntries)
+			{
+				return new CustomBatchWriter(session, batchEntries);
+			}
 		}
 
 		private class CustomAdapterFactory : ODataAdapterFactory

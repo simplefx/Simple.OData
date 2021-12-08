@@ -18,6 +18,8 @@ namespace Simple.OData.Client.Tests
 		/// <returns></returns>
 		public static IBoundClient<T> For<T>(this IODataClient oDataClient, T _, string collectionName)
 			where T : class
-		   => oDataClient.For<T>(collectionName);
+		{
+			return oDataClient.For<T>(collectionName);
+		}
 	}
 }

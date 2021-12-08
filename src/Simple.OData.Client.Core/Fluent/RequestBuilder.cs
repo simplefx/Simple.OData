@@ -29,7 +29,10 @@ namespace Simple.OData.Client
 			_headers = headers;
 		}
 
-		private IDictionary<string, string> GetHeaders() => _command?.Details.Headers ?? _headers;
+		private IDictionary<string, string> GetHeaders()
+		{
+			return _command?.Details.Headers ?? _headers;
+		}
 
 		public async Task<ODataRequest> GetRequestAsync(bool scalarResult, CancellationToken cancellationToken)
 		{

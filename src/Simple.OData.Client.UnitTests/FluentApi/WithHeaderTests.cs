@@ -48,10 +48,14 @@ namespace Simple.OData.Client.Tests.FluentApi
 		}
 
 		private static void AssertHeader(IDictionary<string, IEnumerable<string>> headers, string name, string value)
-			=> Assert.True(headers.TryGetValue(name, out var values) && values.Single() == value);
+		{
+			Assert.True(headers.TryGetValue(name, out var values) && values.Single() == value);
+		}
 
 		private static void AssertHeader(ODataRequest request, string name, string value)
-			=> Assert.True(request.RequestMessage.Headers.TryGetValues(name, out var values) && values.Single() == value);
+		{
+			Assert.True(request.RequestMessage.Headers.TryGetValues(name, out var values) && values.Single() == value);
+		}
 
 		[Fact]
 		public async Task BuildRequestFor()

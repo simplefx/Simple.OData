@@ -18,9 +18,11 @@ namespace Simple.OData.Client.Tests.Entities
 	internal class PrimitiveTypeConverter : System.ComponentModel.TypeConverter
 	{
 		public override bool CanConvertTo(ITypeDescriptorContext context, Type destinationType)
-			=> destinationType == typeof(PrimitiveType) ||
-			   destinationType == typeof(PrimitiveType?) ||
-			   base.CanConvertTo(context, destinationType);
+		{
+			return destinationType == typeof(PrimitiveType) ||
+						  destinationType == typeof(PrimitiveType?) ||
+						  base.CanConvertTo(context, destinationType);
+		}
 
 		public override object ConvertTo(ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
 		{

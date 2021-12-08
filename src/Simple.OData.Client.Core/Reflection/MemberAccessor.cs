@@ -223,10 +223,14 @@ namespace Simple.OData.Client
 		}
 
 		public static object GetValue(object instance, MemberInfo memberInfo)
-			=> GetValue<object>(instance, memberInfo);
+		{
+			return GetValue<object>(instance, memberInfo);
+		}
 
 		public static object GetValue(object instance, string memberName)
-			=> GetValue<object>(instance, memberName);
+		{
+			return GetValue<object>(instance, memberName);
+		}
 
 		public static bool TryGetValue<TMember>(object instance, MemberInfo memberInfo, out TMember value)
 		{
@@ -272,10 +276,14 @@ namespace Simple.OData.Client
 		}
 
 		public static bool TryGetValue(object instance, MemberInfo memberInfo, out object value)
-			=> TryGetValue<object>(instance, memberInfo, out value);
+		{
+			return TryGetValue<object>(instance, memberInfo, out value);
+		}
 
 		public static bool TryGetValue(object instance, string memberName, out object value)
-			=> TryGetValue<object>(instance, memberName, out value);
+		{
+			return TryGetValue<object>(instance, memberName, out value);
+		}
 
 		private static Action<object, TMember> GetSetAccessor<TMember>(object instance, MemberInfo memberInfo)
 		{
@@ -325,10 +333,14 @@ namespace Simple.OData.Client
 		}
 
 		public static void SetValue(object instance, MemberInfo memberInfo, object value)
-			=> SetValue<object>(instance, memberInfo, value);
+		{
+			SetValue<object>(instance, memberInfo, value);
+		}
 
 		public static void SetValue(object instance, string memberName, object value)
-			=> SetValue<object>(instance, memberName, value);
+		{
+			SetValue<object>(instance, memberName, value);
+		}
 
 		public static bool TrySetValue<TMember>(object instance, MemberInfo memberInfo, TMember value)
 		{
@@ -370,9 +382,13 @@ namespace Simple.OData.Client
 		}
 
 		public static bool TrySetValue(object instance, MemberInfo memberInfo, object value)
-			=> TrySetValue<object>(instance, memberInfo, value);
+		{
+			return TrySetValue<object>(instance, memberInfo, value);
+		}
 
 		public static bool TrySetValue(object instance, string memberName, object value)
-			=> TrySetValue<object>(instance, memberName, value);
+		{
+			return TrySetValue<object>(instance, memberName, value);
+		}
 	}
 }
