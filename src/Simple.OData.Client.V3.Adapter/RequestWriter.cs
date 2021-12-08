@@ -38,39 +38,37 @@ namespace Simple.OData.Client.V3.Adapter
                 _session.Metadata.GetQualifiedTypeName(collection)) as IEdmEntityType;
             var model = (method == RestVerbs.Patch || method == RestVerbs.Merge) ? new EdmDeltaModel(_model, entityType, entryData.Keys) : _model;
 
-            using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), model))
-            {
-                var contentId = _deferredBatchWriter != null ? _deferredBatchWriter.Value.GetContentId(entryData, null) : null;
-                //var entityCollection = _session.Metadata.GetEntityCollection(collection);
-                var entityCollection = _session.Metadata.NavigateToCollection(collection);
-                var entryDetails = _session.Metadata.ParseEntryDetails(entityCollection.Name, entryData, contentId);
+			using var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), model);
+			var contentId = _deferredBatchWriter != null ? _deferredBatchWriter.Value.GetContentId(entryData, null) : null;
+			//var entityCollection = _session.Metadata.GetEntityCollection(collection);
+			var entityCollection = _session.Metadata.NavigateToCollection(collection);
+			var entryDetails = _session.Metadata.ParseEntryDetails(entityCollection.Name, entryData, contentId);
 
-                var entryWriter = messageWriter.CreateODataEntryWriter();
-                var entry = CreateODataEntry(entityType.FullName(), entryDetails.Properties);
+			var entryWriter = messageWriter.CreateODataEntryWriter();
+			var entry = CreateODataEntry(entityType.FullName(), entryDetails.Properties);
 
-                entryWriter.WriteStart(entry);
+			entryWriter.WriteStart(entry);
 
-                if (entryDetails.Links != null)
-                {
-                    foreach (var link in entryDetails.Links)
-                    {
-                        if (link.Value.Any(x => x.LinkData != null))
-                        {
-                            WriteLink(entryWriter, entry, link.Key, link.Value);
-                        }
-                    }
-                }
-
-                entryWriter.WriteEnd();
-
-                if (IsBatch)
+			if (entryDetails.Links != null)
+			{
+				foreach (var link in entryDetails.Links)
 				{
-					return null;
+					if (link.Value.Any(x => x.LinkData != null))
+					{
+						WriteLink(entryWriter, entry, link.Key, link.Value);
+					}
 				}
+			}
 
-				return await message.GetStreamAsync().ConfigureAwait(false);
-            }
-        }
+			entryWriter.WriteEnd();
+
+			if (IsBatch)
+			{
+				return null;
+			}
+
+			return await message.GetStreamAsync().ConfigureAwait(false);
+		}
 
         protected async override Task<Stream> WriteLinkContentAsync(string method, string commandText, string linkIdent)
         {
@@ -78,22 +76,20 @@ namespace Simple.OData.Client.V3.Adapter
                 ? await CreateBatchOperationMessageAsync(method, null, null, commandText, false).ConfigureAwait(false) 
                 : new ODataRequestMessage();
 
-            using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), _model))
-            {
-                var link = new ODataEntityReferenceLink
-                {
-                    Url = Utils.CreateAbsoluteUri(_session.Settings.BaseUri.AbsoluteUri, linkIdent)
-                };
-                messageWriter.WriteEntityReferenceLink(link);
+			using var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), _model);
+			var link = new ODataEntityReferenceLink
+			{
+				Url = Utils.CreateAbsoluteUri(_session.Settings.BaseUri.AbsoluteUri, linkIdent)
+			};
+			messageWriter.WriteEntityReferenceLink(link);
 
-                if (IsBatch)
-				{
-					return null;
-				}
+			if (IsBatch)
+			{
+				return null;
+			}
 
-				return await message.GetStreamAsync().ConfigureAwait(false);
-            }
-        }
+			return await message.GetStreamAsync().ConfigureAwait(false);
+		}
 
         protected async override Task<Stream> WriteFunctionContentAsync(string method, string commandText)
         {
@@ -111,37 +107,35 @@ namespace Simple.OData.Client.V3.Adapter
                 ? await CreateBatchOperationMessageAsync(method, null, null, commandText, true).ConfigureAwait(false) 
                 : new ODataRequestMessage();
 
-            using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(ODataFormat.Json), _model))
-            {
-                var action = _model.SchemaElements
-                    .Where(x => x.SchemaElementKind == EdmSchemaElementKind.EntityContainer)
-                    .SelectMany(x => (x as IEdmEntityContainer).FunctionImports())
-                    .BestMatch(x => x.Name, actionName, _session.Settings.NameMatchResolver);
-                var parameterWriter = await messageWriter.CreateODataParameterWriterAsync(action).ConfigureAwait(false);
-                await parameterWriter.WriteStartAsync().ConfigureAwait(false);
+			using var messageWriter = new ODataMessageWriter(message, GetWriterSettings(ODataFormat.Json), _model);
+			var action = _model.SchemaElements
+				.Where(x => x.SchemaElementKind == EdmSchemaElementKind.EntityContainer)
+				.SelectMany(x => (x as IEdmEntityContainer).FunctionImports())
+				.BestMatch(x => x.Name, actionName, _session.Settings.NameMatchResolver);
+			var parameterWriter = await messageWriter.CreateODataParameterWriterAsync(action).ConfigureAwait(false);
+			await parameterWriter.WriteStartAsync().ConfigureAwait(false);
 
 
-                foreach (var parameter in parameters)
-                {
-                    var operationParameter = action.Parameters.BestMatch(x => x.Name, parameter.Key, _session.Settings.NameMatchResolver);
-                    if (operationParameter == null)
-					{
-						throw new UnresolvableObjectException(parameter.Key, $"Parameter [{parameter.Key}] not found for action [{actionName}]");
-					}
-
-					await WriteOperationParameterAsync(parameterWriter, operationParameter, parameter.Key, parameter.Value).ConfigureAwait(false);
-                }
-
-                await parameterWriter.WriteEndAsync().ConfigureAwait(false);
-
-                if (IsBatch)
+			foreach (var parameter in parameters)
+			{
+				var operationParameter = action.Parameters.BestMatch(x => x.Name, parameter.Key, _session.Settings.NameMatchResolver);
+				if (operationParameter == null)
 				{
-					return null;
+					throw new UnresolvableObjectException(parameter.Key, $"Parameter [{parameter.Key}] not found for action [{actionName}]");
 				}
 
-				return await message.GetStreamAsync().ConfigureAwait(false);
-            }
-        }
+				await WriteOperationParameterAsync(parameterWriter, operationParameter, parameter.Key, parameter.Value).ConfigureAwait(false);
+			}
+
+			await parameterWriter.WriteEndAsync().ConfigureAwait(false);
+
+			if (IsBatch)
+			{
+				return null;
+			}
+
+			return await message.GetStreamAsync().ConfigureAwait(false);
+		}
 
         private async Task WriteOperationParameterAsync(ODataParameterWriter parameterWriter, IEdmFunctionParameter operationParameter, string paramName, object paramValue)
         {
@@ -171,13 +165,11 @@ namespace Simple.OData.Client.V3.Adapter
         protected async override Task<Stream> WriteStreamContentAsync(Stream stream, bool writeAsText)
         {
             var message = new ODataRequestMessage();
-            using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(ODataFormat.RawValue), _model))
-            {
-                var value = writeAsText ? (object)Utils.StreamToString(stream) : Utils.StreamToByteArray(stream);
-                await messageWriter.WriteValueAsync(value);
-                return await message.GetStreamAsync();
-            }
-        }
+			using var messageWriter = new ODataMessageWriter(message, GetWriterSettings(ODataFormat.RawValue), _model);
+			var value = writeAsText ? (object)Utils.StreamToString(stream) : Utils.StreamToByteArray(stream);
+			await messageWriter.WriteValueAsync(value);
+			return await message.GetStreamAsync();
+		}
 
         protected override string FormatLinkPath(string entryIdent, string navigationPropertyName, string linkIdent = null)
         {

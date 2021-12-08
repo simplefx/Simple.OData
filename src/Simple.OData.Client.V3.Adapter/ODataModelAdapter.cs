@@ -39,20 +39,16 @@ namespace Simple.OData.Client.V3.Adapter
             {
                 MessageQuotas = { MaxReceivedMessageSize = Int32.MaxValue }
             };
-            using (var messageReader = new ODataMessageReader(new ODataResponseMessage(response), readerSettings))
-            {
-                Model = messageReader.ReadMetadataDocument();
-            }
-        }
+			using var messageReader = new ODataMessageReader(new ODataResponseMessage(response), readerSettings);
+			Model = messageReader.ReadMetadataDocument();
+		}
 
         public ODataModelAdapter(string protocolVersion, string metadataString)
             : this(protocolVersion)
         {
-            using (var reader = XmlReader.Create(new StringReader(metadataString)))
-            {
-                reader.MoveToContent();
-                Model = EdmxReader.Parse(reader);
-            }
-        }
+			using var reader = XmlReader.Create(new StringReader(metadataString));
+			reader.MoveToContent();
+			Model = EdmxReader.Parse(reader);
+		}
     }
 }

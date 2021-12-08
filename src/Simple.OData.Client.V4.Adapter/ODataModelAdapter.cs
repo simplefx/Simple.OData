@@ -38,11 +38,9 @@ namespace Simple.OData.Client.V4.Adapter
             {
                 MessageQuotas = { MaxReceivedMessageSize = int.MaxValue }
             };
-            using (var messageReader = new ODataMessageReader(new ODataResponseMessage(response), readerSettings))
-            {
-                Model = messageReader.ReadMetadataDocument();
-            }
-        }
+			using var messageReader = new ODataMessageReader(new ODataResponseMessage(response), readerSettings);
+			Model = messageReader.ReadMetadataDocument();
+		}
 
         public ODataModelAdapter(string protocolVersion, string metadataString)
             : this(protocolVersion)
@@ -51,11 +49,9 @@ namespace Simple.OData.Client.V4.Adapter
             metadataString = metadataString
                 .Replace(" ConcurrencyMode=\"None\"", "")
                 .Replace(" ConcurrencyMode=\"Fixed\"", "");
-            using (var reader = XmlReader.Create(new StringReader(metadataString)))
-            {
-                reader.MoveToContent();
-                Model = CsdlReader.Parse(reader);
-            }
-        }
+			using var reader = XmlReader.Create(new StringReader(metadataString));
+			reader.MoveToContent();
+			Model = CsdlReader.Parse(reader);
+		}
     }
 }

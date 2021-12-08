@@ -171,105 +171,98 @@ namespace Simple.OData.Client.Tests
 
         private void SaveRequest(HttpRequestMessage request)
         {
-            using (var stream = new FileStream(GenerateMockDataPath(), FileMode.Create))
-            {
-                var ser = new DataContractJsonSerializer(typeof(SerializableHttpRequestMessage));
-                ser.WriteObject(stream, new SerializableHttpRequestMessage(request));
-            }
-        }
+			using var stream = new FileStream(GenerateMockDataPath(), FileMode.Create);
+			var ser = new DataContractJsonSerializer(typeof(SerializableHttpRequestMessage));
+			ser.WriteObject(stream, new SerializableHttpRequestMessage(request));
+		}
 
         private void SaveResponse(HttpResponseMessage response)
         {
-            using (var stream = new FileStream(GenerateMockDataPath(), FileMode.Create))
-            {
-                var ser = new DataContractJsonSerializer(typeof(SerializableHttpResponseMessage));
-                ser.WriteObject(stream, new SerializableHttpResponseMessage(response));
-            }
-        }
+			using var stream = new FileStream(GenerateMockDataPath(), FileMode.Create);
+			var ser = new DataContractJsonSerializer(typeof(SerializableHttpResponseMessage));
+			ser.WriteObject(stream, new SerializableHttpResponseMessage(response));
+		}
 
         private async Task ValidateRequestAsync(HttpRequestMessage request)
         {
-            using (var stream = new FileStream(GenerateMockDataPath(), FileMode.Open))
-            {
-                var ser = new DataContractJsonSerializer(typeof(SerializableHttpRequestMessage));
-                var savedRequest = ser.ReadObject(stream) as SerializableHttpRequestMessage;
-                Assert.Equal(savedRequest.Method, request.Method.ToString());
-                Assert.Equal(savedRequest.RequestUri.AbsolutePath.Split('/').Last(), request.RequestUri.AbsolutePath.Split('/').Last());
-                var expectedHeaders = new Dictionary<string, IEnumerable<string>>();
-                foreach (var header in savedRequest.RequestHeaders)
+			using var stream = new FileStream(GenerateMockDataPath(), FileMode.Open);
+			var ser = new DataContractJsonSerializer(typeof(SerializableHttpRequestMessage));
+			var savedRequest = ser.ReadObject(stream) as SerializableHttpRequestMessage;
+			Assert.Equal(savedRequest.Method, request.Method.ToString());
+			Assert.Equal(savedRequest.RequestUri.AbsolutePath.Split('/').Last(), request.RequestUri.AbsolutePath.Split('/').Last());
+			var expectedHeaders = new Dictionary<string, IEnumerable<string>>();
+			foreach (var header in savedRequest.RequestHeaders)
+			{
+				expectedHeaders.Add(header.Key, header.Value);
+			}
+
+			var actualHeaders = new Dictionary<string, IEnumerable<string>>();
+			foreach (var header in request.Headers)
+			{
+				actualHeaders.Add(header.Key, header.Value);
+			}
+
+			ValidateHeaders(expectedHeaders, actualHeaders);
+			if (request.Content != null)
+			{
+				expectedHeaders = new Dictionary<string, IEnumerable<string>>();
+				foreach (var header in savedRequest.ContentHeaders)
 				{
 					expectedHeaders.Add(header.Key, header.Value);
 				}
 
-				var actualHeaders = new Dictionary<string, IEnumerable<string>>();
-                foreach (var header in request.Headers)
+				actualHeaders = new Dictionary<string, IEnumerable<string>>();
+				foreach (var header in request.Content.Headers)
 				{
 					actualHeaders.Add(header.Key, header.Value);
 				}
 
 				ValidateHeaders(expectedHeaders, actualHeaders);
-                if (request.Content != null)
-                {
-                    expectedHeaders = new Dictionary<string, IEnumerable<string>>();
-                    foreach (var header in savedRequest.ContentHeaders)
-					{
-						expectedHeaders.Add(header.Key, header.Value);
-					}
-
-					actualHeaders = new Dictionary<string, IEnumerable<string>>();
-                    foreach (var header in request.Content.Headers)
-					{
-						actualHeaders.Add(header.Key, header.Value);
-					}
-
-					ValidateHeaders(expectedHeaders, actualHeaders);
-                    var expectedContent = savedRequest.Content;
-                    expectedContent = AdjustContent(expectedContent);
-                    var actualContent = AdjustContent(await request.Content.ReadAsStringAsync());
-                    Assert.Equal(expectedContent, actualContent);
-                }
-            }
-        }
+				var expectedContent = savedRequest.Content;
+				expectedContent = AdjustContent(expectedContent);
+				var actualContent = AdjustContent(await request.Content.ReadAsStringAsync());
+				Assert.Equal(expectedContent, actualContent);
+			}
+		}
 
         private HttpResponseMessage GetResponseFromResponseMessage(HttpRequestMessage request)
         {
-            using (var stream = new FileStream(GenerateMockDataPath(), FileMode.Open))
-            {
-                var ser = new DataContractJsonSerializer(typeof(SerializableHttpResponseMessage));
-                var savedResponse = ser.ReadObject(stream) as SerializableHttpResponseMessage;
-                var response = new HttpResponseMessage
-                {
-                    StatusCode = savedResponse.StatusCode,
-                    Content = savedResponse.Content == null
-                        ? null
-                        : new StreamContent(Utils.StringToStream(savedResponse.Content)),
-                    RequestMessage = request,
-                    Version = new Version(1, 1),
-                };
-                foreach (var header in savedResponse.ResponseHeaders)
-                {
-                    if (response.Headers.Contains(header.Key))
+			using var stream = new FileStream(GenerateMockDataPath(), FileMode.Open);
+			var ser = new DataContractJsonSerializer(typeof(SerializableHttpResponseMessage));
+			var savedResponse = ser.ReadObject(stream) as SerializableHttpResponseMessage;
+			var response = new HttpResponseMessage
+			{
+				StatusCode = savedResponse.StatusCode,
+				Content = savedResponse.Content == null
+					? null
+					: new StreamContent(Utils.StringToStream(savedResponse.Content)),
+				RequestMessage = request,
+				Version = new Version(1, 1),
+			};
+			foreach (var header in savedResponse.ResponseHeaders)
+			{
+				if (response.Headers.Contains(header.Key))
+				{
+					response.Headers.Remove(header.Key);
+				}
+
+				response.Headers.Add(header.Key, header.Value);
+			}
+
+			if (savedResponse.Content != null)
+			{
+				foreach (var header in savedResponse.ContentHeaders)
+				{
+					if (response.Content.Headers.Contains(header.Key))
 					{
-						response.Headers.Remove(header.Key);
+						response.Content.Headers.Remove(header.Key);
 					}
 
-					response.Headers.Add(header.Key, header.Value);
-                }
-
-                if (savedResponse.Content != null)
-                {
-                    foreach (var header in savedResponse.ContentHeaders)
-                    {
-                        if (response.Content.Headers.Contains(header.Key))
-						{
-							response.Content.Headers.Remove(header.Key);
-						}
-
-						response.Content.Headers.Add(header.Key, header.Value);
-                    }
-                }
-                return response; }
-        }
+					response.Content.Headers.Add(header.Key, header.Value);
+				}
+			}
+			return response;
+		}
 
         private HttpResponseMessage GetResponseFromJson(HttpRequestMessage request)
         {

@@ -100,16 +100,14 @@ namespace Simple.OData.Client
             var request = await _lazyBatchWriter.Value.CreateBatchRequestAsync(this, actions, responseIndexes, headers).ConfigureAwait(false);
             if (request != null)
             {
-                // Execute batch and get response
-                using (var response = await _requestRunner.ExecuteRequestAsync(request, cancellationToken).ConfigureAwait(false))
-                {
-                    var responseReader = _session.Adapter.GetResponseReader();
-                    var batchResponse = await responseReader.GetResponseAsync(response).ConfigureAwait(false);
+				// Execute batch and get response
+				using var response = await _requestRunner.ExecuteRequestAsync(request, cancellationToken).ConfigureAwait(false);
+				var responseReader = _session.Adapter.GetResponseReader();
+				var batchResponse = await responseReader.GetResponseAsync(response).ConfigureAwait(false);
 
-                    // Replay batch operations to assign results
-                    await responseReader.AssignBatchActionResultsAsync(this, batchResponse, actions, responseIndexes).ConfigureAwait(false);
-                }
-            }
+				// Replay batch operations to assign results
+				await responseReader.AssignBatchActionResultsAsync(this, batchResponse, actions, responseIndexes).ConfigureAwait(false);
+			}
         }
 
         private async Task ExecuteRequestAsync(ODataRequest request, CancellationToken cancellationToken)
@@ -152,20 +150,18 @@ namespace Simple.OData.Client
 
 			try
             {
-                using (var response = await _requestRunner.ExecuteRequestAsync(request, cancellationToken).ConfigureAwait(false))
-                {
-                    if (response.IsSuccessStatusCode && response.StatusCode != HttpStatusCode.NoContent &&
-                        (request.Method == RestVerbs.Get || request.ResultRequired))
-                    {
-                        var responseReader = _session.Adapter.GetResponseReader();
-                        return createResult(await responseReader.GetResponseAsync(response).ConfigureAwait(false));
-                    }
-                    else
-                    {
-                        return default(T);
-                    }
-                }
-            }
+				using var response = await _requestRunner.ExecuteRequestAsync(request, cancellationToken).ConfigureAwait(false);
+				if (response.IsSuccessStatusCode && response.StatusCode != HttpStatusCode.NoContent &&
+					(request.Method == RestVerbs.Get || request.ResultRequired))
+				{
+					var responseReader = _session.Adapter.GetResponseReader();
+					return createResult(await responseReader.GetResponseAsync(response).ConfigureAwait(false));
+				}
+				else
+				{
+					return default(T);
+				}
+			}
             catch (WebRequestException ex)
             {
                 if (_settings.IgnoreResourceNotFoundException && ex.Code == HttpStatusCode.NotFound)
@@ -188,26 +184,24 @@ namespace Simple.OData.Client
 
 			try
             {
-                using (var response = await _requestRunner.ExecuteRequestAsync(request, cancellationToken).ConfigureAwait(false))
-                {
-                    if (response.IsSuccessStatusCode && response.StatusCode != HttpStatusCode.NoContent &&
-                        (request.Method == RestVerbs.Get || request.ResultRequired))
-                    {
-                        var stream = new MemoryStream();
-                        await response.Content.CopyToAsync(stream);
-                        if (stream.CanSeek)
-						{
-							stream.Seek(0L, SeekOrigin.Begin);
-						}
+				using var response = await _requestRunner.ExecuteRequestAsync(request, cancellationToken).ConfigureAwait(false);
+				if (response.IsSuccessStatusCode && response.StatusCode != HttpStatusCode.NoContent &&
+					(request.Method == RestVerbs.Get || request.ResultRequired))
+				{
+					var stream = new MemoryStream();
+					await response.Content.CopyToAsync(stream);
+					if (stream.CanSeek)
+					{
+						stream.Seek(0L, SeekOrigin.Begin);
+					}
 
-						return stream;
-                    }
-                    else
-                    {
-                        return Stream.Null;
-                    }
-                }
-            }
+					return stream;
+				}
+				else
+				{
+					return Stream.Null;
+				}
+			}
             catch (WebRequestException ex)
             {
                 if (_settings.IgnoreResourceNotFoundException && ex.Code == HttpStatusCode.NotFound)

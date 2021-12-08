@@ -783,12 +783,10 @@ namespace Simple.OData.Client
 
 			try
             {
-                using (var response = await _requestRunner.ExecuteRequestAsync(request, cancellationToken).ConfigureAwait(false))
-                {
-                    var responseReader = _session.Adapter.GetResponseReader();
-                    return await responseReader.GetResponseAsync(response).ConfigureAwait(false);
-                }
-            }
+				using var response = await _requestRunner.ExecuteRequestAsync(request, cancellationToken).ConfigureAwait(false);
+				var responseReader = _session.Adapter.GetResponseReader();
+				return await responseReader.GetResponseAsync(response).ConfigureAwait(false);
+			}
             catch (WebRequestException ex)
             {
                 if (_settings.IgnoreResourceNotFoundException && ex.Code == HttpStatusCode.NotFound)

@@ -44,12 +44,10 @@ namespace Simple.OData.Client.Tests.Core
             var assembly = Assembly.GetExecutingAssembly();
             var resourceNames = assembly.GetManifestResourceNames();
             var completeResourceName = resourceNames.FirstOrDefault(o => o.EndsWith("." + resourceName, StringComparison.CurrentCultureIgnoreCase));
-            using (var resourceStream = assembly.GetManifestResourceStream(completeResourceName))
-            {
-                TextReader reader = new StreamReader(resourceStream);
-                return reader.ReadToEnd();
-            }
-        }
+			using var resourceStream = assembly.GetManifestResourceStream(completeResourceName);
+			TextReader reader = new StreamReader(resourceStream);
+			return reader.ReadToEnd();
+		}
 
         public static IODataResponseMessageAsync SetUpResourceMock(string resourceName)
         {

@@ -31,65 +31,63 @@ namespace Simple.OData.Client.V4.Adapter
                 return ODataResponse.FromStatusCode(TypeCache, responseMessage.StatusCode, responseMessage.Headers);
             }
             var readerSettings = _session.ToReaderSettings();
-            using (var messageReader = new ODataMessageReader(responseMessage, readerSettings, _model))
-            {
-                var payloadKind = messageReader.DetectPayloadKind().ToList();
-                if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Error))
-                {
-                    return ODataResponse.FromStatusCode(TypeCache, responseMessage.StatusCode, responseMessage.Headers);
-                }
-                else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Value))
-                {
-                    if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Collection))
-                    {
-                        throw new NotImplementedException();
-                    }
-                    else
-                    {
-                        return ODataResponse.FromValueStream(TypeCache, await responseMessage.GetStreamAsync().ConfigureAwait(false), responseMessage is ODataBatchOperationResponseMessage);
-                    }
-                }
-                else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Batch))
-                {
-                    return await ReadResponse(messageReader.CreateODataBatchReader()).ConfigureAwait(false);
-                }
-                else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.ResourceSet))
-                {
-                    return ReadResponse(messageReader.CreateODataResourceSetReader(), responseMessage);
-                }
-                else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Collection))
-                {
-                    return ReadResponse(messageReader.CreateODataCollectionReader());
-                }
-                else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Property))
-                {
-                    if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Resource))
-                    {
-                        return ReadResponse(messageReader.CreateODataResourceReader(), responseMessage);
-                    }
-                    else
-                    {
-                        var property = messageReader.ReadProperty();
-                        return ODataResponse.FromProperty(TypeCache, property.Name, GetPropertyValue(property.Value));
-                    }
-                }
-                else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Delta))
-                {
-                    if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Resource))
-                    {
-                        return ReadResponse(messageReader.CreateODataResourceReader(), responseMessage);
-                    }
-                    else
-                    {
-                        return ReadResponse(messageReader.CreateODataDeltaResourceSetReader(), responseMessage);
-                    }
-                }
-                else
-                {
-                    return ReadResponse(messageReader.CreateODataResourceReader(), responseMessage);
-                }
-            }
-        }
+			using var messageReader = new ODataMessageReader(responseMessage, readerSettings, _model);
+			var payloadKind = messageReader.DetectPayloadKind().ToList();
+			if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Error))
+			{
+				return ODataResponse.FromStatusCode(TypeCache, responseMessage.StatusCode, responseMessage.Headers);
+			}
+			else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Value))
+			{
+				if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Collection))
+				{
+					throw new NotImplementedException();
+				}
+				else
+				{
+					return ODataResponse.FromValueStream(TypeCache, await responseMessage.GetStreamAsync().ConfigureAwait(false), responseMessage is ODataBatchOperationResponseMessage);
+				}
+			}
+			else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Batch))
+			{
+				return await ReadResponse(messageReader.CreateODataBatchReader()).ConfigureAwait(false);
+			}
+			else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.ResourceSet))
+			{
+				return ReadResponse(messageReader.CreateODataResourceSetReader(), responseMessage);
+			}
+			else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Collection))
+			{
+				return ReadResponse(messageReader.CreateODataCollectionReader());
+			}
+			else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Property))
+			{
+				if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Resource))
+				{
+					return ReadResponse(messageReader.CreateODataResourceReader(), responseMessage);
+				}
+				else
+				{
+					var property = messageReader.ReadProperty();
+					return ODataResponse.FromProperty(TypeCache, property.Name, GetPropertyValue(property.Value));
+				}
+			}
+			else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Delta))
+			{
+				if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Resource))
+				{
+					return ReadResponse(messageReader.CreateODataResourceReader(), responseMessage);
+				}
+				else
+				{
+					return ReadResponse(messageReader.CreateODataDeltaResourceSetReader(), responseMessage);
+				}
+			}
+			else
+			{
+				return ReadResponse(messageReader.CreateODataResourceReader(), responseMessage);
+			}
+		}
 
         private async Task<ODataResponse> ReadResponse(ODataBatchReader odataReader)
         {

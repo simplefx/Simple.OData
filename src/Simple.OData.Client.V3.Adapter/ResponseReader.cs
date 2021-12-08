@@ -32,65 +32,63 @@ namespace Simple.OData.Client.V3.Adapter
                 return ODataResponse.FromStatusCode(TypeCache, responseMessage.StatusCode, responseMessage.Headers);
             }
             var readerSettings = _session.ToReaderSettings();
-            using (var messageReader = new ODataMessageReader(responseMessage, readerSettings, _model))
-            {
-                var payloadKind = messageReader.DetectPayloadKind();
-                if (payloadKind.Any(x => x.PayloadKind != ODataPayloadKind.Property))
+			using var messageReader = new ODataMessageReader(responseMessage, readerSettings, _model);
+			var payloadKind = messageReader.DetectPayloadKind();
+			if (payloadKind.Any(x => x.PayloadKind != ODataPayloadKind.Property))
+			{
+				_hasResponse = true;
+			}
+
+			if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Error))
+			{
+				return ODataResponse.FromStatusCode(TypeCache, responseMessage.StatusCode, responseMessage.Headers);
+			}
+			else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Value))
+			{
+				if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Collection))
+				{
+					throw new NotImplementedException();
+				}
+				else
+				{
+					var stream = await responseMessage.GetStreamAsync().ConfigureAwait(false);
+					return ODataResponse.FromValueStream(TypeCache, stream, responseMessage is ODataBatchOperationResponseMessage);
+				}
+			}
+			else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Batch))
+			{
+				return await ReadResponse(messageReader.CreateODataBatchReader()).ConfigureAwait(false);
+			}
+			else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Feed))
+			{
+				return ReadResponse(messageReader.CreateODataFeedReader(), responseMessage);
+			}
+			else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Collection))
+			{
+				return ReadResponse(messageReader.CreateODataCollectionReader());
+			}
+			else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Property))
+			{
+				var property = messageReader.ReadProperty();
+				if (property.Value != null && (property.Value.GetType() != typeof(string) || !string.IsNullOrEmpty(property.Value.ToString())))
 				{
 					_hasResponse = true;
 				}
 
-				if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Error))
-                {
-                    return ODataResponse.FromStatusCode(TypeCache, responseMessage.StatusCode, responseMessage.Headers);
-                }
-                else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Value))
-                {
-                    if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Collection))
-                    {
-                        throw new NotImplementedException();
-                    }
-                    else
-                    {
-                        var stream = await responseMessage.GetStreamAsync().ConfigureAwait(false);
-                        return ODataResponse.FromValueStream(TypeCache, stream, responseMessage is ODataBatchOperationResponseMessage);
-                    }
-                }
-                else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Batch))
-                {
-                    return await ReadResponse(messageReader.CreateODataBatchReader()).ConfigureAwait(false);
-                }
-                else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Feed))
-                {
-                    return ReadResponse(messageReader.CreateODataFeedReader(), responseMessage);
-                }
-                else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Collection))
-                {
-                    return ReadResponse(messageReader.CreateODataCollectionReader());
-                }
-                else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Property))
-                {
-                    var property = messageReader.ReadProperty();
-                    if (property.Value != null && (property.Value.GetType() != typeof(string) || !string.IsNullOrEmpty(property.Value.ToString())))
-					{
-						_hasResponse = true;
-					}
-
-					if (_hasResponse)
-                    {
-                        return ODataResponse.FromProperty(TypeCache, property.Name, GetPropertyValue(property.Value));
-                    }
-                    else
-                    {
-                        return ODataResponse.EmptyFeeds(TypeCache);
-                    }
-                }
-                else
-                {
-                    return ReadResponse(messageReader.CreateODataEntryReader(), responseMessage);
-                }
-            }
-        }
+				if (_hasResponse)
+				{
+					return ODataResponse.FromProperty(TypeCache, property.Name, GetPropertyValue(property.Value));
+				}
+				else
+				{
+					return ODataResponse.EmptyFeeds(TypeCache);
+				}
+			}
+			else
+			{
+				return ReadResponse(messageReader.CreateODataEntryReader(), responseMessage);
+			}
+		}
 
         private async Task<ODataResponse> ReadResponse(ODataBatchReader odataReader)
         {
