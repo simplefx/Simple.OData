@@ -28,3 +28,11 @@ using System.Diagnostics.CodeAnalysis;
 	Scope = "type",
 	Target = "~T:Simple.OData.Client.Tests.Extensions.DictionaryExtensionsTests.ClassNoDefaultConstructor")
 ]
+
+[assembly: SuppressMessage(
+	"Style",
+	"IDE0150:Prefer 'null' check over type check",
+	Justification = "Applying this breaks build",
+	Scope = "member",
+	Target = "~M:Simple.OData.Client.Tests.FluentApi.FindTypedTests.IsOfAssociation~System.Threading.Tasks.Task")
+]
