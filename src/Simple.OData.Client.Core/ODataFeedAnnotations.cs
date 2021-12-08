@@ -69,11 +69,11 @@ namespace Simple.OData.Client
         {
             if (src != null)
             {
-                this.Id = this.Id ?? src.Id;
-                this.Count = this.Count ?? src.Count;
-                this.DeltaLink = this.DeltaLink ?? src.DeltaLink;
-                this.NextPageLink = this.NextPageLink ?? src.NextPageLink;
-                this.InstanceAnnotations = this.InstanceAnnotations ?? src.InstanceAnnotations;
+                this.Id ??= src.Id;
+                this.Count ??= src.Count;
+                this.DeltaLink ??= src.DeltaLink;
+                this.NextPageLink ??= src.NextPageLink;
+                this.InstanceAnnotations ??= src.InstanceAnnotations;
             }
         }
     }

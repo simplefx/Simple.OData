@@ -105,14 +105,14 @@ namespace Simple.OData.Client
         {
             if (src != null)
             {
-                this.Id = this.Id ?? src.Id;
-                this.TypeName = this.TypeName ?? src.TypeName;
-                this.ReadLink = this.ReadLink ?? src.ReadLink;
-                this.EditLink = this.EditLink ?? src.EditLink;
-                this.ETag = this.ETag ?? src.ETag;
-                this.AssociationLinks = this.AssociationLinks ?? src.AssociationLinks;
-                this.MediaResource = this.MediaResource ?? src.MediaResource;
-                this.InstanceAnnotations = this.InstanceAnnotations ?? src.InstanceAnnotations;
+                this.Id ??= src.Id;
+                this.TypeName ??= src.TypeName;
+                this.ReadLink ??= src.ReadLink;
+                this.EditLink ??= src.EditLink;
+                this.ETag ??= src.ETag;
+                this.AssociationLinks ??= src.AssociationLinks;
+                this.MediaResource ??= src.MediaResource;
+                this.InstanceAnnotations ??= src.InstanceAnnotations;
             }
         }
     }

@@ -428,7 +428,7 @@ namespace Simple.OData.Client.V4.Adapter
         private ODataResource CreateODataEntry(string typeName, IDictionary<string, object> properties, ODataResource root)
         {
             var entry = new ODataResource { TypeName = typeName };
-            root = root ?? entry;
+            root ??= entry;
 
             var entryType = _model.FindDeclaredType(entry.TypeName);
             var typeProperties = typeof(IEdmEntityType).IsTypeAssignableFrom(entryType.GetType())

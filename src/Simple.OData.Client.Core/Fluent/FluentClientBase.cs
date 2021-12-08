@@ -379,7 +379,7 @@ namespace Simple.OData.Client
 		protected BoundClient<U> Link<U>(FluentCommand command, string linkName = null)
 		where U : class
 		{
-			linkName = linkName ?? typeof(U).Name;
+			linkName ??= typeof(U).Name;
 			var links = linkName.Split('/');
 			var linkCommand = command;
 			BoundClient<U> linkedClient = null;

@@ -333,7 +333,7 @@ namespace Simple.OData.Client
             if (entry != null && mediaProperties != null)
             {
                 var entityMediaPropertyName = mediaProperties.FirstOrDefault(x => !entry.Data.ContainsKey(x));
-                entityMediaPropertyName = entityMediaPropertyName ?? FluentCommand.AnnotationsLiteral;
+                entityMediaPropertyName ??= FluentCommand.AnnotationsLiteral;
                 if (entry.Annotations != null)
                 {
                     await GetMediaStreamValueAsync(entry.Data, entityMediaPropertyName, entry.Annotations.MediaResource, cancellationToken).ConfigureAwait(false);

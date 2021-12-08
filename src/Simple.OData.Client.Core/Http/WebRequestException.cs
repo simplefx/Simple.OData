@@ -55,7 +55,7 @@ namespace Simple.OData.Client
 
 		private static string BuildMessage(HttpStatusCode statusCode, string reasonPhrase, string responseContent, WebRequestExceptionMessageSource exceptionMessageSource)
 		{
-			reasonPhrase = reasonPhrase ?? statusCode.ToString();
+			reasonPhrase ??= statusCode.ToString();
 			if (exceptionMessageSource == WebRequestExceptionMessageSource.ReasonPhrase)
 			{
 				return reasonPhrase;
