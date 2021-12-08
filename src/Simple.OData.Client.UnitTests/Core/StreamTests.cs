@@ -9,7 +9,7 @@ namespace Simple.OData.Client.Tests.Core
         public override string MetadataFile { get { return "TripPin.xml"; } }
         public override IFormatSettings FormatSettings { get { return new ODataV4Format(); } }
 
-        class Photo
+		private class Photo
         {
             public long Id { get; set; }
             public string Name { get; set; }

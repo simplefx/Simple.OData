@@ -12,7 +12,7 @@ namespace Simple.OData.Client.Tests.Core
 {
     public class AdapterTests : TestBase
     {
-        class CustomBatchWriter : BatchWriter
+		private class CustomBatchWriter : BatchWriter
         {
             private readonly ISession session;
 
@@ -41,7 +41,7 @@ namespace Simple.OData.Client.Tests.Core
             }
         }
 
-        class CustomAdapter : ODataAdapter
+		private class CustomAdapter : ODataAdapter
         {
             private readonly ISession session;
 
@@ -53,7 +53,7 @@ namespace Simple.OData.Client.Tests.Core
             public override IBatchWriter GetBatchWriter(IDictionary<object, IDictionary<string, object>> batchEntries) => new CustomBatchWriter(session,  batchEntries);
         }
 
-        class CustomAdapterFactory : ODataAdapterFactory
+		private class CustomAdapterFactory : ODataAdapterFactory
         {
             public override Func<ISession, IODataAdapter> CreateAdapterLoader(string metadataString, ITypeCache typeCache)
             {

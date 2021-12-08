@@ -241,7 +241,7 @@ namespace Simple.OData.Client.Tests
             Assert.StartsWith("Test named stream data", text);
         }
 
-        class PersonDetail
+		private class PersonDetail
         {
             public string Photo { get; set; }
         }

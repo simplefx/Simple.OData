@@ -6,7 +6,7 @@ using Microsoft.OData.Edm.Vocabularies;
 
 namespace Simple.OData.Client.V4.Adapter
 {
-    class EdmDeltaModel : IEdmModel
+	internal class EdmDeltaModel : IEdmModel
     {
         private readonly IEdmModel _source;
         private readonly EdmEntityType _entityType;

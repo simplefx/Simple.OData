@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Simple.OData.Client
 {
-    class Session : ISession
+	internal class Session : ISession
     {
         private IODataAdapter _adapter;
         private HttpConnection _httpConnection;

@@ -6,7 +6,7 @@ using Microsoft.OData;
 
 namespace Simple.OData.Client.V4.Adapter
 {
-    class ODataRequestMessage : IODataRequestMessageAsync
+	internal class ODataRequestMessage : IODataRequestMessageAsync
     {
         private MemoryStream _stream;
         private readonly Dictionary<string, string> _headers = new Dictionary<string, string>();

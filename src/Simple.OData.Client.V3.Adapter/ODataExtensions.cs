@@ -4,7 +4,7 @@ using Microsoft.Data.OData;
 
 namespace Simple.OData.Client.V3.Adapter
 {
-    static class ODataExtensions
+	internal static class ODataExtensions
     {
         public static ODataMessageReaderSettings ToReaderSettings(this ISession session)
         {

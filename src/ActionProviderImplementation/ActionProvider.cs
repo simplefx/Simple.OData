@@ -12,12 +12,11 @@ namespace ActionProviderImplementation
 {
     public class ActionProvider : IDataServiceActionProvider
     {
-        static Dictionary<Type, List<ServiceAction>> _cache = new Dictionary<Type, List<ServiceAction>>();
-        static Dictionary<string, ServiceAction> _actionsByName = new Dictionary<string, ServiceAction>();
-
-        Type _instanceType;
-        object _context;
-        IParameterMarshaller _marshaller;
+		private static Dictionary<Type, List<ServiceAction>> _cache = new Dictionary<Type, List<ServiceAction>>();
+		private static Dictionary<string, ServiceAction> _actionsByName = new Dictionary<string, ServiceAction>();
+		private Type _instanceType;
+		private object _context;
+		private IParameterMarshaller _marshaller;
 
         public ActionProvider(Object context, IParameterMarshaller marshaller)
         {

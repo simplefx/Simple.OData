@@ -1,6 +1,6 @@
 ﻿namespace Simple.OData.Client
 {
-    static class ODataLiteral
+	internal static class ODataLiteral
     {
         public const string Metadata = "$metadata";
         public const string Filter = "$filter";

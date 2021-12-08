@@ -11,7 +11,7 @@ namespace Simple.OData.Client.Tests.Core
         public override string MetadataFile { get { return "ActionWithEnum.xml"; } }
         public override IFormatSettings FormatSettings { get { return new ODataV4Format(); } }
 
-        enum Rank
+		private enum Rank
         {
             First,
             Second,

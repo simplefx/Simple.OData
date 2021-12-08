@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Simple.OData.Client.Extensions
 {
-    static class TypeCacheExtensions
+	internal static class TypeCacheExtensions
     {
         public static IDictionary<string, object> ToDictionary(this ITypeCache typeCache, object value)
         {

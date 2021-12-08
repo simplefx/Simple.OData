@@ -11,7 +11,7 @@ using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
-    static class Utils
+	internal static class Utils
     {
         public static string StreamToString(Stream stream, bool disposeStream = false)
         {

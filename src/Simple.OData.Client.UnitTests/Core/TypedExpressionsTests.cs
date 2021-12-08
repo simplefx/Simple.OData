@@ -69,17 +69,19 @@ namespace Simple.OData.Client.Tests.Core
 
     public abstract class TypedExpressionTests : CoreTestBase
     {
-        class DataAttribute : Attribute
+		private class DataAttribute : Attribute
         {
             public string Name { get; set; }
             public string PropertyName { get; set; }
         }
-        class DataMemberAttribute : Attribute
+
+		private class DataMemberAttribute : Attribute
         {
             public string Name { get; set; }
             public string PropertyName { get; set; }
         }
-        class OtherAttribute : Attribute
+
+		private class OtherAttribute : Attribute
         {
             public string Name { get; set; }
             public string PropertyName { get; set; }

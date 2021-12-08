@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Simple.OData.Client.Benchmarks
 {
-    class PeopleCollection
+	internal class PeopleCollection
     {
         [JsonProperty("value")]
         public Person [] People { get; set; }

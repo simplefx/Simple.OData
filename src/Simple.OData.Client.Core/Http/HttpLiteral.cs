@@ -1,6 +1,6 @@
 ﻿namespace Simple.OData.Client
 {
-    static class HttpLiteral
+	internal static class HttpLiteral
     {
         public const string ContentType = "Content-Type";
         public const string ContentLength = "Content-Length";

@@ -6,10 +6,10 @@ using System.Xml.Linq;
 
 namespace Simple.OData.Client.Extensions
 {
-    /// <summary>
-    /// Extension methods for <see cref="XElement"/>.
-    /// </summary>
-    static class XElementExtensions
+	/// <summary>
+	/// Extension methods for <see cref="XElement"/>.
+	/// </summary>
+	internal static class XElementExtensions
     {
         public static XElement Element(this XElement element, string prefix, string name)
         {

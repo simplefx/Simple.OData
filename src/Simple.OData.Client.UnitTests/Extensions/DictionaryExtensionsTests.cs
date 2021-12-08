@@ -12,7 +12,7 @@ namespace Simple.OData.Client.Tests.Extensions
 	public class DictionaryExtensionsTests
 	{
 		[Flags]
-		enum EnumType
+		private enum EnumType
 		{
 			Zero,
 			One,
@@ -20,7 +20,7 @@ namespace Simple.OData.Client.Tests.Extensions
 			Three,
 		}
 
-		class ClassType
+		private class ClassType
 		{
 #pragma warning disable CS0649 // Unused private types or members should be removed        {
 			public string StringField;
@@ -41,7 +41,7 @@ namespace Simple.OData.Client.Tests.Extensions
 			public SpatialV4.GeographyPoint PointV4 { get; set; }
 		}
 
-		class SubclassType
+		private class SubclassType
 		{
 			public string StringProperty { get; set; }
 			public int IntProperty { get; set; }
@@ -396,7 +396,7 @@ namespace Simple.OData.Client.Tests.Extensions
 			Assert.Equal(1, value.TransportID);
 		}
 
-		class ClassNoDefaultConstructor
+		private class ClassNoDefaultConstructor
 		{
 			public ClassNoDefaultConstructor(string arg) { }
 		}

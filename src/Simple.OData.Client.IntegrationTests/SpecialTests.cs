@@ -234,7 +234,7 @@ namespace Simple.OData.Client.Tests
             await client.GetMetadataAsync();
         }
 
-        class ExecutionSummary
+		private class ExecutionSummary
         {
             public int ExecutionCount { get; set; }
             public int NonEqualCount { get; set; }

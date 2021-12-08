@@ -9,7 +9,7 @@ namespace Simple.OData.Client.Tests.Reflection
 {
     public class MemberAccessorTests
     {
-        class TestClass
+		private class TestClass
         {
             public string instanceField;
             public static string staticField = "staticFieldValue";

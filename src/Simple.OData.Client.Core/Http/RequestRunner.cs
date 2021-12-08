@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Simple.OData.Client
 {
-    class RequestRunner
+	internal class RequestRunner
     {
         private readonly ISession _session;
 

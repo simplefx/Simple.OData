@@ -16,7 +16,7 @@ namespace Simple.OData.Client.Tests.Core
         string GetContainedInFormat(string item, string text, bool escapeString = false);
     }
 
-    class ODataV3Format : IFormatSettings
+	internal class ODataV3Format : IFormatSettings
     {
         public int ODataVersion { get { return 3; } }
         public string LongNumberSuffix { get { return "L"; } }
@@ -62,7 +62,7 @@ namespace Simple.OData.Client.Tests.Core
         }
     }
 
-    class ODataV4Format : IFormatSettings
+	internal class ODataV4Format : IFormatSettings
     {
         public ODataV4Format(bool escapeUri = false)
         {

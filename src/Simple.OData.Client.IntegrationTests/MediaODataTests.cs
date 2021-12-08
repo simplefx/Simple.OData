@@ -35,7 +35,7 @@ namespace Simple.OData.Client.Tests
 
     public abstract class MediaODataTests : ODataTestBase
     {
-        class PersonDetail
+		private class PersonDetail
         {
             public string Photo { get; set; }
         }

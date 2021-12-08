@@ -10,7 +10,7 @@ using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
-    partial class BoundClient<T>
+	public partial class BoundClient<T>
     {
         public Task<IEnumerable<T>> FindEntriesAsync()
         {

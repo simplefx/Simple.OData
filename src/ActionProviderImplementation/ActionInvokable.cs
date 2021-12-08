@@ -11,10 +11,10 @@ namespace ActionProviderImplementation
 {
     public class ActionInvokable : IDataServiceInvokable
     {
-        ServiceAction _serviceAction;    
-        Action _action;
-        bool _hasRun = false;
-        object _result;
+		private ServiceAction _serviceAction;
+		private Action _action;
+		private bool _hasRun = false;
+		private object _result;
 
         public ActionInvokable(DataServiceOperationContext operationContext, ServiceAction serviceAction, object site, object[] parameters, IParameterMarshaller marshaller)
         {

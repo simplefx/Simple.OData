@@ -12,8 +12,8 @@ namespace ActionProviderImplementation
 {
     public class EntityFrameworkParameterMarshaller: IParameterMarshaller
     {
-        static MethodInfo CastMethodGeneric = typeof(Enumerable).GetMethod("Cast");
-        static MethodInfo ToListMethodGeneric = typeof(Enumerable).GetMethod("ToList");
+		private static MethodInfo CastMethodGeneric = typeof(Enumerable).GetMethod("Cast");
+		private static MethodInfo ToListMethodGeneric = typeof(Enumerable).GetMethod("ToList");
 
         public object[] Marshall(DataServiceOperationContext operationContext, ServiceAction action, object[] parameters)
         {

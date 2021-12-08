@@ -7,10 +7,10 @@ using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {
-    class EdmMetadataCache
+	internal class EdmMetadataCache
     {
-        static readonly ConcurrentDictionary<string, EdmMetadataCache> _instances = new ConcurrentDictionary<string, EdmMetadataCache>();
-        static readonly SemaphoreSlim semaphore = new SemaphoreSlim(1);
+		private static readonly ConcurrentDictionary<string, EdmMetadataCache> _instances = new ConcurrentDictionary<string, EdmMetadataCache>();
+		private static readonly SemaphoreSlim semaphore = new SemaphoreSlim(1);
 
         public static void Clear()
         {

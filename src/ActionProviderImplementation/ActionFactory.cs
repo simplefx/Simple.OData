@@ -9,9 +9,10 @@ namespace ActionProviderImplementation
 {
     public class ActionFactory
     {
-        IDataServiceMetadataProvider _metadata;
-        //TODO: make this list complete
-        static Type[] __primitives = new[] {
+		private IDataServiceMetadataProvider _metadata;
+
+		//TODO: make this list complete
+		private static Type[] __primitives = new[] {
             typeof(bool),
             typeof(short),
             typeof(int),

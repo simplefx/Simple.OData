@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Simple.OData.Client.Extensions
 {
-    static class EnumerableOfKeyValuePairExtensions
+	internal static class EnumerableOfKeyValuePairExtensions
     {
         public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> source)
         {

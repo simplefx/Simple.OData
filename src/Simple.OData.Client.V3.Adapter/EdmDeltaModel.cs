@@ -6,7 +6,7 @@ using Microsoft.Data.Edm.Library;
 
 namespace Simple.OData.Client.V3.Adapter
 {
-    class EdmDeltaModel : IEdmModel
+	internal class EdmDeltaModel : IEdmModel
     {
         private readonly IEdmModel _source;
         private readonly EdmEntityType _entityType;

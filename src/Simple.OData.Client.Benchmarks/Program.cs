@@ -5,9 +5,9 @@ using Simple.OData.Client.Tests;
 
 namespace Simple.OData.Client.Benchmarks
 {
-    class Program
+	internal class Program
     {
-        static void Main(string[] args)
+		private static void Main(string[] args)
         {
             //BenchmarkRunner.Run<CrmEmployee>();
             BenchmarkRunner.Run<TripPinPeople>();

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Simple.OData.Client
 {
-    class ClientWithRequest<T> : IClientWithRequest<T>
+	internal class ClientWithRequest<T> : IClientWithRequest<T>
         where T : class
     {
         private readonly ODataRequest _request;

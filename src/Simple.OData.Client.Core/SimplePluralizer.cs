@@ -8,9 +8,9 @@ namespace Simple.OData.Client
     // https://gist.github.com/hanssens/2835960
     internal class SimplePluralizer : IPluralizer
     {
-        static Dictionary<string, Word> _specialSingulars;
-        static Dictionary<string, Word> _specialPlurals;
-        static List<SuffixRule> _suffixRules;
+		private static Dictionary<string, Word> _specialSingulars;
+		private static Dictionary<string, Word> _specialPlurals;
+		private static List<SuffixRule> _suffixRules;
 
         static SimplePluralizer()
         {
@@ -33,7 +33,7 @@ namespace Simple.OData.Client
             return string.Compare(ToSingularInternal(plural), singular, StringComparison.OrdinalIgnoreCase) == 0;
         }
 
-        static readonly string[] _specialWordsStringTable = 
+		private static readonly string[] _specialWordsStringTable = 
         {
             "agendum", "agenda", "",
             "albino", "albinos", "",
@@ -125,8 +125,7 @@ namespace Simple.OData.Client
             "vertex", "vertices", "vertexes",
             "vortex", "vortices", "vortexes",
         };
-
-        static readonly string[] _suffixRulesStringTable = 
+		private static readonly string[] _suffixRulesStringTable = 
         {
             "ch", "ches",
             "sh", "shes",
@@ -170,7 +169,7 @@ namespace Simple.OData.Client
             "wife", "wives",
         };
 
-        class Word
+		private class Word
         {
             public readonly string Singular;
             public readonly string Plural;
@@ -181,10 +180,10 @@ namespace Simple.OData.Client
             }
         }
 
-        class SuffixRule
+		private class SuffixRule
         {
-            readonly string _singularSuffix;
-            readonly string _pluralSuffix;
+			private readonly string _singularSuffix;
+			private readonly string _pluralSuffix;
             public SuffixRule(string singular, string plural)
             {
                 _singularSuffix = singular;
