@@ -29,6 +29,7 @@ namespace WebApiOData.V3.Samples.Tests
 #else
 		public void Dispose()
 		{
+			GC.SuppressFinalize(this);
 		}
 #endif
 

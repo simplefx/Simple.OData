@@ -96,6 +96,7 @@ namespace Simple.OData.Client.Tests
 			{
 				DeleteTestData().Wait();
 			}
+			GC.SuppressFinalize(this);
 		}
 
 		protected abstract Task DeleteTestData();

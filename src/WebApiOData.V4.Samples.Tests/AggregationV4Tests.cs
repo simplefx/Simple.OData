@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 using Simple.OData.Client;
 using Simple.OData.Client.Tests;
 using Simple.OData.Client.V4.Adapter.Extensions;
-using Xunit;
 using WebApiOData.V4.Samples.Models;
+using Xunit;
 
 #if NET461 && !MOCK_HTTP
 using Microsoft.Owin.Testing;
@@ -32,6 +32,7 @@ namespace WebApiOData.V4.Samples.Tests
 #else
 		public void Dispose()
 		{
+			GC.SuppressFinalize(this);
 		}
 #endif
 

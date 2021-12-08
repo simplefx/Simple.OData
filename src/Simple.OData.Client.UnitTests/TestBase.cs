@@ -72,6 +72,7 @@ namespace Simple.OData.Client.Tests
                 _service = null;
             }
 #endif
+			GC.SuppressFinalize(this);
 		}
 
 		private static string GetMetadataDocument()

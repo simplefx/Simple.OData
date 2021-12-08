@@ -37,6 +37,7 @@ namespace Simple.OData.Client.Tests.Core
 
 		public void Dispose()
 		{
+			GC.SuppressFinalize(this);
 		}
 
 		public static string GetResourceAsString(string resourceName)
