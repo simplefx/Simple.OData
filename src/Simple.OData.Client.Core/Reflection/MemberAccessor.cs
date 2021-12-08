@@ -103,7 +103,7 @@ namespace Simple.OData.Client
 			{
 				return propertyInfo.CanRead;
 			}
-			else if (memberInfo is FieldInfo fieldInfo)
+			else if (memberInfo is FieldInfo)
 			{
 				return true;
 			}
@@ -119,7 +119,7 @@ namespace Simple.OData.Client
 			{
 				return propertyInfo.CanWrite;
 			}
-			else if (memberInfo is FieldInfo fieldInfo)
+			else if (memberInfo is FieldInfo)
 			{
 				return true;
 			}

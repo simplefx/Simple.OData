@@ -33,7 +33,7 @@ namespace Simple.OData.Client.Tests.FluentApi
 		{
 			var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
 			var x = ODataDynamic.Expression;
-			var product = await client
+			_ = await client
 				.For(x.Products)
 				.Set(x.ProductName = "Test1", x.UnitPrice = 18m)
 				.InsertEntryAsync();
@@ -43,7 +43,7 @@ namespace Simple.OData.Client.Tests.FluentApi
 				.Filter(x.ProductName == "Test1")
 				.DeleteEntryAsync();
 
-			product = await client
+			dynamic product = await client
 				.For(x.Products)
 				.Filter(x.ProductName == "Test1")
 				.FindEntryAsync();

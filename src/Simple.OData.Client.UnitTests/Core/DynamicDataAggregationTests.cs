@@ -245,7 +245,7 @@ namespace Simple.OData.Client.Tests.Core
 		[Fact]
 		public async Task AggregateWithCountAsDictionary()
 		{
-			var x = ODataDynamic.Expression;
+			_ = ODataDynamic.Expression;
 			var b = ODataDynamicDataAggregation.Builder;
 			var a = ODataDynamicDataAggregation.AggregationFunction;
 			var command = _client

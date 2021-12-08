@@ -207,7 +207,7 @@ namespace Simple.OData.Client.Tests
 		[Fact]
 		public async Task FindPersonExpandFriendsWithOrderBy()
 		{
-			var person = await _client
+			_ = await _client
 				.For("People")
 				.Key("russellwhyte")
 				.Expand("Friends")
@@ -525,7 +525,7 @@ namespace Simple.OData.Client.Tests
 		[Fact]
 		public async Task InsertPersonWithTypedOpenProperty()
 		{
-			var person = await _client
+			_ = await _client
 				.For<PersonWithOpenTypeFields>("Person")
 				.Set(new
 				{
@@ -536,7 +536,7 @@ namespace Simple.OData.Client.Tests
 				})
 				.InsertEntryAsync();
 
-			person = await _client
+			var person = await _client
 				.For<PersonWithOpenTypeFields>("Person")
 				.Key("gregorsamsa")
 				.FindEntryAsync();
@@ -650,8 +650,7 @@ namespace Simple.OData.Client.Tests
 				.For<Person>()
 				.Key("russellwhyte")
 				.FindEntryAsync();
-
-			var person = await _client
+			_ = await _client
 				.For<Person>()
 				.Set(new
 				{
@@ -662,7 +661,7 @@ namespace Simple.OData.Client.Tests
 				})
 				.InsertEntryAsync();
 
-			person = await _client
+			var person = await _client
 				.For<Person>()
 				.Key("gregorsamsa")
 				.FindEntryAsync();
@@ -676,8 +675,7 @@ namespace Simple.OData.Client.Tests
 			var friend = await _client
 				.For<Me>()
 				.FindEntryAsync();
-
-			var person = await _client
+			_ = await _client
 				.For<Person>()
 				.Set(new
 				{
@@ -688,7 +686,7 @@ namespace Simple.OData.Client.Tests
 				})
 				.InsertEntryAsync();
 
-			person = await _client
+			var person = await _client
 				.For<Person>()
 				.Key("gregorsamsa")
 				.FindEntryAsync();

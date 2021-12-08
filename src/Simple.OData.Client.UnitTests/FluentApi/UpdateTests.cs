@@ -59,7 +59,7 @@ namespace Simple.OData.Client.Tests.FluentApi
 		public async Task UpdateByFilter()
 		{
 			var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
-			var product = await client
+			_ = await client
 				.For("Products")
 				.Set(new { ProductName = "Test1", UnitPrice = 18m })
 				.InsertEntryAsync();
@@ -70,7 +70,7 @@ namespace Simple.OData.Client.Tests.FluentApi
 				.Set(new { UnitPrice = 123m })
 				.UpdateEntryAsync();
 
-			product = await client
+			var product = await client
 				.For("Products")
 				.Filter("ProductName eq 'Test1'")
 				.FindEntryAsync();
@@ -82,12 +82,12 @@ namespace Simple.OData.Client.Tests.FluentApi
 		public async Task UpdateMultipleWithResult()
 		{
 			var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
-			var product = await client
+			_ = await client
 				.For("Products")
 				.Set(new { ProductName = "Test1", UnitPrice = 18m })
 				.InsertEntryAsync();
 
-			product = (await client
+			var product = (await client
 				.For("Products")
 				.Filter("ProductName eq 'Test1'")
 				.Set(new { UnitPrice = 123m })
@@ -100,12 +100,12 @@ namespace Simple.OData.Client.Tests.FluentApi
 		public async Task UpdateMultipleNoResult()
 		{
 			var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
-			var product = await client
+			_ = await client
 				.For("Products")
 				.Set(new { ProductName = "Test1", UnitPrice = 18m })
 				.InsertEntryAsync();
 
-			product = (await client
+			var product = (await client
 				.For("Products")
 				.Filter("ProductName eq 'Test1'")
 				.Set(new { UnitPrice = 123m })

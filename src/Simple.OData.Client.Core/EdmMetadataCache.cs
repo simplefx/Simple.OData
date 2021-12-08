@@ -21,7 +21,7 @@ namespace Simple.OData.Client
 
 		public static void Clear(string key)
 		{
-			_instances.TryRemove(key, out var md);
+			_instances.TryRemove(key, out _);
 		}
 
 		public static EdmMetadataCache GetOrAdd(string key, Func<string, EdmMetadataCache> valueFactory)

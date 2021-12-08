@@ -64,7 +64,7 @@ namespace Simple.OData.Client.Tests
 		[Fact]
 		public async Task DeleteByFilter()
 		{
-			var product = await _client
+			_ = await _client
 				.For("Products")
 				.Set(CreateProduct(3002, "Test1"))
 				.InsertEntryAsync();
@@ -74,7 +74,7 @@ namespace Simple.OData.Client.Tests
 				.Filter("Name eq 'Test1'")
 				.DeleteEntryAsync();
 
-			product = await _client
+			var product = await _client
 				.For("Products")
 				.Filter("Name eq 'Test1'")
 				.FindEntryAsync();

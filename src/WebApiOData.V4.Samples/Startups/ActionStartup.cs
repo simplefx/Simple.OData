@@ -28,7 +28,7 @@ namespace WebApiOData.V4.Samples.Startups
 		private static IEdmModel GetEdmModel(HttpConfiguration config)
 		{
 			var modelBuilder = new ODataConventionModelBuilder(config);
-			var moviesEntitySet = modelBuilder.EntitySet<Movie>("Movies");
+			_ = modelBuilder.EntitySet<Movie>("Movies");
 
 			// Now add actions.
 

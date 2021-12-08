@@ -54,7 +54,7 @@ namespace Simple.OData.Client.Tests.FluentApi
 		public async Task DeleteByFilter()
 		{
 			var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
-			var product = await client
+			_ = await client
 				.For("Products")
 				.Set(new { ProductName = "Test1", UnitPrice = 18m })
 				.InsertEntryAsync();
@@ -64,7 +64,7 @@ namespace Simple.OData.Client.Tests.FluentApi
 				.Filter("ProductName eq 'Test1'")
 				.DeleteEntriesAsync();
 
-			product = await client
+			var product = await client
 				.For("Products")
 				.Filter("ProductName eq 'Test1'")
 				.FindEntryAsync();
@@ -76,7 +76,7 @@ namespace Simple.OData.Client.Tests.FluentApi
 		public async Task DeleteByFilterFromCommand()
 		{
 			var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
-			var product = await client
+			_ = await client
 				.For("Products")
 				.Set(new { ProductName = "Test1", UnitPrice = 18m })
 				.InsertEntryAsync();
@@ -89,7 +89,7 @@ namespace Simple.OData.Client.Tests.FluentApi
 			await client
 				.DeleteEntriesAsync("Products", commandText);
 
-			product = await client
+			var product = await client
 				.For("Products")
 				.Filter("ProductName eq 'Test1'")
 				.FindEntryAsync();

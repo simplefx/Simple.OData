@@ -84,8 +84,8 @@ namespace Simple.OData.Client.Tests.BasicApi
 		public async Task DeleteEntry()
 		{
 			var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
-			var product = await client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test3" }, { "UnitPrice", 18m } }, true);
-			product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test3'");
+			_ = await client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test3" }, { "UnitPrice", 18m } }, true);
+			var product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test3'");
 			Assert.NotNull(product);
 
 			await client.DeleteEntryAsync("Products", product);
@@ -149,8 +149,8 @@ namespace Simple.OData.Client.Tests.BasicApi
 			settings.UseAbsoluteReferenceUris = useAbsoluteReferenceUris;
 			var client = new ODataClient(settings);
 			var category = await client.InsertEntryAsync("Categories", new Entry() { { "CategoryName", "Test6" } }, true);
-			var product = await client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test7" }, { "CategoryID", category["CategoryID"] } }, true);
-			product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test7'");
+			_ = await client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test7" }, { "CategoryID", category["CategoryID"] } }, true);
+			var product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test7'");
 			Assert.NotNull(product["CategoryID"]);
 			Assert.Equal(category["CategoryID"], product["CategoryID"]);
 
