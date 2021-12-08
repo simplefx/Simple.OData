@@ -943,7 +943,7 @@ namespace Simple.OData.Client
                 x => x.AsEntries(_session.Settings.IncludeAnnotationsInResults),
                 () => Array.Empty<IDictionary<string, object>>()).ConfigureAwait(false);
 
-            object extractScalar(IDictionary<string, object> x) => (x == null) || (x.Count == 0) ? null : x.First().Value;
+			static object extractScalar(IDictionary<string, object> x) => (x == null) || (x.Count == 0) ? null : x.First().Value;
             return result == null ? null : extractScalar(result.FirstOrDefault());
         }
 
