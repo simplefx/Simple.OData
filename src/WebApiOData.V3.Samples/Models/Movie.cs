@@ -13,9 +13,6 @@ namespace WebApiOData.V3.Samples.Models
 		[Timestamp]
 		public byte[] TimeStamp { get; set; }
 
-		public bool IsCheckedOut
-		{
-			get { return DueDate.HasValue; }
-		}
+		public bool IsCheckedOut => DueDate.HasValue;
 	}
 }

@@ -103,10 +103,7 @@ namespace Simple.OData.Client
 		/// <value>
 		/// The <see cref="HttpStatusCode"/>.
 		/// </value>
-		public HttpStatusCode Code
-		{
-			get { return _statusCode; }
-		}
+		public HttpStatusCode Code => _statusCode;
 
 		/// <summary>
 		/// Gets the HTTP response text.
@@ -114,10 +111,7 @@ namespace Simple.OData.Client
 		/// <value>
 		/// The response text.
 		/// </value>
-		public string Response
-		{
-			get { return _responseContent; }
-		}
+		public string Response => _responseContent;
 
 		/// <summary>
 		/// Gets the HTTP Uri
@@ -125,17 +119,11 @@ namespace Simple.OData.Client
 		/// <value>
 		/// The original request URI, or the resulting URI if a redirect took place.
 		/// </value>
-		public Uri RequestUri
-		{
-			get { return _requestUri; }
-		}
+		public Uri RequestUri => _requestUri;
 
 		/// <summary>
 		/// Gets the reason phrase associated with the Http status code.
 		/// </summary>
-		public string ReasonPhrase
-		{
-			get { return _reasonPhrase; }
-		}
+		public string ReasonPhrase => _reasonPhrase;
 	}
 }

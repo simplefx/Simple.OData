@@ -65,10 +65,7 @@ namespace Simple.OData.Client.V4.Adapter
 			return getStreamTask.Result;
 		}
 
-		public IEnumerable<KeyValuePair<string, string>> Headers
-		{
-			get { return _response.Headers.Select(h => new KeyValuePair<string, string>(h.Key, h.Value.FirstOrDefault())); }
-		}
+		public IEnumerable<KeyValuePair<string, string>> Headers => _response.Headers.Select(h => new KeyValuePair<string, string>(h.Key, h.Value.FirstOrDefault()));
 
 		public void SetHeader(string headerName, string headerValue)
 		{

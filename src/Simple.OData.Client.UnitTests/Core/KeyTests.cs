@@ -9,8 +9,8 @@ namespace Simple.OData.Client.Tests.Core
 {
 	public class KeyTests : CoreTestBase
 	{
-		public override string MetadataFile { get { return "Northwind4WithAlternateKeys.xml"; } }
-		public override IFormatSettings FormatSettings { get { return new ODataV4Format(); } }
+		public override string MetadataFile => "Northwind4WithAlternateKeys.xml";
+		public override IFormatSettings FormatSettings => new ODataV4Format();
 
 		[Theory]
 		[InlineData("Northwind3.xml", "Categories(1)")]

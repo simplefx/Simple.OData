@@ -14,8 +14,8 @@ namespace Simple.OData.Client
 		private readonly IDictionary<string, object> _properties = new Dictionary<string, object>();
 		private readonly IDictionary<string, List<ReferenceLink>> _links = new Dictionary<string, List<ReferenceLink>>();
 
-		public IDictionary<string, object> Properties { get { return _properties; } }
-		public IDictionary<string, List<ReferenceLink>> Links { get { return _links; } }
+		public IDictionary<string, object> Properties => _properties;
+		public IDictionary<string, List<ReferenceLink>> Links => _links;
 		public bool HasOpenTypeProperties { get; set; }
 
 		public void AddProperty(string propertyName, object propertyValue)

@@ -18,11 +18,11 @@ namespace Simple.OData.Client.Tests.Core
 
 	internal class ODataV3Format : IFormatSettings
 	{
-		public int ODataVersion { get { return 3; } }
-		public string LongNumberSuffix { get { return "L"; } }
-		public string DoubleNumberSuffix { get { return "D"; } }
-		public string DecimalNumberSuffix { get { return "M"; } }
-		public string TimeSpanPrefix { get { return "time"; } }
+		public int ODataVersion => 3;
+		public string LongNumberSuffix => "L";
+		public string DoubleNumberSuffix => "D";
+		public string DecimalNumberSuffix => "M";
+		public string TimeSpanPrefix => "time";
 
 		public string GetDateTimeOffsetFormat(string text, bool escapeString = false)
 		{
@@ -80,11 +80,11 @@ namespace Simple.OData.Client.Tests.Core
 		{
 		}
 
-		public int ODataVersion { get { return 4; } }
-		public string LongNumberSuffix { get { return string.Empty; } }
-		public string DoubleNumberSuffix { get { return string.Empty; } }
-		public string DecimalNumberSuffix { get { return string.Empty; } }
-		public string TimeSpanPrefix { get { return "duration"; } }
+		public int ODataVersion => 4;
+		public string LongNumberSuffix => string.Empty;
+		public string DoubleNumberSuffix => string.Empty;
+		public string DecimalNumberSuffix => string.Empty;
+		public string TimeSpanPrefix => "duration";
 
 		public string GetDateTimeOffsetFormat(string text, bool escapeString = false)
 		{

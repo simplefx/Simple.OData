@@ -8,8 +8,8 @@ namespace Simple.OData.Client.Tests.Core
 {
 	public class ActionWithEnumTests : CoreTestBase
 	{
-		public override string MetadataFile { get { return "ActionWithEnum.xml"; } }
-		public override IFormatSettings FormatSettings { get { return new ODataV4Format(); } }
+		public override string MetadataFile => "ActionWithEnum.xml";
+		public override IFormatSettings FormatSettings => new ODataV4Format();
 
 		private enum Rank
 		{

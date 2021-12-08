@@ -8,7 +8,7 @@ namespace Simple.OData.Client
 		private HttpMessageHandler _messageHandler;
 		private HttpClient _httpClient;
 
-		public HttpClient HttpClient { get { return _httpClient; } }
+		public HttpClient HttpClient => _httpClient;
 
 		public HttpConnection(ODataClientSettings settings)
 		{

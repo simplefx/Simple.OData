@@ -18,7 +18,7 @@ namespace Simple.OData.Client
 		public string Reference { get; private set; }
 		public object Value { get; private set; }
 		public ExpressionFunction Function { get; private set; }
-		public bool IsValueConversion { get { return _conversionType != null; } }
+		public bool IsValueConversion => _conversionType != null;
 
 		internal ODataExpression()
 		{
@@ -122,16 +122,10 @@ namespace Simple.OData.Client
 			return ParseLinqExpression(expression);
 		}
 
-		public bool IsNull
-		{
-			get
-			{
-				return this.Value == null &&
+		public bool IsNull => this.Value == null &&
 			  this.Reference == null &&
 			  this.Function == null &&
 			  _operator == ExpressionType.Default;
-			}
-		}
 
 		public string AsString(ISession session)
 		{

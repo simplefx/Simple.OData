@@ -181,60 +181,30 @@ namespace Simple.OData.Client
 			return _ctors ??= typeof(DynamicODataExpression).GetDeclaredConstructors().ToArray();
 		}
 
-		private static ConstructorInfo CtorWithString
-		{
-			get
-			{
-				return _ctorWithString ??= GetConstructorInfo().Single(x =>
-					x.GetParameters().Count() == 1 &&
-					x.GetParameters()[0].ParameterType == typeof(string));
-			}
-		}
+		private static ConstructorInfo CtorWithString => _ctorWithString ??= GetConstructorInfo().Single(x =>
+																		   x.GetParameters().Count() == 1 &&
+																		   x.GetParameters()[0].ParameterType == typeof(string));
 
-		private static ConstructorInfo CtorWithStringAndValue
-		{
-			get
-			{
-				return _ctorWithStringAndStringAndValue ??= GetConstructorInfo().Single(x =>
-					x.GetParameters().Count() == 2 &&
-					x.GetParameters()[0].ParameterType == typeof(string) &&
-					x.GetParameters()[1].ParameterType == typeof(object));
-			}
-		}
+		private static ConstructorInfo CtorWithStringAndValue => _ctorWithStringAndStringAndValue ??= GetConstructorInfo().Single(x =>
+																				   x.GetParameters().Count() == 2 &&
+																				   x.GetParameters()[0].ParameterType == typeof(string) &&
+																				   x.GetParameters()[1].ParameterType == typeof(object));
 
-		private static ConstructorInfo CtorWithExpressionAndString
-		{
-			get
-			{
-				return _ctorWithExpressionAndString ??= GetConstructorInfo().Single(x =>
-						   x.GetParameters().Count() == 2 &&
-						   x.GetParameters()[0].ParameterType == typeof(ODataExpression) &&
-						   x.GetParameters()[1].ParameterType == typeof(string));
-			}
-		}
+		private static ConstructorInfo CtorWithExpressionAndString => _ctorWithExpressionAndString ??= GetConstructorInfo().Single(x =>
+																							   x.GetParameters().Count() == 2 &&
+																							   x.GetParameters()[0].ParameterType == typeof(ODataExpression) &&
+																							   x.GetParameters()[1].ParameterType == typeof(string));
 
-		private static ConstructorInfo CtorWithExpressionAndExpressionFunction
-		{
-			get
-			{
-				return _ctorWithExpressionAndFunction ??= GetConstructorInfo().Single(x =>
-						   x.GetParameters().Count() == 2 &&
-						   x.GetParameters()[0].ParameterType == typeof(ODataExpression) &&
-						   x.GetParameters()[1].ParameterType == typeof(ExpressionFunction));
-			}
-		}
+		private static ConstructorInfo CtorWithExpressionAndExpressionFunction => _ctorWithExpressionAndFunction ??= GetConstructorInfo().Single(x =>
+																										   x.GetParameters().Count() == 2 &&
+																										   x.GetParameters()[0].ParameterType == typeof(ODataExpression) &&
+																										   x.GetParameters()[1].ParameterType == typeof(ExpressionFunction));
 
-		private static ConstructorInfo CtorWithExpressionAndExpressionAndOperator
-		{
-			get
-			{
-				return _ctorWithExpressionAndExpressionAndOperator ??= GetConstructorInfo().Single(x =>
-						   x.GetParameters().Count() == 3 &&
-						   x.GetParameters()[0].ParameterType == typeof(ODataExpression) &&
-						   x.GetParameters()[1].ParameterType == typeof(ODataExpression) &&
-						   x.GetParameters()[2].ParameterType == typeof(ExpressionType));
-			}
-		}
+		private static ConstructorInfo CtorWithExpressionAndExpressionAndOperator => _ctorWithExpressionAndExpressionAndOperator ??= GetConstructorInfo().Single(x =>
+																											  x.GetParameters().Count() == 3 &&
+																											  x.GetParameters()[0].ParameterType == typeof(ODataExpression) &&
+																											  x.GetParameters()[1].ParameterType == typeof(ODataExpression) &&
+																											  x.GetParameters()[2].ParameterType == typeof(ExpressionType));
 
 		private static ConstructorInfo[] _ctors;
 		private static ConstructorInfo _ctorWithString;

@@ -17,20 +17,11 @@ namespace Simple.OData.Client.Tests
 			_version = version;
 		}
 
-		protected string ProductCategoryName
-		{
-			get { return _version == 2 ? "Category" : "Categories"; }
-		}
+		protected string ProductCategoryName => _version == 2 ? "Category" : "Categories";
 
-		protected Func<IDictionary<string, object>, IDictionary<string, object>> ProductCategoryFunc
-		{
-			get
-			{
-				return x => _version == 2
-				? x[ProductCategoryName] as IDictionary<string, object>
-				: (x[ProductCategoryName] as IEnumerable<object>).Last() as IDictionary<string, object>;
-			}
-		}
+		protected Func<IDictionary<string, object>, IDictionary<string, object>> ProductCategoryFunc => x => _version == 2
+																													  ? x[ProductCategoryName] as IDictionary<string, object>
+																													  : (x[ProductCategoryName] as IEnumerable<object>).Last() as IDictionary<string, object>;
 
 		protected Func<IDictionary<string, object>, object> ProductCategoryLinkFunc
 		{
@@ -47,35 +38,17 @@ namespace Simple.OData.Client.Tests
 			}
 		}
 
-		protected string ExpectedCategory
-		{
-			get { return _version == 2 ? "Electronics" : "Beverages"; }
-		}
+		protected string ExpectedCategory => _version == 2 ? "Electronics" : "Beverages";
 
-		protected int ExpectedCount
-		{
-			get { return _version == 2 ? 9 : 11; }
-		}
+		protected int ExpectedCount => _version == 2 ? 9 : 11;
 
-		protected int ExpectedExpandMany
-		{
-			get { return _version == 2 ? 6 : 8; }
-		}
+		protected int ExpectedExpandMany => _version == 2 ? 6 : 8;
 
-		protected int ExpectedExpandSecondLevel
-		{
-			get { return _version == 2 ? 2 : 8; }
-		}
+		protected int ExpectedExpandSecondLevel => _version == 2 ? 2 : 8;
 
-		protected int ExpectedSkipOne
-		{
-			get { return _version == 2 ? 8 : 10; }
-		}
+		protected int ExpectedSkipOne => _version == 2 ? 8 : 10;
 
-		protected int ExpectedTotalCount
-		{
-			get { return _version == 2 ? 9 : 11; }
-		}
+		protected int ExpectedTotalCount => _version == 2 ? 9 : 11;
 
 		protected Entry CreateProduct(int productId, string productName, IDictionary<string, object> category = null)
 		{

@@ -20,14 +20,8 @@ namespace Simple.OData.Client
 			return _name;
 		}
 
-		public string Name
-		{
-			get { return _name; }
-		}
+		public string Name => _name;
 
-		public EntityCollection BaseEntityCollection
-		{
-			get { return _baseEntityCollection; }
-		}
+		public EntityCollection BaseEntityCollection => _baseEntityCollection;
 	}
 }

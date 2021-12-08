@@ -6,8 +6,8 @@ namespace Simple.OData.Client.Tests.Core
 {
 	public class AggregationTests : CoreTestBase
 	{
-		public override string MetadataFile { get { return "Northwind3.xml"; } }
-		public override IFormatSettings FormatSettings { get { return new ODataV3Format(); } }
+		public override string MetadataFile => "Northwind3.xml";
+		public override IFormatSettings FormatSettings => new ODataV3Format();
 
 		[Theory]
 		[InlineData("Northwind3.xml", "Employees?$filter=Subordinates%2Fany%28x1%3Ax1%2FEmployeeID%20eq%201%29")]
