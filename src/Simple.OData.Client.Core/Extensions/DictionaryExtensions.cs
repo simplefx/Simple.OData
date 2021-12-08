@@ -263,13 +263,13 @@ namespace Simple.OData.Client.Extensions
 
 		private static int GetCollectionCount(object collection)
 		{
-			if (collection is System.Collections.IList)
+			if (collection is System.Collections.IList list)
 			{
-				return ((System.Collections.IList)collection).Count;
+				return list.Count;
 			}
-			else if (collection is System.Collections.IDictionary)
+			else if (collection is System.Collections.IDictionary dictionary)
 			{
-				return ((System.Collections.IDictionary)collection).Count;
+				return dictionary.Count;
 			}
 			else
 			{

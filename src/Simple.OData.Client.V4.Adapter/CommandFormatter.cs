@@ -34,13 +34,13 @@ namespace Simple.OData.Client.V4.Adapter
 			var odataVersion = (ODataVersion)Enum.Parse(typeof(ODataVersion), _session.Adapter.GetODataVersionString(), false);
 			string ConvertValue(object x) => ODataUriUtils.ConvertToUriLiteral(x, odataVersion, (_session.Adapter as ODataAdapter).Model);
 
-			if (value is ODataEnumValue && _session.Settings.EnumPrefixFree)
+			if (value is ODataEnumValue value1 && _session.Settings.EnumPrefixFree)
 			{
-				value = ((ODataEnumValue)value).Value;
+				value = value1.Value;
 			}
-			else if (value is DateTime)
+			else if (value is DateTime time)
 			{
-				value = new DateTimeOffset((DateTime)value);
+				value = new DateTimeOffset(time);
 			}
 
 			return escapeDataString
