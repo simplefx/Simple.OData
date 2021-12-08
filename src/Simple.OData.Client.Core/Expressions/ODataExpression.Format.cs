@@ -161,7 +161,7 @@ namespace Simple.OData.Client
 						string.Equals(Function.FunctionName, "ToString", StringComparison.Ordinal) ? Convert.ToString(val.Value) :
 						string.Equals(Function.FunctionName, "ToUInt16", StringComparison.Ordinal) ? Convert.ToUInt16(val.Value) :
 						string.Equals(Function.FunctionName, "ToUInt32", StringComparison.Ordinal) ? Convert.ToUInt32(val.Value) :
-						string.Equals(Function.FunctionName, "ToUInt64", StringComparison.Ordinal) ? (object)Convert.ToUInt64(val.Value)
+						string.Equals(Function.FunctionName, "ToUInt64", StringComparison.Ordinal) ? Convert.ToUInt64(val.Value)
 						: null);
 					if (formattedVal.Value != null)
 					{

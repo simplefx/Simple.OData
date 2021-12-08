@@ -7,7 +7,7 @@
 		public string LinkName { get; set; }
 
 		public object Value => Feed != null && Feed.Entries != null
-					? (object)Feed.Entries
+					? Feed.Entries
 					: Entry?.Data;
 	}
 }

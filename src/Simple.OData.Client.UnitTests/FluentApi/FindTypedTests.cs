@@ -696,7 +696,7 @@ namespace Simple.OData.Client.Tests.FluentApi
 			var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
 			var employee = await client
 				.For<Employee>()
-				.Filter(x => x as Employee != null)
+				.Filter(x => x != null)
 				.FindEntryAsync();
 			Assert.NotNull(employee);
 		}
@@ -707,7 +707,7 @@ namespace Simple.OData.Client.Tests.FluentApi
 			var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
 			var employee = await client
 				.For<Employee>()
-				.Filter(x => x.Superior as Employee != null)
+				.Filter(x => x.Superior != null)
 				.FindEntryAsync();
 			Assert.NotNull(employee);
 		}

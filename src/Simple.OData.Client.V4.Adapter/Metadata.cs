@@ -397,7 +397,7 @@ namespace Simple.OData.Client.V4.Adapter
 					}
 					else
 					{
-						entityType = entityTypes.BestMatch(x => (x as IEdmEntityType).Name, collection.Name, NameMatchResolver) as IEdmEntityType;
+						entityType = entityTypes.BestMatch(x => x.Name, collection.Name, NameMatchResolver);
 						if (entityType != null)
 						{
 							return true;

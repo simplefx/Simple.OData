@@ -196,7 +196,7 @@ namespace Simple.OData.Client.Tests.Core
 			var created = new DateTime(2010, 12, 1, 12, 11, 10, DateTimeKind.Utc);
 			var command = _client
 				.For<Order>()
-				.Filter(x => x.ShippedDateTimeOffset > (DateTimeOffset)created);
+				.Filter(x => x.ShippedDateTimeOffset > created);
 			var commandText = await command.GetCommandTextAsync();
 			Assert.Equal($"Orders?$filter=ShippedDateTimeOffset%20gt%20{FormatSettings.GetDateTimeOffsetFormat("2010-12-01T12:11:10Z", true)}", commandText);
 		}
@@ -207,7 +207,7 @@ namespace Simple.OData.Client.Tests.Core
 			var created = new DateTimeOffset(2010, 12, 1, 12, 11, 10, TimeSpan.FromHours(0));
 			var command = _client
 				.For<Order>()
-				.Filter(x => x.ShippedDateTimeOffset > (DateTimeOffset)created);
+				.Filter(x => x.ShippedDateTimeOffset > created);
 			var commandText = await command.GetCommandTextAsync();
 			Assert.Equal($"Orders?$filter=ShippedDateTimeOffset%20gt%20{FormatSettings.GetDateTimeOffsetFormat("2010-12-01T12:11:10Z", true)}", commandText);
 		}

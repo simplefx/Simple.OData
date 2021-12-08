@@ -128,7 +128,7 @@ namespace Simple.OData.Client.Tests
 		{
 			var people = await _client
 				.For<Person>()
-				.Filter(x => (int)x.Gender == (int)PersonGender.Male)
+				.Filter(x => x.Gender == (int)PersonGender.Male)
 				.FindEntriesAsync();
 
 			Assert.True(people.All(x => x.Gender == PersonGender.Male));

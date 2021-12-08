@@ -40,7 +40,7 @@ namespace Simple.OData.Client.Tests.FluentApi
 				.Set(new { ProductName = "Test1", UnitPrice = 18m })
 				.InsertEntryAsync();
 
-			(client as ODataClient).Session.ClearMetadataCache();
+			client.Session.ClearMetadataCache();
 			await client
 				.For("Products")
 				.Key(product["ProductID"])
