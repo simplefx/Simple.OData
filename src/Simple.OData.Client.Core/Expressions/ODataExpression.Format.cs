@@ -75,6 +75,8 @@ namespace Simple.OData.Client
         {
             if (ReferenceEquals(expr, null))
             {
+                if (!String.IsNullOrEmpty(context.ScopeQualifier))
+                    return context.ScopeQualifier;
                 return "null";
             }
             else
@@ -175,7 +177,16 @@ namespace Simple.OData.Client
         private string FormatAnyAllFunction(ExpressionContext context)
         {
             var navigationPath = FormatCallerReference();
-            var entityCollection = context.Session.Metadata.NavigateToCollection(context.EntityCollection, navigationPath);
+            EntityCollection entityCollection;
+            if (!context.Session.Metadata.HasNavigationProperty(context.EntityCollection.Name, navigationPath))
+            {
+                //simple collection property
+                entityCollection = context.EntityCollection;
+            }
+            else
+            {
+                entityCollection = context.Session.Metadata.NavigateToCollection(context.EntityCollection, navigationPath);
+            }
 
             string formattedArguments;
             if(!this.Function.Arguments.Any() && string.Equals(this.Function.FunctionName, ODataLiteral.Any, StringComparison.OrdinalIgnoreCase))

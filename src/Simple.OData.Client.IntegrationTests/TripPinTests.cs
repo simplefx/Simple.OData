@@ -439,6 +439,42 @@ namespace Simple.OData.Client.Tests
         }
 
         [Fact]
+        public async Task FindPersonWithEmail()
+        {
+            var persons = await _client
+                .For<Person>()
+                .Filter(x => x.Emails.Any(e=>e != null))
+                .Top(1)
+                .FindEntriesAsync();
+            var person = Assert.Single(persons);
+            Assert.NotEmpty(person.Emails);
+        }
+
+        [Fact]
+        public async Task FindPersonByEmail()
+        {
+            var persons = await _client
+                .For<Person>()
+                .Filter(x => x.Emails.Any(e=>e == "Russell@example.com"))
+                .Top(1)
+                .FindEntriesAsync();
+            var person = Assert.Single(persons);
+            Assert.NotEmpty(person.Emails);
+        }
+
+        [Fact]
+        public async Task FindPersonFromWa()
+        {
+            var persons = await _client
+                .For<Person>()
+                .Filter(x => x.AddressInfo.Any(a => a.City.Region == "WA"))
+                .Top(1)
+                .FindEntriesAsync();
+            var person = Assert.Single(persons);
+            Assert.NotEmpty(person.Emails);
+        }
+
+        [Fact]
         public async Task UpdatePersonLastName()
         {
             var person = await _client
