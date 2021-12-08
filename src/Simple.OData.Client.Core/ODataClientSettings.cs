@@ -34,15 +34,15 @@ namespace Simple.OData.Client
 		{
 			get
 			{
-				if (this.HttpClient != null && this.HttpClient.BaseAddress != null)
+				if (HttpClient != null && HttpClient.BaseAddress != null)
 				{
 					if (_baseOrRelativeUri != null)
 					{
-						return new Uri(this.HttpClient.BaseAddress, _baseOrRelativeUri);
+						return new Uri(HttpClient.BaseAddress, _baseOrRelativeUri);
 					}
 					else
 					{
-						return this.HttpClient.BaseAddress;
+						return HttpClient.BaseAddress;
 					}
 				}
 				else
@@ -52,7 +52,7 @@ namespace Simple.OData.Client
 			}
 			set
 			{
-				if (value != null && value.IsAbsoluteUri && this.HttpClient != null && this.HttpClient.BaseAddress != null)
+				if (value != null && value.IsAbsoluteUri && HttpClient != null && HttpClient.BaseAddress != null)
 				{
 					throw new InvalidOperationException("Unable to set BaseUri when BaseAddress is specified on HttpClient.");
 				}
@@ -327,8 +327,8 @@ namespace Simple.OData.Client
 		[Obsolete("Use of string-typed baseUri is deprecated, please use Uri-typed baseUri instead.")]
 		public ODataClientSettings(string baseUri, ICredentials credentials = null)
 		{
-			this.BaseUri = new Uri(baseUri);
-			this.Credentials = credentials;
+			BaseUri = new Uri(baseUri);
+			Credentials = credentials;
 		}
 
 		/// <summary>
@@ -338,8 +338,8 @@ namespace Simple.OData.Client
 		/// <param name="credentials">The client credentials.</param>
 		public ODataClientSettings(Uri baseUri, ICredentials credentials = null)
 		{
-			this.BaseUri = baseUri;
-			this.Credentials = credentials;
+			BaseUri = baseUri;
+			Credentials = credentials;
 		}
 
 		/// <summary>
@@ -365,41 +365,41 @@ namespace Simple.OData.Client
 				throw new ArgumentException("Must not specify relative URI when HttpClient has no BaseAddress", nameof(relativeUri));
 			}
 
-			this.HttpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-			this.BaseUri = relativeUri;
-			this.Credentials = credentials;
+			HttpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+			BaseUri = relativeUri;
+			Credentials = credentials;
 		}
 
 		internal ODataClientSettings(ISession session)
 		{
-			this.BaseUri = session.Settings.BaseUri;
-			this.Credentials = session.Settings.Credentials;
-			this.PayloadFormat = session.Settings.PayloadFormat;
-			this.RequestTimeout = session.Settings.RequestTimeout;
-			this.IncludeAnnotationsInResults = session.Settings.IncludeAnnotationsInResults;
-			this.IgnoreResourceNotFoundException = session.Settings.IgnoreResourceNotFoundException;
-			this.IgnoreUnmappedProperties = session.Settings.IgnoreUnmappedProperties;
-			this.PreferredUpdateMethod = session.Settings.PreferredUpdateMethod;
-			this.MetadataDocument = session.Settings.MetadataDocument;
-			this.RenewHttpConnection = session.Settings.RenewHttpConnection;
-			this.UnqualifiedNameCall = session.Settings.UnqualifiedNameCall;
-			this.EnumPrefixFree = session.Settings.EnumPrefixFree;
-			this.NameMatchResolver = session.Settings.NameMatchResolver;
-			this.AdapterFactory = session.Settings.AdapterFactory;
-			this.OnCreateMessageHandler = session.Settings.OnCreateMessageHandler;
-			this.OnApplyClientHandler = session.Settings.OnApplyClientHandler;
-			this.HttpClient = session.Settings.HttpClient;
-			this.RequestExecutor = session.Settings.RequestExecutor;
-			this.BeforeRequest = session.Settings.BeforeRequest;
-			this.BeforeRequestAsync = session.Settings.BeforeRequestAsync;
-			this.AfterResponse = session.Settings.AfterResponse;
-			this.AfterResponseAsync = session.Settings.AfterResponseAsync;
-			this.OnTrace = session.Settings.OnTrace;
-			this.TraceFilter = session.Settings.TraceFilter;
-			this.UseAbsoluteReferenceUris = session.Settings.UseAbsoluteReferenceUris;
-			this.ReadUntypedAsString = session.Settings.ReadUntypedAsString;
-			this.WebRequestExceptionMessageSource = session.Settings.WebRequestExceptionMessageSource;
-			this.BatchPayloadUriOption = session.Settings.BatchPayloadUriOption;
+			BaseUri = session.Settings.BaseUri;
+			Credentials = session.Settings.Credentials;
+			PayloadFormat = session.Settings.PayloadFormat;
+			RequestTimeout = session.Settings.RequestTimeout;
+			IncludeAnnotationsInResults = session.Settings.IncludeAnnotationsInResults;
+			IgnoreResourceNotFoundException = session.Settings.IgnoreResourceNotFoundException;
+			IgnoreUnmappedProperties = session.Settings.IgnoreUnmappedProperties;
+			PreferredUpdateMethod = session.Settings.PreferredUpdateMethod;
+			MetadataDocument = session.Settings.MetadataDocument;
+			RenewHttpConnection = session.Settings.RenewHttpConnection;
+			UnqualifiedNameCall = session.Settings.UnqualifiedNameCall;
+			EnumPrefixFree = session.Settings.EnumPrefixFree;
+			NameMatchResolver = session.Settings.NameMatchResolver;
+			AdapterFactory = session.Settings.AdapterFactory;
+			OnCreateMessageHandler = session.Settings.OnCreateMessageHandler;
+			OnApplyClientHandler = session.Settings.OnApplyClientHandler;
+			HttpClient = session.Settings.HttpClient;
+			RequestExecutor = session.Settings.RequestExecutor;
+			BeforeRequest = session.Settings.BeforeRequest;
+			BeforeRequestAsync = session.Settings.BeforeRequestAsync;
+			AfterResponse = session.Settings.AfterResponse;
+			AfterResponseAsync = session.Settings.AfterResponseAsync;
+			OnTrace = session.Settings.OnTrace;
+			TraceFilter = session.Settings.TraceFilter;
+			UseAbsoluteReferenceUris = session.Settings.UseAbsoluteReferenceUris;
+			ReadUntypedAsString = session.Settings.ReadUntypedAsString;
+			WebRequestExceptionMessageSource = session.Settings.WebRequestExceptionMessageSource;
+			BatchPayloadUriOption = session.Settings.BatchPayloadUriOption;
 		}
 	}
 }

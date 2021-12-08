@@ -60,319 +60,319 @@ namespace Simple.OData.Client
 
 		public FT WithProperties(Expression<Func<T, IDictionary<string, object>>> expression)
 		{
-			this.Command.WithProperties(expression.ExtractColumnName(_session.TypeCache));
+			Command.WithProperties(expression.ExtractColumnName(_session.TypeCache));
 			return this as FT;
 		}
 
 		public FT WithMedia(IEnumerable<string> properties)
 		{
-			this.Command.WithMedia(properties);
+			Command.WithMedia(properties);
 			return this as FT;
 		}
 
 		public FT WithMedia(params string[] properties)
 		{
-			this.Command.WithMedia(properties);
+			Command.WithMedia(properties);
 			return this as FT;
 		}
 
 		public FT WithMedia(params ODataExpression[] properties)
 		{
-			this.Command.WithMedia(properties);
+			Command.WithMedia(properties);
 			return this as FT;
 		}
 
 		public FT WithMedia(Expression<Func<T, object>> expression)
 		{
-			this.Command.WithMedia(expression.ExtractColumnNames(_session.TypeCache));
+			Command.WithMedia(expression.ExtractColumnNames(_session.TypeCache));
 			return this as FT;
 		}
 
 		public FT WithHeader(string name, string value)
 		{
-			this.Command.WithHeader(name, value);
+			Command.WithHeader(name, value);
 			return this as FT;
 		}
 
 		public FT WithHeaders(IEnumerable<KeyValuePair<string, string>> headers)
 		{
-			this.Command.WithHeaders(headers);
+			Command.WithHeaders(headers);
 			return this as FT;
 		}
 
 		public FT Key(params object[] entryKey)
 		{
-			this.Command.Key(entryKey);
+			Command.Key(entryKey);
 			return this as FT;
 		}
 
 		public FT Key(IEnumerable<object> entryKey)
 		{
-			this.Command.Key(entryKey);
+			Command.Key(entryKey);
 			return this as FT;
 		}
 
 		public FT Key(IDictionary<string, object> entryKey)
 		{
-			this.Command.Key(entryKey);
+			Command.Key(entryKey);
 			return this as FT;
 		}
 
 		public FT Key(T entryKey)
 		{
-			this.Command.Key(entryKey.ToDictionary(_session.TypeCache));
+			Command.Key(entryKey.ToDictionary(_session.TypeCache));
 			return this as FT;
 		}
 
 		public FT Filter(string filter)
 		{
-			this.Command.Filter(filter);
+			Command.Filter(filter);
 			return this as FT;
 		}
 
 		public FT Filter(ODataExpression expression)
 		{
-			this.Command.Filter(expression);
+			Command.Filter(expression);
 			return this as FT;
 		}
 
 		public FT Filter(Expression<Func<T, bool>> expression)
 		{
-			this.Command.Filter(ODataExpression.FromLinqExpression(expression.Body));
+			Command.Filter(ODataExpression.FromLinqExpression(expression.Body));
 			return this as FT;
 		}
 
 		public FT Search(string search)
 		{
-			this.Command.Search(search);
+			Command.Search(search);
 			return this as FT;
 		}
 
 		public FT Function(string functionName)
 		{
-			this.Command.Function(functionName);
+			Command.Function(functionName);
 			return this as FT;
 		}
 
 		public IBoundClient<U> Function<U>(string functionName) where U : class
 		{
-			this.Command.Function(functionName);
-			return new BoundClient<U>(_client, _session, _parentCommand, this.Command, _dynamicResults);
+			Command.Function(functionName);
+			return new BoundClient<U>(_client, _session, _parentCommand, Command, _dynamicResults);
 		}
 
 		public FT Action(string actionName)
 		{
-			this.Command.Action(actionName);
+			Command.Action(actionName);
 			return this as FT;
 		}
 
 		public FT Skip(long count)
 		{
-			this.Command.Skip(count);
+			Command.Skip(count);
 			return this as FT;
 		}
 
 		public FT Top(long count)
 		{
-			this.Command.Top(count);
+			Command.Top(count);
 			return this as FT;
 		}
 
 		public FT Expand(ODataExpandOptions expandOptions)
 		{
-			this.Command.Expand(expandOptions);
+			Command.Expand(expandOptions);
 			return this as FT;
 		}
 
 		public FT Expand(IEnumerable<string> associations)
 		{
-			this.Command.Expand(associations.Select(ODataExpandAssociation.From));
+			Command.Expand(associations.Select(ODataExpandAssociation.From));
 			return this as FT;
 		}
 
 		public FT Expand(ODataExpandOptions expandOptions, IEnumerable<string> associations)
 		{
-			this.Command.Expand(expandOptions, associations.Select(ODataExpandAssociation.From));
+			Command.Expand(expandOptions, associations.Select(ODataExpandAssociation.From));
 			return this as FT;
 		}
 
 		public FT Expand(params string[] associations)
 		{
-			this.Command.Expand(associations.Select(ODataExpandAssociation.From));
+			Command.Expand(associations.Select(ODataExpandAssociation.From));
 			return this as FT;
 		}
 
 		public FT Expand(ODataExpandOptions expandOptions, params string[] associations)
 		{
-			this.Command.Expand(expandOptions, associations.Select(ODataExpandAssociation.From));
+			Command.Expand(expandOptions, associations.Select(ODataExpandAssociation.From));
 			return this as FT;
 		}
 
 		public FT Expand(params ODataExpression[] associations)
 		{
-			this.Command.Expand(associations.Select(a => ODataExpandAssociation.From(a.Reference)));
+			Command.Expand(associations.Select(a => ODataExpandAssociation.From(a.Reference)));
 			return this as FT;
 		}
 
 		public FT Expand(ODataExpandOptions expandOptions, params ODataExpression[] associations)
 		{
-			this.Command.Expand(expandOptions, associations.Select(a => ODataExpandAssociation.From(a.Reference)));
+			Command.Expand(expandOptions, associations.Select(a => ODataExpandAssociation.From(a.Reference)));
 			return this as FT;
 		}
 
 		public FT Expand(Expression<Func<T, object>> expression)
 		{
-			this.Command.Expand(expression.ExtractExpandAssociations(_session.TypeCache));
+			Command.Expand(expression.ExtractExpandAssociations(_session.TypeCache));
 			return this as FT;
 		}
 
 		public FT Expand(ODataExpandOptions expandOptions, Expression<Func<T, object>> expression)
 		{
-			this.Command.Expand(expandOptions, expression.ExtractExpandAssociations(_session.TypeCache));
+			Command.Expand(expandOptions, expression.ExtractExpandAssociations(_session.TypeCache));
 			return this as FT;
 		}
 
 		public FT Select(IEnumerable<string> columns)
 		{
-			this.Command.Select(columns);
+			Command.Select(columns);
 			return this as FT;
 		}
 
 		public FT Select(params string[] columns)
 		{
-			this.Command.Select(columns);
+			Command.Select(columns);
 			return this as FT;
 		}
 
 		public FT Select(params ODataExpression[] columns)
 		{
-			this.Command.Select(columns);
+			Command.Select(columns);
 			return this as FT;
 		}
 
 		public FT Select(Expression<Func<T, object>> expression)
 		{
-			this.Command.Select(expression.ExtractColumnNames(_session.TypeCache));
+			Command.Select(expression.ExtractColumnNames(_session.TypeCache));
 			return this as FT;
 		}
 
 		public FT OrderBy(IEnumerable<KeyValuePair<string, bool>> columns)
 		{
-			this.Command.OrderBy(columns);
+			Command.OrderBy(columns);
 			return this as FT;
 		}
 
 		public FT OrderBy(params string[] columns)
 		{
-			this.Command.OrderBy(columns);
+			Command.OrderBy(columns);
 			return this as FT;
 		}
 
 		public FT OrderBy(params ODataExpression[] columns)
 		{
-			this.Command.OrderBy(columns);
+			Command.OrderBy(columns);
 			return this as FT;
 		}
 
 		public FT OrderBy(Expression<Func<T, object>> expression)
 		{
-			this.Command.OrderBy(expression.ExtractColumnNames(_session.TypeCache).Select(x => new KeyValuePair<string, bool>(x, false)));
+			Command.OrderBy(expression.ExtractColumnNames(_session.TypeCache).Select(x => new KeyValuePair<string, bool>(x, false)));
 			return this as FT;
 		}
 
 		public FT ThenBy(params ODataExpression[] columns)
 		{
-			this.Command.ThenBy(columns);
+			Command.ThenBy(columns);
 			return this as FT;
 		}
 
 		public FT ThenBy(Expression<Func<T, object>> expression)
 		{
-			this.Command.ThenBy(expression.ExtractColumnNames(TypeCache).ToArray());
+			Command.ThenBy(expression.ExtractColumnNames(TypeCache).ToArray());
 			return this as FT;
 		}
 
 		public FT OrderByDescending(params string[] columns)
 		{
-			this.Command.OrderByDescending(columns);
+			Command.OrderByDescending(columns);
 			return this as FT;
 		}
 
 		public FT OrderByDescending(params ODataExpression[] columns)
 		{
-			this.Command.OrderByDescending(columns);
+			Command.OrderByDescending(columns);
 			return this as FT;
 		}
 
 		public FT OrderByDescending(Expression<Func<T, object>> expression)
 		{
-			this.Command.OrderBy(expression.ExtractColumnNames(_session.TypeCache).Select(x => new KeyValuePair<string, bool>(x, true)));
+			Command.OrderBy(expression.ExtractColumnNames(_session.TypeCache).Select(x => new KeyValuePair<string, bool>(x, true)));
 			return this as FT;
 		}
 
 		public FT ThenByDescending(params ODataExpression[] columns)
 		{
-			this.Command.ThenByDescending(columns);
+			Command.ThenByDescending(columns);
 			return this as FT;
 		}
 
 		public FT ThenByDescending(Expression<Func<T, object>> expression)
 		{
-			this.Command.ThenByDescending(expression.ExtractColumnNames(_session.TypeCache).ToArray());
+			Command.ThenByDescending(expression.ExtractColumnNames(_session.TypeCache).ToArray());
 			return this as FT;
 		}
 
 		public FT QueryOptions(string queryOptions)
 		{
-			this.Command.QueryOptions(queryOptions);
+			Command.QueryOptions(queryOptions);
 			return this as FT;
 		}
 
 		public FT QueryOptions(IDictionary<string, object> queryOptions)
 		{
-			this.Command.QueryOptions(queryOptions);
+			Command.QueryOptions(queryOptions);
 			return this as FT;
 		}
 
 		public FT QueryOptions(ODataExpression expression)
 		{
-			this.Command.QueryOptions(expression);
+			Command.QueryOptions(expression);
 			return this as FT;
 		}
 
 		public FT QueryOptions<U>(Expression<Func<U, bool>> expression)
 		{
-			this.Command.QueryOptions(ODataExpression.FromLinqExpression(expression.Body));
+			Command.QueryOptions(ODataExpression.FromLinqExpression(expression.Body));
 			return this as FT;
 		}
 
 		public IMediaClient Media()
 		{
-			this.Command.Media();
-			return new MediaClient(_client, _session, this.Command, _dynamicResults);
+			Command.Media();
+			return new MediaClient(_client, _session, Command, _dynamicResults);
 		}
 
 		public IMediaClient Media(string streamName)
 		{
-			this.Command.Media(streamName);
-			return new MediaClient(_client, _session, this.Command, _dynamicResults);
+			Command.Media(streamName);
+			return new MediaClient(_client, _session, Command, _dynamicResults);
 		}
 
 		public IMediaClient Media(ODataExpression expression)
 		{
-			this.Command.Media(expression);
-			return new MediaClient(_client, _session, this.Command, _dynamicResults);
+			Command.Media(expression);
+			return new MediaClient(_client, _session, Command, _dynamicResults);
 		}
 
 		public IMediaClient Media(Expression<Func<T, object>> expression)
 		{
-			this.Command.Media(expression.ExtractColumnName(_session.TypeCache));
-			return new MediaClient(_client, _session, this.Command, _dynamicResults);
+			Command.Media(expression.ExtractColumnName(_session.TypeCache));
+			return new MediaClient(_client, _session, Command, _dynamicResults);
 		}
 
 		public FT Count()
 		{
-			this.Command.Count();
+			Command.Count();
 			return this as FT;
 		}
 
@@ -408,7 +408,7 @@ namespace Simple.OData.Client
 		public IBoundClient<U> NavigateTo<U>(string linkName = null)
 			where U : class
 		{
-			return this.Link<U>(this.Command, linkName);
+			return Link<U>(Command, linkName);
 		}
 		/// <summary>
 		/// Navigates to the linked entity.
@@ -419,7 +419,7 @@ namespace Simple.OData.Client
 		public IBoundClient<U> NavigateTo<U>(Expression<Func<T, U>> expression)
 			where U : class
 		{
-			return this.Link<U>(this.Command, expression.ExtractColumnName(_session.TypeCache));
+			return Link<U>(Command, expression.ExtractColumnName(_session.TypeCache));
 		}
 		/// <summary>
 		/// Navigates to the linked entity.
@@ -429,7 +429,7 @@ namespace Simple.OData.Client
 		/// <returns>Self.</returns>
 		public IBoundClient<U> NavigateTo<U>(Expression<Func<T, IEnumerable<U>>> expression) where U : class
 		{
-			return this.Link<U>(this.Command, expression.ExtractColumnName(_session.TypeCache));
+			return Link<U>(Command, expression.ExtractColumnName(_session.TypeCache));
 		}
 		/// <summary>
 		/// Navigates to the linked entity.
@@ -439,7 +439,7 @@ namespace Simple.OData.Client
 		/// <returns>Self.</returns>
 		public IBoundClient<U> NavigateTo<U>(Expression<Func<T, IList<U>>> expression) where U : class
 		{
-			return this.Link<U>(this.Command, expression.ExtractColumnName(_session.TypeCache));
+			return Link<U>(Command, expression.ExtractColumnName(_session.TypeCache));
 		}
 		/// <summary>
 		/// Navigates to the linked entity.
@@ -449,7 +449,7 @@ namespace Simple.OData.Client
 		/// <returns>Self.</returns>
 		public IBoundClient<U> NavigateTo<U>(Expression<Func<T, ISet<U>>> expression) where U : class
 		{
-			return this.Link<U>(this.Command, expression.ExtractColumnName(_session.TypeCache));
+			return Link<U>(Command, expression.ExtractColumnName(_session.TypeCache));
 		}
 		/// <summary>
 		/// Navigates to the linked entity.
@@ -459,7 +459,7 @@ namespace Simple.OData.Client
 		/// <returns>Self.</returns>
 		public IBoundClient<U> NavigateTo<U>(Expression<Func<T, HashSet<U>>> expression) where U : class
 		{
-			return this.Link<U>(this.Command, expression.ExtractColumnName(_session.TypeCache));
+			return Link<U>(Command, expression.ExtractColumnName(_session.TypeCache));
 		}
 		/// <summary>
 		/// Navigates to the linked entity.
@@ -469,7 +469,7 @@ namespace Simple.OData.Client
 		/// <returns>Self.</returns>
 		public IBoundClient<U> NavigateTo<U>(Expression<Func<T, U[]>> expression) where U : class
 		{
-			return this.Link<U>(this.Command, expression.ExtractColumnName(_session.TypeCache));
+			return Link<U>(Command, expression.ExtractColumnName(_session.TypeCache));
 		}
 		/// <summary>
 		/// Navigates to the linked entity.
@@ -478,7 +478,7 @@ namespace Simple.OData.Client
 		/// <returns>Self.</returns>        
 		public IBoundClient<IDictionary<string, object>> NavigateTo(string linkName)
 		{
-			return this.Link<IDictionary<string, object>>(this.Command, linkName);
+			return Link<IDictionary<string, object>>(Command, linkName);
 		}
 		/// <summary>
 		/// Navigates to the linked entity.
@@ -487,7 +487,7 @@ namespace Simple.OData.Client
 		/// <returns>Self.</returns>
 		public IBoundClient<T> NavigateTo(ODataExpression expression)
 		{
-			return this.Link<T>(this.Command, expression);
+			return Link<T>(Command, expression);
 		}
 
 		/// <summary>
@@ -686,7 +686,7 @@ namespace Simple.OData.Client
 				cancellationToken.ThrowIfCancellationRequested();
 			}
 
-			return this.Command.Resolve(_session).Format();
+			return Command.Resolve(_session).Format();
 		}
 
 		protected async Task<IEnumerable<T>> FilterAndTypeColumnsAsync(

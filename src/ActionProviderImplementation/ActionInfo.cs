@@ -13,15 +13,15 @@ namespace ActionProviderImplementation
 	{
 		public ActionInfo(MethodInfo actionMethod, OperationParameterBindingKind bindable, string availabilityMethodName)
 		{
-			this.ActionMethod = actionMethod;
-			this.Binding = bindable;
+			ActionMethod = actionMethod;
+			Binding = bindable;
 
-			if ((this.Binding == OperationParameterBindingKind.Sometimes))
+			if ((Binding == OperationParameterBindingKind.Sometimes))
 			{
-				this.AvailabilityCheckMethod = GetAvailabilityMethod(availabilityMethodName);
-				if (this.AvailabilityCheckMethod.GetCustomAttributes(typeof(SkipCheckForFeeds), true).Length != 0)
+				AvailabilityCheckMethod = GetAvailabilityMethod(availabilityMethodName);
+				if (AvailabilityCheckMethod.GetCustomAttributes(typeof(SkipCheckForFeeds), true).Length != 0)
 				{
-					this.SkipAvailabilityCheckForFeeds = true;
+					SkipAvailabilityCheckForFeeds = true;
 				}
 			}
 			else
@@ -52,15 +52,15 @@ namespace ActionProviderImplementation
 
 		public bool IsAvailable(object context, object entity, bool inFeedContext)
 		{
-			if (this.Binding == OperationParameterBindingKind.Always)
+			if (Binding == OperationParameterBindingKind.Always)
 			{
 				return true;
 			}
-			else if (this.Binding == OperationParameterBindingKind.Never)
+			else if (Binding == OperationParameterBindingKind.Never)
 			{
 				return true; // TODO: need a way to verify we are NOT being bound... although I think this is impossible.
 			}
-			else if (inFeedContext && this.SkipAvailabilityCheckForFeeds)
+			else if (inFeedContext && SkipAvailabilityCheckForFeeds)
 			{
 				return true;
 			}

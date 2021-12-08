@@ -571,7 +571,7 @@ namespace Simple.OData.Client.Tests.Core
 		[Fact]
 		public void FilterWithEnum_MemberVar()
 		{
-			Expression<Func<TestEntity, bool>> filter = x => x.Address.Type == this.addressType;
+			Expression<Func<TestEntity, bool>> filter = x => x.Address.Type == addressType;
 			Assert.Equal($"Address/Type eq {FormatSettings.GetEnumFormat(AddressType.Corporate, typeof(AddressType), "NorthwindModel")}",
 				ODataExpression.FromLinqExpression(filter).AsString(_session));
 		}

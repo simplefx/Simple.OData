@@ -8,7 +8,7 @@ namespace ActionProviderImplementation
 	{
 		public ActionAttribute()
 		{
-			this.Binding = OperationParameterBindingKind.Always;
+			Binding = OperationParameterBindingKind.Always;
 		}
 		public OperationParameterBindingKind Binding { get; protected set; }
 		public string AvailabilityMethodName { get; protected set; }
@@ -17,15 +17,15 @@ namespace ActionProviderImplementation
 	{
 		public OccasionallyBindableAction(string availabilityMethod)
 		{
-			this.AvailabilityMethodName = availabilityMethod;
-			this.Binding = OperationParameterBindingKind.Sometimes;
+			AvailabilityMethodName = availabilityMethod;
+			Binding = OperationParameterBindingKind.Sometimes;
 		}
 	}
 	public class NonBindableAction : ActionAttribute
 	{
 		public NonBindableAction()
 		{
-			this.Binding = OperationParameterBindingKind.Never;
+			Binding = OperationParameterBindingKind.Never;
 		}
 	}
 

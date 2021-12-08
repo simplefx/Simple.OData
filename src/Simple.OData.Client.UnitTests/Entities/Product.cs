@@ -19,7 +19,7 @@ namespace Simple.OData.Client.Tests
 
 		public Product()
 		{
-			this.NotMappedProperty = 42;
+			NotMappedProperty = 42;
 		}
 	}
 
@@ -57,7 +57,7 @@ namespace Simple.OData.Client.Tests
 
 		public ProductWithRemappedColumn()
 		{
-			this.EnglishName = 42;
+			EnglishName = 42;
 		}
 	}
 }

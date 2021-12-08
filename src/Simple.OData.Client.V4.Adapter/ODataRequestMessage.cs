@@ -33,7 +33,7 @@ namespace Simple.OData.Client.V4.Adapter
 		public Task<Stream> GetStreamAsync()
 		{
 			var completionSource = new TaskCompletionSource<Stream>();
-			completionSource.SetResult(this.GetStream());
+			completionSource.SetResult(GetStream());
 			return completionSource.Task;
 		}
 

@@ -231,7 +231,7 @@ namespace Simple.OData.Client
 			{
 				if (value == null)
 				{
-					if (this.IsValue(targetType))
+					if (IsValue(targetType))
 					{
 						result = Activator.CreateInstance(targetType);
 					}
@@ -240,7 +240,7 @@ namespace Simple.OData.Client
 						result = null;
 					}
 				}
-				else if (this.IsTypeAssignableFrom(targetType, value.GetType()))
+				else if (IsTypeAssignableFrom(targetType, value.GetType()))
 				{
 					result = value;
 				}
@@ -248,7 +248,7 @@ namespace Simple.OData.Client
 				{
 					result = value.ToString();
 				}
-				else if (this.IsEnumType(targetType) && value is string)
+				else if (IsEnumType(targetType) && value is string)
 				{
 					result = Enum.Parse(targetType, value.ToString(), true);
 				}
@@ -272,7 +272,7 @@ namespace Simple.OData.Client
 				{
 					result = new DateTimeOffset(time);
 				}
-				else if (this.IsEnumType(targetType))
+				else if (IsEnumType(targetType))
 				{
 					result = Enum.ToObject(targetType, value);
 				}
@@ -306,7 +306,7 @@ namespace Simple.OData.Client
 
 		public object Convert(object value, Type targetType)
 		{
-			if (value == null && !this.IsValue(targetType))
+			if (value == null && !IsValue(targetType))
 			{
 				return null;
 			}

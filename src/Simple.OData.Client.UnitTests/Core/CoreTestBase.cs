@@ -15,7 +15,7 @@ namespace Simple.OData.Client.Tests.Core
 
 		protected CoreTestBase()
 		{
-			_client = CreateClient(this.MetadataFile);
+			_client = CreateClient(MetadataFile);
 		}
 
 		public IODataClient CreateClient(string metadataFile, INameMatchResolver matchResolver = null)

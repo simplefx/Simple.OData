@@ -49,7 +49,7 @@ namespace Simple.OData.Client.V4.Adapter
 			return ProtocolVersion switch
 			{
 				ODataProtocolVersion.V4 => "V4",
-				_ => throw new InvalidOperationException($"Unsupported OData protocol version: \"{this.ProtocolVersion}\""),
+				_ => throw new InvalidOperationException($"Unsupported OData protocol version: \"{ProtocolVersion}\""),
 			};
 		}
 

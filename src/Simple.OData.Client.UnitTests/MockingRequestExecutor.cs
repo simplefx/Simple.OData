@@ -32,17 +32,17 @@ namespace Simple.OData.Client.Tests
 
 		public SerializableHttpRequestMessage(HttpRequestMessage request)
 		{
-			this.Method = request.Method.ToString();
-			this.RequestUri = request.RequestUri;
-			this.RequestHeaders = request.Headers.Select(
+			Method = request.Method.ToString();
+			RequestUri = request.RequestUri;
+			RequestHeaders = request.Headers.Select(
 				x => new KeyValuePair<string, List<string>>(x.Key, new List<string>(x.Value))).ToList()
 				.ToDictionary(x => x.Key, x => x.Value);
 			if (request.Content != null)
 			{
-				this.ContentHeaders = request.Content.Headers.Select(
+				ContentHeaders = request.Content.Headers.Select(
 					x => new KeyValuePair<string, List<string>>(x.Key, new List<string>(x.Value))).ToList()
 					.ToDictionary(x => x.Key, x => x.Value);
-				this.Content = request.Content.ReadAsStringAsync().Result;
+				Content = request.Content.ReadAsStringAsync().Result;
 			}
 		}
 	}
@@ -68,17 +68,17 @@ namespace Simple.OData.Client.Tests
 
 		public SerializableHttpResponseMessage(HttpResponseMessage response)
 		{
-			this.StatusCode = response.StatusCode;
-			this.RequestUri = response.RequestMessage.RequestUri;
-			this.ResponseHeaders = response.Headers.Select(
+			StatusCode = response.StatusCode;
+			RequestUri = response.RequestMessage.RequestUri;
+			ResponseHeaders = response.Headers.Select(
 					x => new KeyValuePair<string, List<string>>(x.Key, new List<string>(x.Value))).ToList()
 				.ToDictionary(x => x.Key, x => x.Value);
 			if (response.Content != null)
 			{
-				this.ContentHeaders = response.Content.Headers.Select(
+				ContentHeaders = response.Content.Headers.Select(
 						x => new KeyValuePair<string, List<string>>(x.Key, new List<string>(x.Value))).ToList()
 					.ToDictionary(x => x.Key, x => x.Value);
-				this.Content = response.Content.ReadAsStringAsync().Result;
+				Content = response.Content.ReadAsStringAsync().Result;
 			}
 		}
 	}

@@ -24,8 +24,8 @@ namespace Simple.OData.Client
 		{
 			get
 			{
-				var isMetadataRequest = this.RequestMessage.RequestUri.LocalPath.EndsWith(ODataLiteral.Metadata);
-				if (!isMetadataRequest && (this.ReturnsScalarResult || !this.ResultRequired))
+				var isMetadataRequest = RequestMessage.RequestUri.LocalPath.EndsWith(ODataLiteral.Metadata);
+				if (!isMetadataRequest && (ReturnsScalarResult || !ResultRequired))
 				{
 					return null;
 				}
@@ -36,7 +36,7 @@ namespace Simple.OData.Client
 				}
 				else
 				{
-					return this._payloadFormat switch
+					return _payloadFormat switch
 					{
 						ODataPayloadFormat.Json => new[] { "application/json", "application/xml", "application/text" },
 						_ => new[] { "application/atom+xml", "application/xml", "application/text" },
@@ -57,8 +57,8 @@ namespace Simple.OData.Client
 
 		internal ODataRequest(string method, ISession session, string commandText, IDictionary<string, string> headers = null)
 		{
-			this.CommandText = commandText;
-			this.Method = method;
+			CommandText = commandText;
+			Method = method;
 
 			var uri = new Uri(commandText, UriKind.RelativeOrAbsolute);
 			_uri = uri.IsAbsoluteUri
@@ -75,7 +75,7 @@ namespace Simple.OData.Client
 		internal ODataRequest(string method, ISession session, string commandText, HttpRequestMessage requestMessage)
 			: this(method, session, commandText)
 		{
-			this.RequestMessage = requestMessage;
+			RequestMessage = requestMessage;
 		}
 
 		internal ODataRequest(string method, ISession session, string commandText, IDictionary<string, object> entryData, Stream contentStream, string mediaType = null, IDictionary<string, string> headers = null)
@@ -99,7 +99,7 @@ namespace Simple.OData.Client
 			}
 
 			var content = new StreamContent(_contentStream);
-			content.Headers.ContentType = new MediaTypeHeaderValue(this.GetContentType());
+			content.Headers.ContentType = new MediaTypeHeaderValue(GetContentType());
 			content.Headers.ContentLength = _contentStream.Length;
 			return content;
 		}
@@ -112,14 +112,14 @@ namespace Simple.OData.Client
 			}
 			else
 			{
-				var payloadFormat = this.UsePayloadFormat != ODataPayloadFormat.Unspecified
-					? this.UsePayloadFormat
+				var payloadFormat = UsePayloadFormat != ODataPayloadFormat.Unspecified
+					? UsePayloadFormat
 					: _payloadFormat;
 
 				return payloadFormat switch
 				{
 					ODataPayloadFormat.Json => "application/json",
-					_ => this.IsLink ? "application/xml" : "application/atom+xml",
+					_ => IsLink ? "application/xml" : "application/atom+xml",
 				};
 			}
 		}
@@ -131,9 +131,9 @@ namespace Simple.OData.Client
 				return _requestMessage;
 			}
 
-			_requestMessage = new HttpRequestMessage(new HttpMethod(this.Method), this._uri)
+			_requestMessage = new HttpRequestMessage(new HttpMethod(Method), _uri)
 			{
-				Content = this._contentStream != null ? this.GetContent() : null
+				Content = _contentStream != null ? GetContent() : null
 			};
 
 			if (Headers != null)

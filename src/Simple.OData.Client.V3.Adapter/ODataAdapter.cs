@@ -55,7 +55,7 @@ namespace Simple.OData.Client.V3.Adapter
 				ODataProtocolVersion.V1 => "V1",
 				ODataProtocolVersion.V2 => "V2",
 				ODataProtocolVersion.V3 => "V3",
-				_ => throw new InvalidOperationException($"Unsupported OData protocol version: \"{this.ProtocolVersion}\""),
+				_ => throw new InvalidOperationException($"Unsupported OData protocol version: \"{ProtocolVersion}\""),
 			};
 		}
 

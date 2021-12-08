@@ -355,7 +355,7 @@ namespace Simple.OData.Client.Tests.Core
 		[Fact(Skip = "Entity set names with multiple segments are not supported")]
 		public async Task FindAllEntityLowerCaseWithPrefix()
 		{
-			var client = CreateClient(this.MetadataFile, ODataNameMatchResolver.Strict);
+			var client = CreateClient(MetadataFile, ODataNameMatchResolver.Strict);
 			var command = client
 				.For("project2")
 				.Key("abc");

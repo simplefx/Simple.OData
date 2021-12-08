@@ -6,10 +6,10 @@
 		public AnnotatedEntry Entry { get; set; }
 		public string LinkName { get; set; }
 
-		public object Value => this.Feed != null && this.Feed.Entries != null
-					? (object)this.Feed.Entries
-					: this.Entry != null
-					? this.Entry.Data
+		public object Value => Feed != null && Feed.Entries != null
+					? (object)Feed.Entries
+					: Entry != null
+					? Entry.Data
 					: null;
 	}
 }
