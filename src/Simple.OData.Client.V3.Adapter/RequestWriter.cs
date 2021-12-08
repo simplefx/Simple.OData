@@ -39,7 +39,7 @@ namespace Simple.OData.Client.V3.Adapter
 			var model = (method == RestVerbs.Patch || method == RestVerbs.Merge) ? new EdmDeltaModel(_model, entityType, entryData.Keys) : _model;
 
 			using var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), model);
-			var contentId = _deferredBatchWriter != null ? _deferredBatchWriter.Value.GetContentId(entryData, null) : null;
+			var contentId = _deferredBatchWriter?.Value.GetContentId(entryData, null);
 			//var entityCollection = _session.Metadata.GetEntityCollection(collection);
 			var entityCollection = _session.Metadata.NavigateToCollection(collection);
 			var entryDetails = _session.Metadata.ParseEntryDetails(entityCollection.Name, entryData, contentId);

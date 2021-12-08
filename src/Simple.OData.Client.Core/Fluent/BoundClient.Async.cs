@@ -328,7 +328,7 @@ namespace Simple.OData.Client
 
 		public Task UnlinkEntryAsync<U>(U linkedEntryKey, string linkName, CancellationToken cancellationToken)
 		{
-			return _client.UnlinkEntryAsync(_command, linkName ?? typeof(U).Name, linkedEntryKey != null ? linkedEntryKey.ToDictionary(_session.TypeCache) : null, cancellationToken);
+			return _client.UnlinkEntryAsync(_command, linkName ?? typeof(U).Name, linkedEntryKey?.ToDictionary(_session.TypeCache), cancellationToken);
 		}
 
 		public Task UnlinkEntryAsync<U>(Expression<Func<T, U>> expression, U linkedEntryKey)
@@ -338,7 +338,7 @@ namespace Simple.OData.Client
 
 		public Task UnlinkEntryAsync<U>(Expression<Func<T, U>> expression, U linkedEntryKey, CancellationToken cancellationToken)
 		{
-			return _client.UnlinkEntryAsync(_command, expression.ExtractColumnName(_session.TypeCache), linkedEntryKey != null ? linkedEntryKey.ToDictionary(_session.TypeCache) : null, cancellationToken);
+			return _client.UnlinkEntryAsync(_command, expression.ExtractColumnName(_session.TypeCache), linkedEntryKey?.ToDictionary(_session.TypeCache), cancellationToken);
 		}
 
 		public Task UnlinkEntryAsync(ODataExpression expression, IDictionary<string, object> linkedEntryKey)

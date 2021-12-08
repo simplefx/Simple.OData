@@ -219,7 +219,7 @@ namespace Simple.OData.Client.V4.Adapter
 		{
 			return new ODataFeedAnnotations()
 			{
-				Id = feed.Id == null ? null : feed.Id.AbsoluteUri,
+				Id = feed.Id?.AbsoluteUri,
 				Count = feed.Count,
 				DeltaLink = feed.DeltaLink,
 				NextPageLink = feed.NextPageLink,

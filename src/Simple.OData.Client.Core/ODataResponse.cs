@@ -119,9 +119,7 @@ namespace Simple.OData.Client
 		{
 			var result = AsEntries(includeAnnotations);
 
-			return result != null
-				? result.FirstOrDefault()
-				: null;
+			return result?.FirstOrDefault();
 		}
 
 		public T AsScalar<T>()

@@ -8,8 +8,6 @@
 
 		public object Value => Feed != null && Feed.Entries != null
 					? (object)Feed.Entries
-					: Entry != null
-					? Entry.Data
-					: null;
+					: Entry?.Data;
 	}
 }

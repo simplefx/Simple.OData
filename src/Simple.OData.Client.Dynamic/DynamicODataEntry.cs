@@ -23,9 +23,7 @@ namespace Simple.OData.Client
 
 		private static IDictionary<string, object> ToDynamicODataEntry(IDictionary<string, object> entry, ITypeCache typeCache)
 		{
-			return entry == null
-				? null
-				: entry.ToDictionary(
+			return entry?.ToDictionary(
 						x => x.Key,
 						y => y.Value is IDictionary<string, object>
 							? new DynamicODataEntry(y.Value as IDictionary<string, object>, typeCache)
@@ -36,9 +34,7 @@ namespace Simple.OData.Client
 
 		private static IEnumerable<object> ToDynamicODataEntry(IEnumerable<object> entry, ITypeCache typeCache)
 		{
-			return entry == null
-				? null
-				: entry.Select(x => x is IDictionary<string, object>
+			return entry?.Select(x => x is IDictionary<string, object>
 					? new DynamicODataEntry(x as IDictionary<string, object>, typeCache)
 					: x).ToList();
 		}
