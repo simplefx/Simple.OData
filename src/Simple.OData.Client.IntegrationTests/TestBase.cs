@@ -51,7 +51,7 @@ namespace Simple.OData.Client.Tests
             {
                 var i1 = uri.IndexOf(".org/V");
                 var i2 = uri.IndexOf("/OData/");
-                uri = uri.Substring(0, i1 + 5) + uri.Substring(i1 + 8, i2 - i1 - 7) + uri.Substring(i1 + 5, 2) + uri.Substring(i2);
+                uri = uri[..(i1 + 5)] + uri.Substring(i1 + 8, i2 - i1 - 7) + uri.Substring(i1 + 5, 2) + uri[i2..];
             }
             return uri;
         }
