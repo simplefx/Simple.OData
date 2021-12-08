@@ -301,7 +301,7 @@ namespace Simple.OData.Client.Tests.Extensions
 			};
 
 			var values = (dict.Select(x => x.ToObject<ODataEntry>(TypeCache, true)) as IEnumerable<dynamic>).ToArray();
-			for (var index = 0; index < values.Count(); index++)
+			for (var index = 0; index < values.Length; index++)
 			{
 				Assert.Equal(dict[index]["StringProperty"], values[index].StringProperty);
 				Assert.Equal(dict[index]["IntProperty"], values[index].IntProperty);

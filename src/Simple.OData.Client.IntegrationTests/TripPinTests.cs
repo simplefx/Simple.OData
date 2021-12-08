@@ -768,7 +768,7 @@ namespace Simple.OData.Client.Tests
                 .For<Person>("Me")
                 .FindEntryAsync();
             Assert.Equal("aprilcline", person.UserName);
-            Assert.Equal(2, person.Emails.Count());
+            Assert.Equal(2, person.Emails.Length);
             Assert.Equal("Lander", person.AddressInfo.Single().City.Name);
             Assert.Equal(PersonGender.Female, person.Gender);
         }

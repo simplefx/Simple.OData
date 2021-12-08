@@ -309,7 +309,7 @@ namespace Simple.OData.Client.Tests.FluentApi
                 .Expand(x => x.Products)
                 .Filter(x => x.CategoryName == "Test17")
                 .FindEntryAsync();
-            Assert.Equal(2, category.Products.Count());
+            Assert.Equal(2, category.Products.Length);
         }
     }
 }

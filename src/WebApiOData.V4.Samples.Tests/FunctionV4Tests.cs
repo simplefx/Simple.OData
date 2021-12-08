@@ -145,7 +145,7 @@ namespace WebApiOData.V4.Samples.Tests
                 .Function("MostExpensives")
                 .ExecuteAsArrayAsync<Product>();
 
-            Assert.Equal(3, result.Count());
+            Assert.Equal(3, result.Length);
         }
 
         [Fact]
@@ -197,7 +197,7 @@ namespace WebApiOData.V4.Samples.Tests
                 .Function("Top10")
                 .ExecuteAsArrayAsync<Product>();
 
-            Assert.Equal(10, result.Count());
+            Assert.Equal(10, result.Length);
         }
 
         [Fact]

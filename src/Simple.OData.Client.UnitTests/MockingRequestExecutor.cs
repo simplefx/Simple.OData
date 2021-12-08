@@ -289,7 +289,7 @@ namespace Simple.OData.Client.Tests
             IDictionary<string, IEnumerable<string>> expectedHeaders,
             IDictionary<string, IEnumerable<string>> actualHeaders)
         {
-            Assert.Equal(expectedHeaders.Count(), actualHeaders.Count());
+            Assert.Equal(expectedHeaders.Count, actualHeaders.Count);
             foreach (var header in expectedHeaders)
             {
                 Assert.Contains(header.Key, actualHeaders.Keys);

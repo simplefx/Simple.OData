@@ -83,7 +83,7 @@ namespace Simple.OData.Client.Tests.FluentApi
                 .Expand(x => new { x.Products })
                 .Filter(x => x.CategoryName == "Test3")
                 .FindEntryAsync();
-            Assert.True(category.Products.Count() == 1);
+            Assert.True(category.Products.Length == 1);
         }
 
         [Fact]
@@ -106,7 +106,7 @@ namespace Simple.OData.Client.Tests.FluentApi
                 .Expand(x => new { x.Products })
                 .Filter(x => x.CategoryName == "Test5")
                 .FindEntryAsync();
-            Assert.True(category.Products.Count() == 1);
+            Assert.True(category.Products.Length == 1);
         }
 
         [Fact]

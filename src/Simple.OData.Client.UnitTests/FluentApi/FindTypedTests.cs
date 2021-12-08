@@ -362,7 +362,7 @@ namespace Simple.OData.Client.Tests.FluentApi
 				.Expand(x => x.Products)
 				.Filter(x => x.CategoryName == "Beverages")
 				.FindEntryAsync();
-			Assert.Equal(ExpectedCountOfBeveragesProducts, category.Products.Count());
+			Assert.Equal(ExpectedCountOfBeveragesProducts, category.Products.Length);
 		}
 
 		[Fact]
@@ -374,7 +374,7 @@ namespace Simple.OData.Client.Tests.FluentApi
 				.Expand(x => x.Products)
 				.Filter(x => x.CategoryName == "Beverages")
 				.FindEntryAsync();
-			Assert.Equal(ExpectedCountOfBeveragesProducts, category.Products.Count());
+			Assert.Equal(ExpectedCountOfBeveragesProducts, category.Products.Count);
 		}
 
 		[Fact]
@@ -386,7 +386,7 @@ namespace Simple.OData.Client.Tests.FluentApi
 				.Expand(x => x.Products)
 				.Filter(x => x.CategoryName == "Beverages")
 				.FindEntryAsync();
-			Assert.Equal(ExpectedCountOfBeveragesProducts, category.Products.Count());
+			Assert.Equal(ExpectedCountOfBeveragesProducts, category.Products.Count);
 		}
 
 		[Fact]
@@ -398,7 +398,7 @@ namespace Simple.OData.Client.Tests.FluentApi
 				.Expand(x => x.Products)
 				.Filter(x => x.CategoryName == "Beverages")
 				.FindEntryAsync();
-			Assert.Equal(ExpectedCountOfBeveragesProducts, category.Products.Count());
+			Assert.Equal(ExpectedCountOfBeveragesProducts, category.Products.Count);
 		}
 
 		[Fact]
@@ -410,7 +410,7 @@ namespace Simple.OData.Client.Tests.FluentApi
 				.Expand(x => x.Products)
 				.Filter(x => x.CategoryName == "Beverages")
 				.FindEntryAsync();
-			Assert.Equal(ExpectedCountOfBeveragesProducts, category.Products.Count());
+			Assert.Equal(ExpectedCountOfBeveragesProducts, category.Products.Count);
 		}
 
 		[Fact]

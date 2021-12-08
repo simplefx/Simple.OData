@@ -119,7 +119,7 @@ namespace Simple.OData.Client.Tests
             }
             Task.WaitAll(tasks.ToArray());
 
-            Assert.Equal(products.Count(), summary.ExecutionCount);
+            Assert.Equal(products.Length, summary.ExecutionCount);
             Assert.Equal(0, summary.ExceptionCount);
             Assert.Equal(0, summary.NonEqualCount);
         }
@@ -139,7 +139,7 @@ namespace Simple.OData.Client.Tests
             }
             Task.WaitAll(tasks.ToArray());
 
-            Assert.Equal(products.Count(), summary.ExecutionCount);
+            Assert.Equal(products.Length, summary.ExecutionCount);
             Assert.Equal(0, summary.ExceptionCount);
             Assert.Equal(0, summary.NonEqualCount);
         }
