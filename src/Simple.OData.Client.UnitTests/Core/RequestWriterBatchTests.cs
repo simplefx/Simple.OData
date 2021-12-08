@@ -1,13 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-
-using Moq;
-
-using Microsoft.Data.OData;
-using Microsoft.Data.Edm;
 
 using Xunit;
 

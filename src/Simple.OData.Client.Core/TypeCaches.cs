@@ -1,7 +1,5 @@
 ﻿using System.Collections.Concurrent;
 
-using Simple.OData.Client.Extensions;
-
 namespace Simple.OData.Client
 {
 	internal static class TypeCaches

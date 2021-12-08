@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.OData.Edm;
+﻿using System.Collections.Generic;
 using Microsoft.Spatial;
 
 namespace Simple.OData.Client.V4.Adapter

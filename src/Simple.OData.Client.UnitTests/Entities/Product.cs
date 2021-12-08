@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.Runtime.Serialization;
 
 namespace Simple.OData.Client.Tests
 {

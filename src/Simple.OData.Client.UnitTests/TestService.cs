@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-#if NET461 && !MOCK_HTTP
+﻿#if NET461 && !MOCK_HTTP
 using System.ServiceModel.Web;
 #endif
-using System.Text;
-using System.Threading;
 
 
 namespace Simple.OData.Client.Tests

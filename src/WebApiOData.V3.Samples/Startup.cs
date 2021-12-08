@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Web.Http;
 using System.Web.Http.OData.Batch;
 using System.Web.Http.OData.Builder;

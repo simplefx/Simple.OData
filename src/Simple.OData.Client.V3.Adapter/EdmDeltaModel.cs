@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Data.Edm;
 using Microsoft.Data.Edm.Annotations;
 using Microsoft.Data.Edm.Library;

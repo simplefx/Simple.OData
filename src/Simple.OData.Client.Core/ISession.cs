@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Net;
 using System.Net.Http;
-
-using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client
 {

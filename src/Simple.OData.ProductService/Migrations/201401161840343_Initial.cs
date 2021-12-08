@@ -1,6 +1,5 @@
 namespace Simple.OData.ProductService.Migrations
 {
-	using System;
 	using System.Data.Entity.Migrations;
 
 	public partial class Initial : DbMigration

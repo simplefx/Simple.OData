@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Reflection;
 using System.Data.Services.Providers;
 using System.Data.Services;
-using System.Data.Entity;
 
 namespace ActionProviderImplementation
 {

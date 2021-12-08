@@ -5,8 +5,6 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-using Simple.OData.Client.Extensions;
-
 namespace Simple.OData.Client
 {
 	public abstract class ResponseReaderBase : IResponseReader

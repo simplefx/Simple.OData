@@ -1,8 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using Microsoft.OData;
-using Microsoft.OData.Edm;
-using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client.V4.Adapter
 {

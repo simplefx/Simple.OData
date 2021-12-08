@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 using BenchmarkDotNet.Running;
 using Simple.OData.Client.Tests;
 

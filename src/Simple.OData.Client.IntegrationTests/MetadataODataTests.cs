@@ -2,8 +2,6 @@
 using System.Threading.Tasks;
 using Xunit;
 
-using Entry = System.Collections.Generic.Dictionary<string, object>;
-
 namespace Simple.OData.Client.Tests
 {
 	public class MetadataODataTestsV2Atom : MetadataODataTests

@@ -7,7 +7,6 @@ using System.Spatial;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 using Microsoft.Data.Edm;
-using Microsoft.Data.Edm.Validation;
 using Microsoft.Data.OData;
 using Simple.OData.Client.Extensions;
 
