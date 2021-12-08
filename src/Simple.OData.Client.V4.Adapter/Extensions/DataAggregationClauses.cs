@@ -107,7 +107,7 @@ namespace Simple.OData.Client.V4.Adapter.Extensions
         internal AggregationClause(string propertyName, Expression expression)
         {
             _propertyName = propertyName;
-            if (!(expression is MethodCallExpression methodCallExpression))
+            if (expression is not MethodCallExpression methodCallExpression)
 			{
 				throw new ArgumentException($"Expression should be a method call.");
 			}

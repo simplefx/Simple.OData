@@ -11,7 +11,7 @@ namespace Simple.OData.Client.V4.Adapter.Extensions
         /// <returns>Extended OData client</returns>
         public static IExtendedODataClient WithExtensions(this IODataClient client)
         {
-            if (!(client is ODataClient oDataClient))
+            if (client is not ODataClient oDataClient)
             {
                 throw new ArgumentException("Client should be ODataClient");
             }

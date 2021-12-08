@@ -174,7 +174,7 @@ namespace Simple.OData.Client
 
             memberInfo = (MemberInfo)propertyInfo ?? fieldInfo;
 
-            return !(memberInfo is null);
+            return memberInfo is not null;
         }
 
         private static Func<object, TMember> GetGetAccessor<TMember>(object instance, MemberInfo memberInfo)
