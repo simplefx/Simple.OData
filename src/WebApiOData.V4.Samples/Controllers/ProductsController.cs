@@ -134,8 +134,7 @@ namespace WebApiOData.V4.Samples.Controllers
 
 		private static double GetRate(string state)
 		{
-			double taxRate = 0;
-			taxRate = state switch
+			var taxRate = state switch
 			{
 				"AZ" => 5.6,
 				"CA" => 7.5,
