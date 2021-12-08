@@ -82,7 +82,7 @@ namespace Simple.OData.Client
 
         private static string FormatExpression(ODataExpression expr, ExpressionContext context)
         {
-            if (ReferenceEquals(expr, null))
+            if (expr is null)
             {
                 if (!String.IsNullOrEmpty(context.ScopeQualifier))
 				{
@@ -221,7 +221,7 @@ namespace Simple.OData.Client
         private string FormatIsOfCastFunction(ExpressionContext context)
         {
             var formattedArguments = string.Empty;
-            if (!ReferenceEquals(this.Function.Arguments.First(), null) && !this.Function.Arguments.First().IsNull)
+            if (this.Function.Arguments.First() is not null && !this.Function.Arguments.First().IsNull)
             {
                 formattedArguments += FormatExpression(this.Function.Arguments.First(), new ExpressionContext(context.Session));
                 formattedArguments += ",";
@@ -396,7 +396,7 @@ namespace Simple.OData.Client
 				return false;
 			}
 
-			if (ReferenceEquals(expr, null))
+			if (expr is null)
 			{
 				return false;
 			}

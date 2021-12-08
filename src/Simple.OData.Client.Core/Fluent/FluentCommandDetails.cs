@@ -92,7 +92,7 @@ namespace Simple.OData.Client
 
         public bool HasKey => this.KeyValues != null && this.KeyValues.Count > 0 || this.NamedKeyValues != null && this.NamedKeyValues.Count > 0;
 
-        public bool HasFilter => !string.IsNullOrEmpty(this.Filter) || !ReferenceEquals(this.FilterExpression, null);
+        public bool HasFilter => !string.IsNullOrEmpty(this.Filter) || this.FilterExpression is not null;
 
         public bool HasSearch => !string.IsNullOrEmpty(this.Search);
 

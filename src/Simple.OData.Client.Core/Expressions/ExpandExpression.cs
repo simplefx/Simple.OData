@@ -106,7 +106,7 @@ namespace Simple.OData.Client
                 {
                     var filterExpression =
                         ODataExpression.FromLinqExpression((node.Arguments[1] as LambdaExpression)?.Body);
-                    if (ReferenceEquals(association.FilterExpression, null))
+                    if (association.FilterExpression is null)
 						{
 							association.FilterExpression = filterExpression;
 						}

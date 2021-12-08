@@ -147,7 +147,7 @@ namespace Simple.OData.Client
 
         public FluentCommand Filter(ODataExpression expression)
         {
-            if (ReferenceEquals(Details.FilterExpression, null))
+            if (Details.FilterExpression is null)
 			{
 				Details.FilterExpression = expression;
 			}
@@ -293,7 +293,7 @@ namespace Simple.OData.Client
 
         public FluentCommand QueryOptions(ODataExpression expression)
         {
-            if (ReferenceEquals(Details.QueryOptionsExpression, null))
+            if (Details.QueryOptionsExpression is null)
 			{
 				Details.QueryOptionsExpression = expression;
 			}

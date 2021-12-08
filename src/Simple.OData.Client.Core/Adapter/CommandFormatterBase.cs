@@ -197,7 +197,7 @@ namespace Simple.OData.Client
 			}
 
 			var details = command.Details;
-			if (!ReferenceEquals(details.QueryOptionsExpression, null))
+			if (details.QueryOptionsExpression is not null)
 			{
 				queryClauses.Add(details.QueryOptionsExpression.Format(new ExpressionContext(_session, true)));
 			}

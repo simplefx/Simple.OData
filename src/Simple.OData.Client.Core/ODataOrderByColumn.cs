@@ -20,7 +20,7 @@ namespace Simple.OData.Client
 
         public bool Equals(ODataOrderByColumn other)
         {
-            if (ReferenceEquals(null, other))
+            if (other is null)
 			{
 				return false;
 			}
@@ -35,7 +35,7 @@ namespace Simple.OData.Client
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj))
+            if (obj is null)
 			{
 				return false;
 			}

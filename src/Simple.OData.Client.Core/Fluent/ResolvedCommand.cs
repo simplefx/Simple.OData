@@ -43,7 +43,7 @@ namespace Simple.OData.Client
 
         private void ResolveCollectionName(FluentCommandDetails details)
         {
-            if (Details.CollectionName == null && !ReferenceEquals(details.CollectionExpression, null))
+            if (Details.CollectionName == null && details.CollectionExpression is not null)
             {
                 var collectionName = details.CollectionExpression.AsString(_sesson);
                 var items = collectionName.Split('/');
@@ -61,7 +61,7 @@ namespace Simple.OData.Client
 
         private void ResolveDerivedCollectionName(FluentCommandDetails details)
         {
-            if (Details.DerivedCollectionName == null && !ReferenceEquals(details.DerivedCollectionExpression, null))
+            if (Details.DerivedCollectionName == null && details.DerivedCollectionExpression is not null)
             {
                 var derivedCollectionName = details.DerivedCollectionExpression.AsString(_sesson);
                 Details.DerivedCollectionName = derivedCollectionName;
@@ -70,7 +70,7 @@ namespace Simple.OData.Client
 
         private void ResolveLinkName(FluentCommandDetails details)
         {
-            if (Details.LinkName == null && !ReferenceEquals(details.LinkExpression, null))
+            if (Details.LinkName == null && details.LinkExpression is not null)
             {
                 Details.LinkName = details.LinkExpression.AsString(_sesson);
             }
@@ -133,7 +133,7 @@ namespace Simple.OData.Client
 
         private void ResolveFilter(FluentCommandDetails details)
         {
-            if (Details.Filter == null && !ReferenceEquals(details.FilterExpression, null))
+            if (Details.Filter == null && details.FilterExpression is not null)
             {
                 Details.NamedKeyValues = TryInterpretFilterExpressionAsKey(details.FilterExpression, out var isAlternateKey);
                 Details.IsAlternateKey = isAlternateKey;
@@ -258,7 +258,7 @@ namespace Simple.OData.Client
             var ok = false;
 
             IDictionary<string, object> namedKeyValues = new Dictionary<string, object>();
-            if (!ReferenceEquals(expression, null))
+            if (expression is not null)
             {
                 ok = expression.ExtractLookupColumns(namedKeyValues);
             }

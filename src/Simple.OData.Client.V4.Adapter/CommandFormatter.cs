@@ -144,7 +144,7 @@ namespace Simple.OData.Client.V4.Adapter
 
             if (associationName != StarString)
             {
-                if (expandsToCollection && !ReferenceEquals(association.FilterExpression, null))
+                if (expandsToCollection && association.FilterExpression is not null)
                 {
                     var associatedEntityCollection = _session.Metadata.GetEntityCollection(
                         _session.Metadata.GetNavigationPropertyPartnerTypeName(entityCollection.Name, associationName));
