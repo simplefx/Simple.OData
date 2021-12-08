@@ -319,34 +319,7 @@ namespace Simple.OData.Client
             }
         }
 
-        private void AssertHasKey(ResolvedCommand command)
-        {
-            if (!command.Details.HasKey && command.Details.FilterAsKey == null)
-			{
-				throw new InvalidOperationException("No entry key specified.");
-			}
-		}
-
-        private async Task<string> FormatEntryKeyAsync(string collection, IDictionary<string, object> entryKey, CancellationToken cancellationToken)
-        {
-            var entryIdent = await GetBoundClient()
-                .For(collection)
-                .Key(entryKey)
-                .GetCommandTextAsync(cancellationToken).ConfigureAwait(false);
-
-            return entryIdent;
-        }
-
-        private string FormatEntryKey(ResolvedCommand command)
-        {
-            var entryIdent = command.Details.HasKey
-                ? command.Format()
-                : new FluentCommand(command.Details).Key(command.Details.FilterAsKey).Resolve(_session).Format();
-
-            return entryIdent;
-        }
-
-        private async Task EnrichWithMediaPropertiesAsync(IEnumerable<AnnotatedEntry> entries, ResolvedCommand command, CancellationToken cancellationToken)
+		private async Task EnrichWithMediaPropertiesAsync(IEnumerable<AnnotatedEntry> entries, ResolvedCommand command, CancellationToken cancellationToken)
         {
             if (entries != null)
             {

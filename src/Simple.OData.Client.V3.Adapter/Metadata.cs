@@ -271,17 +271,7 @@ namespace Simple.OData.Client.V3.Adapter
                 .SelectMany(x => (x as IEdmEntityContainer).EntitySets());
         }
 
-        private IEdmEntitySet GetEntitySet(string entitySetName)
-        {
-            if (TryGetEntitySet(entitySetName, out var entitySet))
-			{
-				return entitySet;
-			}
-
-			throw new UnresolvableObjectException(entitySetName, $"Entity set [{entitySetName}] not found");
-        }
-
-        private bool TryGetEntitySet(string entitySetName, out IEdmEntitySet entitySet)
+		private bool TryGetEntitySet(string entitySetName, out IEdmEntitySet entitySet)
         {
             if (entitySetName.Contains("/"))
 			{
@@ -398,17 +388,7 @@ namespace Simple.OData.Client.V3.Adapter
             return complexType != null;
         }
 
-        private IEdmEnumType GetEnumType(string typeName)
-        {
-            if (TryGetEnumType(typeName, out var enumType))
-			{
-				return enumType;
-			}
-
-			throw new UnresolvableObjectException(typeName, $"Enum [{typeName}] not found");
-        }
-
-        private bool TryGetEnumType(string typeName, out IEdmEnumType enumType)
+		private bool TryGetEnumType(string typeName, out IEdmEnumType enumType)
         {
             enumType = _model.SchemaElements
                 .Where(x => x.SchemaElementKind == EdmSchemaElementKind.TypeDefinition && (x as IEdmType).TypeKind == EdmTypeKind.Enum)
