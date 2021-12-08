@@ -12,10 +12,19 @@ using System.Diagnostics.CodeAnalysis;
 	Scope = "type",
 	Target = "~T:Simple.OData.Client.Tests.FluentApi.FindTypedTests.OrderDetails")
 ]
+
 [assembly: SuppressMessage(
 	"Style",
 	"IDE1006:Naming Styles",
 	Justification = "Class is deliberately strangely capitalized for testing",
 	Scope = "type",
 	Target = "~T:Simple.OData.Client.Tests.FluentApi.FindTypedTests.orderDetails")
+]
+
+[assembly: SuppressMessage(
+	"Style",
+	"IDE0060:Remove unused parameter",
+	Justification = "Unused parameter is present for testing",
+	Scope = "type",
+	Target = "~T:Simple.OData.Client.Tests.Extensions.DictionaryExtensionsTests.ClassNoDefaultConstructor")
 ]
