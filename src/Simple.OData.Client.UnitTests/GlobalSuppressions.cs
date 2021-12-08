@@ -36,3 +36,11 @@ using System.Diagnostics.CodeAnalysis;
 	Scope = "member",
 	Target = "~M:Simple.OData.Client.Tests.FluentApi.FindTypedTests.IsOfAssociation~System.Threading.Tasks.Task")
 ]
+
+[assembly: SuppressMessage(
+	"Style",
+	"IDE0057:Use range operator",
+	Justification = "Range operator cannot be used here",
+	Scope = "member",
+	Target = "~M:Simple.OData.Client.Tests.Core.TypedExpressionTests.SubstringWithPositionEqual")
+]

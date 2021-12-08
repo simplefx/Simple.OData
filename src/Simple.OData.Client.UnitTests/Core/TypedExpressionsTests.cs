@@ -383,7 +383,7 @@ namespace Simple.OData.Client.Tests.Core
 		[Fact]
 		public void SubstringWithPositionEqual()
 		{
-			Expression<Func<TestEntity, bool>> filter = x => x.ProductName[1..] == "hai";
+			Expression<Func<TestEntity, bool>> filter = x => x.ProductName.Substring(1) == "hai";
 			Assert.Equal("substring(ProductName,1) eq 'hai'", ODataExpression.FromLinqExpression(filter).AsString(_session));
 		}
 
