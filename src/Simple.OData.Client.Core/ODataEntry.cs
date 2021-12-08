@@ -39,10 +39,7 @@ namespace Simple.OData.Client
 		/// <returns>The property value.</returns>
 		public object this[string key]
 		{
-			get
-			{
-				return _entry[key];
-			}
+			get => _entry[key];
 			set
 			{
 				if (_entry.ContainsKey(key))

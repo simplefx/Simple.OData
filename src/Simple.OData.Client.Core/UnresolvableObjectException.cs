@@ -54,8 +54,8 @@ namespace Simple.OData.Client
 		/// </value>
 		public string ObjectName
 		{
-			get { return Data.Contains("ObjectName") ? (Data["ObjectName"] != null ? Data["ObjectName"].ToString() : "{{null}}") : null; }
-			private set { Data["ObjectName"] = value; }
+			get => Data.Contains("ObjectName") ? (Data["ObjectName"] != null ? Data["ObjectName"].ToString() : "{{null}}") : null;
+			private set => Data["ObjectName"] = value;
 		}
 	}
 }

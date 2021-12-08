@@ -17,8 +17,8 @@ namespace Devbridge.BasicAuthentication.Configuration
 		[ConfigurationProperty(UserNameAttribute, IsRequired = true)]
 		public string UserName
 		{
-			get { return Convert.ToString(this[UserNameAttribute]); }
-			set { this[UserNameAttribute] = value; }
+			get => Convert.ToString(this[UserNameAttribute]);
+			set => this[UserNameAttribute] = value;
 		}
 
 		/// <summary>
@@ -30,8 +30,8 @@ namespace Devbridge.BasicAuthentication.Configuration
 		[ConfigurationProperty(PasswordAttribute, IsRequired = true)]
 		public string Password
 		{
-			get { return Convert.ToString(this[PasswordAttribute]); }
-			set { this[PasswordAttribute] = value; }
+			get => Convert.ToString(this[PasswordAttribute]);
+			set => this[PasswordAttribute] = value;
 		}
 	}
 }

@@ -7,10 +7,7 @@ namespace Devbridge.BasicAuthentication.Configuration
 	{
 		public CredentialElement this[int index]
 		{
-			get
-			{
-				return (CredentialElement)BaseGet(index);
-			}
+			get => (CredentialElement)BaseGet(index);
 			set
 			{
 				if (BaseGet(index) != null)

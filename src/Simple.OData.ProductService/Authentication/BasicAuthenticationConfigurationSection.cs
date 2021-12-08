@@ -15,8 +15,8 @@ namespace Devbridge.BasicAuthentication.Configuration
 		[ConfigurationProperty(CredentialsNode, IsRequired = false)]
 		public CredentialElementCollection Credentials
 		{
-			get { return (CredentialElementCollection)this[CredentialsNode]; }
-			set { this[CredentialsNode] = value; }
+			get => (CredentialElementCollection)this[CredentialsNode];
+			set => this[CredentialsNode] = value;
 		}
 	}
 }
