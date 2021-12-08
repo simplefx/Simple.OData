@@ -205,8 +205,7 @@ namespace Simple.OData.Client.Tests
 					throw;
 				}
 
-				var arg = ex.InnerException as ArgumentException;
-                if (arg == null)
+				if (ex.InnerException is not ArgumentException arg)
 				{
 					throw;
 				}

@@ -9,26 +9,22 @@ namespace Simple.OData.Client.Extensions
     {
         public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> source)
         {
-            Dictionary<TKey, TValue> dictionary;
+			if (source is not Dictionary<TKey, TValue> dictionary)
+			{
+				dictionary = source.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+			}
 
-            if ((dictionary = source as Dictionary<TKey, TValue>) == null)
-            {
-                dictionary = source.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-            }
-
-            return dictionary;
+			return dictionary;
         }
 
         public static IDictionary<TKey, TValue> ToIDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> source)
         {
-            Dictionary<TKey, TValue> dictionary;
+			if (source is not Dictionary<TKey, TValue> dictionary)
+			{
+				dictionary = source.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
+			}
 
-            if ((dictionary = source as Dictionary<TKey, TValue>) == null)
-            {
-                dictionary = source.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-            }
-
-            return dictionary;
+			return dictionary;
         }
     }
 }

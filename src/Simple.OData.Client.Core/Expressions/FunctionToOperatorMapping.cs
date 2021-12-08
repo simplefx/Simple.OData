@@ -29,12 +29,11 @@ namespace Simple.OData.Client
     {
         public override string Format(ExpressionContext context, ODataExpression functionCaller, List<ODataExpression> functionArguments)
         {
-            var list = functionCaller.Value as IEnumerable;
-            if (list == null)
-            {
-                throw new ArgumentException("Function caller should have a value");
-            }
-            var listAsString = new StringBuilder();
+			if (functionCaller.Value is not IEnumerable list)
+			{
+				throw new ArgumentException("Function caller should have a value");
+			}
+			var listAsString = new StringBuilder();
             var delimiter = string.Empty;
             listAsString.Append("(");
             foreach (var item in list)

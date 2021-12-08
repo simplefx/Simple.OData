@@ -9,8 +9,7 @@ namespace Simple.OData.Client
     {
         public static IEnumerable<string> ExtractColumnNames<T>(this Expression<Func<T, object>> expression, ITypeCache typeCache)
         {
-            var lambdaExpression = expression as LambdaExpression;
-            if (lambdaExpression == null)
+			if (expression is not LambdaExpression lambdaExpression)
 			{
 				throw Utils.NotSupportedExpression(expression);
 			}

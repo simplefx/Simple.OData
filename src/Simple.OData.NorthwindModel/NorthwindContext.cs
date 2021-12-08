@@ -33,8 +33,7 @@ namespace NorthwindModel
 
         private void SetKey<T>(ObjectStateEntry entry, Action<T> setKey) where T : class
         {
-            var entity = entry.Entity as T;
-            if (entity != null)
+			if (entry.Entity is T entity)
 			{
 				setKey(entity);
 			}
