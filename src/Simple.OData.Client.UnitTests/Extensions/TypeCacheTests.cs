@@ -5,7 +5,7 @@ namespace Simple.OData.Client.Tests.Extensions
 {
 	public class TypeCacheTests
 	{
-		private ITypeCache TypeCache => TypeCaches.TypeCache("test", null);
+		private static ITypeCache TypeCache => TypeCaches.TypeCache("test", null);
 
 		[Fact]
 		public void GetDerivedTypes_BaseType()

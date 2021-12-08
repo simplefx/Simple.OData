@@ -18,6 +18,6 @@ namespace WebApiOData.V4.Samples.Models
             };
         }
 
-        public List<Movie> Movies { get { return _movies; } }
+        public static List<Movie> Movies { get { return _movies; } }
     }
 }

@@ -43,7 +43,7 @@ namespace Simple.OData.Client.Tests
             _client = CreateClientWithDefaultSettings();
         }
 
-        private async Task<string> GetReadWriteUri(string serviceUri)
+        private static async Task<string> GetReadWriteUri(string serviceUri)
         {
             var response = await metadataHttpClient.GetAsync(serviceUri).ConfigureAwait(false);
             var uri = response.RequestMessage.RequestUri.AbsoluteUri;

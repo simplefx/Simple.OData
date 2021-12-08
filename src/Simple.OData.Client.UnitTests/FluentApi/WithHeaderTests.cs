@@ -47,10 +47,10 @@ namespace Simple.OData.Client.Tests.FluentApi
             return (new ODataClient(CreateDefaultSettings().WithHttpMock().WithRequestInterceptor(r => r.Headers.ToList().ForEach(x => headers.Add(x.Key, x.Value)))), headers);
         }
 
-        private void AssertHeader(IDictionary<string, IEnumerable<string>> headers, string name, string value)
+        private static void AssertHeader(IDictionary<string, IEnumerable<string>> headers, string name, string value)
             => Assert.True(headers.TryGetValue(name, out var values) && values.Single() == value);
 
-        private void AssertHeader(ODataRequest request, string name, string value)
+        private static void AssertHeader(ODataRequest request, string name, string value)
             => Assert.True(request.RequestMessage.Headers.TryGetValues(name, out var values) && values.Single() == value);
 
         [Fact]
@@ -67,21 +67,21 @@ namespace Simple.OData.Client.Tests.FluentApi
 
             var request = requestClient.GetRequest();
 
-            AssertHeader(request, "header1", "header1Value");
+			AssertHeader(request, "header1", "header1Value");
 
             
             await requestClient.RunAsync();
 
-            AssertHeader(headers, "header1", "header1Value");
-            AssertHeader(request, "header1", "header1Value");
+			AssertHeader(headers, "header1", "header1Value");
+			AssertHeader(request, "header1", "header1Value");
 
             //Clear first run captured headers
             headers.Clear();
             //Run twice to assert no duplicate headers added
             await requestClient.RunAsync();
 
-            AssertHeader(headers, "header1", "header1Value");
-            AssertHeader(request, "header1", "header1Value");
+			AssertHeader(headers, "header1", "header1Value");
+			AssertHeader(request, "header1", "header1Value");
         }
 
         [Fact]
@@ -95,7 +95,7 @@ namespace Simple.OData.Client.Tests.FluentApi
                 .Key(1)
                 .FindEntryAsync();
 
-            AssertHeader(headers, "header1", "header1Value");
+			AssertHeader(headers, "header1", "header1Value");
         }
 
         [Fact]
@@ -110,7 +110,7 @@ namespace Simple.OData.Client.Tests.FluentApi
                 .Media()
                 .GetStreamAsync();
 
-            AssertHeader(headers, "header1", "header1Value");
+			AssertHeader(headers, "header1", "header1Value");
         }
 
         [Fact]
@@ -125,7 +125,7 @@ namespace Simple.OData.Client.Tests.FluentApi
                 .Media()
                 .SetStreamAsync("stream_data", false);
 
-            AssertHeader(headers, "header1", "header1Value");
+			AssertHeader(headers, "header1", "header1Value");
         }
 
         [Fact]
@@ -139,7 +139,7 @@ namespace Simple.OData.Client.Tests.FluentApi
                 .Filter("ProductName eq 'Chai'")
                 .FindEntriesAsync();
 
-            AssertHeader(headers, "header1", "header1Value");
+			AssertHeader(headers, "header1", "header1Value");
         }
 
         [Fact]
@@ -153,7 +153,7 @@ namespace Simple.OData.Client.Tests.FluentApi
                 .Count()
                 .FindScalarAsync<int>();
 
-            AssertHeader(headers, "header1", "header1Value");
+			AssertHeader(headers, "header1", "header1Value");
         }
 
         [Fact]
@@ -168,7 +168,7 @@ namespace Simple.OData.Client.Tests.FluentApi
                 .Set(new Entry() { { "text", "abc" } })
                 .ExecuteAsScalarAsync<string>();
 
-            AssertHeader(headers, "header1", "header1Value");
+			AssertHeader(headers, "header1", "header1Value");
         }
 
         [Fact]
@@ -182,7 +182,7 @@ namespace Simple.OData.Client.Tests.FluentApi
                 .Set(new Entry() { { "ProductName", "Test1" }, { "UnitPrice", 18m } })
                 .InsertEntryAsync();
 
-            AssertHeader(headers, "header1", "header1Value");
+			AssertHeader(headers, "header1", "header1Value");
         }
 
         [Fact]
@@ -197,7 +197,7 @@ namespace Simple.OData.Client.Tests.FluentApi
                 .Set(new { UnitPrice = 123m })
                 .UpdateEntryAsync();
 
-            AssertHeader(headers, "header1", "header1Value");
+			AssertHeader(headers, "header1", "header1Value");
         }
 
         [Fact]
@@ -211,7 +211,7 @@ namespace Simple.OData.Client.Tests.FluentApi
                 .Key(1109)
                 .DeleteEntryAsync();
 
-            AssertHeader(headers, "header1", "header1Value");
+			AssertHeader(headers, "header1", "header1Value");
         }
 
         [Fact]
@@ -227,7 +227,7 @@ namespace Simple.OData.Client.Tests.FluentApi
                 .Key(1004)
                 .LinkEntryAsync("Category", category);
 
-            AssertHeader(headers, "header1", "header1Value");
+			AssertHeader(headers, "header1", "header1Value");
         }
 
         [Fact]
@@ -241,7 +241,7 @@ namespace Simple.OData.Client.Tests.FluentApi
                 .Key(1008)
                 .UnlinkEntryAsync("Category");
 
-            AssertHeader(headers, "header1", "header1Value");
+			AssertHeader(headers, "header1", "header1Value");
         }
     }
 }

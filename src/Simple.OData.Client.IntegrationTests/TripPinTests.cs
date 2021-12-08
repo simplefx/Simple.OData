@@ -1319,7 +1319,7 @@ namespace Simple.OData.Client.Tests
             Assert.Equal(byteCount, photo.Media.Length);
         }
 
-        private Event CreateTestEvent()
+        private static Event CreateTestEvent()
         {
             return new Event
             {

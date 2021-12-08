@@ -14,13 +14,13 @@ namespace WebApiOData.V4.Samples.Controllers
 
         public IHttpActionResult Get()
         {
-            return Ok(_db.Movies);
+            return Ok(MoviesContext.Movies);
         }
 
         [HttpPost]
         public IHttpActionResult CheckOut(int key)
         {
-            var movie = _db.Movies.FirstOrDefault(m => m.ID == key);
+            var movie = MoviesContext.Movies.FirstOrDefault(m => m.ID == key);
             if (movie == null)
             {
                 return BadRequest(ModelState);
@@ -37,7 +37,7 @@ namespace WebApiOData.V4.Samples.Controllers
         [HttpPost]
         public IHttpActionResult Return(int key)
         {
-            var movie = _db.Movies.FirstOrDefault(m => m.ID == key);
+            var movie = MoviesContext.Movies.FirstOrDefault(m => m.ID == key);
             if (movie == null)
             {
                 return BadRequest(ModelState);
@@ -62,7 +62,7 @@ namespace WebApiOData.V4.Samples.Controllers
 
             // Try to check out each movie in the list.
             var results = new List<Movie>();
-            foreach (var movie in _db.Movies.Where(m => movieIDs.Contains(m.ID)))
+            foreach (var movie in MoviesContext.Movies.Where(m => movieIDs.Contains(m.ID)))
             {
                 if (TryCheckoutMovie(movie))
                 {
@@ -88,20 +88,20 @@ namespace WebApiOData.V4.Samples.Controllers
             var movie = new Movie()
             {
                 Title = title,
-                ID = _db.Movies.Count + 1,
+                ID = MoviesContext.Movies.Count + 1,
             };
 
-            _db.Movies.Add(movie);
+			MoviesContext.Movies.Add(movie);
 
             return Created(movie);
         }
 
         protected Movie GetMovieByKey(int key)
         {
-            return _db.Movies.FirstOrDefault(m => m.ID == key);
+            return MoviesContext.Movies.FirstOrDefault(m => m.ID == key);
         }
 
-        private bool TryCheckoutMovie(Movie movie)
+        private static bool TryCheckoutMovie(Movie movie)
         {
             if (movie.IsCheckedOut)
             {

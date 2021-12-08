@@ -48,7 +48,7 @@ namespace WebApiOData.V4.Samples.Tests
             };
         }
 
-        private string GetMetadataDocument()
+        private static string GetMetadataDocument()
         {
 #if MOCK_HTTP
             return MetadataResolver.GetMetadataDocument("Metadata.xml");
@@ -374,7 +374,7 @@ namespace WebApiOData.V4.Samples.Tests
                 .OrderByDescending(x => x.ID)
                 .Skip(1)
                 .FindEntriesAsync();
-            AssertCollectionCount(result, 1);
+			AssertCollectionCount(result, 1);
             Assert.Equal("Fatal Vengeance 2", result.First().Title);
             result = await client
                 .For<Product>()
@@ -385,7 +385,7 @@ namespace WebApiOData.V4.Samples.Tests
                 .Skip(1)
                 .Filter(x => x.ID > 5)
                 .FindEntriesAsync();
-            AssertCollectionCount(result, 0);
+			AssertCollectionCount(result, 0);
         }
 
         [Fact]
@@ -400,7 +400,7 @@ namespace WebApiOData.V4.Samples.Tests
                 .Key(4)
                 .Function("Placements")
                 .FindEntriesAsync();
-            AssertCollectionCount(result, 3);
+			AssertCollectionCount(result, 3);
             result = await client
                 .For(x.Product)
                 .Key(5)
@@ -432,7 +432,7 @@ namespace WebApiOData.V4.Samples.Tests
         //    Assert.InRange(result, 5, 20);
         //}
 
-        private void AssertCollectionCount<T>(IEnumerable<T> collection, int expectedCount)
+        private static void AssertCollectionCount<T>(IEnumerable<T> collection, int expectedCount)
         {
             static void stub(T t) { };
 

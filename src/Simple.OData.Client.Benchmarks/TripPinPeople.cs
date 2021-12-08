@@ -17,7 +17,7 @@ namespace Simple.OData.Client.Benchmarks
     public class TripPinPeople
     {
         [Benchmark]
-        public async Task FindTypedPeopleWithTripsAndFriends()
+        public static async Task FindTypedPeopleWithTripsAndFriends()
         {
             var result = await Utils.GetClient("TripPin.xml", "TripPin_result_20.json")
                 .For<Person>()
@@ -28,7 +28,7 @@ namespace Simple.OData.Client.Benchmarks
         }
 
         [Benchmark]
-        public async Task FindUntypedPeopleWithTripsAndFriends()
+        public static async Task FindUntypedPeopleWithTripsAndFriends()
         {
             var result = await Utils.GetClient("TripPin.xml", "TripPin_result_20.json")
                 .For("People")
@@ -39,7 +39,7 @@ namespace Simple.OData.Client.Benchmarks
         }
 
         [Benchmark]
-        public void ConvertWithNewtonsoftJson()
+        public static void ConvertWithNewtonsoftJson()
         {
             var json = File.ReadAllText(@"..\..\..\..\..\..\..\Resources\" + "TripPin_result_20.json");
             var result = JsonConvert.DeserializeObject<PeopleCollection>(json);

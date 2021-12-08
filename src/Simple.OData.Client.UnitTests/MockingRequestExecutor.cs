@@ -152,7 +152,7 @@ namespace Simple.OData.Client.Tests
 			}
         }
 
-        private bool IsMetadataRequest(HttpRequestMessage request)
+        private static bool IsMetadataRequest(HttpRequestMessage request)
         {
             return request.RequestUri.LocalPath.EndsWith(ODataLiteral.Metadata);
         }
@@ -305,14 +305,14 @@ namespace Simple.OData.Client.Tests
         private string AdjustContent(string content)
         {
             return
-                AdjustBatchIds(
-                AdjustNewLines(
-                AdjustBaseUrl(
-                RemoveElements(content, new[] { "updated" }))));
+				AdjustBatchIds(
+				AdjustNewLines(
+				AdjustBaseUrl(
+				RemoveElements(content, new[] { "updated" }))));
 
         }
 
-        private string RemoveElements(string content, IEnumerable<string> elementNames)
+        private static string RemoveElements(string content, IEnumerable<string> elementNames)
         {
             foreach (var elementName in elementNames)
             {
@@ -333,17 +333,17 @@ namespace Simple.OData.Client.Tests
             return content;
         }
 
-        private string AdjustNewLines(string content)
+        private static string AdjustNewLines(string content)
         {
             return content.Replace("\r\n", "\n");
         }
 
-        private string AdjustBaseUrl(string content)
+        private static string AdjustBaseUrl(string content)
         {
             return _regexBaseUrl.Replace(content, "http://localhost/");
         }
 
-        private string AdjustBatchIds(string content)
+        private static string AdjustBatchIds(string content)
         {
             var result = _regexBatch.Replace(content, Guid.Empty.ToString());
             result = _regexChangeset.Replace(result, Guid.Empty.ToString());

@@ -16,7 +16,7 @@ namespace WebApiOData.V3.Samples
 {
     public class Startup
     {
-        public void Configuration(IAppBuilder builder)
+        public static void Configuration(IAppBuilder builder)
         {
             var config = new HttpConfiguration();
 

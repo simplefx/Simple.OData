@@ -53,7 +53,7 @@ namespace Simple.OData.Client.Tests.Core
             }
         }
 
-        public IODataResponseMessageAsync SetUpResourceMock(string resourceName)
+        public static IODataResponseMessageAsync SetUpResourceMock(string resourceName)
         {
             var document = GetResourceAsString(resourceName);
             var mock = new Mock<IODataResponseMessageAsync>();

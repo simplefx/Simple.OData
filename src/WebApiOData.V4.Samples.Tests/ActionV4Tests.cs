@@ -44,7 +44,7 @@ namespace WebApiOData.V4.Samples.Tests
             };
         }
 
-        private string GetMetadataDocument()
+        private static string GetMetadataDocument()
         {
 #if MOCK_HTTP
             return MetadataResolver.GetMetadataDocument("Metadata.xml");

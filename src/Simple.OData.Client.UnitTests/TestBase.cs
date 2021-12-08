@@ -78,7 +78,7 @@ namespace Simple.OData.Client.Tests
 #endif
         }
 
-        private string GetMetadataDocument()
+        private static string GetMetadataDocument()
         {
 #if MOCK_HTTP
             return MetadataResolver.GetMetadataDocument("Northwind.xml");

@@ -14,7 +14,7 @@ namespace WebApiOData.V3.Samples.Controllers
     {
         private readonly MoviesContext db = new MoviesContext();
 
-        private bool TryCheckoutMovie(Movie movie)
+        private static bool TryCheckoutMovie(Movie movie)
         {
             if (movie.IsCheckedOut)
             {

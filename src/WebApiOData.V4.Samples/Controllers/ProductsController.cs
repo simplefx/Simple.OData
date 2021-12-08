@@ -40,7 +40,7 @@ namespace WebApiOData.V4.Samples.Controllers
         }
 
         [EnableQuery]
-        public IQueryable<Product> Get()
+        public static IQueryable<Product> Get()
         {
             return _data.Values.AsQueryable();
         }

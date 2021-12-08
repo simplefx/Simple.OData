@@ -96,7 +96,7 @@ namespace Simple.OData.Client.Tests
             return entry;
         }
 
-        protected Entry CreateCategory(int categoryId, string categoryName, IEnumerable<IDictionary<string, object>> products = null)
+        protected static Entry CreateCategory(int categoryId, string categoryName, IEnumerable<IDictionary<string, object>> products = null)
         {
             var entry = new Entry()
             {

@@ -47,7 +47,7 @@ namespace Simple.OData.Client.Tests.Extensions
 			public int IntProperty { get; set; }
 		}
 
-		private ITypeCache TypeCache => TypeCaches.TypeCache("test", null);
+		private static ITypeCache TypeCache => TypeCaches.TypeCache("test", null);
 
 		[Fact]
 		public void ToObjectPrimitiveProperties()

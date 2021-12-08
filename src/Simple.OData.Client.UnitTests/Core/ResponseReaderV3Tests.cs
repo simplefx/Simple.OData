@@ -188,7 +188,7 @@ namespace Simple.OData.Client.Tests.Core
             return ParseSchema("ArrayOfNested");
         }
 
-        private Task ParseSchema(string schemaName)
+        private static Task ParseSchema(string schemaName)
         {
             var document = GetResourceAsString(schemaName + ".edmx");
             var metadata = ODataClient.ParseMetadataString<IEdmModel>(document);
