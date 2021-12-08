@@ -157,9 +157,7 @@ namespace Simple.OData.Client
             return session.MetadataCache.MetadataDocument;
         }
 
-#pragma warning disable 1591
-
-        internal async Task<Session> GetSessionAsync()
+		internal async Task<Session> GetSessionAsync()
         {
             await _session.ResolveAdapterAsync(CancellationToken.None).ConfigureAwait(false);
             return _session;
@@ -812,9 +810,7 @@ namespace Simple.OData.Client
             return ExecuteGetStreamRequestAsync(request, cancellationToken);
         }
 
-#pragma warning restore 1591
-
-        private async Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(
+		private async Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(
             string commandText, bool scalarResult, ODataFeedAnnotations annotations, IDictionary<string, string> headers, CancellationToken cancellationToken)
         {
             if (IsBatchResponse)

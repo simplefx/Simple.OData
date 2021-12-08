@@ -17,9 +17,7 @@ namespace Simple.OData.Client
         where T : class
         where FT : class
     {
-#pragma warning disable 1591
-
-        protected readonly ODataClient _client;
+		protected readonly ODataClient _client;
         internal readonly Session _session;
         protected readonly FluentCommand _parentCommand;
         protected FluentCommand _command;
@@ -400,15 +398,14 @@ namespace Simple.OData.Client
             return Link<U>(command, expression.Reference);
         }
 
-#pragma warning restore 1591
 
-        /// <summary>
-        /// Navigates to the linked entity.
-        /// </summary>
-        /// <typeparam name="U">The type of the linked entity.</typeparam>
-        /// <param name="linkName">Name of the link.</param>
-        /// <returns>Self.</returns>
-        public IBoundClient<U> NavigateTo<U>(string linkName = null)
+		/// <summary>
+		/// Navigates to the linked entity.
+		/// </summary>
+		/// <typeparam name="U">The type of the linked entity.</typeparam>
+		/// <param name="linkName">Name of the link.</param>
+		/// <returns>Self.</returns>
+		public IBoundClient<U> NavigateTo<U>(string linkName = null)
             where U : class
         {
             return this.Link<U>(this.Command, linkName);
@@ -692,9 +689,7 @@ namespace Simple.OData.Client
 			return this.Command.Resolve(_session).Format();
         }
 
-#pragma warning disable 1591
-
-        protected async Task<IEnumerable<T>> FilterAndTypeColumnsAsync(
+		protected async Task<IEnumerable<T>> FilterAndTypeColumnsAsync(
             Task<IEnumerable<IDictionary<string, object>>> entries, IList<string> selectedColumns, string dynamicPropertiesContainerName)
         {
             var result = FilterColumns(await entries.ConfigureAwait(false), selectedColumns);
@@ -769,8 +764,5 @@ namespace Simple.OData.Client
                                 .Any(y => IsSelectedColumn(y, string.Join("/", items.Skip(1))))));
             }
         }
-
-#pragma warning restore 1591
-
-    }
+	}
 }

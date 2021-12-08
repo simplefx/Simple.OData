@@ -5,8 +5,6 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.OData;
 
-#pragma warning disable 1591
-
 namespace Simple.OData.Client.V4.Adapter
 {
     public class BatchWriter : BatchWriterBase

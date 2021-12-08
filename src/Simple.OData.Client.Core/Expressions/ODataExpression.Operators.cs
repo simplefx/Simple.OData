@@ -1,9 +1,14 @@
 ﻿using System;
 using System.Linq.Expressions;
 
+
+/* Unmerged change from project 'Simple.OData.Client.Core (netstandard2.0)'
+Before:
 #pragma warning disable 0660,0661
 #pragma warning disable 1591
-
+After:
+#pragma warning disable 0660, 0661
+*/
 namespace Simple.OData.Client
 {
     public partial class ODataExpression

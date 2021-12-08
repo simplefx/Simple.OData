@@ -6,8 +6,6 @@ using System.Text;
 using Microsoft.Data.OData;
 using Moq;
 
-#pragma warning disable 3008
-
 namespace Simple.OData.Client.Tests.Core
 {
     public abstract class CoreTestBase : IDisposable

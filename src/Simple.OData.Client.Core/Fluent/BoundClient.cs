@@ -25,9 +25,7 @@ namespace Simple.OData.Client
         {
         }
 
-        #pragma warning disable 1591
-
-        public IBoundClient<T> For(string collectionName = null)
+		public IBoundClient<T> For(string collectionName = null)
         {
             this.Command.For(collectionName ?? _session.TypeCache.GetMappedName(typeof(T)));
             return this;
@@ -131,9 +129,7 @@ namespace Simple.OData.Client
             return new RequestBuilder<T>(this.Command, _session, _client.BatchWriter);
         }
 
-#pragma warning restore 1591
-
-        private BoundClient<ODataEntry> CreateClientForODataEntry() 
+		private BoundClient<ODataEntry> CreateClientForODataEntry() 
         {
             return new BoundClient<ODataEntry>(_client, _session, _parentCommand, this.Command, true); ;
         }

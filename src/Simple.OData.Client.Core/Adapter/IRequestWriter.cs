@@ -2,8 +2,6 @@
 using System.IO;
 using System.Threading.Tasks;
 
-#pragma warning disable 1591
-
 namespace Simple.OData.Client
 {
     public interface IRequestWriter

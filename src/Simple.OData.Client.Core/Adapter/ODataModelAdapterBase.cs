@@ -1,5 +1,4 @@
-﻿#pragma warning disable 1591
-
+﻿
 namespace Simple.OData.Client
 {
     public abstract class ODataModelAdapterBase : IODataModelAdapter

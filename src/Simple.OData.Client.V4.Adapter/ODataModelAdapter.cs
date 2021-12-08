@@ -6,8 +6,6 @@ using Microsoft.OData;
 using Microsoft.OData.Edm;
 using Microsoft.OData.Edm.Csdl;
 
-#pragma warning disable 1591
-
 namespace Simple.OData.Client
 {
     public static class V4ModelAdapter
@@ -15,8 +13,6 @@ namespace Simple.OData.Client
         public static void Reference() { }
     }
 }
-
-#pragma warning disable 1591
 
 namespace Simple.OData.Client.V4.Adapter
 {

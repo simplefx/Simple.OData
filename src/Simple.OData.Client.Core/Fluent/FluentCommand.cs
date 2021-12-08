@@ -5,8 +5,6 @@ using System.Linq;
 
 using Simple.OData.Client.Extensions;
 
-#pragma warning disable 1591
-
 namespace Simple.OData.Client
 {
     // Although FluentCommand is never instantiated directly (only via ICommand interface)

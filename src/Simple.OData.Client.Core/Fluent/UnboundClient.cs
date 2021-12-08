@@ -19,9 +19,7 @@ namespace Simple.OData.Client
         {
         }
 
-#pragma warning disable 1591
-
-        public IUnboundClient<T> Set(object value)
+		public IUnboundClient<T> Set(object value)
         {
             this.Command.Set(value);
             return this;
@@ -104,9 +102,7 @@ namespace Simple.OData.Client
             return CreateClientForODataEntry();
         }
 
-#pragma warning restore 1591
-
-        private UnboundClient<ODataEntry> CreateClientForODataEntry()
+		private UnboundClient<ODataEntry> CreateClientForODataEntry()
         {
             return new UnboundClient<ODataEntry>(_client, _session, this.Command, true); ;
         }

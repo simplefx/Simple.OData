@@ -7,8 +7,6 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-#pragma warning disable 1591
-
 namespace Simple.OData.Client.V3.Adapter
 {
     public class ResponseReader : ResponseReaderBase

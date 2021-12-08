@@ -7,8 +7,6 @@ using System.Threading.Tasks;
 
 using Simple.OData.Client.Extensions;
 
-#pragma warning disable 1591
-
 namespace Simple.OData.Client
 {
     public abstract class ResponseReaderBase : IResponseReader

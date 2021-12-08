@@ -4,8 +4,6 @@ using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-#pragma warning disable 1591
-
 namespace Simple.OData.Client
 {
     public abstract class BatchWriterBase : IBatchWriter

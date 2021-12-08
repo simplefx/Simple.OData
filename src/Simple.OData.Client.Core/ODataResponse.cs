@@ -5,8 +5,6 @@ using System.Linq;
 using System.Net;
 using Simple.OData.Client.Extensions;
 
-#pragma warning disable 1591
-
 namespace Simple.OData.Client
 {
     public class AnnotatedFeed

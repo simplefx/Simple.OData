@@ -5,8 +5,6 @@ using Microsoft.Spatial;
 
 using Simple.OData.Client.Adapter;
 
-#pragma warning disable 1591
-
 namespace Simple.OData.Client
 {
     public static class V4Adapter
@@ -14,8 +12,6 @@ namespace Simple.OData.Client
         public static void Reference() { }
     }
 }
-
-#pragma warning disable 1591
 
 namespace Simple.OData.Client.V4.Adapter
 {

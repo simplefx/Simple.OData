@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
 
-#pragma warning disable 1591
-
 namespace Simple.OData.Client
 {
     public class ReferenceLink

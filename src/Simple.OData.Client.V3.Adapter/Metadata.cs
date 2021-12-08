@@ -5,8 +5,6 @@ using System.Linq;
 using Microsoft.Data.Edm;
 using Microsoft.Data.Edm.Library.Values;
 
-#pragma warning disable 1591
-
 namespace Simple.OData.Client.V3.Adapter
 {
     public class Metadata : MetadataBase
