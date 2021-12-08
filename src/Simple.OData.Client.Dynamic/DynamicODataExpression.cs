@@ -178,17 +178,16 @@ namespace Simple.OData.Client
 
         private static IEnumerable<ConstructorInfo> GetConstructorInfo()
         {
-            return _ctors ?? (_ctors = typeof(DynamicODataExpression).GetDeclaredConstructors().ToArray());
+            return _ctors ??= typeof(DynamicODataExpression).GetDeclaredConstructors().ToArray();
         }
 
         private static ConstructorInfo CtorWithString
         {
             get
             {
-                return _ctorWithString ??
-                    (_ctorWithString = GetConstructorInfo().Single(x =>
+                return _ctorWithString ??= GetConstructorInfo().Single(x =>
                     x.GetParameters().Count() == 1 &&
-                    x.GetParameters()[0].ParameterType == typeof(string)));
+                    x.GetParameters()[0].ParameterType == typeof(string));
             }
         }
 
@@ -196,11 +195,10 @@ namespace Simple.OData.Client
         {
             get
             {
-                return _ctorWithStringAndStringAndValue ??
-                    (_ctorWithStringAndStringAndValue = GetConstructorInfo().Single(x =>
+                return _ctorWithStringAndStringAndValue ??= GetConstructorInfo().Single(x =>
                     x.GetParameters().Count() == 2 &&
                     x.GetParameters()[0].ParameterType == typeof(string) &&
-                    x.GetParameters()[1].ParameterType == typeof(object)));
+                    x.GetParameters()[1].ParameterType == typeof(object));
             }
         }
 
@@ -208,11 +206,10 @@ namespace Simple.OData.Client
         {
             get
             {
-                return _ctorWithExpressionAndString ??
-                       (_ctorWithExpressionAndString = GetConstructorInfo().Single(x =>
+                return _ctorWithExpressionAndString ??= GetConstructorInfo().Single(x =>
                            x.GetParameters().Count() == 2 &&
                            x.GetParameters()[0].ParameterType == typeof(ODataExpression) &&
-                           x.GetParameters()[1].ParameterType == typeof(string)));
+                           x.GetParameters()[1].ParameterType == typeof(string));
             }
         }
 
@@ -220,11 +217,10 @@ namespace Simple.OData.Client
         {
             get
             {
-                return _ctorWithExpressionAndFunction ??
-                       (_ctorWithExpressionAndFunction = GetConstructorInfo().Single(x =>
+                return _ctorWithExpressionAndFunction ??= GetConstructorInfo().Single(x =>
                            x.GetParameters().Count() == 2 &&
                            x.GetParameters()[0].ParameterType == typeof(ODataExpression) &&
-                           x.GetParameters()[1].ParameterType == typeof(ExpressionFunction)));
+                           x.GetParameters()[1].ParameterType == typeof(ExpressionFunction));
             }
         }
 
@@ -232,12 +228,11 @@ namespace Simple.OData.Client
         {
             get
             {
-                return _ctorWithExpressionAndExpressionAndOperator ??
-                       (_ctorWithExpressionAndExpressionAndOperator = GetConstructorInfo().Single(x =>
+                return _ctorWithExpressionAndExpressionAndOperator ??= GetConstructorInfo().Single(x =>
                            x.GetParameters().Count() == 3 &&
                            x.GetParameters()[0].ParameterType == typeof(ODataExpression) &&
                            x.GetParameters()[1].ParameterType == typeof(ODataExpression) &&
-                           x.GetParameters()[2].ParameterType == typeof(ExpressionType)));
+                           x.GetParameters()[2].ParameterType == typeof(ExpressionType));
             }
         }
 

@@ -27,7 +27,7 @@ namespace Simple.OData.Client.V4.Adapter
 
         public Stream GetStream()
         {
-            return _stream ?? (_stream = new MemoryStream());
+            return _stream ??= new MemoryStream();
         }
 
         public Task<Stream> GetStreamAsync()

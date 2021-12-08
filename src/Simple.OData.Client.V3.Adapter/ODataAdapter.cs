@@ -62,7 +62,7 @@ namespace Simple.OData.Client.V3.Adapter
         public override IMetadata GetMetadata()
         {
             // TODO: Should use a MetadataFactory here 
-            return _metadata ?? (_metadata = new MetadataCache(new Metadata(Model, _session.Settings.NameMatchResolver, _session.Settings.IgnoreUnmappedProperties, _session.Settings.UnqualifiedNameCall)));
+            return _metadata ??= new MetadataCache(new Metadata(Model, _session.Settings.NameMatchResolver, _session.Settings.IgnoreUnmappedProperties, _session.Settings.UnqualifiedNameCall));
         }
 
         public override ICommandFormatter GetCommandFormatter()
