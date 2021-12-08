@@ -19,7 +19,7 @@ namespace Simple.OData.ProductService.Controllers
     */
     public class ProductsController : ODataController
     {
-        private ProductServiceContext db = new ProductServiceContext();
+        private readonly ProductServiceContext db = new ProductServiceContext();
 
 
         // GET odata/Products

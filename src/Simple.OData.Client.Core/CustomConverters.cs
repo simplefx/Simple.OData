@@ -8,7 +8,7 @@ namespace Simple.OData.Client
 {
     public static class CustomConverters
     {
-        private static ConcurrentDictionary<string, ITypeConverter> _converters;
+        private static readonly ConcurrentDictionary<string, ITypeConverter> _converters;
         
         static CustomConverters()
         {

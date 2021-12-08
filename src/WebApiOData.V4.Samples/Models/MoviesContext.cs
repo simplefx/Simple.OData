@@ -4,7 +4,7 @@ namespace WebApiOData.V4.Samples.Models
 {
     public class MoviesContext
     {
-		private static List<Movie> _movies;
+		private static readonly List<Movie> _movies;
         static MoviesContext()
         {
             _movies = new List<Movie>()

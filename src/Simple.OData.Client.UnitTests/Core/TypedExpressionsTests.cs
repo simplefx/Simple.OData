@@ -566,7 +566,7 @@ namespace Simple.OData.Client.Tests.Core
                 ODataExpression.FromLinqExpression(filter).AsString(_session));
         }
 
-        private AddressType addressType = AddressType.Corporate;
+        private readonly AddressType addressType = AddressType.Corporate;
 
         [Fact]
         public void FilterWithEnum_MemberVar()

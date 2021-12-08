@@ -8,7 +8,7 @@ namespace ActionProviderImplementation
 {
     public class EntityFrameworkActionProvider: ActionProvider
     {
-		private DbContext _dbContext;
+		private readonly DbContext _dbContext;
 
         public EntityFrameworkActionProvider(DbContext dbContext) : base(dbContext, new EntityFrameworkParameterMarshaller()) {
             _dbContext = dbContext;

@@ -8,10 +8,10 @@ namespace ActionProviderImplementation
 {
 	public class ActionFactory
 	{
-		private IDataServiceMetadataProvider _metadata;
+		private readonly IDataServiceMetadataProvider _metadata;
 
 		//TODO: make this list complete
-		private static Type[] __primitives = new[] {
+		private static readonly Type[] __primitives = new[] {
 			typeof(bool),
 			typeof(short),
 			typeof(int),

@@ -9,7 +9,7 @@ namespace WebApiOData.V3.Samples
 {
     public class NonBindableActionRoutingConvention : IODataRoutingConvention
     {
-        private string _controllerName;
+        private readonly string _controllerName;
 
         public NonBindableActionRoutingConvention(string controllerName)
         {

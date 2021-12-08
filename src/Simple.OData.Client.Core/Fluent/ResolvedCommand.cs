@@ -10,7 +10,7 @@ namespace Simple.OData.Client
 {
     public class ResolvedCommand
     {
-        private ISession _sesson;
+        private readonly ISession _sesson;
 
         internal ResolvedCommand(FluentCommand command, ISession session)
         {

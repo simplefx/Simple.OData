@@ -11,8 +11,8 @@ namespace ActionProviderImplementation
 {
     public class ActionInvokable : IDataServiceInvokable
     {
-		private ServiceAction _serviceAction;
-		private Action _action;
+		private readonly ServiceAction _serviceAction;
+		private readonly Action _action;
 		private bool _hasRun = false;
 		private object _result;
 
