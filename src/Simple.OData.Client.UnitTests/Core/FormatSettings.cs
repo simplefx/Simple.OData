@@ -28,16 +28,22 @@ namespace Simple.OData.Client.Tests.Core
         {
             var result = $"datetimeoffset'{text}'";
             if (escapeString)
-                result = Uri.EscapeDataString(result);
-            return result;
+			{
+				result = Uri.EscapeDataString(result);
+			}
+
+			return result;
         }
 
         public string GetGuidFormat(string text, bool escapeString = false)
         {
             var result = $"guid'{text}'";
             if (escapeString)
-                result = Uri.EscapeDataString(result);
-            return result;
+			{
+				result = Uri.EscapeDataString(result);
+			}
+
+			return result;
         }
 
         public string GetEnumFormat(object value, Type enumType, string ns, bool prefixFree = false, bool escapeString = false)
@@ -49,16 +55,22 @@ namespace Simple.OData.Client.Tests.Core
         {
             var result = $"substringof('{text}',{item})";
             if (escapeString)
-                result = Uri.EscapeDataString(result);
-            return result;
+			{
+				result = Uri.EscapeDataString(result);
+			}
+
+			return result;
         }
         
         public string GetContainedInFormat(string item, string text, bool escapeString = false)
         {
             var result = $"substringof({item},'{text}')";
             if (escapeString)
-                result = Uri.EscapeDataString(result);
-            return result;
+			{
+				result = Uri.EscapeDataString(result);
+			}
+
+			return result;
         }
     }
 
@@ -90,24 +102,33 @@ namespace Simple.OData.Client.Tests.Core
                 ? $"'{Enum.ToObject(enumType, value)}'"
                 : $"{ns}.{enumType.Name}'{Enum.ToObject(enumType, value)}'";
             if (escapeString)
-                result = Uri.EscapeDataString(result);
-            return result;
+			{
+				result = Uri.EscapeDataString(result);
+			}
+
+			return result;
         }
 
         public string GetContainsFormat(string item, string text, bool escapeString = false)
         {
             var result = $"contains({item},'{text}')";
             if (escapeString)
-                result = Uri.EscapeDataString(result);
-            return result;
+			{
+				result = Uri.EscapeDataString(result);
+			}
+
+			return result;
         }
 
         public string GetContainedInFormat(string item, string text, bool escapeString = false)
         {
             var result = $"contains('{text}',{item})";
             if (escapeString)
-                result = Uri.EscapeDataString(result);
-            return result;
+			{
+				result = Uri.EscapeDataString(result);
+			}
+
+			return result;
         }
     }
 }

@@ -107,16 +107,23 @@ namespace Simple.OData.Client.V4.Adapter
                     case ODataBatchReaderState.Operation:
                         var operationMessage = odataReader.CreateOperationResponseMessage();
                         if (operationMessage.StatusCode == (int)HttpStatusCode.NoContent)
-                            batch.Add(ODataResponse.FromStatusCode(TypeCache, operationMessage.StatusCode, operationMessage.Headers));
-                        else if (operationMessage.StatusCode >= (int)HttpStatusCode.BadRequest)
-                            batch.Add(ODataResponse.FromStatusCode(TypeCache, 
+						{
+							batch.Add(ODataResponse.FromStatusCode(TypeCache, operationMessage.StatusCode, operationMessage.Headers));
+						}
+						else if (operationMessage.StatusCode >= (int)HttpStatusCode.BadRequest)
+						{
+							batch.Add(ODataResponse.FromStatusCode(TypeCache, 
                                 operationMessage.StatusCode,
                                 operationMessage.Headers,
                                 await operationMessage.GetStreamAsync().ConfigureAwait(false),
                                 _session.Settings.WebRequestExceptionMessageSource));
-                        else
-                            batch.Add(await GetResponseAsync(operationMessage).ConfigureAwait(false));
-                        break;
+						}
+						else
+						{
+							batch.Add(await GetResponseAsync(operationMessage).ConfigureAwait(false));
+						}
+
+						break;
 
                     case ODataBatchReaderState.ChangesetEnd:
                         break;
@@ -133,9 +140,11 @@ namespace Simple.OData.Client.V4.Adapter
             while (odataReader.Read())
             {
                 if (odataReader.State == ODataCollectionReaderState.Completed)
-                    break;
+				{
+					break;
+				}
 
-                switch (odataReader.State)
+				switch (odataReader.State)
                 {
                     case ODataCollectionReaderState.CollectionStart:
                         break;
@@ -160,9 +169,11 @@ namespace Simple.OData.Client.V4.Adapter
             while (odataReader.Read())
             {
                 if (odataReader.State == ODataReaderState.Completed)
-                    break;
+				{
+					break;
+				}
 
-                switch (odataReader.State)
+				switch (odataReader.State)
                 {
                     case ODataReaderState.ResourceSetStart:
                     case ODataReaderState.DeltaResourceSetStart:

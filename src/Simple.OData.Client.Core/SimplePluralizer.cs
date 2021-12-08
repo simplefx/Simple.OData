@@ -318,8 +318,12 @@ namespace Simple.OData.Client
             {
                 if (char.IsUpper(template[i]))
                 {
-                    if (i == 0) firstUpper = true;
-                    allLower = false;
+                    if (i == 0)
+					{
+						firstUpper = true;
+					}
+
+					allLower = false;
                     foundUpperOrLower = true;
                 }
                 else if (char.IsLower(template[i]))

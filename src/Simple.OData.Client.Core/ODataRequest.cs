@@ -28,9 +28,11 @@ namespace Simple.OData.Client
             {
                 var isMetadataRequest = this.RequestMessage.RequestUri.LocalPath.EndsWith(ODataLiteral.Metadata);
                 if (!isMetadataRequest && (this.ReturnsScalarResult || !this.ResultRequired))
-                    return null;
+				{
+					return null;
+				}
 
-                if (isMetadataRequest)
+				if (isMetadataRequest)
                 {
                     return new[] { "application/xml" };
                 }
@@ -71,8 +73,10 @@ namespace Simple.OData.Client
             _payloadFormat = session.Settings.PayloadFormat;
 
             if (headers != null)
-                Headers = headers;
-        }
+			{
+				Headers = headers;
+			}
+		}
 
         internal ODataRequest(string method, ISession session, string commandText, HttpRequestMessage requestMessage)
             : this(method, session, commandText)
@@ -91,11 +95,16 @@ namespace Simple.OData.Client
         private HttpContent GetContent()
         {
             if (_contentStream == null)
-                return null;
+			{
+				return null;
+			}
 
-            if (_contentStream.CanSeek)
-                _contentStream.Seek(0, SeekOrigin.Begin);
-            var content = new StreamContent(_contentStream);
+			if (_contentStream.CanSeek)
+			{
+				_contentStream.Seek(0, SeekOrigin.Begin);
+			}
+
+			var content = new StreamContent(_contentStream);
             content.Headers.ContentType = new MediaTypeHeaderValue(this.GetContentType());
             content.Headers.ContentLength = _contentStream.Length;
             return content;
@@ -128,9 +137,11 @@ namespace Simple.OData.Client
         private HttpRequestMessage GetOrCreateRequestMessage()
         {
             if (_requestMessage != null)
-                return _requestMessage;
+			{
+				return _requestMessage;
+			}
 
-            _requestMessage = new HttpRequestMessage(new HttpMethod(this.Method), this._uri)
+			_requestMessage = new HttpRequestMessage(new HttpMethod(this.Method), this._uri)
             {
                 Content = this._contentStream != null ? this.GetContent() : null
             };
@@ -138,8 +149,10 @@ namespace Simple.OData.Client
             if (Headers != null)
             {
                 foreach (var header in Headers)
-                    _requestMessage.Headers.Add(header.Key, header.Value);
-            }
+				{
+					_requestMessage.Headers.Add(header.Key, header.Value);
+				}
+			}
 
             return _requestMessage;
         }

@@ -23,9 +23,11 @@ namespace Simple.OData.Client
         public string FormatCommand(ResolvedCommand command)
         {
             if (command.Details.HasFunction && command.Details.HasAction)
-                throw new InvalidOperationException("OData function and action may not be combined.");
+			{
+				throw new InvalidOperationException("OData function and action may not be combined.");
+			}
 
-            var commandText = string.Empty;
+			var commandText = string.Empty;
             if (!string.IsNullOrEmpty(command.Details.CollectionName))
             {
                 commandText += _session.Metadata.GetEntityCollectionExactName(command.Details.CollectionName);
@@ -37,9 +39,11 @@ namespace Simple.OData.Client
             }
 
             if (command.Details.HasKey)
-                commandText += ConvertKeyValuesToUriLiteral(command.KeyValues, !command.Details.IsAlternateKey);
+			{
+				commandText += ConvertKeyValuesToUriLiteral(command.KeyValues, !command.Details.IsAlternateKey);
+			}
 
-            var collectionValues = new List<string>();
+			var collectionValues = new List<string>();
             if (!string.IsNullOrEmpty(command.Details.MediaName))
             {
                 commandText += "/" + (command.Details.MediaName == FluentCommand.MediaEntityLiteral
@@ -51,17 +55,26 @@ namespace Simple.OData.Client
                 if (!string.IsNullOrEmpty(command.Details.FunctionName) || !string.IsNullOrEmpty(command.Details.ActionName))
                 {
                     if (!string.IsNullOrEmpty(command.Details.CollectionName) || !string.IsNullOrEmpty(command.Details.LinkName))
-                        commandText += "/";
-                    if (!string.IsNullOrEmpty(command.Details.FunctionName))
-                        commandText += _session.Metadata.GetFunctionFullName(command.Details.FunctionName);
-                    else
-                        commandText += _session.Metadata.GetActionFullName(command.Details.ActionName);
-                }
+					{
+						commandText += "/";
+					}
+
+					if (!string.IsNullOrEmpty(command.Details.FunctionName))
+					{
+						commandText += _session.Metadata.GetFunctionFullName(command.Details.FunctionName);
+					}
+					else
+					{
+						commandText += _session.Metadata.GetActionFullName(command.Details.ActionName);
+					}
+				}
 
                 if (!string.IsNullOrEmpty(command.Details.FunctionName) && FunctionFormat == FunctionFormat.Key)
-                    commandText += ConvertKeyValuesToUriLiteralExtractCollections(command.CommandData, collectionValues, false);
+				{
+					commandText += ConvertKeyValuesToUriLiteralExtractCollections(command.CommandData, collectionValues, false);
+				}
 
-                if (!string.IsNullOrEmpty(command.Details.DerivedCollectionName))
+				if (!string.IsNullOrEmpty(command.Details.DerivedCollectionName))
                 {
                     commandText += "/" + _session.Metadata.GetQualifiedTypeName(command.Details.DerivedCollectionName);
                 }
@@ -165,18 +178,26 @@ namespace Simple.OData.Client
 
             if (command.CommandData.Any() && !string.IsNullOrEmpty(command.Details.FunctionName) &&
                 FunctionFormat == FunctionFormat.Query)
-                queryClauses.Add(string.Join("&", command.CommandData.Select(x => $"{x.Key}={ConvertValueToUriLiteral(x.Value, true)}")));
+			{
+				queryClauses.Add(string.Join("&", command.CommandData.Select(x => $"{x.Key}={ConvertValueToUriLiteral(x.Value, true)}")));
+			}
 
-            if (command.Details.Filter != null)
-                queryClauses.Add($"{ODataLiteral.Filter}={EscapeUnescapedString(command.Details.Filter)}");
+			if (command.Details.Filter != null)
+			{
+				queryClauses.Add($"{ODataLiteral.Filter}={EscapeUnescapedString(command.Details.Filter)}");
+			}
 
-            if (command.Details.Search != null)
-                queryClauses.Add($"{ODataLiteral.Search}={EscapeUnescapedString(command.Details.Search)}");
+			if (command.Details.Search != null)
+			{
+				queryClauses.Add($"{ODataLiteral.Search}={EscapeUnescapedString(command.Details.Search)}");
+			}
 
-            if (command.Details.QueryOptions != null)
-                queryClauses.Add(command.Details.QueryOptions);
+			if (command.Details.QueryOptions != null)
+			{
+				queryClauses.Add(command.Details.QueryOptions);
+			}
 
-            var details = command.Details;
+			var details = command.Details;
             if (!ReferenceEquals(details.QueryOptionsExpression, null))
             {
                 queryClauses.Add(details.QueryOptionsExpression.Format(new ExpressionContext(_session, true)));
@@ -190,15 +211,21 @@ namespace Simple.OData.Client
             }
 
             if (command.Details.SkipCount >= 0)
-                queryClauses.Add($"{ODataLiteral.Skip}={command.Details.SkipCount}");
+			{
+				queryClauses.Add($"{ODataLiteral.Skip}={command.Details.SkipCount}");
+			}
 
-            if (command.Details.TopCount >= 0)
-                queryClauses.Add($"{ODataLiteral.Top}={command.Details.TopCount}");
-            
-            if (command.Details.Extensions.Any())
-                FormatExtensions(queryClauses, command);
+			if (command.Details.TopCount >= 0)
+			{
+				queryClauses.Add($"{ODataLiteral.Top}={command.Details.TopCount}");
+			}
 
-            EntityCollection resultCollection;
+			if (command.Details.Extensions.Any())
+			{
+				FormatExtensions(queryClauses, command);
+			}
+
+			EntityCollection resultCollection;
             if (command.Details.HasFunction)
             {
                 resultCollection = _session.Adapter.GetMetadata().GetFunctionReturnCollection(command.Details.FunctionName);
@@ -212,21 +239,31 @@ namespace Simple.OData.Client
                 resultCollection = command.EntityCollection;
             }
             if (resultCollection != null)
-                FormatExpandSelectOrderby(queryClauses, resultCollection, command);
+			{
+				FormatExpandSelectOrderby(queryClauses, resultCollection, command);
+			}
 
-            if (command.Details.IncludeCount)
-                FormatInlineCount(queryClauses);
+			if (command.Details.IncludeCount)
+			{
+				FormatInlineCount(queryClauses);
+			}
 
-            if (command.Details.ComputeCount)
-                aggregateClauses.Add(ODataLiteral.Count);
+			if (command.Details.ComputeCount)
+			{
+				aggregateClauses.Add(ODataLiteral.Count);
+			}
 
-            if (aggregateClauses.Any())
-                text += "/" + string.Join("/", aggregateClauses);
+			if (aggregateClauses.Any())
+			{
+				text += "/" + string.Join("/", aggregateClauses);
+			}
 
-            if (queryClauses.Any())
-                text += "?" + string.Join("&", queryClauses);
+			if (queryClauses.Any())
+			{
+				text += "?" + string.Join("&", queryClauses);
+			}
 
-            return text;
+			return text;
         }
 
         protected string FormatExpandItem(KeyValuePair<string, ODataExpandOptions> pathWithOptions, EntityCollection entityCollection)
@@ -267,8 +304,11 @@ namespace Simple.OData.Client
                     ? _session.Metadata.GetNavigationPropertyExactName(entityCollection.Name, pathWithOrder.Key)
                     : pathWithOrder.Key;
                 if (pathWithOrder.Value)
-                    clause += " desc";
-                return clause;
+				{
+					clause += " desc";
+				}
+
+				return clause;
             }
             else
             {
@@ -285,8 +325,11 @@ namespace Simple.OData.Client
                 {
                     var clause = _session.Metadata.GetStructuralPropertyPath(entityCollection.Name, items);
                     if (pathWithOrder.Value)
-                        clause += " desc";
-                    return clause;
+					{
+						clause += " desc";
+					}
+
+					return clause;
                 }
                 else
                 {

@@ -37,10 +37,14 @@ namespace Simple.OData.Client.Tests
             get
             {
                 if (_version == 2)
-                    return x => x;
-                else
-                    return x => new List<IDictionary<string, object>>() {x};
-            }
+				{
+					return x => x;
+				}
+				else
+				{
+					return x => new List<IDictionary<string, object>>() {x};
+				}
+			}
         }
 
         protected string ExpectedCategory
@@ -115,14 +119,18 @@ namespace Simple.OData.Client.Tests
                 foreach (var product in products)
                 {
                     if (product["Name"].ToString().StartsWith("Test"))
-                        await _client.DeleteEntryAsync("Products", product);
-                }
+					{
+						await _client.DeleteEntryAsync("Products", product);
+					}
+				}
                 var categories = await _client.For("Categories").Select("ID", "Name").FindEntriesAsync();
                 foreach (var category in categories)
                 {
                     if (category["Name"].ToString().StartsWith("Test"))
-                        await _client.DeleteEntryAsync("Categories", category);
-                }
+					{
+						await _client.DeleteEntryAsync("Categories", category);
+					}
+				}
             }
             catch (Exception)
             {

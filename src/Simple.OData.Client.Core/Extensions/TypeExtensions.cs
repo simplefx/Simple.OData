@@ -21,9 +21,11 @@ namespace Simple.OData.Client.Extensions
 
             var baseType = type.GetTypeInfo().BaseType;
             if (baseType != null && baseType != typeof(object))
-                properties.AddRange(baseType.GetAllProperties().Where(x => properties.All(y => y.Name != x.Name)));
+			{
+				properties.AddRange(baseType.GetAllProperties().Where(x => properties.All(y => y.Name != x.Name)));
+			}
 
-            return properties.ToArray();
+			return properties.ToArray();
         }
 
         /// <summary>
@@ -39,9 +41,11 @@ namespace Simple.OData.Client.Extensions
             {
                 var property = currentType.GetTypeInfo().GetDeclaredProperty(propertyName);
                 if (property != null)
-                    return property;
+				{
+					return property;
+				}
 
-                currentType = currentType.GetTypeInfo().BaseType;
+				currentType = currentType.GetTypeInfo().BaseType;
             }
             return null;
         }
@@ -89,9 +93,11 @@ namespace Simple.OData.Client.Extensions
 
             var baseType = type.GetTypeInfo().BaseType;
             if (baseType != null && baseType != typeof(object))
-                fields.AddRange(baseType.GetAllFields().Where(x => fields.All(y => y.Name != x.Name)));
+			{
+				fields.AddRange(baseType.GetAllFields().Where(x => fields.All(y => y.Name != x.Name)));
+			}
 
-            return fields.ToArray();
+			return fields.ToArray();
         }
 
         public static FieldInfo GetAnyField(this Type type, string fieldName, bool includeNonPublic = false)
@@ -101,9 +107,11 @@ namespace Simple.OData.Client.Extensions
             {
                 var field = currentType.GetDeclaredField(fieldName);
                 if (field != null)
-                    return field;
+				{
+					return field;
+				}
 
-                currentType = currentType.GetTypeInfo().BaseType;
+				currentType = currentType.GetTypeInfo().BaseType;
             }
             return null;
         }
@@ -201,8 +209,10 @@ namespace Simple.OData.Client.Extensions
                 {
                     var propertyValue = nameProperty.GetValueEx(mappingAttribute);
                     if (propertyValue != null)
-                        return propertyValue.ToString();
-                }
+					{
+						return propertyValue.ToString();
+					}
+				}
             }
 
             return type.Name;

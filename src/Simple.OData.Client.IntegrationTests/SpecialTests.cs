@@ -201,11 +201,17 @@ namespace Simple.OData.Client.Tests
             {
                 ex = ex.Flatten();
                 if (ex.InnerExceptions.Count != 1)
-                    throw;
-                var arg = ex.InnerException as ArgumentException;
-                if (arg == null) throw;
-                //only HTTP and HTTPS supported
-            }
+				{
+					throw;
+				}
+
+				var arg = ex.InnerException as ArgumentException;
+                if (arg == null)
+				{
+					throw;
+				}
+				//only HTTP and HTTPS supported
+			}
 
             var wasCached = true;
             var cached = EdmMetadataCache.GetOrAdd("ftp://localhost/", x =>

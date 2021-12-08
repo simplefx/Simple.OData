@@ -29,18 +29,26 @@ namespace Simple.OData.Client.Extensions
             }
 
             if (source == null)
-                return default(T);
+			{
+				return default(T);
+			}
 
-            if (typeCache.IsTypeAssignableFrom(typeof(IDictionary<string, object>), typeof(T)))
-                return source as T;
+			if (typeCache.IsTypeAssignableFrom(typeof(IDictionary<string, object>), typeof(T)))
+			{
+				return source as T;
+			}
 
-            if (typeof(T) == typeof(ODataEntry))
-                return CreateODataEntry(source, typeCache, dynamicObject) as T;
+			if (typeof(T) == typeof(ODataEntry))
+			{
+				return CreateODataEntry(source, typeCache, dynamicObject) as T;
+			}
 
-            if (typeof(T) == typeof(string) || typeCache.IsValue(typeof(T)))
-                throw new InvalidOperationException($"Unable to convert structural data to {typeof(T).Name}.");
+			if (typeof(T) == typeof(string) || typeCache.IsValue(typeof(T)))
+			{
+				throw new InvalidOperationException($"Unable to convert structural data to {typeof(T).Name}.");
+			}
 
-            return (T)ToObject(source, typeCache, typeof(T), dynamicObject);
+			return (T)ToObject(source, typeCache, typeof(T), dynamicObject);
         }
 
         public static object ToObject(this IDictionary<string, object> source, ITypeCache typeCache, Type type, bool dynamicObject = false)
@@ -51,16 +59,22 @@ namespace Simple.OData.Client.Extensions
             }
 
             if (source == null)
-                return null;
+			{
+				return null;
+			}
 
-            if (typeCache.IsTypeAssignableFrom(typeof(IDictionary<string, object>), type))
-                return source;
+			if (typeCache.IsTypeAssignableFrom(typeof(IDictionary<string, object>), type))
+			{
+				return source;
+			}
 
-            if (type == typeof(ODataEntry))
-                return CreateODataEntry(source, typeCache, dynamicObject);
+			if (type == typeof(ODataEntry))
+			{
+				return CreateODataEntry(source, typeCache, dynamicObject);
+			}
 
-            // Check before custom converter so we use the most appropriate type.
-            if (source.ContainsKey(FluentCommand.AnnotationsLiteral))
+			// Check before custom converter so we use the most appropriate type.
+			if (source.ContainsKey(FluentCommand.AnnotationsLiteral))
             {
                 type = GetTypeFromAnnotation(source, typeCache, type);
             }
@@ -131,8 +145,10 @@ namespace Simple.OData.Client.Extensions
                 {
                     var typeFound = assembly.GetType(odataType);
                     if (typeFound != null)
-                        return typeFound;
-                }
+					{
+						return typeFound;
+					}
+				}
 
                 // TODO: Should we throw an exception here or log a warning here as we don't understand the data
             }
@@ -175,9 +191,11 @@ namespace Simple.OData.Client.Extensions
         private static object ConvertEnum(Type type, ITypeCache typeCache, object itemValue)
         {
             if (itemValue == null)
-                return null;
+			{
+				return null;
+			}
 
-            var stringValue = itemValue.ToString();
+			var stringValue = itemValue.ToString();
             if (int.TryParse(stringValue, out var intValue))
             {
                 typeCache.TryConvert(intValue, type, out var result);
@@ -211,9 +229,11 @@ namespace Simple.OData.Client.Extensions
                     : null;
 
             if (elementType == null)
-                return null;
+			{
+				return null;
+			}
 
-            var count = GetCollectionCount(itemValue);
+			var count = GetCollectionCount(itemValue);
             var arrayValue = Array.CreateInstance(elementType, count);
 
             count = 0;
@@ -257,8 +277,11 @@ namespace Simple.OData.Client.Extensions
                 var e = ((System.Collections.IEnumerable)collection).GetEnumerator();
                 using (e as IDisposable)
                 {
-                    while (e.MoveNext()) count++;
-                }
+                    while (e.MoveNext())
+					{
+						count++;
+					}
+				}
 
                 return count;
             }
@@ -267,13 +290,21 @@ namespace Simple.OData.Client.Extensions
         public static IDictionary<string, object> ToDictionary(this object source, ITypeCache typeCache)
         {
             if (source == null)
-                return new Dictionary<string, object>();
-            if (source is IDictionary<string, object> objects)
-                return objects;
-            if (source is ODataEntry entry)
-                return (Dictionary<string, object>)entry;
+			{
+				return new Dictionary<string, object>();
+			}
 
-            return typeCache.ToDictionary(source);
+			if (source is IDictionary<string, object> objects)
+			{
+				return objects;
+			}
+
+			if (source is ODataEntry entry)
+			{
+				return (Dictionary<string, object>)entry;
+			}
+
+			return typeCache.ToDictionary(source);
         }
 
         private static object CreateInstance(Type type)
@@ -301,12 +332,16 @@ namespace Simple.OData.Client.Extensions
             var property = typeCache.GetNamedProperty(type, dynamicPropertiesContainerName);
 
             if (property == null)
-                throw new ArgumentException($"Type {type} does not have property {dynamicPropertiesContainerName} ");
+			{
+				throw new ArgumentException($"Type {type} does not have property {dynamicPropertiesContainerName} ");
+			}
 
-            if (!typeCache.IsTypeAssignableFrom(typeof(IDictionary<string, object>), property.PropertyType))
-                throw new InvalidOperationException($"Property {dynamicPropertiesContainerName} must implement IDictionary<string,object> interface");
+			if (!typeCache.IsTypeAssignableFrom(typeof(IDictionary<string, object>), property.PropertyType))
+			{
+				throw new InvalidOperationException($"Property {dynamicPropertiesContainerName} must implement IDictionary<string,object> interface");
+			}
 
-            var dynamicProperties = new Dictionary<string, object>();
+			var dynamicProperties = new Dictionary<string, object>();
             property.SetValue(instance, dynamicProperties, null);
             return dynamicProperties;
         }

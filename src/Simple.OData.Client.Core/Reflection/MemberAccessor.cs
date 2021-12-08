@@ -25,9 +25,11 @@ namespace Simple.OData.Client
             var body = (Expression)Expression.MakeMemberAccess(castedParameter, memberInfo);
 
             if (body.Type != returnType)
-                body = Expression.Convert(body, returnType);
+			{
+				body = Expression.Convert(body, returnType);
+			}
 
-            return Expression.Lambda(delegateType, body, parameter).Compile();
+			return Expression.Lambda(delegateType, body, parameter).Compile();
         }
 
         public static Delegate BuildStaticGetterAccessor(Type returnType, MemberInfo memberInfo)
@@ -36,9 +38,11 @@ namespace Simple.OData.Client
             var body = (Expression)Expression.MakeMemberAccess(null, memberInfo);
 
             if (body.Type != returnType)
-                body = Expression.Convert(body, returnType);
+			{
+				body = Expression.Convert(body, returnType);
+			}
 
-            return Expression.Lambda(delegateType, body).Compile();
+			return Expression.Lambda(delegateType, body).Compile();
         }
 
         public static Delegate BuildSetterAccessor(Type type, Type valueType, MemberInfo memberInfo)
@@ -82,57 +86,84 @@ namespace Simple.OData.Client
         private static Type GetMemberType(MemberInfo memberInfo)
         {
             if (memberInfo is PropertyInfo propertyInfo)
-                return propertyInfo.PropertyType;
-            else if (memberInfo is FieldInfo fieldInfo)
-                return fieldInfo.FieldType;
-            return null;
+			{
+				return propertyInfo.PropertyType;
+			}
+			else if (memberInfo is FieldInfo fieldInfo)
+			{
+				return fieldInfo.FieldType;
+			}
+
+			return null;
         }
 
         private static bool CanGet(MemberInfo memberInfo)
         {
             if (memberInfo is PropertyInfo propertyInfo)
-                return propertyInfo.CanRead;
-            else if (memberInfo is FieldInfo fieldInfo)
-                return true;
-            else
-                return false;
-        }
+			{
+				return propertyInfo.CanRead;
+			}
+			else if (memberInfo is FieldInfo fieldInfo)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
 
         private static bool CanSet(MemberInfo memberInfo)
         {
             if (memberInfo is PropertyInfo propertyInfo)
-                return propertyInfo.CanWrite;
-            else if (memberInfo is FieldInfo fieldInfo)
-                return true;
-            else
-                return false;
-        }
+			{
+				return propertyInfo.CanWrite;
+			}
+			else if (memberInfo is FieldInfo fieldInfo)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
 
         private static bool IsStatic(MemberInfo memberInfo)
         {
             if (memberInfo is PropertyInfo propertyInfo)
-                return (propertyInfo.CanRead && propertyInfo.GetMethod is not null && propertyInfo.GetMethod.IsStatic)
+			{
+				return (propertyInfo.CanRead && propertyInfo.GetMethod is not null && propertyInfo.GetMethod.IsStatic)
                     || (propertyInfo.CanWrite && propertyInfo.SetMethod is not null && propertyInfo.SetMethod.IsStatic);
-            else if (memberInfo is FieldInfo fieldInfo)
-                return fieldInfo.IsStatic;
-            else
-                return false;
-        }
+			}
+			else if (memberInfo is FieldInfo fieldInfo)
+			{
+				return fieldInfo.IsStatic;
+			}
+			else
+			{
+				return false;
+			}
+		}
 
         private static MemberInfo GetMemberInfo(Type type, string memberName)
         {
             if (TryGetMemberInfo(type, memberName, out var memberInfo))
-                return memberInfo;
+			{
+				return memberInfo;
+			}
 
-            throw new InvalidOperationException($"Property or field {memberName} not found in type {type.FullName}");
+			throw new InvalidOperationException($"Property or field {memberName} not found in type {type.FullName}");
         }
 
         private static void AssertMemberInfoType(MemberInfo memberInfo)
         {
             if (memberInfo.MemberType == MemberTypes.Field || memberInfo.MemberType == MemberTypes.Property)
-                return;
+			{
+				return;
+			}
 
-            throw new InvalidOperationException($"Member {memberInfo.Name} is of member type {memberInfo.MemberType}. Only property or field members can be access for value.");
+			throw new InvalidOperationException($"Member {memberInfo.Name} is of member type {memberInfo.MemberType}. Only property or field members can be access for value.");
         }
 
         private static bool TryGetMemberInfo(Type type, string memberName, out MemberInfo memberInfo)
@@ -152,10 +183,12 @@ namespace Simple.OData.Client
 
             var isStatic = IsStatic(memberInfo);
 
-            if (!isStatic && instance is null) 
-                throw new ArgumentNullException(nameof(instance), "Instance cannot be null to access a non static member.");
+            if (!isStatic && instance is null)
+			{
+				throw new ArgumentNullException(nameof(instance), "Instance cannot be null to access a non static member.");
+			}
 
-            if (isStatic)
+			if (isStatic)
             {
                 return (object _) => ((Func<TMember>)staticGetterCache.GetOrAdd(
                     (typeof(TMember), memberInfo),
@@ -178,9 +211,12 @@ namespace Simple.OData.Client
 
         public static TMember GetValue<TMember>(object instance, string memberName)
         {
-            if (instance is null) throw new ArgumentNullException(nameof(instance));
+            if (instance is null)
+			{
+				throw new ArgumentNullException(nameof(instance));
+			}
 
-            var type = instance.GetType();
+			var type = instance.GetType();
             var memberInfo = GetMemberInfo(type, memberName);
 
             return GetValue<TMember>(instance, memberInfo);
@@ -196,12 +232,17 @@ namespace Simple.OData.Client
         {
             value = default;
 
-            if (instance is null) return false;
+            if (instance is null)
+			{
+				return false;
+			}
 
-            if (!(CanGet(memberInfo)))
-                return false;
+			if (!(CanGet(memberInfo)))
+			{
+				return false;
+			}
 
-            var accessor = GetGetAccessor<TMember>(instance, memberInfo);
+			var accessor = GetGetAccessor<TMember>(instance, memberInfo);
 
             try
             {
@@ -219,9 +260,12 @@ namespace Simple.OData.Client
         {
             value = default;
 
-            if (instance is null) return false;
+            if (instance is null)
+			{
+				return false;
+			}
 
-            var type = instance.GetType();
+			var type = instance.GetType();
             var memberInfo = GetMemberInfo(type, memberName);
 
             return TryGetValue(instance, memberInfo, out value);
@@ -240,9 +284,11 @@ namespace Simple.OData.Client
             var isStatic = IsStatic(memberInfo);
 
             if (!isStatic && instance is null)
-                throw new ArgumentNullException(nameof(instance), "Instance cannot be null to access a non static member.");
+			{
+				throw new ArgumentNullException(nameof(instance), "Instance cannot be null to access a non static member.");
+			}
 
-            if (isStatic)
+			if (isStatic)
             {
                 return (object _, TMember x) => ((Action<TMember>)staticSetterCache.GetOrAdd(
                     (typeof(TMember), memberInfo),
@@ -267,9 +313,12 @@ namespace Simple.OData.Client
 
         public static void SetValue<TMember>(object instance, string memberName, TMember value)
         {
-            if (instance is null) throw new ArgumentNullException(nameof(instance));
+            if (instance is null)
+			{
+				throw new ArgumentNullException(nameof(instance));
+			}
 
-            var type = instance.GetType();
+			var type = instance.GetType();
             var memberInfo = GetMemberInfo(type, memberName);
 
             SetValue(instance, memberInfo, value);
@@ -283,12 +332,17 @@ namespace Simple.OData.Client
 
         public static bool TrySetValue<TMember>(object instance, MemberInfo memberInfo, TMember value)
         {
-            if (instance is null) return false;
+            if (instance is null)
+			{
+				return false;
+			}
 
-            if (!(CanSet(memberInfo)))
-                return false;
+			if (!(CanSet(memberInfo)))
+			{
+				return false;
+			}
 
-            var accessor = GetSetAccessor<TMember>(instance, memberInfo);
+			var accessor = GetSetAccessor<TMember>(instance, memberInfo);
 
             try
             {
@@ -304,9 +358,12 @@ namespace Simple.OData.Client
 
         public static bool TrySetValue<TMember>(object instance, string memberName, TMember value)
         {
-            if (instance is null) return false;
+            if (instance is null)
+			{
+				return false;
+			}
 
-            var type = instance.GetType();
+			var type = instance.GetType();
             var memberInfo = GetMemberInfo(type, memberName);
 
             return TrySetValue(instance, memberInfo, value);

@@ -130,13 +130,17 @@ namespace Simple.OData.Client
 
                 case ExpressionType.Call:
                     if (string.Equals(callExpression.Method.Name, nameof(object.ToString), StringComparison.Ordinal))
-                        return ParseCallExpression(callExpression.Object);
-                    else
-                        return new ODataExpression(
+					{
+						return ParseCallExpression(callExpression.Object);
+					}
+					else
+					{
+						return new ODataExpression(
                             new ODataExpression(callExpression.Object), 
                             new ExpressionFunction(callExpression.Method.Name, callExpression.Arguments));
+					}
 
-                case ExpressionType.Constant:
+				case ExpressionType.Constant:
                     return new ODataExpression(ParseConstantExpression(callExpression.Object), 
                         new ExpressionFunction(callExpression.Method.Name, arguments));
             }
@@ -335,8 +339,11 @@ namespace Simple.OData.Client
                     break;
                 case PropertyInfo property:
                     if (property.GetIndexParameters().Length != 0)
-                        throw new ArgumentException("cannot eliminate closure references to indexed properties.");
-                    value = property.GetValueEx(null);
+					{
+						throw new ArgumentException("cannot eliminate closure references to indexed properties.");
+					}
+
+					value = property.GetValueEx(null);
                     break;
             }
             return value;
@@ -345,17 +352,22 @@ namespace Simple.OData.Client
         private static object EvaluateConstValue(object value, Stack<MemberInfo> memberChain)
         {
             if (!memberChain.Any())
-                return value;
+			{
+				return value;
+			}
 
-            var member = memberChain.Pop();
+			var member = memberChain.Pop();
 
             object itemValue;
             switch (member)
             {
                 case PropertyInfo property:
                     if (property.GetIndexParameters().Length != 0)
-                        throw new ArgumentException("cannot evaluate constant value of indexed properties.");
-                    itemValue = property.GetValueEx(value);
+					{
+						throw new ArgumentException("cannot evaluate constant value of indexed properties.");
+					}
+
+					itemValue = property.GetValueEx(value);
                     break;
                 case FieldInfo field:
                     itemValue = field.GetValueEx(value);

@@ -32,9 +32,11 @@ namespace Simple.OData.Client.V3.Adapter
                 : new ODataRequestMessage();
 
             if (method == RestVerbs.Get || method == RestVerbs.Delete)
-                return null;
+			{
+				return null;
+			}
 
-            var entityType = _model.FindDeclaredType(
+			var entityType = _model.FindDeclaredType(
                 _session.Metadata.GetQualifiedTypeName(collection)) as IEdmEntityType;
             var model = (method == RestVerbs.Patch || method == RestVerbs.Merge) ? new EdmDeltaModel(_model, entityType, entryData.Keys) : _model;
 
@@ -64,9 +66,11 @@ namespace Simple.OData.Client.V3.Adapter
                 entryWriter.WriteEnd();
 
                 if (IsBatch)
-                    return null;
+				{
+					return null;
+				}
 
-                return await message.GetStreamAsync().ConfigureAwait(false);
+				return await message.GetStreamAsync().ConfigureAwait(false);
             }
         }
 
@@ -85,18 +89,22 @@ namespace Simple.OData.Client.V3.Adapter
                 messageWriter.WriteEntityReferenceLink(link);
 
                 if (IsBatch)
-                    return null;
+				{
+					return null;
+				}
 
-                return await message.GetStreamAsync().ConfigureAwait(false);
+				return await message.GetStreamAsync().ConfigureAwait(false);
             }
         }
 
         protected override async Task<Stream> WriteFunctionContentAsync(string method, string commandText)
         {
             if (IsBatch)
-                await CreateBatchOperationMessageAsync(method, null, null, commandText, true).ConfigureAwait(false);
+			{
+				await CreateBatchOperationMessageAsync(method, null, null, commandText, true).ConfigureAwait(false);
+			}
 
-            return null;
+			return null;
         }
 
         protected override async Task<Stream> WriteActionContentAsync(string method, string commandText, string actionName, string boundTypeName, IDictionary<string, object> parameters)
@@ -119,17 +127,21 @@ namespace Simple.OData.Client.V3.Adapter
                 {
                     var operationParameter = action.Parameters.BestMatch(x => x.Name, parameter.Key, _session.Settings.NameMatchResolver);
                     if (operationParameter == null)
-                        throw new UnresolvableObjectException(parameter.Key, $"Parameter [{parameter.Key}] not found for action [{actionName}]");
+					{
+						throw new UnresolvableObjectException(parameter.Key, $"Parameter [{parameter.Key}] not found for action [{actionName}]");
+					}
 
-                    await WriteOperationParameterAsync(parameterWriter, operationParameter, parameter.Key, parameter.Value).ConfigureAwait(false);
+					await WriteOperationParameterAsync(parameterWriter, operationParameter, parameter.Key, parameter.Value).ConfigureAwait(false);
                 }
 
                 await parameterWriter.WriteEndAsync().ConfigureAwait(false);
 
                 if (IsBatch)
-                    return null;
+				{
+					return null;
+				}
 
-                return await message.GetStreamAsync().ConfigureAwait(false);
+				return await message.GetStreamAsync().ConfigureAwait(false);
             }
         }
 
@@ -301,10 +313,14 @@ namespace Simple.OData.Client.V3.Adapter
         private static IEdmEntityType GetNavigationPropertyEntityType(IEdmNavigationProperty navigationProperty)
         {
             if (navigationProperty.Type.Definition.TypeKind == EdmTypeKind.Collection)
-                return (navigationProperty.Type.Definition as IEdmCollectionType).ElementType.Definition as IEdmEntityType;
-            else
-                return navigationProperty.Type.Definition as IEdmEntityType;
-        }
+			{
+				return (navigationProperty.Type.Definition as IEdmCollectionType).ElementType.Definition as IEdmEntityType;
+			}
+			else
+			{
+				return navigationProperty.Type.Definition as IEdmEntityType;
+			}
+		}
 
         private object GetPropertyValue(IEnumerable<IEdmProperty> properties, string key, object value)
         {
@@ -315,9 +331,11 @@ namespace Simple.OData.Client.V3.Adapter
         private object GetPropertyValue(IEdmTypeReference propertyType, object value)
         {
             if (value == null)
-                return value;
+			{
+				return value;
+			}
 
-            switch (propertyType.TypeKind())
+			switch (propertyType.TypeKind())
             {
                 case EdmTypeKind.Complex:
                     if (Converter.HasObjectConverter(value.GetType()))
@@ -352,8 +370,10 @@ namespace Simple.OData.Client.V3.Adapter
                         foreach (var mappedType in mappedTypes)
                         {
                             if (TypeCache.TryConvert(value, mappedType.Key, out var result))
-                                return result;
-                        }
+							{
+								return result;
+							}
+						}
                         throw new NotSupportedException($"Conversion is not supported from type {value.GetType()} to OData type {propertyType}");
                     }
                     return value;

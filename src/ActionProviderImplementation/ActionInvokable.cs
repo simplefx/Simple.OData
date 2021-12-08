@@ -27,14 +27,22 @@ namespace ActionProviderImplementation
         }
         public void CaptureResult(object o)
         {
-            if (_hasRun) throw new Exception("Invoke not available. This invokable has already been Invoked.");
-            _hasRun = true;
+            if (_hasRun)
+			{
+				throw new Exception("Invoke not available. This invokable has already been Invoked.");
+			}
+
+			_hasRun = true;
             _result = o;
         }
         public object GetResult()
         {
-            if (!_hasRun) throw new Exception("Results not available. This invokable hasn't been Invoked.");
-            return _result;
+            if (!_hasRun)
+			{
+				throw new Exception("Results not available. This invokable hasn't been Invoked.");
+			}
+
+			return _result;
         }
         public void Invoke()
         {

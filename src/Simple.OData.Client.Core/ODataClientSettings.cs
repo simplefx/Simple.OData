@@ -37,10 +37,14 @@ namespace Simple.OData.Client
                 if (this.HttpClient != null && this.HttpClient.BaseAddress != null)
                 {
                     if (_baseOrRelativeUri != null)
-                        return new Uri(this.HttpClient.BaseAddress, _baseOrRelativeUri);
-                    else
-                        return this.HttpClient.BaseAddress;
-                }
+					{
+						return new Uri(this.HttpClient.BaseAddress, _baseOrRelativeUri);
+					}
+					else
+					{
+						return this.HttpClient.BaseAddress;
+					}
+				}
                 else
                 {
                     return _baseOrRelativeUri;
@@ -49,9 +53,11 @@ namespace Simple.OData.Client
             set
             {
                 if (value != null && value.IsAbsoluteUri && this.HttpClient != null && this.HttpClient.BaseAddress != null)
-                    throw new InvalidOperationException("Unable to set BaseUri when BaseAddress is specified on HttpClient.");
+				{
+					throw new InvalidOperationException("Unable to set BaseUri when BaseAddress is specified on HttpClient.");
+				}
 
-                _baseOrRelativeUri = value;
+				_baseOrRelativeUri = value;
             }
         }
 
@@ -345,13 +351,21 @@ namespace Simple.OData.Client
         public ODataClientSettings(HttpClient httpClient, Uri relativeUri = null, ICredentials credentials = null)
         {
             if (httpClient != null && httpClient.BaseAddress != null && !httpClient.BaseAddress.IsAbsoluteUri)
-                throw new ArgumentException("HttpClient BaseAddress must be an absolute URI", nameof(httpClient));
-            if (relativeUri != null && relativeUri.IsAbsoluteUri)
-                throw new ArgumentException("Must be a relative URI", nameof(relativeUri));
-            if (httpClient != null && httpClient.BaseAddress == null && relativeUri != null)
-                throw new ArgumentException("Must not specify relative URI when HttpClient has no BaseAddress", nameof(relativeUri));
+			{
+				throw new ArgumentException("HttpClient BaseAddress must be an absolute URI", nameof(httpClient));
+			}
 
-            this.HttpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+			if (relativeUri != null && relativeUri.IsAbsoluteUri)
+			{
+				throw new ArgumentException("Must be a relative URI", nameof(relativeUri));
+			}
+
+			if (httpClient != null && httpClient.BaseAddress == null && relativeUri != null)
+			{
+				throw new ArgumentException("Must not specify relative URI when HttpClient has no BaseAddress", nameof(relativeUri));
+			}
+
+			this.HttpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
             this.BaseUri = relativeUri;
             this.Credentials = credentials;
         }

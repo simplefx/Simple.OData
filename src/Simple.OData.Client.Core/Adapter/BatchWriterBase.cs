@@ -78,8 +78,10 @@ namespace Simple.OData.Client
             if (!_contentIdMap.TryGetValue(entryData, out var contentId) && linkData != null)
             {
                 if (this.BatchEntries.TryGetValue(linkData, out var mappedEntry))
-                    _contentIdMap.TryGetValue(mappedEntry, out contentId);
-            }
+				{
+					_contentIdMap.TryGetValue(mappedEntry, out contentId);
+				}
+			}
             return contentId;
         }
 

@@ -93,9 +93,17 @@ namespace Simple.OData.Client
 
         public bool Equals(ODataExpandOptions other)
         {
-            if (other == null) return false;
-            if (ReferenceEquals(this, other)) return true;
-            return ExpandMode == other.ExpandMode && Levels == other.Levels;
+            if (other == null)
+			{
+				return false;
+			}
+
+			if (ReferenceEquals(this, other))
+			{
+				return true;
+			}
+
+			return ExpandMode == other.ExpandMode && Levels == other.Levels;
         }
 
         public override int GetHashCode()

@@ -51,9 +51,11 @@ namespace Simple.OData.Client.V4.Adapter.Extensions
             foreach (var property in declaredProperties)
             {
                 var propertyValue = property.GetValueEx(aggregation);
-                if (propertyValue is ValueTuple<string, ODataExpression> aggregatedProperty) 
-                    aggregationClauses.Add(new AggregationClause<object>(property.Name, aggregatedProperty.Item2?.Reference, aggregatedProperty.Item1));
-            }
+                if (propertyValue is ValueTuple<string, ODataExpression> aggregatedProperty)
+				{
+					aggregationClauses.Add(new AggregationClause<object>(property.Name, aggregatedProperty.Item2?.Reference, aggregatedProperty.Item1));
+				}
+			}
             _underlyingDataAggregationBuilder.Add(aggregationClauses);
             return this;
         }

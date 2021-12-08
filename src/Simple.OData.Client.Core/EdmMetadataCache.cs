@@ -62,10 +62,16 @@ namespace Simple.OData.Client
         public EdmMetadataCache(string key, string metadataDocument, ITypeCache typeCache)
         {
             if (string.IsNullOrWhiteSpace(key))
-                throw new ArgumentNullException(nameof(key));
-            if (string.IsNullOrWhiteSpace(metadataDocument))
-                throw new ArgumentNullException(nameof(metadataDocument));
-            this.typeCache = typeCache;
+			{
+				throw new ArgumentNullException(nameof(key));
+			}
+
+			if (string.IsNullOrWhiteSpace(metadataDocument))
+			{
+				throw new ArgumentNullException(nameof(metadataDocument));
+			}
+
+			this.typeCache = typeCache;
 
             Key = key;
             MetadataDocument = metadataDocument;

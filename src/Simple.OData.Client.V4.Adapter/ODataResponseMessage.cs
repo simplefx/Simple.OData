@@ -36,17 +36,25 @@ namespace Simple.OData.Client.V4.Adapter
             if (headerName == HttpLiteral.ContentType || headerName == HttpLiteral.ContentLength)
             {
                 if (_response.Content.Headers.Contains(headerName))
-                    return _response.Content.Headers.GetValues(headerName).FirstOrDefault();
-                else
-                    return null;
-            }
+				{
+					return _response.Content.Headers.GetValues(headerName).FirstOrDefault();
+				}
+				else
+				{
+					return null;
+				}
+			}
             else
             {
                 if (_response.Headers.Contains(headerName))
-                    return _response.Headers.GetValues(headerName).FirstOrDefault();
-                else
-                    return null;
-            }
+				{
+					return _response.Headers.GetValues(headerName).FirstOrDefault();
+				}
+				else
+				{
+					return null;
+				}
+			}
         }
 
         public Stream GetStream()

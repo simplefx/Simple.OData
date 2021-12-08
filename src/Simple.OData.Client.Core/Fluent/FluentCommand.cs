@@ -136,19 +136,29 @@ namespace Simple.OData.Client
         public FluentCommand Filter(string filter)
         {
             if (string.IsNullOrEmpty(Details.Filter))
-                Details.Filter = filter;
-            else
-                Details.Filter = $"({Details.Filter}) and ({filter})";
-            return this;
+			{
+				Details.Filter = filter;
+			}
+			else
+			{
+				Details.Filter = $"({Details.Filter}) and ({filter})";
+			}
+
+			return this;
         }
 
         public FluentCommand Filter(ODataExpression expression)
         {
             if (ReferenceEquals(Details.FilterExpression, null))
-                Details.FilterExpression = expression;
-            else
-                Details.FilterExpression = Details.FilterExpression && expression;
-            return this;
+			{
+				Details.FilterExpression = expression;
+			}
+			else
+			{
+				Details.FilterExpression = Details.FilterExpression && expression;
+			}
+
+			return this;
         }
 
         public FluentCommand Search(string search)
@@ -266,10 +276,15 @@ namespace Simple.OData.Client
         public FluentCommand QueryOptions(string queryOptions)
         {
             if (Details.QueryOptions == null)
-                Details.QueryOptions = queryOptions;
-            else
-                Details.QueryOptions = $"{Details.QueryOptions}&{queryOptions}";
-            return this;
+			{
+				Details.QueryOptions = queryOptions;
+			}
+			else
+			{
+				Details.QueryOptions = $"{Details.QueryOptions}&{queryOptions}";
+			}
+
+			return this;
         }
 
         public FluentCommand QueryOptions(IDictionary<string, object> queryOptions)
@@ -281,10 +296,15 @@ namespace Simple.OData.Client
         public FluentCommand QueryOptions(ODataExpression expression)
         {
             if (ReferenceEquals(Details.QueryOptionsExpression, null))
-                Details.QueryOptionsExpression = expression;
-            else
-                Details.QueryOptionsExpression = Details.QueryOptionsExpression && expression;
-            return this;
+			{
+				Details.QueryOptionsExpression = expression;
+			}
+			else
+			{
+				Details.QueryOptionsExpression = Details.QueryOptionsExpression && expression;
+			}
+
+			return this;
         }
 
         public FluentCommand Media()
@@ -355,8 +375,11 @@ namespace Simple.OData.Client
         public FluentCommand WithHeaders(IEnumerable<KeyValuePair<string, string>> headers)
         {
             foreach (var header in headers)
-                Details.Headers[header.Key] = header.Value;
-            return this;
+			{
+				Details.Headers[header.Key] = header.Value;
+			}
+
+			return this;
         }
 
         internal IList<string> SelectedColumns => Details.SelectColumns;

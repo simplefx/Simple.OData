@@ -72,7 +72,9 @@ namespace ActionProviderImplementation
 			else if (resourceType.ResourceTypeKind == ResourceTypeKind.EntityCollection)
 			{
 				if (type.GetGenericTypeDefinition() == typeof(IQueryable<>))
+				{
 					return resourceType;
+				}
 			}
 			throw new Exception($"Type {type.FullName} is not a valid binding parameter");
 		}
@@ -106,20 +108,29 @@ namespace ActionProviderImplementation
 					{
 						var elementResource = GetResourceType(type.GetGenericArguments().Single());
 						if ((elementResource.ResourceTypeKind | ResourceTypeKind.EntityType) == ResourceTypeKind.EntityType)
+						{
 							return ResourceType.GetEntityCollectionResourceType(elementResource);
+						}
 						else
+						{
 							return ResourceType.GetCollectionResourceType(elementResource);
+						}
 					}
 				}
 				throw new Exception($"Generic action parameter type {type} not supported");
 			}
 
 			if (ActionFactory.__primitives.Contains(type))
+			{
 				return ResourceType.GetPrimitiveResourceType(type);
+			}
 
 			var resourceType = _metadata.Types.SingleOrDefault(s => s.Name == type.Name);
 			if (resourceType == null)
+			{
 				throw new Exception($"Generic action parameter type {type} not supported");
+			}
+
 			return resourceType;
 		}
 		// Given a type try to find the resource set.

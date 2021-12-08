@@ -90,9 +90,13 @@ namespace Simple.OData.Client.Tests
                 .Expand(ProductCategoryName)
                 .FindEntryAsync();
             if (ProductCategoryName == "Categories")
-                Assert.Empty(product[ProductCategoryName] as IEnumerable);
-            else
-                Assert.Null(product[ProductCategoryName]);
-        }
+			{
+				Assert.Empty(product[ProductCategoryName] as IEnumerable);
+			}
+			else
+			{
+				Assert.Null(product[ProductCategoryName]);
+			}
+		}
     }
 }

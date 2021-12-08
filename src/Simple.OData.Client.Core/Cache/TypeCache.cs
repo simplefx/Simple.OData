@@ -232,10 +232,14 @@ namespace Simple.OData.Client
                 if (value == null)
                 {
                     if (this.IsValue(targetType))
-                        result = Activator.CreateInstance(targetType);
-                    else
-                        result = null;
-                }
+					{
+						result = Activator.CreateInstance(targetType);
+					}
+					else
+					{
+						result = null;
+					}
+				}
                 else if (this.IsTypeAssignableFrom(targetType, value.GetType()))
                 {
                     result = value;
@@ -303,11 +307,15 @@ namespace Simple.OData.Client
         public object Convert(object value, Type targetType)
         {
             if (value == null && !this.IsValue(targetType))
-                return null;
-            else if (TryConvert(value, targetType, out var result))
-                return result;
+			{
+				return null;
+			}
+			else if (TryConvert(value, targetType, out var result))
+			{
+				return result;
+			}
 
-            throw new FormatException($"Unable to convert value from type {value.GetType()} to type {targetType}");
+			throw new FormatException($"Unable to convert value from type {value.GetType()} to type {targetType}");
         }
 
         private TypeCacheResolver Resolver(Type type)

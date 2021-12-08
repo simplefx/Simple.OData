@@ -108,8 +108,11 @@ namespace Simple.OData.Client.V4.Adapter.Extensions
         {
             _propertyName = propertyName;
             if (!(expression is MethodCallExpression methodCallExpression))
-                throw new ArgumentException($"Expression should be a method call.");
-            _expression = methodCallExpression;
+			{
+				throw new ArgumentException($"Expression should be a method call.");
+			}
+
+			_expression = methodCallExpression;
         }
         
         internal AggregationClause(string propertyName, string aggregatedColumnName, string aggregationMethodName)
@@ -138,8 +141,11 @@ namespace Simple.OData.Client.V4.Adapter.Extensions
                 _aggregationMethodName = _expression.Method.Name;
             }
             if (KnownFunctionTemplates.TryGetValue(_aggregationMethodName, out var function))
-                return string.Format(function, _aggregatedColumnName);
-            throw new InvalidOperationException($"Unknown aggregation method '{_aggregationMethodName}'");
+			{
+				return string.Format(function, _aggregatedColumnName);
+			}
+
+			throw new InvalidOperationException($"Unknown aggregation method '{_aggregationMethodName}'");
         }
     }
 }

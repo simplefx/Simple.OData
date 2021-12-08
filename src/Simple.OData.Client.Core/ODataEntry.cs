@@ -46,10 +46,14 @@ namespace Simple.OData.Client
             set
             {
                 if (_entry.ContainsKey(key))
-                    _entry[key] = value;
-                else
-                    _entry.Add(key, value);
-            }
+				{
+					_entry[key] = value;
+				}
+				else
+				{
+					_entry.Add(key, value);
+				}
+			}
         }
 
         /// <summary>

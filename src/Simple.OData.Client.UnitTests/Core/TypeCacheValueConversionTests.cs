@@ -131,21 +131,44 @@ namespace Simple.OData.Client.Tests.Core
 		private object ChangeType(object value, Type targetType)
 		{
 			if (targetType == typeof(string))
+			{
 				return value.ToString();
+			}
+
 			if (targetType == typeof(DateTime))
+			{
 				return DateTime.Parse(value.ToString());
+			}
+
 			if (targetType == typeof(DateTimeOffset))
+			{
 				return DateTimeOffset.Parse(value.ToString());
+			}
+
 			if (targetType.IsEnum)
+			{
 				return Enum.Parse(targetType, value.ToString(), true);
+			}
+
 			if (targetType == typeof(Guid))
+			{
 				return new Guid(value.ToString());
+			}
+
 			if (targetType == typeof(PrimitiveType))
+			{
 				return new PrimitiveType(new Guid(value.ToString()));
+			}
+
 			if (Nullable.GetUnderlyingType(targetType) != null)
+			{
 				return ChangeType(value, Nullable.GetUnderlyingType(targetType));
+			}
+
 			if (targetType == typeof(Microsoft.OData.Edm.Date))
+			{
 				return Microsoft.OData.Edm.Date.Parse(value.ToString());
+			}
 
 			return Convert.ChangeType(value, targetType);
 		}

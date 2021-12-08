@@ -210,9 +210,11 @@ namespace Simple.OData.Client.Tests
         public async Task GetMediaStream()
         {
             if (_version == 2) // No media support in OData V2
-                return;
+			{
+				return;
+			}
 
-            var ad = await _client
+			var ad = await _client
                 .For("Advertisements")
                 .FindEntryAsync();
             var id = ad["ID"];
@@ -229,9 +231,11 @@ namespace Simple.OData.Client.Tests
         public async Task GetNamedMediaStream()
         {
             if (_version == 2) // No media support in OData V2
-                return;
+			{
+				return;
+			}
 
-            var stream = await _client
+			var stream = await _client
                 .For("Persons")
                 .Key(1)
                 .NavigateTo("PersonDetail")
@@ -250,9 +254,11 @@ namespace Simple.OData.Client.Tests
         public async Task GetTypedNamedMediaStream()
         {
             if (_version == 2) // No media support in OData V2
-                return;
+			{
+				return;
+			}
 
-            var text = await _client
+			var text = await _client
                 .For("Persons")
                 .Key(1)
                 .NavigateTo<PersonDetail>()

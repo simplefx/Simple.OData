@@ -34,10 +34,16 @@ namespace Simple.OData.Client
         private static HttpClient CreateHttpClient(ODataClientSettings settings, HttpMessageHandler messageHandler)
         {
             if (settings.HttpClient != null)
-                return settings.HttpClient;
-            if (settings.RequestTimeout >= TimeSpan.FromMilliseconds(1))
-                return new HttpClient(messageHandler) { Timeout = settings.RequestTimeout };
-            return new HttpClient(messageHandler);
+			{
+				return settings.HttpClient;
+			}
+
+			if (settings.RequestTimeout >= TimeSpan.FromMilliseconds(1))
+			{
+				return new HttpClient(messageHandler) { Timeout = settings.RequestTimeout };
+			}
+
+			return new HttpClient(messageHandler);
         }
 
         private static HttpMessageHandler CreateMessageHandler(ODataClientSettings settings)

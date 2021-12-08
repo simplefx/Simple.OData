@@ -45,10 +45,14 @@ namespace Simple.OData.Client
                 var left = FormatExpression(_left, context);
                 var op = FormatOperator(context);
                 if (NeedsGrouping(_left))
-                    return $"{op} ({left})";
-                else
-                    return $"{op} {left}";
-            }
+				{
+					return $"{op} ({left})";
+				}
+				else
+				{
+					return $"{op} {left}";
+				}
+			}
             else
             {
                 var left = FormatExpression(_left, context);
@@ -62,11 +66,16 @@ namespace Simple.OData.Client
                 else
                 {
                     if (NeedsGrouping(_left))
-                        left = $"({left})";
-                    if (NeedsGrouping(_right))
-                        right = $"({right})";
+					{
+						left = $"({left})";
+					}
 
-                    return $"{left} {op} {right}";
+					if (NeedsGrouping(_right))
+					{
+						right = $"({right})";
+					}
+
+					return $"{left} {op} {right}";
                 }
             }
         }
@@ -76,8 +85,11 @@ namespace Simple.OData.Client
             if (ReferenceEquals(expr, null))
             {
                 if (!String.IsNullOrEmpty(context.ScopeQualifier))
-                    return context.ScopeQualifier;
-                return "null";
+				{
+					return context.ScopeQualifier;
+				}
+
+				return "null";
             }
             else
             {
@@ -152,8 +164,10 @@ namespace Simple.OData.Client
                         string.Equals(this.Function.FunctionName, "ToUInt64", StringComparison.Ordinal) ? (object)Convert.ToUInt64(val.Value)
                         : null);
                     if (formattedVal.Value != null)
-                        return FormatExpression(formattedVal, context);
-                }
+					{
+						return FormatExpression(formattedVal, context);
+					}
+				}
             }
 
             throw new NotSupportedException($"The function {this.Function.FunctionName} is not supported or called with wrong number of arguments");
@@ -410,13 +424,21 @@ namespace Simple.OData.Client
         private bool NeedsGrouping(ODataExpression expr)
         {
             if (_operator == ExpressionType.Default)
-                return false;
-            if (ReferenceEquals(expr, null))
-                return false;
-            if (expr._operator == ExpressionType.Default)
-                return false;
+			{
+				return false;
+			}
 
-            var outerPrecedence = GetPrecedence(_operator);
+			if (ReferenceEquals(expr, null))
+			{
+				return false;
+			}
+
+			if (expr._operator == ExpressionType.Default)
+			{
+				return false;
+			}
+
+			var outerPrecedence = GetPrecedence(_operator);
             var innerPrecedence = GetPrecedence(expr._operator);
             return outerPrecedence < innerPrecedence;
         }

@@ -16,22 +16,34 @@ namespace Simple.OData.Client
         public static string StreamToString(Stream stream, bool disposeStream = false)
         {
             if (!disposeStream && stream.CanSeek)
-                stream.Seek(0, SeekOrigin.Begin);
-            var result = new StreamReader(stream).ReadToEnd();
+			{
+				stream.Seek(0, SeekOrigin.Begin);
+			}
+
+			var result = new StreamReader(stream).ReadToEnd();
             if (disposeStream)
-                stream.Dispose();
-            return result;
+			{
+				stream.Dispose();
+			}
+
+			return result;
         }
 
         public static byte[] StreamToByteArray(Stream stream, bool disposeStream = false)
         {
             if (!disposeStream && stream.CanSeek)
-                stream.Seek(0, SeekOrigin.Begin);
-            var bytes = new byte[stream.Length];
+			{
+				stream.Seek(0, SeekOrigin.Begin);
+			}
+
+			var bytes = new byte[stream.Length];
             var result = new BinaryReader(stream).ReadBytes(bytes.Length);
             if (disposeStream)
-                stream.Dispose();
-            return result;
+			{
+				stream.Dispose();
+			}
+
+			return result;
         }
 
         public static Stream StringToStream(string text)
@@ -67,9 +79,11 @@ namespace Simple.OData.Client
             where T : class
         {
             if (ReferenceEquals(matchResolver, ODataNameMatchResolver.Strict))
-                return collection.FirstOrDefault(x => matchResolver.IsMatch(fieldFunc(x), value));
+			{
+				return collection.FirstOrDefault(x => matchResolver.IsMatch(fieldFunc(x), value));
+			}
 
-            return collection
+			return collection
                 .Where(x => matchResolver.IsMatch(fieldFunc(x), value))
                 .Select(x => new { Match = x, IsStrictMatch = ODataNameMatchResolver.Strict.IsMatch(fieldFunc(x), value) })
                 .OrderBy(x => x.IsStrictMatch ? 0 : 1)
@@ -82,9 +96,11 @@ namespace Simple.OData.Client
             where T : class
         {
             if (ReferenceEquals(matchResolver, ODataNameMatchResolver.Strict))
-                return collection.FirstOrDefault(x => condition(x) && matchResolver.IsMatch(fieldFunc(x), value));
+			{
+				return collection.FirstOrDefault(x => condition(x) && matchResolver.IsMatch(fieldFunc(x), value));
+			}
 
-            return collection
+			return collection
                 .Where(x => condition(x) && matchResolver.IsMatch(fieldFunc(x), value))
                 .Select(x => new { Match = x, IsStrictMatch = ODataNameMatchResolver.Strict.IsMatch(fieldFunc(x), value) })
                 .OrderBy(x => x.IsStrictMatch ? 0 : 1)
@@ -107,9 +123,11 @@ namespace Simple.OData.Client
                 baseQuery = baseQuery.Substring(1);
             }
             if (!basePath.EndsWith("/"))
-                basePath += "/";
+			{
+				basePath += "/";
+			}
 
-            uri = new Uri(basePath + relativePath);
+			uri = new Uri(basePath + relativePath);
             if (string.IsNullOrEmpty(baseQuery))
             {
                 return uri;
@@ -161,9 +179,11 @@ namespace Simple.OData.Client
         {
             matchingNamedKeyValues = null;
             if (namedKeyValues is null || keyNames is null)
-                return false;
+			{
+				return false;
+			}
 
-            if (keyNames.Count() == namedKeyValues.Count)
+			if (keyNames.Count() == namedKeyValues.Count)
             {
                 var tmpMatchingNamedKeyValues = new List<KeyValuePair<string, object>>();
                 foreach (var keyProperty in keyNames)
@@ -192,9 +212,11 @@ namespace Simple.OData.Client
         {
             matchingNamedKeyValues = null;
             if (namedKeyValues is null || keyNames is null)
-                return false;
+			{
+				return false;
+			}
 
-            var tmpMatchingNamedKeyValues = new List<KeyValuePair<string, object>>();
+			var tmpMatchingNamedKeyValues = new List<KeyValuePair<string, object>>();
             foreach (var namedKeyValue in namedKeyValues)
             {
                 var keyProperty = keyNames.FirstOrDefault(x => resolver.IsMatch(x, namedKeyValue.Key));

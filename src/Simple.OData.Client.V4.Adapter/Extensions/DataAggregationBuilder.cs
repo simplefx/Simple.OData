@@ -23,10 +23,16 @@ namespace Simple.OData.Client.V4.Adapter.Extensions
             {
                 var formattedApplyClause = applyClause.Format(context);
                 if (string.IsNullOrEmpty(formattedApplyClause))
-                    continue;
-                if (commandText.Length > 0)
-                    commandText += "/";
-                commandText += formattedApplyClause;
+				{
+					continue;
+				}
+
+				if (commandText.Length > 0)
+				{
+					commandText += "/";
+				}
+
+				commandText += formattedApplyClause;
             }
 
             return AddNextCommand(commandText, command, session);
@@ -44,14 +50,23 @@ namespace Simple.OData.Client.V4.Adapter.Extensions
 
         private string AddNextCommand(string commandText, ResolvedCommand command, ISession session)
         {
-            if (_nextDataAggregationBuilder == null) return commandText;
-            
-            var nestedCommand = _nextDataAggregationBuilder.Build(command, session);
-            if (string.IsNullOrEmpty(nestedCommand)) return commandText;
-            
-            if (commandText.Length > 0)
-                commandText += "/";
-            commandText += nestedCommand;
+            if (_nextDataAggregationBuilder == null)
+			{
+				return commandText;
+			}
+
+			var nestedCommand = _nextDataAggregationBuilder.Build(command, session);
+            if (string.IsNullOrEmpty(nestedCommand))
+			{
+				return commandText;
+			}
+
+			if (commandText.Length > 0)
+			{
+				commandText += "/";
+			}
+
+			commandText += nestedCommand;
 
             return commandText;
         }
@@ -102,8 +117,10 @@ namespace Simple.OData.Client.V4.Adapter.Extensions
                     for (var index = 0; index < membersCount; index++)
                     {
                         if (newExpression.Arguments[index] is MethodCallExpression methodCallExpression && methodCallExpression.Method.DeclaringType == typeof(IAggregationFunction<T>))
-                            aggregationClauses.Add(new AggregationClause<T>(newExpression.Members[index].Name, newExpression.Arguments[index]));
-                    }
+							{
+								aggregationClauses.Add(new AggregationClause<T>(newExpression.Members[index].Name, newExpression.Arguments[index]));
+							}
+						}
 
                     break;
                 }
@@ -112,8 +129,10 @@ namespace Simple.OData.Client.V4.Adapter.Extensions
                     foreach (var assignment in memberInitExpression.Bindings.OfType<MemberAssignment>())
                     {
                         if (assignment.Expression is MethodCallExpression methodCallExpression && methodCallExpression.Method.DeclaringType == typeof(IAggregationFunction<T>))
-                            aggregationClauses.Add(new AggregationClause<T>(assignment.Member.Name, assignment.Expression));
-                    }
+							{
+								aggregationClauses.Add(new AggregationClause<T>(assignment.Member.Name, assignment.Expression));
+							}
+						}
 
                     break;
                 }

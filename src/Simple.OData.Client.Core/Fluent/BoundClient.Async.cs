@@ -46,9 +46,11 @@ namespace Simple.OData.Client
             await _session.ResolveAdapterAsync(cancellationToken);
             var command = _command.WithCount().Resolve(_session);
             if (cancellationToken.IsCancellationRequested)
-                cancellationToken.ThrowIfCancellationRequested();
+			{
+				cancellationToken.ThrowIfCancellationRequested();
+			}
 
-            var result = _client.FindEntriesAsync(command.Format(), annotations, cancellationToken);
+			var result = _client.FindEntriesAsync(command.Format(), annotations, cancellationToken);
             return await FilterAndTypeColumnsAsync(
                 result, _command.SelectedColumns, _command.DynamicPropertiesContainerName).ConfigureAwait(false);
         }
@@ -62,9 +64,11 @@ namespace Simple.OData.Client
         {
             var commandText = annotatedUri.AbsoluteUri;
             if (cancellationToken.IsCancellationRequested)
-                cancellationToken.ThrowIfCancellationRequested();
+			{
+				cancellationToken.ThrowIfCancellationRequested();
+			}
 
-            var result = _client.FindEntriesAsync(commandText, annotations, cancellationToken);
+			var result = _client.FindEntriesAsync(commandText, annotations, cancellationToken);
             return await FilterAndTypeColumnsAsync(
                 result, _command.SelectedColumns, _command.DynamicPropertiesContainerName).ConfigureAwait(false);
         }
@@ -189,10 +193,14 @@ namespace Simple.OData.Client
         public Task DeleteEntryAsync(CancellationToken cancellationToken)
         {
             if (_command.Details.HasFilter)
-                return DeleteEntriesAsync(cancellationToken);
-            else
-                return _client.DeleteEntryAsync(_command, cancellationToken);
-        }
+			{
+				return DeleteEntriesAsync(cancellationToken);
+			}
+			else
+			{
+				return _client.DeleteEntryAsync(_command, cancellationToken);
+			}
+		}
 
         public Task<int> DeleteEntriesAsync()
         {
@@ -302,12 +310,18 @@ namespace Simple.OData.Client
         public Task UnlinkEntryAsync<U>(U linkedEntryKey, CancellationToken cancellationToken)
         {
             if (linkedEntryKey.GetType() == typeof(string))
-                return UnlinkEntryAsync(linkedEntryKey.ToString(), cancellationToken);
-            else if (linkedEntryKey is ODataExpression && (linkedEntryKey as ODataExpression).Reference != null)
-                return UnlinkEntryAsync((linkedEntryKey as ODataExpression).Reference, cancellationToken);
-            else
-                return UnlinkEntryAsync(linkedEntryKey, null, cancellationToken);
-        }
+			{
+				return UnlinkEntryAsync(linkedEntryKey.ToString(), cancellationToken);
+			}
+			else if (linkedEntryKey is ODataExpression && (linkedEntryKey as ODataExpression).Reference != null)
+			{
+				return UnlinkEntryAsync((linkedEntryKey as ODataExpression).Reference, cancellationToken);
+			}
+			else
+			{
+				return UnlinkEntryAsync(linkedEntryKey, null, cancellationToken);
+			}
+		}
 
         public Task UnlinkEntryAsync<U>(U linkedEntryKey, string linkName)
         {

@@ -44,8 +44,11 @@ namespace Simple.OData.Client
                         : _session.GetHttpConnection();
 
                     response = await httpConnection.HttpClient.SendAsync(request.RequestMessage, cancellationToken).ConfigureAwait(false);
-                    if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-                }
+                    if (cancellationToken.IsCancellationRequested)
+					{
+						cancellationToken.ThrowIfCancellationRequested();
+					}
+				}
 
                 _session.Trace("Request completed: {0}", response.StatusCode);
                 if (response.Content != null && (_session.Settings.TraceFilter & ODataTrace.ResponseContent) != 0)
@@ -103,21 +106,27 @@ namespace Simple.OData.Client
             foreach (var header in request.Headers)
             {
                 if (request.RequestMessage.Headers.TryGetValues(header.Key, out var values) && !values.Contains(header.Value))
-                    request.RequestMessage.Headers.TryAddWithoutValidation(header.Key, header.Value);
-            }
+				{
+					request.RequestMessage.Headers.TryAddWithoutValidation(header.Key, header.Value);
+				}
+			}
 
             _session.Settings.BeforeRequest?.Invoke(request.RequestMessage);
             if (_session.Settings.BeforeRequestAsync != null)
-                await _session.Settings.BeforeRequestAsync(request.RequestMessage).ConfigureAwait(false);
-        }
+			{
+				await _session.Settings.BeforeRequestAsync(request.RequestMessage).ConfigureAwait(false);
+			}
+		}
 
         private async Task PostExecute(HttpResponseMessage responseMessage)
         {
             _session.Settings.AfterResponse?.Invoke(responseMessage);
             if (_session.Settings.AfterResponseAsync != null)
-                await _session.Settings.AfterResponseAsync(responseMessage).ConfigureAwait(false);
+			{
+				await _session.Settings.AfterResponseAsync(responseMessage).ConfigureAwait(false);
+			}
 
-            if (!responseMessage.IsSuccessStatusCode)
+			if (!responseMessage.IsSuccessStatusCode)
             {
                 throw await WebRequestException.CreateFromResponseMessageAsync(responseMessage, _session.Settings.WebRequestExceptionMessageSource).ConfigureAwait(false);
             }

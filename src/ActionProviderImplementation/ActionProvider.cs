@@ -56,17 +56,21 @@ namespace ActionProviderImplementation
             {
                 serviceAction = GetActions(operationContext).SingleOrDefault(a => a.Name == serviceActionName);
                 if (serviceAction != null)
-                    _actionsByName[serviceActionName] = serviceAction;
-            }
+				{
+					_actionsByName[serviceActionName] = serviceAction;
+				}
+			}
             return serviceAction != null;
         }
 
         private List<ServiceAction> GetActions(DataServiceOperationContext context)
         {
             if (_cache.ContainsKey(_instanceType))
-                return _cache[_instanceType];
+			{
+				return _cache[_instanceType];
+			}
 
-            var metadata = context.GetService(typeof(IDataServiceMetadataProvider)) as IDataServiceMetadataProvider;
+			var metadata = context.GetService(typeof(IDataServiceMetadataProvider)) as IDataServiceMetadataProvider;
             var factory = new ActionFactory(metadata);
 
             var actions = factory.GetActions(_instanceType).ToList();

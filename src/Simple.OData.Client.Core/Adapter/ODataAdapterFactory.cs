@@ -32,8 +32,10 @@ namespace Simple.OData.Client
             {
                 var loadModelAdapter = GetModelAdapterLoader(protocolVersion, response, typeCache);
                 if (loadModelAdapter != null)
-                    return loadModelAdapter();
-            }
+				{
+					return loadModelAdapter();
+				}
+			}
             throw new NotSupportedException($"OData protocols {string.Join(",", protocolVersions)} are not supported");
         }
 
@@ -43,9 +45,11 @@ namespace Simple.OData.Client
             var protocolVersion = GetMetadataProtocolVersion(metadataString);
             var loadModelAdapter = GetModelAdapterLoader(protocolVersion, metadataString, typeCache);
             if (loadModelAdapter == null)
-                throw new NotSupportedException($"OData protocol {protocolVersion} is not supported");
+			{
+				throw new NotSupportedException($"OData protocol {protocolVersion} is not supported");
+			}
 
-            return loadModelAdapter();
+			return loadModelAdapter();
         }
 
         /// <inheritdoc />
@@ -55,9 +59,11 @@ namespace Simple.OData.Client
 
             var loadAdapter = GetAdapterLoader(modelAdapter, typeCache);
             if (loadAdapter == null)
-                throw new NotSupportedException($"OData protocol {modelAdapter.ProtocolVersion} is not supported");
+			{
+				throw new NotSupportedException($"OData protocol {modelAdapter.ProtocolVersion} is not supported");
+			}
 
-            return loadAdapter;
+			return loadAdapter;
         }
 
         /// <summary>
@@ -93,11 +99,16 @@ namespace Simple.OData.Client
             if (modelAdapter.ProtocolVersion == ODataProtocolVersion.V1 ||
                 modelAdapter.ProtocolVersion == ODataProtocolVersion.V2 ||
                 modelAdapter.ProtocolVersion == ODataProtocolVersion.V3)
-                return session => LoadAdapter(AdapterV3AssemblyName, typeCache, AdapterV3TypeName, session, modelAdapter);
-            if (modelAdapter.ProtocolVersion == ODataProtocolVersion.V4)
-                return session => LoadAdapter(AdapterV4AssemblyName, typeCache, AdapterV4TypeName, session, modelAdapter);
+			{
+				return session => LoadAdapter(AdapterV3AssemblyName, typeCache, AdapterV3TypeName, session, modelAdapter);
+			}
 
-            return null;
+			if (modelAdapter.ProtocolVersion == ODataProtocolVersion.V4)
+			{
+				return session => LoadAdapter(AdapterV4AssemblyName, typeCache, AdapterV4TypeName, session, modelAdapter);
+			}
+
+			return null;
         }
 
         private Func<IODataModelAdapter> GetModelAdapterLoader(string protocolVersion, object extraInfo, ITypeCache typeCache)
@@ -105,11 +116,16 @@ namespace Simple.OData.Client
             if (protocolVersion == ODataProtocolVersion.V1 ||
                 protocolVersion == ODataProtocolVersion.V2 ||
                 protocolVersion == ODataProtocolVersion.V3)
-                return () => LoadModelAdapter(typeCache, AdapterV3AssemblyName, ModelAdapterV3TypeName, protocolVersion, extraInfo);
-            if (protocolVersion == ODataProtocolVersion.V4)
-                return () => LoadModelAdapter(typeCache, AdapterV4AssemblyName, ModelAdapterV4TypeName, protocolVersion, extraInfo);
+			{
+				return () => LoadModelAdapter(typeCache, AdapterV3AssemblyName, ModelAdapterV3TypeName, protocolVersion, extraInfo);
+			}
 
-            return null;
+			if (protocolVersion == ODataProtocolVersion.V4)
+			{
+				return () => LoadModelAdapter(typeCache, AdapterV4AssemblyName, ModelAdapterV4TypeName, protocolVersion, extraInfo);
+			}
+
+			return null;
         }
 
         private IODataModelAdapter LoadModelAdapter(ITypeCache typeCache, string modelAdapterAssemblyName, string modelAdapterTypeName, params object[] ctorParams)
@@ -195,11 +211,16 @@ namespace Simple.OData.Client
                         {
                             var version = reader.GetAttribute("m:" + HttpLiteral.MaxDataServiceVersion);
                             if (string.IsNullOrEmpty(version))
-                                version = reader.GetAttribute("m:" + HttpLiteral.DataServiceVersion);
-                            if (!string.IsNullOrEmpty(version) && string.Compare(version, protocolVersion, StringComparison.Ordinal) > 0)
-                                protocolVersion = version;
+							{
+								version = reader.GetAttribute("m:" + HttpLiteral.DataServiceVersion);
+							}
 
-                            break;
+							if (!string.IsNullOrEmpty(version) && string.Compare(version, protocolVersion, StringComparison.Ordinal) > 0)
+							{
+								protocolVersion = version;
+							}
+
+							break;
                         }
                     }
                 }

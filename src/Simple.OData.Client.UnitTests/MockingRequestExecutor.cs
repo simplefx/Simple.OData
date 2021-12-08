@@ -120,24 +120,36 @@ namespace Simple.OData.Client.Tests
             if (_recording)
             {
                 if (!IsMetadataRequest(request))
-                    SaveRequest(request);
+				{
+					SaveRequest(request);
+				}
 
-                var httpConnection = new HttpConnection(_settings);
+				var httpConnection = new HttpConnection(_settings);
                 var response = await httpConnection.HttpClient.SendAsync(request);
 
                 if (!IsMetadataRequest(request))
-                    SaveResponse(response);
-                return response;
+				{
+					SaveResponse(response);
+				}
+
+				return response;
             }
             else
             {
                 if (_validate)
-                    await ValidateRequestAsync(request);
-                if (_mockResponses == null)
-                    return GetResponseFromResponseMessage(request);
-                else
-                    return GetResponseFromJson(request);
-            }
+				{
+					await ValidateRequestAsync(request);
+				}
+
+				if (_mockResponses == null)
+				{
+					return GetResponseFromResponseMessage(request);
+				}
+				else
+				{
+					return GetResponseFromJson(request);
+				}
+			}
         }
 
         private bool IsMetadataRequest(HttpRequestMessage request)
@@ -148,10 +160,14 @@ namespace Simple.OData.Client.Tests
         private string GenerateMockDataPath()
         {
             if (!string.IsNullOrEmpty(_mockDataPathBase))
-                return string.Format($"{_mockDataPathBase}.{++_fileCounter}.txt");
-            else
-                return _mockResponses[_fileCounter++];
-        }
+			{
+				return string.Format($"{_mockDataPathBase}.{++_fileCounter}.txt");
+			}
+			else
+			{
+				return _mockResponses[_fileCounter++];
+			}
+		}
 
         private void SaveRequest(HttpRequestMessage request)
         {
@@ -181,20 +197,32 @@ namespace Simple.OData.Client.Tests
                 Assert.Equal(savedRequest.RequestUri.AbsolutePath.Split('/').Last(), request.RequestUri.AbsolutePath.Split('/').Last());
                 var expectedHeaders = new Dictionary<string, IEnumerable<string>>();
                 foreach (var header in savedRequest.RequestHeaders)
-                    expectedHeaders.Add(header.Key, header.Value);
-                var actualHeaders = new Dictionary<string, IEnumerable<string>>();
+				{
+					expectedHeaders.Add(header.Key, header.Value);
+				}
+
+				var actualHeaders = new Dictionary<string, IEnumerable<string>>();
                 foreach (var header in request.Headers)
-                    actualHeaders.Add(header.Key, header.Value);
-                ValidateHeaders(expectedHeaders, actualHeaders);
+				{
+					actualHeaders.Add(header.Key, header.Value);
+				}
+
+				ValidateHeaders(expectedHeaders, actualHeaders);
                 if (request.Content != null)
                 {
                     expectedHeaders = new Dictionary<string, IEnumerable<string>>();
                     foreach (var header in savedRequest.ContentHeaders)
-                        expectedHeaders.Add(header.Key, header.Value);
-                    actualHeaders = new Dictionary<string, IEnumerable<string>>();
+					{
+						expectedHeaders.Add(header.Key, header.Value);
+					}
+
+					actualHeaders = new Dictionary<string, IEnumerable<string>>();
                     foreach (var header in request.Content.Headers)
-                        actualHeaders.Add(header.Key, header.Value);
-                    ValidateHeaders(expectedHeaders, actualHeaders);
+					{
+						actualHeaders.Add(header.Key, header.Value);
+					}
+
+					ValidateHeaders(expectedHeaders, actualHeaders);
                     var expectedContent = savedRequest.Content;
                     expectedContent = AdjustContent(expectedContent);
                     var actualContent = AdjustContent(await request.Content.ReadAsStringAsync());
@@ -221,8 +249,11 @@ namespace Simple.OData.Client.Tests
                 foreach (var header in savedResponse.ResponseHeaders)
                 {
                     if (response.Headers.Contains(header.Key))
-                        response.Headers.Remove(header.Key);
-                    response.Headers.Add(header.Key, header.Value);
+					{
+						response.Headers.Remove(header.Key);
+					}
+
+					response.Headers.Add(header.Key, header.Value);
                 }
 
                 if (savedResponse.Content != null)
@@ -230,8 +261,11 @@ namespace Simple.OData.Client.Tests
                     foreach (var header in savedResponse.ContentHeaders)
                     {
                         if (response.Content.Headers.Contains(header.Key))
-                            response.Content.Headers.Remove(header.Key);
-                        response.Content.Headers.Add(header.Key, header.Value);
+						{
+							response.Content.Headers.Remove(header.Key);
+						}
+
+						response.Content.Headers.Add(header.Key, header.Value);
                     }
                 }
                 return response; }
@@ -390,12 +424,17 @@ namespace Simple.OData.Client.Tests
             {
                 var stackFrame = stackTrace.GetFrame(frameNumber);
                 if (stackFrame == null)
-                    throw new InvalidOperationException("Attempt to retrieve a frame beyond the call stack.");
-                var method = stackFrame.GetMethod();
+				{
+					throw new InvalidOperationException("Attempt to retrieve a frame beyond the call stack.");
+				}
+
+				var method = stackFrame.GetMethod();
                 var methodName = new string(method.Name.Where(c => char.IsLetterOrDigit(c) || c == '_').ToArray());
                 if (method.IsPublic && !method.IsGenericMethod)
-                    return string.Format($"{method.DeclaringType.Name}.{methodName}");
-            }
+				{
+					return string.Format($"{method.DeclaringType.Name}.{methodName}");
+				}
+			}
         }
     }
 }

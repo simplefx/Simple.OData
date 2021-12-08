@@ -40,9 +40,11 @@ namespace Simple.OData.Client
             get
             {
                 if (_command != null)
-                    return _command;
+				{
+					return _command;
+				}
 
-                lock (this)
+				lock (this)
                 {
                     return _command ?? (_command = CreateCommand());
                 }
@@ -682,9 +684,12 @@ namespace Simple.OData.Client
         public async Task<string> GetCommandTextAsync(CancellationToken cancellationToken)
         {
             await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
-            if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+            if (cancellationToken.IsCancellationRequested)
+			{
+				cancellationToken.ThrowIfCancellationRequested();
+			}
 
-            return this.Command.Resolve(_session).Format();
+			return this.Command.Resolve(_session).Format();
         }
 
 #pragma warning disable 1591
@@ -737,10 +742,14 @@ namespace Simple.OData.Client
 
             if (result != null && result.Keys.Count == 1 && result.ContainsKey(FluentCommand.ResultLiteral) &&
                 TypeCache.IsValue(typeof(T)) || typeof(T) == typeof(string) || typeof(T) == typeof(object))
-                return TypeCache.Convert<T>(result.Values.First());
-            else
-                return result.ToObject<T>(TypeCache, _dynamicResults);
-        }
+			{
+				return TypeCache.Convert<T>(result.Values.First());
+			}
+			else
+			{
+				return result.ToObject<T>(TypeCache, _dynamicResults);
+			}
+		}
 
         private bool IsSelectedColumn(KeyValuePair<string, object> kv, string columnName)
         {

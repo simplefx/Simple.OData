@@ -112,9 +112,11 @@ namespace Simple.OData.Client
         private EntityCollection NavigateToCollection(EntityCollection rootCollection, IEnumerable<string> segments)
         {
             if (!segments.Any())
-                return rootCollection;
+			{
+				return rootCollection;
+			}
 
-            var associationName = GetNavigationPropertyExactName(rootCollection.Name, segments.First());
+			var associationName = GetNavigationPropertyExactName(rootCollection.Name, segments.First());
             var typeName = IsSingleSegmentWithTypeSpecification(segments)
                 ? segments.Last()
                 : GetNavigationPropertyPartnerTypeName(rootCollection.Name, associationName);

@@ -153,9 +153,11 @@ namespace Simple.OData.Client
             {
                 var property = currentType.GetTypeInfo().GetDeclaredProperty(propertyName);
                 if (property != null)
-                    return property;
+				{
+					return property;
+				}
 
-                currentType = currentType.GetTypeInfo().BaseType;
+				currentType = currentType.GetTypeInfo().BaseType;
             }
             return null;
         }
@@ -172,9 +174,11 @@ namespace Simple.OData.Client
             {
                 var field = currentType.GetDeclaredField(fieldName);
                 if (field != null)
-                    return field;
+				{
+					return field;
+				}
 
-                currentType = currentType.GetTypeInfo().BaseType;
+				currentType = currentType.GetTypeInfo().BaseType;
             }
             return null;
         }

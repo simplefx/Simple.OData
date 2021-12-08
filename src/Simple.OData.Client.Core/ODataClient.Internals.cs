@@ -35,8 +35,11 @@ namespace Simple.OData.Client
                 {
                     var result = x.AsEntries(_session.Settings.IncludeAnnotationsInResults);
                     if (annotations != null && x.Feed != null)
-                        annotations.CopyFrom(x.Feed.Annotations);
-                    return result;
+					{
+						annotations.CopyFrom(x.Feed.Annotations);
+					}
+
+					return result;
                 },
                 () => Array.Empty<IDictionary<string, object>>()).ConfigureAwait(false);
         }
@@ -64,8 +67,11 @@ namespace Simple.OData.Client
                 {
                     var result = x.AsEntries(_session.Settings.IncludeAnnotationsInResults);
                     if (annotations != null && x.Feed != null)
-                        annotations.CopyFrom(x.Feed.Annotations);
-                    return result;
+					{
+						annotations.CopyFrom(x.Feed.Annotations);
+					}
+
+					return result;
                 },
                 () => Array.Empty<IDictionary<string, object>>()).ConfigureAwait(false);
         }
@@ -86,9 +92,11 @@ namespace Simple.OData.Client
         private async Task ExecuteBatchActionsAsync(IList<Func<IODataClient, Task>> actions, IDictionary<string, string> headers, CancellationToken cancellationToken)
         {
             if (!actions.Any())
-                return;
+			{
+				return;
+			}
 
-            var responseIndexes = new List<int>();
+			var responseIndexes = new List<int>();
             var request = await _lazyBatchWriter.Value.CreateBatchRequestAsync(this, actions, responseIndexes, headers).ConfigureAwait(false);
             if (request != null)
             {
@@ -107,9 +115,11 @@ namespace Simple.OData.Client
         private async Task ExecuteRequestAsync(ODataRequest request, CancellationToken cancellationToken)
         {
             if (IsBatchRequest)
-                return;
+			{
+				return;
+			}
 
-            try
+			try
             {
                 using (await _requestRunner.ExecuteRequestAsync(request, cancellationToken).ConfigureAwait(false))
                 {
@@ -118,23 +128,29 @@ namespace Simple.OData.Client
             catch (WebRequestException ex)
             {
                 if (_settings.IgnoreResourceNotFoundException && ex.Code == HttpStatusCode.NotFound)
-                    return;
-                else
-                    throw;
-            }
+				{
+					return;
+				}
+				else
+				{
+					throw;
+				}
+			}
         }
 
         private async Task<T> ExecuteRequestWithResultAsync<T>(ODataRequest request, CancellationToken cancellationToken,
             Func<ODataResponse, T> createResult, Func<T> createEmptyResult, Func<T> createBatchResult = null)
         {
             if (IsBatchRequest)
-                return createBatchResult != null
+			{
+				return createBatchResult != null
                     ? createBatchResult()
                     : createEmptyResult != null
                     ? createEmptyResult()
                     : default(T);
+			}
 
-            try
+			try
             {
                 using (var response = await _requestRunner.ExecuteRequestAsync(request, cancellationToken).ConfigureAwait(false))
                 {
@@ -153,18 +169,24 @@ namespace Simple.OData.Client
             catch (WebRequestException ex)
             {
                 if (_settings.IgnoreResourceNotFoundException && ex.Code == HttpStatusCode.NotFound)
-                    return createEmptyResult != null ? createEmptyResult() : default(T);
-                else
-                    throw;
-            }
+				{
+					return createEmptyResult != null ? createEmptyResult() : default(T);
+				}
+				else
+				{
+					throw;
+				}
+			}
         }
 
         private async Task<Stream> ExecuteGetStreamRequestAsync(ODataRequest request, CancellationToken cancellationToken)
         {
             if (IsBatchRequest)
-                return Stream.Null;
+			{
+				return Stream.Null;
+			}
 
-            try
+			try
             {
                 using (var response = await _requestRunner.ExecuteRequestAsync(request, cancellationToken).ConfigureAwait(false))
                 {
@@ -174,8 +196,11 @@ namespace Simple.OData.Client
                         var stream = new MemoryStream();
                         await response.Content.CopyToAsync(stream);
                         if (stream.CanSeek)
-                            stream.Seek(0L, SeekOrigin.Begin);
-                        return stream;
+						{
+							stream.Seek(0L, SeekOrigin.Begin);
+						}
+
+						return stream;
                     }
                     else
                     {
@@ -186,10 +211,14 @@ namespace Simple.OData.Client
             catch (WebRequestException ex)
             {
                 if (_settings.IgnoreResourceNotFoundException && ex.Code == HttpStatusCode.NotFound)
-                    return Stream.Null;
-                else
-                    throw;
-            }
+				{
+					return Stream.Null;
+				}
+				else
+				{
+					throw;
+				}
+			}
         }
 
         private async Task<IEnumerable<IDictionary<string, object>>> IterateEntriesAsync(
@@ -209,8 +238,11 @@ namespace Simple.OData.Client
                 foreach (var entry in entryList)
                 {
                     resultList.Add(await funcAsync(collectionName, entry, entryData, resultRequired).ConfigureAwait(false));
-                    if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-                }
+                    if (cancellationToken.IsCancellationRequested)
+					{
+						cancellationToken.ThrowIfCancellationRequested();
+					}
+				}
                 result = resultList;
             }
 
@@ -231,8 +263,12 @@ namespace Simple.OData.Client
                 foreach (var entry in entryList)
                 {
                     await funcAsync(collectionName, entry).ConfigureAwait(false);
-                    if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-                    ++result;
+                    if (cancellationToken.IsCancellationRequested)
+					{
+						cancellationToken.ThrowIfCancellationRequested();
+					}
+
+					++result;
                 }
             }
             return result;
@@ -253,8 +289,10 @@ namespace Simple.OData.Client
                 {
                     var key = entry.Key;
                     if (key == FluentCommand.AnnotationsLiteral || key.StartsWith(FluentCommand.AnnotationsLiteral + "_"))
-                        actions.Add(() => entryData.Remove(key));
-                }
+					{
+						actions.Add(() => entryData.Remove(key));
+					}
+				}
 
                 var nestedEntries = entryData.Where(x => x.Value is IDictionary<string, object>);
                 foreach (var nestedEntry in nestedEntries)
@@ -284,8 +322,10 @@ namespace Simple.OData.Client
         private void AssertHasKey(ResolvedCommand command)
         {
             if (!command.Details.HasKey && command.Details.FilterAsKey == null)
-                throw new InvalidOperationException("No entry key specified.");
-        }
+			{
+				throw new InvalidOperationException("No entry key specified.");
+			}
+		}
 
         private async Task<string> FormatEntryKeyAsync(string collection, IDictionary<string, object> entryKey, CancellationToken cancellationToken)
         {
@@ -313,8 +353,11 @@ namespace Simple.OData.Client
                 foreach (var entry in entries)
                 {
                     await EnrichWithMediaPropertiesAsync(entry, command.Details.MediaProperties, cancellationToken).ConfigureAwait(false);
-                    if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
-                }
+                    if (cancellationToken.IsCancellationRequested)
+					{
+						cancellationToken.ThrowIfCancellationRequested();
+					}
+				}
             }
         }
 
@@ -345,13 +388,20 @@ namespace Simple.OData.Client
             if (mediaLink != null)
             {
                 var stream = await GetMediaStreamAsync(mediaLink.AbsoluteUri, cancellationToken).ConfigureAwait(false);
-                if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+                if (cancellationToken.IsCancellationRequested)
+				{
+					cancellationToken.ThrowIfCancellationRequested();
+				}
 
-                if (entry.TryGetValue(propertyName, out _))
-                    entry[propertyName] = stream;
-                else
-                    entry.Add(propertyName, stream);
-            }
+				if (entry.TryGetValue(propertyName, out _))
+				{
+					entry[propertyName] = stream;
+				}
+				else
+				{
+					entry.Add(propertyName, stream);
+				}
+			}
         }
     }
 }

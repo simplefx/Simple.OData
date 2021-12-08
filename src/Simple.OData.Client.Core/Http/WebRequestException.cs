@@ -57,12 +57,18 @@ namespace Simple.OData.Client
         {
             reasonPhrase = reasonPhrase ?? statusCode.ToString();
             if (exceptionMessageSource == WebRequestExceptionMessageSource.ReasonPhrase)
-                return reasonPhrase;
-            else if (exceptionMessageSource == WebRequestExceptionMessageSource.ResponseContent)
-                return responseContent;
-            else
-                return $"Request failed with reason {((int)statusCode)} {reasonPhrase}. Response content was {responseContent}.";
-        }
+			{
+				return reasonPhrase;
+			}
+			else if (exceptionMessageSource == WebRequestExceptionMessageSource.ResponseContent)
+			{
+				return responseContent;
+			}
+			else
+			{
+				return $"Request failed with reason {((int)statusCode)} {reasonPhrase}. Response content was {responseContent}.";
+			}
+		}
 
         /// <summary>
         /// Initializes a new instance of the <see cref="WebRequestException"/> class.

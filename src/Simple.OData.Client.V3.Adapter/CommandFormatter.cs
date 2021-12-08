@@ -18,11 +18,16 @@ namespace Simple.OData.Client.V3.Adapter
         public override string ConvertValueToUriLiteral(object value, bool escapeDataString)
         {
             if (value != null && _session.TypeCache.IsEnumType(value.GetType()))
-                value = Convert.ToInt32(value);
-            if (value is ODataExpression expression)
-                return expression.AsString(_session);
+			{
+				value = Convert.ToInt32(value);
+			}
 
-            var odataVersion = (ODataVersion) Enum.Parse(typeof (ODataVersion), _session.Adapter.GetODataVersionString(), false);
+			if (value is ODataExpression expression)
+			{
+				return expression.AsString(_session);
+			}
+
+			var odataVersion = (ODataVersion) Enum.Parse(typeof (ODataVersion), _session.Adapter.GetODataVersionString(), false);
             string ConvertValue(object x) => ODataUriUtils.ConvertToUriLiteral(x, odataVersion, (_session.Adapter as ODataAdapter).Model);
 
             return escapeDataString

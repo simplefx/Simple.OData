@@ -24,11 +24,15 @@ namespace Simple.OData.Client.Extensions
         public static object Convert(this ITypeCache typeCache, object value, Type targetType)
         {
             if (value == null && !typeCache.IsValue(targetType))
-                return null;
-            else if (typeCache.TryConvert(value, targetType, out var result))
-                return result;
+			{
+				return null;
+			}
+			else if (typeCache.TryConvert(value, targetType, out var result))
+			{
+				return result;
+			}
 
-            throw new FormatException($"Unable to convert value from type {value.GetType()} to type {targetType}");
+			throw new FormatException($"Unable to convert value from type {value.GetType()} to type {targetType}");
         }
 
         [Obsolete("Use ITypeCache.TryConvert")]

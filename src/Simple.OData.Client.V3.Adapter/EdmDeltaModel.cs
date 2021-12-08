@@ -19,8 +19,10 @@ namespace Simple.OData.Client.V3.Adapter
             foreach (var property in entityType.StructuralProperties())
             {
                 if (propertyNames.Contains(property.Name))
-                    _entityType.AddStructuralProperty(property.Name, property.Type, property.DefaultValueString, property.ConcurrencyMode);
-            }
+				{
+					_entityType.AddStructuralProperty(property.Name, property.Type, property.DefaultValueString, property.ConcurrencyMode);
+				}
+			}
 
             foreach (var property in entityType.NavigationProperties())
             {
@@ -55,10 +57,14 @@ namespace Simple.OData.Client.V3.Adapter
         public IEdmSchemaType FindDeclaredType(string qualifiedName)
         {
             if (qualifiedName == _entityType.FullName())
-                return _entityType;
-            else
-                return _source.FindDeclaredType(qualifiedName);
-        }
+			{
+				return _entityType;
+			}
+			else
+			{
+				return _source.FindDeclaredType(qualifiedName);
+			}
+		}
 
         public IEdmEntityContainer FindDeclaredEntityContainer(string name) { return _source.FindDeclaredEntityContainer(name); }
         public IEnumerable<IEdmFunction> FindDeclaredFunctions(string qualifiedName) { return _source.FindDeclaredFunctions(qualifiedName); }

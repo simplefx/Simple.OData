@@ -32,8 +32,11 @@ namespace Simple.OData.Client.V3.Adapter
         public override async Task<HttpRequestMessage> EndBatchAsync()
         {
             if (_pendingChangeSet)
-                await _batchWriter.WriteEndChangesetAsync().ConfigureAwait(false);
-            await _batchWriter.WriteEndBatchAsync().ConfigureAwait(false);
+			{
+				await _batchWriter.WriteEndChangesetAsync().ConfigureAwait(false);
+			}
+
+			await _batchWriter.WriteEndBatchAsync().ConfigureAwait(false);
             var stream = await _requestMessage.GetStreamAsync().ConfigureAwait(false);
             return CreateMessageFromStream(stream, _requestMessage.Url, _requestMessage.GetHeader);
         }
@@ -41,9 +44,11 @@ namespace Simple.OData.Client.V3.Adapter
         protected override async Task StartChangesetAsync()
         {
             if (_batchWriter == null)
-                await StartBatchAsync().ConfigureAwait(false);
+			{
+				await StartBatchAsync().ConfigureAwait(false);
+			}
 
-            await _batchWriter.WriteStartChangesetAsync().ConfigureAwait(false);
+			await _batchWriter.WriteStartChangesetAsync().ConfigureAwait(false);
         }
 
         protected override Task EndChangesetAsync()
@@ -54,9 +59,11 @@ namespace Simple.OData.Client.V3.Adapter
         protected override async Task<object> CreateOperationMessageAsync(Uri uri, string method, string collection, string contentId, bool resultRequired)
         {
             if (_batchWriter == null)
-                await StartBatchAsync().ConfigureAwait(false);
+			{
+				await StartBatchAsync().ConfigureAwait(false);
+			}
 
-            return await CreateBatchOperationMessageAsync(uri, method, collection, contentId, resultRequired).ConfigureAwait(false);
+			return await CreateBatchOperationMessageAsync(uri, method, collection, contentId, resultRequired).ConfigureAwait(false);
         }
 
         private async Task<ODataBatchOperationRequestMessage> CreateBatchOperationMessageAsync(
@@ -65,12 +72,16 @@ namespace Simple.OData.Client.V3.Adapter
             var message = await _batchWriter.CreateOperationRequestMessageAsync(method, uri).ConfigureAwait(false);
 
             if (method != RestVerbs.Get && method != RestVerbs.Delete)
-                message.SetHeader(HttpLiteral.ContentId, contentId);
+			{
+				message.SetHeader(HttpLiteral.ContentId, contentId);
+			}
 
-            if (method == RestVerbs.Post || method == RestVerbs.Put || method == RestVerbs.Patch || method == RestVerbs.Merge)
-                message.SetHeader(HttpLiteral.Prefer, resultRequired ? HttpLiteral.ReturnContent : HttpLiteral.ReturnNoContent);
+			if (method == RestVerbs.Post || method == RestVerbs.Put || method == RestVerbs.Patch || method == RestVerbs.Merge)
+			{
+				message.SetHeader(HttpLiteral.Prefer, resultRequired ? HttpLiteral.ReturnContent : HttpLiteral.ReturnNoContent);
+			}
 
-            if (collection != null && _session.Metadata.EntityCollectionRequiresOptimisticConcurrencyCheck(collection) &&
+			if (collection != null && _session.Metadata.EntityCollectionRequiresOptimisticConcurrencyCheck(collection) &&
                 (method == RestVerbs.Put || method == RestVerbs.Patch || method == RestVerbs.Merge || method == RestVerbs.Delete))
             {
                 message.SetHeader(HttpLiteral.IfMatch, EntityTagHeaderValue.Any.Tag);

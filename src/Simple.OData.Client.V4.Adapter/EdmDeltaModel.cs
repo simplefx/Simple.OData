@@ -19,8 +19,10 @@ namespace Simple.OData.Client.V4.Adapter
             foreach (var property in entityType.StructuralProperties())
             {
                 if (propertyNames.Contains(property.Name))
-                    _entityType.AddStructuralProperty(property.Name, property.Type, property.DefaultValueString);
-            }
+				{
+					_entityType.AddStructuralProperty(property.Name, property.Type, property.DefaultValueString);
+				}
+			}
 
             foreach (var property in entityType.NavigationProperties())
             {
@@ -50,10 +52,14 @@ namespace Simple.OData.Client.V4.Adapter
         public IEdmSchemaType FindDeclaredType(string qualifiedName)
         {
             if (qualifiedName == _entityType.FullName())
-                return _entityType;
-            else
-                return _source.FindDeclaredType(qualifiedName);
-        }
+			{
+				return _entityType;
+			}
+			else
+			{
+				return _source.FindDeclaredType(qualifiedName);
+			}
+		}
 
         public IEnumerable<IEdmOperation> FindDeclaredBoundOperations(IEdmType bindingType) { return _source.FindDeclaredBoundOperations(bindingType); }
         public IEnumerable<IEdmOperation> FindDeclaredBoundOperations(string qualifiedName, IEdmType bindingType) { return _source.FindDeclaredBoundOperations(qualifiedName, bindingType); }

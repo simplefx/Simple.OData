@@ -87,8 +87,10 @@ namespace Simple.OData.Client.Extensions
                     {
                         var propertyValue = nameProperty.GetValueEx(mappingAttribute);
                         if (propertyValue != null)
-                            return propertyValue.ToString();
-                    }
+						{
+							return propertyValue.ToString();
+						}
+					}
                 }
             }
 

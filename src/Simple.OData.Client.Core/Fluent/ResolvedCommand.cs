@@ -198,9 +198,11 @@ namespace Simple.OData.Client
             get
             {
                 if (!Details.HasKey)
-                    return null;
+				{
+					return null;
+				}
 
-                var keyNames = _sesson.Metadata.GetDeclaredKeyPropertyNames(this.EntityCollection.Name).ToList();
+				var keyNames = _sesson.Metadata.GetDeclaredKeyPropertyNames(this.EntityCollection.Name).ToList();
                 var namedKeyValues = Details.KeyValues?.Zip(
                      keyNames,
                      (keyValue, keyName) => new KeyValuePair<string, object>(keyName, keyValue))
@@ -217,11 +219,16 @@ namespace Simple.OData.Client
             get
             {
                 if (Details.EntryData == null)
-                    return new Dictionary<string, object>();
-                if (string.IsNullOrEmpty(Details.DynamicPropertiesContainerName))
-                    return Details.EntryData;
+				{
+					return new Dictionary<string, object>();
+				}
 
-                var entryData = new Dictionary<string, object>();
+				if (string.IsNullOrEmpty(Details.DynamicPropertiesContainerName))
+				{
+					return Details.EntryData;
+				}
+
+				var entryData = new Dictionary<string, object>();
                 foreach (var key in Details.EntryData.Keys.Where(x =>
                     !string.Equals(x, Details.DynamicPropertiesContainerName, StringComparison.OrdinalIgnoreCase)))
                 {
@@ -258,12 +265,16 @@ namespace Simple.OData.Client
                 ok = expression.ExtractLookupColumns(namedKeyValues);
             }
             if (!ok)
-                return null;
+			{
+				return null;
+			}
 
-            if (NamedKeyValuesMatchAnyKey(namedKeyValues, out var matchingNamedKeyValues, out isAlternateKey))
-                return matchingNamedKeyValues.ToIDictionary();
+			if (NamedKeyValuesMatchAnyKey(namedKeyValues, out var matchingNamedKeyValues, out isAlternateKey))
+			{
+				return matchingNamedKeyValues.ToIDictionary();
+			}
 
-            return null;
+			return null;
         }
 
         private bool NamedKeyValuesMatchAnyKey(IDictionary<string, object> namedKeyValues, out IEnumerable<KeyValuePair<string, object>> matchingNamedKeyValues, out bool isAlternateKey)
@@ -271,9 +282,11 @@ namespace Simple.OData.Client
             isAlternateKey = false;
 
             if (NamedKeyValuesMatchPrimaryKey(namedKeyValues, out matchingNamedKeyValues))
-                return true;
+			{
+				return true;
+			}
 
-            if (NamedKeyValuesMatchAlternateKey(namedKeyValues, out matchingNamedKeyValues))
+			if (NamedKeyValuesMatchAlternateKey(namedKeyValues, out matchingNamedKeyValues))
             {
                 isAlternateKey = true;
                 return true;
@@ -298,8 +311,10 @@ namespace Simple.OData.Client
             foreach (var alternateKey in alternateKeys)
             {
                 if (Utils.NamedKeyValuesMatchKeyNames(namedKeyValues, _sesson.Settings.NameMatchResolver, alternateKey, out alternateKeyNamedValues))
-                    return true;
-            }
+				{
+					return true;
+				}
+			}
 
             return false;
         }

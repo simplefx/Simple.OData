@@ -80,9 +80,11 @@ namespace Simple.OData.Client
             var hasPropertiesToUpdate = entryDetails.Properties.Count > 0;
             var usePatch = _session.Settings.PreferredUpdateMethod == ODataUpdateMethod.Patch || !hasPropertiesToUpdate;
             if (HasUpdatedKeyProperties(collection, entryKey, entryData))
-                usePatch = false;
+			{
+				usePatch = false;
+			}
 
-            var updateMethod = usePatch ? RestVerbs.Patch : RestVerbs.Put;
+			var updateMethod = usePatch ? RestVerbs.Patch : RestVerbs.Put;
 
             updateMethod = _session.Settings.PreferredUpdateMethod == ODataUpdateMethod.Merge ? RestVerbs.Merge : updateMethod;
 
@@ -219,18 +221,25 @@ namespace Simple.OData.Client
         private bool IsTextMediaType(string mediaType)
         {
             if (mediaType == null)
-                return true;
+			{
+				return true;
+			}
 
-            var items = mediaType.Split('/');
+			var items = mediaType.Split('/');
             var type = items[0];
             var subtype = items.Length > 0 ? items[1] : string.Empty;
 
             if (type == "text")
-                return true;
-            if (subtype == "text" || subtype == "xml" || subtype == "json")
-                return true;
+			{
+				return true;
+			}
 
-            return false;
+			if (subtype == "text" || subtype == "xml" || subtype == "json")
+			{
+				return true;
+			}
+
+			return false;
         }
     }
 }

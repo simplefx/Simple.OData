@@ -32,9 +32,12 @@ namespace Simple.OData.Client.Extensions
         {
             var result = element.Descendants(ResolvePrefix(element, prefix) + name);
 
-            if (result.Any()) return result;
+            if (result.Any())
+			{
+				return result;
+			}
 
-            if (string.IsNullOrEmpty(prefix))
+			if (string.IsNullOrEmpty(prefix))
             {
                 return element.Descendants().Where(
                     x => x.Name.LocalName == name && 

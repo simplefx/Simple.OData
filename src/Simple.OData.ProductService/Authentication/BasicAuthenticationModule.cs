@@ -94,9 +94,11 @@ namespace Devbridge.BasicAuthentication
         {
             var context = ((HttpApplication)source).Context;
             if (!context.Request.Path.Contains("/secure"))
-                return;
+			{
+				return;
+			}
 
-            var authorizationHeader = context.Request.Headers[HttpAuthorizationHeader];
+			var authorizationHeader = context.Request.Headers[HttpAuthorizationHeader];
 
             string userName = null;
             string password = null;

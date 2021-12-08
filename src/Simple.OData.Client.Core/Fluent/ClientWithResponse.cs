@@ -46,8 +46,11 @@ namespace Simple.OData.Client
                 var stream = new MemoryStream();
                 await _responseMessage.Content.CopyToAsync(stream);
                 if (stream.CanSeek)
-                    stream.Seek(0L, SeekOrigin.Begin);
-                return stream;
+				{
+					stream.Seek(0L, SeekOrigin.Begin);
+				}
+
+				return stream;
             }
             else
             {
@@ -77,11 +80,17 @@ namespace Simple.OData.Client
             {
                 var responseReader = _session.Adapter.GetResponseReader();
                 var response = await responseReader.GetResponseAsync(_responseMessage).ConfigureAwait(false);
-                if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+                if (cancellationToken.IsCancellationRequested)
+				{
+					cancellationToken.ThrowIfCancellationRequested();
+				}
 
-                if (annotations != null && response.Feed != null)
-                    annotations.CopyFrom(response.Feed.Annotations);
-                var result = response.AsEntries(_session.Settings.IncludeAnnotationsInResults);
+				if (annotations != null && response.Feed != null)
+				{
+					annotations.CopyFrom(response.Feed.Annotations);
+				}
+
+				var result = response.AsEntries(_session.Settings.IncludeAnnotationsInResults);
                 return result.Select(x => x.ToObject<T>(TypeCache));
             }
             else
@@ -102,9 +111,12 @@ namespace Simple.OData.Client
             {
                 var responseReader = _session.Adapter.GetResponseReader();
                 var response = await responseReader.GetResponseAsync(_responseMessage).ConfigureAwait(false);
-                if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+                if (cancellationToken.IsCancellationRequested)
+				{
+					cancellationToken.ThrowIfCancellationRequested();
+				}
 
-                var result = response.AsEntries(_session.Settings.IncludeAnnotationsInResults);
+				var result = response.AsEntries(_session.Settings.IncludeAnnotationsInResults);
                 return result?.FirstOrDefault().ToObject<T>(TypeCache);
             }
             else
@@ -125,9 +137,12 @@ namespace Simple.OData.Client
             {
                 var responseReader = _session.Adapter.GetResponseReader();
                 var response = await responseReader.GetResponseAsync(_responseMessage).ConfigureAwait(false);
-                if (cancellationToken.IsCancellationRequested) cancellationToken.ThrowIfCancellationRequested();
+                if (cancellationToken.IsCancellationRequested)
+				{
+					cancellationToken.ThrowIfCancellationRequested();
+				}
 
-                var result = response.AsEntries(_session.Settings.IncludeAnnotationsInResults);
+				var result = response.AsEntries(_session.Settings.IncludeAnnotationsInResults);
 
                 object extractScalar(IDictionary<string, object> x) => (x == null) || !x.Any() ? null : x.Values.First();
                 return result == null ? default(U) : _session.TypeCache.Convert<U>(extractScalar(result.FirstOrDefault()));

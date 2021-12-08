@@ -94,28 +94,36 @@ namespace Simple.OData.Client.Tests
             {
                 var productName = product["ProductName"] as string;
                 if (string.IsNullOrEmpty(productName) || productName.StartsWith("Test"))
-                    await _client.DeleteEntryAsync("Products", product);
-            }
+				{
+					await _client.DeleteEntryAsync("Products", product);
+				}
+			}
             var categories = await _client.FindEntriesAsync("Categories");
             foreach (var category in categories)
             {
                 var categoryName = category["CategoryName"] as string;
                 if (string.IsNullOrEmpty(categoryName) || categoryName.StartsWith("Test"))
-                    await _client.DeleteEntryAsync("Categories", category);
-            }
+				{
+					await _client.DeleteEntryAsync("Categories", category);
+				}
+			}
             var transports = await _client.FindEntriesAsync("Transport");
             foreach (var transport in transports)
             {
                 if (int.Parse(transport["TransportID"].ToString()) > 2)
-                    await _client.DeleteEntryAsync("Transport", transport);
-            }
+				{
+					await _client.DeleteEntryAsync("Transport", transport);
+				}
+			}
             var employees = await _client.FindEntriesAsync("Employees");
             foreach (var employee in employees)
             {
                 var employeeName = employee["LastName"] as string;
                 if (string.IsNullOrEmpty(employeeName) || employeeName.StartsWith("Test"))
-                    await _client.DeleteEntryAsync("Employees", employee);
-            }
+				{
+					await _client.DeleteEntryAsync("Employees", employee);
+				}
+			}
         }
 
         public static async Task AssertThrowsAsync<T>(Func<Task> testCode) where T : Exception

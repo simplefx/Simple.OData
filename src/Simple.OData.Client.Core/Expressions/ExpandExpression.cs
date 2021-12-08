@@ -15,9 +15,11 @@ namespace Simple.OData.Client
             expandExpressionVisitor.Visit(expression);
 
             if (expandExpressionVisitor.ExpandAssociations.Any())
-                return expandExpressionVisitor.ExpandAssociations;
+			{
+				return expandExpressionVisitor.ExpandAssociations;
+			}
 
-            throw Utils.NotSupportedExpression(expression);
+			throw Utils.NotSupportedExpression(expression);
         }
     }
 
@@ -46,18 +48,23 @@ namespace Simple.OData.Client
 
         protected override Expression VisitUnary(UnaryExpression node)
         {
-            if (node.NodeType != ExpressionType.Convert) return base.VisitUnary(node);
-            
-            ExpandAssociations.AddRange(ExtractNestedExpandAssociations(node.Operand));
+            if (node.NodeType != ExpressionType.Convert)
+			{
+				return base.VisitUnary(node);
+			}
+
+			ExpandAssociations.AddRange(ExtractNestedExpandAssociations(node.Operand));
             return node;
         }
 
         protected override Expression VisitMethodCall(MethodCallExpression node)
         {
             if (node.Arguments.Count != 2)
-                throw Utils.NotSupportedExpression(node);
+			{
+				throw Utils.NotSupportedExpression(node);
+			}
 
-            var association = AddNestedExpandAssociationAndGetDeepestChild(node.Arguments[0]);
+			var association = AddNestedExpandAssociationAndGetDeepestChild(node.Arguments[0]);
 
             switch (node.Method.Name)
             {
@@ -71,9 +78,11 @@ namespace Simple.OData.Client
                 case "ThenBy":
                 {
                     if ((node.Arguments[0] as MethodCallExpression)?.Method.Name == "Select")
-                        throw Utils.NotSupportedExpression(node);
+						{
+							throw Utils.NotSupportedExpression(node);
+						}
 
-                    association.OrderByColumns
+						association.OrderByColumns
                         .AddRange(node.Arguments[1]
                             .ExtractColumnNames(_typeCache).Select(c => new ODataOrderByColumn(c, false)));
 
@@ -83,9 +92,11 @@ namespace Simple.OData.Client
                 case "ThenByDescending":
                 {
                     if ((node.Arguments[0] as MethodCallExpression)?.Method.Name == "Select")
-                        throw Utils.NotSupportedExpression(node);
+						{
+							throw Utils.NotSupportedExpression(node);
+						}
 
-                    association.OrderByColumns
+						association.OrderByColumns
                         .AddRange(node.Arguments[1]
                             .ExtractColumnNames(_typeCache).Select(c => new ODataOrderByColumn(c, true)));
 
@@ -96,11 +107,15 @@ namespace Simple.OData.Client
                     var filterExpression =
                         ODataExpression.FromLinqExpression((node.Arguments[1] as LambdaExpression)?.Body);
                     if (ReferenceEquals(association.FilterExpression, null))
-                        association.FilterExpression = filterExpression;
-                    else
-                        association.FilterExpression = association.FilterExpression && filterExpression;
+						{
+							association.FilterExpression = filterExpression;
+						}
+						else
+						{
+							association.FilterExpression = association.FilterExpression && filterExpression;
+						}
 
-                    return node;
+						return node;
                 }
                 default:
                     throw Utils.NotSupportedExpression(node);

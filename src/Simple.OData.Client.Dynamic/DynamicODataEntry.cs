@@ -49,8 +49,11 @@ namespace Simple.OData.Client
         {
             var value = base[propertyName];
             if (value is IDictionary<string, object>)
-                value = new DynamicODataEntry(value as IDictionary<string, object>, TypeCache);
-            return value;
+			{
+				value = new DynamicODataEntry(value as IDictionary<string, object>, TypeCache);
+			}
+
+			return value;
         }
 
         public DynamicMetaObject GetMetaObject(Expression parameter)

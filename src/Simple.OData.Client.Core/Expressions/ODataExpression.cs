@@ -150,8 +150,11 @@ namespace Simple.OData.Client
                 case ExpressionType.And:
                     var ok = _left.ExtractLookupColumns(lookupColumns);
                     if (ok)
-                        ok = _right.ExtractLookupColumns(lookupColumns);
-                    return ok;
+					{
+						ok = _right.ExtractLookupColumns(lookupColumns);
+					}
+
+					return ok;
 
                 case ExpressionType.Equal:
                     var expr = this.IsValueConversion ? this : _left;
@@ -168,8 +171,10 @@ namespace Simple.OData.Client
                         }
                         var key = expr.Reference;
                         if (key != null && !lookupColumns.ContainsKey(key))
-                            lookupColumns.Add(key, _right);
-                    }
+						{
+							lookupColumns.Add(key, _right);
+						}
+					}
                     return true;
 
                 default:

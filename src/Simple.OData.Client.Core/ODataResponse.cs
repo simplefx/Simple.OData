@@ -23,10 +23,14 @@ namespace Simple.OData.Client
         public void SetAnnotations(ODataFeedAnnotations annotations)
         {
             if (this.Annotations == null)
-                this.Annotations = annotations;
-            else
-                this.Annotations.Merge(annotations);
-        }
+			{
+				this.Annotations = annotations;
+			}
+			else
+			{
+				this.Annotations.Merge(annotations);
+			}
+		}
     }
 
     public class AnnotatedEntry
@@ -44,18 +48,26 @@ namespace Simple.OData.Client
         public void SetAnnotations(ODataEntryAnnotations annotations)
         {
             if (this.Annotations == null)
-                this.Annotations = annotations;
-            else
-                this.Annotations.Merge(annotations);
-        }
+			{
+				this.Annotations = annotations;
+			}
+			else
+			{
+				this.Annotations.Merge(annotations);
+			}
+		}
 
         public void SetLinkAnnotations(ODataFeedAnnotations annotations)
         {
             if (this.LinkAnnotations == null)
-                this.LinkAnnotations = annotations;
-            else
-                this.LinkAnnotations.Merge(annotations);
-        }
+			{
+				this.LinkAnnotations = annotations;
+			}
+			else
+			{
+				this.LinkAnnotations.Merge(annotations);
+			}
+		}
 
         public IDictionary<string, object> GetData(bool includeAnnotations)
         {
@@ -228,17 +240,21 @@ namespace Simple.OData.Client
         private IDictionary<string, object> ExtractData(AnnotatedEntry entry, bool includeAnnotations)
         {
             if (entry == null || entry.Data == null)
-                return null;
+			{
+				return null;
+			}
 
-            return includeAnnotations ? DataWithAnnotations(entry.Data, entry.Annotations) : entry.Data;
+			return includeAnnotations ? DataWithAnnotations(entry.Data, entry.Annotations) : entry.Data;
         }
 
         private IDictionary<string, object> ExtractDictionary(AnnotatedEntry entry, bool includeAnnotations)
         {
             if (entry == null || entry.Data == null)
-                return null;
+			{
+				return null;
+			}
 
-            var data = entry.Data;
+			var data = entry.Data;
             if (data.Keys.Count == 1 && data.ContainsKey(FluentCommand.ResultLiteral) &&
                 data.Values.First() is IDictionary<string, object>)
             {

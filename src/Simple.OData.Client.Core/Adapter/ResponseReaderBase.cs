@@ -35,7 +35,8 @@ namespace Simple.OData.Client
                 {
                     var actionResponse = batchResponse.Batch[responseIndex];
                     if (actionResponse.Exception != null)
-                        if (actionResponse.StatusCode == (int)HttpStatusCode.NotFound && _session.Settings.IgnoreResourceNotFoundException)
+					{
+						if (actionResponse.StatusCode == (int)HttpStatusCode.NotFound && _session.Settings.IgnoreResourceNotFoundException)
                         {
                             await actions[actionIndex](new ODataClient(client as ODataClient, actionResponse)).ConfigureAwait(false);
                         }
@@ -43,7 +44,8 @@ namespace Simple.OData.Client
                         {
                             exceptions.Add(actionResponse.Exception);
                         }
-                    else
+					}
+					else
                     {
                         await actions[actionIndex](new ODataClient(client as ODataClient, actionResponse)).ConfigureAwait(false);
                     }
@@ -70,11 +72,15 @@ namespace Simple.OData.Client
         {
             var feedNode = nodeStack.Pop();
             if (nodeStack.Any())
-                nodeStack.Peek().Feed = feedNode.Feed;
-            else
-                rootNode = feedNode;
-            
-            feedNode.Feed.SetAnnotations(feedAnnotations);            
+			{
+				nodeStack.Peek().Feed = feedNode.Feed;
+			}
+			else
+			{
+				rootNode = feedNode;
+			}
+
+			feedNode.Feed.SetAnnotations(feedAnnotations);            
         }
 
         protected void StartEntry(Stack<ResponseNode> nodeStack)
