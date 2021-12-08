@@ -2,10 +2,10 @@
 
 namespace Simple.OData.Client
 {
-    public static class ODataDynamicDataAggregation
-    {
-        public static DynamicDataAggregation Builder => new();
+	public static class ODataDynamicDataAggregation
+	{
+		public static DynamicDataAggregation Builder => new();
 
-        public static DynamicAggregationFunction AggregationFunction => new();
-    }
+		public static DynamicAggregationFunction AggregationFunction => new();
+	}
 }

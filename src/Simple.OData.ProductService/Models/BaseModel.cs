@@ -4,8 +4,8 @@
 namespace Simple.OData.ProductService.Models
 // ReSharper restore CheckNamespace
 {
-    public abstract class BaseModel
-    {
-        public Guid Id { get; set; }
-    }
+	public abstract class BaseModel
+	{
+		public Guid Id { get; set; }
+	}
 }

@@ -6,7 +6,7 @@ using System.ServiceModel.Web;
 #endif
 using System.Text;
 using System.Threading;
-    
+
 
 namespace Simple.OData.Client.Tests
 {

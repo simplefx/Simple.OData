@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Simple.OData.Client.Tests.Entities
 {
-    public class Mammal : Animal
-    {
-    }
+	public class Mammal : Animal
+	{
+	}
 }

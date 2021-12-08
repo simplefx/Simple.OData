@@ -7,69 +7,69 @@ using Microsoft.Data.OData;
 
 namespace Simple.OData.Client.V3.Adapter
 {
-    public class BatchWriter : BatchWriterBase
-    {
-        private ODataBatchWriter _batchWriter;
-        private ODataRequestMessage _requestMessage;
-        private ODataMessageWriter _messageWriter;
+	public class BatchWriter : BatchWriterBase
+	{
+		private ODataBatchWriter _batchWriter;
+		private ODataRequestMessage _requestMessage;
+		private ODataMessageWriter _messageWriter;
 
-        public BatchWriter(ISession session, IDictionary<object, IDictionary<string, object>> batchEntries)
-            : base(session, batchEntries)
-        {
-        }
+		public BatchWriter(ISession session, IDictionary<object, IDictionary<string, object>> batchEntries)
+			: base(session, batchEntries)
+		{
+		}
 
-        public async override Task StartBatchAsync()
-        {
-            _requestMessage = new ODataRequestMessage() { Url = _session.Settings.BaseUri };
-            _messageWriter = new ODataMessageWriter(_requestMessage);
-            _batchWriter = await _messageWriter.CreateODataBatchWriterAsync().ConfigureAwait(false);
-            await _batchWriter.WriteStartBatchAsync().ConfigureAwait(false);
-            this.HasOperations = true;
-        }
+		public async override Task StartBatchAsync()
+		{
+			_requestMessage = new ODataRequestMessage() { Url = _session.Settings.BaseUri };
+			_messageWriter = new ODataMessageWriter(_requestMessage);
+			_batchWriter = await _messageWriter.CreateODataBatchWriterAsync().ConfigureAwait(false);
+			await _batchWriter.WriteStartBatchAsync().ConfigureAwait(false);
+			this.HasOperations = true;
+		}
 
-        public async override Task<HttpRequestMessage> EndBatchAsync()
-        {
-            if (_pendingChangeSet)
+		public async override Task<HttpRequestMessage> EndBatchAsync()
+		{
+			if (_pendingChangeSet)
 			{
 				await _batchWriter.WriteEndChangesetAsync().ConfigureAwait(false);
 			}
 
 			await _batchWriter.WriteEndBatchAsync().ConfigureAwait(false);
-            var stream = await _requestMessage.GetStreamAsync().ConfigureAwait(false);
-            return CreateMessageFromStream(stream, _requestMessage.Url, _requestMessage.GetHeader);
-        }
+			var stream = await _requestMessage.GetStreamAsync().ConfigureAwait(false);
+			return CreateMessageFromStream(stream, _requestMessage.Url, _requestMessage.GetHeader);
+		}
 
-        protected async override Task StartChangesetAsync()
-        {
-            if (_batchWriter == null)
+		protected async override Task StartChangesetAsync()
+		{
+			if (_batchWriter == null)
 			{
 				await StartBatchAsync().ConfigureAwait(false);
 			}
 
 			await _batchWriter.WriteStartChangesetAsync().ConfigureAwait(false);
-        }
+		}
 
-        protected override Task EndChangesetAsync()
-        {
-            return _batchWriter.WriteEndChangesetAsync();
-        }
+		protected override Task EndChangesetAsync()
+		{
+			return _batchWriter.WriteEndChangesetAsync();
+		}
 
-        protected async override Task<object> CreateOperationMessageAsync(Uri uri, string method, string collection, string contentId, bool resultRequired)
-        {
-            if (_batchWriter == null)
+		protected async override Task<object> CreateOperationMessageAsync(Uri uri, string method, string collection, string contentId, bool resultRequired)
+		{
+			if (_batchWriter == null)
 			{
 				await StartBatchAsync().ConfigureAwait(false);
 			}
 
 			return await CreateBatchOperationMessageAsync(uri, method, collection, contentId, resultRequired).ConfigureAwait(false);
-        }
+		}
 
-        private async Task<ODataBatchOperationRequestMessage> CreateBatchOperationMessageAsync(
-            Uri uri, string method, string collection, string contentId, bool resultRequired)
-        {
-            var message = await _batchWriter.CreateOperationRequestMessageAsync(method, uri).ConfigureAwait(false);
+		private async Task<ODataBatchOperationRequestMessage> CreateBatchOperationMessageAsync(
+			Uri uri, string method, string collection, string contentId, bool resultRequired)
+		{
+			var message = await _batchWriter.CreateOperationRequestMessageAsync(method, uri).ConfigureAwait(false);
 
-            if (method != RestVerbs.Get && method != RestVerbs.Delete)
+			if (method != RestVerbs.Get && method != RestVerbs.Delete)
 			{
 				message.SetHeader(HttpLiteral.ContentId, contentId);
 			}
@@ -80,12 +80,12 @@ namespace Simple.OData.Client.V3.Adapter
 			}
 
 			if (collection != null && _session.Metadata.EntityCollectionRequiresOptimisticConcurrencyCheck(collection) &&
-                (method == RestVerbs.Put || method == RestVerbs.Patch || method == RestVerbs.Merge || method == RestVerbs.Delete))
-            {
-                message.SetHeader(HttpLiteral.IfMatch, EntityTagHeaderValue.Any.Tag);
-            }
+				(method == RestVerbs.Put || method == RestVerbs.Patch || method == RestVerbs.Merge || method == RestVerbs.Delete))
+			{
+				message.SetHeader(HttpLiteral.IfMatch, EntityTagHeaderValue.Any.Tag);
+			}
 
-            return message;
-        }
-    }
+			return message;
+		}
+	}
 }

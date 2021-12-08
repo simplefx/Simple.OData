@@ -6,110 +6,110 @@ using System.Reflection;
 
 namespace Simple.OData.Client.Extensions
 {
-    public static class MemberInfoExtensions
-    {
-        private static readonly ConcurrentDictionary<MemberInfo, MappingInfo> cache = new();
+	public static class MemberInfoExtensions
+	{
+		private static readonly ConcurrentDictionary<MemberInfo, MappingInfo> cache = new();
 
-        public static bool IsNotMapped(this MemberInfo memberInfo)
-        {
-            return MappingInfo(memberInfo).IsNotMapped;
-        }
+		public static bool IsNotMapped(this MemberInfo memberInfo)
+		{
+			return MappingInfo(memberInfo).IsNotMapped;
+		}
 
-        /// <summary>
-        /// Extract a column name from the member's attributes
-        /// </summary>
-        /// <param name="memberInfo"></param>
-        /// <returns></returns>
-        public static string GetMappedName(this MemberInfo memberInfo)
-        {
-            return MappingInfo(memberInfo).MappedName;
-        }
+		/// <summary>
+		/// Extract a column name from the member's attributes
+		/// </summary>
+		/// <param name="memberInfo"></param>
+		/// <returns></returns>
+		public static string GetMappedName(this MemberInfo memberInfo)
+		{
+			return MappingInfo(memberInfo).MappedName;
+		}
 
-        private static MappingInfo MappingInfo(MemberInfo memberInfo)
-        {
-            var info = cache.GetOrAdd(memberInfo, MappingInfoFactory);
+		private static MappingInfo MappingInfo(MemberInfo memberInfo)
+		{
+			var info = cache.GetOrAdd(memberInfo, MappingInfoFactory);
 
-            return info;
-        }
+			return info;
+		}
 
-        private static MappingInfo MappingInfoFactory(MemberInfo memberInfo)
-        {
-            var attributes = memberInfo.GetCustomAttributes().ToList();
+		private static MappingInfo MappingInfoFactory(MemberInfo memberInfo)
+		{
+			var attributes = memberInfo.GetCustomAttributes().ToList();
 
-            return new MappingInfo
-            {
-                IsNotMapped = attributes.IsNotMapped(),
-                MappedName = memberInfo.Name.GetMappedName(attributes)
-            };
-        }
+			return new MappingInfo
+			{
+				IsNotMapped = attributes.IsNotMapped(),
+				MappedName = memberInfo.Name.GetMappedName(attributes)
+			};
+		}
 
-        private static bool IsNotMapped(this IList<Attribute> attributes)
-        {
-            var supportedAttributeNames = new[]
-            {
-                "NotMappedAttribute",
-                "JsonIgnoreAttribute",
-            };
+		private static bool IsNotMapped(this IList<Attribute> attributes)
+		{
+			var supportedAttributeNames = new[]
+			{
+				"NotMappedAttribute",
+				"JsonIgnoreAttribute",
+			};
 
-            return attributes.Any(x => supportedAttributeNames.Contains(x.GetType().Name));
-        }
+			return attributes.Any(x => supportedAttributeNames.Contains(x.GetType().Name));
+		}
 
-        private static string GetMappedName(this string name, IList<Attribute> attributes)
-        {
-            var supportedAttributeNames = new[]
-            {
-                "DataAttribute",
-                "DataMemberAttribute",
-                "ColumnAttribute",
-                "JsonPropertyAttribute",
-                "JsonPropertyNameAttribute",
-            };
+		private static string GetMappedName(this string name, IList<Attribute> attributes)
+		{
+			var supportedAttributeNames = new[]
+			{
+				"DataAttribute",
+				"DataMemberAttribute",
+				"ColumnAttribute",
+				"JsonPropertyAttribute",
+				"JsonPropertyNameAttribute",
+			};
 
-            var mappingAttribute = attributes.FirstOrDefault(x => supportedAttributeNames.Any(y => x.GetType().Name == y));
-            if (mappingAttribute == null)
-            {
-                mappingAttribute = attributes.FirstOrDefault(x => x.GetType().GetNamedProperty("PropertyName") != null);
-            }
+			var mappingAttribute = attributes.FirstOrDefault(x => supportedAttributeNames.Any(y => x.GetType().Name == y));
+			if (mappingAttribute == null)
+			{
+				mappingAttribute = attributes.FirstOrDefault(x => x.GetType().GetNamedProperty("PropertyName") != null);
+			}
 
-            var attributePropertyNames = new[]
-            {
-                "Name",
-                "PropertyName",
-            };
-            if (mappingAttribute != null)
-            {
-                foreach (var attributeProperty in attributePropertyNames)
-                {
-                    var nameProperty = mappingAttribute.GetType().GetNamedProperty(attributeProperty);
-                    if (nameProperty != null)
-                    {
-                        var propertyValue = nameProperty.GetValueEx(mappingAttribute);
-                        if (propertyValue != null)
+			var attributePropertyNames = new[]
+			{
+				"Name",
+				"PropertyName",
+			};
+			if (mappingAttribute != null)
+			{
+				foreach (var attributeProperty in attributePropertyNames)
+				{
+					var nameProperty = mappingAttribute.GetType().GetNamedProperty(attributeProperty);
+					if (nameProperty != null)
+					{
+						var propertyValue = nameProperty.GetValueEx(mappingAttribute);
+						if (propertyValue != null)
 						{
 							return propertyValue.ToString();
 						}
 					}
-                }
-            }
+				}
+			}
 
-            return name;
-        }
+			return name;
+		}
 
-        public static object GetValueEx(this MemberInfo memberInfo, object instance)
-        {
-            return MemberAccessor.GetValue(instance, memberInfo);
-        }
+		public static object GetValueEx(this MemberInfo memberInfo, object instance)
+		{
+			return MemberAccessor.GetValue(instance, memberInfo);
+		}
 
-        public static void SetValueEx(this MemberInfo memberInfo, object instance, object value)
-        {
-            MemberAccessor.SetValue(instance, memberInfo, value);
-        }
-    }
+		public static void SetValueEx(this MemberInfo memberInfo, object instance, object value)
+		{
+			MemberAccessor.SetValue(instance, memberInfo, value);
+		}
+	}
 
-    public class MappingInfo
-    {
-        public bool IsNotMapped { get; set; }
+	public class MappingInfo
+	{
+		public bool IsNotMapped { get; set; }
 
-        public string MappedName { get; set; }
-    }
+		public string MappedName { get; set; }
+	}
 }
