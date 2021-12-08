@@ -21,7 +21,7 @@ namespace Simple.OData.Client
         /// <param name="response">The instance of <see cref="HttpResponseMessage"/>.</param>
         /// <param name="exceptionMessageSource">The source used to build exception message, see <see cref="WebRequestExceptionMessageSource"/></param>
         /// <returns>The instance of <see cref="WebRequestException"/>.</returns>
-        public static async Task<WebRequestException> CreateFromResponseMessageAsync(HttpResponseMessage response, WebRequestExceptionMessageSource exceptionMessageSource)
+        public async static Task<WebRequestException> CreateFromResponseMessageAsync(HttpResponseMessage response, WebRequestExceptionMessageSource exceptionMessageSource)
         {
             var requestUri = response.RequestMessage?.RequestUri;
             return new WebRequestException(response.ReasonPhrase, response.StatusCode, requestUri,

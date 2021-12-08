@@ -111,7 +111,7 @@ namespace Simple.OData.Client.Tests
             return entry;
         }
 
-        protected override async Task DeleteTestData()
+        protected async override Task DeleteTestData()
         {
             try
             {

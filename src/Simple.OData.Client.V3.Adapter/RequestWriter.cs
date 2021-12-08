@@ -25,7 +25,7 @@ namespace Simple.OData.Client.V3.Adapter
             _model = model;
         }
 
-        protected override async Task<Stream> WriteEntryContentAsync(string method, string collection, string commandText, IDictionary<string, object> entryData, bool resultRequired)
+        protected async override Task<Stream> WriteEntryContentAsync(string method, string collection, string commandText, IDictionary<string, object> entryData, bool resultRequired)
         {
             var message = IsBatch
                 ? await CreateBatchOperationMessageAsync(method, collection, entryData, commandText, resultRequired).ConfigureAwait(false) 
@@ -74,7 +74,7 @@ namespace Simple.OData.Client.V3.Adapter
             }
         }
 
-        protected override async Task<Stream> WriteLinkContentAsync(string method, string commandText, string linkIdent)
+        protected async override Task<Stream> WriteLinkContentAsync(string method, string commandText, string linkIdent)
         {
             var message = IsBatch
                 ? await CreateBatchOperationMessageAsync(method, null, null, commandText, false).ConfigureAwait(false) 
@@ -97,7 +97,7 @@ namespace Simple.OData.Client.V3.Adapter
             }
         }
 
-        protected override async Task<Stream> WriteFunctionContentAsync(string method, string commandText)
+        protected async override Task<Stream> WriteFunctionContentAsync(string method, string commandText)
         {
             if (IsBatch)
 			{
@@ -107,7 +107,7 @@ namespace Simple.OData.Client.V3.Adapter
 			return null;
         }
 
-        protected override async Task<Stream> WriteActionContentAsync(string method, string commandText, string actionName, string boundTypeName, IDictionary<string, object> parameters)
+        protected async override Task<Stream> WriteActionContentAsync(string method, string commandText, string actionName, string boundTypeName, IDictionary<string, object> parameters)
         {
             var message = IsBatch
                 ? await CreateBatchOperationMessageAsync(method, null, null, commandText, true).ConfigureAwait(false) 
@@ -170,7 +170,7 @@ namespace Simple.OData.Client.V3.Adapter
             }
         }
 
-        protected override async Task<Stream> WriteStreamContentAsync(Stream stream, bool writeAsText)
+        protected async override Task<Stream> WriteStreamContentAsync(Stream stream, bool writeAsText)
         {
             var message = new ODataRequestMessage();
             using (var messageWriter = new ODataMessageWriter(message, GetWriterSettings(ODataFormat.RawValue), _model))

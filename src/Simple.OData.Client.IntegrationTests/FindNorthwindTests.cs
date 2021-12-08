@@ -54,7 +54,7 @@ namespace Simple.OData.Client.Tests
     {
         protected FindNorthwindTests(string serviceUri, ODataPayloadFormat payloadFormat) : base(serviceUri, payloadFormat) {}
 
-        protected override async Task DeleteTestData()
+        protected async override Task DeleteTestData()
         {
             var products = await _client.For("Products").Select("ProductID", "ProductName").FindEntriesAsync();
             foreach (var product in products)

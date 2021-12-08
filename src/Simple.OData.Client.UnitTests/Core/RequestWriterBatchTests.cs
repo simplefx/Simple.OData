@@ -18,7 +18,7 @@ namespace Simple.OData.Client.Tests.Core
         public override string MetadataFile => "Northwind3.xml";
         public override IFormatSettings FormatSettings => new ODataV3Format();
 
-        protected override async Task<IRequestWriter> CreateBatchRequestWriter()
+        protected async override Task<IRequestWriter> CreateBatchRequestWriter()
         {
             return new V3.Adapter.RequestWriter(
                 _session,
@@ -33,7 +33,7 @@ namespace Simple.OData.Client.Tests.Core
         public override string MetadataFile => "Northwind4.xml";
         public override IFormatSettings FormatSettings => new ODataV4Format();
 
-        protected override async Task<IRequestWriter> CreateBatchRequestWriter()
+        protected async override Task<IRequestWriter> CreateBatchRequestWriter()
         {
             return new V4.Adapter.RequestWriter(
                 _session,

@@ -126,7 +126,7 @@ namespace Simple.OData.Client.Tests
 			}
         }
 
-        public static async Task AssertThrowsAsync<T>(Func<Task> testCode) where T : Exception
+        public async static Task AssertThrowsAsync<T>(Func<Task> testCode) where T : Exception
         {
             try
             {

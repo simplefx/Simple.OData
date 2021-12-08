@@ -35,7 +35,7 @@ namespace Simple.OData.Client
         {
         }
 
-        protected internal ODataExpression(ODataExpression expression)
+        internal protected ODataExpression(ODataExpression expression)
         {
             _functionCaller = expression._functionCaller;
             _left = expression._left;
@@ -48,47 +48,47 @@ namespace Simple.OData.Client
             this.Function = expression.Function;
         }
 
-        protected internal ODataExpression(object value)
+        internal protected ODataExpression(object value)
         {
             this.Value = value;
         }
 
-        protected internal ODataExpression(string reference)
+        internal protected ODataExpression(string reference)
         {
             this.Reference = reference;
         }
 
-        protected internal ODataExpression(string reference, object value)
+        internal protected ODataExpression(string reference, object value)
         {
             this.Reference = reference;
             this.Value = value;
         }
 
-        protected internal ODataExpression(ExpressionFunction function)
+        internal protected ODataExpression(ExpressionFunction function)
         {
             this.Function = function;
         }
 
-        protected internal ODataExpression(ODataExpression left, ODataExpression right, ExpressionType expressionOperator)
+        internal protected ODataExpression(ODataExpression left, ODataExpression right, ExpressionType expressionOperator)
         {
             _left = left;
             _right = right;
             _operator = expressionOperator;
         }
 
-        protected internal ODataExpression(ODataExpression caller, string reference)
+        internal protected ODataExpression(ODataExpression caller, string reference)
         {
             _functionCaller = caller;
             this.Reference = reference;
         }
 
-        protected internal ODataExpression(ODataExpression caller, ExpressionFunction function)
+        internal protected ODataExpression(ODataExpression caller, ExpressionFunction function)
         {
             _functionCaller = caller;
             this.Function = function;
         }
 
-        protected internal ODataExpression(ODataExpression expr, Type conversionType)
+        internal protected ODataExpression(ODataExpression expr, Type conversionType)
         {
             _conversionType = conversionType;
             this.Value = expr;

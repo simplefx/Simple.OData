@@ -20,7 +20,7 @@ namespace Simple.OData.Client.V4.Adapter
         {
         }
 
-        public override async Task StartBatchAsync()
+        public async override Task StartBatchAsync()
         {
             _requestMessage = new ODataRequestMessage() { Url = _session.Settings.BaseUri };
             _messageWriter = new ODataMessageWriter(_requestMessage, new ODataMessageWriterSettings { BaseUri = _session.Settings.BaseUri });
@@ -29,7 +29,7 @@ namespace Simple.OData.Client.V4.Adapter
             this.HasOperations = true;
         }
 
-        public override async Task<HttpRequestMessage> EndBatchAsync()
+        public async override Task<HttpRequestMessage> EndBatchAsync()
         {
             if (_pendingChangeSet)
 			{
@@ -41,7 +41,7 @@ namespace Simple.OData.Client.V4.Adapter
             return CreateMessageFromStream(stream, _requestMessage.Url, _requestMessage.GetHeader);
         }
 
-        protected override async Task StartChangesetAsync()
+        protected async override Task StartChangesetAsync()
         {
             if (_batchWriter == null)
 			{
@@ -56,7 +56,7 @@ namespace Simple.OData.Client.V4.Adapter
             return _batchWriter.WriteEndChangesetAsync();
         }
 
-        protected override async Task<object> CreateOperationMessageAsync(Uri uri, string method, string collection, string contentId, bool resultRequired)
+        protected async override Task<object> CreateOperationMessageAsync(Uri uri, string method, string collection, string contentId, bool resultRequired)
         {
             if (_batchWriter == null)
 			{

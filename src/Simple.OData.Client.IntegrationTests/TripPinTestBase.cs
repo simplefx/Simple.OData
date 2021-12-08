@@ -11,7 +11,7 @@ namespace Simple.OData.Client.Tests
         }
 
 #pragma warning disable 1998
-        protected override async Task DeleteTestData()
+        protected async override Task DeleteTestData()
         {
             try
             {

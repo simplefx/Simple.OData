@@ -104,7 +104,7 @@ namespace Simple.OData.Client
         /// <returns>
         /// The service metadata.
         /// </returns>
-        public static async Task<T> GetMetadataAsync<T>(Uri baseUri, ICredentials credentials, CancellationToken cancellationToken)
+        public async static Task<T> GetMetadataAsync<T>(Uri baseUri, ICredentials credentials, CancellationToken cancellationToken)
         {
             var session = Session.FromSettings(new ODataClientSettings(baseUri, credentials));
             await session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
@@ -150,7 +150,7 @@ namespace Simple.OData.Client
         /// <param name="credentials">The OData service access credentials.</param>
         /// <param name="cancellationToken">The cancellation token.</param>
         /// <returns>The service metadata.</returns>
-        public static async Task<string> GetMetadataDocumentAsync(Uri baseUri, ICredentials credentials, CancellationToken cancellationToken)
+        public async static Task<string> GetMetadataDocumentAsync(Uri baseUri, ICredentials credentials, CancellationToken cancellationToken)
         {
             var session = Session.FromSettings(new ODataClientSettings(baseUri, credentials));
             await session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);

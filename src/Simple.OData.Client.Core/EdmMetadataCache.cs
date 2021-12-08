@@ -29,7 +29,7 @@ namespace Simple.OData.Client
             return _instances.GetOrAdd(key, valueFactory);
         }
 
-        public static async Task<EdmMetadataCache> GetOrAddAsync(string key, Func<string, Task<EdmMetadataCache>> valueFactory)
+        public async static Task<EdmMetadataCache> GetOrAddAsync(string key, Func<string, Task<EdmMetadataCache>> valueFactory)
         {
             // Cheaper to check first before we do the remote call
             if (_instances.TryGetValue(key, out var found))

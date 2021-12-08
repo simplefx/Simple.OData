@@ -43,7 +43,7 @@ namespace Simple.OData.Client.Tests
             _client = CreateClientWithDefaultSettings();
         }
 
-        private static async Task<string> GetReadWriteUri(string serviceUri)
+        private async static Task<string> GetReadWriteUri(string serviceUri)
         {
             var response = await metadataHttpClient.GetAsync(serviceUri).ConfigureAwait(false);
             var uri = response.RequestMessage.RequestUri.AbsoluteUri;
@@ -101,7 +101,7 @@ namespace Simple.OData.Client.Tests
 
         protected abstract Task DeleteTestData();
 
-        public static async Task AssertThrowsAsync<T>(Func<Task> testCode) where T : Exception
+        public async static Task AssertThrowsAsync<T>(Func<Task> testCode) where T : Exception
         {
             try
             {

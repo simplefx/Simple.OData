@@ -247,7 +247,7 @@ namespace Simple.OData.Client.Tests
             public int ExceptionCount { get; set; }
         }
 
-        private static async Task RunClient(IODataClient client, int productID, ExecutionSummary result)
+        private async static Task RunClient(IODataClient client, int productID, ExecutionSummary result)
         {
             try
             {

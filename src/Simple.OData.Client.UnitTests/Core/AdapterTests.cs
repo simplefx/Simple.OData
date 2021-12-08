@@ -21,7 +21,7 @@ namespace Simple.OData.Client.Tests.Core
                 this.session = session;
             }
 
-            protected override async Task<object> CreateOperationMessageAsync(Uri uri, string method, string collection, string contentId, bool resultRequired)
+            protected async override Task<object> CreateOperationMessageAsync(Uri uri, string method, string collection, string contentId, bool resultRequired)
             {
                 var result = await base.CreateOperationMessageAsync(AppendToken(uri), method, collection, contentId, resultRequired);
                 if (result is IODataRequestMessage request)

@@ -17,7 +17,7 @@ namespace Simple.OData.Client.Benchmarks
     public class TripPinPeople
     {
         [Benchmark]
-        public static async Task FindTypedPeopleWithTripsAndFriends()
+        public async static Task FindTypedPeopleWithTripsAndFriends()
         {
             var result = await Utils.GetClient("TripPin.xml", "TripPin_result_20.json")
                 .For<Person>()
@@ -28,7 +28,7 @@ namespace Simple.OData.Client.Benchmarks
         }
 
         [Benchmark]
-        public static async Task FindUntypedPeopleWithTripsAndFriends()
+        public async static Task FindUntypedPeopleWithTripsAndFriends()
         {
             var result = await Utils.GetClient("TripPin.xml", "TripPin_result_20.json")
                 .For("People")

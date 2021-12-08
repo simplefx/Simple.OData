@@ -15,7 +15,7 @@ namespace Simple.OData.Client.Benchmarks
 	public class CrmEmployee
 	{
 		[Benchmark]
-		public static async Task GetAll()
+		public async static Task GetAll()
 		{
 			var result = await Utils.GetClient("crm_schema.xml", "crm_result_10.json")
 				.For<he_employee>()
@@ -25,7 +25,7 @@ namespace Simple.OData.Client.Benchmarks
 		}
 
 		[Benchmark]
-		public static async Task GetSingle()
+		public async static Task GetSingle()
 		{
 			var result = await Utils.GetClient("crm_schema.xml", "crm_result_1.json")
 				.For<he_employee>()
