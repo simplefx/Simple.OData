@@ -54,17 +54,14 @@ namespace Simple.OData.Client.V3.Adapter
 
         public override string GetODataVersionString()
         {
-            switch (ProtocolVersion)
-            {
-                case ODataProtocolVersion.V1:
-                    return "V1";
-                case ODataProtocolVersion.V2:
-                    return "V2";
-                case ODataProtocolVersion.V3:
-                    return "V3";
-            }
-            throw new InvalidOperationException($"Unsupported OData protocol version: \"{this.ProtocolVersion}\"");
-        }
+			return ProtocolVersion switch
+			{
+				ODataProtocolVersion.V1 => "V1",
+				ODataProtocolVersion.V2 => "V2",
+				ODataProtocolVersion.V3 => "V3",
+				_ => throw new InvalidOperationException($"Unsupported OData protocol version: \"{this.ProtocolVersion}\""),
+			};
+		}
 
         public override IMetadata GetMetadata()
         {

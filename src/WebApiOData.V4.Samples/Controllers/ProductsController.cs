@@ -135,34 +135,30 @@ namespace WebApiOData.V4.Samples.Controllers
 		private static double GetRate(string state)
 		{
 			double taxRate = 0;
-			switch (state)
+			taxRate = state switch
 			{
-				case "AZ": taxRate = 5.6; break;
-				case "CA": taxRate = 7.5; break;
-				case "CT": taxRate = 6.35; break;
-				case "GA": taxRate = 4; break;
-				case "IN": taxRate = 7; break;
-				case "KS": taxRate = 6.15; break;
-				case "KY": taxRate = 6; break;
-				case "MA": taxRate = 6.25; break;
-				case "NV": taxRate = 6.85; break;
-				case "NJ": taxRate = 7; break;
-				case "NY": taxRate = 4; break;
-				case "NC": taxRate = 4.75; break;
-				case "ND": taxRate = 5; break;
-				case "PA": taxRate = 6; break;
-				case "TN": taxRate = 7; break;
-				case "TX": taxRate = 6.25; break;
-				case "VA": taxRate = 4.3; break;
-				case "WA": taxRate = 6.5; break;
-				case "WV": taxRate = 6; break;
-				case "WI": taxRate = 5; break;
-
-				default:
-					taxRate = 0;
-					break;
-			}
-
+				"AZ" => 5.6,
+				"CA" => 7.5,
+				"CT" => 6.35,
+				"GA" => 4,
+				"IN" => 7,
+				"KS" => 6.15,
+				"KY" => 6,
+				"MA" => 6.25,
+				"NV" => 6.85,
+				"NJ" => 7,
+				"NY" => 4,
+				"NC" => 4.75,
+				"ND" => 5,
+				"PA" => 6,
+				"TN" => 7,
+				"TX" => 6.25,
+				"VA" => 4.3,
+				"WA" => 6.5,
+				"WV" => 6,
+				"WI" => 5,
+				_ => 0,
+			};
 			return taxRate;
 		}
 	}

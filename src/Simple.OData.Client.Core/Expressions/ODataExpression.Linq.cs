@@ -11,58 +11,21 @@ namespace Simple.OData.Client
     {
         private static ODataExpression ParseLinqExpression(Expression expression)
         {
-            switch (expression.NodeType)
-            {
-                case ExpressionType.MemberAccess:
-                    return ParseMemberExpression(expression);
-
-                case ExpressionType.Call:
-                    return ParseCallExpression(expression);
-
-                case ExpressionType.Lambda:
-                    return ParseLambdaExpression(expression);
-
-                case ExpressionType.Constant:
-                    return ParseConstantExpression(expression);
-
-                case ExpressionType.Not:
-                case ExpressionType.Convert:
-                case ExpressionType.Negate:
-                    return ParseUnaryExpression(expression);
-
-                case ExpressionType.Equal:
-                case ExpressionType.NotEqual:
-                case ExpressionType.LessThan:
-                case ExpressionType.LessThanOrEqual:
-                case ExpressionType.GreaterThan:
-                case ExpressionType.GreaterThanOrEqual:
-                case ExpressionType.And:
-                case ExpressionType.AndAlso:
-                case ExpressionType.Or:
-                case ExpressionType.OrElse:
-                case ExpressionType.Add:
-                case ExpressionType.AddChecked:
-                case ExpressionType.Subtract:
-                case ExpressionType.SubtractChecked:
-                case ExpressionType.Multiply:
-                case ExpressionType.MultiplyChecked:
-                case ExpressionType.Divide:
-                case ExpressionType.Modulo:
-                    return ParseBinaryExpression(expression);
-
-                case ExpressionType.TypeIs:
-                    return ParseTypeIsExpression(expression);
-                case ExpressionType.TypeAs:
-                    return ParseTypeAsExpression(expression);
-                case ExpressionType.Parameter:
-                    return ParseTypedParameterExpression(expression);
-
-                case ExpressionType.New:
-                    return ParseNewExpression(expression);
-            }
-
-            throw Utils.NotSupportedExpression(expression);
-        }
+			return expression.NodeType switch
+			{
+				ExpressionType.MemberAccess => ParseMemberExpression(expression),
+				ExpressionType.Call => ParseCallExpression(expression),
+				ExpressionType.Lambda => ParseLambdaExpression(expression),
+				ExpressionType.Constant => ParseConstantExpression(expression),
+				ExpressionType.Not or ExpressionType.Convert or ExpressionType.Negate => ParseUnaryExpression(expression),
+				ExpressionType.Equal or ExpressionType.NotEqual or ExpressionType.LessThan or ExpressionType.LessThanOrEqual or ExpressionType.GreaterThan or ExpressionType.GreaterThanOrEqual or ExpressionType.And or ExpressionType.AndAlso or ExpressionType.Or or ExpressionType.OrElse or ExpressionType.Add or ExpressionType.AddChecked or ExpressionType.Subtract or ExpressionType.SubtractChecked or ExpressionType.Multiply or ExpressionType.MultiplyChecked or ExpressionType.Divide or ExpressionType.Modulo => ParseBinaryExpression(expression),
+				ExpressionType.TypeIs => ParseTypeIsExpression(expression),
+				ExpressionType.TypeAs => ParseTypeAsExpression(expression),
+				ExpressionType.Parameter => ParseTypedParameterExpression(expression),
+				ExpressionType.New => ParseNewExpression(expression),
+				_ => throw Utils.NotSupportedExpression(expression),
+			};
+		}
 
         private static ODataExpression ParseMemberExpression(Expression expression, Stack<MemberInfo> memberChain = null)
         {
@@ -159,23 +122,16 @@ namespace Simple.OData.Client
 
         private static ODataExpression ParseCallArgumentExpression(Expression expression)
         {
-            switch (expression.NodeType)
-            {
-                case ExpressionType.Constant:
-                    return ParseConstantExpression(expression);
-                case ExpressionType.MemberAccess:
-                    return ParseMemberExpression(expression);
-                case ExpressionType.ArrayIndex:
-                    return ParseArrayExpression(expression);
-                case ExpressionType.Convert:
-                    return ParseUnaryExpression(expression);
-                case ExpressionType.Call:
-                    return ParseCallExpression(expression);
-
-                default:
-                    throw Utils.NotSupportedExpression(expression);
-            }
-        }
+			return expression.NodeType switch
+			{
+				ExpressionType.Constant => ParseConstantExpression(expression),
+				ExpressionType.MemberAccess => ParseMemberExpression(expression),
+				ExpressionType.ArrayIndex => ParseArrayExpression(expression),
+				ExpressionType.Convert => ParseUnaryExpression(expression),
+				ExpressionType.Call => ParseCallExpression(expression),
+				_ => throw Utils.NotSupportedExpression(expression),
+			};
+		}
 
         private static ODataExpression ParseLambdaExpression(Expression expression)
         {
@@ -210,18 +166,14 @@ namespace Simple.OData.Client
         {
             var unaryExpression = (expression as UnaryExpression).Operand;
             var odataExpression = ParseLinqExpression(unaryExpression);
-            switch (expression.NodeType)
-            {
-                case ExpressionType.Not:
-                    return !odataExpression;
-                case ExpressionType.Convert:
-                    return new ODataExpression(odataExpression, expression.Type);
-                case ExpressionType.Negate:
-                    return -odataExpression;
-            }
-
-            throw Utils.NotSupportedExpression(expression);
-        }
+			return expression.NodeType switch
+			{
+				ExpressionType.Not => !odataExpression,
+				ExpressionType.Convert => new ODataExpression(odataExpression, expression.Type),
+				ExpressionType.Negate => -odataExpression,
+				_ => throw Utils.NotSupportedExpression(expression),
+			};
+		}
 
         private static ODataExpression ParseBinaryExpression(Expression expression)
         {
@@ -244,43 +196,24 @@ namespace Simple.OData.Client
 
         private static ODataExpression ParseBinaryExpression(ODataExpression leftExpression, ODataExpression rightExpression, Expression operandExpression)
         {
-            switch (operandExpression.NodeType)
-            {
-                case ExpressionType.Equal:
-                    return leftExpression == rightExpression;
-                case ExpressionType.NotEqual:
-                    return leftExpression != rightExpression;
-                case ExpressionType.LessThan:
-                    return leftExpression < rightExpression;
-                case ExpressionType.LessThanOrEqual:
-                    return leftExpression <= rightExpression;
-                case ExpressionType.GreaterThan:
-                    return leftExpression > rightExpression;
-                case ExpressionType.GreaterThanOrEqual:
-                    return leftExpression >= rightExpression;
-                case ExpressionType.And:
-                case ExpressionType.AndAlso:
-                    return leftExpression && rightExpression;
-                case ExpressionType.Or:
-                case ExpressionType.OrElse:
-                    return leftExpression || rightExpression;
-                case ExpressionType.Add:
-                case ExpressionType.AddChecked:
-                    return leftExpression + rightExpression;
-                case ExpressionType.Subtract:
-                case ExpressionType.SubtractChecked:
-                    return leftExpression - rightExpression;
-                case ExpressionType.Multiply:
-                case ExpressionType.MultiplyChecked:
-                    return leftExpression * rightExpression;
-                case ExpressionType.Divide:
-                    return leftExpression / rightExpression;
-                case ExpressionType.Modulo:
-                    return leftExpression % rightExpression;
-            }
-
-            throw Utils.NotSupportedExpression(operandExpression);
-        }
+			return operandExpression.NodeType switch
+			{
+				ExpressionType.Equal => leftExpression == rightExpression,
+				ExpressionType.NotEqual => leftExpression != rightExpression,
+				ExpressionType.LessThan => leftExpression < rightExpression,
+				ExpressionType.LessThanOrEqual => leftExpression <= rightExpression,
+				ExpressionType.GreaterThan => leftExpression > rightExpression,
+				ExpressionType.GreaterThanOrEqual => leftExpression >= rightExpression,
+				ExpressionType.And or ExpressionType.AndAlso => leftExpression && rightExpression,
+				ExpressionType.Or or ExpressionType.OrElse => leftExpression || rightExpression,
+				ExpressionType.Add or ExpressionType.AddChecked => leftExpression + rightExpression,
+				ExpressionType.Subtract or ExpressionType.SubtractChecked => leftExpression - rightExpression,
+				ExpressionType.Multiply or ExpressionType.MultiplyChecked => leftExpression * rightExpression,
+				ExpressionType.Divide => leftExpression / rightExpression,
+				ExpressionType.Modulo => leftExpression % rightExpression,
+				_ => throw Utils.NotSupportedExpression(operandExpression),
+			};
+		}
 
         private static bool IsConvertFromCustomEnum(Expression expression, out Type enumType)
         {

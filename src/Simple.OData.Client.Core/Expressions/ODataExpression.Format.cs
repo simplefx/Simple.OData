@@ -272,42 +272,26 @@ namespace Simple.OData.Client
 
         private string FormatOperator(ExpressionContext context)
         {
-            switch (_operator)
-            {
-                case ExpressionType.And:
-                    return context.IsQueryOption ? "&" : "and";
-                case ExpressionType.Or:
-                    return "or";
-                case ExpressionType.Not:
-                    return "not";
-                case ExpressionType.Equal:
-                    return context.IsQueryOption ? "=" : "eq";
-                case ExpressionType.NotEqual:
-                    return "ne";
-                case ExpressionType.GreaterThan:
-                    return "gt";
-                case ExpressionType.GreaterThanOrEqual:
-                    return "ge";
-                case ExpressionType.LessThan:
-                    return "lt";
-                case ExpressionType.LessThanOrEqual:
-                    return "le";
-                case ExpressionType.Add:
-                    return "add";
-                case ExpressionType.Subtract:
-                    return "sub";
-                case ExpressionType.Multiply:
-                    return "mul";
-                case ExpressionType.Divide:
-                    return "div";
-                case ExpressionType.Modulo:
-                    return "mod";
-                case ExpressionType.Negate:
-                    return "-";
-                default:
-                    return null;
-            }
-        }
+			return _operator switch
+			{
+				ExpressionType.And => context.IsQueryOption ? "&" : "and",
+				ExpressionType.Or => "or",
+				ExpressionType.Not => "not",
+				ExpressionType.Equal => context.IsQueryOption ? "=" : "eq",
+				ExpressionType.NotEqual => "ne",
+				ExpressionType.GreaterThan => "gt",
+				ExpressionType.GreaterThanOrEqual => "ge",
+				ExpressionType.LessThan => "lt",
+				ExpressionType.LessThanOrEqual => "le",
+				ExpressionType.Add => "add",
+				ExpressionType.Subtract => "sub",
+				ExpressionType.Multiply => "mul",
+				ExpressionType.Divide => "div",
+				ExpressionType.Modulo => "mod",
+				ExpressionType.Negate => "-",
+				_ => null,
+			};
+		}
 
         private IEnumerable<string> BuildReferencePath(List<string> segmentNames, EntityCollection entityCollection, List<string> elementNames, ExpressionContext context)
         {
@@ -392,34 +376,18 @@ namespace Simple.OData.Client
 
         private int GetPrecedence(ExpressionType op)
         {
-            switch (op)
-            {
-                case ExpressionType.Not:
-                case ExpressionType.Negate:
-                    return 1;
-                case ExpressionType.Modulo:
-                case ExpressionType.Multiply:
-                case ExpressionType.Divide:
-                    return 2;
-                case ExpressionType.Add:
-                case ExpressionType.Subtract:
-                    return 3;
-                case ExpressionType.GreaterThan:
-                case ExpressionType.GreaterThanOrEqual:
-                case ExpressionType.LessThan:
-                case ExpressionType.LessThanOrEqual:
-                    return 4;
-                case ExpressionType.Equal:
-                case ExpressionType.NotEqual:
-                    return 5;
-                case ExpressionType.And:
-                    return 6;
-                case ExpressionType.Or:
-                    return 7;
-                default:
-                    return 0;
-            }
-        }
+			return op switch
+			{
+				ExpressionType.Not or ExpressionType.Negate => 1,
+				ExpressionType.Modulo or ExpressionType.Multiply or ExpressionType.Divide => 2,
+				ExpressionType.Add or ExpressionType.Subtract => 3,
+				ExpressionType.GreaterThan or ExpressionType.GreaterThanOrEqual or ExpressionType.LessThan or ExpressionType.LessThanOrEqual => 4,
+				ExpressionType.Equal or ExpressionType.NotEqual => 5,
+				ExpressionType.And => 6,
+				ExpressionType.Or => 7,
+				_ => 0,
+			};
+		}
 
         private bool NeedsGrouping(ODataExpression expr)
         {

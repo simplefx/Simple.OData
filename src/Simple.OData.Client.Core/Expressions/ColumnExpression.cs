@@ -15,22 +15,14 @@ namespace Simple.OData.Client
 				throw Utils.NotSupportedExpression(expression);
 			}
 
-			switch (lambdaExpression.Body.NodeType)
-            {
-                case ExpressionType.MemberAccess:
-                case ExpressionType.Convert:
-                    return ExtractColumnNames(lambdaExpression.Body, typeCache);
-
-                case ExpressionType.Call:
-                    return ExtractColumnNames(lambdaExpression.Body as MethodCallExpression, typeCache);
-
-                case ExpressionType.New:
-                    return ExtractColumnNames(lambdaExpression.Body as NewExpression, typeCache);
-
-                default:
-                    throw Utils.NotSupportedExpression(lambdaExpression.Body);
-            }
-        }
+			return lambdaExpression.Body.NodeType switch
+			{
+				ExpressionType.MemberAccess or ExpressionType.Convert => ExtractColumnNames(lambdaExpression.Body, typeCache),
+				ExpressionType.Call => ExtractColumnNames(lambdaExpression.Body as MethodCallExpression, typeCache),
+				ExpressionType.New => ExtractColumnNames(lambdaExpression.Body as NewExpression, typeCache),
+				_ => throw Utils.NotSupportedExpression(lambdaExpression.Body),
+			};
+		}
 
         public static string ExtractColumnName(this Expression expression, ITypeCache typeCache)
         {
@@ -39,28 +31,16 @@ namespace Simple.OData.Client
 
         public static IEnumerable<string> ExtractColumnNames(this Expression expression, ITypeCache typeCache)
         {
-            switch (expression.NodeType)
-            {
-                case ExpressionType.MemberAccess:
-                    return ExtractColumnNames(expression as MemberExpression, typeCache);
-
-                case ExpressionType.Convert:
-                case ExpressionType.Quote:    
-                    return ExtractColumnNames((expression as UnaryExpression).Operand, typeCache);
-
-                case ExpressionType.Lambda:
-                    return ExtractColumnNames((expression as LambdaExpression).Body, typeCache);
-
-                case ExpressionType.Call:
-                    return ExtractColumnNames(expression as MethodCallExpression, typeCache);
-
-                case ExpressionType.New:
-                    return ExtractColumnNames(expression as NewExpression, typeCache);
-
-                default:
-                    throw Utils.NotSupportedExpression(expression);
-            }
-        }
+			return expression.NodeType switch
+			{
+				ExpressionType.MemberAccess => ExtractColumnNames(expression as MemberExpression, typeCache),
+				ExpressionType.Convert or ExpressionType.Quote => ExtractColumnNames((expression as UnaryExpression).Operand, typeCache),
+				ExpressionType.Lambda => ExtractColumnNames((expression as LambdaExpression).Body, typeCache),
+				ExpressionType.Call => ExtractColumnNames(expression as MethodCallExpression, typeCache),
+				ExpressionType.New => ExtractColumnNames(expression as NewExpression, typeCache),
+				_ => throw Utils.NotSupportedExpression(expression),
+			};
+		}
 
         private static IEnumerable<string> ExtractColumnNames(MethodCallExpression callExpression, ITypeCache typeCache)
         {

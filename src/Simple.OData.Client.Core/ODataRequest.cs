@@ -38,16 +38,12 @@ namespace Simple.OData.Client
                 }
                 else
                 {
-                    switch (this._payloadFormat)
-                    {
-                        default:
-                        case ODataPayloadFormat.Atom:
-                            return new[] { "application/atom+xml", "application/xml", "application/text" };
-
-                        case ODataPayloadFormat.Json:
-                            return new[] { "application/json", "application/xml", "application/text" };
-                    }
-                }
+					return this._payloadFormat switch
+					{
+						ODataPayloadFormat.Json => new[] { "application/json", "application/xml", "application/text" },
+						_ => new[] { "application/atom+xml", "application/xml", "application/text" },
+					};
+				}
             }
         }
 
@@ -122,16 +118,12 @@ namespace Simple.OData.Client
                     ? this.UsePayloadFormat
                     : _payloadFormat;
 
-                switch (payloadFormat)
-                {
-                    default:
-                    case ODataPayloadFormat.Atom:
-                        return this.IsLink ? "application/xml" : "application/atom+xml";
-
-                    case ODataPayloadFormat.Json:
-                        return "application/json";
-                }
-            }
+				return payloadFormat switch
+				{
+					ODataPayloadFormat.Json => "application/json",
+					_ => this.IsLink ? "application/xml" : "application/atom+xml",
+				};
+			}
         }
 
         private HttpRequestMessage GetOrCreateRequestMessage()

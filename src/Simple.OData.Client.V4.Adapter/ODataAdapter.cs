@@ -50,13 +50,12 @@ namespace Simple.OData.Client.V4.Adapter
 
         public override string GetODataVersionString()
         {
-            switch (ProtocolVersion)
-            {
-                case ODataProtocolVersion.V4:
-                    return "V4";
-            }
-            throw new InvalidOperationException($"Unsupported OData protocol version: \"{this.ProtocolVersion}\"");
-        }
+			return ProtocolVersion switch
+			{
+				ODataProtocolVersion.V4 => "V4",
+				_ => throw new InvalidOperationException($"Unsupported OData protocol version: \"{this.ProtocolVersion}\""),
+			};
+		}
 
         public override IMetadata GetMetadata()
         {
