@@ -45,9 +45,11 @@ namespace Simple.OData.Client
         {
             var entryContent = await WriteStreamContentAsync(stream, IsTextMediaType(mediaType));
 
-            var request = new ODataRequest(RestVerbs.Put, _session, commandText, null, entryContent, mediaType, headers);
-            request.CheckOptimisticConcurrency = optimisticConcurrency;
-            AssignHeaders(request);
+			var request = new ODataRequest(RestVerbs.Put, _session, commandText, null, entryContent, mediaType, headers)
+			{
+				CheckOptimisticConcurrency = optimisticConcurrency
+			};
+			AssignHeaders(request);
             return request;
         }
 

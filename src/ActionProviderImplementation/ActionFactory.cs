@@ -51,10 +51,12 @@ namespace ActionProviderImplementation
 					resourceSet,
 					actionInfo.Binding,
 					parameters
-				);
+				)
+				{
 
-				// Store the method associated with this Action.
-				action.CustomState = actionInfo;
+					// Store the method associated with this Action.
+					CustomState = actionInfo
+				};
 				action.SetReadOnly();
 				yield return action;
 			}
