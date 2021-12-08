@@ -14,19 +14,19 @@ namespace Simple.OData.Client
 
 		public AnnotatedFeed(IEnumerable<AnnotatedEntry> entries, ODataFeedAnnotations annotations = null)
 		{
-			this.Entries = entries.ToList();
-			this.Annotations = annotations;
+			Entries = entries.ToList();
+			Annotations = annotations;
 		}
 
 		public void SetAnnotations(ODataFeedAnnotations annotations)
 		{
-			if (this.Annotations == null)
+			if (Annotations == null)
 			{
-				this.Annotations = annotations;
+				Annotations = annotations;
 			}
 			else
 			{
-				this.Annotations.Merge(annotations);
+				Annotations.Merge(annotations);
 			}
 		}
 	}
@@ -39,45 +39,45 @@ namespace Simple.OData.Client
 
 		public AnnotatedEntry(IDictionary<string, object> data, ODataEntryAnnotations annotations = null)
 		{
-			this.Data = data;
-			this.Annotations = annotations;
+			Data = data;
+			Annotations = annotations;
 		}
 
 		public void SetAnnotations(ODataEntryAnnotations annotations)
 		{
-			if (this.Annotations == null)
+			if (Annotations == null)
 			{
-				this.Annotations = annotations;
+				Annotations = annotations;
 			}
 			else
 			{
-				this.Annotations.Merge(annotations);
+				Annotations.Merge(annotations);
 			}
 		}
 
 		public void SetLinkAnnotations(ODataFeedAnnotations annotations)
 		{
-			if (this.LinkAnnotations == null)
+			if (LinkAnnotations == null)
 			{
-				this.LinkAnnotations = annotations;
+				LinkAnnotations = annotations;
 			}
 			else
 			{
-				this.LinkAnnotations.Merge(annotations);
+				LinkAnnotations.Merge(annotations);
 			}
 		}
 
 		public IDictionary<string, object> GetData(bool includeAnnotations)
 		{
-			if (includeAnnotations && this.Annotations != null)
+			if (includeAnnotations && Annotations != null)
 			{
-				var dataWithAnnotations = new Dictionary<string, object>(this.Data);
-				dataWithAnnotations.Add(FluentCommand.AnnotationsLiteral, this.Annotations);
+				var dataWithAnnotations = new Dictionary<string, object>(Data);
+				dataWithAnnotations.Add(FluentCommand.AnnotationsLiteral, Annotations);
 				return dataWithAnnotations;
 			}
 			else
 			{
-				return this.Data;
+				return Data;
 			}
 		}
 	}
@@ -101,9 +101,9 @@ namespace Simple.OData.Client
 
 		public IEnumerable<IDictionary<string, object>> AsEntries(bool includeAnnotations)
 		{
-			if (this.Feed != null)
+			if (Feed != null)
 			{
-				var data = this.Feed.Entries;
+				var data = Feed.Entries;
 				return data.Select(x =>
 					data.Any() && data.First().Data.ContainsKey(FluentCommand.ResultLiteral)
 					? ExtractDictionary(x, includeAnnotations)
@@ -126,7 +126,7 @@ namespace Simple.OData.Client
 
 		public T AsScalar<T>()
 		{
-			var result = this.AsEntry(false);
+			var result = AsEntry(false);
 			var value = result == null || result.Count == 0
 				? null
 				: result.First().Value;
@@ -138,7 +138,7 @@ namespace Simple.OData.Client
 
 		public T[] AsArray<T>()
 		{
-			return this.AsEntries(false)
+			return AsEntries(false)
 				.SelectMany(x => x.Values)
 				.Select(x => TypeCache.Convert<T>(x))
 				.ToArray();

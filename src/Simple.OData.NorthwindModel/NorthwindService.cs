@@ -26,7 +26,7 @@ namespace Simple.OData.NorthwindModel
 		{
 			if (typeof(IDataServiceActionProvider) == serviceType)
 			{
-				return new EntityFrameworkActionProvider(this.CurrentDataSource);
+				return new EntityFrameworkActionProvider(CurrentDataSource);
 			}
 			return null;
 		}

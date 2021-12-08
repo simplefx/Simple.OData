@@ -24,7 +24,7 @@ namespace Simple.OData.Client.V4.Adapter
 			_messageWriter = new ODataMessageWriter(_requestMessage, new ODataMessageWriterSettings { BaseUri = _session.Settings.BaseUri });
 			_batchWriter = await _messageWriter.CreateODataBatchWriterAsync().ConfigureAwait(false);
 			await _batchWriter.WriteStartBatchAsync().ConfigureAwait(false);
-			this.HasOperations = true;
+			HasOperations = true;
 		}
 
 		public async override Task<HttpRequestMessage> EndBatchAsync()

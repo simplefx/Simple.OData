@@ -41,7 +41,7 @@ namespace NorthwindModel
 
 		public override int SaveChanges()
 		{
-			this.ChangeTracker.DetectChanges();
+			ChangeTracker.DetectChanges();
 			var context = (this as System.Data.Entity.Infrastructure.IObjectContextAdapter).ObjectContext;
 
 			foreach (var entry in context.ObjectStateManager.GetObjectStateEntries(EntityState.Added | EntityState.Modified))

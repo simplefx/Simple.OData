@@ -42,26 +42,26 @@ namespace Simple.OData.Client
 		/// <returns></returns>
 		public IEnumerable<T> GetInstanceAnnotations<T>()
 		{
-			return this.InstanceAnnotations.Select(x => (T)x);
+			return InstanceAnnotations.Select(x => (T)x);
 		}
 
 		internal void CopyFrom(ODataFeedAnnotations src)
 		{
 			if (src != null)
 			{
-				this.Id = src.Id;
-				this.Count = src.Count;
-				this.DeltaLink = src.DeltaLink;
-				this.NextPageLink = src.NextPageLink;
-				this.InstanceAnnotations = src.InstanceAnnotations;
+				Id = src.Id;
+				Count = src.Count;
+				DeltaLink = src.DeltaLink;
+				NextPageLink = src.NextPageLink;
+				InstanceAnnotations = src.InstanceAnnotations;
 			}
 			else
 			{
-				this.Id = null;
-				this.Count = null;
-				this.DeltaLink = null;
-				this.NextPageLink = null;
-				this.InstanceAnnotations = null;
+				Id = null;
+				Count = null;
+				DeltaLink = null;
+				NextPageLink = null;
+				InstanceAnnotations = null;
 			}
 		}
 
@@ -69,11 +69,11 @@ namespace Simple.OData.Client
 		{
 			if (src != null)
 			{
-				this.Id ??= src.Id;
-				this.Count ??= src.Count;
-				this.DeltaLink ??= src.DeltaLink;
-				this.NextPageLink ??= src.NextPageLink;
-				this.InstanceAnnotations ??= src.InstanceAnnotations;
+				Id ??= src.Id;
+				Count ??= src.Count;
+				DeltaLink ??= src.DeltaLink;
+				NextPageLink ??= src.NextPageLink;
+				InstanceAnnotations ??= src.InstanceAnnotations;
 			}
 		}
 	}

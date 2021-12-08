@@ -70,13 +70,13 @@ namespace Devbridge.BasicAuthentication
 			// Extract the basic authentication credentials from the request
 			string userName = null;
 			string password = null;
-			if (!this.ExtractBasicCredentials(authorizationHeader, ref userName, ref password))
+			if (!ExtractBasicCredentials(authorizationHeader, ref userName, ref password))
 			{
 				return;
 			}
 
 			// Validate the user credentials
-			if (!this.ValidateCredentials(userName, password))
+			if (!ValidateCredentials(userName, password))
 			{
 				return;
 			}
@@ -102,8 +102,8 @@ namespace Devbridge.BasicAuthentication
 
 			string userName = null;
 			string password = null;
-			if (this.ExtractBasicCredentials(authorizationHeader, ref userName, ref password) &&
-				this.ValidateCredentials(userName, password))
+			if (ExtractBasicCredentials(authorizationHeader, ref userName, ref password) &&
+				ValidateCredentials(userName, password))
 			{
 				return;
 			}
@@ -174,12 +174,12 @@ namespace Devbridge.BasicAuthentication
 		{
 			var config = System.Configuration.ConfigurationManager.GetSection("basicAuth");
 			var basicAuth = (Configuration.BasicAuthenticationConfigurationSection)config;
-			this.activeUsers = new Dictionary<string, string>();
+			activeUsers = new Dictionary<string, string>();
 
 			for (var i = 0; i < basicAuth.Credentials.Count; i++)
 			{
 				var credential = basicAuth.Credentials[i];
-				this.activeUsers.Add(credential.UserName, credential.Password);
+				activeUsers.Add(credential.UserName, credential.Password);
 			}
 
 			// Subscribe to the authenticate event to perform the authentication.

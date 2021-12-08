@@ -32,7 +32,7 @@ namespace Simple.OData.Client
 		{
 			get
 			{
-				var entityCollection = this.EntityCollection;
+				var entityCollection = EntityCollection;
 				return entityCollection.BaseEntityCollection == null
 					? entityCollection.Name
 					: $"{entityCollection.BaseEntityCollection.Name}/{_sesson.Metadata.GetQualifiedTypeName(entityCollection.Name)}";
@@ -80,7 +80,7 @@ namespace Simple.OData.Client
 		{
 			if (string.IsNullOrEmpty(Details.CollectionName) && string.IsNullOrEmpty(Details.LinkName))
 			{
-				this.EntityCollection = null;
+				EntityCollection = null;
 			}
 			else
 			{
@@ -97,7 +97,7 @@ namespace Simple.OData.Client
 					entityCollection = _sesson.Metadata.GetEntityCollection(Details.CollectionName);
 				}
 
-				this.EntityCollection =
+				EntityCollection =
 					string.IsNullOrEmpty(Details.DerivedCollectionName)
 					? entityCollection
 					: _sesson.Metadata.GetDerivedEntityCollection(entityCollection, Details.DerivedCollectionName);
@@ -140,7 +140,7 @@ namespace Simple.OData.Client
 
 				if (Details.NamedKeyValues == null)
 				{
-					var entityCollection = this.EntityCollection;
+					var entityCollection = EntityCollection;
 					if (details.HasFunction)
 					{
 						var collection = _sesson.Metadata.GetFunctionReturnCollection(details.FunctionName);
@@ -150,7 +150,7 @@ namespace Simple.OData.Client
 						}
 					}
 					Details.Filter = details.FilterExpression.Format(
-						new ExpressionContext(_sesson, entityCollection, null, this.DynamicPropertiesContainerName));
+						new ExpressionContext(_sesson, entityCollection, null, DynamicPropertiesContainerName));
 				}
 				else
 				{
@@ -200,7 +200,7 @@ namespace Simple.OData.Client
 					return null;
 				}
 
-				var keyNames = _sesson.Metadata.GetDeclaredKeyPropertyNames(this.EntityCollection.Name).ToList();
+				var keyNames = _sesson.Metadata.GetDeclaredKeyPropertyNames(EntityCollection.Name).ToList();
 				var namedKeyValues = Details.KeyValues?.Zip(
 					 keyNames,
 					 (keyValue, keyName) => new KeyValuePair<string, object>(keyName, keyValue))
@@ -295,7 +295,7 @@ namespace Simple.OData.Client
 
 		private bool NamedKeyValuesMatchPrimaryKey(IDictionary<string, object> namedKeyValues, out IEnumerable<KeyValuePair<string, object>> matchingNamedKeyValues)
 		{
-			var keyNames = _sesson.Metadata.GetDeclaredKeyPropertyNames(this.EntityCollection.Name).ToList();
+			var keyNames = _sesson.Metadata.GetDeclaredKeyPropertyNames(EntityCollection.Name).ToList();
 
 			return Utils.NamedKeyValuesMatchKeyNames(namedKeyValues, _sesson.Settings.NameMatchResolver, keyNames, out matchingNamedKeyValues);
 		}
@@ -304,7 +304,7 @@ namespace Simple.OData.Client
 		{
 			alternateKeyNamedValues = null;
 
-			var alternateKeys = _sesson.Metadata.GetAlternateKeyPropertyNames(this.EntityCollection.Name).ToList();
+			var alternateKeys = _sesson.Metadata.GetAlternateKeyPropertyNames(EntityCollection.Name).ToList();
 
 			foreach (var alternateKey in alternateKeys)
 			{
@@ -321,7 +321,7 @@ namespace Simple.OData.Client
 		{
 			return Utils.NamedKeyValuesContainKeyNames(namedValues,
 				_sesson.Settings.NameMatchResolver,
-				_sesson.Metadata.GetDeclaredKeyPropertyNames(this.EntityCollection.Name),
+				_sesson.Metadata.GetDeclaredKeyPropertyNames(EntityCollection.Name),
 				out matchingNamedKeyValues);
 		}
 	}

@@ -46,8 +46,8 @@ namespace Simple.OData.Client
 
 		private ODataExpandOptions(int levels = 1, ODataExpandMode expandMode = ODataExpandMode.ByValue)
 		{
-			this.Levels = levels;
-			this.ExpandMode = expandMode;
+			Levels = levels;
+			ExpandMode = expandMode;
 		}
 
 		private ODataExpandOptions(ODataExpandLevels levels, ODataExpandMode expandMode = ODataExpandMode.ByValue)

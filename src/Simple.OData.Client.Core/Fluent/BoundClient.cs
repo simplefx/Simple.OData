@@ -27,43 +27,43 @@ namespace Simple.OData.Client
 
 		public IBoundClient<T> For(string collectionName = null)
 		{
-			this.Command.For(collectionName ?? _session.TypeCache.GetMappedName(typeof(T)));
+			Command.For(collectionName ?? _session.TypeCache.GetMappedName(typeof(T)));
 			return this;
 		}
 
 		public IBoundClient<ODataEntry> For(ODataExpression expression)
 		{
-			this.Command.For(expression.Reference);
+			Command.For(expression.Reference);
 			return CreateClientForODataEntry();
 		}
 
 		public IBoundClient<IDictionary<string, object>> As(string derivedCollectionName)
 		{
-			this.Command.As(derivedCollectionName);
-			return new BoundClient<IDictionary<string, object>>(_client, _session, _parentCommand, this.Command, _dynamicResults);
+			Command.As(derivedCollectionName);
+			return new BoundClient<IDictionary<string, object>>(_client, _session, _parentCommand, Command, _dynamicResults);
 		}
 
 		public IBoundClient<T> Set(object value)
 		{
-			this.Command.Set(value);
+			Command.Set(value);
 			return this;
 		}
 
 		public IBoundClient<T> Set(IDictionary<string, object> value)
 		{
-			this.Command.Set(value);
+			Command.Set(value);
 			return this;
 		}
 
 		public IBoundClient<T> Set(params ODataExpression[] value)
 		{
-			this.Command.Set(value);
+			Command.Set(value);
 			return this;
 		}
 
 		public IBoundClient<T> Set(T entry)
 		{
-			this.Command.Set(entry);
+			Command.Set(entry);
 			return this;
 		}
 
@@ -110,28 +110,28 @@ namespace Simple.OData.Client
 		public IBoundClient<U> As<U>(string derivedCollectionName = null)
 		where U : class
 		{
-			this.Command.As(derivedCollectionName ?? typeof(U).Name);
-			return new BoundClient<U>(_client, _session, _parentCommand, this.Command, _dynamicResults);
+			Command.As(derivedCollectionName ?? typeof(U).Name);
+			return new BoundClient<U>(_client, _session, _parentCommand, Command, _dynamicResults);
 		}
 
 		public IBoundClient<ODataEntry> As(ODataExpression expression)
 		{
-			this.Command.As(expression);
+			Command.As(expression);
 			return CreateClientForODataEntry();
 		}
 
-		public bool FilterIsKey => this.Command.Details.FilterIsKey;
+		public bool FilterIsKey => Command.Details.FilterIsKey;
 
-		public IDictionary<string, object> FilterAsKey => this.Command.Details.FilterAsKey;
+		public IDictionary<string, object> FilterAsKey => Command.Details.FilterAsKey;
 
 		public IRequestBuilder<T> BuildRequestFor()
 		{
-			return new RequestBuilder<T>(this.Command, _session, _client.BatchWriter);
+			return new RequestBuilder<T>(Command, _session, _client.BatchWriter);
 		}
 
 		private BoundClient<ODataEntry> CreateClientForODataEntry()
 		{
-			return new BoundClient<ODataEntry>(_client, _session, _parentCommand, this.Command, true); ;
+			return new BoundClient<ODataEntry>(_client, _session, _parentCommand, Command, true); ;
 		}
 	}
 }

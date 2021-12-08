@@ -19,16 +19,16 @@ namespace Simple.OData.Client
 
 			public FunctionCall(string functionName, int argumentCount)
 			{
-				this.FunctionName = functionName;
-				this.ArgumentCount = argumentCount;
+				FunctionName = functionName;
+				ArgumentCount = argumentCount;
 			}
 
 			public override bool Equals(object obj)
 			{
 				if (obj is FunctionCall)
 				{
-					return this.FunctionName == (obj as FunctionCall).FunctionName &&
-						   this.ArgumentCount == (obj as FunctionCall).ArgumentCount;
+					return FunctionName == (obj as FunctionCall).FunctionName &&
+						   ArgumentCount == (obj as FunctionCall).ArgumentCount;
 				}
 				else
 				{
@@ -38,7 +38,7 @@ namespace Simple.OData.Client
 
 			public override int GetHashCode()
 			{
-				return this.FunctionName.GetHashCode() ^ this.ArgumentCount.GetHashCode();
+				return FunctionName.GetHashCode() ^ ArgumentCount.GetHashCode();
 			}
 		}
 
@@ -48,14 +48,14 @@ namespace Simple.OData.Client
 
 		public ExpressionFunction(string functionName, IEnumerable<object> arguments)
 		{
-			this.FunctionName = functionName;
-			this.Arguments = arguments.Select(ODataExpression.FromValue).ToList();
+			FunctionName = functionName;
+			Arguments = arguments.Select(ODataExpression.FromValue).ToList();
 		}
 
 		public ExpressionFunction(string functionName, IEnumerable<Expression> arguments)
 		{
-			this.FunctionName = functionName;
-			this.Arguments = arguments.Select(ODataExpression.FromLinqExpression).ToList();
+			FunctionName = functionName;
+			Arguments = arguments.Select(ODataExpression.FromLinqExpression).ToList();
 		}
 	}
 }

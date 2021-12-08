@@ -18,7 +18,7 @@ namespace Simple.OData.Client
 			_session = session;
 			_lastOperationId = 0;
 			_contentIdMap = new Dictionary<IDictionary<string, object>, string>();
-			this.BatchEntries = batchEntries;
+			BatchEntries = batchEntries;
 		}
 
 		public abstract Task StartBatchAsync();
@@ -34,7 +34,7 @@ namespace Simple.OData.Client
 			{
 				await action(client).ConfigureAwait(false);
 				var responseIndex = -1;
-				if (this.LastOperationId > lastOperationId)
+				if (LastOperationId > lastOperationId)
 				{
 					lastOperationId = LastOperationId;
 					responseIndex = lastOperationId - 1;
@@ -42,7 +42,7 @@ namespace Simple.OData.Client
 				responseIndexes.Add(responseIndex);
 			}
 
-			if (this.HasOperations)
+			if (HasOperations)
 			{
 				// Create batch request message
 				var requestMessage = await EndBatchAsync().ConfigureAwait(false);
@@ -75,7 +75,7 @@ namespace Simple.OData.Client
 		{
 			if (!_contentIdMap.TryGetValue(entryData, out var contentId) && linkData != null)
 			{
-				if (this.BatchEntries.TryGetValue(linkData, out var mappedEntry))
+				if (BatchEntries.TryGetValue(linkData, out var mappedEntry))
 				{
 					_contentIdMap.TryGetValue(mappedEntry, out contentId);
 				}

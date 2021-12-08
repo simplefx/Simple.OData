@@ -72,32 +72,32 @@ namespace Simple.OData.Client
 		/// <returns></returns>
 		public IEnumerable<T> GetInstanceAnnotations<T>()
 		{
-			return this.InstanceAnnotations.Select(x => (T)x);
+			return InstanceAnnotations.Select(x => (T)x);
 		}
 
 		internal void CopyFrom(ODataEntryAnnotations src)
 		{
 			if (src != null)
 			{
-				this.Id = src.Id;
-				this.TypeName = src.TypeName;
-				this.ReadLink = src.ReadLink;
-				this.EditLink = src.EditLink;
-				this.ETag = src.ETag;
-				this.AssociationLinks = src.AssociationLinks;
-				this.MediaResource = src.MediaResource;
-				this.InstanceAnnotations = src.InstanceAnnotations;
+				Id = src.Id;
+				TypeName = src.TypeName;
+				ReadLink = src.ReadLink;
+				EditLink = src.EditLink;
+				ETag = src.ETag;
+				AssociationLinks = src.AssociationLinks;
+				MediaResource = src.MediaResource;
+				InstanceAnnotations = src.InstanceAnnotations;
 			}
 			else
 			{
-				this.Id = null;
-				this.TypeName = null;
-				this.ReadLink = null;
-				this.EditLink = null;
-				this.ETag = null;
-				this.AssociationLinks = null;
-				this.MediaResource = null;
-				this.InstanceAnnotations = null;
+				Id = null;
+				TypeName = null;
+				ReadLink = null;
+				EditLink = null;
+				ETag = null;
+				AssociationLinks = null;
+				MediaResource = null;
+				InstanceAnnotations = null;
 			}
 		}
 
@@ -105,14 +105,14 @@ namespace Simple.OData.Client
 		{
 			if (src != null)
 			{
-				this.Id ??= src.Id;
-				this.TypeName ??= src.TypeName;
-				this.ReadLink ??= src.ReadLink;
-				this.EditLink ??= src.EditLink;
-				this.ETag ??= src.ETag;
-				this.AssociationLinks ??= src.AssociationLinks;
-				this.MediaResource ??= src.MediaResource;
-				this.InstanceAnnotations ??= src.InstanceAnnotations;
+				Id ??= src.Id;
+				TypeName ??= src.TypeName;
+				ReadLink ??= src.ReadLink;
+				EditLink ??= src.EditLink;
+				ETag ??= src.ETag;
+				AssociationLinks ??= src.AssociationLinks;
+				MediaResource ??= src.MediaResource;
+				InstanceAnnotations ??= src.InstanceAnnotations;
 			}
 		}
 	}

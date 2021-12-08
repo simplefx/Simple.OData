@@ -21,25 +21,25 @@ namespace Simple.OData.Client
 
 		public IUnboundClient<T> Set(object value)
 		{
-			this.Command.Set(value);
+			Command.Set(value);
 			return this;
 		}
 
 		public IUnboundClient<T> Set(IDictionary<string, object> value)
 		{
-			this.Command.Set(value);
+			Command.Set(value);
 			return this;
 		}
 
 		public IUnboundClient<T> Set(params ODataExpression[] value)
 		{
-			this.Command.Set(value);
+			Command.Set(value);
 			return this;
 		}
 
 		public IUnboundClient<T> Set(T entry)
 		{
-			this.Command.Set(entry);
+			Command.Set(entry);
 			return this;
 		}
 
@@ -85,26 +85,26 @@ namespace Simple.OData.Client
 
 		public IUnboundClient<IDictionary<string, object>> As(string derivedCollectionName)
 		{
-			this.Command.As(derivedCollectionName);
-			return new UnboundClient<IDictionary<string, object>>(_client, _session, this.Command, _dynamicResults);
+			Command.As(derivedCollectionName);
+			return new UnboundClient<IDictionary<string, object>>(_client, _session, Command, _dynamicResults);
 		}
 
 		public IUnboundClient<U> As<U>(string derivedCollectionName = null)
 		where U : class
 		{
-			this.Command.As(derivedCollectionName ?? typeof(U).Name);
-			return new UnboundClient<U>(_client, _session, this.Command, _dynamicResults);
+			Command.As(derivedCollectionName ?? typeof(U).Name);
+			return new UnboundClient<U>(_client, _session, Command, _dynamicResults);
 		}
 
 		public IUnboundClient<ODataEntry> As(ODataExpression expression)
 		{
-			this.Command.As(expression);
+			Command.As(expression);
 			return CreateClientForODataEntry();
 		}
 
 		private UnboundClient<ODataEntry> CreateClientForODataEntry()
 		{
-			return new UnboundClient<ODataEntry>(_client, _session, this.Command, true); ;
+			return new UnboundClient<ODataEntry>(_client, _session, Command, true); ;
 		}
 	}
 }

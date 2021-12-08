@@ -10,21 +10,21 @@
 
 		public ExpressionContext(ISession session)
 		{
-			this.Session = session;
+			Session = session;
 		}
 
 		public ExpressionContext(ISession session, EntityCollection entityCollection, string scopeQualifier, string dynamicPropertiesContainerName)
 		{
-			this.Session = session;
-			this.EntityCollection = entityCollection;
-			this.ScopeQualifier = scopeQualifier;
-			this.DynamicPropertiesContainerName = dynamicPropertiesContainerName;
+			Session = session;
+			EntityCollection = entityCollection;
+			ScopeQualifier = scopeQualifier;
+			DynamicPropertiesContainerName = dynamicPropertiesContainerName;
 		}
 
 		public ExpressionContext(ISession session, bool isQueryOption)
 		{
-			this.Session = session;
-			this.IsQueryOption = isQueryOption;
+			Session = session;
+			IsQueryOption = isQueryOption;
 		}
 	}
 }

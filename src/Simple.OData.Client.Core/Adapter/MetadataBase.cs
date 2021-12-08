@@ -74,7 +74,7 @@ namespace Simple.OData.Client
 			{
 				if (SegmentsIncludeTypeSpecification(segments))
 				{
-					var baseEntitySet = this.GetEntityCollection(Utils.ExtractCollectionName(segments[segments.Length - 2]));
+					var baseEntitySet = GetEntityCollection(Utils.ExtractCollectionName(segments[segments.Length - 2]));
 					return GetDerivedEntityCollection(baseEntitySet, Utils.ExtractCollectionName(segments.Last()));
 				}
 				else

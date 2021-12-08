@@ -37,30 +37,30 @@ namespace Simple.OData.Client
 			_operator = expression._operator;
 			_conversionType = expression._conversionType;
 
-			this.Reference = expression.Reference;
-			this.Value = expression.Value;
-			this.Function = expression.Function;
+			Reference = expression.Reference;
+			Value = expression.Value;
+			Function = expression.Function;
 		}
 
 		internal protected ODataExpression(object value)
 		{
-			this.Value = value;
+			Value = value;
 		}
 
 		internal protected ODataExpression(string reference)
 		{
-			this.Reference = reference;
+			Reference = reference;
 		}
 
 		internal protected ODataExpression(string reference, object value)
 		{
-			this.Reference = reference;
-			this.Value = value;
+			Reference = reference;
+			Value = value;
 		}
 
 		internal protected ODataExpression(ExpressionFunction function)
 		{
-			this.Function = function;
+			Function = function;
 		}
 
 		internal protected ODataExpression(ODataExpression left, ODataExpression right, ExpressionType expressionOperator)
@@ -73,19 +73,19 @@ namespace Simple.OData.Client
 		internal protected ODataExpression(ODataExpression caller, string reference)
 		{
 			_functionCaller = caller;
-			this.Reference = reference;
+			Reference = reference;
 		}
 
 		internal protected ODataExpression(ODataExpression caller, ExpressionFunction function)
 		{
 			_functionCaller = caller;
-			this.Function = function;
+			Function = function;
 		}
 
 		internal protected ODataExpression(ODataExpression expr, Type conversionType)
 		{
 			_conversionType = conversionType;
-			this.Value = expr;
+			Value = expr;
 		}
 
 		internal static ODataExpression FromReference(string reference)
@@ -122,9 +122,9 @@ namespace Simple.OData.Client
 			return ParseLinqExpression(expression);
 		}
 
-		public bool IsNull => this.Value == null &&
-			  this.Reference == null &&
-			  this.Function == null &&
+		public bool IsNull => Value == null &&
+			  Reference == null &&
+			  Function == null &&
 			  _operator == ExpressionType.Default;
 
 		public string AsString(ISession session)
@@ -147,7 +147,7 @@ namespace Simple.OData.Client
 					return ok;
 
 				case ExpressionType.Equal:
-					var expr = this.IsValueConversion ? this : _left;
+					var expr = IsValueConversion ? this : _left;
 					while (expr.IsValueConversion)
 					{
 						expr = expr.Value as ODataExpression;
@@ -168,9 +168,9 @@ namespace Simple.OData.Client
 					return true;
 
 				default:
-					if (this.IsValueConversion)
+					if (IsValueConversion)
 					{
-						return (this.Value as ODataExpression).ExtractLookupColumns(lookupColumns);
+						return (Value as ODataExpression).ExtractLookupColumns(lookupColumns);
 					}
 					else
 					{
@@ -185,13 +185,13 @@ namespace Simple.OData.Client
 			{
 				return _left.HasTypeConstraint(typeName) || _right.HasTypeConstraint(typeName);
 			}
-			else if (this.Function != null && this.Function.FunctionName == ODataLiteral.IsOf)
+			else if (Function != null && Function.FunctionName == ODataLiteral.IsOf)
 			{
-				return this.Function.Arguments.Last().HasTypeConstraint(typeName);
+				return Function.Arguments.Last().HasTypeConstraint(typeName);
 			}
-			else if (this.Value != null)
+			else if (Value != null)
 			{
-				return this.Value is Type && (this.Value as Type).Name == typeName;
+				return Value is Type && (Value as Type).Name == typeName;
 			}
 			else
 			{
