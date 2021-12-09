@@ -5,12 +5,16 @@ namespace Simple.OData.Client.Tests;
 public class Product
 {
 	public int ProductID { get; set; }
+
 	public string ProductName { get; set; }
+
 	public decimal UnitPrice { get; set; }
+
 	public int? CategoryID { get; set; }
 
 	[NotMapped]
 	public int NotMappedProperty { get; set; }
+
 	[Column(Name = "EnglishName")]
 	public string MappedEnglishName { get; set; }
 
@@ -34,8 +38,11 @@ public class ProductWithUnmappedProperty : Product
 public class ProductWithNoCategoryLink
 {
 	public int ProductID { get; set; }
+
 	public string ProductName { get; set; }
+
 	public decimal UnitPrice { get; set; }
+
 	public int? CategoryID { get; set; }
 }
 
@@ -43,12 +50,16 @@ public class ProductWithNoCategoryLink
 public class ProductWithRemappedColumn
 {
 	public int ProductID { get; set; }
+
 	public string ProductName { get; set; }
+
 	public decimal UnitPrice { get; set; }
+
 	public int? CategoryID { get; set; }
 
 	[NotMapped]
 	public int EnglishName { get; set; }
+
 	[Column(Name = "EnglishName")]
 	public string MappedEnglishName { get; set; }
 
