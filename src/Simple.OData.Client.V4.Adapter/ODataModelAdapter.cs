@@ -6,52 +6,43 @@ using Microsoft.OData;
 using Microsoft.OData.Edm;
 using Microsoft.OData.Edm.Csdl;
 
-namespace Simple.OData.Client
+namespace Simple.OData.Client.V4.Adapter;
+
+public class ODataModelAdapter : ODataModelAdapterBase
 {
-	public static class V4ModelAdapter
+	public override AdapterVersion AdapterVersion => AdapterVersion.V4;
+
+	public new IEdmModel Model
 	{
-		public static void Reference() { }
+		get => base.Model as IEdmModel;
+		set => base.Model = value;
 	}
-}
 
-namespace Simple.OData.Client.V4.Adapter
-{
-	public class ODataModelAdapter : ODataModelAdapterBase
+	private ODataModelAdapter(string protocolVersion)
 	{
-		public override AdapterVersion AdapterVersion => AdapterVersion.V4;
+		ProtocolVersion = protocolVersion;
+	}
 
-		public new IEdmModel Model
+	public ODataModelAdapter(string protocolVersion, HttpResponseMessage response)
+		: this(protocolVersion)
+	{
+		var readerSettings = new ODataMessageReaderSettings
 		{
-			get => base.Model as IEdmModel;
-			set => base.Model = value;
-		}
+			MessageQuotas = { MaxReceivedMessageSize = int.MaxValue }
+		};
+		using var messageReader = new ODataMessageReader(new ODataResponseMessage(response), readerSettings);
+		Model = messageReader.ReadMetadataDocument();
+	}
 
-		private ODataModelAdapter(string protocolVersion)
-		{
-			ProtocolVersion = protocolVersion;
-		}
-
-		public ODataModelAdapter(string protocolVersion, HttpResponseMessage response)
-			: this(protocolVersion)
-		{
-			var readerSettings = new ODataMessageReaderSettings
-			{
-				MessageQuotas = { MaxReceivedMessageSize = int.MaxValue }
-			};
-			using var messageReader = new ODataMessageReader(new ODataResponseMessage(response), readerSettings);
-			Model = messageReader.ReadMetadataDocument();
-		}
-
-		public ODataModelAdapter(string protocolVersion, string metadataString)
-			: this(protocolVersion)
-		{
-			// HACK to prevent failure due to unsupported ConcurrencyMode attribute
-			metadataString = metadataString
-				.Replace(" ConcurrencyMode=\"None\"", "")
-				.Replace(" ConcurrencyMode=\"Fixed\"", "");
-			using var reader = XmlReader.Create(new StringReader(metadataString));
-			reader.MoveToContent();
-			Model = CsdlReader.Parse(reader);
-		}
+	public ODataModelAdapter(string protocolVersion, string metadataString)
+		: this(protocolVersion)
+	{
+		// HACK to prevent failure due to unsupported ConcurrencyMode attribute
+		metadataString = metadataString
+			.Replace(" ConcurrencyMode=\"None\"", "")
+			.Replace(" ConcurrencyMode=\"Fixed\"", "");
+		using var reader = XmlReader.Create(new StringReader(metadataString));
+		reader.MoveToContent();
+		Model = CsdlReader.Parse(reader);
 	}
 }

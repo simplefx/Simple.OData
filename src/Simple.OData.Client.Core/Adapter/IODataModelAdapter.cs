@@ -1,9 +1,8 @@
-﻿namespace Simple.OData.Client
+﻿namespace Simple.OData.Client;
+
+public interface IODataModelAdapter
 {
-	public interface IODataModelAdapter
-	{
-		AdapterVersion AdapterVersion { get; }
-		string ProtocolVersion { get; set; }
-		object Model { get; set; }
-	}
+	AdapterVersion AdapterVersion { get; }
+	string ProtocolVersion { get; set; }
+	object Model { get; set; }
 }

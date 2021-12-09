@@ -2,36 +2,36 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Data.Entity;
 
-namespace WebApiOData.V3.Samples.Models
+namespace WebApiOData.V3.Samples.Models;
+
+public class MoviesContext : DbContext
 {
-	public class MoviesContext : DbContext
+	static MoviesContext()
 	{
-		static MoviesContext()
-		{
-			Database.SetInitializer(new MoviesInitializer());
-		}
-
-		protected override void OnModelCreating(DbModelBuilder modelBuilder)
-		{
-			// Set the TimeStamp property to be an optimistic concurrency token.
-			// EF will use this to detect concurrency conflicts.
-
-			modelBuilder.Entity<Movie>()
-				.Property(m => m.TimeStamp)
-				.IsConcurrencyToken()
-				.HasDatabaseGeneratedOption(DatabaseGeneratedOption.Computed);
-
-			base.OnModelCreating(modelBuilder);
-		}
-
-		public DbSet<Movie> Movies { get; set; }
+		Database.SetInitializer(new MoviesInitializer());
 	}
 
-	public class MoviesInitializer : DropCreateDatabaseAlways<MoviesContext>
+	protected override void OnModelCreating(DbModelBuilder modelBuilder)
 	{
-		protected override void Seed(MoviesContext context)
-		{
-			var movies = new List<Movie>()
+		// Set the TimeStamp property to be an optimistic concurrency token.
+		// EF will use this to detect concurrency conflicts.
+
+		modelBuilder.Entity<Movie>()
+			.Property(m => m.TimeStamp)
+			.IsConcurrencyToken()
+			.HasDatabaseGeneratedOption(DatabaseGeneratedOption.Computed);
+
+		base.OnModelCreating(modelBuilder);
+	}
+
+	public DbSet<Movie> Movies { get; set; }
+}
+
+public class MoviesInitializer : DropCreateDatabaseAlways<MoviesContext>
+{
+	protected override void Seed(MoviesContext context)
+	{
+		var movies = new List<Movie>()
 			{
 				new Movie() { Title = "Maximum Payback", Year = 1990 },
 				new Movie() { Title = "Inferno of Retribution", Year = 2005 },
@@ -39,8 +39,7 @@ namespace WebApiOData.V3.Samples.Models
 				new Movie() { Title = "Sudden Danger", Year = 2012 },
 				new Movie() { Title = "Deadly Honor IV", Year = 1977 }
 			};
-			movies.ForEach(m => context.Movies.Add(m));
-			context.SaveChanges();
-		}
+		movies.ForEach(m => context.Movies.Add(m));
+		context.SaveChanges();
 	}
 }

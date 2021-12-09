@@ -1,34 +1,33 @@
 ﻿using Microsoft.OData;
 
-namespace Simple.OData.Client.V4.Adapter
+namespace Simple.OData.Client.V4.Adapter;
+
+internal static class ODataExtensions
 {
-	internal static class ODataExtensions
+	public static ODataMessageReaderSettings ToReaderSettings(this ISession session)
 	{
-		public static ODataMessageReaderSettings ToReaderSettings(this ISession session)
+		return session.Settings.ToReaderSettings();
+	}
+
+	public static ODataMessageReaderSettings ToReaderSettings(this ODataClientSettings settings)
+	{
+		var readerSettings = new ODataMessageReaderSettings();
+		// TODO ODataLib7
+		if (settings.IgnoreUnmappedProperties)
 		{
-			return session.Settings.ToReaderSettings();
+			readerSettings.Validations &= ~Microsoft.OData.ValidationKinds.ThrowOnUndeclaredPropertyForNonOpenType;
 		}
 
-		public static ODataMessageReaderSettings ToReaderSettings(this ODataClientSettings settings)
+		readerSettings.MessageQuotas.MaxReceivedMessageSize = int.MaxValue;
+		readerSettings.ShouldIncludeAnnotation = x => settings.IncludeAnnotationsInResults;
+
+		if (!settings.ReadUntypedAsString)
 		{
-			var readerSettings = new ODataMessageReaderSettings();
-			// TODO ODataLib7
-			if (settings.IgnoreUnmappedProperties)
-			{
-				readerSettings.Validations &= ~Microsoft.OData.ValidationKinds.ThrowOnUndeclaredPropertyForNonOpenType;
-			}
-
-			readerSettings.MessageQuotas.MaxReceivedMessageSize = int.MaxValue;
-			readerSettings.ShouldIncludeAnnotation = x => settings.IncludeAnnotationsInResults;
-
-			if (!settings.ReadUntypedAsString)
-			{
-				readerSettings.Version = ODataVersion.V401;
-				readerSettings.MaxProtocolVersion = ODataVersion.V401;
-				readerSettings.ReadUntypedAsString = false;
-			}
-
-			return readerSettings;
+			readerSettings.Version = ODataVersion.V401;
+			readerSettings.MaxProtocolVersion = ODataVersion.V401;
+			readerSettings.ReadUntypedAsString = false;
 		}
+
+		return readerSettings;
 	}
 }

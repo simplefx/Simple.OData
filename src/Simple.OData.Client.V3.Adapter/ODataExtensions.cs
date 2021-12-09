@@ -2,26 +2,25 @@
 
 using Microsoft.Data.OData;
 
-namespace Simple.OData.Client.V3.Adapter
+namespace Simple.OData.Client.V3.Adapter;
+
+internal static class ODataExtensions
 {
-	internal static class ODataExtensions
+	public static ODataMessageReaderSettings ToReaderSettings(this ISession session)
 	{
-		public static ODataMessageReaderSettings ToReaderSettings(this ISession session)
+		return session.Settings.ToReaderSettings();
+	}
+
+	public static ODataMessageReaderSettings ToReaderSettings(this ODataClientSettings settings)
+	{
+		var readerSettings = new ODataMessageReaderSettings();
+		if (settings.IgnoreUnmappedProperties)
 		{
-			return session.Settings.ToReaderSettings();
+			readerSettings.UndeclaredPropertyBehaviorKinds = ODataUndeclaredPropertyBehaviorKinds.IgnoreUndeclaredValueProperty;
 		}
 
-		public static ODataMessageReaderSettings ToReaderSettings(this ODataClientSettings settings)
-		{
-			var readerSettings = new ODataMessageReaderSettings();
-			if (settings.IgnoreUnmappedProperties)
-			{
-				readerSettings.UndeclaredPropertyBehaviorKinds = ODataUndeclaredPropertyBehaviorKinds.IgnoreUndeclaredValueProperty;
-			}
-
-			readerSettings.MessageQuotas.MaxReceivedMessageSize = Int32.MaxValue;
-			readerSettings.ShouldIncludeAnnotation = x => settings.IncludeAnnotationsInResults;
-			return readerSettings;
-		}
+		readerSettings.MessageQuotas.MaxReceivedMessageSize = Int32.MaxValue;
+		readerSettings.ShouldIncludeAnnotation = x => settings.IncludeAnnotationsInResults;
+		return readerSettings;
 	}
 }

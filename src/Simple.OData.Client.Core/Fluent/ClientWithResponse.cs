@@ -8,148 +8,147 @@ using System.Threading;
 using System.Threading.Tasks;
 using Simple.OData.Client.Extensions;
 
-namespace Simple.OData.Client
+namespace Simple.OData.Client;
+
+public class ClientWithResponse<T> : IClientWithResponse<T>
+	where T : class
 {
-	public class ClientWithResponse<T> : IClientWithResponse<T>
-		where T : class
+	private readonly ISession _session;
+	private readonly ODataRequest _request;
+
+	public HttpResponseMessage ResponseMessage { get; private set; }
+
+	public ClientWithResponse(ISession session, ODataRequest request, HttpResponseMessage responseMessage)
 	{
-		private readonly ISession _session;
-		private readonly ODataRequest _request;
+		_session = session;
+		_request = request;
+		ResponseMessage = responseMessage;
+	}
 
-		public HttpResponseMessage ResponseMessage { get; private set; }
+	private ITypeCache TypeCache => _session.TypeCache;
 
-		public ClientWithResponse(ISession session, ODataRequest request, HttpResponseMessage responseMessage)
+	public void Dispose()
+	{
+		ResponseMessage?.Dispose();
+	}
+
+	public Task<Stream> GetResponseStreamAsync()
+	{
+		return GetResponseStreamAsync(CancellationToken.None);
+	}
+
+	public async Task<Stream> GetResponseStreamAsync(CancellationToken cancellationToken)
+	{
+		if (ResponseMessage.IsSuccessStatusCode && ResponseMessage.StatusCode != HttpStatusCode.NoContent &&
+			(_request.Method == RestVerbs.Get || _request.ResultRequired))
 		{
-			_session = session;
-			_request = request;
-			ResponseMessage = responseMessage;
-		}
-
-		private ITypeCache TypeCache => _session.TypeCache;
-
-		public void Dispose()
-		{
-			ResponseMessage?.Dispose();
-		}
-
-		public Task<Stream> GetResponseStreamAsync()
-		{
-			return GetResponseStreamAsync(CancellationToken.None);
-		}
-
-		public async Task<Stream> GetResponseStreamAsync(CancellationToken cancellationToken)
-		{
-			if (ResponseMessage.IsSuccessStatusCode && ResponseMessage.StatusCode != HttpStatusCode.NoContent &&
-				(_request.Method == RestVerbs.Get || _request.ResultRequired))
+			var stream = new MemoryStream();
+			await ResponseMessage.Content.CopyToAsync(stream);
+			if (stream.CanSeek)
 			{
-				var stream = new MemoryStream();
-				await ResponseMessage.Content.CopyToAsync(stream);
-				if (stream.CanSeek)
-				{
-					stream.Seek(0L, SeekOrigin.Begin);
-				}
-
-				return stream;
+				stream.Seek(0L, SeekOrigin.Begin);
 			}
-			else
+
+			return stream;
+		}
+		else
+		{
+			return Stream.Null;
+		}
+	}
+
+	public Task<IEnumerable<T>> ReadAsCollectionAsync()
+	{
+		return ReadAsCollectionAsync(CancellationToken.None);
+	}
+
+	public Task<IEnumerable<T>> ReadAsCollectionAsync(CancellationToken cancellationToken)
+	{
+		return ReadAsCollectionAsync(null, CancellationToken.None);
+	}
+
+	public Task<IEnumerable<T>> ReadAsCollectionAsync(ODataFeedAnnotations annotations)
+	{
+		return ReadAsCollectionAsync(annotations, CancellationToken.None);
+	}
+
+	public async Task<IEnumerable<T>> ReadAsCollectionAsync(ODataFeedAnnotations annotations, CancellationToken cancellationToken)
+	{
+		if (ResponseMessage.IsSuccessStatusCode && ResponseMessage.StatusCode != HttpStatusCode.NoContent &&
+			(_request.Method == RestVerbs.Get || _request.ResultRequired))
+		{
+			var responseReader = _session.Adapter.GetResponseReader();
+			var response = await responseReader.GetResponseAsync(ResponseMessage).ConfigureAwait(false);
+			if (cancellationToken.IsCancellationRequested)
 			{
-				return Stream.Null;
+				cancellationToken.ThrowIfCancellationRequested();
 			}
-		}
 
-		public Task<IEnumerable<T>> ReadAsCollectionAsync()
-		{
-			return ReadAsCollectionAsync(CancellationToken.None);
-		}
-
-		public Task<IEnumerable<T>> ReadAsCollectionAsync(CancellationToken cancellationToken)
-		{
-			return ReadAsCollectionAsync(null, CancellationToken.None);
-		}
-
-		public Task<IEnumerable<T>> ReadAsCollectionAsync(ODataFeedAnnotations annotations)
-		{
-			return ReadAsCollectionAsync(annotations, CancellationToken.None);
-		}
-
-		public async Task<IEnumerable<T>> ReadAsCollectionAsync(ODataFeedAnnotations annotations, CancellationToken cancellationToken)
-		{
-			if (ResponseMessage.IsSuccessStatusCode && ResponseMessage.StatusCode != HttpStatusCode.NoContent &&
-				(_request.Method == RestVerbs.Get || _request.ResultRequired))
+			if (annotations != null && response.Feed != null)
 			{
-				var responseReader = _session.Adapter.GetResponseReader();
-				var response = await responseReader.GetResponseAsync(ResponseMessage).ConfigureAwait(false);
-				if (cancellationToken.IsCancellationRequested)
-				{
-					cancellationToken.ThrowIfCancellationRequested();
-				}
-
-				if (annotations != null && response.Feed != null)
-				{
-					annotations.CopyFrom(response.Feed.Annotations);
-				}
-
-				var result = response.AsEntries(_session.Settings.IncludeAnnotationsInResults);
-				return result.Select(x => x.ToObject<T>(TypeCache));
+				annotations.CopyFrom(response.Feed.Annotations);
 			}
-			else
-			{
-				return Array.Empty<T>();
-			}
+
+			var result = response.AsEntries(_session.Settings.IncludeAnnotationsInResults);
+			return result.Select(x => x.ToObject<T>(TypeCache));
 		}
-
-		public Task<T> ReadAsSingleAsync()
+		else
 		{
-			return ReadAsSingleAsync(CancellationToken.None);
+			return Array.Empty<T>();
 		}
+	}
 
-		public async Task<T> ReadAsSingleAsync(CancellationToken cancellationToken)
+	public Task<T> ReadAsSingleAsync()
+	{
+		return ReadAsSingleAsync(CancellationToken.None);
+	}
+
+	public async Task<T> ReadAsSingleAsync(CancellationToken cancellationToken)
+	{
+		if (ResponseMessage.IsSuccessStatusCode && ResponseMessage.StatusCode != HttpStatusCode.NoContent &&
+			(_request.Method == RestVerbs.Get || _request.ResultRequired))
 		{
-			if (ResponseMessage.IsSuccessStatusCode && ResponseMessage.StatusCode != HttpStatusCode.NoContent &&
-				(_request.Method == RestVerbs.Get || _request.ResultRequired))
+			var responseReader = _session.Adapter.GetResponseReader();
+			var response = await responseReader.GetResponseAsync(ResponseMessage).ConfigureAwait(false);
+			if (cancellationToken.IsCancellationRequested)
 			{
-				var responseReader = _session.Adapter.GetResponseReader();
-				var response = await responseReader.GetResponseAsync(ResponseMessage).ConfigureAwait(false);
-				if (cancellationToken.IsCancellationRequested)
-				{
-					cancellationToken.ThrowIfCancellationRequested();
-				}
+				cancellationToken.ThrowIfCancellationRequested();
+			}
 
-				var result = response.AsEntries(_session.Settings.IncludeAnnotationsInResults);
-				return result?.FirstOrDefault().ToObject<T>(TypeCache);
-			}
-			else
-			{
-				return default(T);
-			}
+			var result = response.AsEntries(_session.Settings.IncludeAnnotationsInResults);
+			return result?.FirstOrDefault().ToObject<T>(TypeCache);
 		}
-
-		public Task<U> ReadAsScalarAsync<U>()
+		else
 		{
-			return ReadAsScalarAsync<U>(CancellationToken.None);
+			return default(T);
 		}
+	}
 
-		public async Task<U> ReadAsScalarAsync<U>(CancellationToken cancellationToken)
+	public Task<U> ReadAsScalarAsync<U>()
+	{
+		return ReadAsScalarAsync<U>(CancellationToken.None);
+	}
+
+	public async Task<U> ReadAsScalarAsync<U>(CancellationToken cancellationToken)
+	{
+		if (ResponseMessage.IsSuccessStatusCode && ResponseMessage.StatusCode != HttpStatusCode.NoContent &&
+			(_request.Method == RestVerbs.Get || _request.ResultRequired))
 		{
-			if (ResponseMessage.IsSuccessStatusCode && ResponseMessage.StatusCode != HttpStatusCode.NoContent &&
-				(_request.Method == RestVerbs.Get || _request.ResultRequired))
+			var responseReader = _session.Adapter.GetResponseReader();
+			var response = await responseReader.GetResponseAsync(ResponseMessage).ConfigureAwait(false);
+			if (cancellationToken.IsCancellationRequested)
 			{
-				var responseReader = _session.Adapter.GetResponseReader();
-				var response = await responseReader.GetResponseAsync(ResponseMessage).ConfigureAwait(false);
-				if (cancellationToken.IsCancellationRequested)
-				{
-					cancellationToken.ThrowIfCancellationRequested();
-				}
-
-				var result = response.AsEntries(_session.Settings.IncludeAnnotationsInResults);
-
-				static object extractScalar(IDictionary<string, object> x) => (x == null) || !x.Any() ? null : x.Values.First();
-				return result == null ? default(U) : _session.TypeCache.Convert<U>(extractScalar(result.FirstOrDefault()));
+				cancellationToken.ThrowIfCancellationRequested();
 			}
-			else
-			{
-				return default(U);
-			}
+
+			var result = response.AsEntries(_session.Settings.IncludeAnnotationsInResults);
+
+			static object extractScalar(IDictionary<string, object> x) => (x == null) || !x.Any() ? null : x.Values.First();
+			return result == null ? default(U) : _session.TypeCache.Convert<U>(extractScalar(result.FirstOrDefault()));
+		}
+		else
+		{
+			return default(U);
 		}
 	}
 }

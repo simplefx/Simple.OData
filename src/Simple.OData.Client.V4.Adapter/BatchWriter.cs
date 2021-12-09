@@ -5,87 +5,86 @@ using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using Microsoft.OData;
 
-namespace Simple.OData.Client.V4.Adapter
+namespace Simple.OData.Client.V4.Adapter;
+
+public class BatchWriter : BatchWriterBase
 {
-	public class BatchWriter : BatchWriterBase
+	private ODataBatchWriter _batchWriter;
+	private ODataRequestMessage _requestMessage;
+	private ODataMessageWriter _messageWriter;
+
+	public BatchWriter(ISession session, IDictionary<object, IDictionary<string, object>> batchEntries)
+		: base(session, batchEntries)
 	{
-		private ODataBatchWriter _batchWriter;
-		private ODataRequestMessage _requestMessage;
-		private ODataMessageWriter _messageWriter;
+	}
 
-		public BatchWriter(ISession session, IDictionary<object, IDictionary<string, object>> batchEntries)
-			: base(session, batchEntries)
+	public async override Task StartBatchAsync()
+	{
+		_requestMessage = new ODataRequestMessage() { Url = _session.Settings.BaseUri };
+		_messageWriter = new ODataMessageWriter(_requestMessage, new ODataMessageWriterSettings { BaseUri = _session.Settings.BaseUri });
+		_batchWriter = await _messageWriter.CreateODataBatchWriterAsync().ConfigureAwait(false);
+		await _batchWriter.WriteStartBatchAsync().ConfigureAwait(false);
+		HasOperations = true;
+	}
+
+	public async override Task<HttpRequestMessage> EndBatchAsync()
+	{
+		if (_pendingChangeSet)
 		{
+			await _batchWriter.WriteEndChangesetAsync().ConfigureAwait(false);
 		}
 
-		public async override Task StartBatchAsync()
+		await _batchWriter.WriteEndBatchAsync().ConfigureAwait(false);
+		var stream = await _requestMessage.GetStreamAsync().ConfigureAwait(false);
+		return CreateMessageFromStream(stream, _requestMessage.Url, _requestMessage.GetHeader);
+	}
+
+	protected async override Task StartChangesetAsync()
+	{
+		if (_batchWriter == null)
 		{
-			_requestMessage = new ODataRequestMessage() { Url = _session.Settings.BaseUri };
-			_messageWriter = new ODataMessageWriter(_requestMessage, new ODataMessageWriterSettings { BaseUri = _session.Settings.BaseUri });
-			_batchWriter = await _messageWriter.CreateODataBatchWriterAsync().ConfigureAwait(false);
-			await _batchWriter.WriteStartBatchAsync().ConfigureAwait(false);
-			HasOperations = true;
+			await StartBatchAsync().ConfigureAwait(false);
 		}
 
-		public async override Task<HttpRequestMessage> EndBatchAsync()
-		{
-			if (_pendingChangeSet)
-			{
-				await _batchWriter.WriteEndChangesetAsync().ConfigureAwait(false);
-			}
+		await _batchWriter.WriteStartChangesetAsync().ConfigureAwait(false);
+	}
 
-			await _batchWriter.WriteEndBatchAsync().ConfigureAwait(false);
-			var stream = await _requestMessage.GetStreamAsync().ConfigureAwait(false);
-			return CreateMessageFromStream(stream, _requestMessage.Url, _requestMessage.GetHeader);
+	protected override Task EndChangesetAsync()
+	{
+		return _batchWriter.WriteEndChangesetAsync();
+	}
+
+	protected async override Task<object> CreateOperationMessageAsync(Uri uri, string method, string collection, string contentId, bool resultRequired)
+	{
+		if (_batchWriter == null)
+		{
+			await StartBatchAsync().ConfigureAwait(false);
 		}
 
-		protected async override Task StartChangesetAsync()
-		{
-			if (_batchWriter == null)
-			{
-				await StartBatchAsync().ConfigureAwait(false);
-			}
+		return await CreateBatchOperationMessageAsync(uri, method, collection, contentId, resultRequired).ConfigureAwait(false);
+	}
 
-			await _batchWriter.WriteStartChangesetAsync().ConfigureAwait(false);
+	private async Task<ODataBatchOperationRequestMessage> CreateBatchOperationMessageAsync(
+		Uri uri, string method, string collection, string contentId, bool resultRequired)
+	{
+		var message = await _batchWriter.CreateOperationRequestMessageAsync(method, uri, contentId, (Microsoft.OData.BatchPayloadUriOption)_session.Settings.BatchPayloadUriOption).ConfigureAwait(false);
+
+		if (method == RestVerbs.Post || method == RestVerbs.Put || method == RestVerbs.Patch || method == RestVerbs.Merge)
+		{
+			message.SetHeader(HttpLiteral.ContentId, contentId);
 		}
 
-		protected override Task EndChangesetAsync()
+		if (method == RestVerbs.Post || method == RestVerbs.Put || method == RestVerbs.Patch || method == RestVerbs.Merge)
 		{
-			return _batchWriter.WriteEndChangesetAsync();
+			message.SetHeader(HttpLiteral.Prefer, resultRequired ? HttpLiteral.ReturnRepresentation : HttpLiteral.ReturnMinimal);
 		}
 
-		protected async override Task<object> CreateOperationMessageAsync(Uri uri, string method, string collection, string contentId, bool resultRequired)
+		if (collection != null && _session.Metadata.EntityCollectionRequiresOptimisticConcurrencyCheck(collection) &&
+			(method == RestVerbs.Put || method == RestVerbs.Patch || method == RestVerbs.Merge || method == RestVerbs.Delete))
 		{
-			if (_batchWriter == null)
-			{
-				await StartBatchAsync().ConfigureAwait(false);
-			}
-
-			return await CreateBatchOperationMessageAsync(uri, method, collection, contentId, resultRequired).ConfigureAwait(false);
+			message.SetHeader(HttpLiteral.IfMatch, EntityTagHeaderValue.Any.Tag);
 		}
 
-		private async Task<ODataBatchOperationRequestMessage> CreateBatchOperationMessageAsync(
-			Uri uri, string method, string collection, string contentId, bool resultRequired)
-		{
-			var message = await _batchWriter.CreateOperationRequestMessageAsync(method, uri, contentId, (Microsoft.OData.BatchPayloadUriOption)_session.Settings.BatchPayloadUriOption).ConfigureAwait(false);
-
-			if (method == RestVerbs.Post || method == RestVerbs.Put || method == RestVerbs.Patch || method == RestVerbs.Merge)
-			{
-				message.SetHeader(HttpLiteral.ContentId, contentId);
-			}
-
-			if (method == RestVerbs.Post || method == RestVerbs.Put || method == RestVerbs.Patch || method == RestVerbs.Merge)
-			{
-				message.SetHeader(HttpLiteral.Prefer, resultRequired ? HttpLiteral.ReturnRepresentation : HttpLiteral.ReturnMinimal);
-			}
-
-			if (collection != null && _session.Metadata.EntityCollectionRequiresOptimisticConcurrencyCheck(collection) &&
-				(method == RestVerbs.Put || method == RestVerbs.Patch || method == RestVerbs.Merge || method == RestVerbs.Delete))
-			{
-				message.SetHeader(HttpLiteral.IfMatch, EntityTagHeaderValue.Any.Tag);
-			}
-
-			return message;
-		}
+		return message;
 	}
 }

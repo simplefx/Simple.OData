@@ -6,76 +6,75 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.OData;
 
-namespace Simple.OData.Client.V4.Adapter
+namespace Simple.OData.Client.V4.Adapter;
+
+internal class ODataResponseMessage : IODataResponseMessageAsync
 {
-	internal class ODataResponseMessage : IODataResponseMessageAsync
+	private readonly HttpResponseMessage _response;
+
+	public ODataResponseMessage(HttpResponseMessage response)
 	{
-		private readonly HttpResponseMessage _response;
+		_response = response;
+	}
 
-		public ODataResponseMessage(HttpResponseMessage response)
+	public Task<Stream> GetStreamAsync()
+	{
+		if (_response.Content != null)
 		{
-			_response = response;
+			return _response.Content.ReadAsStreamAsync();
 		}
-
-		public Task<Stream> GetStreamAsync()
+		else
 		{
-			if (_response.Content != null)
+			var completionSource = new TaskCompletionSource<Stream>();
+			completionSource.SetResult(Stream.Null);
+			return completionSource.Task;
+		}
+	}
+
+	public string GetHeader(string headerName)
+	{
+		if (headerName == HttpLiteral.ContentType || headerName == HttpLiteral.ContentLength)
+		{
+			if (_response.Content.Headers.Contains(headerName))
 			{
-				return _response.Content.ReadAsStreamAsync();
+				return _response.Content.Headers.GetValues(headerName).FirstOrDefault();
 			}
 			else
 			{
-				var completionSource = new TaskCompletionSource<Stream>();
-				completionSource.SetResult(Stream.Null);
-				return completionSource.Task;
+				return null;
 			}
 		}
-
-		public string GetHeader(string headerName)
+		else
 		{
-			if (headerName == HttpLiteral.ContentType || headerName == HttpLiteral.ContentLength)
+			if (_response.Headers.Contains(headerName))
 			{
-				if (_response.Content.Headers.Contains(headerName))
-				{
-					return _response.Content.Headers.GetValues(headerName).FirstOrDefault();
-				}
-				else
-				{
-					return null;
-				}
+				return _response.Headers.GetValues(headerName).FirstOrDefault();
 			}
 			else
 			{
-				if (_response.Headers.Contains(headerName))
-				{
-					return _response.Headers.GetValues(headerName).FirstOrDefault();
-				}
-				else
-				{
-					return null;
-				}
+				return null;
 			}
 		}
+	}
 
-		public Stream GetStream()
-		{
-			var getStreamTask = GetStreamAsync();
-			getStreamTask.Wait();
+	public Stream GetStream()
+	{
+		var getStreamTask = GetStreamAsync();
+		getStreamTask.Wait();
 
-			return getStreamTask.Result;
-		}
+		return getStreamTask.Result;
+	}
 
-		public IEnumerable<KeyValuePair<string, string>> Headers => _response.Headers.Select(h => new KeyValuePair<string, string>(h.Key, h.Value.FirstOrDefault()));
+	public IEnumerable<KeyValuePair<string, string>> Headers => _response.Headers.Select(h => new KeyValuePair<string, string>(h.Key, h.Value.FirstOrDefault()));
 
-		public void SetHeader(string headerName, string headerValue)
-		{
-			throw new NotImplementedException();
-		}
+	public void SetHeader(string headerName, string headerValue)
+	{
+		throw new NotImplementedException();
+	}
 
-		public int StatusCode
-		{
-			get => (int)_response.StatusCode;
-			set => throw new NotImplementedException();
-		}
+	public int StatusCode
+	{
+		get => (int)_response.StatusCode;
+		set => throw new NotImplementedException();
 	}
 }
