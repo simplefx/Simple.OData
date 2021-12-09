@@ -185,35 +185,21 @@ namespace Simple.OData.Client.Tests
 		[Fact]
 		public async Task MetadataErrorIsNotCached()
 		{
-			var baseUri = new Uri("ftp://localhost/");
-			var settings = new ODataClientSettings { BaseUri = baseUri };
-
-			var client = new ODataClient(settings);
+			const string uriString = "ftp://localhost/";
+			var baseUri = new Uri(uriString);
 			try
 			{
+				var settings = new ODataClientSettings { BaseUri = baseUri };
+				var client = new ODataClient(settings);
 				await client.GetMetadataAsync();
 			}
-			catch (ArgumentException)
+			catch (NotSupportedException)
 			{
-				//only HTTP and HTTPS supported
-			}
-			catch (AggregateException ex)
-			{
-				ex = ex.Flatten();
-				if (ex.InnerExceptions.Count != 1)
-				{
-					throw;
-				}
-
-				if (ex.InnerException is not ArgumentException arg)
-				{
-					throw;
-				}
 				//only HTTP and HTTPS supported
 			}
 
 			var wasCached = true;
-			var cached = EdmMetadataCache.GetOrAdd("ftp://localhost/", x =>
+			var cached = EdmMetadataCache.GetOrAdd(uriString, x =>
 			{
 				wasCached = false;
 				return null;
