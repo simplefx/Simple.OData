@@ -9,7 +9,6 @@ namespace Simple.OData.Client
 	{
 		private IODataAdapter _adapter;
 		private HttpConnection _httpConnection;
-		private EdmMetadataCache _metadataCache;
 
 		private Session(Uri baseUri, string metadataString) : this(new ODataClientSettings
 		{
@@ -31,7 +30,7 @@ namespace Simple.OData.Client
 			if (!string.IsNullOrEmpty(Settings.MetadataDocument))
 			{
 				// Create as early as possible as most unit tests require this and also makes it simpler when assigning a static document
-				_metadataCache = InitializeStaticMetadata(Settings.MetadataDocument);
+				MetadataCache = InitializeStaticMetadata(Settings.MetadataDocument);
 			}
 		}
 
@@ -55,7 +54,7 @@ namespace Simple.OData.Client
 
 		public IMetadata Metadata => Adapter.GetMetadata();
 
-		public EdmMetadataCache MetadataCache => _metadataCache;
+		public EdmMetadataCache MetadataCache { get; private set; }
 
 		public ODataClientSettings Settings { get; }
 
@@ -81,15 +80,15 @@ namespace Simple.OData.Client
 
 			try
 			{
-				if (_metadataCache == null)
+				if (MetadataCache == null)
 				{
-					_metadataCache = await InitializeMetadataCache(cancellationToken)
+					MetadataCache = await InitializeMetadataCache(cancellationToken)
 						.ConfigureAwait(false);
 				}
 
 				if (_adapter == null)
 				{
-					_adapter = _metadataCache.GetODataAdapter(this);
+					_adapter = MetadataCache.GetODataAdapter(this);
 				}
 			}
 			finally
@@ -105,11 +104,11 @@ namespace Simple.OData.Client
 
 		public void ClearMetadataCache()
 		{
-			var metadataCache = _metadataCache;
+			var metadataCache = MetadataCache;
 			if (metadataCache != null)
 			{
 				EdmMetadataCache.Clear(metadataCache.Key);
-				_metadataCache = null;
+				MetadataCache = null;
 			}
 		}
 

@@ -9,14 +9,13 @@ namespace Simple.OData.Client
 	public abstract class BatchWriterBase : IBatchWriter
 	{
 		protected readonly ISession _session;
-		private int _lastOperationId;
 		private readonly Dictionary<IDictionary<string, object>, string> _contentIdMap;
 		protected bool _pendingChangeSet;
 
 		protected BatchWriterBase(ISession session, IDictionary<object, IDictionary<string, object>> batchEntries)
 		{
 			_session = session;
-			_lastOperationId = 0;
+			LastOperationId = 0;
 			_contentIdMap = new Dictionary<IDictionary<string, object>, string>();
 			BatchEntries = batchEntries;
 		}
@@ -64,11 +63,11 @@ namespace Simple.OData.Client
 		protected abstract Task EndChangesetAsync();
 		protected abstract Task<object> CreateOperationMessageAsync(Uri uri, string method, string collection, string contentId, bool resultRequired);
 
-		public int LastOperationId => _lastOperationId;
+		public int LastOperationId { get; private set; }
 
 		public string NextContentId()
 		{
-			return (++_lastOperationId).ToString();
+			return (++LastOperationId).ToString();
 		}
 
 		public string GetContentId(IDictionary<string, object> entryData, object linkData)

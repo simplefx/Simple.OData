@@ -11,16 +11,15 @@ namespace Simple.OData.Client
 
 	public class EntryDetails
 	{
-		private readonly IDictionary<string, object> _properties = new Dictionary<string, object>();
 		private readonly IDictionary<string, List<ReferenceLink>> _links = new Dictionary<string, List<ReferenceLink>>();
 
-		public IDictionary<string, object> Properties => _properties;
+		public IDictionary<string, object> Properties { get; } = new Dictionary<string, object>();
 		public IDictionary<string, List<ReferenceLink>> Links => _links;
 		public bool HasOpenTypeProperties { get; set; }
 
 		public void AddProperty(string propertyName, object propertyValue)
 		{
-			_properties.Add(propertyName, propertyValue);
+			Properties.Add(propertyName, propertyValue);
 		}
 
 		public void AddLink(string linkName, object linkData, string contentId = null)

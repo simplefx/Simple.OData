@@ -6,14 +6,13 @@ namespace Simple.OData.Client
 	public class HttpConnection : IDisposable
 	{
 		private HttpMessageHandler _messageHandler;
-		private HttpClient _httpClient;
 
-		public HttpClient HttpClient => _httpClient;
+		public HttpClient HttpClient { get; private set; }
 
 		public HttpConnection(ODataClientSettings settings)
 		{
 			_messageHandler = CreateMessageHandler(settings);
-			_httpClient = CreateHttpClient(settings, _messageHandler);
+			HttpClient = CreateHttpClient(settings, _messageHandler);
 		}
 
 		public void Dispose()
@@ -24,10 +23,10 @@ namespace Simple.OData.Client
 				_messageHandler = null;
 			}
 
-			if (_httpClient != null)
+			if (HttpClient != null)
 			{
-				_httpClient.Dispose();
-				_httpClient = null;
+				HttpClient.Dispose();
+				HttpClient = null;
 			}
 		}
 

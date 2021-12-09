@@ -10,10 +10,7 @@ namespace Simple.OData.Client
 	public partial class ODataClient : IODataClient
 	{
 		private readonly ODataClientSettings _settings;
-		private readonly Session _session;
 		private readonly RequestRunner _requestRunner;
-		private readonly Lazy<IBatchWriter> _lazyBatchWriter;
-		private readonly ConcurrentDictionary<object, IDictionary<string, object>> _batchEntries;
 		private readonly ODataResponse _batchResponse;
 
 		/// <summary>
@@ -44,8 +41,8 @@ namespace Simple.OData.Client
 		public ODataClient(ODataClientSettings settings)
 		{
 			_settings = settings;
-			_session = Session.FromSettings(_settings);
-			_requestRunner = new RequestRunner(_session);
+			Session = Session.FromSettings(_settings);
+			_requestRunner = new RequestRunner(Session);
 		}
 
 		internal ODataClient(ODataClientSettings settings, ConcurrentDictionary<object, IDictionary<string, object>> batchEntries)
@@ -53,15 +50,15 @@ namespace Simple.OData.Client
 		{
 			if (batchEntries != null)
 			{
-				_batchEntries = batchEntries;
-				_lazyBatchWriter = new Lazy<IBatchWriter>(() => _session.Adapter.GetBatchWriter(_batchEntries));
+				BatchEntries = batchEntries;
+				BatchWriter = new Lazy<IBatchWriter>(() => Session.Adapter.GetBatchWriter(BatchEntries));
 			}
 		}
 
 		internal ODataClient(ODataClient client)
 		{
 			_settings = client._settings;
-			_session = client.Session;
+			Session = client.Session;
 			_requestRunner = client._requestRunner;
 		}
 
@@ -70,24 +67,24 @@ namespace Simple.OData.Client
 		{
 			if (batchEntries != null)
 			{
-				_batchEntries = batchEntries;
-				_lazyBatchWriter = new Lazy<IBatchWriter>(() => _session.Adapter.GetBatchWriter(_batchEntries));
+				BatchEntries = batchEntries;
+				BatchWriter = new Lazy<IBatchWriter>(() => Session.Adapter.GetBatchWriter(BatchEntries));
 			}
 		}
 
 		internal ODataClient(ODataClient client, ODataResponse batchResponse)
 		{
 			_settings = client._settings;
-			_session = client.Session;
+			Session = client.Session;
 			_batchResponse = batchResponse;
 		}
 
-		internal Session Session => _session;
+		internal Session Session { get; private set; }
 		internal ODataResponse BatchResponse => _batchResponse;
-		internal bool IsBatchRequest => _lazyBatchWriter != null;
+		internal bool IsBatchRequest => BatchWriter != null;
 		internal bool IsBatchResponse => _batchResponse != null;
-		internal ConcurrentDictionary<object, IDictionary<string, object>> BatchEntries => _batchEntries;
-		internal Lazy<IBatchWriter> BatchWriter => _lazyBatchWriter;
+		internal ConcurrentDictionary<object, IDictionary<string, object>> BatchEntries { get; private set; }
+		internal Lazy<IBatchWriter> BatchWriter { get; private set; }
 
 		/// <summary>
 		/// Parses the OData service metadata string.
@@ -132,7 +129,7 @@ namespace Simple.OData.Client
 		/// </returns>
 		public IBoundClient<ODataEntry> For(ODataExpression expression)
 		{
-			return new BoundClient<ODataEntry>(this, _session).For(expression);
+			return new BoundClient<ODataEntry>(this, Session).For(expression);
 		}
 
 		/// <summary>
@@ -146,7 +143,7 @@ namespace Simple.OData.Client
 		public IBoundClient<T> For<T>(string collectionName = null)
 			where T : class
 		{
-			return new BoundClient<T>(this, _session).For(collectionName);
+			return new BoundClient<T>(this, Session).For(collectionName);
 		}
 
 		/// <summary>
@@ -170,13 +167,13 @@ namespace Simple.OData.Client
 
 		private BoundClient<IDictionary<string, object>> GetBoundClient()
 		{
-			return new BoundClient<IDictionary<string, object>>(this, _session);
+			return new BoundClient<IDictionary<string, object>>(this, Session);
 		}
 
 		private UnboundClient<T> GetUnboundClient<T>()
 			where T : class
 		{
-			return new UnboundClient<T>(this, _session);
+			return new UnboundClient<T>(this, Session);
 		}
 
 		/// <summary>

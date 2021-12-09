@@ -22,18 +22,18 @@ namespace Simple.OData.Client
 				updatedKey.Add(item);
 			}
 			var updatedCommand = new FluentCommand(command).Key(updatedKey);
-			return await FindEntryAsync(updatedCommand.Resolve(_session).Format(), cancellationToken).ConfigureAwait(false);
+			return await FindEntryAsync(updatedCommand.Resolve(Session).Format(), cancellationToken).ConfigureAwait(false);
 		}
 
 		private async Task<IEnumerable<IDictionary<string, object>>> ExecuteFunctionAsync(ResolvedCommand command, ODataFeedAnnotations annotations, CancellationToken cancellationToken)
 		{
-			var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
+			var request = await Session.Adapter.GetRequestWriter(BatchWriter)
 				.CreateFunctionRequestAsync(command.Format(), command.Details.FunctionName, command.Details.Headers).ConfigureAwait(false);
 
 			return await ExecuteRequestWithResultAsync(request, cancellationToken,
 				x =>
 				{
-					var result = x.AsEntries(_session.Settings.IncludeAnnotationsInResults);
+					var result = x.AsEntries(Session.Settings.IncludeAnnotationsInResults);
 					if (annotations != null && x.Feed != null)
 					{
 						annotations.CopyFrom(x.Feed.Annotations);
@@ -46,26 +46,26 @@ namespace Simple.OData.Client
 
 		private async Task<IEnumerable<IDictionary<string, object>>> ExecuteFunctionAsync(ResolvedCommand command, CancellationToken cancellationToken)
 		{
-			var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
+			var request = await Session.Adapter.GetRequestWriter(BatchWriter)
 				.CreateFunctionRequestAsync(command.Format(), command.Details.FunctionName, command.Details.Headers).ConfigureAwait(false);
 
 			return await ExecuteRequestWithResultAsync(request, cancellationToken,
-				x => x.AsEntries(_session.Settings.IncludeAnnotationsInResults),
+				x => x.AsEntries(Session.Settings.IncludeAnnotationsInResults),
 				() => Array.Empty<IDictionary<string, object>>()).ConfigureAwait(false);
 		}
 
 		private async Task<IEnumerable<IDictionary<string, object>>> ExecuteActionAsync(ResolvedCommand command, ODataFeedAnnotations annotations, CancellationToken cancellationToken)
 		{
 			var entityTypeName = command.EntityCollection != null
-				? _session.Metadata.GetQualifiedTypeName(command.EntityCollection.Name)
+				? Session.Metadata.GetQualifiedTypeName(command.EntityCollection.Name)
 				: null;
-			var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
+			var request = await Session.Adapter.GetRequestWriter(BatchWriter)
 				.CreateActionRequestAsync(command.Format(), command.Details.ActionName, entityTypeName, command.CommandData, true, command.Details.Headers).ConfigureAwait(false);
 
 			return await ExecuteRequestWithResultAsync(request, cancellationToken,
 				x =>
 				{
-					var result = x.AsEntries(_session.Settings.IncludeAnnotationsInResults);
+					var result = x.AsEntries(Session.Settings.IncludeAnnotationsInResults);
 					if (annotations != null && x.Feed != null)
 					{
 						annotations.CopyFrom(x.Feed.Annotations);
@@ -79,13 +79,13 @@ namespace Simple.OData.Client
 		private async Task<IEnumerable<IDictionary<string, object>>> ExecuteActionAsync(ResolvedCommand command, CancellationToken cancellationToken)
 		{
 			var entityTypeName = command.EntityCollection != null
-				? _session.Metadata.GetQualifiedTypeName(command.EntityCollection.Name)
+				? Session.Metadata.GetQualifiedTypeName(command.EntityCollection.Name)
 				: null;
-			var request = await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
+			var request = await Session.Adapter.GetRequestWriter(BatchWriter)
 				.CreateActionRequestAsync(command.Format(), command.Details.ActionName, entityTypeName, command.CommandData, true, command.Details.Headers).ConfigureAwait(false);
 
 			return await ExecuteRequestWithResultAsync(request, cancellationToken,
-				x => x.AsEntries(_session.Settings.IncludeAnnotationsInResults),
+				x => x.AsEntries(Session.Settings.IncludeAnnotationsInResults),
 				() => Array.Empty<IDictionary<string, object>>()).ConfigureAwait(false);
 		}
 
@@ -97,12 +97,12 @@ namespace Simple.OData.Client
 			}
 
 			var responseIndexes = new List<int>();
-			var request = await _lazyBatchWriter.Value.CreateBatchRequestAsync(this, actions, responseIndexes, headers).ConfigureAwait(false);
+			var request = await BatchWriter.Value.CreateBatchRequestAsync(this, actions, responseIndexes, headers).ConfigureAwait(false);
 			if (request != null)
 			{
 				// Execute batch and get response
 				using var response = await _requestRunner.ExecuteRequestAsync(request, cancellationToken).ConfigureAwait(false);
-				var responseReader = _session.Adapter.GetResponseReader();
+				var responseReader = Session.Adapter.GetResponseReader();
 				var batchResponse = await responseReader.GetResponseAsync(response).ConfigureAwait(false);
 
 				// Replay batch operations to assign results
@@ -154,7 +154,7 @@ namespace Simple.OData.Client
 				if (response.IsSuccessStatusCode && response.StatusCode != HttpStatusCode.NoContent &&
 					(request.Method == RestVerbs.Get || request.ResultRequired))
 				{
-					var responseReader = _session.Adapter.GetResponseReader();
+					var responseReader = Session.Adapter.GetResponseReader();
 					return createResult(await responseReader.GetResponseAsync(response).ConfigureAwait(false));
 				}
 				else

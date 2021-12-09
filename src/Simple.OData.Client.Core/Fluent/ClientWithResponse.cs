@@ -15,22 +15,21 @@ namespace Simple.OData.Client
 	{
 		private readonly ISession _session;
 		private readonly ODataRequest _request;
-		private readonly HttpResponseMessage _responseMessage;
 
-		public HttpResponseMessage ResponseMessage => _responseMessage;
+		public HttpResponseMessage ResponseMessage { get; private set; }
 
 		public ClientWithResponse(ISession session, ODataRequest request, HttpResponseMessage responseMessage)
 		{
 			_session = session;
 			_request = request;
-			_responseMessage = responseMessage;
+			ResponseMessage = responseMessage;
 		}
 
 		private ITypeCache TypeCache => _session.TypeCache;
 
 		public void Dispose()
 		{
-			_responseMessage?.Dispose();
+			ResponseMessage?.Dispose();
 		}
 
 		public Task<Stream> GetResponseStreamAsync()
@@ -40,11 +39,11 @@ namespace Simple.OData.Client
 
 		public async Task<Stream> GetResponseStreamAsync(CancellationToken cancellationToken)
 		{
-			if (_responseMessage.IsSuccessStatusCode && _responseMessage.StatusCode != HttpStatusCode.NoContent &&
+			if (ResponseMessage.IsSuccessStatusCode && ResponseMessage.StatusCode != HttpStatusCode.NoContent &&
 				(_request.Method == RestVerbs.Get || _request.ResultRequired))
 			{
 				var stream = new MemoryStream();
-				await _responseMessage.Content.CopyToAsync(stream);
+				await ResponseMessage.Content.CopyToAsync(stream);
 				if (stream.CanSeek)
 				{
 					stream.Seek(0L, SeekOrigin.Begin);
@@ -75,11 +74,11 @@ namespace Simple.OData.Client
 
 		public async Task<IEnumerable<T>> ReadAsCollectionAsync(ODataFeedAnnotations annotations, CancellationToken cancellationToken)
 		{
-			if (_responseMessage.IsSuccessStatusCode && _responseMessage.StatusCode != HttpStatusCode.NoContent &&
+			if (ResponseMessage.IsSuccessStatusCode && ResponseMessage.StatusCode != HttpStatusCode.NoContent &&
 				(_request.Method == RestVerbs.Get || _request.ResultRequired))
 			{
 				var responseReader = _session.Adapter.GetResponseReader();
-				var response = await responseReader.GetResponseAsync(_responseMessage).ConfigureAwait(false);
+				var response = await responseReader.GetResponseAsync(ResponseMessage).ConfigureAwait(false);
 				if (cancellationToken.IsCancellationRequested)
 				{
 					cancellationToken.ThrowIfCancellationRequested();
@@ -106,11 +105,11 @@ namespace Simple.OData.Client
 
 		public async Task<T> ReadAsSingleAsync(CancellationToken cancellationToken)
 		{
-			if (_responseMessage.IsSuccessStatusCode && _responseMessage.StatusCode != HttpStatusCode.NoContent &&
+			if (ResponseMessage.IsSuccessStatusCode && ResponseMessage.StatusCode != HttpStatusCode.NoContent &&
 				(_request.Method == RestVerbs.Get || _request.ResultRequired))
 			{
 				var responseReader = _session.Adapter.GetResponseReader();
-				var response = await responseReader.GetResponseAsync(_responseMessage).ConfigureAwait(false);
+				var response = await responseReader.GetResponseAsync(ResponseMessage).ConfigureAwait(false);
 				if (cancellationToken.IsCancellationRequested)
 				{
 					cancellationToken.ThrowIfCancellationRequested();
@@ -132,11 +131,11 @@ namespace Simple.OData.Client
 
 		public async Task<U> ReadAsScalarAsync<U>(CancellationToken cancellationToken)
 		{
-			if (_responseMessage.IsSuccessStatusCode && _responseMessage.StatusCode != HttpStatusCode.NoContent &&
+			if (ResponseMessage.IsSuccessStatusCode && ResponseMessage.StatusCode != HttpStatusCode.NoContent &&
 				(_request.Method == RestVerbs.Get || _request.ResultRequired))
 			{
 				var responseReader = _session.Adapter.GetResponseReader();
-				var response = await responseReader.GetResponseAsync(_responseMessage).ConfigureAwait(false);
+				var response = await responseReader.GetResponseAsync(ResponseMessage).ConfigureAwait(false);
 				if (cancellationToken.IsCancellationRequested)
 				{
 					cancellationToken.ThrowIfCancellationRequested();

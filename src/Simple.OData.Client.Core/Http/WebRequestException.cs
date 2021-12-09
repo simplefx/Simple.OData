@@ -10,10 +10,7 @@ namespace Simple.OData.Client
 	/// </summary>
 	public class WebRequestException : Exception
 	{
-		private readonly HttpStatusCode _statusCode;
-		private readonly string _responseContent;
 		private readonly string _reasonPhrase;
-		private readonly Uri _requestUri;
 
 		/// <summary>
 		/// Creates from the instance of HttpResponseMessage.
@@ -83,9 +80,9 @@ namespace Simple.OData.Client
 			: base(BuildMessage(statusCode, reasonPhrase, responseContent, exceptionMessageSource), inner)
 		{
 			_reasonPhrase = reasonPhrase;
-			_statusCode = statusCode;
-			_responseContent = responseContent;
-			_requestUri = requestUri;
+			Code = statusCode;
+			Response = responseContent;
+			RequestUri = requestUri;
 		}
 
 		/// <summary>
@@ -103,7 +100,7 @@ namespace Simple.OData.Client
 		/// <value>
 		/// The <see cref="HttpStatusCode"/>.
 		/// </value>
-		public HttpStatusCode Code => _statusCode;
+		public HttpStatusCode Code { get; private set; }
 
 		/// <summary>
 		/// Gets the HTTP response text.
@@ -111,7 +108,7 @@ namespace Simple.OData.Client
 		/// <value>
 		/// The response text.
 		/// </value>
-		public string Response => _responseContent;
+		public string Response { get; private set; }
 
 		/// <summary>
 		/// Gets the HTTP Uri
@@ -119,7 +116,7 @@ namespace Simple.OData.Client
 		/// <value>
 		/// The original request URI, or the resulting URI if a redirect took place.
 		/// </value>
-		public Uri RequestUri => _requestUri;
+		public Uri RequestUri { get; private set; }
 
 		/// <summary>
 		/// Gets the reason phrase associated with the Http status code.

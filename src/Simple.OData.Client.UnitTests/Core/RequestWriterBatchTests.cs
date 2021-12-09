@@ -38,15 +38,12 @@ namespace Simple.OData.Client.Tests.Core
 
 	public abstract class RequestWriterBatchTests : CoreTestBase
 	{
-		private readonly Dictionary<object, IDictionary<string, object>> _batchContent =
-			new(3);
-
-		protected Dictionary<object, IDictionary<string, object>> BatchContent => _batchContent;
+		protected Dictionary<object, IDictionary<string, object>> BatchContent { get; } = new(3);
 
 		protected abstract Task<IRequestWriter> CreateBatchRequestWriter();
 
 		protected IBatchWriter BatchWriter => _session.Adapter.GetBatchWriter(
-					_batchContent);
+					BatchContent);
 
 		[Fact]
 		public async Task CreateUpdateRequest_NoPreferredVerb_AllProperties_OperationHeaders_Patch()
