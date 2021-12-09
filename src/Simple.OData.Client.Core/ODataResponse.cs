@@ -71,8 +71,10 @@ namespace Simple.OData.Client
 		{
 			if (includeAnnotations && Annotations != null)
 			{
-				var dataWithAnnotations = new Dictionary<string, object>(Data);
-				dataWithAnnotations.Add(FluentCommand.AnnotationsLiteral, Annotations);
+				var dataWithAnnotations = new Dictionary<string, object>(Data)
+				{
+					{ FluentCommand.AnnotationsLiteral, Annotations }
+				};
 				return dataWithAnnotations;
 			}
 			else

@@ -120,8 +120,10 @@ namespace Simple.OData.Client
 
 		private static List<ODataExpression> MergeArguments(ODataExpression argument, IEnumerable<object> arguments)
 		{
-			var collection = new List<ODataExpression>();
-			collection.Add(argument);
+			var collection = new List<ODataExpression>
+			{
+				argument
+			};
 			collection.AddRange(arguments.Select(ODataExpression.FromValue));
 			return collection;
 		}
