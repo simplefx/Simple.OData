@@ -11,7 +11,6 @@ namespace Simple.OData.Client
 	{
 		private readonly ODataClientSettings _settings;
 		private readonly RequestRunner _requestRunner;
-		private readonly ODataResponse _batchResponse;
 
 		/// <summary>
 		/// Initializes a new instance of the <see cref="ODataClient"/> class.
@@ -76,13 +75,13 @@ namespace Simple.OData.Client
 		{
 			_settings = client._settings;
 			Session = client.Session;
-			_batchResponse = batchResponse;
+			BatchResponse = batchResponse;
 		}
 
 		internal Session Session { get; private set; }
-		internal ODataResponse BatchResponse => _batchResponse;
+		internal ODataResponse BatchResponse { get; private set; }
 		internal bool IsBatchRequest => BatchWriter != null;
-		internal bool IsBatchResponse => _batchResponse != null;
+		internal bool IsBatchResponse => BatchResponse != null;
 		internal ConcurrentDictionary<object, IDictionary<string, object>> BatchEntries { get; private set; }
 		internal Lazy<IBatchWriter> BatchWriter { get; private set; }
 
