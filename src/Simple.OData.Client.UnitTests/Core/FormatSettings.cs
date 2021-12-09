@@ -76,7 +76,7 @@ internal class ODataV3Format : IFormatSettings
 
 internal class ODataV4Format : IFormatSettings
 {
-	public ODataV4Format(bool escapeUri = false)
+	public ODataV4Format()
 	{
 	}
 
