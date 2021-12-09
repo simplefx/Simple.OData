@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using System.Text.Json.Serialization;
 using Newtonsoft.Json;
 using Xunit;
 
@@ -69,18 +70,21 @@ public class TypedExpressionV4Tests : TypedExpressionTests
 
 public abstract class TypedExpressionTests : CoreTestBase
 {
+	[AttributeUsage(AttributeTargets.Property)]
 	private class DataAttribute : Attribute
 	{
 		public string Name { get; set; }
 		public string PropertyName { get; set; }
 	}
 
+	[AttributeUsage(AttributeTargets.Property)]
 	private class DataMemberAttribute : Attribute
 	{
 		public string Name { get; set; }
 		public string PropertyName { get; set; }
 	}
 
+	[AttributeUsage(AttributeTargets.Property)]
 	private class OtherAttribute : Attribute
 	{
 		public string Name { get; set; }
@@ -90,30 +94,45 @@ public abstract class TypedExpressionTests : CoreTestBase
 	internal class TestEntity
 	{
 		public int ProductID { get; set; }
+
 		public string ProductName { get; set; }
+
 		public Guid LinkID { get; set; }
+
 		public decimal Price { get; set; }
+
 		public Address Address { get; set; }
+
 		public DateTime CreationTime { get; set; }
+
 		public DateTimeOffset Updated { get; set; }
+
 		public TimeSpan Period { get; set; }
+
 		public TestEntity Nested { get; set; }
+
 		public TestEntity[] Collection { get; set; }
 
 		[Column(Name = "Name")]
 		public string MappedNameUsingColumnAttribute { get; set; }
+
 		[Data(Name = "Name", PropertyName = "OtherName")]
 		public string MappedNameUsingDataAttribute { get; set; }
+
 		[DataMember(Name = "Name", PropertyName = "OtherName")]
 		public string MappedNameUsingDataMemberAttribute { get; set; }
+
 		[Other(Name = "Name", PropertyName = "OtherName")]
 		public string MappedNameUsingOtherAttribute { get; set; }
+
 		[DataMember(Name = "Name", PropertyName = "OtherName")]
 		[Other(Name = "OtherName", PropertyName = "OtherName")]
 		public string MappedNameUsingDataMemberAndOtherAttribute { get; set; }
+
 		[JsonProperty("Name")]
 		public string MappedNameUsingJsonPropertyAttribute { get; set; }
-		[System.Text.Json.Serialization.JsonPropertyName("Name")]
+
+		[JsonPropertyName("Name")]
 		public string MappedNameUsingJsonPropertyNameAttribute { get; set; }
 	}
 
