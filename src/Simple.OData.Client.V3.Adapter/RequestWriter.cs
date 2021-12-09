@@ -192,14 +192,9 @@ namespace Simple.OData.Client.V3.Adapter
 				Indent = true,
 				DisableMessageStreamDisposal = !IsBatch,
 			};
-			ODataFormat contentType;
-			if (preferredContentType != null)
-			{
-				contentType = preferredContentType;
-			}
-			else
-			{
-				contentType = _session.Settings.PayloadFormat switch
+			var contentType = preferredContentType != null
+				? preferredContentType
+				: _session.Settings.PayloadFormat switch
 				{
 					ODataPayloadFormat.Json => _session.Adapter.ProtocolVersion switch
 					{
@@ -208,8 +203,6 @@ namespace Simple.OData.Client.V3.Adapter
 					},
 					_ => ODataFormat.Atom,
 				};
-			}
-
 			settings.SetContentType(contentType);
 			return settings;
 		}

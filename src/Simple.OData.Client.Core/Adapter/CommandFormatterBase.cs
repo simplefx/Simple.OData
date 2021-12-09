@@ -233,13 +233,11 @@ public abstract class CommandFormatterBase : ICommandFormatter
 		{
 			resultCollection = _session.Adapter.GetMetadata().GetFunctionReturnCollection(command.Details.FunctionName);
 		}
-		else if (command.Details.HasAction)
-		{
-			resultCollection = _session.Adapter.GetMetadata().GetActionReturnCollection(command.Details.ActionName);
-		}
 		else
 		{
-			resultCollection = command.EntityCollection;
+			resultCollection = command.Details.HasAction
+				? _session.Adapter.GetMetadata().GetActionReturnCollection(command.Details.ActionName)
+				: command.EntityCollection;
 		}
 
 		if (resultCollection != null)

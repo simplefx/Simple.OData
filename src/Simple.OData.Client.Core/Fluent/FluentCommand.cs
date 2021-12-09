@@ -134,28 +134,18 @@ public class FluentCommand
 
 	public FluentCommand Filter(string filter)
 	{
-		if (string.IsNullOrEmpty(Details.Filter))
-		{
-			Details.Filter = filter;
-		}
-		else
-		{
-			Details.Filter = $"({Details.Filter}) and ({filter})";
-		}
+		Details.Filter = string.IsNullOrEmpty(Details.Filter)
+			? filter
+			: $"({Details.Filter}) and ({filter})";
 
 		return this;
 	}
 
 	public FluentCommand Filter(ODataExpression expression)
 	{
-		if (Details.FilterExpression is null)
-		{
-			Details.FilterExpression = expression;
-		}
-		else
-		{
-			Details.FilterExpression = Details.FilterExpression && expression;
-		}
+		Details.FilterExpression = Details.FilterExpression is null
+			? expression
+			: Details.FilterExpression && expression;
 
 		return this;
 	}
@@ -275,14 +265,9 @@ public class FluentCommand
 
 	public FluentCommand QueryOptions(string queryOptions)
 	{
-		if (Details.QueryOptions == null)
-		{
-			Details.QueryOptions = queryOptions;
-		}
-		else
-		{
-			Details.QueryOptions = $"{Details.QueryOptions}&{queryOptions}";
-		}
+		Details.QueryOptions = Details.QueryOptions == null
+			? queryOptions
+			: $"{Details.QueryOptions}&{queryOptions}";
 
 		return this;
 	}
@@ -295,14 +280,9 @@ public class FluentCommand
 
 	public FluentCommand QueryOptions(ODataExpression expression)
 	{
-		if (Details.QueryOptionsExpression is null)
-		{
-			Details.QueryOptionsExpression = expression;
-		}
-		else
-		{
-			Details.QueryOptionsExpression = Details.QueryOptionsExpression && expression;
-		}
+		Details.QueryOptionsExpression = Details.QueryOptionsExpression is null
+			? expression
+			: Details.QueryOptionsExpression && expression;
 
 		return this;
 	}

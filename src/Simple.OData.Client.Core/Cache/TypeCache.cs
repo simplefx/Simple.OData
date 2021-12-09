@@ -231,14 +231,9 @@ public class TypeCache : ITypeCache
 		{
 			if (value == null)
 			{
-				if (IsValue(targetType))
-				{
-					result = Activator.CreateInstance(targetType);
-				}
-				else
-				{
-					result = null;
-				}
+				result = IsValue(targetType)
+					? Activator.CreateInstance(targetType)
+					: null;
 			}
 			else if (IsTypeAssignableFrom(targetType, value.GetType()))
 			{

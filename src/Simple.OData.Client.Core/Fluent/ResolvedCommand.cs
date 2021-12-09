@@ -119,13 +119,11 @@ public class ResolvedCommand
 				Details.NamedKeyValues = matchingKey.ToDictionary();
 				Details.IsAlternateKey = isAlternateKey;
 			}
-			else if (TryExtractKeyFromNamedValues(namedKeyValues, out var containedKey))
-			{
-				Details.NamedKeyValues = containedKey.ToDictionary();
-			}
 			else
 			{
-				Details.NamedKeyValues = null;
+				Details.NamedKeyValues = TryExtractKeyFromNamedValues(namedKeyValues, out var containedKey)
+					? containedKey.ToDictionary()
+					: null;
 			}
 
 			Details.KeyValues = null;

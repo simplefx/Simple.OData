@@ -106,14 +106,9 @@ internal class ExpandExpressionVisitor : ExpressionVisitor
 				{
 					var filterExpression =
 						ODataExpression.FromLinqExpression((node.Arguments[1] as LambdaExpression)?.Body);
-					if (association.FilterExpression is null)
-					{
-						association.FilterExpression = filterExpression;
-					}
-					else
-					{
-						association.FilterExpression = association.FilterExpression && filterExpression;
-					}
+					association.FilterExpression = association.FilterExpression is null
+						? filterExpression
+						: association.FilterExpression && filterExpression;
 
 					return node;
 				}
