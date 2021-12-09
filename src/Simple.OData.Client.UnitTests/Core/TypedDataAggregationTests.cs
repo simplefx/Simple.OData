@@ -291,7 +291,7 @@ namespace Simple.OData.Client.Tests.FluentApi
 			var command = _client
 				.WithExtensions()
 				.For<Product>()
-				.Apply(b => b.Filter(x => x.Category.CategoryName.Contains("v")))
+				.Apply(b => b.Filter(x => x.Category.CategoryName.Contains("ab")))
 				.Apply(b => b.GroupBy((x, a) => new
 				{
 					x.Category.CategoryName,
@@ -300,7 +300,7 @@ namespace Simple.OData.Client.Tests.FluentApi
 				.Apply(b => b.Filter(x => x.AverageUnitPrice > 100));
 
 			var commandText = await command.GetCommandTextAsync();
-			Assert.Equal("Products?$apply=filter%28contains%28Category%2FCategoryName%2C%27v%27%29%29%2Fgroupby%28%28Category%2FCategoryName%29%2Caggregate%28UnitPrice%20with%20average%20as%20AverageUnitPrice%29%29%2Ffilter%28AverageUnitPrice%20gt%20100%29", commandText);
+			Assert.Equal("Products?$apply=filter%28contains%28Category%2FCategoryName%2C%27ab%27%29%29%2Fgroupby%28%28Category%2FCategoryName%29%2Caggregate%28UnitPrice%20with%20average%20as%20AverageUnitPrice%29%29%2Ffilter%28AverageUnitPrice%20gt%20100%29", commandText);
 		}
 	}
 
