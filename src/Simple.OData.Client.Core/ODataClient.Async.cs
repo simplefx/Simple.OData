@@ -129,7 +129,7 @@ public partial class ODataClient
 	/// <returns>The service metadata.</returns>
 	public static Task<string> GetMetadataDocumentAsync(Uri baseUri, CancellationToken cancellationToken)
 	{
-		return GetMetadataDocumentAsync(baseUri, null, CancellationToken.None);
+		return GetMetadataDocumentAsync(baseUri, null, cancellationToken);
 	}
 
 	/// <summary>
