@@ -196,6 +196,37 @@ public partial class ODataExpression
 			return false;
 		}
 	}
+
+	public override bool Equals(object obj)
+	{
+		return obj is ODataExpression expression &&
+			   EqualityComparer<ODataExpression>.Default.Equals(_functionCaller, expression._functionCaller) &&
+			   EqualityComparer<ODataExpression>.Default.Equals(_left, expression._left) &&
+			   EqualityComparer<ODataExpression>.Default.Equals(_right, expression._right) &&
+			   _operator == expression._operator &&
+			   EqualityComparer<Type>.Default.Equals(_conversionType, expression._conversionType) &&
+			   Reference == expression.Reference &&
+			   EqualityComparer<object>.Default.Equals(Value, expression.Value) &&
+			   EqualityComparer<ExpressionFunction>.Default.Equals(Function, expression.Function) &&
+			   IsValueConversion == expression.IsValueConversion &&
+			   IsNull == expression.IsNull;
+	}
+
+	public override int GetHashCode()
+	{
+		var hashCode = -1908471857;
+		hashCode = hashCode * -1521134295 + EqualityComparer<ODataExpression>.Default.GetHashCode(_functionCaller);
+		hashCode = hashCode * -1521134295 + EqualityComparer<ODataExpression>.Default.GetHashCode(_left);
+		hashCode = hashCode * -1521134295 + EqualityComparer<ODataExpression>.Default.GetHashCode(_right);
+		hashCode = hashCode * -1521134295 + _operator.GetHashCode();
+		hashCode = hashCode * -1521134295 + EqualityComparer<Type>.Default.GetHashCode(_conversionType);
+		hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Reference);
+		hashCode = hashCode * -1521134295 + EqualityComparer<object>.Default.GetHashCode(Value);
+		hashCode = hashCode * -1521134295 + EqualityComparer<ExpressionFunction>.Default.GetHashCode(Function);
+		hashCode = hashCode * -1521134295 + IsValueConversion.GetHashCode();
+		hashCode = hashCode * -1521134295 + IsNull.GetHashCode();
+		return hashCode;
+	}
 }
 
 public partial class ODataExpression<T> : ODataExpression
@@ -209,5 +240,28 @@ public partial class ODataExpression<T> : ODataExpression
 	internal ODataExpression(ODataExpression expression)
 		: base(expression)
 	{
+	}
+
+	public override bool Equals(object obj)
+	{
+		return obj is ODataExpression<T> expression &&
+			   base.Equals(obj) &&
+			   Reference == expression.Reference &&
+			   EqualityComparer<object>.Default.Equals(Value, expression.Value) &&
+			   EqualityComparer<ExpressionFunction>.Default.Equals(Function, expression.Function) &&
+			   IsValueConversion == expression.IsValueConversion &&
+			   IsNull == expression.IsNull;
+	}
+
+	public override int GetHashCode()
+	{
+		var hashCode = 223019041;
+		hashCode = hashCode * -1521134295 + base.GetHashCode();
+		hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Reference);
+		hashCode = hashCode * -1521134295 + EqualityComparer<object>.Default.GetHashCode(Value);
+		hashCode = hashCode * -1521134295 + EqualityComparer<ExpressionFunction>.Default.GetHashCode(Function);
+		hashCode = hashCode * -1521134295 + IsValueConversion.GetHashCode();
+		hashCode = hashCode * -1521134295 + IsNull.GetHashCode();
+		return hashCode;
 	}
 }
