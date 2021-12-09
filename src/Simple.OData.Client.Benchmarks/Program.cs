@@ -6,7 +6,7 @@ namespace Simple.OData.Client.Benchmarks
 {
 	internal class Program
 	{
-		private static void Main(string[] args)
+		private static void Main()
 		{
 			//BenchmarkRunner.Run<CrmEmployee>();
 			BenchmarkRunner.Run<TripPinPeople>();
