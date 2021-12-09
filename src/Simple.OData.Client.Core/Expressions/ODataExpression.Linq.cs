@@ -21,7 +21,7 @@ public partial class ODataExpression
 			ExpressionType.Equal or ExpressionType.NotEqual or ExpressionType.LessThan or ExpressionType.LessThanOrEqual or ExpressionType.GreaterThan or ExpressionType.GreaterThanOrEqual or ExpressionType.And or ExpressionType.AndAlso or ExpressionType.Or or ExpressionType.OrElse or ExpressionType.Add or ExpressionType.AddChecked or ExpressionType.Subtract or ExpressionType.SubtractChecked or ExpressionType.Multiply or ExpressionType.MultiplyChecked or ExpressionType.Divide or ExpressionType.Modulo => ParseBinaryExpression(expression),
 			ExpressionType.TypeIs => ParseTypeIsExpression(expression),
 			ExpressionType.TypeAs => ParseTypeAsExpression(expression),
-			ExpressionType.Parameter => ParseTypedParameterExpression(expression),
+			ExpressionType.Parameter => ParseTypedParameterExpression(),
 			ExpressionType.New => ParseNewExpression(expression),
 			_ => throw Utils.NotSupportedExpression(expression),
 		};
@@ -251,7 +251,7 @@ public partial class ODataExpression
 			});
 	}
 
-	private static ODataExpression ParseTypedParameterExpression(Expression expression)
+	private static ODataExpression ParseTypedParameterExpression()
 	{
 		return null;
 	}
