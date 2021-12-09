@@ -61,7 +61,7 @@ namespace Devbridge.BasicAuthentication
 
 		private IDictionary<string, string> activeUsers;
 
-		public void AuthenticateUser(Object source, EventArgs e)
+		public void AuthenticateUser(object source, EventArgs e)
 		{
 			var context = ((HttpApplication)source).Context;
 
@@ -90,7 +90,7 @@ namespace Devbridge.BasicAuthentication
 			}
 		}
 
-		public void IssueAuthenticationChallenge(Object source, EventArgs e)
+		public void IssueAuthenticationChallenge(object source, EventArgs e)
 		{
 			var context = ((HttpApplication)source).Context;
 			if (!context.Request.Path.Contains("/secure"))

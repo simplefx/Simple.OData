@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Net.Http;
 using System.Xml;
 
@@ -37,7 +36,7 @@ namespace Simple.OData.Client.V3.Adapter
 		{
 			var readerSettings = new ODataMessageReaderSettings
 			{
-				MessageQuotas = { MaxReceivedMessageSize = Int32.MaxValue }
+				MessageQuotas = { MaxReceivedMessageSize = int.MaxValue }
 			};
 			using var messageReader = new ODataMessageReader(new ODataResponseMessage(response), readerSettings);
 			Model = messageReader.ReadMetadataDocument();

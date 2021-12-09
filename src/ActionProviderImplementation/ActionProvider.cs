@@ -14,7 +14,7 @@ namespace ActionProviderImplementation
 		private readonly object _context;
 		private readonly IParameterMarshaller _marshaller;
 
-		public ActionProvider(Object context, IParameterMarshaller marshaller)
+		public ActionProvider(object context, IParameterMarshaller marshaller)
 		{
 			_context = context;
 			_instanceType = context.GetType();

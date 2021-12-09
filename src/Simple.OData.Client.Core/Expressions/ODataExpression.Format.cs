@@ -84,7 +84,7 @@ namespace Simple.OData.Client
 		{
 			if (expr is null)
 			{
-				if (!String.IsNullOrEmpty(context.ScopeQualifier))
+				if (!string.IsNullOrEmpty(context.ScopeQualifier))
 				{
 					return context.ScopeQualifier;
 				}
