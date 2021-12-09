@@ -127,6 +127,7 @@ public class ResolvedCommand
 			{
 				Details.NamedKeyValues = null;
 			}
+
 			Details.KeyValues = null;
 		}
 	}
@@ -149,6 +150,7 @@ public class ResolvedCommand
 						entityCollection = collection;
 					}
 				}
+
 				Details.Filter = details.FilterExpression.Format(
 					new ExpressionContext(_sesson, entityCollection, null, DynamicPropertiesContainerName));
 			}
@@ -157,6 +159,7 @@ public class ResolvedCommand
 				Details.KeyValues = null;
 				Details.TopCount = -1;
 			}
+
 			if (details.FilterExpression.HasTypeConstraint(details.DerivedCollectionName))
 			{
 				Details.DerivedCollectionName = null;
@@ -262,6 +265,7 @@ public class ResolvedCommand
 		{
 			ok = expression.ExtractLookupColumns(namedKeyValues);
 		}
+
 		if (!ok)
 		{
 			return null;

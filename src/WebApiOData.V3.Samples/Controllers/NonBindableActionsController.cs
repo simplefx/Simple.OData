@@ -34,6 +34,7 @@ public class NonBindableActionsController : ODataController
 		{
 			throw new HttpResponseException(HttpStatusCode.BadRequest);
 		}
+
 		return movie;
 	}
 

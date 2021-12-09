@@ -56,6 +56,7 @@ public class ActionProvider : IDataServiceActionProvider
 				_actionsByName[serviceActionName] = serviceAction;
 			}
 		}
+
 		return serviceAction != null;
 	}
 

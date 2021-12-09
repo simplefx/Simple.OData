@@ -361,6 +361,7 @@ internal static class DictionaryExtensions
 			var parameterInfo = parameterInfos[parameterIndex];
 			constructorParameters[parameterIndex] = ConvertValue(parameterInfo.ParameterType, typeCache, source[parameterInfo.Name]);
 		}
+
 		return constructor.Invoke(constructorParameters);
 	}
 

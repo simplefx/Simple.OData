@@ -133,6 +133,7 @@ public class WorkTaskModelsController : ODataController
 		{
 			db.Dispose();
 		}
+
 		base.Dispose(disposing);
 	}
 

@@ -66,6 +66,7 @@ public abstract class ODataTestBase : TestBase
 		{
 			entry.Add(ProductCategoryName, ProductCategoryLinkFunc(category));
 		}
+
 		return entry;
 	}
 
@@ -81,6 +82,7 @@ public abstract class ODataTestBase : TestBase
 		{
 			entry.Add("Products", products);
 		}
+
 		return entry;
 	}
 
@@ -96,6 +98,7 @@ public abstract class ODataTestBase : TestBase
 					await _client.DeleteEntryAsync("Products", product);
 				}
 			}
+
 			var categories = await _client.For("Categories").Select("ID", "Name").FindEntriesAsync();
 			foreach (var category in categories)
 			{

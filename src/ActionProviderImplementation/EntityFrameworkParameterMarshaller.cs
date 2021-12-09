@@ -52,6 +52,7 @@ public class EntityFrameworkParameterMarshaller : IParameterMarshaller
 			var toListMethod = ToListMethodGeneric.MakeGenericMethod(elementType);
 			value = toListMethod.Invoke(null, new[] { marshalledValue });
 		}
+
 		return value;
 	}
 }

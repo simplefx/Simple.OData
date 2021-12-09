@@ -48,6 +48,7 @@ internal class Session : ISession
 					}
 				}
 			}
+
 			return _adapter;
 		}
 	}

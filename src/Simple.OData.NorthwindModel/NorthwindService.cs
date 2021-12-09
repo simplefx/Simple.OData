@@ -28,6 +28,7 @@ public class NorthwindService : EntityFrameworkDataService<NorthwindContext>, IS
 		{
 			return new EntityFrameworkActionProvider(CurrentDataSource);
 		}
+
 		return null;
 	}
 
@@ -56,6 +57,7 @@ public class NorthwindService : EntityFrameworkDataService<NorthwindContext>, IS
 		{
 			numbers.Add(index);
 		}
+
 		return numbers.AsQueryable();
 	}
 
@@ -86,6 +88,7 @@ public class NorthwindService : EntityFrameworkDataService<NorthwindContext>, IS
 		{
 			addresses.Add(address);
 		}
+
 		return addresses.AsQueryable();
 	}
 }

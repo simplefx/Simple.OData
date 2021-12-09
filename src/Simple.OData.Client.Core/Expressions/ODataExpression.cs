@@ -150,6 +150,7 @@ public partial class ODataExpression
 				{
 					expr = expr.Value as ODataExpression;
 				}
+
 				if (!string.IsNullOrEmpty(expr.Reference))
 				{
 					if (expr.Reference.IndexOfAny(_propertySeperator) >= 0)
@@ -157,12 +158,14 @@ public partial class ODataExpression
 						//skip child entity - may result in false positives
 						return false;
 					}
+
 					var key = expr.Reference;
 					if (key != null && !lookupColumns.ContainsKey(key))
 					{
 						lookupColumns.Add(key, _right);
 					}
 				}
+
 				return true;
 
 			default:

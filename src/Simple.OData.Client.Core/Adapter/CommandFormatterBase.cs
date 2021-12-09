@@ -133,6 +133,7 @@ public abstract class CommandFormatterBase : ICommandFormatter
 					{
 						escapedCollection.Add(ConvertValueToUriLiteral(o, true));
 					}
+
 					collectionValues.Add(string.Format("{0}=[" + string.Join(",", escapedCollection) + "]", itemAlias));
 					itemValue = itemAlias;
 				}
@@ -145,8 +146,10 @@ public abstract class CommandFormatterBase : ICommandFormatter
 			{
 				itemValue = ConvertValueToUriLiteral(item.Value, true);
 			}
+
 			escapedData.Add(item.Key, itemValue);
 		}
+
 		var formattedKeyValues = escapedData.Count == 1 && skipKeyNameForSingleValue
 			? string.Join(",", escapedData)
 			: string.Join(",",
@@ -201,6 +204,7 @@ public abstract class CommandFormatterBase : ICommandFormatter
 		{
 			queryClauses.Add(details.QueryOptionsExpression.Format(new ExpressionContext(_session, true)));
 		}
+
 		if (command.Details.QueryOptionsKeyValues != null)
 		{
 			foreach (var kv in command.Details.QueryOptionsKeyValues)
@@ -237,6 +241,7 @@ public abstract class CommandFormatterBase : ICommandFormatter
 		{
 			resultCollection = command.EntityCollection;
 		}
+
 		if (resultCollection != null)
 		{
 			FormatExpandSelectOrderby(queryClauses, resultCollection, command);

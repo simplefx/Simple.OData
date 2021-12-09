@@ -95,6 +95,7 @@ internal static class TypeCacheExtensions
 					? descriptor.ConvertTo(value, targetType)
 					: System.Convert.ChangeType(value, targetType, CultureInfo.InvariantCulture);
 			}
+
 			return true;
 		}
 		catch (Exception)

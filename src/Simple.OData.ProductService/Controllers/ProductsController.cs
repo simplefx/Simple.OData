@@ -141,6 +141,7 @@ public class ProductsController : ODataController
 		{
 			db.Dispose();
 		}
+
 		base.Dispose(disposing);
 	}
 

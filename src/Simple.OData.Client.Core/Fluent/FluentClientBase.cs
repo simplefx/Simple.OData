@@ -389,6 +389,7 @@ public abstract class FluentClientBase<T, FT> : IFluentClient<T, FT>
 			linkedClient.Command.Link(link);
 			linkCommand = linkedClient.Command;
 		}
+
 		return linkedClient;
 	}
 

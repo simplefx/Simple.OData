@@ -105,6 +105,7 @@ internal class FunctionMapping
 		{
 			functionMapping = function.FunctionMapping;
 		}
+
 		return function != null;
 	}
 

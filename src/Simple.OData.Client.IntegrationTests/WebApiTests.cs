@@ -24,6 +24,7 @@ public abstract class WebApiTestsBase : IDisposable
 		{
 			DeleteTestData().Wait();
 		}
+
 		GC.SuppressFinalize(this);
 	}
 

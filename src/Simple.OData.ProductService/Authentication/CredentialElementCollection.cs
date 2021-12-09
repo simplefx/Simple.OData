@@ -14,6 +14,7 @@ public class CredentialElementCollection : ConfigurationElementCollection
 			{
 				BaseRemoveAt(index);
 			}
+
 			BaseAdd(index, value);
 		}
 	}

@@ -299,6 +299,7 @@ internal class SimplePluralizer : IPluralizer
 		{
 			return s.Substring(0, s.Length - 1);
 		}
+
 		return s;
 	}
 
@@ -352,6 +353,7 @@ internal class SimplePluralizer : IPluralizer
 				}
 			}
 		}
+
 		return s;
 	}
 }

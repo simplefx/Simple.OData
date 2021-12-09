@@ -33,6 +33,7 @@ internal class InOperatorMapping : FunctionToOperatorMapping
 		{
 			throw new ArgumentException("Function caller should have a value");
 		}
+
 		var listAsString = new StringBuilder();
 		var delimiter = string.Empty;
 		listAsString.Append("(");
@@ -42,6 +43,7 @@ internal class InOperatorMapping : FunctionToOperatorMapping
 			listAsString.Append(context.Session.Adapter.GetCommandFormatter().ConvertValueToUriLiteral(item, false));
 			delimiter = ",";
 		}
+
 		listAsString.Append(")");
 
 		// to work around the issue in OData/odata.net (https://github.com/OData/odata.net/issues/2016) the 'in' is always grouped
@@ -65,11 +67,13 @@ internal class InOperatorMapping : FunctionToOperatorMapping
 		{
 			return false;
 		}
+
 		var valueType = value.GetType();
 		if (expectedType.IsAssignableFrom(valueType))
 		{
 			return true;
 		}
+
 		if (expectedType.IsGenericType && !expectedType.GenericTypeArguments.Any() && valueType.IsGenericType)
 		{
 			var genericArgumentTypes = valueType.GenericTypeArguments;
@@ -78,9 +82,11 @@ internal class InOperatorMapping : FunctionToOperatorMapping
 				genericArgumentTypes = new[] { typeof(object) };
 				valueType = valueType.MakeGenericType(genericArgumentTypes);
 			}
+
 			var expectedGenericType = expectedType.MakeGenericType(genericArgumentTypes);
 			return expectedGenericType.IsAssignableFrom(valueType);
 		}
+
 		return false;
 	}
 }

@@ -138,8 +138,10 @@ internal class AggregationClause<T>
 				var aggregationMethodArgument = _expression.Arguments[0];
 				_aggregatedColumnName = aggregationMethodArgument.ExtractColumnName(context.Session.TypeCache);
 			}
+
 			_aggregationMethodName = _expression.Method.Name;
 		}
+
 		if (KnownFunctionTemplates.TryGetValue(_aggregationMethodName, out var function))
 		{
 			return string.Format(function, _aggregatedColumnName);

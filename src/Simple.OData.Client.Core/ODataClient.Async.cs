@@ -318,6 +318,7 @@ public partial class ODataClient
 		{
 			entryKeyWithNames.Add(keyNames[index], entryKey.ElementAt(index));
 		}
+
 		return await GetEntryAsync(collection, entryKeyWithNames, cancellationToken).ConfigureAwait(false);
 	}
 

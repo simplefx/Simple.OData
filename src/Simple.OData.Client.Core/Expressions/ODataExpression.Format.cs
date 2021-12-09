@@ -38,6 +38,7 @@ public partial class ODataExpression
 					expr = new ODataExpression(result);
 				}
 			}
+
 			return FormatExpression(expr, context);
 		}
 		else if (_operator == ExpressionType.Not || _operator == ExpressionType.Negate)
@@ -112,6 +113,7 @@ public partial class ODataExpression
 		{
 			return FormatMappedOperator(context, operatorMapping);
 		}
+
 		if (FunctionMapping.TryGetFunctionMapping(Function.FunctionName, Function.Arguments.Count(), adapterVersion, out var functionMapping))
 		{
 			return FormatMappedFunction(context, functionMapping);
@@ -226,6 +228,7 @@ public partial class ODataExpression
 			formattedArguments += FormatExpression(Function.Arguments.First(), new ExpressionContext(context.Session));
 			formattedArguments += ",";
 		}
+
 		formattedArguments += FormatExpression(Function.Arguments.Last(), new ExpressionContext(context.Session));
 
 		return $"{Function.FunctionName.ToLower()}({formattedArguments})";

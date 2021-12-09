@@ -224,6 +224,7 @@ public partial class ODataExpression
 			enumType = unaryExpression.Type;
 			return enumType.IsEnumType() && !Utils.IsSystemType(enumType);
 		}
+
 		return false;
 	}
 
@@ -279,6 +280,7 @@ public partial class ODataExpression
 				value = property.GetValueEx(null);
 				break;
 		}
+
 		return value;
 	}
 

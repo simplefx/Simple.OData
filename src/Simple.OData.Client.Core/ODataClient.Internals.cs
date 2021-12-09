@@ -21,6 +21,7 @@ public partial class ODataClient
 		{
 			updatedKey.Add(item);
 		}
+
 		var updatedCommand = new FluentCommand(command).Key(updatedKey);
 		return await FindEntryAsync(updatedCommand.Resolve(Session).Format(), cancellationToken).ConfigureAwait(false);
 	}
@@ -237,6 +238,7 @@ public partial class ODataClient
 					cancellationToken.ThrowIfCancellationRequested();
 				}
 			}
+
 			result = resultList;
 		}
 
@@ -265,6 +267,7 @@ public partial class ODataClient
 				++result;
 			}
 		}
+
 		return result;
 	}
 

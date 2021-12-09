@@ -53,6 +53,7 @@ public class Metadata : MetadataBase
 		{
 			return false;
 		}
+
 		return annotatable.VocabularyAnnotations(_model).Any(x => x.Term.Name == "OptimisticConcurrency");
 	}
 
@@ -104,24 +105,29 @@ public class Metadata : MetadataBase
 		{
 			return entitySet.Name;
 		}
+
 		if (TryGetSingleton(instanceTypeName, out var singleton))
 		{
 			isSingleton = true;
 			return singleton.Name;
 		}
+
 		if (TryGetEntityType(instanceTypeName, out var entityType))
 		{
 			return entityType.Name;
 		}
+
 		if (TryGetEntitySet(typeName, out entitySet))
 		{
 			return entitySet.Name;
 		}
+
 		if (TryGetSingleton(typeName, out singleton))
 		{
 			isSingleton = true;
 			return singleton.Name;
 		}
+
 		if (TryGetEntityType(typeName, out entityType))
 		{
 			return entityType.Name;
@@ -203,6 +209,7 @@ public class Metadata : MetadataBase
 				break;
 			}
 		}
+
 		return string.Join("/", exactNames.ToArray());
 	}
 

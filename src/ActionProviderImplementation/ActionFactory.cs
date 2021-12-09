@@ -76,6 +76,7 @@ public class ActionFactory
 				return resourceType;
 			}
 		}
+
 		throw new Exception($"Type {type.FullName} is not a valid binding parameter");
 	}
 	// Only allow Primitive/Complex or IEnumerable<Primitive>/IEnumerable<Complex>
@@ -94,6 +95,7 @@ public class ActionFactory
 		{
 			throw new Exception("IQueryable<> is not supported for non-binding parameters.");
 		}
+
 		return resourceType;
 	}
 	// Allow all types: Primitive/Complex/Entity and IQueryable<> and IEnumerable<>
@@ -117,6 +119,7 @@ public class ActionFactory
 					}
 				}
 			}
+
 			throw new Exception($"Generic action parameter type {type} not supported");
 		}
 
@@ -157,6 +160,7 @@ public class ActionFactory
 				return GetResourceSet(type.BaseType);
 			}
 		}
+
 		return null;
 	}
 	private IEnumerable<ServiceActionParameter> GetParameters(MethodInfo method, bool isBindable)
@@ -171,6 +175,7 @@ public class ActionFactory
 			);
 			parameters = parameters.Skip(1);
 		}
+
 		foreach (var parameter in parameters)
 		{
 			yield return new ServiceActionParameter(

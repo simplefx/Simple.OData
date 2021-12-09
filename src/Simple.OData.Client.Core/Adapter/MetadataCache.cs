@@ -231,6 +231,7 @@ public class MetadataCache : IMetadata
 							{
 								entryDetails.AddLink(item.Key, element, contentId);
 							}
+
 							break;
 					}
 				}

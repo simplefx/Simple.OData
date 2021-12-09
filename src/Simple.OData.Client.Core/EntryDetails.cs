@@ -27,6 +27,7 @@ public class EntryDetails
 			links = new List<ReferenceLink>();
 			Links.Add(linkName, links);
 		}
+
 		links.Add(new ReferenceLink() { LinkName = linkName, LinkData = linkData, ContentId = contentId });
 	}
 }

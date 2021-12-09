@@ -114,6 +114,7 @@ public class DynamicODataExpression : ODataExpression, IDynamicMetaObjectProvide
 					expression,
 					BindingRestrictions.GetTypeRestriction(Expression, LimitType));
 			}
+
 			if (string.Equals(binder.Name, ODataLiteral.Any, StringComparison.OrdinalIgnoreCase) ||
 				string.Equals(binder.Name, ODataLiteral.All, StringComparison.OrdinalIgnoreCase))
 			{
@@ -127,6 +128,7 @@ public class DynamicODataExpression : ODataExpression, IDynamicMetaObjectProvide
 					expression,
 					BindingRestrictions.GetTypeRestriction(Expression, LimitType));
 			}
+
 			if (string.Equals(binder.Name, ODataLiteral.IsOf, StringComparison.OrdinalIgnoreCase) ||
 				string.Equals(binder.Name, ODataLiteral.Is, StringComparison.OrdinalIgnoreCase) ||
 				string.Equals(binder.Name, ODataLiteral.Cast, StringComparison.OrdinalIgnoreCase) ||

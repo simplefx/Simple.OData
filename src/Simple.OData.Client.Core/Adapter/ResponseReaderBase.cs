@@ -142,6 +142,7 @@ public abstract class ResponseReaderBase : IResponseReader
 					{
 						x.Data[FluentCommand.AnnotationsLiteral] = x.Annotations;
 					}
+
 					return x.Data;
 				}).ToArray();
 			}

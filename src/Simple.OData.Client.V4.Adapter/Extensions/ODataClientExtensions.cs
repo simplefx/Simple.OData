@@ -15,6 +15,7 @@ public static class ODataClientExtensions
 		{
 			throw new ArgumentException("Client should be ODataClient");
 		}
+
 		return WithExtensions(oDataClient);
 	}
 

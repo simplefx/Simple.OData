@@ -28,6 +28,7 @@ public class AdapterTests : TestBase
 			{
 				session.Trace("{0} batch request id {1}: {2}", request.Method, contentId, request.Url.AbsoluteUri);
 			}
+
 			return result;
 		}
 

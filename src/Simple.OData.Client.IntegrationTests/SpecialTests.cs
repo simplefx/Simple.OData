@@ -117,6 +117,7 @@ public class SpecialTests : ODataTestBase
 			var task = RunClient(_client, Convert.ToInt32(product["ID"]), summary);
 			tasks.Add(task);
 		}
+
 		Task.WaitAll(tasks.ToArray());
 
 		Assert.Equal(products.Length, summary.ExecutionCount);
@@ -137,6 +138,7 @@ public class SpecialTests : ODataTestBase
 			var task = RunClient(client, Convert.ToInt32(product["ID"]), summary);
 			tasks.Add(task);
 		}
+
 		Task.WaitAll(tasks.ToArray());
 
 		Assert.Equal(products.Length, summary.ExecutionCount);

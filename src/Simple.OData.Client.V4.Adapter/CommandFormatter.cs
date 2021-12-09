@@ -62,6 +62,7 @@ public class CommandFormatter : CommandFormatterBase
 					{
 						mainAssociation = MergeExpandAssociations(mainAssociation, association).First();
 					}
+
 					return new KeyValuePair<ODataExpandAssociation, ODataExpandOptions>(mainAssociation, x.Key.Value);
 				});
 
@@ -232,6 +233,7 @@ public class CommandFormatter : CommandFormatterBase
 					mainAssociation = MergeExpandAssociations(mainAssociation, association).First();
 					mainAssociation.OrderByColumns.AddRange(association.OrderByColumns.Except(mainAssociation.OrderByColumns));
 				}
+
 				return mainAssociation;
 			});
 

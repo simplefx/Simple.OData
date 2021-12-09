@@ -137,6 +137,7 @@ internal class ExpandExpressionVisitor : ExpressionVisitor
 		{
 			deepestChildAssociation = deepestChildAssociation.ExpandAssociations.First();
 		}
+
 		return deepestChildAssociation;
 	}
 

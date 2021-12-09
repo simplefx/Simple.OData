@@ -159,6 +159,7 @@ public class TypeCacheResolver
 
 			currentType = currentType.GetTypeInfo().BaseType;
 		}
+
 		return null;
 	}
 
@@ -180,6 +181,7 @@ public class TypeCacheResolver
 
 			currentType = currentType.GetTypeInfo().BaseType;
 		}
+
 		return null;
 	}
 

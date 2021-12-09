@@ -119,6 +119,7 @@ internal static class Utils
 			basePath = basePath.Substring(0, basePath.Length - baseQuery.Length);
 			baseQuery = baseQuery.Substring(1);
 		}
+
 		if (!basePath.EndsWith("/"))
 		{
 			basePath += "/";
@@ -195,6 +196,7 @@ internal static class Utils
 					break;
 				}
 			}
+
 			if (tmpMatchingNamedKeyValues.Count == keyNames.Count())
 			{
 				matchingNamedKeyValues = tmpMatchingNamedKeyValues;
@@ -222,6 +224,7 @@ internal static class Utils
 				tmpMatchingNamedKeyValues.Add(new KeyValuePair<string, object>(keyProperty, namedKeyValue.Value));
 			}
 		}
+
 		if (tmpMatchingNamedKeyValues.Any())
 		{
 			matchingNamedKeyValues = tmpMatchingNamedKeyValues;

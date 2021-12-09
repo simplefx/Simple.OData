@@ -38,6 +38,7 @@ public abstract class BatchWriterBase : IBatchWriter
 				lastOperationId = LastOperationId;
 				responseIndex = lastOperationId - 1;
 			}
+
 			responseIndexes.Add(responseIndex);
 		}
 
@@ -79,6 +80,7 @@ public abstract class BatchWriterBase : IBatchWriter
 				_contentIdMap.TryGetValue(mappedEntry, out contentId);
 			}
 		}
+
 		return contentId;
 	}
 

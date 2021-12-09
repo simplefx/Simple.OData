@@ -47,6 +47,7 @@ internal static class TypeExtensions
 
 			currentType = currentType.GetTypeInfo().BaseType;
 		}
+
 		return null;
 	}
 
@@ -113,6 +114,7 @@ internal static class TypeExtensions
 
 			currentType = currentType.GetTypeInfo().BaseType;
 		}
+
 		return null;
 	}
 

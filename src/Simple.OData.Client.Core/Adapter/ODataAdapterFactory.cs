@@ -36,6 +36,7 @@ public class ODataAdapterFactory : IODataAdapterFactory
 				return loadModelAdapter();
 			}
 		}
+
 		throw new NotSupportedException($"OData protocols {string.Join(",", protocolVersions)} are not supported");
 	}
 
@@ -156,6 +157,7 @@ public class ODataAdapterFactory : IODataAdapterFactory
 			{
 				throw;
 			}
+
 			return type;
 		}
 	}

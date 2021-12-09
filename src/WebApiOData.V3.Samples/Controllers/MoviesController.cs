@@ -63,6 +63,7 @@ public class MoviesController : EntitySetController<Movie, int>
 		{
 			throw new HttpResponseException(HttpStatusCode.BadRequest);
 		}
+
 		return movie;
 	}
 
@@ -84,6 +85,7 @@ public class MoviesController : EntitySetController<Movie, int>
 		{
 			throw new HttpResponseException(HttpStatusCode.BadRequest);
 		}
+
 		return movie;
 	}
 
@@ -111,6 +113,7 @@ public class MoviesController : EntitySetController<Movie, int>
 		{
 			throw new HttpResponseException(HttpStatusCode.BadRequest);
 		}
+
 		return movie;
 	}
 

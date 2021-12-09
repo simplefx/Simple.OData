@@ -201,6 +201,7 @@ public abstract class RequestWriterBase : IRequestWriter
 		{
 			contentId = _deferredBatchWriter.Value.GetContentId(linkEntry, referenceLink.LinkData);
 		}
+
 		return contentId;
 	}
 
@@ -215,6 +216,7 @@ public abstract class RequestWriterBase : IRequestWriter
 				return true;
 			}
 		}
+
 		return false;
 	}
 

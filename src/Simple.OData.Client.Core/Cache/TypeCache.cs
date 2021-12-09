@@ -295,6 +295,7 @@ public class TypeCache : ITypeCache
 					? descriptor.ConvertTo(value, targetType)
 					: System.Convert.ChangeType(value, targetType, CultureInfo.InvariantCulture);
 			}
+
 			return true;
 		}
 		catch (Exception)

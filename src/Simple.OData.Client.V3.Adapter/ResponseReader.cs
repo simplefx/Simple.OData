@@ -7,296 +7,299 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-namespace Simple.OData.Client.V3.Adapter;
-
-public class ResponseReader : ResponseReaderBase
+namespace Simple.OData.Client.V3.Adapter
 {
-	private readonly IEdmModel _model;
-	private bool _hasResponse = false;
-
-	public ResponseReader(ISession session, IEdmModel model)
-		: base(session)
+	public class ResponseReader : ResponseReaderBase
 	{
-		_model = model;
-	}
+		private readonly IEdmModel _model;
+		private bool _hasResponse = false;
 
-	public override Task<ODataResponse> GetResponseAsync(HttpResponseMessage responseMessage)
-	{
-		return GetResponseAsync(new ODataResponseMessage(responseMessage));
-	}
-
-	public async Task<ODataResponse> GetResponseAsync(IODataResponseMessageAsync responseMessage)
-	{
-		if (responseMessage.StatusCode == (int)HttpStatusCode.NoContent)
+		public ResponseReader(ISession session, IEdmModel model)
+			: base(session)
 		{
-			return ODataResponse.FromStatusCode(TypeCache, responseMessage.StatusCode, responseMessage.Headers);
-		}
-		var readerSettings = _session.ToReaderSettings();
-		using var messageReader = new ODataMessageReader(responseMessage, readerSettings, _model);
-		var payloadKind = messageReader.DetectPayloadKind();
-		if (payloadKind.Any(x => x.PayloadKind != ODataPayloadKind.Property))
-		{
-			_hasResponse = true;
+			_model = model;
 		}
 
-		if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Error))
+		public override Task<ODataResponse> GetResponseAsync(HttpResponseMessage responseMessage)
 		{
-			return ODataResponse.FromStatusCode(TypeCache, responseMessage.StatusCode, responseMessage.Headers);
+			return GetResponseAsync(new ODataResponseMessage(responseMessage));
 		}
-		else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Value))
+
+		public async Task<ODataResponse> GetResponseAsync(IODataResponseMessageAsync responseMessage)
 		{
-			if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Collection))
+			if (responseMessage.StatusCode == (int)HttpStatusCode.NoContent)
 			{
-				throw new NotImplementedException();
+				return ODataResponse.FromStatusCode(TypeCache, responseMessage.StatusCode, responseMessage.Headers);
 			}
-			else
-			{
-				var stream = await responseMessage.GetStreamAsync().ConfigureAwait(false);
-				return ODataResponse.FromValueStream(TypeCache, stream, responseMessage is ODataBatchOperationResponseMessage);
-			}
-		}
-		else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Batch))
-		{
-			return await ReadResponse(messageReader.CreateODataBatchReader()).ConfigureAwait(false);
-		}
-		else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Feed))
-		{
-			return ReadResponse(messageReader.CreateODataFeedReader(), responseMessage);
-		}
-		else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Collection))
-		{
-			return ReadResponse(messageReader.CreateODataCollectionReader());
-		}
-		else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Property))
-		{
-			var property = messageReader.ReadProperty();
-			if (property.Value != null && (property.Value.GetType() != typeof(string) || !string.IsNullOrEmpty(property.Value.ToString())))
+
+			var readerSettings = _session.ToReaderSettings();
+			using var messageReader = new ODataMessageReader(responseMessage, readerSettings, _model);
+			var payloadKind = messageReader.DetectPayloadKind();
+			if (payloadKind.Any(x => x.PayloadKind != ODataPayloadKind.Property))
 			{
 				_hasResponse = true;
 			}
 
-			if (_hasResponse)
+			if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Error))
 			{
-				return ODataResponse.FromProperty(TypeCache, property.Name, GetPropertyValue(property.Value));
+				return ODataResponse.FromStatusCode(TypeCache, responseMessage.StatusCode, responseMessage.Headers);
+			}
+			else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Value))
+			{
+				if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Collection))
+				{
+					throw new NotImplementedException();
+				}
+				else
+				{
+					var stream = await responseMessage.GetStreamAsync().ConfigureAwait(false);
+					return ODataResponse.FromValueStream(TypeCache, stream, responseMessage is ODataBatchOperationResponseMessage);
+				}
+			}
+			else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Batch))
+			{
+				return await ReadResponse(messageReader.CreateODataBatchReader()).ConfigureAwait(false);
+			}
+			else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Feed))
+			{
+				return ReadResponse(messageReader.CreateODataFeedReader(), responseMessage);
+			}
+			else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Collection))
+			{
+				return ReadResponse(messageReader.CreateODataCollectionReader());
+			}
+			else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Property))
+			{
+				var property = messageReader.ReadProperty();
+				if (property.Value != null && (property.Value.GetType() != typeof(string) || !string.IsNullOrEmpty(property.Value.ToString())))
+				{
+					_hasResponse = true;
+				}
+
+				if (_hasResponse)
+				{
+					return ODataResponse.FromProperty(TypeCache, property.Name, GetPropertyValue(property.Value));
+				}
+				else
+				{
+					return ODataResponse.EmptyFeeds(TypeCache);
+				}
 			}
 			else
 			{
-				return ODataResponse.EmptyFeeds(TypeCache);
-			}
-		}
-		else
-		{
-			return ReadResponse(messageReader.CreateODataEntryReader(), responseMessage);
-		}
-	}
-
-	private async Task<ODataResponse> ReadResponse(ODataBatchReader odataReader)
-	{
-		var batch = new List<ODataResponse>();
-
-		while (odataReader.Read())
-		{
-			switch (odataReader.State)
-			{
-				case ODataBatchReaderState.ChangesetStart:
-					break;
-
-				case ODataBatchReaderState.Operation:
-					var operationMessage = odataReader.CreateOperationResponseMessage();
-					if (operationMessage.StatusCode == (int)HttpStatusCode.NoContent)
-					{
-						batch.Add(ODataResponse.FromStatusCode(TypeCache, operationMessage.StatusCode, operationMessage.Headers));
-					}
-					else if (operationMessage.StatusCode >= (int)HttpStatusCode.BadRequest)
-					{
-						batch.Add(ODataResponse.FromStatusCode(TypeCache,
-							operationMessage.StatusCode,
-							operationMessage.Headers,
-							await operationMessage.GetStreamAsync().ConfigureAwait(false),
-							_session.Settings.WebRequestExceptionMessageSource));
-					}
-					else
-					{
-						batch.Add(await GetResponseAsync(operationMessage).ConfigureAwait(false));
-					}
-
-					break;
-
-				case ODataBatchReaderState.ChangesetEnd:
-					break;
+				return ReadResponse(messageReader.CreateODataEntryReader(), responseMessage);
 			}
 		}
 
-		return ODataResponse.FromBatch(TypeCache, batch);
-	}
-
-	private ODataResponse ReadResponse(ODataCollectionReader odataReader)
-	{
-		var collection = new List<object>();
-
-		while (odataReader.Read())
+		private async Task<ODataResponse> ReadResponse(ODataBatchReader odataReader)
 		{
-			if (odataReader.State == ODataCollectionReaderState.Completed)
+			var batch = new List<ODataResponse>();
+
+			while (odataReader.Read())
 			{
-				break;
-			}
-
-			switch (odataReader.State)
-			{
-				case ODataCollectionReaderState.CollectionStart:
-					break;
-
-				case ODataCollectionReaderState.Value:
-					collection.Add(GetPropertyValue(odataReader.Item));
-					break;
-
-				case ODataCollectionReaderState.CollectionEnd:
-					break;
-			}
-		}
-
-		return ODataResponse.FromCollection(TypeCache, collection);
-	}
-
-	private ODataResponse ReadResponse(ODataReader odataReader, IODataResponseMessageAsync responseMessage)
-	{
-		ResponseNode rootNode = null;
-		var nodeStack = new Stack<ResponseNode>();
-
-		while (odataReader.Read())
-		{
-			if (odataReader.State == ODataReaderState.Completed)
-			{
-				break;
-			}
-
-			switch (odataReader.State)
-			{
-				case ODataReaderState.FeedStart:
-					StartFeed(nodeStack, CreateAnnotations(odataReader.Item as ODataFeed));
-					break;
-
-				case ODataReaderState.FeedEnd:
-					EndFeed(nodeStack, CreateAnnotations(odataReader.Item as ODataFeed), ref rootNode);
-					break;
-
-				case ODataReaderState.EntryStart:
-					StartEntry(nodeStack);
-					break;
-
-				case ODataReaderState.EntryEnd:
-					EndEntry(nodeStack, ref rootNode, odataReader.Item);
-					break;
-
-				case ODataReaderState.NavigationLinkStart:
-					StartNavigationLink(nodeStack, (odataReader.Item as ODataNavigationLink).Name);
-					break;
-
-				case ODataReaderState.NavigationLinkEnd:
-					EndNavigationLink(nodeStack);
-					break;
-			}
-		}
-
-		return ODataResponse.FromNode(TypeCache, rootNode, responseMessage.Headers);
-	}
-
-	protected override void ConvertEntry(ResponseNode entryNode, object entry)
-	{
-		if (entry != null)
-		{
-			var odataEntry = entry as Microsoft.Data.OData.ODataEntry;
-			foreach (var property in odataEntry.Properties)
-			{
-				entryNode.Entry.Data.Add(property.Name, GetPropertyValue(property.Value));
-			}
-			entryNode.Entry.SetAnnotations(CreateAnnotations(odataEntry));
-		}
-	}
-
-	private ODataFeedAnnotations CreateAnnotations(ODataFeed feed)
-	{
-		return new ODataFeedAnnotations
-		{
-			Id = feed.Id,
-			Count = feed.Count,
-			DeltaLink = feed.DeltaLink,
-			NextPageLink = feed.NextPageLink,
-			InstanceAnnotations = feed.InstanceAnnotations,
-		};
-	}
-
-	private ODataEntryAnnotations CreateAnnotations(Microsoft.Data.OData.ODataEntry odataEntry)
-	{
-		string id = null;
-		Uri readLink = null;
-		Uri editLink = null;
-		IEnumerable<ODataAssociationLink> associationLinks = null;
-		if (_session.Adapter.GetMetadata().IsTypeWithId(odataEntry.TypeName))
-		{
-			try
-			{
-				id = odataEntry.Id;
-				readLink = odataEntry.ReadLink;
-				editLink = odataEntry.EditLink;
-				associationLinks = odataEntry.AssociationLinks;
-			}
-			catch (ODataException)
-			{
-				// Ignored
-			}
-		}
-
-		return new ODataEntryAnnotations
-		{
-			Id = id,
-			TypeName = odataEntry.TypeName,
-			ReadLink = readLink,
-			EditLink = editLink,
-			ETag = odataEntry.ETag,
-			AssociationLinks = associationLinks == null
-				? null
-				: new List<ODataEntryAnnotations.AssociationLink>(
-				odataEntry.AssociationLinks.Select(x => new ODataEntryAnnotations.AssociationLink
+				switch (odataReader.State)
 				{
-					Name = x.Name,
-					Uri = x.Url,
-				})),
-			MediaResource = CreateAnnotations(odataEntry.MediaResource),
-			InstanceAnnotations = odataEntry.InstanceAnnotations,
-		};
-	}
+					case ODataBatchReaderState.ChangesetStart:
+						break;
 
-	private ODataMediaAnnotations CreateAnnotations(ODataStreamReferenceValue value)
-	{
-		return value == null ? null : new ODataMediaAnnotations
-		{
-			ContentType = value.ContentType,
-			ReadLink = value.ReadLink,
-			EditLink = value.EditLink,
-			ETag = value.ETag,
-		};
-	}
+					case ODataBatchReaderState.Operation:
+						var operationMessage = odataReader.CreateOperationResponseMessage();
+						if (operationMessage.StatusCode == (int)HttpStatusCode.NoContent)
+						{
+							batch.Add(ODataResponse.FromStatusCode(TypeCache, operationMessage.StatusCode, operationMessage.Headers));
+						}
+						else if (operationMessage.StatusCode >= (int)HttpStatusCode.BadRequest)
+						{
+							batch.Add(ODataResponse.FromStatusCode(TypeCache,
+								operationMessage.StatusCode,
+								operationMessage.Headers,
+								await operationMessage.GetStreamAsync().ConfigureAwait(false),
+								_session.Settings.WebRequestExceptionMessageSource));
+						}
+						else
+						{
+							batch.Add(await GetResponseAsync(operationMessage).ConfigureAwait(false));
+						}
 
-	private object GetPropertyValue(object value)
-	{
-		if (value is ODataComplexValue)
-		{
-			return (value as ODataComplexValue).Properties.ToDictionary(
-				x => x.Name, x => GetPropertyValue(x.Value));
+						break;
+
+					case ODataBatchReaderState.ChangesetEnd:
+						break;
+				}
+			}
+
+			return ODataResponse.FromBatch(TypeCache, batch);
 		}
-		else if (value is ODataCollectionValue)
+
+		private ODataResponse ReadResponse(ODataCollectionReader odataReader)
 		{
-			return (value as ODataCollectionValue).Items.Cast<object>()
-				.Select(GetPropertyValue).ToList();
+			var collection = new List<object>();
+
+			while (odataReader.Read())
+			{
+				if (odataReader.State == ODataCollectionReaderState.Completed)
+				{
+					break;
+				}
+
+				switch (odataReader.State)
+				{
+					case ODataCollectionReaderState.CollectionStart:
+						break;
+
+					case ODataCollectionReaderState.Value:
+						collection.Add(GetPropertyValue(odataReader.Item));
+						break;
+
+					case ODataCollectionReaderState.CollectionEnd:
+						break;
+				}
+			}
+
+			return ODataResponse.FromCollection(TypeCache, collection);
 		}
-		else if (value is ODataStreamReferenceValue)
+
+		private ODataResponse ReadResponse(ODataReader odataReader, IODataResponseMessageAsync responseMessage)
 		{
-			return CreateAnnotations(value as ODataStreamReferenceValue);
+			ResponseNode rootNode = null;
+			var nodeStack = new Stack<ResponseNode>();
+
+			while (odataReader.Read())
+			{
+				if (odataReader.State == ODataReaderState.Completed)
+				{
+					break;
+				}
+
+				switch (odataReader.State)
+				{
+					case ODataReaderState.FeedStart:
+						StartFeed(nodeStack, CreateAnnotations(odataReader.Item as ODataFeed));
+						break;
+
+					case ODataReaderState.FeedEnd:
+						EndFeed(nodeStack, CreateAnnotations(odataReader.Item as ODataFeed), ref rootNode);
+						break;
+
+					case ODataReaderState.EntryStart:
+						StartEntry(nodeStack);
+						break;
+
+					case ODataReaderState.EntryEnd:
+						EndEntry(nodeStack, ref rootNode, odataReader.Item);
+						break;
+
+					case ODataReaderState.NavigationLinkStart:
+						StartNavigationLink(nodeStack, (odataReader.Item as ODataNavigationLink).Name);
+						break;
+
+					case ODataReaderState.NavigationLinkEnd:
+						EndNavigationLink(nodeStack);
+						break;
+				}
+			}
+
+			return ODataResponse.FromNode(TypeCache, rootNode, responseMessage.Headers);
 		}
-		else
+
+		protected override void ConvertEntry(ResponseNode entryNode, object entry)
 		{
-			return value;
+			if (entry != null)
+			{
+				var odataEntry = entry as Microsoft.Data.OData.ODataEntry;
+				foreach (var property in odataEntry.Properties)
+				{
+					entryNode.Entry.Data.Add(property.Name, GetPropertyValue(property.Value));
+				}
+
+				entryNode.Entry.SetAnnotations(CreateAnnotations(odataEntry));
+			}
+		}
+
+		private ODataFeedAnnotations CreateAnnotations(ODataFeed feed)
+		{
+			return new ODataFeedAnnotations
+			{
+				Id = feed.Id,
+				Count = feed.Count,
+				DeltaLink = feed.DeltaLink,
+				NextPageLink = feed.NextPageLink,
+				InstanceAnnotations = feed.InstanceAnnotations,
+			};
+		}
+
+		private ODataEntryAnnotations CreateAnnotations(Microsoft.Data.OData.ODataEntry odataEntry)
+		{
+			string id = null;
+			Uri readLink = null;
+			Uri editLink = null;
+			IEnumerable<ODataAssociationLink> associationLinks = null;
+			if (_session.Adapter.GetMetadata().IsTypeWithId(odataEntry.TypeName))
+			{
+				try
+				{
+					id = odataEntry.Id;
+					readLink = odataEntry.ReadLink;
+					editLink = odataEntry.EditLink;
+					associationLinks = odataEntry.AssociationLinks;
+				}
+				catch (ODataException)
+				{
+					// Ignored
+				}
+			}
+
+			return new ODataEntryAnnotations
+			{
+				Id = id,
+				TypeName = odataEntry.TypeName,
+				ReadLink = readLink,
+				EditLink = editLink,
+				ETag = odataEntry.ETag,
+				AssociationLinks = associationLinks == null
+					? null
+					: new List<ODataEntryAnnotations.AssociationLink>(
+					odataEntry.AssociationLinks.Select(x => new ODataEntryAnnotations.AssociationLink
+					{
+						Name = x.Name,
+						Uri = x.Url,
+					})),
+				MediaResource = CreateAnnotations(odataEntry.MediaResource),
+				InstanceAnnotations = odataEntry.InstanceAnnotations,
+			};
+		}
+
+		private ODataMediaAnnotations CreateAnnotations(ODataStreamReferenceValue value)
+		{
+			return value == null ? null : new ODataMediaAnnotations
+			{
+				ContentType = value.ContentType,
+				ReadLink = value.ReadLink,
+				EditLink = value.EditLink,
+				ETag = value.ETag,
+			};
+		}
+
+		private object GetPropertyValue(object value)
+		{
+			if (value is ODataComplexValue)
+			{
+				return (value as ODataComplexValue).Properties.ToDictionary(
+					x => x.Name, x => GetPropertyValue(x.Value));
+			}
+			else if (value is ODataCollectionValue)
+			{
+				return (value as ODataCollectionValue).Items.Cast<object>()
+					.Select(GetPropertyValue).ToList();
+			}
+			else if (value is ODataStreamReferenceValue)
+			{
+				return CreateAnnotations(value as ODataStreamReferenceValue);
+			}
+			else
+			{
+				return value;
+			}
 		}
 	}
 }

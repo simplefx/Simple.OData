@@ -118,6 +118,7 @@ public partial class BoundClient<T>
 		{
 			TypeCache.Register<T>(_command.DynamicPropertiesContainerName);
 		}
+
 		return result.ToObject<T>(TypeCache, _dynamicResults);
 	}
 
@@ -152,6 +153,7 @@ public partial class BoundClient<T>
 			{
 				TypeCache.Register<T>(_command.DynamicPropertiesContainerName);
 			}
+
 			return resultRequired
 				? result?.ToObject<T>(TypeCache, _dynamicResults)
 				: null;
@@ -180,6 +182,7 @@ public partial class BoundClient<T>
 		{
 			TypeCache.Register<T>(_command.DynamicPropertiesContainerName);
 		}
+
 		return result.Select(y => y.ToObject<T>(TypeCache, _dynamicResults));
 	}
 

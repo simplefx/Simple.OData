@@ -53,6 +53,7 @@ public class NorthwindContext : DbContext
 			SetKey<Shipper>(entry, x => { if (x.ShipperID == 0) { x.ShipperID = ++NextId; } });
 			SetKey<Transport>(entry, x => { if (x.TransportID == 0) { x.TransportID = ++NextId; } });
 		}
+
 		return base.SaveChanges();
 	}
 

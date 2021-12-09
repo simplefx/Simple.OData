@@ -39,6 +39,7 @@ public class TypeConverter : ITypeConverter
 			{
 				_dictionaryConverters.Remove(type);
 			}
+
 			_dictionaryConverters.Add(type, converter);
 		}
 	}
@@ -52,6 +53,7 @@ public class TypeConverter : ITypeConverter
 			{
 				_objectConverters.Remove(type);
 			}
+
 			_objectConverters.Add(type, converter);
 		}
 	}

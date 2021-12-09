@@ -63,6 +63,7 @@ public abstract class FindNorthwindTests : TestBase
 				await _client.DeleteEntryAsync("Products", product);
 			}
 		}
+
 		var categories = await _client.For("Categories").Select("CategoryID", "CategoryName").FindEntriesAsync();
 		foreach (var category in categories)
 		{
@@ -71,6 +72,7 @@ public abstract class FindNorthwindTests : TestBase
 				await _client.DeleteEntryAsync("Categories", category);
 			}
 		}
+
 		var employees = await _client.For("Employees").Select("EmployeeID", "LastName").FindEntriesAsync();
 		foreach (var employee in employees)
 		{

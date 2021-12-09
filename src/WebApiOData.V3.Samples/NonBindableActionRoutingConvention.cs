@@ -22,6 +22,7 @@ public class NonBindableActionRoutingConvention : IODataRoutingConvention
 		{
 			return _controllerName;
 		}
+
 		return null;
 	}
 
@@ -42,6 +43,7 @@ public class NonBindableActionRoutingConvention : IODataRoutingConvention
 				}
 			}
 		}
+
 		return null;
 	}
 }

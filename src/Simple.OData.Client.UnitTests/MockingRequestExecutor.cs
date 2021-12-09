@@ -259,6 +259,7 @@ public class MockingRequestExecutor
 				response.Content.Headers.Add(header.Key, header.Value);
 			}
 		}
+
 		return response;
 	}
 
@@ -321,6 +322,7 @@ public class MockingRequestExecutor
 				}
 			}
 		}
+
 		return content;
 	}
 
