@@ -2,62 +2,61 @@
 using System.Linq;
 using System.Xml.Linq;
 
-namespace Simple.OData.Client.Extensions
+namespace Simple.OData.Client.Extensions;
+
+/// <summary>
+/// Extension methods for <see cref="XElement"/>.
+/// </summary>
+internal static class XElementExtensions
 {
-	/// <summary>
-	/// Extension methods for <see cref="XElement"/>.
-	/// </summary>
-	internal static class XElementExtensions
+	public static XElement Element(this XElement element, string prefix, string name)
 	{
-		public static XElement Element(this XElement element, string prefix, string name)
+		return Elements(element, prefix, name).FirstOrDefault();
+	}
+
+	public static IEnumerable<XElement> Elements(this XElement element, string prefix, string name)
+	{
+		if (string.IsNullOrEmpty(prefix))
 		{
-			return Elements(element, prefix, name).FirstOrDefault();
+			return element.Elements().Where(
+				x => x.Name.LocalName == name &&
+					string.IsNullOrEmpty(element.GetPrefixOfNamespace(x.Name.Namespace)));
 		}
 
-		public static IEnumerable<XElement> Elements(this XElement element, string prefix, string name)
-		{
-			if (string.IsNullOrEmpty(prefix))
-			{
-				return element.Elements().Where(
-					x => x.Name.LocalName == name &&
-						string.IsNullOrEmpty(element.GetPrefixOfNamespace(x.Name.Namespace)));
-			}
+		return element.Elements(ResolvePrefix(element, prefix) + name);
+	}
 
-			return element.Elements(ResolvePrefix(element, prefix) + name);
+	public static IEnumerable<XElement> Descendants(this XElement element, string prefix, string name)
+	{
+		var result = element.Descendants(ResolvePrefix(element, prefix) + name);
+
+		if (result.Any())
+		{
+			return result;
 		}
 
-		public static IEnumerable<XElement> Descendants(this XElement element, string prefix, string name)
+		if (string.IsNullOrEmpty(prefix))
 		{
-			var result = element.Descendants(ResolvePrefix(element, prefix) + name);
-
-			if (result.Any())
-			{
-				return result;
-			}
-
-			if (string.IsNullOrEmpty(prefix))
-			{
-				return element.Descendants().Where(
-					x => x.Name.LocalName == name &&
-						string.IsNullOrEmpty(element.GetPrefixOfNamespace(x.Name.Namespace)));
-			}
-
-			return XElement.EmptySequence;
+			return element.Descendants().Where(
+				x => x.Name.LocalName == name &&
+					string.IsNullOrEmpty(element.GetPrefixOfNamespace(x.Name.Namespace)));
 		}
 
-		public static XAttribute Attribute(this XElement element, string prefix, string name)
-		{
-			return element.Attribute(ResolvePrefix(element, prefix) + name);
-		}
+		return XElement.EmptySequence;
+	}
 
-		private static XNamespace ResolvePrefix(XElement element, string prefix)
-		{
-			return string.IsNullOrEmpty(prefix) ? element.GetDefaultNamespace() : element.GetNamespaceOfPrefix(prefix);
-		}
+	public static XAttribute Attribute(this XElement element, string prefix, string name)
+	{
+		return element.Attribute(ResolvePrefix(element, prefix) + name);
+	}
 
-		public static string ValueOrDefault(this XElement element)
-		{
-			return element == null ? string.Empty : element.Value;
-		}
+	private static XNamespace ResolvePrefix(XElement element, string prefix)
+	{
+		return string.IsNullOrEmpty(prefix) ? element.GetDefaultNamespace() : element.GetNamespaceOfPrefix(prefix);
+	}
+
+	public static string ValueOrDefault(this XElement element)
+	{
+		return element == null ? string.Empty : element.Value;
 	}
 }

@@ -1,15 +1,14 @@
-﻿namespace Simple.OData.Client.Tests
+﻿namespace Simple.OData.Client.Tests;
+
+public interface IAddress
 {
-	public interface IAddress
-	{
-		AddressType Type { get; set; }
+	AddressType Type { get; set; }
 
-		string City { get; set; }
+	string City { get; set; }
 
-		string Region { get; set; }
+	string Region { get; set; }
 
-		string PostalCode { get; set; }
+	string PostalCode { get; set; }
 
-		string Country { get; set; }
-	}
+	string Country { get; set; }
 }

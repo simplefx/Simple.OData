@@ -3,19 +3,19 @@ using System.Collections.Generic;
 using System.Data.Entity.Migrations;
 using Simple.OData.ProductService.Models;
 
-namespace Simple.OData.ProductService.Migrations
-{
-	internal sealed class Configuration : DbMigrationsConfiguration<ProductServiceContext>
-	{
-		public Configuration()
-		{
-			AutomaticMigrationsEnabled = false;
-		}
+namespace Simple.OData.ProductService.Migrations;
 
-		protected override void Seed(global::Simple.OData.ProductService.Models.ProductServiceContext context)
-		{
-			// New code 
-			context.Products.AddOrUpdate(new Product[] {
+internal sealed class Configuration : DbMigrationsConfiguration<ProductServiceContext>
+{
+	public Configuration()
+	{
+		AutomaticMigrationsEnabled = false;
+	}
+
+	protected override void Seed(global::Simple.OData.ProductService.Models.ProductServiceContext context)
+	{
+		// New code 
+		context.Products.AddOrUpdate(new Product[] {
 				new Product() { ID = 1, Name = "Hat", Price = 15, Category = "Apparel" },
 				new Product() { ID = 2, Name = "Socks", Price = 5, Category = "Apparel" },
 				new Product() { ID = 3, Name = "Scarf", Price = 12, Category = "Apparel" },
@@ -23,8 +23,8 @@ namespace Simple.OData.ProductService.Migrations
 				new Product() { ID = 5, Name = "Puzzle", Price = 8, Category = "Toys" },
 			});
 
-			context.WorkTaskModels.AddOrUpdate(new WorkTaskModel[]
-			{
+		context.WorkTaskModels.AddOrUpdate(new WorkTaskModel[]
+		{
 				new WorkTaskModel()
 				{
 					Id = Guid.NewGuid(),
@@ -35,7 +35,6 @@ namespace Simple.OData.ProductService.Migrations
 					Attachments = new List<WorkTaskAttachmentModel>(),
 					WorkActivityReports = new List<WorkActivityReportModel>(),
 				}
-			});
-		}
+		});
 	}
 }

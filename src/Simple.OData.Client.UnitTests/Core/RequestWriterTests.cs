@@ -3,52 +3,52 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Simple.OData.Client.Tests.Core
+namespace Simple.OData.Client.Tests.Core;
+
+public class RequestWriterV3Tests : RequestWriterTests
 {
-	public class RequestWriterV3Tests : RequestWriterTests
-	{
-		public override string MetadataFile => "Northwind3.xml";
-		public override IFormatSettings FormatSettings => new ODataV3Format();
+	public override string MetadataFile => "Northwind3.xml";
+	public override IFormatSettings FormatSettings => new ODataV3Format();
 
-		protected async override Task<IRequestWriter> CreateRequestWriter()
-		{
-			return new V3.Adapter.RequestWriter(_session, await _client.GetMetadataAsync<Microsoft.Data.Edm.IEdmModel>(), null);
-		}
+	protected async override Task<IRequestWriter> CreateRequestWriter()
+	{
+		return new V3.Adapter.RequestWriter(_session, await _client.GetMetadataAsync<Microsoft.Data.Edm.IEdmModel>(), null);
+	}
+}
+
+public class RequestWriterV4Tests : RequestWriterTests
+{
+	public override string MetadataFile => "Northwind4.xml";
+	public override IFormatSettings FormatSettings => new ODataV4Format();
+
+	protected async override Task<IRequestWriter> CreateRequestWriter()
+	{
+		return new V4.Adapter.RequestWriter(_session, await _client.GetMetadataAsync<Microsoft.OData.Edm.IEdmModel>(), null);
+	}
+}
+
+public abstract class RequestWriterTests : CoreTestBase
+{
+	protected abstract Task<IRequestWriter> CreateRequestWriter();
+
+	[Fact]
+	public async Task CreateUpdateRequest_NoPreferredVerb_PartialProperties_Patch()
+	{
+		var requestWriter = await CreateRequestWriter();
+		var result = await requestWriter.CreateUpdateRequestAsync("Products", "",
+					new Dictionary<string, object>() { { "ProductID", 1 } },
+					new Dictionary<string, object>() { { "ProductName", "Chai" } }, false);
+		Assert.Equal("PATCH", result.Method);
 	}
 
-	public class RequestWriterV4Tests : RequestWriterTests
+	[Fact]
+	public async Task CreateUpdateRequest_NoPreferredVerb_AllProperties_Patch()
 	{
-		public override string MetadataFile => "Northwind4.xml";
-		public override IFormatSettings FormatSettings => new ODataV4Format();
-
-		protected async override Task<IRequestWriter> CreateRequestWriter()
-		{
-			return new V4.Adapter.RequestWriter(_session, await _client.GetMetadataAsync<Microsoft.OData.Edm.IEdmModel>(), null);
-		}
-	}
-
-	public abstract class RequestWriterTests : CoreTestBase
-	{
-		protected abstract Task<IRequestWriter> CreateRequestWriter();
-
-		[Fact]
-		public async Task CreateUpdateRequest_NoPreferredVerb_PartialProperties_Patch()
-		{
-			var requestWriter = await CreateRequestWriter();
-			var result = await requestWriter.CreateUpdateRequestAsync("Products", "",
-						new Dictionary<string, object>() { { "ProductID", 1 } },
-						new Dictionary<string, object>() { { "ProductName", "Chai" } }, false);
-			Assert.Equal("PATCH", result.Method);
-		}
-
-		[Fact]
-		public async Task CreateUpdateRequest_NoPreferredVerb_AllProperties_Patch()
-		{
-			var requestWriter = await CreateRequestWriter();
-			var result = await requestWriter.CreateUpdateRequestAsync("Products", "",
-						new Dictionary<string, object>() { { "ProductID", 1 } },
-						new Dictionary<string, object>()
-						{
+		var requestWriter = await CreateRequestWriter();
+		var result = await requestWriter.CreateUpdateRequestAsync("Products", "",
+					new Dictionary<string, object>() { { "ProductID", 1 } },
+					new Dictionary<string, object>()
+					{
 							{ "ProductID", 1 },
 							{ "SupplierID", 2 },
 							{ "CategoryID", 3 },
@@ -60,22 +60,22 @@ namespace Simple.OData.Client.Tests.Core
 							{ "UnitsOnOrder", 1000 },
 							{ "ReorderLevel", 500 },
 							{ "Discontinued", false },
-						}, false);
-			Assert.Equal("PATCH", result.Method);
-		}
+					}, false);
+		Assert.Equal("PATCH", result.Method);
+	}
 
-		[Fact]
-		public async Task CreateUpdateRequest_PreferredVerbPut_AllProperties_Put()
+	[Fact]
+	public async Task CreateUpdateRequest_PreferredVerbPut_AllProperties_Put()
+	{
+		var preferredUpdateMethod = _session.Settings.PreferredUpdateMethod;
+		try
 		{
-			var preferredUpdateMethod = _session.Settings.PreferredUpdateMethod;
-			try
-			{
-				_session.Settings.PreferredUpdateMethod = ODataUpdateMethod.Put;
-				var requestWriter = await CreateRequestWriter();
-				var result = await requestWriter.CreateUpdateRequestAsync("Products", "",
-							new Dictionary<string, object>() { { "ProductID", 1 } },
-							new Dictionary<string, object>()
-						{
+			_session.Settings.PreferredUpdateMethod = ODataUpdateMethod.Put;
+			var requestWriter = await CreateRequestWriter();
+			var result = await requestWriter.CreateUpdateRequestAsync("Products", "",
+						new Dictionary<string, object>() { { "ProductID", 1 } },
+						new Dictionary<string, object>()
+					{
 							{ "ProductID", 1 },
 							{ "SupplierID", 2 },
 							{ "CategoryID", 3 },
@@ -87,23 +87,23 @@ namespace Simple.OData.Client.Tests.Core
 							{ "UnitsOnOrder", 1000 },
 							{ "ReorderLevel", 500 },
 							{ "Discontinued", false },
-						}, false);
-				Assert.Equal("PUT", result.Method);
-			}
-			finally
-			{
-				_session.Settings.PreferredUpdateMethod = preferredUpdateMethod;
-			}
+					}, false);
+			Assert.Equal("PUT", result.Method);
 		}
-
-		[Fact]
-		public async Task CreateUpdateRequest_PreferredVerbPatch_ChangedKey_Put()
+		finally
 		{
-			var requestWriter = await CreateRequestWriter();
-			var result = await requestWriter.CreateUpdateRequestAsync("Products", "",
-						new Dictionary<string, object>() { { "ProductID", 1 } },
-						new Dictionary<string, object>()
-						{
+			_session.Settings.PreferredUpdateMethod = preferredUpdateMethod;
+		}
+	}
+
+	[Fact]
+	public async Task CreateUpdateRequest_PreferredVerbPatch_ChangedKey_Put()
+	{
+		var requestWriter = await CreateRequestWriter();
+		var result = await requestWriter.CreateUpdateRequestAsync("Products", "",
+					new Dictionary<string, object>() { { "ProductID", 1 } },
+					new Dictionary<string, object>()
+					{
 							{ "ProductID", 10 },
 							{ "SupplierID", 2 },
 							{ "CategoryID", 3 },
@@ -115,124 +115,123 @@ namespace Simple.OData.Client.Tests.Core
 							{ "UnitsOnOrder", 1000 },
 							{ "ReorderLevel", 500 },
 							{ "Discontinued", false },
-						}, false);
-			Assert.Equal("PUT", result.Method);
-		}
+					}, false);
+		Assert.Equal("PUT", result.Method);
+	}
 
-		[Fact]
-		public async Task CreateInsertRequest_Post()
-		{
-			var requestWriter = await CreateRequestWriter();
-			var result = await requestWriter.CreateInsertRequestAsync("Employees", "",
-				new Dictionary<string, object>()
-				{
+	[Fact]
+	public async Task CreateInsertRequest_Post()
+	{
+		var requestWriter = await CreateRequestWriter();
+		var result = await requestWriter.CreateInsertRequestAsync("Employees", "",
+			new Dictionary<string, object>()
+			{
 					{ "FirstName", "John" },
 					{ "LastName", "Smith" },
-				}, false);
-			Assert.Equal("POST", result.Method);
-		}
+			}, false);
+		Assert.Equal("POST", result.Method);
+	}
 
-		[Fact]
-		public async Task CreateInsertRequest_DateTime_Not_Null_Post()
-		{
-			var requestWriter = await CreateRequestWriter();
-			var result = await requestWriter.CreateInsertRequestAsync("Employees", "",
-				new Dictionary<string, object>()
-				{
+	[Fact]
+	public async Task CreateInsertRequest_DateTime_Not_Null_Post()
+	{
+		var requestWriter = await CreateRequestWriter();
+		var result = await requestWriter.CreateInsertRequestAsync("Employees", "",
+			new Dictionary<string, object>()
+			{
 					{ "FirstName", "John" },
 					{ "LastName", "Smith" },
 					{ "BirthDate", DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Unspecified) },
-				}, false);
-			Assert.Equal("POST", result.Method);
-		}
+			}, false);
+		Assert.Equal("POST", result.Method);
+	}
 
-		[Fact]
-		public async Task CreateInsertRequest_DateTime_Null_Post()
-		{
-			var requestWriter = await CreateRequestWriter();
-			var result = await requestWriter.CreateInsertRequestAsync("Employees", "",
-				new Dictionary<string, object>()
-				{
+	[Fact]
+	public async Task CreateInsertRequest_DateTime_Null_Post()
+	{
+		var requestWriter = await CreateRequestWriter();
+		var result = await requestWriter.CreateInsertRequestAsync("Employees", "",
+			new Dictionary<string, object>()
+			{
 					{ "FirstName", "John" },
 					{ "LastName", "Smith" },
 					{ "BirthDate", null },
-				}, false);
-			Assert.Equal("POST", result.Method);
-		}
+			}, false);
+		Assert.Equal("POST", result.Method);
+	}
 
-		[Fact]
-		public async Task CreateInsertRequest_DateTimeOffset_Not_Null_Post()
-		{
-			var requestWriter = await CreateRequestWriter();
-			var result = await requestWriter.CreateInsertRequestAsync("Employees", "",
-				new Dictionary<string, object>()
-				{
+	[Fact]
+	public async Task CreateInsertRequest_DateTimeOffset_Not_Null_Post()
+	{
+		var requestWriter = await CreateRequestWriter();
+		var result = await requestWriter.CreateInsertRequestAsync("Employees", "",
+			new Dictionary<string, object>()
+			{
 					{ "FirstName", "John" },
 					{ "LastName", "Smith" },
 					{ "BirthDate", DateTimeOffset.Now },
-				}, false);
-			Assert.Equal("POST", result.Method);
-		}
+			}, false);
+		Assert.Equal("POST", result.Method);
+	}
 
-		[Fact]
-		public async Task CreateInsertRequest_DateTimeOffset_Null_Post()
-		{
-			var requestWriter = await CreateRequestWriter();
-			var result = await requestWriter.CreateInsertRequestAsync("Employees", "",
-				new Dictionary<string, object>()
-				{
+	[Fact]
+	public async Task CreateInsertRequest_DateTimeOffset_Null_Post()
+	{
+		var requestWriter = await CreateRequestWriter();
+		var result = await requestWriter.CreateInsertRequestAsync("Employees", "",
+			new Dictionary<string, object>()
+			{
 					{ "FirstName", "John" },
 					{ "LastName", "Smith" },
 					{ "BirthDate", null },
-				}, false);
-			Assert.Equal("POST", result.Method);
-		}
+			}, false);
+		Assert.Equal("POST", result.Method);
+	}
 
-		[Fact]
-		public async Task CreateInsertRequest_Date_Not_Null_Post()
-		{
-			var requestWriter = await CreateRequestWriter();
-			var result = await requestWriter.CreateInsertRequestAsync("Employees", "",
-				new Dictionary<string, object>()
-				{
+	[Fact]
+	public async Task CreateInsertRequest_Date_Not_Null_Post()
+	{
+		var requestWriter = await CreateRequestWriter();
+		var result = await requestWriter.CreateInsertRequestAsync("Employees", "",
+			new Dictionary<string, object>()
+			{
 					{ "FirstName", "John" },
 					{ "LastName", "Smith" },
 					{ "HireDate", DateTimeOffset.Now },
-				}, false);
-			Assert.Equal("POST", result.Method);
-		}
+			}, false);
+		Assert.Equal("POST", result.Method);
+	}
 
-		[Fact]
-		public async Task CreateInsertRequest_Date_Null_Post()
-		{
-			var requestWriter = await CreateRequestWriter();
-			var result = await requestWriter.CreateInsertRequestAsync("Employees", "",
-				new Dictionary<string, object>()
-				{
+	[Fact]
+	public async Task CreateInsertRequest_Date_Null_Post()
+	{
+		var requestWriter = await CreateRequestWriter();
+		var result = await requestWriter.CreateInsertRequestAsync("Employees", "",
+			new Dictionary<string, object>()
+			{
 					{ "FirstName", "John" },
 					{ "LastName", "Smith" },
 					{ "HireDate", null },
-				}, false);
-			Assert.Equal("POST", result.Method);
-		}
+			}, false);
+		Assert.Equal("POST", result.Method);
+	}
 
-		[Fact]
-		public async Task CreateInsertRequest_With_Headers()
-		{
-			var requestWriter = await CreateRequestWriter();
-			var result = await requestWriter.CreateInsertRequestAsync("Employees", "",
-				new Dictionary<string, object>()
-				{
+	[Fact]
+	public async Task CreateInsertRequest_With_Headers()
+	{
+		var requestWriter = await CreateRequestWriter();
+		var result = await requestWriter.CreateInsertRequestAsync("Employees", "",
+			new Dictionary<string, object>()
+			{
 					{ "FirstName", "John" },
-				}, false,
-				new Dictionary<string, string>
-				{
+			}, false,
+			new Dictionary<string, string>
+			{
 					{ "header1" , "header1Value" },
 					{ "header2" , "header2Value" }
-				});
+			});
 
-			Assert.Equal("header1Value", result.Headers["header1"]);
-			Assert.Equal("header2Value", result.Headers["header2"]);
-		}
+		Assert.Equal("header1Value", result.Headers["header1"]);
+		Assert.Equal("header2Value", result.Headers["header2"]);
 	}
 }

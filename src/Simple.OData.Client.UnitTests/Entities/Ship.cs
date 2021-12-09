@@ -1,7 +1,6 @@
-﻿namespace Simple.OData.Client.Tests
+﻿namespace Simple.OData.Client.Tests;
+
+public class Ship : Transport
 {
-	public class Ship : Transport
-	{
-		public string ShipName { get; set; }
-	}
+	public string ShipName { get; set; }
 }

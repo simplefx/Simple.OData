@@ -1,7 +1,6 @@
-﻿namespace Simple.OData.Client
+﻿namespace Simple.OData.Client;
+
+public interface INameMatchResolver
 {
-	public interface INameMatchResolver
-	{
-		bool IsMatch(string actualName, string requestedName);
-	}
+	bool IsMatch(string actualName, string requestedName);
 }

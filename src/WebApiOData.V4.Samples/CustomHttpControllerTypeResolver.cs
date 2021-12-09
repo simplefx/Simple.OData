@@ -2,22 +2,21 @@
 using System.Web.Http.Dispatcher;
 using Microsoft.AspNet.OData;
 
-namespace WebApiOData.V4.Samples
+namespace WebApiOData.V4.Samples;
+
+public class CustomHttpControllerTypeResolver : DefaultHttpControllerTypeResolver
 {
-	public class CustomHttpControllerTypeResolver : DefaultHttpControllerTypeResolver
+	public CustomHttpControllerTypeResolver(Type controllerType)
+		: base(IsController(controllerType))
 	{
-		public CustomHttpControllerTypeResolver(Type controllerType)
-			: base(IsController(controllerType))
-		{
-		}
+	}
 
-		private static Predicate<Type> IsController(Type controllerType)
-		{
-			Predicate<Type> predicate = t =>
-				t == typeof(MetadataController)
-				|| t == controllerType;
+	private static Predicate<Type> IsController(Type controllerType)
+	{
+		Predicate<Type> predicate = t =>
+			t == typeof(MetadataController)
+			|| t == controllerType;
 
-			return predicate;
-		}
+		return predicate;
 	}
 }

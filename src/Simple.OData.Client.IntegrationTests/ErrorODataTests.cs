@@ -2,126 +2,125 @@
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Simple.OData.Client.Tests
+namespace Simple.OData.Client.Tests;
+
+public class ErrorODataTestsV2Atom : ErrorODataTests
 {
-	public class ErrorODataTestsV2Atom : ErrorODataTests
+	public ErrorODataTestsV2Atom() : base(ODataV2ReadWriteUri, ODataPayloadFormat.Atom, 2) { }
+}
+
+public class ErrorODataTestsV2Json : ErrorODataTests
+{
+	public ErrorODataTestsV2Json() : base(ODataV2ReadWriteUri, ODataPayloadFormat.Json, 2) { }
+}
+
+public class ErrorODataTestsV3Atom : ErrorODataTests
+{
+	public ErrorODataTestsV3Atom() : base(ODataV3ReadWriteUri, ODataPayloadFormat.Atom, 3) { }
+}
+
+public class ErrorODataTestsV3Json : ErrorODataTests
+{
+	public ErrorODataTestsV3Json() : base(ODataV3ReadWriteUri, ODataPayloadFormat.Json, 3) { }
+}
+
+public class ErrorODataTestsV4Json : ErrorODataTests
+{
+	public ErrorODataTestsV4Json() : base(ODataV4ReadWriteUri, ODataPayloadFormat.Json, 4) { }
+}
+
+public abstract class ErrorODataTests : ODataTestBase
+{
+	protected ErrorODataTests(string serviceUri, ODataPayloadFormat payloadFormat, int version)
+		: base(serviceUri, payloadFormat, version)
 	{
-		public ErrorODataTestsV2Atom() : base(ODataV2ReadWriteUri, ODataPayloadFormat.Atom, 2) { }
 	}
 
-	public class ErrorODataTestsV2Json : ErrorODataTests
+	[Fact]
+	public async Task ErrorContent()
 	{
-		public ErrorODataTestsV2Json() : base(ODataV2ReadWriteUri, ODataPayloadFormat.Json, 2) { }
-	}
-
-	public class ErrorODataTestsV3Atom : ErrorODataTests
-	{
-		public ErrorODataTestsV3Atom() : base(ODataV3ReadWriteUri, ODataPayloadFormat.Atom, 3) { }
-	}
-
-	public class ErrorODataTestsV3Json : ErrorODataTests
-	{
-		public ErrorODataTestsV3Json() : base(ODataV3ReadWriteUri, ODataPayloadFormat.Json, 3) { }
-	}
-
-	public class ErrorODataTestsV4Json : ErrorODataTests
-	{
-		public ErrorODataTestsV4Json() : base(ODataV4ReadWriteUri, ODataPayloadFormat.Json, 4) { }
-	}
-
-	public abstract class ErrorODataTests : ODataTestBase
-	{
-		protected ErrorODataTests(string serviceUri, ODataPayloadFormat payloadFormat, int version)
-			: base(serviceUri, payloadFormat, version)
+		try
 		{
+			await _client
+				.For("Products")
+				.Filter("NonExistingProperty eq 1")
+				.FindEntryAsync();
+
+			Assert.False(true, "Expected exception");
 		}
-
-		[Fact]
-		public async Task ErrorContent()
+		catch (WebRequestException ex)
 		{
-			try
-			{
-				await _client
-					.For("Products")
-					.Filter("NonExistingProperty eq 1")
-					.FindEntryAsync();
-
-				Assert.False(true, "Expected exception");
-			}
-			catch (WebRequestException ex)
-			{
-				Assert.NotNull(ex.Response);
-			}
-			catch (Exception)
-			{
-				Assert.False(true, "Expected WebRequestException");
-			}
+			Assert.NotNull(ex.Response);
 		}
-
-		[Fact]
-		public async Task ErrorMessage_ReasonPhrase()
+		catch (Exception)
 		{
-			try
-			{
-				var client = new ODataClient(CreateDefaultSettings(x =>
-					x.WebRequestExceptionMessageSource = WebRequestExceptionMessageSource.ReasonPhrase));
-
-				await client
-					.For("Products")
-					.Filter("NonExistingProperty eq 1")
-					.FindEntryAsync();
-
-				Assert.False(true, "Expected exception");
-			}
-			catch (WebRequestException ex)
-			{
-				Assert.NotNull(ex.Message);
-				Assert.Equal(ex.ReasonPhrase, ex.Message);
-			}
+			Assert.False(true, "Expected WebRequestException");
 		}
+	}
 
-		[Fact]
-		public async Task ErrorMessage_ResponseContent()
+	[Fact]
+	public async Task ErrorMessage_ReasonPhrase()
+	{
+		try
 		{
-			try
-			{
-				var client = new ODataClient(CreateDefaultSettings(x =>
-					x.WebRequestExceptionMessageSource = WebRequestExceptionMessageSource.ResponseContent));
+			var client = new ODataClient(CreateDefaultSettings(x =>
+				x.WebRequestExceptionMessageSource = WebRequestExceptionMessageSource.ReasonPhrase));
 
-				await client
-					.For("Products")
-					.Filter("NonExistingProperty eq 1")
-					.FindEntryAsync();
+			await client
+				.For("Products")
+				.Filter("NonExistingProperty eq 1")
+				.FindEntryAsync();
 
-				Assert.False(true, "Expected exception");
-			}
-			catch (WebRequestException ex)
-			{
-				Assert.NotNull(ex.Message);
-				Assert.Equal(ex.Response, ex.Message);
-			}
+			Assert.False(true, "Expected exception");
 		}
-
-		[Fact]
-		public async Task ErrorMessage_PhraseAndContent()
+		catch (WebRequestException ex)
 		{
-			try
-			{
-				var client = new ODataClient(CreateDefaultSettings(x =>
-					x.WebRequestExceptionMessageSource = WebRequestExceptionMessageSource.Both));
+			Assert.NotNull(ex.Message);
+			Assert.Equal(ex.ReasonPhrase, ex.Message);
+		}
+	}
 
-				await client
-					.For("Products")
-					.Filter("NonExistingProperty eq 1")
-					.FindEntryAsync();
+	[Fact]
+	public async Task ErrorMessage_ResponseContent()
+	{
+		try
+		{
+			var client = new ODataClient(CreateDefaultSettings(x =>
+				x.WebRequestExceptionMessageSource = WebRequestExceptionMessageSource.ResponseContent));
 
-				Assert.False(true, "Expected exception");
-			}
-			catch (WebRequestException ex)
-			{
-				Assert.NotNull(ex.Message);
-				Assert.True(ex.Message.Contains(ex.ReasonPhrase) && ex.Message.Contains(ex.Response));
-			}
+			await client
+				.For("Products")
+				.Filter("NonExistingProperty eq 1")
+				.FindEntryAsync();
+
+			Assert.False(true, "Expected exception");
+		}
+		catch (WebRequestException ex)
+		{
+			Assert.NotNull(ex.Message);
+			Assert.Equal(ex.Response, ex.Message);
+		}
+	}
+
+	[Fact]
+	public async Task ErrorMessage_PhraseAndContent()
+	{
+		try
+		{
+			var client = new ODataClient(CreateDefaultSettings(x =>
+				x.WebRequestExceptionMessageSource = WebRequestExceptionMessageSource.Both));
+
+			await client
+				.For("Products")
+				.Filter("NonExistingProperty eq 1")
+				.FindEntryAsync();
+
+			Assert.False(true, "Expected exception");
+		}
+		catch (WebRequestException ex)
+		{
+			Assert.NotNull(ex.Message);
+			Assert.True(ex.Message.Contains(ex.ReasonPhrase) && ex.Message.Contains(ex.Response));
 		}
 	}
 }

@@ -1,10 +1,9 @@
-﻿namespace Simple.OData.Client.Tests
+﻿namespace Simple.OData.Client.Tests;
+
+public enum AddressType
 {
-	public enum AddressType
-	{
-		Unknown,
-		Private,
-		Corporate,
-		Delivery
-	}
+	Unknown,
+	Private,
+	Corporate,
+	Delivery
 }

@@ -1,28 +1,27 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace Simple.OData.Client.Extensions
+namespace Simple.OData.Client.Extensions;
+
+internal static class EnumerableOfKeyValuePairExtensions
 {
-	internal static class EnumerableOfKeyValuePairExtensions
+	public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> source)
 	{
-		public static Dictionary<TKey, TValue> ToDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> source)
+		if (source is not Dictionary<TKey, TValue> dictionary)
 		{
-			if (source is not Dictionary<TKey, TValue> dictionary)
-			{
-				dictionary = source.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-			}
-
-			return dictionary;
+			dictionary = source.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 		}
 
-		public static IDictionary<TKey, TValue> ToIDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> source)
-		{
-			if (source is not Dictionary<TKey, TValue> dictionary)
-			{
-				dictionary = source.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
-			}
+		return dictionary;
+	}
 
-			return dictionary;
+	public static IDictionary<TKey, TValue> ToIDictionary<TKey, TValue>(this IEnumerable<KeyValuePair<TKey, TValue>> source)
+	{
+		if (source is not Dictionary<TKey, TValue> dictionary)
+		{
+			dictionary = source.ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
 		}
+
+		return dictionary;
 	}
 }

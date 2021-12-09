@@ -1,11 +1,9 @@
 ﻿using System;
 
 // ReSharper disable CheckNamespace
-namespace Simple.OData.ProductService.Models
-// ReSharper restore CheckNamespace
+namespace Simple.OData.ProductService.Models;
+
+public abstract class BaseModel
 {
-	public abstract class BaseModel
-	{
-		public Guid Id { get; set; }
-	}
+	public Guid Id { get; set; }
 }

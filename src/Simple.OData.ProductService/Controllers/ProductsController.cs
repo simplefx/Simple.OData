@@ -6,147 +6,146 @@ using System.Web.Http;
 using System.Web.Http.OData;
 using Simple.OData.ProductService.Models;
 
-namespace Simple.OData.ProductService.Controllers
+namespace Simple.OData.ProductService.Controllers;
+
+/*
+To add a route for this controller, merge these statements into the Register method of the WebApiConfig class. Note that OData URLs are case sensitive.
+
+using System.Web.Http.OData.Builder;
+using ProductService.Models;
+ODataConventionModelBuilder builder = new ODataConventionModelBuilder();
+builder.EntitySet<Product>("Products");
+config.Routes.MapODataRoute("odata", "odata", builder.GetEdmModel());
+*/
+public class ProductsController : ODataController
 {
-	/*
-    To add a route for this controller, merge these statements into the Register method of the WebApiConfig class. Note that OData URLs are case sensitive.
+	private readonly ProductServiceContext db = new();
 
-    using System.Web.Http.OData.Builder;
-    using ProductService.Models;
-    ODataConventionModelBuilder builder = new ODataConventionModelBuilder();
-    builder.EntitySet<Product>("Products");
-    config.Routes.MapODataRoute("odata", "odata", builder.GetEdmModel());
-    */
-	public class ProductsController : ODataController
+
+	// GET odata/Products
+	[EnableQuery]
+	public IQueryable<Product> GetProducts()
 	{
-		private readonly ProductServiceContext db = new();
+		return db.Products;
+	}
 
+	// GET odata/Products(5)
+	[EnableQuery]
+	public SingleResult<Product> GetProduct([FromODataUri] int key)
+	{
+		return SingleResult.Create(db.Products.Where(product => product.ID == key));
+	}
 
-		// GET odata/Products
-		[EnableQuery]
-		public IQueryable<Product> GetProducts()
+	// PUT odata/Products(5)
+	public IHttpActionResult Put([FromODataUri] int key, Product product)
+	{
+		if (!ModelState.IsValid)
 		{
-			return db.Products;
+			return BadRequest(ModelState);
 		}
 
-		// GET odata/Products(5)
-		[EnableQuery]
-		public SingleResult<Product> GetProduct([FromODataUri] int key)
+		if (key != product.ID)
 		{
-			return SingleResult.Create(db.Products.Where(product => product.ID == key));
+			return BadRequest();
 		}
 
-		// PUT odata/Products(5)
-		public IHttpActionResult Put([FromODataUri] int key, Product product)
+		db.Entry(product).State = EntityState.Modified;
+
+		try
 		{
-			if (!ModelState.IsValid)
-			{
-				return BadRequest(ModelState);
-			}
-
-			if (key != product.ID)
-			{
-				return BadRequest();
-			}
-
-			db.Entry(product).State = EntityState.Modified;
-
-			try
-			{
-				db.SaveChanges();
-			}
-			catch (DbUpdateConcurrencyException)
-			{
-				if (!ProductExists(key))
-				{
-					return NotFound();
-				}
-				else
-				{
-					throw;
-				}
-			}
-
-			return Updated(product);
-		}
-
-		// POST odata/Products
-		public IHttpActionResult Post(Product product)
-		{
-			if (!ModelState.IsValid)
-			{
-				return BadRequest(ModelState);
-			}
-
-			db.Products.Add(product);
 			db.SaveChanges();
-
-			return Created(product);
 		}
-
-		// PATCH odata/Products(5)
-		[AcceptVerbs("PATCH", "MERGE")]
-		public IHttpActionResult Patch([FromODataUri] int key, Delta<Product> patch)
+		catch (DbUpdateConcurrencyException)
 		{
-			if (!ModelState.IsValid)
-			{
-				return BadRequest(ModelState);
-			}
-
-			var product = db.Products.Find(key);
-			if (product == null)
+			if (!ProductExists(key))
 			{
 				return NotFound();
 			}
-
-			patch.Patch(product);
-
-			try
+			else
 			{
-				db.SaveChanges();
+				throw;
 			}
-			catch (DbUpdateConcurrencyException)
-			{
-				if (!ProductExists(key))
-				{
-					return NotFound();
-				}
-				else
-				{
-					throw;
-				}
-			}
-
-			return Updated(product);
 		}
 
-		// DELETE odata/Products(5)
-		public IHttpActionResult Delete([FromODataUri] int key)
+		return Updated(product);
+	}
+
+	// POST odata/Products
+	public IHttpActionResult Post(Product product)
+	{
+		if (!ModelState.IsValid)
 		{
-			var product = db.Products.Find(key);
-			if (product == null)
+			return BadRequest(ModelState);
+		}
+
+		db.Products.Add(product);
+		db.SaveChanges();
+
+		return Created(product);
+	}
+
+	// PATCH odata/Products(5)
+	[AcceptVerbs("PATCH", "MERGE")]
+	public IHttpActionResult Patch([FromODataUri] int key, Delta<Product> patch)
+	{
+		if (!ModelState.IsValid)
+		{
+			return BadRequest(ModelState);
+		}
+
+		var product = db.Products.Find(key);
+		if (product == null)
+		{
+			return NotFound();
+		}
+
+		patch.Patch(product);
+
+		try
+		{
+			db.SaveChanges();
+		}
+		catch (DbUpdateConcurrencyException)
+		{
+			if (!ProductExists(key))
 			{
 				return NotFound();
 			}
-
-			db.Products.Remove(product);
-			db.SaveChanges();
-
-			return StatusCode(HttpStatusCode.NoContent);
-		}
-
-		protected override void Dispose(bool disposing)
-		{
-			if (disposing)
+			else
 			{
-				db.Dispose();
+				throw;
 			}
-			base.Dispose(disposing);
 		}
 
-		private bool ProductExists(int key)
+		return Updated(product);
+	}
+
+	// DELETE odata/Products(5)
+	public IHttpActionResult Delete([FromODataUri] int key)
+	{
+		var product = db.Products.Find(key);
+		if (product == null)
 		{
-			return db.Products.Count(e => e.ID == key) > 0;
+			return NotFound();
 		}
+
+		db.Products.Remove(product);
+		db.SaveChanges();
+
+		return StatusCode(HttpStatusCode.NoContent);
+	}
+
+	protected override void Dispose(bool disposing)
+	{
+		if (disposing)
+		{
+			db.Dispose();
+		}
+		base.Dispose(disposing);
+	}
+
+	private bool ProductExists(int key)
+	{
+		return db.Products.Count(e => e.ID == key) > 0;
 	}
 }

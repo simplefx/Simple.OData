@@ -1,6 +1,5 @@
-﻿namespace Simple.OData.Client.Tests.Entities
+﻿namespace Simple.OData.Client.Tests.Entities;
+
+public class Mammal : Animal
 {
-	public class Mammal : Animal
-	{
-	}
 }

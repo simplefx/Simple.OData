@@ -1,64 +1,63 @@
 using System;
 
-namespace Simple.OData.Client
+namespace Simple.OData.Client;
+
+public class ODataOrderByColumn : IEquatable<ODataOrderByColumn>
 {
-	public class ODataOrderByColumn : IEquatable<ODataOrderByColumn>
+	public string Name { get; }
+	public bool Descending { get; }
+
+	public ODataOrderByColumn(string name, bool descending)
 	{
-		public string Name { get; }
-		public bool Descending { get; }
-
-		public ODataOrderByColumn(string name, bool descending)
+		if (string.IsNullOrEmpty(name))
 		{
-			if (string.IsNullOrEmpty(name))
-			{
-				throw new ArgumentException($"Parameter {nameof(name)} should not be null or empty.", nameof(name));
-			}
-
-			Name = name;
-			Descending = descending;
+			throw new ArgumentException($"Parameter {nameof(name)} should not be null or empty.", nameof(name));
 		}
 
-		public bool Equals(ODataOrderByColumn other)
+		Name = name;
+		Descending = descending;
+	}
+
+	public bool Equals(ODataOrderByColumn other)
+	{
+		if (other is null)
 		{
-			if (other is null)
-			{
-				return false;
-			}
-
-			if (ReferenceEquals(this, other))
-			{
-				return true;
-			}
-
-			return Name == other.Name && Descending == other.Descending;
+			return false;
 		}
 
-		public override bool Equals(object obj)
+		if (ReferenceEquals(this, other))
 		{
-			if (obj is null)
-			{
-				return false;
-			}
-
-			if (ReferenceEquals(this, obj))
-			{
-				return true;
-			}
-
-			if (obj.GetType() != GetType())
-			{
-				return false;
-			}
-
-			return Equals((ODataOrderByColumn)obj);
+			return true;
 		}
 
-		public override int GetHashCode()
+		return Name == other.Name && Descending == other.Descending;
+	}
+
+	public override bool Equals(object obj)
+	{
+		if (obj is null)
 		{
-			unchecked
-			{
-				return ((Name != null ? Name.GetHashCode() : 0) * 397) ^ Descending.GetHashCode();
-			}
+			return false;
+		}
+
+		if (ReferenceEquals(this, obj))
+		{
+			return true;
+		}
+
+		if (obj.GetType() != GetType())
+		{
+			return false;
+		}
+
+		return Equals((ODataOrderByColumn)obj);
+	}
+
+	public override int GetHashCode()
+	{
+		unchecked
+		{
+			return ((Name != null ? Name.GetHashCode() : 0) * 397) ^ Descending.GetHashCode();
 		}
 	}
 }

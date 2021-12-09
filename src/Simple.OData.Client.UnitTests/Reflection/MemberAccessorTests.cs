@@ -1,100 +1,99 @@
 ﻿using Xunit;
 
-namespace Simple.OData.Client.Tests.Reflection
+namespace Simple.OData.Client.Tests.Reflection;
+
+public class MemberAccessorTests
 {
-	public class MemberAccessorTests
+	private class TestClass
 	{
-		private class TestClass
+		public string instanceField;
+		public static string staticField = "staticFieldValue";
+		public static string staticFieldToSet = "staticFieldToSetValue";
+
+		public string InstanceProprety { get; set; }
+		public static string StaticProperty { get; } = "staticPropertyValue";
+		public static string StaticPropertyToSet { get; set; } = "staticPropertyToSetValue";
+	}
+
+	[Fact]
+	public void ShouldGetInstancePropertyValue()
+	{
+		var instance = new TestClass
 		{
-			public string instanceField;
-			public static string staticField = "staticFieldValue";
-			public static string staticFieldToSet = "staticFieldToSetValue";
+			InstanceProprety = "instancePropertyValue"
+		};
 
-			public string InstanceProprety { get; set; }
-			public static string StaticProperty { get; } = "staticPropertyValue";
-			public static string StaticPropertyToSet { get; set; } = "staticPropertyToSetValue";
-		}
+		Assert.Equal(instance.InstanceProprety, MemberAccessor.GetValue<string>(instance, nameof(TestClass.InstanceProprety)));
+	}
 
-		[Fact]
-		public void ShouldGetInstancePropertyValue()
+	[Fact]
+	public void ShouldGetInstanceFieldValue()
+	{
+		var instance = new TestClass
 		{
-			var instance = new TestClass
-			{
-				InstanceProprety = "instancePropertyValue"
-			};
+			instanceField = "instanceFieldValue"
+		};
 
-			Assert.Equal(instance.InstanceProprety, MemberAccessor.GetValue<string>(instance, nameof(TestClass.InstanceProprety)));
-		}
+		Assert.Equal(instance.instanceField, MemberAccessor.GetValue<string>(instance, nameof(TestClass.instanceField)));
+	}
 
-		[Fact]
-		public void ShouldGetInstanceFieldValue()
+	[Fact]
+	public void ShouldGetStaticPropertyValue()
+	{
+		Assert.Equal(TestClass.StaticProperty, MemberAccessor.GetValue<string>(null, typeof(TestClass).GetProperty(nameof(TestClass.StaticProperty))));
+	}
+
+	[Fact]
+	public void ShouldGetStaticFieldValue()
+	{
+		Assert.Equal(TestClass.staticField, MemberAccessor.GetValue<string>(null, typeof(TestClass).GetField(nameof(TestClass.staticField))));
+	}
+
+
+
+
+
+
+	[Fact]
+	public void ShouldSetInstancePropertyValue()
+	{
+		var instance = new TestClass
 		{
-			var instance = new TestClass
-			{
-				instanceField = "instanceFieldValue"
-			};
+			InstanceProprety = "instancePropertyValue"
+		};
 
-			Assert.Equal(instance.instanceField, MemberAccessor.GetValue<string>(instance, nameof(TestClass.instanceField)));
-		}
+		MemberAccessor.SetValue(instance, nameof(TestClass.InstanceProprety), "test");
 
-		[Fact]
-		public void ShouldGetStaticPropertyValue()
+		Assert.Equal("test", instance.InstanceProprety);
+	}
+
+	[Fact]
+	public void ShouldSetInstanceFieldValue()
+	{
+		var instance = new TestClass
 		{
-			Assert.Equal(TestClass.StaticProperty, MemberAccessor.GetValue<string>(null, typeof(TestClass).GetProperty(nameof(TestClass.StaticProperty))));
-		}
+			instanceField = "instanceFieldValue"
+		};
 
-		[Fact]
-		public void ShouldGetStaticFieldValue()
-		{
-			Assert.Equal(TestClass.staticField, MemberAccessor.GetValue<string>(null, typeof(TestClass).GetField(nameof(TestClass.staticField))));
-		}
+		MemberAccessor.SetValue(instance, nameof(TestClass.instanceField), "test");
 
+		Assert.Equal("test", instance.instanceField);
+	}
 
+	[Fact]
+	public void ShouldSetStaticPropertyValue()
+	{
+		MemberAccessor.SetValue(null, typeof(TestClass).GetProperty(nameof(TestClass.StaticPropertyToSet)), "test");
 
+		Assert.Equal("test", TestClass.StaticPropertyToSet);
+	}
 
+	[Fact]
+	public void ShouldSetStaticFieldValue()
+	{
+		MemberAccessor.SetValue(null, typeof(TestClass).GetField(nameof(TestClass.staticFieldToSet)), "test");
 
-
-		[Fact]
-		public void ShouldSetInstancePropertyValue()
-		{
-			var instance = new TestClass
-			{
-				InstanceProprety = "instancePropertyValue"
-			};
-
-			MemberAccessor.SetValue(instance, nameof(TestClass.InstanceProprety), "test");
-
-			Assert.Equal("test", instance.InstanceProprety);
-		}
-
-		[Fact]
-		public void ShouldSetInstanceFieldValue()
-		{
-			var instance = new TestClass
-			{
-				instanceField = "instanceFieldValue"
-			};
-
-			MemberAccessor.SetValue(instance, nameof(TestClass.instanceField), "test");
-
-			Assert.Equal("test", instance.instanceField);
-		}
-
-		[Fact]
-		public void ShouldSetStaticPropertyValue()
-		{
-			MemberAccessor.SetValue(null, typeof(TestClass).GetProperty(nameof(TestClass.StaticPropertyToSet)), "test");
-
-			Assert.Equal("test", TestClass.StaticPropertyToSet);
-		}
-
-		[Fact]
-		public void ShouldSetStaticFieldValue()
-		{
-			MemberAccessor.SetValue(null, typeof(TestClass).GetField(nameof(TestClass.staticFieldToSet)), "test");
-
-			Assert.Equal("test", TestClass.staticFieldToSet);
-		}
+		Assert.Equal("test", TestClass.staticFieldToSet);
 	}
 }
 

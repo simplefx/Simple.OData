@@ -1,20 +1,19 @@
-namespace Simple.OData.Client
+namespace Simple.OData.Client;
+
+public class EntityCollection
 {
-	public class EntityCollection
+	internal EntityCollection(string name, EntityCollection baseEntityCollection = null)
 	{
-		internal EntityCollection(string name, EntityCollection baseEntityCollection = null)
-		{
-			Name = name;
-			BaseEntityCollection = baseEntityCollection;
-		}
-
-		public override string ToString()
-		{
-			return Name;
-		}
-
-		public string Name { get; private set; }
-
-		public EntityCollection BaseEntityCollection { get; private set; }
+		Name = name;
+		BaseEntityCollection = baseEntityCollection;
 	}
+
+	public override string ToString()
+	{
+		return Name;
+	}
+
+	public string Name { get; private set; }
+
+	public EntityCollection BaseEntityCollection { get; private set; }
 }

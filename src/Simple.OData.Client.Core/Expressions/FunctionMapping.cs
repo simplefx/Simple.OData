@@ -2,61 +2,61 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Simple.OData.Client
+namespace Simple.OData.Client;
+
+internal class FunctionMapping
 {
-	internal class FunctionMapping
+	public class FunctionDefinition
 	{
-		public class FunctionDefinition
+		public FunctionDefinition(ExpressionFunction.FunctionCall functionCall, FunctionMapping functionMapping, AdapterVersion adapterVersion = AdapterVersion.Any)
 		{
-			public FunctionDefinition(ExpressionFunction.FunctionCall functionCall, FunctionMapping functionMapping, AdapterVersion adapterVersion = AdapterVersion.Any)
+			FunctionCall = functionCall;
+			FunctionMapping = functionMapping;
+			AdapterVersion = adapterVersion;
+		}
+
+		public ExpressionFunction.FunctionCall FunctionCall { get; set; }
+		public FunctionMapping FunctionMapping { get; set; }
+		public AdapterVersion AdapterVersion { get; set; }
+	}
+
+	public string FunctionName { get; private set; }
+	public Func<string, ODataExpression, IEnumerable<object>, ODataExpression> FunctionMapper { get; private set; }
+
+	private FunctionMapping(string functionName)
+	{
+		FunctionName = functionName;
+	}
+
+	private static readonly Func<FunctionDefinition, Func<string, ODataExpression, IEnumerable<object>, ODataExpression>> FunctionWithTarget =
+		function =>
+			(functionName, target, arguments) => ODataExpression.FromFunction(
+			new ExpressionFunction()
 			{
-				FunctionCall = functionCall;
-				FunctionMapping = functionMapping;
-				AdapterVersion = adapterVersion;
-			}
+				FunctionName = function.FunctionMapping.FunctionName,
+				Arguments = new List<ODataExpression>() { target },
+			});
 
-			public ExpressionFunction.FunctionCall FunctionCall { get; set; }
-			public FunctionMapping FunctionMapping { get; set; }
-			public AdapterVersion AdapterVersion { get; set; }
-		}
-
-		public string FunctionName { get; private set; }
-		public Func<string, ODataExpression, IEnumerable<object>, ODataExpression> FunctionMapper { get; private set; }
-
-		private FunctionMapping(string functionName)
-		{
-			FunctionName = functionName;
-		}
-
-		private static readonly Func<FunctionDefinition, Func<string, ODataExpression, IEnumerable<object>, ODataExpression>> FunctionWithTarget =
-			function =>
-				(functionName, target, arguments) => ODataExpression.FromFunction(
+	private static readonly Func<FunctionDefinition, Func<string, ODataExpression, IEnumerable<object>, ODataExpression>> FunctionWithTargetAndArguments =
+		function =>
+			(functionName, target, arguments) => ODataExpression.FromFunction(
 				new ExpressionFunction()
 				{
 					FunctionName = function.FunctionMapping.FunctionName,
-					Arguments = new List<ODataExpression>() { target },
+					Arguments = MergeArguments(target, arguments),
 				});
 
-		private static readonly Func<FunctionDefinition, Func<string, ODataExpression, IEnumerable<object>, ODataExpression>> FunctionWithTargetAndArguments =
-			function =>
-				(functionName, target, arguments) => ODataExpression.FromFunction(
-					new ExpressionFunction()
-					{
-						FunctionName = function.FunctionMapping.FunctionName,
-						Arguments = MergeArguments(target, arguments),
-					});
-
-		private static readonly Func<FunctionDefinition, Func<string, ODataExpression, IEnumerable<object>, ODataExpression>> FunctionWithArgumentsAndTarget =
-			function =>
-				(functionName, target, arguments) => ODataExpression.FromFunction(
-				new ExpressionFunction()
-				{
-					FunctionName = function.FunctionMapping.FunctionName,
-					Arguments = MergeArguments(arguments, target),
-				});
-
-		public static readonly FunctionDefinition[] DefinedFunctions =
+	private static readonly Func<FunctionDefinition, Func<string, ODataExpression, IEnumerable<object>, ODataExpression>> FunctionWithArgumentsAndTarget =
+		function =>
+			(functionName, target, arguments) => ODataExpression.FromFunction(
+			new ExpressionFunction()
 			{
+				FunctionName = function.FunctionMapping.FunctionName,
+				Arguments = MergeArguments(arguments, target),
+			});
+
+	public static readonly FunctionDefinition[] DefinedFunctions =
+		{
 				CreateFunctionDefinition("Contains", 1, "substringof", FunctionWithArgumentsAndTarget, AdapterVersion.V3),
 				CreateFunctionDefinition("Contains", 1, "contains", FunctionWithTargetAndArguments, AdapterVersion.V4),
 				CreateFunctionDefinition("StartsWith", 1, "startswith", FunctionWithTargetAndArguments),
@@ -89,51 +89,50 @@ namespace Simple.OData.Client
 				CreateFunctionDefinition("Ceiling", 0, "ceiling", FunctionWithTarget),
 			};
 
-		public static bool ContainsFunction(string functionName, int argumentCount)
+	public static bool ContainsFunction(string functionName, int argumentCount)
+	{
+		return DefinedFunctions.Any(x => x.FunctionCall.Equals(new ExpressionFunction.FunctionCall(functionName, argumentCount)));
+	}
+
+	public static bool TryGetFunctionMapping(string functionName, int argumentCount, AdapterVersion adapterVersion, out FunctionMapping functionMapping)
+	{
+		functionMapping = null;
+		var function = DefinedFunctions.SingleOrDefault(x =>
+			x.FunctionCall.Equals(new ExpressionFunction.FunctionCall(functionName, argumentCount)) &&
+			(x.AdapterVersion & adapterVersion) == adapterVersion);
+
+		if (function != null)
 		{
-			return DefinedFunctions.Any(x => x.FunctionCall.Equals(new ExpressionFunction.FunctionCall(functionName, argumentCount)));
+			functionMapping = function.FunctionMapping;
 		}
+		return function != null;
+	}
 
-		public static bool TryGetFunctionMapping(string functionName, int argumentCount, AdapterVersion adapterVersion, out FunctionMapping functionMapping)
-		{
-			functionMapping = null;
-			var function = DefinedFunctions.SingleOrDefault(x =>
-				x.FunctionCall.Equals(new ExpressionFunction.FunctionCall(functionName, argumentCount)) &&
-				(x.AdapterVersion & adapterVersion) == adapterVersion);
+	private static FunctionDefinition CreateFunctionDefinition(string functionName, int argumentCount, string mappedFunctionName,
+		Func<FunctionDefinition, Func<string, ODataExpression, IEnumerable<object>, ODataExpression>> mapper, AdapterVersion adapterVersion = AdapterVersion.Any)
+	{
+		var functionCall = new ExpressionFunction.FunctionCall(functionName, argumentCount);
+		var functionMapping = new FunctionMapping(mappedFunctionName);
+		var function = new FunctionDefinition(functionCall, functionMapping, adapterVersion);
+		functionMapping.FunctionMapper = mapper(function);
+		return function;
+	}
 
-			if (function != null)
-			{
-				functionMapping = function.FunctionMapping;
-			}
-			return function != null;
-		}
-
-		private static FunctionDefinition CreateFunctionDefinition(string functionName, int argumentCount, string mappedFunctionName,
-			Func<FunctionDefinition, Func<string, ODataExpression, IEnumerable<object>, ODataExpression>> mapper, AdapterVersion adapterVersion = AdapterVersion.Any)
-		{
-			var functionCall = new ExpressionFunction.FunctionCall(functionName, argumentCount);
-			var functionMapping = new FunctionMapping(mappedFunctionName);
-			var function = new FunctionDefinition(functionCall, functionMapping, adapterVersion);
-			functionMapping.FunctionMapper = mapper(function);
-			return function;
-		}
-
-		private static List<ODataExpression> MergeArguments(ODataExpression argument, IEnumerable<object> arguments)
-		{
-			var collection = new List<ODataExpression>
+	private static List<ODataExpression> MergeArguments(ODataExpression argument, IEnumerable<object> arguments)
+	{
+		var collection = new List<ODataExpression>
 			{
 				argument
 			};
-			collection.AddRange(arguments.Select(ODataExpression.FromValue));
-			return collection;
-		}
+		collection.AddRange(arguments.Select(ODataExpression.FromValue));
+		return collection;
+	}
 
-		private static List<ODataExpression> MergeArguments(IEnumerable<object> arguments, ODataExpression argument)
-		{
-			var collection = new List<ODataExpression>();
-			collection.AddRange(arguments.Select(ODataExpression.FromValue));
-			collection.Add(argument);
-			return collection;
-		}
+	private static List<ODataExpression> MergeArguments(IEnumerable<object> arguments, ODataExpression argument)
+	{
+		var collection = new List<ODataExpression>();
+		collection.AddRange(arguments.Select(ODataExpression.FromValue));
+		collection.Add(argument);
+		return collection;
 	}
 }

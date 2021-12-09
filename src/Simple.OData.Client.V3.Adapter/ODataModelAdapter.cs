@@ -6,48 +6,39 @@ using Microsoft.Data.Edm;
 using Microsoft.Data.Edm.Csdl;
 using Microsoft.Data.OData;
 
-namespace Simple.OData.Client
+namespace Simple.OData.Client.V3.Adapter;
+
+public class ODataModelAdapter : ODataModelAdapterBase
 {
-	public static class V3ModelAdapter
+	public override AdapterVersion AdapterVersion => AdapterVersion.V3;
+
+	public new IEdmModel Model
 	{
-		public static void Reference() { }
+		get => base.Model as IEdmModel;
+		set => base.Model = value;
 	}
-}
 
-namespace Simple.OData.Client.V3.Adapter
-{
-	public class ODataModelAdapter : ODataModelAdapterBase
+	private ODataModelAdapter(string protocolVersion)
 	{
-		public override AdapterVersion AdapterVersion => AdapterVersion.V3;
+		ProtocolVersion = protocolVersion;
+	}
 
-		public new IEdmModel Model
+	public ODataModelAdapter(string protocolVersion, HttpResponseMessage response)
+		: this(protocolVersion)
+	{
+		var readerSettings = new ODataMessageReaderSettings
 		{
-			get => base.Model as IEdmModel;
-			set => base.Model = value;
-		}
+			MessageQuotas = { MaxReceivedMessageSize = int.MaxValue }
+		};
+		using var messageReader = new ODataMessageReader(new ODataResponseMessage(response), readerSettings);
+		Model = messageReader.ReadMetadataDocument();
+	}
 
-		private ODataModelAdapter(string protocolVersion)
-		{
-			ProtocolVersion = protocolVersion;
-		}
-
-		public ODataModelAdapter(string protocolVersion, HttpResponseMessage response)
-			: this(protocolVersion)
-		{
-			var readerSettings = new ODataMessageReaderSettings
-			{
-				MessageQuotas = { MaxReceivedMessageSize = int.MaxValue }
-			};
-			using var messageReader = new ODataMessageReader(new ODataResponseMessage(response), readerSettings);
-			Model = messageReader.ReadMetadataDocument();
-		}
-
-		public ODataModelAdapter(string protocolVersion, string metadataString)
-			: this(protocolVersion)
-		{
-			using var reader = XmlReader.Create(new StringReader(metadataString));
-			reader.MoveToContent();
-			Model = EdmxReader.Parse(reader);
-		}
+	public ODataModelAdapter(string protocolVersion, string metadataString)
+		: this(protocolVersion)
+	{
+		using var reader = XmlReader.Create(new StringReader(metadataString));
+		reader.MoveToContent();
+		Model = EdmxReader.Parse(reader);
 	}
 }

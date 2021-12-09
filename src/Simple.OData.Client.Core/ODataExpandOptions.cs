@@ -1,114 +1,113 @@
 ﻿using System;
 
-namespace Simple.OData.Client
+namespace Simple.OData.Client;
+
+/// <summary>
+/// Specifies expansion levels.
+/// </summary>
+public enum ODataExpandLevels
 {
 	/// <summary>
-	/// Specifies expansion levels.
+	/// Specifies maximum expansion levels.
 	/// </summary>
-	public enum ODataExpandLevels
+	Max,
+}
+
+/// <summary>
+/// Specifies expansion mode (by value or by reference).
+/// </summary>
+public enum ODataExpandMode
+{
+	/// <summary>
+	/// Associations should be expanded by value.
+	/// </summary>
+	ByValue,
+
+	/// <summary>
+	/// Associations should be expanded by reference.
+	/// </summary>
+	ByReference,
+}
+
+/// <summary>
+/// Specifies how to expand entity associations.
+/// </summary>
+public class ODataExpandOptions : IEquatable<ODataExpandOptions>
+{
+	/// <summary>
+	/// The number of levels to expand.
+	/// </summary>
+	public int Levels { get; private set; }
+
+	/// <summary>
+	/// The expansion mode (by value or by reference).
+	/// </summary>
+	public ODataExpandMode ExpandMode { get; private set; }
+
+	private ODataExpandOptions(int levels = 1, ODataExpandMode expandMode = ODataExpandMode.ByValue)
 	{
-		/// <summary>
-		/// Specifies maximum expansion levels.
-		/// </summary>
-		Max,
+		Levels = levels;
+		ExpandMode = expandMode;
+	}
+
+	private ODataExpandOptions(ODataExpandLevels levels, ODataExpandMode expandMode = ODataExpandMode.ByValue)
+		: this(0, expandMode)
+	{
 	}
 
 	/// <summary>
-	/// Specifies expansion mode (by value or by reference).
+	/// Expansion by value.
 	/// </summary>
-	public enum ODataExpandMode
+	/// <param name="levels">The number of levels to expand.</param>
+	public static ODataExpandOptions ByValue(int levels = 1)
 	{
-		/// <summary>
-		/// Associations should be expanded by value.
-		/// </summary>
-		ByValue,
-
-		/// <summary>
-		/// Associations should be expanded by reference.
-		/// </summary>
-		ByReference,
+		return new ODataExpandOptions(levels, ODataExpandMode.ByValue);
 	}
 
 	/// <summary>
-	/// Specifies how to expand entity associations.
+	/// Expansion by value.
 	/// </summary>
-	public class ODataExpandOptions : IEquatable<ODataExpandOptions>
+	/// <param name="levels">The number of levels to expand.</param>
+	public static ODataExpandOptions ByValue(ODataExpandLevels levels)
 	{
-		/// <summary>
-		/// The number of levels to expand.
-		/// </summary>
-		public int Levels { get; private set; }
+		return new ODataExpandOptions(levels, ODataExpandMode.ByValue);
+	}
 
-		/// <summary>
-		/// The expansion mode (by value or by reference).
-		/// </summary>
-		public ODataExpandMode ExpandMode { get; private set; }
+	/// <summary>
+	/// Expansion by reference.
+	/// </summary>
+	/// <param name="levels">The number of levels to expand.</param>
+	public static ODataExpandOptions ByReference(int levels = 1)
+	{
+		return new ODataExpandOptions(levels, ODataExpandMode.ByReference);
+	}
 
-		private ODataExpandOptions(int levels = 1, ODataExpandMode expandMode = ODataExpandMode.ByValue)
+	/// <summary>
+	/// Expansion by reference.
+	/// </summary>
+	/// <param name="levels">The number of levels to expand.</param>
+	public static ODataExpandOptions ByReference(ODataExpandLevels levels)
+	{
+		return new ODataExpandOptions(levels, ODataExpandMode.ByReference);
+	}
+
+	public bool Equals(ODataExpandOptions other)
+	{
+		if (other == null)
 		{
-			Levels = levels;
-			ExpandMode = expandMode;
+			return false;
 		}
 
-		private ODataExpandOptions(ODataExpandLevels levels, ODataExpandMode expandMode = ODataExpandMode.ByValue)
-			: this(0, expandMode)
+		if (ReferenceEquals(this, other))
 		{
+			return true;
 		}
 
-		/// <summary>
-		/// Expansion by value.
-		/// </summary>
-		/// <param name="levels">The number of levels to expand.</param>
-		public static ODataExpandOptions ByValue(int levels = 1)
-		{
-			return new ODataExpandOptions(levels, ODataExpandMode.ByValue);
-		}
+		return ExpandMode == other.ExpandMode && Levels == other.Levels;
+	}
 
-		/// <summary>
-		/// Expansion by value.
-		/// </summary>
-		/// <param name="levels">The number of levels to expand.</param>
-		public static ODataExpandOptions ByValue(ODataExpandLevels levels)
-		{
-			return new ODataExpandOptions(levels, ODataExpandMode.ByValue);
-		}
-
-		/// <summary>
-		/// Expansion by reference.
-		/// </summary>
-		/// <param name="levels">The number of levels to expand.</param>
-		public static ODataExpandOptions ByReference(int levels = 1)
-		{
-			return new ODataExpandOptions(levels, ODataExpandMode.ByReference);
-		}
-
-		/// <summary>
-		/// Expansion by reference.
-		/// </summary>
-		/// <param name="levels">The number of levels to expand.</param>
-		public static ODataExpandOptions ByReference(ODataExpandLevels levels)
-		{
-			return new ODataExpandOptions(levels, ODataExpandMode.ByReference);
-		}
-
-		public bool Equals(ODataExpandOptions other)
-		{
-			if (other == null)
-			{
-				return false;
-			}
-
-			if (ReferenceEquals(this, other))
-			{
-				return true;
-			}
-
-			return ExpandMode == other.ExpandMode && Levels == other.Levels;
-		}
-
-		public override int GetHashCode()
-		{
-			return (ExpandMode, Levels).GetHashCode();
-		}
+	public override int GetHashCode()
+	{
+		return (ExpandMode, Levels).GetHashCode();
 	}
 }

@@ -1,18 +1,17 @@
-﻿namespace Simple.OData.Client
+﻿namespace Simple.OData.Client;
+
+/// <summary>
+/// The format of OData function arguments.
+/// </summary>
+public enum FunctionFormat
 {
 	/// <summary>
-	/// The format of OData function arguments.
+	/// The function arguments will be formatted as a query string
 	/// </summary>
-	public enum FunctionFormat
-	{
-		/// <summary>
-		/// The function arguments will be formatted as a query string
-		/// </summary>
-		Query,
+	Query,
 
-		/// <summary>
-		/// The function arguments will be formatted as a a key-value list
-		/// </summary>
-		Key,
-	}
+	/// <summary>
+	/// The function arguments will be formatted as a a key-value list
+	/// </summary>
+	Key,
 }

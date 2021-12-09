@@ -1,11 +1,10 @@
 ﻿using System.Data.Entity;
 
-namespace ActionProviderImplementation
+namespace ActionProviderImplementation;
+
+public class EntityFrameworkActionProvider : ActionProvider
 {
-	public class EntityFrameworkActionProvider : ActionProvider
+	public EntityFrameworkActionProvider(DbContext dbContext) : base(dbContext, new EntityFrameworkParameterMarshaller())
 	{
-		public EntityFrameworkActionProvider(DbContext dbContext) : base(dbContext, new EntityFrameworkParameterMarshaller())
-		{
-		}
 	}
 }

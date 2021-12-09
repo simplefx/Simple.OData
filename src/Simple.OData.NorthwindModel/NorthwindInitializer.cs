@@ -3,14 +3,14 @@ using System.Data.Entity;
 using NorthwindModel;
 using Simple.OData.NorthwindModel.Entities;
 
-namespace Simple.OData.NorthwindModel
+namespace Simple.OData.NorthwindModel;
+
+public class NorthwindInitializer : DropCreateDatabaseAlways<NorthwindContext>
 {
-	public class NorthwindInitializer : DropCreateDatabaseAlways<NorthwindContext>
+	protected override void Seed(NorthwindContext ctx)
 	{
-		protected override void Seed(NorthwindContext ctx)
+		ctx.Categories.AddRange(new[]
 		{
-			ctx.Categories.AddRange(new[]
-			{
 				new Category { CategoryID = 1, CategoryName = "Beverages", Description = "Beverages Soft drinks, coffees, teas, beer, and ale", Picture = new byte[] {1,2,3} },
 				new Category { CategoryID = 2, CategoryName = "Condiments", Description = "Sweet and savory sauces, relishes, spreads, and seasonings", Picture = new byte[] {1,2,3}  },
 				new Category { CategoryID = 3, CategoryName = "Confections", Description = "Desserts, candies, sweetbreads", Picture = new byte[] {1,2,3}  },
@@ -21,8 +21,8 @@ namespace Simple.OData.NorthwindModel
 				new Category { CategoryID = 8, CategoryName = "Seafood", Description = "Seaweed and fish", Picture = new byte[] {1,2,3}  },
 			});
 
-			ctx.Suppliers.AddRange(new[]
-			{
+		ctx.Suppliers.AddRange(new[]
+		{
 				new Supplier { SupplierID = 1, CompanyName = "Exotic Liquids", ContactName = "Charlotte Cooper", ContactTitle = "Purchasing Manager", Address = "49 Gilbert St.", City = "London", Region = null, PostalCode = "EC1 4SD", Country = "UK", Phone = "(71) 555-2222", Fax = null },
 				new Supplier { SupplierID = 2, CompanyName = "New Orleans Cajun Delights", ContactName = "Shelley Burke", ContactTitle = "Order Administrator", Address = "P.O. Box 78934", City = "New Orleans", Region = "LA", PostalCode = "70117", Country = "USA", Phone = "(100) 555-4822", Fax = null },
 				new Supplier { SupplierID = 3, CompanyName = "Grandma Kelly's Homestead", ContactName = "Regina Murphy", ContactTitle = "Sales Representative", Address = "707 Oxford Rd.", City = "Ann Arbor", Region = "MI", PostalCode = "48104", Country = "USA", Phone = "(313) 555-5735", Fax = "(313) 555-3349" },
@@ -38,8 +38,8 @@ namespace Simple.OData.NorthwindModel
                 //new Supplier { SupplierID = 0, CompanyName = "", ContactName = "", ContactTitle = "", Address = "", City = "", Region = null, PostalCode = "", Country = "", Phone = "", Fax = null },
             });
 
-			ctx.Products.AddRange(new[]
-			{
+		ctx.Products.AddRange(new[]
+		{
 				new Product { ProductID = 1, ProductName = "Chai", SupplierID = 1, CategoryID = 1, QuantityPerUnit = "10 boxes x 20 bags", UnitPrice = 18, UnitsInStock = 39, UnitsOnOrder = 0, ReorderLevel = 10, Discontinued = false },
 				new Product { ProductID = 2, ProductName = "Chang", SupplierID = 1, CategoryID = 1, QuantityPerUnit = "24 - 12 oz bottles", UnitPrice = 19, UnitsInStock = 17, UnitsOnOrder = 40, ReorderLevel = 25, Discontinued = false },
 				new Product { ProductID = 3, ProductName = "Aniseed Syrup", SupplierID = 1, CategoryID = 2, QuantityPerUnit = "12 - 550 ml bottles", UnitPrice = 10, UnitsInStock = 13, UnitsOnOrder = 70, ReorderLevel = 25, Discontinued = false },
@@ -65,8 +65,8 @@ namespace Simple.OData.NorthwindModel
                 //new Product { ProductID = 0, ProductName = "", SupplierID = 0, CategoryID = 0, QuantityPerUnit = "", UnitPrice = 0, UnitsInStock = 0, UnitsOnOrder = 0, ReorderLevel = 0, Discontinued = false }, 
             });
 
-			ctx.Customers.AddRange(new[]
-			{
+		ctx.Customers.AddRange(new[]
+		{
 				new Customer { CustomerID = "BOTTM", CompanyName = "Bottom-Dollar Markets", ContactName = "Elizabeth Lincoln", ContactTitle = "Accounting Manager", Address = "23 Tsawassen Blvd.", City = "Tsawassen", Region = "BC", PostalCode = "T2F 8M4", Country = "Canada", Phone = "(604) 555-4729", Fax = "(604) 555-3745" },
 				new Customer { CustomerID = "ERNSH", CompanyName = "Ernst Handel", ContactName = "Roland Mendel", ContactTitle = "Sales Manager", Address = "Kirchgasse 6", City = "Graz", Region = null, PostalCode = "8010", Country = "Austria", Phone = "7675-3425", Fax = "7675-3426" },
 				new Customer { CustomerID = "FRANS", CompanyName = "Franchi S.p.A.", ContactName = "Paolo Accorti", ContactTitle = "Sales Representative", Address = "Via Monte Bianco 34", City = "Torino", Region = null, PostalCode = "10100", Country = "Italy", Phone = "011-4988260", Fax = "011-4988261" },
@@ -75,8 +75,8 @@ namespace Simple.OData.NorthwindModel
                 // new Customer { CustomerID = "", CompanyName = "", ContactName = "", ContactTitle = "", Address = "", City = "", Region = null, PostalCode = "", Country = "", Phone = "", Fax = "" },
             });
 
-			ctx.Employees.AddRange(new[]
-			{
+		ctx.Employees.AddRange(new[]
+		{
 				new Employee { EmployeeID = 1, LastName = "Davolio", FirstName = "Nancy", Title = "Sales Representative", BirthDate = new DateTime(1948,12,8), HireDate = new DateTime(1991,3,29), Address = "507 - 20th Ave. E. Apt. 2A", City = "Seattle", Region = "WA", PostalCode = "98122", Country = "USA", HomePhone = "(206) 555-9857", Extension = "5467", Photo = new byte[] {1,2,3}, Notes = "Notes", ReportsTo = 2 },
 				new Employee { EmployeeID = 2, LastName = "Fuller", FirstName = "Andrew", Title = "Vice President, Sales", BirthDate = new DateTime(1942,2,19), HireDate = new DateTime(1991,7,12), Address = "", City = "", Region = null, PostalCode = "", Country = "", HomePhone = "", Extension = "", Photo = new byte[] {1,2,3}, Notes = null, ReportsTo = null },
 				new Employee { EmployeeID = 3, LastName = "Leverling", FirstName = "Janet", Title = "Sales Representative", BirthDate = new DateTime(1963,8,30), HireDate = new DateTime(1991,2,27), Address = "", City = "", Region = null, PostalCode = "", Country = "", HomePhone = "", Extension = "", Photo = new byte[] {1,2,3}, Notes = null, ReportsTo = 2 },
@@ -89,15 +89,15 @@ namespace Simple.OData.NorthwindModel
                 //new Employee { EmployeeID = 0, LastName = "", FirstName = "", Title = "", BirthDate = DateTime.MinValue, HireDate = DateTime.MinValue, Address = "", City = "", Region = null, PostalCode = "", Country = "", HomePhone = "", Extension = "", Photo = new byte[] {1,2,3}, Notes = null, ReportsTo = 0 },
             });
 
-			ctx.Shippers.AddRange(new[]
-			{
+		ctx.Shippers.AddRange(new[]
+		{
 				new Shipper { ShipperID = 1, CompanyName = "Speedy Express" },
 				new Shipper { ShipperID = 2, CompanyName = "United Package" },
 				new Shipper { ShipperID = 3, CompanyName = "Federal Shipping" },
 			});
 
-			ctx.Orders.AddRange(new[]
-			{
+		ctx.Orders.AddRange(new[]
+		{
 				new Order { OrderID = 10000, CustomerID = "FRANS", EmployeeID = 6, ShipName = "Franchi S.p.A.", ShipAddress = "Via Monte Bianco 34", ShipCity = "Torino", ShipRegion = null, ShipPostalCode = "10100", ShipCountry = "Italy", ShipVia = 3, OrderDate = new DateTime(1991,10,5), RequiredDate = new DateTime(1991,6,7), ShippedDate = new DateTime(1991,5,15), Freight = 4.45m },
 				new Order { OrderID = 10021, CustomerID = "ERNSH", EmployeeID = 7, ShipName = "Ernst Handel", ShipAddress = "Kirchgasse 6", ShipCity = "Graz", ShipRegion = null, ShipPostalCode = "8010", ShipCountry = "Austria", ShipVia = 3, OrderDate = new DateTime(1991,6,14), RequiredDate = new DateTime(1991,7,12), ShippedDate = new DateTime(1991,7,2), Freight = 75.17m },
 				new Order { OrderID = 10065, CustomerID = "SAVEA", EmployeeID = 1, ShipName = "Save-a-lot Markets", ShipAddress = "187 Suffolk Ln.", ShipCity = "Boise", ShipRegion = "ID", ShipPostalCode = "83720", ShipCountry = "USA", ShipVia = 3, OrderDate = new DateTime(1991,8,28), RequiredDate = new DateTime(1991,9,25), ShippedDate = new DateTime(1991,9,3), Freight = 45.03m },
@@ -108,8 +108,8 @@ namespace Simple.OData.NorthwindModel
                 // new Order { OrderID = 0, CustomerID = "", EmployeeID = , ShipName = "", ShipAddress = "", ShipCity = "", ShipRegion = null, ShipPostalCode = "", ShipCountry = "", ShipVia = 0, OrderDate = new DateTime(0,0,0), RequiredDate = new DateTime(0,0,0), ShippedDate = new DateTime(0,0,0), Freight = 0m },
             });
 
-			ctx.Order_Details.AddRange(new[]
-			{
+		ctx.Order_Details.AddRange(new[]
+		{
 				new OrderDetail { OrderID = 10021, ProductID = 1, UnitPrice = 12m, Quantity = 60, Discount = 0.2f },
 				new OrderDetail { OrderID = 10065, ProductID = 1, UnitPrice = 12.6m, Quantity = 55, Discount = 0.25f },
 				new OrderDetail { OrderID = 10199, ProductID = 1, UnitPrice = 12m, Quantity = 66, Discount = 0 },
@@ -121,11 +121,10 @@ namespace Simple.OData.NorthwindModel
                 // new OrderDetail { OrderID = 0, ProductID = 0, UnitPrice = 0m, Quantity = 0, Discount = 0 },
             });
 
-			ctx.Transport.AddRange(new Transport[]
-			{
+		ctx.Transport.AddRange(new Transport[]
+		{
 				new Ship { TransportID = 1, TransportType = 1, ShipName = "Titanic" },
 				new Truck { TransportID = 2, TransportType = 2, TruckNumber = "123456" },
-			});
-		}
+		});
 	}
 }

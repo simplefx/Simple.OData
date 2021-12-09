@@ -1,34 +1,33 @@
 ﻿using System.Collections.Generic;
 
-namespace Simple.OData.Client
+namespace Simple.OData.Client;
+
+public class ReferenceLink
 {
-	public class ReferenceLink
+	public string LinkName { get; set; }
+	public object LinkData { get; set; }
+	public string ContentId { get; set; }
+}
+
+public class EntryDetails
+{
+	public IDictionary<string, object> Properties { get; } = new Dictionary<string, object>();
+	public IDictionary<string, List<ReferenceLink>> Links { get; } = new Dictionary<string, List<ReferenceLink>>();
+	public bool HasOpenTypeProperties { get; set; }
+
+	public void AddProperty(string propertyName, object propertyValue)
 	{
-		public string LinkName { get; set; }
-		public object LinkData { get; set; }
-		public string ContentId { get; set; }
+		Properties.Add(propertyName, propertyValue);
 	}
 
-	public class EntryDetails
+	public void AddLink(string linkName, object linkData, string contentId = null)
 	{
-		public IDictionary<string, object> Properties { get; } = new Dictionary<string, object>();
-		public IDictionary<string, List<ReferenceLink>> Links { get; } = new Dictionary<string, List<ReferenceLink>>();
-		public bool HasOpenTypeProperties { get; set; }
-
-		public void AddProperty(string propertyName, object propertyValue)
+		if (!Links.TryGetValue(linkName, out var links))
 		{
-			Properties.Add(propertyName, propertyValue);
+			links = new List<ReferenceLink>();
+			Links.Add(linkName, links);
 		}
-
-		public void AddLink(string linkName, object linkData, string contentId = null)
-		{
-			if (!Links.TryGetValue(linkName, out var links))
-			{
-				links = new List<ReferenceLink>();
-				Links.Add(linkName, links);
-			}
-			links.Add(new ReferenceLink() { LinkName = linkName, LinkData = linkData, ContentId = contentId });
-		}
+		links.Add(new ReferenceLink() { LinkName = linkName, LinkData = linkData, ContentId = contentId });
 	}
 }
 
