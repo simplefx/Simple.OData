@@ -1,10 +1,9 @@
-﻿namespace Simple.OData.NorthwindModel.Entities
+﻿namespace Simple.OData.NorthwindModel.Entities;
+
+public enum AddressType
 {
-    public enum AddressType
-    {
-        Unknown,
-        Private,
-        Corporate,
-        Delivery
-    }
+	Unknown,
+	Private,
+	Corporate,
+	Delivery
 }

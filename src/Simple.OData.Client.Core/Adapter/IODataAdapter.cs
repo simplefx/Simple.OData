@@ -1,30 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 
-#pragma warning disable 1591
+namespace Simple.OData.Client;
 
-namespace Simple.OData.Client
+public interface IODataAdapter
 {
-    public interface IODataAdapter
-    {
-        AdapterVersion AdapterVersion { get; }
+	AdapterVersion AdapterVersion { get; }
 
-        ODataPayloadFormat DefaultPayloadFormat { get; }
+	ODataPayloadFormat DefaultPayloadFormat { get; }
 
-        string ProtocolVersion { get; set; }
+	string ProtocolVersion { get; set; }
 
-        object Model { get; set; }
+	object Model { get; set; }
 
-        string GetODataVersionString();
+	string GetODataVersionString();
 
-        IMetadata GetMetadata();
+	IMetadata GetMetadata();
 
-        ICommandFormatter GetCommandFormatter();
+	ICommandFormatter GetCommandFormatter();
 
-        IResponseReader GetResponseReader();
+	IResponseReader GetResponseReader();
 
-        IRequestWriter GetRequestWriter(Lazy<IBatchWriter> deferredBatchWriter);
+	IRequestWriter GetRequestWriter(Lazy<IBatchWriter> deferredBatchWriter);
 
-        IBatchWriter GetBatchWriter(IDictionary<object, IDictionary<string, object>> batchEntries);
-    }
+	IBatchWriter GetBatchWriter(IDictionary<object, IDictionary<string, object>> batchEntries);
 }

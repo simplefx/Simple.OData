@@ -1,9 +1,8 @@
-﻿namespace Simple.OData.Client.Tests
+﻿namespace Simple.OData.Client.Tests;
+
+public class Transport
 {
-    public class Transport
-    {
-        public static readonly string TransportPropertyKey = @"Test Value";
-        
-        public int TransportID { get; set; }
-    }
+	public static readonly string TransportPropertyKey = @"Test Value";
+
+	public int TransportID { get; set; }
 }

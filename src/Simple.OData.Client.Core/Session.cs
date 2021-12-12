@@ -3,193 +3,192 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Simple.OData.Client
+namespace Simple.OData.Client;
+
+internal class Session : ISession
 {
-    class Session : ISession
-    {
-        private IODataAdapter _adapter;
-        private HttpConnection _httpConnection;
-        private EdmMetadataCache _metadataCache;
+	private IODataAdapter _adapter;
+	private HttpConnection _httpConnection;
 
-        private Session(Uri baseUri, string metadataString) : this(new ODataClientSettings
-        {
-            BaseUri = baseUri,
-            MetadataDocument = metadataString
-        })
-        { 
-        }
+	private Session(Uri baseUri, string metadataString) : this(new ODataClientSettings
+	{
+		BaseUri = baseUri,
+		MetadataDocument = metadataString
+	})
+	{
+	}
 
-        private Session(ODataClientSettings settings)
-        {
-            if (settings.BaseUri == null || string.IsNullOrEmpty(settings.BaseUri.AbsoluteUri))
-            {
-                throw new InvalidOperationException("Unable to create client session with no URI specified.");
-            }
+	private Session(ODataClientSettings settings)
+	{
+		if (settings.BaseUri == null || string.IsNullOrEmpty(settings.BaseUri.AbsoluteUri))
+		{
+			throw new InvalidOperationException("Unable to create client session with no URI specified.");
+		}
 
-            Settings = settings;
+		Settings = settings;
 
-            if (!string.IsNullOrEmpty(Settings.MetadataDocument))
-            {
-                // Create as early as possible as most unit tests require this and also makes it simpler when assigning a static document
-                _metadataCache = InitializeStaticMetadata(Settings.MetadataDocument);
-            }
-        }
+		if (!string.IsNullOrEmpty(Settings.MetadataDocument))
+		{
+			// Create as early as possible as most unit tests require this and also makes it simpler when assigning a static document
+			MetadataCache = InitializeStaticMetadata(Settings.MetadataDocument);
+		}
+	}
 
-        public IODataAdapter Adapter
-        {
-            get
-            {
-                if (_adapter == null)
-                {
-                    lock (this)
-                    {
-                        if (_adapter == null)
-                        {
-                            _adapter = MetadataCache.GetODataAdapter(this);
-                        }
-                    }
-                }
-                return _adapter;
-            }
-        }
+	public IODataAdapter Adapter
+	{
+		get
+		{
+			if (_adapter == null)
+			{
+				lock (this)
+				{
+					if (_adapter == null)
+					{
+						_adapter = MetadataCache.GetODataAdapter(this);
+					}
+				}
+			}
 
-        public IMetadata Metadata => Adapter.GetMetadata();
+			return _adapter;
+		}
+	}
 
-        public EdmMetadataCache MetadataCache => _metadataCache;
+	public IMetadata Metadata => Adapter.GetMetadata();
 
-        public ODataClientSettings Settings { get; }
+	public EdmMetadataCache MetadataCache { get; private set; }
 
-        public ITypeCache TypeCache => TypeCaches.TypeCache(Settings.BaseUri.AbsoluteUri, Settings.NameMatchResolver);
+	public ODataClientSettings Settings { get; }
 
-        public void Dispose()
-        {
-            lock (this)
-            {
-                if (_httpConnection != null)
-                {
-                    _httpConnection.Dispose();
-                    _httpConnection = null;
-                }
-            }
-        }
+	public ITypeCache TypeCache => TypeCaches.TypeCache(Settings.BaseUri.AbsoluteUri, Settings.NameMatchResolver);
 
-        private readonly SemaphoreSlim _initializeSemaphore = new SemaphoreSlim(1);
-        public async Task Initialize(CancellationToken cancellationToken)
-        {
-            // Just allow one schema request at a time, unlikely to be much contention but avoids multiple requests for same endpoint.
-            await _initializeSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
+	public void Dispose()
+	{
+		lock (this)
+		{
+			if (_httpConnection != null)
+			{
+				_httpConnection.Dispose();
+				_httpConnection = null;
+			}
+		}
+	}
 
-            try
-            {
-                if (_metadataCache == null)
-                {
-                    _metadataCache = await InitializeMetadataCache(cancellationToken)
-                        .ConfigureAwait(false);
-                }
+	private readonly SemaphoreSlim _initializeSemaphore = new(1);
+	public async Task Initialize(CancellationToken cancellationToken)
+	{
+		// Just allow one schema request at a time, unlikely to be much contention but avoids multiple requests for same endpoint.
+		await _initializeSemaphore.WaitAsync(cancellationToken).ConfigureAwait(false);
 
-                if (_adapter == null)
-                {
-                    _adapter = _metadataCache.GetODataAdapter(this);
-                }
-            }
-            finally
-            {
-                _initializeSemaphore.Release();
-            }
-        }
+		try
+		{
+			if (MetadataCache == null)
+			{
+				MetadataCache = await InitializeMetadataCache(cancellationToken)
+					.ConfigureAwait(false);
+			}
 
-        public void Trace(string message, params object[] messageParams)
-        {
-            Settings.OnTrace?.Invoke(message, messageParams);
-        }
+			if (_adapter == null)
+			{
+				_adapter = MetadataCache.GetODataAdapter(this);
+			}
+		}
+		finally
+		{
+			_initializeSemaphore.Release();
+		}
+	}
 
-        public void ClearMetadataCache()
-        {
-            var metadataCache = _metadataCache;
-            if (metadataCache != null)
-            {
-                EdmMetadataCache.Clear(metadataCache.Key);
-                _metadataCache = null;
-            }
-        }
+	public void Trace(string message, params object[] messageParams)
+	{
+		Settings.OnTrace?.Invoke(message, messageParams);
+	}
 
-        public async Task<IODataAdapter> ResolveAdapterAsync(CancellationToken cancellationToken)
-        {
-            await Initialize(cancellationToken).ConfigureAwait(false);
+	public void ClearMetadataCache()
+	{
+		var metadataCache = MetadataCache;
+		if (metadataCache != null)
+		{
+			EdmMetadataCache.Clear(metadataCache.Key);
+			MetadataCache = null;
+		}
+	}
 
-            if (Settings.PayloadFormat == ODataPayloadFormat.Unspecified)
-            {
-                Settings.PayloadFormat = Adapter.DefaultPayloadFormat;
-            }
+	public async Task<IODataAdapter> ResolveAdapterAsync(CancellationToken cancellationToken)
+	{
+		await Initialize(cancellationToken).ConfigureAwait(false);
 
-            return Adapter;
-        }
+		if (Settings.PayloadFormat == ODataPayloadFormat.Unspecified)
+		{
+			Settings.PayloadFormat = Adapter.DefaultPayloadFormat;
+		}
 
-        public HttpConnection GetHttpConnection()
-        {
-            if (_httpConnection == null)
-            {
-                lock (this)
-                {
-                    if (_httpConnection == null)
-                    {
-                        _httpConnection = new HttpConnection(Settings);
-                    }
-                }
-            }
+		return Adapter;
+	}
 
-            return _httpConnection;
-        }
+	public HttpConnection GetHttpConnection()
+	{
+		if (_httpConnection == null)
+		{
+			lock (this)
+			{
+				if (_httpConnection == null)
+				{
+					_httpConnection = new HttpConnection(Settings);
+				}
+			}
+		}
 
-        internal static Session FromSettings(ODataClientSettings settings)
-        {
-            return new Session(settings);
-        }
+		return _httpConnection;
+	}
 
-        internal static Session FromMetadata(Uri baseUri, string metadataString)
-        {
-            return new Session(baseUri, metadataString);
-        }
+	internal static Session FromSettings(ODataClientSettings settings)
+	{
+		return new Session(settings);
+	}
 
-        private async Task<HttpResponseMessage> SendMetadataRequestAsync(CancellationToken cancellationToken)
-        {
-            var request = new ODataRequest(RestVerbs.Get, this, ODataLiteral.Metadata);
-            return await new RequestRunner(this).ExecuteRequestAsync(request, cancellationToken).ConfigureAwait(false);
-        }
+	internal static Session FromMetadata(Uri baseUri, string metadataString)
+	{
+		return new Session(baseUri, metadataString);
+	}
 
-        private EdmMetadataCache InitializeStaticMetadata(string metadata)
-        {
-            return EdmMetadataCache.GetOrAdd(
-                Settings.BaseUri.AbsoluteUri,
-                uri => CreateMdc(uri, metadata));
-        }
+	private async Task<HttpResponseMessage> SendMetadataRequestAsync(CancellationToken cancellationToken)
+	{
+		var request = new ODataRequest(RestVerbs.Get, this, ODataLiteral.Metadata);
+		return await new RequestRunner(this).ExecuteRequestAsync(request, cancellationToken).ConfigureAwait(false);
+	}
 
-        private async Task<EdmMetadataCache> InitializeMetadataCache(CancellationToken cancellationToken)
-        {
-            return await EdmMetadataCache.GetOrAddAsync(
-                Settings.BaseUri.AbsoluteUri,
-                async uri =>
-                {
-                    var metadata = await ResolveMetadataAsync(cancellationToken).ConfigureAwait(false);
-                    return CreateMdc(uri, metadata);
-                });
-        }
+	private EdmMetadataCache InitializeStaticMetadata(string metadata)
+	{
+		return EdmMetadataCache.GetOrAdd(
+			Settings.BaseUri.AbsoluteUri,
+			uri => CreateMdc(uri, metadata));
+	}
 
-        private async Task<string> ResolveMetadataAsync(CancellationToken cancellationToken)
-        {
-            if (!string.IsNullOrEmpty(Settings.MetadataDocument))
-            {
-                return Settings.MetadataDocument;
-            }
+	private async Task<EdmMetadataCache> InitializeMetadataCache(CancellationToken cancellationToken)
+	{
+		return await EdmMetadataCache.GetOrAddAsync(
+			Settings.BaseUri.AbsoluteUri,
+			async uri =>
+			{
+				var metadata = await ResolveMetadataAsync(cancellationToken).ConfigureAwait(false);
+				return CreateMdc(uri, metadata);
+			});
+	}
 
-            var response = await SendMetadataRequestAsync(cancellationToken).ConfigureAwait(false);
-            var metadataDocument = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-            return metadataDocument;
-        }
+	private async Task<string> ResolveMetadataAsync(CancellationToken cancellationToken)
+	{
+		if (!string.IsNullOrEmpty(Settings.MetadataDocument))
+		{
+			return Settings.MetadataDocument;
+		}
 
-        private EdmMetadataCache CreateMdc(string key, string metadata)
-        {
-            return new EdmMetadataCache(key, metadata, TypeCaches.TypeCache(key, Settings.NameMatchResolver));
-        }
-    }
+		var response = await SendMetadataRequestAsync(cancellationToken).ConfigureAwait(false);
+		var metadataDocument = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+		return metadataDocument;
+	}
+
+	private EdmMetadataCache CreateMdc(string key, string metadata)
+	{
+		return new EdmMetadataCache(key, metadata, TypeCaches.TypeCache(key, Settings.NameMatchResolver));
+	}
 }

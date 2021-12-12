@@ -6,44 +6,43 @@ using Newtonsoft.Json;
 using Simple.OData.Client.Tests;
 using Xunit;
 
-namespace Simple.OData.Client.Benchmarks
+namespace Simple.OData.Client.Benchmarks;
+
+internal class PeopleCollection
 {
-    class PeopleCollection
-    {
-        [JsonProperty("value")]
-        public Person [] People { get; set; }
-    }
+	[JsonProperty("value")]
+	public Person[] People { get; set; }
+}
 
-    public class TripPinPeople
-    {
-        [Benchmark]
-        public async Task FindTypedPeopleWithTripsAndFriends()
-        {
-            var result = await Utils.GetClient("TripPin.xml", "TripPin_result_20.json")
-                .For<Person>()
-                .Expand(x => new {x.Trips, x.Friends})
-                .FindEntriesAsync();
+public class TripPinPeople
+{
+	[Benchmark]
+	public async static Task FindTypedPeopleWithTripsAndFriends()
+	{
+		var result = await Utils.GetClient("TripPin.xml", "TripPin_result_20.json")
+			.For<Person>()
+			.Expand(x => new { x.Trips, x.Friends })
+			.FindEntriesAsync();
 
-            Assert.Equal(20, result.ToList().Count);
-        }
+		Assert.Equal(20, result.ToList().Count);
+	}
 
-        [Benchmark]
-        public async Task FindUntypedPeopleWithTripsAndFriends()
-        {
-            var result = await Utils.GetClient("TripPin.xml", "TripPin_result_20.json")
-                .For("People")
-                .Expand(new [] {"Trips", "Friends"})
-                .FindEntriesAsync();
+	[Benchmark]
+	public async static Task FindUntypedPeopleWithTripsAndFriends()
+	{
+		var result = await Utils.GetClient("TripPin.xml", "TripPin_result_20.json")
+			.For("People")
+			.Expand(new[] { "Trips", "Friends" })
+			.FindEntriesAsync();
 
-            Assert.Equal(20, result.ToList().Count);
-        }
+		Assert.Equal(20, result.ToList().Count);
+	}
 
-        [Benchmark]
-        public void ConvertWithNewtonsoftJson()
-        {
-            var json = File.ReadAllText(@"..\..\..\..\..\..\..\Resources\" + "TripPin_result_20.json");
-            var result = JsonConvert.DeserializeObject<PeopleCollection>(json);
-            Assert.Equal(20, result.People.Length);
-        }
-    }
+	[Benchmark]
+	public static void ConvertWithNewtonsoftJson()
+	{
+		var json = File.ReadAllText(@"..\..\..\..\..\..\..\Resources\" + "TripPin_result_20.json");
+		var result = JsonConvert.DeserializeObject<PeopleCollection>(json);
+		Assert.Equal(20, result.People.Length);
+	}
 }

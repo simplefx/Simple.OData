@@ -1,7 +1,6 @@
-﻿namespace Simple.OData.NorthwindModel.Entities
+﻿namespace Simple.OData.NorthwindModel.Entities;
+
+public class Truck : Transport
 {
-    public class Truck : Transport
-    {
-        public string TruckNumber { get; set; }
-    }
+	public string TruckNumber { get; set; }
 }

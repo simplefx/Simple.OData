@@ -1,13 +1,8 @@
-﻿using System;
+﻿namespace Simple.OData.Client;
 
-#pragma warning disable 1591
-
-namespace Simple.OData.Client
+public interface IODataModelAdapter
 {
-    public interface IODataModelAdapter
-    {
-        AdapterVersion AdapterVersion { get; }
-        string ProtocolVersion { get; set; }
-        object Model { get; set;  }
-    }
+	AdapterVersion AdapterVersion { get; }
+	string ProtocolVersion { get; set; }
+	object Model { get; set; }
 }

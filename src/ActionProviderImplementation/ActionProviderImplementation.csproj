@@ -1,30 +1,30 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>net461</TargetFramework>
-    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <OutputPath>$(SolutionDir)/build/$(Configuration)/$(AssemblyName)/$(TargetFramework)/</OutputPath>
-    <OutDir>$(OutputPath)</OutDir>
-    <LangVersion>default</LangVersion>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="EntityFramework" Version="6.4.4" />
-    <PackageReference Include="Microsoft.Data.Services" Version="5.8.4" />
-    <PackageReference Include="Microsoft.Data.Services.Client" Version="5.8.4" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System" />
-    <!--Reference Include="System.ComponentModel.DataAnnotations" />-->
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
+	<PropertyGroup>
+		<TargetFramework>net461</TargetFramework>
+		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+		<OutputPath>$(SolutionDir)/build/$(Configuration)/$(AssemblyName)/$(TargetFramework)/</OutputPath>
+		<OutDir>$(OutputPath)</OutDir>
+		<LangVersion>latest</LangVersion>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="EntityFramework" Version="6.4.4" />
+		<PackageReference Include="Microsoft.Data.Services" Version="5.8.5" />
+		<PackageReference Include="Microsoft.Data.Services.Client" Version="5.8.5" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="App.config" />
+	</ItemGroup>
+	<ItemGroup>
+		<Reference Include="System" />
+		<!--Reference Include="System.ComponentModel.DataAnnotations" />-->
+		<Reference Include="System.Core" />
+		<Reference Include="System.Xml.Linq" />
+		<Reference Include="System.Data.DataSetExtensions" />
+		<Reference Include="Microsoft.CSharp" />
+		<Reference Include="System.Data" />
+		<Reference Include="System.Xml" />
+	</ItemGroup>
+	<ItemGroup>
+		<Folder Include="Properties\" />
+	</ItemGroup>
 </Project>

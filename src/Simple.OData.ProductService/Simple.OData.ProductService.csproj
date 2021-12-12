@@ -1,35 +1,29 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFrameworks>net461</TargetFrameworks>
-    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-    <RootNamespace>Simple.OData.ProductService</RootNamespace>
-    <OutputPath>$(SolutionDir)/build/$(Configuration)/$(AssemblyName)/$(TargetFramework)/</OutputPath>
-    <OutDir>$(OutputPath)</OutDir>
-    <LangVersion>default</LangVersion>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net461|AnyCPU'">
-    <DefineConstants>TRACE</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net461|AnyCPU'">
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="EntityFramework" Version="6.4.4" />
-    <PackageReference Include="Microsoft.AspNet.WebApi" Version="5.2.7" />
-    <PackageReference Include="Microsoft.AspNet.WebApi.Client" Version="5.2.7" />
-    <PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.2.7" />
-    <PackageReference Include="Microsoft.AspNet.WebApi.OData" Version="5.7.0" />
-    <PackageReference Include="Microsoft.AspNet.WebApi.WebHost" Version="5.2.7" />
-    <PackageReference Include="Microsoft.Data.Edm" Version="5.8.5" />
-    <PackageReference Include="Microsoft.Data.OData" Version="5.8.5" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-    <PackageReference Include="System.Spatial" Version="5.8.5" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Web" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
+	<PropertyGroup>
+		<TargetFrameworks>net461</TargetFrameworks>
+		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+		<RootNamespace>Simple.OData.ProductService</RootNamespace>
+		<OutputPath>$(SolutionDir)/build/$(Configuration)/$(AssemblyName)/$(TargetFramework)/</OutputPath>
+		<OutDir>$(OutputPath)</OutDir>
+		<LangVersion>latest</LangVersion>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net461|AnyCPU'">
+		<DefineConstants>TRACE</DefineConstants>
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net461|AnyCPU'">
+		<DefineConstants>TRACE;DEBUG</DefineConstants>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="EntityFramework" Version="6.4.4" />
+		<PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.2.7" />
+		<PackageReference Include="Microsoft.AspNet.WebApi.OData" Version="5.7.0" />
+		<PackageReference Include="Microsoft.AspNet.WebApi.WebHost" Version="5.2.7" />
+	</ItemGroup>
+	<ItemGroup>
+		<Reference Include="System.Configuration" />
+		<Reference Include="System.Web" />
+	</ItemGroup>
+	<ItemGroup>
+		<Folder Include="Properties\" />
+	</ItemGroup>
 </Project>

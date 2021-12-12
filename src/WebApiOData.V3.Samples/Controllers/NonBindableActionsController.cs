@@ -4,43 +4,43 @@ using System.Web.Http;
 using System.Web.Http.OData;
 using WebApiOData.V3.Samples.Models;
 
-namespace WebApiOData.V3.Samples.Controllers
+namespace WebApiOData.V3.Samples.Controllers;
+
+public class NonBindableActionsController : ODataController
 {
-    public class NonBindableActionsController : ODataController
-    {
-        MoviesContext db = new MoviesContext();
+	private readonly MoviesContext db = new();
 
-        [HttpPost]
-        public Movie CreateMovie(ODataActionParameters parameters)
-        {
-            if (!ModelState.IsValid)
-            {
-                throw new HttpResponseException(HttpStatusCode.BadRequest);
-            }
+	[HttpPost]
+	public Movie CreateMovie(ODataActionParameters parameters)
+	{
+		if (!ModelState.IsValid)
+		{
+			throw new HttpResponseException(HttpStatusCode.BadRequest);
+		}
 
-            string title = parameters["Title"] as string;
+		var title = parameters["Title"] as string;
 
-            Movie movie = new Movie()
-            {
-                Title = title
-            };
+		var movie = new Movie()
+		{
+			Title = title
+		};
 
-            try
-            {
-                db.Movies.Add(movie);
-                db.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                throw new HttpResponseException(HttpStatusCode.BadRequest);
-            }
-            return movie;
-        }
+		try
+		{
+			db.Movies.Add(movie);
+			db.SaveChanges();
+		}
+		catch (DbUpdateConcurrencyException)
+		{
+			throw new HttpResponseException(HttpStatusCode.BadRequest);
+		}
 
-        protected override void Dispose(bool disposing)
-        {
-            db.Dispose();
-            base.Dispose(disposing);
-        }
-    }
+		return movie;
+	}
+
+	protected override void Dispose(bool disposing)
+	{
+		db.Dispose();
+		base.Dispose(disposing);
+	}
 }

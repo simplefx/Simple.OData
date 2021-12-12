@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
@@ -12,10 +11,10 @@ using Microsoft.Owin.Testing;
 using WebApiOData.V4.Samples.Startups;
 #endif
 
-namespace WebApiOData.V4.Samples.Tests
+namespace WebApiOData.V4.Samples.Tests;
+
+public class ActionV4Tests
 {
-    public class ActionV4Tests
-    {
 #if NET461 && !MOCK_HTTP
         private readonly TestServer _server;
 
@@ -30,127 +29,126 @@ namespace WebApiOData.V4.Samples.Tests
         }
 #endif
 
-        private ODataClientSettings CreateDefaultSettings()
-        {
-            return new ODataClientSettings()
-            {
-                BaseUri = new Uri("http://localhost/actions"),
-                MetadataDocument = GetMetadataDocument(),
-                PayloadFormat = ODataPayloadFormat.Json,
+	private static ODataClientSettings CreateDefaultSettings()
+	{
+		return new ODataClientSettings()
+		{
+			BaseUri = new Uri("http://localhost/actions"),
+			MetadataDocument = GetMetadataDocument(),
+			PayloadFormat = ODataPayloadFormat.Json,
 #if NET461 && !MOCK_HTTP
                 OnCreateMessageHandler = () => _server.Handler,
 #endif
-                OnTrace = (x, y) => Console.WriteLine(string.Format(x, y)),
-            };
-        }
+			OnTrace = (x, y) => Console.WriteLine(string.Format(x, y)),
+		};
+	}
 
-        private string GetMetadataDocument()
-        {
+	private static string GetMetadataDocument()
+	{
 #if MOCK_HTTP
-            return MetadataResolver.GetMetadataDocument("Metadata.xml");
+		return MetadataResolver.GetMetadataDocument("Metadata.xml");
 #else
             return null;
 #endif
 
-        }
+	}
 
-        [Fact]
-        public async Task Check_out_a_movie()
-        {
-            var settings = CreateDefaultSettings().WithHttpMock();
-            var client = new ODataClient(settings);
-            var isCheckedOut = false;
-            Movie result = null;
-            try
-            {
-                result = await client
-                    .For<Movie>()
-                    .Key(1)
-                    .Action("CheckOut")
-                    .ExecuteAsSingleAsync();
-            }
-            catch (WebRequestException)
-            {
-                isCheckedOut = true;
-            }
+	[Fact]
+	public async Task Check_out_a_movie()
+	{
+		var settings = CreateDefaultSettings().WithHttpMock();
+		var client = new ODataClient(settings);
+		var isCheckedOut = false;
+		Movie result = null;
+		try
+		{
+			result = await client
+				.For<Movie>()
+				.Key(1)
+				.Action("CheckOut")
+				.ExecuteAsSingleAsync();
+		}
+		catch (WebRequestException)
+		{
+			isCheckedOut = true;
+		}
 
-            if (isCheckedOut)
-            {
-                await client
-                    .For<Movie>()
-                    .Key(1)
-                    .Action("Return")
-                    .ExecuteAsSingleAsync();
+		if (isCheckedOut)
+		{
+			await client
+				.For<Movie>()
+				.Key(1)
+				.Action("Return")
+				.ExecuteAsSingleAsync();
 
-                result = await client
-                    .For<Movie>()
-                    .Key(1)
-                    .Action("CheckOut")
-                    .ExecuteAsSingleAsync();
-            }
+			result = await client
+				.For<Movie>()
+				.Key(1)
+				.Action("CheckOut")
+				.ExecuteAsSingleAsync();
+		}
 
-            Assert.Equal(1, result.ID);
-        }
+		Assert.Equal(1, result.ID);
+	}
 
-        [Fact]
-        public async Task Return_a_movie()
-        {
-            var settings = CreateDefaultSettings().WithHttpMock();
-            var client = new ODataClient(settings);
-            var result = await client
-                .For<Movie>()
-                .Key(1)
-                .Action("Return")
-                .ExecuteAsSingleAsync();
+	[Fact]
+	public async Task Return_a_movie()
+	{
+		var settings = CreateDefaultSettings().WithHttpMock();
+		var client = new ODataClient(settings);
+		var result = await client
+			.For<Movie>()
+			.Key(1)
+			.Action("Return")
+			.ExecuteAsSingleAsync();
 
-            Assert.Equal(1, result.ID);
-        }
+		Assert.Equal(1, result.ID);
+	}
 
-        [Fact]
-        public async Task Check_out_several()
-        {
-            var settings = CreateDefaultSettings().WithHttpMock();
-            var client = new ODataClient(settings);
-            var result = await client
-                .For<Movie>()
-                .Action("CheckOutMany")
-                .Set(new Dictionary<string, object>() { { "MovieIDs", new[] { 1, 2, 3 } } })
-                .ExecuteAsEnumerableAsync();
+	[Fact]
+	public async Task Check_out_several()
+	{
+		var settings = CreateDefaultSettings().WithHttpMock();
+		var client = new ODataClient(settings);
+		var result = await client
+			.For<Movie>()
+			.Action("CheckOutMany")
+			.Set(new Dictionary<string, object>() { { "MovieIDs", new[] { 1, 2, 3 } } })
+			.ExecuteAsEnumerableAsync();
 
-            Assert.True(result.Count() > 1);
-        }
+		Assert.True(result.Count() > 1);
+	}
 
-        [Fact]
-        public async Task CreateMovie()
-        {
-            var settings = CreateDefaultSettings().WithHttpMock();
-            var client = new ODataClient(settings);
-            var guid = new Guid("EC9DB412-AF7F-4157-B9F5-BFAB8A942B16");
-            var result = await client
-                .Unbound<Movie>()
-                .Action("CreateMovie")
-                .Set(new { Title = guid.ToString() })
-                .ExecuteAsSingleAsync();
+	[Fact]
+	public async Task CreateMovie()
+	{
+		var settings = CreateDefaultSettings().WithHttpMock();
+		var client = new ODataClient(settings);
+		var guid = new Guid("EC9DB412-AF7F-4157-B9F5-BFAB8A942B16");
+		var result = await client
+			.Unbound<Movie>()
+			.Action("CreateMovie")
+			.Set(new { Title = guid.ToString() })
+			.ExecuteAsSingleAsync();
 
-            Assert.True(result.ID > 0);
-        }
+		Assert.True(result.ID > 0);
+	}
 
-        [Fact]
-        public async Task CreateMovie_batch()
-        {
-            var settings = CreateDefaultSettings().WithHttpMock();
-            var client = new ODataClient(settings);
-            var guid = new Guid("E7857D7F-5B85-406A-A5C7-0DBA1D411576");
-            Movie result = null;
-            var batch = new ODataBatch(client);
-            batch += async c => result = await c
-                .Unbound<Movie>()
-                .Action("CreateMovie")
-                .Set(new { Title = guid.ToString() })
-                .ExecuteAsSingleAsync();
-            await batch.ExecuteAsync();
+	[Fact]
+	public async Task CreateMovie_batch()
+	{
+		var settings = CreateDefaultSettings().WithHttpMock();
+		var client = new ODataClient(settings);
+		var guid = new Guid("E7857D7F-5B85-406A-A5C7-0DBA1D411576");
+		Movie result = null;
+		var batch = new ODataBatch(client);
+		batch += async c => result = await c
+			.Unbound<Movie>()
+			.Action("CreateMovie")
+			.Set(new { Title = guid.ToString() })
+			.ExecuteAsSingleAsync();
+		await batch.ExecuteAsync();
 
-            Assert.True(result.ID > 0);
-        }
-    }
+		Assert.True(result.ID > 0);
+	}
 }

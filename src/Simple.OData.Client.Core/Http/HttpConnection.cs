@@ -1,65 +1,69 @@
 ﻿using System;
 using System.Net.Http;
 
-namespace Simple.OData.Client
+namespace Simple.OData.Client;
+
+public class HttpConnection : IDisposable
 {
-    public class HttpConnection : IDisposable
-    {
-        private HttpMessageHandler _messageHandler;
-        private HttpClient _httpClient;
+	private HttpMessageHandler _messageHandler;
 
-        public HttpClient HttpClient { get {  return _httpClient; } }
+	public HttpClient HttpClient { get; private set; }
 
-        public HttpConnection(ODataClientSettings settings)
-        {
-            _messageHandler = CreateMessageHandler(settings);
-            _httpClient = CreateHttpClient(settings, _messageHandler);
-        }
+	public HttpConnection(ODataClientSettings settings)
+	{
+		_messageHandler = CreateMessageHandler(settings);
+		HttpClient = CreateHttpClient(settings, _messageHandler);
+	}
 
-        public void Dispose()
-        {
-            if (_messageHandler != null)
-            {
-                _messageHandler.Dispose();
-                _messageHandler = null;
-            }
+	public void Dispose()
+	{
+		if (_messageHandler != null)
+		{
+			_messageHandler.Dispose();
+			_messageHandler = null;
+		}
 
-            if (_httpClient != null)
-            {
-                _httpClient.Dispose();
-                _httpClient = null;
-            }
-        }
+		if (HttpClient != null)
+		{
+			HttpClient.Dispose();
+			HttpClient = null;
+		}
+	}
 
-        private static HttpClient CreateHttpClient(ODataClientSettings settings, HttpMessageHandler messageHandler)
-        {
-            if (settings.HttpClient != null)
-                return settings.HttpClient;
-            if (settings.RequestTimeout >= TimeSpan.FromMilliseconds(1))
-                return new HttpClient(messageHandler) { Timeout = settings.RequestTimeout };
-            return new HttpClient(messageHandler);
-        }
+	private static HttpClient CreateHttpClient(ODataClientSettings settings, HttpMessageHandler messageHandler)
+	{
+		if (settings.HttpClient != null)
+		{
+			return settings.HttpClient;
+		}
 
-        private static HttpMessageHandler CreateMessageHandler(ODataClientSettings settings)
-        {
-            if (settings.OnCreateMessageHandler != null)
-            {
-                return settings.OnCreateMessageHandler();
-            }
-            else
-            {
-                var clientHandler = new HttpClientHandler();
+		if (settings.RequestTimeout >= TimeSpan.FromMilliseconds(1))
+		{
+			return new HttpClient(messageHandler) { Timeout = settings.RequestTimeout };
+		}
 
-                if (settings.Credentials != null)
-                {
-                    clientHandler.Credentials = settings.Credentials;
-                    clientHandler.PreAuthenticate = true;
-                }
+		return new HttpClient(messageHandler);
+	}
 
-                settings.OnApplyClientHandler?.Invoke(clientHandler);
+	private static HttpMessageHandler CreateMessageHandler(ODataClientSettings settings)
+	{
+		if (settings.OnCreateMessageHandler != null)
+		{
+			return settings.OnCreateMessageHandler();
+		}
+		else
+		{
+			var clientHandler = new HttpClientHandler();
 
-                return clientHandler;
-            }
-        }
-    }
+			if (settings.Credentials != null)
+			{
+				clientHandler.Credentials = settings.Credentials;
+				clientHandler.PreAuthenticate = true;
+			}
+
+			settings.OnApplyClientHandler?.Invoke(clientHandler);
+
+			return clientHandler;
+		}
+	}
 }

@@ -4,132 +4,132 @@ using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
 
-#pragma warning disable 1591
+namespace Simple.OData.Client;
 
-namespace Simple.OData.Client
+public abstract class BatchWriterBase : IBatchWriter
 {
-    public abstract class BatchWriterBase : IBatchWriter
-    {
-        protected readonly ISession _session;
-        private int _lastOperationId;
-        private readonly Dictionary<IDictionary<string, object>, string> _contentIdMap;
-        protected bool _pendingChangeSet;
+	protected readonly ISession _session;
+	private readonly Dictionary<IDictionary<string, object>, string> _contentIdMap;
+	protected bool _pendingChangeSet;
 
-        protected BatchWriterBase(ISession session, IDictionary<object, IDictionary<string, object>> batchEntries)
-        {
-            _session = session;
-            _lastOperationId = 0;
-            _contentIdMap = new Dictionary<IDictionary<string, object>, string> ();
-            this.BatchEntries = batchEntries;
-        }
+	protected BatchWriterBase(ISession session, IDictionary<object, IDictionary<string, object>> batchEntries)
+	{
+		_session = session;
+		LastOperationId = 0;
+		_contentIdMap = new Dictionary<IDictionary<string, object>, string>();
+		BatchEntries = batchEntries;
+	}
 
-        public abstract Task StartBatchAsync();
-        public abstract Task<HttpRequestMessage> EndBatchAsync();
+	public abstract Task StartBatchAsync();
+	public abstract Task<HttpRequestMessage> EndBatchAsync();
 
-        public async Task<ODataRequest> CreateBatchRequestAsync(
-            IODataClient client, IList<Func<IODataClient, Task>> actions, IList<int> responseIndexes,
-            IDictionary<string, string> headers = null)
-        {
-            // Write batch operations into a batch content
-            var lastOperationId = 0;
-            foreach (var action in actions)
-            {
-                await action(client).ConfigureAwait(false);
-                var responseIndex = -1;
-                if (this.LastOperationId > lastOperationId)
-                {
-                    lastOperationId = LastOperationId;
-                    responseIndex = lastOperationId - 1;
-                }
-                responseIndexes.Add(responseIndex);
-            }
+	public async Task<ODataRequest> CreateBatchRequestAsync(
+		IODataClient client, IList<Func<IODataClient, Task>> actions, IList<int> responseIndexes,
+		IDictionary<string, string> headers = null)
+	{
+		// Write batch operations into a batch content
+		var lastOperationId = 0;
+		foreach (var action in actions)
+		{
+			await action(client).ConfigureAwait(false);
+			var responseIndex = -1;
+			if (LastOperationId > lastOperationId)
+			{
+				lastOperationId = LastOperationId;
+				responseIndex = lastOperationId - 1;
+			}
 
-            if (this.HasOperations)
-            {
-                // Create batch request message
-                var requestMessage = await EndBatchAsync().ConfigureAwait(false);
+			responseIndexes.Add(responseIndex);
+		}
 
-                foreach (var header in headers)
-                {
-                    requestMessage.Headers.Add(header.Key, header.Value);
-                }
+		if (HasOperations)
+		{
+			// Create batch request message
+			var requestMessage = await EndBatchAsync().ConfigureAwait(false);
 
-                return new ODataRequest(RestVerbs.Post, _session, ODataLiteral.Batch, requestMessage);
-            }
-            else
-            {
-                return null;
-            }
-        }
-        
-        protected abstract Task StartChangesetAsync();
-        protected abstract Task EndChangesetAsync();
-        protected abstract Task<object> CreateOperationMessageAsync(Uri uri, string method, string collection, string contentId, bool resultRequired);
+			foreach (var header in headers)
+			{
+				requestMessage.Headers.Add(header.Key, header.Value);
+			}
 
-        public int LastOperationId => _lastOperationId;
+			return new ODataRequest(RestVerbs.Post, _session, ODataLiteral.Batch, requestMessage);
+		}
+		else
+		{
+			return null;
+		}
+	}
 
-        public string NextContentId()
-        {
-            return (++_lastOperationId).ToString();
-        }
+	protected abstract Task StartChangesetAsync();
+	protected abstract Task EndChangesetAsync();
+	protected abstract Task<object> CreateOperationMessageAsync(Uri uri, string method, string collection, string contentId, bool resultRequired);
 
-        public string GetContentId(IDictionary<string, object> entryData, object linkData)
-        {
-            if (!_contentIdMap.TryGetValue(entryData, out var contentId) && linkData != null)
-            {
-                if (this.BatchEntries.TryGetValue(linkData, out var mappedEntry))
-                    _contentIdMap.TryGetValue(mappedEntry, out contentId);
-            }
-            return contentId;
-        }
+	public int LastOperationId { get; private set; }
 
-        public void MapContentId(IDictionary<string, object> entryData, string contentId)
-        {
-            if (entryData != null && !_contentIdMap.TryGetValue(entryData, out _))
-            {
-                _contentIdMap.Add(entryData, contentId);
-            }
-        }
+	public string NextContentId()
+	{
+		return (++LastOperationId).ToString();
+	}
 
-        public IDictionary<object, IDictionary<string, object>> BatchEntries { get; private set; }
+	public string GetContentId(IDictionary<string, object> entryData, object linkData)
+	{
+		if (!_contentIdMap.TryGetValue(entryData, out var contentId) && linkData != null)
+		{
+			if (BatchEntries.TryGetValue(linkData, out var mappedEntry))
+			{
+				_contentIdMap.TryGetValue(mappedEntry, out contentId);
+			}
+		}
 
-        public async Task<object> CreateOperationMessageAsync(Uri uri, string method, string collection, IDictionary<string, object> entryData, bool resultRequired)
-        {
-            if (method != RestVerbs.Get && !_pendingChangeSet)
-            {
-                await StartChangesetAsync().ConfigureAwait(false);
-                _pendingChangeSet = true;
-            }
-            else if (method == RestVerbs.Get && _pendingChangeSet)
-            {
-                await EndChangesetAsync().ConfigureAwait(false);
-                _pendingChangeSet = false;
-            }
+		return contentId;
+	}
 
-            var contentId = NextContentId();
-            if (method != RestVerbs.Get && method != RestVerbs.Delete)
-            {
-                MapContentId(entryData, contentId);
-            }
+	public void MapContentId(IDictionary<string, object> entryData, string contentId)
+	{
+		if (entryData != null && !_contentIdMap.TryGetValue(entryData, out _))
+		{
+			_contentIdMap.Add(entryData, contentId);
+		}
+	}
 
-            return await CreateOperationMessageAsync(uri, method, collection, contentId, resultRequired).ConfigureAwait(false);
-        }
+	public IDictionary<object, IDictionary<string, object>> BatchEntries { get; private set; }
 
-        public bool HasOperations { get; protected set; }
+	public async Task<object> CreateOperationMessageAsync(Uri uri, string method, string collection, IDictionary<string, object> entryData, bool resultRequired)
+	{
+		if (method != RestVerbs.Get && !_pendingChangeSet)
+		{
+			await StartChangesetAsync().ConfigureAwait(false);
+			_pendingChangeSet = true;
+		}
+		else if (method == RestVerbs.Get && _pendingChangeSet)
+		{
+			await EndChangesetAsync().ConfigureAwait(false);
+			_pendingChangeSet = false;
+		}
 
-        protected HttpRequestMessage CreateMessageFromStream(Stream stream, Uri requestUrl, Func<string, string> getHeaderFunc)
-        {
-            _pendingChangeSet = false;
-            stream.Position = 0;
+		var contentId = NextContentId();
+		if (method != RestVerbs.Get && method != RestVerbs.Delete)
+		{
+			MapContentId(entryData, contentId);
+		}
 
-            var httpRequest = new HttpRequestMessage()
-            {
-                RequestUri = Utils.CreateAbsoluteUri(requestUrl.AbsoluteUri, ODataLiteral.Batch),
-                Method = HttpMethod.Post,
-                Content = new StreamContent(stream),
-            };
-            httpRequest.Content.Headers.Add(HttpLiteral.ContentType, getHeaderFunc(HttpLiteral.ContentType));
-            return httpRequest;
-        }
-    }
+		return await CreateOperationMessageAsync(uri, method, collection, contentId, resultRequired).ConfigureAwait(false);
+	}
+
+	public bool HasOperations { get; protected set; }
+
+	protected HttpRequestMessage CreateMessageFromStream(Stream stream, Uri requestUrl, Func<string, string> getHeaderFunc)
+	{
+		_pendingChangeSet = false;
+		stream.Position = 0;
+
+		var httpRequest = new HttpRequestMessage()
+		{
+			RequestUri = Utils.CreateAbsoluteUri(requestUrl.AbsoluteUri, ODataLiteral.Batch),
+			Method = HttpMethod.Post,
+			Content = new StreamContent(stream),
+		};
+		httpRequest.Content.Headers.Add(HttpLiteral.ContentType, getHeaderFunc(HttpLiteral.ContentType));
+		return httpRequest;
+	}
 }

@@ -8,191 +8,193 @@ using System.Web.Http.OData;
 using System.Web.Http.OData.Query;
 using WebApiOData.V3.Samples.Models;
 
-namespace WebApiOData.V3.Samples.Controllers
+namespace WebApiOData.V3.Samples.Controllers;
+
+public class MoviesController : EntitySetController<Movie, int>
 {
-    public class MoviesController : EntitySetController<Movie, int>
-    {
-        private MoviesContext db = new MoviesContext();
+	private readonly MoviesContext db = new();
 
-        private bool TryCheckoutMovie(Movie movie)
-        {
-            if (movie.IsCheckedOut)
-            {
-                return false;
-            }
-            else
-            {
-                // To check out a movie, set the due date.
-                movie.DueDate = DateTime.Now.AddDays(7);
-                return true;
-            }
-        }
+	private static bool TryCheckoutMovie(Movie movie)
+	{
+		if (movie.IsCheckedOut)
+		{
+			return false;
+		}
+		else
+		{
+			// To check out a movie, set the due date.
+			movie.DueDate = DateTime.Now.AddDays(7);
+			return true;
+		}
+	}
 
-        // 
-        public override IQueryable<Movie> Get()
-        {
-            return db.Movies;
-        }
+	// 
+	public override IQueryable<Movie> Get()
+	{
+		return db.Movies;
+	}
 
-        protected override Movie GetEntityByKey(int key)
-        {
-            return db.Movies.Find(key);
-        }
+	protected override Movie GetEntityByKey(int key)
+	{
+		return db.Movies.Find(key);
+	}
 
-        #region Action methods
+	#region Action methods
 
-        [HttpPost]
-        public Movie CheckOut([FromODataUri] int key)
-        {
-            var movie = GetEntityByKey(key);
-            if (movie == null)
-            {
-                throw new HttpResponseException(HttpStatusCode.NotFound);
-            }
+	[HttpPost]
+	public Movie CheckOut([FromODataUri] int key)
+	{
+		var movie = GetEntityByKey(key);
+		if (movie == null)
+		{
+			throw new HttpResponseException(HttpStatusCode.NotFound);
+		}
 
-            if (!TryCheckoutMovie(movie))
-            {
-                throw new HttpResponseException(HttpStatusCode.BadRequest);
-            }
+		if (!TryCheckoutMovie(movie))
+		{
+			throw new HttpResponseException(HttpStatusCode.BadRequest);
+		}
 
-            try
-            {
-                db.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                throw new HttpResponseException(HttpStatusCode.BadRequest);
-            }
-            return movie;
-        }
+		try
+		{
+			db.SaveChanges();
+		}
+		catch (DbUpdateConcurrencyException)
+		{
+			throw new HttpResponseException(HttpStatusCode.BadRequest);
+		}
 
-        [HttpPost]
-        public Movie Return([FromODataUri] int key)
-        {
-            var movie = GetEntityByKey(key);
-            if (movie == null)
-            {
-                throw new HttpResponseException(HttpStatusCode.NotFound);
-            }
+		return movie;
+	}
 
-            movie.DueDate = null;
-            try
-            {
-                db.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                throw new HttpResponseException(HttpStatusCode.BadRequest);
-            }
-            return movie;
-        }
+	[HttpPost]
+	public Movie Return([FromODataUri] int key)
+	{
+		var movie = GetEntityByKey(key);
+		if (movie == null)
+		{
+			throw new HttpResponseException(HttpStatusCode.NotFound);
+		}
 
-        [HttpPost]
-        public Movie SetDueDate([FromODataUri] int key, ODataActionParameters parameters)
-        {
-            if (!ModelState.IsValid)
-            {
-                throw new HttpResponseException(HttpStatusCode.BadRequest);
-            }
+		movie.DueDate = null;
+		try
+		{
+			db.SaveChanges();
+		}
+		catch (DbUpdateConcurrencyException)
+		{
+			throw new HttpResponseException(HttpStatusCode.BadRequest);
+		}
 
-            var movie = GetEntityByKey(key);
-            if (movie == null)
-            {
-                throw new HttpResponseException(HttpStatusCode.NotFound);
-            }
+		return movie;
+	}
 
-            movie.DueDate = (DateTime)parameters["DueDate"];
-            // In a real app you would validate this date (not in the past, etc).
-            try
-            {
-                db.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                throw new HttpResponseException(HttpStatusCode.BadRequest);
-            }
-            return movie;
-        }
+	[HttpPost]
+	public Movie SetDueDate([FromODataUri] int key, ODataActionParameters parameters)
+	{
+		if (!ModelState.IsValid)
+		{
+			throw new HttpResponseException(HttpStatusCode.BadRequest);
+		}
 
-        // Check out a list of movies.
-        [HttpPost]
-        public ICollection<Movie> CheckOutMany(ODataActionParameters parameters)
-        {
-            if (!ModelState.IsValid)
-            {
-                throw new HttpResponseException(HttpStatusCode.BadRequest);
-            }
+		var movie = GetEntityByKey(key);
+		if (movie == null)
+		{
+			throw new HttpResponseException(HttpStatusCode.NotFound);
+		}
 
-            // Client passes a list of movie IDs to check out.
-            var movieIDs = new HashSet<int>(parameters["MovieIDs"] as IEnumerable<int>);
+		movie.DueDate = (DateTime)parameters["DueDate"];
+		// In a real app you would validate this date (not in the past, etc).
+		try
+		{
+			db.SaveChanges();
+		}
+		catch (DbUpdateConcurrencyException)
+		{
+			throw new HttpResponseException(HttpStatusCode.BadRequest);
+		}
 
-            // Try to check out each movie in the list.
-            var results = new List<Movie>();
-            foreach (Movie movie in db.Movies.Where(m => movieIDs.Contains(m.ID)))
-            {
-                if (TryCheckoutMovie(movie))
-                {
-                    results.Add(movie);
-                }
-            }
+		return movie;
+	}
 
-            try
-            {
-                db.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                throw new HttpResponseException(HttpStatusCode.BadRequest);
-            }
+	// Check out a list of movies.
+	[HttpPost]
+	public ICollection<Movie> CheckOutMany(ODataActionParameters parameters)
+	{
+		if (!ModelState.IsValid)
+		{
+			throw new HttpResponseException(HttpStatusCode.BadRequest);
+		}
 
-            // Return a list of the movies that were checked out.
-            return results;
-        }
+		// Client passes a list of movie IDs to check out.
+		var movieIDs = new HashSet<int>(parameters["MovieIDs"] as IEnumerable<int>);
 
-        [HttpPost]
-        // This action accepts $filter queries. For example:
-        //     ~/odata/Movies/CheckOut?$filter=Year eq 2005
-        public ICollection<Movie> CheckOut(ODataQueryOptions opts)
-        {
-            // Validate the query options.
-            var settings = new ODataValidationSettings()
-            {
-                AllowedQueryOptions = AllowedQueryOptions.Filter
-            };
-            opts.Validate(settings);
+		// Try to check out each movie in the list.
+		var results = new List<Movie>();
+		foreach (var movie in db.Movies.Where(m => movieIDs.Contains(m.ID)))
+		{
+			if (TryCheckoutMovie(movie))
+			{
+				results.Add(movie);
+			}
+		}
 
-            // Use the query options to get a filtered list of movies.
-            var movies = opts.ApplyTo(db.Movies) as IQueryable<Movie>;
+		try
+		{
+			db.SaveChanges();
+		}
+		catch (DbUpdateConcurrencyException)
+		{
+			throw new HttpResponseException(HttpStatusCode.BadRequest);
+		}
 
-            // Try to check out each movie in the list.
-            var results = new List<Movie>();
-            foreach (Movie movie in movies)
-            {
-                if (TryCheckoutMovie(movie))
-                {
-                    results.Add(movie);
-                }
-            }
+		// Return a list of the movies that were checked out.
+		return results;
+	}
 
-            try
-            {
-                db.SaveChanges();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                throw new HttpResponseException(HttpStatusCode.BadRequest);
-            }
+	[HttpPost]
+	// This action accepts $filter queries. For example:
+	//     ~/odata/Movies/CheckOut?$filter=Year eq 2005
+	public ICollection<Movie> CheckOut(ODataQueryOptions opts)
+	{
+		// Validate the query options.
+		var settings = new ODataValidationSettings()
+		{
+			AllowedQueryOptions = AllowedQueryOptions.Filter
+		};
+		opts.Validate(settings);
 
-            // Return a list of the movies that were checked out.
-            return results;
-        }
+		// Use the query options to get a filtered list of movies.
+		var movies = opts.ApplyTo(db.Movies) as IQueryable<Movie>;
 
-        #endregion
+		// Try to check out each movie in the list.
+		var results = new List<Movie>();
+		foreach (var movie in movies)
+		{
+			if (TryCheckoutMovie(movie))
+			{
+				results.Add(movie);
+			}
+		}
 
-        protected override void Dispose(bool disposing)
-        {
-            db.Dispose();
-            base.Dispose(disposing);
-        }
-    }
+		try
+		{
+			db.SaveChanges();
+		}
+		catch (DbUpdateConcurrencyException)
+		{
+			throw new HttpResponseException(HttpStatusCode.BadRequest);
+		}
+
+		// Return a list of the movies that were checked out.
+		return results;
+	}
+
+	#endregion
+
+	protected override void Dispose(bool disposing)
+	{
+		db.Dispose();
+		base.Dispose(disposing);
+	}
 }
