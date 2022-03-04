@@ -218,7 +218,7 @@ public partial class ODataExpression
 		}
 
 		var formattedNavigationPath = context.Session.Adapter.GetCommandFormatter().FormatNavigationPath(context.EntityCollection, navigationPath);
-		return FormatScope($"{formattedNavigationPath}/{Function.FunctionName.ToLower()}({formattedArguments})", context);
+		return FormatScope($"{formattedNavigationPath}/{Function.FunctionName.ToLowerInvariant()}({formattedArguments})", context);
 	}
 
 	private string FormatIsOfCastFunction(ExpressionContext context)
@@ -232,7 +232,7 @@ public partial class ODataExpression
 
 		formattedArguments += FormatExpression(Function.Arguments.Last(), new ExpressionContext(context.Session));
 
-		return $"{Function.FunctionName.ToLower()}({formattedArguments})";
+		return $"{Function.FunctionName.ToLowerInvariant()}({formattedArguments})";
 	}
 
 	private string FormatEnumHasFlagFunction(ExpressionContext context)
