@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -68,7 +69,7 @@ public abstract class BatchWriterBase : IBatchWriter
 
 	public string NextContentId()
 	{
-		return (++LastOperationId).ToString();
+		return (++LastOperationId).ToString(CultureInfo.InvariantCulture);
 	}
 
 	public string GetContentId(IDictionary<string, object> entryData, object linkData)

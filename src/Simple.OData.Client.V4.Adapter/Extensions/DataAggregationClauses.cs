@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 
@@ -144,7 +145,7 @@ internal class AggregationClause<T>
 
 		if (KnownFunctionTemplates.TryGetValue(_aggregationMethodName, out var function))
 		{
-			return string.Format(function, _aggregatedColumnName);
+			return string.Format(CultureInfo.InvariantCulture, function, _aggregatedColumnName);
 		}
 
 		throw new InvalidOperationException($"Unknown aggregation method '{_aggregationMethodName}'");

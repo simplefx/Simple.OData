@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace Simple.OData.Client;
@@ -134,7 +135,7 @@ public abstract class CommandFormatterBase : ICommandFormatter
 						escapedCollection.Add(ConvertValueToUriLiteral(o, true));
 					}
 
-					collectionValues.Add(string.Format("{0}=[" + string.Join(",", escapedCollection) + "]", itemAlias));
+					collectionValues.Add(string.Format(CultureInfo.InvariantCulture, "{0}=[" + string.Join(",", escapedCollection) + "]", itemAlias));
 					itemValue = itemAlias;
 				}
 				else

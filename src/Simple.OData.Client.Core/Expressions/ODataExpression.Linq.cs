@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -117,7 +118,7 @@ public partial class ODataExpression
 		var arrayExpression = ParseMemberExpression(binaryEpression.Left);
 		var indexExpression = ParseConstantExpression(binaryEpression.Right);
 
-		return FromValue((arrayExpression.Value as Array).GetValue(int.Parse(indexExpression.Value.ToString())));
+		return FromValue((arrayExpression.Value as Array).GetValue(int.Parse(indexExpression.Value.ToString(), CultureInfo.InvariantCulture)));
 	}
 
 	private static ODataExpression ParseCallArgumentExpression(Expression expression)
