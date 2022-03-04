@@ -24,7 +24,7 @@ public class ODataRequest
 	{
 		get
 		{
-			var isMetadataRequest = RequestMessage.RequestUri.LocalPath.EndsWith(ODataLiteral.Metadata);
+			var isMetadataRequest = RequestMessage.RequestUri.LocalPath.EndsWith(ODataLiteral.Metadata, StringComparison.Ordinal);
 			if (!isMetadataRequest && (ReturnsScalarResult || !ResultRequired))
 			{
 				return null;

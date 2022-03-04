@@ -120,7 +120,7 @@ internal static class Utils
 			baseQuery = baseQuery.Substring(1);
 		}
 
-		if (!basePath.EndsWith("/"))
+		if (!basePath.EndsWith("/", StringComparison.Ordinal))
 		{
 			basePath += "/";
 		}
@@ -158,8 +158,8 @@ internal static class Utils
 	public static bool IsSystemType(Type type)
 	{
 		return
-			type.FullName.StartsWith("System.") ||
-			type.FullName.StartsWith("Microsoft.");
+			type.FullName.StartsWith("System.", StringComparison.Ordinal) ||
+			type.FullName.StartsWith("Microsoft.", StringComparison.Ordinal);
 	}
 
 	public static bool IsDesktopPlatform()

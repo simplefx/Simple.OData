@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 
 namespace Simple.OData.Client.Extensions;
 
@@ -21,6 +22,6 @@ internal static class StringExtensions
 
 	public static string EnsureStartsWith(this string source, string value)
 	{
-		return (source == null || source.StartsWith(value)) ? source : value + source;
+		return (source == null || source.StartsWith(value, StringComparison.Ordinal)) ? source : value + source;
 	}
 }

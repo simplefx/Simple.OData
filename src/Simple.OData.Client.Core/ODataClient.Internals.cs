@@ -285,7 +285,7 @@ public partial class ODataClient
 			foreach (var entry in entryData)
 			{
 				var key = entry.Key;
-				if (key == FluentCommand.AnnotationsLiteral || key.StartsWith(FluentCommand.AnnotationsLiteral + "_"))
+				if (key == FluentCommand.AnnotationsLiteral || key.StartsWith(FluentCommand.AnnotationsLiteral + "_", StringComparison.Ordinal))
 				{
 					actions.Add(() => entryData.Remove(key));
 				}

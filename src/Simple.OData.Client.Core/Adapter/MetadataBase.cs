@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Simple.OData.Client;
@@ -183,6 +184,6 @@ public abstract class MetadataBase : IMetadata
 
 	public IEnumerable<string> GetCollectionPathSegments(string path)
 	{
-		return path.Split('/').Select(x => x.Contains("(") ? x.Substring(0, x.IndexOf("(")) : x);
+		return path.Split('/').Select(x => x.Contains("(") ? x.Substring(0, x.IndexOf("(", StringComparison.Ordinal)) : x);
 	}
 }
