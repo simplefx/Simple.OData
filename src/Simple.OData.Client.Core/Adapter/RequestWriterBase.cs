@@ -54,7 +54,7 @@ public abstract class RequestWriterBase : IRequestWriter
 	public async Task<ODataRequest> CreateInsertRequestAsync(string collection, string commandText, IDictionary<string, object> entryData, bool resultRequired, IDictionary<string, string> headers = null)
 	{
 		var segments = commandText.Split('/');
-		if (segments.Count() > 1 && segments.Last().Contains("."))
+		if (segments.Length > 1 && segments.Last().Contains("."))
 		{
 			commandText = commandText.Substring(0, commandText.Length - segments.Last().Length - 1);
 		}

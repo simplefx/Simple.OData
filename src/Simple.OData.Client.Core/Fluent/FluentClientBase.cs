@@ -750,7 +750,7 @@ public abstract class FluentClientBase<T, FT> : IFluentClient<T, FT>
 	private bool IsSelectedColumn(KeyValuePair<string, object> kv, string columnName)
 	{
 		var items = columnName.Split('/');
-		if (items.Count() == 1)
+		if (items.Length == 1)
 		{
 			return _session.Settings.NameMatchResolver.IsMatch(kv.Key, columnName);
 		}

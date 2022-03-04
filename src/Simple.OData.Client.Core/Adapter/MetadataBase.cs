@@ -69,7 +69,7 @@ public abstract class MetadataBase : IMetadata
 	public EntityCollection GetEntityCollection(string collectionPath)
 	{
 		var segments = collectionPath.Split('/');
-		if (segments.Count() > 1)
+		if (segments.Length > 1)
 		{
 			if (SegmentsIncludeTypeSpecification(segments))
 			{

@@ -47,7 +47,7 @@ public class ResolvedCommand
 		{
 			var collectionName = details.CollectionExpression.AsString(_sesson);
 			var items = collectionName.Split('/');
-			if (items.Count() > 1)
+			if (items.Length > 1)
 			{
 				Details.CollectionName = items[0];
 				Details.DerivedCollectionName = items[1];

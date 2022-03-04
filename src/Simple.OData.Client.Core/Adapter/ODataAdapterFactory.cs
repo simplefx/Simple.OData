@@ -166,7 +166,7 @@ public class ODataAdapterFactory : IODataAdapterFactory
 	{
 		var constructors = typeCache.GetDeclaredConstructors(type);
 		return constructors.Single(x =>
-			x.GetParameters().Count() == ctorParams.Count() &&
+			x.GetParameters().Length == ctorParams.Length &&
 			x.GetParameters().Last().ParameterType.GetTypeInfo().IsAssignableFrom(ctorParams.Last().GetType().GetTypeInfo()));
 	}
 
@@ -179,7 +179,7 @@ public class ODataAdapterFactory : IODataAdapterFactory
 			var constructors = typeCache.GetDeclaredConstructors(type);
 
 			var ctor = constructors.Single(x =>
-				x.GetParameters().Count() == ctorParams.Count() &&
+				x.GetParameters().Length == ctorParams.Length &&
 				x.GetParameters().Last().ParameterType.IsInstanceOfType(ctorParams.Last()));
 
 			return ctor.Invoke(ctorParams) as IODataAdapter;

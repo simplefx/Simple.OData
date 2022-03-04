@@ -114,7 +114,7 @@ public partial class ODataExpression
 			return FormatMappedOperator(context, operatorMapping);
 		}
 
-		if (FunctionMapping.TryGetFunctionMapping(Function.FunctionName, Function.Arguments.Count(), adapterVersion, out var functionMapping))
+		if (FunctionMapping.TryGetFunctionMapping(Function.FunctionName, Function.Arguments.Count, adapterVersion, out var functionMapping))
 		{
 			return FormatMappedFunction(context, functionMapping);
 		}
