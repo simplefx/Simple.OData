@@ -1411,7 +1411,7 @@ public partial class ODataClient
 
 		if (commandText.Length > filterPrefix.Length &&
 			commandText.Substring(0, collection.Length + filterPrefix.Length).Equals(
-				collection + filterPrefix, StringComparison.CurrentCultureIgnoreCase))
+				collection + filterPrefix, StringComparison.OrdinalIgnoreCase))
 		{
 			return commandText.Substring(collection.Length + filterPrefix.Length);
 		}

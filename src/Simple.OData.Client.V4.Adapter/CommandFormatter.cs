@@ -290,7 +290,7 @@ public class CommandFormatter : CommandFormatterBase
 			expandedPaths.Select(FormatFirstSegment));
 
 		return columns
-			.Where(x => !expandedNavigationProperties.Any(y => y.Equals(FormatFirstSegment(x))))
+			.Where(x => !expandedNavigationProperties.Any(y => y.Equals(FormatFirstSegment(x), StringComparison.Ordinal)))
 			.ToList();
 	}
 
