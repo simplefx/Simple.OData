@@ -543,7 +543,8 @@ public abstract class FluentClientBase<T, FT> : IFluentClient<T, FT>
 	/// <returns>Execution result.</returns>
 	public async Task<U> ExecuteAsSingleAsync<U>(CancellationToken cancellationToken)
 	{
-		return (await ExecuteAsArrayAsync<U>(cancellationToken)).Single();
+		return (await ExecuteAsArrayAsync<U>(cancellationToken)
+			.ConfigureAwait(false)).Single();
 	}
 
 	/// <summary>
@@ -681,7 +682,9 @@ public abstract class FluentClientBase<T, FT> : IFluentClient<T, FT>
 	/// <returns>The command text.</returns>
 	public async Task<string> GetCommandTextAsync(CancellationToken cancellationToken)
 	{
-		await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
+		await _session
+			.ResolveAdapterAsync(cancellationToken)
+			.ConfigureAwait(false);
 		if (cancellationToken.IsCancellationRequested)
 		{
 			cancellationToken.ThrowIfCancellationRequested();

@@ -167,8 +167,12 @@ public class RequestWriter : RequestWriterBase
 		var message = new ODataRequestMessage();
 		using var messageWriter = new ODataMessageWriter(message, GetWriterSettings(ODataFormat.RawValue), _model);
 		var value = writeAsText ? (object)Utils.StreamToString(stream) : Utils.StreamToByteArray(stream);
-		await messageWriter.WriteValueAsync(value);
-		return await message.GetStreamAsync();
+		await messageWriter
+			.WriteValueAsync(value)
+			.ConfigureAwait(false);
+		return await message
+			.GetStreamAsync()
+			.ConfigureAwait(false);
 	}
 
 	protected override string FormatLinkPath(string entryIdent, string navigationPropertyName, string linkIdent = null)

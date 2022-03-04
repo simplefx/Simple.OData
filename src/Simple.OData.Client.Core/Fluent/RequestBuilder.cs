@@ -36,19 +36,24 @@ internal class RequestBuilder : IRequestBuilder
 
 	public async Task<ODataRequest> GetRequestAsync(bool scalarResult, CancellationToken cancellationToken)
 	{
-		await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
+		await _session
+			.ResolveAdapterAsync(cancellationToken)
+			.ConfigureAwait(false);
 		if (cancellationToken.IsCancellationRequested)
 		{
 			cancellationToken.ThrowIfCancellationRequested();
 		}
 
 		return await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-			.CreateGetRequestAsync(_commandText ?? _command.Format(), scalarResult, GetHeaders()).ConfigureAwait(false);
+			.CreateGetRequestAsync(_commandText ?? _command.Format(), scalarResult, GetHeaders())
+			.ConfigureAwait(false);
 	}
 
 	public async Task<ODataRequest> InsertRequestAsync(bool resultRequired, CancellationToken cancellationToken)
 	{
-		await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
+		await _session
+			.ResolveAdapterAsync(cancellationToken)
+			.ConfigureAwait(false);
 		if (cancellationToken.IsCancellationRequested)
 		{
 			cancellationToken.ThrowIfCancellationRequested();
@@ -57,14 +62,17 @@ internal class RequestBuilder : IRequestBuilder
 		var entryData = _command.CommandData;
 
 		return await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-			.CreateInsertRequestAsync(_command.QualifiedEntityCollectionName, _command.Format(), entryData, resultRequired, GetHeaders()).ConfigureAwait(false);
+			.CreateInsertRequestAsync(_command.QualifiedEntityCollectionName, _command.Format(), entryData, resultRequired, GetHeaders())
+			.ConfigureAwait(false);
 	}
 
 	public async Task<ODataRequest> UpdateRequestAsync(bool resultRequired, CancellationToken cancellationToken)
 	{
 		AssertHasKey(_command);
 
-		await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
+		await _session
+			.ResolveAdapterAsync(cancellationToken)
+			.ConfigureAwait(false);
 		if (cancellationToken.IsCancellationRequested)
 		{
 			cancellationToken.ThrowIfCancellationRequested();
@@ -75,27 +83,35 @@ internal class RequestBuilder : IRequestBuilder
 		var entryData = _command.CommandData;
 		var entryIdent = FormatEntryKey(_command);
 
-		return await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-			.CreateUpdateRequestAsync(collectionName, entryIdent, entryKey, entryData, resultRequired, GetHeaders()).ConfigureAwait(false);
+		return await _session
+			.Adapter
+			.GetRequestWriter(_lazyBatchWriter)
+			.CreateUpdateRequestAsync(collectionName, entryIdent, entryKey, entryData, resultRequired, GetHeaders())
+			.ConfigureAwait(false);
 	}
 
 	public async Task<ODataRequest> UpdateRequestAsync(Stream stream, string contentType, bool optimisticConcurrency, CancellationToken cancellationToken)
 	{
-		await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
+		await _session
+			.ResolveAdapterAsync(cancellationToken)
+			.ConfigureAwait(false);
 		if (cancellationToken.IsCancellationRequested)
 		{
 			cancellationToken.ThrowIfCancellationRequested();
 		}
 
 		return await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-			.CreatePutRequestAsync(_commandText, stream, contentType, optimisticConcurrency, GetHeaders()).ConfigureAwait(false);
+			.CreatePutRequestAsync(_commandText, stream, contentType, optimisticConcurrency, GetHeaders())
+			.ConfigureAwait(false);
 	}
 
 	public async Task<ODataRequest> DeleteRequestAsync(CancellationToken cancellationToken)
 	{
 		AssertHasKey(_command);
 
-		await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
+		await _session
+			.ResolveAdapterAsync(cancellationToken)
+			.ConfigureAwait(false);
 		if (cancellationToken.IsCancellationRequested)
 		{
 			cancellationToken.ThrowIfCancellationRequested();
@@ -104,15 +120,20 @@ internal class RequestBuilder : IRequestBuilder
 		var collectionName = _command.QualifiedEntityCollectionName;
 		var entryIdent = FormatEntryKey(_command);
 
-		return await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-			.CreateDeleteRequestAsync(collectionName, entryIdent, GetHeaders()).ConfigureAwait(false);
+		return await _session
+			.Adapter
+			.GetRequestWriter(_lazyBatchWriter)
+			.CreateDeleteRequestAsync(collectionName, entryIdent, GetHeaders())
+			.ConfigureAwait(false);
 	}
 
 	public async Task<ODataRequest> LinkRequestAsync(string linkName, IDictionary<string, object> linkedEntryKey, CancellationToken cancellationToken)
 	{
 		AssertHasKey(_command);
 
-		await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
+		await _session
+			.ResolveAdapterAsync(cancellationToken)
+			.ConfigureAwait(false);
 		if (cancellationToken.IsCancellationRequested)
 		{
 			cancellationToken.ThrowIfCancellationRequested();
@@ -134,15 +155,20 @@ internal class RequestBuilder : IRequestBuilder
 			cancellationToken.ThrowIfCancellationRequested();
 		}
 
-		return await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-			.CreateLinkRequestAsync(collectionName, linkName, entryIdent, linkIdent, GetHeaders()).ConfigureAwait(false);
+		return await _session
+			.Adapter
+			.GetRequestWriter(_lazyBatchWriter)
+			.CreateLinkRequestAsync(collectionName, linkName, entryIdent, linkIdent, GetHeaders())
+			.ConfigureAwait(false);
 	}
 
 	public async Task<ODataRequest> UnlinkRequestAsync(string linkName, IDictionary<string, object> linkedEntryKey, CancellationToken cancellationToken)
 	{
 		AssertHasKey(_command);
 
-		await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
+		await _session
+			.ResolveAdapterAsync(cancellationToken)
+			.ConfigureAwait(false);
 		if (cancellationToken.IsCancellationRequested)
 		{
 			cancellationToken.ThrowIfCancellationRequested();
@@ -169,7 +195,8 @@ internal class RequestBuilder : IRequestBuilder
 		}
 
 		return await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
-			.CreateUnlinkRequestAsync(collectionName, linkName, entryIdent, linkIdent, GetHeaders()).ConfigureAwait(false);
+			.CreateUnlinkRequestAsync(collectionName, linkName, entryIdent, linkIdent, GetHeaders())
+			.ConfigureAwait(false);
 	}
 
 	private string FormatEntryKey(ResolvedCommand command)
@@ -234,14 +261,18 @@ internal class RequestBuilder<T> : IRequestBuilder<T>
 
 	public async Task<IClientWithRequest<T>> FindEntriesAsync(bool scalarResult, CancellationToken cancellationToken)
 	{
-		await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
+		await _session
+			.ResolveAdapterAsync(cancellationToken)
+			.ConfigureAwait(false);
 		if (cancellationToken.IsCancellationRequested)
 		{
 			cancellationToken.ThrowIfCancellationRequested();
 		}
 
 		var requestBuilder = new RequestBuilder(_command.Resolve(_session), _session, _lazyBatchWriter);
-		return new ClientWithRequest<T>(await requestBuilder.GetRequestAsync(scalarResult, cancellationToken).ConfigureAwait(false), _session);
+		return new ClientWithRequest<T>(await requestBuilder
+			.GetRequestAsync(scalarResult, cancellationToken)
+			.ConfigureAwait(false), _session);
 	}
 
 	public Task<IClientWithRequest<T>> FindEntriesAsync(ODataFeedAnnotations annotations)
@@ -251,14 +282,18 @@ internal class RequestBuilder<T> : IRequestBuilder<T>
 
 	public async Task<IClientWithRequest<T>> FindEntriesAsync(ODataFeedAnnotations annotations, CancellationToken cancellationToken)
 	{
-		await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
+		await _session
+			.ResolveAdapterAsync(cancellationToken)
+			.ConfigureAwait(false);
 		if (cancellationToken.IsCancellationRequested)
 		{
 			cancellationToken.ThrowIfCancellationRequested();
 		}
 
 		var requestBuilder = new RequestBuilder(_command.Resolve(_session).WithCount(), _session, _lazyBatchWriter);
-		return new ClientWithRequest<T>(await requestBuilder.GetRequestAsync(false, cancellationToken).ConfigureAwait(false), _session);
+		return new ClientWithRequest<T>(await requestBuilder
+			.GetRequestAsync(false, cancellationToken)
+			.ConfigureAwait(false), _session);
 	}
 
 	public Task<IClientWithRequest<T>> FindEntryAsync()
@@ -268,14 +303,18 @@ internal class RequestBuilder<T> : IRequestBuilder<T>
 
 	public async Task<IClientWithRequest<T>> FindEntryAsync(CancellationToken cancellationToken)
 	{
-		await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
+		await _session
+			.ResolveAdapterAsync(cancellationToken)
+			.ConfigureAwait(false);
 		if (cancellationToken.IsCancellationRequested)
 		{
 			cancellationToken.ThrowIfCancellationRequested();
 		}
 
 		var requestBuilder = new RequestBuilder(_command.Resolve(_session), _session, _lazyBatchWriter);
-		return new ClientWithRequest<T>(await requestBuilder.GetRequestAsync(false, cancellationToken), _session);
+		return new ClientWithRequest<T>(await requestBuilder
+			.GetRequestAsync(false, cancellationToken)
+			.ConfigureAwait(false), _session);
 	}
 
 	public Task<IClientWithRequest<T>> InsertEntryAsync()
@@ -295,14 +334,18 @@ internal class RequestBuilder<T> : IRequestBuilder<T>
 
 	public async Task<IClientWithRequest<T>> InsertEntryAsync(bool resultRequired, CancellationToken cancellationToken)
 	{
-		await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
+		await _session
+			.ResolveAdapterAsync(cancellationToken)
+			.ConfigureAwait(false);
 		if (cancellationToken.IsCancellationRequested)
 		{
 			cancellationToken.ThrowIfCancellationRequested();
 		}
 
 		var requestBuilder = new RequestBuilder(_command.Resolve(_session), _session, _lazyBatchWriter);
-		return new ClientWithRequest<T>(await requestBuilder.InsertRequestAsync(resultRequired, cancellationToken).ConfigureAwait(false), _session);
+		return new ClientWithRequest<T>(await requestBuilder
+			.InsertRequestAsync(resultRequired, cancellationToken)
+			.ConfigureAwait(false), _session);
 	}
 
 	public Task<IClientWithRequest<T>> UpdateEntryAsync()
@@ -322,14 +365,18 @@ internal class RequestBuilder<T> : IRequestBuilder<T>
 
 	public async Task<IClientWithRequest<T>> UpdateEntryAsync(bool resultRequired, CancellationToken cancellationToken)
 	{
-		await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
+		await _session
+			.ResolveAdapterAsync(cancellationToken)
+			.ConfigureAwait(false);
 		if (cancellationToken.IsCancellationRequested)
 		{
 			cancellationToken.ThrowIfCancellationRequested();
 		}
 
 		var requestBuilder = new RequestBuilder(_command.Resolve(_session), _session, _lazyBatchWriter);
-		return new ClientWithRequest<T>(await requestBuilder.UpdateRequestAsync(resultRequired, cancellationToken).ConfigureAwait(false), _session);
+		return new ClientWithRequest<T>(await requestBuilder
+			.UpdateRequestAsync(resultRequired, cancellationToken)
+			.ConfigureAwait(false), _session);
 	}
 
 	public Task<IClientWithRequest<T>> DeleteEntryAsync()
@@ -339,13 +386,17 @@ internal class RequestBuilder<T> : IRequestBuilder<T>
 
 	public async Task<IClientWithRequest<T>> DeleteEntryAsync(CancellationToken cancellationToken)
 	{
-		await _session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
+		await _session
+			.ResolveAdapterAsync(cancellationToken)
+			.ConfigureAwait(false);
 		if (cancellationToken.IsCancellationRequested)
 		{
 			cancellationToken.ThrowIfCancellationRequested();
 		}
 
 		var requestBuilder = new RequestBuilder(_command.Resolve(_session), _session, _lazyBatchWriter);
-		return new ClientWithRequest<T>(await requestBuilder.DeleteRequestAsync(cancellationToken).ConfigureAwait(false), _session);
+		return new ClientWithRequest<T>(await requestBuilder
+			.DeleteRequestAsync(cancellationToken)
+			.ConfigureAwait(false), _session);
 	}
 }

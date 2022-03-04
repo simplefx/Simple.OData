@@ -108,7 +108,8 @@ namespace Simple.OData.Client.V4.Adapter
 				{
 					if (link.Value.Any(x => x.LinkData != null))
 					{
-						await WriteLinkAsync(entryWriter, entry.TypeName, link.Key, link.Value).ConfigureAwait(false);
+						await WriteLinkAsync(entryWriter, entry.TypeName, link.Key, link.Value)
+							.ConfigureAwait(false);
 					}
 				}
 			}
@@ -124,10 +125,12 @@ namespace Simple.OData.Client.V4.Adapter
 				IsCollection = true,
 			}).ConfigureAwait(false);
 
-			await entryWriter.WriteStartAsync(new ODataResourceSet());
+			await entryWriter.WriteStartAsync(new ODataResourceSet())
+				.ConfigureAwait(false);
 			foreach (var item in collection.Items)
 			{
-				await WriteEntryPropertiesAsync(entryWriter, item as ODataResource, null);
+				await WriteEntryPropertiesAsync(entryWriter, item as ODataResource, null)
+					.ConfigureAwait(false);
 			}
 
 			await entryWriter.WriteEndAsync().ConfigureAwait(false);
@@ -143,7 +146,7 @@ namespace Simple.OData.Client.V4.Adapter
 				IsCollection = false,
 			}).ConfigureAwait(false);
 
-			await WriteEntryPropertiesAsync(entryWriter, entry, null);
+			await WriteEntryPropertiesAsync(entryWriter, entry, null).ConfigureAwait(false);
 
 			await entryWriter.WriteEndAsync().ConfigureAwait(false);
 		}
@@ -320,8 +323,8 @@ namespace Simple.OData.Client.V4.Adapter
 			var message = new ODataRequestMessage();
 			using var messageWriter = new ODataMessageWriter(message, GetWriterSettings(ODataFormat.RawValue), _model);
 			var value = writeAsText ? (object)Utils.StreamToString(stream) : Utils.StreamToByteArray(stream);
-			await messageWriter.WriteValueAsync(value);
-			return await message.GetStreamAsync();
+			await messageWriter.WriteValueAsync(value).ConfigureAwait(false);
+			return await message.GetStreamAsync().ConfigureAwait(false);
 		}
 
 		protected override string FormatLinkPath(string entryIdent, string navigationPropertyName, string linkIdent = null)

@@ -26,7 +26,9 @@ public class ODataAdapterFactory : IODataAdapterFactory
 	/// <inheritdoc />
 	public async virtual Task<IODataModelAdapter> CreateModelAdapterAsync(HttpResponseMessage response, ITypeCache typeCache)
 	{
-		var protocolVersions = (await GetSupportedProtocolVersionsAsync(response).ConfigureAwait(false)).ToArray();
+		var protocolVersions = (await GetSupportedProtocolVersionsAsync(response)
+			.ConfigureAwait(false)
+		).ToArray();
 
 		foreach (var protocolVersion in protocolVersions)
 		{
@@ -84,7 +86,10 @@ public class ODataAdapterFactory : IODataAdapterFactory
 		{
 			try
 			{
-				var metadataString = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+				var metadataString = await response
+					.Content
+					.ReadAsStringAsync()
+					.ConfigureAwait(false);
 				var protocolVersion = GetMetadataProtocolVersion(metadataString);
 				return new[] { protocolVersion };
 			}

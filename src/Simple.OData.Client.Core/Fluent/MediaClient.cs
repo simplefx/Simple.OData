@@ -29,7 +29,9 @@ public class MediaClient : FluentClientBase<IDictionary<string, object>, MediaCl
 
 	public async Task<byte[]> GetStreamAsArrayAsync(CancellationToken cancellationToken)
 	{
-		using var stream = await _client.GetMediaStreamAsync(_command, cancellationToken).ConfigureAwait(false);
+		using var stream = await _client
+			.GetMediaStreamAsync(_command, cancellationToken)
+			.ConfigureAwait(false);
 		return Utils.StreamToByteArray(stream);
 	}
 
@@ -40,7 +42,9 @@ public class MediaClient : FluentClientBase<IDictionary<string, object>, MediaCl
 
 	public async Task<string> GetStreamAsStringAsync(CancellationToken cancellationToken)
 	{
-		using var stream = await _client.GetMediaStreamAsync(_command, cancellationToken).ConfigureAwait(false);
+		using var stream = await _client
+			.GetMediaStreamAsync(_command, cancellationToken)
+			.ConfigureAwait(false);
 		return Utils.StreamToString(stream);
 	}
 

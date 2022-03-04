@@ -190,7 +190,8 @@ public partial class ODataClient
 				(request.Method == RestVerbs.Get || request.ResultRequired))
 			{
 				var stream = new MemoryStream();
-				await response.Content.CopyToAsync(stream);
+				await response.Content.CopyToAsync(stream)
+					.ConfigureAwait(false);
 				if (stream.CanSeek)
 				{
 					stream.Seek(0L, SeekOrigin.Begin);

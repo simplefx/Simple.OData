@@ -172,7 +172,8 @@ internal class Session : ISession
 			{
 				var metadata = await ResolveMetadataAsync(cancellationToken).ConfigureAwait(false);
 				return CreateMdc(uri, metadata);
-			});
+			})
+			.ConfigureAwait(false);
 	}
 
 	private async Task<string> ResolveMetadataAsync(CancellationToken cancellationToken)

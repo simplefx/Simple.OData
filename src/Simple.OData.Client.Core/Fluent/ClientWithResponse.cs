@@ -43,7 +43,8 @@ public class ClientWithResponse<T> : IClientWithResponse<T>
 			(_request.Method == RestVerbs.Get || _request.ResultRequired))
 		{
 			var stream = new MemoryStream();
-			await ResponseMessage.Content.CopyToAsync(stream);
+			await ResponseMessage.Content.CopyToAsync(stream)
+				.ConfigureAwait(false);
 			if (stream.CanSeek)
 			{
 				stream.Seek(0L, SeekOrigin.Begin);
@@ -78,7 +79,9 @@ public class ClientWithResponse<T> : IClientWithResponse<T>
 			(_request.Method == RestVerbs.Get || _request.ResultRequired))
 		{
 			var responseReader = _session.Adapter.GetResponseReader();
-			var response = await responseReader.GetResponseAsync(ResponseMessage).ConfigureAwait(false);
+			var response = await responseReader
+				.GetResponseAsync(ResponseMessage)
+				.ConfigureAwait(false);
 			if (cancellationToken.IsCancellationRequested)
 			{
 				cancellationToken.ThrowIfCancellationRequested();
@@ -109,7 +112,9 @@ public class ClientWithResponse<T> : IClientWithResponse<T>
 			(_request.Method == RestVerbs.Get || _request.ResultRequired))
 		{
 			var responseReader = _session.Adapter.GetResponseReader();
-			var response = await responseReader.GetResponseAsync(ResponseMessage).ConfigureAwait(false);
+			var response = await responseReader
+				.GetResponseAsync(ResponseMessage)
+				.ConfigureAwait(false);
 			if (cancellationToken.IsCancellationRequested)
 			{
 				cancellationToken.ThrowIfCancellationRequested();
@@ -135,7 +140,9 @@ public class ClientWithResponse<T> : IClientWithResponse<T>
 			(_request.Method == RestVerbs.Get || _request.ResultRequired))
 		{
 			var responseReader = _session.Adapter.GetResponseReader();
-			var response = await responseReader.GetResponseAsync(ResponseMessage).ConfigureAwait(false);
+			var response = await responseReader
+				.GetResponseAsync(ResponseMessage)
+				.ConfigureAwait(false);
 			if (cancellationToken.IsCancellationRequested)
 			{
 				cancellationToken.ThrowIfCancellationRequested();

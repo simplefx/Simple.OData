@@ -28,7 +28,8 @@ public abstract class RequestWriterBase : IRequestWriter
 	public async Task<ODataRequest> CreateGetRequestAsync(string commandText, bool scalarResult, IDictionary<string, string> headers = null)
 	{
 		await WriteEntryContentAsync(
-			RestVerbs.Get, Utils.ExtractCollectionName(commandText), commandText, null, true).ConfigureAwait(false);
+			RestVerbs.Get, Utils.ExtractCollectionName(commandText), commandText, null, true)
+			.ConfigureAwait(false);
 
 		var request = new ODataRequest(RestVerbs.Get, _session, commandText, headers)
 		{
@@ -41,7 +42,8 @@ public abstract class RequestWriterBase : IRequestWriter
 
 	public async Task<ODataRequest> CreatePutRequestAsync(string commandText, Stream stream, string mediaType = null, bool optimisticConcurrency = false, IDictionary<string, string> headers = null)
 	{
-		var entryContent = await WriteStreamContentAsync(stream, IsTextMediaType(mediaType));
+		var entryContent = await WriteStreamContentAsync(stream, IsTextMediaType(mediaType))
+			.ConfigureAwait(false);
 
 		var request = new ODataRequest(RestVerbs.Put, _session, commandText, null, entryContent, mediaType, headers)
 		{
@@ -60,7 +62,8 @@ public abstract class RequestWriterBase : IRequestWriter
 		}
 
 		var entryContent = await WriteEntryContentAsync(
-			RestVerbs.Post, collection, commandText, entryData, resultRequired).ConfigureAwait(false);
+			RestVerbs.Post, collection, commandText, entryData, resultRequired)
+			.ConfigureAwait(false);
 
 		var request = new ODataRequest(RestVerbs.Post, _session, commandText, entryData, entryContent, headers: headers)
 		{
@@ -89,7 +92,8 @@ public abstract class RequestWriterBase : IRequestWriter
 #pragma warning restore CS0618 // Type or member is obsolete
 
 		var entryContent = await WriteEntryContentAsync(
-			updateMethod, collection, entryIdent, entryData, resultRequired).ConfigureAwait(false);
+			updateMethod, collection, entryIdent, entryData, resultRequired)
+			.ConfigureAwait(false);
 
 		var checkOptimisticConcurrency = _session.Metadata.EntityCollectionRequiresOptimisticConcurrencyCheck(collection);
 		var request = new ODataRequest(updateMethod, _session, entryIdent, entryData, entryContent, headers: headers)
@@ -104,7 +108,8 @@ public abstract class RequestWriterBase : IRequestWriter
 	public async Task<ODataRequest> CreateDeleteRequestAsync(string collection, string entryIdent, IDictionary<string, string> headers = null)
 	{
 		await WriteEntryContentAsync(
-			RestVerbs.Delete, collection, entryIdent, null, false).ConfigureAwait(false);
+			RestVerbs.Delete, collection, entryIdent, null, false)
+			.ConfigureAwait(false);
 
 		var request = new ODataRequest(RestVerbs.Delete, _session, entryIdent, headers)
 		{
@@ -122,7 +127,8 @@ public abstract class RequestWriterBase : IRequestWriter
 			RestVerbs.Put;
 
 		var commandText = FormatLinkPath(entryIdent, associationName);
-		var linkContent = await WriteLinkContentAsync(linkMethod, commandText, linkIdent).ConfigureAwait(false);
+		var linkContent = await WriteLinkContentAsync(linkMethod, commandText, linkIdent)
+			.ConfigureAwait(false);
 		var request = new ODataRequest(linkMethod, _session, commandText, null, linkContent, headers: headers)
 		{
 			IsLink = true,
@@ -136,7 +142,8 @@ public abstract class RequestWriterBase : IRequestWriter
 		var associationName = _session.Metadata.GetNavigationPropertyExactName(collection, linkName);
 		var commandText = FormatLinkPath(entryIdent, associationName, linkIdent);
 
-		await WriteEntryContentAsync(RestVerbs.Delete, collection, commandText, null, false).ConfigureAwait(false);
+		await WriteEntryContentAsync(RestVerbs.Delete, collection, commandText, null, false)
+			.ConfigureAwait(false);
 
 		var request = new ODataRequest(RestVerbs.Delete, _session, commandText, headers)
 		{
@@ -150,7 +157,8 @@ public abstract class RequestWriterBase : IRequestWriter
 	{
 		var verb = _session.Metadata.GetFunctionVerb(functionName);
 
-		await WriteFunctionContentAsync(verb, commandText).ConfigureAwait(false);
+		await WriteFunctionContentAsync(verb, commandText)
+			.ConfigureAwait(false);
 
 		var request = new ODataRequest(verb, _session, commandText, headers)
 		{
@@ -168,12 +176,14 @@ public abstract class RequestWriterBase : IRequestWriter
 
 		if (parameters != null && parameters.Any())
 		{
-			entryContent = await WriteActionContentAsync(RestVerbs.Post, commandText, actionName, boundTypeName, parameters).ConfigureAwait(false);
+			entryContent = await WriteActionContentAsync(RestVerbs.Post, commandText, actionName, boundTypeName, parameters)
+				.ConfigureAwait(false);
 			usePayloadFormat = ODataPayloadFormat.Json;
 		}
 		else
 		{
-			await WriteFunctionContentAsync(verb, commandText).ConfigureAwait(false);
+			await WriteFunctionContentAsync(verb, commandText)
+				.ConfigureAwait(false);
 		}
 
 		var request = new ODataRequest(verb, _session, commandText, parameters, entryContent, headers: headers)
