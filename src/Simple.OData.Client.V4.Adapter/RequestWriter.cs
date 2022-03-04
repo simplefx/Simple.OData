@@ -180,7 +180,8 @@ namespace Simple.OData.Client.V4.Adapter
 				: new ODataRequestMessage();
 
 			using var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), _model);
-			Func<IEdmOperationParameter, IEdmType, bool> typeMatch = (parameter, baseType) =>
+
+			static bool typeMatch(IEdmOperationParameter parameter, IEdmType baseType) =>
 				parameter == null ||
 				parameter.Type.Definition == baseType ||
 				parameter.Type.Definition.TypeKind == EdmTypeKind.Collection &&

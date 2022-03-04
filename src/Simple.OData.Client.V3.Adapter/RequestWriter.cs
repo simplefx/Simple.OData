@@ -210,11 +210,12 @@ public class RequestWriter : RequestWriterBase
 		var entry = new Microsoft.Data.OData.ODataEntry() { TypeName = typeName };
 
 		var typeProperties = (_model.FindDeclaredType(entry.TypeName) as IEdmEntityType).Properties();
-		Func<string, string> findMatchingPropertyName = name =>
+		string findMatchingPropertyName(string name)
 		{
 			var property = typeProperties.BestMatch(y => y.Name, name, _session.Settings.NameMatchResolver);
 			return property != null ? property.Name : name;
-		};
+		}
+
 		entry.Properties = properties.Select(x => new ODataProperty()
 		{
 			Name = findMatchingPropertyName(x.Key),
