@@ -13,7 +13,7 @@ public class ODataSchemaTests
 	public async Task ReadMetadataV3()
 	{
 		var client = new ODataClient(string.Format(_serviceUrl, "V3"));
-		var metadata = await client.GetMetadataAsync<Microsoft.Data.Edm.IEdmModel>();
+		var metadata = await client.GetMetadataAsync<Microsoft.Data.Edm.IEdmModel>().ConfigureAwait(false);
 		Assert.Equal(12, metadata.SchemaElements.Count());
 	}
 
@@ -21,7 +21,7 @@ public class ODataSchemaTests
 	public async Task ReadMetadataV3AsDynamic()
 	{
 		var client = new ODataClient(string.Format(_serviceUrl, "V3"));
-		dynamic metadata = await client.GetMetadataAsync();
+		dynamic metadata = await client.GetMetadataAsync().ConfigureAwait(false);
 		Assert.Equal(12, (metadata.SchemaElements as IEnumerable<dynamic>).Count());
 	}
 
@@ -29,7 +29,7 @@ public class ODataSchemaTests
 	public async Task ReadMetadataV4()
 	{
 		var client = new ODataClient(string.Format(_serviceUrl, "V4"));
-		var metadata = await client.GetMetadataAsync<Microsoft.OData.Edm.IEdmModel>();
+		var metadata = await client.GetMetadataAsync<Microsoft.OData.Edm.IEdmModel>().ConfigureAwait(false);
 		Assert.Equal(12, metadata.SchemaElements.Count());
 	}
 
@@ -37,7 +37,7 @@ public class ODataSchemaTests
 	public async Task ReadMetadataV4AsDynamic()
 	{
 		var client = new ODataClient(string.Format(_serviceUrl, "V4"));
-		dynamic metadata = await client.GetMetadataAsync();
+		dynamic metadata = await client.GetMetadataAsync().ConfigureAwait(false);
 		Assert.Equal(12, (metadata.SchemaElements as IEnumerable<dynamic>).Count());
 	}
 }

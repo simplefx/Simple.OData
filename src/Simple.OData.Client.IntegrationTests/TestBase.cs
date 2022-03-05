@@ -107,7 +107,7 @@ public abstract class TestBase : IDisposable
 	{
 		try
 		{
-			await testCode();
+			await testCode().ConfigureAwait(false);
 			throw new Exception($"Expected exception: {typeof(T)}");
 		}
 		catch (T)

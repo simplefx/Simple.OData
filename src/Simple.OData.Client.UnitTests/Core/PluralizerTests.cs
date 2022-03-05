@@ -86,7 +86,7 @@ public class NonLatinSchemaPluralizerTests : CoreTestBase
 		var commandText = await client
 			.For("Catalog_Контрагенты")
 			.Top(10)
-			.GetCommandTextAsync();
+			.GetCommandTextAsync().ConfigureAwait(false);
 
 		Assert.Equal("Catalog_Контрагенты?$top=10", commandText);
 	}
@@ -98,7 +98,7 @@ public class NonLatinSchemaPluralizerTests : CoreTestBase
 		var commandText = await client
 			.For("Catalog_Контрагенты")
 			.Top(10)
-			.GetCommandTextAsync();
+			.GetCommandTextAsync().ConfigureAwait(false);
 
 		Assert.Equal("Catalog_Контрагенты?$top=10", commandText);
 	}

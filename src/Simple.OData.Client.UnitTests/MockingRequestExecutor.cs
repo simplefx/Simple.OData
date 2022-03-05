@@ -123,7 +123,7 @@ public class MockingRequestExecutor
 			}
 
 			var httpConnection = new HttpConnection(_settings);
-			var response = await httpConnection.HttpClient.SendAsync(request);
+			var response = await httpConnection.HttpClient.SendAsync(request).ConfigureAwait(false);
 
 			if (!IsMetadataRequest(request))
 			{
@@ -136,7 +136,7 @@ public class MockingRequestExecutor
 		{
 			if (_validate)
 			{
-				await ValidateRequestAsync(request);
+				await ValidateRequestAsync(request).ConfigureAwait(false);
 			}
 
 			if (_mockResponses == null)
@@ -218,7 +218,7 @@ public class MockingRequestExecutor
 			ValidateHeaders(expectedHeaders, actualHeaders);
 			var expectedContent = savedRequest.Content;
 			expectedContent = AdjustContent(expectedContent);
-			var actualContent = AdjustContent(await request.Content.ReadAsStringAsync());
+			var actualContent = AdjustContent(await request.Content.ReadAsStringAsync().ConfigureAwait(false));
 			Assert.Equal(expectedContent, actualContent);
 		}
 	}

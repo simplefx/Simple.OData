@@ -66,7 +66,7 @@ public class ActionV4Tests
 				.For<Movie>()
 				.Key(1)
 				.Action("CheckOut")
-				.ExecuteAsSingleAsync();
+				.ExecuteAsSingleAsync().ConfigureAwait(false);
 		}
 		catch (WebRequestException)
 		{
@@ -79,13 +79,13 @@ public class ActionV4Tests
 				.For<Movie>()
 				.Key(1)
 				.Action("Return")
-				.ExecuteAsSingleAsync();
+				.ExecuteAsSingleAsync().ConfigureAwait(false);
 
 			result = await client
 				.For<Movie>()
 				.Key(1)
 				.Action("CheckOut")
-				.ExecuteAsSingleAsync();
+				.ExecuteAsSingleAsync().ConfigureAwait(false);
 		}
 
 		Assert.Equal(1, result.ID);
@@ -100,7 +100,7 @@ public class ActionV4Tests
 			.For<Movie>()
 			.Key(1)
 			.Action("Return")
-			.ExecuteAsSingleAsync();
+			.ExecuteAsSingleAsync().ConfigureAwait(false);
 
 		Assert.Equal(1, result.ID);
 	}
@@ -114,7 +114,7 @@ public class ActionV4Tests
 			.For<Movie>()
 			.Action("CheckOutMany")
 			.Set(new Dictionary<string, object>() { { "MovieIDs", new[] { 1, 2, 3 } } })
-			.ExecuteAsEnumerableAsync();
+			.ExecuteAsEnumerableAsync().ConfigureAwait(false);
 
 		Assert.True(result.Count() > 1);
 	}
@@ -129,7 +129,7 @@ public class ActionV4Tests
 			.Unbound<Movie>()
 			.Action("CreateMovie")
 			.Set(new { Title = guid.ToString() })
-			.ExecuteAsSingleAsync();
+			.ExecuteAsSingleAsync().ConfigureAwait(false);
 
 		Assert.True(result.ID > 0);
 	}
@@ -146,8 +146,8 @@ public class ActionV4Tests
 			.Unbound<Movie>()
 			.Action("CreateMovie")
 			.Set(new { Title = guid.ToString() })
-			.ExecuteAsSingleAsync();
-		await batch.ExecuteAsync();
+			.ExecuteAsSingleAsync().ConfigureAwait(false);
+		await batch.ExecuteAsync().ConfigureAwait(false);
 
 		Assert.True(result.ID > 0);
 	}
