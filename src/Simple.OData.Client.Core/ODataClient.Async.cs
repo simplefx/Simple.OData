@@ -926,7 +926,10 @@ public partial class ODataClient
 		return result?.GetData(Session.Settings.IncludeAnnotationsInResults);
 	}
 
-	private async Task<object> FindScalarAsync(string commandText, IDictionary<string, string> headers, CancellationToken cancellationToken)
+	private async Task<object?> FindScalarAsync(
+		string commandText,
+		IDictionary<string, string> headers,
+		CancellationToken cancellationToken)
 	{
 		if (IsBatchResponse)
 		{
@@ -944,7 +947,7 @@ public partial class ODataClient
 			x => x.AsEntries(Session.Settings.IncludeAnnotationsInResults),
 			() => Array.Empty<IDictionary<string, object>>()).ConfigureAwait(false);
 
-		static object extractScalar(IDictionary<string, object> x) => (x == null) || (x.Count == 0) ? null : x.First().Value;
+		static object? extractScalar(IDictionary<string, object?> x) => (x == null) || (x.Count == 0) ? null : x.First().Value;
 		return result == null ? null : extractScalar(result.FirstOrDefault());
 	}
 

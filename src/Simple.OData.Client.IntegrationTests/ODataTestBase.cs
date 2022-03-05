@@ -50,7 +50,10 @@ public abstract class ODataTestBase : TestBase
 
 	protected int ExpectedTotalCount => _version == 2 ? 9 : 11;
 
-	protected Entry CreateProduct(int productId, string productName, IDictionary<string, object> category = null)
+	protected Entry CreateProduct(
+		int productId,
+		string productName,
+		IDictionary<string, object>? category = null)
 	{
 		var entry = new Entry()
 				{
@@ -70,7 +73,10 @@ public abstract class ODataTestBase : TestBase
 		return entry;
 	}
 
-	protected static Entry CreateCategory(int categoryId, string categoryName, IEnumerable<IDictionary<string, object>> products = null)
+	protected static Entry CreateCategory(
+		int categoryId,
+		string categoryName,
+		IEnumerable<IDictionary<string, object>>? products = null)
 	{
 		var entry = new Entry()
 			{

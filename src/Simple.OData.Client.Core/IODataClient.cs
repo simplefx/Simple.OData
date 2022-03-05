@@ -29,7 +29,7 @@ public interface IODataClient
 	/// </summary>
 	/// <param name="collectionName">Name of the collection.</param>
 	/// <returns>The fluent OData client instance.</returns>
-	IBoundClient<T> For<T>(string collectionName = null) where T : class;
+	IBoundClient<T> For<T>(string? collectionName = null) where T : class;
 
 	/// <summary>
 	/// Returns an instance of a fluent OData client for unbound operations (functions and actions).

@@ -37,8 +37,8 @@ public class BatchTypedTests : TestBase
 	public async Task SuccessWithResults()
 	{
 		var settings = CreateDefaultSettings().WithHttpMock();
-		Product product1 = null;
-		Product product2 = null;
+		Product? product1 = null;
+		Product? product2 = null;
 
 		var batch = new ODataBatch(settings);
 		batch += async c => product1 = await c
@@ -119,9 +119,9 @@ public class BatchTypedTests : TestBase
 	public async Task MultipleUpdatesSingleBatch()
 	{
 		var settings = CreateDefaultSettings().WithHttpMock();
-		Product product = null;
-		Product product1 = null;
-		Product product2 = null;
+		Product? product = null;
+		Product? product1 = null;
+		Product? product2 = null;
 
 		var batch = new ODataBatch(settings);
 		batch += async c => product = await c
@@ -166,9 +166,9 @@ public class BatchTypedTests : TestBase
 	public async Task UpdateDeleteSingleBatch()
 	{
 		var settings = CreateDefaultSettings().WithHttpMock();
-		Product product = null;
-		Product product1 = null;
-		Product product2 = null;
+		Product? product = null;
+		Product? product1 = null;
+		Product? product2 = null;
 
 		var batch = new ODataBatch(settings);
 		batch += async c => product = await c

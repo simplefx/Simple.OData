@@ -225,7 +225,7 @@ public class TypeCache : ITypeCache
 		return Resolver(type).MappedName;
 	}
 
-	public bool TryConvert(object value, Type targetType, out object result)
+	public bool TryConvert(object? value, Type targetType, out object? result)
 	{
 		try
 		{
@@ -300,7 +300,7 @@ public class TypeCache : ITypeCache
 		}
 	}
 
-	public object Convert(object value, Type targetType)
+	public object? Convert(object? value, Type targetType)
 	{
 		if (value == null && !IsValue(targetType))
 		{
@@ -321,7 +321,10 @@ public class TypeCache : ITypeCache
 		return resolver;
 	}
 
-	private TypeCacheResolver InternalRegister(Type type, bool dynamicType = false, string dynamicContainerName = null)
+	private TypeCacheResolver InternalRegister(
+		Type type,
+		bool dynamicType = false,
+		string? dynamicContainerName = null)
 	{
 		var resolver = new TypeCacheResolver(type, NameMatchResolver, dynamicType, dynamicContainerName);
 

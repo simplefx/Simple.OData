@@ -26,7 +26,7 @@ public abstract class BatchWriterBase : IBatchWriter
 
 	public async Task<ODataRequest> CreateBatchRequestAsync(
 		IODataClient client, IList<Func<IODataClient, Task>> actions, IList<int> responseIndexes,
-		IDictionary<string, string> headers = null)
+		IDictionary<string, string>? headers = null)
 	{
 		// Write batch operations into a batch content
 		var lastOperationId = 0;

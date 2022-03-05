@@ -52,9 +52,11 @@ internal class FilterClause : IDataAggregationClause
 internal class GroupByClause<T> : IDataAggregationClause
 {
 	private readonly IEnumerable<string> _columns;
-	private readonly AggregationClauseCollection<T> _aggregation;
+	private readonly AggregationClauseCollection<T>? _aggregation;
 
-	internal GroupByClause(IEnumerable<string> columns, AggregationClauseCollection<T> aggregation = null)
+	internal GroupByClause(
+		IEnumerable<string> columns,
+		AggregationClauseCollection<T>? aggregation = null)
 	{
 		_columns = columns;
 		_aggregation = aggregation;

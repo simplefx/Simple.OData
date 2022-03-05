@@ -160,7 +160,7 @@ namespace Simple.OData.Client.V4.Adapter
 
 		private ODataResponse ReadResponse(ODataReader odataReader, IODataResponseMessageAsync responseMessage)
 		{
-			ResponseNode rootNode = null;
+			ResponseNode? rootNode = null;
 			var nodeStack = new Stack<ResponseNode>();
 
 			while (odataReader.Read())
@@ -231,10 +231,10 @@ namespace Simple.OData.Client.V4.Adapter
 
 		private ODataEntryAnnotations CreateAnnotations(ODataResource odataEntry)
 		{
-			string id = null;
-			Uri readLink = null;
-			Uri editLink = null;
-			string etag = null;
+			string? id = null;
+			Uri? readLink = null;
+			Uri? editLink = null;
+			string? etag = null;
 			if (_session.Adapter.GetMetadata().IsTypeWithId(odataEntry.TypeName))
 			{
 				try
@@ -263,7 +263,7 @@ namespace Simple.OData.Client.V4.Adapter
 			};
 		}
 
-		private ODataMediaAnnotations CreateAnnotations(ODataStreamReferenceValue value)
+		private ODataMediaAnnotations? CreateAnnotations(ODataStreamReferenceValue value)
 		{
 			return value == null ? null : new ODataMediaAnnotations
 			{

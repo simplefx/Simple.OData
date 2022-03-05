@@ -61,7 +61,7 @@ internal class InOperatorMapping : FunctionToOperatorMapping
 			   adapterVersion == AdapterVersion.V4;
 	}
 
-	private static bool IsInstanceOfType(Type expectedType, object value)
+	private static bool IsInstanceOfType(Type expectedType, object? value)
 	{
 		if (value == null)
 		{

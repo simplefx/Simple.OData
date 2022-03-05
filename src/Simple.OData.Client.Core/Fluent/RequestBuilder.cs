@@ -12,16 +12,23 @@ internal class RequestBuilder : IRequestBuilder
 	private readonly string _commandText;
 	private readonly Session _session;
 	private readonly Lazy<IBatchWriter> _lazyBatchWriter;
-	private readonly IDictionary<string, string> _headers;
+	private readonly IDictionary<string, string>? _headers;
 
-	public RequestBuilder(ResolvedCommand command, Session session, Lazy<IBatchWriter> batchWriter)
+	public RequestBuilder(
+		ResolvedCommand command,
+		Session session,
+		Lazy<IBatchWriter> batchWriter)
 	{
 		_command = command;
 		_session = session;
 		_lazyBatchWriter = batchWriter;
 	}
 
-	public RequestBuilder(string commandText, Session session, Lazy<IBatchWriter> batchWriter, IDictionary<string, string> headers = null)
+	public RequestBuilder(
+		string commandText,
+		Session session,
+		Lazy<IBatchWriter> batchWriter,
+		IDictionary<string, string>? headers = null)
 	{
 		_commandText = commandText;
 		_session = session;
@@ -29,12 +36,14 @@ internal class RequestBuilder : IRequestBuilder
 		_headers = headers;
 	}
 
-	private IDictionary<string, string> GetHeaders()
+	private IDictionary<string, string>? GetHeaders()
 	{
 		return _command?.Details.Headers ?? _headers;
 	}
 
-	public async Task<ODataRequest> GetRequestAsync(bool scalarResult, CancellationToken cancellationToken)
+	public async Task<ODataRequest> GetRequestAsync(
+		bool scalarResult,
+		CancellationToken cancellationToken)
 	{
 		await _session
 			.ResolveAdapterAsync(cancellationToken)
@@ -49,7 +58,9 @@ internal class RequestBuilder : IRequestBuilder
 			.ConfigureAwait(false);
 	}
 
-	public async Task<ODataRequest> InsertRequestAsync(bool resultRequired, CancellationToken cancellationToken)
+	public async Task<ODataRequest> InsertRequestAsync(
+		bool resultRequired,
+		CancellationToken cancellationToken)
 	{
 		await _session
 			.ResolveAdapterAsync(cancellationToken)
@@ -66,7 +77,9 @@ internal class RequestBuilder : IRequestBuilder
 			.ConfigureAwait(false);
 	}
 
-	public async Task<ODataRequest> UpdateRequestAsync(bool resultRequired, CancellationToken cancellationToken)
+	public async Task<ODataRequest> UpdateRequestAsync(
+		bool resultRequired,
+		CancellationToken cancellationToken)
 	{
 		AssertHasKey(_command);
 
@@ -90,7 +103,11 @@ internal class RequestBuilder : IRequestBuilder
 			.ConfigureAwait(false);
 	}
 
-	public async Task<ODataRequest> UpdateRequestAsync(Stream stream, string contentType, bool optimisticConcurrency, CancellationToken cancellationToken)
+	public async Task<ODataRequest> UpdateRequestAsync(
+		Stream stream,
+		string contentType,
+		bool optimisticConcurrency,
+		CancellationToken cancellationToken)
 	{
 		await _session
 			.ResolveAdapterAsync(cancellationToken)
@@ -127,7 +144,10 @@ internal class RequestBuilder : IRequestBuilder
 			.ConfigureAwait(false);
 	}
 
-	public async Task<ODataRequest> LinkRequestAsync(string linkName, IDictionary<string, object> linkedEntryKey, CancellationToken cancellationToken)
+	public async Task<ODataRequest> LinkRequestAsync(
+		string linkName,
+		IDictionary<string, object> linkedEntryKey,
+		CancellationToken cancellationToken)
 	{
 		AssertHasKey(_command);
 
@@ -162,7 +182,10 @@ internal class RequestBuilder : IRequestBuilder
 			.ConfigureAwait(false);
 	}
 
-	public async Task<ODataRequest> UnlinkRequestAsync(string linkName, IDictionary<string, object> linkedEntryKey, CancellationToken cancellationToken)
+	public async Task<ODataRequest> UnlinkRequestAsync(
+		string linkName,
+		IDictionary<string, object> linkedEntryKey,
+		CancellationToken cancellationToken)
 	{
 		AssertHasKey(_command);
 
@@ -183,7 +206,7 @@ internal class RequestBuilder : IRequestBuilder
 			cancellationToken.ThrowIfCancellationRequested();
 		}
 
-		string linkIdent = null;
+		string? linkIdent = null;
 		if (linkedEntryKey != null)
 		{
 			var linkedCollection = _session.Metadata.GetNavigationPropertyPartnerTypeName(collectionName, linkName);
@@ -208,7 +231,9 @@ internal class RequestBuilder : IRequestBuilder
 		return entryIdent;
 	}
 
-	private string FormatEntryKey(string collection, IDictionary<string, object> entryKey)
+	private string FormatEntryKey(
+		string collection,
+		IDictionary<string, object> entryKey)
 	{
 		return new ResolvedCommand(
 			new FluentCommand(

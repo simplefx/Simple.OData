@@ -59,7 +59,7 @@ public class SerializableHttpResponseMessage
 	[DataMember]
 	public Dictionary<string, List<string>> ContentHeaders;
 	[DataMember]
-	public string Content { get; set; }
+	public string? Content { get; set; }
 
 	public SerializableHttpResponseMessage()
 	{
@@ -86,8 +86,8 @@ public class SerializableHttpResponseMessage
 public class MockingRequestExecutor
 {
 	private readonly ODataClientSettings _settings;
-	private readonly string _mockDataPathBase;
-	private readonly string[] _mockResponses;
+	private readonly string? _mockDataPathBase;
+	private readonly string[]? _mockResponses;
 	private readonly bool _validate;
 	private readonly bool _recording;
 	private int _fileCounter;

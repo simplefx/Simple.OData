@@ -1103,7 +1103,7 @@ public abstract class TripPinTests : TripPinTestBase
 	{
 		var batch = new ODataBatch(_client);
 
-		IEnumerable<object> people = null;
+		IEnumerable<object>? people = null;
 		batch += async x =>
 		{
 			people = await x.For<Person>()
@@ -1121,8 +1121,8 @@ public abstract class TripPinTests : TripPinTestBase
 	[Fact]
 	public async Task Batch()
 	{
-		IEnumerable<Airline> airlines1 = null;
-		IEnumerable<Airline> airlines2 = null;
+		IEnumerable<Airline>? airlines1 = null;
+		IEnumerable<Airline>? airlines2 = null;
 
 		var batch = new ODataBatch(_client);
 		batch += async c => airlines1 = await c
@@ -1144,8 +1144,8 @@ public abstract class TripPinTests : TripPinTestBase
 	[Fact(Skip = "Fails at server: https://github.com/OData/ODataSamples/issues/140")]
 	public async Task BatchPayloadRelativeUri()
 	{
-		IEnumerable<Airline> airlines1 = null;
-		IEnumerable<Airline> airlines2 = null;
+		IEnumerable<Airline>? airlines1 = null;
+		IEnumerable<Airline>? airlines2 = null;
 
 		var client = new ODataClient(CreateDefaultSettings(s =>
 		{
@@ -1173,8 +1173,8 @@ public abstract class TripPinTests : TripPinTestBase
 	[Fact]
 	public async Task BatchPayloadAbsoluteUri()
 	{
-		IEnumerable<Airline> airlines1 = null;
-		IEnumerable<Airline> airlines2 = null;
+		IEnumerable<Airline>? airlines1 = null;
+		IEnumerable<Airline>? airlines2 = null;
 
 		var client = new ODataClient(CreateDefaultSettings(s =>
 		{
@@ -1202,8 +1202,8 @@ public abstract class TripPinTests : TripPinTestBase
 	[Fact(Skip = "Fails at server: https://github.com/OData/ODataSamples/issues/140")]
 	public async Task BatchPayloadAbsoluteUriUsingHostHeader()
 	{
-		IEnumerable<Airline> airlines1 = null;
-		IEnumerable<Airline> airlines2 = null;
+		IEnumerable<Airline>? airlines1 = null;
+		IEnumerable<Airline>? airlines2 = null;
 
 		var client = new ODataClient(CreateDefaultSettings(s =>
 		{

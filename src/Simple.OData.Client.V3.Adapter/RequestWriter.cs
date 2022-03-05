@@ -175,7 +175,10 @@ public class RequestWriter : RequestWriterBase
 			.ConfigureAwait(false);
 	}
 
-	protected override string FormatLinkPath(string entryIdent, string navigationPropertyName, string linkIdent = null)
+	protected override string FormatLinkPath(
+		string entryIdent,
+		string navigationPropertyName,
+		string? linkIdent = null)
 	{
 		return linkIdent == null
 			? $"{entryIdent}/$links/{navigationPropertyName}"
@@ -188,7 +191,7 @@ public class RequestWriter : RequestWriterBase
 			request.ResultRequired ? HttpLiteral.ReturnContent : HttpLiteral.ReturnNoContent;
 	}
 
-	private ODataMessageWriterSettings GetWriterSettings(ODataFormat preferredContentType = null)
+	private ODataMessageWriterSettings GetWriterSettings(ODataFormat? preferredContentType = null)
 	{
 		var settings = new ODataMessageWriterSettings()
 		{
@@ -229,7 +232,11 @@ public class RequestWriter : RequestWriterBase
 		return entry;
 	}
 
-	private async Task<IODataRequestMessageAsync> CreateBatchOperationMessageAsync(string method, string collection, IDictionary<string, object> entryData, string commandText, bool resultRequired)
+	private async Task<IODataRequestMessageAsync> CreateBatchOperationMessageAsync(
+		string method,
+		string collection,
+		IDictionary<string, object> entryData,
+		string commandText, bool resultRequired)
 	{
 		var message = (await _deferredBatchWriter.Value.CreateOperationMessageAsync(
 			Utils.CreateAbsoluteUri(_session.Settings.BaseUri.AbsoluteUri, commandText),
@@ -238,7 +245,11 @@ public class RequestWriter : RequestWriterBase
 		return message;
 	}
 
-	private void WriteLink(ODataWriter entryWriter, Microsoft.Data.OData.ODataEntry entry, string linkName, IEnumerable<ReferenceLink> links)
+	private void WriteLink(
+		ODataWriter entryWriter,
+		Microsoft.Data.OData.ODataEntry entry,
+		string linkName,
+		IEnumerable<ReferenceLink> links)
 	{
 		var navigationProperty = (_model.FindDeclaredType(entry.TypeName) as IEdmEntityType).NavigationProperties()
 			.BestMatch(x => x.Name, linkName, _session.Settings.NameMatchResolver);
@@ -306,7 +317,7 @@ public class RequestWriter : RequestWriterBase
 		return property != null ? GetPropertyValue(property.Type, value) : value;
 	}
 
-	private object GetPropertyValue(IEdmTypeReference propertyType, object value)
+	private object? GetPropertyValue(IEdmTypeReference propertyType, object? value)
 	{
 		if (value == null)
 		{

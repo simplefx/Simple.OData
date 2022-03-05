@@ -37,7 +37,7 @@ public class BatchTests : TestBase
 	public async Task ReadOnlyBatch()
 	{
 		var settings = CreateDefaultSettings().WithHttpMock();
-		IDictionary<string, object> product = null;
+		IDictionary<string, object>? product = null;
 		var batch = new ODataBatch(settings);
 		batch += async c => product = await c.FindEntryAsync("Products");
 		await batch.ExecuteAsync();
@@ -75,8 +75,8 @@ public class BatchTests : TestBase
 	public async Task SuccessWithResults()
 	{
 		var settings = CreateDefaultSettings().WithHttpMock();
-		IDictionary<string, object> product1 = null;
-		IDictionary<string, object> product2 = null;
+		IDictionary<string, object>? product1 = null;
+		IDictionary<string, object>? product2 = null;
 
 		var batch = new ODataBatch(settings);
 		batch += async x => { product1 = await x.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test1" }, { "UnitPrice", 10m } }); };
@@ -133,9 +133,9 @@ public class BatchTests : TestBase
 	public async Task MultipleUpdateEntrySingleBatch()
 	{
 		var settings = CreateDefaultSettings().WithHttpMock();
-		IDictionary<string, object> product = null;
-		IDictionary<string, object> product1 = null;
-		IDictionary<string, object> product2 = null;
+		IDictionary<string, object>? product = null;
+		IDictionary<string, object>? product1 = null;
+		IDictionary<string, object>? product2 = null;
 
 		var batch = new ODataBatch(settings);
 		batch += async c => product = await c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test11" }, { "UnitPrice", 21m } });
@@ -160,7 +160,7 @@ public class BatchTests : TestBase
 	public async Task MultipleUpdatesEntriesSingleBatch()
 	{
 		var settings = CreateDefaultSettings().WithHttpMock();
-		IDictionary<string, object> product = null;
+		IDictionary<string, object>? product = null;
 
 		var batch = new ODataBatch(settings);
 		batch += async c => product = await c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test11" }, { "UnitPrice", 121m } });
@@ -183,9 +183,9 @@ public class BatchTests : TestBase
 	public async Task UpdateDeleteSingleBatch()
 	{
 		var settings = CreateDefaultSettings().WithHttpMock();
-		IDictionary<string, object> product = null;
-		IDictionary<string, object> product1 = null;
-		IDictionary<string, object> product2 = null;
+		IDictionary<string, object>? product = null;
+		IDictionary<string, object>? product1 = null;
+		IDictionary<string, object>? product2 = null;
 
 		var batch = new ODataBatch(settings);
 		batch += async x => product = await x.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test11" }, { "UnitPrice", 21m } });
@@ -238,7 +238,7 @@ public class BatchTests : TestBase
 	public async Task InsertSingleEntityWithSingleAssociationSingleBatch()
 	{
 		var settings = CreateDefaultSettings().WithHttpMock();
-		IDictionary<string, object> category = null;
+		IDictionary<string, object>? category = null;
 		var batch = new ODataBatch(settings);
 		batch += async x => category = await x.InsertEntryAsync("Categories", new Entry() { { "CategoryName", "Test13" } });
 		batch += c => c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test14" }, { "UnitPrice", 21m }, { "Category", category } }, false);
@@ -257,8 +257,8 @@ public class BatchTests : TestBase
 	public async Task InsertSingleEntityWithMultipleAssociationsSingleBatch()
 	{
 		var settings = CreateDefaultSettings().WithHttpMock();
-		IDictionary<string, object> product1 = null;
-		IDictionary<string, object> product2 = null;
+		IDictionary<string, object>? product1 = null;
+		IDictionary<string, object>? product2 = null;
 		var batch = new ODataBatch(settings);
 		batch += async c => product1 = await c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test15" }, { "UnitPrice", 21m } });
 		batch += async c => product2 = await c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test16" }, { "UnitPrice", 22m } });
@@ -338,7 +338,7 @@ public class BatchTests : TestBase
 	public async Task DeleteEntriesNonExistingThenInsert()
 	{
 		var settings = CreateDefaultSettings().WithHttpMock();
-		IDictionary<string, object> product = null;
+		IDictionary<string, object>? product = null;
 		var batch = new ODataBatch(settings);
 		batch += c => c.DeleteEntriesAsync("Products", "Products?$filter=ProductName eq 'Test99'");
 		batch += async c => product = await c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test15" }, { "UnitPrice", 21m } });
@@ -350,8 +350,8 @@ public class BatchTests : TestBase
 	public async Task UpdateWithResultRequired()
 	{
 		var settings = CreateDefaultSettings().WithHttpMock();
-		IDictionary<string, object> product = null;
-		IDictionary<string, object> product1 = null;
+		IDictionary<string, object>? product = null;
+		IDictionary<string, object>? product1 = null;
 
 		var batch = new ODataBatch(settings);
 		batch += async x => product = await x.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test11" }, { "UnitPrice", 21m } }, true);

@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Xunit;
 using Simple.OData.Client;
 using Simple.OData.Client.Tests;
 using WebApiOData.V4.Samples.Models;
+using Xunit;
 #if NET461 && !MOCK_HTTP
 using Microsoft.Owin.Testing;
 using WebApiOData.V4.Samples.Startups;
@@ -59,7 +59,7 @@ public class ActionV4Tests
 		var settings = CreateDefaultSettings().WithHttpMock();
 		var client = new ODataClient(settings);
 		var isCheckedOut = false;
-		Movie result = null;
+		Movie? result = null;
 		try
 		{
 			result = await client
@@ -140,7 +140,7 @@ public class ActionV4Tests
 		var settings = CreateDefaultSettings().WithHttpMock();
 		var client = new ODataClient(settings);
 		var guid = new Guid("E7857D7F-5B85-406A-A5C7-0DBA1D411576");
-		Movie result = null;
+		Movie? result = null;
 		var batch = new ODataBatch(client);
 		batch += async c => result = await c
 			.Unbound<Movie>()

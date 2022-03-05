@@ -63,7 +63,7 @@ public class ActionV3Tests : IDisposable
 		var settings = CreateDefaultSettings().WithHttpMock();
 		var client = new ODataClient(settings);
 		var isCheckedOut = false;
-		Movie result = null;
+		Movie? result = null;
 		try
 		{
 			result = await client
@@ -144,7 +144,7 @@ public class ActionV3Tests : IDisposable
 		var settings = CreateDefaultSettings().WithHttpMock();
 		var client = new ODataClient(settings);
 		var guid = new Guid("2C44053F-6790-4221-934E-BA214DFEB643");
-		Movie result = null;
+		Movie? result = null;
 		var batch = new ODataBatch(client);
 		batch += async c => result = await c
 			.Unbound<Movie>()

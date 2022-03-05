@@ -41,8 +41,8 @@ public class BatchDynamicTests : TestBase
 	{
 		var settings = CreateDefaultSettings().WithHttpMock();
 		var x = ODataDynamic.Expression;
-		dynamic product1 = null;
-		dynamic product2 = null;
+		dynamic? product1 = null;
+		dynamic? product2 = null;
 
 		var batch = new ODataBatch(settings);
 		batch += async c => product1 = await c
@@ -126,9 +126,9 @@ public class BatchDynamicTests : TestBase
 	{
 		var settings = CreateDefaultSettings().WithHttpMock();
 		var x = ODataDynamic.Expression;
-		dynamic product = null;
-		dynamic product1 = null;
-		dynamic product2 = null;
+		dynamic? product = null;
+		dynamic? product1 = null;
+		dynamic? product2 = null;
 
 		var batch = new ODataBatch(settings);
 		batch += async c => product = await c
@@ -174,9 +174,9 @@ public class BatchDynamicTests : TestBase
 	{
 		var settings = CreateDefaultSettings().WithHttpMock();
 		var x = ODataDynamic.Expression;
-		dynamic product = null;
-		dynamic product1 = null;
-		dynamic product2 = null;
+		dynamic? product = null;
+		dynamic? product1 = null;
+		dynamic? product2 = null;
 
 		var batch = new ODataBatch(settings);
 		batch += async c => product = await c

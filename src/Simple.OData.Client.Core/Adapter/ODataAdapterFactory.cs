@@ -100,7 +100,7 @@ public class ODataAdapterFactory : IODataAdapterFactory
 		}
 	}
 
-	private Func<ISession, IODataAdapter> GetAdapterLoader(IODataModelAdapter modelAdapter, ITypeCache typeCache)
+	private Func<ISession, IODataAdapter>? GetAdapterLoader(IODataModelAdapter modelAdapter, ITypeCache typeCache)
 	{
 		if (modelAdapter.ProtocolVersion == ODataProtocolVersion.V1 ||
 			modelAdapter.ProtocolVersion == ODataProtocolVersion.V2 ||
@@ -117,7 +117,7 @@ public class ODataAdapterFactory : IODataAdapterFactory
 		return null;
 	}
 
-	private Func<IODataModelAdapter> GetModelAdapterLoader(string protocolVersion, object extraInfo, ITypeCache typeCache)
+	private Func<IODataModelAdapter>? GetModelAdapterLoader(string protocolVersion, object extraInfo, ITypeCache typeCache)
 	{
 		if (protocolVersion == ODataProtocolVersion.V1 ||
 			protocolVersion == ODataProtocolVersion.V2 ||

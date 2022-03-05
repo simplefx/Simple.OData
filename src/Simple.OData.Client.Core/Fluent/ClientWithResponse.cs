@@ -150,7 +150,7 @@ public class ClientWithResponse<T> : IClientWithResponse<T>
 
 			var result = response.AsEntries(_session.Settings.IncludeAnnotationsInResults);
 
-			static object extractScalar(IDictionary<string, object> x) => (x == null) || !x.Any() ? null : x.Values.First();
+			static object extractScalar(IDictionary<string, object?> x) => (x == null) || !x.Any() ? null : x.Values.First();
 			return result == null ? default(U) : _session.TypeCache.Convert<U>(extractScalar(result.FirstOrDefault()));
 		}
 		else

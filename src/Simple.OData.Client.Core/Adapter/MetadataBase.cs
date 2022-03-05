@@ -59,7 +59,7 @@ public abstract class MetadataBase : IMetadata
 
 	public abstract string GetFunctionFullName(string functionName);
 
-	public abstract EntityCollection GetFunctionReturnCollection(string functionName);
+	public abstract EntityCollection? GetFunctionReturnCollection(string functionName);
 
 	public abstract string GetFunctionVerb(string functionName);
 
@@ -135,7 +135,10 @@ public abstract class MetadataBase : IMetadata
 		return segments.Count() == 2 && SegmentsIncludeTypeSpecification(segments);
 	}
 
-	public EntryDetails ParseEntryDetails(string collectionName, IDictionary<string, object> entryData, string contentId = null)
+	public EntryDetails ParseEntryDetails(
+		string collectionName,
+		IDictionary<string, object> entryData,
+		string? contentId = null)
 	{
 		var entryDetails = new EntryDetails();
 

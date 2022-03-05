@@ -117,7 +117,7 @@ public abstract class BatchODataTests : ODataTestBase
 	[Fact]
 	public async Task InsertSingleEntityWithSingleAssociationSingleBatch()
 	{
-		IDictionary<string, object> category = null;
+		IDictionary<string, object>? category = null;
 		var batch = new ODataBatch(_serviceUri);
 		batch += async x => category = await x.InsertEntryAsync("Categories", CreateCategory(5013, "Test13"));
 		batch += x => x.InsertEntryAsync("Products", CreateProduct(5014, "Test14", category), false);
@@ -134,8 +134,8 @@ public abstract class BatchODataTests : ODataTestBase
 	[Fact]
 	public async Task InsertSingleEntityWithMultipleAssociationsSingleBatch()
 	{
-		IDictionary<string, object> product1 = null;
-		IDictionary<string, object> product2 = null;
+		IDictionary<string, object>? product1 = null;
+		IDictionary<string, object>? product2 = null;
 
 		var batch = new ODataBatch(_serviceUri);
 		batch += async x => product1 = await x.InsertEntryAsync("Products", CreateProduct(5015, "Test15"));
@@ -154,8 +154,8 @@ public abstract class BatchODataTests : ODataTestBase
 	[Fact]
 	public async Task ExecuteXCsrfFetchPriorToBatchExecution()
 	{
-		IDictionary<string, object> product1 = null;
-		IDictionary<string, object> product2 = null;
+		IDictionary<string, object>? product1 = null;
+		IDictionary<string, object>? product2 = null;
 
 		// None of the existing sample service endpoints actually provide an xcsrf token, 
 		// but in scenarios where a developer may need to use a csrf token, this is an 
@@ -168,9 +168,9 @@ public abstract class BatchODataTests : ODataTestBase
 		};
 		settings.AfterResponse += (response) =>
 		{
-				// Assuming that because the service end points don't return tokens at this time
-				// that we won't be setting the value of the token here.
-				token = response.Headers.TryGetValues("x-csrf-token", out var values) ? values.First() : "myToken";
+			// Assuming that because the service end points don't return tokens at this time
+			// that we won't be setting the value of the token here.
+			token = response.Headers.TryGetValues("x-csrf-token", out var values) ? values.First() : "myToken";
 		};
 
 		// Execute an arbitrary request to retrieve the csrf token
@@ -229,7 +229,7 @@ public abstract class BatchODataTests : ODataTestBase
 	public async Task InsertWithoutResultsReadingLocationHeader()
 	{
 		const int id = 5897;
-		ODataResponse response = null;
+		ODataResponse? response = null;
 		var batch = new ODataBatch(_serviceUri);
 		batch += async x =>
 		{
@@ -250,7 +250,7 @@ public abstract class BatchODataTests : ODataTestBase
 	public async Task InsertReadingLocationHeader()
 	{
 		const int id = 5898;
-		ODataResponse response = null;
+		ODataResponse? response = null;
 		var batch = new ODataBatch(_serviceUri);
 		batch += async x =>
 		{

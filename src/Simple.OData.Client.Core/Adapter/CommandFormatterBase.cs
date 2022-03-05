@@ -173,7 +173,7 @@ public abstract class CommandFormatterBase : ICommandFormatter
 			: text;
 	}
 
-	private string FormatClauses(ResolvedCommand command, IList<string> queryClauses = null)
+	private string FormatClauses(ResolvedCommand command, IList<string>? queryClauses = null)
 	{
 		var text = string.Empty;
 		queryClauses ??= new List<string>();
