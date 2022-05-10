@@ -273,6 +273,11 @@ public partial class ODataClient
 		return FindEntriesAsync(commandText, false, annotations, null, cancellationToken);
 	}
 
+	public Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(string commandText, ODataFeedAnnotations annotations, IDictionary<string, string> headers, CancellationToken cancellationToken)
+	{
+		return FindEntriesAsync(commandText, false, annotations, headers, cancellationToken);
+	}
+
 	public Task<IDictionary<string, object>> FindEntryAsync(string commandText)
 	{
 		return FindEntryAsync(commandText, null, CancellationToken.None);

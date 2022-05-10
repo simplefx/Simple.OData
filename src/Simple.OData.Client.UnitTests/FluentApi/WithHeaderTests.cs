@@ -147,6 +147,21 @@ public class WithHeaderTests : TestBase
 	}
 
 	[Fact]
+	public async Task FindEntriesWithAnnotations()
+	{
+		var annotations = new ODataFeedAnnotations();
+		var (client, headers) = CreateClient();
+
+		await client
+			.For("Products")
+			.WithHeader("header1", "header1Value")
+			.Filter("ProductName eq 'Chai'")
+			.FindEntriesAsync(annotations).ConfigureAwait(false);
+
+		AssertHeader(headers, "header1", "header1Value");
+	}
+
+	[Fact]
 	public async Task FindScalar()
 	{
 		var (client, headers) = CreateClient();
