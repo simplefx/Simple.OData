@@ -49,7 +49,7 @@ public partial class BoundClient<T>
 			cancellationToken.ThrowIfCancellationRequested();
 		}
 
-		var result = _client.FindEntriesAsync(command.Format(), annotations, cancellationToken);
+		var result = _client.FindEntriesAsync(command.Format(), annotations, command.Details.Headers, cancellationToken);
 		return await FilterAndTypeColumnsAsync(
 			result, _command.SelectedColumns, _command.DynamicPropertiesContainerName)
 			.ConfigureAwait(false);
