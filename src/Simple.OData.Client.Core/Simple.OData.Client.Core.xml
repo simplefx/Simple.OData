@@ -712,7 +712,7 @@
             Navigates to the linked entity.
             </summary>
             <param name="linkName">Name of the link.</param>
-            <returns>Self.</returns>        
+            <returns>Self.</returns>
         </member>
         <member name="M:Simple.OData.Client.FluentClientBase`2.NavigateTo(Simple.OData.Client.ODataExpression)">
             <summary>
@@ -3858,7 +3858,7 @@
         <member name="P:Simple.OData.Client.ODataFeedAnnotations.NextPageLink">
             <summary>
             A URL that can be used to retrieve the next subset of the requested collection.
-            When set, indicates that the response response is only a subset of the requested collection of entities or collection of entity references.
+            When set, indicates that the response is only a subset of the requested collection of entities or collection of entity references.
             </summary>
         </member>
         <member name="P:Simple.OData.Client.ODataFeedAnnotations.InstanceAnnotations">

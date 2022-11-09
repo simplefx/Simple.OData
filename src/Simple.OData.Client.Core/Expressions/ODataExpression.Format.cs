@@ -149,7 +149,7 @@ public partial class ODataExpression
 			var val = Function.Arguments.First();
 			if (val.Value != null)
 			{
-				var formattedVal = ODataExpression.FromValue(
+				var formattedVal = FromValue(
 					string.Equals(Function.FunctionName, "ToBoolean", StringComparison.Ordinal) ? Convert.ToBoolean(val.Value, CultureInfo.InvariantCulture) :
 					string.Equals(Function.FunctionName, "ToByte", StringComparison.Ordinal) ? Convert.ToByte(val.Value, CultureInfo.InvariantCulture) :
 					string.Equals(Function.FunctionName, "ToChar", StringComparison.Ordinal) ? Convert.ToChar(val.Value, CultureInfo.InvariantCulture) :

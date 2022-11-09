@@ -289,7 +289,7 @@ public class FluentCommand
 
 	public FluentCommand Media()
 	{
-		return Media(FluentCommand.MediaEntityLiteral);
+		return Media(MediaEntityLiteral);
 	}
 
 	public FluentCommand Media(string streamName)

@@ -247,7 +247,7 @@ namespace Simple.OData.Client.V4.Adapter
 				}
 				catch (ODataException)
 				{
-					// Ingored
+					// Ignored
 				}
 			}
 
