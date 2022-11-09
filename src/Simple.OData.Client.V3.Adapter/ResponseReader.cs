@@ -174,15 +174,15 @@ namespace Simple.OData.Client.V3.Adapter
 				switch (odataReader.State)
 				{
 					case ODataReaderState.FeedStart:
-						StartFeed(nodeStack, CreateAnnotations(odataReader.Item as ODataFeed));
+						ResponseReaderBase.StartFeed(nodeStack, ResponseReader.CreateAnnotations(odataReader.Item as ODataFeed));
 						break;
 
 					case ODataReaderState.FeedEnd:
-						EndFeed(nodeStack, CreateAnnotations(odataReader.Item as ODataFeed), ref rootNode);
+						ResponseReaderBase.EndFeed(nodeStack, ResponseReader.CreateAnnotations(odataReader.Item as ODataFeed), ref rootNode);
 						break;
 
 					case ODataReaderState.EntryStart:
-						StartEntry(nodeStack);
+						ResponseReaderBase.StartEntry(nodeStack);
 						break;
 
 					case ODataReaderState.EntryEnd:
@@ -190,7 +190,7 @@ namespace Simple.OData.Client.V3.Adapter
 						break;
 
 					case ODataReaderState.NavigationLinkStart:
-						StartNavigationLink(nodeStack, (odataReader.Item as ODataNavigationLink).Name);
+						ResponseReaderBase.StartNavigationLink(nodeStack, (odataReader.Item as ODataNavigationLink).Name);
 						break;
 
 					case ODataReaderState.NavigationLinkEnd:
@@ -216,7 +216,7 @@ namespace Simple.OData.Client.V3.Adapter
 			}
 		}
 
-		private ODataFeedAnnotations CreateAnnotations(ODataFeed feed)
+		private static ODataFeedAnnotations CreateAnnotations(ODataFeed feed)
 		{
 			return new ODataFeedAnnotations
 			{
@@ -264,12 +264,12 @@ namespace Simple.OData.Client.V3.Adapter
 						Name = x.Name,
 						Uri = x.Url,
 					})),
-				MediaResource = CreateAnnotations(odataEntry.MediaResource),
+				MediaResource = ResponseReader.CreateAnnotations(odataEntry.MediaResource),
 				InstanceAnnotations = odataEntry.InstanceAnnotations,
 			};
 		}
 
-		private ODataMediaAnnotations? CreateAnnotations(ODataStreamReferenceValue value)
+		private static ODataMediaAnnotations? CreateAnnotations(ODataStreamReferenceValue value)
 		{
 			return value == null ? null : new ODataMediaAnnotations
 			{
@@ -294,7 +294,7 @@ namespace Simple.OData.Client.V3.Adapter
 			}
 			else if (value is ODataStreamReferenceValue oDataStreamReferenceValue)
 			{
-				return CreateAnnotations(oDataStreamReferenceValue);
+				return ResponseReader.CreateAnnotations(oDataStreamReferenceValue);
 			}
 			else
 			{

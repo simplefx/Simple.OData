@@ -226,7 +226,7 @@ public class Metadata : MetadataBase
 	public override string GetNavigationPropertyPartnerTypeName(string collectionName, string propertyName)
 	{
 		var navigationProperty = GetNavigationProperty(collectionName, propertyName);
-		if (!TryGetEntityType(navigationProperty.Type, out var entityType))
+		if (!Metadata.TryGetEntityType(navigationProperty.Type, out var entityType))
 		{
 			throw new UnresolvableObjectException(propertyName, $"No association found for [{propertyName}].");
 		}
@@ -289,7 +289,7 @@ public class Metadata : MetadataBase
 			return null;
 		}
 
-		return !TryGetEntityType(function.ReturnType, out var entityType) ? null : new EntityCollection(entityType.Name);
+		return !Metadata.TryGetEntityType(function.ReturnType, out var entityType) ? null : new EntityCollection(entityType.Name);
 	}
 
 	public override string GetFunctionVerb(string functionName)
@@ -312,7 +312,7 @@ public class Metadata : MetadataBase
 			return null;
 		}
 
-		return !TryGetEntityType(action.ReturnType, out var entityType) ? null : new EntityCollection(entityType.Name);
+		return !Metadata.TryGetEntityType(action.ReturnType, out var entityType) ? null : new EntityCollection(entityType.Name);
 	}
 
 	private IEnumerable<IEdmEntitySet> GetEntitySets()
@@ -381,9 +381,9 @@ public class Metadata : MetadataBase
 		entityType = null;
 		if (collectionName.Contains("/"))
 		{
-			var segments = GetCollectionPathSegments(collectionName).ToList();
+			var segments = MetadataBase.GetCollectionPathSegments(collectionName).ToList();
 
-			if (SegmentsIncludeTypeSpecification(segments))
+			if (MetadataBase.SegmentsIncludeTypeSpecification(segments))
 			{
 				var derivedTypeName = segments.Last();
 				var derivedType = GetEntityTypes().SingleOrDefault(x => x.FullName() == derivedTypeName);
@@ -449,7 +449,7 @@ public class Metadata : MetadataBase
 		return false;
 	}
 
-	private bool TryGetEntityType(IEdmTypeReference typeReference, out IEdmEntityType entityType)
+	private static bool TryGetEntityType(IEdmTypeReference typeReference, out IEdmEntityType entityType)
 	{
 		entityType = typeReference.Definition.TypeKind == EdmTypeKind.Collection
 			? (typeReference.Definition as IEdmCollectionType).ElementType.Definition as IEdmEntityType

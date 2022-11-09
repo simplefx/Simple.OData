@@ -253,7 +253,7 @@ public class ODataResponse
 			return null;
 		}
 
-		return includeAnnotations ? DataWithAnnotations(entry.Data, entry.Annotations) : entry.Data;
+		return includeAnnotations ? ODataResponse.DataWithAnnotations(entry.Data, entry.Annotations) : entry.Data;
 	}
 
 	private IDictionary<string, object>? ExtractDictionary(AnnotatedEntry entry, bool includeAnnotations)
@@ -271,7 +271,7 @@ public class ODataResponse
 		}
 		else if (includeAnnotations)
 		{
-			return DataWithAnnotations(data, entry.Annotations);
+			return ODataResponse.DataWithAnnotations(data, entry.Annotations);
 		}
 		else
 		{
@@ -279,7 +279,7 @@ public class ODataResponse
 		}
 	}
 
-	private IDictionary<string, object> DataWithAnnotations(IDictionary<string, object> data, ODataEntryAnnotations annotations)
+	private static IDictionary<string, object> DataWithAnnotations(IDictionary<string, object> data, ODataEntryAnnotations annotations)
 	{
 		var dataWithAnnotations = new Dictionary<string, object>(data)
 			{

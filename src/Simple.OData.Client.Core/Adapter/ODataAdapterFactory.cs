@@ -45,7 +45,7 @@ public class ODataAdapterFactory : IODataAdapterFactory
 	/// <inheritdoc />
 	public virtual IODataModelAdapter CreateModelAdapter(string metadataString, ITypeCache typeCache)
 	{
-		var protocolVersion = GetMetadataProtocolVersion(metadataString);
+		var protocolVersion = ODataAdapterFactory.GetMetadataProtocolVersion(metadataString);
 		var loadModelAdapter = GetModelAdapterLoader(protocolVersion, metadataString, typeCache);
 		if (loadModelAdapter == null)
 		{
@@ -90,7 +90,7 @@ public class ODataAdapterFactory : IODataAdapterFactory
 					.Content
 					.ReadAsStringAsync()
 					.ConfigureAwait(false);
-				var protocolVersion = GetMetadataProtocolVersion(metadataString);
+				var protocolVersion = ODataAdapterFactory.GetMetadataProtocolVersion(metadataString);
 				return new[] { protocolVersion };
 			}
 			catch (Exception)
@@ -138,8 +138,8 @@ public class ODataAdapterFactory : IODataAdapterFactory
 	{
 		try
 		{
-			var type = LoadType(modelAdapterAssemblyName, modelAdapterTypeName);
-			var ctor = FindAdapterConstructor(type, typeCache, ctorParams);
+			var type = ODataAdapterFactory.LoadType(modelAdapterAssemblyName, modelAdapterTypeName);
+			var ctor = ODataAdapterFactory.FindAdapterConstructor(type, typeCache, ctorParams);
 			return ctor.Invoke(ctorParams) as IODataModelAdapter;
 		}
 		catch (Exception exception)
@@ -148,7 +148,7 @@ public class ODataAdapterFactory : IODataAdapterFactory
 		}
 	}
 
-	private Type LoadType(string assemblyName, string typeName)
+	private static Type LoadType(string assemblyName, string typeName)
 	{
 		try
 		{
@@ -167,7 +167,7 @@ public class ODataAdapterFactory : IODataAdapterFactory
 		}
 	}
 
-	private ConstructorInfo FindAdapterConstructor(Type type, ITypeCache typeCache, params object[] ctorParams)
+	private static ConstructorInfo FindAdapterConstructor(Type type, ITypeCache typeCache, params object[] ctorParams)
 	{
 		var constructors = typeCache.GetDeclaredConstructors(type);
 		return constructors.Single(x =>
@@ -180,7 +180,7 @@ public class ODataAdapterFactory : IODataAdapterFactory
 		try
 		{
 
-			var type = LoadType(adapterAssemblyName, adapterTypeName);
+			var type = ODataAdapterFactory.LoadType(adapterAssemblyName, adapterTypeName);
 			var constructors = typeCache.GetDeclaredConstructors(type);
 
 			var ctor = constructors.Single(x =>
@@ -200,7 +200,7 @@ public class ODataAdapterFactory : IODataAdapterFactory
 	/// </summary>
 	/// <param name="metadataString">Service metadata</param>
 	/// <returns></returns>
-	protected string GetMetadataProtocolVersion(string metadataString)
+	protected static string GetMetadataProtocolVersion(string metadataString)
 	{
 		using var reader = XmlReader.Create(new StringReader(metadataString));
 		reader.MoveToContent();

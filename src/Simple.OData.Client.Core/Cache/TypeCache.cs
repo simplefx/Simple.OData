@@ -259,7 +259,7 @@ public class TypeCache : ITypeCache
 			{
 				result = offset.DateTime;
 			}
-			else if ((targetType == typeof(DateTime) || targetType == typeof(DateTime?)) && ImplicitConversionTo<DateTime>(value) is MethodInfo implicitMethod)
+			else if ((targetType == typeof(DateTime) || targetType == typeof(DateTime?)) && TypeCache.ImplicitConversionTo<DateTime>(value) is MethodInfo implicitMethod)
 			{
 				result = (DateTime)implicitMethod.Invoke(value, new object[] { value });
 			}
@@ -333,7 +333,7 @@ public class TypeCache : ITypeCache
 		return resolver;
 	}
 
-	private MethodInfo ImplicitConversionTo<T>(object value)
+	private static MethodInfo ImplicitConversionTo<T>(object value)
 	{
 		return value.GetType().GetMethods()
 						   .FirstOrDefault(m => string.Equals(m.Name, "op_Implicit", StringComparison.Ordinal)

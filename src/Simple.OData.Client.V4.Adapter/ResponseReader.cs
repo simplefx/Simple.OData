@@ -174,16 +174,16 @@ namespace Simple.OData.Client.V4.Adapter
 				{
 					case ODataReaderState.ResourceSetStart:
 					case ODataReaderState.DeltaResourceSetStart:
-						StartFeed(nodeStack, CreateAnnotations(odataReader.Item as ODataResourceSetBase));
+						ResponseReaderBase.StartFeed(nodeStack, ResponseReader.CreateAnnotations(odataReader.Item as ODataResourceSetBase));
 						break;
 
 					case ODataReaderState.ResourceSetEnd:
 					case ODataReaderState.DeltaResourceSetEnd:
-						EndFeed(nodeStack, CreateAnnotations(odataReader.Item as ODataResourceSetBase), ref rootNode);
+						ResponseReaderBase.EndFeed(nodeStack, ResponseReader.CreateAnnotations(odataReader.Item as ODataResourceSetBase), ref rootNode);
 						break;
 
 					case ODataReaderState.ResourceStart:
-						StartEntry(nodeStack);
+						ResponseReaderBase.StartEntry(nodeStack);
 						break;
 
 					case ODataReaderState.ResourceEnd:
@@ -191,7 +191,7 @@ namespace Simple.OData.Client.V4.Adapter
 						break;
 
 					case ODataReaderState.NestedResourceInfoStart:
-						StartNavigationLink(nodeStack, (odataReader.Item as ODataNestedResourceInfo).Name);
+						ResponseReaderBase.StartNavigationLink(nodeStack, (odataReader.Item as ODataNestedResourceInfo).Name);
 						break;
 
 					case ODataReaderState.NestedResourceInfoEnd:
@@ -217,7 +217,7 @@ namespace Simple.OData.Client.V4.Adapter
 			}
 		}
 
-		private ODataFeedAnnotations CreateAnnotations(ODataResourceSetBase feed)
+		private static ODataFeedAnnotations CreateAnnotations(ODataResourceSetBase feed)
 		{
 			return new ODataFeedAnnotations()
 			{
@@ -258,12 +258,12 @@ namespace Simple.OData.Client.V4.Adapter
 				ReadLink = readLink,
 				EditLink = editLink,
 				ETag = etag,
-				MediaResource = CreateAnnotations(odataEntry.MediaResource),
+				MediaResource = ResponseReader.CreateAnnotations(odataEntry.MediaResource),
 				InstanceAnnotations = odataEntry.InstanceAnnotations,
 			};
 		}
 
-		private ODataMediaAnnotations? CreateAnnotations(ODataStreamReferenceValue value)
+		private static ODataMediaAnnotations? CreateAnnotations(ODataStreamReferenceValue value)
 		{
 			return value == null ? null : new ODataMediaAnnotations
 			{
@@ -305,7 +305,7 @@ namespace Simple.OData.Client.V4.Adapter
 			}
 			else if (value is ODataStreamReferenceValue referenceValue)
 			{
-				return CreateAnnotations(referenceValue);
+				return ResponseReader.CreateAnnotations(referenceValue);
 			}
 			else
 			{

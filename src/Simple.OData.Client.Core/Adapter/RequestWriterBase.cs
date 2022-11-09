@@ -50,7 +50,7 @@ public abstract class RequestWriterBase : IRequestWriter
 		bool optimisticConcurrency = false,
 		IDictionary<string, string>? headers = null)
 	{
-		var entryContent = await WriteStreamContentAsync(stream, IsTextMediaType(mediaType))
+		var entryContent = await WriteStreamContentAsync(stream, RequestWriterBase.IsTextMediaType(mediaType))
 			.ConfigureAwait(false);
 
 		var request = new ODataRequest(RestVerbs.Put, _session, commandText, null, entryContent, mediaType, headers)
@@ -300,7 +300,7 @@ public abstract class RequestWriterBase : IRequestWriter
 		return false;
 	}
 
-	private bool IsTextMediaType(string? mediaType)
+	private static bool IsTextMediaType(string? mediaType)
 	{
 		if (mediaType == null)
 		{

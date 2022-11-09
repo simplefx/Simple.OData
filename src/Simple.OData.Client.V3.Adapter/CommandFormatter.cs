@@ -39,9 +39,9 @@ public class CommandFormatter : CommandFormatterBase
 	protected override void FormatExpandSelectOrderby(IList<string> commandClauses, EntityCollection resultCollection, ResolvedCommand command)
 	{
 		var expandAssociations = FlatExpandAssociations(command.Details.ExpandAssociations).ToList();
-		FormatClause(commandClauses, resultCollection, expandAssociations, ODataLiteral.Expand, FormatExpandItem);
-		FormatClause(commandClauses, resultCollection, command.Details.SelectColumns, ODataLiteral.Select, FormatSelectItem);
-		FormatClause(commandClauses, resultCollection, command.Details.OrderbyColumns, ODataLiteral.OrderBy, FormatOrderByItem);
+		CommandFormatterBase.FormatClause(commandClauses, resultCollection, expandAssociations, ODataLiteral.Expand, FormatExpandItem);
+		CommandFormatterBase.FormatClause(commandClauses, resultCollection, command.Details.SelectColumns, ODataLiteral.Select, FormatSelectItem);
+		CommandFormatterBase.FormatClause(commandClauses, resultCollection, command.Details.OrderbyColumns, ODataLiteral.OrderBy, FormatOrderByItem);
 	}
 
 	protected override void FormatInlineCount(IList<string> commandClauses)

@@ -19,7 +19,7 @@ public class EntityFrameworkParameterMarshaller : IParameterMarshaller
 
 		return marshalled;
 	}
-	private object GetMarshalledParameter(DataServiceOperationContext operationContext, ServiceActionParameter serviceActionParameter, object value)
+	private static object GetMarshalledParameter(DataServiceOperationContext operationContext, ServiceActionParameter serviceActionParameter, object value)
 	{
 		var parameterKind = serviceActionParameter.ParameterType.ResourceTypeKind;
 

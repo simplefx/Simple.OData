@@ -20,17 +20,17 @@ internal class SimplePluralizer : IPluralizer
 
 	public string Pluralize(string noun)
 	{
-		return AdjustCase(ToPluralInternal(noun), noun);
+		return SimplePluralizer.AdjustCase(SimplePluralizer.ToPluralInternal(noun), noun);
 	}
 
 	public string Singularize(string noun)
 	{
-		return AdjustCase(ToSingularInternal(noun), noun);
+		return SimplePluralizer.AdjustCase(SimplePluralizer.ToSingularInternal(noun), noun);
 	}
 
 	public bool IsNounPluralOfNoun(string plural, string singular)
 	{
-		return string.Equals(ToSingularInternal(plural), singular, StringComparison.OrdinalIgnoreCase);
+		return string.Equals(SimplePluralizer.ToSingularInternal(plural), singular, StringComparison.OrdinalIgnoreCase);
 	}
 
 	private static readonly string[] _specialWordsStringTable =
@@ -253,7 +253,7 @@ internal class SimplePluralizer : IPluralizer
 		}
 	}
 
-	private string ToPluralInternal(string s)
+	private static string ToPluralInternal(string s)
 	{
 		if (string.IsNullOrEmpty(s) || s.ToCharArray().Any(x => x > 0x7F))
 		{
@@ -276,7 +276,7 @@ internal class SimplePluralizer : IPluralizer
 		return s + "s";
 	}
 
-	private string ToSingularInternal(string s)
+	private static string ToSingularInternal(string s)
 	{
 		if (string.IsNullOrEmpty(s) || s.ToCharArray().Any(x => x > 0x7F))
 		{
@@ -304,7 +304,7 @@ internal class SimplePluralizer : IPluralizer
 		return s;
 	}
 
-	private string AdjustCase(string s, string template)
+	private static string AdjustCase(string s, string template)
 	{
 		if (string.IsNullOrEmpty(s))
 		{
