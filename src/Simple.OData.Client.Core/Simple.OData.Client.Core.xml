@@ -712,7 +712,7 @@
             Navigates to the linked entity.
             </summary>
             <param name="linkName">Name of the link.</param>
-            <returns>Self.</returns>
+            <returns>Self.</returns>        
         </member>
         <member name="M:Simple.OData.Client.FluentClientBase`2.NavigateTo(Simple.OData.Client.ODataExpression)">
             <summary>

@@ -66,7 +66,7 @@ public abstract class ResponseReaderBase : IResponseReader
 		});
 	}
 
-	protected static void EndFeed(Stack<ResponseNode> nodeStack, ODataFeedAnnotations feedAnnotations, ref ResponseNode rootNode)
+	protected static void EndFeed(Stack<ResponseNode> nodeStack, ODataFeedAnnotations feedAnnotations, ref ResponseNode? rootNode)
 	{
 		var feedNode = nodeStack.Pop();
 		if (nodeStack.Any())
