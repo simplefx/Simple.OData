@@ -20,17 +20,17 @@ internal class SimplePluralizer : IPluralizer
 
 	public string Pluralize(string noun)
 	{
-		return SimplePluralizer.AdjustCase(SimplePluralizer.ToPluralInternal(noun), noun);
+		return AdjustCase(ToPluralInternal(noun), noun);
 	}
 
 	public string Singularize(string noun)
 	{
-		return SimplePluralizer.AdjustCase(SimplePluralizer.ToSingularInternal(noun), noun);
+		return AdjustCase(ToSingularInternal(noun), noun);
 	}
 
-	public bool IsNounPluralOfNoun(string plural, string singular)
+	public static bool IsNounPluralOfNoun(string plural, string singular)
 	{
-		return string.Equals(SimplePluralizer.ToSingularInternal(plural), singular, StringComparison.OrdinalIgnoreCase);
+		return string.Equals(ToSingularInternal(plural), singular, StringComparison.OrdinalIgnoreCase);
 	}
 
 	private static readonly string[] _specialWordsStringTable =

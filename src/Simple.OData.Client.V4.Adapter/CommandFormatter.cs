@@ -71,12 +71,12 @@ public class CommandFormatter : CommandFormatterBase
 			commandClauses.Add($"{ODataLiteral.Expand}={formattedExpand}");
 		}
 
-		CommandFormatterBase.FormatClause(commandClauses, resultCollection,
+		FormatClause(commandClauses, resultCollection,
 			SelectPathSegmentColumns(command.Details.SelectColumns, resultCollection,
 				command.Details.ExpandAssociations.Select(x => FormatFirstSegment(x.Key.Name)).ToList()),
 			ODataLiteral.Select, FormatSelectItem);
 
-		CommandFormatterBase.FormatClause(commandClauses, resultCollection,
+		FormatClause(commandClauses, resultCollection,
 			command.Details.OrderbyColumns
 				.Where(o => !command.Details.ExpandAssociations.Select(ea => ea.Key)
 							.Any(ea => IsInnerCollectionOrderBy(ea.Name, resultCollection, o.Key))).ToList(),
@@ -105,7 +105,7 @@ public class CommandFormatter : CommandFormatterBase
 
 			if (!string.IsNullOrEmpty(formattedApplyCommand))
 			{
-				commandClauses.Add($"{ODataLiteral.Apply}={CommandFormatterBase.EscapeUnescapedString(formattedApplyCommand)}");
+				commandClauses.Add($"{ODataLiteral.Apply}={EscapeUnescapedString(formattedApplyCommand)}");
 			}
 		}
 	}
@@ -150,7 +150,7 @@ public class CommandFormatter : CommandFormatterBase
 				var associatedEntityCollection = _session.Metadata.GetEntityCollection(
 					_session.Metadata.GetNavigationPropertyPartnerTypeName(entityCollection.Name, associationName));
 				clauses.Add(
-					$"{ODataLiteral.Filter}={CommandFormatterBase.EscapeUnescapedString(association.FilterExpression.Format(new ExpressionContext(_session, associatedEntityCollection, null, command.DynamicPropertiesContainerName)))}");
+					$"{ODataLiteral.Filter}={EscapeUnescapedString(association.FilterExpression.Format(new ExpressionContext(_session, associatedEntityCollection, null, command.DynamicPropertiesContainerName)))}");
 			}
 
 			if (association.ExpandAssociations.Any())
@@ -314,12 +314,12 @@ public class CommandFormatter : CommandFormatterBase
 			entityCollection = _session.Metadata.GetEntityCollection(
 			  _session.Metadata.GetNavigationPropertyPartnerTypeName(entityCollection.Name, associationName));
 
-			if (!CommandFormatter.HasMultipleSegments(orderByColumn) || FormatFirstSegment(orderByColumn) != FormatFirstSegment(expandAssociation))
+			if (!HasMultipleSegments(orderByColumn) || FormatFirstSegment(orderByColumn) != FormatFirstSegment(expandAssociation))
 			{
 				return false;
 			}
 
-			orderByColumn = CommandFormatter.FormatSkipSegments(orderByColumn, 1);
+			orderByColumn = FormatSkipSegments(orderByColumn, 1);
 			return IsInnerCollectionOrderBy(expandAssociation, entityCollection, orderByColumn);
 		}
 

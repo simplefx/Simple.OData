@@ -81,7 +81,7 @@ internal class RequestBuilder : IRequestBuilder
 		bool resultRequired,
 		CancellationToken cancellationToken)
 	{
-		RequestBuilder.AssertHasKey(_command);
+		AssertHasKey(_command);
 
 		await _session
 			.ResolveAdapterAsync(cancellationToken)
@@ -124,7 +124,7 @@ internal class RequestBuilder : IRequestBuilder
 
 	public async Task<ODataRequest> DeleteRequestAsync(CancellationToken cancellationToken)
 	{
-		RequestBuilder.AssertHasKey(_command);
+		AssertHasKey(_command);
 
 		await _session
 			.ResolveAdapterAsync(cancellationToken)
@@ -149,7 +149,7 @@ internal class RequestBuilder : IRequestBuilder
 		IDictionary<string, object> linkedEntryKey,
 		CancellationToken cancellationToken)
 	{
-		RequestBuilder.AssertHasKey(_command);
+		AssertHasKey(_command);
 
 		await _session
 			.ResolveAdapterAsync(cancellationToken)
@@ -187,7 +187,7 @@ internal class RequestBuilder : IRequestBuilder
 		IDictionary<string, object> linkedEntryKey,
 		CancellationToken cancellationToken)
 	{
-		RequestBuilder.AssertHasKey(_command);
+		AssertHasKey(_command);
 
 		await _session
 			.ResolveAdapterAsync(cancellationToken)

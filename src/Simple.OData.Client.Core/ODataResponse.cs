@@ -246,17 +246,17 @@ public class ODataResponse
 		};
 	}
 
-	private IDictionary<string, object>? ExtractData(AnnotatedEntry entry, bool includeAnnotations)
+	private static IDictionary<string, object>? ExtractData(AnnotatedEntry entry, bool includeAnnotations)
 	{
 		if (entry == null || entry.Data == null)
 		{
 			return null;
 		}
 
-		return includeAnnotations ? ODataResponse.DataWithAnnotations(entry.Data, entry.Annotations) : entry.Data;
+		return includeAnnotations ? DataWithAnnotations(entry.Data, entry.Annotations) : entry.Data;
 	}
 
-	private IDictionary<string, object>? ExtractDictionary(AnnotatedEntry entry, bool includeAnnotations)
+	private static IDictionary<string, object>? ExtractDictionary(AnnotatedEntry entry, bool includeAnnotations)
 	{
 		if (entry == null || entry.Data == null)
 		{
@@ -271,7 +271,7 @@ public class ODataResponse
 		}
 		else if (includeAnnotations)
 		{
-			return ODataResponse.DataWithAnnotations(data, entry.Annotations);
+			return DataWithAnnotations(data, entry.Annotations);
 		}
 		else
 		{

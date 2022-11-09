@@ -50,7 +50,7 @@ public abstract class RequestWriterBase : IRequestWriter
 		bool optimisticConcurrency = false,
 		IDictionary<string, string>? headers = null)
 	{
-		var entryContent = await WriteStreamContentAsync(stream, RequestWriterBase.IsTextMediaType(mediaType))
+		var entryContent = await WriteStreamContentAsync(stream, IsTextMediaType(mediaType))
 			.ConfigureAwait(false);
 
 		var request = new ODataRequest(RestVerbs.Put, _session, commandText, null, entryContent, mediaType, headers)

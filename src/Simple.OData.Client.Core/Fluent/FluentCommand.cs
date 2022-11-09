@@ -72,7 +72,7 @@ public class FluentCommand
 
 	public FluentCommand WithMedia(params string[] properties)
 	{
-		Details.MediaProperties = FluentCommand.SplitItems(properties).ToList();
+		Details.MediaProperties = SplitItems(properties).ToList();
 		return this;
 	}
 
@@ -200,13 +200,13 @@ public class FluentCommand
 
 	public FluentCommand Select(IEnumerable<string> columns)
 	{
-		Details.SelectColumns.AddRange(FluentCommand.SplitItems(columns).ToList());
+		Details.SelectColumns.AddRange(SplitItems(columns).ToList());
 		return this;
 	}
 
 	public FluentCommand Select(params string[] columns)
 	{
-		Details.SelectColumns.AddRange(FluentCommand.SplitItems(columns).ToList());
+		Details.SelectColumns.AddRange(SplitItems(columns).ToList());
 		return this;
 	}
 
@@ -217,13 +217,13 @@ public class FluentCommand
 
 	public FluentCommand OrderBy(IEnumerable<KeyValuePair<string, bool>> columns)
 	{
-		Details.OrderbyColumns.AddRange(FluentCommand.SplitItems(columns));
+		Details.OrderbyColumns.AddRange(SplitItems(columns));
 		return this;
 	}
 
 	public FluentCommand OrderBy(params string[] columns)
 	{
-		return OrderBy(FluentCommand.SplitItems(columns).Select(x => new KeyValuePair<string, bool>(x, false)));
+		return OrderBy(SplitItems(columns).Select(x => new KeyValuePair<string, bool>(x, false)));
 	}
 
 	public FluentCommand OrderBy(params ODataExpression[] columns)
@@ -233,7 +233,7 @@ public class FluentCommand
 
 	public FluentCommand ThenBy(params string[] columns)
 	{
-		Details.OrderbyColumns.AddRange(FluentCommand.SplitItems(columns).Select(x => new KeyValuePair<string, bool>(x, false)));
+		Details.OrderbyColumns.AddRange(SplitItems(columns).Select(x => new KeyValuePair<string, bool>(x, false)));
 		return this;
 	}
 
@@ -244,7 +244,7 @@ public class FluentCommand
 
 	public FluentCommand OrderByDescending(params string[] columns)
 	{
-		return OrderBy(FluentCommand.SplitItems(columns).Select(x => new KeyValuePair<string, bool>(x, true)));
+		return OrderBy(SplitItems(columns).Select(x => new KeyValuePair<string, bool>(x, true)));
 	}
 
 	public FluentCommand OrderByDescending(params ODataExpression[] columns)
@@ -254,7 +254,7 @@ public class FluentCommand
 
 	public FluentCommand ThenByDescending(params string[] columns)
 	{
-		Details.OrderbyColumns.AddRange(FluentCommand.SplitItems(columns).Select(x => new KeyValuePair<string, bool>(x, true)));
+		Details.OrderbyColumns.AddRange(SplitItems(columns).Select(x => new KeyValuePair<string, bool>(x, true)));
 		return this;
 	}
 

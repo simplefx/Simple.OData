@@ -174,16 +174,16 @@ namespace Simple.OData.Client.V4.Adapter
 				{
 					case ODataReaderState.ResourceSetStart:
 					case ODataReaderState.DeltaResourceSetStart:
-						ResponseReaderBase.StartFeed(nodeStack, ResponseReader.CreateAnnotations(odataReader.Item as ODataResourceSetBase));
+						StartFeed(nodeStack, CreateAnnotations(odataReader.Item as ODataResourceSetBase));
 						break;
 
 					case ODataReaderState.ResourceSetEnd:
 					case ODataReaderState.DeltaResourceSetEnd:
-						ResponseReaderBase.EndFeed(nodeStack, ResponseReader.CreateAnnotations(odataReader.Item as ODataResourceSetBase), ref rootNode);
+						EndFeed(nodeStack, CreateAnnotations(odataReader.Item as ODataResourceSetBase), ref rootNode);
 						break;
 
 					case ODataReaderState.ResourceStart:
-						ResponseReaderBase.StartEntry(nodeStack);
+						StartEntry(nodeStack);
 						break;
 
 					case ODataReaderState.ResourceEnd:
@@ -191,7 +191,7 @@ namespace Simple.OData.Client.V4.Adapter
 						break;
 
 					case ODataReaderState.NestedResourceInfoStart:
-						ResponseReaderBase.StartNavigationLink(nodeStack, (odataReader.Item as ODataNestedResourceInfo).Name);
+						StartNavigationLink(nodeStack, (odataReader.Item as ODataNestedResourceInfo).Name);
 						break;
 
 					case ODataReaderState.NestedResourceInfoEnd:
@@ -258,7 +258,7 @@ namespace Simple.OData.Client.V4.Adapter
 				ReadLink = readLink,
 				EditLink = editLink,
 				ETag = etag,
-				MediaResource = ResponseReader.CreateAnnotations(odataEntry.MediaResource),
+				MediaResource = CreateAnnotations(odataEntry.MediaResource),
 				InstanceAnnotations = odataEntry.InstanceAnnotations,
 			};
 		}
@@ -305,7 +305,7 @@ namespace Simple.OData.Client.V4.Adapter
 			}
 			else if (value is ODataStreamReferenceValue referenceValue)
 			{
-				return ResponseReader.CreateAnnotations(referenceValue);
+				return CreateAnnotations(referenceValue);
 			}
 			else
 			{

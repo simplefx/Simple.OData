@@ -432,7 +432,7 @@ public partial class ODataClient
 
 		var command = GetBoundClient()
 			.For(collection)
-			.Filter(ODataClient.ExtractFilterFromCommandText(collection, commandText))
+			.Filter(ExtractFilterFromCommandText(collection, commandText))
 			.Set(entryData)
 			.AsBoundClient().Command;
 
@@ -465,7 +465,7 @@ public partial class ODataClient
 	{
 		var command = GetBoundClient()
 			.For(collection)
-			.Filter(ODataClient.ExtractFilterFromCommandText(collection, commandText))
+			.Filter(ExtractFilterFromCommandText(collection, commandText))
 			.AsBoundClient().Command;
 
 		return await DeleteEntriesAsync(command, cancellationToken).ConfigureAwait(false);

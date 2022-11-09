@@ -104,7 +104,7 @@ public partial class ODataExpression
 		var elementNames = new List<string>(Reference.Split('.', '/'));
 		var entityCollection = context.EntityCollection;
 		var segmentNames = BuildReferencePath(new List<string>(), entityCollection, elementNames, context);
-		return ODataExpression.FormatScope(string.Join("/", segmentNames), context);
+		return FormatScope(string.Join("/", segmentNames), context);
 	}
 
 	private string FormatFunction(ExpressionContext context)
@@ -218,7 +218,7 @@ public partial class ODataExpression
 		}
 
 		var formattedNavigationPath = context.Session.Adapter.GetCommandFormatter().FormatNavigationPath(context.EntityCollection, navigationPath);
-		return ODataExpression.FormatScope($"{formattedNavigationPath}/{Function.FunctionName.ToLowerInvariant()}({formattedArguments})", context);
+		return FormatScope($"{formattedNavigationPath}/{Function.FunctionName.ToLowerInvariant()}({formattedArguments})", context);
 	}
 
 	private string FormatIsOfCastFunction(ExpressionContext context)
@@ -324,7 +324,7 @@ public partial class ODataExpression
 				segmentNames.Add(propertyName);
 				return BuildReferencePath(segmentNames, linkedEntityCollection, elementNames.Skip(1).ToList(), context);
 			}
-			else if (ODataExpression.IsFunction(objectName, context))
+			else if (IsFunction(objectName, context))
 			{
 				var formattedFunction = FormatAsFunction(objectName, context);
 				segmentNames.Add(formattedFunction);
@@ -410,8 +410,8 @@ public partial class ODataExpression
 			return false;
 		}
 
-		var outerPrecedence = ODataExpression.GetPrecedence(_operator);
-		var innerPrecedence = ODataExpression.GetPrecedence(expr._operator);
+		var outerPrecedence = GetPrecedence(_operator);
+		var innerPrecedence = GetPrecedence(expr._operator);
 		return outerPrecedence < innerPrecedence;
 	}
 

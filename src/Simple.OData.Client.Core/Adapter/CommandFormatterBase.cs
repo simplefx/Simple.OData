@@ -187,12 +187,12 @@ public abstract class CommandFormatterBase : ICommandFormatter
 
 		if (command.Details.Filter != null)
 		{
-			queryClauses.Add($"{ODataLiteral.Filter}={CommandFormatterBase.EscapeUnescapedString(command.Details.Filter)}");
+			queryClauses.Add($"{ODataLiteral.Filter}={EscapeUnescapedString(command.Details.Filter)}");
 		}
 
 		if (command.Details.Search != null)
 		{
-			queryClauses.Add($"{ODataLiteral.Search}={CommandFormatterBase.EscapeUnescapedString(command.Details.Search)}");
+			queryClauses.Add($"{ODataLiteral.Search}={EscapeUnescapedString(command.Details.Search)}");
 		}
 
 		if (command.Details.QueryOptions != null)

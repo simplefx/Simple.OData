@@ -45,7 +45,7 @@ public class ODataAdapterFactory : IODataAdapterFactory
 	/// <inheritdoc />
 	public virtual IODataModelAdapter CreateModelAdapter(string metadataString, ITypeCache typeCache)
 	{
-		var protocolVersion = ODataAdapterFactory.GetMetadataProtocolVersion(metadataString);
+		var protocolVersion = GetMetadataProtocolVersion(metadataString);
 		var loadModelAdapter = GetModelAdapterLoader(protocolVersion, metadataString, typeCache);
 		if (loadModelAdapter == null)
 		{
@@ -75,7 +75,7 @@ public class ODataAdapterFactory : IODataAdapterFactory
 	/// <param name="response">HTTP response message with schema information</param>
 	/// <returns></returns>
 	/// <exception cref="InvalidOperationException"></exception>
-	protected async Task<IEnumerable<string>> GetSupportedProtocolVersionsAsync(HttpResponseMessage response)
+	protected static async Task<IEnumerable<string>> GetSupportedProtocolVersionsAsync(HttpResponseMessage response)
 	{
 		if (response.Headers.TryGetValues(HttpLiteral.DataServiceVersion, out var headerValues) ||
 			response.Headers.TryGetValues(HttpLiteral.ODataVersion, out headerValues))
@@ -90,7 +90,7 @@ public class ODataAdapterFactory : IODataAdapterFactory
 					.Content
 					.ReadAsStringAsync()
 					.ConfigureAwait(false);
-				var protocolVersion = ODataAdapterFactory.GetMetadataProtocolVersion(metadataString);
+				var protocolVersion = GetMetadataProtocolVersion(metadataString);
 				return new[] { protocolVersion };
 			}
 			catch (Exception)
@@ -134,12 +134,12 @@ public class ODataAdapterFactory : IODataAdapterFactory
 		return null;
 	}
 
-	private IODataModelAdapter LoadModelAdapter(ITypeCache typeCache, string modelAdapterAssemblyName, string modelAdapterTypeName, params object[] ctorParams)
+	private static IODataModelAdapter LoadModelAdapter(ITypeCache typeCache, string modelAdapterAssemblyName, string modelAdapterTypeName, params object[] ctorParams)
 	{
 		try
 		{
-			var type = ODataAdapterFactory.LoadType(modelAdapterAssemblyName, modelAdapterTypeName);
-			var ctor = ODataAdapterFactory.FindAdapterConstructor(type, typeCache, ctorParams);
+			var type = LoadType(modelAdapterAssemblyName, modelAdapterTypeName);
+			var ctor = FindAdapterConstructor(type, typeCache, ctorParams);
 			return ctor.Invoke(ctorParams) as IODataModelAdapter;
 		}
 		catch (Exception exception)
@@ -175,12 +175,12 @@ public class ODataAdapterFactory : IODataAdapterFactory
 			x.GetParameters().Last().ParameterType.GetTypeInfo().IsAssignableFrom(ctorParams.Last().GetType().GetTypeInfo()));
 	}
 
-	private IODataAdapter LoadAdapter(string adapterAssemblyName, ITypeCache typeCache, string adapterTypeName, params object[] ctorParams)
+	private static IODataAdapter LoadAdapter(string adapterAssemblyName, ITypeCache typeCache, string adapterTypeName, params object[] ctorParams)
 	{
 		try
 		{
 
-			var type = ODataAdapterFactory.LoadType(adapterAssemblyName, adapterTypeName);
+			var type = LoadType(adapterAssemblyName, adapterTypeName);
 			var constructors = typeCache.GetDeclaredConstructors(type);
 
 			var ctor = constructors.Single(x =>

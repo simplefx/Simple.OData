@@ -174,15 +174,15 @@ namespace Simple.OData.Client.V3.Adapter
 				switch (odataReader.State)
 				{
 					case ODataReaderState.FeedStart:
-						ResponseReaderBase.StartFeed(nodeStack, ResponseReader.CreateAnnotations(odataReader.Item as ODataFeed));
+						StartFeed(nodeStack, CreateAnnotations(odataReader.Item as ODataFeed));
 						break;
 
 					case ODataReaderState.FeedEnd:
-						ResponseReaderBase.EndFeed(nodeStack, ResponseReader.CreateAnnotations(odataReader.Item as ODataFeed), ref rootNode);
+						EndFeed(nodeStack, CreateAnnotations(odataReader.Item as ODataFeed), ref rootNode);
 						break;
 
 					case ODataReaderState.EntryStart:
-						ResponseReaderBase.StartEntry(nodeStack);
+						StartEntry(nodeStack);
 						break;
 
 					case ODataReaderState.EntryEnd:
@@ -190,7 +190,7 @@ namespace Simple.OData.Client.V3.Adapter
 						break;
 
 					case ODataReaderState.NavigationLinkStart:
-						ResponseReaderBase.StartNavigationLink(nodeStack, (odataReader.Item as ODataNavigationLink).Name);
+						StartNavigationLink(nodeStack, (odataReader.Item as ODataNavigationLink).Name);
 						break;
 
 					case ODataReaderState.NavigationLinkEnd:
@@ -264,7 +264,7 @@ namespace Simple.OData.Client.V3.Adapter
 						Name = x.Name,
 						Uri = x.Url,
 					})),
-				MediaResource = ResponseReader.CreateAnnotations(odataEntry.MediaResource),
+				MediaResource = CreateAnnotations(odataEntry.MediaResource),
 				InstanceAnnotations = odataEntry.InstanceAnnotations,
 			};
 		}
@@ -294,7 +294,7 @@ namespace Simple.OData.Client.V3.Adapter
 			}
 			else if (value is ODataStreamReferenceValue oDataStreamReferenceValue)
 			{
-				return ResponseReader.CreateAnnotations(oDataStreamReferenceValue);
+				return CreateAnnotations(oDataStreamReferenceValue);
 			}
 			else
 			{

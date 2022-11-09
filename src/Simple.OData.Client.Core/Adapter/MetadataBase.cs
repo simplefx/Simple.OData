@@ -72,7 +72,7 @@ public abstract class MetadataBase : IMetadata
 		var segments = collectionPath.Split('/');
 		if (segments.Length > 1)
 		{
-			if (MetadataBase.SegmentsIncludeTypeSpecification(segments))
+			if (SegmentsIncludeTypeSpecification(segments))
 			{
 				var baseEntitySet = GetEntityCollection(Utils.ExtractCollectionName(segments[segments.Length - 2]));
 				return GetDerivedEntityCollection(baseEntitySet, Utils.ExtractCollectionName(segments.Last()));
@@ -96,7 +96,7 @@ public abstract class MetadataBase : IMetadata
 
 	public EntityCollection NavigateToCollection(string path)
 	{
-		var segments = MetadataBase.GetCollectionPathSegments(path);
+		var segments = GetCollectionPathSegments(path);
 		return IsSingleSegmentWithTypeSpecification(segments)
 			? GetEntityCollection(path)
 			: NavigateToCollection(GetEntityCollection(segments.First()), segments.Skip(1));
@@ -104,7 +104,7 @@ public abstract class MetadataBase : IMetadata
 
 	public EntityCollection NavigateToCollection(EntityCollection rootCollection, string path)
 	{
-		return NavigateToCollection(rootCollection, MetadataBase.GetCollectionPathSegments(path));
+		return NavigateToCollection(rootCollection, GetCollectionPathSegments(path));
 	}
 
 	private EntityCollection NavigateToCollection(EntityCollection rootCollection, IEnumerable<string> segments)
@@ -130,9 +130,9 @@ public abstract class MetadataBase : IMetadata
 		return segments.Last().Contains(".");
 	}
 
-	protected bool IsSingleSegmentWithTypeSpecification(IEnumerable<string> segments)
+	protected static bool IsSingleSegmentWithTypeSpecification(IEnumerable<string> segments)
 	{
-		return segments.Count() == 2 && MetadataBase.SegmentsIncludeTypeSpecification(segments);
+		return segments.Count() == 2 && SegmentsIncludeTypeSpecification(segments);
 	}
 
 	public EntryDetails ParseEntryDetails(

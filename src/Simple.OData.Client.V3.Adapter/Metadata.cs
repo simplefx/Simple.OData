@@ -184,7 +184,7 @@ namespace Simple.OData.Client.V3.Adapter
 		public override string GetNavigationPropertyPartnerTypeName(string collectionName, string propertyName)
 		{
 			var navigationProperty = GetNavigationProperty(collectionName, propertyName);
-			if (!Metadata.TryGetEntityType(navigationProperty.Type, out var entityType))
+			if (!TryGetEntityType(navigationProperty.Type, out var entityType))
 			{
 				throw new UnresolvableObjectException(propertyName, $"No association found for [{propertyName}].");
 			}
@@ -245,7 +245,7 @@ namespace Simple.OData.Client.V3.Adapter
 				return null;
 			}
 
-			return !Metadata.TryGetEntityType(function.ReturnType, out var entityType) ? null : new EntityCollection(entityType.Name);
+			return !TryGetEntityType(function.ReturnType, out var entityType) ? null : new EntityCollection(entityType.Name);
 		}
 
 		public override string GetFunctionVerb(string functionName)
@@ -309,9 +309,9 @@ namespace Simple.OData.Client.V3.Adapter
 			entityType = null;
 			if (collectionName.Contains("/"))
 			{
-				var segments = MetadataBase.GetCollectionPathSegments(collectionName);
+				var segments = GetCollectionPathSegments(collectionName);
 
-				if (MetadataBase.SegmentsIncludeTypeSpecification(segments))
+				if (SegmentsIncludeTypeSpecification(segments))
 				{
 					var derivedTypeName = segments.Last();
 					var derivedType = GetEntityTypes().SingleOrDefault(x => x.FullName() == derivedTypeName);
