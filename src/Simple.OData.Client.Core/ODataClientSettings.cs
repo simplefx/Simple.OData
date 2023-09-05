@@ -313,6 +313,14 @@ public class ODataClientSettings
 	public ValidationKinds Validations { get; set; } = ValidationKinds.All;
 
 	/// <summary>
+	/// Gets or sets SemaphoreRequestLimiter.
+	/// </summary>
+	/// <value>
+	/// If set, limits the number of httprequests to input value.
+	/// </value>
+	public int SemaphoreRequestLimiter { get; set; }
+
+	/// <summary>
 	/// Initializes a new instance of the <see cref="ODataClientSettings"/> class.
 	/// </summary>
 	public ODataClientSettings()
@@ -408,5 +416,6 @@ public class ODataClientSettings
 		ReadUntypedAsString = session.Settings.ReadUntypedAsString;
 		WebRequestExceptionMessageSource = session.Settings.WebRequestExceptionMessageSource;
 		BatchPayloadUriOption = session.Settings.BatchPayloadUriOption;
+		SemaphoreRequestLimiter = session.Settings.SemaphoreRequestLimiter;
 	}
 }
