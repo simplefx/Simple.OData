@@ -38,10 +38,7 @@ internal class ClientWithRequest<T> : IClientWithRequest<T>
 		var response = await _requestRunner
 			.ExecuteRequestAsync(_request, cancellationToken)
 			.ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		return new ClientWithResponse<T>(_session, _request, response);
 	}

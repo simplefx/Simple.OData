@@ -44,10 +44,7 @@ public partial class BoundClient<T>
 		await _session.ResolveAdapterAsync(cancellationToken)
 			.ConfigureAwait(false);
 		var command = _command.WithCount().Resolve(_session);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		var result = _client.FindEntriesAsync(command.Format(), annotations, command.Details.Headers, cancellationToken);
 		return await FilterAndTypeColumnsAsync(
@@ -63,10 +60,7 @@ public partial class BoundClient<T>
 	public async Task<IEnumerable<T>> FindEntriesAsync(Uri annotatedUri, ODataFeedAnnotations annotations, CancellationToken cancellationToken)
 	{
 		var commandText = annotatedUri.AbsoluteUri;
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		var result = _client.FindEntriesAsync(commandText, annotations, cancellationToken);
 		return await FilterAndTypeColumnsAsync(

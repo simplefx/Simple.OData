@@ -43,10 +43,7 @@ internal class RequestRunner
 					: _session.GetHttpConnection();
 
 				response = await httpConnection.HttpClient.SendAsync(request.RequestMessage, cancellationToken).ConfigureAwait(false);
-				if (cancellationToken.IsCancellationRequested)
-				{
-					cancellationToken.ThrowIfCancellationRequested();
-				}
+				cancellationToken.ThrowIfCancellationRequested();
 			}
 
 			_session.Trace("Request completed: {0}", response.StatusCode);
