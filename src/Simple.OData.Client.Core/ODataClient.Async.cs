@@ -213,10 +213,7 @@ public partial class ODataClient
 	public async Task<string> GetCommandTextAsync(string collection, ODataExpression expression, CancellationToken cancellationToken)
 	{
 		await Session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		return await GetBoundClient()
 			.For(collection)
@@ -232,10 +229,7 @@ public partial class ODataClient
 	public async Task<string> GetCommandTextAsync<T>(string collection, Expression<Func<T, bool>> expression, CancellationToken cancellationToken)
 	{
 		await Session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		return await GetBoundClient()
 			.For(collection)
@@ -311,10 +305,7 @@ public partial class ODataClient
 		}
 
 		await Session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		var entryKeyWithNames = new Dictionary<string, object>();
 		var entityCollection = Session.Metadata.GetEntityCollection(collection);
@@ -346,10 +337,7 @@ public partial class ODataClient
 
 		var requestBuilder = new RequestBuilder(command, Session, BatchWriter);
 		var request = await requestBuilder.GetRequestAsync(false, cancellationToken).ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		return await ExecuteRequestWithResultAsync(request, cancellationToken,
 			x => x.AsEntry(Session.Settings.IncludeAnnotationsInResults), () => null).ConfigureAwait(false);
@@ -554,10 +542,7 @@ public partial class ODataClient
 		}
 
 		await Session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		var command = GetBoundClient()
 			.Function(functionName)
@@ -581,10 +566,7 @@ public partial class ODataClient
 		}
 
 		await Session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		var command = GetBoundClient()
 			.Function(functionName)
@@ -607,10 +589,7 @@ public partial class ODataClient
 		}
 
 		await Session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		var result = await ExecuteFunctionAsSingleAsync(functionName, parameters, cancellationToken).ConfigureAwait(false);
 		return (T)result.First().Value;
@@ -629,10 +608,7 @@ public partial class ODataClient
 		}
 
 		await Session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		var result = await ExecuteFunctionAsEnumerableAsync(functionName, parameters, cancellationToken).ConfigureAwait(false);
 		return IsBatchRequest
@@ -655,10 +631,7 @@ public partial class ODataClient
 		}
 
 		await Session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		var command = GetBoundClient()
 			.Action(actionName)
@@ -681,10 +654,7 @@ public partial class ODataClient
 		}
 
 		await Session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		var command = GetBoundClient()
 			.Action(actionName)
@@ -708,10 +678,7 @@ public partial class ODataClient
 		}
 
 		await Session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		var command = GetBoundClient()
 			.Action(actionName)
@@ -734,10 +701,7 @@ public partial class ODataClient
 		}
 
 		await Session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		var result = await ExecuteActionAsSingleAsync(actionName, parameters, cancellationToken).ConfigureAwait(false);
 		return (T)result.First().Value;
@@ -756,10 +720,7 @@ public partial class ODataClient
 		}
 
 		await Session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		var result = await ExecuteActionAsEnumerableAsync(actionName, parameters, cancellationToken).ConfigureAwait(false);
 		return IsBatchRequest
@@ -836,10 +797,7 @@ public partial class ODataClient
 	{
 		var requestBuilder = new RequestBuilder(commandText, Session, BatchWriter, headers);
 		var request = await requestBuilder.GetRequestAsync(scalarResult, cancellationToken).ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		return await ExecuteRequestWithResultAsync(request, cancellationToken, x =>
 		{
@@ -867,18 +825,12 @@ public partial class ODataClient
 		}
 
 		await Session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		var resolvedCommand = command.Resolve(Session);
 
 		var result = await FindAnnotatedEntriesAsync(resolvedCommand.Format(), scalarResult, annotations, resolvedCommand.Details.Headers, cancellationToken).ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		await EnrichWithMediaPropertiesAsync(result, resolvedCommand, cancellationToken).ConfigureAwait(false);
 		return result?.Select(x => x.GetData(Session.Settings.IncludeAnnotationsInResults));
@@ -893,10 +845,7 @@ public partial class ODataClient
 
 		var requestBuilder = new RequestBuilder(commandText, Session, BatchWriter, headers);
 		var request = await requestBuilder.GetRequestAsync(false, cancellationToken).ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		var result = await ExecuteRequestWithResultAsync(request, cancellationToken,
 			x => x.AsEntries(Session.Settings.IncludeAnnotationsInResults),
@@ -912,18 +861,12 @@ public partial class ODataClient
 		}
 
 		await Session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		var resolvedCommand = command.Resolve(Session);
 
 		var results = await FindAnnotatedEntriesAsync(resolvedCommand.Format(), false, null, resolvedCommand.Details.Headers, cancellationToken).ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		var result = results?.FirstOrDefault();
 
@@ -943,10 +886,7 @@ public partial class ODataClient
 
 		var requestBuilder = new RequestBuilder(commandText, Session, BatchWriter, headers);
 		var request = await requestBuilder.GetRequestAsync(true, cancellationToken).ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		var result = await ExecuteRequestWithResultAsync(request, cancellationToken,
 			x => x.AsEntries(Session.Settings.IncludeAnnotationsInResults),
@@ -964,10 +904,7 @@ public partial class ODataClient
 		}
 
 		await Session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		var resolvedCommand = command.Resolve(Session);
 
@@ -982,34 +919,22 @@ public partial class ODataClient
 		}
 
 		await Session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		var resolvedCommand = command.Resolve(Session);
 		var requestBuilder = new RequestBuilder(resolvedCommand, Session, BatchWriter);
 		var request = await requestBuilder.InsertRequestAsync(resultRequired, cancellationToken).ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		var result = await ExecuteRequestWithResultAsync(request, cancellationToken,
 			x => x.AsEntry(Session.Settings.IncludeAnnotationsInResults), () => null, () => resolvedCommand.CommandData).ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		var keyNames = Session.Metadata.GetDeclaredKeyPropertyNames(resolvedCommand.QualifiedEntityCollectionName);
 		if (result == null && resultRequired && Utils.AllMatch(keyNames, resolvedCommand.CommandData.Keys, Session.Settings.NameMatchResolver))
 		{
 			result = await GetEntryAsync(request.CommandText, request.EntryData, cancellationToken).ConfigureAwait(false);
-			if (cancellationToken.IsCancellationRequested)
-			{
-				cancellationToken.ThrowIfCancellationRequested();
-			}
+			cancellationToken.ThrowIfCancellationRequested();
 		}
 
 		return result;
@@ -1023,35 +948,23 @@ public partial class ODataClient
 		}
 
 		await Session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		var resolvedCommand = command.Resolve(Session);
 		var requestBuilder = new RequestBuilder(resolvedCommand, Session, BatchWriter);
 		var request = await requestBuilder.UpdateRequestAsync(resultRequired, cancellationToken).ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		var result = await ExecuteRequestWithResultAsync(request, cancellationToken,
 			x => x.AsEntry(Session.Settings.IncludeAnnotationsInResults), () => null, () => request.EntryData).ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		if (result == null && resultRequired)
 		{
 			try
 			{
 				result = await GetUpdatedResult(resolvedCommand, cancellationToken).ConfigureAwait(false);
-				if (cancellationToken.IsCancellationRequested)
-				{
-					cancellationToken.ThrowIfCancellationRequested();
-				}
+				cancellationToken.ThrowIfCancellationRequested();
 			}
 			catch (Exception)
 			{
@@ -1072,10 +985,7 @@ public partial class ODataClient
 			{
 				var entryKey = resolvedCommand.Details.HasKey ? resolvedCommand.KeyValues : resolvedCommand.FilterAsKey;
 				await UnlinkEntryAsync(resolvedCommand.QualifiedEntityCollectionName, entryKey, associationName, cancellationToken).ConfigureAwait(false);
-				if (cancellationToken.IsCancellationRequested)
-				{
-					cancellationToken.ThrowIfCancellationRequested();
-				}
+				cancellationToken.ThrowIfCancellationRequested();
 			}
 			catch (Exception)
 			{
@@ -1093,10 +1003,7 @@ public partial class ODataClient
 		}
 
 		await Session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		var resolvedCommand = command.Resolve(Session);
 
@@ -1114,10 +1021,7 @@ public partial class ODataClient
 		}
 
 		await Session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		var resolvedCommand = command.Resolve(Session);
 		var requestBuilder = new RequestBuilder(resolvedCommand, Session, BatchWriter);
@@ -1138,10 +1042,7 @@ public partial class ODataClient
 		}
 
 		await Session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		var resolvedCommand = command.Resolve(Session);
 		return await IterateEntriesAsync(
@@ -1158,18 +1059,12 @@ public partial class ODataClient
 		}
 
 		await Session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		var resolvedCommand = command.Resolve(Session);
 		var requestBuilder = new RequestBuilder(resolvedCommand, Session, BatchWriter);
 		var request = await requestBuilder.LinkRequestAsync(linkName, linkedEntryKey, cancellationToken).ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		if (!IsBatchRequest)
 		{
@@ -1187,18 +1082,12 @@ public partial class ODataClient
 		}
 
 		await Session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		var resolvedCommand = command.Resolve(Session);
 		var requestBuilder = new RequestBuilder(resolvedCommand, Session, BatchWriter);
 		var request = await requestBuilder.UnlinkRequestAsync(linkName, linkedEntryKey, cancellationToken).ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		if (!IsBatchRequest)
 		{
@@ -1217,10 +1106,7 @@ public partial class ODataClient
 
 		var requestBuilder = new RequestBuilder(commandText, Session, BatchWriter, headers);
 		var request = await requestBuilder.GetRequestAsync(true, cancellationToken).ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		return await ExecuteGetStreamRequestAsync(request, cancellationToken).ConfigureAwait(false);
 	}
@@ -1233,10 +1119,7 @@ public partial class ODataClient
 		}
 
 		await Session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		var resolvedCommand = command.Resolve(Session);
 		return await GetMediaStreamAsync(resolvedCommand.Format(), command.Details.Headers, cancellationToken).ConfigureAwait(false);
@@ -1251,10 +1134,7 @@ public partial class ODataClient
 
 		var requestBuilder = new RequestBuilder(commandText, Session, BatchWriter, headers);
 		var request = await requestBuilder.UpdateRequestAsync(stream, contentType, optimisticConcurrency, cancellationToken).ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		await ExecuteRequestAsync(request, cancellationToken).ConfigureAwait(false);
 	}
@@ -1267,10 +1147,7 @@ public partial class ODataClient
 		}
 
 		await Session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		var resolvedCommand = command.Resolve(Session);
 		await SetMediaStreamAsync(resolvedCommand.Format(), stream, contentType, optimisticConcurrency, resolvedCommand.Details.Headers, cancellationToken).ConfigureAwait(false);
@@ -1305,10 +1182,7 @@ public partial class ODataClient
 		}
 
 		await Session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		var resolvedCommand = command.Resolve(Session);
 		if (command.Details.HasFunction)
@@ -1333,10 +1207,7 @@ public partial class ODataClient
 		}
 
 		await Session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		var resolvedCommand = command.Resolve(Session);
 		if (command.Details.HasFunction)
@@ -1405,10 +1276,7 @@ public partial class ODataClient
 	internal async Task ExecuteBatchAsync(IList<Func<IODataClient, Task>> actions, IDictionary<string, string> headers, CancellationToken cancellationToken)
 	{
 		await Session.ResolveAdapterAsync(cancellationToken).ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		await ExecuteBatchActionsAsync(actions, headers, cancellationToken).ConfigureAwait(false);
 	}

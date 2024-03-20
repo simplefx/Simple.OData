@@ -48,10 +48,7 @@ internal class RequestBuilder : IRequestBuilder
 		await _session
 			.ResolveAdapterAsync(cancellationToken)
 			.ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		return await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
 			.CreateGetRequestAsync(_commandText ?? _command.Format(), scalarResult, GetHeaders())
@@ -65,10 +62,7 @@ internal class RequestBuilder : IRequestBuilder
 		await _session
 			.ResolveAdapterAsync(cancellationToken)
 			.ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		var entryData = _command.CommandData;
 
@@ -86,10 +80,7 @@ internal class RequestBuilder : IRequestBuilder
 		await _session
 			.ResolveAdapterAsync(cancellationToken)
 			.ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		var collectionName = _command.QualifiedEntityCollectionName;
 		var entryKey = _command.Details.HasKey ? _command.KeyValues : _command.FilterAsKey;
@@ -112,10 +103,7 @@ internal class RequestBuilder : IRequestBuilder
 		await _session
 			.ResolveAdapterAsync(cancellationToken)
 			.ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		return await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
 			.CreatePutRequestAsync(_commandText, stream, contentType, optimisticConcurrency, GetHeaders())
@@ -129,10 +117,7 @@ internal class RequestBuilder : IRequestBuilder
 		await _session
 			.ResolveAdapterAsync(cancellationToken)
 			.ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		var collectionName = _command.QualifiedEntityCollectionName;
 		var entryIdent = FormatEntryKey(_command);
@@ -154,26 +139,17 @@ internal class RequestBuilder : IRequestBuilder
 		await _session
 			.ResolveAdapterAsync(cancellationToken)
 			.ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		var collectionName = _command.QualifiedEntityCollectionName;
 		var entryKey = _command.Details.HasKey ? _command.KeyValues : _command.FilterAsKey;
 
 		var entryIdent = FormatEntryKey(collectionName, entryKey);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		var linkedCollection = _session.Metadata.GetNavigationPropertyPartnerTypeName(collectionName, linkName);
 		var linkIdent = FormatEntryKey(linkedCollection, linkedEntryKey);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		return await _session
 			.Adapter
@@ -192,29 +168,20 @@ internal class RequestBuilder : IRequestBuilder
 		await _session
 			.ResolveAdapterAsync(cancellationToken)
 			.ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		var collectionName = _command.QualifiedEntityCollectionName;
 		var entryKey = _command.Details.HasKey ? _command.KeyValues : _command.FilterAsKey;
 
 		var entryIdent = FormatEntryKey(collectionName, entryKey);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		string? linkIdent = null;
 		if (linkedEntryKey != null)
 		{
 			var linkedCollection = _session.Metadata.GetNavigationPropertyPartnerTypeName(collectionName, linkName);
 			linkIdent = FormatEntryKey(linkedCollection, linkedEntryKey);
-			if (cancellationToken.IsCancellationRequested)
-			{
-				cancellationToken.ThrowIfCancellationRequested();
-			}
+			cancellationToken.ThrowIfCancellationRequested();
 		}
 
 		return await _session.Adapter.GetRequestWriter(_lazyBatchWriter)
@@ -289,10 +256,7 @@ internal class RequestBuilder<T> : IRequestBuilder<T>
 		await _session
 			.ResolveAdapterAsync(cancellationToken)
 			.ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		var requestBuilder = new RequestBuilder(_command.Resolve(_session), _session, _lazyBatchWriter);
 		return new ClientWithRequest<T>(await requestBuilder
@@ -310,10 +274,7 @@ internal class RequestBuilder<T> : IRequestBuilder<T>
 		await _session
 			.ResolveAdapterAsync(cancellationToken)
 			.ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		var requestBuilder = new RequestBuilder(_command.Resolve(_session).WithCount(), _session, _lazyBatchWriter);
 		return new ClientWithRequest<T>(await requestBuilder
@@ -331,10 +292,7 @@ internal class RequestBuilder<T> : IRequestBuilder<T>
 		await _session
 			.ResolveAdapterAsync(cancellationToken)
 			.ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		var requestBuilder = new RequestBuilder(_command.Resolve(_session), _session, _lazyBatchWriter);
 		return new ClientWithRequest<T>(await requestBuilder
@@ -362,10 +320,7 @@ internal class RequestBuilder<T> : IRequestBuilder<T>
 		await _session
 			.ResolveAdapterAsync(cancellationToken)
 			.ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		var requestBuilder = new RequestBuilder(_command.Resolve(_session), _session, _lazyBatchWriter);
 		return new ClientWithRequest<T>(await requestBuilder
@@ -393,10 +348,7 @@ internal class RequestBuilder<T> : IRequestBuilder<T>
 		await _session
 			.ResolveAdapterAsync(cancellationToken)
 			.ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		var requestBuilder = new RequestBuilder(_command.Resolve(_session), _session, _lazyBatchWriter);
 		return new ClientWithRequest<T>(await requestBuilder
@@ -414,10 +366,7 @@ internal class RequestBuilder<T> : IRequestBuilder<T>
 		await _session
 			.ResolveAdapterAsync(cancellationToken)
 			.ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		var requestBuilder = new RequestBuilder(_command.Resolve(_session), _session, _lazyBatchWriter);
 		return new ClientWithRequest<T>(await requestBuilder

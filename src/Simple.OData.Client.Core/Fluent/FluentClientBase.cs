@@ -690,10 +690,7 @@ public abstract class FluentClientBase<T, FT> : IFluentClient<T, FT>
 		await _session
 			.ResolveAdapterAsync(cancellationToken)
 			.ConfigureAwait(false);
-		if (cancellationToken.IsCancellationRequested)
-		{
-			cancellationToken.ThrowIfCancellationRequested();
-		}
+		cancellationToken.ThrowIfCancellationRequested();
 
 		return Command.Resolve(_session).Format();
 	}

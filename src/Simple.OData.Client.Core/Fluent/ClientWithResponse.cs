@@ -82,10 +82,7 @@ public class ClientWithResponse<T> : IClientWithResponse<T>
 			var response = await responseReader
 				.GetResponseAsync(ResponseMessage)
 				.ConfigureAwait(false);
-			if (cancellationToken.IsCancellationRequested)
-			{
-				cancellationToken.ThrowIfCancellationRequested();
-			}
+			cancellationToken.ThrowIfCancellationRequested();
 
 			if (annotations != null && response.Feed != null)
 			{
@@ -115,10 +112,7 @@ public class ClientWithResponse<T> : IClientWithResponse<T>
 			var response = await responseReader
 				.GetResponseAsync(ResponseMessage)
 				.ConfigureAwait(false);
-			if (cancellationToken.IsCancellationRequested)
-			{
-				cancellationToken.ThrowIfCancellationRequested();
-			}
+			cancellationToken.ThrowIfCancellationRequested();
 
 			var result = response.AsEntries(_session.Settings.IncludeAnnotationsInResults);
 			return result?.FirstOrDefault().ToObject<T>(TypeCache);
@@ -143,10 +137,7 @@ public class ClientWithResponse<T> : IClientWithResponse<T>
 			var response = await responseReader
 				.GetResponseAsync(ResponseMessage)
 				.ConfigureAwait(false);
-			if (cancellationToken.IsCancellationRequested)
-			{
-				cancellationToken.ThrowIfCancellationRequested();
-			}
+			cancellationToken.ThrowIfCancellationRequested();
 
 			var result = response.AsEntries(_session.Settings.IncludeAnnotationsInResults);
 
