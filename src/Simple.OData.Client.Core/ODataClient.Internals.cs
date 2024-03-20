@@ -238,10 +238,7 @@ public partial class ODataClient
 			foreach (var entry in entryList)
 			{
 				resultList.Add(await funcAsync(collectionName, entry, entryData, resultRequired).ConfigureAwait(false));
-				if (cancellationToken.IsCancellationRequested)
-				{
-					cancellationToken.ThrowIfCancellationRequested();
-				}
+				cancellationToken.ThrowIfCancellationRequested();
 			}
 
 			result = resultList;
@@ -264,10 +261,7 @@ public partial class ODataClient
 			foreach (var entry in entryList)
 			{
 				await funcAsync(collectionName, entry).ConfigureAwait(false);
-				if (cancellationToken.IsCancellationRequested)
-				{
-					cancellationToken.ThrowIfCancellationRequested();
-				}
+				cancellationToken.ThrowIfCancellationRequested();
 
 				++result;
 			}
@@ -330,10 +324,7 @@ public partial class ODataClient
 			foreach (var entry in entries)
 			{
 				await EnrichWithMediaPropertiesAsync(entry, command.Details.MediaProperties, cancellationToken).ConfigureAwait(false);
-				if (cancellationToken.IsCancellationRequested)
-				{
-					cancellationToken.ThrowIfCancellationRequested();
-				}
+				cancellationToken.ThrowIfCancellationRequested();
 			}
 		}
 	}
@@ -369,10 +360,7 @@ public partial class ODataClient
 		if (mediaLink != null)
 		{
 			var stream = await GetMediaStreamAsync(mediaLink.AbsoluteUri, cancellationToken).ConfigureAwait(false);
-			if (cancellationToken.IsCancellationRequested)
-			{
-				cancellationToken.ThrowIfCancellationRequested();
-			}
+			cancellationToken.ThrowIfCancellationRequested();
 
 			if (entry.TryGetValue(propertyName, out _))
 			{
