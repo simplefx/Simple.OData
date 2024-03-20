@@ -313,12 +313,14 @@ public class ODataClientSettings
 	public ValidationKinds Validations { get; set; } = ValidationKinds.All;
 
 	/// <summary>
-	/// Gets or sets SemaphoreRequestLimiter.
+	/// Gets or sets the number of simultaneous requests the ODataClient can send.
 	/// </summary>
 	/// <value>
-	/// If set, limits the number of httprequests to input value.
+	/// 0 (Default) to allow unlimited requests at the same time. 
 	/// </value>
-	public int SemaphoreRequestLimiter { get; set; }
+	/// <remarks>
+	/// Set this to a value > 0 when you are seeing 429 responses to your requests.
+	public int MaxConcurrentRequests { get; set; }
 
 	/// <summary>
 	/// Initializes a new instance of the <see cref="ODataClientSettings"/> class.
@@ -416,6 +418,6 @@ public class ODataClientSettings
 		ReadUntypedAsString = session.Settings.ReadUntypedAsString;
 		WebRequestExceptionMessageSource = session.Settings.WebRequestExceptionMessageSource;
 		BatchPayloadUriOption = session.Settings.BatchPayloadUriOption;
-		SemaphoreRequestLimiter = session.Settings.SemaphoreRequestLimiter;
+		MaxConcurrentRequests = session.Settings.MaxConcurrentRequests;
 	}
 }

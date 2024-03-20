@@ -11,22 +11,22 @@ namespace Simple.OData.Client;
 internal class RequestRunner
 {
 	private readonly ISession _session;
-	private SemaphoreSlim? _semaphore;
-	private readonly int _semaphoreLimiter;
+	private readonly SemaphoreSlim? _semaphore;
+	private readonly int _maxConcurrentRequests;
 
 	public RequestRunner(ISession session)
 	{
 		_session = session;
-		if (session.Settings.SemaphoreRequestLimiter > 0)
+		if (session.Settings.MaxConcurrentRequests > 0)
 		{
-			_semaphoreLimiter = session.Settings.SemaphoreRequestLimiter;
-			_semaphore = new SemaphoreSlim(_semaphoreLimiter, _semaphoreLimiter);
+			_maxConcurrentRequests = session.Settings.MaxConcurrentRequests;
+			_semaphore = new SemaphoreSlim(_maxConcurrentRequests, _maxConcurrentRequests);
 		}
 	}
 
 	public async Task<HttpResponseMessage> ExecuteRequestAsync(ODataRequest request, CancellationToken cancellationToken)
 	{
-		if (_semaphoreLimiter > 0 && _semaphore != null)
+		if (_maxConcurrentRequests > 0 && _semaphore != null)
 		{
 			await _semaphore.WaitAsync();
 		}
