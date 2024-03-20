@@ -964,11 +964,15 @@ public partial class ODataClient
 			try
 			{
 				result = await GetUpdatedResult(resolvedCommand, cancellationToken).ConfigureAwait(false);
-				cancellationToken.ThrowIfCancellationRequested();
 			}
 			catch (Exception)
 			{
 			}
+		}
+
+		if (Session.Settings.IgnoreNavigationPropertiesOnUpdate)
+		{
+			return result;
 		}
 
 		var entityCollection = Session.Metadata.GetEntityCollection(resolvedCommand.QualifiedEntityCollectionName);

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Simple.OData.Client.V4.Adapter.Extensions;
 using Xunit;
 
 using Entry = System.Collections.Generic.Dictionary<string, object>;
@@ -203,6 +204,64 @@ public abstract class UpdateODataTests : ODataTestBase
 			.Expand(ProductCategoryName)
 			.FindEntryAsync().ConfigureAwait(false);
 		Assert.Equal(category2["ID"], ProductCategoryFunc(product)["ID"]);
+	}
+
+	[Fact]
+	public async Task UpdateSingleAssociation_IgnoreNullNavProperties()
+	{
+		var category1 = await _client
+			.For("Categories")
+			.Set(CreateCategory(2013, "Test1"))
+			.InsertEntryAsync().ConfigureAwait(false);
+		var category2 = await _client
+			.For("Categories")
+			.Set(CreateCategory(2014, "Test2"))
+			.InsertEntryAsync().ConfigureAwait(false);
+		var product = await _client
+			.For("Products")
+			.Set(CreateProduct(2015, "Test3", category1))
+			.InsertEntryAsync().ConfigureAwait(false);
+
+		await _client
+			.For("Products")
+			.Key(product["ID"])
+			.Set(new Entry { { ProductCategoryName, ProductCategoryLinkFunc(category2) } })
+			.UpdateEntryAsync().ConfigureAwait(false);
+
+		product = await _client
+			.For("Products")
+			.Key(product["ID"])
+			.Expand(ProductCategoryName)
+			.FindEntryAsync().ConfigureAwait(false);
+		Assert.Equal(category2["ID"], ProductCategoryFunc(product)["ID"]);
+
+		//@robertmclaws: At this point, we've verified entries and associations are available.
+		//               Now, we're going grab another copy to edit, make changes, and verify the removal was ignored with no side effects.
+
+		var _client2 = new ODataClient(CreateDefaultSettings((settings) => settings.IgnoreNavigationPropertiesOnUpdate = true));
+
+		var productToEdit = await _client2
+			.For("Products")
+			.Key(product["ID"])
+			.Expand(ProductCategoryName)
+			.FindEntryAsync().ConfigureAwait(false);
+
+		productToEdit["Name"] = "Test99";
+		productToEdit["Categories"] = null;
+
+		await _client2
+			.For("Products")
+			.Key(product["ID"])
+			.Set(productToEdit)
+			.UpdateEntryAsync().ConfigureAwait(false);
+
+		var product2 = await _client2
+			.For("Products")
+			.Key(product["ID"])
+			.Expand(ProductCategoryName)
+			.FindEntryAsync().ConfigureAwait(false);
+		Assert.Equal(ProductCategoryFunc(product2)["ID"], ProductCategoryFunc(product)["ID"]);
+		Assert.Equal("Test99", product2["Name"]);
 	}
 
 	// Not supported for one-to-many relationships
