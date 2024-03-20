@@ -77,7 +77,7 @@ public abstract class TripPinTests : TripPinTestBase
 			.FindEntriesAsync(annotations).ConfigureAwait(false);
 		count += people.Count();
 
-		while (annotations.NextPageLink != null)
+		while (annotations.NextPageLink is not null)
 		{
 			people = await client
 				.For<PersonWithAnnotations>()
@@ -327,7 +327,7 @@ public abstract class TripPinTests : TripPinTestBase
 				.All(y => y.Budget > 10000d))
 			.Expand(x => x.Trips)
 			.FindEntriesAsync().ConfigureAwait(false);
-		Assert.True(flights.All(x => x.Trips == null || x.Trips.All(y => y.Budget > 10000d)));
+		Assert.True(flights.All(x => x.Trips is null || x.Trips.All(y => y.Budget > 10000d)));
 	}
 
 	[Fact]
@@ -417,8 +417,8 @@ public abstract class TripPinTests : TripPinTestBase
 			.Top(1)
 			.FindEntriesAsync().ConfigureAwait(false);
 		var person = Assert.Single(persons);
-		Assert.DoesNotContain(person.Friends, x => x.UserName == null);
-		Assert.True(person.Friends.All(x => x.FirstName == null));
+		Assert.DoesNotContain(person.Friends, x => x.UserName is null);
+		Assert.True(person.Friends.All(x => x.FirstName is null));
 	}
 
 	[Fact]

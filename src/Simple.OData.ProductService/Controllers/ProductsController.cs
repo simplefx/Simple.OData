@@ -94,7 +94,7 @@ public class ProductsController : ODataController
 		}
 
 		var product = db.Products.Find(key);
-		if (product == null)
+		if (product is null)
 		{
 			return NotFound();
 		}
@@ -124,7 +124,7 @@ public class ProductsController : ODataController
 	public IHttpActionResult Delete([FromODataUri] int key)
 	{
 		var product = db.Products.Find(key);
-		if (product == null)
+		if (product is null)
 		{
 			return NotFound();
 		}

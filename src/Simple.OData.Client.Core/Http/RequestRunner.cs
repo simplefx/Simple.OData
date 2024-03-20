@@ -26,7 +26,7 @@ internal class RequestRunner
 
 	public async Task<HttpResponseMessage> ExecuteRequestAsync(ODataRequest request, CancellationToken cancellationToken)
 	{
-		if (_maxConcurrentRequests > 0 && _semaphore != null)
+		if (_maxConcurrentRequests > 0 && _semaphore is not null)
 		{
 			await _semaphore.WaitAsync();
 		}
@@ -37,14 +37,14 @@ internal class RequestRunner
 			await PreExecuteAsync(request).ConfigureAwait(false);
 
 			_session.Trace("{0} request: {1}", request.Method, request.RequestMessage.RequestUri.AbsoluteUri);
-			if (request.RequestMessage.Content != null && (_session.Settings.TraceFilter & ODataTrace.RequestContent) != 0)
+			if (request.RequestMessage.Content is not null && (_session.Settings.TraceFilter & ODataTrace.RequestContent) != 0)
 			{
 				var content = await request.RequestMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
 				_session.Trace("Request content:{0}{1}", Environment.NewLine, content);
 			}
 
 			HttpResponseMessage response;
-			if (_session.Settings.RequestExecutor != null)
+			if (_session.Settings.RequestExecutor is not null)
 			{
 				response = await _session.Settings.RequestExecutor(request.RequestMessage).ConfigureAwait(false);
 			}
@@ -59,7 +59,7 @@ internal class RequestRunner
 			}
 
 			_session.Trace("Request completed: {0}", response.StatusCode);
-			if (response.Content != null && (_session.Settings.TraceFilter & ODataTrace.ResponseContent) != 0)
+			if (response.Content is not null && (_session.Settings.TraceFilter & ODataTrace.ResponseContent) != 0)
 			{
 				var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 				_session.Trace("Response content:{0}{1}", Environment.NewLine, content);
@@ -85,11 +85,11 @@ internal class RequestRunner
 		}
 		finally
 		{
-			if (httpConnection != null && _session.Settings.RenewHttpConnection)
+			if (httpConnection is not null && _session.Settings.RenewHttpConnection)
 			{
 				httpConnection.Dispose();
 			}
-			if (_semaphore != null)
+			if (_semaphore is not null)
 			{
 				_semaphore.Release();
 			}
@@ -98,7 +98,7 @@ internal class RequestRunner
 
 	private async Task PreExecuteAsync(ODataRequest request)
 	{
-		if (request.Accept != null)
+		if (request.Accept is not null)
 		{
 			foreach (var accept in request.Accept)
 			{
@@ -124,7 +124,7 @@ internal class RequestRunner
 		}
 
 		_session.Settings.BeforeRequest?.Invoke(request.RequestMessage);
-		if (_session.Settings.BeforeRequestAsync != null)
+		if (_session.Settings.BeforeRequestAsync is not null)
 		{
 			await _session.Settings.BeforeRequestAsync(request.RequestMessage).ConfigureAwait(false);
 		}
@@ -133,7 +133,7 @@ internal class RequestRunner
 	private async Task PostExecute(HttpResponseMessage responseMessage)
 	{
 		_session.Settings.AfterResponse?.Invoke(responseMessage);
-		if (_session.Settings.AfterResponseAsync != null)
+		if (_session.Settings.AfterResponseAsync is not null)
 		{
 			await _session.Settings.AfterResponseAsync(responseMessage).ConfigureAwait(false);
 		}

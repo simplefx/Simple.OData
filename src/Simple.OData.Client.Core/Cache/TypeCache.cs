@@ -229,7 +229,7 @@ public class TypeCache : ITypeCache
 	{
 		try
 		{
-			if (value == null)
+			if (value is null)
 			{
 				result = IsValue(targetType)
 					? Activator.CreateInstance(targetType)
@@ -275,7 +275,7 @@ public class TypeCache : ITypeCache
 			{
 				result = new Guid(value.ToString());
 			}
-			else if (Nullable.GetUnderlyingType(targetType) != null)
+			else if (Nullable.GetUnderlyingType(targetType) is not null)
 			{
 				result = Convert(value, Nullable.GetUnderlyingType(targetType));
 			}
@@ -286,7 +286,7 @@ public class TypeCache : ITypeCache
 			else
 			{
 				var descriptor = TypeDescriptor.GetConverter(targetType);
-				result = descriptor != null & descriptor.CanConvertTo(targetType)
+				result = descriptor is not null & descriptor.CanConvertTo(targetType)
 					? descriptor.ConvertTo(value, targetType)
 					: System.Convert.ChangeType(value, targetType, CultureInfo.InvariantCulture);
 			}
@@ -302,7 +302,7 @@ public class TypeCache : ITypeCache
 
 	public object? Convert(object? value, Type targetType)
 	{
-		if (value == null && !IsValue(targetType))
+		if (value is null && !IsValue(targetType))
 		{
 			return null;
 		}

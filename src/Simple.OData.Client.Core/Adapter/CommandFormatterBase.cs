@@ -122,7 +122,7 @@ public abstract class CommandFormatterBase : ICommandFormatter
 		foreach (var item in data)
 		{
 			object itemValue;
-			if (item.Value != null)
+			if (item.Value is not null)
 			{
 				var itemType = item.Value.GetType();
 				if (itemType.IsArray || TypeCache.IsGeneric(itemType) && TypeCache.IsTypeAssignableFrom(typeof(System.Collections.IEnumerable), itemType))
@@ -185,17 +185,17 @@ public abstract class CommandFormatterBase : ICommandFormatter
 			queryClauses.Add(string.Join("&", command.CommandData.Select(x => $"{x.Key}={ConvertValueToUriLiteral(x.Value, true)}")));
 		}
 
-		if (command.Details.Filter != null)
+		if (command.Details.Filter is not null)
 		{
 			queryClauses.Add($"{ODataLiteral.Filter}={EscapeUnescapedString(command.Details.Filter)}");
 		}
 
-		if (command.Details.Search != null)
+		if (command.Details.Search is not null)
 		{
 			queryClauses.Add($"{ODataLiteral.Search}={EscapeUnescapedString(command.Details.Search)}");
 		}
 
-		if (command.Details.QueryOptions != null)
+		if (command.Details.QueryOptions is not null)
 		{
 			queryClauses.Add(command.Details.QueryOptions);
 		}
@@ -206,7 +206,7 @@ public abstract class CommandFormatterBase : ICommandFormatter
 			queryClauses.Add(details.QueryOptionsExpression.Format(new ExpressionContext(_session, true)));
 		}
 
-		if (command.Details.QueryOptionsKeyValues != null)
+		if (command.Details.QueryOptionsKeyValues is not null)
 		{
 			foreach (var kv in command.Details.QueryOptionsKeyValues)
 			{
@@ -241,7 +241,7 @@ public abstract class CommandFormatterBase : ICommandFormatter
 				: command.EntityCollection;
 		}
 
-		if (resultCollection != null)
+		if (resultCollection is not null)
 		{
 			FormatExpandSelectOrderby(queryClauses, resultCollection, command);
 		}

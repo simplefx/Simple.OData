@@ -17,13 +17,13 @@ public class HttpConnection : IDisposable
 
 	public void Dispose()
 	{
-		if (_messageHandler != null)
+		if (_messageHandler is not null)
 		{
 			_messageHandler.Dispose();
 			_messageHandler = null;
 		}
 
-		if (HttpClient != null)
+		if (HttpClient is not null)
 		{
 			HttpClient.Dispose();
 			HttpClient = null;
@@ -32,7 +32,7 @@ public class HttpConnection : IDisposable
 
 	private static HttpClient CreateHttpClient(ODataClientSettings settings, HttpMessageHandler messageHandler)
 	{
-		if (settings.HttpClient != null)
+		if (settings.HttpClient is not null)
 		{
 			return settings.HttpClient;
 		}
@@ -47,7 +47,7 @@ public class HttpConnection : IDisposable
 
 	private static HttpMessageHandler CreateMessageHandler(ODataClientSettings settings)
 	{
-		if (settings.OnCreateMessageHandler != null)
+		if (settings.OnCreateMessageHandler is not null)
 		{
 			return settings.OnCreateMessageHandler();
 		}
@@ -55,7 +55,7 @@ public class HttpConnection : IDisposable
 		{
 			var clientHandler = new HttpClientHandler();
 
-			if (settings.Credentials != null)
+			if (settings.Credentials is not null)
 			{
 				clientHandler.Credentials = settings.Credentials;
 				clientHandler.PreAuthenticate = true;

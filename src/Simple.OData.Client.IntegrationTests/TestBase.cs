@@ -93,7 +93,7 @@ public abstract class TestBase : IDisposable
 
 	public void Dispose()
 	{
-		if (_client != null)
+		if (_client is not null)
 		{
 			DeleteTestData().Wait();
 		}

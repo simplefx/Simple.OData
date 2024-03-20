@@ -23,12 +23,12 @@ internal static class DictionaryExtensions
 	public static T ToObject<T>(this IDictionary<string, object>? source, ITypeCache typeCache, bool dynamicObject = false)
 		where T : class
 	{
-		if (typeCache == null)
+		if (typeCache is null)
 		{
 			throw new ArgumentNullException(nameof(typeCache));
 		}
 
-		if (source == null)
+		if (source is null)
 		{
 			return default(T);
 		}
@@ -57,12 +57,12 @@ internal static class DictionaryExtensions
 		Type type,
 		bool dynamicObject = false)
 	{
-		if (typeCache == null)
+		if (typeCache is null)
 		{
 			throw new ArgumentNullException(nameof(typeCache));
 		}
 
-		if (source == null)
+		if (source is null)
 		{
 			return null;
 		}
@@ -106,9 +106,9 @@ internal static class DictionaryExtensions
 		{
 			var property = FindMatchingProperty(type, typeCache, item);
 
-			if (property != null && property.CanWrite)
+			if (property is not null && property.CanWrite)
 			{
-				if (item.Value != null)
+				if (item.Value is not null)
 				{
 					property.SetValue(instance, ConvertValue(property.PropertyType, typeCache, item.Value), null);
 				}
@@ -140,7 +140,7 @@ internal static class DictionaryExtensions
 		{
 			// OK, something other than the base type, see if we can match it
 			var derived = typeCache.GetDerivedTypes(type).FirstOrDefault(x => resolver.IsMatch(odataType, typeCache.GetMappedName(x)));
-			if (derived != null)
+			if (derived is not null)
 			{
 				return derived;
 			}
@@ -148,7 +148,7 @@ internal static class DictionaryExtensions
 			foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
 			{
 				var typeFound = assembly.GetType(odataType);
-				if (typeFound != null)
+				if (typeFound is not null)
 				{
 					return typeFound;
 				}
@@ -164,7 +164,7 @@ internal static class DictionaryExtensions
 	{
 		var property = typeCache.GetMappedProperty(type, item.Key);
 
-		if (property == null && item.Key == FluentCommand.AnnotationsLiteral)
+		if (property is null && item.Key == FluentCommand.AnnotationsLiteral)
 		{
 			property = typeCache.GetAnnotationsProperty(type);
 		}
@@ -184,7 +184,7 @@ internal static class DictionaryExtensions
 		return
 			(type.IsArray || typeCache.IsGeneric(type) &&
 			 typeCache.IsTypeAssignableFrom(typeof(System.Collections.IEnumerable), type)) &&
-			(itemValue as System.Collections.IEnumerable) != null;
+			(itemValue as System.Collections.IEnumerable) is not null;
 	}
 
 	private static bool IsCompoundType(Type type, ITypeCache typeCache)
@@ -194,7 +194,7 @@ internal static class DictionaryExtensions
 
 	private static object ConvertEnum(Type type, ITypeCache typeCache, object itemValue)
 	{
-		if (itemValue == null)
+		if (itemValue is null)
 		{
 			return null;
 		}
@@ -232,7 +232,7 @@ internal static class DictionaryExtensions
 				? typeCache.GetGenericTypeArguments(type)[0]
 				: null;
 
-		if (elementType == null)
+		if (elementType is null)
 		{
 			return null;
 		}
@@ -257,7 +257,7 @@ internal static class DictionaryExtensions
 					typeof(IList<>).MakeGenericType(elementType),
 					typeof(IEnumerable<>).MakeGenericType(elementType)
 				};
-			var collectionType = type.GetConstructor(new[] { collectionTypes[0] }) != null
+			var collectionType = type.GetConstructor(new[] { collectionTypes[0] }) is not null
 				? collectionTypes[0]
 				: collectionTypes[1];
 			var activator = _collectionActivators.GetOrAdd(new Tuple<Type, Type>(type, collectionType), t => type.CreateActivator(collectionType));
@@ -293,7 +293,7 @@ internal static class DictionaryExtensions
 
 	public static IDictionary<string, object> ToDictionary(this object source, ITypeCache typeCache)
 	{
-		if (source == null)
+		if (source is null)
 		{
 			return new Dictionary<string, object>();
 		}
@@ -326,7 +326,7 @@ internal static class DictionaryExtensions
 
 	private static ODataEntry CreateODataEntry(IDictionary<string, object> source, ITypeCache typeCache, bool dynamicObject = false)
 	{
-		return dynamicObject && CreateDynamicODataEntry != null ?
+		return dynamicObject && CreateDynamicODataEntry is not null ?
 			CreateDynamicODataEntry(source, typeCache) :
 			new ODataEntry(source);
 	}
@@ -335,7 +335,7 @@ internal static class DictionaryExtensions
 	{
 		var property = typeCache.GetNamedProperty(type, dynamicPropertiesContainerName);
 
-		if (property == null)
+		if (property is null)
 		{
 			throw new ArgumentException($"Type {type} does not have property {dynamicPropertiesContainerName} ");
 		}
@@ -353,7 +353,7 @@ internal static class DictionaryExtensions
 	private static object CreateInstanceOfAnonymousType(IDictionary<string, object> source, Type type, ITypeCache typeCache)
 	{
 		var constructor = FindConstructorOfAnonymousType(type, source);
-		if (constructor == null)
+		if (constructor is null)
 		{
 			throw new ConstructorNotFoundException(type, source.Values.Select(v => v.GetType()));
 		}

@@ -47,7 +47,7 @@ public class ODataFeedAnnotations
 
 	internal void CopyFrom(ODataFeedAnnotations src)
 	{
-		if (src != null)
+		if (src is not null)
 		{
 			Id = src.Id;
 			Count = src.Count;
@@ -67,7 +67,7 @@ public class ODataFeedAnnotations
 
 	internal void Merge(ODataFeedAnnotations src)
 	{
-		if (src != null)
+		if (src is not null)
 		{
 			Id ??= src.Id;
 			Count ??= src.Count;

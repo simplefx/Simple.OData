@@ -65,7 +65,7 @@ public abstract class ODataTestBase : TestBase
 					{"ReleaseDate", DateTimeOffset.Now},
 				};
 
-		if (category != null)
+		if (category is not null)
 		{
 			entry.Add(ProductCategoryName, ProductCategoryLinkFunc(category));
 		}
@@ -84,7 +84,7 @@ public abstract class ODataTestBase : TestBase
 				{"Name", categoryName},
 			};
 
-		if (products != null)
+		if (products is not null)
 		{
 			entry.Add("Products", products);
 		}

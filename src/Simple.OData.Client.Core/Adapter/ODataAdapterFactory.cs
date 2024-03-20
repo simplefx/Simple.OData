@@ -33,7 +33,7 @@ public class ODataAdapterFactory : IODataAdapterFactory
 		foreach (var protocolVersion in protocolVersions)
 		{
 			var loadModelAdapter = GetModelAdapterLoader(protocolVersion, response, typeCache);
-			if (loadModelAdapter != null)
+			if (loadModelAdapter is not null)
 			{
 				return loadModelAdapter();
 			}
@@ -47,7 +47,7 @@ public class ODataAdapterFactory : IODataAdapterFactory
 	{
 		var protocolVersion = GetMetadataProtocolVersion(metadataString);
 		var loadModelAdapter = GetModelAdapterLoader(protocolVersion, metadataString, typeCache);
-		if (loadModelAdapter == null)
+		if (loadModelAdapter is null)
 		{
 			throw new NotSupportedException($"OData protocol {protocolVersion} is not supported");
 		}
@@ -61,7 +61,7 @@ public class ODataAdapterFactory : IODataAdapterFactory
 		var modelAdapter = CreateModelAdapter(metadataString, typeCache);
 
 		var loadAdapter = GetAdapterLoader(modelAdapter, typeCache);
-		if (loadAdapter == null)
+		if (loadAdapter is null)
 		{
 			throw new NotSupportedException($"OData protocol {modelAdapter.ProtocolVersion} is not supported");
 		}
@@ -158,7 +158,7 @@ public class ODataAdapterFactory : IODataAdapterFactory
 		catch (FileNotFoundException)
 		{
 			var type = Type.GetType(typeName);
-			if (type == null)
+			if (type is null)
 			{
 				throw;
 			}

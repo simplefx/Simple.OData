@@ -83,7 +83,7 @@ public class BasicAuthenticationModule : IHttpModule
 
 		// check whether cookie is set and send it to client if needed
 		var authCookie = context.Request.Cookies.Get(AuthenticationCookieName);
-		if (authCookie == null)
+		if (authCookie is null)
 		{
 			authCookie = new HttpCookie(AuthenticationCookieName, "1") { Expires = DateTime.Now.AddHours(1) };
 			context.Response.Cookies.Add(authCookie);
@@ -110,7 +110,7 @@ public class BasicAuthenticationModule : IHttpModule
 
 		// if authentication cookie is not set issue a basic challenge
 		var authCookie = context.Request.Cookies.Get(AuthenticationCookieName);
-		if (authCookie == null)
+		if (authCookie is null)
 		{
 			//make sure that user is not authenticated yet
 			if (!context.Response.Cookies.AllKeys.Contains(AuthenticationCookieName))

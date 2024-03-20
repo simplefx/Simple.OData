@@ -43,7 +43,7 @@ public static class ExpressionActivator
 	public static ActivatorDelegate<T> CreateActivator<T>(params Type[] parameters)
 	{
 		var constructor = typeof(T).GetConstructor(parameters);
-		if (constructor == null)
+		if (constructor is null)
 		{
 			throw new ConstructorNotFoundException(typeof(T), parameters);
 		}
@@ -69,7 +69,7 @@ public static class ExpressionActivator
 	public static ActivatorDelegate CreateActivator(this Type type, params Type[] parameters)
 	{
 		var constructor = type.GetConstructor(parameters);
-		if (constructor == null)
+		if (constructor is null)
 		{
 			throw new ConstructorNotFoundException(type, parameters);
 		}
@@ -79,7 +79,7 @@ public static class ExpressionActivator
 
 	public static ActivatorDelegate CreateActivator(this ConstructorInfo constructor)
 	{
-		if (constructor == null)
+		if (constructor is null)
 		{
 			throw new ArgumentNullException(nameof(constructor));
 		}

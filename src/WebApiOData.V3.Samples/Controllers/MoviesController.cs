@@ -45,7 +45,7 @@ public class MoviesController : EntitySetController<Movie, int>
 	public Movie CheckOut([FromODataUri] int key)
 	{
 		var movie = GetEntityByKey(key);
-		if (movie == null)
+		if (movie is null)
 		{
 			throw new HttpResponseException(HttpStatusCode.NotFound);
 		}
@@ -71,7 +71,7 @@ public class MoviesController : EntitySetController<Movie, int>
 	public Movie Return([FromODataUri] int key)
 	{
 		var movie = GetEntityByKey(key);
-		if (movie == null)
+		if (movie is null)
 		{
 			throw new HttpResponseException(HttpStatusCode.NotFound);
 		}
@@ -98,7 +98,7 @@ public class MoviesController : EntitySetController<Movie, int>
 		}
 
 		var movie = GetEntityByKey(key);
-		if (movie == null)
+		if (movie is null)
 		{
 			throw new HttpResponseException(HttpStatusCode.NotFound);
 		}

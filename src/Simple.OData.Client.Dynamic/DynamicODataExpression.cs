@@ -161,7 +161,7 @@ public class DynamicODataExpression : ODataExpression, IDynamicMetaObjectProvide
 
 		public override DynamicMetaObject BindBinaryOperation(BinaryOperationBinder binder, DynamicMetaObject arg)
 		{
-			if (arg.RuntimeType != null && arg.RuntimeType.IsEnumType())
+			if (arg.RuntimeType is not null && arg.RuntimeType.IsEnumType())
 			{
 				var ctor = typeof(ODataExpression).GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.NonPublic, null, new[] { typeof(object) }, null);
 				var expression = Expression.New(CtorWithExpressionAndExpressionAndOperator,

@@ -34,9 +34,9 @@ public class ODataClientSettings
 	{
 		get
 		{
-			if (HttpClient != null && HttpClient.BaseAddress != null)
+			if (HttpClient is not null && HttpClient.BaseAddress is not null)
 			{
-				if (_baseOrRelativeUri != null)
+				if (_baseOrRelativeUri is not null)
 				{
 					return new Uri(HttpClient.BaseAddress, _baseOrRelativeUri);
 				}
@@ -52,7 +52,7 @@ public class ODataClientSettings
 		}
 		set
 		{
-			if (value != null && value.IsAbsoluteUri && HttpClient != null && HttpClient.BaseAddress != null)
+			if (value is not null && value.IsAbsoluteUri && HttpClient is not null && HttpClient.BaseAddress is not null)
 			{
 				throw new InvalidOperationException("Unable to set BaseUri when BaseAddress is specified on HttpClient.");
 			}
@@ -133,7 +133,7 @@ public class ODataClientSettings
 	{
 		get
 		{
-			if (BaseUri == null)
+			if (BaseUri is null)
 			{
 				throw new InvalidOperationException("Assign BaseUri before accessing TypeCache");
 			}
@@ -369,17 +369,17 @@ public class ODataClientSettings
 	{
 		HttpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
 
-		if (httpClient.BaseAddress != null && !httpClient.BaseAddress.IsAbsoluteUri)
+		if (httpClient.BaseAddress is not null && !httpClient.BaseAddress.IsAbsoluteUri)
 		{
 			throw new ArgumentException("HttpClient BaseAddress must be an absolute URI", nameof(httpClient));
 		}
 
-		if (relativeUri != null && relativeUri.IsAbsoluteUri)
+		if (relativeUri is not null && relativeUri.IsAbsoluteUri)
 		{
 			throw new ArgumentException("Must be a relative URI", nameof(relativeUri));
 		}
 
-		if (httpClient.BaseAddress == null && relativeUri != null)
+		if (httpClient.BaseAddress is null && relativeUri is not null)
 		{
 			throw new ArgumentException("Must not specify relative URI when HttpClient has no BaseAddress", nameof(relativeUri));
 		}

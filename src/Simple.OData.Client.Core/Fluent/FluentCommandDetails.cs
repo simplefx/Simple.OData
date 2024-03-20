@@ -92,7 +92,7 @@ internal class FluentCommandDetails
 		Extensions = details.Extensions;
 	}
 
-	public bool HasKey => KeyValues != null && KeyValues.Count > 0 || NamedKeyValues != null && NamedKeyValues.Count > 0;
+	public bool HasKey => KeyValues is not null && KeyValues.Count > 0 || NamedKeyValues is not null && NamedKeyValues.Count > 0;
 
 	public bool HasFilter => !string.IsNullOrEmpty(Filter) || FilterExpression is not null;
 
@@ -102,7 +102,7 @@ internal class FluentCommandDetails
 
 	public bool HasAction => !string.IsNullOrEmpty(ActionName);
 
-	public bool FilterIsKey => NamedKeyValues != null;
+	public bool FilterIsKey => NamedKeyValues is not null;
 
 	public IDictionary<string, object> FilterAsKey => NamedKeyValues;
 }

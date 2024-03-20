@@ -47,7 +47,7 @@ public partial class ODataClient : IODataClient
 	internal ODataClient(ODataClientSettings settings, ConcurrentDictionary<object, IDictionary<string, object>> batchEntries)
 		: this(settings)
 	{
-		if (batchEntries != null)
+		if (batchEntries is not null)
 		{
 			BatchEntries = batchEntries;
 			BatchWriter = new Lazy<IBatchWriter>(() => Session.Adapter.GetBatchWriter(BatchEntries));
@@ -64,7 +64,7 @@ public partial class ODataClient : IODataClient
 	internal ODataClient(ODataClient client, ConcurrentDictionary<object, IDictionary<string, object>> batchEntries)
 		: this(client)
 	{
-		if (batchEntries != null)
+		if (batchEntries is not null)
 		{
 			BatchEntries = batchEntries;
 			BatchWriter = new Lazy<IBatchWriter>(() => Session.Adapter.GetBatchWriter(BatchEntries));
@@ -80,8 +80,8 @@ public partial class ODataClient : IODataClient
 
 	internal Session Session { get; private set; }
 	internal ODataResponse BatchResponse { get; private set; }
-	internal bool IsBatchRequest => BatchWriter != null;
-	internal bool IsBatchResponse => BatchResponse != null;
+	internal bool IsBatchRequest => BatchWriter is not null;
+	internal bool IsBatchResponse => BatchResponse is not null;
 	internal ConcurrentDictionary<object, IDictionary<string, object>> BatchEntries { get; private set; }
 	internal Lazy<IBatchWriter> BatchWriter { get; private set; }
 

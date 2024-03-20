@@ -51,13 +51,13 @@ public class ActionProvider : IDataServiceActionProvider
 		else
 		{
 			serviceAction = GetActions(operationContext).SingleOrDefault(a => a.Name == serviceActionName);
-			if (serviceAction != null)
+			if (serviceAction is not null)
 			{
 				_actionsByName[serviceActionName] = serviceAction;
 			}
 		}
 
-		return serviceAction != null;
+		return serviceAction is not null;
 	}
 
 	private List<ServiceAction> GetActions(DataServiceOperationContext context)

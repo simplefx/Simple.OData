@@ -153,10 +153,10 @@ public class TypeCacheResolver
 	public PropertyInfo GetAnyProperty(string propertyName)
 	{
 		var currentType = Type;
-		while (currentType != null && currentType != typeof(object))
+		while (currentType is not null && currentType != typeof(object))
 		{
 			var property = currentType.GetTypeInfo().GetDeclaredProperty(propertyName);
-			if (property != null)
+			if (property is not null)
 			{
 				return property;
 			}
@@ -175,10 +175,10 @@ public class TypeCacheResolver
 	public FieldInfo GetAnyField(string fieldName, bool includeNonPublic = false)
 	{
 		var currentType = Type;
-		while (currentType != null && currentType != typeof(object))
+		while (currentType is not null && currentType != typeof(object))
 		{
 			var field = currentType.GetDeclaredField(fieldName);
-			if (field != null)
+			if (field is not null)
 			{
 				return field;
 			}
@@ -226,6 +226,6 @@ public class TypeCacheResolver
 
 	public bool HasCustomAttribute(Type attributeType, bool inherit)
 	{
-		return TypeInfo.GetCustomAttribute(attributeType, inherit) != null;
+		return TypeInfo.GetCustomAttribute(attributeType, inherit) is not null;
 	}
 }

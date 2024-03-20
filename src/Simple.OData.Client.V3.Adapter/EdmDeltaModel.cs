@@ -33,14 +33,14 @@ internal class EdmDeltaModel : IEdmModel
 					DependentProperties = property.DependentProperties,
 					Name = property.Name,
 					OnDelete = property.OnDelete,
-					Target = property.Partner != null
+					Target = property.Partner is not null
 						? property.Partner.DeclaringEntityType()
 						: property.Type.TypeKind() == EdmTypeKind.Collection
 						? (property.Type.Definition as IEdmCollectionType).ElementType.Definition as IEdmEntityType
 						: property.Type.TypeKind() == EdmTypeKind.Entity
 						? property.Type.Definition as IEdmEntityType
 						: null,
-					TargetMultiplicity = property.Partner != null
+					TargetMultiplicity = property.Partner is not null
 						? property.Partner.Multiplicity()
 						: property.Type.TypeKind() == EdmTypeKind.Collection
 						? EdmMultiplicity.Many

@@ -35,7 +35,7 @@ public partial class ODataClient
 			x =>
 			{
 				var result = x.AsEntries(Session.Settings.IncludeAnnotationsInResults);
-				if (annotations != null && x.Feed != null)
+				if (annotations is not null && x.Feed is not null)
 				{
 					annotations.CopyFrom(x.Feed.Annotations);
 				}
@@ -57,7 +57,7 @@ public partial class ODataClient
 
 	private async Task<IEnumerable<IDictionary<string, object>>> ExecuteActionAsync(ResolvedCommand command, ODataFeedAnnotations annotations, CancellationToken cancellationToken)
 	{
-		var entityTypeName = command.EntityCollection != null
+		var entityTypeName = command.EntityCollection is not null
 			? Session.Metadata.GetQualifiedTypeName(command.EntityCollection.Name)
 			: null;
 		var request = await Session.Adapter.GetRequestWriter(BatchWriter)
@@ -67,7 +67,7 @@ public partial class ODataClient
 			x =>
 			{
 				var result = x.AsEntries(Session.Settings.IncludeAnnotationsInResults);
-				if (annotations != null && x.Feed != null)
+				if (annotations is not null && x.Feed is not null)
 				{
 					annotations.CopyFrom(x.Feed.Annotations);
 				}
@@ -79,7 +79,7 @@ public partial class ODataClient
 
 	private async Task<IEnumerable<IDictionary<string, object>>> ExecuteActionAsync(ResolvedCommand command, CancellationToken cancellationToken)
 	{
-		var entityTypeName = command.EntityCollection != null
+		var entityTypeName = command.EntityCollection is not null
 			? Session.Metadata.GetQualifiedTypeName(command.EntityCollection.Name)
 			: null;
 		var request = await Session.Adapter.GetRequestWriter(BatchWriter)
@@ -99,7 +99,7 @@ public partial class ODataClient
 
 		var responseIndexes = new List<int>();
 		var request = await BatchWriter.Value.CreateBatchRequestAsync(this, actions, responseIndexes, headers).ConfigureAwait(false);
-		if (request != null)
+		if (request is not null)
 		{
 			// Execute batch and get response
 			using var response = await _requestRunner.ExecuteRequestAsync(request, cancellationToken).ConfigureAwait(false);
@@ -146,9 +146,9 @@ public partial class ODataClient
 	{
 		if (IsBatchRequest)
 		{
-			return createBatchResult != null
+			return createBatchResult is not null
 				? createBatchResult()
-				: createEmptyResult != null
+				: createEmptyResult is not null
 				? createEmptyResult()
 				: default(T);
 		}
@@ -171,7 +171,7 @@ public partial class ODataClient
 		{
 			if (_settings.IgnoreResourceNotFoundException && ex.Code == HttpStatusCode.NotFound)
 			{
-				return createEmptyResult != null ? createEmptyResult() : default(T);
+				return createEmptyResult is not null ? createEmptyResult() : default(T);
 			}
 			else
 			{
@@ -231,7 +231,7 @@ public partial class ODataClient
 		IEnumerable<IDictionary<string, object>>? result = null;
 		var client = new ODataClient(this);
 		var entries = await client.FindEntriesAsync(command.Format(), cancellationToken).ConfigureAwait(false);
-		if (entries != null)
+		if (entries is not null)
 		{
 			var entryList = entries.ToList();
 			var resultList = new List<IDictionary<string, object>>();
@@ -255,7 +255,7 @@ public partial class ODataClient
 		var result = 0;
 		var client = new ODataClient(this);
 		var entries = await client.FindEntriesAsync(command.Format(), cancellationToken).ConfigureAwait(false);
-		if (entries != null)
+		if (entries is not null)
 		{
 			var entryList = entries.ToList();
 			foreach (var entry in entryList)
@@ -275,7 +275,7 @@ public partial class ODataClient
 		IList<Action>? actions = null)
 	{
 		var runActionsOnExist = false;
-		if (actions == null)
+		if (actions is null)
 		{
 			actions = new List<Action>();
 			runActionsOnExist = true;
@@ -319,7 +319,7 @@ public partial class ODataClient
 
 	private async Task EnrichWithMediaPropertiesAsync(IEnumerable<AnnotatedEntry> entries, ResolvedCommand command, CancellationToken cancellationToken)
 	{
-		if (entries != null)
+		if (entries is not null)
 		{
 			foreach (var entry in entries)
 			{
@@ -331,11 +331,11 @@ public partial class ODataClient
 
 	private async Task EnrichWithMediaPropertiesAsync(AnnotatedEntry entry, IEnumerable<string> mediaProperties, CancellationToken cancellationToken)
 	{
-		if (entry != null && mediaProperties != null)
+		if (entry is not null && mediaProperties is not null)
 		{
 			var entityMediaPropertyName = mediaProperties.FirstOrDefault(x => !entry.Data.ContainsKey(x));
 			entityMediaPropertyName ??= FluentCommand.AnnotationsLiteral;
-			if (entry.Annotations != null)
+			if (entry.Annotations is not null)
 			{
 				await GetMediaStreamValueAsync(entry.Data, entityMediaPropertyName, entry.Annotations.MediaResource, cancellationToken).ConfigureAwait(false);
 			}
@@ -356,8 +356,8 @@ public partial class ODataClient
 		ODataMediaAnnotations? annotations,
 		CancellationToken cancellationToken)
 	{
-		var mediaLink = annotations == null ? null : annotations.ReadLink ?? annotations.EditLink;
-		if (mediaLink != null)
+		var mediaLink = annotations is null ? null : annotations.ReadLink ?? annotations.EditLink;
+		if (mediaLink is not null)
 		{
 			var stream = await GetMediaStreamAsync(mediaLink.AbsoluteUri, cancellationToken).ConfigureAwait(false);
 			cancellationToken.ThrowIfCancellationRequested();

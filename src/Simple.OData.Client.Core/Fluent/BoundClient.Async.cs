@@ -316,7 +316,7 @@ public partial class BoundClient<T>
 		{
 			return UnlinkEntryAsync(linkedEntryKey.ToString(), cancellationToken);
 		}
-		else if (linkedEntryKey is ODataExpression && (linkedEntryKey as ODataExpression).Reference != null)
+		else if (linkedEntryKey is ODataExpression && (linkedEntryKey as ODataExpression).Reference is not null)
 		{
 			return UnlinkEntryAsync((linkedEntryKey as ODataExpression).Reference, cancellationToken);
 		}

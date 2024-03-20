@@ -48,11 +48,11 @@ public class RequestWriter : RequestWriterBase
 
 		entryWriter.WriteStart(entry);
 
-		if (entryDetails.Links != null)
+		if (entryDetails.Links is not null)
 		{
 			foreach (var link in entryDetails.Links)
 			{
-				if (link.Value.Any(x => x.LinkData != null))
+				if (link.Value.Any(x => x.LinkData is not null))
 				{
 					WriteLink(entryWriter, entry, link.Key, link.Value);
 				}
@@ -118,7 +118,7 @@ public class RequestWriter : RequestWriterBase
 		foreach (var parameter in parameters)
 		{
 			var operationParameter = action.Parameters.BestMatch(x => x.Name, parameter.Key, _session.Settings.NameMatchResolver);
-			if (operationParameter == null)
+			if (operationParameter is null)
 			{
 				throw new UnresolvableObjectException(parameter.Key, $"Parameter [{parameter.Key}] not found for action [{actionName}]");
 			}
@@ -180,7 +180,7 @@ public class RequestWriter : RequestWriterBase
 		string navigationPropertyName,
 		string? linkIdent = null)
 	{
-		return linkIdent == null
+		return linkIdent is null
 			? $"{entryIdent}/$links/{navigationPropertyName}"
 			: $"{entryIdent}/$links/{linkIdent}";
 	}
@@ -220,7 +220,7 @@ public class RequestWriter : RequestWriterBase
 		string findMatchingPropertyName(string name)
 		{
 			var property = typeProperties.BestMatch(y => y.Name, name, _session.Settings.NameMatchResolver);
-			return property != null ? property.Name : name;
+			return property is not null ? property.Name : name;
 		}
 
 		entry.Properties = properties.Select(x => new ODataProperty()
@@ -257,7 +257,7 @@ public class RequestWriter : RequestWriterBase
 
 		var linkType = GetNavigationPropertyEntityType(navigationProperty);
 		var linkTypeWithKey = linkType;
-		while (linkTypeWithKey.DeclaredKey == null && linkTypeWithKey.BaseEntityType() != null)
+		while (linkTypeWithKey.DeclaredKey is null && linkTypeWithKey.BaseEntityType() is not null)
 		{
 			linkTypeWithKey = linkTypeWithKey.BaseEntityType();
 		}
@@ -275,7 +275,7 @@ public class RequestWriter : RequestWriterBase
 			var linkEntry = referenceLink.LinkData.ToDictionary(TypeCache);
 			var contentId = GetContentId(referenceLink);
 			string linkUri;
-			if (contentId != null)
+			if (contentId is not null)
 			{
 				linkUri = "$" + contentId;
 			}
@@ -314,12 +314,12 @@ public class RequestWriter : RequestWriterBase
 	private object GetPropertyValue(IEnumerable<IEdmProperty> properties, string key, object value)
 	{
 		var property = properties.BestMatch(x => x.Name, key, _session.Settings.NameMatchResolver);
-		return property != null ? GetPropertyValue(property.Type, value) : value;
+		return property is not null ? GetPropertyValue(property.Type, value) : value;
 	}
 
 	private object? GetPropertyValue(IEdmTypeReference propertyType, object? value)
 	{
-		if (value == null)
+		if (value is null)
 		{
 			return value;
 		}

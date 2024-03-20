@@ -129,7 +129,7 @@ public class ActionFactory
 		}
 
 		var resourceType = _metadata.Types.SingleOrDefault(s => s.Name == type.Name);
-		if (resourceType == null)
+		if (resourceType is null)
 		{
 			throw new Exception($"Generic action parameter type {type} not supported");
 		}
@@ -144,7 +144,7 @@ public class ActionFactory
 	/// <returns></returns>
 	private ResourceSet? GetResourceSet(ResourceType? type)
 	{
-		if (type == null)
+		if (type is null)
 		{
 			return null;
 		}
@@ -156,11 +156,11 @@ public class ActionFactory
 		else if (type.ResourceTypeKind == ResourceTypeKind.EntityType)
 		{
 			var set = _metadata.ResourceSets.SingleOrDefault(rs => rs.ResourceType == type);
-			if (set != null)
+			if (set is not null)
 			{
 				return set;
 			}
-			else if (type.BaseType != null)
+			else if (type.BaseType is not null)
 			{
 				return GetResourceSet(type.BaseType);
 			}

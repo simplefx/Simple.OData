@@ -84,7 +84,7 @@ public class ClientWithResponse<T> : IClientWithResponse<T>
 				.ConfigureAwait(false);
 			cancellationToken.ThrowIfCancellationRequested();
 
-			if (annotations != null && response.Feed != null)
+			if (annotations is not null && response.Feed is not null)
 			{
 				annotations.CopyFrom(response.Feed.Annotations);
 			}
@@ -141,8 +141,8 @@ public class ClientWithResponse<T> : IClientWithResponse<T>
 
 			var result = response.AsEntries(_session.Settings.IncludeAnnotationsInResults);
 
-			static object extractScalar(IDictionary<string, object?> x) => (x == null) || !x.Any() ? null : x.Values.First();
-			return result == null ? default(U) : _session.TypeCache.Convert<U>(extractScalar(result.FirstOrDefault()));
+			static object extractScalar(IDictionary<string, object?> x) => (x is null) || !x.Any() ? null : x.Values.First();
+			return result is null ? default(U) : _session.TypeCache.Convert<U>(extractScalar(result.FirstOrDefault()));
 		}
 		else
 		{

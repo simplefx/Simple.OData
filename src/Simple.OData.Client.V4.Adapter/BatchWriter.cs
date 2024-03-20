@@ -41,7 +41,7 @@ public class BatchWriter : BatchWriterBase
 
 	protected async override Task StartChangesetAsync()
 	{
-		if (_batchWriter == null)
+		if (_batchWriter is null)
 		{
 			await StartBatchAsync().ConfigureAwait(false);
 		}
@@ -56,7 +56,7 @@ public class BatchWriter : BatchWriterBase
 
 	protected async override Task<object> CreateOperationMessageAsync(Uri uri, string method, string collection, string contentId, bool resultRequired)
 	{
-		if (_batchWriter == null)
+		if (_batchWriter is null)
 		{
 			await StartBatchAsync().ConfigureAwait(false);
 		}
@@ -79,7 +79,7 @@ public class BatchWriter : BatchWriterBase
 			message.SetHeader(HttpLiteral.Prefer, resultRequired ? HttpLiteral.ReturnRepresentation : HttpLiteral.ReturnMinimal);
 		}
 
-		if (collection != null && _session.Metadata.EntityCollectionRequiresOptimisticConcurrencyCheck(collection) &&
+		if (collection is not null && _session.Metadata.EntityCollectionRequiresOptimisticConcurrencyCheck(collection) &&
 			(method == RestVerbs.Put || method == RestVerbs.Patch || method == RestVerbs.Merge || method == RestVerbs.Delete))
 		{
 			message.SetHeader(HttpLiteral.IfMatch, EntityTagHeaderValue.Any.Tag);

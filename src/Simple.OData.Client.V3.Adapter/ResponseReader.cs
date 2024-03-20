@@ -71,7 +71,7 @@ namespace Simple.OData.Client.V3.Adapter
 			else if (payloadKind.Any(x => x.PayloadKind == ODataPayloadKind.Property))
 			{
 				var property = messageReader.ReadProperty();
-				if (property.Value != null && (property.Value.GetType() != typeof(string) || !string.IsNullOrEmpty(property.Value.ToString())))
+				if (property.Value is not null && (property.Value.GetType() != typeof(string) || !string.IsNullOrEmpty(property.Value.ToString())))
 				{
 					_hasResponse = true;
 				}
@@ -204,7 +204,7 @@ namespace Simple.OData.Client.V3.Adapter
 
 		protected override void ConvertEntry(ResponseNode entryNode, object entry)
 		{
-			if (entry != null)
+			if (entry is not null)
 			{
 				var odataEntry = entry as Microsoft.Data.OData.ODataEntry;
 				foreach (var property in odataEntry.Properties)
@@ -256,7 +256,7 @@ namespace Simple.OData.Client.V3.Adapter
 				ReadLink = readLink,
 				EditLink = editLink,
 				ETag = odataEntry.ETag,
-				AssociationLinks = associationLinks == null
+				AssociationLinks = associationLinks is null
 					? null
 					: new List<ODataEntryAnnotations.AssociationLink>(
 					odataEntry.AssociationLinks.Select(x => new ODataEntryAnnotations.AssociationLink
@@ -271,7 +271,7 @@ namespace Simple.OData.Client.V3.Adapter
 
 		private static ODataMediaAnnotations? CreateAnnotations(ODataStreamReferenceValue value)
 		{
-			return value == null ? null : new ODataMediaAnnotations
+			return value is null ? null : new ODataMediaAnnotations
 			{
 				ContentType = value.ContentType,
 				ReadLink = value.ReadLink,

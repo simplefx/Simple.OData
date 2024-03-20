@@ -66,9 +66,9 @@ public static class MemberInfoExtensions
 			};
 
 		var mappingAttribute = attributes.FirstOrDefault(x => supportedAttributeNames.Any(y => x.GetType().Name == y));
-		if (mappingAttribute == null)
+		if (mappingAttribute is null)
 		{
-			mappingAttribute = attributes.FirstOrDefault(x => x.GetType().GetNamedProperty("PropertyName") != null);
+			mappingAttribute = attributes.FirstOrDefault(x => x.GetType().GetNamedProperty("PropertyName") is not null);
 		}
 
 		var attributePropertyNames = new[]
@@ -76,15 +76,15 @@ public static class MemberInfoExtensions
 				"Name",
 				"PropertyName",
 			};
-		if (mappingAttribute != null)
+		if (mappingAttribute is not null)
 		{
 			foreach (var attributeProperty in attributePropertyNames)
 			{
 				var nameProperty = mappingAttribute.GetType().GetNamedProperty(attributeProperty);
-				if (nameProperty != null)
+				if (nameProperty is not null)
 				{
 					var propertyValue = nameProperty.GetValueEx(mappingAttribute);
-					if (propertyValue != null)
+					if (propertyValue is not null)
 					{
 						return propertyValue.ToString();
 					}

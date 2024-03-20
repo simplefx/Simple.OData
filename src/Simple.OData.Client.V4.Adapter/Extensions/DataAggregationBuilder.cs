@@ -40,7 +40,7 @@ namespace Simple.OData.Client.V4.Adapter.Extensions
 
 		internal void Append(DataAggregationBuilder nextDataAggregationBuilder)
 		{
-			if (_nextDataAggregationBuilder != null)
+			if (_nextDataAggregationBuilder is not null)
 			{
 				_nextDataAggregationBuilder.Append(nextDataAggregationBuilder);
 				return;
@@ -51,7 +51,7 @@ namespace Simple.OData.Client.V4.Adapter.Extensions
 
 		private string AddNextCommand(string commandText, ResolvedCommand command, ISession session)
 		{
-			if (_nextDataAggregationBuilder == null)
+			if (_nextDataAggregationBuilder is null)
 			{
 				return commandText;
 			}

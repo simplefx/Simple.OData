@@ -20,17 +20,17 @@ public partial class ODataExpression
 
 		if (_operator == ExpressionType.Default && !IsValueConversion)
 		{
-			return Reference != null ?
-				FormatReference(context) : Function != null ?
+			return Reference is not null ?
+				FormatReference(context) : Function is not null ?
 				FormatFunction(context) :
 				FormatValue(context);
 		}
 		else if (IsValueConversion)
 		{
 			var expr = Value as ODataExpression;
-			if (expr.Reference == null && expr.Function == null && !expr.IsValueConversion)
+			if (expr.Reference is null && expr.Function is null && !expr.IsValueConversion)
 			{
-				if (expr.Value != null && context.Session.TypeCache.IsEnumType(expr.Value.GetType()))
+				if (expr.Value is not null && context.Session.TypeCache.IsEnumType(expr.Value.GetType()))
 				{
 					expr = new ODataExpression(expr.Value);
 				}
@@ -147,7 +147,7 @@ public partial class ODataExpression
 		else if (Function.Arguments.Count == 1)
 		{
 			var val = Function.Arguments.First();
-			if (val.Value != null)
+			if (val.Value is not null)
 			{
 				var formattedVal = FromValue(
 					string.Equals(Function.FunctionName, "ToBoolean", StringComparison.Ordinal) ? Convert.ToBoolean(val.Value, CultureInfo.InvariantCulture) :
@@ -166,7 +166,7 @@ public partial class ODataExpression
 					string.Equals(Function.FunctionName, "ToUInt32", StringComparison.Ordinal) ? Convert.ToUInt32(val.Value, CultureInfo.InvariantCulture) :
 					string.Equals(Function.FunctionName, "ToUInt64", StringComparison.Ordinal) ? Convert.ToUInt64(val.Value, CultureInfo.InvariantCulture)
 					: null);
-				if (formattedVal.Value != null)
+				if (formattedVal.Value is not null)
 				{
 					return FormatExpression(formattedVal, context);
 				}
@@ -252,7 +252,7 @@ public partial class ODataExpression
 
 	private string FormatToStringFunction(ExpressionContext context)
 	{
-		return _functionCaller.Reference != null
+		return _functionCaller.Reference is not null
 			? FormatCallerReference()
 			: _functionCaller.FormatValue(context);
 	}
@@ -305,7 +305,7 @@ public partial class ODataExpression
 		}
 
 		var objectName = elementNames.First();
-		if (entityCollection != null)
+		if (entityCollection is not null)
 		{
 			if (context.Session.Metadata.HasStructuralProperty(entityCollection.Name, objectName))
 			{

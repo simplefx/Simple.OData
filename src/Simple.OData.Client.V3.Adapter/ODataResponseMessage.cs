@@ -50,7 +50,7 @@ internal class ODataResponseMessage : IODataResponseMessageAsync
 
 	public Task<Stream> GetStreamAsync()
 	{
-		if (_response.Content != null)
+		if (_response.Content is not null)
 		{
 			return _response.Content.ReadAsStreamAsync();
 		}

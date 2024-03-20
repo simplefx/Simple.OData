@@ -93,7 +93,7 @@ public class ODataExpandOptions : IEquatable<ODataExpandOptions>
 
 	public bool Equals(ODataExpandOptions? other)
 	{
-		if (other == null)
+		if (other is null)
 		{
 			return false;
 		}

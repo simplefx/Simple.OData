@@ -133,7 +133,7 @@ internal class AggregationClause<T>
 
 	private string FormatFunction(ExpressionContext context)
 	{
-		if (_expression != null)
+		if (_expression is not null)
 		{
 			_aggregatedColumnName = string.Empty;
 			if (_expression.Arguments.Any())

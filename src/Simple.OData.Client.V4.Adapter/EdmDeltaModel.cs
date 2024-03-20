@@ -33,7 +33,7 @@ internal class EdmDeltaModel : IEdmModel
 					PrincipalProperties = property.PrincipalProperties(),
 					Name = property.Name,
 					OnDelete = property.OnDelete,
-					Target = property.Partner != null
+					Target = property.Partner is not null
 						? property.Partner.DeclaringEntityType()
 						: property.Type.TypeKind() == EdmTypeKind.Collection
 						? (property.Type.Definition as IEdmCollectionType).ElementType.Definition as IEdmEntityType

@@ -17,7 +17,7 @@ internal static class HomogenizeEx
 	/// <returns>The modified string.</returns>
 	public static string? Homogenize(this string? source)
 	{
-		return source == null ? null : Cache.GetOrAdd(source, HomogenizeImpl);
+		return source is null ? null : Cache.GetOrAdd(source, HomogenizeImpl);
 	}
 
 	private static string HomogenizeImpl(string source)

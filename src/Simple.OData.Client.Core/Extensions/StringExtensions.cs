@@ -22,6 +22,6 @@ internal static class StringExtensions
 
 	public static string EnsureStartsWith(this string? source, string value)
 	{
-		return (source == null || source.StartsWith(value, StringComparison.Ordinal)) ? source : value + source;
+		return (source is null || source.StartsWith(value, StringComparison.Ordinal)) ? source : value + source;
 	}
 }

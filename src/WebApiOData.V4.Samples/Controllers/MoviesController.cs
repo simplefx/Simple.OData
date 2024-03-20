@@ -21,7 +21,7 @@ public class MoviesController : ODataController
 	public IHttpActionResult CheckOut(int key)
 	{
 		var movie = _db.Movies.FirstOrDefault(m => m.ID == key);
-		if (movie == null)
+		if (movie is null)
 		{
 			return BadRequest(ModelState);
 		}
@@ -38,7 +38,7 @@ public class MoviesController : ODataController
 	public IHttpActionResult Return(int key)
 	{
 		var movie = _db.Movies.FirstOrDefault(m => m.ID == key);
-		if (movie == null)
+		if (movie is null)
 		{
 			return BadRequest(ModelState);
 		}

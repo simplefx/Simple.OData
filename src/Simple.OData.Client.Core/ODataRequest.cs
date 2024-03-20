@@ -70,7 +70,7 @@ public class ODataRequest
 			: Utils.CreateAbsoluteUri(session.Settings.BaseUri.AbsoluteUri, commandText).AbsoluteUri;
 		_payloadFormat = session.Settings.PayloadFormat;
 
-		if (headers != null)
+		if (headers is not null)
 		{
 			Headers = headers;
 		}
@@ -99,7 +99,7 @@ public class ODataRequest
 
 	private HttpContent? GetContent()
 	{
-		if (_contentStream == null)
+		if (_contentStream is null)
 		{
 			return null;
 		}
@@ -137,17 +137,17 @@ public class ODataRequest
 
 	private HttpRequestMessage GetOrCreateRequestMessage()
 	{
-		if (_requestMessage != null)
+		if (_requestMessage is not null)
 		{
 			return _requestMessage;
 		}
 
 		_requestMessage = new HttpRequestMessage(new HttpMethod(Method), _uri)
 		{
-			Content = _contentStream != null ? GetContent() : null
+			Content = _contentStream is not null ? GetContent() : null
 		};
 
-		if (Headers != null)
+		if (Headers is not null)
 		{
 			foreach (var header in Headers)
 			{

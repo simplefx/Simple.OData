@@ -16,7 +16,7 @@ public partial class ODataExpression
 	public string? Reference { get; private set; }
 	public object? Value { get; private set; }
 	public ExpressionFunction? Function { get; private set; }
-	public bool IsValueConversion => _conversionType != null;
+	public bool IsValueConversion => _conversionType is not null;
 
 	internal ODataExpression()
 	{
@@ -120,9 +120,9 @@ public partial class ODataExpression
 		return ParseLinqExpression(expression);
 	}
 
-	public bool IsNull => Value == null &&
-		  Reference == null &&
-		  Function == null &&
+	public bool IsNull => Value is null &&
+		  Reference is null &&
+		  Function is null &&
 		  _operator == ExpressionType.Default;
 
 	public string AsString(ISession session)
@@ -160,7 +160,7 @@ public partial class ODataExpression
 					}
 
 					var key = expr.Reference;
-					if (key != null && !lookupColumns.ContainsKey(key))
+					if (key is not null && !lookupColumns.ContainsKey(key))
 					{
 						lookupColumns.Add(key, _right);
 					}
@@ -186,11 +186,11 @@ public partial class ODataExpression
 		{
 			return _left.HasTypeConstraint(typeName) || _right.HasTypeConstraint(typeName);
 		}
-		else if (Function != null && Function.FunctionName == ODataLiteral.IsOf)
+		else if (Function is not null && Function.FunctionName == ODataLiteral.IsOf)
 		{
 			return Function.Arguments.Last().HasTypeConstraint(typeName);
 		}
-		else if (Value != null)
+		else if (Value is not null)
 		{
 			return Value is Type valueType && valueType.Name == typeName;
 		}
