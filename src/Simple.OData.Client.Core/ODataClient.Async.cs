@@ -780,7 +780,7 @@ public partial class ODataClient
 	{
 		if (IsBatchResponse)
 		{
-			if (annotations != null && BatchResponse.Feed != null)
+			if (annotations is not null && BatchResponse.Feed is not null)
 			{
 				annotations.CopyFrom(BatchResponse.Feed.Annotations);
 			}
@@ -801,7 +801,7 @@ public partial class ODataClient
 
 		return await ExecuteRequestWithResultAsync(request, cancellationToken, x =>
 		{
-			if (annotations != null && x.Feed != null)
+			if (annotations is not null && x.Feed is not null)
 			{
 				annotations.CopyFrom(x.Feed.Annotations);
 			}
@@ -816,7 +816,7 @@ public partial class ODataClient
 	{
 		if (IsBatchResponse)
 		{
-			if (annotations != null && BatchResponse.Feed != null)
+			if (annotations is not null && BatchResponse.Feed is not null)
 			{
 				annotations.CopyFrom(BatchResponse.Feed.Annotations);
 			}
@@ -892,8 +892,8 @@ public partial class ODataClient
 			x => x.AsEntries(Session.Settings.IncludeAnnotationsInResults),
 			() => Array.Empty<IDictionary<string, object>>()).ConfigureAwait(false);
 
-		static object? extractScalar(IDictionary<string, object?> x) => (x == null) || (x.Count == 0) ? null : x.First().Value;
-		return result == null ? null : extractScalar(result.FirstOrDefault());
+		static object? extractScalar(IDictionary<string, object?> x) => (x is null) || (x.Count == 0) ? null : x.First().Value;
+		return result is null ? null : extractScalar(result.FirstOrDefault());
 	}
 
 	internal async Task<object> FindScalarAsync(FluentCommand command, CancellationToken cancellationToken)
@@ -931,7 +931,7 @@ public partial class ODataClient
 		cancellationToken.ThrowIfCancellationRequested();
 
 		var keyNames = Session.Metadata.GetDeclaredKeyPropertyNames(resolvedCommand.QualifiedEntityCollectionName);
-		if (result == null && resultRequired && Utils.AllMatch(keyNames, resolvedCommand.CommandData.Keys, Session.Settings.NameMatchResolver))
+		if (result is null && resultRequired && Utils.AllMatch(keyNames, resolvedCommand.CommandData.Keys, Session.Settings.NameMatchResolver))
 		{
 			result = await GetEntryAsync(request.CommandText, request.EntryData, cancellationToken).ConfigureAwait(false);
 			cancellationToken.ThrowIfCancellationRequested();
@@ -959,7 +959,7 @@ public partial class ODataClient
 			x => x.AsEntry(Session.Settings.IncludeAnnotationsInResults), () => null, () => request.EntryData).ConfigureAwait(false);
 		cancellationToken.ThrowIfCancellationRequested();
 
-		if (result == null && resultRequired)
+		if (result is null && resultRequired)
 		{
 			try
 			{
@@ -975,7 +975,7 @@ public partial class ODataClient
 		var entryDetails = Session.Metadata.ParseEntryDetails(entityCollection.Name, request.EntryData);
 
 		var removedLinks = entryDetails.Links
-			.SelectMany(x => x.Value.Where(y => y.LinkData == null))
+			.SelectMany(x => x.Value.Where(y => y.LinkData is null))
 			.Select(x => Session.Metadata.GetNavigationPropertyExactName(entityCollection.Name, x.LinkName))
 			.ToList();
 
@@ -1234,7 +1234,7 @@ public partial class ODataClient
 		var result = await ExecuteAsSingleAsync(command, cancellationToken).ConfigureAwait(false);
 		return IsBatchRequest
 			? default(T)
-			: result == null
+			: result is null
 			? default(T)
 			: Session.TypeCache.Convert<T>(result.First().Value);
 	}
@@ -1249,7 +1249,7 @@ public partial class ODataClient
 		var result = await ExecuteAsEnumerableAsync(command, cancellationToken).ConfigureAwait(false);
 		return IsBatchRequest
 			? Array.Empty<T>()
-			: result == null
+			: result is null
 			? null
 			: typeof(T) == typeof(string) || typeof(T).IsValue()
 			? result.SelectMany(x => x.Values).Select(x => Session.TypeCache.Convert<T>(x)).ToArray()
@@ -1266,7 +1266,7 @@ public partial class ODataClient
 		var result = await ExecuteAsEnumerableAsync(command, annotations, cancellationToken).ConfigureAwait(false);
 		return IsBatchRequest
 			? Array.Empty<T>()
-			: result == null
+			: result is null
 			? null
 			: typeof(T) == typeof(string) || typeof(T).IsValue()
 			? result.SelectMany(x => x.Values).Select(x => Session.TypeCache.Convert<T>(x)).ToArray()

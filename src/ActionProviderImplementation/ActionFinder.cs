@@ -16,7 +16,7 @@ public static class ActionFinder
 				Method = m,
 				Attribute = Attribute.GetCustomAttribute(m, typeof(ActionAttribute)) as ActionAttribute
 			})
-			.Where(u => u.Attribute != null)
+			.Where(u => u.Attribute is not null)
 			.Select(u => new ActionInfo(
 				u.Method,
 				u.Attribute.Binding,

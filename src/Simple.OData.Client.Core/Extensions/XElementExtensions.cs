@@ -57,6 +57,6 @@ internal static class XElementExtensions
 
 	public static string ValueOrDefault(this XElement? element)
 	{
-		return element == null ? string.Empty : element.Value;
+		return element is null ? string.Empty : element.Value;
 	}
 }

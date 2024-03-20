@@ -562,7 +562,7 @@ public class FindDynamicTests : TestBase
 		var x = ODataDynamic.Expression;
 		var employee = await client
 			.For(x.Employee)
-			.Filter(x.As(typeof(Employee)) != null)
+			.Filter(x.As(typeof(Employee)) is not null)
 			.FindEntryAsync();
 		Assert.NotNull(employee);
 	}
@@ -574,7 +574,7 @@ public class FindDynamicTests : TestBase
 		var x = ODataDynamic.Expression;
 		var employee = await client
 			.For(x.Employee)
-			.Filter(x.Superior.As(typeof(Employee)) != null)
+			.Filter(x.Superior.As(typeof(Employee)) is not null)
 			.FindEntryAsync();
 		Assert.NotNull(employee);
 	}

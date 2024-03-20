@@ -21,7 +21,7 @@ public class CommandFormatter : CommandFormatterBase
 	{
 		var type = value?.GetType();
 
-		if (value != null && _session.TypeCache.IsEnumType(type))
+		if (value is not null && _session.TypeCache.IsEnumType(type))
 		{
 			value = new ODataEnumValue(value.ToString(), _session.Metadata.GetQualifiedTypeName(type.Name));
 		}
@@ -158,7 +158,7 @@ public class CommandFormatter : CommandFormatterBase
 				var associatedEntityCollection = _session.Metadata.GetEntityCollection(
 					_session.Metadata.GetNavigationPropertyPartnerTypeName(entityCollection.Name, associationName));
 				var expandAll = association.ExpandAssociations.FirstOrDefault(a => a.Name == StarString);
-				if (expandAll != null)
+				if (expandAll is not null)
 				{
 					clauses.Add($"{ODataLiteral.Expand}=*");
 				}
@@ -275,7 +275,7 @@ public class CommandFormatter : CommandFormatterBase
 		}
 
 		var nestedAssociation = expandAssociation.ExpandAssociations.FirstOrDefault(a => a.Name == segments[currentIndex]);
-		if (nestedAssociation != null)
+		if (nestedAssociation is not null)
 		{
 			MergeOrderByColumns(nestedAssociation, segments, descending, currentIndex + 1);
 		}

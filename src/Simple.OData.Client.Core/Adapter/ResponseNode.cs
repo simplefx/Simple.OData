@@ -6,7 +6,7 @@ public class ResponseNode
 	public AnnotatedEntry Entry { get; set; }
 	public string LinkName { get; set; }
 
-	public object Value => Feed != null && Feed.Entries != null
+	public object Value => Feed is not null && Feed.Entries is not null
 				? Feed.Entries
 				: Entry?.Data;
 }

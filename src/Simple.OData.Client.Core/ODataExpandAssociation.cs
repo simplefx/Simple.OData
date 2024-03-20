@@ -54,7 +54,7 @@ public class ODataExpandAssociation : IEquatable<ODataExpandAssociation>
 
 	public bool Equals(ODataExpandAssociation? other)
 	{
-		if (other == null)
+		if (other is null)
 		{
 			return false;
 		}

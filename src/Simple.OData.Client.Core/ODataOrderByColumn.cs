@@ -57,7 +57,7 @@ public class ODataOrderByColumn : IEquatable<ODataOrderByColumn>
 	{
 		unchecked
 		{
-			return ((Name != null ? Name.GetHashCode() : 0) * 397) ^ Descending.GetHashCode();
+			return ((Name is not null ? Name.GetHashCode() : 0) * 397) ^ Descending.GetHashCode();
 		}
 	}
 }

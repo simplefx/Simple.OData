@@ -86,7 +86,7 @@ public class WorkTaskModelsController : ODataController
 		}
 
 		var workTaskModel = db.WorkTaskModels.Find(key);
-		if (workTaskModel == null)
+		if (workTaskModel is null)
 		{
 			return NotFound();
 		}
@@ -116,7 +116,7 @@ public class WorkTaskModelsController : ODataController
 	public IHttpActionResult Delete([FromODataUri] Guid key)
 	{
 		var workTaskModel = db.WorkTaskModels.Find(key);
-		if (workTaskModel == null)
+		if (workTaskModel is null)
 		{
 			return NotFound();
 		}

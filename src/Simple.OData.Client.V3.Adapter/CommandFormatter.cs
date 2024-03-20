@@ -18,7 +18,7 @@ public class CommandFormatter : CommandFormatterBase
 
 	public override string ConvertValueToUriLiteral(object value, bool escapeDataString)
 	{
-		if (value != null && _session.TypeCache.IsEnumType(value.GetType()))
+		if (value is not null && _session.TypeCache.IsEnumType(value.GetType()))
 		{
 			value = Convert.ToInt32(value, CultureInfo.InvariantCulture);
 		}

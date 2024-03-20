@@ -205,7 +205,7 @@ namespace Simple.OData.Client.V4.Adapter
 
 		protected override void ConvertEntry(ResponseNode entryNode, object entry)
 		{
-			if (entry != null)
+			if (entry is not null)
 			{
 				var odataEntry = entry as ODataResource;
 				foreach (var property in odataEntry.Properties)
@@ -265,7 +265,7 @@ namespace Simple.OData.Client.V4.Adapter
 
 		private static ODataMediaAnnotations? CreateAnnotations(ODataStreamReferenceValue value)
 		{
-			return value == null ? null : new ODataMediaAnnotations
+			return value is null ? null : new ODataMediaAnnotations
 			{
 				ContentType = value.ContentType,
 				ReadLink = value.ReadLink,

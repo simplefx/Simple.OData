@@ -12,7 +12,7 @@ internal abstract class FunctionToOperatorMapping
 		out FunctionToOperatorMapping operatorMapping)
 	{
 		operatorMapping = DefinedMappings.SingleOrDefault(x => x.CanMap(function.FunctionName, function.Arguments.Count, functionCaller, adapterVersion));
-		return operatorMapping != null;
+		return operatorMapping is not null;
 	}
 
 	public abstract string Format(ExpressionContext context, ODataExpression functionCaller, List<ODataExpression> functionArguments);
@@ -55,7 +55,7 @@ internal class InOperatorMapping : FunctionToOperatorMapping
 	{
 		return functionName == nameof(Enumerable.Contains) &&
 			   argumentCount == 1 &&
-			   functionCaller.Value != null &&
+			   functionCaller.Value is not null &&
 			   functionCaller.Value.GetType() != typeof(string) &&
 			   IsInstanceOfType(typeof(IEnumerable), functionCaller.Value) &&
 			   adapterVersion == AdapterVersion.V4;
@@ -63,7 +63,7 @@ internal class InOperatorMapping : FunctionToOperatorMapping
 
 	private static bool IsInstanceOfType(Type expectedType, object? value)
 	{
-		if (value == null)
+		if (value is null)
 		{
 			return false;
 		}

@@ -43,7 +43,7 @@ namespace Simple.OData.Client.V3.Adapter
 			{
 				entityType = (_model.FindAllDerivedTypes(entitySet.ElementType)
 					.BestMatch(x => (x as IEdmEntityType).Name, entityTypeName, NameMatchResolver) as IEdmEntityType);
-				if (entityType != null)
+				if (entityType is not null)
 				{
 					return entityType.Name;
 				}
@@ -59,7 +59,7 @@ namespace Simple.OData.Client.V3.Adapter
 		public override string GetEntityTypeExactName(string collectionName)
 		{
 			var entityType = GetEntityTypes().BestMatch(x => x.Name, collectionName, NameMatchResolver);
-			if (entityType != null)
+			if (entityType is not null)
 			{
 				return entityType.Name;
 			}
@@ -123,7 +123,7 @@ namespace Simple.OData.Client.V3.Adapter
 		{
 			if (TryGetEntityType(collectionName, out var entityType))
 			{
-				return entityType.DeclaredKey != null;
+				return entityType.DeclaredKey is not null;
 			}
 			else
 			{
@@ -148,7 +148,7 @@ namespace Simple.OData.Client.V3.Adapter
 
 		public override string GetStructuralPropertyPath(string collectionName, params string[]? propertyNames)
 		{
-			if (propertyNames == null || propertyNames.Length == 0)
+			if (propertyNames is null || propertyNames.Length == 0)
 			{
 				throw new ArgumentNullException(nameof(propertyNames));
 			}
@@ -201,12 +201,12 @@ namespace Simple.OData.Client.V3.Adapter
 		public override IEnumerable<string> GetDeclaredKeyPropertyNames(string collectionName)
 		{
 			var entityType = GetEntityType(collectionName);
-			while (entityType.DeclaredKey == null && entityType.BaseEntityType() != null)
+			while (entityType.DeclaredKey is null && entityType.BaseEntityType() is not null)
 			{
 				entityType = entityType.BaseEntityType();
 			}
 
-			if (entityType.DeclaredKey == null)
+			if (entityType.DeclaredKey is null)
 			{
 				return Array.Empty<string>();
 			}
@@ -240,7 +240,7 @@ namespace Simple.OData.Client.V3.Adapter
 		{
 			var function = GetFunction(functionName);
 
-			if (function.ReturnType == null)
+			if (function.ReturnType is null)
 			{
 				return null;
 			}
@@ -284,7 +284,7 @@ namespace Simple.OData.Client.V3.Adapter
 				.SelectMany(x => (x as IEdmEntityContainer).EntitySets())
 				.BestMatch(x => x.Name, entitySetName, NameMatchResolver);
 
-			return entitySet != null;
+			return entitySet is not null;
 		}
 
 		private IEnumerable<IEdmEntityType> GetEntityTypes()
@@ -315,7 +315,7 @@ namespace Simple.OData.Client.V3.Adapter
 				{
 					var derivedTypeName = segments.Last();
 					var derivedType = GetEntityTypes().SingleOrDefault(x => x.FullName() == derivedTypeName);
-					if (derivedType != null)
+					if (derivedType is not null)
 					{
 						entityType = derivedType;
 						return true;
@@ -325,7 +325,7 @@ namespace Simple.OData.Client.V3.Adapter
 				{
 					var collection = NavigateToCollection(collectionName);
 					entityType = GetEntityTypes().SingleOrDefault(x => x.Name == collection.Name);
-					if (entityType != null)
+					if (entityType is not null)
 					{
 						return true;
 					}
@@ -334,18 +334,18 @@ namespace Simple.OData.Client.V3.Adapter
 			else
 			{
 				var entitySet = GetEntitySets().BestMatch(x => x.Name, collectionName, NameMatchResolver);
-				if (entitySet != null)
+				if (entitySet is not null)
 				{
 					entityType = entitySet.ElementType;
 					return true;
 				}
 
 				var derivedType = GetEntityTypes().BestMatch(x => x.Name, collectionName, NameMatchResolver);
-				if (derivedType != null)
+				if (derivedType is not null)
 				{
 					var baseType = GetEntityTypes()
 						.SingleOrDefault(x => _model.FindDirectlyDerivedTypes(x).Contains(derivedType));
-					if (baseType != null && GetEntitySets().Any(x => x.ElementType == baseType))
+					if (baseType is not null && GetEntitySets().Any(x => x.ElementType == baseType))
 					{
 						entityType = derivedType;
 						return true;
@@ -366,7 +366,7 @@ namespace Simple.OData.Client.V3.Adapter
 				: typeReference.Definition.TypeKind == EdmTypeKind.Entity
 				? typeReference.Definition as IEdmEntityType
 				: null;
-			return entityType != null;
+			return entityType is not null;
 		}
 
 		private IEdmComplexType GetComplexType(string typeName)
@@ -386,7 +386,7 @@ namespace Simple.OData.Client.V3.Adapter
 				.Select(x => x as IEdmComplexType)
 				.BestMatch(x => x.Name, typeName, NameMatchResolver);
 
-			return complexType != null;
+			return complexType is not null;
 		}
 
 		private bool TryGetEnumType(string typeName, out IEdmEnumType enumType)
@@ -396,7 +396,7 @@ namespace Simple.OData.Client.V3.Adapter
 				.Select(x => x as IEdmEnumType)
 				.BestMatch(x => x.Name, typeName, NameMatchResolver);
 
-			return enumType != null;
+			return enumType is not null;
 		}
 
 		private IEdmStructuralProperty GetStructuralProperty(string entitySetName, string propertyName)
@@ -409,7 +409,7 @@ namespace Simple.OData.Client.V3.Adapter
 		{
 			var property = edmType.StructuralProperties().BestMatch(x => x.Name, propertyName, NameMatchResolver);
 
-			if (property == null)
+			if (property is null)
 			{
 				throw new UnresolvableObjectException(propertyName, $"Structural property [{propertyName}] not found");
 			}
@@ -421,7 +421,7 @@ namespace Simple.OData.Client.V3.Adapter
 		{
 			var property = GetEntityType(entitySetName).NavigationProperties().BestMatch(x => x.Name, propertyName, NameMatchResolver);
 
-			if (property == null)
+			if (property is null)
 			{
 				throw new UnresolvableObjectException(propertyName, $"Navigation property [{propertyName}] not found");
 			}
@@ -436,7 +436,7 @@ namespace Simple.OData.Client.V3.Adapter
 				.SelectMany(x => (x as IEdmEntityContainer).FunctionImports())
 				.BestMatch(x => x.Name, functionName, NameMatchResolver);
 
-			if (function == null)
+			if (function is null)
 			{
 				throw new UnresolvableObjectException(functionName, $"Function [{functionName}] not found");
 			}

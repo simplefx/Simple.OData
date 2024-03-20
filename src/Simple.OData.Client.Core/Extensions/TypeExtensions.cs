@@ -20,7 +20,7 @@ internal static class TypeExtensions
 		var properties = GetDeclaredProperties(type).ToList();
 
 		var baseType = type.GetTypeInfo().BaseType;
-		if (baseType != null && baseType != typeof(object))
+		if (baseType is not null && baseType != typeof(object))
 		{
 			properties.AddRange(baseType.GetAllProperties().Where(x => properties.All(y => y.Name != x.Name)));
 		}
@@ -37,10 +37,10 @@ internal static class TypeExtensions
 	public static PropertyInfo GetNamedProperty(this Type type, string propertyName)
 	{
 		var currentType = type;
-		while (currentType != null && currentType != typeof(object))
+		while (currentType is not null && currentType != typeof(object))
 		{
 			var property = currentType.GetTypeInfo().GetDeclaredProperty(propertyName);
-			if (property != null)
+			if (property is not null)
 			{
 				return property;
 			}
@@ -93,7 +93,7 @@ internal static class TypeExtensions
 		var fields = GetDeclaredFields(type).ToList();
 
 		var baseType = type.GetTypeInfo().BaseType;
-		if (baseType != null && baseType != typeof(object))
+		if (baseType is not null && baseType != typeof(object))
 		{
 			fields.AddRange(baseType.GetAllFields().Where(x => fields.All(y => y.Name != x.Name)));
 		}
@@ -104,10 +104,10 @@ internal static class TypeExtensions
 	public static FieldInfo GetAnyField(this Type type, string fieldName, bool includeNonPublic = false)
 	{
 		var currentType = type;
-		while (currentType != null && currentType != typeof(object))
+		while (currentType is not null && currentType != typeof(object))
 		{
 			var field = currentType.GetDeclaredField(fieldName);
-			if (field != null)
+			if (field is not null)
 			{
 				return field;
 			}
@@ -160,7 +160,7 @@ internal static class TypeExtensions
 
 	public static bool HasCustomAttribute(this Type type, Type attributeType, bool inherit)
 	{
-		return type.GetTypeInfo().GetCustomAttribute(attributeType, inherit) != null;
+		return type.GetTypeInfo().GetCustomAttribute(attributeType, inherit) is not null;
 	}
 
 	public static bool IsGeneric(this Type type)
@@ -204,13 +204,13 @@ internal static class TypeExtensions
 		var mappingAttribute = type.GetCustomAttributes()
 			.FirstOrDefault(x => supportedAttributeNames.Any(y => x.GetType().Name == y));
 
-		if (mappingAttribute != null)
+		if (mappingAttribute is not null)
 		{
 			var nameProperty = mappingAttribute.GetType().GetNamedProperty("Name");
-			if (nameProperty != null)
+			if (nameProperty is not null)
 			{
 				var propertyValue = nameProperty.GetValueEx(mappingAttribute);
-				if (propertyValue != null)
+				if (propertyValue is not null)
 				{
 					return propertyValue.ToString();
 				}

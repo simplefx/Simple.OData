@@ -23,7 +23,7 @@ public class ActionInfo
 		}
 		else
 		{
-			if (availabilityMethodName != null)
+			if (availabilityMethodName is not null)
 			{
 				throw new Exception("Unexpected availabilityMethodName provided.");
 			}
@@ -36,7 +36,7 @@ public class ActionInfo
 
 	public void AssertAvailable(object context, object? entity, bool inFeedContext)
 	{
-		if (entity == null)
+		if (entity is null)
 		{
 			return;
 		}
@@ -71,7 +71,7 @@ public class ActionInfo
 	private bool SkipAvailabilityCheckForFeeds { get; set; }
 	private MethodInfo GetAvailabilityMethod(string? availabilityMethodName)
 	{
-		if (availabilityMethodName == null)
+		if (availabilityMethodName is null)
 		{
 			throw new Exception("If the action is conditionally available you need to provide a method to calculate availability.");
 		}
@@ -79,7 +79,7 @@ public class ActionInfo
 		var declaringType = ActionMethod.DeclaringType;
 		var method = declaringType.GetMethod(availabilityMethodName);
 
-		if (method == null)
+		if (method is null)
 		{
 			throw new Exception($"Availability Method {availabilityMethodName} was not found on type {declaringType.FullName}");
 		}

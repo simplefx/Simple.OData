@@ -105,12 +105,12 @@ internal class FunctionMapping
 			x.FunctionCall.Equals(new ExpressionFunction.FunctionCall(functionName, argumentCount)) &&
 			(x.AdapterVersion & adapterVersion) == adapterVersion);
 
-		if (function != null)
+		if (function is not null)
 		{
 			functionMapping = function.FunctionMapping;
 		}
 
-		return function != null;
+		return function is not null;
 	}
 
 	private static FunctionDefinition CreateFunctionDefinition(string functionName, int argumentCount, string mappedFunctionName,

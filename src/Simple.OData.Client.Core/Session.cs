@@ -20,7 +20,7 @@ internal class Session : ISession
 
 	private Session(ODataClientSettings settings)
 	{
-		if (settings.BaseUri == null || string.IsNullOrEmpty(settings.BaseUri.AbsoluteUri))
+		if (settings.BaseUri is null || string.IsNullOrEmpty(settings.BaseUri.AbsoluteUri))
 		{
 			throw new InvalidOperationException("Unable to create client session with no URI specified.");
 		}
@@ -38,11 +38,11 @@ internal class Session : ISession
 	{
 		get
 		{
-			if (_adapter == null)
+			if (_adapter is null)
 			{
 				lock (this)
 				{
-					if (_adapter == null)
+					if (_adapter is null)
 					{
 						_adapter = MetadataCache.GetODataAdapter(this);
 					}
@@ -65,7 +65,7 @@ internal class Session : ISession
 	{
 		lock (this)
 		{
-			if (_httpConnection != null)
+			if (_httpConnection is not null)
 			{
 				_httpConnection.Dispose();
 				_httpConnection = null;
@@ -81,13 +81,13 @@ internal class Session : ISession
 
 		try
 		{
-			if (MetadataCache == null)
+			if (MetadataCache is null)
 			{
 				MetadataCache = await InitializeMetadataCache(cancellationToken)
 					.ConfigureAwait(false);
 			}
 
-			if (_adapter == null)
+			if (_adapter is null)
 			{
 				_adapter = MetadataCache.GetODataAdapter(this);
 			}
@@ -106,7 +106,7 @@ internal class Session : ISession
 	public void ClearMetadataCache()
 	{
 		var metadataCache = MetadataCache;
-		if (metadataCache != null)
+		if (metadataCache is not null)
 		{
 			EdmMetadataCache.Clear(metadataCache.Key);
 			MetadataCache = null;
@@ -127,11 +127,11 @@ internal class Session : ISession
 
 	public HttpConnection GetHttpConnection()
 	{
-		if (_httpConnection == null)
+		if (_httpConnection is null)
 		{
 			lock (this)
 			{
-				if (_httpConnection == null)
+				if (_httpConnection is null)
 				{
 					_httpConnection = new HttpConnection(Settings);
 				}

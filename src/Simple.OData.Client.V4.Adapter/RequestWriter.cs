@@ -79,22 +79,22 @@ namespace Simple.OData.Client.V4.Adapter
 			await entryWriter.WriteStartAsync(entry).ConfigureAwait(false);
 			if (_resourceEntryMap.TryGetValue(entry, out var resourceEntry))
 			{
-				if (resourceEntry.CollectionProperties != null)
+				if (resourceEntry.CollectionProperties is not null)
 				{
 					foreach (var prop in resourceEntry.CollectionProperties)
 					{
-						if (prop.Value != null)
+						if (prop.Value is not null)
 						{
 							await WriteNestedCollectionAsync(entryWriter, prop.Key, prop.Value).ConfigureAwait(false);
 						}
 					}
 				}
 
-				if (resourceEntry.StructuralProperties != null)
+				if (resourceEntry.StructuralProperties is not null)
 				{
 					foreach (var prop in resourceEntry.StructuralProperties)
 					{
-						if (prop.Value != null)
+						if (prop.Value is not null)
 						{
 							await WriteNestedEntryAsync(entryWriter, prop.Key, prop.Value).ConfigureAwait(false);
 						}
@@ -102,11 +102,11 @@ namespace Simple.OData.Client.V4.Adapter
 				}
 			}
 
-			if (links != null)
+			if (links is not null)
 			{
 				foreach (var link in links)
 				{
-					if (link.Value.Any(x => x.LinkData != null))
+					if (link.Value.Any(x => x.LinkData is not null))
 					{
 						await WriteLinkAsync(entryWriter, entry.TypeName, link.Key, link.Value)
 							.ConfigureAwait(false);
@@ -190,12 +190,12 @@ namespace Simple.OData.Client.V4.Adapter
 			using var messageWriter = new ODataMessageWriter(message, GetWriterSettings(), _model);
 
 			static bool typeMatch(IEdmOperationParameter parameter, IEdmType baseType) =>
-				parameter == null ||
+				parameter is null ||
 				parameter.Type.Definition == baseType ||
 				parameter.Type.Definition.TypeKind == EdmTypeKind.Collection &&
 					(parameter.Type.Definition as IEdmCollectionType).ElementType.Definition == baseType;
 
-			var action = boundTypeName == null
+			var action = boundTypeName is null
 				? _model.SchemaElements.BestMatch(
 					x => x.SchemaElementKind == EdmSchemaElementKind.Action,
 					x => x.Name, actionName, _session.Settings.NameMatchResolver) as IEdmAction
@@ -214,7 +214,7 @@ namespace Simple.OData.Client.V4.Adapter
 			foreach (var parameter in parameters)
 			{
 				var operationParameter = action.Parameters.BestMatch(x => x.Name, parameter.Key, _session.Settings.NameMatchResolver);
-				if (operationParameter == null)
+				if (operationParameter is null)
 				{
 					throw new UnresolvableObjectException(parameter.Key, $"Parameter [{parameter.Key}] not found for action [{actionName}]");
 				}
@@ -340,7 +340,7 @@ namespace Simple.OData.Client.V4.Adapter
 			string? linkIdent = null)
 		{
 			var linkPath = $"{entryIdent}/{navigationPropertyName}/$ref";
-			if (linkIdent != null)
+			if (linkIdent is not null)
 			{
 				var link = _session.Settings.UseAbsoluteReferenceUris
 					? Utils.CreateAbsoluteUri(_session.Settings.BaseUri.AbsoluteUri, linkIdent).AbsoluteUri
@@ -386,7 +386,7 @@ namespace Simple.OData.Client.V4.Adapter
 
 			var linkType = GetNavigationPropertyEntityType(navigationProperty);
 			var linkTypeWithKey = linkType;
-			while (linkTypeWithKey.DeclaredKey == null && linkTypeWithKey.BaseEntityType() != null)
+			while (linkTypeWithKey.DeclaredKey is null && linkTypeWithKey.BaseEntityType() is not null)
 			{
 				linkTypeWithKey = linkTypeWithKey.BaseEntityType();
 			}
@@ -404,7 +404,7 @@ namespace Simple.OData.Client.V4.Adapter
 				var linkEntry = referenceLink.LinkData.ToDictionary(TypeCache);
 				var contentId = GetContentId(referenceLink);
 				string linkUri;
-				if (contentId != null)
+				if (contentId is not null)
 				{
 					linkUri = "$" + contentId;
 				}
@@ -473,7 +473,7 @@ namespace Simple.OData.Client.V4.Adapter
 			string findMatchingPropertyName(string name)
 			{
 				var property = typeProperties.BestMatch(y => y.Name, name, _session.Settings.NameMatchResolver);
-				return property != null ? property.Name : name;
+				return property is not null ? property.Name : name;
 			}
 
 			IEdmTypeReference findMatchingPropertyType(string name)
@@ -483,9 +483,9 @@ namespace Simple.OData.Client.V4.Adapter
 			}
 
 			bool isStructural(IEdmTypeReference type) =>
-				type != null && type.TypeKind() == EdmTypeKind.Complex;
+				type is not null && type.TypeKind() == EdmTypeKind.Complex;
 			bool isStructuralCollection(IEdmTypeReference type) =>
-				type != null && type.TypeKind() == EdmTypeKind.Collection && type.AsCollection().ElementType().TypeKind() == EdmTypeKind.Complex;
+				type is not null && type.TypeKind() == EdmTypeKind.Collection && type.AsCollection().ElementType().TypeKind() == EdmTypeKind.Complex;
 			bool isPrimitive(IEdmTypeReference type) =>
 				!isStructural(type) && !isStructuralCollection(type);
 
@@ -510,7 +510,7 @@ namespace Simple.OData.Client.V4.Adapter
 					GetPropertyValue(typeProperties, x.Key, x.Value, root) as ODataResource))
 				.ToDictionary();
 			_resourceEntryMap.Add(entry, resourceEntry);
-			if (root != null && _resourceEntries.TryGetValue(root, out var entries))
+			if (root is not null && _resourceEntries.TryGetValue(root, out var entries))
 			{
 				entries.Add(entry);
 			}
@@ -521,12 +521,12 @@ namespace Simple.OData.Client.V4.Adapter
 		private object GetPropertyValue(IEnumerable<IEdmProperty> properties, string key, object value, ODataResource root)
 		{
 			var property = properties.BestMatch(x => x.Name, key, _session.Settings.NameMatchResolver);
-			return property != null ? GetPropertyValue(property.Type, value, root) : value;
+			return property is not null ? GetPropertyValue(property.Type, value, root) : value;
 		}
 
 		private object GetPropertyValue(IEdmTypeReference propertyType, object value, ODataResource root)
 		{
-			if (value == null)
+			if (value is null)
 			{
 				return value;
 			}

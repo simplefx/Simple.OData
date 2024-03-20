@@ -165,7 +165,7 @@ internal static class Utils
 	public static bool IsDesktopPlatform()
 	{
 		var cmdm = Type.GetType("System.ComponentModel.DesignerProperties, PresentationFramework, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35");
-		return cmdm != null;
+		return cmdm is not null;
 	}
 
 	public static Task<T> GetTaskFromResult<T>(T result)
@@ -191,7 +191,7 @@ internal static class Utils
 			foreach (var keyProperty in keyNames)
 			{
 				var namedKeyValue = namedKeyValues.FirstOrDefault(x => resolver.IsMatch(x.Key, keyProperty));
-				if (namedKeyValue.Key != null)
+				if (namedKeyValue.Key is not null)
 				{
 					tmpMatchingNamedKeyValues.Add(new KeyValuePair<string, object>(keyProperty, namedKeyValue.Value));
 				}
@@ -227,7 +227,7 @@ internal static class Utils
 		foreach (var namedKeyValue in namedKeyValues)
 		{
 			var keyProperty = keyNames.FirstOrDefault(x => resolver.IsMatch(x, namedKeyValue.Key));
-			if (keyProperty != null)
+			if (keyProperty is not null)
 			{
 				tmpMatchingNamedKeyValues.Add(new KeyValuePair<string, object>(keyProperty, namedKeyValue.Value));
 			}

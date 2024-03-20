@@ -160,7 +160,7 @@ public class TypeCacheValueConversionTests
 			return new PrimitiveType(new Guid(value.ToString()));
 		}
 
-		if (Nullable.GetUnderlyingType(targetType) != null)
+		if (Nullable.GetUnderlyingType(targetType) is not null)
 		{
 			return ChangeType(value, Nullable.GetUnderlyingType(targetType));
 		}

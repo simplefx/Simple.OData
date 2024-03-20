@@ -23,7 +23,7 @@ internal static class TypeCacheExtensions
 
 	public static object? Convert(this ITypeCache typeCache, object? value, Type targetType)
 	{
-		if (value == null && !typeCache.IsValue(targetType))
+		if (value is null && !typeCache.IsValue(targetType))
 		{
 			return null;
 		}
@@ -40,7 +40,7 @@ internal static class TypeCacheExtensions
 	{
 		try
 		{
-			if (value == null)
+			if (value is null)
 			{
 				result = typeCache.IsValue(targetType) ? Activator.CreateInstance(targetType) : null;
 			}
@@ -80,7 +80,7 @@ internal static class TypeCacheExtensions
 			{
 				result = new Guid(value.ToString());
 			}
-			else if (Nullable.GetUnderlyingType(targetType) != null)
+			else if (Nullable.GetUnderlyingType(targetType) is not null)
 			{
 				result = typeCache.Convert(value, Nullable.GetUnderlyingType(targetType));
 			}
@@ -91,7 +91,7 @@ internal static class TypeCacheExtensions
 			else
 			{
 				var descriptor = TypeDescriptor.GetConverter(targetType);
-				result = descriptor != null & descriptor.CanConvertTo(targetType)
+				result = descriptor is not null & descriptor.CanConvertTo(targetType)
 					? descriptor.ConvertTo(value, targetType)
 					: System.Convert.ChangeType(value, targetType, CultureInfo.InvariantCulture);
 			}

@@ -17,7 +17,7 @@ namespace Simple.OData.Client.V4.Adapter.Extensions
 		public DynamicDataAggregation Filter(string filter)
 		{
 			var filterClause = (FilterClause)_underlyingDataAggregationBuilder.LastOrDefault(x => x is FilterClause);
-			if (filterClause != null)
+			if (filterClause is not null)
 			{
 				filterClause.Append(filter);
 			}

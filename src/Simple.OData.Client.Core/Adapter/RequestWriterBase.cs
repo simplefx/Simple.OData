@@ -19,7 +19,7 @@ public abstract class RequestWriterBase : IRequestWriter
 		_deferredBatchWriter = deferredBatchWriter;
 	}
 
-	protected bool IsBatch => _deferredBatchWriter != null;
+	protected bool IsBatch => _deferredBatchWriter is not null;
 
 	protected ITypeCache TypeCache => _session.TypeCache;
 
@@ -215,7 +215,7 @@ public abstract class RequestWriterBase : IRequestWriter
 		Stream? entryContent = null;
 		var usePayloadFormat = ODataPayloadFormat.Unspecified;
 
-		if (parameters != null && parameters.Any())
+		if (parameters is not null && parameters.Any())
 		{
 			entryContent = await WriteActionContentAsync(RestVerbs.Post, commandText, actionName, boundTypeName, parameters)
 				.ConfigureAwait(false);
@@ -274,7 +274,7 @@ public abstract class RequestWriterBase : IRequestWriter
 	{
 		string? contentId = null;
 		var linkEntry = referenceLink.LinkData.ToDictionary(TypeCache);
-		if (_deferredBatchWriter != null)
+		if (_deferredBatchWriter is not null)
 		{
 			contentId = _deferredBatchWriter.Value.GetContentId(linkEntry, referenceLink.LinkData);
 		}
@@ -302,7 +302,7 @@ public abstract class RequestWriterBase : IRequestWriter
 
 	private static bool IsTextMediaType(string? mediaType)
 	{
-		if (mediaType == null)
+		if (mediaType is null)
 		{
 			return true;
 		}

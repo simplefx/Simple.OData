@@ -37,7 +37,7 @@ public class SerializableHttpRequestMessage
 		RequestHeaders = request.Headers.Select(
 			x => new KeyValuePair<string, List<string>>(x.Key, new List<string>(x.Value))).ToList()
 			.ToDictionary(x => x.Key, x => x.Value);
-		if (request.Content != null)
+		if (request.Content is not null)
 		{
 			ContentHeaders = request.Content.Headers.Select(
 				x => new KeyValuePair<string, List<string>>(x.Key, new List<string>(x.Value))).ToList()
@@ -73,7 +73,7 @@ public class SerializableHttpResponseMessage
 		ResponseHeaders = response.Headers.Select(
 				x => new KeyValuePair<string, List<string>>(x.Key, new List<string>(x.Value))).ToList()
 			.ToDictionary(x => x.Key, x => x.Value);
-		if (response.Content != null)
+		if (response.Content is not null)
 		{
 			ContentHeaders = response.Content.Headers.Select(
 					x => new KeyValuePair<string, List<string>>(x.Key, new List<string>(x.Value))).ToList()
@@ -139,7 +139,7 @@ public class MockingRequestExecutor
 				await ValidateRequestAsync(request).ConfigureAwait(false);
 			}
 
-			if (_mockResponses == null)
+			if (_mockResponses is null)
 			{
 				return GetResponseFromResponseMessage(request);
 			}
@@ -201,7 +201,7 @@ public class MockingRequestExecutor
 		}
 
 		ValidateHeaders(expectedHeaders, actualHeaders);
-		if (request.Content != null)
+		if (request.Content is not null)
 		{
 			expectedHeaders = new Dictionary<string, IEnumerable<string>>();
 			foreach (var header in savedRequest.ContentHeaders)
@@ -231,7 +231,7 @@ public class MockingRequestExecutor
 		var response = new HttpResponseMessage
 		{
 			StatusCode = savedResponse.StatusCode,
-			Content = savedResponse.Content == null
+			Content = savedResponse.Content is null
 				? null
 				: new StreamContent(Utils.StringToStream(savedResponse.Content)),
 			RequestMessage = request,
@@ -247,7 +247,7 @@ public class MockingRequestExecutor
 			response.Headers.Add(header.Key, header.Value);
 		}
 
-		if (savedResponse.Content != null)
+		if (savedResponse.Content is not null)
 		{
 			foreach (var header in savedResponse.ContentHeaders)
 			{
@@ -416,7 +416,7 @@ public static partial class ODataClientSettingsExtensionMethods
 		for (var frameNumber = 2; ; frameNumber++)
 		{
 			var stackFrame = stackTrace.GetFrame(frameNumber);
-			if (stackFrame == null)
+			if (stackFrame is null)
 			{
 				throw new InvalidOperationException("Attempt to retrieve a frame beyond the call stack.");
 			}

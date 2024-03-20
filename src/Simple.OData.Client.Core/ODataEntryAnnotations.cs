@@ -77,7 +77,7 @@ public class ODataEntryAnnotations
 
 	internal void CopyFrom(ODataEntryAnnotations src)
 	{
-		if (src != null)
+		if (src is not null)
 		{
 			Id = src.Id;
 			TypeName = src.TypeName;
@@ -103,7 +103,7 @@ public class ODataEntryAnnotations
 
 	internal void Merge(ODataEntryAnnotations src)
 	{
-		if (src != null)
+		if (src is not null)
 		{
 			Id ??= src.Id;
 			TypeName ??= src.TypeName;

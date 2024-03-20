@@ -22,7 +22,7 @@ public class AnnotatedFeed
 
 	public void SetAnnotations(ODataFeedAnnotations annotations)
 	{
-		if (Annotations == null)
+		if (Annotations is null)
 		{
 			Annotations = annotations;
 		}
@@ -49,7 +49,7 @@ public class AnnotatedEntry
 
 	public void SetAnnotations(ODataEntryAnnotations annotations)
 	{
-		if (Annotations == null)
+		if (Annotations is null)
 		{
 			Annotations = annotations;
 		}
@@ -61,7 +61,7 @@ public class AnnotatedEntry
 
 	public void SetLinkAnnotations(ODataFeedAnnotations annotations)
 	{
-		if (LinkAnnotations == null)
+		if (LinkAnnotations is null)
 		{
 			LinkAnnotations = annotations;
 		}
@@ -73,7 +73,7 @@ public class AnnotatedEntry
 
 	public IDictionary<string, object> GetData(bool includeAnnotations)
 	{
-		if (includeAnnotations && Annotations != null)
+		if (includeAnnotations && Annotations is not null)
 		{
 			var dataWithAnnotations = new Dictionary<string, object>(Data)
 				{
@@ -107,7 +107,7 @@ public class ODataResponse
 
 	public IEnumerable<IDictionary<string, object>> AsEntries(bool includeAnnotations)
 	{
-		if (Feed != null)
+		if (Feed is not null)
 		{
 			var data = Feed.Entries;
 			return data.Select(x =>
@@ -131,11 +131,11 @@ public class ODataResponse
 	public T? AsScalar<T>()
 	{
 		var result = AsEntry(false);
-		var value = result == null || result.Count == 0
+		var value = result is null || result.Count == 0
 			? null
 			: result.First().Value;
 
-		return value == null
+		return value is null
 			? default(T)
 			: TypeCache.Convert<T>(value);
 	}
@@ -152,7 +152,7 @@ public class ODataResponse
 	{
 		return new ODataResponse(typeCache)
 		{
-			Feed = node.Feed ?? new AnnotatedFeed(node.Entry != null ? new[] { node.Entry } : null),
+			Feed = node.Feed ?? new AnnotatedFeed(node.Entry is not null ? new[] { node.Entry } : null),
 			Headers = headers
 		};
 	}
@@ -248,7 +248,7 @@ public class ODataResponse
 
 	private static IDictionary<string, object>? ExtractData(AnnotatedEntry entry, bool includeAnnotations)
 	{
-		if (entry == null || entry.Data == null)
+		if (entry is null || entry.Data is null)
 		{
 			return null;
 		}
@@ -258,7 +258,7 @@ public class ODataResponse
 
 	private static IDictionary<string, object>? ExtractDictionary(AnnotatedEntry entry, bool includeAnnotations)
 	{
-		if (entry == null || entry.Data == null)
+		if (entry is null || entry.Data is null)
 		{
 			return null;
 		}

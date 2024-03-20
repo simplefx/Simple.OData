@@ -33,7 +33,7 @@ public partial class ODataExpression
 		Stack<MemberInfo>? memberChain = null)
 	{
 		var memberExpression = expression as MemberExpression;
-		if (memberExpression.Expression == null)
+		if (memberExpression.Expression is null)
 		{
 			return new ODataExpression(EvaluateStaticMember(memberExpression));
 		}
@@ -70,10 +70,10 @@ public partial class ODataExpression
 	private static ODataExpression ParseCallExpression(Expression expression)
 	{
 		var callExpression = expression as MethodCallExpression;
-		if (callExpression.Object == null)
+		if (callExpression.Object is null)
 		{
 			var target = callExpression.Arguments.FirstOrDefault();
-			if (target != null)
+			if (target is not null)
 			{
 				var callArguments = string.Equals(callExpression.Method.DeclaringType.FullName, "System.Convert", StringComparison.Ordinal)
 					? callExpression.Arguments

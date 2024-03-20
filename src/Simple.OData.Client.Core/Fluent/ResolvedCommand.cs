@@ -33,7 +33,7 @@ public class ResolvedCommand
 		get
 		{
 			var entityCollection = EntityCollection;
-			return entityCollection.BaseEntityCollection == null
+			return entityCollection.BaseEntityCollection is null
 				? entityCollection.Name
 				: $"{entityCollection.BaseEntityCollection.Name}/{_sesson.Metadata.GetQualifiedTypeName(entityCollection.Name)}";
 		}
@@ -43,7 +43,7 @@ public class ResolvedCommand
 
 	private void ResolveCollectionName(FluentCommandDetails details)
 	{
-		if (Details.CollectionName == null && details.CollectionExpression is not null)
+		if (Details.CollectionName is null && details.CollectionExpression is not null)
 		{
 			var collectionName = details.CollectionExpression.AsString(_sesson);
 			var items = collectionName.Split('/');
@@ -61,7 +61,7 @@ public class ResolvedCommand
 
 	private void ResolveDerivedCollectionName(FluentCommandDetails details)
 	{
-		if (Details.DerivedCollectionName == null && details.DerivedCollectionExpression is not null)
+		if (Details.DerivedCollectionName is null && details.DerivedCollectionExpression is not null)
 		{
 			var derivedCollectionName = details.DerivedCollectionExpression.AsString(_sesson);
 			Details.DerivedCollectionName = derivedCollectionName;
@@ -70,7 +70,7 @@ public class ResolvedCommand
 
 	private void ResolveLinkName(FluentCommandDetails details)
 	{
-		if (Details.LinkName == null && details.LinkExpression is not null)
+		if (Details.LinkName is null && details.LinkExpression is not null)
 		{
 			Details.LinkName = details.LinkExpression.AsString(_sesson);
 		}
@@ -107,12 +107,12 @@ public class ResolvedCommand
 	private void ResolveKeys(FluentCommandDetails details)
 	{
 		var namedKeyValues =
-			details.KeyValues != null && details.KeyValues.Count == 1 &&
+			details.KeyValues is not null && details.KeyValues.Count == 1 &&
 			_sesson.TypeCache.IsAnonymousType(details.KeyValues.First().GetType())
 				? _sesson.TypeCache.ToDictionary(details.KeyValues.First())
 				: details.NamedKeyValues;
 
-		if (namedKeyValues != null)
+		if (namedKeyValues is not null)
 		{
 			if (NamedKeyValuesMatchAnyKey(namedKeyValues, out var matchingKey, out var isAlternateKey))
 			{
@@ -132,18 +132,18 @@ public class ResolvedCommand
 
 	private void ResolveFilter(FluentCommandDetails details)
 	{
-		if (Details.Filter == null && details.FilterExpression is not null)
+		if (Details.Filter is null && details.FilterExpression is not null)
 		{
 			Details.NamedKeyValues = TryInterpretFilterExpressionAsKey(details.FilterExpression, out var isAlternateKey);
 			Details.IsAlternateKey = isAlternateKey;
 
-			if (Details.NamedKeyValues == null)
+			if (Details.NamedKeyValues is null)
 			{
 				var entityCollection = EntityCollection;
 				if (details.HasFunction)
 				{
 					var collection = _sesson.Metadata.GetFunctionReturnCollection(details.FunctionName);
-					if (collection != null)
+					if (collection is not null)
 					{
 						entityCollection = collection;
 					}
@@ -167,7 +167,7 @@ public class ResolvedCommand
 
 	private void ResolveEntryData(FluentCommandDetails details)
 	{
-		if (details.EntryValue != null)
+		if (details.EntryValue is not null)
 		{
 			Details.EntryData = _sesson.TypeCache.ToDictionary(details.EntryValue);
 			Details.BatchEntries?.GetOrAdd(details.EntryValue, Details.EntryData);
@@ -217,7 +217,7 @@ public class ResolvedCommand
 	{
 		get
 		{
-			if (Details.EntryData == null)
+			if (Details.EntryData is null)
 			{
 				return new Dictionary<string, object>();
 			}
@@ -234,7 +234,7 @@ public class ResolvedCommand
 				entryData.Add(key, Details.EntryData[key]);
 			}
 
-			if (Details.EntryData.TryGetValue(Details.DynamicPropertiesContainerName, out var dynamicProperties) && dynamicProperties != null)
+			if (Details.EntryData.TryGetValue(Details.DynamicPropertiesContainerName, out var dynamicProperties) && dynamicProperties is not null)
 			{
 				if (dynamicProperties is IDictionary<string, object> kv)
 				{

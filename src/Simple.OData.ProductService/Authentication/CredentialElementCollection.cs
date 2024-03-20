@@ -10,7 +10,7 @@ public class CredentialElementCollection : ConfigurationElementCollection
 		get => (CredentialElement)BaseGet(index);
 		set
 		{
-			if (BaseGet(index) != null)
+			if (BaseGet(index) is not null)
 			{
 				BaseRemoveAt(index);
 			}

@@ -265,7 +265,7 @@ public class FluentCommand
 
 	public FluentCommand QueryOptions(string queryOptions)
 	{
-		Details.QueryOptions = Details.QueryOptions == null
+		Details.QueryOptions = Details.QueryOptions is null
 			? queryOptions
 			: $"{Details.QueryOptions}&{queryOptions}";
 

@@ -54,7 +54,7 @@ public sealed class UnresolvableObjectException : Exception
 	/// </value>
 	public string ObjectName
 	{
-		get => Data.Contains("ObjectName") ? (Data["ObjectName"] != null ? Data["ObjectName"].ToString() : "{{null}}") : null;
+		get => Data.Contains("ObjectName") ? (Data["ObjectName"] is not null ? Data["ObjectName"].ToString() : "{{null}}") : null;
 		private set => Data["ObjectName"] = value;
 	}
 }

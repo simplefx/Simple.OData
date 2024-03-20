@@ -40,7 +40,7 @@ public abstract class FluentClientBase<T, FT> : IFluentClient<T, FT>
 	{
 		get
 		{
-			if (_command != null)
+			if (_command is not null)
 			{
 				return _command;
 			}
@@ -724,7 +724,7 @@ public abstract class FluentClientBase<T, FT> : IFluentClient<T, FT>
 
 	protected IDictionary<string, object>? FilterColumns(IDictionary<string, object>? entry, IList<string>? selectedColumns)
 	{
-		if (entry == null || selectedColumns == null || !selectedColumns.Any())
+		if (entry is null || selectedColumns is null || !selectedColumns.Any())
 		{
 			return entry;
 		}
@@ -741,7 +741,7 @@ public abstract class FluentClientBase<T, FT> : IFluentClient<T, FT>
 			TypeCache.Register<T>(dynamicPropertiesContainerName);
 		}
 
-		if (result != null && result.Keys.Count == 1 && result.ContainsKey(FluentCommand.ResultLiteral) &&
+		if (result is not null && result.Keys.Count == 1 && result.ContainsKey(FluentCommand.ResultLiteral) &&
 			TypeCache.IsValue(typeof(T)) || typeof(T) == typeof(string) || typeof(T) == typeof(object))
 		{
 			return TypeCache.Convert<T>(result.Values.First());

@@ -21,7 +21,7 @@ public class WebRequestException : Exception
 	{
 		var requestUri = response.RequestMessage?.RequestUri;
 		return new WebRequestException(response.ReasonPhrase, response.StatusCode, requestUri,
-			response.Content != null ? await response.Content.ReadAsStringAsync().ConfigureAwait(false) : null, exceptionMessageSource, null);
+			response.Content is not null ? await response.Content.ReadAsStringAsync().ConfigureAwait(false) : null, exceptionMessageSource, null);
 	}
 
 	/// <summary>

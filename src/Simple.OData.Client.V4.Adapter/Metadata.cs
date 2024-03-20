@@ -64,7 +64,7 @@ public class Metadata : MetadataBase
 		{
 			entityType = (_model.FindAllDerivedTypes(entitySet.EntityType())
 				.BestMatch(x => (x as IEdmEntityType).Name, entityTypeName, NameMatchResolver)) as IEdmEntityType;
-			if (entityType != null)
+			if (entityType is not null)
 			{
 				return entityType.Name;
 			}
@@ -73,7 +73,7 @@ public class Metadata : MetadataBase
 		{
 			entityType = (_model.FindDirectlyDerivedTypes(singleton.EntityType())
 				.BestMatch(x => (x as IEdmEntityType).Name, entityTypeName, NameMatchResolver)) as IEdmEntityType;
-			if (entityType != null)
+			if (entityType is not null)
 			{
 				return entityType.Name;
 			}
@@ -89,7 +89,7 @@ public class Metadata : MetadataBase
 	public override string GetEntityTypeExactName(string collectionName)
 	{
 		var entityType = GetEntityTypes().BestMatch(x => x.Name, collectionName, NameMatchResolver);
-		if (entityType != null)
+		if (entityType is not null)
 		{
 			return entityType.Name;
 		}
@@ -165,7 +165,7 @@ public class Metadata : MetadataBase
 	{
 		if (TryGetEntityType(collectionName, out var entityType))
 		{
-			return entityType.DeclaredKey != null;
+			return entityType.DeclaredKey is not null;
 		}
 		else
 		{
@@ -190,7 +190,7 @@ public class Metadata : MetadataBase
 
 	public override string GetStructuralPropertyPath(string collectionName, params string[]? propertyNames)
 	{
-		if (propertyNames == null || propertyNames.Length == 0)
+		if (propertyNames is null || propertyNames.Length == 0)
 		{
 			throw new ArgumentNullException(nameof(propertyNames));
 		}
@@ -243,12 +243,12 @@ public class Metadata : MetadataBase
 	public override IEnumerable<string> GetDeclaredKeyPropertyNames(string collectionName)
 	{
 		var entityType = GetEntityType(collectionName);
-		while (entityType.DeclaredKey == null && entityType.BaseEntityType() != null)
+		while (entityType.DeclaredKey is null && entityType.BaseEntityType() is not null)
 		{
 			entityType = entityType.BaseEntityType();
 		}
 
-		if (entityType.DeclaredKey == null)
+		if (entityType.DeclaredKey is null)
 		{
 			return Array.Empty<string>();
 		}
@@ -284,7 +284,7 @@ public class Metadata : MetadataBase
 	{
 		var function = GetFunction(functionName);
 
-		if (function.ReturnType == null)
+		if (function.ReturnType is null)
 		{
 			return null;
 		}
@@ -307,7 +307,7 @@ public class Metadata : MetadataBase
 	{
 		var action = GetAction(actionName);
 
-		if (action.ReturnType == null)
+		if (action.ReturnType is null)
 		{
 			return null;
 		}
@@ -334,7 +334,7 @@ public class Metadata : MetadataBase
 			.SelectMany(x => (x as IEdmEntityContainer).EntitySets())
 			.BestMatch(x => x.Name, entitySetName, NameMatchResolver);
 
-		return entitySet != null;
+		return entitySet is not null;
 	}
 
 	private IEnumerable<IEdmSingleton> GetSingletons()
@@ -356,7 +356,7 @@ public class Metadata : MetadataBase
 			.SelectMany(x => (x as IEdmEntityContainer).Singletons())
 			.BestMatch(x => x.Name, singletonName, NameMatchResolver);
 
-		return singleton != null;
+		return singleton is not null;
 	}
 
 	private IEnumerable<IEdmEntityType> GetEntityTypes()
@@ -387,7 +387,7 @@ public class Metadata : MetadataBase
 			{
 				var derivedTypeName = segments.Last();
 				var derivedType = GetEntityTypes().SingleOrDefault(x => x.FullName() == derivedTypeName);
-				if (derivedType != null)
+				if (derivedType is not null)
 				{
 					entityType = derivedType;
 					return true;
@@ -398,14 +398,14 @@ public class Metadata : MetadataBase
 				var collection = NavigateToCollection(collectionName);
 				var entityTypes = GetEntityTypes();
 				entityType = entityTypes.SingleOrDefault(x => x.Name == collection.Name);
-				if (entityType != null)
+				if (entityType is not null)
 				{
 					return true;
 				}
 				else
 				{
 					entityType = entityTypes.BestMatch(x => x.Name, collection.Name, NameMatchResolver);
-					if (entityType != null)
+					if (entityType is not null)
 					{
 						return true;
 					}
@@ -416,7 +416,7 @@ public class Metadata : MetadataBase
 		{
 			var entitySet = GetEntitySets()
 				.BestMatch(x => x.Name, collectionName, NameMatchResolver);
-			if (entitySet != null)
+			if (entitySet is not null)
 			{
 				entityType = entitySet.EntityType();
 				return true;
@@ -424,18 +424,18 @@ public class Metadata : MetadataBase
 
 			var singleton = GetSingletons()
 				.BestMatch(x => x.Name, collectionName, NameMatchResolver);
-			if (singleton != null)
+			if (singleton is not null)
 			{
 				entityType = singleton.EntityType();
 				return true;
 			}
 
 			var derivedType = GetEntityTypes().BestMatch(x => x.Name, collectionName, NameMatchResolver);
-			if (derivedType != null)
+			if (derivedType is not null)
 			{
 				var baseType = GetEntityTypes()
 					.SingleOrDefault(x => _model.FindDirectlyDerivedTypes(x).Contains(derivedType));
-				if (baseType != null && GetEntitySets().Any(x => x.EntityType() == baseType))
+				if (baseType is not null && GetEntitySets().Any(x => x.EntityType() == baseType))
 				{
 					entityType = derivedType;
 					return true;
@@ -456,7 +456,7 @@ public class Metadata : MetadataBase
 			: typeReference.Definition.TypeKind == EdmTypeKind.Entity
 			? typeReference.Definition as IEdmEntityType
 			: null;
-		return entityType != null;
+		return entityType is not null;
 	}
 
 	private IEdmComplexType GetComplexType(string typeName)
@@ -476,7 +476,7 @@ public class Metadata : MetadataBase
 			.Select(x => x as IEdmComplexType)
 			.BestMatch(x => x.Name, typeName, NameMatchResolver);
 
-		return complexType != null;
+		return complexType is not null;
 	}
 
 	private bool TryGetEnumType(string typeName, out IEdmEnumType enumType)
@@ -486,7 +486,7 @@ public class Metadata : MetadataBase
 			.Select(x => x as IEdmEnumType)
 			.BestMatch(x => x.Name, typeName, NameMatchResolver);
 
-		return enumType != null;
+		return enumType is not null;
 	}
 
 	private IEdmStructuralProperty GetStructuralProperty(string collectionName, string propertyName)
@@ -500,7 +500,7 @@ public class Metadata : MetadataBase
 		var property = edmType.StructuralProperties().BestMatch(
 			x => x.Name, propertyName, NameMatchResolver);
 
-		if (property == null)
+		if (property is null)
 		{
 			throw new UnresolvableObjectException(propertyName, $"Structural property [{propertyName}] not found");
 		}
@@ -513,7 +513,7 @@ public class Metadata : MetadataBase
 		var property = GetEntityType(collectionName).NavigationProperties()
 			.BestMatch(x => x.Name, propertyName, NameMatchResolver);
 
-		if (property == null)
+		if (property is null)
 		{
 			throw new UnresolvableObjectException(propertyName, $"Association [{propertyName}] not found");
 		}
@@ -533,14 +533,14 @@ public class Metadata : MetadataBase
 			function = functionImport.Function;
 		}
 
-		if (function == null)
+		if (function is null)
 		{
 			function = _model.SchemaElements
 				.BestMatch(x => x.SchemaElementKind == EdmSchemaElementKind.Function,
 					x => x.Name, functionName, NameMatchResolver) as IEdmFunction;
 		}
 
-		if (function == null)
+		if (function is null)
 		{
 			throw new UnresolvableObjectException(functionName, $"Function [{functionName}] not found");
 		}
@@ -560,14 +560,14 @@ public class Metadata : MetadataBase
 			action = actionImport.Action;
 		}
 
-		if (action == null)
+		if (action is null)
 		{
 			action = _model.SchemaElements
 				.BestMatch(x => x.SchemaElementKind == EdmSchemaElementKind.Action,
 					x => x.Name, actionName, NameMatchResolver) as IEdmAction;
 		}
 
-		if (action == null)
+		if (action is null)
 		{
 			throw new UnresolvableObjectException(actionName, $"Action [{actionName}] not found");
 		}

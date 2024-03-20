@@ -61,12 +61,12 @@ public class TestBase : IDisposable
 	public void Dispose()
 	{
 #if net462 && !MOCK_HTTP
-            if (_client != null && !_readOnlyTests)
+            if (_client is not null && !_readOnlyTests)
             {
                 DeleteTestData().Wait();
             }
 
-            if (_service != null)
+            if (_service is not null)
             {
                 _service.Dispose();
                 _service = null;

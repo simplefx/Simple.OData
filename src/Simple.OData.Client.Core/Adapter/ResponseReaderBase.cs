@@ -30,7 +30,7 @@ public abstract class ResponseReaderBase : IResponseReader
 			if (responseIndex >= 0 && responseIndex < batchResponse.Batch.Count)
 			{
 				var actionResponse = batchResponse.Batch[responseIndex];
-				if (actionResponse.Exception != null)
+				if (actionResponse.Exception is not null)
 				{
 					if (actionResponse.StatusCode == (int)HttpStatusCode.NotFound && _session.Settings.IgnoreResourceNotFoundException)
 					{
@@ -96,7 +96,7 @@ public abstract class ResponseReaderBase : IResponseReader
 		if (nodeStack.Any())
 		{
 			var node = nodeStack.Peek();
-			if (node.Feed != null)
+			if (node.Feed is not null)
 			{
 				node.Feed.Entries.Add(entryNode.Entry);
 			}
@@ -123,7 +123,7 @@ public abstract class ResponseReaderBase : IResponseReader
 	{
 		var linkNode = nodeStack.Pop();
 		var linkValue = linkNode.Value;
-		if (linkValue != null)
+		if (linkValue is not null)
 		{
 			if (linkValue is IDictionary<string, object> d)
 			{
@@ -152,7 +152,7 @@ public abstract class ResponseReaderBase : IResponseReader
 			nodeStack.Peek().Entry.Data.Add(linkNode.LinkName, linkValue);
 		}
 
-		if (linkNode.Feed?.Annotations != null)
+		if (linkNode.Feed?.Annotations is not null)
 		{
 			nodeStack.Peek().Entry.SetLinkAnnotations(linkNode.Feed.Annotations);
 		}

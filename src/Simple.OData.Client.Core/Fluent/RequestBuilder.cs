@@ -177,7 +177,7 @@ internal class RequestBuilder : IRequestBuilder
 		cancellationToken.ThrowIfCancellationRequested();
 
 		string? linkIdent = null;
-		if (linkedEntryKey != null)
+		if (linkedEntryKey is not null)
 		{
 			var linkedCollection = _session.Metadata.GetNavigationPropertyPartnerTypeName(collectionName, linkName);
 			linkIdent = FormatEntryKey(linkedCollection, linkedEntryKey);
@@ -215,7 +215,7 @@ internal class RequestBuilder : IRequestBuilder
 
 	private static void AssertHasKey(ResolvedCommand command)
 	{
-		if (!command.Details.HasKey && command.FilterAsKey == null)
+		if (!command.Details.HasKey && command.FilterAsKey is null)
 		{
 			throw new InvalidOperationException("No entry key specified.");
 		}

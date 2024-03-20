@@ -76,7 +76,7 @@ public abstract class BatchWriterBase : IBatchWriter
 
 	public string GetContentId(IDictionary<string, object> entryData, object linkData)
 	{
-		if (!_contentIdMap.TryGetValue(entryData, out var contentId) && linkData != null)
+		if (!_contentIdMap.TryGetValue(entryData, out var contentId) && linkData is not null)
 		{
 			if (BatchEntries.TryGetValue(linkData, out var mappedEntry))
 			{
@@ -89,7 +89,7 @@ public abstract class BatchWriterBase : IBatchWriter
 
 	public void MapContentId(IDictionary<string, object> entryData, string contentId)
 	{
-		if (entryData != null && !_contentIdMap.TryGetValue(entryData, out _))
+		if (entryData is not null && !_contentIdMap.TryGetValue(entryData, out _))
 		{
 			_contentIdMap.Add(entryData, contentId);
 		}
