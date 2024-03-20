@@ -11,14 +11,26 @@ namespace Simple.OData.Client;
 internal class RequestRunner
 {
 	private readonly ISession _session;
+	private SemaphoreSlim? _semaphore;
+	private readonly int _semaphoreLimiter;
 
 	public RequestRunner(ISession session)
 	{
 		_session = session;
+		if (session.Settings.SemaphoreRequestLimiter > 0)
+		{
+			_semaphoreLimiter = session.Settings.SemaphoreRequestLimiter;
+			_semaphore = new SemaphoreSlim(_semaphoreLimiter, _semaphoreLimiter);
+		}
 	}
 
 	public async Task<HttpResponseMessage> ExecuteRequestAsync(ODataRequest request, CancellationToken cancellationToken)
 	{
+		if (_semaphoreLimiter > 0 && _semaphore != null)
+		{
+			await _semaphore.WaitAsync();
+		}
+
 		HttpConnection? httpConnection = null;
 		try
 		{
@@ -76,6 +88,10 @@ internal class RequestRunner
 			if (httpConnection != null && _session.Settings.RenewHttpConnection)
 			{
 				httpConnection.Dispose();
+			}
+			if (_semaphore != null)
+			{
+				_semaphore.Release();
 			}
 		}
 	}
