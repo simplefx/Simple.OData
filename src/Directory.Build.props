@@ -1,0 +1,118 @@
+<Project>
+	<!-- Folder layout -->
+	<PropertyGroup>
+		<IsBenchmarkProject Condition="$(MSBuildProjectName.EndsWith('.Benchmarks'))">true</IsBenchmarkProject>
+		<IsTestProject Condition="$(MSBuildProjectName.ToLower().Contains('tests'))">true</IsTestProject>
+		<IsTestAssetProject Condition="$(RepoRelativeProjectDir.ToLower().Contains('testassets'))">true</IsTestAssetProject>
+		<IsSampleProject Condition="$(MSBuildProjectName.ToLower().Contains('.samples'))">true</IsSampleProject>
+		<IsNetCore Condition=" '$(TargetFramework)' == 'net6.0' OR '$(TargetFramework)' == 'net7.0' OR '$(TargetFramework)' == 'net8.0' ">true</IsNetCore>
+		<IsPrimaryProject Condition=" '$(IsBenchmarkProject)' != 'true' And '$(IsTestProject)' != 'true' And '$(IsTestAssetProject)' != 'true' And '$(IsSampleProject)' != 'true' ">true</IsPrimaryProject>
+
+		<IncludeSource>false</IncludeSource>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<PublishRepositoryUrl>true</PublishRepositoryUrl>
+		<EmbedUntrackedSources>true</EmbedUntrackedSources>
+
+		<SignAssembly>true</SignAssembly>
+		<AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)Simple.OData.Client.snk</AssemblyOriginatorKeyFile>
+		<StrongNamePublicKey>PublicKey=00240000048000009400000006020000002400005253413100040000010001002d608f5bce35f3eff1c1102fc3a90c0c1fb48a69491aa396dc6f2b3214374645179700266ff7c64b35de02956afd8e0f29a6de4d4a32660d2ac7c531901daf5e1130944b1ca1e9a95cb7abcadca5aab49507e5673c1d0315e41157c0daf720fca9a7bfa78a264648bedc83ddb75792c607dda0b84e48ff577db2898566a470c2</StrongNamePublicKey>
+
+		<LangVersion>12</LangVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)' == 'Release'">
+		<DefineConstants>TRACE;RELEASE</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)' == 'Debug'">
+		<DefineConstants>DEBUG;TRACE</DefineConstants>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<Product>Simple.OData.Client</Product>
+		<Authors>Vagif Abilov, David Bond, Robert McLaws, and contributors.</Authors>
+		<Company>Simple.OData.Client</Company>
+		<RpmPackageVendor>.NET Foundation</RpmPackageVendor>
+		<Copyright>Copyright © 2012-2024 Simple.OData.Client contributors. All rights reserved.</Copyright>
+		<NeutralLanguage>en-US</NeutralLanguage>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<!--
+      Suppress a warning about upcoming deprecation of PackageLicenseUrl. When embedding licenses are supported,
+      replace PackageLicenseUrl with PackageLicenseExpression.
+    -->
+		<NoWarn>$(NoWarn);NU5125</NoWarn>
+		<!-- Suppress warnings about using SemVer 2.0. -->
+		<NoWarn>$(NoWarn);NU5105</NoWarn>
+
+		<!-- Contact email address for NuGet packages and Linux installers. -->
+		<!--<MaintainerEmail>odata@nimbleapps.cloud</MaintainerEmail>-->
+
+		<!--<PackageIcon>dotnet-logo.png</PackageIcon>-->
+		<PackageProjectUrl>https://github.com/simple-odata-client/Simple.OData.Client/wiki</PackageProjectUrl>
+		<PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+		<PackageTags>odata;wcf data services;</PackageTags>
+		<Serviceable>true</Serviceable>
+
+		<RepositoryRoot>$(MSBuildThisFileDirectory)</RepositoryRoot>
+		<RepositoryUrl>https://github.com/simple-odata-client/Simple.OData.Client.git</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+	</PropertyGroup>
+
+	<!-- Compilation options -->
+	<PropertyGroup>
+		<!--<TreatWarningsAsErrors>true</TreatWarningsAsErrors>-->
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+
+		<!-- Instructs the compiler to use SHA256 instead of SHA1 when adding file hashes to PDBs. -->
+		<ChecksumAlgorithm>SHA256</ChecksumAlgorithm>
+
+		<!-- Fixes a common error in targets implementing a NoBuild mode. -->
+		<BuildProjectReferences Condition=" '$(NoBuild)' == 'true' ">false</BuildProjectReferences>
+
+		<!-- Suppress warnings about uninstantiated classes. -->
+		<NoWarn>$(NoWarn);CA1812;CS1570</NoWarn>
+
+		<!-- Suppress warnings about pre-release packages -->
+		<NoWarn>$(NoWarn);NU5104</NoWarn>
+
+	</PropertyGroup>
+
+	<PropertyGroup Condition=" $(IsTestProject) == 'true' ">
+		<NoWarn>$(NoWarn);CA1001;CA1031;CA1062;CA1301;CA1303;AC1307;CA1707;CA1716;CA1801;CA1806;CA1819;CA1822;CA1825;CA2000;CA2007;CA2227;CA2234</NoWarn>
+	</PropertyGroup>
+
+	<PropertyGroup Condition=" $(IsSampleProject) == 'true' ">
+		<NoWarn>$(NoWarn);CA1001;CA1707;CA1716;CA1801;CA1822</NoWarn>
+	</PropertyGroup>
+
+	<PropertyGroup Condition=" '$(IsPrimaryProject)' == 'true' ">
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<GenerateDocumentationFile>true</GenerateDocumentationFile>
+		<DocumentationFile>bin\$(Configuration)\$(TargetFramework)</DocumentationFile>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<StandardTestTfms>net8.0</StandardTestTfms>
+	</PropertyGroup>
+
+	<ItemGroup Condition=" $(IsTestProject) != 'true' and $(IsSampleProject) != 'true'">
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.*" PrivateAssets="All" />
+
+		<!--<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleToAttribute">
+			<_Parameter1>$(AssemblyName.Replace("Microsoft.Restier.", "Microsoft.Restier.Tests.")), $(StrongNamePublicKey)</_Parameter1>
+		</AssemblyAttribute>-->
+	</ItemGroup>
+
+	<ItemGroup Condition=" $(IsTestProject) == 'true' and $(IsSampleProject) != 'true'">
+		<PackageReference Include="FluentAssertions" Version="6.*" PrivateAssets="All" />
+		<PackageReference Include="FluentAssertions.Analyzers" Version="0.*" PrivateAssets="All" />
+		<PackageReference Include="MSTest" Version="3.*" />
+	</ItemGroup>
+
+	<!--<ItemGroup>
+		<None Include="$(MSBuildThisFileDirectory)dotnet-logo.png" Pack="true" PackagePath="\" Condition="'$(IsTestProject)' != 'true'" />
+	</ItemGroup>-->
+
+</Project>

@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Xunit;
+﻿using Xunit;
 using Entry = System.Collections.Generic.Dictionary<string, object>;
 
 namespace Simple.OData.Client.Tests.FluentApi;
@@ -18,7 +15,7 @@ public class WithHeaderTests : TestBase
 			.WithHeader("header1", "header1Value")
 			.WithHeader("header2", "header2Value")
 			.BuildRequestFor()
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 
 		Assert.Equal("header1Value", request.GetRequest().RequestMessage.Headers.GetValues("header1").SingleOrDefault());
 		Assert.Equal("header2Value", request.GetRequest().RequestMessage.Headers.GetValues("header2").SingleOrDefault());
@@ -35,7 +32,7 @@ public class WithHeaderTests : TestBase
 					{ "header1", "header1Value" },
 					{ "header2", "header2Value" }})
 			.BuildRequestFor()
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 
 		Assert.Equal("header1Value", request.GetRequest().RequestMessage.Headers.GetValues("header1").SingleOrDefault());
 		Assert.Equal("header2Value", request.GetRequest().RequestMessage.Headers.GetValues("header2").SingleOrDefault());
@@ -67,14 +64,14 @@ public class WithHeaderTests : TestBase
 			.WithHeader("header1", "header1Value")
 			.Key(1)
 			.BuildRequestFor()
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 
 		var request = requestClient.GetRequest();
 
 		AssertHeader(request, "header1", "header1Value");
 
 
-		await requestClient.RunAsync().ConfigureAwait(false);
+		await requestClient.RunAsync();
 
 		AssertHeader(headers, "header1", "header1Value");
 		AssertHeader(request, "header1", "header1Value");
@@ -82,7 +79,7 @@ public class WithHeaderTests : TestBase
 		//Clear first run captured headers
 		headers.Clear();
 		//Run twice to assert no duplicate headers added
-		await requestClient.RunAsync().ConfigureAwait(false);
+		await requestClient.RunAsync();
 
 		AssertHeader(headers, "header1", "header1Value");
 		AssertHeader(request, "header1", "header1Value");
@@ -97,7 +94,7 @@ public class WithHeaderTests : TestBase
 			.For("Categories")
 			.WithHeader("header1", "header1Value")
 			.Key(1)
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 
 		AssertHeader(headers, "header1", "header1Value");
 	}
@@ -112,7 +109,7 @@ public class WithHeaderTests : TestBase
 			.WithHeader("header1", "header1Value")
 			.Key(1)
 			.Media()
-			.GetStreamAsync().ConfigureAwait(false);
+			.GetStreamAsync();
 
 		AssertHeader(headers, "header1", "header1Value");
 	}
@@ -127,7 +124,7 @@ public class WithHeaderTests : TestBase
 			.WithHeader("header1", "header1Value")
 			.Key(1)
 			.Media()
-			.SetStreamAsync("stream_data", false).ConfigureAwait(false);
+			.SetStreamAsync("stream_data", false);
 
 		AssertHeader(headers, "header1", "header1Value");
 	}
@@ -141,7 +138,7 @@ public class WithHeaderTests : TestBase
 			.For("Products")
 			.WithHeader("header1", "header1Value")
 			.Filter("ProductName eq 'Chai'")
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 
 		AssertHeader(headers, "header1", "header1Value");
 	}
@@ -156,7 +153,7 @@ public class WithHeaderTests : TestBase
 			.For("Products")
 			.WithHeader("header1", "header1Value")
 			.Filter("ProductName eq 'Chai'")
-			.FindEntriesAsync(annotations).ConfigureAwait(false);
+			.FindEntriesAsync(annotations);
 
 		AssertHeader(headers, "header1", "header1Value");
 	}
@@ -170,7 +167,7 @@ public class WithHeaderTests : TestBase
 			.For("Products")
 			.WithHeader("header1", "header1Value")
 			.Count()
-			.FindScalarAsync<int>().ConfigureAwait(false);
+			.FindScalarAsync<int>();
 
 		AssertHeader(headers, "header1", "header1Value");
 	}
@@ -185,7 +182,7 @@ public class WithHeaderTests : TestBase
 			.WithHeader("header1", "header1Value")
 			.Function("ReturnString")
 			.Set(new Entry() { { "text", "abc" } })
-			.ExecuteAsScalarAsync<string>().ConfigureAwait(false);
+			.ExecuteAsScalarAsync<string>();
 
 		AssertHeader(headers, "header1", "header1Value");
 	}
@@ -199,7 +196,7 @@ public class WithHeaderTests : TestBase
 			.For("Products")
 			.WithHeader("header1", "header1Value")
 			.Set(new Entry() { { "ProductName", "Test1" }, { "UnitPrice", 18m } })
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 
 		AssertHeader(headers, "header1", "header1Value");
 	}
@@ -214,7 +211,7 @@ public class WithHeaderTests : TestBase
 			.WithHeader("header1", "header1Value")
 			.Key(1171)
 			.Set(new { UnitPrice = 123m })
-			.UpdateEntryAsync().ConfigureAwait(false);
+			.UpdateEntryAsync();
 
 		AssertHeader(headers, "header1", "header1Value");
 	}
@@ -228,7 +225,7 @@ public class WithHeaderTests : TestBase
 			.For("Products")
 			.WithHeader("header1", "header1Value")
 			.Key(1109)
-			.DeleteEntryAsync().ConfigureAwait(false);
+			.DeleteEntryAsync();
 
 		AssertHeader(headers, "header1", "header1Value");
 	}
@@ -244,7 +241,7 @@ public class WithHeaderTests : TestBase
 			.For("Products")
 			.WithHeader("header1", "header1Value")
 			.Key(1004)
-			.LinkEntryAsync("Category", category).ConfigureAwait(false);
+			.LinkEntryAsync("Category", category);
 
 		AssertHeader(headers, "header1", "header1Value");
 	}
@@ -258,7 +255,7 @@ public class WithHeaderTests : TestBase
 			.For("Products")
 			.WithHeader("header1", "header1Value")
 			.Key(1008)
-			.UnlinkEntryAsync("Category").ConfigureAwait(false);
+			.UnlinkEntryAsync("Category");
 
 		AssertHeader(headers, "header1", "header1Value");
 	}

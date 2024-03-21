@@ -1,5 +1,4 @@
-﻿using System;
-using System.Data.Entity;
+﻿using System.Data.Entity;
 using NorthwindModel;
 using Simple.OData.NorthwindModel.Entities;
 

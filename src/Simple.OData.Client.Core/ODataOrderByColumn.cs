@@ -1,5 +1,3 @@
-using System;
-
 namespace Simple.OData.Client;
 
 public class ODataOrderByColumn : IEquatable<ODataOrderByColumn>

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-
-using Simple.OData.Client.Extensions;
+﻿using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client;
 

@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Xunit;
+﻿using Xunit;
 
 namespace Simple.OData.Client.Tests.FluentApi;
 
@@ -16,21 +15,21 @@ public class LinkTests : TestBase
 		var category = await client
 			.For("Categories")
 			.Set(new { CategoryName = "Test4" })
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 		var product = await client
 			.For("Products")
 			.Set(new { ProductName = "Test5" })
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 
 		await client
 			.For("Products")
 			.Key(product)
-			.LinkEntryAsync("Category", category).ConfigureAwait(false);
+			.LinkEntryAsync("Category", category);
 
 		product = await client
 			.For("Products")
 			.Filter("ProductName eq 'Test5'")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.NotNull(product["CategoryID"]);
 		Assert.Equal(category["CategoryID"], product["CategoryID"]);
 	}
@@ -46,21 +45,21 @@ public class LinkTests : TestBase
 		var category = await client
 			.For("Categories")
 			.Set(new { CategoryName = "Test4" })
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 		var product = await client
 			.For("Products")
 			.Set(new { ProductName = "Test5", CategoryID = category["CategoryID"] })
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 
 		await client
 			.For("Products")
 			.Key(product)
-			.UnlinkEntryAsync("Category").ConfigureAwait(false);
+			.UnlinkEntryAsync("Category");
 
 		product = await client
 			.For("Products")
 			.Filter("ProductName eq 'Test5'")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Null(product["CategoryID"]);
 	}
 }

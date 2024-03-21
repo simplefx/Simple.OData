@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Xunit;
+﻿using Xunit;
 
 namespace Simple.OData.Client.Tests.Core;
 
@@ -19,7 +16,7 @@ public class ExpansionTests : CoreTestBase
 		var command = client
 			.For<Employee>()
 			.Expand(x => x.Subordinates);
-		var commandText = await command.GetCommandTextAsync().ConfigureAwait(false);
+		var commandText = await command.GetCommandTextAsync();
 		Assert.Equal(expectedCommand, commandText);
 	}
 
@@ -32,7 +29,7 @@ public class ExpansionTests : CoreTestBase
 		var command = client
 			.For<Employee>()
 			.Expand("*");
-		var commandText = await command.GetCommandTextAsync().ConfigureAwait(false);
+		var commandText = await command.GetCommandTextAsync();
 		Assert.Equal(expectedCommand, commandText);
 	}
 
@@ -46,7 +43,7 @@ public class ExpansionTests : CoreTestBase
 			.For<Employee>()
 			.Expand("*")
 			.Select("*");
-		var commandText = await command.GetCommandTextAsync().ConfigureAwait(false);
+		var commandText = await command.GetCommandTextAsync();
 		Assert.Equal(expectedCommand, commandText);
 	}
 
@@ -59,7 +56,7 @@ public class ExpansionTests : CoreTestBase
 		var command = client
 			.For<Employee>()
 			.Expand(x => new { x.Subordinates, x.Superior });
-		var commandText = await command.GetCommandTextAsync().ConfigureAwait(false);
+		var commandText = await command.GetCommandTextAsync();
 		Assert.Equal(expectedCommand, commandText);
 	}
 
@@ -73,7 +70,7 @@ public class ExpansionTests : CoreTestBase
 			.For<Employee>()
 			.Expand(x => x.Subordinates)
 			.Expand(x => x.Superior);
-		var commandText = await command.GetCommandTextAsync().ConfigureAwait(false);
+		var commandText = await command.GetCommandTextAsync();
 		Assert.Equal(expectedCommand, commandText);
 	}
 
@@ -86,7 +83,7 @@ public class ExpansionTests : CoreTestBase
 		var command = client
 			.For<Employee>()
 			.Expand(x => x.Subordinates.Select(y => y.Subordinates));
-		var commandText = await command.GetCommandTextAsync().ConfigureAwait(false);
+		var commandText = await command.GetCommandTextAsync();
 		Assert.Equal(expectedCommand, commandText);
 	}
 
@@ -99,7 +96,7 @@ public class ExpansionTests : CoreTestBase
 		var command = client
 			.For<Employee>()
 			.Expand($"{nameof(Employee.Subordinates)}/*");
-		var commandText = await command.GetCommandTextAsync().ConfigureAwait(false);
+		var commandText = await command.GetCommandTextAsync();
 		Assert.Equal(expectedCommand, commandText);
 	}
 
@@ -112,7 +109,7 @@ public class ExpansionTests : CoreTestBase
 		var command = client
 			.For<Employee>()
 			.Expand(x => x.Subordinates.Select(y => y.Subordinates.Select(z => z.Subordinates)));
-		var commandText = await command.GetCommandTextAsync().ConfigureAwait(false);
+		var commandText = await command.GetCommandTextAsync();
 		Assert.Equal(expectedCommand, commandText);
 	}
 
@@ -125,7 +122,7 @@ public class ExpansionTests : CoreTestBase
 		var command = client
 			.For<Employee>()
 			.Expand($"{nameof(Employee.Subordinates)}/{nameof(Employee.Subordinates)}/*");
-		var commandText = await command.GetCommandTextAsync().ConfigureAwait(false);
+		var commandText = await command.GetCommandTextAsync();
 		Assert.Equal(expectedCommand, commandText);
 	}
 
@@ -140,7 +137,7 @@ public class ExpansionTests : CoreTestBase
 			.Expand(x => x.Subordinates)
 			.Select(x => new { x.LastName, x.Subordinates })
 			.OrderBy(x => x.LastName);
-		var commandText = await command.GetCommandTextAsync().ConfigureAwait(false);
+		var commandText = await command.GetCommandTextAsync();
 		Assert.Equal(expectedCommand, commandText);
 	}
 
@@ -155,7 +152,7 @@ public class ExpansionTests : CoreTestBase
 			.Expand("*")
 			.Select(x => new { x.LastName, x.Subordinates })
 			.OrderBy(x => x.LastName);
-		var commandText = await command.GetCommandTextAsync().ConfigureAwait(false);
+		var commandText = await command.GetCommandTextAsync();
 		Assert.Equal(expectedCommand, commandText);
 	}
 
@@ -170,7 +167,7 @@ public class ExpansionTests : CoreTestBase
 			.Expand(x => x.Subordinates.Select(y => y.Subordinates))
 			.Select(x => new { x.LastName, x.Subordinates })
 			.Select(x => x.Subordinates.Select(y => new { y.LastName, y.Subordinates }));
-		var commandText = await command.GetCommandTextAsync().ConfigureAwait(false);
+		var commandText = await command.GetCommandTextAsync();
 		Assert.Equal(expectedCommand, commandText);
 	}
 
@@ -187,7 +184,7 @@ public class ExpansionTests : CoreTestBase
 			.Select(x => x.Subordinates.Select(y => new { y.LastName, y.Subordinates }))
 			.OrderBy(x => x.LastName)
 			.OrderBy(x => x.Subordinates.Select(y => y.LastName));
-		var commandText = await command.GetCommandTextAsync().ConfigureAwait(false);
+		var commandText = await command.GetCommandTextAsync();
 		Assert.Equal(expectedCommand, commandText);
 	}
 
@@ -204,7 +201,7 @@ public class ExpansionTests : CoreTestBase
 			.Select(x => x.Subordinates.Select(y => new { y.LastName, y.Subordinates }))
 			.OrderBy(x => x.LastName)
 			.OrderBy(x => x.Subordinates.Select(y => y.LastName));
-		var commandText = await command.GetCommandTextAsync().ConfigureAwait(false);
+		var commandText = await command.GetCommandTextAsync();
 		Assert.Equal(expectedCommand, commandText);
 	}
 
@@ -235,7 +232,7 @@ public class ExpansionTests : CoreTestBase
 			.OrderBy(x => x.LastName)
 			.OrderBy(x => x.Subordinates.Select(y => y.LastName))
 			.OrderBy(x => x.Subordinates.Select(y => y.Subordinates.Select(z => z.LastName)));
-		var commandText = await command.GetCommandTextAsync().ConfigureAwait(false);
+		var commandText = await command.GetCommandTextAsync();
 		Assert.Equal(expectedCommand, commandText);
 	}
 
@@ -254,7 +251,7 @@ public class ExpansionTests : CoreTestBase
 			.OrderBy(x => x.LastName)
 			.OrderBy(x => x.Subordinates.Select(y => y.LastName))
 			.OrderBy(x => x.Subordinates.Select(y => y.Subordinates.Select(z => z.LastName)));
-		var commandText = await command.GetCommandTextAsync().ConfigureAwait(false);
+		var commandText = await command.GetCommandTextAsync();
 		Assert.Equal(expectedCommand, commandText);
 	}
 
@@ -269,7 +266,7 @@ public class ExpansionTests : CoreTestBase
 			.Expand(x => x.Subordinates)
 			.Select(x => new { x.LastName, x.Subordinates })
 			.OrderBy(x => x.Superior.LastName);
-		var commandText = await command.GetCommandTextAsync().ConfigureAwait(false);
+		var commandText = await command.GetCommandTextAsync();
 		Assert.Equal(expectedCommand, commandText);
 	}
 
@@ -284,7 +281,7 @@ public class ExpansionTests : CoreTestBase
 			.Expand("*")
 			.Select(x => new { x.LastName, x.Subordinates })
 			.OrderBy(x => x.Superior.LastName);
-		var commandText = await command.GetCommandTextAsync().ConfigureAwait(false);
+		var commandText = await command.GetCommandTextAsync();
 		Assert.Equal(expectedCommand, commandText);
 	}
 
@@ -298,7 +295,7 @@ public class ExpansionTests : CoreTestBase
 			.For<Employee>()
 			.Select(x => new { x.LastName, x.Subordinates })
 			.OrderBy(x => x.Superior.LastName);
-		var commandText = await command.GetCommandTextAsync().ConfigureAwait(false);
+		var commandText = await command.GetCommandTextAsync();
 		Assert.Equal(expectedCommand, commandText);
 	}
 
@@ -312,7 +309,7 @@ public class ExpansionTests : CoreTestBase
 			.For<Employee>()
 			.Select("*")
 			.OrderBy(x => x.Superior.LastName);
-		var commandText = await command.GetCommandTextAsync().ConfigureAwait(false);
+		var commandText = await command.GetCommandTextAsync();
 		Assert.Equal(expectedCommand, commandText);
 	}
 
@@ -325,7 +322,7 @@ public class ExpansionTests : CoreTestBase
 		var command = client.For<Product>()
 			.Expand(p => p.Category)
 			.Select(p => new { p.ProductName, p.Category.CategoryName });
-		var commandText = await command.GetCommandTextAsync().ConfigureAwait(false);
+		var commandText = await command.GetCommandTextAsync();
 		Assert.Equal(expectedCommand, commandText);
 	}
 
@@ -337,7 +334,7 @@ public class ExpansionTests : CoreTestBase
 		var client = CreateClient(metadataFile);
 		var command = client.For<Employee>()
 			.Expand(x => x.Superior.Subordinates);
-		var commandText = await command.GetCommandTextAsync().ConfigureAwait(false);
+		var commandText = await command.GetCommandTextAsync();
 		Assert.Equal(expectedCommand, commandText);
 	}
 
@@ -353,7 +350,7 @@ public class ExpansionTests : CoreTestBase
 			.Expand(x => x.Superior.Subordinates)
 			.Expand(x => x.Superior.Superior);
 
-		var commandText = await command.GetCommandTextAsync().ConfigureAwait(false);
+		var commandText = await command.GetCommandTextAsync();
 		Assert.Equal(expectedCommand, commandText);
 	}
 
@@ -365,7 +362,7 @@ public class ExpansionTests : CoreTestBase
 		var client = CreateClient(metadataFile);
 		var command = client.For<Employee>()
 			.Expand(x => x.Superior.Superior.Superior);
-		var commandText = await command.GetCommandTextAsync().ConfigureAwait(false);
+		var commandText = await command.GetCommandTextAsync();
 		Assert.Equal(expectedCommand, commandText);
 	}
 
@@ -378,7 +375,7 @@ public class ExpansionTests : CoreTestBase
 		var command = client.For<Product>()
 			.Expand("*")
 			.Select(p => new { p.ProductName, p.Category.CategoryName });
-		var commandText = await command.GetCommandTextAsync().ConfigureAwait(false);
+		var commandText = await command.GetCommandTextAsync();
 		Assert.Equal(expectedCommand, commandText);
 	}
 
@@ -392,7 +389,7 @@ public class ExpansionTests : CoreTestBase
 			.Expand(p => p.Category)
 			.Select(p => new { p.ProductName, p.Category.CategoryName })
 			.OrderBy(p => p.Category.CategoryName);
-		var commandText = await command.GetCommandTextAsync().ConfigureAwait(false);
+		var commandText = await command.GetCommandTextAsync();
 		Assert.Equal(expectedCommand, commandText);
 	}
 
@@ -406,7 +403,7 @@ public class ExpansionTests : CoreTestBase
 			.Expand("*")
 			.Select(p => new { p.ProductName, p.Category.CategoryName })
 			.OrderBy(p => p.Category.CategoryName);
-		var commandText = await command.GetCommandTextAsync().ConfigureAwait(false);
+		var commandText = await command.GetCommandTextAsync();
 		Assert.Equal(expectedCommand, commandText);
 	}
 
@@ -421,7 +418,7 @@ public class ExpansionTests : CoreTestBase
 			.Select(p => new { p.ProductName, p.Category.CategoryName })
 			.OrderBy(p => p.Category.CategoryName)
 			.ThenBy(p => p.ProductName);
-		var commandText = await command.GetCommandTextAsync().ConfigureAwait(false);
+		var commandText = await command.GetCommandTextAsync();
 		Assert.Equal(expectedCommand, commandText);
 	}
 
@@ -436,7 +433,7 @@ public class ExpansionTests : CoreTestBase
 			.Select(p => new { p.ProductName, p.Category.CategoryName })
 			.OrderBy(p => p.Category.CategoryName)
 			.ThenBy(p => p.ProductName);
-		var commandText = await command.GetCommandTextAsync().ConfigureAwait(false);
+		var commandText = await command.GetCommandTextAsync();
 		Assert.Equal(expectedCommand, commandText);
 	}
 
@@ -462,7 +459,7 @@ public class ExpansionTests : CoreTestBase
 			.OrderBy(p => p.Order.OrderDate)
 			.ThenBy(p => p.Quantity);
 
-		var commandText = await command.GetCommandTextAsync().ConfigureAwait(false);
+		var commandText = await command.GetCommandTextAsync();
 		Assert.Equal(expectedCommand, commandText);
 	}
 
@@ -474,7 +471,7 @@ public class ExpansionTests : CoreTestBase
 			.For<Employee>()
 			.Expand(ODataExpandOptions.ByValue(2), x => x.Subordinates);
 
-		var commandText = await command.GetCommandTextAsync().ConfigureAwait(false);
+		var commandText = await command.GetCommandTextAsync();
 		Assert.Equal("Employees?$expand=Subordinates($levels=2)", commandText);
 	}
 
@@ -486,7 +483,7 @@ public class ExpansionTests : CoreTestBase
 			.For<Employee>()
 			.Expand(ODataExpandOptions.ByReference(2), x => x.Subordinates);
 
-		var commandText = await command.GetCommandTextAsync().ConfigureAwait(false);
+		var commandText = await command.GetCommandTextAsync();
 		Assert.Equal("Employees?$expand=Subordinates/$ref($levels=2)", commandText);
 	}
 
@@ -544,7 +541,7 @@ public class ExpansionTests : CoreTestBase
 				.Expand(CreateUpdateExpandTables)
 				.Select(CreateUpdateSelectColumns);
 
-		var commandText = await command.GetCommandTextAsync().ConfigureAwait(false);
+		var commandText = await command.GetCommandTextAsync();
 		Console.WriteLine(commandText);
 
 		Assert.Equal(expectedResult, commandText);
@@ -557,7 +554,7 @@ public class ExpansionTests : CoreTestBase
 		var command = client
 			.For<Category>()
 			.Expand(x => x.Products.Where(p => p.UnitPrice > 18));
-		var commandText = await command.GetCommandTextAsync().ConfigureAwait(false);
+		var commandText = await command.GetCommandTextAsync();
 		Assert.Equal("Categories?$expand=Products($filter=UnitPrice%20gt%2018)", commandText);
 	}
 
@@ -568,7 +565,7 @@ public class ExpansionTests : CoreTestBase
 		var command = client
 			.For<Category>()
 			.Expand(x => x.Products.OrderBy(p => p.UnitPrice).ThenBy(p => p.ProductName));
-		var commandText = await command.GetCommandTextAsync().ConfigureAwait(false);
+		var commandText = await command.GetCommandTextAsync();
 		Assert.Equal("Categories?$expand=Products($orderby=UnitPrice,ProductName)", commandText);
 	}
 
@@ -579,7 +576,7 @@ public class ExpansionTests : CoreTestBase
 		var command = client
 			.For<Category>()
 			.Expand(x => x.Products.OrderBy(p => p.Category.CategoryName));
-		var commandText = await command.GetCommandTextAsync().ConfigureAwait(false);
+		var commandText = await command.GetCommandTextAsync();
 		Assert.Equal("Categories?$expand=Products($orderby=Category/CategoryName)", commandText);
 	}
 
@@ -590,7 +587,7 @@ public class ExpansionTests : CoreTestBase
 		var command = client
 			.For<Category>()
 			.Expand(x => x.Products.OrderByDescending(p => p.UnitPrice).ThenByDescending(p => p.ProductName));
-		var commandText = await command.GetCommandTextAsync().ConfigureAwait(false);
+		var commandText = await command.GetCommandTextAsync();
 		Assert.Equal("Categories?$expand=Products($orderby=UnitPrice desc,ProductName desc)", commandText);
 	}
 
@@ -602,18 +599,18 @@ public class ExpansionTests : CoreTestBase
 		var command = client.For<Employee>()
 			.Expand(x => x.Superior.Subordinates.Select(s => s.Superior))
 			.Expand(x => x.Superior.Subordinates.OrderBy(s => s.LastName));
-		var commandText = await command.GetCommandTextAsync().ConfigureAwait(false);
+		var commandText = await command.GetCommandTextAsync();
 		Assert.Equal(expectedCommand, commandText);
 
 		command = client.For<Employee>()
 			.Expand(x => x.Superior.Subordinates.OrderBy(s => s.LastName))
 			.Expand(x => x.Superior.Subordinates.Select(s => s.Superior));
-		commandText = await command.GetCommandTextAsync().ConfigureAwait(false);
+		commandText = await command.GetCommandTextAsync();
 		Assert.Equal(expectedCommand, commandText);
 
 		command = client.For<Employee>()
 			.Expand(x => x.Superior.Subordinates.OrderBy(s => s.LastName).Select(s => s.Superior));
-		commandText = await command.GetCommandTextAsync().ConfigureAwait(false);
+		commandText = await command.GetCommandTextAsync();
 		Assert.Equal(expectedCommand, commandText);
 	}
 
@@ -625,7 +622,7 @@ public class ExpansionTests : CoreTestBase
 			.For<Category>()
 			.Expand(x => x.Products.Select(p => new { p.ProductName, p.UnitPrice }))
 			.Expand(x => x.Products.OrderByDescending(p => p.UnitPrice).ThenByDescending(p => p.ProductName));
-		var commandText = await command.GetCommandTextAsync().ConfigureAwait(false);
+		var commandText = await command.GetCommandTextAsync();
 		Assert.Equal("Categories?$expand=Products($select=ProductName,UnitPrice;$orderby=UnitPrice desc,ProductName desc)", commandText);
 	}
 }

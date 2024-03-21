@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Simple.OData.Client.V4.Adapter.Extensions;
+﻿namespace Simple.OData.Client.V4.Adapter.Extensions;
 
 public interface IExtendedODataClient
 {

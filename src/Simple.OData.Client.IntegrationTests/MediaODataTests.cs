@@ -1,6 +1,4 @@
-﻿using System.IO;
-using System.Threading.Tasks;
-using Xunit;
+﻿using Xunit;
 
 namespace Simple.OData.Client.Tests;
 
@@ -47,13 +45,13 @@ public abstract class MediaODataTests : ODataTestBase
 	{
 		var ad = await _client
 			.For("Advertisements")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		var id = ad["ID"];
 		var stream = await _client
 			.For("Advertisements")
 			.Key(id)
 			.Media()
-			.GetStreamAsync().ConfigureAwait(false);
+			.GetStreamAsync();
 		var text = Utils.StreamToString(stream);
 		Assert.Contains("stream data", text);
 	}
@@ -66,7 +64,7 @@ public abstract class MediaODataTests : ODataTestBase
 			.Key(1)
 			.NavigateTo("PersonDetail")
 			.Media("Photo")
-			.GetStreamAsync().ConfigureAwait(false);
+			.GetStreamAsync();
 		var text = Utils.StreamToString(stream);
 		Assert.Contains("named stream data", text);
 	}
@@ -79,7 +77,7 @@ public abstract class MediaODataTests : ODataTestBase
 			.Key(1)
 			.NavigateTo<PersonDetail>()
 			.Media(x => x.Photo)
-			.GetStreamAsStringAsync().ConfigureAwait(false);
+			.GetStreamAsStringAsync();
 		Assert.Contains("named stream data", text);
 	}
 
@@ -88,14 +86,14 @@ public abstract class MediaODataTests : ODataTestBase
 	{
 		var ad = await _client
 			.For("Advertisements")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		var id = ad["ID"];
 
 		ad = await _client
 			.For("Advertisements")
 			.WithMedia("Media")
 			.Key(id)
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.NotNull(ad["Media"]);
 		var text = Utils.StreamToString(ad["Media"] as Stream);
 		Assert.Contains("stream data", text);
@@ -109,7 +107,7 @@ public abstract class MediaODataTests : ODataTestBase
 			.Key(1)
 			.NavigateTo("PersonDetail")
 			.WithMedia("Photo")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.NotNull(person["Photo"]);
 		var text = Utils.StreamToString(person["Photo"] as Stream);
 		Assert.Contains("named stream data", text);
@@ -120,19 +118,19 @@ public abstract class MediaODataTests : ODataTestBase
 	{
 		var ad = await _client
 			.For("Advertisements")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		var id = ad["ID"];
 		var stream = Utils.StringToStream("Updated stream data");
 		await _client
 			.For("Advertisements")
 			.Key(id)
 			.Media()
-			.SetStreamAsync(stream, "text/plain", false).ConfigureAwait(false);
+			.SetStreamAsync(stream, "text/plain", false);
 		stream = await _client
 			.For("Advertisements")
 			.Key(id)
 			.Media()
-			.GetStreamAsync().ConfigureAwait(false);
+			.GetStreamAsync();
 		var text = Utils.StreamToString(stream);
 		Assert.Equal("Updated stream data", text);
 	}
@@ -146,13 +144,13 @@ public abstract class MediaODataTests : ODataTestBase
 			.Key(1)
 			.NavigateTo("PersonDetail")
 			.Media("Photo")
-			.SetStreamAsync(stream, "text/plain", false).ConfigureAwait(false);
+			.SetStreamAsync(stream, "text/plain", false);
 		stream = await _client
 			.For("Persons")
 			.Key(1)
 			.NavigateTo("PersonDetail")
 			.Media("Photo")
-			.GetStreamAsync().ConfigureAwait(false);
+			.GetStreamAsync();
 		var text = Utils.StreamToString(stream);
 		Assert.Equal("Updated named stream data", text);
 	}

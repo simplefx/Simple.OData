@@ -1,7 +1,4 @@
-﻿using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 using Microsoft.OData;
 using Microsoft.OData.Edm;
 using Moq;
@@ -20,9 +17,9 @@ public class OpenTypesTests : CoreTestBase
 	{
 		_session.Settings.ReadUntypedAsString = false;
 		var response = SetUpResourceMock("OpenTypeV401.json");
-		var edmModel = await _client.GetMetadataAsync<IEdmModel>().ConfigureAwait(false);
+		var edmModel = await _client.GetMetadataAsync<IEdmModel>();
 		var responseReader = new ResponseReader(_session, edmModel);
-		var result = (await responseReader.GetResponseAsync(response).ConfigureAwait(false)).Feed;
+		var result = (await responseReader.GetResponseAsync(response)).Feed;
 		var entry = result.Entries.First();
 		Assert.NotNull(entry);
 		Assert.Equal(42m, entry.Data["Id"]);

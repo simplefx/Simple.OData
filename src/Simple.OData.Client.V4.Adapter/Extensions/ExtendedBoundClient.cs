@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Simple.OData.Client.V4.Adapter.Extensions
+﻿namespace Simple.OData.Client.V4.Adapter.Extensions
 {
 	/// <summary>
 	/// Provides access to extended OData operations e.g. data aggregation extensions in a fluent style.

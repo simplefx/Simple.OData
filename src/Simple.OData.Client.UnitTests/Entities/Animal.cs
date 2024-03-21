@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Simple.OData.Client.Tests.Entities;
+﻿namespace Simple.OData.Client.Tests.Entities;
 
 public class Animal
 {

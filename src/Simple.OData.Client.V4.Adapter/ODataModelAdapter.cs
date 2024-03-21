@@ -1,6 +1,4 @@
-﻿using System.IO;
-using System.Net.Http;
-using System.Xml;
+﻿using System.Xml;
 
 using Microsoft.OData;
 using Microsoft.OData.Edm;

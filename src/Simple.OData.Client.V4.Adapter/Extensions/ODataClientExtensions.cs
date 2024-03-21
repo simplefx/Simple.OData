@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Simple.OData.Client.V4.Adapter.Extensions;
+﻿namespace Simple.OData.Client.V4.Adapter.Extensions;
 
 public static class ODataClientExtensions
 {

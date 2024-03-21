@@ -1,33 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+	
 	<PropertyGroup>
-		<TargetFrameworks>net461</TargetFrameworks>
+		<TargetFrameworks>net48</TargetFrameworks>
+		<DocumentationFile>$(DocumentationFile)\$(AssemblyName).xml</DocumentationFile>
 		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
 		<RootNamespace>Simple.OData.ProductService</RootNamespace>
-		<OutputPath>$(SolutionDir)/build/$(Configuration)/$(AssemblyName)/$(TargetFramework)/</OutputPath>
-		<OutDir>$(OutputPath)</OutDir>
-		<LangVersion>latest</LangVersion>
-		<Nullable>enable</Nullable>
-		<EnableNETAnalyzers>true</EnableNETAnalyzers>
-		<AnalysisMode>All</AnalysisMode>
-
+		<AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+		<GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+		<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
 	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net461|AnyCPU'">
-		<DefineConstants>TRACE</DefineConstants>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net461|AnyCPU'">
-		<DefineConstants>TRACE;DEBUG</DefineConstants>
-	</PropertyGroup>
+	
 	<ItemGroup>
-		<PackageReference Include="EntityFramework" Version="6.4.4" />
-		<PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.2.9" />
-		<PackageReference Include="Microsoft.AspNet.WebApi.OData" Version="5.7.0" />
-		<PackageReference Include="Microsoft.AspNet.WebApi.WebHost" Version="5.2.9" />
+		<PackageReference Include="EntityFramework" Version="6.*" />
+		<PackageReference Include="Microsoft.AspNet.WebApi.Core" Version="5.2.*" />
+		<PackageReference Include="Microsoft.AspNet.WebApi.OData" Version="5.*" />
+		<PackageReference Include="Microsoft.AspNet.WebApi.WebHost" Version="5.2.*" />
 	</ItemGroup>
+	
 	<ItemGroup>
 		<Reference Include="System.Configuration" />
 		<Reference Include="System.Web" />
 	</ItemGroup>
-	<ItemGroup>
-		<Folder Include="Properties\" />
-	</ItemGroup>
+	
 </Project>

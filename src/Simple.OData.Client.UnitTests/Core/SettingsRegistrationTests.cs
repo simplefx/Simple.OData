@@ -1,5 +1,4 @@
-﻿using System;
-using Simple.OData.Client.Tests.Entities;
+﻿using Simple.OData.Client.Tests.Entities;
 using Xunit;
 
 namespace Simple.OData.Client.Tests.Core;

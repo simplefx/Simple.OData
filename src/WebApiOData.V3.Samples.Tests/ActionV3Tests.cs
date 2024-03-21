@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-#if NET461 && !MOCK_HTTP
+﻿#if NET461 && !MOCK_HTTP
 using Microsoft.Owin.Testing;
 #endif
 using Xunit;
@@ -70,7 +66,7 @@ public class ActionV3Tests : IDisposable
 				.For<Movie>()
 				.Key(1)
 				.Action("CheckOut")
-				.ExecuteAsSingleAsync().ConfigureAwait(false);
+				.ExecuteAsSingleAsync();
 		}
 		catch (WebRequestException)
 		{
@@ -83,13 +79,13 @@ public class ActionV3Tests : IDisposable
 				.For<Movie>()
 				.Key(1)
 				.Action("Return")
-				.ExecuteAsSingleAsync().ConfigureAwait(false);
+				.ExecuteAsSingleAsync();
 
 			result = await client
 				.For<Movie>()
 				.Key(1)
 				.Action("CheckOut")
-				.ExecuteAsSingleAsync().ConfigureAwait(false);
+				.ExecuteAsSingleAsync();
 		}
 
 		Assert.Equal(1, result.ID);
@@ -104,7 +100,7 @@ public class ActionV3Tests : IDisposable
 			.For<Movie>()
 			.Key(1)
 			.Action("Return")
-			.ExecuteAsSingleAsync().ConfigureAwait(false);
+			.ExecuteAsSingleAsync();
 
 		Assert.Equal(1, result.ID);
 	}
@@ -118,7 +114,7 @@ public class ActionV3Tests : IDisposable
 			.For<Movie>()
 			.Action("CheckOutMany")
 			.Set(new Dictionary<string, object>() { { "MovieIDs", new[] { 1, 2, 3 } } })
-			.ExecuteAsEnumerableAsync().ConfigureAwait(false);
+			.ExecuteAsEnumerableAsync();
 
 		Assert.True(result.Count() > 1);
 	}
@@ -133,7 +129,7 @@ public class ActionV3Tests : IDisposable
 			.Unbound<Movie>()
 			.Action("CreateMovie")
 			.Set(new { Title = guid.ToString() })
-			.ExecuteAsSingleAsync().ConfigureAwait(false);
+			.ExecuteAsSingleAsync();
 
 		Assert.True(result.ID > 0);
 	}
@@ -150,8 +146,8 @@ public class ActionV3Tests : IDisposable
 			.Unbound<Movie>()
 			.Action("CreateMovie")
 			.Set(new { Title = guid.ToString() })
-			.ExecuteAsSingleAsync().ConfigureAwait(false);
-		await batch.ExecuteAsync().ConfigureAwait(false);
+			.ExecuteAsSingleAsync();
+		await batch.ExecuteAsync();
 
 		Assert.True(result.ID > 0);
 	}

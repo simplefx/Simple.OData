@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-using Microsoft.OData.Edm;
+﻿using Microsoft.OData.Edm;
 using Microsoft.OData.Edm.Vocabularies;
 
 namespace Simple.OData.Client.V4.Adapter;
@@ -259,7 +255,7 @@ public class Metadata : MetadataBase
 	/// <summary>
 	/// Gets a collection of key name collections that represent the alternate keys of the given entity
 	/// </summary>
-	/// <see cref="https://github.com/OData/vocabularies/blob/master/OData.Community.Keys.V1.md"/>
+	/// <see href="https://github.com/OData/vocabularies/blob/master/OData.Community.Keys.V1.md"/>
 	/// <param name="collectionName">The collection name of the entity</param>
 	/// <returns>An enumeration of string enumerations representing the key names</returns>
 	public override IEnumerable<IEnumerable<string>> GetAlternateKeyPropertyNames(string collectionName)

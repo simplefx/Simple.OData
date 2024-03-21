@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Simple.OData.Client;
+﻿namespace Simple.OData.Client;
 
 public interface ITypeConverter
 {

@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Microsoft.OData;
+﻿using Microsoft.OData;
 
 namespace Simple.OData.Client.V4.Adapter;
 

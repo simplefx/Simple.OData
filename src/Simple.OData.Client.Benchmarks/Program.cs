@@ -1,5 +1,4 @@
-﻿using System;
-using BenchmarkDotNet.Running;
+﻿using BenchmarkDotNet.Running;
 using Simple.OData.Client.Tests;
 
 namespace Simple.OData.Client.Benchmarks;

@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Xunit;
+﻿using Xunit;
 
 namespace Simple.OData.Client.Tests.FluentApi;
 
@@ -12,17 +11,17 @@ public class DeleteTests : TestBase
 		var product = await client
 			.For("Products")
 			.Set(new { ProductName = "Test1", UnitPrice = 18m })
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 
 		await client
 			.For("Products")
 			.Key(product["ProductID"])
-			.DeleteEntryAsync().ConfigureAwait(false);
+			.DeleteEntryAsync();
 
 		product = await client
 			.For("Products")
 			.Filter("ProductName eq 'Test1'")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 
 		Assert.Null(product);
 	}
@@ -34,18 +33,18 @@ public class DeleteTests : TestBase
 		var product = await client
 			.For("Products")
 			.Set(new { ProductName = "Test1", UnitPrice = 18m })
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 
 		client.Session.ClearMetadataCache();
 		await client
 			.For("Products")
 			.Key(product["ProductID"])
-			.DeleteEntryAsync().ConfigureAwait(false);
+			.DeleteEntryAsync();
 
 		product = await client
 			.For("Products")
 			.Filter("ProductName eq 'Test1'")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 
 		Assert.Null(product);
 	}
@@ -57,17 +56,17 @@ public class DeleteTests : TestBase
 		_ = await client
 			.For("Products")
 			.Set(new { ProductName = "Test1", UnitPrice = 18m })
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 
 		await client
 			.For("Products")
 			.Filter("ProductName eq 'Test1'")
-			.DeleteEntriesAsync().ConfigureAwait(false);
+			.DeleteEntriesAsync();
 
 		var product = await client
 			.For("Products")
 			.Filter("ProductName eq 'Test1'")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 
 		Assert.Null(product);
 	}
@@ -79,20 +78,20 @@ public class DeleteTests : TestBase
 		_ = await client
 			.For("Products")
 			.Set(new { ProductName = "Test1", UnitPrice = 18m })
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 
 		var commandText = await client
 			.For("Products")
 			.Filter("ProductName eq 'Test1'")
-			.GetCommandTextAsync().ConfigureAwait(false);
+			.GetCommandTextAsync();
 
 		await client
-			.DeleteEntriesAsync("Products", commandText).ConfigureAwait(false);
+			.DeleteEntriesAsync("Products", commandText);
 
 		var product = await client
 			.For("Products")
 			.Filter("ProductName eq 'Test1'")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 
 		Assert.Null(product);
 	}
@@ -104,17 +103,17 @@ public class DeleteTests : TestBase
 		var product = await client
 			.For("Products")
 			.Set(new { ProductName = "Test1", UnitPrice = 18m })
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 
 		await client
 			.For("Products")
 			.Key(product)
-			.DeleteEntryAsync().ConfigureAwait(false);
+			.DeleteEntryAsync();
 
 		product = await client
 			.For("Products")
 			.Filter("ProductName eq 'Test1'")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 
 		Assert.Null(product);
 	}
@@ -127,19 +126,19 @@ public class DeleteTests : TestBase
 			.For("Transport")
 			.As("Ship")
 			.Set(new { ShipName = "Test1" })
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 
 		await client
 			.For("Transport")
 			.As("Ship")
 			.Key(ship["TransportID"])
-			.DeleteEntryAsync().ConfigureAwait(false);
+			.DeleteEntryAsync();
 
 		ship = await client
 			.For("Transport")
 			.As("Ship")
 			.Filter("ShipName eq 'Test1'")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 
 		Assert.Null(ship);
 	}

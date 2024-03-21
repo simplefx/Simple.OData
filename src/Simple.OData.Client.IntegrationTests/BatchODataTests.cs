@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Xunit;
+﻿using Xunit;
 
 namespace Simple.OData.Client.Tests;
 
@@ -46,11 +42,11 @@ public abstract class BatchODataTests : ODataTestBase
 		var batch = new ODataBatch(_serviceUri);
 		batch += x => x.InsertEntryAsync("Products", CreateProduct(5001, "Test1"), false);
 		batch += x => x.InsertEntryAsync("Products", CreateProduct(5002, "Test2"), false);
-		await batch.ExecuteAsync().ConfigureAwait(false);
+		await batch.ExecuteAsync();
 
-		var product = await _client.FindEntryAsync("Products?$filter=Name eq 'Test1'").ConfigureAwait(false);
+		var product = await _client.FindEntryAsync("Products?$filter=Name eq 'Test1'");
 		Assert.NotNull(product);
-		product = await _client.FindEntryAsync("Products?$filter=Name eq 'Test2'").ConfigureAwait(false);
+		product = await _client.FindEntryAsync("Products?$filter=Name eq 'Test2'");
 		Assert.NotNull(product);
 	}
 
@@ -83,9 +79,9 @@ public abstract class BatchODataTests : ODataTestBase
 		batch += x => x.InsertEntryAsync("Products", CreateProduct(5011, "Test11"), false);
 		batch += x => x.UpdateEntriesAsync("Products", "Products?$filter=Name eq 'Test11'", new Entry() { { "Price", 22m } });
 		batch += x => x.DeleteEntriesAsync("Products", "Products?$filter=Name eq 'Test11'");
-		await batch.ExecuteAsync().ConfigureAwait(false);
+		await batch.ExecuteAsync();
 
-		var product = await _client.FindEntryAsync("Products?$filter=Name eq 'Test11'").ConfigureAwait(false);
+		var product = await _client.FindEntryAsync("Products?$filter=Name eq 'Test11'");
 		Assert.Equal(18d, Convert.ToDouble(product["Price"]));
 	}
 
@@ -119,15 +115,15 @@ public abstract class BatchODataTests : ODataTestBase
 	{
 		IDictionary<string, object>? category = null;
 		var batch = new ODataBatch(_serviceUri);
-		batch += async x => category = await x.InsertEntryAsync("Categories", CreateCategory(5013, "Test13")).ConfigureAwait(false);
+		batch += async x => category = await x.InsertEntryAsync("Categories", CreateCategory(5013, "Test13"));
 		batch += x => x.InsertEntryAsync("Products", CreateProduct(5014, "Test14", category), false);
-		await batch.ExecuteAsync().ConfigureAwait(false);
+		await batch.ExecuteAsync();
 
 		var product = await _client
 			.For("Products")
 			.Expand(ProductCategoryName)
 			.Filter("Name eq 'Test14'")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal(5013, ProductCategoryFunc(product)["ID"]);
 	}
 
@@ -138,16 +134,16 @@ public abstract class BatchODataTests : ODataTestBase
 		IDictionary<string, object>? product2 = null;
 
 		var batch = new ODataBatch(_serviceUri);
-		batch += async x => product1 = await x.InsertEntryAsync("Products", CreateProduct(5015, "Test15")).ConfigureAwait(false);
-		batch += async x => product2 = await x.InsertEntryAsync("Products", CreateProduct(5016, "Test16")).ConfigureAwait(false);
-		batch += async x => await x.InsertEntryAsync("Categories", CreateCategory(5017, "Test17", new[] { product1, product2 }), false).ConfigureAwait(false);
-		await batch.ExecuteAsync().ConfigureAwait(false);
+		batch += async x => product1 = await x.InsertEntryAsync("Products", CreateProduct(5015, "Test15"));
+		batch += async x => product2 = await x.InsertEntryAsync("Products", CreateProduct(5016, "Test16"));
+		batch += async x => await x.InsertEntryAsync("Categories", CreateCategory(5017, "Test17", new[] { product1, product2 }), false);
+		await batch.ExecuteAsync();
 
 		var category = await _client
 			.For("Categories")
 			.Key(5017)
 			.Expand("Products")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal(2, (category["Products"] as IEnumerable<object>).Count());
 	}
 
@@ -175,7 +171,7 @@ public abstract class BatchODataTests : ODataTestBase
 
 		// Execute an arbitrary request to retrieve the csrf token
 		var client = new ODataClient(settings);
-		await client.GetMetadataDocumentAsync().ConfigureAwait(false);
+		await client.GetMetadataDocumentAsync();
 
 		// Since the token was never updated it should still be an empty string.
 		Assert.NotNull(token);
@@ -188,16 +184,16 @@ public abstract class BatchODataTests : ODataTestBase
 		client.UpdateRequestHeaders(newHeaders);
 
 		var batch = new ODataBatch(client, reuseSession: true);
-		batch += async x => product1 = await x.InsertEntryAsync("Products", CreateProduct(5015, "Test15")).ConfigureAwait(false);
-		batch += async x => product2 = await x.InsertEntryAsync("Products", CreateProduct(5016, "Test16")).ConfigureAwait(false);
-		batch += async x => await x.InsertEntryAsync("Categories", CreateCategory(5017, "Test17", new[] { product1, product2 }), false).ConfigureAwait(false);
-		await batch.ExecuteAsync().ConfigureAwait(false);
+		batch += async x => product1 = await x.InsertEntryAsync("Products", CreateProduct(5015, "Test15"));
+		batch += async x => product2 = await x.InsertEntryAsync("Products", CreateProduct(5016, "Test16"));
+		batch += async x => await x.InsertEntryAsync("Categories", CreateCategory(5017, "Test17", new[] { product1, product2 }), false);
+		await batch.ExecuteAsync();
 
 		var category = await _client
 			.For("Categories")
 			.Key(5017)
 			.Expand("Products")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal(2, (category["Products"] as IEnumerable<object>).Count());
 	}
 
@@ -215,11 +211,11 @@ public abstract class BatchODataTests : ODataTestBase
 
 		IDictionary<string, object> milk = new Dictionary<string, object>();
 
-		batch += async x => bread = await x.For("Products").Key(0).FindEntryAsync().ConfigureAwait(false);
-		batch += async x => await x.For("Products").Key(-1).FindEntryAsync().ConfigureAwait(false);
-		batch += async x => milk = await x.For("Products").Key(1).FindEntryAsync().ConfigureAwait(false);
+		batch += async x => bread = await x.For("Products").Key(0).FindEntryAsync();
+		batch += async x => await x.For("Products").Key(-1).FindEntryAsync();
+		batch += async x => milk = await x.For("Products").Key(1).FindEntryAsync();
 
-		await batch.ExecuteAsync().ConfigureAwait(false);
+		await batch.ExecuteAsync();
 
 		Assert.True(bread.ContainsKey("ID"));
 		Assert.True(milk.ContainsKey("ID"));
@@ -239,9 +235,9 @@ public abstract class BatchODataTests : ODataTestBase
 				.InsertEntryAsync(false)
 				.Result
 				.GetRequest();
-			response = await x.GetResponseAsync(request).ConfigureAwait(false);
+			response = await x.GetResponseAsync(request);
 		};
-		await batch.ExecuteAsync().ConfigureAwait(false);
+		await batch.ExecuteAsync();
 		Assert.NotNull(response);
 		Assert.Equal($"{_serviceUri}Products({id})", response.Location);
 	}
@@ -260,9 +256,9 @@ public abstract class BatchODataTests : ODataTestBase
 				.InsertEntryAsync(true)
 				.Result
 				.GetRequest();
-			response = await x.GetResponseAsync(request).ConfigureAwait(false);
+			response = await x.GetResponseAsync(request);
 		};
-		await batch.ExecuteAsync().ConfigureAwait(false);
+		await batch.ExecuteAsync();
 		Assert.NotNull(response);
 		Assert.Equal($"{_serviceUri}Products({id})", response.Location);
 	}

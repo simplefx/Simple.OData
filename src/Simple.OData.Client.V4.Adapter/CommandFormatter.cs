@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.OData;
+﻿using Microsoft.OData;
 using Simple.OData.Client.V4.Adapter.Extensions;
 
 namespace Simple.OData.Client.V4.Adapter;

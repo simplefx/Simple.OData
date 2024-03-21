@@ -1,6 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace Simple.OData.Client.Tests.FluentApi;
@@ -16,12 +13,12 @@ public class BatchTests : TestBase
 		var batch = new ODataBatch(settings);
 		batch += c => c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test1" }, { "UnitPrice", 10m } }, false);
 		batch += c => c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test2" }, { "UnitPrice", 20m } }, false);
-		await batch.ExecuteAsync().ConfigureAwait(false);
+		await batch.ExecuteAsync();
 
 		var client = new ODataClient(settings);
-		var product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test1'").ConfigureAwait(false);
+		var product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test1'");
 		Assert.NotNull(product);
-		product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test2'").ConfigureAwait(false);
+		product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test2'");
 		Assert.NotNull(product);
 	}
 
@@ -30,7 +27,7 @@ public class BatchTests : TestBase
 	{
 		var settings = CreateDefaultSettings().WithHttpMock();
 		var batch = new ODataBatch(settings);
-		await batch.ExecuteAsync().ConfigureAwait(false);
+		await batch.ExecuteAsync();
 	}
 
 	[Fact]
@@ -39,8 +36,8 @@ public class BatchTests : TestBase
 		var settings = CreateDefaultSettings().WithHttpMock();
 		IDictionary<string, object>? product = null;
 		var batch = new ODataBatch(settings);
-		batch += async c => product = await c.FindEntryAsync("Products").ConfigureAwait(false);
-		await batch.ExecuteAsync().ConfigureAwait(false);
+		batch += async c => product = await c.FindEntryAsync("Products");
+		await batch.ExecuteAsync();
 
 		Assert.NotNull(product);
 	}
@@ -56,18 +53,18 @@ public class BatchTests : TestBase
 		var batch2 = new ODataBatch(settings);
 		batch2 += c => c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test3" }, { "UnitPrice", 30m } }, false);
 		batch2 += c => c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test4" }, { "UnitPrice", 40m } }, false);
-		await batch2.ExecuteAsync().ConfigureAwait(false);
+		await batch2.ExecuteAsync();
 
-		await batch1.ExecuteAsync().ConfigureAwait(false);
+		await batch1.ExecuteAsync();
 
 		var client = new ODataClient(settings);
-		var product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test1'").ConfigureAwait(false);
+		var product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test1'");
 		Assert.NotNull(product);
-		product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test2'").ConfigureAwait(false);
+		product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test2'");
 		Assert.NotNull(product);
-		product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test3'").ConfigureAwait(false);
+		product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test3'");
 		Assert.NotNull(product);
-		product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test4'").ConfigureAwait(false);
+		product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test4'");
 		Assert.NotNull(product);
 	}
 
@@ -79,17 +76,17 @@ public class BatchTests : TestBase
 		IDictionary<string, object>? product2 = null;
 
 		var batch = new ODataBatch(settings);
-		batch += async x => { product1 = await x.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test1" }, { "UnitPrice", 10m } }).ConfigureAwait(false); };
-		batch += async x => { product2 = await x.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test2" }, { "UnitPrice", 20m } }).ConfigureAwait(false); };
-		await batch.ExecuteAsync().ConfigureAwait(false);
+		batch += async x => { product1 = await x.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test1" }, { "UnitPrice", 10m } }); };
+		batch += async x => { product2 = await x.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test2" }, { "UnitPrice", 20m } }); };
+		await batch.ExecuteAsync();
 
 		Assert.NotNull(product1["ProductID"]);
 		Assert.NotNull(product2["ProductID"]);
 
 		var client = new ODataClient(settings);
-		product1 = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test1'").ConfigureAwait(false);
+		product1 = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test1'");
 		Assert.NotNull(product1);
-		product2 = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test2'").ConfigureAwait(false);
+		product2 = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test2'");
 		Assert.NotNull(product2);
 	}
 
@@ -103,7 +100,7 @@ public class BatchTests : TestBase
 
 		try
 		{
-			await batch.ExecuteAsync().ConfigureAwait(false);
+			await batch.ExecuteAsync();
 		}
 		catch (WebRequestException exception)
 		{
@@ -121,7 +118,7 @@ public class BatchTests : TestBase
 
 		try
 		{
-			await batch.ExecuteAsync().ConfigureAwait(false);
+			await batch.ExecuteAsync();
 		}
 		catch (WebRequestException exception)
 		{
@@ -138,21 +135,21 @@ public class BatchTests : TestBase
 		IDictionary<string, object>? product2 = null;
 
 		var batch = new ODataBatch(settings);
-		batch += async c => product = await c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test11" }, { "UnitPrice", 21m } }).ConfigureAwait(false);
-		await batch.ExecuteAsync().ConfigureAwait(false);
+		batch += async c => product = await c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test11" }, { "UnitPrice", 21m } });
+		await batch.ExecuteAsync();
 
 		batch = new ODataBatch(settings);
 		batch += c => c.UpdateEntryAsync("Products", product, new Entry() { { "UnitPrice", 22m } });
-		batch += async x => product1 = await x.FindEntryAsync("Products?$filter=ProductName eq 'Test11'").ConfigureAwait(false);
+		batch += async x => product1 = await x.FindEntryAsync("Products?$filter=ProductName eq 'Test11'");
 		batch += c => c.UpdateEntryAsync("Products", product, new Entry() { { "UnitPrice", 23m } });
-		batch += async x => product2 = await x.FindEntryAsync("Products?$filter=ProductName eq 'Test11'").ConfigureAwait(false);
-		await batch.ExecuteAsync().ConfigureAwait(false);
+		batch += async x => product2 = await x.FindEntryAsync("Products?$filter=ProductName eq 'Test11'");
+		await batch.ExecuteAsync();
 
 		Assert.Equal(22m, product1["UnitPrice"]);
 		Assert.Equal(23m, product2["UnitPrice"]);
 
 		var client = new ODataClient(settings);
-		product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test11'").ConfigureAwait(false);
+		product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test11'");
 		Assert.Equal(23m, product["UnitPrice"]);
 	}
 
@@ -163,19 +160,19 @@ public class BatchTests : TestBase
 		IDictionary<string, object>? product = null;
 
 		var batch = new ODataBatch(settings);
-		batch += async c => product = await c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test11" }, { "UnitPrice", 121m } }).ConfigureAwait(false);
-		batch += async c => product = await c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test12" }, { "UnitPrice", 121m } }).ConfigureAwait(false);
-		batch += async c => product = await c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test13" }, { "UnitPrice", 121m } }).ConfigureAwait(false);
-		await batch.ExecuteAsync().ConfigureAwait(false);
+		batch += async c => product = await c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test11" }, { "UnitPrice", 121m } });
+		batch += async c => product = await c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test12" }, { "UnitPrice", 121m } });
+		batch += async c => product = await c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test13" }, { "UnitPrice", 121m } });
+		await batch.ExecuteAsync();
 
 		batch = new ODataBatch(settings);
 		batch += c => c.For("Products").Filter("UnitPrice eq 121").Set(new Entry() { { "UnitPrice", 122m } }).UpdateEntriesAsync();
-		await batch.ExecuteAsync().ConfigureAwait(false);
+		await batch.ExecuteAsync();
 
 		var client = new ODataClient(settings);
-		product = await client.FindEntryAsync("Products?$filter=UnitPrice eq 121").ConfigureAwait(false);
+		product = await client.FindEntryAsync("Products?$filter=UnitPrice eq 121");
 		Assert.Null(product);
-		var products = await client.FindEntriesAsync("Products?$filter=UnitPrice eq 122").ConfigureAwait(false);
+		var products = await client.FindEntriesAsync("Products?$filter=UnitPrice eq 122");
 		Assert.Equal(3, products.Count());
 	}
 
@@ -188,21 +185,21 @@ public class BatchTests : TestBase
 		IDictionary<string, object>? product2 = null;
 
 		var batch = new ODataBatch(settings);
-		batch += async x => product = await x.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test11" }, { "UnitPrice", 21m } }).ConfigureAwait(false);
-		await batch.ExecuteAsync().ConfigureAwait(false);
+		batch += async x => product = await x.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test11" }, { "UnitPrice", 21m } });
+		await batch.ExecuteAsync();
 
 		batch = new ODataBatch(settings);
 		batch += c => c.UpdateEntryAsync("Products", product, new Entry() { { "UnitPrice", 22m } });
-		batch += async c => product1 = await c.FindEntryAsync("Products?$filter=ProductName eq 'Test11'").ConfigureAwait(false);
+		batch += async c => product1 = await c.FindEntryAsync("Products?$filter=ProductName eq 'Test11'");
 		batch += c => c.DeleteEntryAsync("Products", product);
-		batch += async c => product2 = await c.FindEntryAsync("Products?$filter=ProductName eq 'Test11'").ConfigureAwait(false);
-		await batch.ExecuteAsync().ConfigureAwait(false);
+		batch += async c => product2 = await c.FindEntryAsync("Products?$filter=ProductName eq 'Test11'");
+		await batch.ExecuteAsync();
 
 		Assert.Equal(22m, product1["UnitPrice"]);
 		Assert.Null(product2);
 
 		var client = new ODataClient(settings);
-		product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test11'").ConfigureAwait(false);
+		product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test11'");
 		Assert.Null(product);
 	}
 
@@ -212,25 +209,25 @@ public class BatchTests : TestBase
 		var settings = CreateDefaultSettings().WithHttpMock();
 		var batch = new ODataBatch(settings);
 		batch += c => c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test12" }, { "UnitPrice", 21m } }, false);
-		await batch.ExecuteAsync().ConfigureAwait(false);
+		await batch.ExecuteAsync();
 
 		var client = new ODataClient(settings);
-		var product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test12'").ConfigureAwait(false);
+		var product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test12'");
 		Assert.Equal(21m, product["UnitPrice"]);
 		var key = new Entry() { { "ProductID", product["ProductID"] } };
 
 		batch = new ODataBatch(settings);
 		batch += c => c.UpdateEntryAsync("Products", key, new Entry() { { "UnitPrice", 22m } });
-		await batch.ExecuteAsync().ConfigureAwait(false);
+		await batch.ExecuteAsync();
 
-		product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test12'").ConfigureAwait(false);
+		product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test12'");
 		Assert.Equal(22m, product["UnitPrice"]);
 
 		batch = new ODataBatch(settings);
 		batch += c => c.DeleteEntryAsync("Products", key);
-		await batch.ExecuteAsync().ConfigureAwait(false);
+		await batch.ExecuteAsync();
 
-		product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test12'").ConfigureAwait(false);
+		product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test12'");
 		Assert.Null(product);
 	}
 
@@ -240,16 +237,16 @@ public class BatchTests : TestBase
 		var settings = CreateDefaultSettings().WithHttpMock();
 		IDictionary<string, object>? category = null;
 		var batch = new ODataBatch(settings);
-		batch += async x => category = await x.InsertEntryAsync("Categories", new Entry() { { "CategoryName", "Test13" } }).ConfigureAwait(false);
+		batch += async x => category = await x.InsertEntryAsync("Categories", new Entry() { { "CategoryName", "Test13" } });
 		batch += c => c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test14" }, { "UnitPrice", 21m }, { "Category", category } }, false);
-		await batch.ExecuteAsync().ConfigureAwait(false);
+		await batch.ExecuteAsync();
 
 		var client = new ODataClient(settings);
 		var product = await client
 			.For("Products")
 			.Expand("Category")
 			.Filter("ProductName eq 'Test14'")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal("Test13", (product["Category"] as IDictionary<string, object>)["CategoryName"]);
 	}
 
@@ -260,17 +257,17 @@ public class BatchTests : TestBase
 		IDictionary<string, object>? product1 = null;
 		IDictionary<string, object>? product2 = null;
 		var batch = new ODataBatch(settings);
-		batch += async c => product1 = await c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test15" }, { "UnitPrice", 21m } }).ConfigureAwait(false);
-		batch += async c => product2 = await c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test16" }, { "UnitPrice", 22m } }).ConfigureAwait(false);
+		batch += async c => product1 = await c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test15" }, { "UnitPrice", 21m } });
+		batch += async c => product2 = await c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test16" }, { "UnitPrice", 22m } });
 		batch += c => c.InsertEntryAsync("Categories", new Entry() { { "CategoryName", "Test17" }, { "Products", new[] { product1, product2 } } }, false);
-		await batch.ExecuteAsync().ConfigureAwait(false);
+		await batch.ExecuteAsync();
 
 		var client = new ODataClient(settings);
 		var category = await client
 			.For("Categories")
 			.Expand("Products")
 			.Filter("CategoryName eq 'Test17'")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal(2, (category["Products"] as IEnumerable<object>).Count());
 	}
 
@@ -280,7 +277,7 @@ public class BatchTests : TestBase
 		var settings = CreateDefaultSettings().WithHttpMock();
 		var batch = new ODataBatch(settings);
 		batch += c => c.DeleteEntryAsync("Products", new Entry { { "ProductID", 0xFFFF } });
-		await AssertThrowsAsync<WebRequestException>(async () => await batch.ExecuteAsync().ConfigureAwait(false)).ConfigureAwait(false);
+		await AssertThrowsAsync<WebRequestException>(async () => await batch.ExecuteAsync());
 	}
 
 	[Fact]
@@ -288,18 +285,18 @@ public class BatchTests : TestBase
 	{
 		var settings = CreateDefaultSettings().WithHttpMock();
 		var batch = new ODataBatch(settings);
-		batch += async c => await c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test19" }, { "UnitPrice", 21m } }).ConfigureAwait(false);
-		await batch.ExecuteAsync().ConfigureAwait(false);
+		batch += async c => await c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test19" }, { "UnitPrice", 21m } });
+		await batch.ExecuteAsync();
 
 		batch = new ODataBatch(settings);
 		batch += c => c.DeleteEntriesAsync("Products", "Products?$filter=ProductName eq 'Test19'");
-		await batch.ExecuteAsync().ConfigureAwait(false);
+		await batch.ExecuteAsync();
 
 		var client = new ODataClient(settings);
 		var product = await client
 			.For("Products")
 			.Filter("ProductName eq 'Test19'")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Null(product);
 	}
 
@@ -309,7 +306,7 @@ public class BatchTests : TestBase
 		var settings = CreateDefaultSettings().WithHttpMock();
 		var batch = new ODataBatch(settings);
 		batch += c => c.DeleteEntriesAsync("Products", "Products?$filter=ProductName eq 'Test99'");
-		await batch.ExecuteAsync().ConfigureAwait(false);
+		await batch.ExecuteAsync();
 	}
 
 	[Fact]
@@ -317,20 +314,20 @@ public class BatchTests : TestBase
 	{
 		var settings = CreateDefaultSettings().WithHttpMock();
 		var batch = new ODataBatch(settings);
-		batch += async c => await c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test21" }, { "UnitPrice", 111m } }).ConfigureAwait(false);
-		batch += async c => await c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test22" }, { "UnitPrice", 111m } }).ConfigureAwait(false);
-		batch += async c => await c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test23" }, { "UnitPrice", 111m } }).ConfigureAwait(false);
-		await batch.ExecuteAsync().ConfigureAwait(false);
+		batch += async c => await c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test21" }, { "UnitPrice", 111m } });
+		batch += async c => await c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test22" }, { "UnitPrice", 111m } });
+		batch += async c => await c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test23" }, { "UnitPrice", 111m } });
+		await batch.ExecuteAsync();
 
 		batch = new ODataBatch(settings);
 		batch += c => c.DeleteEntriesAsync("Products", "Products?$filter=UnitPrice eq 111");
-		await batch.ExecuteAsync().ConfigureAwait(false);
+		await batch.ExecuteAsync();
 
 		var client = new ODataClient(settings);
 		var product = await client
 			.For("Products")
 			.Filter("UnitPrice eq 111")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Null(product);
 	}
 
@@ -341,9 +338,9 @@ public class BatchTests : TestBase
 		IDictionary<string, object>? product = null;
 		var batch = new ODataBatch(settings);
 		batch += c => c.DeleteEntriesAsync("Products", "Products?$filter=ProductName eq 'Test99'");
-		batch += async c => product = await c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test15" }, { "UnitPrice", 21m } }).ConfigureAwait(false);
+		batch += async c => product = await c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test15" }, { "UnitPrice", 21m } });
 		batch += c => c.InsertEntryAsync("Categories", new Entry() { { "CategoryName", "Test17" }, { "Products", new[] { product } } }, false);
-		await batch.ExecuteAsync().ConfigureAwait(false);
+		await batch.ExecuteAsync();
 	}
 
 	[Fact]
@@ -354,12 +351,12 @@ public class BatchTests : TestBase
 		IDictionary<string, object>? product1 = null;
 
 		var batch = new ODataBatch(settings);
-		batch += async x => product = await x.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test11" }, { "UnitPrice", 21m } }, true).ConfigureAwait(false);
-		await batch.ExecuteAsync().ConfigureAwait(false);
+		batch += async x => product = await x.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test11" }, { "UnitPrice", 21m } }, true);
+		await batch.ExecuteAsync();
 
 		batch = new ODataBatch(settings);
-		batch += async c => product1 = await c.UpdateEntryAsync("Products", product, new Entry() { { "UnitPrice", 22m } }, true).ConfigureAwait(false);
-		await batch.ExecuteAsync().ConfigureAwait(false);
+		batch += async c => product1 = await c.UpdateEntryAsync("Products", product, new Entry() { { "UnitPrice", 22m } }, true);
+		await batch.ExecuteAsync();
 
 		Assert.Equal(22m, product1["UnitPrice"]);
 	}
@@ -370,8 +367,8 @@ public class BatchTests : TestBase
 		var settings = CreateDefaultSettings().WithHttpMock();
 		var batch = new ODataBatch(settings);
 		var result = 0;
-		batch += async c => result = await c.Unbound().Function("ParseInt").Set(new Entry() { { "number", "1" } }).ExecuteAsScalarAsync<int>().ConfigureAwait(false);
-		await batch.ExecuteAsync().ConfigureAwait(false);
+		batch += async c => result = await c.Unbound().Function("ParseInt").Set(new Entry() { { "number", "1" } }).ExecuteAsScalarAsync<int>();
+		await batch.ExecuteAsync();
 
 		Assert.Equal(1, result);
 	}
@@ -387,23 +384,23 @@ public class BatchTests : TestBase
 		var category = await client
 			.For("Categories")
 			.Set(new { CategoryName = "Test4" })
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 		var product = await client
 			.For("Products")
 			.Set(new { ProductName = "Test5" })
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 
 		var batch = new ODataBatch(settings);
 		batch += async c => await c
 			.For("Products")
 			.Key(product)
-			.LinkEntryAsync("Category", category).ConfigureAwait(false);
-		await batch.ExecuteAsync().ConfigureAwait(false);
+			.LinkEntryAsync("Category", category);
+		await batch.ExecuteAsync();
 
 		product = await client
 			.For("Products")
 			.Filter("ProductName eq 'Test5'")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.NotNull(product["CategoryID"]);
 		Assert.Equal(category["CategoryID"], product["CategoryID"]);
 	}
@@ -417,8 +414,8 @@ public class BatchTests : TestBase
 		batch += async c => count = await c
 			.For("Products")
 			.Count()
-			.FindScalarAsync<int>().ConfigureAwait(false);
-		await batch.ExecuteAsync().ConfigureAwait(false);
+			.FindScalarAsync<int>();
+		await batch.ExecuteAsync();
 
 		Assert.Equal(ExpectedCountOfProducts, count);
 	}
@@ -436,7 +433,7 @@ public class BatchTests : TestBase
 		batch += c => c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test1" }, { "UnitPrice", 10m } }, false);
 		batch += c => c.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test2" }, { "UnitPrice", 20m } }, false);
 
-		await batch.ExecuteAsync().ConfigureAwait(false);
+		await batch.ExecuteAsync();
 
 		Assert.True(headers.TryGetValue("batchHeader", out var value) && value == "batchHeaderValue");
 	}

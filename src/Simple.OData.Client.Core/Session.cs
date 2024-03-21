@@ -1,9 +1,4 @@
-﻿using System;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace Simple.OData.Client;
+﻿namespace Simple.OData.Client;
 
 internal class Session : ISession
 {

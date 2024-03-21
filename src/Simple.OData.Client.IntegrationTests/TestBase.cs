@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
+﻿using System.Net.Http;
 using Xunit;
 
 namespace Simple.OData.Client.Tests;
@@ -44,13 +41,17 @@ public abstract class TestBase : IDisposable
 
 	private async static Task<string> GetReadWriteUri(string serviceUri)
 	{
-		var response = await metadataHttpClient.GetAsync(serviceUri).ConfigureAwait(false);
+		var response = await metadataHttpClient.GetAsync(serviceUri);
 		var uri = response.RequestMessage.RequestUri.AbsoluteUri;
 		if (serviceUri == ODataV2ReadWriteUri)
 		{
 			var i1 = uri.IndexOf(".org/V");
 			var i2 = uri.IndexOf("/OData/");
-			uri = string.Concat(uri[..(i1 + 5)], uri.AsSpan(i1 + 8, i2 - i1 - 7), uri.AsSpan(i1 + 5, 2), uri[i2..]);
+#if NET7_0_OR_GREATER
+			uri = string.Concat(uri.AsSpan()[..(i1 + 5)], uri.AsSpan(i1 + 8, i2 - i1 - 7), uri.AsSpan(i1 + 5, 2), uri.AsSpan()[i2..]);
+#else
+            uri = uri.Substring(0, i1 + 5) + uri.Substring(i1 + 8, i2 - i1 - 7) + uri.Substring(i1 + 5, 2) + uri.Substring(i2);
+#endif
 		}
 
 		return uri;
@@ -107,7 +108,7 @@ public abstract class TestBase : IDisposable
 	{
 		try
 		{
-			await testCode().ConfigureAwait(false);
+			await testCode();
 			throw new Exception($"Expected exception: {typeof(T)}");
 		}
 		catch (T)

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Linq.Expressions;
 using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client;
@@ -247,12 +242,12 @@ public partial class BoundClient<T>
 
 	public Task LinkEntryAsync(ODataExpression expression, IDictionary<string, object> linkedEntryKey)
 	{
-		return _client.LinkEntryAsync(_command, expression.AsString(_session), linkedEntryKey.ToDictionary(), CancellationToken.None);
+		return _client.LinkEntryAsync(_command, expression.AsString(_session), linkedEntryKey.ToIDictionary(), CancellationToken.None);
 	}
 
 	public Task LinkEntryAsync(ODataExpression expression, IDictionary<string, object> linkedEntryKey, CancellationToken cancellationToken)
 	{
-		return _client.LinkEntryAsync(_command, expression.AsString(_session), linkedEntryKey.ToDictionary(), cancellationToken);
+		return _client.LinkEntryAsync(_command, expression.AsString(_session), linkedEntryKey.ToIDictionary(), cancellationToken);
 	}
 
 	public Task LinkEntryAsync(ODataExpression expression, ODataEntry linkedEntryKey)
@@ -348,12 +343,12 @@ public partial class BoundClient<T>
 
 	public Task UnlinkEntryAsync(ODataExpression expression, IDictionary<string, object> linkedEntryKey)
 	{
-		return _client.UnlinkEntryAsync(_command, expression.AsString(_session), linkedEntryKey?.ToDictionary(), CancellationToken.None);
+		return _client.UnlinkEntryAsync(_command, expression.AsString(_session), linkedEntryKey?.ToIDictionary(), CancellationToken.None);
 	}
 
 	public Task UnlinkEntryAsync(ODataExpression expression, IDictionary<string, object> linkedEntryKey, CancellationToken cancellationToken)
 	{
-		return _client.UnlinkEntryAsync(_command, expression.AsString(_session), linkedEntryKey?.ToDictionary(), cancellationToken);
+		return _client.UnlinkEntryAsync(_command, expression.AsString(_session), linkedEntryKey?.ToIDictionary(), cancellationToken);
 	}
 
 	public Task UnlinkEntryAsync(ODataExpression expression, ODataEntry linkedEntryKey)

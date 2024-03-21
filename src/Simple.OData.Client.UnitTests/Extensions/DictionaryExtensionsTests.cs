@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
+﻿using System.Collections.ObjectModel;
 using Simple.OData.Client.Extensions;
 using Xunit;
 using SpatialV3 = System.Spatial;

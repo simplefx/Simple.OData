@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace WebApiOData.V4.Samples.Models;
+﻿namespace WebApiOData.V4.Samples.Models;
 
 public class MoviesContext
 {

@@ -1,5 +1,4 @@
-﻿using System;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 
 
 /* Unmerged change from project 'Simple.OData.Client.Core (netstandard2.0)'

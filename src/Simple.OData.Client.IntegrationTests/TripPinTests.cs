@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
+﻿using System.Net.Http;
 using Simple.OData.Client.V4.Adapter.Extensions;
 using Xunit;
 
@@ -32,7 +28,7 @@ public class TripPinRESTierTestsV4Json : TripPinTestBase
 				p.Gender,
 				Count = a.Count()
 			}))
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 
 		Assert.True(peopleGroupedByGender.All(x => x.Count > 0));
 	}
@@ -74,14 +70,14 @@ public abstract class TripPinTests : TripPinTestBase
 		var count = 0;
 		var people = await client
 			.For<PersonWithAnnotations>("Person")
-			.FindEntriesAsync(annotations).ConfigureAwait(false);
+			.FindEntriesAsync(annotations);
 		count += people.Count();
 
 		while (annotations.NextPageLink is not null)
 		{
 			people = await client
 				.For<PersonWithAnnotations>()
-				.FindEntriesAsync(annotations.NextPageLink, annotations).ConfigureAwait(false);
+				.FindEntriesAsync(annotations.NextPageLink, annotations);
 			count += people.Count();
 
 			foreach (var person in people)
@@ -103,7 +99,7 @@ public abstract class TripPinTests : TripPinTestBase
 		var people = await _client
 			.For<Person>()
 			.Filter(x => x.UserName == "russellwhyte")
-			.FindEntriesAsync(annotations).ConfigureAwait(false);
+			.FindEntriesAsync(annotations);
 
 		Assert.Single(people);
 		Assert.Null(annotations.NextPageLink);
@@ -117,7 +113,7 @@ public abstract class TripPinTests : TripPinTestBase
 		var person = await client
 			.For<Person>()
 			.Key("russellwhyte")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 
 		Assert.Equal("russellwhyte", person.UserName);
 	}
@@ -128,7 +124,7 @@ public abstract class TripPinTests : TripPinTestBase
 		var people = await _client
 			.For<Person>()
 			.Filter(x => x.Gender == (int)PersonGender.Male)
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 
 		Assert.True(people.All(x => x.Gender == PersonGender.Male));
 	}
@@ -144,7 +140,7 @@ public abstract class TripPinTests : TripPinTestBase
 		var person = await client
 			.For<PersonWithAnnotations>("Person")
 			.Filter(x => x.UserName == "russellwhyte")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 
 		Assert.NotNull(person.Annotations.Id);
 	}
@@ -156,7 +152,7 @@ public abstract class TripPinTests : TripPinTestBase
 			.For<Person>()
 			.Key("russellwhyte")
 			.Expand(x => new { x.Trips, x.Friends })
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal(3, person.Trips.Count());
 		Assert.Equal(4, person.Friends.Count());
 	}
@@ -168,7 +164,7 @@ public abstract class TripPinTests : TripPinTestBase
 			.For<Person>()
 			.Key("keithpinckney")
 			.Expand(x => new { x.Trips })
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Empty(person.Trips);
 		Assert.Null(person.Friends);
 		Assert.Null(person.Photo);
@@ -183,7 +179,7 @@ public abstract class TripPinTests : TripPinTestBase
 			.Expand(x => new { x.Trips, x.Friends })
 			.Select(x => x.Trips.Select(y => y.Name))
 			.Select(x => x.Friends.Select(y => y.LastName))
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal("Trip in US", person.Trips.First().Name);
 		Assert.Equal("Ketchum", person.Friends.First().LastName);
 	}
@@ -211,7 +207,7 @@ public abstract class TripPinTests : TripPinTestBase
 			.Key("russellwhyte")
 			.Expand("Friends")
 			.OrderBy("Friends/LastName")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		//Assert.Equal(3, person.Trips.Count());
 		//Assert.Equal(4, person.Friends.Count());
 	}
@@ -225,7 +221,7 @@ public abstract class TripPinTests : TripPinTestBase
 			.NavigateTo(x => x.Trips)
 			.Key(1003)
 			.NavigateTo(x => x.PlanItems)
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 		Assert.Equal(3, flights.Count());
 	}
 
@@ -238,7 +234,7 @@ public abstract class TripPinTests : TripPinTestBase
 			.NavigateTo(x => x.Trips)
 			.Key(1003)
 			.NavigateTo(x => x.PlanItems)
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 		Assert.Equal(3, flights.Count());
 	}
 
@@ -248,7 +244,7 @@ public abstract class TripPinTests : TripPinTestBase
 		var person = await _client
 			.For<PersonWithDataContract>()
 			.Key("russellwhyte")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal("russellwhyte", person.UserName);
 	}
 
@@ -261,7 +257,7 @@ public abstract class TripPinTests : TripPinTestBase
 			.NavigateTo(x => x.Trips)
 			.Key(1003)
 			.NavigateTo(x => x.PlanItems)
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 		Assert.Equal(3, flights.Count());
 	}
 
@@ -276,7 +272,7 @@ public abstract class TripPinTests : TripPinTestBase
 			.Key(1003)
 			.NavigateTo(x => x.PlanItems)
 			.Filter(x => x.StartsAt == now)
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 		Assert.Empty(flights);
 	}
 
@@ -287,7 +283,7 @@ public abstract class TripPinTests : TripPinTestBase
 			.For<Person>()
 			.Key("russellwhyte")
 			.Expand(x => x.Friends.Select(y => y.Friends))
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.NotNull(person);
 		Assert.Equal(4, person.Friends.Count());
 	}
@@ -299,7 +295,7 @@ public abstract class TripPinTests : TripPinTestBase
 			.For<Person>()
 			.Key("russellwhyte")
 			.Expand(x => x.Friends.Select(y => y.Friends.Select(z => z.Friends)))
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.NotNull(person);
 		Assert.Equal(4, person.Friends.Count());
 		Assert.Equal(8, person.Friends.SelectMany(x => x.Friends).Count());
@@ -313,7 +309,7 @@ public abstract class TripPinTests : TripPinTestBase
 			.Filter(x => x.Trips
 				.Any(y => y.Budget > 10000d))
 			.Expand(x => x.Trips)
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 		Assert.True(flights.All(x => x.Trips.Any(y => y.Budget > 10000d)));
 		Assert.Equal(2, flights.SelectMany(x => x.Trips).Count());
 	}
@@ -326,7 +322,7 @@ public abstract class TripPinTests : TripPinTestBase
 			.Filter(x => x.Trips
 				.All(y => y.Budget > 10000d))
 			.Expand(x => x.Trips)
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 		Assert.True(flights.All(x => x.Trips is null || x.Trips.All(y => y.Budget > 10000d)));
 	}
 
@@ -339,7 +335,7 @@ public abstract class TripPinTests : TripPinTestBase
 			.Filter(x => x.Trips
 				.All(y => y.PlanItems
 					.Any(z => z.Duration < duration)))
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 		Assert.Equal(8, flights.Count());
 	}
 
@@ -354,7 +350,7 @@ public abstract class TripPinTests : TripPinTestBase
 			.NavigateTo(x => x.PlanItems)
 			.Key(21)
 			.As<Flight>()
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal("FM1930", flight.FlightNumber);
 	}
 
@@ -371,7 +367,7 @@ public abstract class TripPinTests : TripPinTestBase
 			.As<Flight>()
 			.Expand(x => x.Airline)
 			.Select(x => new { x.FlightNumber, x.Airline.AirlineCode })
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Null(flight.From);
 		Assert.Null(flight.To);
 		Assert.Null(flight.Airline.Name);
@@ -388,7 +384,7 @@ public abstract class TripPinTests : TripPinTestBase
 			.Key(1003)
 			.NavigateTo(x => x.PlanItems)
 			.As<Flight>()
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 		Assert.Equal(2, flights.Count());
 		Assert.Contains(flights, x => x.FlightNumber == "FM1930");
 	}
@@ -401,7 +397,7 @@ public abstract class TripPinTests : TripPinTestBase
 			.Expand(x => x.Photo)
 			.Select(x => new { x.UserName, Photo = new { x.Photo.Name } })
 			.Top(1)
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 		var person = Assert.Single(persons);
 		Assert.Null(person.Photo.Media);
 		Assert.Equal(default, person.Photo.Id);
@@ -415,7 +411,7 @@ public abstract class TripPinTests : TripPinTestBase
 			.Expand(x => x.Friends)
 			.Select(x => new { x.UserName, Friends = x.Friends.Select(y => y.UserName) })
 			.Top(1)
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 		var person = Assert.Single(persons);
 		Assert.DoesNotContain(person.Friends, x => x.UserName is null);
 		Assert.True(person.Friends.All(x => x.FirstName is null));
@@ -432,7 +428,7 @@ public abstract class TripPinTests : TripPinTestBase
 			.NavigateTo(x => x.PlanItems)
 			.As<Flight>()
 			.Filter(x => x.FlightNumber == "FM1930")
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 		Assert.Single(flights);
 		Assert.True(flights.All(x => x.FlightNumber == "FM1930"));
 	}
@@ -444,7 +440,7 @@ public abstract class TripPinTests : TripPinTestBase
 			.For<Person>()
 			.Filter(x => x.Emails.Any(e => e != null))
 			.Top(1)
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 		var person = Assert.Single(persons);
 		Assert.NotEmpty(person.Emails);
 	}
@@ -456,7 +452,7 @@ public abstract class TripPinTests : TripPinTestBase
 			.For<Person>()
 			.Filter(x => x.Emails.Any(e => e == "Russell@example.com"))
 			.Top(1)
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 		var person = Assert.Single(persons);
 		Assert.NotEmpty(person.Emails);
 	}
@@ -468,7 +464,7 @@ public abstract class TripPinTests : TripPinTestBase
 			.For<Person>()
 			.Filter(x => x.AddressInfo.Any(a => a.City.Region == "WA"))
 			.Top(1)
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 		var person = Assert.Single(persons);
 		Assert.NotEmpty(person.Emails);
 	}
@@ -480,7 +476,7 @@ public abstract class TripPinTests : TripPinTestBase
 			.For<Person>()
 			.Filter(x => x.UserName == "russellwhyte")
 			.Set(new { LastName = "White" })
-			.UpdateEntryAsync().ConfigureAwait(false);
+			.UpdateEntryAsync();
 		Assert.Equal("White", person.LastName);
 	}
 
@@ -491,7 +487,7 @@ public abstract class TripPinTests : TripPinTestBase
 			.For<Person>()
 			.Filter(x => x.UserName == "russellwhyte")
 			.Set(new { Emails = new[] { "russell.whyte@gmail.com" } })
-			.UpdateEntryAsync().ConfigureAwait(false);
+			.UpdateEntryAsync();
 		Assert.Equal("russell.whyte@gmail.com", person.Emails.First());
 	}
 
@@ -517,7 +513,7 @@ public abstract class TripPinTests : TripPinTestBase
 						}
 				},
 			})
-			.UpdateEntryAsync().ConfigureAwait(false);
+			.UpdateEntryAsync();
 		Assert.Equal("Boise", person.AddressInfo.First().City.Name);
 	}
 
@@ -533,12 +529,12 @@ public abstract class TripPinTests : TripPinTestBase
 				LastName = "Samsa",
 				OpenTypeString = "Description"
 			})
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 
 		var person = await _client
 			.For<PersonWithOpenTypeFields>("Person")
 			.Key("gregorsamsa")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal(@"Description", person.OpenTypeString);
 	}
 
@@ -555,13 +551,13 @@ public abstract class TripPinTests : TripPinTestBase
 				LastName = "Samsa",
 				Properties = new Dictionary<string, object> { { "OpenTypeString", "Description" } },
 			})
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 
 		person = await _client
 			.For<PersonWithOpenTypeContainer>("Person")
 			.WithProperties(x => x.Properties)
 			.Key("gregorsamsa")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal(@"Description", person.Properties["OpenTypeString"]);
 	}
 
@@ -578,7 +574,7 @@ public abstract class TripPinTests : TripPinTestBase
 				LastName = "Samsa",
 				Properties = new Dictionary<string, object> { { "OpenTypeString", "Description" } },
 			})
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 		await _client
 			.For<PersonWithOpenTypeContainer>("Person")
 			.Key("gregorsamsa")
@@ -588,12 +584,12 @@ public abstract class TripPinTests : TripPinTestBase
 				UserName = "gregorsamsa",
 				Properties = new Dictionary<string, object> { { "OpenTypeString", "New description" } },
 			})
-			.UpdateEntryAsync().ConfigureAwait(false);
+			.UpdateEntryAsync();
 		person = await _client
 			.For<PersonWithOpenTypeContainer>("Person")
 			.WithProperties(x => x.Properties)
 			.Key("gregorsamsa")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal(@"New description", person.Properties["OpenTypeString"]);
 		Assert.Equal("Samsa", person.LastName);
 	}
@@ -610,12 +606,12 @@ public abstract class TripPinTests : TripPinTestBase
 				LastName = "Samsa",
 				OpenTypeString = "Description"
 			})
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 
 		person = await _client
 			.For<PersonWithOpenTypeFields>("Person")
 			.Filter(x => x.OpenTypeString == "Description")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal(@"Description", person.OpenTypeString);
 	}
 
@@ -632,13 +628,13 @@ public abstract class TripPinTests : TripPinTestBase
 				LastName = "Samsa",
 				Properties = new Dictionary<string, object> { { "OpenTypeString", "Description" } },
 			})
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 
 		person = await _client
 			.For<PersonWithOpenTypeContainer>("Person")
 			.WithProperties(x => x.Properties)
 			.Filter(x => x.Properties["OpenTypeString"].ToString() == "Description")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal(@"Description", person.Properties["OpenTypeString"]);
 	}
 
@@ -648,7 +644,7 @@ public abstract class TripPinTests : TripPinTestBase
 		var friend = await _client
 			.For<Person>()
 			.Key("russellwhyte")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		_ = await _client
 			.For<Person>()
 			.Set(new
@@ -658,12 +654,12 @@ public abstract class TripPinTests : TripPinTestBase
 				LastName = "Samsa",
 				Friends = new[] { friend },
 			})
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 
 		var person = await _client
 			.For<Person>()
 			.Key("gregorsamsa")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 
 		Assert.NotNull(person);
 	}
@@ -673,7 +669,7 @@ public abstract class TripPinTests : TripPinTestBase
 	{
 		var friend = await _client
 			.For<Me>()
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		_ = await _client
 			.For<Person>()
 			.Set(new
@@ -683,12 +679,12 @@ public abstract class TripPinTests : TripPinTestBase
 				LastName = "Samsa",
 				Friends = new[] { friend },
 			})
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 
 		var person = await _client
 			.For<Person>()
 			.Key("gregorsamsa")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 
 		Assert.NotNull(person);
 	}
@@ -705,12 +701,12 @@ public abstract class TripPinTests : TripPinTestBase
 				LastName = "Samsa",
 				OpenTypeString = "Description"
 			})
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 
 		person = await _client
 			.For<PersonWithOpenTypeFields>("Person")
 			.Filter(x => x.OpenTypeString == "Description")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal(@"Description", person.OpenTypeString);
 	}
 
@@ -726,13 +722,13 @@ public abstract class TripPinTests : TripPinTestBase
 				LastName = "Samsa",
 				OpenTypeString = @"""Description"""
 			})
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 
 		person = await _client
 			.For<PersonWithOpenTypeFields>("Person")
 			.Key("gregorsamsa")
 			.Select(x => new { x.UserName, x.OpenTypeString })
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal(@"\""Description\""", person.OpenTypeString);
 	}
 
@@ -748,13 +744,13 @@ public abstract class TripPinTests : TripPinTestBase
 				LastName = "Samsa",
 				OpenTypeInt = 1
 			})
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 
 		person = await _client
 			.For<PersonWithOpenTypeFields>("Person")
 			.Key("gregorsamsa")
 			.Select(x => new { x.UserName, x.OpenTypeInt })
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal(1, person.OpenTypeInt);
 	}
 
@@ -763,7 +759,7 @@ public abstract class TripPinTests : TripPinTestBase
 	{
 		var person = await _client
 			.For<Person>("Me")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal("aprilcline", person.UserName);
 		Assert.Equal(2, person.Emails.Length);
 		Assert.Equal("Lander", person.AddressInfo.Single().City.Name);
@@ -776,7 +772,7 @@ public abstract class TripPinTests : TripPinTestBase
 		var person = await _client
 			.For<Person>("Me")
 			.Select(x => x.AddressInfo)
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal("Lander", person.AddressInfo.Single().City.Name);
 		Assert.Null(person.UserName);
 		Assert.Null(person.Emails);
@@ -790,8 +786,8 @@ public abstract class TripPinTests : TripPinTestBase
 			await _client
 				.For<Person>("Me")
 				.Set(new { Gender = PersonGender.Male })
-				.UpdateEntryAsync().ConfigureAwait(false);
-		}).ConfigureAwait(false);
+				.UpdateEntryAsync();
+		});
 	}
 
 	//[Fact]
@@ -809,7 +805,7 @@ public abstract class TripPinTests : TripPinTestBase
 	{
 		var airlines = await _client
 			.For<Airline>()
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 		Assert.Equal(8, airlines.Count());
 	}
 
@@ -818,7 +814,7 @@ public abstract class TripPinTests : TripPinTestBase
 	{
 		var airports = await _client
 			.For<Airport>()
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 		Assert.Equal(8, airports.Count());
 	}
 
@@ -828,7 +824,7 @@ public abstract class TripPinTests : TripPinTestBase
 		var airport = await _client
 			.For<Airport>()
 			.Key("KSFO")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal("SFO", airport.IataCode);
 		Assert.Equal("San Francisco", airport.Location.City.Name);
 		Assert.Equal(4326, airport.Location.Loc.CoordinateSystem.EpsgId);
@@ -843,7 +839,7 @@ public abstract class TripPinTests : TripPinTestBase
 			.For<Airport>()
 			.OrderBy(x => x.Location.Address)
 			.Top(2)
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 		var first = airports.Select(x => x.Location.Address).First();
 		var second = airports.Select(x => x.Location.Address).Last();
 		Assert.True(first.CompareTo(second) < 0);
@@ -851,7 +847,7 @@ public abstract class TripPinTests : TripPinTestBase
 			.For<Airport>()
 			.OrderByDescending(x => x.Location.Address)
 			.Top(2)
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 		first = airports.Select(x => x.Location.Address).First();
 		second = airports.Select(x => x.Location.Address).Last();
 		Assert.True(first.CompareTo(second) > 0);
@@ -864,7 +860,7 @@ public abstract class TripPinTests : TripPinTestBase
 			.For<Airport>()
 			.OrderBy(x => x.Location.City.Name)
 			.Top(2)
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 		var first = airports.Select(x => x.Location.City.Name).First();
 		var second = airports.Select(x => x.Location.City.Name).Last();
 		Assert.True(first.CompareTo(second) < 0);
@@ -872,7 +868,7 @@ public abstract class TripPinTests : TripPinTestBase
 			.For<Airport>()
 			.OrderByDescending(x => x.Location.City.Name)
 			.Top(2)
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 		first = airports.Select(x => x.Location.City.Name).First();
 		second = airports.Select(x => x.Location.City.Name).Last();
 		Assert.True(first.CompareTo(second) > 0);
@@ -884,7 +880,7 @@ public abstract class TripPinTests : TripPinTestBase
 		var airport = await _client
 			.For<Airport>()
 			.Filter(x => x.Location.City.Region == "California")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal("SFO", airport.IataCode);
 	}
 
@@ -894,7 +890,7 @@ public abstract class TripPinTests : TripPinTestBase
 		var airport = await _client
 			.For<Airport>()
 			.Filter(x => x.Location.City.Region.Contains("California"))
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal("SFO", airport.IataCode);
 	}
 
@@ -911,11 +907,11 @@ public abstract class TripPinTests : TripPinTestBase
 
 		var tripEvent = await command
 			.Set(CreateTestEvent())
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 
 		tripEvent = await command
 			.Key(tripEvent.PlanItemId)
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 
 		Assert.NotNull(tripEvent);
 	}
@@ -933,12 +929,12 @@ public abstract class TripPinTests : TripPinTestBase
 
 		var tripEvent = await command
 			.Set(CreateTestEvent())
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 
 		tripEvent = await command
 			.Key(tripEvent.PlanItemId)
 			.Set(new { Description = "This is a new description" })
-			.UpdateEntryAsync().ConfigureAwait(false);
+			.UpdateEntryAsync();
 
 		Assert.Equal("This is a new description", tripEvent.Description);
 	}
@@ -956,15 +952,15 @@ public abstract class TripPinTests : TripPinTestBase
 
 		var tripEvent = await command
 			.Set(CreateTestEvent())
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 
 		await command
 			.Key(tripEvent.PlanItemId)
-			.DeleteEntryAsync().ConfigureAwait(false);
+			.DeleteEntryAsync();
 
 		tripEvent = await command
 			.Key(tripEvent.PlanItemId)
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 
 		Assert.Null(tripEvent);
 	}
@@ -976,7 +972,7 @@ public abstract class TripPinTests : TripPinTestBase
 			.For<Person>()
 			.Key("russellwhyte")
 			.NavigateTo<Trip>()
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 
 		Assert.Equal(3, trips.Count());
 	}
@@ -988,7 +984,7 @@ public abstract class TripPinTests : TripPinTestBase
 			.For<Person>()
 			.Key("russellwhyte")
 			.NavigateTo<TripWithDateTime>("Trip")
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 
 		Assert.Equal(3, trips.Count());
 	}
@@ -1001,7 +997,7 @@ public abstract class TripPinTests : TripPinTestBase
 			.Key("russellwhyte")
 			.NavigateTo<Trip>()
 			.Filter(x => x.Description.Contains("New York"))
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 
 		Assert.Single(trips);
 		Assert.Contains("New York", trips.Single().Description);
@@ -1014,7 +1010,7 @@ public abstract class TripPinTests : TripPinTestBase
 			.Unbound<Airport>()
 			.Function("GetNearestAirport")
 			.Set(new { lat = 100d, lon = 100d })
-			.ExecuteAsSingleAsync().ConfigureAwait(false);
+			.ExecuteAsSingleAsync();
 
 		Assert.Equal("KSEA", airport.IcaoCode);
 	}
@@ -1032,16 +1028,16 @@ public abstract class TripPinTests : TripPinTestBase
 
 		var tripEvent = await command
 			.Set(CreateTestEvent())
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 
 		await _client
 			.Unbound()
 			.Action("ResetDataSource")
-			.ExecuteAsync().ConfigureAwait(false);
+			.ExecuteAsync();
 
 		tripEvent = await command
 			.Filter(x => x.PlanItemId == tripEvent.PlanItemId)
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 
 		Assert.Null(tripEvent);
 	}
@@ -1054,7 +1050,7 @@ public abstract class TripPinTests : TripPinTestBase
 			.Key("russellwhyte")
 			.Action("ShareTrip")
 			.Set(new { userName = "scottketchum", tripId = 1003 })
-			.ExecuteAsync().ConfigureAwait(false);
+			.ExecuteAsync();
 	}
 
 	[Fact]
@@ -1067,9 +1063,9 @@ public abstract class TripPinTests : TripPinTestBase
 			.Key("russellwhyte")
 			.Action("ShareTrip")
 			.Set(new { userName = "scottketchum", tripId = 1003 })
-			.ExecuteAsSingleAsync().ConfigureAwait(false);
+			.ExecuteAsSingleAsync();
 
-		await batch.ExecuteAsync().ConfigureAwait(false);
+		await batch.ExecuteAsync();
 	}
 
 	[Fact]
@@ -1081,7 +1077,7 @@ public abstract class TripPinTests : TripPinTestBase
 			.NavigateTo<Trip>()
 			.Key(0)
 			.Function("GetInvolvedPeople")
-			.ExecuteAsEnumerableAsync().ConfigureAwait(false);
+			.ExecuteAsEnumerableAsync();
 		Assert.Equal(2, people.Count());
 	}
 
@@ -1094,7 +1090,7 @@ public abstract class TripPinTests : TripPinTestBase
 			.NavigateTo<Trip>()
 			.Key(1)
 			.Function("GetInvolvedPeople")
-			.ExecuteAsEnumerableAsync().ConfigureAwait(false);
+			.ExecuteAsEnumerableAsync();
 		Assert.Empty(people);
 	}
 
@@ -1111,10 +1107,10 @@ public abstract class TripPinTests : TripPinTestBase
 				.NavigateTo<Trip>()
 				.Key(0)
 				.Function("GetInvolvedPeople")
-				.ExecuteAsEnumerableAsync().ConfigureAwait(false);
+				.ExecuteAsEnumerableAsync();
 		};
 
-		await batch.ExecuteAsync().ConfigureAwait(false);
+		await batch.ExecuteAsync();
 		Assert.Equal(2, people.Count());
 	}
 
@@ -1127,15 +1123,15 @@ public abstract class TripPinTests : TripPinTestBase
 		var batch = new ODataBatch(_client);
 		batch += async c => airlines1 = await c
 		   .For<Airline>()
-		   .FindEntriesAsync().ConfigureAwait(false);
+		   .FindEntriesAsync();
 		batch += c => c
 		   .For<Airline>()
 		   .Set(new Airline() { AirlineCode = "TT", Name = "Test Airline" })
 		   .InsertEntryAsync(false);
 		batch += async c => airlines2 = await c
 		   .For<Airline>()
-		   .FindEntriesAsync().ConfigureAwait(false);
-		await batch.ExecuteAsync().ConfigureAwait(false);
+		   .FindEntriesAsync();
+		await batch.ExecuteAsync();
 
 		Assert.Equal(8, airlines1.Count());
 		Assert.Equal(8, airlines2.Count());
@@ -1156,15 +1152,15 @@ public abstract class TripPinTests : TripPinTestBase
 		var batch = new ODataBatch(client);
 		batch += async c => airlines1 = await c
 		   .For<Airline>()
-		   .FindEntriesAsync().ConfigureAwait(false);
+		   .FindEntriesAsync();
 		batch += c => c
 		   .For<Airline>()
 		   .Set(new Airline() { AirlineCode = "TT", Name = "Test Airline" })
 		   .InsertEntryAsync(false);
 		batch += async c => airlines2 = await c
 		   .For<Airline>()
-		   .FindEntriesAsync().ConfigureAwait(false);
-		await batch.ExecuteAsync().ConfigureAwait(false);
+		   .FindEntriesAsync();
+		await batch.ExecuteAsync();
 
 		Assert.Equal(8, airlines1.Count());
 		Assert.Equal(8, airlines2.Count());
@@ -1185,15 +1181,15 @@ public abstract class TripPinTests : TripPinTestBase
 		var batch = new ODataBatch(client);
 		batch += async c => airlines1 = await c
 		   .For<Airline>()
-		   .FindEntriesAsync().ConfigureAwait(false);
+		   .FindEntriesAsync();
 		batch += c => c
 		   .For<Airline>()
 		   .Set(new Airline() { AirlineCode = "TT", Name = "Test Airline" })
 		   .InsertEntryAsync(false);
 		batch += async c => airlines2 = await c
 		   .For<Airline>()
-		   .FindEntriesAsync().ConfigureAwait(false);
-		await batch.ExecuteAsync().ConfigureAwait(false);
+		   .FindEntriesAsync();
+		await batch.ExecuteAsync();
 
 		Assert.Equal(8, airlines1.Count());
 		Assert.Equal(8, airlines2.Count());
@@ -1214,15 +1210,15 @@ public abstract class TripPinTests : TripPinTestBase
 		var batch = new ODataBatch(client);
 		batch += async c => airlines1 = await c
 		   .For<Airline>()
-		   .FindEntriesAsync().ConfigureAwait(false);
+		   .FindEntriesAsync();
 		batch += c => c
 		   .For<Airline>()
 		   .Set(new Airline() { AirlineCode = "TT", Name = "Test Airline" })
 		   .InsertEntryAsync(false);
 		batch += async c => airlines2 = await c
 		   .For<Airline>()
-		   .FindEntriesAsync().ConfigureAwait(false);
-		await batch.ExecuteAsync().ConfigureAwait(false);
+		   .FindEntriesAsync();
+		await batch.ExecuteAsync();
 
 		Assert.Equal(8, airlines1.Count());
 		Assert.Equal(8, airlines2.Count());
@@ -1239,7 +1235,7 @@ public abstract class TripPinTests : TripPinTestBase
 			.NavigateTo(x => x.PlanItems)
 			.As<Event>()
 			.Filter(x => x.StartsAt < DateTimeOffset.UtcNow)
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 
 		Assert.NotNull(tripEvent);
 	}
@@ -1255,7 +1251,7 @@ public abstract class TripPinTests : TripPinTestBase
 			.NavigateTo(x => x.PlanItems)
 			.As<Event>()
 			.Filter(x => x.StartsAt == null)
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 
 		Assert.Null(tripEvent);
 	}
@@ -1267,7 +1263,7 @@ public abstract class TripPinTests : TripPinTestBase
 			.For<Person>()
 			.Key("russellwhyte")
 			.Function("GetFavoriteAirline")
-			.ExecuteAsArrayAsync<Airline>().ConfigureAwait(false);
+			.ExecuteAsArrayAsync<Airline>();
 
 		Assert.Equal("AA", airport.First().AirlineCode);
 	}
@@ -1278,12 +1274,12 @@ public abstract class TripPinTests : TripPinTestBase
 		var photo = await _client
 			.For<Photo>()
 			.Key(1)
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		photo.Media = await _client
 			.For<Photo>()
 			.Key(photo.Id)
 			.Media()
-			.GetStreamAsArrayAsync().ConfigureAwait(false);
+			.GetStreamAsArrayAsync();
 
 		Assert.Equal(12277, photo.Media.Length);
 	}
@@ -1294,24 +1290,24 @@ public abstract class TripPinTests : TripPinTestBase
 		var photo = await _client
 			.For<Photo>()
 			.Key(1)
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		photo.Media = await _client
 			.For<Photo>()
 			.Key(photo.Id)
 			.Media()
-			.GetStreamAsArrayAsync().ConfigureAwait(false);
+			.GetStreamAsArrayAsync();
 		var byteCount = photo.Media.Length;
 
 		await _client
 			.For<Photo>()
 			.Key(photo.Id)
 			.Media()
-			.SetStreamAsync(photo.Media, "image/jpeg", true).ConfigureAwait(false);
+			.SetStreamAsync(photo.Media, "image/jpeg", true);
 		photo.Media = await _client
 			.For<Photo>()
 			.Key(photo.Id)
 			.Media()
-			.GetStreamAsArrayAsync().ConfigureAwait(false);
+			.GetStreamAsArrayAsync();
 
 		Assert.Equal(byteCount, photo.Media.Length);
 	}

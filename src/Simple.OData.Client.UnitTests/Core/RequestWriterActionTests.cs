@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Xunit;
 
@@ -20,7 +17,7 @@ public class RequestWriterActionTests : CoreTestBase
 	[Fact]
 	public async Task CreateActionRequestWithDerivedType()
 	{
-		var requestWriter = await CreateRequestWriter().ConfigureAwait(false);
+		var requestWriter = await CreateRequestWriter();
 		var request = await requestWriter.CreateActionRequestAsync("CancelSalesOrder", "CancelSalesOrder", null,
 			new Dictionary<string, object>
 			{
@@ -31,8 +28,8 @@ public class RequestWriterActionTests : CoreTestBase
 					["subject"] = $"Close sales Order {DateTime.Now}",
 					["@odata.type"] = "Microsoft.Dynamics.CRM.orderclose"
 				}
-			}, true).ConfigureAwait(false);
-		var stringResult = await request.RequestMessage.Content.ReadAsStringAsync().ConfigureAwait(false);
+			}, true);
+		var stringResult = await request.RequestMessage.Content.ReadAsStringAsync();
 		var result = JsonConvert.DeserializeObject<JObject>(stringResult);
 
 		Assert.True(result.ContainsKey("OrderClose"));

@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>net8.0;net7.0;netstandard2.0</TargetFrameworks>
+		<DocumentationFile>$(DocumentationFile)\$(AssemblyName).xml</DocumentationFile>
+		<StrongNamePublicKey>$(StrongNamePublicKey)</StrongNamePublicKey>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<Summary>Simple.OData.Client helps you interact with OData APIs that comply with any version of the OData standard.</Summary>
+		<Description>
+			$(Summary) Modern APIs will likely want to use the Simple.OData.V4.Client package, which has a smaller memory footprint and is optimized for OData V4.
+
+			Commonly used types:
+			Simple.OData.Client.ODataClient
+		</Description>
+		<PackageTags>$(PackageTags)"odata v3";"odata v4"</PackageTags>
+		<IncludeBuildOutput>false</IncludeBuildOutput>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Simple.OData.Client.Core\Simple.OData.Client.Core.csproj" />
+		<ProjectReference Include="..\Simple.OData.Client.V3.Adapter\Simple.OData.Client.V3.Adapter.csproj" />
+		<ProjectReference Include="..\Simple.OData.Client.V4.Adapter\Simple.OData.Client.V4.Adapter.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="README.md" Pack="true" PackagePath="">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+
+</Project>

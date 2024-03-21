@@ -1,8 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-
-using Xunit;
+﻿using Xunit;
 #if net462 && !MOCK_HTTP
 using Simple.OData.NorthwindModel;
 #endif
@@ -88,7 +84,7 @@ public class TestBase : IDisposable
 	{
 		try
 		{
-			await testCode().ConfigureAwait(false);
+			await testCode();
 			throw new Exception($"Expected exception: {typeof(T)}");
 		}
 		catch (T)

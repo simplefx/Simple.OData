@@ -1,41 +1,35 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
+	
 	<PropertyGroup>
-		<TargetFrameworks>net461;netstandard2.0</TargetFrameworks>
-		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+		<TargetFrameworks>net8.0;net7.0;netstandard2.0</TargetFrameworks>
 		<RootNamespace>Simple.OData.Client</RootNamespace>
-		<OutputPath>$(SolutionDir)/build/$(Configuration)/$(AssemblyName)/$(TargetFramework)/</OutputPath>
-		<OutDir>$(OutputPath)</OutDir>
-		<Decription></Decription>
-		<LangVersion>latest</LangVersion>
-		<Nullable>enable</Nullable>
-		<EnableNETAnalyzers>true</EnableNETAnalyzers>
-		<AnalysisMode>All</AnalysisMode>
+		<DocumentationFile>$(DocumentationFile)\$(AssemblyName).xml</DocumentationFile>
+		<StrongNamePublicKey>$(StrongNamePublicKey)</StrongNamePublicKey>
 	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net461|AnyCPU'">
-		<DocumentationFile>Simple.OData.Client.Core.xml</DocumentationFile>
-		<DefineConstants>TRACE</DefineConstants>
+
+	<PropertyGroup>
+		<Summary>Simple.OData.Client helps you interact with OData APIs that comply with any version of the OData standard.</Summary>
+		<Description>
+			$(Summary) Please make sure you are also referencing either the Simple.OData.V4.Client and/or the Simple.OData.V3.Client package(s).
+
+			Commonly used types:
+			Simple.OData.Client.ODataClient
+		</Description>
+		<PackageTags>$(PackageTags)"odata v3";"odata v4"</PackageTags>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|netstandard2.0|AnyCPU'">
-		<DocumentationFile>Simple.OData.Client.Core.xml</DocumentationFile>
-		<DefineConstants>TRACE</DefineConstants>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net461|AnyCPU'">
-		<DefineConstants>TRACE;DEBUG</DefineConstants>
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
-		<DefineConstants>TRACE;DEBUG</DefineConstants>
-	</PropertyGroup>
-	<ItemGroup Condition="'$(TargetFramework)' == 'net461'">
-		<PackageReference Include="System.Net.Http" Version="4.3.4" />
-		<PackageReference Include="System.ValueTuple" Version="4.5.0" />
-	</ItemGroup>
+	
+	<!--<ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+		<PackageReference Include="System.Net.Http" Version="[4.*, 5.0.0)" />
+		<PackageReference Include="System.ValueTuple" Version="[4.*, 5.0.0)" />
+	</ItemGroup>-->
+	
 	<ItemGroup>
-		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
+		<!--<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />-->
 	</ItemGroup>
+	
 	<ItemGroup>
-		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
-			<_Parameter1>Simple.OData.Client.Dynamic, $(StrongNamePublicKey)</_Parameter1>
-		</AssemblyAttribute>
 		<AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
 			<_Parameter1>Simple.OData.Client.V3.Adapter, $(StrongNamePublicKey)</_Parameter1>
 		</AssemblyAttribute>
@@ -58,4 +52,11 @@
 			<_Parameter1>Simple.OData.Client.Benchmarks, $(StrongNamePublicKey)</_Parameter1>
 		</AssemblyAttribute>
 	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="README.md" Pack="true" PackagePath="">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+	
 </Project>

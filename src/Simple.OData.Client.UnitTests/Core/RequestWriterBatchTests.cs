@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-using Xunit;
+﻿using Xunit;
 
 namespace Simple.OData.Client.Tests.Core;
 
@@ -48,7 +43,7 @@ public abstract class RequestWriterBatchTests : CoreTestBase
 	[Fact]
 	public async Task CreateUpdateRequest_NoPreferredVerb_AllProperties_OperationHeaders_Patch()
 	{
-		var requestWriter = await CreateBatchRequestWriter().ConfigureAwait(false);
+		var requestWriter = await CreateBatchRequestWriter();
 
 		var result = await requestWriter.CreateUpdateRequestAsync("Products", "",
 					new Dictionary<string, object>() { { "ProductID", 1 } },
@@ -70,7 +65,7 @@ public abstract class RequestWriterBatchTests : CoreTestBase
 					new Dictionary<string, string>()
 					{
 							{ "Header1","HeaderValue1"}
-					}).ConfigureAwait(false);
+					});
 
 		Assert.Equal("PATCH", result.Method);
 		Assert.True(result.Headers.TryGetValue("Header1", out var value) && value == "HeaderValue1");

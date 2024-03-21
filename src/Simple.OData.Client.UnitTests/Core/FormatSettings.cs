@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Simple.OData.Client.Tests.Core;
+﻿namespace Simple.OData.Client.Tests.Core;
 
 public interface IFormatSettings
 {

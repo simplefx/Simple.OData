@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using Xunit;
+﻿using Xunit;
 
 namespace Simple.OData.Client.Tests;
 
@@ -39,7 +37,7 @@ public abstract class MetadataODataTests : ODataTestBase
 	[Fact]
 	public async Task FilterWithMetadataDocument()
 	{
-		var metadataDocument = await _client.GetMetadataDocumentAsync().ConfigureAwait(false);
+		var metadataDocument = await _client.GetMetadataDocumentAsync();
 		ODataClient.ClearMetadataCache();
 		var settings = new ODataClientSettings()
 		{
@@ -51,7 +49,7 @@ public abstract class MetadataODataTests : ODataTestBase
 		var products = await client
 			.For("Products")
 			.Filter("Name eq 'Milk'")
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 		Assert.Equal("Milk", products.Single()["Name"]);
 	}
 
@@ -79,7 +77,7 @@ public abstract class MetadataODataTests : ODataTestBase
 			client.GetMetadataAsStringAsync(),
 			client.GetMetadataAsStringAsync(),
 			client.GetMetadataAsStringAsync()
-		).ConfigureAwait(false);
+		);
 
 		Assert.Equal(1, metadataCallsCount);
 	}
