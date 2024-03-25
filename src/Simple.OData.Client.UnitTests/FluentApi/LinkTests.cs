@@ -61,6 +61,6 @@ public class LinkTests : TestBase
 			.For("Products")
 			.Filter("ProductName eq 'Test5'")
 			.FindEntryAsync();
-		product["CategoryID"].Should().BeNull();
+		Assert.Null(product["CategoryID"]);
 	}
 }

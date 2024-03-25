@@ -41,13 +41,13 @@ public class MemberAccessorTests
 	[Fact]
 	public void ShouldGetStaticPropertyValue()
 	{
-		MemberAccessor.GetValue<string>(null, typeof(TestClass).GetProperty(nameof(TestClass.StaticProperty))).Should().Be(TestClass.StaticProperty);
+		Assert.Equal(TestClass.StaticProperty, MemberAccessor.GetValue<string>(null, typeof(TestClass).GetProperty(nameof(TestClass.StaticProperty))));
 	}
 
 	[Fact]
 	public void ShouldGetStaticFieldValue()
 	{
-		MemberAccessor.GetValue<string>(null, typeof(TestClass).GetField(nameof(TestClass.staticField))).Should().Be(TestClass.staticField);
+		Assert.Equal(TestClass.staticField, MemberAccessor.GetValue<string>(null, typeof(TestClass).GetField(nameof(TestClass.staticField))));
 	}
 
 
@@ -65,7 +65,7 @@ public class MemberAccessorTests
 
 		MemberAccessor.SetValue(instance, nameof(TestClass.InstanceProprety), "test");
 
-		instance.InstanceProprety.Should().Be("test");
+		Assert.Equal("test", instance.InstanceProprety);
 	}
 
 	[Fact]
@@ -78,7 +78,7 @@ public class MemberAccessorTests
 
 		MemberAccessor.SetValue(instance, nameof(TestClass.instanceField), "test");
 
-		instance.instanceField.Should().Be("test");
+		Assert.Equal("test", instance.instanceField);
 	}
 
 	[Fact]
@@ -86,7 +86,7 @@ public class MemberAccessorTests
 	{
 		MemberAccessor.SetValue(null, typeof(TestClass).GetProperty(nameof(TestClass.StaticPropertyToSet)), "test");
 
-		TestClass.StaticPropertyToSet.Should().Be("test");
+		Assert.Equal("test", TestClass.StaticPropertyToSet);
 	}
 
 	[Fact]
@@ -94,7 +94,7 @@ public class MemberAccessorTests
 	{
 		MemberAccessor.SetValue(null, typeof(TestClass).GetField(nameof(TestClass.staticFieldToSet)), "test");
 
-		TestClass.staticFieldToSet.Should().Be("test");
+		Assert.Equal("test", TestClass.staticFieldToSet);
 	}
 }
 

@@ -38,8 +38,8 @@ public class ResponseReaderV4Tests : CoreTestBase
 		var responseReader = new ResponseReader(_session, await _client.GetMetadataAsync<IEdmModel>());
 		var result = (await responseReader.GetResponseAsync(response)).Feed;
 		var entry = result.Entries.First();
-		entry.Should().NotBeNull();
-		entry.Data["SomeProperty"].Should().Be("MyPropertyValue");
+		Assert.NotNull(entry);
+		Assert.Equal("MyPropertyValue", entry.Data["SomeProperty"]);
 	}
 
 	private static new IODataResponseMessageAsync SetUpResourceMock(string resourceName)

@@ -29,6 +29,6 @@ public class DynamicContainerTests
 	{
 		TypeCache.Register<Animal>();
 
-		TypeCache.DynamicContainerName(typeof(Mammal)).Should().Be("DynamicProperties");
+		Assert.Equal("DynamicProperties", TypeCache.DynamicContainerName(typeof(Mammal)));
 	}
 }

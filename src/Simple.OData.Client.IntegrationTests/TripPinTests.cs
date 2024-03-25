@@ -82,8 +82,8 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 			foreach (var person in people)
 			{
 				person.Annotations.Id.Should().NotBeNull();
-				person.Annotations.ReadLink.Should().NotBeNull();
-				person.Annotations.EditLink.Should().NotBeNull();
+				Assert.NotNull(person.Annotations.ReadLink);
+				Assert.NotNull(person.Annotations.EditLink);
 			}
 		}
 
@@ -101,7 +101,7 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 			.FindEntriesAsync(annotations);
 
 		Assert.Single(people);
-		annotations.NextPageLink.Should().BeNull();
+		Assert.Null(annotations.NextPageLink);
 	}
 
 	[Fact]
@@ -114,7 +114,7 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 			.Key("russellwhyte")
 			.FindEntryAsync();
 
-		person.UserName.Should().Be("russellwhyte");
+		Assert.Equal("russellwhyte", person.UserName);
 	}
 
 	[Fact]
@@ -125,7 +125,7 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 			.Filter(x => x.Gender == (int)PersonGender.Male)
 			.FindEntriesAsync();
 
-		people.All(x => x.Gender == PersonGender.Male).Should().BeTrue();
+		Assert.True(people.All(x => x.Gender == PersonGender.Male));
 	}
 
 	[Fact]
@@ -141,7 +141,7 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 			.Filter(x => x.UserName == "russellwhyte")
 			.FindEntryAsync();
 
-		person.Annotations.Id.Should().NotBeNull();
+		Assert.NotNull(person.Annotations.Id);
 	}
 
 	[Fact]
@@ -164,9 +164,9 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 			.Key("keithpinckney")
 			.Expand(x => new { x.Trips })
 			.FindEntryAsync();
-		person.Trips.Should().BeEmpty();
-		person.Friends.Should().BeNull();
-		person.Photo.Should().BeNull();
+		Assert.Empty(person.Trips);
+		Assert.Null(person.Friends);
+		Assert.Null(person.Photo);
 	}
 
 	[Fact]
@@ -179,8 +179,8 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 			.Select(x => x.Trips.Select(y => y.Name))
 			.Select(x => x.Friends.Select(y => y.LastName))
 			.FindEntryAsync();
-		person.Trips.First().Name.Should().Be("Trip in US");
-		person.Friends.First().LastName.Should().Be("Ketchum");
+		Assert.Equal("Trip in US", person.Trips.First().Name);
+		Assert.Equal("Ketchum", person.Friends.First().LastName);
 	}
 
 	[Fact]
@@ -244,7 +244,7 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 			.For<PersonWithDataContract>()
 			.Key("russellwhyte")
 			.FindEntryAsync();
-		person.UserName.Should().Be("russellwhyte");
+		Assert.Equal("russellwhyte", person.UserName);
 	}
 
 	[Fact]
@@ -272,7 +272,7 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 			.NavigateTo(x => x.PlanItems)
 			.Filter(x => x.StartsAt == now)
 			.FindEntriesAsync();
-		flights.Should().BeEmpty();
+		Assert.Empty(flights);
 	}
 
 	[Fact]
@@ -283,7 +283,7 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 			.Key("russellwhyte")
 			.Expand(x => x.Friends.Select(y => y.Friends))
 			.FindEntryAsync();
-		person.Should().NotBeNull();
+		Assert.NotNull(person);
 		Assert.Equal(4, person.Friends.Count());
 	}
 
@@ -295,7 +295,7 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 			.Key("russellwhyte")
 			.Expand(x => x.Friends.Select(y => y.Friends.Select(z => z.Friends)))
 			.FindEntryAsync();
-		person.Should().NotBeNull();
+		Assert.NotNull(person);
 		Assert.Equal(4, person.Friends.Count());
 		Assert.Equal(8, person.Friends.SelectMany(x => x.Friends).Count());
 	}
@@ -309,7 +309,7 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 				.Any(y => y.Budget > 10000d))
 			.Expand(x => x.Trips)
 			.FindEntriesAsync();
-		flights.All(x => x.Trips.Any(y => y.Budget > 10000d)).Should().BeTrue();
+		Assert.True(flights.All(x => x.Trips.Any(y => y.Budget > 10000d)));
 		Assert.Equal(2, flights.SelectMany(x => x.Trips).Count());
 	}
 
@@ -322,7 +322,7 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 				.All(y => y.Budget > 10000d))
 			.Expand(x => x.Trips)
 			.FindEntriesAsync();
-		flights.All(x => x.Trips is null || x.Trips.All(y => y.Budget > 10000d)).Should().BeTrue();
+		Assert.True(flights.All(x => x.Trips is null || x.Trips.All(y => y.Budget > 10000d)));
 	}
 
 	[Fact]
@@ -350,7 +350,7 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 			.Key(21)
 			.As<Flight>()
 			.FindEntryAsync();
-		flight.FlightNumber.Should().Be("FM1930");
+		Assert.Equal("FM1930", flight.FlightNumber);
 	}
 
 	[Fact]
@@ -367,10 +367,10 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 			.Expand(x => x.Airline)
 			.Select(x => new { x.FlightNumber, x.Airline.AirlineCode })
 			.FindEntryAsync();
-		flight.From.Should().BeNull();
-		flight.To.Should().BeNull();
-		flight.Airline.Name.Should().BeNull();
-		flight.Airline.AirlineCode.Should().Be("FM");
+		Assert.Null(flight.From);
+		Assert.Null(flight.To);
+		Assert.Null(flight.Airline.Name);
+		Assert.Equal("FM", flight.Airline.AirlineCode);
 	}
 
 	[Fact]
@@ -385,7 +385,7 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 			.As<Flight>()
 			.FindEntriesAsync();
 		Assert.Equal(2, flights.Count());
-		(x => x.FlightNumber == "FM1930").Should().Contain(flights);
+		Assert.Contains(flights, x => x.FlightNumber == "FM1930");
 	}
 
 	[Fact]
@@ -398,7 +398,7 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 			.Top(1)
 			.FindEntriesAsync();
 		var person = Assert.Single(persons);
-		person.Photo.Media.Should().BeNull();
+		Assert.Null(person.Photo.Media);
 		Assert.Equal(default, person.Photo.Id);
 	}
 
@@ -412,8 +412,8 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 			.Top(1)
 			.FindEntriesAsync();
 		var person = Assert.Single(persons);
-		(x => x.UserName is null).Should().NotContain(person.Friends);
-		person.Friends.All(x => x.FirstName is null).Should().BeTrue();
+		Assert.DoesNotContain(person.Friends, x => x.UserName is null);
+		Assert.True(person.Friends.All(x => x.FirstName is null));
 	}
 
 	[Fact]
@@ -429,7 +429,7 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 			.Filter(x => x.FlightNumber == "FM1930")
 			.FindEntriesAsync();
 		Assert.Single(flights);
-		flights.All(x => x.FlightNumber == "FM1930").Should().BeTrue();
+		Assert.True(flights.All(x => x.FlightNumber == "FM1930"));
 	}
 
 	[Fact]
@@ -476,7 +476,7 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 			.Filter(x => x.UserName == "russellwhyte")
 			.Set(new { LastName = "White" })
 			.UpdateEntryAsync();
-		person.LastName.Should().Be("White");
+		Assert.Equal("White", person.LastName);
 	}
 
 	[Fact]
@@ -487,7 +487,7 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 			.Filter(x => x.UserName == "russellwhyte")
 			.Set(new { Emails = new[] { "russell.whyte@gmail.com" } })
 			.UpdateEntryAsync();
-		person.Emails.First().Should().Be("russell.whyte@gmail.com");
+		Assert.Equal("russell.whyte@gmail.com", person.Emails.First());
 	}
 
 	[Fact]
@@ -513,7 +513,7 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 				},
 			})
 			.UpdateEntryAsync();
-		person.AddressInfo.First().City.Name.Should().Be("Boise");
+		Assert.Equal("Boise", person.AddressInfo.First().City.Name);
 	}
 
 	[Fact]
@@ -534,7 +534,7 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 			.For<PersonWithOpenTypeFields>("Person")
 			.Key("gregorsamsa")
 			.FindEntryAsync();
-		person.OpenTypeString.Should().Be(@"Description");
+		Assert.Equal(@"Description", person.OpenTypeString);
 	}
 
 	[Fact]
@@ -557,7 +557,7 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 			.WithProperties(x => x.Properties)
 			.Key("gregorsamsa")
 			.FindEntryAsync();
-		person.Properties["OpenTypeString"].Should().Be(@"Description");
+		Assert.Equal(@"Description", person.Properties["OpenTypeString"]);
 	}
 
 	[Fact]
@@ -589,8 +589,8 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 			.WithProperties(x => x.Properties)
 			.Key("gregorsamsa")
 			.FindEntryAsync();
-		person.Properties["OpenTypeString"].Should().Be(@"New description");
-		person.LastName.Should().Be("Samsa");
+		Assert.Equal(@"New description", person.Properties["OpenTypeString"]);
+		Assert.Equal("Samsa", person.LastName);
 	}
 
 	[Fact]
@@ -611,7 +611,7 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 			.For<PersonWithOpenTypeFields>("Person")
 			.Filter(x => x.OpenTypeString == "Description")
 			.FindEntryAsync();
-		person.OpenTypeString.Should().Be(@"Description");
+		Assert.Equal(@"Description", person.OpenTypeString);
 	}
 
 	[Fact]
@@ -634,7 +634,7 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 			.WithProperties(x => x.Properties)
 			.Filter(x => x.Properties["OpenTypeString"].ToString() == "Description")
 			.FindEntryAsync();
-		person.Properties["OpenTypeString"].Should().Be(@"Description");
+		Assert.Equal(@"Description", person.Properties["OpenTypeString"]);
 	}
 
 	[Fact(Skip = "Fails at server")]
@@ -660,7 +660,7 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 			.Key("gregorsamsa")
 			.FindEntryAsync();
 
-		person.Should().NotBeNull();
+		Assert.NotNull(person);
 	}
 
 	[Fact(Skip = "Fails at server")]
@@ -685,7 +685,7 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 			.Key("gregorsamsa")
 			.FindEntryAsync();
 
-		person.Should().NotBeNull();
+		Assert.NotNull(person);
 	}
 
 	[Fact]
@@ -706,7 +706,7 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 			.For<PersonWithOpenTypeFields>("Person")
 			.Filter(x => x.OpenTypeString == "Description")
 			.FindEntryAsync();
-		person.OpenTypeString.Should().Be(@"Description");
+		Assert.Equal(@"Description", person.OpenTypeString);
 	}
 
 	[Fact]
@@ -728,7 +728,7 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 			.Key("gregorsamsa")
 			.Select(x => new { x.UserName, x.OpenTypeString })
 			.FindEntryAsync();
-		person.OpenTypeString.Should().Be(@"\""Description\""");
+		Assert.Equal(@"\""Description\""", person.OpenTypeString);
 	}
 
 	[Fact]
@@ -759,9 +759,9 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 		var person = await _client
 			.For<Person>("Me")
 			.FindEntryAsync();
-		person.UserName.Should().Be("aprilcline");
+		Assert.Equal("aprilcline", person.UserName);
 		Assert.Equal(2, person.Emails.Length);
-		person.AddressInfo.Single().City.Name.Should().Be("Lander");
+		Assert.Equal("Lander", person.AddressInfo.Single().City.Name);
 		Assert.Equal(PersonGender.Female, person.Gender);
 	}
 
@@ -772,9 +772,9 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 			.For<Person>("Me")
 			.Select(x => x.AddressInfo)
 			.FindEntryAsync();
-		person.AddressInfo.Single().City.Name.Should().Be("Lander");
-		person.UserName.Should().BeNull();
-		person.Emails.Should().BeNull();
+		Assert.Equal("Lander", person.AddressInfo.Single().City.Name);
+		Assert.Null(person.UserName);
+		Assert.Null(person.Emails);
 	}
 
 	[Fact]
@@ -824,8 +824,8 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 			.For<Airport>()
 			.Key("KSFO")
 			.FindEntryAsync();
-		airport.IataCode.Should().Be("SFO");
-		airport.Location.City.Name.Should().Be("San Francisco");
+		Assert.Equal("SFO", airport.IataCode);
+		Assert.Equal("San Francisco", airport.Location.City.Name);
 		Assert.Equal(4326, airport.Location.Loc.CoordinateSystem.EpsgId);
 		Assert.Equal(37.6188888888889, airport.Location.Loc.Latitude);
 		Assert.Equal(-122.374722222222, airport.Location.Loc.Longitude);
@@ -841,7 +841,7 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 			.FindEntriesAsync();
 		var first = airports.Select(x => x.Location.Address).First();
 		var second = airports.Select(x => x.Location.Address).Last();
-		(first.CompareTo(second) < 0).Should().BeTrue();
+		Assert.True(first.CompareTo(second) < 0);
 		airports = await _client
 			.For<Airport>()
 			.OrderByDescending(x => x.Location.Address)
@@ -849,7 +849,7 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 			.FindEntriesAsync();
 		first = airports.Select(x => x.Location.Address).First();
 		second = airports.Select(x => x.Location.Address).Last();
-		(first.CompareTo(second) > 0).Should().BeTrue();
+		Assert.True(first.CompareTo(second) > 0);
 	}
 
 	[Fact]
@@ -862,7 +862,7 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 			.FindEntriesAsync();
 		var first = airports.Select(x => x.Location.City.Name).First();
 		var second = airports.Select(x => x.Location.City.Name).Last();
-		(first.CompareTo(second) < 0).Should().BeTrue();
+		Assert.True(first.CompareTo(second) < 0);
 		airports = await _client
 			.For<Airport>()
 			.OrderByDescending(x => x.Location.City.Name)
@@ -870,7 +870,7 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 			.FindEntriesAsync();
 		first = airports.Select(x => x.Location.City.Name).First();
 		second = airports.Select(x => x.Location.City.Name).Last();
-		(first.CompareTo(second) > 0).Should().BeTrue();
+		Assert.True(first.CompareTo(second) > 0);
 	}
 
 	[Fact]
@@ -880,7 +880,7 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 			.For<Airport>()
 			.Filter(x => x.Location.City.Region == "California")
 			.FindEntryAsync();
-		airport.IataCode.Should().Be("SFO");
+		Assert.Equal("SFO", airport.IataCode);
 	}
 
 	[Fact]
@@ -890,7 +890,7 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 			.For<Airport>()
 			.Filter(x => x.Location.City.Region.Contains("California"))
 			.FindEntryAsync();
-		airport.IataCode.Should().Be("SFO");
+		Assert.Equal("SFO", airport.IataCode);
 	}
 
 	[Fact]
@@ -912,7 +912,7 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 			.Key(tripEvent.PlanItemId)
 			.FindEntryAsync();
 
-		tripEvent.Should().NotBeNull();
+		Assert.NotNull(tripEvent);
 	}
 
 	[Fact]
@@ -935,7 +935,7 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 			.Set(new { Description = "This is a new description" })
 			.UpdateEntryAsync();
 
-		tripEvent.Description.Should().Be("This is a new description");
+		Assert.Equal("This is a new description", tripEvent.Description);
 	}
 
 	[Fact]
@@ -961,7 +961,7 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 			.Key(tripEvent.PlanItemId)
 			.FindEntryAsync();
 
-		tripEvent.Should().BeNull();
+		Assert.Null(tripEvent);
 	}
 
 	[Fact]
@@ -999,7 +999,7 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 			.FindEntriesAsync();
 
 		Assert.Single(trips);
-		trips.Single().Description.Should().Contain("New York");
+		Assert.Contains("New York", trips.Single().Description);
 	}
 
 	[Fact]
@@ -1011,7 +1011,7 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 			.Set(new { lat = 100d, lon = 100d })
 			.ExecuteAsSingleAsync();
 
-		airport.IcaoCode.Should().Be("KSEA");
+		Assert.Equal("KSEA", airport.IcaoCode);
 	}
 
 	[Fact]
@@ -1038,7 +1038,7 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 			.Filter(x => x.PlanItemId == tripEvent.PlanItemId)
 			.FindEntryAsync();
 
-		tripEvent.Should().BeNull();
+		Assert.Null(tripEvent);
 	}
 
 	[Fact]
@@ -1090,7 +1090,7 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 			.Key(1)
 			.Function("GetInvolvedPeople")
 			.ExecuteAsEnumerableAsync();
-		people.Should().BeEmpty();
+		Assert.Empty(people);
 	}
 
 	[Fact]
@@ -1236,7 +1236,7 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 			.Filter(x => x.StartsAt < DateTimeOffset.UtcNow)
 			.FindEntryAsync();
 
-		tripEvent.Should().NotBeNull();
+		Assert.NotNull(tripEvent);
 	}
 
 	[Fact]
@@ -1252,7 +1252,7 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 			.Filter(x => x.StartsAt == null)
 			.FindEntryAsync();
 
-		tripEvent.Should().BeNull();
+		Assert.Null(tripEvent);
 	}
 
 	[Fact]
@@ -1264,7 +1264,7 @@ public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payload
 			.Function("GetFavoriteAirline")
 			.ExecuteAsArrayAsync<Airline>();
 
-		airport.First().AirlineCode.Should().Be("AA");
+		Assert.Equal("AA", airport.First().AirlineCode);
 	}
 
 	[Fact]

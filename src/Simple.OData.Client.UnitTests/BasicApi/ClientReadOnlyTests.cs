@@ -34,7 +34,7 @@ public class ClientReadOnlyTests : TestBase
 		var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
 		var products = await client.FindEntriesAsync("Products?$select=ProductName");
 		Assert.Equal(1, products.First().Count);
-		products.First().First().Key.Should().Be("ProductName");
+		Assert.Equal("ProductName", products.First().First().Key);
 	}
 
 	[Fact]
@@ -58,7 +58,7 @@ public class ClientReadOnlyTests : TestBase
 	{
 		var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
 		var product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Chai'");
-		product["ProductName"].Should().Be("Chai");
+		Assert.Equal("Chai", product["ProductName"]);
 	}
 
 	[Fact]
@@ -66,7 +66,7 @@ public class ClientReadOnlyTests : TestBase
 	{
 		var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
 		var product = await client.GetEntryAsync("Products", new Entry() { { "ProductID", 1 } });
-		product["ProductName"].Should().Be("Chai");
+		Assert.Equal("Chai", product["ProductName"]);
 	}
 
 	[Fact]
@@ -74,7 +74,7 @@ public class ClientReadOnlyTests : TestBase
 	{
 		var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
 		var orderDetail = await client.GetEntryAsync("Order_Details", new Entry() { { "OrderID", 10248 }, { "ProductID", 11 } });
-		orderDetail["ProductID"].Should().Be(11);
+		Assert.Equal(11, orderDetail["ProductID"]);
 	}
 
 	[Fact]
@@ -90,7 +90,7 @@ public class ClientReadOnlyTests : TestBase
 		var client = new ODataClient(CreateDefaultSettings().WithIgnoredResourceNotFoundException().WithHttpMock());
 		var product = await client.GetEntryAsync("Products", new Entry() { { "ProductID", -1 } });
 
-		product.Should().BeNull();
+		Assert.Null(product);
 	}
 
 	[Fact]
@@ -115,7 +115,7 @@ public class ClientReadOnlyTests : TestBase
 		var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
 		var dateTime = new DateTime(2013, 1, 1, 12, 13, 14, 789, DateTimeKind.Utc);
 		var result = await client.ExecuteFunctionAsScalarAsync<DateTime>("PassThroughDateTime", new Entry() { { "dateTime", dateTime } });
-		result.Should().Be(dateTime.ToUniversalTime());
+		Assert.Equal(dateTime.ToUniversalTime(), result);
 	}
 
 	[Fact]
@@ -134,7 +134,7 @@ public class ClientReadOnlyTests : TestBase
 		var x = ODataDynamic.Expression;
 		var filter = await ((Task<string>)client.GetCommandTextAsync("Products", x.ProductName == "Chai"));
 		var product = await client.FindEntryAsync(filter);
-		product["ProductName"].Should().Be("Chai");
+		Assert.Equal("Chai", product["ProductName"]);
 	}
 
 	[Fact]
@@ -144,7 +144,7 @@ public class ClientReadOnlyTests : TestBase
 		var x = ODataDynamic.Expression;
 		var filter = await ((Task<string>)client.GetCommandTextAsync("Transport", x.TransportID == 1));
 		var ship = await client.FindEntryAsync(filter);
-		ship["ShipName"].Should().Be("Titanic");
+		Assert.Equal("Titanic", ship["ShipName"]);
 	}
 
 	[Fact]
@@ -154,7 +154,7 @@ public class ClientReadOnlyTests : TestBase
 		var x = ODataDynamic.Expression;
 		var filter = await ((Task<string>)client.GetCommandTextAsync("Transport/Ships", x.ShipName == "Titanic"));
 		var ship = await client.FindEntryAsync(filter);
-		ship["ShipName"].Should().Be("Titanic");
+		Assert.Equal("Titanic", ship["ShipName"]);
 	}
 
 	[Fact]
@@ -163,7 +163,7 @@ public class ClientReadOnlyTests : TestBase
 		var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
 		var filter = await client.GetCommandTextAsync<Product>("Products", x => x.ProductName == "Chai");
 		var product = await client.FindEntryAsync(filter);
-		product["ProductName"].Should().Be("Chai");
+		Assert.Equal("Chai", product["ProductName"]);
 	}
 
 	[Fact]
@@ -172,7 +172,7 @@ public class ClientReadOnlyTests : TestBase
 		var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
 		var filter = await client.GetCommandTextAsync<Transport>("Transport", x => x.TransportID == 1);
 		var ship = await client.FindEntryAsync(filter);
-		ship["ShipName"].Should().Be("Titanic");
+		Assert.Equal("Titanic", ship["ShipName"]);
 	}
 
 	[Fact]
@@ -181,6 +181,6 @@ public class ClientReadOnlyTests : TestBase
 		var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
 		var filter = await client.GetCommandTextAsync<Ship>("Transport/Ships", x => x.ShipName == "Titanic");
 		var ship = await client.FindEntryAsync(filter);
-		ship["ShipName"].Should().Be("Titanic");
+		Assert.Equal("Titanic", ship["ShipName"]);
 	}
 }

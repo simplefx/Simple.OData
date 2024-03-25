@@ -72,7 +72,7 @@ public class UpdateTests : TestBase
 			.Filter("ProductName eq 'Test1'")
 			.FindEntryAsync();
 
-		product["UnitPrice"].Should().Be(123m);
+		Assert.Equal(123m, product["UnitPrice"]);
 	}
 
 	[Fact]
@@ -90,7 +90,7 @@ public class UpdateTests : TestBase
 			.Set(new { UnitPrice = 123m })
 			.UpdateEntriesAsync()).Single();
 
-		product["UnitPrice"].Should().Be(123m);
+		Assert.Equal(123m, product["UnitPrice"]);
 	}
 
 	[Fact]
@@ -107,14 +107,14 @@ public class UpdateTests : TestBase
 			.Filter("ProductName eq 'Test1'")
 			.Set(new { UnitPrice = 123m })
 			.UpdateEntriesAsync(false)).Single();
-		product.Should().BeNull();
+		Assert.Null(product);
 
 		product = await client
 			.For("Products")
 			.Filter("ProductName eq 'Test1'")
 			.FindEntryAsync();
 
-		product["UnitPrice"].Should().Be(123m);
+		Assert.Equal(123m, product["UnitPrice"]);
 	}
 
 	[Fact]
@@ -137,7 +137,7 @@ public class UpdateTests : TestBase
 			.Filter("ProductName eq 'Test1'")
 			.FindEntryAsync();
 
-		product["UnitPrice"].Should().Be(456m);
+		Assert.Equal(456m, product["UnitPrice"]);
 	}
 
 	[Fact]
@@ -163,7 +163,7 @@ public class UpdateTests : TestBase
 			.Key(employee["EmployeeID"])
 			.FindEntryAsync();
 
-		employee["HireDate"].Should().Be(tomorrow);
+		Assert.Equal(tomorrow, employee["HireDate"]);
 	}
 
 	[Fact]
@@ -189,7 +189,7 @@ public class UpdateTests : TestBase
 			.For("Products")
 			.Filter("ProductID eq " + product["ProductID"])
 			.FindEntryAsync();
-		product["CategoryID"].Should().Be(category["CategoryID"]);
+		Assert.Equal(category["CategoryID"], product["CategoryID"]);
 		category = await client
 			.For("Categories")
 			.Filter("CategoryID eq " + category["CategoryID"])
@@ -221,7 +221,7 @@ public class UpdateTests : TestBase
 			.For("Products")
 			.Filter("ProductID eq " + product["ProductID"])
 			.FindEntryAsync();
-		product["CategoryID"].Should().Be(category["CategoryID"]);
+		Assert.Equal(category["CategoryID"], product["CategoryID"]);
 		category = await client
 			.For("Categories")
 			.Filter("CategoryID eq " + category["CategoryID"])
@@ -253,7 +253,7 @@ public class UpdateTests : TestBase
 			.For("Products")
 			.Filter("ProductID eq " + product["ProductID"])
 			.FindEntryAsync();
-		product["CategoryID"].Should().BeNull();
+		Assert.Null(product["CategoryID"]);
 	}
 
 	[Fact]
@@ -304,6 +304,6 @@ public class UpdateTests : TestBase
 			.Set(new { ShipName = "Test2" })
 			.UpdateEntryAsync();
 
-		ship["ShipName"].Should().Be("Test2");
+		Assert.Equal("Test2", ship["ShipName"]);
 	}
 }

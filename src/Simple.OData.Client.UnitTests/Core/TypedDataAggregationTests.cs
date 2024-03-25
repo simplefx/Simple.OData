@@ -46,7 +46,7 @@ public class TypedDataAggregationTests : CoreTestBase
 			}));
 
 		var commandText = await command.GetCommandTextAsync();
-		commandText.Should().Be("Products?$apply=aggregate%28UnitPrice%20with%20average%20as%20AverageUnitPrice%29");
+		Assert.Equal("Products?$apply=aggregate%28UnitPrice%20with%20average%20as%20AverageUnitPrice%29", commandText);
 	}
 
 	[Fact]
@@ -58,7 +58,7 @@ public class TypedDataAggregationTests : CoreTestBase
 			.Apply(b => b.Aggregate((x, a) => new { Total = a.Sum(x.UnitPrice) }));
 
 		var commandText = await command.GetCommandTextAsync();
-		commandText.Should().Be("Products?$apply=aggregate%28UnitPrice%20with%20sum%20as%20Total%29");
+		Assert.Equal("Products?$apply=aggregate%28UnitPrice%20with%20sum%20as%20Total%29", commandText);
 	}
 
 	[Fact]
@@ -70,7 +70,7 @@ public class TypedDataAggregationTests : CoreTestBase
 			.Apply(b => b.Aggregate((x, a) => new { MinPrice = a.Min(x.UnitPrice) }));
 
 		var commandText = await command.GetCommandTextAsync();
-		commandText.Should().Be("Products?$apply=aggregate%28UnitPrice%20with%20min%20as%20MinPrice%29");
+		Assert.Equal("Products?$apply=aggregate%28UnitPrice%20with%20min%20as%20MinPrice%29", commandText);
 	}
 
 	[Fact]
@@ -82,7 +82,7 @@ public class TypedDataAggregationTests : CoreTestBase
 			.Apply(b => b.Aggregate((x, a) => new { MaxPrice = a.Max(x.UnitPrice) }));
 
 		var commandText = await command.GetCommandTextAsync();
-		commandText.Should().Be("Products?$apply=aggregate%28UnitPrice%20with%20max%20as%20MaxPrice%29");
+		Assert.Equal("Products?$apply=aggregate%28UnitPrice%20with%20max%20as%20MaxPrice%29", commandText);
 	}
 
 	[Fact]
@@ -94,7 +94,7 @@ public class TypedDataAggregationTests : CoreTestBase
 			.Apply(b => b.Aggregate((x, a) => new { Count = a.CountDistinct(x.ProductName) }));
 
 		var commandText = await command.GetCommandTextAsync();
-		commandText.Should().Be("Products?$apply=aggregate%28ProductName%20with%20countdistinct%20as%20Count%29");
+		Assert.Equal("Products?$apply=aggregate%28ProductName%20with%20countdistinct%20as%20Count%29", commandText);
 	}
 
 	[Fact]
@@ -106,7 +106,7 @@ public class TypedDataAggregationTests : CoreTestBase
 			.Apply(b => b.Aggregate((x, a) => new { Count = a.Count() }));
 
 		var commandText = await command.GetCommandTextAsync();
-		commandText.Should().Be("Products?$apply=aggregate%28%24count%20as%20Count%29");
+		Assert.Equal("Products?$apply=aggregate%28%24count%20as%20Count%29", commandText);
 	}
 
 	[Fact]
@@ -118,7 +118,7 @@ public class TypedDataAggregationTests : CoreTestBase
 			.Apply(b => b.GroupBy((x, _) => x.Category.CategoryName));
 
 		var commandText = await command.GetCommandTextAsync();
-		commandText.Should().Be("Products?$apply=groupby%28%28Category%2FCategoryName%29%29");
+		Assert.Equal("Products?$apply=groupby%28%28Category%2FCategoryName%29%29", commandText);
 	}
 
 	[Fact]
@@ -134,7 +134,7 @@ public class TypedDataAggregationTests : CoreTestBase
 			}));
 
 		var commandText = await command.GetCommandTextAsync();
-		commandText.Should().Be("Products?$apply=groupby%28%28Category%2FCategoryName%2CProductName%29%29");
+		Assert.Equal("Products?$apply=groupby%28%28Category%2FCategoryName%2CProductName%29%29", commandText);
 	}
 
 	[Fact]
@@ -150,7 +150,7 @@ public class TypedDataAggregationTests : CoreTestBase
 			}));
 
 		var commandText = await command.GetCommandTextAsync();
-		commandText.Should().Be("Products?$apply=groupby%28%28Category%2FCategoryName%29%2Caggregate%28UnitPrice%20with%20average%20as%20AverageUnitPrice%29%29");
+		Assert.Equal("Products?$apply=groupby%28%28Category%2FCategoryName%29%2Caggregate%28UnitPrice%20with%20average%20as%20AverageUnitPrice%29%29", commandText);
 	}
 
 	[Fact]
@@ -170,7 +170,7 @@ public class TypedDataAggregationTests : CoreTestBase
 			}));
 
 		var commandText = await command.GetCommandTextAsync();
-		commandText.Should().Be("Products?$apply=groupby%28%28ProductName%2CCategory%2FCategoryName%29%2Caggregate%28UnitPrice%20with%20average%20as%20AverageUnitPrice%29%29");
+		Assert.Equal("Products?$apply=groupby%28%28ProductName%2CCategory%2FCategoryName%29%2Caggregate%28UnitPrice%20with%20average%20as%20AverageUnitPrice%29%29", commandText);
 	}
 
 	[Fact]
@@ -187,7 +187,7 @@ public class TypedDataAggregationTests : CoreTestBase
 			}));
 
 		var commandText = await command.GetCommandTextAsync();
-		commandText.Should().Be("Products?$apply=groupby%28%28Category%2FCategoryName%29%2Caggregate%28UnitPrice%20with%20average%20as%20AverageUnitPrice%2C%24count%20as%20Count%29%29");
+		Assert.Equal("Products?$apply=groupby%28%28Category%2FCategoryName%29%2Caggregate%28UnitPrice%20with%20average%20as%20AverageUnitPrice%2C%24count%20as%20Count%29%29", commandText);
 	}
 
 	[Fact]
@@ -206,7 +206,7 @@ public class TypedDataAggregationTests : CoreTestBase
 				}));
 
 		var commandText = await command.GetCommandTextAsync();
-		commandText.Should().Be("Products?$apply=filter%28%28Category%2FCategoryName%20in%20%28%27Beverage%27%2C%27Food%27%29%29%29%2Fgroupby%28%28Category%2FCategoryName%29%2Caggregate%28UnitPrice%20with%20average%20as%20AverageUnitPrice%29%29");
+		Assert.Equal("Products?$apply=filter%28%28Category%2FCategoryName%20in%20%28%27Beverage%27%2C%27Food%27%29%29%29%2Fgroupby%28%28Category%2FCategoryName%29%2Caggregate%28UnitPrice%20with%20average%20as%20AverageUnitPrice%29%29", commandText);
 	}
 
 	[Fact]
@@ -224,7 +224,7 @@ public class TypedDataAggregationTests : CoreTestBase
 				.Filter(x => x.MaxUnitPrice > 100));
 
 		var commandText = await command.GetCommandTextAsync();
-		commandText.Should().Be("Products?$apply=groupby%28%28Category%2FCategoryName%29%2Caggregate%28UnitPrice%20with%20max%20as%20MaxUnitPrice%29%29%2Ffilter%28MaxUnitPrice%20gt%20100%29");
+		Assert.Equal("Products?$apply=groupby%28%28Category%2FCategoryName%29%2Caggregate%28UnitPrice%20with%20max%20as%20MaxUnitPrice%29%29%2Ffilter%28MaxUnitPrice%20gt%20100%29", commandText);
 	}
 
 	[Fact]
@@ -242,7 +242,7 @@ public class TypedDataAggregationTests : CoreTestBase
 				.Aggregate((x, a) => new { MaxPrice = a.Max(x.AverageUnitPrice) }));
 
 		var commandText = await command.GetCommandTextAsync();
-		commandText.Should().Be("Products?$apply=groupby%28%28Category%2FCategoryName%29%2Caggregate%28UnitPrice%20with%20average%20as%20AverageUnitPrice%29%29%2Faggregate%28AverageUnitPrice%20with%20max%20as%20MaxPrice%29");
+		Assert.Equal("Products?$apply=groupby%28%28Category%2FCategoryName%29%2Caggregate%28UnitPrice%20with%20average%20as%20AverageUnitPrice%29%29%2Faggregate%28AverageUnitPrice%20with%20max%20as%20MaxPrice%29", commandText);
 	}
 
 	[Fact]
@@ -264,7 +264,7 @@ public class TypedDataAggregationTests : CoreTestBase
 				}));
 
 		var commandText = await command.GetCommandTextAsync();
-		commandText.Should().Be("Products?$apply=groupby%28%28Category%2FCategoryName%29%2Caggregate%28UnitPrice%20with%20average%20as%20AverageUnitPrice%29%29%2Fgroupby%28%28AverageUnitPrice%29%2Caggregate%28%24count%20as%20CategoriesCount%29%29");
+		Assert.Equal("Products?$apply=groupby%28%28Category%2FCategoryName%29%2Caggregate%28UnitPrice%20with%20average%20as%20AverageUnitPrice%29%29%2Fgroupby%28%28AverageUnitPrice%29%2Caggregate%28%24count%20as%20CategoriesCount%29%29", commandText);
 	}
 
 	[Fact]
@@ -281,7 +281,7 @@ public class TypedDataAggregationTests : CoreTestBase
 			.OrderBy(x => x.AverageUnitPrice);
 
 		var commandText = await command.GetCommandTextAsync();
-		commandText.Should().Be("Products?$apply=groupby%28%28Category%2FCategoryName%29%2Caggregate%28UnitPrice%20with%20average%20as%20AverageUnitPrice%29%29&$orderby=AverageUnitPrice");
+		Assert.Equal("Products?$apply=groupby%28%28Category%2FCategoryName%29%2Caggregate%28UnitPrice%20with%20average%20as%20AverageUnitPrice%29%29&$orderby=AverageUnitPrice", commandText);
 	}
 
 	[Fact]
@@ -299,7 +299,7 @@ public class TypedDataAggregationTests : CoreTestBase
 			.Apply(b => b.Filter(x => x.AverageUnitPrice > 100));
 
 		var commandText = await command.GetCommandTextAsync();
-		commandText.Should().Be("Products?$apply=filter%28contains%28Category%2FCategoryName%2C%27ab%27%29%29%2Fgroupby%28%28Category%2FCategoryName%29%2Caggregate%28UnitPrice%20with%20average%20as%20AverageUnitPrice%29%29%2Ffilter%28AverageUnitPrice%20gt%20100%29");
+		Assert.Equal("Products?$apply=filter%28contains%28Category%2FCategoryName%2C%27ab%27%29%29%2Fgroupby%28%28Category%2FCategoryName%29%2Caggregate%28UnitPrice%20with%20average%20as%20AverageUnitPrice%29%29%2Ffilter%28AverageUnitPrice%20gt%20100%29", commandText);
 	}
 }
 

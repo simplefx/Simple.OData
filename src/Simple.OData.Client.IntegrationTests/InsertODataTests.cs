@@ -51,7 +51,7 @@ public abstract class InsertODataTests(string serviceUri, ODataPayloadFormat pay
 			.InsertEntryAsync();
 
 		((int)product["ID"] > 0).Should().BeTrue();
-		product["Name"].Should().Be("Test1");
+		Assert.Equal("Test1", product["Name"]);
 	}
 
 	[Fact]
@@ -70,7 +70,7 @@ public abstract class InsertODataTests(string serviceUri, ODataPayloadFormat pay
 			.Set(expando)
 			.InsertEntryAsync());
 
-		((int)product["ID"] > 0).Should().BeTrue();
+		Assert.True((int)product["ID"] > 0);
 	}
 
 	[Fact]
@@ -85,14 +85,14 @@ public abstract class InsertODataTests(string serviceUri, ODataPayloadFormat pay
 			.Set(CreateProduct(1007, "Test6", category))
 			.InsertEntryAsync();
 
-		product["Name"].Should().Be("Test6");
+		Assert.Equal("Test6", product["Name"]);
 		product = await _client
 			.For("Products")
 			.Filter("Name eq 'Test6'")
 			.Expand(ProductCategoryName)
 			.FindEntryAsync();
-		product[ProductCategoryName].Should().NotBeNull();
-		ProductCategoryFunc(product)["ID"].Should().Be(category["ID"]);
+		Assert.NotNull(product[ProductCategoryName]);
+		Assert.Equal(category["ID"], ProductCategoryFunc(product)["ID"]);
 	}
 
 	[Fact]
@@ -105,8 +105,8 @@ public abstract class InsertODataTests(string serviceUri, ODataPayloadFormat pay
 			.BuildRequestFor()
 			.InsertEntryAsync();
 		var response = await _client.GetResponseAsync(withRequest.GetRequest());
-		response.Should().NotBeNull();
-		response.Location.Should().Be($"{_serviceUri}Products({id})");
+		Assert.NotNull(response);
+		Assert.Equal($"{_serviceUri}Products({id})", response.Location);
 	}
 
 	[Fact]
@@ -119,7 +119,7 @@ public abstract class InsertODataTests(string serviceUri, ODataPayloadFormat pay
 			.BuildRequestFor()
 			.InsertEntryAsync(false);
 		var response = await _client.GetResponseAsync(withRequest.GetRequest());
-		response.Should().NotBeNull();
-		response.Location.Should().Be($"{_serviceUri}Products({id})");
+		Assert.NotNull(response);
+		Assert.Equal($"{_serviceUri}Products({id})", response.Location);
 	}
 }

@@ -27,7 +27,7 @@ public class InsertTypedTests : TestBase
 			.InsertEntryAsync();
 
 		(product.ProductID > 0).Should().BeTrue();
-		product.ProductName.Should().Be("Test1");
+		Assert.Equal("Test1", product.ProductName);
 	}
 
 	[Fact]
@@ -44,7 +44,7 @@ public class InsertTypedTests : TestBase
 			.InsertEntryAsync();
 
 		Assert.NotEqual(default, product.ProductID);
-		product.ProductName.Should().Be(default);
+		Assert.Equal(default, product.ProductName);
 		Assert.Equal(default, product.UnitPrice);
 	}
 
@@ -57,8 +57,8 @@ public class InsertTypedTests : TestBase
 			.Set(new Product { ProductName = "Test1", UnitPrice = 18m, MappedEnglishName = "EnglishTest" })
 			.InsertEntryAsync();
 
-		product.ProductName.Should().Be("Test1");
-		product.MappedEnglishName.Should().Be("EnglishTest");
+		Assert.Equal("Test1", product.ProductName);
+		Assert.Equal("EnglishTest", product.MappedEnglishName);
 	}
 
 	[Fact]
@@ -74,14 +74,14 @@ public class InsertTypedTests : TestBase
 			.Set(new { ProductName = "Test4", UnitPrice = 18m, CategoryID = category.CategoryID })
 			.InsertEntryAsync();
 
-		product.ProductName.Should().Be("Test4");
+		Assert.Equal("Test4", product.ProductName);
 		Assert.Equal(category.CategoryID, product.CategoryID);
 		category = await client
 			.For<Category>()
 			.Expand(x => new { x.Products })
 			.Filter(x => x.CategoryName == "Test3")
 			.FindEntryAsync();
-		(category.Products.Length == 1).Should().BeTrue();
+		Assert.True(category.Products.Length == 1);
 	}
 
 	[Fact]
@@ -97,14 +97,14 @@ public class InsertTypedTests : TestBase
 			.Set(new { ProductName = "Test6", UnitPrice = 18m, Category = category })
 			.InsertEntryAsync();
 
-		product.ProductName.Should().Be("Test6");
+		Assert.Equal("Test6", product.ProductName);
 		Assert.Equal(category.CategoryID, product.CategoryID);
 		category = await client
 			.For<Category>()
 			.Expand(x => new { x.Products })
 			.Filter(x => x.CategoryName == "Test5")
 			.FindEntryAsync();
-		(category.Products.Length == 1).Should().BeTrue();
+		Assert.True(category.Products.Length == 1);
 	}
 
 	[Fact]
@@ -121,7 +121,7 @@ public class InsertTypedTests : TestBase
 			.Expand(x => new { x.Products })
 			.Filter(x => x.CategoryName == "Test7")
 			.FindEntryAsync();
-		(category.Picture.Length > 0).Should().BeTrue();
+		Assert.True(category.Picture.Length > 0);
 	}
 
 	[Fact]
@@ -138,7 +138,7 @@ public class InsertTypedTests : TestBase
 			.Expand(x => new { x.Products })
 			.Filter(x => x.CategoryName == "Test7")
 			.FindEntryAsync();
-		(category.Picture.Length > 0).Should().BeTrue();
+		Assert.True(category.Picture.Length > 0);
 	}
 
 	[Fact]
@@ -151,6 +151,6 @@ public class InsertTypedTests : TestBase
 			.Set(new Ship { ShipName = "Test1" })
 			.InsertEntryAsync();
 
-		ship.ShipName.Should().Be("Test1");
+		Assert.Equal("Test1", ship.ShipName);
 	}
 }

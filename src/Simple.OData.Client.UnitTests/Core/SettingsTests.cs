@@ -23,7 +23,7 @@ public class SettingsTests
 	public void CtorWithBaseUri()
 	{
 		var settings = new ODataClientSettings(new Uri("http://localhost"));
-		settings.BaseUri.AbsoluteUri.Should().Be("http://localhost/");
+		Assert.Equal("http://localhost/", settings.BaseUri.AbsoluteUri);
 	}
 
 	[Fact]
@@ -32,14 +32,14 @@ public class SettingsTests
 		var settings = new ODataClientSettings(new Uri("http://localhost"));
 		var settings2 = new ODataClientSettings(new Uri("http://localhost"));
 
-		settings2.TypeCache.Should().BeSameAs(settings.TypeCache);
+		Assert.Same(settings.TypeCache, settings2.TypeCache);
 	}
 
 	[Fact]
 	public void CtorWithHttpClient()
 	{
 		var settings = new ODataClientSettings(new HttpClient());
-		settings.BaseUri.Should().BeNull();
+		Assert.Null(settings.BaseUri);
 	}
 
 	[Fact]
@@ -53,7 +53,7 @@ public class SettingsTests
 	public void CtorWithHttpClientNoBaseAddressAndBaseUri()
 	{
 		var settings = new ODataClientSettings(new HttpClient()) { BaseUri = new Uri("http://localhost") };
-		settings.BaseUri.AbsoluteUri.Should().Be("http://localhost/");
+		Assert.Equal("http://localhost/", settings.BaseUri.AbsoluteUri);
 	}
 
 	[Fact]
@@ -62,7 +62,7 @@ public class SettingsTests
 		var settings = new ODataClientSettings(new HttpClient()) { BaseUri = new Uri("http://localhost") };
 		var settings2 = new ODataClientSettings(new HttpClient()) { BaseUri = new Uri("http://localhost") };
 
-		settings2.TypeCache.Should().BeSameAs(settings.TypeCache);
+		Assert.Same(settings.TypeCache, settings2.TypeCache);
 	}
 
 	[Fact]
@@ -75,7 +75,7 @@ public class SettingsTests
 	public void CtorWithHttpClientAndBaseAddress()
 	{
 		var settings = new ODataClientSettings(new HttpClient { BaseAddress = new Uri("http://localhost") });
-		settings.BaseUri.AbsoluteUri.Should().Be("http://localhost/");
+		Assert.Equal("http://localhost/", settings.BaseUri.AbsoluteUri);
 	}
 
 	[Fact]
@@ -84,7 +84,7 @@ public class SettingsTests
 		var settings = new ODataClientSettings(new HttpClient { BaseAddress = new Uri("http://localhost") });
 		var settings2 = new ODataClientSettings(new HttpClient { BaseAddress = new Uri("http://localhost") });
 
-		settings2.TypeCache.Should().BeSameAs(settings.TypeCache);
+		Assert.Same(settings.TypeCache, settings2.TypeCache);
 	}
 
 	[Fact]
@@ -97,7 +97,7 @@ public class SettingsTests
 	public void CtorWithHttpClientAndBaseAddressAndRelativeUrl()
 	{
 		var settings = new ODataClientSettings(new HttpClient { BaseAddress = new Uri("http://localhost") }, new Uri("api", UriKind.Relative));
-		settings.BaseUri.AbsoluteUri.Should().Be("http://localhost/api");
+		Assert.Equal("http://localhost/api", settings.BaseUri.AbsoluteUri);
 	}
 
 	[Fact]
@@ -106,7 +106,7 @@ public class SettingsTests
 		var settings = new ODataClientSettings(new HttpClient { BaseAddress = new Uri("http://localhost") }, new Uri("api", UriKind.Relative));
 		var settings2 = new ODataClientSettings(new HttpClient { BaseAddress = new Uri("http://localhost") }, new Uri("api", UriKind.Relative));
 
-		settings2.TypeCache.Should().BeSameAs(settings.TypeCache);
+		Assert.Same(settings.TypeCache, settings2.TypeCache);
 	}
 
 	[Fact]

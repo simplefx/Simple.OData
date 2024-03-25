@@ -38,7 +38,7 @@ public class RequestWriterActionTests : CoreTestBase
 		var orderClose = result["OrderClose"];
 
 		orderClose.Should().NotBeNull();
-		orderClose["@odata.type"].Should().NotBeNull();
-		(((JValue)orderClose["@odata.type"]).Value as string).Should().Be("#Microsoft.Dynamics.CRM.orderclose");
+		Assert.NotNull(orderClose["@odata.type"]);
+		Assert.Equal("#Microsoft.Dynamics.CRM.orderclose", ((JValue)orderClose["@odata.type"]).Value as string);
 	}
 }

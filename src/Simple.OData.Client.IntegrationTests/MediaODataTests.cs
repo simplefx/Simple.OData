@@ -74,7 +74,7 @@ public abstract class MediaODataTests(string serviceUri, ODataPayloadFormat payl
 			.NavigateTo<PersonDetail>()
 			.Media(x => x.Photo)
 			.GetStreamAsStringAsync();
-		text.Should().Contain("named stream data");
+		Assert.Contains("named stream data", text);
 	}
 
 	[Fact]
@@ -90,9 +90,9 @@ public abstract class MediaODataTests(string serviceUri, ODataPayloadFormat payl
 			.WithMedia("Media")
 			.Key(id)
 			.FindEntryAsync();
-		ad["Media"].Should().NotBeNull();
+		Assert.NotNull(ad["Media"]);
 		var text = Utils.StreamToString(ad["Media"] as Stream);
-		text.Should().Contain("stream data");
+		Assert.Contains("stream data", text);
 	}
 
 	[Fact]
@@ -104,9 +104,9 @@ public abstract class MediaODataTests(string serviceUri, ODataPayloadFormat payl
 			.NavigateTo("PersonDetail")
 			.WithMedia("Photo")
 			.FindEntryAsync();
-		person["Photo"].Should().NotBeNull();
+		Assert.NotNull(person["Photo"]);
 		var text = Utils.StreamToString(person["Photo"] as Stream);
-		text.Should().Contain("named stream data");
+		Assert.Contains("named stream data", text);
 	}
 
 	[Fact]
@@ -128,7 +128,7 @@ public abstract class MediaODataTests(string serviceUri, ODataPayloadFormat payl
 			.Media()
 			.GetStreamAsync();
 		var text = Utils.StreamToString(stream);
-		text.Should().Be("Updated stream data");
+		Assert.Equal("Updated stream data", text);
 	}
 
 	[Fact]
@@ -148,6 +148,6 @@ public abstract class MediaODataTests(string serviceUri, ODataPayloadFormat payl
 			.Media("Photo")
 			.GetStreamAsync();
 		var text = Utils.StreamToString(stream);
-		text.Should().Be("Updated named stream data");
+		Assert.Equal("Updated named stream data", text);
 	}
 }

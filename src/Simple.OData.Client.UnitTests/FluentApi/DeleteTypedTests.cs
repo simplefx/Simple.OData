@@ -68,7 +68,7 @@ public class DeleteTypedTests : TestBase
 			.Filter(x => x.ProductName == "Test1")
 			.FindEntryAsync();
 
-		product.Should().BeNull();
+		Assert.Null(product);
 	}
 
 	[Fact]
@@ -93,6 +93,6 @@ public class DeleteTypedTests : TestBase
 			.Filter(x => x.ShipName == "Test1")
 			.FindEntryAsync();
 
-		ship.Should().BeNull();
+		Assert.Null(ship);
 	}
 }

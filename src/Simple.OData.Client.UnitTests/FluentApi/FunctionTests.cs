@@ -101,7 +101,7 @@ public class FunctionTests : TestBase
 			.Set(new Entry() { { "dateTime", dateTime } })
 			.ExecuteAsScalarAsync<DateTime>();
 
-		result.Should().Be(dateTime);
+		Assert.Equal(dateTime, result);
 	}
 
 	[Fact]
@@ -115,7 +115,7 @@ public class FunctionTests : TestBase
 			.Set(new Entry() { { "dateTime", dateTime } })
 			.ExecuteAsScalarAsync<DateTime>();
 
-		result.Should().Be(dateTime);
+		Assert.Equal(dateTime, result);
 	}
 
 	[Fact]
@@ -144,8 +144,8 @@ public class FunctionTests : TestBase
 			.ExecuteAsSingleAsync();
 
 		result = result["PassThroughAddress"] as IDictionary<string, object>;
-		result["City"].Should().Be("Oslo");
-		result["Country"].Should().Be("Norway");
+		Assert.Equal("Oslo", result["City"]);
+		Assert.Equal("Norway", result["Country"]);
 	}
 
 	[Fact]
@@ -158,8 +158,8 @@ public class FunctionTests : TestBase
 			.Set(new Entry() { { "count", 1 } })
 			.ExecuteAsSingleAsync());
 
-		result["City"].Should().Be("Oslo");
-		result["Country"].Should().Be("Norway");
+		Assert.Equal("Oslo", result["City"]);
+		Assert.Equal("Norway", result["Country"]);
 	}
 
 	[Fact]
@@ -172,10 +172,10 @@ public class FunctionTests : TestBase
 			.Set(new Entry() { { "count", 3 } })
 			.ExecuteAsEnumerableAsync()).ToArray();
 
-		result[0]["City"].Should().Be("Oslo");
-		result[0]["Country"].Should().Be("Norway");
-		result[1]["City"].Should().Be("Oslo");
-		result[2]["City"].Should().Be("Oslo");
+		Assert.Equal("Oslo", result[0]["City"]);
+		Assert.Equal("Norway", result[0]["Country"]);
+		Assert.Equal("Oslo", result[1]["City"]);
+		Assert.Equal("Oslo", result[2]["City"]);
 	}
 
 	[Fact]
@@ -188,6 +188,6 @@ public class FunctionTests : TestBase
 			.Set(new Entry() { { "count", 0 } })
 			.ExecuteAsEnumerableAsync()).ToArray();
 
-		result.Should().BeEmpty();
+		Assert.Empty(result);
 	}
 }

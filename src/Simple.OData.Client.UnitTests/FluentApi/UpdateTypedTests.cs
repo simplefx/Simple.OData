@@ -253,7 +253,7 @@ public class UpdateTypedTests : TestBase
 			.For<Product>()
 			.Filter(x => x.ProductID == product.ProductID)
 			.FindEntryAsync();
-		product.CategoryID.Should().BeNull();
+		Assert.Null(product.CategoryID);
 	}
 
 	[Fact]
@@ -317,8 +317,8 @@ public class UpdateTypedTests : TestBase
 			.For<ProductWithNoCategoryLink>("Products")
 			.Key(product.ProductID)
 			.FindEntryAsync();
-		product.ProductName.Should().Be("Test7");
-		product.CategoryID.Should().NotBeNull();
+		Assert.Equal("Test7", product.ProductName);
+		Assert.NotNull(product.CategoryID);
 	}
 
 	[Fact]
@@ -338,6 +338,6 @@ public class UpdateTypedTests : TestBase
 			.Set(new { ShipName = "Test2" })
 			.UpdateEntryAsync();
 
-		ship.ShipName.Should().Be("Test2");
+		Assert.Equal("Test2", ship.ShipName);
 	}
 }

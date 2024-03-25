@@ -29,6 +29,6 @@ public class TypeConverterCacheTests
 		var c1 = CustomConverters.Converter("global");
 		var c2 = CustomConverters.Global;
 
-		c2.Should().BeSameAs(c1);
+		Assert.Same(c1, c2);
 	}
 }

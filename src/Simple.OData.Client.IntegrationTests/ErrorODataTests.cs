@@ -48,7 +48,7 @@ public abstract class ErrorODataTests(string serviceUri, ODataPayloadFormat payl
 		}
 		catch (Exception)
 		{
-			true.Should().BeFalse("Expected WebRequestException");
+			Assert.False(true, "Expected WebRequestException");
 		}
 	}
 
@@ -65,12 +65,12 @@ public abstract class ErrorODataTests(string serviceUri, ODataPayloadFormat payl
 				.Filter("NonExistingProperty eq 1")
 				.FindEntryAsync();
 
-			true.Should().BeFalse("Expected exception");
+			Assert.False(true, "Expected exception");
 		}
 		catch (WebRequestException ex)
 		{
-			ex.Message.Should().NotBeNull();
-			ex.Message.Should().Be(ex.ReasonPhrase);
+			Assert.NotNull(ex.Message);
+			Assert.Equal(ex.ReasonPhrase, ex.Message);
 		}
 	}
 
@@ -87,12 +87,12 @@ public abstract class ErrorODataTests(string serviceUri, ODataPayloadFormat payl
 				.Filter("NonExistingProperty eq 1")
 				.FindEntryAsync();
 
-			true.Should().BeFalse("Expected exception");
+			Assert.False(true, "Expected exception");
 		}
 		catch (WebRequestException ex)
 		{
-			ex.Message.Should().NotBeNull();
-			ex.Message.Should().Be(ex.Response);
+			Assert.NotNull(ex.Message);
+			Assert.Equal(ex.Response, ex.Message);
 		}
 	}
 
@@ -109,12 +109,12 @@ public abstract class ErrorODataTests(string serviceUri, ODataPayloadFormat payl
 				.Filter("NonExistingProperty eq 1")
 				.FindEntryAsync();
 
-			true.Should().BeFalse("Expected exception");
+			Assert.False(true, "Expected exception");
 		}
 		catch (WebRequestException ex)
 		{
-			ex.Message.Should().NotBeNull();
-			(ex.Message.Contains(ex.ReasonPhrase) && ex.Message.Contains(ex.Response)).Should().BeTrue();
+			Assert.NotNull(ex.Message);
+			Assert.True(ex.Message.Contains(ex.ReasonPhrase) && ex.Message.Contains(ex.Response));
 		}
 	}
 }

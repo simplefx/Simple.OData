@@ -70,6 +70,6 @@ public abstract class RequestWriterBatchTests : CoreTestBase
 
 		result.Method.Should().Be("PATCH");
 		(result.Headers.TryGetValue("Header1", out var value) && value == "HeaderValue1").Should().BeTrue();
-		(result.RequestMessage.Headers.TryGetValues("Header1", out var values) && values.Contains("HeaderValue1")).Should().BeTrue();
+		Assert.True(result.RequestMessage.Headers.TryGetValues("Header1", out var values) && values.Contains("HeaderValue1"));
 	}
 }

@@ -41,7 +41,7 @@ public class FindTests : TestBase
 			.For("Categories")
 			.Key(1)
 			.FindEntryAsync();
-		category["CategoryID"].Should().Be(1);
+		Assert.Equal(1, category["CategoryID"]);
 	}
 
 	[Fact]
@@ -96,7 +96,7 @@ public class FindTests : TestBase
 			.For("Products")
 			.OrderBy("ProductName")
 			.FindEntriesAsync()).First();
-		product["ProductName"].Should().Be("Alice Mutton");
+		Assert.Equal("Alice Mutton", product["ProductName"]);
 	}
 
 	[Fact]
@@ -107,7 +107,7 @@ public class FindTests : TestBase
 			.For("Products")
 			.OrderByDescending("ProductName")
 			.FindEntriesAsync()).First();
-		product["ProductName"].Should().Be("Zaanse koeken");
+		Assert.Equal("Zaanse koeken", product["ProductName"]);
 	}
 
 	[Fact]
@@ -119,7 +119,7 @@ public class FindTests : TestBase
 			.Expand("Category")
 			.OrderBy("Category/CategoryName")
 			.FindEntriesAsync()).Last();
-		(product["Category"] as IDictionary<string, object>)["CategoryName"].Should().Be("Seafood");
+		Assert.Equal("Seafood", (product["Category"] as IDictionary<string, object>)["CategoryName"]);
 	}
 
 	[Fact]
@@ -130,8 +130,8 @@ public class FindTests : TestBase
 			.For("Products")
 			.Select("ProductName")
 			.FindEntryAsync();
-		product.Keys.Should().Contain("ProductName");
-		product.Keys.Should().NotContain("ProductID");
+		Assert.Contains("ProductName", product.Keys);
+		Assert.DoesNotContain("ProductID", product.Keys);
 	}
 
 	[Fact]
@@ -142,8 +142,8 @@ public class FindTests : TestBase
 			.For("Products")
 			.Select("Product_Name")
 			.FindEntryAsync();
-		product.Keys.Should().Contain("ProductName");
-		product.Keys.Should().NotContain("ProductID");
+		Assert.Contains("ProductName", product.Keys);
+		Assert.DoesNotContain("ProductID", product.Keys);
 	}
 
 	[Fact]
@@ -154,8 +154,8 @@ public class FindTests : TestBase
 			.For("Products")
 			.Select("ProductID", "ProductName")
 			.FindEntryAsync();
-		product.Keys.Should().Contain("ProductName");
-		product.Keys.Should().Contain("ProductID");
+		Assert.Contains("ProductName", product.Keys);
+		Assert.Contains("ProductID", product.Keys);
 	}
 
 	[Fact]
@@ -167,8 +167,8 @@ public class FindTests : TestBase
 			.Select("ProductID, ProductName")
 			.FindEntryAsync();
 		Assert.Equal(2, product.Count);
-		product.Keys.Should().Contain("ProductName");
-		product.Keys.Should().Contain("ProductID");
+		Assert.Contains("ProductName", product.Keys);
+		Assert.Contains("ProductID", product.Keys);
 	}
 
 	[Fact]
@@ -180,7 +180,7 @@ public class FindTests : TestBase
 			.OrderBy("ProductID")
 			.Expand("Category")
 			.FindEntriesAsync()).Last();
-		(product["Category"] as IDictionary<string, object>)["CategoryName"].Should().Be("Condiments");
+		Assert.Equal("Condiments", (product["Category"] as IDictionary<string, object>)["CategoryName"]);
 	}
 
 	[Fact]
@@ -216,8 +216,8 @@ public class FindTests : TestBase
 			.OrderBy("ProductID")
 			.Expand("Category/Products/Category")
 			.FindEntriesAsync()).Last();
-		((((product["Category"] as IDictionary<string, object>)["Products"] as IEnumerable<object>)
-									.First() as IDictionary<string, object>)["Category"] as IDictionary<string, object>)["CategoryName"].Should().Be("Condiments");
+		Assert.Equal("Condiments", ((((product["Category"] as IDictionary<string, object>)["Products"] as IEnumerable<object>)
+									.First() as IDictionary<string, object>)["Category"] as IDictionary<string, object>)["CategoryName"]);
 	}
 
 	[Fact]
@@ -236,8 +236,8 @@ public class FindTests : TestBase
 									.First() as IDictionary<string, object>).Count);
 		Assert.Equal(1, ((((product["Category"] as IDictionary<string, object>)["Products"] as IEnumerable<object>)
 									.First() as IDictionary<string, object>)["Category"] as IDictionary<string, object>).Count);
-		((((product["Category"] as IDictionary<string, object>)["Products"] as IEnumerable<object>)
-									.First() as IDictionary<string, object>)["Category"] as IDictionary<string, object>)["CategoryName"].Should().Be("Condiments");
+		Assert.Equal("Condiments", ((((product["Category"] as IDictionary<string, object>)["Products"] as IEnumerable<object>)
+									.First() as IDictionary<string, object>)["Category"] as IDictionary<string, object>)["CategoryName"]);
 	}
 
 	[Fact]
@@ -252,7 +252,7 @@ public class FindTests : TestBase
 			.FindEntriesAsync()).Last();
 		Assert.Equal(2, product.Count);
 		Assert.Equal(1, (product["Category"] as IDictionary<string, object>).Count);
-		(product["Category"] as IDictionary<string, object>)["CategoryName"].Should().Be("Condiments");
+		Assert.Equal("Condiments", (product["Category"] as IDictionary<string, object>)["CategoryName"]);
 	}
 
 	[Fact]
@@ -302,7 +302,7 @@ public class FindTests : TestBase
 			.Expand("Category")
 			.Select("Category")
 			.FindEntriesAsync()).Single();
-		(product["Category"] as IDictionary<string, object>)["CategoryName"].Should().Be("Seafood");
+		Assert.Equal("Seafood", (product["Category"] as IDictionary<string, object>)["CategoryName"]);
 	}
 
 	[Fact]
@@ -317,7 +317,7 @@ public class FindTests : TestBase
 			.Skip(2)
 			.OrderBy("ProductName")
 			.FindEntriesAsync()).Single();
-		(product["Category"] as IDictionary<string, object>)["CategoryName"].Should().Be("Seafood");
+		Assert.Equal("Seafood", (product["Category"] as IDictionary<string, object>)["CategoryName"]);
 	}
 
 	[Fact]
@@ -329,7 +329,7 @@ public class FindTests : TestBase
 			.Key(new Entry() { { "ProductID", 2 } })
 			.NavigateTo("Category")
 			.FindEntryAsync();
-		category["CategoryName"].Should().Be("Beverages");
+		Assert.Equal("Beverages", category["CategoryName"]);
 	}
 
 	[Fact]
@@ -356,7 +356,7 @@ public class FindTests : TestBase
 			.NavigateTo("Subordinates")
 			.Key(3)
 			.FindEntryAsync();
-		employee["FirstName"].Should().Be("Janet");
+		Assert.Equal("Janet", employee["FirstName"]);
 	}
 
 	[Fact]
@@ -369,7 +369,7 @@ public class FindTests : TestBase
 			.NavigateTo("Superior/Superior/Subordinates")
 			.Key(3)
 			.FindEntryAsync();
-		employee["FirstName"].Should().Be("Janet");
+		Assert.Equal("Janet", employee["FirstName"]);
 	}
 
 	[Fact]
@@ -380,7 +380,7 @@ public class FindTests : TestBase
 			.For("Transport")
 			.FindEntriesAsync();
 		Assert.Equal(2, transport.Count());
-		(x => x.ContainsKey(FluentCommand.AnnotationsLiteral)).Should().NotContain(transport);
+		Assert.DoesNotContain(transport, x => x.ContainsKey(FluentCommand.AnnotationsLiteral));
 	}
 
 	[Fact]
@@ -391,7 +391,7 @@ public class FindTests : TestBase
 			.For("Transport")
 			.FindEntriesAsync();
 		Assert.Equal(2, transport.Count());
-		transport.All(x => x.ContainsKey(FluentCommand.AnnotationsLiteral)).Should().BeTrue();
+		Assert.True(transport.All(x => x.ContainsKey(FluentCommand.AnnotationsLiteral)));
 	}
 
 	[Fact]
@@ -402,7 +402,7 @@ public class FindTests : TestBase
 			.For("Transport")
 			.As("Ships")
 			.FindEntriesAsync();
-		transport.Single()["ShipName"].Should().Be("Titanic");
+		Assert.Equal("Titanic", transport.Single()["ShipName"]);
 	}
 
 	[Fact]
@@ -415,8 +415,8 @@ public class FindTests : TestBase
 			.FindEntriesAsync();
 
 		var ship = transport.Single();
-		ship["ShipName"].Should().Be("Titanic");
-		(ship[FluentCommand.AnnotationsLiteral] as ODataEntryAnnotations).TypeName.Should().Be("NorthwindModel.Ship");
+		Assert.Equal("Titanic", ship["ShipName"]);
+		Assert.Equal("NorthwindModel.Ship", (ship[FluentCommand.AnnotationsLiteral] as ODataEntryAnnotations).TypeName);
 	}
 
 	[Fact]
@@ -428,7 +428,7 @@ public class FindTests : TestBase
 			.As("Ships")
 			.Filter("ShipName eq 'Titanic'")
 			.FindEntryAsync();
-		transport["ShipName"].Should().Be("Titanic");
+		Assert.Equal("Titanic", transport["ShipName"]);
 	}
 
 	[Fact]
@@ -439,7 +439,7 @@ public class FindTests : TestBase
 			.For("Transport")
 			.Key(1)
 			.FindEntryAsync();
-		transport["ShipName"].Should().Be("Titanic");
+		Assert.Equal("Titanic", transport["ShipName"]);
 	}
 
 	[Fact]
@@ -451,7 +451,7 @@ public class FindTests : TestBase
 			.As("Ships")
 			.Key(1)
 			.FindEntryAsync();
-		transport["ShipName"].Should().Be("Titanic");
+		Assert.Equal("Titanic", transport["ShipName"]);
 	}
 
 	[Fact]
@@ -463,7 +463,7 @@ public class FindTests : TestBase
 			.As("Ships")
 			.Filter("TransportID eq 1 and ShipName eq 'Titanic'")
 			.FindEntryAsync();
-		transport["ShipName"].Should().Be("Titanic");
+		Assert.Equal("Titanic", transport["ShipName"]);
 	}
 
 	[Fact]
@@ -474,7 +474,7 @@ public class FindTests : TestBase
 			.For("Transport")
 			.Filter("isof('NorthwindModel.Ship')")
 			.FindEntryAsync();
-		transport["ShipName"].Should().Be("Titanic");
+		Assert.Equal("Titanic", transport["ShipName"]);
 	}
 
 	[Fact]
@@ -485,7 +485,7 @@ public class FindTests : TestBase
 			.For("Employees")
 			.Filter("isof(Superior, 'NorthwindModel.Employee')")
 			.FindEntryAsync();
-		employee.Should().NotBeNull();
+		Assert.NotNull(employee);
 	}
 
 	[Fact]
@@ -496,7 +496,7 @@ public class FindTests : TestBase
 			.For("Products")
 			.Filter("ProductID eq cast(1L, 'Edm.Int32')")
 			.FindEntryAsync();
-		product.Should().NotBeNull();
+		Assert.NotNull(product);
 	}
 
 	[Fact]
@@ -507,7 +507,7 @@ public class FindTests : TestBase
 			.For("Employees")
 			.Filter("cast('NorthwindModel.Employee') ne null")
 			.FindEntryAsync();
-		employee.Should().NotBeNull();
+		Assert.NotNull(employee);
 	}
 
 	[Fact]
@@ -518,7 +518,7 @@ public class FindTests : TestBase
 			.For("Employees")
 			.Filter("cast(Superior, 'NorthwindModel.Employee') ne null")
 			.FindEntryAsync();
-		employee.Should().NotBeNull();
+		Assert.NotNull(employee);
 	}
 
 	[Fact]

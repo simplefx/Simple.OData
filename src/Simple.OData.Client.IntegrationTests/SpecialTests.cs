@@ -217,8 +217,8 @@ public class SpecialTests : ODataTestBase
 			wasCached = false;
 			return null;
 		});
-		wasCached.Should().BeFalse();
-		cached.Should().BeNull();
+		Assert.False(wasCached);
+		Assert.Null(cached);
 	}
 
 	[Fact]

@@ -59,12 +59,12 @@ public class BatchTypedTests : TestBase
 			.For<Product>()
 			.Filter(x => x.ProductName == "Test1")
 			.FindEntryAsync();
-		product1.Should().NotBeNull();
+		Assert.NotNull(product1);
 		product2 = await client
 			.For<Product>()
 			.Filter(x => x.ProductName == "Test2")
 			.FindEntryAsync();
-		product2.Should().NotBeNull();
+		Assert.NotNull(product2);
 	}
 
 	[Fact]
@@ -87,7 +87,7 @@ public class BatchTypedTests : TestBase
 		}
 		catch (WebRequestException exception)
 		{
-			exception.Response.Should().NotBeNull();
+			Assert.NotNull(exception.Response);
 		}
 	}
 
@@ -111,7 +111,7 @@ public class BatchTypedTests : TestBase
 		}
 		catch (WebRequestException exception)
 		{
-			exception.Response.Should().NotBeNull();
+			Assert.NotNull(exception.Response);
 		}
 	}
 
@@ -198,14 +198,14 @@ public class BatchTypedTests : TestBase
 		await batch.ExecuteAsync();
 
 		Assert.Equal(22m, product1.UnitPrice);
-		product2.Should().BeNull();
+		Assert.Null(product2);
 
 		var client = new ODataClient(settings);
 		product = await client
 			.For<Product>()
 			.Filter(x => x.ProductName == "Test11")
 			.FindEntryAsync();
-		product.Should().BeNull();
+		Assert.Null(product);
 	}
 
 	[Fact]
@@ -252,7 +252,7 @@ public class BatchTypedTests : TestBase
 			.For<Product>()
 			.Filter(x => x.ProductName == "Test12")
 			.FindEntryAsync();
-		product.Should().BeNull();
+		Assert.Null(product);
 	}
 
 	[Fact]
@@ -277,7 +277,7 @@ public class BatchTypedTests : TestBase
 			.Expand(x => x.Category)
 			.Filter(x => x.ProductName == "Test14")
 			.FindEntryAsync();
-		product.Category.CategoryName.Should().Be("Test13");
+		Assert.Equal("Test13", product.Category.CategoryName);
 	}
 
 	[Fact]

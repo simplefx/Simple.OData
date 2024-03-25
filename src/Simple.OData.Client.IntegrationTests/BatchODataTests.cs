@@ -120,7 +120,7 @@ public abstract class BatchODataTests(string serviceUri, ODataPayloadFormat payl
 			.Expand(ProductCategoryName)
 			.Filter("Name eq 'Test14'")
 			.FindEntryAsync();
-		ProductCategoryFunc(product)["ID"].Should().Be(5013);
+		Assert.Equal(5013, ProductCategoryFunc(product)["ID"]);
 	}
 
 	[Fact]
@@ -170,7 +170,7 @@ public abstract class BatchODataTests(string serviceUri, ODataPayloadFormat payl
 		await client.GetMetadataDocumentAsync();
 
 		// Since the token was never updated it should still be an empty string.
-		token.Should().NotBeNull();
+		Assert.NotNull(token);
 
 		// Change the settings for the client so we can re-use the session and create a new request with different headers 
 		var newHeaders = new Dictionary<string, IEnumerable<string>>
@@ -213,8 +213,8 @@ public abstract class BatchODataTests(string serviceUri, ODataPayloadFormat payl
 
 		await batch.ExecuteAsync();
 
-		bread.Should().ContainKey("ID");
-		milk.Should().ContainKey("ID");
+		Assert.True(bread.ContainsKey("ID"));
+		Assert.True(milk.ContainsKey("ID"));
 	}
 
 	[Fact]
@@ -234,8 +234,8 @@ public abstract class BatchODataTests(string serviceUri, ODataPayloadFormat payl
 			response = await x.GetResponseAsync(request);
 		};
 		await batch.ExecuteAsync();
-		response.Should().NotBeNull();
-		response.Location.Should().Be($"{_serviceUri}Products({id})");
+		Assert.NotNull(response);
+		Assert.Equal($"{_serviceUri}Products({id})", response.Location);
 	}
 
 	[Fact]
@@ -255,7 +255,7 @@ public abstract class BatchODataTests(string serviceUri, ODataPayloadFormat payl
 			response = await x.GetResponseAsync(request);
 		};
 		await batch.ExecuteAsync();
-		response.Should().NotBeNull();
-		response.Location.Should().Be($"{_serviceUri}Products({id})");
+		Assert.NotNull(response);
+		Assert.Equal($"{_serviceUri}Products({id})", response.Location);
 	}
 }

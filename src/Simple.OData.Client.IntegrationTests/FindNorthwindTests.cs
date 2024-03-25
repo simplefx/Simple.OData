@@ -127,7 +127,7 @@ public abstract class FindNorthwindTests(string serviceUri, ODataPayloadFormat p
 			.For("Products")
 			.OrderBy("ProductName")
 			.FindEntriesAsync()).First();
-		product["ProductName"].Should().Be("Alice Mutton");
+		Assert.Equal("Alice Mutton", product["ProductName"]);
 	}
 
 	[Fact]
@@ -137,8 +137,8 @@ public abstract class FindNorthwindTests(string serviceUri, ODataPayloadFormat p
 			.For("Products")
 			.Select("ProductID", "ProductName")
 			.FindEntryAsync();
-		product.Keys.Should().Contain("ProductName");
-		product.Keys.Should().Contain("ProductID");
+		Assert.Contains("ProductName", product.Keys);
+		Assert.Contains("ProductID", product.Keys);
 	}
 
 	[Fact]
@@ -149,7 +149,7 @@ public abstract class FindNorthwindTests(string serviceUri, ODataPayloadFormat p
 			.OrderBy("ProductID")
 			.Expand("Category")
 			.FindEntriesAsync()).Last();
-		(product["Category"] as IDictionary<string, object>)["CategoryName"].Should().Be("Confections");
+		Assert.Equal("Confections", (product["Category"] as IDictionary<string, object>)["CategoryName"]);
 	}
 
 	[Fact]
@@ -183,7 +183,7 @@ public abstract class FindNorthwindTests(string serviceUri, ODataPayloadFormat p
 			.OrderBy(x => x.Category.CategoryName)
 			.Select(x => x.Category.CategoryName)
 			.FindEntriesAsync()).Last();
-		product.Category.CategoryName.Should().Be("Condiments");
+		Assert.Equal("Condiments", product.Category.CategoryName);
 	}
 
 	[Fact]
@@ -196,7 +196,7 @@ public abstract class FindNorthwindTests(string serviceUri, ODataPayloadFormat p
 				.Expand(x => x.Products)
 				.OrderBy(x => x.Products.Select(y => y.ProductName))
 				.FindEntriesAsync()).Last();
-			category.Products.Last().ProductName.Should().Be("Röd Kaviar");
+			Assert.Equal("Röd Kaviar", category.Products.Last().ProductName);
 		}
 	}
 
@@ -232,7 +232,7 @@ public abstract class FindNorthwindTests(string serviceUri, ODataPayloadFormat p
 			.Expand("Category")
 			.Select("Category")
 			.FindEntriesAsync()).Single();
-		(product["Category"] as IDictionary<string, object>)["CategoryName"].Should().Be("Seafood");
+		Assert.Equal("Seafood", (product["Category"] as IDictionary<string, object>)["CategoryName"]);
 	}
 
 	[Fact]
@@ -243,7 +243,7 @@ public abstract class FindNorthwindTests(string serviceUri, ODataPayloadFormat p
 			.Key(new Entry() { { "ProductID", 2 } })
 			.NavigateTo("Category")
 			.FindEntryAsync();
-		category["CategoryName"].Should().Be("Beverages");
+		Assert.Equal("Beverages", category["CategoryName"]);
 	}
 
 	[Fact]
@@ -268,7 +268,7 @@ public abstract class FindNorthwindTests(string serviceUri, ODataPayloadFormat p
 			.NavigateTo("Employees1")
 			.Key(5)
 			.FindEntryAsync();
-		employee["FirstName"].Should().Be("Steven");
+		Assert.Equal("Steven", employee["FirstName"]);
 	}
 
 	[Fact]
@@ -280,6 +280,6 @@ public abstract class FindNorthwindTests(string serviceUri, ODataPayloadFormat p
 			.NavigateTo("Employee1/Employee1/Employees1")
 			.Key(5)
 			.FindEntryAsync();
-		employee["FirstName"].Should().Be("Steven");
+		Assert.Equal("Steven", employee["FirstName"]);
 	}
 }

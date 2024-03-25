@@ -47,7 +47,7 @@ public class KeyTests : CoreTestBase
 			.For<OrderDetail>()
 			.Key(1, 2);
 		var commandText = await command.GetCommandTextAsync();
-		commandText.Should().Be(expectedCommand);
+		Assert.Equal(expectedCommand, commandText);
 	}
 
 	[Theory]
@@ -61,7 +61,7 @@ public class KeyTests : CoreTestBase
 			.For<OrderDetail>()
 			.Key(new { ProductID = 2, OrderID = 1 });
 		var commandText = await command.GetCommandTextAsync();
-		commandText.Should().Be(expectedCommand);
+		Assert.Equal(expectedCommand, commandText);
 	}
 
 	[Theory]
@@ -75,7 +75,7 @@ public class KeyTests : CoreTestBase
 			.For<OrderDetail>()
 			.Key(new OrderDetail { ProductID = 2, OrderID = 1, Quantity = 5 });
 		var commandText = await command.GetCommandTextAsync();
-		commandText.Should().Be(expectedCommand);
+		Assert.Equal(expectedCommand, commandText);
 	}
 
 	[Theory]
@@ -89,7 +89,7 @@ public class KeyTests : CoreTestBase
 			.For<Category>()
 			.Key(new Category { CategoryID = 1 });
 		var commandText = await command.GetCommandTextAsync();
-		commandText.Should().Be(expectedCommand);
+		Assert.Equal(expectedCommand, commandText);
 	}
 
 	[Theory]
@@ -103,7 +103,7 @@ public class KeyTests : CoreTestBase
 			.For<Category>()
 			.Filter(x => x.CategoryID == 1);
 		var commandText = await command.GetCommandTextAsync();
-		commandText.Should().Be(expectedCommand);
+		Assert.Equal(expectedCommand, commandText);
 	}
 
 	[Theory]
@@ -117,7 +117,7 @@ public class KeyTests : CoreTestBase
 			.For<Category>()
 			.Filter(x => x.CategoryID == 1 && x.CategoryName == "Test");
 		var commandText = await command.GetCommandTextAsync();
-		commandText.Should().Be(expectedCommand);
+		Assert.Equal(expectedCommand, commandText);
 	}
 
 	[Theory]
@@ -130,7 +130,7 @@ public class KeyTests : CoreTestBase
 			.For<Activity>()
 			.Filter(x => x.Ticket.Id == 1);
 		var commandText = await command.GetCommandTextAsync();
-		commandText.Should().Be(expectedCommand);
+		Assert.Equal(expectedCommand, commandText);
 	}
 
 	[Theory]
@@ -143,7 +143,7 @@ public class KeyTests : CoreTestBase
 			.For<Activity>()
 			.Filter(x => x.Option.Id == 1);
 		var commandText = await command.GetCommandTextAsync();
-		commandText.Should().Be(expectedCommand);
+		Assert.Equal(expectedCommand, commandText);
 	}
 
 	[Theory]
@@ -157,7 +157,7 @@ public class KeyTests : CoreTestBase
 			.For<Category>()
 			.Key(new { CategoryName = "Beverages" });
 		var commandText = await command.GetCommandTextAsync();
-		commandText.Should().Be(expectedCommand);
+		Assert.Equal(expectedCommand, commandText);
 	}
 
 	[Theory]
@@ -171,7 +171,7 @@ public class KeyTests : CoreTestBase
 			.For<Category>()
 			.Filter(x => x.CategoryName == "Beverages");
 		var commandText = await command.GetCommandTextAsync();
-		commandText.Should().Be(expectedCommand);
+		Assert.Equal(expectedCommand, commandText);
 	}
 
 	[Theory]
@@ -185,7 +185,7 @@ public class KeyTests : CoreTestBase
 			.For<Employee>()
 			.Key(new { HomePhone = "123", Title = "Manager" });
 		var commandText = await command.GetCommandTextAsync();
-		commandText.Should().Be(expectedCommand);
+		Assert.Equal(expectedCommand, commandText);
 	}
 
 	[Theory]
@@ -199,7 +199,7 @@ public class KeyTests : CoreTestBase
 			.For<Employee>()
 			.Filter(x => x.HomePhone == "123" && x.Title == "Manager");
 		var commandText = await command.GetCommandTextAsync();
-		commandText.Should().Be(expectedCommand);
+		Assert.Equal(expectedCommand, commandText);
 	}
 
 	[Theory]
@@ -213,7 +213,7 @@ public class KeyTests : CoreTestBase
 			.For<Order>()
 			.Key(new { CustomerID = "ALFKI" });
 		var commandText = await command.GetCommandTextAsync();
-		commandText.Should().Be(expectedCommand);
+		Assert.Equal(expectedCommand, commandText);
 	}
 
 	[Theory]
@@ -227,6 +227,6 @@ public class KeyTests : CoreTestBase
 			.For<Order>()
 			.Key(new { ShipName = "TEST" });
 		var commandText = await command.GetCommandTextAsync();
-		commandText.Should().Be(expectedCommand);
+		Assert.Equal(expectedCommand, commandText);
 	}
 }
