@@ -213,8 +213,8 @@ public abstract class BatchODataTests(string serviceUri, ODataPayloadFormat payl
 
 		await batch.ExecuteAsync();
 
-		bread.ContainsKey("ID").Should().BeTrue();
-		milk.ContainsKey("ID").Should().BeTrue();
+		bread.Should().ContainKey("ID");
+		milk.Should().ContainKey("ID");
 	}
 
 	[Fact]
