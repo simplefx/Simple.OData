@@ -8,8 +8,8 @@ public class NorthwindInitializer : DropCreateDatabaseAlways<NorthwindContext>
 {
 	protected override void Seed(NorthwindContext ctx)
 	{
-		ctx.Categories.AddRange(new[]
-		{
+		ctx.Categories.AddRange(
+		[
 				new Category { CategoryID = 1, CategoryName = "Beverages", Description = "Beverages Soft drinks, coffees, teas, beer, and ale", Picture = [1,2,3] },
 				new Category { CategoryID = 2, CategoryName = "Condiments", Description = "Sweet and savory sauces, relishes, spreads, and seasonings", Picture = [1,2,3]  },
 				new Category { CategoryID = 3, CategoryName = "Confections", Description = "Desserts, candies, sweetbreads", Picture = [1,2,3]  },
@@ -18,10 +18,10 @@ public class NorthwindInitializer : DropCreateDatabaseAlways<NorthwindContext>
 				new Category { CategoryID = 6, CategoryName = "Meat/Poultry", Description = "Prepared meats", Picture = [1,2,3]  },
 				new Category { CategoryID = 7, CategoryName = "Produce", Description = "Dried fruit and bean curd", Picture = [1,2,3]  },
 				new Category { CategoryID = 8, CategoryName = "Seafood", Description = "Seaweed and fish", Picture = [1,2,3]  },
-			});
+			]);
 
-		ctx.Suppliers.AddRange(new[]
-		{
+		ctx.Suppliers.AddRange(
+		[
 				new Supplier { SupplierID = 1, CompanyName = "Exotic Liquids", ContactName = "Charlotte Cooper", ContactTitle = "Purchasing Manager", Address = "49 Gilbert St.", City = "London", Region = null, PostalCode = "EC1 4SD", Country = "UK", Phone = "(71) 555-2222", Fax = null },
 				new Supplier { SupplierID = 2, CompanyName = "New Orleans Cajun Delights", ContactName = "Shelley Burke", ContactTitle = "Order Administrator", Address = "P.O. Box 78934", City = "New Orleans", Region = "LA", PostalCode = "70117", Country = "USA", Phone = "(100) 555-4822", Fax = null },
 				new Supplier { SupplierID = 3, CompanyName = "Grandma Kelly's Homestead", ContactName = "Regina Murphy", ContactTitle = "Sales Representative", Address = "707 Oxford Rd.", City = "Ann Arbor", Region = "MI", PostalCode = "48104", Country = "USA", Phone = "(313) 555-5735", Fax = "(313) 555-3349" },
@@ -35,10 +35,10 @@ public class NorthwindInitializer : DropCreateDatabaseAlways<NorthwindContext>
 				new Supplier { SupplierID = 20, CompanyName = "Leka Trading", ContactName = "Chandra Leka", ContactTitle = "Owner", Address = "471 Serangoon Loop, Suite #402", City = "Singapore", Region = null, PostalCode = "0512", Country = "Singapore", Phone = "555-8787", Fax = null },
 				new Supplier { SupplierID = 22, CompanyName = "Zaanse Snoepfabriek", ContactName = "Dirk Luchte", ContactTitle = "Accounting Manager", Address = "Verkoop Rijnweg 22", City = "Zaandam", Region = null, PostalCode = "9999 ZZ", Country = "Netherlands", Phone = "(12345) 1212", Fax = "(12345) 1210" },
                 //new Supplier { SupplierID = 0, CompanyName = "", ContactName = "", ContactTitle = "", Address = "", City = "", Region = null, PostalCode = "", Country = "", Phone = "", Fax = null },
-            });
+            ]);
 
-		ctx.Products.AddRange(new[]
-		{
+		ctx.Products.AddRange(
+		[
 				new Product { ProductID = 1, ProductName = "Chai", SupplierID = 1, CategoryID = 1, QuantityPerUnit = "10 boxes x 20 bags", UnitPrice = 18, UnitsInStock = 39, UnitsOnOrder = 0, ReorderLevel = 10, Discontinued = false },
 				new Product { ProductID = 2, ProductName = "Chang", SupplierID = 1, CategoryID = 1, QuantityPerUnit = "24 - 12 oz bottles", UnitPrice = 19, UnitsInStock = 17, UnitsOnOrder = 40, ReorderLevel = 25, Discontinued = false },
 				new Product { ProductID = 3, ProductName = "Aniseed Syrup", SupplierID = 1, CategoryID = 2, QuantityPerUnit = "12 - 550 ml bottles", UnitPrice = 10, UnitsInStock = 13, UnitsOnOrder = 70, ReorderLevel = 25, Discontinued = false },
@@ -62,20 +62,20 @@ public class NorthwindInitializer : DropCreateDatabaseAlways<NorthwindContext>
 				new Product { ProductID = 72, ProductName = "Mozzarella di Giovanni", SupplierID = 14, CategoryID = 4, QuantityPerUnit = "24 - 200 g pkgs.", UnitPrice = 34.8m, UnitsInStock = 14, UnitsOnOrder = 0, ReorderLevel = 0, Discontinued = false },
 				new Product { ProductID = 77, ProductName = "Original Frankfurter grüne Soße", SupplierID = 12, CategoryID = 2, QuantityPerUnit = "12 boxes", UnitPrice = 13, UnitsInStock = 32, UnitsOnOrder = 0, ReorderLevel = 15, Discontinued = false }, 
                 //new Product { ProductID = 0, ProductName = "", SupplierID = 0, CategoryID = 0, QuantityPerUnit = "", UnitPrice = 0, UnitsInStock = 0, UnitsOnOrder = 0, ReorderLevel = 0, Discontinued = false }, 
-            });
+            ]);
 
-		ctx.Customers.AddRange(new[]
-		{
+		ctx.Customers.AddRange(
+		[
 				new Customer { CustomerID = "BOTTM", CompanyName = "Bottom-Dollar Markets", ContactName = "Elizabeth Lincoln", ContactTitle = "Accounting Manager", Address = "23 Tsawassen Blvd.", City = "Tsawassen", Region = "BC", PostalCode = "T2F 8M4", Country = "Canada", Phone = "(604) 555-4729", Fax = "(604) 555-3745" },
 				new Customer { CustomerID = "ERNSH", CompanyName = "Ernst Handel", ContactName = "Roland Mendel", ContactTitle = "Sales Manager", Address = "Kirchgasse 6", City = "Graz", Region = null, PostalCode = "8010", Country = "Austria", Phone = "7675-3425", Fax = "7675-3426" },
 				new Customer { CustomerID = "FRANS", CompanyName = "Franchi S.p.A.", ContactName = "Paolo Accorti", ContactTitle = "Sales Representative", Address = "Via Monte Bianco 34", City = "Torino", Region = null, PostalCode = "10100", Country = "Italy", Phone = "011-4988260", Fax = "011-4988261" },
 				new Customer { CustomerID = "SAVEA", CompanyName = "Save-a-lot Markets", ContactName = "Jose Pavarotti", ContactTitle = "Sales Representative", Address = "187 Suffolk Ln.", City = "Boise", Region = "ID", PostalCode = "83720", Country = "USA", Phone = "(208) 555-8097", Fax = "" },
 				new Customer { CustomerID = "VINET", CompanyName = "Vins et alcools Chevalier", ContactName = "Paul Henriot", ContactTitle = "Accounting Manager", Address = "59 rue de l'Abbaye", City = "Reims", Region = null, PostalCode = "51100", Country = "France", Phone = "26.47.15.10", Fax = "26.47.15.11" },
                 // new Customer { CustomerID = "", CompanyName = "", ContactName = "", ContactTitle = "", Address = "", City = "", Region = null, PostalCode = "", Country = "", Phone = "", Fax = "" },
-            });
+            ]);
 
-		ctx.Employees.AddRange(new[]
-		{
+		ctx.Employees.AddRange(
+		[
 				new Employee { EmployeeID = 1, LastName = "Davolio", FirstName = "Nancy", Title = "Sales Representative", BirthDate = new DateTime(1948,12,8), HireDate = new DateTime(1991,3,29), Address = "507 - 20th Ave. E. Apt. 2A", City = "Seattle", Region = "WA", PostalCode = "98122", Country = "USA", HomePhone = "(206) 555-9857", Extension = "5467", Photo = [1,2,3], Notes = "Notes", ReportsTo = 2 },
 				new Employee { EmployeeID = 2, LastName = "Fuller", FirstName = "Andrew", Title = "Vice President, Sales", BirthDate = new DateTime(1942,2,19), HireDate = new DateTime(1991,7,12), Address = "", City = "", Region = null, PostalCode = "", Country = "", HomePhone = "", Extension = "", Photo = [1,2,3], Notes = null, ReportsTo = null },
 				new Employee { EmployeeID = 3, LastName = "Leverling", FirstName = "Janet", Title = "Sales Representative", BirthDate = new DateTime(1963,8,30), HireDate = new DateTime(1991,2,27), Address = "", City = "", Region = null, PostalCode = "", Country = "", HomePhone = "", Extension = "", Photo = [1,2,3], Notes = null, ReportsTo = 2 },
@@ -86,17 +86,17 @@ public class NorthwindInitializer : DropCreateDatabaseAlways<NorthwindContext>
 				new Employee { EmployeeID = 13, LastName = "Brid", FirstName = "Justin", Title = "Marketing Director", BirthDate = new DateTime(1962,10,8), HireDate = new DateTime(1994,1,1), Address = "", City = "", Region = null, PostalCode = "", Country = "", HomePhone = "", Extension = "", Photo = [1,2,3], Notes = null, ReportsTo = 2 },
 				new Employee { EmployeeID = 14, LastName = "Martin", FirstName = "Xavier", Title = "Marketing Associate", BirthDate = new DateTime(1960,11,30), HireDate = new DateTime(1994,1,15), Address = "", City = "", Region = null, PostalCode = "", Country = "", HomePhone = "", Extension = "", Photo = [1,2,3], Notes = null, ReportsTo = 13 },
                 //new Employee { EmployeeID = 0, LastName = "", FirstName = "", Title = "", BirthDate = DateTime.MinValue, HireDate = DateTime.MinValue, Address = "", City = "", Region = null, PostalCode = "", Country = "", HomePhone = "", Extension = "", Photo = new byte[] {1,2,3}, Notes = null, ReportsTo = 0 },
-            });
+            ]);
 
-		ctx.Shippers.AddRange(new[]
-		{
+		ctx.Shippers.AddRange(
+		[
 				new Shipper { ShipperID = 1, CompanyName = "Speedy Express" },
 				new Shipper { ShipperID = 2, CompanyName = "United Package" },
 				new Shipper { ShipperID = 3, CompanyName = "Federal Shipping" },
-			});
+			]);
 
-		ctx.Orders.AddRange(new[]
-		{
+		ctx.Orders.AddRange(
+		[
 				new Order { OrderID = 10000, CustomerID = "FRANS", EmployeeID = 6, ShipName = "Franchi S.p.A.", ShipAddress = "Via Monte Bianco 34", ShipCity = "Torino", ShipRegion = null, ShipPostalCode = "10100", ShipCountry = "Italy", ShipVia = 3, OrderDate = new DateTime(1991,10,5), RequiredDate = new DateTime(1991,6,7), ShippedDate = new DateTime(1991,5,15), Freight = 4.45m },
 				new Order { OrderID = 10021, CustomerID = "ERNSH", EmployeeID = 7, ShipName = "Ernst Handel", ShipAddress = "Kirchgasse 6", ShipCity = "Graz", ShipRegion = null, ShipPostalCode = "8010", ShipCountry = "Austria", ShipVia = 3, OrderDate = new DateTime(1991,6,14), RequiredDate = new DateTime(1991,7,12), ShippedDate = new DateTime(1991,7,2), Freight = 75.17m },
 				new Order { OrderID = 10065, CustomerID = "SAVEA", EmployeeID = 1, ShipName = "Save-a-lot Markets", ShipAddress = "187 Suffolk Ln.", ShipCity = "Boise", ShipRegion = "ID", ShipPostalCode = "83720", ShipCountry = "USA", ShipVia = 3, OrderDate = new DateTime(1991,8,28), RequiredDate = new DateTime(1991,9,25), ShippedDate = new DateTime(1991,9,3), Freight = 45.03m },
@@ -105,10 +105,10 @@ public class NorthwindInitializer : DropCreateDatabaseAlways<NorthwindContext>
 				new Order { OrderID = 10847, CustomerID = "SAVEA", EmployeeID = 4, ShipName = "Save-a-lot Markets", ShipAddress = "187 Suffolk Ln.", ShipCity = "Boise", ShipRegion = "ID", ShipPostalCode = "83720", ShipCountry = "USA", ShipVia = 3, OrderDate = new DateTime(1993,12,16), RequiredDate = new DateTime(1993,12,30), ShippedDate = new DateTime(1994,1,4), Freight = 487.57m },
 				new Order { OrderID = 10918, CustomerID = "BOTTM", EmployeeID = 3, ShipName = "Bottom-Dollar Markets", ShipAddress = "23 Tsawassen Blvd.", ShipCity = "Tsawassen", ShipRegion = "BC", ShipPostalCode = "T2F 8M4", ShipCountry = "Canada", ShipVia = 3, OrderDate = new DateTime(1994,1,24), RequiredDate = new DateTime(1994,2,21), ShippedDate = new DateTime(1994,2,2), Freight = 48.83m },
                 // new Order { OrderID = 0, CustomerID = "", EmployeeID = , ShipName = "", ShipAddress = "", ShipCity = "", ShipRegion = null, ShipPostalCode = "", ShipCountry = "", ShipVia = 0, OrderDate = new DateTime(0,0,0), RequiredDate = new DateTime(0,0,0), ShippedDate = new DateTime(0,0,0), Freight = 0m },
-            });
+            ]);
 
-		ctx.Order_Details.AddRange(new[]
-		{
+		ctx.Order_Details.AddRange(
+		[
 				new OrderDetail { OrderID = 10021, ProductID = 1, UnitPrice = 12m, Quantity = 60, Discount = 0.2f },
 				new OrderDetail { OrderID = 10065, ProductID = 1, UnitPrice = 12.6m, Quantity = 55, Discount = 0.25f },
 				new OrderDetail { OrderID = 10199, ProductID = 1, UnitPrice = 12m, Quantity = 66, Discount = 0 },
@@ -118,12 +118,12 @@ public class NorthwindInitializer : DropCreateDatabaseAlways<NorthwindContext>
 				new OrderDetail { OrderID = 10847, ProductID = 1, UnitPrice = 18m, Quantity = 80, Discount = 0.2f },
 				new OrderDetail { OrderID = 10918, ProductID = 1, UnitPrice = 18m, Quantity = 60, Discount = 0.25f },
                 // new OrderDetail { OrderID = 0, ProductID = 0, UnitPrice = 0m, Quantity = 0, Discount = 0 },
-            });
+            ]);
 
-		ctx.Transport.AddRange(new Transport[]
-		{
+		ctx.Transport.AddRange(
+		[
 				new Ship { TransportID = 1, TransportType = 1, ShipName = "Titanic" },
 				new Truck { TransportID = 2, TransportType = 2, TruckNumber = "123456" },
-		});
+		]);
 	}
 }

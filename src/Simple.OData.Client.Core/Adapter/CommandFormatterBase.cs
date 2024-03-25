@@ -356,7 +356,7 @@ public abstract class CommandFormatterBase : ICommandFormatter
 						new KeyValuePair<ODataExpandAssociation, ODataExpandOptions>(x,
 							ODataExpandOptions.ByValue())))
 					.Select(x => new KeyValuePair<string, ODataExpandOptions>(a.Key.Name + "/" + x.Key, x.Value))
-				: new[] { new KeyValuePair<string, ODataExpandOptions>(a.Key.Name, a.Value) })
+				: [new KeyValuePair<string, ODataExpandOptions>(a.Key.Name, a.Value)])
 			.ToList();
 	}
 }

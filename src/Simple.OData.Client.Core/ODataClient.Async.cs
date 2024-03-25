@@ -606,7 +606,7 @@ public partial class ODataClient
 
 		var result = await ExecuteFunctionAsEnumerableAsync(functionName, parameters, cancellationToken).ConfigureAwait(false);
 		return IsBatchRequest
-			? Array.Empty<T>()
+			? []
 			: result?.SelectMany(x => x.Values)
 				.Select(x => Session.TypeCache.Convert<T>(x))
 				.ToArray();
@@ -718,7 +718,7 @@ public partial class ODataClient
 
 		var result = await ExecuteActionAsEnumerableAsync(actionName, parameters, cancellationToken).ConfigureAwait(false);
 		return IsBatchRequest
-			? Array.Empty<T>()
+			? []
 			: result?.SelectMany(x => x.Values)
 				.Select(x => Session.TypeCache.Convert<T>(x))
 				.ToArray();
@@ -802,7 +802,7 @@ public partial class ODataClient
 
 			return x.Feed?.Entries;
 		},
-		() => Array.Empty<AnnotatedEntry>()).ConfigureAwait(false);
+		() => []).ConfigureAwait(false);
 	}
 
 	internal async Task<IEnumerable<IDictionary<string, object>>> FindEntriesAsync(
@@ -843,7 +843,7 @@ public partial class ODataClient
 
 		var result = await ExecuteRequestWithResultAsync(request, cancellationToken,
 			x => x.AsEntries(Session.Settings.IncludeAnnotationsInResults),
-			() => Array.Empty<IDictionary<string, object>>()).ConfigureAwait(false);
+			() => []).ConfigureAwait(false);
 		return result?.FirstOrDefault();
 	}
 
@@ -884,7 +884,7 @@ public partial class ODataClient
 
 		var result = await ExecuteRequestWithResultAsync(request, cancellationToken,
 			x => x.AsEntries(Session.Settings.IncludeAnnotationsInResults),
-			() => Array.Empty<IDictionary<string, object>>()).ConfigureAwait(false);
+			() => []).ConfigureAwait(false);
 
 		static object? extractScalar(IDictionary<string, object?> x) => (x is null) || (x.Count == 0) ? null : x.First().Value;
 		return result is null ? null : extractScalar(result.FirstOrDefault());
@@ -1246,7 +1246,7 @@ public partial class ODataClient
 
 		var result = await ExecuteAsEnumerableAsync(command, cancellationToken).ConfigureAwait(false);
 		return IsBatchRequest
-			? Array.Empty<T>()
+			? []
 			: result is null
 			? null
 			: typeof(T) == typeof(string) || typeof(T).IsValue()
@@ -1263,7 +1263,7 @@ public partial class ODataClient
 
 		var result = await ExecuteAsEnumerableAsync(command, annotations, cancellationToken).ConfigureAwait(false);
 		return IsBatchRequest
-			? Array.Empty<T>()
+			? []
 			: result is null
 			? null
 			: typeof(T) == typeof(string) || typeof(T).IsValue()

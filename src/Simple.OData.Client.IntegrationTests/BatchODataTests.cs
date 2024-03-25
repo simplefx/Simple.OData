@@ -136,7 +136,7 @@ public abstract class BatchODataTests : ODataTestBase
 		var batch = new ODataBatch(_serviceUri);
 		batch += async x => product1 = await x.InsertEntryAsync("Products", CreateProduct(5015, "Test15"));
 		batch += async x => product2 = await x.InsertEntryAsync("Products", CreateProduct(5016, "Test16"));
-		batch += async x => await x.InsertEntryAsync("Categories", CreateCategory(5017, "Test17", new[] { product1, product2 }), false);
+		batch += async x => await x.InsertEntryAsync("Categories", CreateCategory(5017, "Test17", [product1, product2]), false);
 		await batch.ExecuteAsync();
 
 		var category = await _client
@@ -186,7 +186,7 @@ public abstract class BatchODataTests : ODataTestBase
 		var batch = new ODataBatch(client, reuseSession: true);
 		batch += async x => product1 = await x.InsertEntryAsync("Products", CreateProduct(5015, "Test15"));
 		batch += async x => product2 = await x.InsertEntryAsync("Products", CreateProduct(5016, "Test16"));
-		batch += async x => await x.InsertEntryAsync("Categories", CreateCategory(5017, "Test17", new[] { product1, product2 }), false);
+		batch += async x => await x.InsertEntryAsync("Categories", CreateCategory(5017, "Test17", [product1, product2]), false);
 		await batch.ExecuteAsync();
 
 		var category = await _client

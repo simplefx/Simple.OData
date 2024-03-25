@@ -113,7 +113,7 @@ public class ODataResponse
 		}
 		else
 		{
-			return Array.Empty<IDictionary<string, object>>();
+			return [];
 		}
 	}
 

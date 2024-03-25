@@ -87,7 +87,7 @@ public class ClientWithResponse<T> : IClientWithResponse<T>
 		}
 		else
 		{
-			return Array.Empty<T>();
+			return [];
 		}
 	}
 

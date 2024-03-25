@@ -22,7 +22,7 @@ internal static class TypeExtensions
 			properties.AddRange(baseType.GetAllProperties().Where(x => properties.All(y => y.Name != x.Name)));
 		}
 
-		return properties.ToArray();
+		return [.. properties];
 	}
 
 	/// <summary>
@@ -95,7 +95,7 @@ internal static class TypeExtensions
 			fields.AddRange(baseType.GetAllFields().Where(x => fields.All(y => y.Name != x.Name)));
 		}
 
-		return fields.ToArray();
+		return [.. fields];
 	}
 
 	public static FieldInfo GetAnyField(this Type type, string fieldName, bool includeNonPublic = false)

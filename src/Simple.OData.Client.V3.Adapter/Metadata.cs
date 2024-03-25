@@ -164,7 +164,7 @@ namespace Simple.OData.Client.V3.Adapter
 				}
 			}
 
-			return string.Join("/", exactNames.ToArray());
+			return string.Join("/", [.. exactNames]);
 		}
 
 		public override bool HasNavigationProperty(string collectionName, string propertyName)
@@ -204,7 +204,7 @@ namespace Simple.OData.Client.V3.Adapter
 
 			if (entityType.DeclaredKey is null)
 			{
-				return Array.Empty<string>();
+				return [];
 			}
 
 			return entityType.DeclaredKey.Select(x => x.Name);
@@ -223,7 +223,7 @@ namespace Simple.OData.Client.V3.Adapter
 		/// <returns>An empty enumeration of string enumerations representing the key names</returns>
 		public override IEnumerable<IEnumerable<string>> GetAlternateKeyPropertyNames(string collectionName)
 		{
-			return Enumerable.Empty<IEnumerable<string>>();
+			return [];
 		}
 
 		public override string GetFunctionFullName(string functionName)

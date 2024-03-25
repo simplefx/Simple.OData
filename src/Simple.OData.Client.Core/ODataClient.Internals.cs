@@ -36,7 +36,7 @@ public partial class ODataClient
 
 				return result;
 			},
-			() => Array.Empty<IDictionary<string, object>>()).ConfigureAwait(false);
+			() => []).ConfigureAwait(false);
 	}
 
 	private async Task<IEnumerable<IDictionary<string, object>>> ExecuteFunctionAsync(ResolvedCommand command, CancellationToken cancellationToken)
@@ -46,7 +46,7 @@ public partial class ODataClient
 
 		return await ExecuteRequestWithResultAsync(request, cancellationToken,
 			x => x.AsEntries(Session.Settings.IncludeAnnotationsInResults),
-			() => Array.Empty<IDictionary<string, object>>()).ConfigureAwait(false);
+			() => []).ConfigureAwait(false);
 	}
 
 	private async Task<IEnumerable<IDictionary<string, object>>> ExecuteActionAsync(ResolvedCommand command, ODataFeedAnnotations annotations, CancellationToken cancellationToken)
@@ -68,7 +68,7 @@ public partial class ODataClient
 
 				return result;
 			},
-			() => Array.Empty<IDictionary<string, object>>()).ConfigureAwait(false);
+			() => []).ConfigureAwait(false);
 	}
 
 	private async Task<IEnumerable<IDictionary<string, object>>> ExecuteActionAsync(ResolvedCommand command, CancellationToken cancellationToken)
@@ -81,7 +81,7 @@ public partial class ODataClient
 
 		return await ExecuteRequestWithResultAsync(request, cancellationToken,
 			x => x.AsEntries(Session.Settings.IncludeAnnotationsInResults),
-			() => Array.Empty<IDictionary<string, object>>()).ConfigureAwait(false);
+			() => []).ConfigureAwait(false);
 	}
 
 	private async Task ExecuteBatchActionsAsync(IList<Func<IODataClient, Task>> actions, IDictionary<string, string> headers, CancellationToken cancellationToken)

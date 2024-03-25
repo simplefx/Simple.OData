@@ -85,7 +85,7 @@ public class ODataAdapterFactory : IODataAdapterFactory
 					.ReadAsStringAsync()
 					.ConfigureAwait(false);
 				var protocolVersion = GetMetadataProtocolVersion(metadataString);
-				return new[] { protocolVersion };
+				return [protocolVersion];
 			}
 			catch (Exception)
 			{

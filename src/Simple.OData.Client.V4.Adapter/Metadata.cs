@@ -206,7 +206,7 @@ public class Metadata : MetadataBase
 			}
 		}
 
-		return string.Join("/", exactNames.ToArray());
+		return string.Join("/", [.. exactNames]);
 	}
 
 	public override bool HasNavigationProperty(string collectionName, string propertyName)
@@ -246,7 +246,7 @@ public class Metadata : MetadataBase
 
 		if (entityType.DeclaredKey is null)
 		{
-			return Array.Empty<string>();
+			return [];
 		}
 
 		return entityType.DeclaredKey.Select(x => x.Name);

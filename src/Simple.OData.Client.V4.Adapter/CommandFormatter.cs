@@ -212,7 +212,7 @@ public class CommandFormatter : CommandFormatterBase
 	{
 		if (first.Name != second.Name && first.Name != "*")
 		{
-			return new[] { first, second };
+			return [first, second];
 		}
 
 		var result = first.Clone();
@@ -236,7 +236,7 @@ public class CommandFormatter : CommandFormatterBase
 
 		result.ExpandAssociations.AddRange(mergedExpandAssociations);
 
-		return new[] { result };
+		return [result];
 	}
 
 	private static ODataExpandAssociation MergeOrderByColumns(ODataExpandAssociation expandAssociation, KeyValuePair<string, bool> orderByColumn)

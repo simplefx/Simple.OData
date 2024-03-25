@@ -135,7 +135,7 @@ public class SpecialTests : ODataTestBase
 			tasks.Add(task);
 		}
 
-		Task.WaitAll(tasks.ToArray());
+		Task.WaitAll([.. tasks]);
 
 		Assert.Equal(products.Length, summary.ExecutionCount);
 		Assert.Equal(0, summary.ExceptionCount);

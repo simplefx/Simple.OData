@@ -295,7 +295,7 @@ public class MockingRequestExecutor
 			AdjustBatchIds(
 			AdjustNewLines(
 			AdjustBaseUrl(
-			RemoveElements(content, new[] { "updated" }))));
+			RemoveElements(content, ["updated"]))));
 
 	}
 
