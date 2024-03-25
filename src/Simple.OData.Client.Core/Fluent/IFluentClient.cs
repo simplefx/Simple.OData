@@ -331,8 +331,7 @@ public interface IFluentClient<T, FT>
 	/// <summary>
 	/// Adds a collection of headers to be included in the HTTP request.
 	/// </summary>
-	/// <param name="name">The header name.</param>
-	/// <param name="value">The header value.</param>
+	/// <param name="headers">The headers.</param>
 	/// <remarks>Ignored in batch actions. For batch headers use the <see cref="ODataBatch.WithHeaders(IDictionary{string, string})"/> method.</remarks>
 	/// <returns>Self.</returns>
 	FT WithHeaders(IEnumerable<KeyValuePair<string, string>> headers);
