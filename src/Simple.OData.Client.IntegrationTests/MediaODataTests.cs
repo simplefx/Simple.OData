@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using FluentAssertions;
+using Xunit;
 
 namespace Simple.OData.Client.Tests;
 
@@ -48,7 +49,7 @@ public abstract class MediaODataTests(string serviceUri, ODataPayloadFormat payl
 			.Media()
 			.GetStreamAsync();
 		var text = Utils.StreamToString(stream);
-		Assert.Contains("stream data", text);
+		text.Should().Contain("stream data");
 	}
 
 	[Fact]
@@ -61,7 +62,7 @@ public abstract class MediaODataTests(string serviceUri, ODataPayloadFormat payl
 			.Media("Photo")
 			.GetStreamAsync();
 		var text = Utils.StreamToString(stream);
-		Assert.Contains("named stream data", text);
+		text.Should().Contain("named stream data");
 	}
 
 	[Fact]

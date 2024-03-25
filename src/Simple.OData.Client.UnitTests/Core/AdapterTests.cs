@@ -1,5 +1,6 @@
 ﻿using System.Text.RegularExpressions;
 using System.Web;
+using FluentAssertions;
 using Microsoft.Data.OData;
 using Simple.OData.Client.V3.Adapter;
 using Xunit;
@@ -58,7 +59,7 @@ public class AdapterTests : TestBase
 		var settings = CreateDefaultSettings();
 		settings.AdapterFactory = new CustomAdapterFactory();
 		var client = new ODataClient(settings);
-		Assert.IsType<CustomAdapter>(client.Session.Adapter);
+		client.Session.Adapter.Should().BeOfType<CustomAdapter>();
 	}
 
 	[Fact]

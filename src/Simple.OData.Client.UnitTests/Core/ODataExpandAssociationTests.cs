@@ -1,3 +1,4 @@
+using FluentAssertions;
 using Xunit;
 
 namespace Simple.OData.Client.Tests.Core;
@@ -9,7 +10,7 @@ public class ODataExpandAssociationTests
 	{
 		var association = ODataExpandAssociation.From("Products");
 
-		Assert.Equal("Products", association.Name);
+		association.Name.Should().Be("Products");
 	}
 
 	[Fact]
@@ -17,7 +18,7 @@ public class ODataExpandAssociationTests
 	{
 		var association = ODataExpandAssociation.From("Products/Category/Orders");
 
-		Assert.Equal("Products", association.Name);
+		association.Name.Should().Be("Products");
 		Assert.Single(association.ExpandAssociations);
 		Assert.Equal("Category", association.ExpandAssociations.First().Name);
 		Assert.Single(association.ExpandAssociations.First().ExpandAssociations);

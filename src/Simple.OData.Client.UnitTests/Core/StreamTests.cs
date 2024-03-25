@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using FluentAssertions;
+using Xunit;
 
 namespace Simple.OData.Client.Tests.Core;
 
@@ -23,6 +24,6 @@ public class StreamTests : CoreTestBase
 			.QueryOptions(new Dictionary<string, object>() { { "IntOption", 42 }, { "StringOption", "xyz" } })
 			.Media();
 		var commandText = await command.GetCommandTextAsync();
-		Assert.Equal("Photos(1)/$value?IntOption=42&StringOption='xyz'", commandText);
+		commandText.Should().Be("Photos(1)/$value?IntOption=42&StringOption='xyz'");
 	}
 }

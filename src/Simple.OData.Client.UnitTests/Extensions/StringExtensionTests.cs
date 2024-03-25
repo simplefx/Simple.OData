@@ -1,4 +1,5 @@
-﻿using Simple.OData.Client.Extensions;
+﻿using FluentAssertions;
+using Simple.OData.Client.Extensions;
 using Xunit;
 
 namespace Simple.OData.Client.Tests.Extensions;
@@ -10,7 +11,7 @@ public class StringExtensionTests
 	{
 		var actual = "bar".EnsureStartsWith("foo");
 
-		Assert.Equal("foobar", actual);
+		actual.Should().Be("foobar");
 	}
 
 	[Fact]
@@ -18,6 +19,6 @@ public class StringExtensionTests
 	{
 		var actual = "foobar".EnsureStartsWith("foo");
 
-		Assert.Equal("foobar", actual);
+		actual.Should().Be("foobar");
 	}
 }

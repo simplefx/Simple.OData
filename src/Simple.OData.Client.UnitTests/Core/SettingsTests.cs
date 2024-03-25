@@ -1,4 +1,5 @@
 ﻿using System.Net.Http;
+using FluentAssertions;
 using Xunit;
 
 namespace Simple.OData.Client.Tests.Core;
@@ -15,7 +16,7 @@ public class SettingsTests
 	public void DefaultCtorAndBaseUri()
 	{
 		var settings = new ODataClientSettings { BaseUri = new Uri("http://localhost") };
-		Assert.Equal("http://localhost/", settings.BaseUri.AbsoluteUri);
+		settings.BaseUri.AbsoluteUri.Should().Be("http://localhost/");
 	}
 
 	[Fact]

@@ -1,4 +1,5 @@
 ﻿using System.Net.Http;
+using FluentAssertions;
 using Xunit;
 
 namespace Simple.OData.Client.Tests;
@@ -116,7 +117,7 @@ public abstract class TestBase : IDisposable
 		}
 		catch (AggregateException exception)
 		{
-			Assert.IsType<T>(exception.InnerExceptions.Single());
+			exception.InnerExceptions.Single().Should().BeOfType<T>();
 		}
 	}
 }

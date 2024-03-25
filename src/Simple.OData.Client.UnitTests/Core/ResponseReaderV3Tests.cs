@@ -1,3 +1,4 @@
+using FluentAssertions;
 using Microsoft.Data.Edm;
 using Simple.OData.Client.V3.Adapter;
 using Xunit;
@@ -83,8 +84,8 @@ public class ResponseReaderV3Tests : CoreTestBase
 		var result = (await responseReader.GetResponseAsync(response)).AsEntry(false);
 		Assert.Equal(productProperties + 1, result.Count);
 		var quantity = result["Quantity"] as IDictionary<string, object>;
-		Assert.NotNull(quantity);
-		Assert.Equal(10d, quantity["Value"]);
+		quantity.Should().NotBeNull();
+		quantity["Value"].Should().Be(10d);
 		Assert.Equal("bags", quantity["Units"]);
 	}
 

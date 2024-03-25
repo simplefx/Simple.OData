@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using FluentAssertions;
+using Xunit;
 
 namespace Simple.OData.Client.Tests.FluentApi;
 
@@ -30,7 +31,7 @@ public class LinkTypedTests : TestBase
 			.For<Product>()
 			.Filter(x => x.ProductName == "Test5")
 			.FindEntryAsync();
-		Assert.NotNull(product.CategoryID);
+		product.CategoryID.Should().NotBeNull();
 		Assert.Equal(category.CategoryID, product.CategoryID);
 	}
 
@@ -60,6 +61,6 @@ public class LinkTypedTests : TestBase
 			.For<Product>()
 			.Filter(x => x.ProductName == "Test5")
 			.FindEntryAsync();
-		Assert.Null(product.CategoryID);
+		product.CategoryID.Should().BeNull();
 	}
 }

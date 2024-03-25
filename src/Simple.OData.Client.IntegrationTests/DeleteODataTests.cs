@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using FluentAssertions;
+using Xunit;
 
 namespace Simple.OData.Client.Tests;
 
@@ -47,7 +48,7 @@ public abstract class DeleteODataTests(string serviceUri, ODataPayloadFormat pay
 			.Filter("Name eq 'Test1'")
 			.FindEntryAsync();
 
-		Assert.Null(product);
+		product.Should().BeNull();
 	}
 
 	[Fact]
@@ -68,7 +69,7 @@ public abstract class DeleteODataTests(string serviceUri, ODataPayloadFormat pay
 			.Filter("Name eq 'Test1'")
 			.FindEntryAsync();
 
-		Assert.Null(product);
+		product.Should().BeNull();
 	}
 
 	[Fact]

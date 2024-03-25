@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using FluentAssertions;
+using Xunit;
 
 namespace Simple.OData.Client.Tests.FluentApi;
 
@@ -82,7 +83,7 @@ public class UpdateTypedTests : TestBase
 			.Filter(x => x.ProductName == "Test1")
 			.Set(new { UnitPrice = 123m })
 			.UpdateEntriesAsync(false)).Single();
-		Assert.Null(product);
+		product.Should().BeNull();
 
 		product = await client
 			.For<Product>()
@@ -162,7 +163,7 @@ public class UpdateTypedTests : TestBase
 			.Key(employee.EmployeeID)
 			.FindEntryAsync();
 
-		Assert.Equal(tomorrow, employee.HireDate);
+		employee.HireDate.Should().Be(tomorrow);
 	}
 
 	[Fact]

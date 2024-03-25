@@ -1,4 +1,5 @@
 ﻿using System.Collections;
+using FluentAssertions;
 using Xunit;
 
 namespace Simple.OData.Client.Tests;
@@ -52,8 +53,8 @@ public abstract class LinkODataTests(string serviceUri, ODataPayloadFormat paylo
 			.Filter("Name eq 'Test5'")
 			.Expand(ProductCategoryName)
 			.FindEntryAsync();
-		Assert.NotNull(product[ProductCategoryName]);
-		Assert.Equal(category["ID"], ProductCategoryFunc(product)["ID"]);
+		product[ProductCategoryName].Should().NotBeNull();
+		ProductCategoryFunc(product)["ID"].Should().Be(category["ID"]);
 	}
 
 	[Fact]

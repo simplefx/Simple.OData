@@ -1,4 +1,5 @@
 ﻿using System.Net.Http;
+using FluentAssertions;
 using Microsoft.Data.Edm;
 using Xunit;
 
@@ -87,7 +88,7 @@ public class SpecialTests : ODataTestBase
 		var model = await client.GetMetadataAsync<IEdmModel>();
 		var type = model.FindDeclaredType("ODataDemo.Product");
 		var property = (type as IEdmEntityType).DeclaredProperties.Single(x => x.Name == "Price");
-		Assert.True(property.Type.IsNullable);
+		property.Type.IsNullable.Should().BeTrue();
 
 		await AssertThrowsAsync<WebRequestException>(async () =>
 			await client.InsertEntryAsync("Products",
@@ -178,7 +179,7 @@ public class SpecialTests : ODataTestBase
 		await batch.ExecuteAsync();
 
 		product = await client.FindEntryAsync("Products?$filter=Name eq 'Test1'");
-		Assert.Null(product);
+		product.Should().BeNull();
 	}
 
 	/// <summary>

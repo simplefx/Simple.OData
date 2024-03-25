@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using FluentAssertions;
+using Xunit;
 
 namespace Simple.OData.Client.Tests;
 
@@ -40,9 +41,9 @@ public abstract class BatchODataTests(string serviceUri, ODataPayloadFormat payl
 		await batch.ExecuteAsync();
 
 		var product = await _client.FindEntryAsync("Products?$filter=Name eq 'Test1'");
-		Assert.NotNull(product);
+		product.Should().NotBeNull();
 		product = await _client.FindEntryAsync("Products?$filter=Name eq 'Test2'");
-		Assert.NotNull(product);
+		product.Should().NotBeNull();
 	}
 
 	// OData.org sample service doesn't fail on this request

@@ -1,4 +1,5 @@
-﻿using Microsoft.OData.Edm;
+﻿using FluentAssertions;
+using Microsoft.OData.Edm;
 using Simple.OData.Client.V4.Adapter;
 using Xunit;
 
@@ -22,6 +23,6 @@ public class ActionWithEnumTests : CoreTestBase
 		var requestWriter = new RequestWriter(_session, await _client.GetMetadataAsync<IEdmModel>().ConfigureAwait(false), null);
 		var result = await requestWriter.CreateActionRequestAsync("Entity", "MakeFromParam", null,
 					new Dictionary<string, object>() { { "Name", "Entity Name" }, { "Rank", Rank.Second } }, false);
-		Assert.Equal("POST", result.Method);
+		result.Method.Should().Be("POST");
 	}
 }

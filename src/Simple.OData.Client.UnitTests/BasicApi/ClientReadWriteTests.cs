@@ -1,3 +1,4 @@
+using FluentAssertions;
 using Xunit;
 
 namespace Simple.OData.Client.Tests.BasicApi;
@@ -12,7 +13,7 @@ public class ClientReadWriteTests : TestBase
 		var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
 		var product = await client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test1" }, { "UnitPrice", 18m } }, true);
 
-		Assert.Equal("Test1", product["ProductName"]);
+		product["ProductName"].Should().Be("Test1");
 	}
 
 	[Fact]
@@ -21,7 +22,7 @@ public class ClientReadWriteTests : TestBase
 		var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
 		var product = await client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test2" }, { "UnitPrice", 18m } }, false);
 
-		Assert.Null(product);
+		product.Should().BeNull();
 	}
 
 	[Fact]

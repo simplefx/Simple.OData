@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using FluentAssertions;
+using Xunit;
 
 namespace Simple.OData.Client.Tests.FluentApi;
 
@@ -23,7 +24,7 @@ public class DeleteTests : TestBase
 			.Filter("ProductName eq 'Test1'")
 			.FindEntryAsync();
 
-		Assert.Null(product);
+		product.Should().BeNull();
 	}
 
 	[Fact(Skip = "Cannot be mocked")]
@@ -46,7 +47,7 @@ public class DeleteTests : TestBase
 			.Filter("ProductName eq 'Test1'")
 			.FindEntryAsync();
 
-		Assert.Null(product);
+		product.Should().BeNull();
 	}
 
 	[Fact]

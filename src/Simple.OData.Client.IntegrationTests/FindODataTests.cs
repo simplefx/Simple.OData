@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using FluentAssertions;
+using Xunit;
 
 namespace Simple.OData.Client.Tests;
 
@@ -36,7 +37,7 @@ public abstract class FindODataTests(string serviceUri, ODataPayloadFormat paylo
 			.For("Products")
 			.Filter("Name eq 'Milk'")
 			.FindEntriesAsync();
-		Assert.Equal("Milk", products.Single()["Name"]);
+		products.Single()["Name"].Should().Be("Milk");
 	}
 
 	[Fact]
@@ -57,7 +58,7 @@ public abstract class FindODataTests(string serviceUri, ODataPayloadFormat paylo
 			.For("Categories")
 			.Key(1)
 			.FindEntryAsync();
-		Assert.Equal(1, category["ID"]);
+		category["ID"].Should().Be(1);
 	}
 
 	[Fact]

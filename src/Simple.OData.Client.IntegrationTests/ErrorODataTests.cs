@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using FluentAssertions;
+using Xunit;
 
 namespace Simple.OData.Client.Tests;
 
@@ -39,11 +40,11 @@ public abstract class ErrorODataTests(string serviceUri, ODataPayloadFormat payl
 				.Filter("NonExistingProperty eq 1")
 				.FindEntryAsync();
 
-			Assert.False(true, "Expected exception");
+			true.Should().BeFalse("Expected exception");
 		}
 		catch (WebRequestException ex)
 		{
-			Assert.NotNull(ex.Response);
+			ex.Response.Should().NotBeNull();
 		}
 		catch (Exception)
 		{

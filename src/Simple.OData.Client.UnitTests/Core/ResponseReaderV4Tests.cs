@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using FluentAssertions;
 using Microsoft.OData;
 using Microsoft.OData.Edm;
 using Moq;
@@ -18,7 +19,7 @@ public class ResponseReaderV4Tests : CoreTestBase
 		var response = SetUpResourceMock("AccountTasksOnlyLink.json");
 		var responseReader = new ResponseReader(_session, await _client.GetMetadataAsync<IEdmModel>());
 		var result = (await responseReader.GetResponseAsync(response)).Feed;
-		Assert.NotNull(result.Entries.First().LinkAnnotations);
+		result.Entries.First().LinkAnnotations.Should().NotBeNull();
 	}
 
 	[Fact]
@@ -27,7 +28,7 @@ public class ResponseReaderV4Tests : CoreTestBase
 		var response = SetUpResourceMock("AccountTasksAndLink.json");
 		var responseReader = new ResponseReader(_session, await _client.GetMetadataAsync<IEdmModel>());
 		var result = (await responseReader.GetResponseAsync(response)).Feed;
-		Assert.NotNull(result.Entries.First().LinkAnnotations);
+		result.Entries.First().LinkAnnotations.Should().NotBeNull();
 	}
 
 	[Fact]

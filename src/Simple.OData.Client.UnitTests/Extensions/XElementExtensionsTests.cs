@@ -1,4 +1,5 @@
 ﻿using System.Xml.Linq;
+using FluentAssertions;
 using Simple.OData.Client.Extensions;
 using Simple.OData.Client.UnitTests.Properties;
 using Xunit;
@@ -14,8 +15,8 @@ public class XElementExtensionsTests
 		var element = XElement.Parse(content);
 		var list = element.Elements(null, "child").ToList();
 		Assert.Equal(2, list.Count);
-		Assert.Equal("Foo", list[0].Element(null, "sub").Value);
-		Assert.Equal("Bar", list[1].Element(null, "sub").Value);
+		list[0].Element(null, "sub").Value.Should().Be("Foo");
+		list[1].Element(null, "sub").Value.Should().Be("Bar");
 	}
 
 	[Fact]

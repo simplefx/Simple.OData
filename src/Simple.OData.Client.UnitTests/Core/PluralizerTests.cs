@@ -1,4 +1,5 @@
-﻿using Simple.OData.Client.Extensions;
+﻿using FluentAssertions;
+using Simple.OData.Client.Extensions;
 using Xunit;
 
 namespace Simple.OData.Client.Tests.Core;
@@ -17,7 +18,7 @@ public class PluralizerTests
 	[InlineData("Status", "Statuses")]
 	public void PluralizeWord(string word, string expectedResult)
 	{
-		Assert.Equal(expectedResult, _pluralizer.Pluralize(word));
+		_pluralizer.Pluralize(word).Should().Be(expectedResult);
 	}
 
 	[Theory]
@@ -31,7 +32,7 @@ public class PluralizerTests
 	[InlineData("Statuses", "Status")]
 	public void SingularizeWord(string word, string expectedResult)
 	{
-		Assert.Equal(expectedResult, _pluralizer.Singularize(word));
+		_pluralizer.Singularize(word).Should().Be(expectedResult);
 	}
 
 	[Theory]

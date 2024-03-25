@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using FluentAssertions;
+using Xunit;
 
 namespace Simple.OData.Client.Tests;
 
@@ -45,7 +46,7 @@ public abstract class MetadataODataTests(string serviceUri, ODataPayloadFormat p
 			.For("Products")
 			.Filter("Name eq 'Milk'")
 			.FindEntriesAsync();
-		Assert.Equal("Milk", products.Single()["Name"]);
+		products.Single()["Name"].Should().Be("Milk");
 	}
 
 	[Fact]

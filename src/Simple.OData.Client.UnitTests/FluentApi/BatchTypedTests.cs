@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using FluentAssertions;
+using Xunit;
 
 namespace Simple.OData.Client.Tests.FluentApi;
 
@@ -24,12 +25,12 @@ public class BatchTypedTests : TestBase
 			.For<Product>()
 			.Filter(x => x.ProductName == "Test1")
 			.FindEntryAsync();
-		Assert.NotNull(product);
+		product.Should().NotBeNull();
 		product = await client
 			.For<Product>()
 			.Filter(x => x.ProductName == "Test2")
 			.FindEntryAsync();
-		Assert.NotNull(product);
+		product.Should().NotBeNull();
 	}
 
 	[Fact]

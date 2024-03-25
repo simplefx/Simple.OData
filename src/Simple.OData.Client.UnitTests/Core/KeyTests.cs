@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using FluentAssertions;
+using Xunit;
 
 namespace Simple.OData.Client.Tests.Core;
 
@@ -18,7 +19,7 @@ public class KeyTests : CoreTestBase
 			.For<Category>()
 			.Key(1);
 		var commandText = await command.GetCommandTextAsync();
-		Assert.Equal(expectedCommand, commandText);
+		commandText.Should().Be(expectedCommand);
 	}
 
 	[Theory]
@@ -32,7 +33,7 @@ public class KeyTests : CoreTestBase
 			.For<Category>()
 			.Key(new { CategoryID = 1 });
 		var commandText = await command.GetCommandTextAsync();
-		Assert.Equal(expectedCommand, commandText);
+		commandText.Should().Be(expectedCommand);
 	}
 
 	[Theory]

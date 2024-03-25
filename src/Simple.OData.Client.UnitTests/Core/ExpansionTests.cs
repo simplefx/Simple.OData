@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using FluentAssertions;
+using Xunit;
 
 namespace Simple.OData.Client.Tests.Core;
 
@@ -17,7 +18,7 @@ public class ExpansionTests : CoreTestBase
 			.For<Employee>()
 			.Expand(x => x.Subordinates);
 		var commandText = await command.GetCommandTextAsync();
-		Assert.Equal(expectedCommand, commandText);
+		commandText.Should().Be(expectedCommand);
 	}
 
 	[Theory]
@@ -30,7 +31,7 @@ public class ExpansionTests : CoreTestBase
 			.For<Employee>()
 			.Expand("*");
 		var commandText = await command.GetCommandTextAsync();
-		Assert.Equal(expectedCommand, commandText);
+		commandText.Should().Be(expectedCommand);
 	}
 
 	[Theory]

@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using FluentAssertions;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Xunit;
 
@@ -32,11 +33,11 @@ public class RequestWriterActionTests : CoreTestBase
 		var stringResult = await request.RequestMessage.Content.ReadAsStringAsync();
 		var result = JsonConvert.DeserializeObject<JObject>(stringResult);
 
-		Assert.True(result.ContainsKey("OrderClose"));
+		result.ContainsKey("OrderClose").Should().BeTrue();
 
 		var orderClose = result["OrderClose"];
 
-		Assert.NotNull(orderClose);
+		orderClose.Should().NotBeNull();
 		Assert.NotNull(orderClose["@odata.type"]);
 		Assert.Equal("#Microsoft.Dynamics.CRM.orderclose", ((JValue)orderClose["@odata.type"]).Value as string);
 	}

@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using FluentAssertions;
 using Microsoft.OData;
 using Microsoft.OData.Edm;
 using Moq;
@@ -21,8 +22,8 @@ public class OpenTypesTests : CoreTestBase
 		var responseReader = new ResponseReader(_session, edmModel);
 		var result = (await responseReader.GetResponseAsync(response)).Feed;
 		var entry = result.Entries.First();
-		Assert.NotNull(entry);
-		Assert.Equal(42m, entry.Data["Id"]);
+		entry.Should().NotBeNull();
+		entry.Data["Id"].Should().Be(42m);
 		Assert.Equal(43m, entry.Data["IntegerProperty"]);
 		Assert.Null(entry.Data["NullProperty"]);
 		Assert.Equal("some string", entry.Data["StringProperty"]);

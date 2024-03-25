@@ -1,4 +1,5 @@
 ﻿using System.Dynamic;
+using FluentAssertions;
 using Xunit;
 
 namespace Simple.OData.Client.Tests;
@@ -38,7 +39,7 @@ public abstract class InsertODataTests(string serviceUri, ODataPayloadFormat pay
 			.Set(CreateProduct(1001, "Test1"))
 			.InsertEntryAsync();
 
-		Assert.Equal("Test1", product["Name"]);
+		product["Name"].Should().Be("Test1");
 	}
 
 	[Fact]
@@ -49,7 +50,7 @@ public abstract class InsertODataTests(string serviceUri, ODataPayloadFormat pay
 			.Set(CreateProduct(1002, "Test1"))
 			.InsertEntryAsync();
 
-		Assert.True((int)product["ID"] > 0);
+		((int)product["ID"] > 0).Should().BeTrue();
 		Assert.Equal("Test1", product["Name"]);
 	}
 

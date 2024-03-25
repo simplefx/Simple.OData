@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using FluentAssertions;
+using Xunit;
 using Entry = System.Collections.Generic.Dictionary<string, object>;
 
 namespace Simple.OData.Client.Tests.FluentApi;
@@ -17,8 +18,8 @@ public class WithHeaderTests : TestBase
 			.BuildRequestFor()
 			.FindEntryAsync();
 
-		Assert.Equal("header1Value", request.GetRequest().RequestMessage.Headers.GetValues("header1").SingleOrDefault());
-		Assert.Equal("header2Value", request.GetRequest().RequestMessage.Headers.GetValues("header2").SingleOrDefault());
+		request.GetRequest().RequestMessage.Headers.GetValues("header1").SingleOrDefault().Should().Be("header1Value");
+		request.GetRequest().RequestMessage.Headers.GetValues("header2").SingleOrDefault().Should().Be("header2Value");
 	}
 
 	[Fact]

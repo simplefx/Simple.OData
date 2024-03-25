@@ -1,4 +1,5 @@
-﻿using Microsoft.Spatial;
+﻿using FluentAssertions;
+using Microsoft.Spatial;
 using Simple.OData.Client.Tests.Entities;
 using Xunit;
 
@@ -47,8 +48,8 @@ public class TypeCacheValueConversionTests
 	{
 		var sourceValue = ChangeType(value, sourceType);
 		var result = TypeCache.TryConvert(sourceValue, targetType, out var targetValue);
-		Assert.True(result);
-		Assert.Equal(ChangeType(sourceValue, targetType), ChangeType(targetValue, targetType));
+		result.Should().BeTrue();
+		ChangeType(targetValue, targetType).Should().Be(ChangeType(sourceValue, targetType));
 
 		sourceValue = ChangeType(value, targetType);
 		result = TypeCache.TryConvert(sourceValue, sourceType, out targetValue);

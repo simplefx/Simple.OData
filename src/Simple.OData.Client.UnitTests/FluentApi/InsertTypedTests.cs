@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using FluentAssertions;
+using Xunit;
 
 namespace Simple.OData.Client.Tests.FluentApi;
 
@@ -13,7 +14,7 @@ public class InsertTypedTests : TestBase
 			.Set(new { ProductName = "Test1", UnitPrice = 18m })
 			.InsertEntryAsync();
 
-		Assert.Equal("Test1", product.ProductName);
+		product.ProductName.Should().Be("Test1");
 	}
 
 	[Fact]
@@ -25,7 +26,7 @@ public class InsertTypedTests : TestBase
 			.Set(new { ProductName = "Test1", UnitPrice = 18m })
 			.InsertEntryAsync();
 
-		Assert.True(product.ProductID > 0);
+		(product.ProductID > 0).Should().BeTrue();
 		Assert.Equal("Test1", product.ProductName);
 	}
 

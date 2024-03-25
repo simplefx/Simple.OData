@@ -1,4 +1,5 @@
-﻿using Simple.OData.Client.Extensions;
+﻿using FluentAssertions;
+using Simple.OData.Client.Extensions;
 using Xunit;
 
 namespace Simple.OData.Client.Tests;
@@ -44,13 +45,13 @@ public class TypeExtensionTests
 	[Fact]
 	public void GetNamedProperty_BaseType()
 	{
-		Assert.NotNull(typeof(Transport).GetNamedProperty("TransportID"));
+		typeof(Transport).GetNamedProperty("TransportID").Should().NotBeNull();
 	}
 
 	[Fact]
 	public void GetNamedProperty_DerivedType()
 	{
-		Assert.NotNull(typeof(Ship).GetNamedProperty("TransportID"));
+		typeof(Ship).GetNamedProperty("TransportID").Should().NotBeNull();
 		Assert.NotNull(typeof(Ship).GetNamedProperty("ShipName"));
 	}
 

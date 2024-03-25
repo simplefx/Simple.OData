@@ -1,5 +1,5 @@
-﻿using Xunit;
-
+﻿using FluentAssertions;
+using Xunit;
 using Entry = System.Collections.Generic.Dictionary<string, object>;
 
 namespace Simple.OData.Client.Tests;
@@ -52,7 +52,7 @@ public abstract class UpdateODataTests(string serviceUri, ODataPayloadFormat pay
 			.Key(product["ID"])
 			.FindEntryAsync();
 
-		Assert.Equal(123d, product["Price"]);
+		product["Price"].Should().Be(123d);
 	}
 
 	[Fact]
@@ -74,7 +74,7 @@ public abstract class UpdateODataTests(string serviceUri, ODataPayloadFormat pay
 			.Key(product["ID"])
 			.FindEntryAsync();
 
-		Assert.Equal(123d, product["Price"]);
+		product["Price"].Should().Be(123d);
 	}
 
 	[Fact]

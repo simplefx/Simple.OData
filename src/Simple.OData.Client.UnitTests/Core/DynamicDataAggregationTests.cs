@@ -1,4 +1,5 @@
-﻿using Simple.OData.Client.V4.Adapter.Extensions;
+﻿using FluentAssertions;
+using Simple.OData.Client.V4.Adapter.Extensions;
 using Xunit;
 
 namespace Simple.OData.Client.Tests.Core;
@@ -18,7 +19,7 @@ public class DynamicDataAggregationTests : CoreTestBase
 			.Apply(b.Filter("contains(ProductName,'ai')").Filter("startswith(ProductName,'Ch')"));
 
 		var commandText = await command.GetCommandTextAsync();
-		Assert.Equal("Products?$apply=filter%28contains%28ProductName%2C%27ai%27%29%20and%20startswith%28ProductName%2C%27Ch%27%29%29", commandText);
+		commandText.Should().Be("Products?$apply=filter%28contains%28ProductName%2C%27ai%27%29%20and%20startswith%28ProductName%2C%27Ch%27%29%29");
 	}
 
 	[Fact]
@@ -103,7 +104,7 @@ public class DynamicDataAggregationTests : CoreTestBase
 			.Apply(b.Aggregate(new { AverageUnitPrice = a.Average(x.UnitPrice) }));
 
 		var commandText = await command.GetCommandTextAsync();
-		Assert.Equal("Products?$apply=aggregate%28UnitPrice%20with%20average%20as%20AverageUnitPrice%29", commandText);
+		commandText.Should().Be("Products?$apply=aggregate%28UnitPrice%20with%20average%20as%20AverageUnitPrice%29");
 	}
 
 	[Fact]

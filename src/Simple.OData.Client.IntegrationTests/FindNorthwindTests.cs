@@ -1,5 +1,5 @@
-﻿using Xunit;
-
+﻿using FluentAssertions;
+using Xunit;
 using Entry = System.Collections.Generic.Dictionary<string, object>;
 
 namespace Simple.OData.Client.Tests;
@@ -85,7 +85,7 @@ public abstract class FindNorthwindTests(string serviceUri, ODataPayloadFormat p
 			.For("Products")
 			.Filter("ProductName eq 'Chai'")
 			.FindEntriesAsync();
-		Assert.Equal("Chai", products.Single()["ProductName"]);
+		products.Single()["ProductName"].Should().Be("Chai");
 	}
 
 	[Fact]
@@ -106,7 +106,7 @@ public abstract class FindNorthwindTests(string serviceUri, ODataPayloadFormat p
 			.For("Categories")
 			.Key(1)
 			.FindEntryAsync();
-		Assert.Equal(1, category["CategoryID"]);
+		category["CategoryID"].Should().Be(1);
 	}
 
 	[Fact]

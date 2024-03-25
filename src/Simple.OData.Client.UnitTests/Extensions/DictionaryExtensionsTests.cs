@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using FluentAssertions;
 using Simple.OData.Client.Extensions;
 using Xunit;
 using SpatialV3 = System.Spatial;
@@ -56,7 +57,7 @@ public class DictionaryExtensionsTests
 			};
 
 		var value = dict.ToObject<ClassType>(TypeCache);
-		Assert.Equal("a", value.StringProperty);
+		value.StringProperty.Should().Be("a");
 		Assert.Equal(1, value.IntProperty);
 	}
 
@@ -119,7 +120,7 @@ public class DictionaryExtensionsTests
 			};
 
 		var value = dict.ToObject<ClassType>(TypeCache);
-		Assert.Equal("a", value.StringProperty);
+		value.StringProperty.Should().Be("a");
 		Assert.Equal(1, value.IntProperty);
 	}
 
