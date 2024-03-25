@@ -63,7 +63,7 @@ public abstract class RequestWriterBase : IRequestWriter
 		IDictionary<string, string>? headers = null)
 	{
 		var segments = commandText.Split('/');
-		if (segments.Length > 1 && segments.Last().Contains("."))
+		if (segments.Length > 1 && segments.Last().Contains('.'))
 		{
 			commandText = commandText.Substring(0, commandText.Length - segments.Last().Length - 1);
 		}

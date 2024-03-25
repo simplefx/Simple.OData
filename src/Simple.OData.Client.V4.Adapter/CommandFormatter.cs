@@ -325,7 +325,7 @@ public class CommandFormatter : CommandFormatterBase
 
 	private static bool HasMultipleSegments(string path)
 	{
-		return path.Contains("/");
+		return path.Contains('/');
 	}
 
 	private string FormatFirstSegment(string path)

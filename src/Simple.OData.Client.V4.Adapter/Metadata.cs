@@ -320,7 +320,7 @@ public class Metadata : MetadataBase
 
 	private bool TryGetEntitySet(string entitySetName, out IEdmEntitySet entitySet)
 	{
-		if (entitySetName.Contains("/"))
+		if (entitySetName.Contains('/'))
 		{
 			entitySetName = entitySetName.Split('/').First();
 		}
@@ -342,7 +342,7 @@ public class Metadata : MetadataBase
 
 	private bool TryGetSingleton(string singletonName, out IEdmSingleton singleton)
 	{
-		if (singletonName.Contains("/"))
+		if (singletonName.Contains('/'))
 		{
 			singletonName = singletonName.Split('/').First();
 		}
@@ -375,7 +375,7 @@ public class Metadata : MetadataBase
 	private bool TryGetEntityType(string collectionName, out IEdmEntityType? entityType)
 	{
 		entityType = null;
-		if (collectionName.Contains("/"))
+		if (collectionName.Contains('/'))
 		{
 			var segments = GetCollectionPathSegments(collectionName).ToList();
 

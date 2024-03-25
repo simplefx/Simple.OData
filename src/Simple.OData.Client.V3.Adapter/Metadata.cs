@@ -270,7 +270,7 @@ namespace Simple.OData.Client.V3.Adapter
 
 		private bool TryGetEntitySet(string entitySetName, out IEdmEntitySet entitySet)
 		{
-			if (entitySetName.Contains("/"))
+			if (entitySetName.Contains('/'))
 			{
 				entitySetName = entitySetName.Split('/').First();
 			}
@@ -303,7 +303,7 @@ namespace Simple.OData.Client.V3.Adapter
 		private bool TryGetEntityType(string collectionName, out IEdmEntityType? entityType)
 		{
 			entityType = null;
-			if (collectionName.Contains("/"))
+			if (collectionName.Contains('/'))
 			{
 				var segments = GetCollectionPathSegments(collectionName);
 

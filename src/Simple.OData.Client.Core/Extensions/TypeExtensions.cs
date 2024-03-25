@@ -66,7 +66,7 @@ internal static class TypeExtensions
 
 	private static bool IsExplicitInterfaceProperty(PropertyInfo propertyInfo)
 	{
-		return propertyInfo.Name.Contains(".");
+		return propertyInfo.Name.Contains('.');
 	}
 
 	private static bool IsIndexerProperty(PropertyInfo propertyInfo)
