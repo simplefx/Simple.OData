@@ -5,8 +5,8 @@ namespace ActionProviderImplementation;
 
 public class ActionProvider(object context, IParameterMarshaller marshaller) : IDataServiceActionProvider
 {
-	private static readonly Dictionary<Type, List<ServiceAction>> _cache = new();
-	private static readonly Dictionary<string, ServiceAction> _actionsByName = new();
+	private static readonly Dictionary<Type, List<ServiceAction>> _cache = [];
+	private static readonly Dictionary<string, ServiceAction> _actionsByName = [];
 	private readonly Type _instanceType = context.GetType();
 	private readonly object _context = context;
 	private readonly IParameterMarshaller _marshaller = marshaller;

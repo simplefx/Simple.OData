@@ -5,7 +5,7 @@ namespace Simple.OData.Client;
 public abstract class BatchWriterBase(ISession session, IDictionary<object, IDictionary<string, object>> batchEntries) : IBatchWriter
 {
 	protected readonly ISession _session = session;
-	private readonly Dictionary<IDictionary<string, object>, string> _contentIdMap = new Dictionary<IDictionary<string, object>, string>();
+	private readonly Dictionary<IDictionary<string, object>, string> _contentIdMap = [];
 	protected bool _pendingChangeSet;
 
 	public abstract Task StartBatchAsync();

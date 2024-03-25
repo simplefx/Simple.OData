@@ -198,13 +198,13 @@ public class MockingRequestExecutor
 		ValidateHeaders(expectedHeaders, actualHeaders);
 		if (request.Content is not null)
 		{
-			expectedHeaders = new Dictionary<string, IEnumerable<string>>();
+			expectedHeaders = [];
 			foreach (var header in savedRequest.ContentHeaders)
 			{
 				expectedHeaders.Add(header.Key, header.Value);
 			}
 
-			actualHeaders = new Dictionary<string, IEnumerable<string>>();
+			actualHeaders = [];
 			foreach (var header in request.Content.Headers)
 			{
 				actualHeaders.Add(header.Key, header.Value);

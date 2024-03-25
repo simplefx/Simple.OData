@@ -30,8 +30,8 @@ internal sealed class Configuration : DbMigrationsConfiguration<ProductServiceCo
 					StartDate = DateTime.Now.AddDays(-1),
 					EndDate = DateTime.Now.AddDays(-1),
 					Location = new GeoLocationModel() { Longitude = 1, Latitude = 2 },
-					Attachments = new List<WorkTaskAttachmentModel>(),
-					WorkActivityReports = new List<WorkActivityReportModel>(),
+					Attachments = [],
+					WorkActivityReports = [],
 				}
 		]);
 	}

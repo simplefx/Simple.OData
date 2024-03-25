@@ -15,7 +15,7 @@ public class ODataEntry
 	/// </summary>
 	public ODataEntry()
 	{
-		_entry = new Dictionary<string, object>();
+		_entry = [];
 	}
 
 	/// <summary>

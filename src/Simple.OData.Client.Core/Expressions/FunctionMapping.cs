@@ -23,7 +23,7 @@ internal class FunctionMapping
 			new ExpressionFunction()
 			{
 				FunctionName = function.FunctionMapping.FunctionName,
-				Arguments = new List<ODataExpression>() { target },
+				Arguments = [target],
 			});
 
 	private static readonly Func<FunctionDefinition, Func<string, ODataExpression, IEnumerable<object>, ODataExpression>> FunctionWithTargetAndArguments =

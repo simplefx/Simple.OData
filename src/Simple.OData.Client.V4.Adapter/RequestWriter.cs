@@ -10,12 +10,12 @@ namespace Simple.OData.Client.V4.Adapter
 	public class RequestWriter(ISession session, IEdmModel model, Lazy<IBatchWriter> deferredBatchWriter) : RequestWriterBase(session, deferredBatchWriter)
 	{
 		private readonly IEdmModel _model = model;
-		private readonly Dictionary<ODataResource, ResourceProperties> _resourceEntryMap = new Dictionary<ODataResource, ResourceProperties>();
-		private readonly Dictionary<ODataResource, List<ODataResource>> _resourceEntries = new Dictionary<ODataResource, List<ODataResource>>();
+		private readonly Dictionary<ODataResource, ResourceProperties> _resourceEntryMap = [];
+		private readonly Dictionary<ODataResource, List<ODataResource>> _resourceEntries = [];
 
 		private void RegisterRootEntry(ODataResource root)
 		{
-			_resourceEntries.Add(root, new List<ODataResource>());
+			_resourceEntries.Add(root, []);
 		}
 
 		private void UnregisterRootEntry(ODataResource root)

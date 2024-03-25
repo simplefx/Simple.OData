@@ -24,7 +24,7 @@ internal class ExpandExpressionVisitor(ITypeCache typeCache) : ExpressionVisitor
 {
 	private readonly ITypeCache _typeCache = typeCache;
 
-	public List<ODataExpandAssociation> ExpandAssociations { get; } = new List<ODataExpandAssociation>();
+	public List<ODataExpandAssociation> ExpandAssociations { get; } = [];
 
 	protected override Expression VisitMember(MemberExpression node)
 	{

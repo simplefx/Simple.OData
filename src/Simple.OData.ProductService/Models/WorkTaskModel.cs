@@ -5,8 +5,8 @@ public class WorkTaskModel : BaseModel
 {
 	public WorkTaskModel()
 	{
-		Attachments = new List<WorkTaskAttachmentModel>();
-		WorkActivityReports = new List<WorkActivityReportModel>();
+		Attachments = [];
+		WorkActivityReports = [];
 	}
 
 	public string Code { get; set; }

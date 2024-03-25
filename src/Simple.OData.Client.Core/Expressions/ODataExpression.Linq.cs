@@ -238,7 +238,7 @@ public partial class ODataExpression
 			new ExpressionFunction()
 			{
 				FunctionName = "isof",
-				Arguments = new List<ODataExpression>() { targetExpression, FromValue(typeIsExpression.TypeOperand) },
+				Arguments = [targetExpression, FromValue(typeIsExpression.TypeOperand)],
 			});
 	}
 
@@ -250,7 +250,7 @@ public partial class ODataExpression
 			new ExpressionFunction()
 			{
 				FunctionName = "cast",
-				Arguments = new List<ODataExpression>() { targetExpression, FromValue(typeAsExpression.Type) },
+				Arguments = [targetExpression, FromValue(typeAsExpression.Type)],
 			});
 	}
 

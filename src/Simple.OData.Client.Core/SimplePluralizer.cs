@@ -231,7 +231,7 @@ internal class SimplePluralizer : IPluralizer
 
 	private static void PopulateSuffixRules()
 	{
-		_suffixRules = new List<SuffixRule>();
+		_suffixRules = [];
 		for (var i = 0; i < _suffixRulesStringTable.Length; i += 2)
 		{
 			var singular = _suffixRulesStringTable[i];

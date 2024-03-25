@@ -14,9 +14,9 @@ public class ODataExpandAssociation : IEquatable<ODataExpandAssociation>
 
 	public string Name { get; }
 
-	public List<ODataExpandAssociation> ExpandAssociations { get; } = new List<ODataExpandAssociation>();
+	public List<ODataExpandAssociation> ExpandAssociations { get; } = [];
 
-	public List<ODataOrderByColumn> OrderByColumns { get; } = new List<ODataOrderByColumn>();
+	public List<ODataOrderByColumn> OrderByColumns { get; } = [];
 
 	public ODataExpression FilterExpression { get; set; }
 

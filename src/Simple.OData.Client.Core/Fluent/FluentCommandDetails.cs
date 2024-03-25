@@ -45,9 +45,9 @@ internal class FluentCommandDetails
 		Parent = parent;
 		SkipCount = -1;
 		TopCount = -1;
-		ExpandAssociations = new List<KeyValuePair<ODataExpandAssociation, ODataExpandOptions>>();
-		SelectColumns = new List<string>();
-		OrderbyColumns = new List<KeyValuePair<string, bool>>();
+		ExpandAssociations = [];
+		SelectColumns = [];
+		OrderbyColumns = [];
 		MediaProperties = new List<string>();
 		BatchEntries = batchEntries;
 		Headers = new Dictionary<string, string>();

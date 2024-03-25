@@ -9,7 +9,7 @@ namespace Simple.OData.Client.V4.Adapter.Extensions
 
 		protected DataAggregationBuilder()
 		{
-			DataAggregationClauses = new List<IDataAggregationClause>();
+			DataAggregationClauses = [];
 		}
 
 		internal string Build(ResolvedCommand command, ISession session)

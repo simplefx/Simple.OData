@@ -11,8 +11,8 @@ public class TypeConverter : ITypeConverter
 	/// </summary>
 	public TypeConverter()
 	{
-		_dictionaryConverters = new Dictionary<Type, Func<IDictionary<string, object>, object>>();
-		_objectConverters = new Dictionary<Type, Func<object, object>>();
+		_dictionaryConverters = [];
+		_objectConverters = [];
 	}
 
 	/// <copydoc cref="ITypeConverter.RegisterTypeConverter{T}(Func{IDictionary{string, object}, object})" />
