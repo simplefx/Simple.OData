@@ -1,9 +1,4 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace Simple.OData.Client;
+﻿namespace Simple.OData.Client;
 
 internal interface IRequestBuilder
 {

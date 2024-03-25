@@ -1,6 +1,4 @@
-﻿using System.Linq;
-using System.Threading.Tasks;
-using Xunit;
+﻿using Xunit;
 
 namespace Simple.OData.Client.Tests.Core;
 
@@ -19,7 +17,7 @@ public class AggregationTests : CoreTestBase
 		var command = client
 			.For<Employee>()
 			.Filter(x => x.Subordinates.Any(y => y.EmployeeID == 1));
-		var commandText = await command.GetCommandTextAsync().ConfigureAwait(false);
+		var commandText = await command.GetCommandTextAsync();
 		Assert.Equal(expectedCommand, commandText);
 	}
 
@@ -33,7 +31,7 @@ public class AggregationTests : CoreTestBase
 		var command = client
 			.For<Employee>()
 			.Filter(x => x.Subordinates.Any(y => y.EmployeeID == 1 && y.FirstName == "abc"));
-		var commandText = await command.GetCommandTextAsync().ConfigureAwait(false);
+		var commandText = await command.GetCommandTextAsync();
 		Assert.Equal(expectedCommand, commandText);
 	}
 
@@ -47,7 +45,7 @@ public class AggregationTests : CoreTestBase
 		var command = client
 			.For<Employee>()
 			.Filter(x => x.Subordinates.Any(y => y.EmployeeID == 1 && y.FirstName.Contains("abc")));
-		var commandText = await command.GetCommandTextAsync().ConfigureAwait(false);
+		var commandText = await command.GetCommandTextAsync();
 		Assert.Equal(expectedCommand, commandText);
 	}
 
@@ -61,7 +59,7 @@ public class AggregationTests : CoreTestBase
 		var command = client
 			.For<Product>()
 			.Filter(x => x.Category.Products.Any(y => y.ProductID == 1));
-		var commandText = await command.GetCommandTextAsync().ConfigureAwait(false);
+		var commandText = await command.GetCommandTextAsync();
 		Assert.Equal(expectedCommand, commandText);
 	}
 
@@ -75,7 +73,7 @@ public class AggregationTests : CoreTestBase
 		var command = client
 			.For<Product>()
 			.Filter(x => x.Category.Products.Any(y => y.Category.Products.Any(z => z.ProductID == 1)));
-		var commandText = await command.GetCommandTextAsync().ConfigureAwait(false);
+		var commandText = await command.GetCommandTextAsync();
 		Assert.Equal(expectedCommand, commandText);
 	}
 }

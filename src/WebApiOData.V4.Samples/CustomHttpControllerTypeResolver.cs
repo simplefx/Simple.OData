@@ -1,5 +1,4 @@
-﻿using System;
-using System.Web.Http.Dispatcher;
+﻿using System.Web.Http.Dispatcher;
 using Microsoft.AspNet.OData;
 
 namespace WebApiOData.V4.Samples;

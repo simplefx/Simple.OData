@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-using Entry = System.Collections.Generic.Dictionary<string, object>;
+﻿using Entry = System.Collections.Generic.Dictionary<string, object>;
 
 namespace Simple.OData.Client.Tests;
 
@@ -96,21 +91,21 @@ public abstract class ODataTestBase : TestBase
 	{
 		try
 		{
-			var products = await _client.For("Products").Select("ID", "Name").FindEntriesAsync().ConfigureAwait(false);
+			var products = await _client.For("Products").Select("ID", "Name").FindEntriesAsync();
 			foreach (var product in products)
 			{
 				if (product["Name"].ToString().StartsWith("Test"))
 				{
-					await _client.DeleteEntryAsync("Products", product).ConfigureAwait(false);
+					await _client.DeleteEntryAsync("Products", product);
 				}
 			}
 
-			var categories = await _client.For("Categories").Select("ID", "Name").FindEntriesAsync().ConfigureAwait(false);
+			var categories = await _client.For("Categories").Select("ID", "Name").FindEntriesAsync();
 			foreach (var category in categories)
 			{
 				if (category["Name"].ToString().StartsWith("Test"))
 				{
-					await _client.DeleteEntryAsync("Categories", category).ConfigureAwait(false);
+					await _client.DeleteEntryAsync("Categories", category);
 				}
 			}
 		}

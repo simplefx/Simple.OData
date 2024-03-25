@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Simple.OData.Client;
+﻿namespace Simple.OData.Client;
 
 /// <summary>
 /// Validation kinds used in ODataMessageReaderSettings and ODataMessageWriterSettings.

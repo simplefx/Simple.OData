@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Simple.OData.Client.Tests;
+﻿namespace Simple.OData.Client.Tests;
 
 public class Employee
 {

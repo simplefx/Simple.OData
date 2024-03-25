@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Simple.OData.Client.Extensions;
+﻿using Simple.OData.Client.Extensions;
 using Xunit;
 
 namespace Simple.OData.Client.Tests;

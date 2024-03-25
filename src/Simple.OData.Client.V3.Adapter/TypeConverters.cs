@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Spatial;
+﻿using System.Spatial;
 
 namespace Simple.OData.Client.V3.Adapter;
 

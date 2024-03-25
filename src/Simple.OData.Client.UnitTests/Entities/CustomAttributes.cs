@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Simple.OData.Client.Tests;
+﻿namespace Simple.OData.Client.Tests;
 
 [AttributeUsage(AttributeTargets.Property)]
 public class NotMappedAttribute : Attribute

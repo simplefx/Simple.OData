@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Xunit;
+﻿using Xunit;
 
 namespace Simple.OData.Client.Tests.FluentApi;
 
@@ -23,7 +19,7 @@ public class FunctionTests : TestBase
 			.Unbound()
 			.Function("ParseInt")
 			.Set(new Entry() { { "number", "1" } })
-			.ExecuteAsScalarAsync<int>().ConfigureAwait(false);
+			.ExecuteAsScalarAsync<int>();
 
 		Assert.Equal(1, result);
 	}
@@ -36,7 +32,7 @@ public class FunctionTests : TestBase
 			.Unbound()
 			.Function("ReturnString")
 			.Set(new Entry() { { "text", "abc" } })
-			.ExecuteAsScalarAsync<string>().ConfigureAwait(false);
+			.ExecuteAsScalarAsync<string>();
 
 		Assert.Equal("abc", result);
 	}
@@ -49,7 +45,7 @@ public class FunctionTests : TestBase
 			.Unbound<string>()
 			.Function("ReturnString")
 			.Set(new Entry() { { "text", "abc" } })
-			.ExecuteAsSingleAsync().ConfigureAwait(false);
+			.ExecuteAsSingleAsync();
 
 		Assert.Equal("abc", result);
 	}
@@ -62,7 +58,7 @@ public class FunctionTests : TestBase
 			.Unbound()
 			.Function("ReturnIntCollection")
 			.Set(new Entry() { { "count", 1 } })
-			.ExecuteAsArrayAsync<int>().ConfigureAwait(false);
+			.ExecuteAsArrayAsync<int>();
 
 		Assert.Equal(new[] { 1 }, result);
 	}
@@ -75,7 +71,7 @@ public class FunctionTests : TestBase
 			.Unbound()
 			.Function("ReturnIntCollection")
 			.Set(new Entry() { { "count", 3 } })
-			.ExecuteAsArrayAsync<int>().ConfigureAwait(false);
+			.ExecuteAsArrayAsync<int>();
 
 		Assert.Equal(new[] { 1, 2, 3 }, result);
 	}
@@ -88,7 +84,7 @@ public class FunctionTests : TestBase
 			.Unbound()
 			.Function("PassThroughLong")
 			.Set(new Entry() { { "number", 1L } })
-			.ExecuteAsScalarAsync<long>().ConfigureAwait(false);
+			.ExecuteAsScalarAsync<long>();
 
 		Assert.Equal(1L, result);
 	}
@@ -102,7 +98,7 @@ public class FunctionTests : TestBase
 			.Unbound()
 			.Function("PassThroughDateTime")
 			.Set(new Entry() { { "dateTime", dateTime } })
-			.ExecuteAsScalarAsync<DateTime>().ConfigureAwait(false);
+			.ExecuteAsScalarAsync<DateTime>();
 
 		Assert.Equal(dateTime, result);
 	}
@@ -116,7 +112,7 @@ public class FunctionTests : TestBase
 			.Unbound()
 			.Function("PassThroughDateTime")
 			.Set(new Entry() { { "dateTime", dateTime } })
-			.ExecuteAsScalarAsync<DateTime>().ConfigureAwait(false);
+			.ExecuteAsScalarAsync<DateTime>();
 
 		Assert.Equal(dateTime, result);
 	}
@@ -130,7 +126,7 @@ public class FunctionTests : TestBase
 			.Unbound()
 			.Function("PassThroughGuid")
 			.Set(new Entry() { { "guid", guid } })
-			.ExecuteAsScalarAsync<Guid>().ConfigureAwait(false);
+			.ExecuteAsScalarAsync<Guid>();
 
 		Assert.Equal(guid, result);
 	}
@@ -144,7 +140,7 @@ public class FunctionTests : TestBase
 			.Unbound<IDictionary<string, object>>()
 			.Action("PassThroughAddress")
 			.Set(new Entry() { { "address", address } })
-			.ExecuteAsSingleAsync().ConfigureAwait(false);
+			.ExecuteAsSingleAsync();
 
 		result = result["PassThroughAddress"] as IDictionary<string, object>;
 		Assert.Equal("Oslo", result["City"]);
@@ -159,7 +155,7 @@ public class FunctionTests : TestBase
 			.Unbound<IDictionary<string, object>>()
 			.Function("ReturnAddressCollection")
 			.Set(new Entry() { { "count", 1 } })
-			.ExecuteAsSingleAsync().ConfigureAwait(false));
+			.ExecuteAsSingleAsync());
 
 		Assert.Equal("Oslo", result["City"]);
 		Assert.Equal("Norway", result["Country"]);
@@ -173,7 +169,7 @@ public class FunctionTests : TestBase
 			.Unbound<IDictionary<string, object>>()
 			.Function("ReturnAddressCollection")
 			.Set(new Entry() { { "count", 3 } })
-			.ExecuteAsEnumerableAsync().ConfigureAwait(false)).ToArray();
+			.ExecuteAsEnumerableAsync()).ToArray();
 
 		Assert.Equal("Oslo", result[0]["City"]);
 		Assert.Equal("Norway", result[0]["Country"]);
@@ -189,7 +185,7 @@ public class FunctionTests : TestBase
 			.Unbound<IDictionary<string, object>>()
 			.Function("ReturnAddressCollection")
 			.Set(new Entry() { { "count", 0 } })
-			.ExecuteAsEnumerableAsync().ConfigureAwait(false)).ToArray();
+			.ExecuteAsEnumerableAsync()).ToArray();
 
 		Assert.Empty(result);
 	}

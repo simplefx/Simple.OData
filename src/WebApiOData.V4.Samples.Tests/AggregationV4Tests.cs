@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Simple.OData.Client;
+﻿using Simple.OData.Client;
 using Simple.OData.Client.Tests;
 using Simple.OData.Client.V4.Adapter.Extensions;
 using WebApiOData.V4.Samples.Models;
@@ -75,7 +71,7 @@ public class AggregationV4Tests : IDisposable
 				Count = a.Count()
 			}))
 			.OrderByDescending(x => x.Count)
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 
 		Assert.Equal(3, result.Count());
 		Assert.Equal(new[] { 1990, 1989, 1995 }, result.Select(x => x.Year).ToArray());
@@ -96,7 +92,7 @@ public class AggregationV4Tests : IDisposable
 				Count = a.Count()
 			}))
 			.OrderByDescending(x => x.Count)
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 
 		Assert.Equal(3, result.Count());
 		Assert.Equal(new[] { 1990, 1989, 1995 }, result.Select(x => x.Year).ToArray());

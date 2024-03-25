@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Simple.OData.Client.Tests;
+﻿namespace Simple.OData.Client.Tests;
 
 public class Category
 {

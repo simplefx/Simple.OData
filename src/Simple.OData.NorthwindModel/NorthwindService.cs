@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data.Services;
+﻿using System.Data.Services;
 using System.Data.Services.Common;
 using System.Data.Services.Providers;
-using System.Linq;
 using System.ServiceModel.Web;
 using ActionProviderImplementation;
 using NorthwindModel;

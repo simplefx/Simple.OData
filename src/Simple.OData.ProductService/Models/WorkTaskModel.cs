@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-// ReSharper disable CheckNamespace
+﻿// ReSharper disable CheckNamespace
 namespace Simple.OData.ProductService.Models;
 
 public class WorkTaskModel : BaseModel

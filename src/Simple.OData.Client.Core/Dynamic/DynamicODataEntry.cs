@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
+﻿using System.Dynamic;
 using System.Linq.Expressions;
 using Simple.OData.Client.Extensions;
 

@@ -1,6 +1,6 @@
-﻿using System.Linq;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 using Simple.OData.Client.Extensions;
+using Simple.OData.Client.UnitTests.Properties;
 using Xunit;
 
 namespace Simple.OData.Client.Tests.Extensions;
@@ -10,7 +10,7 @@ public class XElementExtensionsTests
 	[Fact]
 	public void TestXElementWithDefaultNamespace()
 	{
-		var content = Properties.XmlSamples.XmlWithDefaultNamespace;
+		var content = XmlSamples.XmlWithDefaultNamespace;
 		var element = XElement.Parse(content);
 		var list = element.Elements(null, "child").ToList();
 		Assert.Equal(2, list.Count);
@@ -21,7 +21,7 @@ public class XElementExtensionsTests
 	[Fact]
 	public void TestXElementWithNoNamespace()
 	{
-		var content = Properties.XmlSamples.XmlWithNoNamespace;
+		var content = XmlSamples.XmlWithNoNamespace;
 		var element = XElement.Parse(content);
 		var list = element.Elements(null, "child").ToList();
 		Assert.Equal(2, list.Count);
@@ -32,7 +32,7 @@ public class XElementExtensionsTests
 	[Fact]
 	public void TestXElementWithPrefixedNamespace()
 	{
-		var content = Properties.XmlSamples.XmlWithPrefixedNamespace;
+		var content = XmlSamples.XmlWithPrefixedNamespace;
 		var element = XElement.Parse(content);
 		var list = element.Elements("c", "child").ToList();
 		Assert.Equal(2, list.Count);

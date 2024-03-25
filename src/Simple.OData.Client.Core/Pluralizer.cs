@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Simple.OData.Client;
+﻿namespace Simple.OData.Client;
 
 /// <summary>
 /// Provides pluralization and singularization of words when resolving names of resources and properties

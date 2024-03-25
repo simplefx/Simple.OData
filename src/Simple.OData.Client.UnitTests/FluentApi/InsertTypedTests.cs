@@ -1,6 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-using Xunit;
+﻿using Xunit;
 
 namespace Simple.OData.Client.Tests.FluentApi;
 
@@ -13,7 +11,7 @@ public class InsertTypedTests : TestBase
 		var product = await client
 			.For<Product>()
 			.Set(new { ProductName = "Test1", UnitPrice = 18m })
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 
 		Assert.Equal("Test1", product.ProductName);
 	}
@@ -25,7 +23,7 @@ public class InsertTypedTests : TestBase
 		var product = await client
 			.For<Product>()
 			.Set(new { ProductName = "Test1", UnitPrice = 18m })
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 
 		Assert.True(product.ProductID > 0);
 		Assert.Equal("Test1", product.ProductName);
@@ -42,7 +40,7 @@ public class InsertTypedTests : TestBase
 			{
 				x.ProductID
 			})
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 
 		Assert.NotEqual(default, product.ProductID);
 		Assert.Equal(default, product.ProductName);
@@ -56,7 +54,7 @@ public class InsertTypedTests : TestBase
 		var product = await client
 			.For<Product>()
 			.Set(new Product { ProductName = "Test1", UnitPrice = 18m, MappedEnglishName = "EnglishTest" })
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 
 		Assert.Equal("Test1", product.ProductName);
 		Assert.Equal("EnglishTest", product.MappedEnglishName);
@@ -69,11 +67,11 @@ public class InsertTypedTests : TestBase
 		var category = await client
 			.For<Category>()
 			.Set(new { CategoryName = "Test3" })
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 		var product = await client
 			.For<Product>()
 			.Set(new { ProductName = "Test4", UnitPrice = 18m, CategoryID = category.CategoryID })
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 
 		Assert.Equal("Test4", product.ProductName);
 		Assert.Equal(category.CategoryID, product.CategoryID);
@@ -81,7 +79,7 @@ public class InsertTypedTests : TestBase
 			.For<Category>()
 			.Expand(x => new { x.Products })
 			.Filter(x => x.CategoryName == "Test3")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.True(category.Products.Length == 1);
 	}
 
@@ -92,11 +90,11 @@ public class InsertTypedTests : TestBase
 		var category = await client
 			.For<Category>()
 			.Set(new { CategoryName = "Test5" })
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 		var product = await client
 			.For<Product>()
 			.Set(new { ProductName = "Test6", UnitPrice = 18m, Category = category })
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 
 		Assert.Equal("Test6", product.ProductName);
 		Assert.Equal(category.CategoryID, product.CategoryID);
@@ -104,7 +102,7 @@ public class InsertTypedTests : TestBase
 			.For<Category>()
 			.Expand(x => new { x.Products })
 			.Filter(x => x.CategoryName == "Test5")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.True(category.Products.Length == 1);
 	}
 
@@ -115,13 +113,13 @@ public class InsertTypedTests : TestBase
 		var category = await client
 			.For<Category>()
 			.Set(new { CategoryName = "Test7", Picture = new byte[] { 1, 2, 3, 4, 5 } })
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 
 		category = await client
 			.For<Category>()
 			.Expand(x => new { x.Products })
 			.Filter(x => x.CategoryName == "Test7")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.True(category.Picture.Length > 0);
 	}
 
@@ -132,13 +130,13 @@ public class InsertTypedTests : TestBase
 		var category = await client
 			.For<Category>()
 			.Set(new { CategoryName = "Test7", Picture = Convert.ToBase64String(new byte[] { 1, 2, 3, 4, 5 }) })
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 
 		category = await client
 			.For<Category>()
 			.Expand(x => new { x.Products })
 			.Filter(x => x.CategoryName == "Test7")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.True(category.Picture.Length > 0);
 	}
 
@@ -150,7 +148,7 @@ public class InsertTypedTests : TestBase
 			.For<Transport>()
 			.As<Ship>()
 			.Set(new Ship { ShipName = "Test1" })
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 
 		Assert.Equal("Test1", ship.ShipName);
 	}

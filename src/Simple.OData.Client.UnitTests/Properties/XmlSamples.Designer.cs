@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Simple.OData.Client.Tests.Properties {
+namespace Simple.OData.Client.UnitTests.Properties {
     using System;
     
     
@@ -19,10 +19,10 @@ namespace Simple.OData.Client.Tests.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class XmlSamples {
+    public class XmlSamples {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,10 +36,10 @@ namespace Simple.OData.Client.Tests.Properties {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Simple.OData.Client.Tests.Properties.XmlSamples", typeof(XmlSamples).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Simple.OData.Client.UnitTests.Properties.XmlSamples", typeof(XmlSamples).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -51,7 +51,7 @@ namespace Simple.OData.Client.Tests.Properties {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -78,7 +78,7 @@ namespace Simple.OData.Client.Tests.Properties {
         ///&lt;name&gt;Doug Williams&lt;/name&gt;
         ///&lt;screen_name&gt;dougw [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string TwitterStatusesSample {
+        public static string TwitterStatusesSample {
             get {
                 return ResourceManager.GetString("TwitterStatusesSample", resourceCulture);
             }
@@ -95,7 +95,7 @@ namespace Simple.OData.Client.Tests.Properties {
         ///  &lt;/child&gt;  
         ///&lt;/root&gt;.
         /// </summary>
-        internal static string XmlWithDefaultNamespace {
+        public static string XmlWithDefaultNamespace {
             get {
                 return ResourceManager.GetString("XmlWithDefaultNamespace", resourceCulture);
             }
@@ -112,7 +112,7 @@ namespace Simple.OData.Client.Tests.Properties {
         ///  &lt;/child&gt;  
         ///&lt;/root&gt;.
         /// </summary>
-        internal static string XmlWithNoNamespace {
+        public static string XmlWithNoNamespace {
             get {
                 return ResourceManager.GetString("XmlWithNoNamespace", resourceCulture);
             }
@@ -129,7 +129,7 @@ namespace Simple.OData.Client.Tests.Properties {
         ///  &lt;/c:child&gt;  
         ///&lt;/root&gt;.
         /// </summary>
-        internal static string XmlWithPrefixedNamespace {
+        public static string XmlWithPrefixedNamespace {
             get {
                 return ResourceManager.GetString("XmlWithPrefixedNamespace", resourceCulture);
             }

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-using Simple.OData.Client.Extensions;
+﻿using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client;
 
@@ -116,13 +112,13 @@ public class ResolvedCommand
 		{
 			if (NamedKeyValuesMatchAnyKey(namedKeyValues, out var matchingKey, out var isAlternateKey))
 			{
-				Details.NamedKeyValues = matchingKey.ToDictionary();
+				Details.NamedKeyValues = matchingKey.ToIDictionary();
 				Details.IsAlternateKey = isAlternateKey;
 			}
 			else
 			{
 				Details.NamedKeyValues = TryExtractKeyFromNamedValues(namedKeyValues, out var containedKey)
-					? containedKey.ToDictionary()
+					? containedKey.ToIDictionary()
 					: null;
 			}
 

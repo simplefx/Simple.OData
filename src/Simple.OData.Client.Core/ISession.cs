@@ -1,7 +1,4 @@
-﻿using System;
-using System.Net.Http;
-
-namespace Simple.OData.Client;
+﻿namespace Simple.OData.Client;
 
 /// <summary>
 /// Provide access to session-specific details.

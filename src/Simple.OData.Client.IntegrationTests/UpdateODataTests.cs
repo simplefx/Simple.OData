@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Simple.OData.Client.V4.Adapter.Extensions;
-using Xunit;
+﻿using Xunit;
 
 using Entry = System.Collections.Generic.Dictionary<string, object>;
 
@@ -49,18 +44,18 @@ public abstract class UpdateODataTests : ODataTestBase
 		var product = await _client
 			.For("Products")
 			.Set(CreateProduct(2001, "Test1"))
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 
 		await _client
 			.For("Products")
 			.Key(product["ID"])
 			.Set(new { Price = 123m })
-			.UpdateEntryAsync().ConfigureAwait(false);
+			.UpdateEntryAsync();
 
 		product = await _client
 			.For("Products")
 			.Key(product["ID"])
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 
 		Assert.Equal(123d, product["Price"]);
 	}
@@ -71,18 +66,18 @@ public abstract class UpdateODataTests : ODataTestBase
 		var product = await _client
 			.For("Products")
 			.Set(CreateProduct(2002, "Test1"))
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 
 		await _client
 			.For("Products")
 			.Filter("Name eq 'Test1'")
 			.Set(new { Price = 123 })
-			.UpdateEntryAsync().ConfigureAwait(false);
+			.UpdateEntryAsync();
 
 		product = await _client
 			.For("Products")
 			.Key(product["ID"])
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 
 		Assert.Equal(123d, product["Price"]);
 	}
@@ -93,13 +88,13 @@ public abstract class UpdateODataTests : ODataTestBase
 		_ = await _client
 			.For("Products")
 			.Set(CreateProduct(2003, "Test1"))
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 
 		var product = (await _client
 			.For("Products")
 			.Filter("Name eq 'Test1'")
 			.Set(new { Price = 123 })
-			.UpdateEntriesAsync().ConfigureAwait(false)).Single();
+			.UpdateEntriesAsync()).Single();
 
 		Assert.Equal(123d, product["Price"]);
 	}
@@ -110,18 +105,18 @@ public abstract class UpdateODataTests : ODataTestBase
 		var product = await _client
 			.For("Products")
 			.Set(CreateProduct(2004, "Test1"))
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 
 		await _client
 			.For("Products")
 			.Key(product)
 			.Set(new { Price = 456 })
-			.UpdateEntryAsync().ConfigureAwait(false);
+			.UpdateEntryAsync();
 
 		product = await _client
 			.For("Products")
 			.Key(product["ID"])
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 
 		Assert.Equal(456d, product["Price"]);
 	}
@@ -134,18 +129,18 @@ public abstract class UpdateODataTests : ODataTestBase
 		var product = await _client
 			.For("Products")
 			.Set(CreateProduct(2008, "Test1"))
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 
 		await _client
 			.For("Products")
 			.Key(product["ID"])
 			.Set(new { ReleaseDate = tomorrow })
-			.UpdateEntryAsync().ConfigureAwait(false);
+			.UpdateEntryAsync();
 
 		product = await _client
 			.For("Products")
 			.Key(product["ID"])
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 
 		Assert.Equal(tomorrow.Date, DateTime.Parse(product["ReleaseDate"].ToString()).Date);
 	}
@@ -156,23 +151,23 @@ public abstract class UpdateODataTests : ODataTestBase
 		var category = await _client
 			.For("Categories")
 			.Set(CreateCategory(2011, "Test1"))
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 		var product = await _client
 			.For("Products")
 			.Set(CreateProduct(2012, "Test2"))
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 
 		await _client
 			.For("Products")
 			.Key(product["ID"])
 			.Set(new Entry { { ProductCategoryName, ProductCategoryLinkFunc(category) } })
-			.UpdateEntryAsync().ConfigureAwait(false);
+			.UpdateEntryAsync();
 
 		product = await _client
 			.For("Products")
 			.Key(product["ID"])
 			.Expand(ProductCategoryName)
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal(category["ID"], ProductCategoryFunc(product)["ID"]);
 	}
 
@@ -182,27 +177,27 @@ public abstract class UpdateODataTests : ODataTestBase
 		var category1 = await _client
 			.For("Categories")
 			.Set(CreateCategory(2013, "Test1"))
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 		var category2 = await _client
 			.For("Categories")
 			.Set(CreateCategory(2014, "Test2"))
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 		var product = await _client
 			.For("Products")
 			.Set(CreateProduct(2015, "Test3", category1))
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 
 		await _client
 			.For("Products")
 			.Key(product["ID"])
 			.Set(new Entry { { ProductCategoryName, ProductCategoryLinkFunc(category2) } })
-			.UpdateEntryAsync().ConfigureAwait(false);
+			.UpdateEntryAsync();
 
 		product = await _client
 			.For("Products")
 			.Key(product["ID"])
 			.Expand(ProductCategoryName)
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal(category2["ID"], ProductCategoryFunc(product)["ID"]);
 	}
 
@@ -212,27 +207,27 @@ public abstract class UpdateODataTests : ODataTestBase
 		var category1 = await _client
 			.For("Categories")
 			.Set(CreateCategory(2013, "Test1"))
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 		var category2 = await _client
 			.For("Categories")
 			.Set(CreateCategory(2014, "Test2"))
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 		var product = await _client
 			.For("Products")
 			.Set(CreateProduct(2015, "Test3", category1))
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 
 		await _client
 			.For("Products")
 			.Key(product["ID"])
 			.Set(new Entry { { ProductCategoryName, ProductCategoryLinkFunc(category2) } })
-			.UpdateEntryAsync().ConfigureAwait(false);
+			.UpdateEntryAsync();
 
 		product = await _client
 			.For("Products")
 			.Key(product["ID"])
 			.Expand(ProductCategoryName)
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal(category2["ID"], ProductCategoryFunc(product)["ID"]);
 
 		//@robertmclaws: At this point, we've verified entries and associations are available.
@@ -244,7 +239,7 @@ public abstract class UpdateODataTests : ODataTestBase
 			.For("Products")
 			.Key(product["ID"])
 			.Expand(ProductCategoryName)
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 
 		productToEdit["Name"] = "Test99";
 		productToEdit["Categories"] = null;
@@ -253,13 +248,13 @@ public abstract class UpdateODataTests : ODataTestBase
 			.For("Products")
 			.Key(product["ID"])
 			.Set(productToEdit)
-			.UpdateEntryAsync().ConfigureAwait(false);
+			.UpdateEntryAsync();
 
 		var product2 = await _client2
 			.For("Products")
 			.Key(product["ID"])
 			.Expand(ProductCategoryName)
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal(ProductCategoryFunc(product2)["ID"], ProductCategoryFunc(product)["ID"]);
 		Assert.Equal("Test99", product2["Name"]);
 	}
@@ -297,27 +292,27 @@ public abstract class UpdateODataTests : ODataTestBase
 		var category = await _client
 			.For("Categories")
 			.Set(CreateCategory(2018, "Test3"))
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 		var product1 = await _client
 			.For("Products")
 			.Set(CreateProduct(2019, "Test4"))
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 		var product2 = await _client
 			.For("Products")
 			.Set(CreateProduct(2020, "Test5"))
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 
 		await _client
 			.For("Categories")
 			.Key(category["ID"])
 			.Set(new { Products = new[] { product1, product2 } })
-			.UpdateEntryAsync().ConfigureAwait(false);
+			.UpdateEntryAsync();
 
 		category = await _client
 			.For("Categories")
 			.Key(category["ID"])
 			.Expand("Products")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal(2, (category["Products"] as IEnumerable<object>).Count());
 	}
 }

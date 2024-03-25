@@ -4,20 +4,23 @@
 		<OutputType>Exe</OutputType>
 		<TargetFramework>net8.0</TargetFramework>
 		<GenerateAssemblyInfo>true</GenerateAssemblyInfo>
-		<LangVersion>latest</LangVersion>
-		<Nullable>enable</Nullable>
-		<EnableNETAnalyzers>true</EnableNETAnalyzers>
-		<AnalysisMode>All</AnalysisMode>
-
+		<StartupObject>Simple.OData.Client.Benchmarks.Program</StartupObject>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<DefineConstants>TRACE;MOCK_HTTP</DefineConstants>
+	<PropertyGroup>
+		<DefineConstants>$(DefineConstants);MOCK_HTTP</DefineConstants>
 	</PropertyGroup>
 
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-		<DefineConstants>TRACE;DEBUG;MOCK_HTTP</DefineConstants>
-	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="BenchmarkDotNet" Version="0.*" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.*" />
+		<PackageReference Include="xunit" Version="2.*" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Simple.OData.Client.Core\Simple.OData.Client.Core.csproj" />
+		<ProjectReference Include="..\Simple.OData.Client.V4.Adapter\Simple.OData.Client.V4.Adapter.csproj" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<None Remove="Resources\crm_schema.xml" />
@@ -36,17 +39,6 @@
 
 	<ItemGroup>
 		<EmbeddedResource Include="Resources\crm_schema.xml" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<PackageReference Include="BenchmarkDotNet" Version="0.13.2" />
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-		<PackageReference Include="xunit" Version="2.4.2" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\Simple.OData.Client.Core\Simple.OData.Client.Core.csproj" />
-		<ProjectReference Include="..\Simple.OData.Client.V4.Adapter\Simple.OData.Client.V4.Adapter.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

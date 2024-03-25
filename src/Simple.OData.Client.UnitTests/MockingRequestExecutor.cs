@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
+﻿using System.Net;
 using System.Net.Http;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using Xunit;
 
 namespace Simple.OData.Client.Tests;
@@ -123,7 +118,7 @@ public class MockingRequestExecutor
 			}
 
 			var httpConnection = new HttpConnection(_settings);
-			var response = await httpConnection.HttpClient.SendAsync(request).ConfigureAwait(false);
+			var response = await httpConnection.HttpClient.SendAsync(request);
 
 			if (!IsMetadataRequest(request))
 			{
@@ -136,7 +131,7 @@ public class MockingRequestExecutor
 		{
 			if (_validate)
 			{
-				await ValidateRequestAsync(request).ConfigureAwait(false);
+				await ValidateRequestAsync(request);
 			}
 
 			if (_mockResponses is null)
@@ -218,7 +213,7 @@ public class MockingRequestExecutor
 			ValidateHeaders(expectedHeaders, actualHeaders);
 			var expectedContent = savedRequest.Content;
 			expectedContent = AdjustContent(expectedContent);
-			var actualContent = AdjustContent(await request.Content.ReadAsStringAsync().ConfigureAwait(false));
+			var actualContent = AdjustContent(await request.Content.ReadAsStringAsync());
 			Assert.Equal(expectedContent, actualContent);
 		}
 	}
@@ -314,7 +309,11 @@ public class MockingRequestExecutor
 				var endPos = content.IndexOf($"</{elementName}>");
 				if (startPos >= 0 && endPos > startPos)
 				{
+#if NET7_0_OR_GREATER
 					content = content[..startPos] + content[(endPos + elementName.Length + 3)..];
+#else
+                    content = content.Substring(0, startPos) + content.Substring(endPos + elementName.Length + 3);
+#endif
 				}
 				else
 				{
@@ -346,7 +345,7 @@ public class MockingRequestExecutor
 
 public static partial class ODataClientSettingsExtensionMethods
 {
-	private const string MockDataDir = @"../../../../MockData";
+	private const string MockDataDir = @"../../../../../MockData";
 
 	public static ODataClientSettings WithNameResolver(this ODataClientSettings settings, INameMatchResolver resolver)
 	{

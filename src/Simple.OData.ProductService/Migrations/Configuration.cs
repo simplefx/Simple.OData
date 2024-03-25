@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Data.Entity.Migrations;
 using Simple.OData.ProductService.Models;
 

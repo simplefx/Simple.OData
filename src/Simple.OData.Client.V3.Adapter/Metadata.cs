@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-using Microsoft.Data.Edm;
+﻿using Microsoft.Data.Edm;
 using Microsoft.Data.Edm.Library.Values;
 
 namespace Simple.OData.Client.V3.Adapter

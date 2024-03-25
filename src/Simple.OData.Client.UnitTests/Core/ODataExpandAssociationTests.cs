@@ -1,5 +1,3 @@
-using System;
-using System.Linq;
 using Xunit;
 
 namespace Simple.OData.Client.Tests.Core;

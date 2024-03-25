@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Simple.OData.Client;
+﻿namespace Simple.OData.Client;
 
 /// <summary>
 /// Contains additional information about OData media resource

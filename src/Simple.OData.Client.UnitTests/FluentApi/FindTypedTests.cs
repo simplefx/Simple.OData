@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
-using Xunit;
+﻿using Xunit;
 
 namespace Simple.OData.Client.Tests.FluentApi;
 
@@ -14,7 +11,7 @@ public class FindTypedTests : TestBase
 		var product = await client
 			.For<Product>()
 			.Filter(x => x.ProductName == "Chai")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal("Chai", product.ProductName);
 	}
 
@@ -25,7 +22,7 @@ public class FindTypedTests : TestBase
 		var product = await client
 			.For<Product>()
 			.Filter(x => x.ProductName == "Chai")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal("Chai", product.ProductName);
 	}
 
@@ -36,7 +33,7 @@ public class FindTypedTests : TestBase
 		var employee = await client
 			.For<Employee>()
 			.Filter(x => x.FirstName == "Nancy" && x.HireDate < DateTime.Now)
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal("Davolio", employee.LastName);
 	}
 
@@ -48,7 +45,7 @@ public class FindTypedTests : TestBase
 			.For<Employee>()
 			.Filter(x => x.FirstName == "Nancy")
 			.Filter(x => x.HireDate < DateTime.Now)
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal("Davolio", employee.LastName);
 	}
 
@@ -64,7 +61,7 @@ public class FindTypedTests : TestBase
 			.Top(1)
 			.Expand(x => x.Category)
 			.Select(x => x.Category)
-			.FindEntriesAsync().ConfigureAwait(false)).Single();
+			.FindEntriesAsync()).Single();
 		Assert.Equal("Seafood", product.Category.CategoryName);
 	}
 
@@ -80,7 +77,7 @@ public class FindTypedTests : TestBase
 			.Skip(2)
 			.OrderBy(x => x.ProductName)
 			.ThenByDescending(x => x.UnitPrice)
-			.FindEntriesAsync().ConfigureAwait(false)).Single();
+			.FindEntriesAsync()).Single();
 		Assert.Equal("Seafood", product.Category.CategoryName);
 	}
 
@@ -91,13 +88,13 @@ public class FindTypedTests : TestBase
 		await client
 			.For<Product>()
 			.Set(new Product { ProductName = "Test1", UnitPrice = 18m, MappedEnglishName = "EnglishTest" })
-			.InsertEntryAsync(false).ConfigureAwait(false);
+			.InsertEntryAsync(false);
 
 		var product = await client
 			.For<Product>()
 			.Filter(x => x.ProductName == "Test1")
 			.Select(x => new { x.ProductID, x.ProductName, x.MappedEnglishName })
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal("EnglishTest", product.MappedEnglishName);
 	}
 
@@ -108,7 +105,7 @@ public class FindTypedTests : TestBase
 		await AssertThrowsAsync<UnresolvableObjectException>(async () => await client
 			.For<ProductWithUnmappedProperty>("Products")
 			.Set(new ProductWithUnmappedProperty { ProductName = "Test1" })
-			.InsertEntryAsync().ConfigureAwait(false)).ConfigureAwait(false);
+			.InsertEntryAsync());
 	}
 
 	[Fact]
@@ -118,18 +115,18 @@ public class FindTypedTests : TestBase
 		var product = await client
 			.For<ProductWithUnmappedProperty>("Products")
 			.Set(new ProductWithUnmappedProperty { ProductName = "Test1" })
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 
 		await client
 			.For<ProductWithUnmappedProperty>("Products")
 			.Key(product.ProductID)
 			.Set(new ProductWithUnmappedProperty { ProductName = "Test2" })
-			.UpdateEntryAsync(false).ConfigureAwait(false);
+			.UpdateEntryAsync(false);
 
 		product = await client
 			.For<ProductWithUnmappedProperty>("Products")
 			.Key(product.ProductID)
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal("Test2", product.ProductName);
 	}
 
@@ -140,13 +137,13 @@ public class FindTypedTests : TestBase
 		await client
 			.For<Product>()
 			.Set(new ProductWithRemappedColumn { ProductName = "Test1", UnitPrice = 18m, MappedEnglishName = "EnglishTest" })
-			.InsertEntryAsync(false).ConfigureAwait(false);
+			.InsertEntryAsync(false);
 
 		var product = await client
 			.For<Product>()
 			.Filter(x => x.ProductName == "Test1")
 			.Select(x => new { x.ProductID, x.ProductName, x.MappedEnglishName })
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal("EnglishTest", product.MappedEnglishName);
 	}
 
@@ -157,7 +154,7 @@ public class FindTypedTests : TestBase
 		var product = await client
 			.For<ExtendedProduct>("Products")
 			.Filter(x => x.ProductName == "Chai")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal("Chai", product.ProductName);
 	}
 
@@ -168,7 +165,7 @@ public class FindTypedTests : TestBase
 		var products = await client
 			.For<Product>()
 			.Filter(x => x.ProductName.Contains("ai"))
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 		Assert.Equal("Chai", products.Single().ProductName);
 	}
 
@@ -180,7 +177,7 @@ public class FindTypedTests : TestBase
 		var products = await client
 			.For<Product>()
 			.Filter(x => x.ProductName.Contains(text))
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 		Assert.Equal("Chai", products.Single().ProductName);
 	}
 
@@ -192,7 +189,7 @@ public class FindTypedTests : TestBase
 		var products = await client
 			.For<Product>()
 			.Filter(x => x.ProductName.Contains(text[0]))
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 		Assert.Equal("Chai", products.Single().ProductName);
 	}
 
@@ -203,7 +200,7 @@ public class FindTypedTests : TestBase
 		var products = await client
 			.For<Product>()
 			.Filter(x => !x.ProductName.Contains("ai"))
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 		Assert.NotEqual("Chai", products.First().ProductName);
 	}
 
@@ -214,7 +211,7 @@ public class FindTypedTests : TestBase
 		var products = await client
 			.For<Product>()
 			.Filter(x => x.ProductName.StartsWith("Ch"))
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 		Assert.Equal("Chai", products.First().ProductName);
 	}
 
@@ -225,7 +222,7 @@ public class FindTypedTests : TestBase
 		var products = await client
 			.For<Product>()
 			.Filter(x => x.ProductName.Length == 4)
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 		Assert.Equal("Chai", products.First().ProductName);
 	}
 
@@ -236,7 +233,7 @@ public class FindTypedTests : TestBase
 		var products = await client
 			.For<Product>()
 			.Filter(x => x.ProductName.Substring(1, 2) == "ha")
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 		Assert.Equal("Chai", products.First().ProductName);
 	}
 
@@ -248,7 +245,7 @@ public class FindTypedTests : TestBase
 		var products = await client
 			.For<Product>()
 			.Filter(x => x.ProductName.Substring(1, 2) == text)
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 		Assert.Equal("Chai", products.First().ProductName);
 	}
 
@@ -260,7 +257,7 @@ public class FindTypedTests : TestBase
 			.For<Product>()
 			.Filter(x => x.ProductName == "Chai")
 			.Top(1)
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 		Assert.Single(products);
 	}
 
@@ -272,7 +269,7 @@ public class FindTypedTests : TestBase
 			.For<Product>()
 			.Filter(x => x.ProductName == "Chai")
 			.Count()
-			.FindScalarAsync<int>().ConfigureAwait(false);
+			.FindScalarAsync<int>();
 		Assert.Equal(1, count);
 	}
 
@@ -283,7 +280,7 @@ public class FindTypedTests : TestBase
 		var category = await client
 			.For<Category>()
 			.Key(1)
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal(1, category.CategoryID);
 	}
 
@@ -294,7 +291,7 @@ public class FindTypedTests : TestBase
 		await AssertThrowsAsync<WebRequestException>(async () => await client
 			.For<Category>()
 			.Key(-1)
-			.FindEntryAsync().ConfigureAwait(false)).ConfigureAwait(false);
+			.FindEntryAsync());
 	}
 
 	[Fact]
@@ -305,7 +302,7 @@ public class FindTypedTests : TestBase
 			.For<Product>()
 			.Filter(x => x.ProductName == "Chai")
 			.Select(x => x.ProductName)
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal("Chai", product.ProductName);
 	}
 
@@ -317,7 +314,7 @@ public class FindTypedTests : TestBase
 			.For<Product>()
 			.Filter(x => x.ProductName == "Chai")
 			.Select(x => new { x.ProductID, x.ProductName })
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal("Chai", product.ProductName);
 	}
 
@@ -336,7 +333,7 @@ public class FindTypedTests : TestBase
 			.For<ProductWithUnmappedProperty>("Products")
 			.Filter(x => x.ProductName == "Chai")
 			.Select(x => new { x.ProductID, UnmappedName = x.ProductName })
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal("Chai", product.UnmappedName);
 		Assert.Null(product.ProductName);
 	}
@@ -349,7 +346,7 @@ public class FindTypedTests : TestBase
 			.For<Product>()
 			.OrderBy(x => x.ProductID)
 			.Expand(x => x.Category)
-			.FindEntriesAsync().ConfigureAwait(false)).Last();
+			.FindEntriesAsync()).Last();
 		Assert.Equal("Condiments", product.Category.CategoryName);
 	}
 
@@ -361,7 +358,7 @@ public class FindTypedTests : TestBase
 			.For<Category>()
 			.Expand(x => x.Products)
 			.Filter(x => x.CategoryName == "Beverages")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal(ExpectedCountOfBeveragesProducts, category.Products.Length);
 	}
 
@@ -373,7 +370,7 @@ public class FindTypedTests : TestBase
 			.For<CategoryWithList>("Categories")
 			.Expand(x => x.Products)
 			.Filter(x => x.CategoryName == "Beverages")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal(ExpectedCountOfBeveragesProducts, category.Products.Count);
 	}
 
@@ -385,7 +382,7 @@ public class FindTypedTests : TestBase
 			.For<CategoryWithIList>("Categories")
 			.Expand(x => x.Products)
 			.Filter(x => x.CategoryName == "Beverages")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal(ExpectedCountOfBeveragesProducts, category.Products.Count);
 	}
 
@@ -397,7 +394,7 @@ public class FindTypedTests : TestBase
 			.For<CategoryWithHashSet>("Categories")
 			.Expand(x => x.Products)
 			.Filter(x => x.CategoryName == "Beverages")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal(ExpectedCountOfBeveragesProducts, category.Products.Count);
 	}
 
@@ -409,7 +406,7 @@ public class FindTypedTests : TestBase
 			.For<CategoryWithICollection>("Categories")
 			.Expand(x => x.Products)
 			.Filter(x => x.CategoryName == "Beverages")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal(ExpectedCountOfBeveragesProducts, category.Products.Count);
 	}
 
@@ -421,7 +418,7 @@ public class FindTypedTests : TestBase
 			.For<Product>()
 			.OrderBy(x => x.ProductID)
 			.Expand(x => x.Category.Products)
-			.FindEntriesAsync().ConfigureAwait(false)).Last();
+			.FindEntriesAsync()).Last();
 		Assert.Equal(ExpectedCountOfCondimentsProducts, product.Category.Products.Length);
 	}
 
@@ -433,7 +430,7 @@ public class FindTypedTests : TestBase
 			.For<Product>()
 			.OrderBy(x => x.ProductID)
 			.Expand(x => x.Category.Products.Select(y => y.Category))
-			.FindEntriesAsync().ConfigureAwait(false)).Last();
+			.FindEntriesAsync()).Last();
 		Assert.Equal("Condiments", product.Category.Products.First().Category.CategoryName);
 	}
 
@@ -446,7 +443,7 @@ public class FindTypedTests : TestBase
 			.OrderBy(x => x.ProductID)
 			.Expand(x => x.Category)
 			.Select(x => new { x.ProductName, x.Category.CategoryName })
-			.FindEntriesAsync().ConfigureAwait(false)).Last();
+			.FindEntriesAsync()).Last();
 		Assert.Equal("Condiments", product.Category.CategoryName);
 	}
 
@@ -458,7 +455,7 @@ public class FindTypedTests : TestBase
 			.For<Product>()
 			.Filter(x => x.ProductName == "Chai")
 			.OrderBy(x => x.ProductName)
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal("Chai", product.ProductName);
 	}
 
@@ -470,7 +467,7 @@ public class FindTypedTests : TestBase
 			.For<Product>()
 			.Filter(x => x.ProductName == "Chai")
 			.OrderBy(x => new { x.ProductID, x.ProductName })
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal("Chai", product.ProductName);
 	}
 
@@ -482,7 +479,7 @@ public class FindTypedTests : TestBase
 			.For<Product>()
 			.Expand(x => x.Category)
 			.OrderBy(x => new { x.Category.CategoryName })
-			.FindEntriesAsync().ConfigureAwait(false)).Last();
+			.FindEntriesAsync()).Last();
 		Assert.Equal("Seafood", product.Category.CategoryName);
 	}
 
@@ -494,7 +491,7 @@ public class FindTypedTests : TestBase
 			.For<Product>()
 			.Key(new { ProductID = 2 })
 			.NavigateTo<Category>()
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal("Beverages", category.CategoryName);
 	}
 
@@ -506,7 +503,7 @@ public class FindTypedTests : TestBase
 			.For<Product>()
 			.Key(new { ProductID = 2 })
 			.NavigateTo(x => x.Category)
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal("Beverages", category.CategoryName);
 	}
 
@@ -518,7 +515,7 @@ public class FindTypedTests : TestBase
 			.For<Category>()
 			.Key(2)
 			.NavigateTo<Product>()
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 		Assert.Equal(ExpectedCountOfCondimentsProducts, products.Count());
 	}
 
@@ -533,7 +530,7 @@ public class FindTypedTests : TestBase
 			.NavigateTo<Employee>("Superior")
 			.NavigateTo<Employee>("Subordinates")
 			.Key(3)
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal("Janet", employee.FirstName);
 	}
 
@@ -548,7 +545,7 @@ public class FindTypedTests : TestBase
 			.NavigateTo(x => x.Superior)
 			.NavigateTo(x => x.Subordinates)
 			.Key(3)
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal("Janet", employee.FirstName);
 	}
 
@@ -561,7 +558,7 @@ public class FindTypedTests : TestBase
 			.Key(14)
 			.NavigateTo(x => x.Superior.Superior.Subordinates)
 			.Key(3)
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal("Janet", employee.FirstName);
 	}
 
@@ -571,7 +568,7 @@ public class FindTypedTests : TestBase
 		var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
 		var query = await client
 			.For<Transport>()
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 		var transport = query.ToList();
 		Assert.Equal(2, transport.Count);
 	}
@@ -582,7 +579,7 @@ public class FindTypedTests : TestBase
 		var client = new ODataClient(CreateDefaultSettings().WithAnnotations().WithHttpMock());
 		var query = await client
 			.For<Transport>()
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 		var transport = query.ToList();
 		Assert.Equal(2, transport.Count);
 	}
@@ -594,7 +591,7 @@ public class FindTypedTests : TestBase
 		var transport = await client
 			.For<Transport>()
 			.As<Ship>()
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 		Assert.Equal("Titanic", transport.Single().ShipName);
 	}
 
@@ -605,7 +602,7 @@ public class FindTypedTests : TestBase
 		var transport = await client
 			.For<Transport>()
 			.As<Ship>()
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 		Assert.Equal("Titanic", transport.Single().ShipName);
 	}
 
@@ -617,7 +614,7 @@ public class FindTypedTests : TestBase
 			.For<Transport>()
 			.As<Ship>()
 			.Filter(x => x.ShipName == "Titanic")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal("Titanic", transport.ShipName);
 	}
 
@@ -628,7 +625,7 @@ public class FindTypedTests : TestBase
 		var transport = await client
 			.For<Transport>()
 			.Key(1)
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal(1, transport.TransportID);
 	}
 
@@ -640,7 +637,7 @@ public class FindTypedTests : TestBase
 			.For<Transport>()
 			.As<Ship>()
 			.Key(1)
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal("Titanic", transport.ShipName);
 	}
 
@@ -652,7 +649,7 @@ public class FindTypedTests : TestBase
 			.For<Transport>()
 			.As<Ship>()
 			.Filter(x => x.TransportID == 1 && x.ShipName == "Titanic")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal("Titanic", transport.ShipName);
 	}
 
@@ -664,7 +661,7 @@ public class FindTypedTests : TestBase
 			.For<Transport>()
 			.Filter(x => x is Ship)
 			.As<Ship>()
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.Equal("Titanic", transport.ShipName);
 	}
 
@@ -675,7 +672,7 @@ public class FindTypedTests : TestBase
 		var employee = await client
 			.For<Employee>()
 			.Filter(x => x.Superior is Employee)
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.NotNull(employee);
 	}
 
@@ -686,7 +683,7 @@ public class FindTypedTests : TestBase
 		var product = await client
 			.For<Product>()
 			.Filter(x => x.CategoryID == (int)1L)
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.NotNull(product);
 	}
 
@@ -697,7 +694,7 @@ public class FindTypedTests : TestBase
 		var employee = await client
 			.For<Employee>()
 			.Filter(x => x != null)
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.NotNull(employee);
 	}
 
@@ -708,7 +705,7 @@ public class FindTypedTests : TestBase
 		var employee = await client
 			.For<Employee>()
 			.Filter(x => x.Superior != null)
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 		Assert.NotNull(employee);
 	}
 
@@ -719,7 +716,7 @@ public class FindTypedTests : TestBase
 		var products = await client
 			.For<Order>()
 			.Filter(x => x.OrderDetails.Any(y => y.Quantity > 50))
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 		Assert.Equal(ExpectedCountOfOrdersHavingAnyDetail, products.Count());
 	}
 
@@ -730,7 +727,7 @@ public class FindTypedTests : TestBase
 		var products = await client
 			.For<Order>()
 			.Filter(x => x.OrderDetails.All(y => y.Quantity > 50))
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 		Assert.Equal(ExpectedCountOfOrdersHavingAllDetails, products.Count());
 	}
 
@@ -758,11 +755,11 @@ public class FindTypedTests : TestBase
 			.WithHttpMock());
 		var orderDetails1 = await client
 			.For<Order_Details>()
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 		Assert.NotEmpty(orderDetails1);
 		await AssertThrowsAsync<UnresolvableObjectException>(async () =>
 			await client.For<OrderDetails>()
-				.FindEntriesAsync().ConfigureAwait(false)).ConfigureAwait(false);
+				.FindEntriesAsync());
 	}
 
 	[Fact]
@@ -773,12 +770,12 @@ public class FindTypedTests : TestBase
 			.WithHttpMock());
 		var orderDetails1 = await client
 			.For<Order_Details>()
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 		Assert.NotEmpty(orderDetails1);
 		Assert.True(orderDetails1.First().OrderID > 0);
 		var orderDetails2 = await client
 			.For<OrderDetails>()
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 		Assert.NotEmpty(orderDetails2);
 		Assert.True(orderDetails2.First().Order_ID > 0);
 	}
@@ -791,7 +788,7 @@ public class FindTypedTests : TestBase
 			.WithHttpMock());
 		var orderDetails = await client
 			.For<orderDetails>()
-			.FindEntriesAsync().ConfigureAwait(false);
+			.FindEntriesAsync();
 		Assert.NotEmpty(orderDetails);
 		Assert.True(orderDetails.First().orderID > 0);
 	}

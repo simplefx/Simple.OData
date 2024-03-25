@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections;
 using System.Xml.Linq;
 using Microsoft.OData;
 using Microsoft.OData.Edm;
@@ -502,13 +497,13 @@ namespace Simple.OData.Client.V4.Adapter
 				.Select(x => new KeyValuePair<string, ODataCollectionValue>(
 					findMatchingPropertyName(x.Key),
 					GetPropertyValue(typeProperties, x.Key, x.Value, root) as ODataCollectionValue))
-				.ToDictionary();
+				.ToIDictionary();
 			resourceEntry.StructuralProperties = properties
 				.Where(x => isStructural(findMatchingPropertyType(x.Key)))
 				.Select(x => new KeyValuePair<string, ODataResource>(
 					findMatchingPropertyName(x.Key),
 					GetPropertyValue(typeProperties, x.Key, x.Value, root) as ODataResource))
-				.ToDictionary();
+				.ToIDictionary();
 			_resourceEntryMap.Add(entry, resourceEntry);
 			if (root is not null && _resourceEntries.TryGetValue(root, out var entries))
 			{

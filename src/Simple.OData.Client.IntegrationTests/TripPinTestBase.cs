@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
-
-namespace Simple.OData.Client.Tests;
+﻿namespace Simple.OData.Client.Tests;
 
 public class TripPinTestBase : TestBase
 {

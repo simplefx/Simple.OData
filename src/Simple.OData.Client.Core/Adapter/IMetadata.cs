@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Simple.OData.Client;
+﻿namespace Simple.OData.Client;
 
 /// <summary>
 /// Abstraction over the OData Edm model.
@@ -45,7 +43,7 @@ public interface IMetadata
 	/// Gets a collection of key name collections that represent the alternate keys of the given entity.
 	/// Alternate keys are only supported on V4. On V3 this method will always return an empty enumeration.
 	/// </summary>
-	/// <see cref="https://github.com/OData/vocabularies/blob/master/OData.Community.Keys.V1.md"/>
+	/// <see href="https://github.com/OData/vocabularies/blob/master/OData.Community.Keys.V1.md"/>
 	/// <param name="collectionName">The collection name of the entity</param>
 	/// <returns>An empty enumeration of string enumerations representing the key names</returns>
 	IEnumerable<IEnumerable<string>> GetAlternateKeyPropertyNames(string collectionName);

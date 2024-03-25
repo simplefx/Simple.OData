@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-
-namespace Simple.OData.Client.Extensions;
+﻿namespace Simple.OData.Client.Extensions;
 
 internal static class StringExtensions
 {

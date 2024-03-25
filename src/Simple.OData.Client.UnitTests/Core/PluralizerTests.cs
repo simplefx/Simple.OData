@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Simple.OData.Client.Extensions;
+﻿using Simple.OData.Client.Extensions;
 using Xunit;
 
 namespace Simple.OData.Client.Tests.Core;
@@ -88,7 +87,7 @@ public class NonLatinSchemaPluralizerTests : CoreTestBase
 		var commandText = await client
 			.For("Catalog_Контрагенты")
 			.Top(10)
-			.GetCommandTextAsync().ConfigureAwait(false);
+			.GetCommandTextAsync();
 
 		Assert.Equal("Catalog_Контрагенты?$top=10", commandText);
 	}
@@ -100,7 +99,7 @@ public class NonLatinSchemaPluralizerTests : CoreTestBase
 		var commandText = await client
 			.For("Catalog_Контрагенты")
 			.Top(10)
-			.GetCommandTextAsync().ConfigureAwait(false);
+			.GetCommandTextAsync();
 
 		Assert.Equal("Catalog_Контрагенты?$top=10", commandText);
 	}

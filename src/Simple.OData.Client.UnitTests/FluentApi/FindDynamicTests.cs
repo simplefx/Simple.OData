@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Xunit;
+﻿using Xunit;
 
 namespace Simple.OData.Client.Tests.FluentApi;
 
@@ -229,7 +225,7 @@ public class FindDynamicTests : TestBase
 		await AssertThrowsAsync<WebRequestException>(async () => await client
 			.For(x.Categories)
 			.Key(-1)
-			.FindEntryAsync()).ConfigureAwait(false);
+			.FindEntryAsync());
 	}
 
 	[Fact]

@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace Simple.OData.Client;
+﻿namespace Simple.OData.Client;
 
 // Based on gist by Juliën Hanssens
 // https://gist.github.com/hanssens/2835960

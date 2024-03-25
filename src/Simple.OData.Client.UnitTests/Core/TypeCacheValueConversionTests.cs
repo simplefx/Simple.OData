@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.Spatial;
+﻿using Microsoft.Spatial;
 using Simple.OData.Client.Tests.Entities;
 using Xunit;
 

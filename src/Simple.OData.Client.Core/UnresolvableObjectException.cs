@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Simple.OData.Client;
+﻿namespace Simple.OData.Client;
 
 /// <summary>
 /// The exception that is thrown when service metadata doesn't contain the requested metadata object

@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Xunit;
+﻿using Xunit;
 
 namespace Simple.OData.Client.Tests;
 
@@ -41,17 +40,17 @@ public abstract class DeleteODataTests : ODataTestBase
 		var product = await _client
 			.For("Products")
 			.Set(CreateProduct(3001, "Test1"))
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 
 		await _client
 			.For("Products")
 			.Key(product["ID"])
-			.DeleteEntryAsync().ConfigureAwait(false);
+			.DeleteEntryAsync();
 
 		product = await _client
 			.For("Products")
 			.Filter("Name eq 'Test1'")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 
 		Assert.Null(product);
 	}
@@ -62,17 +61,17 @@ public abstract class DeleteODataTests : ODataTestBase
 		_ = await _client
 			.For("Products")
 			.Set(CreateProduct(3002, "Test1"))
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 
 		await _client
 			.For("Products")
 			.Filter("Name eq 'Test1'")
-			.DeleteEntryAsync().ConfigureAwait(false);
+			.DeleteEntryAsync();
 
 		var product = await _client
 			.For("Products")
 			.Filter("Name eq 'Test1'")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 
 		Assert.Null(product);
 	}
@@ -83,17 +82,17 @@ public abstract class DeleteODataTests : ODataTestBase
 		var product = await _client
 			.For("Products")
 			.Set(CreateProduct(3003, "Test1"))
-			.InsertEntryAsync().ConfigureAwait(false);
+			.InsertEntryAsync();
 
 		await _client
 			.For("Products")
 			.Key(product)
-			.DeleteEntryAsync().ConfigureAwait(false);
+			.DeleteEntryAsync();
 
 		product = await _client
 			.For("Products")
 			.Filter("Name eq 'Test1'")
-			.FindEntryAsync().ConfigureAwait(false);
+			.FindEntryAsync();
 
 		Assert.Null(product);
 	}

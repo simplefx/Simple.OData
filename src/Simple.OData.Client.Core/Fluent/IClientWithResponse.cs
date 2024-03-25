@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
-
-namespace Simple.OData.Client;
+﻿namespace Simple.OData.Client;
 
 public interface IClientWithResponse<T> : IDisposable
 {
