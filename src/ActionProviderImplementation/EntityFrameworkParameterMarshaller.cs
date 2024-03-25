@@ -49,7 +49,7 @@ public class EntityFrameworkParameterMarshaller : IParameterMarshaller
 			var marshalledValue = castMethod.Invoke(null, new[] { enumerable });
 			// call IEnumerable<T>.ToList();
 			var toListMethod = ToListMethodGeneric.MakeGenericMethod(elementType);
-			value = toListMethod.Invoke(null, new[] { marshalledValue });
+			value = toListMethod.Invoke(null, [marshalledValue]);
 		}
 
 		return value;

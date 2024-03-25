@@ -10,14 +10,14 @@ public class NorthwindInitializer : DropCreateDatabaseAlways<NorthwindContext>
 	{
 		ctx.Categories.AddRange(new[]
 		{
-				new Category { CategoryID = 1, CategoryName = "Beverages", Description = "Beverages Soft drinks, coffees, teas, beer, and ale", Picture = new byte[] {1,2,3} },
-				new Category { CategoryID = 2, CategoryName = "Condiments", Description = "Sweet and savory sauces, relishes, spreads, and seasonings", Picture = new byte[] {1,2,3}  },
-				new Category { CategoryID = 3, CategoryName = "Confections", Description = "Desserts, candies, sweetbreads", Picture = new byte[] {1,2,3}  },
-				new Category { CategoryID = 4, CategoryName = "Dairy Products", Description = "Cheeses", Picture = new byte[] {1,2,3}  },
-				new Category { CategoryID = 5, CategoryName = "Grains/Cereals", Description = "Breads, crackers, pasta, and cereal", Picture = new byte[] {1,2,3}  },
-				new Category { CategoryID = 6, CategoryName = "Meat/Poultry", Description = "Prepared meats", Picture = new byte[] {1,2,3}  },
-				new Category { CategoryID = 7, CategoryName = "Produce", Description = "Dried fruit and bean curd", Picture = new byte[] {1,2,3}  },
-				new Category { CategoryID = 8, CategoryName = "Seafood", Description = "Seaweed and fish", Picture = new byte[] {1,2,3}  },
+				new Category { CategoryID = 1, CategoryName = "Beverages", Description = "Beverages Soft drinks, coffees, teas, beer, and ale", Picture = [1,2,3] },
+				new Category { CategoryID = 2, CategoryName = "Condiments", Description = "Sweet and savory sauces, relishes, spreads, and seasonings", Picture = [1,2,3]  },
+				new Category { CategoryID = 3, CategoryName = "Confections", Description = "Desserts, candies, sweetbreads", Picture = [1,2,3]  },
+				new Category { CategoryID = 4, CategoryName = "Dairy Products", Description = "Cheeses", Picture = [1,2,3]  },
+				new Category { CategoryID = 5, CategoryName = "Grains/Cereals", Description = "Breads, crackers, pasta, and cereal", Picture = [1,2,3]  },
+				new Category { CategoryID = 6, CategoryName = "Meat/Poultry", Description = "Prepared meats", Picture = [1,2,3]  },
+				new Category { CategoryID = 7, CategoryName = "Produce", Description = "Dried fruit and bean curd", Picture = [1,2,3]  },
+				new Category { CategoryID = 8, CategoryName = "Seafood", Description = "Seaweed and fish", Picture = [1,2,3]  },
 			});
 
 		ctx.Suppliers.AddRange(new[]
@@ -76,15 +76,15 @@ public class NorthwindInitializer : DropCreateDatabaseAlways<NorthwindContext>
 
 		ctx.Employees.AddRange(new[]
 		{
-				new Employee { EmployeeID = 1, LastName = "Davolio", FirstName = "Nancy", Title = "Sales Representative", BirthDate = new DateTime(1948,12,8), HireDate = new DateTime(1991,3,29), Address = "507 - 20th Ave. E. Apt. 2A", City = "Seattle", Region = "WA", PostalCode = "98122", Country = "USA", HomePhone = "(206) 555-9857", Extension = "5467", Photo = new byte[] {1,2,3}, Notes = "Notes", ReportsTo = 2 },
-				new Employee { EmployeeID = 2, LastName = "Fuller", FirstName = "Andrew", Title = "Vice President, Sales", BirthDate = new DateTime(1942,2,19), HireDate = new DateTime(1991,7,12), Address = "", City = "", Region = null, PostalCode = "", Country = "", HomePhone = "", Extension = "", Photo = new byte[] {1,2,3}, Notes = null, ReportsTo = null },
-				new Employee { EmployeeID = 3, LastName = "Leverling", FirstName = "Janet", Title = "Sales Representative", BirthDate = new DateTime(1963,8,30), HireDate = new DateTime(1991,2,27), Address = "", City = "", Region = null, PostalCode = "", Country = "", HomePhone = "", Extension = "", Photo = new byte[] {1,2,3}, Notes = null, ReportsTo = 2 },
-				new Employee { EmployeeID = 4, LastName = "Peacock", FirstName = "Margaret", Title = "Sales Representative", BirthDate = new DateTime(1937,9,19), HireDate = new DateTime(1992,3,30), Address = "", City = "", Region = null, PostalCode = "", Country = "", HomePhone = "", Extension = "", Photo = new byte[] {1,2,3}, Notes = null, ReportsTo = 2 },
-				new Employee { EmployeeID = 5, LastName = "Buchanan", FirstName = "Steven", Title = "Sales Manager", BirthDate = new DateTime(1955,3,4), HireDate = new DateTime(1992,9,13), Address = "", City = "", Region = null, PostalCode = "", Country = "", HomePhone = "", Extension = "", Photo = new byte[] {1,2,3}, Notes = null, ReportsTo = 2 },
-				new Employee { EmployeeID = 6, LastName = "Suyama", FirstName = "Michael", Title = "Sales Representative", BirthDate = new DateTime(1963,7,2), HireDate = new DateTime(1992,9,13), Address = "", City = "", Region = null, PostalCode = "", Country = "", HomePhone = "", Extension = "", Photo = new byte[] {1,2,3}, Notes = null, ReportsTo = 5 },
-				new Employee { EmployeeID = 7, LastName = "King", FirstName = "Robert", Title = "Sales Representative", BirthDate = new DateTime(1960,5,29), HireDate = new DateTime(1992,11,29), Address = "", City = "", Region = null, PostalCode = "", Country = "", HomePhone = "", Extension = "", Photo = new byte[] {1,2,3}, Notes = null, ReportsTo = 5 },
-				new Employee { EmployeeID = 13, LastName = "Brid", FirstName = "Justin", Title = "Marketing Director", BirthDate = new DateTime(1962,10,8), HireDate = new DateTime(1994,1,1), Address = "", City = "", Region = null, PostalCode = "", Country = "", HomePhone = "", Extension = "", Photo = new byte[] {1,2,3}, Notes = null, ReportsTo = 2 },
-				new Employee { EmployeeID = 14, LastName = "Martin", FirstName = "Xavier", Title = "Marketing Associate", BirthDate = new DateTime(1960,11,30), HireDate = new DateTime(1994,1,15), Address = "", City = "", Region = null, PostalCode = "", Country = "", HomePhone = "", Extension = "", Photo = new byte[] {1,2,3}, Notes = null, ReportsTo = 13 },
+				new Employee { EmployeeID = 1, LastName = "Davolio", FirstName = "Nancy", Title = "Sales Representative", BirthDate = new DateTime(1948,12,8), HireDate = new DateTime(1991,3,29), Address = "507 - 20th Ave. E. Apt. 2A", City = "Seattle", Region = "WA", PostalCode = "98122", Country = "USA", HomePhone = "(206) 555-9857", Extension = "5467", Photo = [1,2,3], Notes = "Notes", ReportsTo = 2 },
+				new Employee { EmployeeID = 2, LastName = "Fuller", FirstName = "Andrew", Title = "Vice President, Sales", BirthDate = new DateTime(1942,2,19), HireDate = new DateTime(1991,7,12), Address = "", City = "", Region = null, PostalCode = "", Country = "", HomePhone = "", Extension = "", Photo = [1,2,3], Notes = null, ReportsTo = null },
+				new Employee { EmployeeID = 3, LastName = "Leverling", FirstName = "Janet", Title = "Sales Representative", BirthDate = new DateTime(1963,8,30), HireDate = new DateTime(1991,2,27), Address = "", City = "", Region = null, PostalCode = "", Country = "", HomePhone = "", Extension = "", Photo = [1,2,3], Notes = null, ReportsTo = 2 },
+				new Employee { EmployeeID = 4, LastName = "Peacock", FirstName = "Margaret", Title = "Sales Representative", BirthDate = new DateTime(1937,9,19), HireDate = new DateTime(1992,3,30), Address = "", City = "", Region = null, PostalCode = "", Country = "", HomePhone = "", Extension = "", Photo = [1,2,3], Notes = null, ReportsTo = 2 },
+				new Employee { EmployeeID = 5, LastName = "Buchanan", FirstName = "Steven", Title = "Sales Manager", BirthDate = new DateTime(1955,3,4), HireDate = new DateTime(1992,9,13), Address = "", City = "", Region = null, PostalCode = "", Country = "", HomePhone = "", Extension = "", Photo = [1,2,3], Notes = null, ReportsTo = 2 },
+				new Employee { EmployeeID = 6, LastName = "Suyama", FirstName = "Michael", Title = "Sales Representative", BirthDate = new DateTime(1963,7,2), HireDate = new DateTime(1992,9,13), Address = "", City = "", Region = null, PostalCode = "", Country = "", HomePhone = "", Extension = "", Photo = [1,2,3], Notes = null, ReportsTo = 5 },
+				new Employee { EmployeeID = 7, LastName = "King", FirstName = "Robert", Title = "Sales Representative", BirthDate = new DateTime(1960,5,29), HireDate = new DateTime(1992,11,29), Address = "", City = "", Region = null, PostalCode = "", Country = "", HomePhone = "", Extension = "", Photo = [1,2,3], Notes = null, ReportsTo = 5 },
+				new Employee { EmployeeID = 13, LastName = "Brid", FirstName = "Justin", Title = "Marketing Director", BirthDate = new DateTime(1962,10,8), HireDate = new DateTime(1994,1,1), Address = "", City = "", Region = null, PostalCode = "", Country = "", HomePhone = "", Extension = "", Photo = [1,2,3], Notes = null, ReportsTo = 2 },
+				new Employee { EmployeeID = 14, LastName = "Martin", FirstName = "Xavier", Title = "Marketing Associate", BirthDate = new DateTime(1960,11,30), HireDate = new DateTime(1994,1,15), Address = "", City = "", Region = null, PostalCode = "", Country = "", HomePhone = "", Extension = "", Photo = [1,2,3], Notes = null, ReportsTo = 13 },
                 //new Employee { EmployeeID = 0, LastName = "", FirstName = "", Title = "", BirthDate = DateTime.MinValue, HireDate = DateTime.MinValue, Address = "", City = "", Region = null, PostalCode = "", Country = "", HomePhone = "", Extension = "", Photo = new byte[] {1,2,3}, Notes = null, ReportsTo = 0 },
             });
 

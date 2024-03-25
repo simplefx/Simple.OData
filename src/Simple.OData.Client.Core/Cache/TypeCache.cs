@@ -258,7 +258,7 @@ public class TypeCache : ITypeCache
 			}
 			else if ((targetType == typeof(DateTime) || targetType == typeof(DateTime?)) && ImplicitConversionTo<DateTime>(value) is MethodInfo implicitMethod)
 			{
-				result = (DateTime)implicitMethod.Invoke(value, new object[] { value });
+				result = (DateTime)implicitMethod.Invoke(value, [value]);
 			}
 			else if ((targetType == typeof(DateTimeOffset) || targetType == typeof(DateTimeOffset?)) && value is DateTime time)
 			{

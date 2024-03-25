@@ -67,7 +67,7 @@ public class DynamicODataExpression : ODataExpression, IDynamicMetaObjectProvide
 			if (FunctionMapping.ContainsFunction(binder.Name, 0))
 			{
 				ctor = CtorWithExpressionAndString;
-				ctorArguments = new Expression[] { Expression.Convert(Expression, LimitType), Expression.Constant(binder.Name) };
+				ctorArguments = [Expression.Convert(Expression, LimitType), Expression.Constant(binder.Name)];
 			}
 			else
 			{
@@ -76,7 +76,7 @@ public class DynamicODataExpression : ODataExpression, IDynamicMetaObjectProvide
 					: binder.Name;
 				var referenceExpression = Expression.Invoke(calculateReference, Expression.Constant(HasValue), Expression.Convert(Expression, LimitType));
 				ctor = CtorWithString;
-				ctorArguments = new Expression[] { referenceExpression };
+				ctorArguments = [referenceExpression];
 			}
 
 			return new DynamicMetaObject(
@@ -98,7 +98,7 @@ public class DynamicODataExpression : ODataExpression, IDynamicMetaObjectProvide
 		public override DynamicMetaObject BindInvokeMember(
 			InvokeMemberBinder binder, DynamicMetaObject[] args)
 		{
-			var expressionFunctionConstructor = typeof(ExpressionFunction).GetConstructor(new[] { typeof(string), typeof(IEnumerable<object>) });
+			var expressionFunctionConstructor = typeof(ExpressionFunction).GetConstructor([typeof(string), typeof(IEnumerable<object>)]);
 			if (FunctionMapping.ContainsFunction(binder.Name, args.Length))
 			{
 				var expression = Expression.New(CtorWithExpressionAndExpressionFunction,
@@ -160,7 +160,7 @@ public class DynamicODataExpression : ODataExpression, IDynamicMetaObjectProvide
 		{
 			if (arg.RuntimeType is not null && arg.RuntimeType.IsEnumType())
 			{
-				var ctor = typeof(ODataExpression).GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.NonPublic, null, new[] { typeof(object) }, null);
+				var ctor = typeof(ODataExpression).GetConstructor(BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.NonPublic, null, [typeof(object)], null);
 				var expression = Expression.New(CtorWithExpressionAndExpressionAndOperator,
 					Expression.Convert(Expression, LimitType),
 					Expression.New(ctor, Expression.Convert(arg.Expression, typeof(object))),

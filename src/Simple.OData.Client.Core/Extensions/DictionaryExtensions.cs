@@ -254,7 +254,7 @@ internal static class DictionaryExtensions
 					typeof(IList<>).MakeGenericType(elementType),
 					typeof(IEnumerable<>).MakeGenericType(elementType)
 				};
-			var collectionType = type.GetConstructor(new[] { collectionTypes[0] }) is not null
+			var collectionType = type.GetConstructor([collectionTypes[0]]) is not null
 				? collectionTypes[0]
 				: collectionTypes[1];
 			var activator = _collectionActivators.GetOrAdd(new Tuple<Type, Type>(type, collectionType), t => type.CreateActivator(collectionType));

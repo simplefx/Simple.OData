@@ -509,21 +509,21 @@ public class ExpansionTests : CoreTestBase
 	{
 		var client = CreateClient("ClientProductSku.xml");
 
-		string[] CreateUpdateExpandTables = {
+		string[] CreateUpdateExpandTables = [
 				"Product/ProductCategory/Category/CategorySalesArea",
 				"ClientProductSkuPriceList",
 				"ClientProductSkuSalesArea",
 				"Product/SupplierProductSkuClient/SupplierProductSku/SupplierProductSkuPriceList/SupplierPriceList",
 				"Product/SupplierProductSkuClient/SupplierProductSku/SupplierProductSkuOnHand/Warehouse"
-			};
+			];
 
-		string[] CreateUpdateSelectColumns = {
+		string[] CreateUpdateSelectColumns = [
 				"PartNo", "ClientId", "ErpName", "EanCode",
 				"Product/Id","Product/ManufacturerId",
 				"Product/ProductCategory/IsPrimary",
 				"Product/ProductCategory/Category/Code",
 				"ClientProductSkuPriceList/CurrencyId"
-			};
+			];
 
 		var expectedResult =
 			@"ClientProductSkus/FunctionService.GetCreateUpdateSkuDelta(clientId=35,offsetInMinutes=2000)?" +

@@ -61,7 +61,7 @@ public class ActionInfo
 		}
 		else
 		{
-			return (bool)AvailabilityCheckMethod.Invoke(context, new object[] { entity });
+			return (bool)AvailabilityCheckMethod.Invoke(context, [entity]);
 		}
 	}
 

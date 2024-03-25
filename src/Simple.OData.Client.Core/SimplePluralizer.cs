@@ -30,7 +30,7 @@ internal class SimplePluralizer : IPluralizer
 	}
 
 	private static readonly string[] _specialWordsStringTable =
-	{
+	[
 			"agendum", "agenda", "",
 			"albino", "albinos", "",
 			"alga", "algae", "",
@@ -121,9 +121,9 @@ internal class SimplePluralizer : IPluralizer
 			"vertebra", "vertebrae", "",
 			"vertex", "vertices", "vertexes",
 			"vortex", "vortices", "vortexes",
-		};
+		];
 	private static readonly string[] _suffixRulesStringTable =
-	{
+	[
 			"ch", "ches",
 			"sh", "shes",
 			"ss", "sses",
@@ -164,7 +164,7 @@ internal class SimplePluralizer : IPluralizer
 			"nife", "nives",
 			"life", "lives",
 			"wife", "wives",
-		};
+		];
 
 	private class Word
 	{

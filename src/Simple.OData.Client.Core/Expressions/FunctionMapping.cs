@@ -52,7 +52,7 @@ internal class FunctionMapping
 			});
 
 	public static readonly FunctionDefinition[] DefinedFunctions =
-		{
+		[
 				CreateFunctionDefinition("Contains", 1, "substringof", FunctionWithArgumentsAndTarget, AdapterVersion.V3),
 				CreateFunctionDefinition("Contains", 1, "contains", FunctionWithTargetAndArguments, AdapterVersion.V4),
 				CreateFunctionDefinition("StartsWith", 1, "startswith", FunctionWithTargetAndArguments),
@@ -83,7 +83,7 @@ internal class FunctionMapping
 				CreateFunctionDefinition("Round", 0, "round", FunctionWithTarget),
 				CreateFunctionDefinition("Floor", 0, "floor", FunctionWithTarget),
 				CreateFunctionDefinition("Ceiling", 0, "ceiling", FunctionWithTarget),
-			};
+			];
 
 	public static bool ContainsFunction(string functionName, int argumentCount)
 	{

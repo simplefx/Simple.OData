@@ -8,7 +8,7 @@ public class ActionFactory
 	private readonly IDataServiceMetadataProvider _metadata;
 
 	//TODO: make this list complete
-	private static readonly Type[] __primitives = new[] {
+	private static readonly Type[] __primitives = [
 			typeof(bool),
 			typeof(short),
 			typeof(int),
@@ -22,7 +22,7 @@ public class ActionFactory
 			typeof(long?),
 			typeof(decimal?),
 			typeof(Guid?)
-		};
+		];
 
 	public ActionFactory(IDataServiceMetadataProvider metadata)
 	{

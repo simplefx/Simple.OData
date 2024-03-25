@@ -28,14 +28,14 @@ public class ODataRequest
 
 			if (isMetadataRequest)
 			{
-				return new[] { "application/xml" };
+				return ["application/xml"];
 			}
 			else
 			{
 				return _payloadFormat switch
 				{
 					ODataPayloadFormat.Json => new[] { "application/json", "application/xml", "application/text" },
-					_ => new[] { "application/atom+xml", "application/xml", "application/text" },
+					_ => ["application/atom+xml", "application/xml", "application/text"],
 				};
 			}
 		}

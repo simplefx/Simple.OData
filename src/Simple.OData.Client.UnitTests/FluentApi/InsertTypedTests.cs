@@ -129,7 +129,7 @@ public class InsertTypedTests : TestBase
 		var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
 		var category = await client
 			.For<Category>()
-			.Set(new { CategoryName = "Test7", Picture = Convert.ToBase64String(new byte[] { 1, 2, 3, 4, 5 }) })
+			.Set(new { CategoryName = "Test7", Picture = Convert.ToBase64String([1, 2, 3, 4, 5]) })
 			.InsertEntryAsync();
 
 		category = await client
