@@ -190,7 +190,7 @@ internal class SimplePluralizer : IPluralizer
 		{
 			if (word.EndsWith(_singularSuffix, StringComparison.OrdinalIgnoreCase))
 			{
-				plural = word.Substring(0, word.Length - _singularSuffix.Length) + _pluralSuffix;
+				plural = string.Concat(word.AsSpan(0, word.Length - _singularSuffix.Length), _pluralSuffix);
 				return true;
 			}
 			else
@@ -203,7 +203,7 @@ internal class SimplePluralizer : IPluralizer
 		{
 			if (word.EndsWith(_pluralSuffix, StringComparison.OrdinalIgnoreCase))
 			{
-				singular = word.Substring(0, word.Length - _pluralSuffix.Length) + _singularSuffix;
+				singular = string.Concat(word.AsSpan(0, word.Length - _pluralSuffix.Length), _singularSuffix);
 				return true;
 			}
 			else
@@ -346,7 +346,7 @@ internal class SimplePluralizer : IPluralizer
 			{
 				if (!char.IsUpper(s[0]))
 				{
-					s = s.Substring(0, 1).ToUpperInvariant() + s.Substring(1);
+					s = string.Concat(s.Substring(0, 1).ToUpperInvariant(), s.AsSpan(1));
 				}
 			}
 		}
