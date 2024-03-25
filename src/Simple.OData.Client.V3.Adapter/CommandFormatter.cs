@@ -4,13 +4,8 @@ using Microsoft.Data.OData.Query;
 
 namespace Simple.OData.Client.V3.Adapter;
 
-public class CommandFormatter : CommandFormatterBase
+public class CommandFormatter(ISession session) : CommandFormatterBase(session)
 {
-	public CommandFormatter(ISession session)
-		: base(session)
-	{
-	}
-
 	public override FunctionFormat FunctionFormat => FunctionFormat.Query;
 
 	public override string ConvertValueToUriLiteral(object value, bool escapeDataString)

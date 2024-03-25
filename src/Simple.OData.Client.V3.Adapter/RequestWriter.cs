@@ -7,15 +7,9 @@ using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client.V3.Adapter;
 
-public class RequestWriter : RequestWriterBase
+public class RequestWriter(ISession session, IEdmModel model, Lazy<IBatchWriter> deferredBatchWriter) : RequestWriterBase(session, deferredBatchWriter)
 {
-	private readonly IEdmModel _model;
-
-	public RequestWriter(ISession session, IEdmModel model, Lazy<IBatchWriter> deferredBatchWriter)
-		: base(session, deferredBatchWriter)
-	{
-		_model = model;
-	}
+	private readonly IEdmModel _model = model;
 
 	protected async override Task<Stream> WriteEntryContentAsync(string method, string collection, string commandText, IDictionary<string, object> entryData, bool resultRequired)
 	{

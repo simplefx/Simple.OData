@@ -5,14 +5,9 @@ using Owin;
 
 namespace WebApiOData.V4.Samples;
 
-public abstract class Startup
+public abstract class Startup(Type controllerType)
 {
-	private readonly Type _controllerType;
-
-	protected Startup(Type controllerType)
-	{
-		_controllerType = controllerType;
-	}
+	private readonly Type _controllerType = controllerType;
 
 	protected abstract void ConfigureController(HttpConfiguration config);
 

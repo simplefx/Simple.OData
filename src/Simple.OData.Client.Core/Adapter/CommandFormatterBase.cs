@@ -2,14 +2,9 @@
 
 namespace Simple.OData.Client;
 
-public abstract class CommandFormatterBase : ICommandFormatter
+public abstract class CommandFormatterBase(ISession session) : ICommandFormatter
 {
-	protected readonly ISession _session;
-
-	protected CommandFormatterBase(ISession session)
-	{
-		_session = session;
-	}
+	protected readonly ISession _session = session;
 
 	public abstract string ConvertValueToUriLiteral(object value, bool escapeString);
 

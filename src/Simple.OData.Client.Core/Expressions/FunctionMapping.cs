@@ -2,18 +2,11 @@
 
 internal class FunctionMapping
 {
-	public class FunctionDefinition
+	public class FunctionDefinition(ExpressionFunction.FunctionCall functionCall, FunctionMapping functionMapping, AdapterVersion adapterVersion = AdapterVersion.Any)
 	{
-		public FunctionDefinition(ExpressionFunction.FunctionCall functionCall, FunctionMapping functionMapping, AdapterVersion adapterVersion = AdapterVersion.Any)
-		{
-			FunctionCall = functionCall;
-			FunctionMapping = functionMapping;
-			AdapterVersion = adapterVersion;
-		}
-
-		public ExpressionFunction.FunctionCall FunctionCall { get; set; }
-		public FunctionMapping FunctionMapping { get; set; }
-		public AdapterVersion AdapterVersion { get; set; }
+		public ExpressionFunction.FunctionCall FunctionCall { get; set; } = functionCall;
+		public FunctionMapping FunctionMapping { get; set; } = functionMapping;
+		public AdapterVersion AdapterVersion { get; set; } = adapterVersion;
 	}
 
 	public string FunctionName { get; private set; }

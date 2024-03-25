@@ -27,13 +27,8 @@ public class MetadataODataTestsV4Json : MetadataODataTests
 	public MetadataODataTestsV4Json() : base(ODataV4ReadWriteUri, ODataPayloadFormat.Json, 4) { }
 }
 
-public abstract class MetadataODataTests : ODataTestBase
+public abstract class MetadataODataTests(string serviceUri, ODataPayloadFormat payloadFormat, int version) : ODataTestBase(serviceUri, payloadFormat, version)
 {
-	protected MetadataODataTests(string serviceUri, ODataPayloadFormat payloadFormat, int version)
-		: base(serviceUri, payloadFormat, version)
-	{
-	}
-
 	[Fact]
 	public async Task FilterWithMetadataDocument()
 	{

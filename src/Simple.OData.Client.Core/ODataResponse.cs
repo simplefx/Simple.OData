@@ -3,18 +3,12 @@ using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client;
 
-public class AnnotatedFeed
+public class AnnotatedFeed(
+	IEnumerable<AnnotatedEntry> entries,
+	ODataFeedAnnotations? annotations = null)
 {
-	public IList<AnnotatedEntry> Entries { get; private set; }
-	public ODataFeedAnnotations? Annotations { get; private set; }
-
-	public AnnotatedFeed(
-		IEnumerable<AnnotatedEntry> entries,
-		ODataFeedAnnotations? annotations = null)
-	{
-		Entries = entries.ToList();
-		Annotations = annotations;
-	}
+	public IList<AnnotatedEntry> Entries { get; private set; } = entries.ToList();
+	public ODataFeedAnnotations? Annotations { get; private set; } = annotations;
 
 	public void SetAnnotations(ODataFeedAnnotations annotations)
 	{
@@ -29,19 +23,13 @@ public class AnnotatedFeed
 	}
 }
 
-public class AnnotatedEntry
+public class AnnotatedEntry(
+	IDictionary<string, object> data,
+	ODataEntryAnnotations? annotations = null)
 {
-	public IDictionary<string, object>? Data { get; private set; }
-	public ODataEntryAnnotations? Annotations { get; private set; }
+	public IDictionary<string, object>? Data { get; private set; } = data;
+	public ODataEntryAnnotations? Annotations { get; private set; } = annotations;
 	public ODataFeedAnnotations? LinkAnnotations { get; private set; }
-
-	public AnnotatedEntry(
-		IDictionary<string, object> data,
-		ODataEntryAnnotations? annotations = null)
-	{
-		Data = data;
-		Annotations = annotations;
-	}
 
 	public void SetAnnotations(ODataEntryAnnotations annotations)
 	{

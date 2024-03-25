@@ -31,13 +31,8 @@ public class UpdateODataTestsV4Json : UpdateODataTests
 	public UpdateODataTestsV4Json() : base(ODataV4ReadWriteUri, ODataPayloadFormat.Json, 4) { }
 }
 
-public abstract class UpdateODataTests : ODataTestBase
+public abstract class UpdateODataTests(string serviceUri, ODataPayloadFormat payloadFormat, int version) : ODataTestBase(serviceUri, payloadFormat, version)
 {
-	protected UpdateODataTests(string serviceUri, ODataPayloadFormat payloadFormat, int version)
-		: base(serviceUri, payloadFormat, version)
-	{
-	}
-
 	[Fact]
 	public async Task UpdateByKey()
 	{

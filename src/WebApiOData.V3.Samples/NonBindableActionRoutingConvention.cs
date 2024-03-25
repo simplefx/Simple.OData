@@ -5,14 +5,9 @@ using System.Web.Http.OData.Routing.Conventions;
 
 namespace WebApiOData.V3.Samples;
 
-public class NonBindableActionRoutingConvention : IODataRoutingConvention
+public class NonBindableActionRoutingConvention(string controllerName) : IODataRoutingConvention
 {
-	private readonly string _controllerName;
-
-	public NonBindableActionRoutingConvention(string controllerName)
-	{
-		_controllerName = controllerName;
-	}
+	private readonly string _controllerName = controllerName;
 
 	// Route all non-bindable actions to a single controller.
 	public string SelectController(ODataPath odataPath, System.Net.Http.HttpRequestMessage request)

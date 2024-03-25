@@ -27,13 +27,8 @@ public class FindODataTestsV4Json : FindODataTests
 	public FindODataTestsV4Json() : base(ODataV4ReadOnlyUri, ODataPayloadFormat.Json, 4) { }
 }
 
-public abstract class FindODataTests : ODataTestBase
+public abstract class FindODataTests(string serviceUri, ODataPayloadFormat payloadFormat, int version) : ODataTestBase(serviceUri, payloadFormat, version)
 {
-	protected FindODataTests(string serviceUri, ODataPayloadFormat payloadFormat, int version)
-		: base(serviceUri, payloadFormat, version)
-	{
-	}
-
 	[Fact]
 	public async Task Filter()
 	{

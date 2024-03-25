@@ -3,14 +3,9 @@
 /// <summary>
 /// <inheritdoc cref="IExtendedODataClient"/>
 /// </summary>
-public class ExtendedODataClient : IExtendedODataClient
+public class ExtendedODataClient(ODataClient baseClient) : IExtendedODataClient
 {
-	private readonly ODataClient _baseClient;
-
-	public ExtendedODataClient(ODataClient baseClient)
-	{
-		_baseClient = baseClient;
-	}
+	private readonly ODataClient _baseClient = baseClient;
 
 	public IExtendedBoundClient<IDictionary<string, object>> For(string collectionName)
 	{

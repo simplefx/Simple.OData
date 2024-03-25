@@ -166,26 +166,17 @@ internal class SimplePluralizer : IPluralizer
 			"wife", "wives",
 		];
 
-	private class Word
+	private class Word(string singular, string plural)
 	{
-		public readonly string Singular;
-		public readonly string Plural;
-		public Word(string singular, string plural)
-		{
-			Singular = singular;
-			Plural = plural;
-		}
+		public readonly string Singular = singular;
+		public readonly string Plural = plural;
 	}
 
-	private class SuffixRule
+	private class SuffixRule(string singular, string plural)
 	{
-		private readonly string _singularSuffix;
-		private readonly string _pluralSuffix;
-		public SuffixRule(string singular, string plural)
-		{
-			_singularSuffix = singular;
-			_pluralSuffix = plural;
-		}
+		private readonly string _singularSuffix = singular;
+		private readonly string _pluralSuffix = plural;
+
 		public bool TryToPlural(string word, out string? plural)
 		{
 			if (word.EndsWith(_singularSuffix, StringComparison.OrdinalIgnoreCase))

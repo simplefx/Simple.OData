@@ -2,14 +2,9 @@
 
 namespace Simple.OData.Client.V3.Adapter;
 
-internal class ODataResponseMessage : IODataResponseMessageAsync
+internal class ODataResponseMessage(HttpResponseMessage response) : IODataResponseMessageAsync
 {
-	private readonly HttpResponseMessage _response;
-
-	public ODataResponseMessage(HttpResponseMessage response)
-	{
-		_response = response;
-	}
+	private readonly HttpResponseMessage _response = response;
 
 	public string GetHeader(string headerName)
 	{

@@ -7,19 +7,11 @@ using Simple.OData.Client.Extensions;
 
 namespace Simple.OData.Client.V4.Adapter
 {
-	public class RequestWriter : RequestWriterBase
+	public class RequestWriter(ISession session, IEdmModel model, Lazy<IBatchWriter> deferredBatchWriter) : RequestWriterBase(session, deferredBatchWriter)
 	{
-		private readonly IEdmModel _model;
-		private readonly Dictionary<ODataResource, ResourceProperties> _resourceEntryMap;
-		private readonly Dictionary<ODataResource, List<ODataResource>> _resourceEntries;
-
-		public RequestWriter(ISession session, IEdmModel model, Lazy<IBatchWriter> deferredBatchWriter)
-			: base(session, deferredBatchWriter)
-		{
-			_model = model;
-			_resourceEntryMap = new Dictionary<ODataResource, ResourceProperties>();
-			_resourceEntries = new Dictionary<ODataResource, List<ODataResource>>();
-		}
+		private readonly IEdmModel _model = model;
+		private readonly Dictionary<ODataResource, ResourceProperties> _resourceEntryMap = new Dictionary<ODataResource, ResourceProperties>();
+		private readonly Dictionary<ODataResource, List<ODataResource>> _resourceEntries = new Dictionary<ODataResource, List<ODataResource>>();
 
 		private void RegisterRootEntry(ODataResource root)
 		{

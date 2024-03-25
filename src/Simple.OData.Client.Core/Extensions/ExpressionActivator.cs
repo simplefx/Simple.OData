@@ -104,22 +104,12 @@ public static class ExpressionActivator
 	}
 }
 
-public class ConstructorNotFoundException : Exception
+public class ConstructorNotFoundException(Type type, IEnumerable<Type> parameterTypes) : Exception(string.Format(CultureInfo.InvariantCulture, ErrorMessage, type.Name, string.Join(", ", parameterTypes.Select(x => x.Name))))
 {
 	private const string ErrorMessage = "Could not find a constructor for type '{0}' with the following argument types: {1}";
-
-	public ConstructorNotFoundException(Type type, IEnumerable<Type> parameterTypes)
-		: base(string.Format(CultureInfo.InvariantCulture, ErrorMessage, type.Name, string.Join(", ", parameterTypes.Select(x => x.Name))))
-	{
-	}
 }
 
-public class TypeMismatchException : Exception
+public class TypeMismatchException(Type type, Type declaringType) : Exception(string.Format(CultureInfo.InvariantCulture, ErrorMessage, declaringType.Name, type.Name))
 {
 	private const string ErrorMessage = "Type '{0}' must be assignable to type '{1}' in order to create a typed activator.";
-
-	public TypeMismatchException(Type type, Type declaringType)
-		: base(string.Format(CultureInfo.InvariantCulture, ErrorMessage, declaringType.Name, type.Name))
-	{
-	}
 }

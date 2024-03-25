@@ -27,13 +27,8 @@ public class DeleteODataTestsV4Json : DeleteODataTests
 	public DeleteODataTestsV4Json() : base(ODataV4ReadWriteUri, ODataPayloadFormat.Json, 4) { }
 }
 
-public abstract class DeleteODataTests : ODataTestBase
+public abstract class DeleteODataTests(string serviceUri, ODataPayloadFormat payloadFormat, int version) : ODataTestBase(serviceUri, payloadFormat, version)
 {
-	protected DeleteODataTests(string serviceUri, ODataPayloadFormat payloadFormat, int version)
-		: base(serviceUri, payloadFormat, version)
-	{
-	}
-
 	[Fact]
 	public async Task DeleteByKey()
 	{

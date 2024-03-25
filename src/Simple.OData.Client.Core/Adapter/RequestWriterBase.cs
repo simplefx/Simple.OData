@@ -2,16 +2,10 @@
 
 namespace Simple.OData.Client;
 
-public abstract class RequestWriterBase : IRequestWriter
+public abstract class RequestWriterBase(ISession session, Lazy<IBatchWriter> deferredBatchWriter) : IRequestWriter
 {
-	protected readonly ISession _session;
-	protected readonly Lazy<IBatchWriter> _deferredBatchWriter;
-
-	protected RequestWriterBase(ISession session, Lazy<IBatchWriter> deferredBatchWriter)
-	{
-		_session = session;
-		_deferredBatchWriter = deferredBatchWriter;
-	}
+	protected readonly ISession _session = session;
+	protected readonly Lazy<IBatchWriter> _deferredBatchWriter = deferredBatchWriter;
 
 	protected bool IsBatch => _deferredBatchWriter is not null;
 

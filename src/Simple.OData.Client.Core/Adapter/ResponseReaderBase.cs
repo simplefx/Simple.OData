@@ -2,14 +2,9 @@
 
 namespace Simple.OData.Client;
 
-public abstract class ResponseReaderBase : IResponseReader
+public abstract class ResponseReaderBase(ISession session) : IResponseReader
 {
-	protected readonly ISession _session;
-
-	protected ResponseReaderBase(ISession session)
-	{
-		_session = session;
-	}
+	protected readonly ISession _session = session;
 
 	protected ITypeCache TypeCache => _session.TypeCache;
 

@@ -53,10 +53,8 @@ public class TripPinRESTierTestsV4Json : TripPinTestBase
 	}
 }
 
-public abstract class TripPinTests : TripPinTestBase
+public abstract class TripPinTests(string serviceUri, ODataPayloadFormat payloadFormat) : TripPinTestBase(serviceUri, payloadFormat)
 {
-	protected TripPinTests(string serviceUri, ODataPayloadFormat payloadFormat) : base(serviceUri, payloadFormat) { }
-
 	[Fact]
 	public async Task FindAllPeople()
 	{

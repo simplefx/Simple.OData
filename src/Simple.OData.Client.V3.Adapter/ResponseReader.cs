@@ -4,16 +4,10 @@ using Microsoft.Data.OData;
 
 namespace Simple.OData.Client.V3.Adapter
 {
-	public class ResponseReader : ResponseReaderBase
+	public class ResponseReader(ISession session, IEdmModel model) : ResponseReaderBase(session)
 	{
-		private readonly IEdmModel _model;
+		private readonly IEdmModel _model = model;
 		private bool _hasResponse = false;
-
-		public ResponseReader(ISession session, IEdmModel model)
-			: base(session)
-		{
-			_model = model;
-		}
 
 		public override Task<ODataResponse> GetResponseAsync(HttpResponseMessage responseMessage)
 		{

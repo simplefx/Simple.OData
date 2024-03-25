@@ -3,9 +3,9 @@ using System.Reflection;
 
 namespace ActionProviderImplementation;
 
-public class ActionFactory
+public class ActionFactory(IDataServiceMetadataProvider metadata)
 {
-	private readonly IDataServiceMetadataProvider _metadata;
+	private readonly IDataServiceMetadataProvider _metadata = metadata;
 
 	//TODO: make this list complete
 	private static readonly Type[] __primitives = [
@@ -23,11 +23,6 @@ public class ActionFactory
 			typeof(decimal?),
 			typeof(Guid?)
 		];
-
-	public ActionFactory(IDataServiceMetadataProvider metadata)
-	{
-		_metadata = metadata;
-	}
 
 	public IEnumerable<ServiceAction> GetActions(Type typeWithActions)
 	{

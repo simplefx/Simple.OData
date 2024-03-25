@@ -28,16 +28,11 @@ public class MediaODataTestsV4Json : MediaODataTests
 	public MediaODataTestsV4Json() : base(ODataV4ReadWriteUri, ODataPayloadFormat.Json, 4) { }
 }
 
-public abstract class MediaODataTests : ODataTestBase
+public abstract class MediaODataTests(string serviceUri, ODataPayloadFormat payloadFormat, int version) : ODataTestBase(serviceUri, payloadFormat, version)
 {
 	private class PersonDetail
 	{
 		public string Photo { get; set; }
-	}
-
-	protected MediaODataTests(string serviceUri, ODataPayloadFormat payloadFormat, int version)
-		: base(serviceUri, payloadFormat, version)
-	{
 	}
 
 	[Fact]

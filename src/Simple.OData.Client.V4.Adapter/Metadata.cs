@@ -3,14 +3,9 @@ using Microsoft.OData.Edm.Vocabularies;
 
 namespace Simple.OData.Client.V4.Adapter;
 
-public class Metadata : MetadataBase
+public class Metadata(IEdmModel model, INameMatchResolver nameMatchResolver, bool ignoreUnmappedProperties, bool unqualifiedNameCall) : MetadataBase(nameMatchResolver, ignoreUnmappedProperties, unqualifiedNameCall)
 {
-	private readonly IEdmModel _model;
-
-	public Metadata(IEdmModel model, INameMatchResolver nameMatchResolver, bool ignoreUnmappedProperties, bool unqualifiedNameCall) : base(nameMatchResolver, ignoreUnmappedProperties, unqualifiedNameCall)
-	{
-		_model = model;
-	}
+	private readonly IEdmModel _model = model;
 
 	public override string GetEntityCollectionExactName(string collectionName)
 	{

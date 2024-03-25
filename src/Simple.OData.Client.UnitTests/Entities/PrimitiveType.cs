@@ -4,14 +4,9 @@ using System.Globalization;
 namespace Simple.OData.Client.Tests.Entities
 {
 	[TypeConverter(typeof(PrimitiveTypeConverter))]
-	internal readonly struct PrimitiveType
+	internal readonly struct PrimitiveType(Guid value)
 	{
-		public PrimitiveType(Guid value)
-		{
-			Value = value;
-		}
-
-		public Guid Value { get; }
+		public Guid Value { get; } = value;
 	}
 
 	internal class PrimitiveTypeConverter : System.ComponentModel.TypeConverter

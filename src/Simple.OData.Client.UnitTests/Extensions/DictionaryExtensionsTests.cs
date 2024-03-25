@@ -393,9 +393,8 @@ public class DictionaryExtensionsTests
 		Assert.Equal(1, value.TransportID);
 	}
 
-	private class ClassNoDefaultConstructor
+	private class ClassNoDefaultConstructor(string arg)
 	{
-		public ClassNoDefaultConstructor(string arg) { }
 	}
 
 	[Fact]

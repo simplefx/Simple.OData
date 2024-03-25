@@ -2,18 +2,11 @@
 
 namespace Simple.OData.Client;
 
-public class CachedPluralizer : IPluralizer
+public class CachedPluralizer(IPluralizer pluralizer) : IPluralizer
 {
-	private readonly IPluralizer pluralizer;
-	private readonly ConcurrentDictionary<string, string> singles;
-	private readonly ConcurrentDictionary<string, string> plurals;
-
-	public CachedPluralizer(IPluralizer pluralizer)
-	{
-		this.pluralizer = pluralizer;
-		singles = new ConcurrentDictionary<string, string>();
-		plurals = new ConcurrentDictionary<string, string>();
-	}
+	private readonly IPluralizer pluralizer = pluralizer;
+	private readonly ConcurrentDictionary<string, string> singles = new ConcurrentDictionary<string, string>();
+	private readonly ConcurrentDictionary<string, string> plurals = new ConcurrentDictionary<string, string>();
 
 	public string Pluralize(string word)
 	{

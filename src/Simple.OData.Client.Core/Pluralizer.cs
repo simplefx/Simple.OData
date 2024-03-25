@@ -3,21 +3,15 @@
 /// <summary>
 /// Provides pluralization and singularization of words when resolving names of resources and properties
 /// </summary>
-public class Pluralizer : IPluralizer
+/// <remarks>
+/// Initializes a new instance of the <see cref="Pluralizer"/> class.
+/// </remarks>
+/// <param name="pluralize">The Pluralize function delegate.</param>
+/// <param name="singularize">The Singularize function delegate.</param>
+public class Pluralizer(Func<string, string> pluralize, Func<string, string> singularize) : IPluralizer
 {
-	private readonly Func<string, string> _pluralize;
-	private readonly Func<string, string> _singularize;
-
-	/// <summary>
-	/// Initializes a new instance of the <see cref="Pluralizer"/> class.
-	/// </summary>
-	/// <param name="pluralize">The Pluralize function delegate.</param>
-	/// <param name="singularize">The Singularize function delegate.</param>
-	public Pluralizer(Func<string, string> pluralize, Func<string, string> singularize)
-	{
-		_pluralize = pluralize;
-		_singularize = singularize;
-	}
+	private readonly Func<string, string> _pluralize = pluralize;
+	private readonly Func<string, string> _singularize = singularize;
 
 	/// <summary>
 	/// Pluralizes the specified word.

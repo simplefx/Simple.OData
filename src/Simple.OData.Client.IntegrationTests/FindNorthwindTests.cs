@@ -46,10 +46,8 @@ public class FindNorthwindTestsV4Json : FindNorthwindTests
 	public FindNorthwindTestsV4Json() : base(NorthwindV4ReadOnlyUri, ODataPayloadFormat.Json) { }
 }
 
-public abstract class FindNorthwindTests : TestBase
+public abstract class FindNorthwindTests(string serviceUri, ODataPayloadFormat payloadFormat) : TestBase(serviceUri, payloadFormat)
 {
-	protected FindNorthwindTests(string serviceUri, ODataPayloadFormat payloadFormat) : base(serviceUri, payloadFormat) { }
-
 	protected async override Task DeleteTestData()
 	{
 		var products = await _client.For("Products").Select("ProductID", "ProductName").FindEntriesAsync();

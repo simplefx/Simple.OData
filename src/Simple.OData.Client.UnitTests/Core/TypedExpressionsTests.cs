@@ -89,10 +89,9 @@ public abstract class TypedExpressionTests : CoreTestBase
 	}
 
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Property, AllowMultiple = false)]
-	private class JsonPropertyNameAttribute : Attribute
+	private class JsonPropertyNameAttribute(string name) : Attribute
 	{
-		public JsonPropertyNameAttribute(string name) { Name = name; }
-		public string Name { get; }
+		public string Name { get; } = name;
 	}
 
 	internal class TestEntity

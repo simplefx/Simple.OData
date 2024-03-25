@@ -3,20 +3,13 @@ using System.Data.Services.Providers;
 
 namespace ActionProviderImplementation;
 
-public class ActionProvider : IDataServiceActionProvider
+public class ActionProvider(object context, IParameterMarshaller marshaller) : IDataServiceActionProvider
 {
 	private static readonly Dictionary<Type, List<ServiceAction>> _cache = new();
 	private static readonly Dictionary<string, ServiceAction> _actionsByName = new();
-	private readonly Type _instanceType;
-	private readonly object _context;
-	private readonly IParameterMarshaller _marshaller;
-
-	public ActionProvider(object context, IParameterMarshaller marshaller)
-	{
-		_context = context;
-		_instanceType = context.GetType();
-		_marshaller = marshaller;
-	}
+	private readonly Type _instanceType = context.GetType();
+	private readonly object _context = context;
+	private readonly IParameterMarshaller _marshaller = marshaller;
 
 	public bool AdvertiseServiceAction(DataServiceOperationContext operationContext, ServiceAction serviceAction, object resourceInstance, bool inFeed, ref Microsoft.Data.OData.ODataAction actionToSerialize)
 	{

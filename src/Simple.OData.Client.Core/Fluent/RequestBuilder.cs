@@ -216,19 +216,12 @@ internal class RequestBuilder : IRequestBuilder
 	}
 }
 
-internal class RequestBuilder<T> : IRequestBuilder<T>
+internal class RequestBuilder<T>(FluentCommand command, Session session, Lazy<IBatchWriter> batchWriter) : IRequestBuilder<T>
 	where T : class
 {
-	private readonly FluentCommand _command;
-	private readonly Session _session;
-	private readonly Lazy<IBatchWriter> _lazyBatchWriter;
-
-	public RequestBuilder(FluentCommand command, Session session, Lazy<IBatchWriter> batchWriter)
-	{
-		_command = command;
-		_session = session;
-		_lazyBatchWriter = batchWriter;
-	}
+	private readonly FluentCommand _command = command;
+	private readonly Session _session = session;
+	private readonly Lazy<IBatchWriter> _lazyBatchWriter = batchWriter;
 
 	public Task<IClientWithRequest<T>> FindEntriesAsync()
 	{

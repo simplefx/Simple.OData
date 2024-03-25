@@ -8,14 +8,9 @@ namespace Simple.OData.Client.Tests.Core;
 
 public class AdapterTests : TestBase
 {
-	private class CustomBatchWriter : BatchWriter
+	private class CustomBatchWriter(ISession session, IDictionary<object, IDictionary<string, object>> batchEntries) : BatchWriter(session, batchEntries)
 	{
-		private readonly ISession session;
-
-		public CustomBatchWriter(ISession session, IDictionary<object, IDictionary<string, object>> batchEntries) : base(session, batchEntries)
-		{
-			this.session = session;
-		}
+		private readonly ISession session = session;
 
 		protected async override Task<object> CreateOperationMessageAsync(Uri uri, string method, string collection, string contentId, bool resultRequired)
 		{
@@ -38,14 +33,9 @@ public class AdapterTests : TestBase
 		}
 	}
 
-	private class CustomAdapter : ODataAdapter
+	private class CustomAdapter(ISession session, IODataModelAdapter modelAdapter) : ODataAdapter(session, modelAdapter)
 	{
-		private readonly ISession session;
-
-		public CustomAdapter(ISession session, IODataModelAdapter modelAdapter) : base(session, modelAdapter)
-		{
-			this.session = session;
-		}
+		private readonly ISession session = session;
 
 		public override IBatchWriter GetBatchWriter(IDictionary<object, IDictionary<string, object>> batchEntries)
 		{

@@ -3,16 +3,11 @@ using Microsoft.Data.OData;
 
 namespace Simple.OData.Client.V3.Adapter;
 
-public class BatchWriter : BatchWriterBase
+public class BatchWriter(ISession session, IDictionary<object, IDictionary<string, object>> batchEntries) : BatchWriterBase(session, batchEntries)
 {
 	private ODataBatchWriter? _batchWriter;
 	private ODataRequestMessage _requestMessage;
 	private ODataMessageWriter _messageWriter;
-
-	public BatchWriter(ISession session, IDictionary<object, IDictionary<string, object>> batchEntries)
-		: base(session, batchEntries)
-	{
-	}
 
 	public async override Task StartBatchAsync()
 	{

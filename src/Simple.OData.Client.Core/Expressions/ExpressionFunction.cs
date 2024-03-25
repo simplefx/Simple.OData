@@ -7,16 +7,10 @@ public class ExpressionFunction
 	public string FunctionName { get; set; }
 	public List<ODataExpression> Arguments { get; set; }
 
-	public class FunctionCall
+	public class FunctionCall(string functionName, int argumentCount)
 	{
-		public string FunctionName { get; private set; }
-		public int ArgumentCount { get; private set; }
-
-		public FunctionCall(string functionName, int argumentCount)
-		{
-			FunctionName = functionName;
-			ArgumentCount = argumentCount;
-		}
+		public string FunctionName { get; private set; } = functionName;
+		public int ArgumentCount { get; private set; } = argumentCount;
 
 		public override bool Equals(object obj)
 		{

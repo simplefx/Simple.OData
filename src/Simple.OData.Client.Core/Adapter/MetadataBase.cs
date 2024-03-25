@@ -1,19 +1,12 @@
 ﻿namespace Simple.OData.Client;
 
-public abstract class MetadataBase : IMetadata
+public abstract class MetadataBase(INameMatchResolver nameMatchResolver, bool ignoreUnmappedProperties, bool unqualifiedNameCall) : IMetadata
 {
-	protected MetadataBase(INameMatchResolver nameMatchResolver, bool ignoreUnmappedProperties, bool unqualifiedNameCall)
-	{
-		IgnoreUnmappedProperties = ignoreUnmappedProperties;
-		NameMatchResolver = nameMatchResolver;
-		UnqualifiedNameCall = unqualifiedNameCall;
-	}
+	public bool IgnoreUnmappedProperties { get; } = ignoreUnmappedProperties;
 
-	public bool IgnoreUnmappedProperties { get; }
+	public INameMatchResolver NameMatchResolver { get; } = nameMatchResolver;
 
-	public INameMatchResolver NameMatchResolver { get; }
-
-	public bool UnqualifiedNameCall { get; }
+	public bool UnqualifiedNameCall { get; } = unqualifiedNameCall;
 
 	public abstract string GetEntityCollectionExactName(string collectionName);
 

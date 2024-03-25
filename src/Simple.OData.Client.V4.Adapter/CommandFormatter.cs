@@ -3,14 +3,9 @@ using Simple.OData.Client.V4.Adapter.Extensions;
 
 namespace Simple.OData.Client.V4.Adapter;
 
-public class CommandFormatter : CommandFormatterBase
+public class CommandFormatter(ISession session) : CommandFormatterBase(session)
 {
 	private const string StarString = "*";
-
-	public CommandFormatter(ISession session)
-		: base(session)
-	{
-	}
 
 	public override FunctionFormat FunctionFormat => FunctionFormat.Key;
 

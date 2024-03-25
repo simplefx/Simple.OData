@@ -5,66 +5,35 @@ namespace Simple.OData.Client.Adapter;
 /// <summary>
 /// A caching layer for <see cref="IMetadata"/>
 /// </summary>
-public class MetadataCache : IMetadata
+public class MetadataCache(IMetadata metadata) : IMetadata
 {
-	private readonly IMetadata metadata;
-	private readonly ConcurrentDictionary<string, EntityCollection> ec;
-	private readonly ConcurrentDictionary<string, EntityCollection> nav;
-	private readonly ConcurrentDictionary<string, string> ecen;
-	private readonly ConcurrentDictionary<string, bool> roc;
-	private readonly ConcurrentDictionary<string, string> eten;
-	private readonly ConcurrentDictionary<string, string> qtn;
-	private readonly ConcurrentDictionary<string, bool> ot;
-	private readonly ConcurrentDictionary<string, bool> tid;
-	private readonly ConcurrentDictionary<string, bool> sp;
-	private readonly ConcurrentDictionary<string, bool> np;
-	private readonly ConcurrentDictionary<string, IList<string>> npn;
-	private readonly ConcurrentDictionary<string, bool> npc;
-	private readonly ConcurrentDictionary<string, IList<string>> spns;
-	private readonly ConcurrentDictionary<string, IList<string>> dkpns;
-	private readonly ConcurrentDictionary<string, IList<IList<string>>> akpns;
-	private readonly ConcurrentDictionary<string, string> npen;
-	private readonly ConcurrentDictionary<string, string> spp;
-	private readonly ConcurrentDictionary<string, string> ffn;
-	private readonly ConcurrentDictionary<string, string> fv;
-	private readonly ConcurrentDictionary<string, string> afn;
-	private readonly ConcurrentDictionary<string, string> nppt;
-	private readonly ConcurrentDictionary<string, EntityCollection> arc;
-	private readonly ConcurrentDictionary<string, EntityCollection> frc;
-	private readonly ConcurrentDictionary<string, string> spen;
+	private readonly IMetadata metadata = metadata;
+	private readonly ConcurrentDictionary<string, EntityCollection> ec = new ConcurrentDictionary<string, EntityCollection>();
+	private readonly ConcurrentDictionary<string, EntityCollection> nav = new ConcurrentDictionary<string, EntityCollection>();
+	private readonly ConcurrentDictionary<string, string> ecen = new ConcurrentDictionary<string, string>();
+	private readonly ConcurrentDictionary<string, bool> roc = new ConcurrentDictionary<string, bool>();
+	private readonly ConcurrentDictionary<string, string> eten = new ConcurrentDictionary<string, string>();
+	private readonly ConcurrentDictionary<string, string> qtn = new ConcurrentDictionary<string, string>();
+	private readonly ConcurrentDictionary<string, bool> ot = new ConcurrentDictionary<string, bool>();
+	private readonly ConcurrentDictionary<string, bool> tid = new ConcurrentDictionary<string, bool>();
+	private readonly ConcurrentDictionary<string, bool> sp = new ConcurrentDictionary<string, bool>();
+	private readonly ConcurrentDictionary<string, bool> np = new ConcurrentDictionary<string, bool>();
+	private readonly ConcurrentDictionary<string, IList<string>> npn = new ConcurrentDictionary<string, IList<string>>();
+	private readonly ConcurrentDictionary<string, bool> npc = new ConcurrentDictionary<string, bool>();
+	private readonly ConcurrentDictionary<string, IList<string>> spns = new ConcurrentDictionary<string, IList<string>>();
+	private readonly ConcurrentDictionary<string, IList<string>> dkpns = new ConcurrentDictionary<string, IList<string>>();
+	private readonly ConcurrentDictionary<string, IList<IList<string>>> akpns = new ConcurrentDictionary<string, IList<IList<string>>>();
+	private readonly ConcurrentDictionary<string, string> npen = new ConcurrentDictionary<string, string>();
+	private readonly ConcurrentDictionary<string, string> spp = new ConcurrentDictionary<string, string>();
+	private readonly ConcurrentDictionary<string, string> ffn = new ConcurrentDictionary<string, string>();
+	private readonly ConcurrentDictionary<string, string> fv = new ConcurrentDictionary<string, string>();
+	private readonly ConcurrentDictionary<string, string> afn = new ConcurrentDictionary<string, string>();
+	private readonly ConcurrentDictionary<string, string> nppt = new ConcurrentDictionary<string, string>();
+	private readonly ConcurrentDictionary<string, EntityCollection> arc = new ConcurrentDictionary<string, EntityCollection>();
+	private readonly ConcurrentDictionary<string, EntityCollection> frc = new ConcurrentDictionary<string, EntityCollection>();
+	private readonly ConcurrentDictionary<string, string> spen = new ConcurrentDictionary<string, string>();
 
-	public MetadataCache(IMetadata metadata)
-	{
-		this.metadata = metadata;
-		IgnoreUnmappedProperties = (metadata as MetadataBase).IgnoreUnmappedProperties;
-
-		ec = new ConcurrentDictionary<string, EntityCollection>();
-		nav = new ConcurrentDictionary<string, EntityCollection>();
-		ecen = new ConcurrentDictionary<string, string>();
-		roc = new ConcurrentDictionary<string, bool>();
-		eten = new ConcurrentDictionary<string, string>();
-		qtn = new ConcurrentDictionary<string, string>();
-		ot = new ConcurrentDictionary<string, bool>();
-		tid = new ConcurrentDictionary<string, bool>();
-		sp = new ConcurrentDictionary<string, bool>();
-		np = new ConcurrentDictionary<string, bool>();
-		npn = new ConcurrentDictionary<string, IList<string>>();
-		npc = new ConcurrentDictionary<string, bool>();
-		spns = new ConcurrentDictionary<string, IList<string>>();
-		dkpns = new ConcurrentDictionary<string, IList<string>>();
-		akpns = new ConcurrentDictionary<string, IList<IList<string>>>();
-		spp = new ConcurrentDictionary<string, string>();
-		npen = new ConcurrentDictionary<string, string>();
-		ffn = new ConcurrentDictionary<string, string>();
-		fv = new ConcurrentDictionary<string, string>();
-		afn = new ConcurrentDictionary<string, string>();
-		nppt = new ConcurrentDictionary<string, string>();
-		arc = new ConcurrentDictionary<string, EntityCollection>();
-		frc = new ConcurrentDictionary<string, EntityCollection>();
-		spen = new ConcurrentDictionary<string, string>();
-	}
-
-	public bool IgnoreUnmappedProperties { get; }
+	public bool IgnoreUnmappedProperties { get; } = (metadata as MetadataBase).IgnoreUnmappedProperties;
 
 	public EntityCollection GetEntityCollection(string collectionPath)
 	{
