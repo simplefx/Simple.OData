@@ -71,7 +71,7 @@ public class InsertDynamicTests : TestBase
 			.Expand(x.Products)
 			.Filter(x.CategoryName == "Test3")
 			.FindEntryAsync();
-		Assert.True((category.Products as IEnumerable<dynamic>).Count() == 1);
+		((category.Products as IEnumerable<dynamic>).Count() == 1).Should().BeTrue();
 	}
 
 	[Fact]
@@ -95,7 +95,7 @@ public class InsertDynamicTests : TestBase
 			.Expand(x.Products)
 			.Filter(x.CategoryName == "Test5")
 			.FindEntryAsync();
-		Assert.True((category.Products as IEnumerable<dynamic>).Count() == 1);
+		((category.Products as IEnumerable<dynamic>).Count() == 1).Should().BeTrue();
 	}
 
 	[Fact]

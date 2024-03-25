@@ -20,21 +20,21 @@ public class ODataExpandAssociationTests
 
 		association.Name.Should().Be("Products");
 		Assert.Single(association.ExpandAssociations);
-		Assert.Equal("Category", association.ExpandAssociations.First().Name);
+		association.ExpandAssociations.First().Name.Should().Be("Category");
 		Assert.Single(association.ExpandAssociations.First().ExpandAssociations);
-		Assert.Equal("Orders", association.ExpandAssociations.First().ExpandAssociations.First().Name);
+		association.ExpandAssociations.First().ExpandAssociations.First().Name.Should().Be("Orders");
 	}
 
 	[Fact]
 	public void CreateExpandAssociationFromNullStringThrowsArgumentException()
 	{
-		Assert.Throws<ArgumentException>(() => ODataExpandAssociation.From(null));
+		(() => ODataExpandAssociation.From(null)).Should().ThrowExactly<ArgumentException>();
 	}
 
 	[Fact]
 	public void CreateExpandAssociationFromEmptyStringThrowsArgumentException()
 	{
-		Assert.Throws<ArgumentException>(() => ODataExpandAssociation.From(string.Empty));
+		(() => ODataExpandAssociation.From(string.Empty)).Should().ThrowExactly<ArgumentException>();
 	}
 
 	[Fact]
@@ -47,7 +47,7 @@ public class ODataExpandAssociationTests
 
 		var clonedAssociation = association.Clone();
 
-		Assert.NotSame(association, clonedAssociation);
-		Assert.NotSame(association.ExpandAssociations.First(), clonedAssociation.ExpandAssociations.First());
+		clonedAssociation.Should().NotBeSameAs(association);
+		clonedAssociation.ExpandAssociations.First().Should().NotBeSameAs(association.ExpandAssociations.First());
 	}
 }

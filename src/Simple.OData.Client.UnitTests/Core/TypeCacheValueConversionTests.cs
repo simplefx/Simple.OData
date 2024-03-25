@@ -53,8 +53,8 @@ public class TypeCacheValueConversionTests
 
 		sourceValue = ChangeType(value, targetType);
 		result = TypeCache.TryConvert(sourceValue, sourceType, out targetValue);
-		Assert.True(result);
-		Assert.Equal(ChangeType(sourceValue, sourceType), ChangeType(targetValue, sourceType));
+		result.Should().BeTrue();
+		ChangeType(targetValue, sourceType).Should().Be(ChangeType(sourceValue, sourceType));
 	}
 
 	[Fact]
@@ -62,7 +62,7 @@ public class TypeCacheValueConversionTests
 	{
 		var source = GeographyPoint.Create(10, 10);
 		var result = TypeCache.TryConvert(source, typeof(GeographyPoint), out _);
-		Assert.True(result);
+		result.Should().BeTrue();
 	}
 
 	[Theory]
@@ -72,8 +72,8 @@ public class TypeCacheValueConversionTests
 	{
 		var sourceValue = ChangeType(value, sourceType);
 		var result = TypeCache.TryConvert(sourceValue, targetType, out var targetValue);
-		Assert.True(result);
-		Assert.Equal(ChangeType(sourceValue, targetType), ChangeType(targetValue, targetType));
+		result.Should().BeTrue();
+		ChangeType(targetValue, targetType).Should().Be(ChangeType(sourceValue, targetType));
 	}
 
 	[Theory]
@@ -83,7 +83,7 @@ public class TypeCacheValueConversionTests
 	{
 		var sourceValue = ChangeType(value, sourceType);
 		var result = TypeCache.TryConvert(sourceValue, targetType, out _);
-		Assert.False(result);
+		result.Should().BeFalse();
 	}
 
 	[Fact]
@@ -94,7 +94,7 @@ public class TypeCacheValueConversionTests
 
 		var source = Guid.NewGuid();
 		var result = TypeCache.TryConvert(source, typeof(PrimitiveType), out var converted);
-		Assert.True(result);
+		result.Should().BeTrue();
 		Assert.Equal(source, ((PrimitiveType)converted).Value);
 	}
 
@@ -106,7 +106,7 @@ public class TypeCacheValueConversionTests
 
 		var source = (Guid?)Guid.NewGuid();
 		var result = TypeCache.TryConvert(source, typeof(PrimitiveType?), out var converted);
-		Assert.True(result);
+		result.Should().BeTrue();
 		Assert.Equal(source, ((PrimitiveType)converted).Value);
 	}
 
@@ -115,7 +115,7 @@ public class TypeCacheValueConversionTests
 	{
 		var source = Guid.NewGuid();
 		var result = TypeCache.TryConvert(source, typeof(PrimitiveType), out var converted);
-		Assert.True(result);
+		result.Should().BeTrue();
 		Assert.Equal(source, ((PrimitiveType)converted).Value);
 	}
 
@@ -124,7 +124,7 @@ public class TypeCacheValueConversionTests
 	{
 		var source = (Guid?)Guid.NewGuid();
 		var result = TypeCache.TryConvert(source, typeof(PrimitiveType?), out var converted);
-		Assert.True(result);
+		result.Should().BeTrue();
 		Assert.Equal(source, ((PrimitiveType)converted).Value);
 	}
 

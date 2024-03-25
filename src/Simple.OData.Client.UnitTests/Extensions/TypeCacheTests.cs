@@ -53,19 +53,19 @@ public class TypeCacheTests
 	public void GetNamedProperty_DerivedType()
 	{
 		TypeCache.GetNamedProperty(typeof(Ship), "TransportID").Should().NotBeNull();
-		Assert.NotNull(TypeCache.GetNamedProperty(typeof(Ship), "ShipName"));
+		TypeCache.GetNamedProperty(typeof(Ship), "ShipName").Should().NotBeNull();
 	}
 
 	[Fact]
 	public void GetDeclaredProperty_BaseType()
 	{
-		Assert.NotNull(TypeCache.GetDeclaredProperty(typeof(Transport), "TransportID"));
+		TypeCache.GetDeclaredProperty(typeof(Transport), "TransportID").Should().NotBeNull();
 	}
 
 	[Fact]
 	public void GetDeclaredProperty_DerivedType()
 	{
-		Assert.Null(TypeCache.GetDeclaredProperty(typeof(Ship), "TransportID"));
-		Assert.NotNull(TypeCache.GetDeclaredProperty(typeof(Ship), "ShipName"));
+		TypeCache.GetDeclaredProperty(typeof(Ship), "TransportID").Should().BeNull();
+		TypeCache.GetDeclaredProperty(typeof(Ship), "ShipName").Should().NotBeNull();
 	}
 }

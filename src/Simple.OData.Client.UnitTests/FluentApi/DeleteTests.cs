@@ -69,7 +69,7 @@ public class DeleteTests : TestBase
 			.Filter("ProductName eq 'Test1'")
 			.FindEntryAsync();
 
-		Assert.Null(product);
+		product.Should().BeNull();
 	}
 
 	[Fact]
@@ -94,7 +94,7 @@ public class DeleteTests : TestBase
 			.Filter("ProductName eq 'Test1'")
 			.FindEntryAsync();
 
-		Assert.Null(product);
+		product.Should().BeNull();
 	}
 
 	[Fact]
@@ -116,7 +116,7 @@ public class DeleteTests : TestBase
 			.Filter("ProductName eq 'Test1'")
 			.FindEntryAsync();
 
-		Assert.Null(product);
+		product.Should().BeNull();
 	}
 
 	[Fact]
@@ -141,6 +141,6 @@ public class DeleteTests : TestBase
 			.Filter("ShipName eq 'Test1'")
 			.FindEntryAsync();
 
-		Assert.Null(ship);
+		ship.Should().BeNull();
 	}
 }

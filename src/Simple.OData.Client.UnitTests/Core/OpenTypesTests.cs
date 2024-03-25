@@ -24,9 +24,9 @@ public class OpenTypesTests : CoreTestBase
 		var entry = result.Entries.First();
 		entry.Should().NotBeNull();
 		entry.Data["Id"].Should().Be(42m);
-		Assert.Equal(43m, entry.Data["IntegerProperty"]);
-		Assert.Null(entry.Data["NullProperty"]);
-		Assert.Equal("some string", entry.Data["StringProperty"]);
+		entry.Data["IntegerProperty"].Should().Be(43m);
+		entry.Data["NullProperty"].Should().BeNull();
+		entry.Data["StringProperty"].Should().Be("some string");
 	}
 
 	private static new IODataResponseMessageAsync SetUpResourceMock(string resourceName)

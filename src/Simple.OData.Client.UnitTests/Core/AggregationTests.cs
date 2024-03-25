@@ -47,7 +47,7 @@ public class AggregationTests : CoreTestBase
 			.For<Employee>()
 			.Filter(x => x.Subordinates.Any(y => y.EmployeeID == 1 && y.FirstName.Contains("abc")));
 		var commandText = await command.GetCommandTextAsync();
-		Assert.Equal(expectedCommand, commandText);
+		commandText.Should().Be(expectedCommand);
 	}
 
 	[Theory]
@@ -61,7 +61,7 @@ public class AggregationTests : CoreTestBase
 			.For<Product>()
 			.Filter(x => x.Category.Products.Any(y => y.ProductID == 1));
 		var commandText = await command.GetCommandTextAsync();
-		Assert.Equal(expectedCommand, commandText);
+		commandText.Should().Be(expectedCommand);
 	}
 
 	[Theory]
@@ -75,6 +75,6 @@ public class AggregationTests : CoreTestBase
 			.For<Product>()
 			.Filter(x => x.Category.Products.Any(y => y.Category.Products.Any(z => z.ProductID == 1)));
 		var commandText = await command.GetCommandTextAsync();
-		Assert.Equal(expectedCommand, commandText);
+		commandText.Should().Be(expectedCommand);
 	}
 }

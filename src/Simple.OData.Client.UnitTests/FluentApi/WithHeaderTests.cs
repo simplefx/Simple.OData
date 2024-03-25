@@ -35,8 +35,8 @@ public class WithHeaderTests : TestBase
 			.BuildRequestFor()
 			.FindEntryAsync();
 
-		Assert.Equal("header1Value", request.GetRequest().RequestMessage.Headers.GetValues("header1").SingleOrDefault());
-		Assert.Equal("header2Value", request.GetRequest().RequestMessage.Headers.GetValues("header2").SingleOrDefault());
+		request.GetRequest().RequestMessage.Headers.GetValues("header1").SingleOrDefault().Should().Be("header1Value");
+		request.GetRequest().RequestMessage.Headers.GetValues("header2").SingleOrDefault().Should().Be("header2Value");
 	}
 
 	private (ODataClient client, IDictionary<string, IEnumerable<string>> headers) CreateClient()
@@ -47,12 +47,12 @@ public class WithHeaderTests : TestBase
 
 	private static void AssertHeader(IDictionary<string, IEnumerable<string>> headers, string name, string value)
 	{
-		Assert.True(headers.TryGetValue(name, out var values) && values.Single() == value);
+		(headers.TryGetValue(name, out var values) && values.Single() == value).Should().BeTrue();
 	}
 
 	private static void AssertHeader(ODataRequest request, string name, string value)
 	{
-		Assert.True(request.RequestMessage.Headers.TryGetValues(name, out var values) && values.Single() == value);
+		(request.RequestMessage.Headers.TryGetValues(name, out var values) && values.Single() == value).Should().BeTrue();
 	}
 
 	[Fact]

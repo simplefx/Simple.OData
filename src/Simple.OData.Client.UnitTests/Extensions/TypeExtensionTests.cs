@@ -52,19 +52,19 @@ public class TypeExtensionTests
 	public void GetNamedProperty_DerivedType()
 	{
 		typeof(Ship).GetNamedProperty("TransportID").Should().NotBeNull();
-		Assert.NotNull(typeof(Ship).GetNamedProperty("ShipName"));
+		typeof(Ship).GetNamedProperty("ShipName").Should().NotBeNull();
 	}
 
 	[Fact]
 	public void GetDeclaredProperty_BaseType()
 	{
-		Assert.NotNull(typeof(Transport).GetDeclaredProperty("TransportID"));
+		typeof(Transport).GetDeclaredProperty("TransportID").Should().NotBeNull();
 	}
 
 	[Fact]
 	public void GetDeclaredProperty_DerivedType()
 	{
-		Assert.Null(typeof(Ship).GetDeclaredProperty("TransportID"));
-		Assert.NotNull(typeof(Ship).GetDeclaredProperty("ShipName"));
+		typeof(Ship).GetDeclaredProperty("TransportID").Should().BeNull();
+		typeof(Ship).GetDeclaredProperty("ShipName").Should().NotBeNull();
 	}
 }

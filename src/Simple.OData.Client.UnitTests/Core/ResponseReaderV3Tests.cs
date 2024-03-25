@@ -86,7 +86,7 @@ public class ResponseReaderV3Tests : CoreTestBase
 		var quantity = result["Quantity"] as IDictionary<string, object>;
 		quantity.Should().NotBeNull();
 		quantity["Value"].Should().Be(10d);
-		Assert.Equal("bags", quantity["Units"]);
+		quantity["Units"].Should().Be("bags");
 	}
 
 	[Fact]
@@ -193,7 +193,7 @@ public class ResponseReaderV3Tests : CoreTestBase
 		var entityType = metadata.SchemaElements
 			.Single(x => x.SchemaElementKind == EdmSchemaElementKind.TypeDefinition &&
 				(x as IEdmType).TypeKind == EdmTypeKind.Entity);
-		Assert.Equal(schemaName, entityType.Name);
+		entityType.Name.Should().Be(schemaName);
 		return Task.FromResult(0);
 	}
 }

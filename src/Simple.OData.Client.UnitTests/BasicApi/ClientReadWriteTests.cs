@@ -31,7 +31,7 @@ public class ClientReadWriteTests : TestBase
 		var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
 		var ship = await client.InsertEntryAsync("Transport/Ships", new Entry() { { "ShipName", "Test1" } }, true);
 
-		Assert.Equal("Test1", ship["ShipName"]);
+		ship["ShipName"].Should().Be("Test1");
 	}
 
 	[Fact]
@@ -41,7 +41,7 @@ public class ClientReadWriteTests : TestBase
 		var key = new Entry() { { "ProductID", 1 } };
 		var product = await client.UpdateEntryAsync("Products", key, new Entry() { { "ProductName", "Chai" }, { "UnitPrice", 123m } }, true);
 
-		Assert.Equal(123m, product["UnitPrice"]);
+		product["UnitPrice"].Should().Be(123m);
 	}
 
 	[Fact]
@@ -50,10 +50,10 @@ public class ClientReadWriteTests : TestBase
 		var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
 		var key = new Entry() { { "ProductID", 1 } };
 		var product = await client.UpdateEntryAsync("Products", key, new Entry() { { "ProductName", "Chai" }, { "UnitPrice", 123m } }, false);
-		Assert.Null(product);
+		product.Should().BeNull();
 
 		product = await client.GetEntryAsync("Products", key);
-		Assert.Equal(123m, product["UnitPrice"]);
+		product["UnitPrice"].Should().Be(123m);
 	}
 
 	[Fact]
@@ -65,7 +65,7 @@ public class ClientReadWriteTests : TestBase
 		await client.UpdateEntryAsync("Transport/Ships", key, new Entry() { { "ShipName", "Test2" } });
 
 		ship = await client.GetEntryAsync("Transport", key);
-		Assert.Equal("Test2", ship["ShipName"]);
+		ship["ShipName"].Should().Be("Test2");
 	}
 
 	[Fact]
@@ -77,7 +77,7 @@ public class ClientReadWriteTests : TestBase
 		await client.UpdateEntryAsync("Transport/Ships", key, new Entry() { { "ShipName", "Test2" } });
 
 		ship = await client.GetEntryAsync("Transport", key);
-		Assert.Equal("Test2", ship["ShipName"]);
+		ship["ShipName"].Should().Be("Test2");
 	}
 
 	[Fact]
@@ -86,12 +86,12 @@ public class ClientReadWriteTests : TestBase
 		var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
 		_ = await client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test3" }, { "UnitPrice", 18m } }, true);
 		var product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test3'");
-		Assert.NotNull(product);
+		product.Should().NotBeNull();
 
 		await client.DeleteEntryAsync("Products", product);
 
 		product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test3'");
-		Assert.Null(product);
+		product.Should().BeNull();
 	}
 
 	[Fact]
@@ -100,12 +100,12 @@ public class ClientReadWriteTests : TestBase
 		var client = new ODataClient(CreateDefaultSettings().WithHttpMock());
 		var ship = await client.InsertEntryAsync("Transport/Ships", new Entry() { { "ShipName", "Test3" } }, true);
 		ship = await client.FindEntryAsync("Transport?$filter=TransportID eq " + ship["TransportID"]);
-		Assert.NotNull(ship);
+		ship.Should().NotBeNull();
 
 		await client.DeleteEntryAsync("Transport", ship);
 
 		ship = await client.FindEntryAsync("Transport?$filter=TransportID eq " + ship["TransportID"]);
-		Assert.Null(ship);
+		ship.Should().BeNull();
 	}
 
 	[Fact]
@@ -114,12 +114,12 @@ public class ClientReadWriteTests : TestBase
 		var client = new ODataClient(CreateDefaultSettings().WithAnnotations().WithHttpMock());
 		var ship = await client.InsertEntryAsync("Transport/Ships", new Entry() { { "ShipName", "Test3" } }, true);
 		ship = await client.FindEntryAsync("Transport?$filter=TransportID eq " + ship["TransportID"]);
-		Assert.NotNull(ship);
+		ship.Should().NotBeNull();
 
 		await client.DeleteEntryAsync("Transport", ship);
 
 		ship = await client.FindEntryAsync("Transport?$filter=TransportID eq " + ship["TransportID"]);
-		Assert.Null(ship);
+		ship.Should().BeNull();
 	}
 
 	[Theory]
@@ -136,8 +136,8 @@ public class ClientReadWriteTests : TestBase
 		await client.LinkEntryAsync("Products", product, "Category", category);
 
 		product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test5'");
-		Assert.NotNull(product["CategoryID"]);
-		Assert.Equal(category["CategoryID"], product["CategoryID"]);
+		product["CategoryID"].Should().NotBeNull();
+		product["CategoryID"].Should().Be(category["CategoryID"]);
 	}
 
 	[Theory]
@@ -151,12 +151,12 @@ public class ClientReadWriteTests : TestBase
 		var category = await client.InsertEntryAsync("Categories", new Entry() { { "CategoryName", "Test6" } }, true);
 		_ = await client.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test7" }, { "CategoryID", category["CategoryID"] } }, true);
 		var product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test7'");
-		Assert.NotNull(product["CategoryID"]);
-		Assert.Equal(category["CategoryID"], product["CategoryID"]);
+		product["CategoryID"].Should().NotBeNull();
+		product["CategoryID"].Should().Be(category["CategoryID"]);
 
 		await client.UnlinkEntryAsync("Products", product, "Category");
 
 		product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test7'");
-		Assert.Null(product["CategoryID"]);
+		product["CategoryID"].Should().BeNull();
 	}
 }

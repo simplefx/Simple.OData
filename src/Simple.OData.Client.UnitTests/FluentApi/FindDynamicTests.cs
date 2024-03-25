@@ -462,7 +462,7 @@ public class FindDynamicTests : TestBase
 			.As(x.Ships)
 			.FindEntriesAsync();
 		Assert.Equal("Titanic", (transport as IEnumerable<dynamic>).Single().ShipName);
-		Assert.Equal("NorthwindModel.Ship", ((transport as IEnumerable<dynamic>).Single()[FluentCommand.AnnotationsLiteral] as ODataEntryAnnotations).TypeName);
+		((transport as IEnumerable<dynamic>).Single()[FluentCommand.AnnotationsLiteral] as ODataEntryAnnotations).TypeName.Should().Be("NorthwindModel.Ship");
 	}
 
 	[Fact]
@@ -609,7 +609,7 @@ public class FindDynamicTests : TestBase
 			.For(x.Products)
 			.Filter(x.ProductName == "Chai")
 			.FindEntryAsync();
-		Assert.Equal("Chai", product.ProductName);
+		product.ProductName.Should().Be("Chai");
 	}
 
 	[Fact]
@@ -621,6 +621,6 @@ public class FindDynamicTests : TestBase
 			.For(x.Products)
 			.Filter(x.ProductName == "XYZ")
 			.FindEntryAsync();
-		Assert.Null(product);
+		product.Should().BeNull();
 	}
 }

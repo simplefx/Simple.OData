@@ -40,7 +40,7 @@ public class BatchTests : TestBase
 		batch += async c => product = await c.FindEntryAsync("Products");
 		await batch.ExecuteAsync();
 
-		Assert.NotNull(product);
+		product.Should().NotBeNull();
 	}
 
 	[Fact]
@@ -60,13 +60,13 @@ public class BatchTests : TestBase
 
 		var client = new ODataClient(settings);
 		var product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test1'");
-		Assert.NotNull(product);
+		product.Should().NotBeNull();
 		product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test2'");
-		Assert.NotNull(product);
+		product.Should().NotBeNull();
 		product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test3'");
-		Assert.NotNull(product);
+		product.Should().NotBeNull();
 		product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test4'");
-		Assert.NotNull(product);
+		product.Should().NotBeNull();
 	}
 
 	[Fact]
@@ -81,14 +81,14 @@ public class BatchTests : TestBase
 		batch += async x => { product2 = await x.InsertEntryAsync("Products", new Entry() { { "ProductName", "Test2" }, { "UnitPrice", 20m } }); };
 		await batch.ExecuteAsync();
 
-		Assert.NotNull(product1["ProductID"]);
-		Assert.NotNull(product2["ProductID"]);
+		product1["ProductID"].Should().NotBeNull();
+		product2["ProductID"].Should().NotBeNull();
 
 		var client = new ODataClient(settings);
 		product1 = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test1'");
-		Assert.NotNull(product1);
+		product1.Should().NotBeNull();
 		product2 = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test2'");
-		Assert.NotNull(product2);
+		product2.Should().NotBeNull();
 	}
 
 	[Fact]
@@ -105,7 +105,7 @@ public class BatchTests : TestBase
 		}
 		catch (WebRequestException exception)
 		{
-			Assert.NotNull(exception.Response);
+			exception.Response.Should().NotBeNull();
 		}
 	}
 
@@ -123,7 +123,7 @@ public class BatchTests : TestBase
 		}
 		catch (WebRequestException exception)
 		{
-			Assert.NotNull(exception.Response);
+			exception.Response.Should().NotBeNull();
 		}
 	}
 
@@ -146,12 +146,12 @@ public class BatchTests : TestBase
 		batch += async x => product2 = await x.FindEntryAsync("Products?$filter=ProductName eq 'Test11'");
 		await batch.ExecuteAsync();
 
-		Assert.Equal(22m, product1["UnitPrice"]);
-		Assert.Equal(23m, product2["UnitPrice"]);
+		product1["UnitPrice"].Should().Be(22m);
+		product2["UnitPrice"].Should().Be(23m);
 
 		var client = new ODataClient(settings);
 		product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test11'");
-		Assert.Equal(23m, product["UnitPrice"]);
+		product["UnitPrice"].Should().Be(23m);
 	}
 
 	[Fact]
@@ -172,7 +172,7 @@ public class BatchTests : TestBase
 
 		var client = new ODataClient(settings);
 		product = await client.FindEntryAsync("Products?$filter=UnitPrice eq 121");
-		Assert.Null(product);
+		product.Should().BeNull();
 		var products = await client.FindEntriesAsync("Products?$filter=UnitPrice eq 122");
 		Assert.Equal(3, products.Count());
 	}
@@ -196,12 +196,12 @@ public class BatchTests : TestBase
 		batch += async c => product2 = await c.FindEntryAsync("Products?$filter=ProductName eq 'Test11'");
 		await batch.ExecuteAsync();
 
-		Assert.Equal(22m, product1["UnitPrice"]);
-		Assert.Null(product2);
+		product1["UnitPrice"].Should().Be(22m);
+		product2.Should().BeNull();
 
 		var client = new ODataClient(settings);
 		product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test11'");
-		Assert.Null(product);
+		product.Should().BeNull();
 	}
 
 	[Fact]
@@ -214,7 +214,7 @@ public class BatchTests : TestBase
 
 		var client = new ODataClient(settings);
 		var product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test12'");
-		Assert.Equal(21m, product["UnitPrice"]);
+		product["UnitPrice"].Should().Be(21m);
 		var key = new Entry() { { "ProductID", product["ProductID"] } };
 
 		batch = new ODataBatch(settings);
@@ -222,14 +222,14 @@ public class BatchTests : TestBase
 		await batch.ExecuteAsync();
 
 		product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test12'");
-		Assert.Equal(22m, product["UnitPrice"]);
+		product["UnitPrice"].Should().Be(22m);
 
 		batch = new ODataBatch(settings);
 		batch += c => c.DeleteEntryAsync("Products", key);
 		await batch.ExecuteAsync();
 
 		product = await client.FindEntryAsync("Products?$filter=ProductName eq 'Test12'");
-		Assert.Null(product);
+		product.Should().BeNull();
 	}
 
 	[Fact]
@@ -248,7 +248,7 @@ public class BatchTests : TestBase
 			.Expand("Category")
 			.Filter("ProductName eq 'Test14'")
 			.FindEntryAsync();
-		Assert.Equal("Test13", (product["Category"] as IDictionary<string, object>)["CategoryName"]);
+		(product["Category"] as IDictionary<string, object>)["CategoryName"].Should().Be("Test13");
 	}
 
 	[Fact]
@@ -298,7 +298,7 @@ public class BatchTests : TestBase
 			.For("Products")
 			.Filter("ProductName eq 'Test19'")
 			.FindEntryAsync();
-		Assert.Null(product);
+		product.Should().BeNull();
 	}
 
 	[Fact]
@@ -329,7 +329,7 @@ public class BatchTests : TestBase
 			.For("Products")
 			.Filter("UnitPrice eq 111")
 			.FindEntryAsync();
-		Assert.Null(product);
+		product.Should().BeNull();
 	}
 
 	[Fact]
@@ -359,7 +359,7 @@ public class BatchTests : TestBase
 		batch += async c => product1 = await c.UpdateEntryAsync("Products", product, new Entry() { { "UnitPrice", 22m } }, true);
 		await batch.ExecuteAsync();
 
-		Assert.Equal(22m, product1["UnitPrice"]);
+		product1["UnitPrice"].Should().Be(22m);
 	}
 
 	[Fact]
@@ -402,8 +402,8 @@ public class BatchTests : TestBase
 			.For("Products")
 			.Filter("ProductName eq 'Test5'")
 			.FindEntryAsync();
-		Assert.NotNull(product["CategoryID"]);
-		Assert.Equal(category["CategoryID"], product["CategoryID"]);
+		product["CategoryID"].Should().NotBeNull();
+		product["CategoryID"].Should().Be(category["CategoryID"]);
 	}
 
 	[Fact]
@@ -436,6 +436,6 @@ public class BatchTests : TestBase
 
 		await batch.ExecuteAsync();
 
-		Assert.True(headers.TryGetValue("batchHeader", out var value) && value == "batchHeaderValue");
+		(headers.TryGetValue("batchHeader", out var value) && value == "batchHeaderValue").Should().BeTrue();
 	}
 }

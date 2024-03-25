@@ -79,7 +79,7 @@ public abstract class FindODataTests(string serviceUri, ODataPayloadFormat paylo
 			.For("Products")
 			.OrderBy("Name")
 			.FindEntriesAsync()).First();
-		Assert.Equal("Bread", product["Name"]);
+		product["Name"].Should().Be("Bread");
 	}
 
 	[Fact]
@@ -89,12 +89,12 @@ public abstract class FindODataTests(string serviceUri, ODataPayloadFormat paylo
 			.For("Suppliers")
 			.OrderBy("Address/City")
 			.FindEntriesAsync()).First();
-		Assert.Equal("Tokyo Traders", supplier["Name"]);
+		supplier["Name"].Should().Be("Tokyo Traders");
 		supplier = (await _client
 			.For("Suppliers")
 			.OrderByDescending("Address/City")
 			.FindEntriesAsync()).First();
-		Assert.Equal("Exotic Liquids", supplier["Name"]);
+		supplier["Name"].Should().Be("Exotic Liquids");
 	}
 
 	[Fact]
@@ -104,8 +104,8 @@ public abstract class FindODataTests(string serviceUri, ODataPayloadFormat paylo
 			.For("Products")
 			.Select("ID", "Name")
 			.FindEntryAsync();
-		Assert.Contains("Name", product.Keys);
-		Assert.Contains("ID", product.Keys);
+		product.Keys.Should().Contain("Name");
+		product.Keys.Should().Contain("ID");
 	}
 
 	[Fact]
@@ -116,7 +116,7 @@ public abstract class FindODataTests(string serviceUri, ODataPayloadFormat paylo
 			.OrderBy("ID")
 			.Expand(ProductCategoryName)
 			.FindEntriesAsync()).Last();
-		Assert.Equal(ExpectedCategory, ProductCategoryFunc(product)["Name"]);
+		ProductCategoryFunc(product)["Name"].Should().Be(ExpectedCategory);
 	}
 
 	[Fact]
@@ -173,7 +173,7 @@ public abstract class FindODataTests(string serviceUri, ODataPayloadFormat paylo
 			.Expand(ProductCategoryName)
 			.Select(ProductCategoryName)
 			.FindEntriesAsync()).Single();
-		Assert.Equal(ExpectedCategory, ProductCategoryFunc(product)["Name"]);
+		ProductCategoryFunc(product)["Name"].Should().Be(ExpectedCategory);
 	}
 
 	[Fact]
@@ -184,7 +184,7 @@ public abstract class FindODataTests(string serviceUri, ODataPayloadFormat paylo
 			.Key(new Dictionary<string, object>() { { "ID", 2 } })
 			.NavigateTo(ProductCategoryName)
 			.FindEntryAsync();
-		Assert.Equal("Beverages", category["Name"]);
+		category["Name"].Should().Be("Beverages");
 	}
 
 	[Fact]
@@ -216,7 +216,7 @@ public abstract class FindODataTests(string serviceUri, ODataPayloadFormat paylo
 			.Media()
 			.GetStreamAsync();
 		var text = Utils.StreamToString(stream);
-		Assert.StartsWith("Test stream data", text);
+		text.Should().StartWith("Test stream data");
 	}
 
 	[Fact]
@@ -234,7 +234,7 @@ public abstract class FindODataTests(string serviceUri, ODataPayloadFormat paylo
 			.Media("Photo")
 			.GetStreamAsync();
 		var text = Utils.StreamToString(stream);
-		Assert.StartsWith("Test named stream data", text);
+		text.Should().StartWith("Test named stream data");
 	}
 
 	private class PersonDetail
@@ -256,6 +256,6 @@ public abstract class FindODataTests(string serviceUri, ODataPayloadFormat paylo
 			.NavigateTo<PersonDetail>()
 			.Media(x => x.Photo)
 			.GetStreamAsStringAsync();
-		Assert.StartsWith("Test named stream data", text);
+		text.Should().StartWith("Test named stream data");
 	}
 }

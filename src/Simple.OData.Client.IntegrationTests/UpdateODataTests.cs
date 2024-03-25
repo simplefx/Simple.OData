@@ -91,7 +91,7 @@ public abstract class UpdateODataTests(string serviceUri, ODataPayloadFormat pay
 			.Set(new { Price = 123 })
 			.UpdateEntriesAsync()).Single();
 
-		Assert.Equal(123d, product["Price"]);
+		product["Price"].Should().Be(123d);
 	}
 
 	[Fact]
@@ -113,7 +113,7 @@ public abstract class UpdateODataTests(string serviceUri, ODataPayloadFormat pay
 			.Key(product["ID"])
 			.FindEntryAsync();
 
-		Assert.Equal(456d, product["Price"]);
+		product["Price"].Should().Be(456d);
 	}
 
 	[Fact]
@@ -137,7 +137,7 @@ public abstract class UpdateODataTests(string serviceUri, ODataPayloadFormat pay
 			.Key(product["ID"])
 			.FindEntryAsync();
 
-		Assert.Equal(tomorrow.Date, DateTime.Parse(product["ReleaseDate"].ToString()).Date);
+		DateTime.Parse(product["ReleaseDate"].ToString()).Date.Should().Be(tomorrow.Date);
 	}
 
 	[Fact]
@@ -163,7 +163,7 @@ public abstract class UpdateODataTests(string serviceUri, ODataPayloadFormat pay
 			.Key(product["ID"])
 			.Expand(ProductCategoryName)
 			.FindEntryAsync();
-		Assert.Equal(category["ID"], ProductCategoryFunc(product)["ID"]);
+		ProductCategoryFunc(product)["ID"].Should().Be(category["ID"]);
 	}
 
 	[Fact]
@@ -193,7 +193,7 @@ public abstract class UpdateODataTests(string serviceUri, ODataPayloadFormat pay
 			.Key(product["ID"])
 			.Expand(ProductCategoryName)
 			.FindEntryAsync();
-		Assert.Equal(category2["ID"], ProductCategoryFunc(product)["ID"]);
+		ProductCategoryFunc(product)["ID"].Should().Be(category2["ID"]);
 	}
 
 	[Fact]
@@ -223,7 +223,7 @@ public abstract class UpdateODataTests(string serviceUri, ODataPayloadFormat pay
 			.Key(product["ID"])
 			.Expand(ProductCategoryName)
 			.FindEntryAsync();
-		Assert.Equal(category2["ID"], ProductCategoryFunc(product)["ID"]);
+		ProductCategoryFunc(product)["ID"].Should().Be(category2["ID"]);
 
 		//@robertmclaws: At this point, we've verified entries and associations are available.
 		//               Now, we're going grab another copy to edit, make changes, and verify the removal was ignored with no side effects.
@@ -250,8 +250,8 @@ public abstract class UpdateODataTests(string serviceUri, ODataPayloadFormat pay
 			.Key(product["ID"])
 			.Expand(ProductCategoryName)
 			.FindEntryAsync();
-		Assert.Equal(ProductCategoryFunc(product2)["ID"], ProductCategoryFunc(product)["ID"]);
-		Assert.Equal("Test99", product2["Name"]);
+		ProductCategoryFunc(product)["ID"].Should().Be(ProductCategoryFunc(product2)["ID"]);
+		product2["Name"].Should().Be("Test99");
 	}
 
 	// Not supported for one-to-many relationships

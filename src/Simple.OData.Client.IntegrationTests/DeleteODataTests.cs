@@ -90,6 +90,6 @@ public abstract class DeleteODataTests(string serviceUri, ODataPayloadFormat pay
 			.Filter("Name eq 'Test1'")
 			.FindEntryAsync();
 
-		Assert.Null(product);
+		product.Should().BeNull();
 	}
 }

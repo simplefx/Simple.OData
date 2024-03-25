@@ -135,9 +135,9 @@ public class DictionaryExtensionsTests
 			};
 
 		var value = dict.ToObject<ClassType>(TypeCache);
-		Assert.Equal("a", value.StringProperty);
+		value.StringProperty.Should().Be("a");
 		Assert.Equal(1, value.IntProperty);
-		Assert.Equal("p", value.StringPropertyPrivateSetter);
+		value.StringPropertyPrivateSetter.Should().Be("p");
 	}
 
 	[Fact]
@@ -151,9 +151,9 @@ public class DictionaryExtensionsTests
 			};
 
 		var value = dict.ToObject<ClassType>(TypeCache);
-		Assert.Equal("a", value.StringProperty);
+		value.StringProperty.Should().Be("a");
 		Assert.Equal(1, value.IntProperty);
-		Assert.Null(value.StringField);
+		value.StringField.Should().BeNull();
 	}
 
 	[Fact]
@@ -167,11 +167,11 @@ public class DictionaryExtensionsTests
 			};
 
 		var value = dict.ToObject<ClassType>(TypeCache);
-		Assert.Equal("a", value.StringProperty);
+		value.StringProperty.Should().Be("a");
 		Assert.Equal(1, value.IntProperty);
 		for (var index = 0; index < 3; index++)
 		{
-			Assert.Equal((dict["StringArrayProperty"] as IList<string>)[index], value.StringArrayProperty[index]);
+			value.StringArrayProperty[index].Should().Be((dict["StringArrayProperty"] as IList<string>)[index]);
 		}
 	}
 
@@ -186,7 +186,7 @@ public class DictionaryExtensionsTests
 			};
 
 		var value = dict.ToObject<ClassType>(TypeCache);
-		Assert.Equal("a", value.StringProperty);
+		value.StringProperty.Should().Be("a");
 		Assert.Equal(1, value.IntProperty);
 		for (var index = 0; index < 3; index++)
 		{
@@ -205,7 +205,7 @@ public class DictionaryExtensionsTests
 			};
 
 		var value = dict.ToObject<ClassType>(TypeCache);
-		Assert.Equal("a", value.StringProperty);
+		value.StringProperty.Should().Be("a");
 		Assert.Equal(1, value.IntProperty);
 		for (var index = 0; index < 3; index++)
 		{
@@ -224,9 +224,9 @@ public class DictionaryExtensionsTests
 			};
 
 		var value = dict.ToObject<ClassType>(TypeCache);
-		Assert.Equal("a", value.StringProperty);
+		value.StringProperty.Should().Be("a");
 		Assert.Equal(1, value.IntProperty);
-		Assert.Equal("z", value.CompoundProperty.StringProperty);
+		value.CompoundProperty.StringProperty.Should().Be("z");
 		Assert.Equal(0, value.CompoundProperty.IntProperty);
 	}
 
@@ -247,13 +247,13 @@ public class DictionaryExtensionsTests
 			};
 
 		var value = dict.ToObject<ClassType>(TypeCache);
-		Assert.Equal("a", value.StringProperty);
+		value.StringProperty.Should().Be("a");
 		Assert.Equal(1, value.IntProperty);
 		for (var index = 0; index < 3; index++)
 		{
 			var kv = (dict["CompoundCollectionProperty"] as IList<IDictionary<string, object>>)[index];
-			Assert.Equal(kv["StringProperty"], value.CompoundCollectionProperty[index].StringProperty);
-			Assert.Equal(kv["IntProperty"], value.CompoundCollectionProperty[index].IntProperty);
+			value.CompoundCollectionProperty[index].StringProperty.Should().Be(kv["StringProperty"]);
+			value.CompoundCollectionProperty[index].IntProperty.Should().Be(kv["IntProperty"]);
 		}
 	}
 
@@ -267,8 +267,8 @@ public class DictionaryExtensionsTests
 			};
 
 		var value = dict.ToObject<ODataEntry>(TypeCache);
-		Assert.Equal("a", value["StringProperty"]);
-		Assert.Equal(1, value["IntProperty"]);
+		value["StringProperty"].Should().Be("a");
+		value["IntProperty"].Should().Be(1);
 	}
 
 	[Fact]
@@ -375,9 +375,9 @@ public class DictionaryExtensionsTests
 
 		var value = dict.ToObject<Transport>(TypeCache);
 		var ship = value as Ship;
-		Assert.NotNull(ship);
+		ship.Should().NotBeNull();
 		Assert.Equal(1, ship.TransportID);
-		Assert.Equal("Sloop John B", ship.ShipName);
+		ship.ShipName.Should().Be("Sloop John B");
 	}
 
 	[Fact]
@@ -406,6 +406,6 @@ public class DictionaryExtensionsTests
 				{ "Data", new ClassNoDefaultConstructor("test") },
 			};
 
-		Assert.Throws<ConstructorNotFoundException>(() => dict.ToObject<ClassNoDefaultConstructor>(TypeCache));
+		(() => dict.ToObject<ClassNoDefaultConstructor>(TypeCache)).Should().ThrowExactly<ConstructorNotFoundException>();
 	}
 }

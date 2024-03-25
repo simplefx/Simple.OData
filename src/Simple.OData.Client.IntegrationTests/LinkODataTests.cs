@@ -81,11 +81,11 @@ public abstract class LinkODataTests(string serviceUri, ODataPayloadFormat paylo
 			.FindEntryAsync();
 		if (ProductCategoryName == "Categories")
 		{
-			Assert.Empty(product[ProductCategoryName] as IEnumerable);
+			(product[ProductCategoryName] as IEnumerable).Should().BeEmpty();
 		}
 		else
 		{
-			Assert.Null(product[ProductCategoryName]);
+			product[ProductCategoryName].Should().BeNull();
 		}
 	}
 }

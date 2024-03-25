@@ -40,8 +40,8 @@ public class InsertTests : TestBase
 			.Set(new { ProductName = "Test1", UnitPrice = 18m })
 			.InsertEntryAsync();
 
-		Assert.True((int)product["ProductID"] > 0);
-		Assert.Equal("Test1", product["ProductName"]);
+		((int)product["ProductID"] > 0).Should().BeTrue();
+		product["ProductName"].Should().Be("Test1");
 	}
 
 	[Fact]
@@ -57,7 +57,7 @@ public class InsertTests : TestBase
 			.Set(expando)
 			.InsertEntryAsync());
 
-		Assert.True((int)product["ProductID"] > 0);
+		((int)product["ProductID"] > 0).Should().BeTrue();
 	}
 
 	[Fact]
@@ -73,14 +73,14 @@ public class InsertTests : TestBase
 			.Set(new { ProductName = "Test4", UnitPrice = 18m, CategoryID = category["CategoryID"] })
 			.InsertEntryAsync();
 
-		Assert.Equal("Test4", product["ProductName"]);
-		Assert.Equal(category["CategoryID"], product["CategoryID"]);
+		product["ProductName"].Should().Be("Test4");
+		product["CategoryID"].Should().Be(category["CategoryID"]);
 		category = await client
 			.For("Categories")
 			.Expand("Products")
 			.Filter("CategoryName eq 'Test3'")
 			.FindEntryAsync();
-		Assert.True((category["Products"] as IEnumerable<object>).Count() == 1);
+		((category["Products"] as IEnumerable<object>).Count() == 1).Should().BeTrue();
 	}
 
 	[Fact(Skip = "Cannot be mocked")]
@@ -97,14 +97,14 @@ public class InsertTests : TestBase
 			.Set(new { ProductName = "Test4", UnitPrice = 18m, CategoryID = category["CategoryID"] })
 			.InsertEntryAsync();
 
-		Assert.Equal("Test4", product["ProductName"]);
-		Assert.Equal(category["CategoryID"], product["CategoryID"]);
+		product["ProductName"].Should().Be("Test4");
+		product["CategoryID"].Should().Be(category["CategoryID"]);
 		category = await client
 			.For("Categories")
 			.Expand("Products")
 			.Filter("CategoryName eq 'Test3'")
 			.FindEntryAsync();
-		Assert.True((category["Products"] as IEnumerable<object>).Count() == 1);
+		((category["Products"] as IEnumerable<object>).Count() == 1).Should().BeTrue();
 	}
 
 	[Fact]
@@ -120,14 +120,14 @@ public class InsertTests : TestBase
 			.Set(new { ProductName = "Test6", UnitPrice = 18m, Category = category })
 			.InsertEntryAsync();
 
-		Assert.Equal("Test6", product["ProductName"]);
-		Assert.Equal(category["CategoryID"], product["CategoryID"]);
+		product["ProductName"].Should().Be("Test6");
+		product["CategoryID"].Should().Be(category["CategoryID"]);
 		category = await client
 			.For("Categories")
 			.Expand("Products")
 			.Filter("CategoryName eq 'Test5'")
 			.FindEntryAsync();
-		Assert.True((category["Products"] as IEnumerable<object>).Count() == 1);
+		((category["Products"] as IEnumerable<object>).Count() == 1).Should().BeTrue();
 	}
 
 	[Fact]
@@ -140,6 +140,6 @@ public class InsertTests : TestBase
 			.Set(new { ShipName = "Test1" })
 			.InsertEntryAsync();
 
-		Assert.Equal("Test1", ship["ShipName"]);
+		ship["ShipName"].Should().Be("Test1");
 	}
 }

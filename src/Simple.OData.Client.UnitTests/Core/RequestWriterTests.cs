@@ -86,7 +86,7 @@ public abstract class RequestWriterTests : CoreTestBase
 							{ "ReorderLevel", 500 },
 							{ "Discontinued", false },
 					}, false);
-			Assert.Equal("PUT", result.Method);
+			result.Method.Should().Be("PUT");
 		}
 		finally
 		{
@@ -114,7 +114,7 @@ public abstract class RequestWriterTests : CoreTestBase
 							{ "ReorderLevel", 500 },
 							{ "Discontinued", false },
 					}, false);
-		Assert.Equal("PUT", result.Method);
+		result.Method.Should().Be("PUT");
 	}
 
 	[Fact]
@@ -127,7 +127,7 @@ public abstract class RequestWriterTests : CoreTestBase
 					{ "FirstName", "John" },
 					{ "LastName", "Smith" },
 			}, false);
-		Assert.Equal("POST", result.Method);
+		result.Method.Should().Be("POST");
 	}
 
 	[Fact]
@@ -141,7 +141,7 @@ public abstract class RequestWriterTests : CoreTestBase
 					{ "LastName", "Smith" },
 					{ "BirthDate", DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Unspecified) },
 			}, false);
-		Assert.Equal("POST", result.Method);
+		result.Method.Should().Be("POST");
 	}
 
 	[Fact]
@@ -155,7 +155,7 @@ public abstract class RequestWriterTests : CoreTestBase
 					{ "LastName", "Smith" },
 					{ "BirthDate", null },
 			}, false);
-		Assert.Equal("POST", result.Method);
+		result.Method.Should().Be("POST");
 	}
 
 	[Fact]
@@ -169,7 +169,7 @@ public abstract class RequestWriterTests : CoreTestBase
 					{ "LastName", "Smith" },
 					{ "BirthDate", DateTimeOffset.Now },
 			}, false);
-		Assert.Equal("POST", result.Method);
+		result.Method.Should().Be("POST");
 	}
 
 	[Fact]
@@ -183,7 +183,7 @@ public abstract class RequestWriterTests : CoreTestBase
 					{ "LastName", "Smith" },
 					{ "BirthDate", null },
 			}, false);
-		Assert.Equal("POST", result.Method);
+		result.Method.Should().Be("POST");
 	}
 
 	[Fact]
@@ -197,7 +197,7 @@ public abstract class RequestWriterTests : CoreTestBase
 					{ "LastName", "Smith" },
 					{ "HireDate", DateTimeOffset.Now },
 			}, false);
-		Assert.Equal("POST", result.Method);
+		result.Method.Should().Be("POST");
 	}
 
 	[Fact]
@@ -211,7 +211,7 @@ public abstract class RequestWriterTests : CoreTestBase
 					{ "LastName", "Smith" },
 					{ "HireDate", null },
 			}, false);
-		Assert.Equal("POST", result.Method);
+		result.Method.Should().Be("POST");
 	}
 
 	[Fact]
@@ -229,7 +229,7 @@ public abstract class RequestWriterTests : CoreTestBase
 					{ "header2" , "header2Value" }
 			});
 
-		Assert.Equal("header1Value", result.Headers["header1"]);
-		Assert.Equal("header2Value", result.Headers["header2"]);
+		result.Headers["header1"].Should().Be("header1Value");
+		result.Headers["header2"].Should().Be("header2Value");
 	}
 }

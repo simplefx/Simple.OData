@@ -35,7 +35,7 @@ public class FindTypedTests : TestBase
 			.For<Employee>()
 			.Filter(x => x.FirstName == "Nancy" && x.HireDate < DateTime.Now)
 			.FindEntryAsync();
-		Assert.Equal("Davolio", employee.LastName);
+		employee.LastName.Should().Be("Davolio");
 	}
 
 	[Fact]
@@ -47,7 +47,7 @@ public class FindTypedTests : TestBase
 			.Filter(x => x.FirstName == "Nancy")
 			.Filter(x => x.HireDate < DateTime.Now)
 			.FindEntryAsync();
-		Assert.Equal("Davolio", employee.LastName);
+		employee.LastName.Should().Be("Davolio");
 	}
 
 	[Fact]
@@ -63,7 +63,7 @@ public class FindTypedTests : TestBase
 			.Expand(x => x.Category)
 			.Select(x => x.Category)
 			.FindEntriesAsync()).Single();
-		Assert.Equal("Seafood", product.Category.CategoryName);
+		product.Category.CategoryName.Should().Be("Seafood");
 	}
 
 	[Fact]
@@ -79,7 +79,7 @@ public class FindTypedTests : TestBase
 			.OrderBy(x => x.ProductName)
 			.ThenByDescending(x => x.UnitPrice)
 			.FindEntriesAsync()).Single();
-		Assert.Equal("Seafood", product.Category.CategoryName);
+		product.Category.CategoryName.Should().Be("Seafood");
 	}
 
 	[Fact]
@@ -96,7 +96,7 @@ public class FindTypedTests : TestBase
 			.Filter(x => x.ProductName == "Test1")
 			.Select(x => new { x.ProductID, x.ProductName, x.MappedEnglishName })
 			.FindEntryAsync();
-		Assert.Equal("EnglishTest", product.MappedEnglishName);
+		product.MappedEnglishName.Should().Be("EnglishTest");
 	}
 
 	[Fact]
@@ -128,7 +128,7 @@ public class FindTypedTests : TestBase
 			.For<ProductWithUnmappedProperty>("Products")
 			.Key(product.ProductID)
 			.FindEntryAsync();
-		Assert.Equal("Test2", product.ProductName);
+		product.ProductName.Should().Be("Test2");
 	}
 
 	[Fact]
@@ -145,7 +145,7 @@ public class FindTypedTests : TestBase
 			.Filter(x => x.ProductName == "Test1")
 			.Select(x => new { x.ProductID, x.ProductName, x.MappedEnglishName })
 			.FindEntryAsync();
-		Assert.Equal("EnglishTest", product.MappedEnglishName);
+		product.MappedEnglishName.Should().Be("EnglishTest");
 	}
 
 	[Fact]
@@ -156,7 +156,7 @@ public class FindTypedTests : TestBase
 			.For<ExtendedProduct>("Products")
 			.Filter(x => x.ProductName == "Chai")
 			.FindEntryAsync();
-		Assert.Equal("Chai", product.ProductName);
+		product.ProductName.Should().Be("Chai");
 	}
 
 	[Fact]
@@ -167,7 +167,7 @@ public class FindTypedTests : TestBase
 			.For<Product>()
 			.Filter(x => x.ProductName.Contains("ai"))
 			.FindEntriesAsync();
-		Assert.Equal("Chai", products.Single().ProductName);
+		products.Single().ProductName.Should().Be("Chai");
 	}
 
 	[Fact]
@@ -179,7 +179,7 @@ public class FindTypedTests : TestBase
 			.For<Product>()
 			.Filter(x => x.ProductName.Contains(text))
 			.FindEntriesAsync();
-		Assert.Equal("Chai", products.Single().ProductName);
+		products.Single().ProductName.Should().Be("Chai");
 	}
 
 	[Fact]
@@ -191,7 +191,7 @@ public class FindTypedTests : TestBase
 			.For<Product>()
 			.Filter(x => x.ProductName.Contains(text[0]))
 			.FindEntriesAsync();
-		Assert.Equal("Chai", products.Single().ProductName);
+		products.Single().ProductName.Should().Be("Chai");
 	}
 
 	[Fact]
@@ -202,7 +202,7 @@ public class FindTypedTests : TestBase
 			.For<Product>()
 			.Filter(x => !x.ProductName.Contains("ai"))
 			.FindEntriesAsync();
-		Assert.NotEqual("Chai", products.First().ProductName);
+		products.First().ProductName.Should().NotBe("Chai");
 	}
 
 	[Fact]
@@ -213,7 +213,7 @@ public class FindTypedTests : TestBase
 			.For<Product>()
 			.Filter(x => x.ProductName.StartsWith("Ch"))
 			.FindEntriesAsync();
-		Assert.Equal("Chai", products.First().ProductName);
+		products.First().ProductName.Should().Be("Chai");
 	}
 
 	[Fact]
@@ -224,7 +224,7 @@ public class FindTypedTests : TestBase
 			.For<Product>()
 			.Filter(x => x.ProductName.Length == 4)
 			.FindEntriesAsync();
-		Assert.Equal("Chai", products.First().ProductName);
+		products.First().ProductName.Should().Be("Chai");
 	}
 
 	[Fact]
@@ -235,7 +235,7 @@ public class FindTypedTests : TestBase
 			.For<Product>()
 			.Filter(x => x.ProductName.Substring(1, 2) == "ha")
 			.FindEntriesAsync();
-		Assert.Equal("Chai", products.First().ProductName);
+		products.First().ProductName.Should().Be("Chai");
 	}
 
 	[Fact]
@@ -247,7 +247,7 @@ public class FindTypedTests : TestBase
 			.For<Product>()
 			.Filter(x => x.ProductName.Substring(1, 2) == text)
 			.FindEntriesAsync();
-		Assert.Equal("Chai", products.First().ProductName);
+		products.First().ProductName.Should().Be("Chai");
 	}
 
 	[Fact]
@@ -304,7 +304,7 @@ public class FindTypedTests : TestBase
 			.Filter(x => x.ProductName == "Chai")
 			.Select(x => x.ProductName)
 			.FindEntryAsync();
-		Assert.Equal("Chai", product.ProductName);
+		product.ProductName.Should().Be("Chai");
 	}
 
 	[Fact]
@@ -316,7 +316,7 @@ public class FindTypedTests : TestBase
 			.Filter(x => x.ProductName == "Chai")
 			.Select(x => new { x.ProductID, x.ProductName })
 			.FindEntryAsync();
-		Assert.Equal("Chai", product.ProductName);
+		product.ProductName.Should().Be("Chai");
 	}
 
 	[Fact(Skip = "NewExpression property names are not supported")]
@@ -335,8 +335,8 @@ public class FindTypedTests : TestBase
 			.Filter(x => x.ProductName == "Chai")
 			.Select(x => new { x.ProductID, UnmappedName = x.ProductName })
 			.FindEntryAsync();
-		Assert.Equal("Chai", product.UnmappedName);
-		Assert.Null(product.ProductName);
+		product.UnmappedName.Should().Be("Chai");
+		product.ProductName.Should().BeNull();
 	}
 
 	[Fact]
@@ -348,7 +348,7 @@ public class FindTypedTests : TestBase
 			.OrderBy(x => x.ProductID)
 			.Expand(x => x.Category)
 			.FindEntriesAsync()).Last();
-		Assert.Equal("Condiments", product.Category.CategoryName);
+		product.Category.CategoryName.Should().Be("Condiments");
 	}
 
 	[Fact]
@@ -432,7 +432,7 @@ public class FindTypedTests : TestBase
 			.OrderBy(x => x.ProductID)
 			.Expand(x => x.Category.Products.Select(y => y.Category))
 			.FindEntriesAsync()).Last();
-		Assert.Equal("Condiments", product.Category.Products.First().Category.CategoryName);
+		product.Category.Products.First().Category.CategoryName.Should().Be("Condiments");
 	}
 
 	[Fact]
@@ -445,7 +445,7 @@ public class FindTypedTests : TestBase
 			.Expand(x => x.Category)
 			.Select(x => new { x.ProductName, x.Category.CategoryName })
 			.FindEntriesAsync()).Last();
-		Assert.Equal("Condiments", product.Category.CategoryName);
+		product.Category.CategoryName.Should().Be("Condiments");
 	}
 
 	[Fact]
@@ -457,7 +457,7 @@ public class FindTypedTests : TestBase
 			.Filter(x => x.ProductName == "Chai")
 			.OrderBy(x => x.ProductName)
 			.FindEntryAsync();
-		Assert.Equal("Chai", product.ProductName);
+		product.ProductName.Should().Be("Chai");
 	}
 
 	[Fact]
@@ -469,7 +469,7 @@ public class FindTypedTests : TestBase
 			.Filter(x => x.ProductName == "Chai")
 			.OrderBy(x => new { x.ProductID, x.ProductName })
 			.FindEntryAsync();
-		Assert.Equal("Chai", product.ProductName);
+		product.ProductName.Should().Be("Chai");
 	}
 
 	[Fact]
@@ -481,7 +481,7 @@ public class FindTypedTests : TestBase
 			.Expand(x => x.Category)
 			.OrderBy(x => new { x.Category.CategoryName })
 			.FindEntriesAsync()).Last();
-		Assert.Equal("Seafood", product.Category.CategoryName);
+		product.Category.CategoryName.Should().Be("Seafood");
 	}
 
 	[Fact]
@@ -493,7 +493,7 @@ public class FindTypedTests : TestBase
 			.Key(new { ProductID = 2 })
 			.NavigateTo<Category>()
 			.FindEntryAsync();
-		Assert.Equal("Beverages", category.CategoryName);
+		category.CategoryName.Should().Be("Beverages");
 	}
 
 	[Fact]
@@ -505,7 +505,7 @@ public class FindTypedTests : TestBase
 			.Key(new { ProductID = 2 })
 			.NavigateTo(x => x.Category)
 			.FindEntryAsync();
-		Assert.Equal("Beverages", category.CategoryName);
+		category.CategoryName.Should().Be("Beverages");
 	}
 
 	[Fact]
@@ -532,7 +532,7 @@ public class FindTypedTests : TestBase
 			.NavigateTo<Employee>("Subordinates")
 			.Key(3)
 			.FindEntryAsync();
-		Assert.Equal("Janet", employee.FirstName);
+		employee.FirstName.Should().Be("Janet");
 	}
 
 	[Fact]
@@ -547,7 +547,7 @@ public class FindTypedTests : TestBase
 			.NavigateTo(x => x.Subordinates)
 			.Key(3)
 			.FindEntryAsync();
-		Assert.Equal("Janet", employee.FirstName);
+		employee.FirstName.Should().Be("Janet");
 	}
 
 	[Fact]
@@ -560,7 +560,7 @@ public class FindTypedTests : TestBase
 			.NavigateTo(x => x.Superior.Superior.Subordinates)
 			.Key(3)
 			.FindEntryAsync();
-		Assert.Equal("Janet", employee.FirstName);
+		employee.FirstName.Should().Be("Janet");
 	}
 
 	[Fact]
@@ -593,7 +593,7 @@ public class FindTypedTests : TestBase
 			.For<Transport>()
 			.As<Ship>()
 			.FindEntriesAsync();
-		Assert.Equal("Titanic", transport.Single().ShipName);
+		transport.Single().ShipName.Should().Be("Titanic");
 	}
 
 	[Fact]
@@ -604,7 +604,7 @@ public class FindTypedTests : TestBase
 			.For<Transport>()
 			.As<Ship>()
 			.FindEntriesAsync();
-		Assert.Equal("Titanic", transport.Single().ShipName);
+		transport.Single().ShipName.Should().Be("Titanic");
 	}
 
 	[Fact]
@@ -616,7 +616,7 @@ public class FindTypedTests : TestBase
 			.As<Ship>()
 			.Filter(x => x.ShipName == "Titanic")
 			.FindEntryAsync();
-		Assert.Equal("Titanic", transport.ShipName);
+		transport.ShipName.Should().Be("Titanic");
 	}
 
 	[Fact]
@@ -639,7 +639,7 @@ public class FindTypedTests : TestBase
 			.As<Ship>()
 			.Key(1)
 			.FindEntryAsync();
-		Assert.Equal("Titanic", transport.ShipName);
+		transport.ShipName.Should().Be("Titanic");
 	}
 
 	[Fact]
@@ -651,7 +651,7 @@ public class FindTypedTests : TestBase
 			.As<Ship>()
 			.Filter(x => x.TransportID == 1 && x.ShipName == "Titanic")
 			.FindEntryAsync();
-		Assert.Equal("Titanic", transport.ShipName);
+		transport.ShipName.Should().Be("Titanic");
 	}
 
 	[Fact]
@@ -663,7 +663,7 @@ public class FindTypedTests : TestBase
 			.Filter(x => x is Ship)
 			.As<Ship>()
 			.FindEntryAsync();
-		Assert.Equal("Titanic", transport.ShipName);
+		transport.ShipName.Should().Be("Titanic");
 	}
 
 	[Fact]
@@ -674,7 +674,7 @@ public class FindTypedTests : TestBase
 			.For<Employee>()
 			.Filter(x => x.Superior is Employee)
 			.FindEntryAsync();
-		Assert.NotNull(employee);
+		employee.Should().NotBeNull();
 	}
 
 	[Fact]
@@ -685,7 +685,7 @@ public class FindTypedTests : TestBase
 			.For<Product>()
 			.Filter(x => x.CategoryID == (int)1L)
 			.FindEntryAsync();
-		Assert.NotNull(product);
+		product.Should().NotBeNull();
 	}
 
 	[Fact]
@@ -696,7 +696,7 @@ public class FindTypedTests : TestBase
 			.For<Employee>()
 			.Filter(x => x != null)
 			.FindEntryAsync();
-		Assert.NotNull(employee);
+		employee.Should().NotBeNull();
 	}
 
 	[Fact]
@@ -707,7 +707,7 @@ public class FindTypedTests : TestBase
 			.For<Employee>()
 			.Filter(x => x.Superior != null)
 			.FindEntryAsync();
-		Assert.NotNull(employee);
+		employee.Should().NotBeNull();
 	}
 
 	[Fact]
@@ -773,12 +773,12 @@ public class FindTypedTests : TestBase
 			.For<Order_Details>()
 			.FindEntriesAsync();
 		Assert.NotEmpty(orderDetails1);
-		Assert.True(orderDetails1.First().OrderID > 0);
+		(orderDetails1.First().OrderID > 0).Should().BeTrue();
 		var orderDetails2 = await client
 			.For<OrderDetails>()
 			.FindEntriesAsync();
 		Assert.NotEmpty(orderDetails2);
-		Assert.True(orderDetails2.First().Order_ID > 0);
+		(orderDetails2.First().Order_ID > 0).Should().BeTrue();
 	}
 
 	[Fact]
@@ -791,6 +791,6 @@ public class FindTypedTests : TestBase
 			.For<orderDetails>()
 			.FindEntriesAsync();
 		Assert.NotEmpty(orderDetails);
-		Assert.True(orderDetails.First().orderID > 0);
+		(orderDetails.First().orderID > 0).Should().BeTrue();
 	}
 }
