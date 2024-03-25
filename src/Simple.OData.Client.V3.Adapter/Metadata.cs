@@ -403,25 +403,13 @@ namespace Simple.OData.Client.V3.Adapter
 
 		private IEdmStructuralProperty GetStructuralProperty(IEdmStructuredType edmType, string propertyName)
 		{
-			var property = edmType.StructuralProperties().BestMatch(x => x.Name, propertyName, NameMatchResolver);
-
-			if (property is null)
-			{
-				throw new UnresolvableObjectException(propertyName, $"Structural property [{propertyName}] not found");
-			}
-
+			var property = edmType.StructuralProperties().BestMatch(x => x.Name, propertyName, NameMatchResolver) ?? throw new UnresolvableObjectException(propertyName, $"Structural property [{propertyName}] not found");
 			return property;
 		}
 
 		private IEdmNavigationProperty GetNavigationProperty(string entitySetName, string propertyName)
 		{
-			var property = GetEntityType(entitySetName).NavigationProperties().BestMatch(x => x.Name, propertyName, NameMatchResolver);
-
-			if (property is null)
-			{
-				throw new UnresolvableObjectException(propertyName, $"Navigation property [{propertyName}] not found");
-			}
-
+			var property = GetEntityType(entitySetName).NavigationProperties().BestMatch(x => x.Name, propertyName, NameMatchResolver) ?? throw new UnresolvableObjectException(propertyName, $"Navigation property [{propertyName}] not found");
 			return property;
 		}
 
@@ -430,13 +418,7 @@ namespace Simple.OData.Client.V3.Adapter
 			var function = _model.SchemaElements
 				.Where(x => x.SchemaElementKind == EdmSchemaElementKind.EntityContainer)
 				.SelectMany(x => (x as IEdmEntityContainer).FunctionImports())
-				.BestMatch(x => x.Name, functionName, NameMatchResolver);
-
-			if (function is null)
-			{
-				throw new UnresolvableObjectException(functionName, $"Function [{functionName}] not found");
-			}
-
+				.BestMatch(x => x.Name, functionName, NameMatchResolver) ?? throw new UnresolvableObjectException(functionName, $"Function [{functionName}] not found");
 			return function;
 		}
 	}

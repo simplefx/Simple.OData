@@ -330,13 +330,7 @@ internal static class DictionaryExtensions
 
 	private static IDictionary<string, object> CreateDynamicPropertiesContainer(Type type, ITypeCache typeCache, object instance, string dynamicPropertiesContainerName)
 	{
-		var property = typeCache.GetNamedProperty(type, dynamicPropertiesContainerName);
-
-		if (property is null)
-		{
-			throw new ArgumentException($"Type {type} does not have property {dynamicPropertiesContainerName} ");
-		}
-
+		var property = typeCache.GetNamedProperty(type, dynamicPropertiesContainerName) ?? throw new ArgumentException($"Type {type} does not have property {dynamicPropertiesContainerName} ");
 		if (!typeCache.IsTypeAssignableFrom(typeof(IDictionary<string, object>), property.PropertyType))
 		{
 			throw new InvalidOperationException($"Property {dynamicPropertiesContainerName} must implement IDictionary<string,object> interface");
@@ -349,12 +343,7 @@ internal static class DictionaryExtensions
 
 	private static object CreateInstanceOfAnonymousType(IDictionary<string, object> source, Type type, ITypeCache typeCache)
 	{
-		var constructor = FindConstructorOfAnonymousType(type, source);
-		if (constructor is null)
-		{
-			throw new ConstructorNotFoundException(type, source.Values.Select(v => v.GetType()));
-		}
-
+		var constructor = FindConstructorOfAnonymousType(type, source) ?? throw new ConstructorNotFoundException(type, source.Values.Select(v => v.GetType()));
 		var parameterInfos = constructor.GetParameters();
 		var constructorParameters = new object[parameterInfos.Length];
 		for (var parameterIndex = 0; parameterIndex < parameterInfos.Length; parameterIndex++)

@@ -494,26 +494,14 @@ public class Metadata : MetadataBase
 	private IEdmStructuralProperty GetStructuralProperty(IEdmStructuredType edmType, string propertyName)
 	{
 		var property = edmType.StructuralProperties().BestMatch(
-			x => x.Name, propertyName, NameMatchResolver);
-
-		if (property is null)
-		{
-			throw new UnresolvableObjectException(propertyName, $"Structural property [{propertyName}] not found");
-		}
-
+			x => x.Name, propertyName, NameMatchResolver) ?? throw new UnresolvableObjectException(propertyName, $"Structural property [{propertyName}] not found");
 		return property;
 	}
 
 	private IEdmNavigationProperty GetNavigationProperty(string collectionName, string propertyName)
 	{
 		var property = GetEntityType(collectionName).NavigationProperties()
-			.BestMatch(x => x.Name, propertyName, NameMatchResolver);
-
-		if (property is null)
-		{
-			throw new UnresolvableObjectException(propertyName, $"Association [{propertyName}] not found");
-		}
-
+			.BestMatch(x => x.Name, propertyName, NameMatchResolver) ?? throw new UnresolvableObjectException(propertyName, $"Association [{propertyName}] not found");
 		return property;
 	}
 

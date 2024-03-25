@@ -62,12 +62,7 @@ public static class MemberInfoExtensions
 				"JsonPropertyNameAttribute",
 			};
 
-		var mappingAttribute = attributes.FirstOrDefault(x => supportedAttributeNames.Any(y => x.GetType().Name == y));
-		if (mappingAttribute is null)
-		{
-			mappingAttribute = attributes.FirstOrDefault(x => x.GetType().GetNamedProperty("PropertyName") is not null);
-		}
-
+		var mappingAttribute = attributes.FirstOrDefault(x => supportedAttributeNames.Any(y => x.GetType().Name == y)) ?? attributes.FirstOrDefault(x => x.GetType().GetNamedProperty("PropertyName") is not null);
 		var attributePropertyNames = new[]
 		{
 				"Name",

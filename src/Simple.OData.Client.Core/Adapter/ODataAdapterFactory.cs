@@ -40,12 +40,7 @@ public class ODataAdapterFactory : IODataAdapterFactory
 	public virtual IODataModelAdapter CreateModelAdapter(string metadataString, ITypeCache typeCache)
 	{
 		var protocolVersion = GetMetadataProtocolVersion(metadataString);
-		var loadModelAdapter = GetModelAdapterLoader(protocolVersion, metadataString, typeCache);
-		if (loadModelAdapter is null)
-		{
-			throw new NotSupportedException($"OData protocol {protocolVersion} is not supported");
-		}
-
+		var loadModelAdapter = GetModelAdapterLoader(protocolVersion, metadataString, typeCache) ?? throw new NotSupportedException($"OData protocol {protocolVersion} is not supported");
 		return loadModelAdapter();
 	}
 
@@ -54,12 +49,7 @@ public class ODataAdapterFactory : IODataAdapterFactory
 	{
 		var modelAdapter = CreateModelAdapter(metadataString, typeCache);
 
-		var loadAdapter = GetAdapterLoader(modelAdapter, typeCache);
-		if (loadAdapter is null)
-		{
-			throw new NotSupportedException($"OData protocol {modelAdapter.ProtocolVersion} is not supported");
-		}
-
+		var loadAdapter = GetAdapterLoader(modelAdapter, typeCache) ?? throw new NotSupportedException($"OData protocol {modelAdapter.ProtocolVersion} is not supported");
 		return loadAdapter;
 	}
 

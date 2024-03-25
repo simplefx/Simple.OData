@@ -125,12 +125,7 @@ public class ActionFactory
 			return ResourceType.GetPrimitiveResourceType(type);
 		}
 
-		var resourceType = _metadata.Types.SingleOrDefault(s => s.Name == type.Name);
-		if (resourceType is null)
-		{
-			throw new Exception($"Generic action parameter type {type} not supported");
-		}
-
+		var resourceType = _metadata.Types.SingleOrDefault(s => s.Name == type.Name) ?? throw new Exception($"Generic action parameter type {type} not supported");
 		return resourceType;
 	}
 

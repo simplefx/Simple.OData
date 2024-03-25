@@ -41,12 +41,7 @@ public class MoviesController : EntitySetController<Movie, int>
 	[HttpPost]
 	public Movie CheckOut([FromODataUri] int key)
 	{
-		var movie = GetEntityByKey(key);
-		if (movie is null)
-		{
-			throw new HttpResponseException(HttpStatusCode.NotFound);
-		}
-
+		var movie = GetEntityByKey(key) ?? throw new HttpResponseException(HttpStatusCode.NotFound);
 		if (!TryCheckoutMovie(movie))
 		{
 			throw new HttpResponseException(HttpStatusCode.BadRequest);
@@ -67,12 +62,7 @@ public class MoviesController : EntitySetController<Movie, int>
 	[HttpPost]
 	public Movie Return([FromODataUri] int key)
 	{
-		var movie = GetEntityByKey(key);
-		if (movie is null)
-		{
-			throw new HttpResponseException(HttpStatusCode.NotFound);
-		}
-
+		var movie = GetEntityByKey(key) ?? throw new HttpResponseException(HttpStatusCode.NotFound);
 		movie.DueDate = null;
 		try
 		{
@@ -94,12 +84,7 @@ public class MoviesController : EntitySetController<Movie, int>
 			throw new HttpResponseException(HttpStatusCode.BadRequest);
 		}
 
-		var movie = GetEntityByKey(key);
-		if (movie is null)
-		{
-			throw new HttpResponseException(HttpStatusCode.NotFound);
-		}
-
+		var movie = GetEntityByKey(key) ?? throw new HttpResponseException(HttpStatusCode.NotFound);
 		movie.DueDate = (DateTime)parameters["DueDate"];
 		// In a real app you would validate this date (not in the past, etc).
 		try
